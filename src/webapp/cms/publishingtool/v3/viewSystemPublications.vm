@@ -1,0 +1,56 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+	<!--
+		$(document).ready(function() {
+			#set($extraParameter = '')
+			#initDataTableImpl("systemChanges" $extraParameter)
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.publishingtool.globalSettings.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	
+		<h3>$ui.getString("tool.publishingtool.globalSettings.header")</h3>
+				
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="systemChanges">
+			<thead>
+				<tr>
+					<th>Class</th>
+					<th>Type</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach ($notificationMessage in $systemNotificationMessages)
+					<tr>
+						<td>$notificationMessage.className</td>
+						<td>$notificationMessage.getTransactionTypeName($notificationMessage.type)</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+	
+		#if($systemNotificationMessages.size() > 0)
+		<p class="buttonPane">	
+			<input type="button" class="commit" onclick="document.location.href = 'ViewPublishingToolStartPage!pushSystemNotificationMessages.action';" value="Push"/>
+		</p>		
+		#end
+	</div>
+
+#endLightCommonToolV3()

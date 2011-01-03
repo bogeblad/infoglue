@@ -1,0 +1,33 @@
+#define( $headerMarkup )
+	<link rel="stylesheet" type="text/css" media="all" href="css/cms.css" title="cms" />
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.common.workflowDetails.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	
+	<h3>$ui.getString("tool.common.workflowDetails.title")</h3>
+
+	<table border="0" cellpadding="4" cellspacing="0" width="100%">
+	#foreach($workflowStepVO in $workflow.steps)
+	<tr>
+		<td style="#if(!$workflowStepVO.finishDate)color: black; #else color: silver; #end">$workflowStepVO.name</td>
+		<td style="#if(!$workflowStepVO.finishDate)color: black; #else color: silver; #end">#if($workflowStepVO.owner)$workflowStepVO.owner#else Not specified#end</td>
+		<td style="#if(!$workflowStepVO.finishDate)color: black; #else color: silver; #end">#if($workflowStepVO.caller)$workflowStepVO.caller#else Not specified#end</td>
+		<td style="#if(!$workflowStepVO.finishDate)color: black; #else color: silver; #end">$workflowStepVO.status</td>
+		<td style="#if(!$workflowStepVO.finishDate)color: black; #else color: silver; #end">#if(!$workflowStepVO.startDate)Not started#else$formatter.formatDate($workflowStepVO.startDate, "yyyy-MM-dd")#end</td>
+		<td style="#if(!$workflowStepVO.finishDate)color: black; #else color: silver; #end">#if(!$workflowStepVO.finishDate)Not completed#else$formatter.formatDate($workflowStepVO.finishDate, "yyyy-MM-dd")#end</td>
+	</tr>
+	#end
+	</table>
+	
+	#lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()

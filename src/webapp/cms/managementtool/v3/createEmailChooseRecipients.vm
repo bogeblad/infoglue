@@ -1,0 +1,258 @@
+#beginLightCommonToolV3("tool.managementtool.createEmailChooseRecipients.title" "" "" false true $!disableCloseButton)
+
+<style type="text/css">
+	
+	.userSelectBox
+	{
+		width: 200px;
+		height: 200px;
+	}
+	
+	.moveButton
+	{
+		width: 50px;
+	}
+</style>
+
+<script type="text/javascript">
+	<!--
+		$(document).ready(function(){
+		$("#tabsContainer").tabs({ show:function() { resizeInlineTabDivs();} });
+		});
+		
+		var xmlHttp;
+
+		try
+		{
+			// Firefox, Opera 8.0+, Safari
+			xmlHttp=new XMLHttpRequest();
+		}
+		catch (e)
+		{
+			// Internet Explorer
+			try
+			{
+				xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+			}
+			catch (e)
+			{
+				try
+				{
+					xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				catch (e)
+				{
+					alert("Your browser does not support AJAX!");			
+				}
+			}
+		}
+		
+		function performAjaxSearch()
+		{
+			var query = document.editForm.elements["query"].value;
+			var queryUrl = "ViewListSystemUser!userListSearch.action?searchString=" + query;
+			makeAjaxCall(queryUrl, "searchResultDiv");			
+		}
+		
+		function makeAjaxCall(aAjaxUrl, aTargetDiv)
+		{
+			xmlHttp.open("POST", aAjaxUrl, true);
+			xmlHttp.onreadystatechange 	= function()
+			{
+				handleAjaxResponse(aTargetDiv);
+			}
+			xmlHttp.send(null);
+		}
+		
+		function handleAjaxResponse(aTargetDiv)
+		{		
+			if(xmlHttp.readyState == 4)
+			{		
+				if (aTargetDiv != "")
+				{			
+					document.getElementById(aTargetDiv).innerHTML = xmlHttp.responseText;								
+				}			
+			}
+		}
+		
+		function addAll()
+		{
+			selectAll("searchResult");
+			addSelected();
+			unselectAll("searchResult");
+		}
+
+		function removeAll()
+		{
+			selectAll("userName");
+			removeSelected();
+		}
+
+		function addSelected()
+		{
+			var searchResultSize 	= document.editForm.elements["searchResult"].options.length;
+			var userNameSize		= 0;
+			var selectedUser		= null;
+			var alreadyInList 		= false;
+			var userId				= "";
+			var userName 			= "";
+
+			for (x = 0; x < searchResultSize; x ++)
+			{
+				if (document.editForm.elements["searchResult"].options[x].selected == true)
+				{
+					selectedUser	= document.editForm.elements["searchResult"].options[x].value;
+					alreadyInList 	= false;
+
+					for (i = 0; i < userNameSize; i ++)
+					{
+						if (document.editForm.elements["userName"].options[i].value == selectedUser)
+						{
+							alreadyInList = true;
+							break;
+						}
+					}
+
+					if (!alreadyInList)
+					{
+						userNameSize	= document.editForm.elements["userName"].options.length;
+						userId 			= document.editForm.elements["searchResult"].options[x].value;
+						userName 		= document.editForm.elements["searchResult"].options[x].text;
+						document.editForm.elements["userName"].options[userNameSize] = new Option(userName,userId);
+					}
+				}
+			}
+
+		}
+
+		function removeSelected()
+		{
+			var userNameSize 	= document.editForm.elements["userName"].options.length;
+
+			for (x = 0; x < userNameSize; x ++)
+			{
+				if (document.editForm.elements["userName"].options[x].selected == true)
+				{
+					document.editForm.elements["userName"].options[x] = null;
+					x --;
+					userNameSize --
+				}
+			}
+		}
+
+		function selectAll(aElementName)
+		{
+			var size = document.editForm.elements[aElementName].options.length;
+
+			for (i = 0; i < size; i ++)
+			{
+				document.editForm.elements[aElementName].options[i].selected = true;
+			}
+		}
+		
+		function unselectAll(aElementName)
+		{
+			var size = document.editForm.elements[aElementName].options.length;
+
+			for (i = 0; i < size; i ++)
+			{
+				document.editForm.elements[aElementName].options[i].selected = false;
+			}
+		}
+		
+		function submitForm()
+		{
+			selectAll('userName'); 
+			document.editForm.submit();
+		}
+	-->
+</script>
+
+<div onfocus="this.blur();">
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3 style="text-indent: 16px;">$ui.getString("tool.managementtool.createEmailChooseRecipients.title") 
+		#if($errorMessage && $errorMessage != "")
+			<span style="color:red">$errorMessage</span><br/>
+		#end
+	</h3>
+
+
+	<form method="POST" name="editForm" action="CreateEmail!inputCreateEmailV3.action" autocomplete="off" onsubmit="selectAll('userName')">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="returnAddress" value="$!returnAddress"/>
+		<input type="hidden" name="originalUrl" value="$!originalUrl"/>
+		<input type="hidden" name="extraText" value="$!extraText"/>
+		<input type="hidden" name="extraTextProperty" value="$!extraTextProperty"/>
+		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
+		<input type="hidden" name="disableCloseButton" value="$!disableCloseButton"/>
+				
+		<div style="color: black;">
+			
+			<div id="tabsContainer" class="flora">      
+				<ul>
+			        <li><a href="#usersTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.usersTabLabel")</span></a></li>
+			        <li><a href="#rolesTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.rolesTabLabel")</span></a></li>
+			        <li><a href="#groupsTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.groupsTabLabel")</span></a></li>
+			    </ul>
+	
+				<div id="usersTab" class="recipientTab inlineTabDiv">	
+					<table>
+						<tr>
+							<td colspan="3">
+								<span style="font-weight: bold;">$ui.getString("tool.managementtool.createEmailChooseRecipients.filterLabel")</span><br/>
+								<input type="text" name="query" onkeyup="performAjaxSearch();" onchange="performAjaxSearch();"/>
+								<input type="button" value="Clear" onclick="document.editForm.elements['query'].value = ''; performAjaxSearch();"/>
+							</td>
+						</tr>
+						<tr>
+							<td valign="top">
+								<span style="font-weight: bold;">$ui.getString("tool.managementtool.createEmailChooseRecipients.availableUsersLabel")</span><br/>					
+								<div id="searchResultDiv" style="margin: 0px; float: left;">			
+									<select name="searchResult" size="10" class="userSelectBox" multiple="true">
+										#foreach ($userVO in $users)
+											<option value="$userVO.name">$userVO.firstName $userVO.lastName</option>
+										#end
+									</select>			
+								</div>	
+							</td>
+							<td>
+								<input type="button" class="moveButton" onclick="addAll()" value=">>"/><br/>
+								<input type="button" class="moveButton" onclick="addSelected()" value=">"/><br/>
+								<input type="button" class="moveButton" onclick="removeSelected()" value="<"/><br/>
+								<input type="button" class="moveButton" onclick="removeAll()" value="<<"/><br/>
+							</td>
+							<td valign="top">	
+								<span style="font-weight: bold;">$ui.getString("tool.managementtool.createEmailChooseRecipients.selectedUsersLabel")</span><br/>							
+								<select name="userName" size="10" class="userSelectBox" multiple="true">
+								</select>	
+							</td>
+						</tr>
+					</table>				
+				</div>
+				
+				<div id="rolesTab" class="recipientTab inlineTabDiv" style="display: none;"> 				
+					#foreach ($roleVO in $roles)
+						<input type="checkbox" name="roleName" value="$roleVO.name"/> $roleVO.name<br/>
+					#end
+				</div>
+				
+				<div id="groupsTab" class="recipientTab inlineTabDiv" style="display: none;"> 				
+					#foreach ($groupVO in $groups)
+						<input type="checkbox" name="groupName" value="$groupVO.name"/> $groupVO.name<br/>
+					#end
+				</div>
+			</div>		
+			
+		</div>
+			
+	</form>
+
+</div>
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

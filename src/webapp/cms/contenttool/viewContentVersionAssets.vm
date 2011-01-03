@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Select inline image</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/editor.js"></script>
+	<script type="text/javascript" src="applications/HTMLArea/popups/infogluePopup.js"></script>
+	
+	<script language="JavaScript">
+	<!--
+		
+		var selectedAssetElement;
+		var contentId;
+		var assetKey;
+		var firstAssetKey;
+			
+		function markAsset(object, aContentId, anAssetKey)
+		{
+			if(selectedAssetElement)
+				selectedAssetElement.style.background = "";
+				
+			contentId = aContentId;	
+			assetKey = anAssetKey;	
+			
+			//alert("object:" + object);
+			//alert("contentId" + contentId);
+			//alert("assetKey" + assetKey);
+			selectedAssetElement = document.getElementById("digitalAsset" + assetKey);
+			//alert("selectedAssetElement" + selectedAssetElement);
+			if(selectedAssetElement)
+				selectedAssetElement.style.background = "#C2D0E2";
+		}
+		
+		function onOk()
+		{
+			#if(!$treatAsLink)
+				//alert("parent:" + parent);
+				//alert("contentId:" + contentId);
+				//alert("assetKey:" + assetKey);
+				invalid = false;
+				
+				var required = {"f_alt": "You have not entered an alt text - are you sure you want to continue?"};
+				for (var i in required) {
+					var el = document.getElementById(i);
+				    if (!el.value) {
+				      if(!confirm(required[i]))
+				      {
+					      el.focus();
+					      invalid = true;
+				      }
+				    }
+				}
+				//alert("invalid:" + invalid);
+				if(!invalid)
+				{
+					// pass data back to the calling window
+					var fields = ["image", "f_text", "f_url", "f_alt", "f_align", "f_border", "f_horiz", "f_vert"];
+				 	var param = new Object();
+					for (var i in fields) {
+					    var id = fields[i];
+					    var el = document.getElementById(id);
+					    if(el)
+					    {
+						    //alert(id + "=" + el.value);
+						    param[id] = el.value;
+						}
+					}
+					
+					parent.onOk(param, contentId, assetKey);
+				}
+				//alert("Done...");
+			#else
+				
+				title = document.inputForm.f_title.value;
+				target = document.inputForm.f_target.value;
+				document.inputForm.f_href.value = "#";
+				#set($dollar = "$")
+				attribute = "<a href=\"${dollar}templateLogic.getInlineAssetUrl(" + contentId + ", \"" + assetKey + "\")\" title=\"" + title + "\" target=\"" + target + "\">" + document.inputForm.f_text.value + "</a>";
+				originalTag = transformAttribute(attribute, top.opener.document);
+			
+				var required = 
+					{
+				  	"f_href": "You must select a page in the tree which the link will lead to",
+				    "f_title": "You must enter a title for the url"
+					};
+				
+				for (var i in required) 
+				{
+					var el = document.getElementById(i);
+					if (!el.value) 
+					{
+						alert(required[i]);
+					    el.focus();
+					    return; // false;
+					}
+				}
+				
+				// pass data back to the calling window
+				var fields = ["f_href", "f_title", "f_target"];
+				var param = new Object();
+				for (var i in fields) 
+				{
+					var id = fields[i];
+				    var el = document.getElementById(id);
+				    param[id] = el.value;
+				}
+				
+				if (param.f_target == "_other")
+				    param.f_target = document.getElementById("f_other_target").value;
+				   
+				param.originaltag = originalTag;  
+				//alert("param.f_href at closing time:" + param.f_href);  
+				//alert("param.f_title at closing time:" + param.f_title);  
+				//alert("param.f_target at closing time:" + param.f_target); 
+				//alert("param.originaltag at closing time:" + param.originaltag);   
+				
+				parent.onOk(param, contentId, assetKey);
+			#end
+		}
+
+		function onCancel() 
+		{
+		    //alert("Parent:" + parent.name) 
+		    parent.onCancel(null);
+			return false;
+		}	
+		
+		function initSub() 
+		{
+			//alert("assetKey: $assetKey");
+			#if($assetKey && $assetKey != "")
+				assetKey = "$assetKey";
+				contentId = "$oldContentId";
+				//alert("assetKey:" + assetKey);
+				//alert("contentId:" + contentId);
+				//if(selectedAssetElement)
+					selectedAssetElement = document.getElementById("digitalAsset" + assetKey);
+				//alert("selectedAssetElement:" + selectedAssetElement);
+			#else
+				markAsset(this, $contentId, firstAssetKey);
+			#end
+				
+			//alert("initSub");
+			/*
+		  	window.resizeTo(350,400);
+	  	  	*/
+	  	  	//alert("parent.f_border:" + parent.f_alt);
+	  	  	//alert("parent.f_border:" + parent.f_border);
+	  	  	//alert("parent.f_border:" + parent.f_align);
+	  	  	//alert("parent.f_border:" + parent.f_vert);
+	  	  	//alert("parent.f_border:" + parent.f_horiz);
+
+			#if(!$treatAsLink)
+	  	  	//document.getElementById("f_text").value = parent.f_text;
+	  	  	document.getElementById("f_alt").value = parent.f_alt;
+	  	  	document.getElementById("f_border").value = parent.f_border;
+	      	document.getElementById("f_align").value = parent.f_align;
+	      	document.getElementById("f_vert").value = parent.f_vert;
+	      	document.getElementById("f_horiz").value = parent.f_horiz;
+	  		#else
+	  		document.getElementById("f_text").value = parent.f_text;
+	  	  	document.getElementById("f_title").value = parent.f_title;
+	  	  	document.getElementById("f_target").value = parent.f_target;
+	  		#end
+		};
+		
+		-->
+	</script>
+	
+	<style>
+	
+		form p {
+		  margin-top: 5px;
+		  margin-bottom: 5px;
+		}
+		.fl { width: 9em; float: left; padding: 2px 5px; text-align: left; }
+		.fr { width: 6em; float: left; padding: 2px 5px; text-align: right; }
+		fieldset { padding: 0px 10px 5px 5px; height:110px;}
+		select, input, button { font: 11px Tahoma,Verdana,sans-serif; }
+		button { width: 70px; }
+		.space { padding: 2px; }
+		
+		.title { background: #ddf; color: #000; font-weight: bold; font-size: 120%; padding: 3px 10px; margin-bottom: 10px;
+		border-bottom: 1px solid black; letter-spacing: 2px;
+		}
+		form { padding: 0px; margin: 0px; }
+
+	</style>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+</head>
+
+<body class="contenttooledit" onload="initSub();">
+
+<table border="0" width="100%" cellpadding="2" cellspacing="0">
+#set($counter = 0)
+#foreach($digitalAsset in $inheritedDigitalAssets)
+<tr>
+	<td id="digitalAsset$digitalAsset.assetKey" valign="bottom" align="center" class="bordered" #if($assetKey == $digitalAsset.assetKey) style="background-color: #C2D0E2;" #end>
+		<input type="hidden" id="digitalAsset$digitalAsset.assetKey" value="$this.getDigitalAssetUrl($digitalAsset.digitalAssetId)">
+		<a href="javascript:markAsset(this, $contentId, '$digitalAsset.assetKey');"><img class="scaledbordered" src="$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)">
+		<br/>$digitalAsset.assetKey</a><br/>
+	</td>
+	#if($counter == 0)
+		<script type="text/javascript">
+		<!--
+			//markAsset(this, $contentId, '$digitalAsset.assetKey');
+			firstAssetKey = '$digitalAsset.assetKey';
+		-->
+		</script>
+	#end
+	#set($counter = $counter + 1)
+</tr>
+#end
+
+#if($counter == 0)
+<tr>
+	<td id="digitalAsset$digitalAsset.assetKey" valign="bottom" align="center" class="bordered">
+		<br/>$ui.getString("tool.contenttool.noAssetsOrNoContentSelectedLabel")<br/><br/>
+	</td>
+</tr>
+#end
+
+<tr>
+	<td>
+		<br/>
+		#if($contentVersionVO.id)
+		<a href="javascript:openPopup('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 'DigitalAsset', 'width=400,height=200,resizable=no');">$ui.getString("tool.contenttool.uploadNewAttachment")</a>
+		#end
+	</td>
+</tr>
+
+
+<tr>
+	<td>&nbsp;</td>
+</tr>
+#set($treatAsLink = $treatAsLink)
+#if($treatAsLink)
+<tr id="linkProperties" style="position: relative; diplay:block;">
+	<td>
+	<form name="inputForm" action="CreateServiceBinding.action">
+		<table cellpadding="0" cellspacing="0" border="0" width="300">
+		<tr class="darkgreen">
+			<td class="smalllabel" colspan="2">$ui.getString("tool.structuretool.linkProperties")</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>	
+		<tr>
+			<td class="label">Title&nbsp;(tooltip):&nbsp;</td>
+		    <td><input type="text" id="f_title" style="width: 250px" /></td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>	
+		<tr>
+			<td class="label">Target:</td>
+		    <td><select id="f_target">
+		      <option value="">None (use implicit)</option>
+		      <option value="_blank">New window (_blank)</option>
+		      <option value="_self">Same frame (_self)</option>
+		      <option value="_top">Top frame (_top)</option>
+		    </select>
+		    <input type="text" name="f_other_target" id="f_other_target" size="10" style="visibility: hidden" />
+		    </td>
+		</tr>	
+
+		</table>
+		<input type="hidden" id="f_href"/>
+		<input type="hidden" id="f_text"/>
+		<input type="hidden" name="entityId" value="">
+		<input type="hidden" name="repositoryId" value="">
+		<input type="hidden" name="path" value="">
+	</form>
+	</td>
+</tr>
+#else
+<tr id="imageProperties" style="position: relative; diplay:block;">
+	<td>
+		<form action="" method="get">
+		<table border="0" cellpadding="2" cellspacing="0" width="100%">
+		<tr>
+			<td colspan="2">Alternate&nbsp;text:</td>
+		</tr>
+		<tr>
+			<td colspan="2"><input type="text" name="alt" id="f_alt" style="width:100%" title="For browsers that don't support images" /></td>
+		</tr>
+		<tr>
+			<td>
+				<fieldset style="float: left; margin-left: 5px; width: 50%;">
+				<legend>Layout</legend>
+				<div class="space"></div>
+				
+				<div class="fl">Alignment:</div>
+				<select size="1" name="align" id="f_align" title="Positioning of this image">
+				  <option value=""                             >Not set</option>
+				  <option value="left"                         >Left</option>
+				  <option value="right"                        >Right</option>
+				  <option value="bottom"                       >Bottom</option>
+				  <option value="middle"                       >Middle</option>
+				  <option value="top"                          >Top</option>
+				</select>
+				
+				<p />
+				
+				<div class="fl">Border&nbsp;thickness:</div>
+				<input type="text" name="border" id="f_border" size="5" title="Leave empty for no border" />
+				
+				<div class="space"></div>
+				
+				</fieldset>
+			</td>
+			<td>
+				<fieldset style="float:right; margin-right: 5px; width: 40%;">
+				<legend>Spacing</legend>
+				
+				<div class="space"></div>
+				
+				<div class="fl">Horizontal:</div>
+				<input type="text" name="horiz" id="f_horiz" size="5" title="Horizontal padding" />
+				
+				<p />
+				
+				<div class="fl">Vertical:</div>
+				<input type="text" name="vert" id="f_vert" size="5" title="Vertical padding" />
+				
+				<div class="space"></div>
+				
+				</fieldset>
+			</td>
+		</tr>
+		</table>
+		</form>
+	</td>
+</tr>
+#end
+<tr>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>
+		<a href="javascript:onOk();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+		<a href="javascript:onCancel();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+	</td>
+</tr>
+
+<!--
+<tr>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>
+		<a href="javascript:onCancel();"><img src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" border="0"></a>
+	</td>
+</tr>
+-->
+</table>
+
+<script type="text/javascript">
+	setTimeout("initSub()", 500);
+</script>
+</body>
+</html>

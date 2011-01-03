@@ -1,0 +1,571 @@
+##***********************************************************
+## A macro for the embla compact toolbar
+##***********************************************************
+#macro(compactEmblaLeftMenuToolbar $buttons)
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		#foreach($button in $buttons)
+			#set($parentCount = $velocityCount)
+			#if($button.subButtons.size() == 0)
+				#if($parentCount > 1)
+					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+				#end
+				<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+
+				<script type="text/javascript">
+				<!--
+				#if($button.useConfirmation())
+					//Event listener for delete option
+                	$("#button$parentCount").click(function () {
+						$("#genericDialog").dialog("destroy");
+                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+                		$("#genericDialog h3").html("$button.confirmationTitle");
+                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+                		$("#genericDialog").dialog({
+                			autoOpen: false,
+                			resizable: false,
+							width: 500,
+							minHeight: 400,
+                			modal: true,
+                			overlay: {
+                				backgroundColor: '#000',
+                				opacity: 0.8
+                			},
+                			buttons: {
+                				'$button.confirmationTitle': function() {
+                					$(this).dialog('close');
+                					#if($button.target == "inlineDiv")
+                						openInlineDiv("$button.actionURL", 700, 900, true, true, "$button.confirmationTitle"); 
+									#else
+										#if($button.getIsJavascript())
+	                						window.frames["$button.target"].$button.actionURL;
+										#else
+		                					$("#$button.target").attr("src", "$button.actionURL");
+                						#end
+				    		        #end
+                				},
+                				'$ui.getString("tool.common.cancelButton.label")': function() {
+                					$(this).dialog('close');
+                				}
+                			},
+							open: function(event, ui) {
+								$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+								$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+							}
+                		});
+						$("#genericDialog").dialog('open');
+                		return false;
+                	});
+				#else
+    				$("#button$parentCount").click(function(){
+						//alert("Click on link: $button.actionURL");
+    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+    		           		#if($button.target == "inlineDiv")
+	    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
+	    		           	#else
+    		           			openUrlInWorkArea("$button.actionURL");
+	    		           	#end
+    		           	#else
+			           		#if($button.target == "inlineDiv")
+	    		           		$button.actionURL
+	    		           	#else
+	    		           		if(window.frames["$button.target"])
+	    		           			window.frames["$button.target"].$button.actionURL
+	    		           		else
+	    		           			$button.actionURL
+	    		           	#end
+    		           	#end
+    		           	return false;
+    	            });
+				#end
+				-->
+				</script>
+			#else
+				#if($parentCount > 1)
+					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+				#end
+					<div id="initialButton">
+						<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+					</div>
+					<div id="subButtons$parentCount" class="subButtons">
+					#set($height = 26)
+					#foreach($subButton in $button.subButtons)
+						<a class="igToolbarButton igToolbarSubButton" style="margin-top: 0px; margin-bottom: 0px;" href="#" id="subButton${parentCount}_$velocityCount" name="subButton${parentCount}_$velocityCount" title="$subButton.title"><span class='igToolbarButtonOuterSpan igToolbarSubButtonOuterSpan'><span class='$subButton.cssClass' title="$subButton.title">$subButton.text</span></span></a>
+						<div style="clear: both;"></div>
+						#set($height = $height + 26)
+					#end
+					</div>
+					
+					<script type="text/javascript">
+					<!--
+					$("#button$parentCount").mouseenter(function(){
+						var offset = $(this).offset();
+						var top = offset.top;
+						var left = offset.left;
+						$("#subButtons$parentCount").css("top", (top + $(this).height()) + "px")
+						$("#subButtons$parentCount").css("left", left - 13 + "px");
+						$("#subButtons$parentCount").show();
+					}).mouseleave(function(){
+						$("#subButtons$parentCount").hide();
+					});
+					$("#subButtons$parentCount").mouseenter(function(){
+						$("#subButtons$parentCount").show();
+					}).mouseleave(function(){
+						$("#subButtons$parentCount").hide();
+					});
+					
+					#if($button.useConfirmation())
+	    				//Event listener for delete option
+						$("#button$parentCount").click(function () {
+							$("#genericDialog").dialog("destroy");
+	                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+                			$("#genericDialog h3").html("$button.confirmationTitle");
+	                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+	                		$("#genericDialog").dialog({
+	                			autoOpen: false,
+	                			resizable: false,
+								width: 500,
+								minHeight: 400,
+	                			modal: true,
+	                			overlay: {
+	                				backgroundColor: '#000',
+	                				opacity: 0.8
+	                			},
+	                			buttons: {
+	                				'$button.confirmationTitle': function() {
+	                					$(this).dialog('close');
+	                					#if($button.target == "inlineDiv")
+	                						openInlineDiv("$button.actionURL", 700, 900, true, true, "$button.confirmationTitle"); 
+				    		           	#else
+											#if($button.getIsJavascript())
+		                						window.frames["$button.target"].$button.actionURL;
+											#else
+			           		           			openUrlInWorkArea("$button.actionURL");
+			        						#end
+				    		           	#end
+	                				},
+	                				'$ui.getString("tool.common.cancelButton.label")': function() {
+	                					$(this).dialog('close');
+	                				}
+	                			},
+								open: function(event, ui) {
+									$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+									$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+								}
+	                		});
+							$("#genericDialog").dialog('open');
+	                		return false;
+	                	});
+					#else
+	    				$("#button$parentCount").click(function(){
+							//alert("Click on link");
+	    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+	    		           		#if($button.target == "inlineDiv")
+		    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
+		    		           	#else
+		    		           		openUrlInWorkArea("$button.actionURL");
+		    		           	#end
+	    		           	#else
+				           		#if($button.target == "inlineDiv")
+		    		           		$button.actionURL
+		    		           	#else
+		    		           		window.frames["$button.target"].$button.actionURL;
+		    		           	#end
+	    		           	#end
+	    		           	return false;
+	    	            });
+					#end
+					
+					#foreach($subButton in $button.subButtons)
+						#if($subButton.useConfirmation())
+							$("#subButton${parentCount}_$velocityCount").click(function () {
+								$("#genericDialog").dialog("destroy");
+		                		$("#genericDialog").attr("title", "$subButton.confirmationTitle");
+                				$("#genericDialog h3").html("$subButton.confirmationTitle");
+		                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($subButton.confirmationText)");
+		                		$("#genericDialog").dialog({
+									autoOpen: false,
+		                			resizable: false,
+									width: 500,
+									minHeight: 400,
+		                			modal: true,
+		                			overlay: {
+		                				backgroundColor: '#000',
+		                				opacity: 0.8
+		                			},
+		                			buttons: {
+		                				'$subButton.confirmationTitle': function() {
+		                					$(this).dialog('close');
+		                					#if($subButton.target == "inlineDiv")
+		                						openInlineDiv("$subButton.actionURL", 700, 900, true, true, "$subButton.confirmationTitle"); 
+					    		           	#else
+												#if($button.getIsJavascript())
+			                						window.frames["$subButton.target"].$subButton.actionURL;
+												#else
+				                					openUrlInWorkArea("$subButton.actionURL");
+		                						#end
+					    		           	#end
+		                				},
+		                				'$ui.getString("tool.common.cancelButton.label")': function() {
+		                					$(this).dialog('close');
+		                				}
+		                			},
+									open: function(event, ui) {
+										$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+										$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+									}
+		                		});
+								$("#genericDialog").dialog('open');
+		                		return false;
+		                	});
+						#else
+							$("#subButton${parentCount}_$velocityCount").click(function(){
+				            	#if($subButton.actionURL.indexOf("javascript") == -1 && $subButton.isJavascript == false && $subButton.actionURL != '')
+		    		           		#if($subButton.target == "inlineDiv")
+			    		           		openInlineDiv("$subButton.actionURL", 700, 900, true, true, "");
+			    		           	#else
+			    		           		openUrlInWorkArea("$subButton.actionURL");
+			    		           	#end
+		    		           	#else
+					           		#if($subButton.target == "inlineDiv")
+			    		           		$subButton.actionURL
+			    		           	#else
+			    		           		window.frames["$subButton.target"].$subButton.actionURL;
+			    		           	#end
+		    		           	#end
+		    		           	return false;
+				            });
+				    	#end
+					#end
+					-->
+					</script>
+			#end
+		#end
+	</div>
+#end
+
+##***********************************************************
+## A macro for the embla default toolbar
+##***********************************************************
+#macro(defaultEmblaLeftMenuToolbarOld $buttons)
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		#foreach($button in $buttons)
+			#set($parentCount = $velocityCount)
+			#if($button.subButtons.size() == 0)
+				<div id="button$parentCount" name="button$parentCount" class="igEmblaLargeButton" title="$button.title">
+					<img src="images/trans.gif" alt="$button.title" class="$subButton.cssClass" width="32" height="32"/><br/>
+					<span title="$button.title">$button.text</span>
+				</div>
+
+				<script type="text/javascript">
+				<!--
+				#if($button.useConfirmation())
+					//Event listener for delete option
+                	$("#button$parentCount").click(function () {
+						$("#genericDialog").dialog("destroy");
+                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+                		$("#genericDialog").dialog({
+							autoOpen: false,
+                			resizable: false,
+							//width: 400,
+                			//height:160,
+                			modal: true,
+                			overlay: {
+                				backgroundColor: '#000',
+                				opacity: 0.8
+                			},
+                			buttons: {
+                				'$button.confirmationTitle': function() {
+                					$(this).dialog('close');
+                					#if($button.target == "inlineDiv")
+                						openInlineDiv("$button.actionURL", 700, 900, true, true, "$button.confirmationTitle"); 
+									#else
+										#if($button.getIsJavascript())
+	                						window.frames["$button.target"].$button.actionURL;
+										#else
+		                					$("#$button.target").attr("src", "$button.actionURL");
+                						#end
+				    		        #end
+                				},
+                				'$ui.getString("tool.common.cancelButton.label")': function() {
+                					$(this).dialog('close');
+                				}
+                			},
+							open: function(event, ui) {
+								$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+								$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+							}
+                		});
+						$("#genericDialog").dialog('open');
+                		return false;
+                	});
+				#else
+    				$("#button$parentCount").click(function(){
+						//alert("Click on link");
+    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+    		           		#if($button.target == "inlineDiv")
+	    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
+	    		           	#else
+	    		           		$("#$button.target").attr("src", "$button.actionURL");
+	    		           	#end
+    		           	#else
+			           		#if($button.target == "inlineDiv")
+	    		           		$button.actionURL
+	    		           	#else
+	    		           		window.frames["$button.target"].$button.actionURL;
+	    		           	#end
+    		           	#end
+    		           	return false;
+    	            });
+				#end
+				-->
+				</script>
+			#else
+				#if($parentCount > 1)
+					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+				#end
+					<div id="button${parentCount}Group" class="igEmblaButtonGroup">
+						<div id="button$parentCount" name="button$parentCount" class="igEmblaLargeButton" title="$button.title">
+							<img src="images/trans.gif" alt="$button.title" class="$subButton.cssClass" width="32" height="32"/><br/>
+							<span title="$button.title">$button.text</span>
+						</div>
+						<br/>
+						#foreach($subButton in $button.subButtons)
+							<a class="igToolbarButton igToolbarSubButton igEmblaSmallButton" style="margin-top: 0px; margin-bottom: 0px;" href="#" id="subButton${parentCount}_$velocityCount" name="subButton${parentCount}_$velocityCount" title="$subButton.title"><span class='igToolbarEmblaButtonOuterSpan igToolbarSubButtonOuterSpan'><span class='$subButton.cssClass' title="$subButton.title">$subButton.text</span></span></a>
+						#end
+					</div>
+					
+					<script type="text/javascript">
+					<!--
+					#if($button.useConfirmation())
+	    				//Event listener for delete option
+						$("#button$parentCount").click(function () {
+							$("#genericDialog").dialog("destroy");
+	                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+	                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+	                		$("#genericDialog").dialog({
+								autoOpen: false,
+	                			resizable: false,
+								//width: 400,
+	                			//height:140,
+	                			modal: true,
+	                			overlay: {
+	                				backgroundColor: '#000',
+	                				opacity: 0.8
+	                			},
+	                			buttons: {
+	                				'$button.confirmationTitle': function() {
+	                					$(this).dialog('close');
+	                					#if($button.target == "inlineDiv")
+	                						openInlineDiv("$button.actionURL", 700, 900, true, true, "$button.confirmationTitle"); 
+				    		           	#else
+											#if($button.getIsJavascript())
+		                						window.frames["$button.target"].$button.actionURL;
+											#else
+			                					$("#$button.target").attr("src", "$button.actionURL");
+	                						#end
+				    		           	#end
+	                				},
+	                				'$ui.getString("tool.common.cancelButton.label")': function() {
+	                					$(this).dialog('close');
+	                				}
+	                			},
+								open: function(event, ui) {
+									$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+									$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+								}
+	                		});
+							$("#genericDialog").dialog('open');
+	                		return false;
+	                	});
+					#else
+	    				$("#button$parentCount").click(function(){
+							//alert("Click on link");
+	    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+	    		           		#if($button.target == "inlineDiv")
+		    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
+		    		           	#else
+		    		           		$("#$button.target").attr("src", "$button.actionURL");
+		    		           	#end
+	    		           	#else
+				           		#if($button.target == "inlineDiv")
+		    		           		$button.actionURL
+		    		           	#else
+		    		           		window.frames["$button.target"].$button.actionURL;
+		    		           	#end
+	    		           	#end
+	    		           	return false;
+	    	            });
+					#end
+					
+					#foreach($subButton in $button.subButtons)
+						#if($subButton.useConfirmation())
+							$("#subButton${parentCount}_$velocityCount").click(function () {
+								$("#genericDialog").dialog("destroy");
+		                		$("#genericDialog").attr("title", "$subButton.confirmationTitle");
+		                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($subButton.confirmationText)");
+		                		$("#genericDialog").dialog({
+									autoOpen: false,
+		                			resizable: false,
+		                			height:140,
+		                			modal: true,
+		                			overlay: {
+		                				backgroundColor: '#000',
+		                				opacity: 0.8
+		                			},
+		                			buttons: {
+		                				'$subButton.confirmationTitle': function() {
+		                					$(this).dialog('close');
+		                					#if($subButton.target == "inlineDiv")
+		                						openInlineDiv("$subButton.actionURL", 700, 900, true, true, "$subButton.confirmationTitle"); 
+					    		           	#else
+												#if($button.getIsJavascript())
+			                						window.frames["$subButton.target"].$subButton.actionURL;
+												#else
+				                					$("#$subButton.target").attr("src", "$subButton.actionURL");
+		                						#end
+					    		           	#end
+		                				},
+		                				'$ui.getString("tool.common.cancelButton.label")': function() {
+		                					$(this).dialog('close');
+		                				}
+		                			},
+									open: function(event, ui) {
+										$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+										$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+									}
+		                		});
+								$("#genericDialog").dialog('open');
+		                		return false;
+		                	});
+						#else
+							$("#subButton${parentCount}_$velocityCount").click(function(){
+				            	#if($subButton.actionURL.indexOf("javascript") == -1 && $subButton.isJavascript == false && $subButton.actionURL != '')
+		    		           		#if($subButton.target == "inlineDiv")
+			    		           		openInlineDiv("$subButton.actionURL", 700, 900, true, true, "");
+			    		           	#else
+			    		           		$("#$subButton.target").attr("src", "$subButton.actionURL");
+			    		           	#end
+		    		           	#else
+					           		#if($subButton.target == "inlineDiv")
+			    		           		$subButton.actionURL
+			    		           	#else
+			    		           		window.frames["$subButton.target"].$subButton.actionURL;
+			    		           	#end
+		    		           	#end
+		    		           	return false;
+				            });
+				    	#end
+					#end
+					-->
+					</script>
+			#end
+		#end
+	</div>
+#end
+
+##***********************************************************
+## A macro for the embla default toolbar
+##***********************************************************
+#macro(defaultEmblaLeftMenuToolbar $groups)
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		#foreach($group in $groups)
+			<div id="$group.id" class="buttonGroup" style="float: left; border-right: 1px solid #ccc;">
+				$group.title<br/>
+				
+				#foreach($button in $group.buttons)
+					#set($parentCount = $velocityCount)
+					<div id="button${parentCount}Container" style="float: left;">
+						<button id="button$parentCount" name="button$parentCount" class="igEmblaLargeButton" title="$button.title">$button.text</button>
+						<br/>
+						#foreach($subButton in $button.subButtons)
+							<a class="igToolbarButton igToolbarSubButton igEmblaSmallButton" style="margin-top: 0px; margin-bottom: 0px;" href="#" id="subButton${parentCount}_$velocityCount" name="subButton${parentCount}_$velocityCount" title="$subButton.title"><span class='igToolbarEmblaButtonOuterSpan igToolbarSubButtonOuterSpan'><span class='$subButton.cssClass' title="$subButton.title">$subButton.text</span></span></a>
+						#end
+					</div>
+										
+					<script type="text/javascript">
+					<!--
+					#if($button.useConfirmation())
+						//Event listener for delete option
+	                	$("#button$parentCount").click(function () {
+							$("#genericDialog").dialog("destroy");
+	                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+	                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+	                		$("#genericDialog").dialog({
+								autoOpen: false,
+	                			resizable: false,
+								//width: 400,
+	                			//height:160,
+	                			modal: true,
+	                			overlay: {
+	                				backgroundColor: '#000',
+	                				opacity: 0.8
+	                			},
+	                			buttons: {
+	                				'$button.confirmationTitle': function() {
+	                					$(this).dialog('close');
+	                					#if($button.target == "inlineDiv")
+	                						openInlineDiv("$button.actionURL", 700, 900, true, true, "$button.confirmationTitle"); 
+										#else
+											#if($button.getIsJavascript())
+		                						window.frames["$button.target"].$button.actionURL;
+											#else
+			                					$("#$button.target").attr("src", "$button.actionURL");
+	                						#end
+					    		        #end
+	                				},
+	                				'$ui.getString("tool.common.cancelButton.label")': function() {
+	                					$(this).dialog('close');
+	                				}
+	                			},
+								open: function(event, ui) {
+									$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+									$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+								}
+	                		});
+							$("#genericDialog").dialog('open');
+	                		return false;
+	                	});
+					#else
+	    				$("#button$parentCount").click(function(){
+							//alert("Click on link");
+	    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+	    		           		#if($button.target == "inlineDiv")
+		    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
+		    		           	#else
+		    		           		$("#$button.target").attr("src", "$button.actionURL");
+		    		           	#end
+	    		           	#else
+				           		#if($button.target == "inlineDiv")
+		    		           		$button.actionURL
+		    		           	#else
+		    		           		window.frames["$button.target"].$button.actionURL;
+		    		           	#end
+	    		           	#end
+	    		           	return false;
+	    	            });
+					#end
+					-->
+					</script>
+		
+				#end
+			</div>
+		#end
+	</div>
+#end
+
+
+#if(!$useEmblaToolbar)
+	#lightLeftMenuToolbar("" $buttons)
+#else
+	#if($toolbarVariant == "compact")
+		#compactEmblaLeftMenuToolbar($buttons)
+	#else
+		#defaultEmblaLeftMenuToolbar($groups)
+	#end
+#end
+<script type="text/javascript">
+<!--
+	//alert("Loading toolbar: $originalFullURL");
+-->
+</script>

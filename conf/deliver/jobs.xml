@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<quartz xmlns="http://www.quartzscheduler.org/ns/quartz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.infoglue.org/xsd/quartz job_scheduling_data_1_1.xsd" version="1.1">
+	
+	<calendar class-name="org.quartz.impl.calendar.WeeklyCalendar">
+		<name>weeklyCalendar</name>
+		<description>WeeklyCalendar</description>
+		<base-calendar class-name="org.quartz.impl.calendar.AnnualCalendar">
+			<name>annualCalendar</name>
+			<description>AnnualCalendar</description>
+		</base-calendar>
+	</calendar>
+
+	<job>
+		<job-detail>
+			<name>ExpireCaches</name>
+			<group>infoglueJobs</group>
+			<job-class>org.infoglue.deliver.jobs.ExpireCacheJob</job-class>
+			<volatility>false</volatility>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job-detail>
+			        
+		<trigger>
+			<cron>
+				<name>infoglueTrigger</name>
+				<group>infoglueJobs</group>
+				<job-name>ExpireCaches</job-name>
+				<job-group>infoglueJobs</job-group>
+				<!--<cron-expression>0/30 * * ? * *</cron-expression>-->
+				<cron-expression>* 0/5 * ? * *</cron-expression>
+			</cron>
+		</trigger>
+	</job>
+
+</quartz>

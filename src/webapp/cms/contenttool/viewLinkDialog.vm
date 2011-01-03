@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Insert link</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/editor.js"></script>
+	<script type="text/javascript" src="applications/HTMLArea/popups/infogluePopup.js"></script>
+		
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+	
+	<script language="JavaScript">
+	<!--	
+	
+		image 		= "";
+		f_alt 		= "";
+		f_border 	= "0";
+		f_align 	= "";
+		f_vert 		= "0";
+		f_horiz 	= "0";
+
+		f_text 		= "";
+		f_title		= "";
+		f_target	= "";
+			
+		function init()
+		{
+			//alert("intializing....");
+			window.resizeTo(800,700);
+	
+			__dlg_init();
+		  	var param = window.dialogArguments;
+		  	//alert("param AA:" + param);
+		  	
+		  	if (param) 
+		  	{
+		  		image = param["image"];
+		      	f_text = param["f_text"];
+		      	f_title = param["f_title"];
+		      	f_target = param["f_target"];
+		      	f_alt = param["f_alt"];
+		      	f_border = param["f_border"];
+		      	f_align = param["f_align"];
+		      	f_vert = param["f_vert"];
+		      	f_horiz = param["f_horiz"];
+				
+				/*
+				alert("image:" + image);	
+		  		alert("f_alt:" + f_text);	
+		  		alert("f_border:" + f_border);	
+		  		alert("f_align:" + f_align);	
+		  		alert("f_vert:" + f_vert);	
+		  		alert("f_horiz:" + f_horiz);		  		
+		      	alert("f_text:" + f_text);
+		      	alert("f_title:" + f_title);
+		      	alert("f_target:" + f_target);
+		      	*/
+		      	
+				if("$method" == "externalLink")
+					changeTab("externalLink");
+				else if("$method" == "inlineLink")
+					changeTab("internalLink");
+				else if("$method" == "inlineAsset")
+					changeTab("internalAsset");
+				else
+					changeTab("externalLink");
+					
+				//alert("method: $method");
+						
+			}
+		}
+		
+		var previousTabId; // = "externalLink";
+		
+		function changeTab(id)
+		{
+			if(previousTabId)
+			{
+				//document.getElementById(previousTabId).style.display = "none";
+				document.getElementById(previousTabId).className = "inactiveTab";
+				document.getElementById(previousTabId + "TD").className = "inactiveTabControl";
+			}
+			
+			//document.getElementById(id).style.display = "block";
+			document.getElementById(id).className = "activeTab";
+			document.getElementById(id + "TD").className = "activeTabControl";
+			
+			//alert("src" + document.getElementById("internalAssetFrame").src);
+			if(id == "internalLink" && document.getElementById("internalLinkFrame").src.indexOf("ViewStructureTreeForInlineLink.action") == -1)
+				document.getElementById("internalLinkFrame").src = "ViewStructureTreeForInlineLink.action?contentId=$contentId&languageId=$languageId&textAreaId=$!textAreaId&oldSiteNodeId=$!oldSiteNodeId&oldContentId=$!oldContentId";
+			else if(id == "internalAsset" && document.getElementById("internalAssetFrame").src.indexOf("ViewContentVersion!viewAssetsDialog.action") == -1)
+				document.getElementById("internalAssetFrame").src = "ViewContentVersion!viewAssetsDialog.action?repositoryId=$repositoryId&contentId=$contentId&languageId=$languageId&treatAsLink=true&textAreaId=$!textAreaId&oldContentId=$!oldContentId&assetKey=$!assetKey";
+			
+			previousTabId = id;
+		}
+		
+		
+		function onOk(param, contentId, assetKey)
+		{
+			//alert("param:" + param);			
+			//alert("contentId" + contentId);			
+			//alert("assetKey" + assetKey);			
+			/*
+			alert("Generating image....");
+			tag = "<img src=\"$templateLogic.getInlineAssetUrl(";
+			tag = tag + contentId;
+			tag = tag + ", \"" + assetKey + "\")\"";
+			tag = tag + " alt=\"" + param.f_alt + "\"";
+			tag = tag + " align=\"" + param.f_align + "\"";
+			tag = tag + " border=\"" + param.f_border + "\"";
+			tag = tag + " hspace=\"" + param.f_horiz + "\"";
+			tag = tag + " vspace=\"" + param.f_vert + "\">";
+			//alert("tag:" + tag);
+			imageTag = transformAttribute(tag, self.opener.document);
+			
+			//alert(imageTag);
+			param["f_url"] = getDownloadUrl(contentId, assetKey);
+			//alert("f_url:" + param["f_url"]);
+			param["image"] = imageTag;
+			//alert("param.imageTag:" + param["image"]);
+			//alert("param.imageTag:" + param["image"]);
+			//alert("f_alt:" + param.f_alt);
+			//alert("f_align:" + param.f_align);
+			//alert("f_border:" + param.f_border);
+			//alert("f_horiz:" + param.f_horiz);
+			//alert("f_vert:" + param.f_vert);
+			*/			
+			__dlg_close(param);
+			return false;
+		}
+		
+		function onCancel() {
+		    __dlg_close(null);
+			return false;
+		}	
+		
+		function getDownloadUrl(contentId, assetKey)
+		{
+			return "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
+		}
+	-->
+	</script>
+	
+	<style>
+		.tabHeader
+		{
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 12px;
+			font-weight: bold;
+		}
+		.activeTabControl 
+		{
+			background-color: white;
+			position: relative;
+			width: 120px; 
+			border-top:1px solid black; 
+			border-left:1px solid black; 
+			border-right:1px solid black; 
+			padding: 4px 4px 4px 4px;
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 12px;
+			font-weight: bold;
+		}
+		.inactiveTabControl 
+		{
+			background-color: silver;		
+			position: relative;
+			width: 120px; 
+			border-top:1px solid black; 
+			border-left:1px solid black; 
+			border-right:1px solid black; 
+			padding: 4px 4px 4px 4px;
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 10px;
+			font-weight: normal;
+		}
+		.activeTab 
+		{
+			position: relative;
+			width: 100%; 
+			height: 600px;
+			border:1px solid black; 
+			display: block;
+			padding: 2px 2px 2px 2px;
+		}
+		.inactiveTab
+		{
+			position: relative;
+			width: 100%; 
+			height: 600px;
+			border:1px solid black;
+			display: none;
+			padding: 2px 2px 2px 2px;
+		}
+
+	</style>
+</head>
+
+
+<body class="contenttooledit" onload="init();">
+
+<div>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+	<td class="activeTabControl" id="externalLinkTD" style="background-color: white;"><a href="javascript:changeTab('externalLink');">External Link</a></td>
+	<td><img src="images/trans.gif" width="3" height="1"></td>
+	<td class="inactiveTabControl" id="internalLinkTD" style="background-color: #F0E1B4;"><a href="javascript:changeTab('internalLink');">$ui.getString("tool.contenttool.inlineImageInternalLinkTitle")</a></td>
+	<td><img src="images/trans.gif" width="3" height="1"></td>
+	<td class="inactiveTabControl" id="internalAssetTD" style="background-color: #C7D1B3; border-right:1px solid black;"><a href="javascript:changeTab('internalAsset');">$ui.getString("tool.contenttool.inlineImageUploadedAssetTitle")</a></td>
+</tr>
+</table>
+
+<div id="externalLink" style="background-color: #FFFFFF;" class="inactiveTab">
+	<IFRAME frameborder="0" id="externalLinkFrame" src="applications/HTMLArea/popups/infoglueLink.html" width="100%" height="100%" align="baseline"></IFRAME>
+</div>
+<div id="internalLink" style="background-color: #FEF8D0;" class="inactiveTab">
+	<IFRAME frameborder="0" id="internalLinkFrame" src="" width="100%" height="100%" align="baseline"></IFRAME>
+</div>
+<div id="internalAsset" class="inactiveTab">
+	<IFRAME frameborder="0" id="internalAssetFrame" src="" width="100%" height="100%" align="baseline"></IFRAME>
+</div>
+
+</div>
+
+</body>
+</html>

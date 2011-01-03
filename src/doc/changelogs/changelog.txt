@@ -1,0 +1,1928 @@
+Added new tags: <content:scriptExtensionUrl which allows you to upload a js-plugin or similar as an zip-asset which are then deployed. It also supports bundling of many scripts / css-files. Also added page:htmlBodyItem which let's you add html to the bottom of the html body element.
+Added webdav support and new interception point to control access to it
+Fixed a bug in asset dialog and also added preview button to assets.
+
+ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId INT NOT NULL DEFAULT '-1'; --MŒste in i alla script
+ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) NOT NULL DEFAULT '';
+ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverData VARCHAR(1024) NOT NULL DEFAULT '';
+
+-------------------------------------------------------------------------------------
+
+- InfoGlue 2.9.9.4 Final
+
+-------------------------------------------------------------------------------------
+
+Release notes 2.9.9.4 Final
+---------------------------------------
+AAAAAAAAAAAAAAAAAAAA
+
+Thanx for all support and contributions.
+The InfoGlue Team
+
+Abbreviated Changelog from 2.9.7.1 Final 
+---------------------------------------
+Added an option to the matchingContents functionality to only retrieve contents below a certain content (i.e. folder) in the content tree, for instance getting only the news contents found under a certain folder while skipping all other news contents.
+Added better fallback for thumbnails so the original is allways fetched if not on disk allready.
+Added bugfix for when you ask for inherited components language varied property values.
+Added check to avoid unneccessary looping when the new user/role/group does not have any access rights.
+Added concurrency error check
+Added failhandling on session checkup in asset upload
+Added fix for evaluating variables in the startNodeId attribute.
+Added method to ajax set a component property
+Added more frequent clean of caches
+Added new attribute to allow force refresh and changed the equals method
+Added new caches
+Added new method removeUserFromGroup and removeUserFromRole
+Added new quick deploy button on components and changed order a bit
+Added new tag assetFilePath. Also added assetKey to assets-tag
+
+Added optimizations and possibility to fetch other modes
+
+Added possibility to add users to roles / groups without overhead
+
+Added possibility to control if http/https should be used on protected pages / assets etc.
+
+Added possibility to customize logo-part in admin GUI header
+
+Added possibility to have a few custom caches which are not emptied upon publishing
+
+Added possibility to limit number of recipients in mailservice. So if a user tries to email to many the system denies it.
+
+Added possibility to set if a page should be forcing to https in site node cover
+
+Added possibility to state a file filter on properties of type asset bindning and made dialogs a bit nicer
+
+Added replyTo and bounceAddresses to common:mail-tag and changed the MailService interface
+
+Added small interface improvements and shortcuts
+
+Added so you can see and delete detailed subscriptions in the mysettings-subscriptions-GUI. Easier to get an overview and manage them there.
+
+Added two new tags: management:hasRole and management:hasGroup
+
+Adjusted caches to leave a smaller footprint
+
+Better cache statistics
+
+Better concurrency checks on session management
+
+Better fast-build process
+
+Better handling of , in names
+
+Better performance
+
+Better report on publishing
+
+Better setting of change date in remoteContentService
+
+Better support for , in displayName for category
+
+Better wildcard
+
+Changed formatting
+
+Changed some cache names to better use namespace
+
+Changed some details in logic
+
+Changed to stringBuilder and changed cache name
+
+Changed to XPP3
+
+Clearing pageCache when clearing all caches
+
+Fixed a bug where the options in the select box had an id-attribute instead of a value attribute, which resulted in the selection getting the value from the display field, which resulted in the wrong values being added in the database.
+
+Fixed better category cleanup
+
+Fixed better fallback if language or site node not stated
+
+Fixed better path-handling - not relying on the encoded path in the url all the time.
+
+Fixed bug in cache:ing of anonymous principal
+
+Fixed bug in handling of hardcoded attribute prio
+
+Fixed bug in how component properties was parsed. The bug made them allways be parsed from the latest version no matter state.
+
+Fixed bug in multiple asset component binding
+
+Fixed bug with inherited component properties when moving pages
+
+Fixed cache key bug
+
+Fixed check for if user anonymous has access to sitenode it should not switch to https
+
+Fixed equals-bug
+
+Fixed escape of comment
+
+Fixed failover if responsible person has left
+
+Fixed javascript errors
+
+Fixed new interception point Repositoy.Write. This means that a user can have access to edit content etc in a repository through edit on sight for example but not see the repository in any repository select box.
+
+Fixed nullcheck
+
+Fixed problem with high loaded webs
+
+Fixed search asset  - change in assetTypeFilter syntax
+
+Fixed so correct modifyer is set
+
+Fixed so modifyer is set right when forced down
+
+Fixed so principal is initialized correct
+
+Fixed so you can control sync and hashcode on caches
+
+Fixed solution for when you switch to assetBinding property from non-asset-binding property and get broken images
+
+Fixed typeo
+
+Fixed wrong cache fetch
+
+Formatted code
+
+Improved cache handling and cache cleanup
+
+Improved char-encoding on using filecache
+
+Improved document converter
+
+Improved importTag so duplicate entries are avoided and you can use fileCache without memory cache
+
+Improved monitor mails to include accurate memory figures when the thread started (not when finished)
+
+Improved performance
+
+Improved performance of latestAssets-method used in asset dialogs
+
+Improved performance on loading user when you have a lot of users/roles/groups inside InfoGlue.
+
+Improved so one now can run JSP as tasks
+
+Improved the asset binding dialog to use the new asset choose dialog form version 3 GUI
+
+Improved to support new word format
+
+Improved UpdateUser-tag to support password reset, change and user update
+
+Killing threads
+
+Larger default width
+
+Lazy loading of cmSystemUser, cmRole and cmGroup
+
+Made nice uri a bit nicer so port is not regarded
+
+Made some small changes to https-support
+
+Made templates and componentLabels attributes cache in less variants
+
+Made thumbnail creation better in handling non-file-cached assets
+
+Made validationQuery default to Select 1 from cmInfoGlueProperties to save performance when having huge numbers of users.
+
+Minimized caches
+
+Minimized error output and added cache clear of new caches
+
+More efficient queries
+
+Moved some errors to warnings
+
+New general error code
+
+New method in AuthorizationModule-interface to support user-updates better
+
+New parameter useSynchronizationOnCaches
+
+No large strings are cached in memory but on file instead
+
+Only notifications from cms
+
+Only register long pages
+
+Optimized caches
+
+Optimized memory handling - more efficient key on content attributes
+
+Removed cache validation and flushing
+
+Removed debug and optimized code
+
+Removed reference to new isDeleted-field found first in 3.0
+
+Removed timed waits
+
+Removed validation which allways threw exception due to non unique username which it should not be
+
+Reverted logic on request from users
+
+Separated meta info from ordinary
+
+Seperated cache info in application state view into another screen
+
+Smarter search form - senses what you want pretty good
+
+Splitted contentAttributeCache into one or each attributeName to somewhat avoid slow sync between threads. You must control their sizes more perhaps
+
+Switched to XPP3 for xml-parsing
+
+Timeout on mail
+
+Updated common:documentConvert to support expandable toc/menu
+
+Updated deployment parts to work better between systems with different user-sets.
+
+Updated multiple asset binding dialog to use the new V3 interface system.
+
+Width / height fixed
+
+Worked on CVS checkout deploy system
+
+Worked on disk-based pageCache - had to make cacheMap public
+
+Worked on new component quick deploy system
+
+
+
+Also generally improved logging and error checking/catching in many classes.
+
+
+
+Better error handling, logging and statistics
+
+
+
+- Fixed so you can now state if subContext should be used in include. Default now yes.
+
+- Fixed so includedComponentContentId is reset after include is done
+
+- Fixed huge bug in matchingContents-cache-key which could result in wrong results.
+
+- Removed debug and system out statements filling up the logs.
+
+- Added siteNodeId as attribute to content:boundContents-tag so one can easier get content from another node.
+
+- Added encodeWithEncoding to common:parameter-tag
+
+- Added pngfix.js and supersleight pngfix to infoglue.
+
+- Added allowHTMLContent and allowExternalLinks to content:updateContentVersionTag
+
+- Fixed new disableSlotDecoration attribute in ig:slot-tag.
+
+- Added attribute keepExistingAttributes to content:updateContentVersion-tag so one can update only some attributes at a time - the rest are kept.
+
+
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.9.7.1 Final
+-------------------------------------------------------------------------------------
+
+Release notes 2.9.7.1 Final
+---------------------------------------
+This release is a performance update and improves the new form-editor infrastructure. 
+We also added better support for i18n in nice URI and a few bugfixes and UI-improvements along with a few new tags and other improvements.
+
+Thanx for all support and contributions.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.9.6.3 Final 
+---------------------------------------
+- Adding new ioqueue to the platform so we can use the feature in many non blocking situations. 
+  Together with, for example the common:import-tag, you can get cached results all the time and the system updates the result in that background.
+- Implemented background-caching on import-tag. Also now possible to have fallback file cache for special caches.
+- Fixed better support for i18n-chars in niceuri and redirects
+- Added context.xml into webapps - so we don't have to add them into catalina special folders
+- Added a bit more user friendly handling in access rights screen with for example save and save and exit and visual notification of successful save.
+- Added new interception point "Component.Select" so one can set access to individual components which controls who can select the component when adding component in structure tool.
+  Before this was controlled by the normal "Content.Read" point but that had the negative effect that you had to protect all templates which had many pitfalls.
+- Fixed bug in cleanup job which before forced the system to only keep 3 versions of each language.
+- Made it possible to work with structure:componentLabel even from inside an included component.
+- Added useFileCacheFallback and fileCacheCharEncoding attributes to common:import and changed the cache-methods etc to utilize it.
+- Made rightclick not possible through page structure or component-properties divs. Could before result in wrong actions. Also removed questionmark and associated layer next to property in IE6 as it broke it's layout.
+- Added Entity ID as search option in content search. Very nice if you just want to find a page or content with a certain id.
+- Added possibility to reset average page load time in ViewApplicationState.action
+- Separated ViewApplicationState into two statistics-screen for component and page statistics. The original could slow the delivery if called to often.
+- Added maximumNumberOfItems to the content:matchingContents-tag. Uses the limit feature in SQL.
+- Added better selective cache update in live
+- Improved recaching of server settings so the system should not ever fallback to file settings if database exists. A bug in concurrency handling could end up in that situation.
+- Added better failover on propertyset handling
+- Fixed issue with attribute updates from edit on sight
+- Fixed so validation errors in inline editing is handled better.
+- Fixed bug which was caused by a cached transaction object in associated auth module.
+- Removed extra "); which was in edit on sight decoration
+- Added so remoteContentService.createContents and remoteSiteNodeService.createSiteNodes returns a more wich status object which includes a list of ID:s of the entities created.
+- Fixed better push of system entities
+- Made mapKeyName in contentAttribute and componentLabel tags evaluate el-expresssions.
+- Made capcha-tag allow user to specify range of chars to use
+- Added attributes for creatorName, isBranch, isProtected, expireDateTime, publishDateTime to contentParameterTag in content:remoteContentService.
+- Made it possible to set access rights on contents and pages through webservices. 
+	- 4 new tags under management.
+- Improved category search so one can say attributeName=* and attributeName=UNDEFINED if you want to qualify or disqualify.
+- Fixed edit on sight bug where IE put a very large font-size in textfields when using inline editing.
+- Added scope attribute to XSLTransformParameter so you can set transformation engine attributes upon call.
+- Translated more labels in CreateSiteNode-wizard.
+- Added new management:hasAccess-tag which allows you to check access for almost anything in the system.
+- Added content:hasContentAccess tag so you can check out who are authorized to do what to your prescious contents.
+- Fixed bug in common:import which disregarded when you added common:parameter-tag inside the import-tag.
+- Added path and repositoryId to content:content-tag so now you can get a content based on it's location / name in the content  tree.
+- Made so contentId in the querystring is also considered upon "Publish" action in structure tool.
+- Made a shortcut so you now can get the component content id with <page:pageContext id="pc"/> <c:out value="${pc.componentContentId}"/>.
+- Made a shortcut so you now can get the current repository id with <page:pageContext id="pc"/> <c:out value="${pc.repositoryId}"/>
+- Added skipLanguageCheck as a parameter to matchingContents. Very nice for multi language sites who wants fallback.
+- Added possibility to clear individual caches through normal UpdateCache.action
+- Added repositoryName to content:content as an option to repositoryId
+- Added matchingName and returnOnlyFirst to content:childContents tag so you can search for a certain content
+- Added possibility to have nice uri name instead of contentId-parameter in url:s. Two new properties allow you to control this behaviour. 
+- New optimized JNDI-adaptor. Does not pre-cache all users. Well suited for most situations.
+- Fixed so common:parseMultipart-tag tries to convert between encoding on non-file-fields.
+- Tried to add better support for unicode in inline editing. 
+- Added new tag management:formStatistics which can supply some simple stats about a form.
+- Added considerEditorInDecoratedMode to deliverContext. Now it default consider the cmsUser logged in when in working decorated mode evaluating users access to pages and contents.
+- Fixed bug with positioning of property dialog
+- Added thread ping to keep connection up to eclipse plugin
+- Worked on new feature "allowedComponentGroupNames" in ig:slot-tag.
+- Improved cacheing of components in add/change component operations.
+- Made it possible to add toolId as parameter to ViewCMSTool.action so you can bookmark alll tabls
+- Fixed bug in siteNodeVersion-cache-update
+- Added so you can minimize/reactivate the menu in structure tool to get a large work area for wide sites
+- Fixed access handling on Component.Select on PagePartTemplates as well
+- Fixed better localization support for notification and subscriptions
+- Made change component special treat pagePartTemplates. Now no subcomponents or properties are kept when changing to a pagePartTemplate.
+- Allways allow PagePartTemplates in component select no matter what slot limitations are made. 
+- Added 3 new options to the edit on sight menu:
+	- NotifyUserOfPage - lets you directly send a notification to a fellow user by mail about a page.
+	- ContentNotifications - Let's you subscribe (mail) to events on the particualar content (if right clicked on text).
+	- PageNotifications - Let's you subscribe (mail) to events on the current page.
+- Improved cms UpdateCache.action so it clears caches better. Mostly for a dual admin-tool setup.
+- Added a repository copy feature and enhanced the import repository feature so you can substitute words in the copy.
+- Added new common:portlet-tag so you can easily write such components that calls and interacts with portlets.
+- Added selectiveCacheUpdateNonApplicable to page:deliverContext tag so you can state when a page should not be considered when doing selective cache updates but rather allways be updated on any change.
+- Added cleaup logic in component property editor. " and ' are not allowed in most fields now.
+- Fixed clear of principal after most remote-ws-calls so that tags don't cache wrong user.
+- Made it possible to state that some component properties are not possible to have in language variations. Great for non-gui-properties.
+- Added possibility to set access to many component properties at the same time.
+- Fixed more handling of when allowLanguageVariations are set to false.
+- Fixed an inline unpublish content feature in version 3 design
+- Added new tag hasContentVersionInState
+- Added encodeWithEncoding to common:parameter-tag so you don't have to use common:URLEncode in some situations.
+- Fixed bug in deployment tool concerning when target and source repositories differed in name
+- Added contentId as possible input for content:assetUrls-tag
+- Made so one must be logged in as a real cmsUser when using decoratedMode.
+- Added localization of categories and a new tag management:localizedCategoryName which helps using it.
+- Fixed translations and bug in global subscriptions ui. Also category localizations
+- Upgraded to FCKEditor 2.6.4
+
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.9.6.3 Final
+-------------------------------------------------------------------------------------
+
+Release notes 2.9.6.3 Final
+---------------------------------------
+This is a maintenance release with many small bug-fixes, memory leak fixes and several new improvements.
+We strongly recommend an upgrade. 
+
+Thanx for all reports and proposals for bugfixes.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.9.5 Final 
+---------------------------------------
+- Made ContentBooleanFieldTag and ContentCheckboxFieldTag evaluate jstl-expressions on name and checked attributes.
+- Added possibility to set allowMultipleSelections on select-boxes properties.
+- New remote properties data provider - nice if you want checkbox/selectbox properties populated by a remote service.
+- Added possibility to enable nice uri different in working and live by new setting in application settings.
+- Added help form in repository view - much easier to understand how to configure nice uri:s. Also possible to have path in working and not in live.
+- Added correctDoubleAmpEncoding in common:rssFeedEntry to allow developer to fix problems with the normal urls being double encoded.
+- Added logic so deliver working is not protected automatically if the user comes from localhost. This is to make sure internal rss/http-requests are not blocked. In live you can make such a page unprotected but working is more strict which was a problem internally.
+- Added forcePublication attribute to RemoteUserProperties-tag so that personal info can allways be directly published. 
+- Fixed so double // should not occur even with empty contexts and nice uri
+- Fixed bug in asset deletion in edit-on-sight. Refactored so version change does work a bit different - fixed a bug with asset references on delete.
+- Added escapeing of content:textfield value tag
+- Worked on some memory leaks. Null more jsp-tags values - before they seemed to keep references wrong in some situations.
+- Fixed many bugs concerning how published versions get's handled when edited. Before they got state working which was wrong.
+- Removed stop/kill-call in ThreadMonitor on long threads - causes memory problems.
+- Fixed many memory leaks - clears some objects after view page is done.
+- Added clear castor caches method in ViewApplicationState. For debug purposes.
+- Added expireFromDate, expireToDate and versionModifier as possible arguments to matchingContents-tag.
+- Improved structure:componentLabel so you can state labelKey_languageCode as keys in the master language version of the component. So you don't have to have two language versions of the component just to have several labels.
+- Added new common:authorizedRemoteAddressTag which lets you control access to content based on users IP-address/range/hostname.
+- Made role/group properties form be populated with PropertyPriority automatically. This is so you can define which property takes presedence if a user has multiple roles / groups.
+- Made management-tool --> content type definitions be sorted by name as default.
+- Changed logging strategy to set more messages to warn on content attribute fetches in delivery. 
+- Improved diagnostics screen with direct access to clear caches and log viewer.   
+- Improved log-viewer 
+- Fixed so content and structure relation editors work with pages/contents which has ' or " in the names.
+- Made childContentsTag default sort by contentId
+- Improved errorhandling and repair logic if one unpublish all versions of a page.
+- Changed xpath in property binding lookup - was wrong before
+- Made site nodes repair themselves if all versions was unpublished.
+- Made group and role names be allowed to max 100 chars instead of the 50 previously allowed.
+- Fixed bug in how compressed response handles encoding - it did not seem to do it right before as it always took the language charset and disregarded the page / component set charsets.
+- Added more options to common:gapcha-tag.
+- Added more logic to handle protection handling on pages and contents. Before one could get around setting access rights in the cms to easy if one had write access to the item in question (not affecting deliver).
+- Fixed bug in assetThumbnailUrl with language fallback
+- Added more browser detection.. IE6, IE7, IE8, Windows Vista.
+- Upgraded the mass upload flash (SWFUpload)  to support newer browsers.
+- Upgraded the file upload dialog to the new design
+- Added jquery.media plugin
+- Added jquery Syntax Hightlighter plugin
+- Added jquery.metadata plugin
+- Added swfobject plugin
+- Improved the file upload dialog and upgraded the multi file upload feature.
+- Added check so infinite loops in property fetching because of circular parent site references cannot occur any more.
+- Added camino, seamonkey and chrome to the list of browsers especially detected by the infoglue browser-bean.
+- Added new common:formatter tag which allows for easy and locale safe formatting of dates, calendars, numbers and file sizes.
+- Added forgotten thickbox (jquery plugin) image which fixes issue on FF Mac.
+- Added property allowXForwardedIPCheck in application settings so one can allow Apache X-forwarded IP-addresses in IP-protected actions like ViewApplicationState.action.
+- Fixed so pages validated even if some tags which uses usedEntities-references are used.
+- Fixed so if all active versions are unpublished or inactivated a new working version is created so the page / content is not broken/empty.
+- Added languageId as possible attribute to content:matchingContents-tag
+- Fixed null check in workflows - mostly when a workflowdef was removed even if instances existed.
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.9.5 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+Version 2.9.5 is a bugfix release but it also has some small new features.
+It improves performance and also increases backwards compability.
+    
+Thanx for all reports and proposals for bugfixes.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.9.4 Final 
+---------------------------------------
+- Fixed bug in script reference - made all popups from management tool not work.
+- Added save and exit button to component property dialog. 
+- Also fixed so component properties are not shown after you use a content:assignPropertyBinding. New attribute on that tag as well so you can force the palette to show.
+- Made compress page response default true - makes page delivery much faster.
+- Reinstated page cache on decorated views. Most important for the related css/javascript pages. To many uncached hits otherwise.
+- Bundled some jquery plugins into one file instead of many in decorated view.
+- Fixed small bug with custom markup
+- Added new structure:componentLabel tag which works similar as contentAttribute but is meant only to get mapped labels from the component itself.
+- Fixed SQL so SQLServer does accept the diagnostic screen.
+- Added setting possibility to turn off final rendering in decorated view.
+- Fixed so the old behaviour with decorated mode being finally rendered is back. To many was forced to rewrite components otherwise.
+- Fixed so component property value does not return null due but empty string as it used to if not available.
+- Fixed encoding bug in asset bindings
+- Worked on better asset key encoding handling - before there was issues with i18n asset keys on multiple asset bindings.
+- Added new interception point "ComponentPropertyEditor.EditAdvancedProperties" which controls who sees the Advanced properties - arrow on component properties palette.
+
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.9.4 Final
+-------------------------------------------------------------------------------------
+
+
+Release notes
+---------------------------------------
+Version 2.9.4 a medium release with some medium and small improvements and many small bugfixes. 
+The installer has been improved as well as many other items. 
+One big new feature is the new content/sitenode version cleanup functionality and we have improved the 
+performance/loadtime for the new V3-interfaces in edit on sight.
+    
+Thanx for all reports and proposals for bugfixes.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.9.3 Final 
+---------------------------------------
+- Added so pageCacheTimeout on a page is inherited from parent pages if not set on individual pages.
+- Added attribute pageCacheTimeout to the <page:deliveryContext-tag so one can specify it from the code also. This overrides the page setting.
+- Added a few new tags concerning personal images etc
+	- <management:principalAssets id="assets"/>
+	- <management:principalAssetUrl id="personaImageUrl" assetKey="personalImage"/>
+	- added so you can add <content:digitalAssetParameter...> inside a remoteUserPropertiesTag.
+- Fixed even better fallback on image retrieval between sites with no common languages.
+- Added languageId option to all principalProperty-related tags.
+- Fixed bug in XSLTransform-tag where if you not stated outputFormat the rendering only worked once - after that a null pointer occurred.
+- Fixed bug where in how change component handles language differences between repositories.
+- Added limitation on depth of a page component structure. Now only hierarchies of max 15 levels of subcomponents are allowed. This is to solve problems with recursive loops which previously could happen if you put slot-components with inheritance recursively. Made the whole system instable.
+- Fixed so toolbar is correct on create content wizard if custom
+- Fixed so validation errors in edit content version in standalone view is not shown in the old version of the edit view.
+- Added new property to control what character to use as default in nice uri names. Default non-ascii chars was converted to '_' but now you can state your own and if you write "none" in that field the non-ascii chars gets removed and not substituted.
+- Optimized most assetKey-related operations. Increased speed up to 10 times or more on some pages which used the assetKey-methods.
+- Added new common:forward-tag which somewhat replaces jsp:forward which does not work in infoglue
+- Added filtering in assets browser's "Latest assets" to only include assets from the currect repository
+- Fixed bug in custom interception point creation.
+- Added new interception point called "StructureTool.PageTemplateIsOptional" which allows you to control which users has to supply a page template when creating a page. Developers may not allways want to.
+- Added check to ViewPageFilter and PageInvoker so they do not throw errors if the response was taken over by the components etc.
+- Used display:none instead of visibility for tasks and properties on components and also put back the behaviour to show the inserted components properties directly if there are more than the standard properties available to be filled.
+- Modified jscalendar a bit to use div id jscalendar instead of calendar. Was to easy to interfer with websites classes.
+- Made tabs gets loaded upon click in asset browser to save performance.
+- Fixed bug in mapping of version comment in oracle
+- New version of jquery ui
+- Fixed better transaction handling in lucene controller when reindexing the entire installation
+- Removed some cache defeat code in new v3 interfaces
+- Fixed a bug in new v3 interfaces concerning unicode names in assets keys.
+- Updated the new interface for improved speed and decreased complexity.
+- Fixed so subscriptions can be specified inline - not standalone
+- Added common:captcha-tag for use to defeat robots in forms etc. 
+- Fixed better handling of i18n-chars in roles, groups and systemuser-names.
+- Used the common asset methods to show content version assets
+- Added better dirty-warning for content version editor screens.
+- Made content editor forms not be posted by mistake by pressing enter key in textfields for example.
+- Added interface to start version cleanup from management tool
+- Fixed visual bug in access rights view which did not show group access dependencies in some situations.
+- Added some simple database statistics to diagnostics and status screen in management. 
+- Improved the version cleanup strategy to prioritize versions not to close together. If two versions are less then 8 hours apart they are considered less important than older versions.
+- Fixed so file names are converted with the same logic as the new nice uri conversion logic.
+- Added statistics on how many unused assets were in the system and sql instructions to delete them.
+- Fixed bug in asset update in oracle - blobs became null.
+- Fixed bug in how languages are treated between repositories when using page templates.
+- Added possibility to get a prediction (in archive tool) on how many versions will get deleted with the new cleanup function.
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.9.3 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+Version 2.9.3 is a bugfix and improvement release. We have included experimental optional lucene support
+for the internal search but most of all we have fixed a few important bugs.
+    
+Thanx for all reports and proposals for bugfixes.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.9.2 Final 
+---------------------------------------
+- Added lucene as a internal content search engine - experimental so far and it must be enabled in application settings.
+- Fixed bug in structure tool which affected how non-html pages were not getting a toolbar.
+- Fixed bug with how tree is not refreshed after creation of new nodes. Also added so creation from edit on sight refreshes the tree.
+- Fixed bug in save and exit on content properties
+- Improved publishing so it finds more unpublished related content to a page than before. Before it only looked one relation away - it now looks a couple more.
+- Fixed a bug in default mail-service. It did not regard the properties in application settings at all times.
+- Fixed a bug in open office document generator with regards to how paths are created for the html documents.
+- Fixed bug with sso and cms and working if iguserid-cookie contained an equal-sign.
+- Added sectioning of menu in management tool so it's easier to overview.
+- Fixed asset binding functionality in AssignPropertyBindingTag
+- Added new interception point which controls which ones sees meta info folders in the content tree.
+- Fixed so meta info contents get's moved to new repository if the site node it belongs to is moved.
+- Fixed so preview is default window size
+- Improved the inline edit - so textareas does not get to big.
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.9.2 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+Version 2.9.2 is a bugfix and improvment release. As 2.9.0 contained so much
+new functionality a few bugs were to be expected and most of them are now found and fixed.
+We strongly recommend an upgrade to this version.
+    
+Thanx for all reports and proposals for bugfixes.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.9.0 Final 
+---------------------------------------
+- Fixed bugs in common:mail-tag. Now it's ok to leave empty strings on cc, bcc and recipients.
+- Fixed so file upload in imports actually end up in /uploads-dir and not in digitalAssets-dir.
+- Localized inline dialog and made it possible to include extraData-parameter disableCloseLink and not have the default close-link in the end-view.
+- Added possibility to state target on Linkbean - which is used in inline operations messages.
+- Made personal settings changes in cms transfer to deliver. Also implemented so the deliver-dialogs all depends on the personal preferences in the cms. So if the user selects english as wanted tool-language all labels in delivers edit on sight etc is in english no matter what the site language is.
+- Improved inline publish wizard to include a link to the live version of the published page. Very convinient for the users. 
+- Added new footer buttons for mysettings and publish wizard.
+- Added create subpage, edit page meta info and my setting to the edit on sight menu.
+- Added so if a td in a table-header has class skipSortHeader it does not get's handled by the sorttable-routine.
+- Included better file upload integration with FCKEditor. Now the image dialog's upload tab works.
+- Added display: block to inline textarea editing - before FF 2 had some problems otherwise.
+- Fixed bug in page:htmlHeadItem-handling - was not ok with cached pages.
+- Fixed bug which ended in a error if you tried to add a component on a newly created page.
+- Removed language drop from standard tools - now you choose language under my settings only.
+- Worked on a completely new asset dialog for integration with FCKEditor. The new asset dialog has the new V3-look and feel, it works more like a file-bank/imagebank as well.
+- Fixed bug in application settings where an error occurred if you choose cancel directly when you entered the application settings screen.
+- Added background image directive for IE - no flickering in some situations.
+- Fixed inline editing bug with ' and "-characters in textfields.
+- Fixed filtering of assets so only images are shown in asset browser when you are inserting an image in FCKEditor.
+- Fixed bug in update asset key
+- Worked on supplying the user prefferred languageCode to WYSIWYG-config.
+- Added helpUrl to application settings
+- Fixed small positioning issues with edit on sight and also link look&feel for visited and hover properties links.
+- Fixed translations on more buttons and labels in edit on sight. Also fixed so constraints get's treated better.
+- Fixed bug which made auto-created content not use the default text in the content type.
+- Fixed bug in how assets were deleted when updated with another file with the same name. Made the updated file not appear as the cache file were still active.
+- Fixed bug - both publish and submit to publish from edit on sight did the same thing before.
+- Improved safari and chrome-compability a great deal
+- Improved the FCKEditor-integration dialogs. New default dialogs in the standard WYSIWYGConfig.js. 
+	* New improved dialogs for image (latest uploaded, search etc)
+	* New improved dialogs for link
+	* Possibility to use image upload and link upload directly in FCKEditor-tab "Upload".
+- When a new site node is created in structure tool - you now are shown the new page directly. 
+
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.9.0 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+We are happy to announce the immediate availability of the summer release of InfoGlue.
+The new release is a new big step towards better usability in InfoGlue. Efforts has been made
+to allow more work to be done directly in the decorated site view (edit on sight). 
+A number of new features/screens to support this is implemented and many of the screens have been 
+updated with what will later become the new GUI for 3.0.
+
+For system administrators and DBA:s we are happy to announce a few features that will strongly limit the 
+growth of the database. 
+    
+Thanx for all reports and proposals for bugfixes.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.8.2 Final 
+---------------------------------------
+- Added a new subscription infrastructure. This let's users subscribe (when implemented in full) on selected interceptionPoints. This means they will get an email about events.
+- I18n-adjusted more labels in the system.
+- Improved new toolbar system
+- Made it possible to state a displayName which differs from the name of a component-property. Nice for your users.
+- Added new tag "EditOnSight" which puts a function button on the page with all infoglue features.
+- Added possibility to better control custom icons per content type.
+- Added possibility to style state-information in the tree-views. 
+- Added new setting which let's you hide component-properties the user are not allowed to edit.
+- Worked on subscriptions, new design for inline actions and a lot more.
+- Worked more on subscriptions, a new translation screen and the new edit on sight tag.
+- Worked on new component property features
+- Improved the ViewInlineOperationsMessages action which is great for allowing actions to end up in a summary screen with several choices for the user.
+- Added double-click feature to edit on sight. Inline editing that is.
+- Added new property attribute 'propertyDisplayName' so one can have a different visual name from the programatic name used.
+- Added state info to content toolbar area
+- Updated to fit the new handling where published versions can be edited directly and handles versioning itself
+- Worked on new properties for 
+	- state styling (working, publish, published)
+	- Being able to state if protected properties should be hidden.
+	- Better possibility to state custom icons in tree.
+	- Possible to state if the new version cleanup job should only keep published versions.
+- Made subscriptions not be propagated through callback mechanism.
+- Improved the content cleaner so it can clean only working/publish versions. Also possible to state how many back in time.
+- Added possibility to have different toolbars for different fields in a content type.	
+- Made quite some changes to make it possible for the user to edit a published copy and it automatically changes into a working copy without any extra user interaction.
+- Added new interception points:
+	- Content.ExpireDateComingUp
+	- SiteNode.ExpireDateComingUp
+- New test-help-method. Remove perhaps? ??????????
+- Added synchronization on ChangeNotificationController
+- Updated DocumentConverterHelper a lot - it now honors the new digitalAsset tree
+- Automatically disable the pagecache for decorated views
+- Added new rewrite attribute to DocumentConverterTag
+- Worked on making the tree in content and structure show more info.
+- New my settings screen
+- Made last modified not be written in working/preview environments... only in live.
+- Fixed issue with null input stream in some asset handling situations.
+- Updated so inline dialogs get's handled better on small screens.
+- Added possibility to set smtp-port in mail settings
+- Added cache control headers in non published mode
+- Fixed issue where direct publishing is made from a remote content service tag.
+- Added logic for a new parameter for content type attribute. WYSIWYGExtraConfig can be set to any javascript.
+- Made PageAttribute tag not demand the value attribute. This is so if only stated with name it outputs the value of the attribute with that name.
+- Added new cool preProcessing possibility for components. This allows components and in some respect portlets to communicate internally before the renderphase which allows for a much more interactive and dynamic page. 
+- Added some parameters (CacheResult, UpdateInterval, CacheKey and PreProcessingOrder) as fixed system properties for all components and show them under a advanced part.
+- Improved the button javascript for close.
+- Fixed issues with asset handling and store assets on disk (not in database).
+- Implemented preProcessing of page so components can communicate with each other by passing data to each other.
+- Made it possible to add a new tag <ig:lastModifiedDateTime format="yyyy-MM-dd HH:ss"></ig:lastModifiedDateTime> on a page if you want the latest date on all contents used on the page to be written. That is the same date also given in the HTTP-headers.
+- Added automatic resize and some button classes to new v3-interfaces.
+- Added logic to warn when expiration dates are closing on content or sitenodes.
+- Fixed content and structure tool toolbar arrows bug in Firefox 3
+- Made edit on sight open larger edit window.
+- Added two new parameters:
+  * niceURICharacterMapping which allows you to state how individual chars should be converted when auto-creating nice uri:s.
+  * NiceURIForceLowerCase which allows you to force all nice URI:s to become lowercase.
+- Added so structure tool (menu and tree) follows the activity in the preview/edit on sight. 
+- Worked on a new edit on sight menu with better looks and better features.
+- Added new automatic attributes to content versions when publishing. IGAuthorFullName and IGAuthorEmail. 
+  The idea is that those fields can be used if a user has been removed from the auth system. LDAP:s never inform IG so we can use that as a fallback mechanism.
+- Upgraded jquery to 1.2.6
+- Made default page cache key consider pricipal. 
+- Added possibility to turn off deletion of assets in work and live cache update threads. Needed for situations where you let the applications share one single digitalAssetDirectory.
+- Fixed so any default value defined in content type also is reflected in "create content wizard".
+- Added new field type in content types. The new customfield is targeted at organisations / developers 
+  who want to extend the content types with anything that you can do in html/javascript. You can fill in a piece of html/javascript code directly in the field-attrribute and thereby make the form behave as you want.
+- Fixed bug in IE7 in which if you used border-collapse: collapse; in your site infoglue:s hidden elements were outlined anyway.
+- Added new binding property attribute and a tag(content:contentDetailPageUrl) which makes infoglue derive a page where the content you push on a startpage for example is bound in the sub structure. This is nice in some situations where you want to push a subpage by using the leadin the main article on that page has without having both to state the page and the content. Now you only bind the content so the leadin can be fetched and then infoglue finds the page for you. If there are several pages with a content a list below the property is shown and you can select which detail page to use.
+- Upgraded to Saxon 9
+- Added possibility to have custom fields (you write your own markup) for component properties in the structure editor.
+- Improved repository export / import feature so it now also transfers properties and access rights (roles/groups right only for security reasons).
+- Improved so if only one SiteNodeTypeDefintion exists in the system root site nodes gets that automatically. Helps a little for new users.
+- Added so you can state transformation settings on each asset key if you want. Also - you can state assetKeyPattern in global transformation settings.
+- Added property so you can state if you wish to have assets duplicated allways or only when changed between versions. 
+
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.8.2 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+This is a bugfix version which fixes another couple of small bugs and improves some small aspects. 
+    
+Thanx for all reports and proposals for bugfixes.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.8.1 Final 
+---------------------------------------
+- Added cc and bcc attributes to common:mail-tag.
+- Improved mailtag so it now always trims and lowercases the addresses and you can apply your own email validation regexp.
+- Fixed bug in CASBasicAuthenticatorModule concerning proxy tickets.
+- Added three new great features to the slot-mechanism in InfoGlue:
+	* addComponentText - this attribute lets you modify the text which tells the user to rightclick to another text
+	* addComponentLinkHTML - this attribute lets replace the normal instruction to rightclick with html of 
+	  your choice - including the possibility to have a normal link/button/icon as the user can leftclick on. Easier yet.
+	* allowedNumberOfComponents - allows you to state that only a limited number of components are allowed in a slot.
+- Added jquery ui plugin and jquery 1.2.3
+- Added some actions/commands which we use in AJAX-calls in edit on sight. Makes the UI more lightweight and flexible. 
+- Added new feature which allows a user to save a part of a page (component structure) as a reusable part.
+- Improved transaction logging - now the real user's name is logged.
+- Fixed bug when userName was null in login transaction logging.
+- Added a new attribute "parseToMap" to componentPropertyValue-tag which enables you to have name/values sets in properties.
+- New tag (savePagePartTemplate) which allows you to output a link to the new save pagePartTemplate feature.
+- Added possibility to override what decorated component invoker the system uses.
+- Added the basics for a ajax-based page/component-editor. Improves performance a bit and makes the UI much more flexible.
+- Improved save page part template and save page template action so it now auto-creates the needed content-types if not installed.
+- Fixed bug in change component logic - it did not regard allowedComponentNames or disallowedComponentNames before.
+- Fixed issue with i18names in assetkeys
+- Added new attribute "component" to componentPropertyValue so you can get property connected to a specific component.
+- Added new attributes "seekRecursive" and "propertyFilterStrings" which allows you to get a subcomponent which has a given property.
+- Added jquery validate plugin - great javascript library for validating forms.
+- Added new attribute "map" to common:size tag so one can choose to size up maps as well.
+- Added new tag commons:contains which returns if an object is equal to or is contained in another object or collection/map.
+- Added possibility to state more options on component properties: defaultValue, WYSIWYGEnabled and WYSIWYGToolbar
+- Added a parse-attribute to structure:componentPropertyValue-tag so now wysiwyg-content can be rendered ok.
+- Improved startup handling of property loading.
+- Worked on improved access rights to role/user/group-management. The new feature allows you to distribute management in an organisation.
+- Improved create user screen so one can select roles and groups directly. The roles and groups are filtered (if you have that turned on) so you only let users assign roles/groups they are allowed to assign.
+- Fixed bug in deployment tool.
+- Made it possible to move components between slots and within a slot by dragging it.
+- Added a setting under my settings in the tools so one can define which repository should be default when you log in.
+- Added new exiting features in component properties. Now it's possible to define dataProviders for properties of type select, checkbox or radiobuttons. Added an initial contenttypes data provider.
+- Added extraParameters to assignPropertyBindingTag
+- Fixed issues where popup windows did not get focus before.
+- Added new tags (RemoteSiteNodeTag and SiteNodeParameterTag) to enable programmatic page creation from deliver.
+- Added a redirect-tag called commons:sendRedirect. 
+- Added method for replacing a component structure on a page - an effort because we wanted one page to be able to load and edit pagepart-definitions.
+- Added a new cleaup-job which deletes old content versions. Great for keeping down database size. By default it keeps the 10 latest versions of each language but you can define this yourself.
+- Added floatdiv as a seperate js-file.
+- Worked on a more flexible mydesktop with a more outlook approach.
+- New images and css for version 3
+- Added classes for the new Toolbar system for version 3
+- Added tags (management:formEntryParameter etc) and form webservice.
+- Started implementing the new inline editing feature.
+- Added initial version of a feature that let's you define that content bindings are automatically created with a new content. Makes it supereasy for new users.
+- Added new date property-type.
+- Added new date content type attribute.
+- Added method which allows fallback to other language than masterlanguage - now supports so components between repositories can be shared even though in different languages.
+- Started adding multi file upload through the eminent swfupload-flash component.
+- Fixed so the screen scrolls down to to the assets after you delete one. 
+- Added feature which checks if the content version has an identical assetKey allready and denies duplicates.
+- Added possibility to automatically convert images to other formats/sizes upon upload. Only works for jpg, png and gif so far. Will be expanded later with other file formats. Convenient for controlling what users upload.
+- Added better handling of users in decorated view.
+- Changed so pageKey by default contains principal.
+- Translated more texts in the tools
+- Added interception points for submit to publish button. Good if you want to only allow direct publishing.
+- Made so the tree view shows if pages or contents are protected. Also changes the labels so one can see if contents or pages are in working-mode etc.
+- Cancel-button in content-version now moves user to content cover.
+- Fixed bug in asset dialog concerning i18n asset keys.
+- Made the context menu in structure tool hide "Open in new window" if the window is allready expanded.
+- Worked on and optimized/improved the new SimplifiedFallbackJNDIBasicAuthorizationModule which now recaches all users/roles/groups in the background at regular intervals. No more hickups after cache expiration.
+- Fixed so empty addresses in cc and bcc can be sent in and ignored
+- Made edit on sight not show edit and edit inline if the elements were not editable.
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.8.1 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+This is a bugfix version but it also introduces a new tag. The installer is also improved and an important
+bug in how validation query was constructed was fixed. 
+    
+Thanx for all reports and proposals for bugfixes.
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.8.0 Final 
+---------------------------------------
+- Fixed better check of access rights on changing version state in content version. If the content is protected and you don't have 
+  create version rights or submit to publish the system now protests correctly.
+- Changed so now we ship the full distribution of yahoo ui. The previous version where we only shipped the build-part did not work very good because of internal dependencies inside yui.
+- Added new taglib structure:pageAttribute which is a great tag for accessing page meta info content attributes. It can handle inheritance on attribute level also.
+- Improved component tasks and made it possible to state if to open it in popup or not.
+- Better error logging in mail-tag. Now the contents of the mail is logged so no data is wasted.
+- Fixed bug in tag common:transformText concerning linebreak replacement.
+- Fixed bug in which a database was not properly closed ViewPageFilter
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.8.0 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+After a huge effort the winter release of InfoGlue is here. We can now proudly announce InfoGlue 2.8.0 for immediate download.
+As the changelog below shows a lot of new features and a lot of bugfixes has been made since 2.6.0. As always we have made a lot of user 
+interface improvements as well as a lot of improvements under the hood. An upgrade to FCKEditor 2.5.1 has also been made so now we are 
+well on the way to being able to fully support more browsers.
+
+The release of InfoGlue 2.8.0 is part of a bigger launch where we release several parts during a period ahead.
+	
+	* A new version of www.infoglue.org which is also released as a example site for free.
+	* The new InfoGlue Eclipse IDE Plugin which allows template/component-editing directly in Eclipse.
+    * InfoGlue Calendar Portlet which is a competent and flexible calendar and event handling system which is well integrated with InfoGlue. (Coming soon)
+    * Updated documentation of InfoGlue (Coming soon)
+    
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.6.0 Final 
+---------------------------------------
+- Fixed spelling mistake in 2 tags concerning useInheritance.
+- Fixed user detail view so it shows full group and role names as titles in the list and also increased the width of the select-boxes.
+- Fixed "save and exit" on content properties and repository properties. Before it just wrongly exited.
+- Added extra check when selecting resource bundle in some parts of the admin tools. A report came about problems when having Slovak as default locale.
+- Fixed bug in content creation wizard when you have languages disabled. Now the initial version is allways in the language you used when clicking on the wizard icon.
+- Fixed bug where deletion of property was still allowed even though the user had no access rights to that property editing action.
+- Added feature in workflow engine so one can set a property called 'finalReturnAddress' in the propertyset of a workflow or send it in when creating a workflow and when the workflow ends the user is directed to that address instead of to the mydesktop view.
+- Improved performance in the archive tool.
+- Added scope for common:parameter so one can specify requestParameter or requestProperty.
+- Fixed so nodes can survive after problem with it's meta info content id.
+- Added feature so you can choose to store the assets you have only on disk. Beware - not recommended yet.
+- Added new great deployment tool which lets you sync your development server with a test or production server. Has some limits in this first version but is still extremely useful.
+- Added new asset protection feature - forces download of assets to be access controlled. Very useful for sensitive/purchaseable assets.
+- Added maximum file-size allowed in the file-upload dialog so the user understands whats not allowed.
+- Added new cache possibility - now one can state a refresh-rate for the page caches on individual pages.
+- Added useDownloadAction to assetUrl-tag. Very useful if you want to protect assets from unauthorized use.
+- Added new tag (<page:htmlHeadItem>) for setting html-header tags from components in the page. Very useful as the components then are totally self-contained.
+- Made editOnSight-edit-tag also force working mode.
+- Fixed so if a content versions access rights are blank the contents access rights are used instead. 
+- Fixed so if a component throws an exception it does not get page-cached.
+- Made it possible to edit assets from standalone content version view.
+- Added feature which allows you to disable enforced identity check on particual pages (only useful when using CAS-SSO).
+- Made file upload dialog propose an asset key similar to the filename if you choose the file first.
+- Fixed bug with edit on sight popup not dissapearing in some situations when you click next to it.
+- Added a new feature which lets you change a component into another. For now it can keep the underlying 
+  components if the new component has the same slot names as the sub components was located in. If not the subcomponents are
+  removed totally from the page.
+- Added new Interception point to control access to change component feature.
+- Added so interface scrolls down to categories section in content version when action is made there. 
+- Fixed so one can control the cache-taglibs size (OSCache framework) the same way you can control the size of all other caches.
+- Improved export repository feature so the export file name can be specified by the user. Before the filenames could be to long if several sites were exported.
+- Added features to select user in access rights dialog. Also new button to select onself through a simple click.
+- Added feature in SimplifiedJNDIBasicAuthorizationModule so a users extra attributes can be read into the principal objects meta map.
+- Improved ContentMover-function (workflow) - Content can now be stored i subfolders of year and month under the designated destination folder.
+- Added more memory and user details in the warning mails InfoGlue sends when pages take to long to reach the user.
+- Added new workflow store which works a lot better with session management inside hibernate. Should fix most issues with workflows being broken.
+- Added asset search as option in content tool search. Also change the look&feel a bit.
+- Added possibility in archive tool to use it on latest working versions as well. Useful sometimes to find and shrink any test-assets before export for example. 
+- Removed possibility to look at asset in popup from content version edit view if archived.
+- Fixed bugs and improved archive tool a lot. The size was not lessened very good  in the previous versions. 
+- The attribute targetEndPointAddress on all webservice tags are now optional and defaults to the webservicesBaseUrl + service. 
+- Added count-limit on content version entities - should keep down memory usage.
+- Added general block in robots.xml and introduced a different one for live-instances. 
+- Added so anonymous also gets logged in... by cas module
+- Fixed empty assetKey check (javascript) in createContentWizard.
+- Improved session / transaction management in the underlaying persistence classes shipped with OSWorkflow by adding our own. Now all session management is made by InfoGlue. Improved performance and action-wide rollbacks etc are a few of the benefits.
+- Fixed so interface in all asset uploads always shows the max asset upload size. Also when you state max size on asset keys and switch between them in the dialogs.
+- Improved the content history diff view.
+- Added a new Interception point "ContentTool.ExportImport" so you can control who are allowed to export and import contents (not site export/import - that is another feature).
+- Added a feature in export content and export site so one can skip all assets that are of a certain size and above. Very handy to keep down export size.
+- Removed servlet.jar and catalina.jar from distributions. No need for them.
+- Added attribute on deliveryContext and changed a bit in pageInvoker which allows you to control the page content type in your components. Both content type and charset can be set in the attribute as once as usual in http.
+- Added a new entity called SmallSiteNodeVersion to enhance performance in the tools in some views in large installations.
+- Worked more on performance in structure tool. Now no more startup delays hopefully in superlarge installations.
+- Patched castor-bug with oracle 10g so oracle limit support is allways true in OQL - we only support oracle 8.1.6 and forward from now on.
+- Reversed some changes and removed a lot of extra entities. Instead removed serviceBindings relation on AvailableServiceBinding. Works better.
+- Added possibility to clear castor caches individually so one can finetune cache later. Mostly for advanced users.
+- Fixed so no duplicates appears when searching for users in management tool.
+- Fixed so InfoGlue handles the lack of exact resolution in the OS on currentTimeMillis. Could result on some OS in a bad state. 
+- Changed how string size are calculated in caches. Before was far to small.
+- Added component name and slot name in property header in decorated page view. 
+- Fixed so serverNodePropertiesCache are stored in oscache with a limit. Before it grew to much. Also Added limitation on pageCache to 10000 pages and on serverNodePropertiesCache to 2000 properties but that can be overridden in cache settings as usual.
+- Made new cache for string encodings.. no need to keep them together with serverNodeProperties as it will slow it down.
+- Fixed bug in SSO-handling.
+- Added a new tag (<page:httpHeader>) for adding response headers in a controlled and cache-safe way.
+- Added handling of response headers although page cache is on
+- Added a few new icons for asset content types.
+- Added check so broken assets get's marked and handled better. A constraint is added so no publications can be made with broken assets.
+- Improved asset deletion speed a lot upon asset archiving.
+- Fixed bug in edit view if a content name had quotes in the names.
+- Added parameter called allowCrossSiteSubmitToPublish which if enabled allows items(contents and pages) to be included from from other repositories as well when submitting to publishing in structure tool.
+- Remade the application settings screen so it's now tab-based and easier to find in hopefully.
+- Added possibility to enable password encryption when using infoglue:s built in authentication system. All passwords will be encrypted in the database with the SHA-1 algorithm.
+- Added password-hash-generation tool under system tools. Very useful for generating a root-password hash if you want to use the encryption of passwords.
+- Improved the password-changed mail template a bit.
+- Added a new method to security framework which is used for resetting anonymous password. 
+- Forced update of anonymous user whenever a server node property is changed. This is to secure that it stays plain or encrypted depending on the protection setting.
+- Worked on a push-solution to deployment as well so one can choose pull or push.
+- Fixed bug in which templates a user are allowed to see
+- Complemented with personalAuthorizationCache so a logout in the CMS does not clear unneccesairy caches.
+- Improved insert image dialog in FCKEditor so a doubleclick on an image directly chooses it.
+- Changed so there is now a possibility to say that creation of items are not enough to be granted access. In some views one does not want this and in some we do.
+- New icons for components and slots. Also made thumbsize better.
+- Added application attributes to the ViewApplicationState-view so one can clear such caches when needed.
+- Re-added the transaction history view which allows a history of different system/user/access events. Also added some simple filters to the view which is only available if you are root right now.
+- Made default behavior for infoglue divide assets into different subfolders in digitalAssets dir. The algorithm is deviced so that all assets are divided into 1000 assets at max in each dir. Makes file operations much faster in some situations.
+- Added so login actions in cms are recorded into transactionsHistory.
+- Fixed so one can see the repository path in content search result (title on each found content).
+- Made so reveal in tree works between repositories as well and not as before only if you are in the same one.
+- Fixed content:assignProperty-tag so it senses if the user are in decorated mode or not and returns the user to the correct view after the operation.
+- Added info about use of a category in management tool. Nice to know when you want to delete some.
+- Fixed check so user is warned when deleting a category which is used by a content version. 
+- Fixed so change component works even when you change repository. Was a bug before.
+- Added new possibility to control the look and feel of FCKEditors comboboxes and the editor area. New fields are added under application settings for this purpose.
+- Upgraded to FCKEditor 2.5.1
+- Added feature which allows you to change a content versions language to another language.
+- Made contentTypeDefinitionNames-attribute on matchingContents-tag evaluate el-expressions.
+- Added sorting of siteNodeTypeDefinitions by name in all create site node views.
+- Added new attributes to transformText-tag so you can make more useful operations. Very useful for handling of bad user input etc.
+- Added a new attribute ("repositoryIds") to content:matchingContents-tag so one can state which repositories to search in.
+- Added method to get the configured SMTP-server through the pageContext-object (TemplateController).
+- Added new content:categoryParameter-tag which let's you add categories to a content version when creating / updating it from the sites.
+- Added new job which clears the caches and checks database connections with a certain interval.
+- Fixed so transformer.reset() is called after each run in common:XSLTransformTag.. had problems with xerces documents not being gc:d otherwise.
+- Made a solution to the connection timeout issues which also manifests if databases are shut down etc. Now an validation query is run each time a connection is fetched from the connection pool. 
+- Added new button in content version so one can switch to an xml-view and thereby get the version xml straight up. Could be useful for debugging or for moving complex versions with a lot of attributes.
+- Updated the login forms with new look&feel which better matches the new site design.
+- Added better error message if login fails due to exception.
+- Better cache-key in category-search-method. Now it looks at repositoryId:s and language also.
+- Fixed so the person denying a publishing request is stated as email-sender in the deny-mail. 
+- Added access control to add component-dialog. Now you only see components you are allowed to read as defined by the normal security settings.
+- Added new tag which allows you to store any string as a file in the digitalAsset dir and get an url to it. Very handy in some situations.
+- Added tag which allows you to export one or many contents and get the url to the export file.
+- Worked on adding possibility to add multiple asset bindings. This is great for document collections or slideshows.
+- Fixed bug in how binding path is reset in asset binding dialog.
+- Added new tag called content:assetUrls which returns multiple asset urls. The assets are either bound with the new multi-asset-binding or it can also take all assets one or many contents.
+- Fixed so palette is default off after installation
+- Added content id in content cover - just for information purposes.
+- Added experimental support for CAS Proxy authentication.
+- Added The Yahoo! User Interface Library (YUI) to the codebase. Very useful framework for building dynamic interfaces.
+- Fixed bug in handling of repository paths and how nice uri was parsed with respect to that
+- Added jquery 1.21 and jquery 1.22 and some additional plugins. Moredocs  to come later.
+- Added new commons:Mail-tag as a simple replacement for apache taglib mailer where you need direct feedback on success/failure.
+- Installer compiled with Java 1.5
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.6.0 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+The autumn release 2007 of InfoGlue is here. As usual the new version includes a lot of major and minor changes.
+Performance and security are allways improved but finetuning of existing features and bugfixes are also included.
+
+Check out the changelog below for details. 
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.5.0 Final 
+---------------------------------------
+- Added a new feature which let's you delete all children for a certain content.
+- Fixed performance problem in import repository feature when you have a huge installation.
+- Updated to OSCache 2.4
+- Fixed a new default LRU-algorithm class for OSCache which actually throws away objects when they don't fit in the LRU-cache anymore. The default class shipped with OSCache only invalidated it - it was never removed and could hence not be garbage collected.
+- Added possibility to have a thumbnail for each component/HTMLTemplate and also add a description which can then be seen when one tries to add a component and look at the component list dialog.
+- Added support for checkboxes in component properties
+- Added warning if non-binding properties was edited but not saved in the component editor view when one clicks to assign a binding property. This is so one does not loose the changes automatically.
+- Added new tag which can return many values for a property. For example if it's the new checkbox-property a user may choose several options. The tag is called <structure:componentPropertyValues>.
+- A new content export / import feature is now available in the content tool.
+- Added new methods in componentLogic to get a list of property bound pages or contents on a target siteNode. Before those methods only returned single entities.
+- Updated task executor so it supports jsp and freemarker
+- Added new property which controls if sites should enforce identity checkup through SSO-plugins even if the pages are not protected. Use with care.
+- Fixed bug with message center messages look & feel.
+- Added possibility to set that a certain content binding requires which asset to use and also interfaces for the choose dialog.
+- Added logic so "EditOnSight" works on the base component - before it worked only on all other sub components.
+- Added possibility to set which asset keys should be mandatory to upload - used currently only by the create content wizard but should later be implemented by the save content version / publish actions.
+- Added better handling of assets to the create content wizard available next to content binding properties in structure tool. Now mandatory assets are required and additional assets can be uploaded and they can then be used when editing the wysiwyg fields like normal.
+- Added new structure:siteNodesFromWebPages-tag which allows easy conversion between a list of WebPage-beans and SiteNodeVO:s which are more suitable for advanced sorting etc.
+- Added parsing/el-expressions of siteNodeId on the tag structure:siteNode.
+- Added timeout handling in webservice handler (30 seconds)
+- Removed bold on a:active - it led to some issues with moving texts upon clicked.
+- Included saxon 8.9 in the distribution and created a new tag for transforming with it. It is much faster and less memory expensive than Xalan. Saxon is a XSLT 2.0, XQuery 1.0, and XPath 2.0 conformant processor.
+- Removed mail and activation from the local classpath - apache tomcat and others allready includes it.
+- Fixed bug in access right view and also fixed so the rows are colored in different colors like all other lists.
+- Added new attribute on Include-tag so one now can state if the relation include should be using attribute language fallback. Defaults to true.
+- Added a new document conversion tag which operates together with JODConverter (Open Office serverside). It can take a worddocument and convert it on the fly to pdf, odf and html. Our tag also manages to create table of contents separately so you can have navigation separate.
+- Fixed so page templates images are scaled down to a conformed format in screens where they are used. Messes up GUI if to large.
+- Added scroll-possibility to both structure and content toolbars so buttons can be reached even though the screen resolution is limited.
+- Moved task button in content toolbar - decreased importance
+- Upgraded to mysql-connector 5.0.7 JDBC driver.
+- Added new assets-tag which returns a list of DigitalAssetsVO objects for a content/property binding. This is also available to velocity/freemarker-templates through the templateController-API.
+- Added possibility to assetUrl-tag and assetThumbnailUrl-tag so you can state the digitalAssetId directly if you know it. Nice in conjunction with the new assets-tag. This is also available to velocity/freemarker-templates through the templateController-API.
+- Fixed bug in URLComposer which led to // at the end of nice-uri:s when constructing url to another repository.
+- Added possibility to have different login page for each repository. Just define a loginUrl in the repostory extra properties.
+- Added possibility to have different error page for each repository. Just define a errorUrl in the repostory extra properties.
+- Fixed bug when disabling and enabling languages which led to "null" in properties edit window.
+- Added settings so you can configure if protected contents / sitenodes are to be shown to persons without access in the tool trees.
+- Added a setting that enables a more rigid content access enforcement. Very important if working with intranets as the default setting is no good as it caches attributes without principal as key for memory and performance reasons.
+- Added an attribute / method in DeliveryContext-object which can control so that non published contents are shown anyway in working mode. You have to set it in the components you want this behaviour.
+- Added an attribute and flags on most methods which are of interest which allows you to state if property-inheritance should be limited to the page. Default is page + structure above as before.
+- Added a create sitenode wizard (just like the create content wizard) so one can create a sitenode while binding a page to a property.
+
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.5 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+The summer release 2007 of InfoGlue contains the 2.4.2 version of the popular FCKEditor. It also contains a lot of 
+user-interface improvements. Last but not least as usual there are some bugfixes and stability improvements.
+
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.4.6 Final 
+---------------------------------------
+- Upgraded FCKEditor(the WYSIWYG-component in InfoGlue) to 2.4.2.
+- Improved handling of Available service bindings - remove later completely :)
+- Fixed error handling for when inconsistencies are not really there. Old nodes and contents not cleared out from the registry for example.
+- Removed cmsUserName and repositoryName when opening preview window.
+- Added new contentVersion tag for the cms workflows.
+- Made it possible to assign a return address on the createDigitalAsset action so the save button can lead to a different view.
+- Fixed bug in getMatchingContents which did not use the user db connection but started a new one.
+- Added check so if a user sends in null or a id less than 1 it returns null allways. Saves a lot of errors in the logfiles.
+- Fixed bug with overriding references when deleting a sitenode. The old code did not correctly delete the binding and it resulted in an error.
+- Fixed issue with active users were counted wrong.
+- Added method to get when latest publications were made.
+- Changed the httphelper to not skip linebreak chars. 
+- Fixed so one now can use non-ascii chars as digitalAssetKey. Two new encodings in app settings allow one to convert depending on server settings. Default settings usually works.
+- Made the repositories be sorted by name in most views
+- Improved performance and fault tolerance in repository export/import.
+- Fixed issue with the Image-editor when using non-ascii user names.
+- Fixed so displayName is shown in publishing lists and history instead of userName.
+- Fixed nullpointer which occurred when an login failed in extranet.
+- Fixed so validation errors gets focus when saving a content version.
+- Fixed bug which made edit-on-sight fall back to normal edit view if a validation error occurred.
+- Added possibility to have different icons in the content-tree for each content types. Rudimentary at the moment - you have to add an image file with the contentTypeDefinitionId in the infoglueCMS\script\xloadtree\images\xp\-folder.
+- Fixed so the text searches with matchingContents etc on SQLServer works. Was a problem with how SQL-server escapes [-tags.
+- Made a new webservice method which lets you get a contentVersion for a content remotely.
+- Made it possible to have a ContentVersionVO as argument when using the contentAttribute-tag. Makes things easier when dealing with remote versions.
+- Added speed improvements to ReferencingPages-tag.
+- Added an experimental ClearCache-tag which would allow you to clear the caches from deliver based on that you know what you are doing. Not recommended yet.
+- Made evaluation of whole page really not happen if set. Saves a lot of memory and performance on large pages.
+- Made publications nor require unique names
+- Fixed so language drop in tool-header is now shown if only one language is available.
+- Upgraded dbcp to 1.2.2 which says it should solve some connection reset issues not being handled with grace.
+- Fixed so JNDI and webservice caches are not cleared upon publication. No need - they time out themselves.
+- Made the search view when binding contents better visually - now the path to the found content is only displayed when clicking on the questionmark.
+- Added fields and logic to control which languages are available in the tool header.
+- Improved handling of assets a lot so now the blob in them are only loaded when needed.
+- Added possibility to change content type on any content.
+- Fixed so the cas authentication module does not send so many redirects to the CAS-server. It tries to minimize the redirects to just a few actions.
+- Added two new taglibs for extracting access rights for a page or other object - that is what roles, users and groups are allowed to access it.
+- Fixed issue with logout when running CAS
+- Added a new alternative way of making content category searches (matching contents tag etc). Improves performance for complex expressions hugely. 
+- Added possibility to control which version of the content search controller should be used in management tool with a new setting. The new default is the improved much faster search method.
+- Added support for unicode names in asset keys
+- Fixed so the mouse over symbol is hand when choosing repository in publishingtool. 
+- Added new webservice API:s for creating, updating and deleting users in InfoGlue. 
+- Added new diff-tag which operates on two strings
+- Added new contentVersions-tag which fetches all published versions in a certain language.
+- Added two new settings concerning dates on pages and contents. 
+	1. First one makes it possible to state if the date fields should be editable in combination with the calendar-popup. 
+	2. Second one states the default number of years you want expireDateTime on pages and contents should be set to. 
+	   Default is 50 years which is perhaps to long for some organisations and now they can set a default value themselves.
+- Added a flag on most tags which allows you to disable repository inheritance when looking up properties.
+- Fixed issues with updating digitalAssets not being propagating correctly through the digitalAsset caches due to the new SmallDigitalAsset concept.
+- Implemented cleanup of content-versions when a user chooses to force removal of inline links and inline images which references a content/page the user wants to delete.
+- Fixed better cookie-handling so the menu tree better remembers the expansion of your sites.
+- Added a refresh icon to the left menu which lets the user refresh the menu and reset all tool-cookies. Often needed after a while to get the three expansion to work as it should.
+- Fixed so the same description tooltip are used for all properties.
+- Added so one can search for contents in the inline asset dialog and only get those contents which has an asset on them and the asset name or key matches the searched keyword.
+- Made input encoding filter configurable at build-time with properties.
+- Made component editor view (structure tool view) consider available tool languages when choosing localized labels for edit on sight etc.
+- Added cache-possibility to the matchingContents-tag and implements a default caching.
+- Added possibility to add categories to an rss/atom feed with a new common:rssFeedEntryCategory-tag.
+- Added new webservices for a lot of authorization framework operations. Approved applications can now use the infoglue users/roles/groups through webservices.
+- Added drag/drop support for the multi-binding-views (content and structure) both from the tree to the selection list and you can also sort the list by dragging the items in it to new positions.
+- Upgraded the jsdiff-component - some bugs in it is now removed and you can state your own css-styling for the diff elements.
+- Improved ViewApplicationState-view with sorting of components based on average time and also added how many hits the average was based on. 
+- Added app start date in application state and cleaned up so the data do not contain MB or ms in the text itself but rather on the labels.
+- Added possibility to move components up and down in a slot through the edit on sight feature. Previously only reachable through the page structure view.
+- Added possibility to turn off the custom icons in content tool tree as this is a huge performance issue on some browsers on mac.
+- Added possibility to use the contentVersionTag with contentVersionId instead of content and language. Not for normal use really but useful sometimes.
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.4.6 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+The spring release 2007 of InfoGlue contains a huge amount of new features, bugfixes and improvements.
+As allways we encourage upgrading and this release focuses extra on performance, stability, scalability
+maintanance and diagnostics so it will hopefully make your life easier. Having that said there are of course
+welcomed new features for both users and developers as well.
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.4.1 Final 
+---------------------------------------
+- InfoGlue now require Java 1.5
+- Added fix so if the cas-ticket is first argument it will not be forgotten
+- Fixed so one can state to user $currentUrl for cas-serviceURL in the cms-authentication filter as well. Before only one static url could be set.
+- Added debug and fixed an issue where anonymous user could interfer with userBase in JNDI-lookups if not set
+- Fixed so all url:s are protected in infoglueCMS - before only .action was protected. Instead added so one can specify url:s to allow in web.xml.
+- Added user cache to avoid calls to LDAP
+- Added finally-blocks to all jndi-context-uses so we clean up all connections even if errors occur
+- Changed name on a css-class to avoid clashes with customer classes. .tab is now .igtab
+- Added possibility to have a robots.txt in deliver
+- Added thumbnail support for PNG-images and made edit-link only appear in front of gif, jpg and png assets in the content tool
+- Made image editor a bit more robust - added some checks on crop and resize tools.
+- Added feature which allows the system to send notifications to publishers when one or more items are submitted for publication. 
+  The notification can either be sent to the publishers which is members of the same group as the submitter or to submitters in a particular group.
+  The feature can be turned on/off through the application settings.
+- Added feature so a publisher can filter the items submitted to publishing tool. One can look at all items, items submitted by members in any of my groups or items submitter by members of a particular group.
+- Added sorting of workflows in my desktop tool so they are allways sorted by creation id
+- Added better exception handling in os-workflow integration. Now the database can go down and OS-Workflow will recover when it's available again.
+- Added more statistics to the ViewApplicationState-page - now one can see:
+	* Total number of requests handled since deliver was started
+	* Average processing time (time until response was delivered)
+	* Slowest request time since start.
+- Added warning mail if workflow engine get's into trouble
+- Added so long requests are reported from liveservers to the admin email address.
+- Added robots.txt file possibility
+- Filter out more hibernate errors with log4j which are duplicates.
+- Added so one can see long threads in BlockedThread.jsp
+- Fixed so events up for publishing but which are for deleted content versions or site node versions are marked as broken and deleted 
+- Tried to fix bug with inherited properties not being recognised for cache eviction when the meta info on the parent node was updated.
+- Services are now not totally blocked by AuthenticationFilter.
+- Made internal content search and replace work against multiple repositories at once.
+- Added possibility to have meta data on InfoGluePrincipal and displayName on InfoGlueGroup and InfoGlueRole.
+- Added new helper method to webservice helper which allows one to call a one string argument method.
+- Fixed a bug which showed related allready published sitenodes as publishable when submitting to publish.
+- Added an extraProperties-field to the repository properties-fields so one can define custom name-value-pairs and extract such information in the site templates.
+- Added validation of authorization module in the validation service.
+- Added a webservice authorization module. The format of the SOAP-response-content is IG-specifik (an xml string) but still - a new kind of flexibility for organisations to build their own middleware to collect the users, roles and groups for InfoGlue.
+- Added a contentPath-attribute to the contentParameter-tag so one can get a directory structure created and the content put in that directory-structure.
+- Added a new GenericCombinedAuthorizationModule which allows one to combine any number of similar or different authorization-modules. For example is one wants to combine two LDAP-directories and then InfoGlue:s own it's easy now.
+- Added warning message when you log in as root user so users understand do use another account for normal use.
+- Added better webservice security
+- Added possibility to delete published contents through the webservice
+- Improved the generic combined auth module and how the delegated adaptors should handle caches.
+- Added logic to allow enable languages on specific pages and their subpages. Complements the disable languages feature.
+- Fixed bug in import repository which made contents loose their content types.
+- Worked on more advanced component statistics - now one can get average processing time on each component.
+- Added possibility to add timeout on http requests from within HttpHelper
+- Made all list in the administrative tools sortable on their columns.
+- Made it possible to reset the component statistics
+- Added handling of focus to links to remove dotted line around it in firefox
+- Made content and siteNodes modifyer it's own colum in publish screens so it's sortable
+- Added caching on url-encoding to save object creation
+- Changed the parser helper for dom4j and how it parses a document - not dependent on xerces DOM any more - instead uses a sax-method to keep memory use down.
+- Optimized parts of the deliver engine to use StringBuilder instead of Strings and other performance and memory usage improvements.
+- Added a method in the AuthenticationModule which states if a module enforces J2EE security
+- Fixed a more correct view of the caches in ViewApplicationState
+- Added possibility to control the size of each cache listed in ViewApplicationState - great way to tune memory usage.
+- Added new log viewer inside the management tool and from ViewApplicationState.action which allows you to sort of "tail" the important log files. This way you can debug without having access to server.
+- Made modified date in content search result into standard format and it's own column so it's sortable.
+- Added possibility to control how large the advanced caches can be through the management tool. Very useful for trimming memory consumption.
+- Added possibility to search for a content in the content binding dialog. Very useful if you have a huge content mass and don't really know where the content you want is located.
+- Improved the statistics of the ViewApplicationState to refelect the sizes of the caches better.
+- Added new filtering logic to the content webservices to avoid harmful code or similar external form submits. 
+- Fixed so the getUsers(roleName) returns a list of full principals - not only shallow objects.
+- Dramatically improved performance when listing all active workflows in mydesktop. Also beneficial for other apps using the API:s.
+- Added new JNDI Authorization module which is a rewrite of the old module but is more strict and conforms better to standards and uses full names all over.
+- Implemented displayName on principal, role and group so it's easier to build nicer GUI:s when assigning rights etc. When connecting LDAP-sources the fully qualified names are so long it gets hard to read.
+- Made adjustments so if a user changes the meta info of a page it also changes the last modifyer and date of the page.
+- Added 3 different XPath-handlers for property parsing to compare performance - Xalan, Dom4j and XPP3. For now XPP3 is used - can be configured if needed by setting a property in deliver.properties called "propertiesParser" - Can be "xalan", "dom4j" or "xpp3".
+- Tried to improve performance by removing some synchronized blocks in the cache handling. Handles huge number of concurrent visitors better.
+- Extended the MatchingContentsTag to also allow text search on any number of content attributes and possibility to limit serch to a specific period in time which can be a huge performance boast.
+- Added <management:categoryPath-tag which let's you get the full path to a category. Important in followup searches based on assigned categories for example.
+- Added new tag (<content:assignedCategories) and underlying methods to get all categories assigned to a content version. Very useful as part if you want to search for similar contents for example.
+- Improved "Add component"-dialog performance hugely when dealing with a large number of components.
+- Improved the create interception point dialog so all inactive system interception points (tehre are quite a few) are listed for quick activation.
+- Added possibility to control access to all menu items in the management tool. Nice if you want to be able to have some users do only some administrative tasks like diagnosing logs or creating users but nothing else.  
+- Created a new "Publish this page" button in structure which is not recursive as a complement to the normal recursive "Publish"-button.
+- Added inconsistencies tool which allows you to track down faulty/broken references to deleted contents or pages or components. Also enables you to delete such references.
+- Added feature so you now can specify disallowedComponentNames instead of allowedComponentNames on slots if you want. 
+- Made so the inconsistenciesController gets a chance to remove references to stuff that are getting deleted.
+- Added so warning mail, which can be sent when a page takes more than x seconds, contains what other long thread are active in the system. Of huge value from a debug perspective.
+- Added pageing of users in management tool > System users - 100 at a time.
+- Added possibility to specify any number of approved roles as authContraint (access to cms tools). Separate them with ; and you are done.
+- Added new settings to control how InfoGlue handles huge load. The settings allow you to state if the deliver engine shall limit how many threads should excecute at once. 
+  As to many threads at a time results in syncronizing issues and possibly memory issues it is sometimes nice to be able to limit the number to for example 50 concurrent threads. 
+  The new threads coming in would be kept waiting until another thread finishes and the idea is that you should set the limit to a size that suits your servers and the load it has.
+  Dont mess with these settings if you don't experience problems or if you don't know what it's doing.
+- Added logic so a warning email will be sent to the warningEmailRecipient when the memory is dropping below 15% of the maximum java heap size. Consider this an early warning system. Only one mail per application life cycle is sent.  
+- Added taglib and logic to invoke workflow actions remotely
+- Upgraded to Velocity 1.5 - check the changelog for that project. Hopefully the inline macro issues have really been solved as they say.
+- Made all cache update actions and validators time out after 3 seconds. We have seen strange results when remote services hang.
+- Fixed a new Import-tag which should be able to replace the normal jstl-import tag which cannot handle timeouts etc well.
+- Made better error message handling when lock not granted exceptions due to simultaneous editing occur.
+- Made it possible to control if live also should kill long threads and also allow live to have another timeout for when to kill threads.
+- Updated the Apache Axis packages to 1.5.1
+- Upgraded to Rome 0.9 (RSS libraries)
+- Made it possible to state contentId instead of propertyName for tag content:assetThumbnailUrl.
+- Fixed bug in access control when protecting which users are allowed to create sitenodes under a sitenode. It behaves correct now.
+- Fixed issue with window positioning in IE sometimes
+- Moved buttons in masspublishing/unpublishing screens, so that it conforms more with the other screens
+- Added new principalContentVersions taglib which lets you look up all contents last modified by a certain user and perhaps is nearing expireDate. Useful in intranets or similar.
+- Added tag to get all siteNodes referencing a certain content. Useful for finding where to show a detailed view
+- Improved performance hugely on getAllUsers on InfoGlueBasicAuthorizationModule.
+- Added tag for getting url that changes the current page language
+- Made it possible to in the ig:slot-declaration state if access rights should be disables on that slot. 
+  Helpful for when you wish to secure only some slots. No need to set access rights on all slots this way. Use disableAccessControl="true".
+- Tried to fix IE7-layout issues with tree navigation
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.4.1 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+This is a bug-fix release for 2.4 which seems to have been released a bit premature. Thanx for the feedback all!!
+Everybody must use this rather than 2.4.
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.4 Final 
+---------------------------------------
+- Fixed so export file names are converted to avoid i18n-chars when exporting a repository
+- Added a new section in management tool for archiving and restoring assets of old content versions. 
+  This allows administrators to minimize the database space taken by InfoGlue. Up to 90 % of the database are usually digital assets so it can save a lot of backup space and time.
+- Added principal to recursive deletion check for site nodes and contents - there was a flaw in protection before on that point
+- Fixed flaw in InfoGlueJDBCPropertySet which gave errors when trying to save data in completely fresh databases
+- Fixed a bug in content version edit - FCKEditor has changed and interfers with body onload so now we do it in the script-part instead.
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.4 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+The InfoGlue Team are happy to release the best version yet. InfoGlue 2.4 is available for immediate download.
+This release contains so many impovements it's hard to say what to lift up. Stability, performance and security is allways in focus of course so quite
+a few changes and improvements have been made in those areas. Check out the long list of improvements below.
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.3.5 Final 
+---------------------------------------
+- Made InfoGlueGroup, InfoGlueRole and InfoGluePrincipal implement serializable so context can share them within a tomcat or in a cluster.
+- Added new J2EE-authentication module. It allows one to let the container handle login and infoglue deliver accepts it's principal.
+- Added new JDBC Authorization module (experimental so far).
+- Changed PortalServletRequest so portlets get the principal object propagated in a better way.
+- Changed ViewPage.action so if the user is authenticated by the container it at least asks the authentication module if it's ok.
+- Added a protectedRediect which may be used later for container managed auth.
+- Made it possible to dictate for the delivery engine from a component that a page should be trimmed before sent to the client. This means components returning xml as a result don't have to be written on one line to avoid invalid xml any more. 
+- Completed all classes which uses OQLQuery with closing of OQL and QueryResults object. Fixes issues with max cursors in Oracle and releases resources better.
+- Improved mydesktop so any workflows with faulty definitions are not loaded and an warning message are shown next to them.
+- Added failcheck for very old version of InfoGlue Databases in validation code
+- Enabled user to set new property controlling requests timeout in deliverWorking and preview. Also made system properties come back trimmed so extra spaces are removed. 
+- Updated admin tools with a new date picker (jscalendar from dynarch). Much smoother handling and skinnable.
+- Made it possible to set onclick on submit buttons used in workflows.
+- Added mailer-taglib in web.xml i deliver
+- Made fix to avoid ?null after login when no request parameters are available.
+- Made module a bit better to avoid dubble / in context
+- Made it possible to control what link-classes are available in the FCKEditor from the javascript-init. 
+- Changed so the JNDIAuthorizationModule supports SSL and also anonymous bind etc.
+- Fixed some css-mistakes
+- Improved JNDIAuthorizationModule with several aspects including reuse of bind-operations, case insensitivity and some failover
+- Made listings of users, roles and groups sorted on user names
+- Added authorization converter and test case. 
+- Fixed bug in group handling in LDAP Authorization Module
+- Improved authentication mechanism so users, roles and groups can be tagged to be update:able and delete:able individually so several sources can be used.
+- Added a new AuthorizationModule which combines a JNDI and InfoGlue's own auth module into one source.
+- Improved Authorization system so any number of sources can be combined and each user/role/group can be edited etc if that source it came from supports it.
+- Added new JDBC/Infoglue authorization module which can combine those two sources.
+- Worked more on having a single source for database definitions for all frameworks which are also manageable through a interface. This is to be able to drop the infoglue wars in the app server and then just set up the database connection and go from there. Not ready yet.
+- Defeated the IE cache refresh bug which before made tree not update after change in Internet Explorer.
+- Fixed an option when importing so only the latest versions are imported.
+- Made intuitive rights transfer GUI:s so one can duplicate one user's/group's/role's rights to another. This makes it easier to move between authorization systems. 
+- Added fix so that internal http-calls from InfoGlue does not trigger the update cache filter as that can lead to locks in working environment and a hung system. 
+- Made JNDI adaptor more efficient and adding a possibility to cache roles, users and groups for a period of time (definable for each in properties).
+- Added possiblity to delete old content versions so one can clean up a huge database. A new button comes up when you enter a earlier version than the latest.
+- Changed so table width when used in FCKEditor by default is set to 75% instead of pixels
+- Upgraded to FCKEditor 2.3.1 from the 2.2 version we had before
+- Improved import utility by adding failchecks, better handling of errors and also fixed bug which did not account for relations to contents and pages created by a relation editor.'
+- Fixed bug in component caching which could lead to wrong component being fetched. 
+- Added better caching in some areas (content types, component properties) which improves dynamic pages a lot and decreases the xml/xpath cost.
+- Fixed bug with opener reload in mozilla when in edit on sight mode. We used <body onload="javascript:.." before and that seems to be working bad - changed to window.onload in javascript.
+- Added dbcp-pool on InfoGlueJDBCPropertySet until we completely remove it. Decreases the load on the database server quite a bit.
+- Started working on transferring property sets - now optional beta
+- Started working on a cleaning function which cleans out broken references to components etc.
+- Added cms full base url so we can handle any references between the deliver app and the cms.
+- Changed so we don't have multiple NullObjects.
+- Changed log4j-references to local variable instead of getLogger() - a bit faster.
+- Added toString()-method on BrowserBean so one can debug browser easily in templates
+- Worked on beta feature which allows one to save a page as a digitalAsset (suitable for css and javascript nodes for example to avoid overhead).
+- Added improved access right check so now one has to have repository access to the repository holding the content to be able to edit it.
+- Improved the ViewApplicationState.action page so users are listed last - not in the middle
+- Fixed bug in logonUrl-handling
+- Fixed so repositories can be placed below other repositories dns-names like http://www.mycomp.com/sitex
+- Fixed so deliver working and preview can be protected and that the decorated view never can be shown in live mode.
+- Removed a few e.printStacktrace() in favour for more log4j-statements and also modified the log4j.xml to not show messeges about mapping of url failing or components missing in the standard log but in a infoglue log instead. All severe errors should still come out in the normal catalina log.
+- Fixed so one can have steps in workflows on other servers and also jump between protocols like http and https.
+- Made fix so remoteUserProperties-tag actually cares about the language-id sent in.
+- Fixed so application handles https-situations better
+- Decreased castor-cache to 5000 on the content version entity to limit the memory footprint a bit.
+- Removed hard set of javax.xmk.transform.TransformFactory in PortletDispatcher - was messing with other applications ect and was marked as just a test.
+- Made startup output a bit nicer and more informative
+- Added more debug info to broken component references so one can see exact which page has the broken reference.
+- Added check for sitenodes with no siteNodeVersions - only found on siteNodes with no metaInfoContentId however. After an upgrade from 1.3.2 to 2.4 for example we suggest one run validation at least 2 times to optimize the database.
+- Made more setPropertyName methods in taglibs evaluate expressions
+- Fixed a workaround to problem with empty slots allowing users with no access to save page template to still do it. Now they get an error when trying.
+- Made so warnings such as broken references to components etc are handled by a rolling file appender and stored in each webapps logs directory.
+- Made it possible to statein the deliveryContext-object that a page should not be evaluated a final time by velocity after all components has been evaluated. Improves performance but can lead to different behaviour in your sites.
+- Worked more on a logging system which is dynamic and still divides the files in severity. 
+- Added indexes to digitalAsset table which improves performance on portlet-handling a lot if your database is big.
+- Made the system sense when properties are not available in a language one has chosen in the structure-tool editor. Before they were blank or undefined if you choose a language not supported on that page 
+- Added so inputCharacterEncoding can be different for cms and deliver i application settings. No more need to mess around in web.xml for that.
+- Made ContentSort tag accept a custom comparator - very neat - now you can have InfoGlue use your own custom class for sorting. If the comparator implements TemplateControllerAwareComparator it can also use the templateController-object for lookups in InfoGlue. 
+- Fixed a bug which made old page binding be valid if newer versions of a sitenode does not have that binding. Now it should work fine again. This bug only concerned people building sites the old way without components.
+- Added better nullchecks for sites that for some reason have pages which has no versions. Only happens when old sites are being upgraded. New sites (build with 2.0 and above) does not have such pages. 
+- Removed reference between ServiceDefinition and it's ServiceBindings as no queries go that way and it affects performance to much. Should make no difference to anyone.
+- Added alfa version of simple image editor - can be disabled in application settings.
+- Updated installer and infoglue login screens with a new logo
+- Changed colors a bit in my desktop to a less intense color.
+- Fixed so sublist tag now behaves as intended. You state a startIndex and how many elements you want.
+- Made errors (404 etc) in cms be directed to error page and not to the tool main action.
+- Added error check in ViewSystemUser action - thrown if encoding settings are wrong and one uses userNames with non-ascii-chars.
+- Upgraded oscache to 2.3.2 and fixed a small cache issue with component tree not being visualized right when adding slots
+- Added so one can define the component cache key either in a component property called CacheKey or in a applikation property componentKey.
+- Added experimental property for selective cache update of live servers in almost the same way working servers are updated.
+- Added better caching of properties which are not found.
+- Improved the new Pooling - before only 10 connections was pooled as a max - which could cause locks in high load sites. Now it's max 200 and configurable through the dbcp.maxActive property
+- Changed usedXXX-lists to HashSets so no duplicates are handled - minimizes the cache updates.
+- Improved how jsp files are written to disk before used to avoid thread issues
+- Added experimental live cache eviction thread. Will make publishing much less heavy and faster as the objective with this class is to throw away only affected items in the cache. Much testing needs to be done though.
+- Added methods to get the original full uri and original full querystring - they are usually modified by InfoGlue filters when they reach the templates.
+- Improved how attributes and url contents are written to disk when used as assets
+- Added possibility to control the pool size of os-propertyset
+- Fixed better performance on content covers and site node covers - before central pages and templates could take very long to show.
+- Finally got around to optimize the create site node methods - on old installs this could take quite a few seconds when the sites was getting big. Now it takes a couple of milliseconds.
+- Added export format as application setting and made the default one version 2 
+- Made errors during deletion of repository due to published items better and added force option
+- Added support for exporting multiple repositories into one export as well made export handle categories.
+- Several small but important performance enhancements to the core
+- Added more caching - now also on the InfoGlueJDBCPropertySet - eases the load a lot during publications
+- Fixed so empty or "Undefined" text properties are not added.
+- Made deletion of a text property in one language not remove the entire property node so the other language-properties are not removed. 
+- Added tag to get all categories attributes in a ContentTypeDefinition
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.3.5 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+The InfoGlue Team will not rest for the summer just yet. InfoGlue 2.3.5 is available now.
+This release contains better portlet support, JBoss 4 experimental support and a whole lot of work 
+concerning caching and threading. Check out the long list of improvements below.
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.3 Final 
+---------------------------------------
+- Made infoglue divide the transaction into smaller ones when using the getMatchingContents. It often throws Maximum cursors reached in oracle otherwise.
+- Fixed so save and exit actually saves in application settings
+- Made deletion of server node also clean up in the database propertyset 
+- Added functionality so the folder properties is inherited when creating new folder, also made so the properties is removed when content is deleted.
+- Added a getIsDecorated() method in the TemplateController to check if the pagenode is render with editonsight.
+- Made the decorated tags in editonsight use the setting of the cms property getRequestArgumentDelimiter.
+- Fixed the getContentAttribute(Integer contentId, String attributeName, boolean clean) in EditOnSiteBasicTemplateController.
+- Fixed html compliance in some files in cms/contenttool/
+- Fixed bug in import if repository references another existing repository.
+- Made an option to specify exportFormat in cms.properties and this results in much more compact xml-files. Can only be imported by a version later than 2.3 however.
+- Fixed bug in import when pages had no siteNodeTypeDefinition
+- Added new tag and methods for getting all available languages for a site node, the old one did not regard disabled languages.
+- Fixed bug in installers sqlserver scripts - identity column on cmInterceptionPointInterceptor where it should not be
+- Made entire cache update less thread sensitive.
+  * Now all updates during a transaction is packaged into one update call.
+  * More syncronization on cache-objects
+  * ViewPage now waits for caches to clear if in working/preview mode to ensure no colissions.
+  * Made pushed system publications work
+  * Made deliver end threads which takes to long and also send a warning email to the admin. Only in working/preview mode.
+- Made NullPointer check on allowedComponents in the properties and added a logger warning if the contenttypedefinition is not found.
+- Made installer support JBoss 4
+- Changed a lot of details in the portlet driver making hot deploy work as well as supporting portlets in JBoss 4. 
+- Made a new section in management which links in all diagnostic tools / screens making debuggingf easier.
+- Made cms-user visible in message center - later chat between users should be easy.
+- Fixed bug in getMatching contents which was not regarding language when selecting max from content version. 
+- Fixed issue with url:s becoming messed up if dnsNames are filled in and some special settings are made. 
+- Also fixed language change url 
+- Cleaned up the message center look and feel
+- Fixed so properties are properly defaulted if not parsed and still in @varName@ format
+- Made it possible to turn full url:s globally on or off by setting the useDnsNameInUrl property. Van naturally still be set locally in pages as before.
+- Made getDigitalAssetBaseUrl work properly by also fixing getRepositoryBaseUrl
+- Added failcheck a bit if no languages was active at all for a page.
+- Fixed bug where group list was not cleared when new was added
+- Made relation editors show full path to the content / sitenode
+- Made SiteNodeVO contain parentSiteNodeId
+- Made default expiration date 50 year ahead
+- Changed page icon in structure tree - made more sense - the old one was the same as for content folder.
+- Added nullcheck in ViewContentVersion - problem could otherwise arise when clicking on a text to edit in a language not yet existing
+- Fixed some issues with property editors buttons and also made property window nicer
+- Fixed bug and issues with remote digital assets through webservice. File were named Unknown before.
+- Added encoding possibility to rss-feeds (taglib and helper)
+- Changed the Support-class used in certain circumstances by the content attrribute tag when mapKey is specified 
+  to use iso-8859-1 as the getBytes-encoding as java.util.Property-class expects that encoding in the load-method. 
+  We should perhaps write a new class for this later but as it is seldom used we will wait a bit.
+- Fixed issue with empty passwords in LDAP-authentication resulting in anonymous binds
+- Added possibility to set if multiple arguments should be parsed in URL-tag.
+- Fixed cache-update bug which led to changes in user/role/group relations did not immediate effect deliver engines in working mode.
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.3 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+The InfoGlue Team is very pleased to finally announce version 2.3 of the InfoGlue CMS and Portal platform.
+This release contains many important improvement of the 2.1 release and the platform has matured a lot since then.
+Among the new features are a lot of new user features which makes you much more efficient. This along with a big effort on
+system management and maintainability as well as on performance makes it worth the wait. We have also made some neat additions 
+which let's you expose some editing and user preferences to non-cms-users if you like. Very nice for intranets and community sites. 
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.1 Final 
+---------------------------------------
+
+New features
+- Added taglib to get principal properties
+- Fixed so structure tree can represent if a page is hidden
+- Added new taglib parameters to hide protected childpages
+- Added new taglibs which lets you have visible links to content wizard and assgn content
+- Enabled a new feature called "content wizard" which lets you crate contents from a component property or from a link on the page.
+- Fixed functionality to push system messages through ajax
+- A new feature makes it possible to unpublish all versions of a content or a sitenode. Recursively.
+- Server-settings - so one can manage all server settings in the tools instead of in property files.
+- A user is now able to choose which language should be shown first when clicking on a content.
+- A new feature lets you add "Shortcuts" in the mydesktop tool so users can do all their work from there.
+- Completed userAccess support as an addition to roles and groups in the ACL
+- Added webservices-taglibs for updating and deleting contents, versions and assets etc
+- Made it possible to get a content type from it's name
+- Added taglib which lets one check if a user has access to a certain sitenode
+- Huge performance improvments on large sites after an upgrade of the cache system and the completion of a selective cache eviction
+- Added new message center to management tool to which lets administrators chat and email to the system users.
+- Added new FAQ entries and configuration examples
+- Made compression of page responses possible and controllable
+- Made it possible to have a workflow return to a special address after finishing instead of allways returning to the mydesktop
+- Fixed a possibility to push system settings to live servers.
+- Made management changes que up and be ready for push
+- Added Submit to publish option in right click menu
+- Added session count to ViewApplicationState.action
+- Fixed login with cookies and in querystring
+- Added method to get if the user is in PageComponent mode
+- Added new taglibs which lets you have visible links to content wizard and assgn content
+- New method to get logout url
+- Added logic and taglib to get all component properties from a site node with a certain name. Example - get all Articles on a page.
+- Added language taglib
+- Added new UserProperties webservice api and taglibs
+- Made it possible to submit to publish directly from edit on sight and then return to the page
+
+Improvements
+- Fixed so not all uris are filtered - as with the other filters
+- New properties to have a better auth system
+- Added new parameter for recaching
+- Fixed mouse over on comments in publishing tool so long comments are shown correctly
+- Fixed so one can comment a deny on publishing
+- Fixed so one can edit the portlet registry by hand
+- Worked more on language handling and also made small changes making forms easier
+- Worked more on a more covering language solution
+- Minor error checks and improvements on remote content handling and multipart parsing
+- Made it possible to fallback on individual content attributes to master language
+- Made expressions valid for some tags
+- Added Submit to publish option in right click menu
+- Made rightclick menu more robust and also added two new menu items - the toolbar is now more or less not needed any more so turn it off.
+- Fixed so input character encoding can be set live.
+- Enabled improved logging possibilities during runtime - now one can set debug level on packages/classes without restarting.
+- Made reference handling much better so publication works better
+- Added method to get the real original url - even if it's a portlet request
+- Fixed issues with CAS login and static service url. Now it can direct the user to a dynamic url
+- Fixed some state change logic so a working content version is created when using edit on sight if not in working state
+- Made contenttype editor a little more bareable to work in when you have a huge number of fields
+- Added more input types for properties, textareas and options are now supported
+- Fixed more statistics on users in ViewApplicationState
+- Added html-escaping on emails if html-enabled
+- Fixed so access error gets reported correctly
+- Added better transaction handling in the cms
+- Made edit on sight drag down sitenode to working if not allready
+- Fixed so even published sitenodes are investigated for associated contents.
+- Added convinience methods on LanguageVO so one can get the locale from it and a string representation of the language
+- Added new methods and improved login procedure
+- Added cache of access rights
+- Made the update site node logic only reindex the latest meta info version
+- Added new kind of notification type
+- Fixed so edit on sight is allways shown no matter what state the page is in. Also made simple view allways have the toolbar.
+  This also demanded a new feature which let's a user choose when he presses "Edit Node Properties" if the page should be set to working
+  so the user can edit the meta info or not.
+- Fixed issues with case sensitivity on linux / mysql and also fixed so the getMatchingContents only returns valid contents
+- Made CAS throw better exception if user was SSO-logged in but not found in the authorization system after that
+- Made it possible to remove properties and also made deliver and cms ACL seperated
+- Adding more debug and made JNDI controllable from management tool
+- Made a few changes which makes some broadcast reach all servers, working as well as live
+- Improved mydesktop performance by caching workflows and caching propertysets.
+- Fixed so authentication module can plug into logout
+- Improved page cache when portlets are involved
+- Optimized performance and changed fetching strategies a bit. Not allways use model and better cache of asset urls
+- Improved performance by skipping available serv bind on sitenodes that have a meta info content id
+- Added principal to child content cache
+- Added new recache strategy class
+- Made pageCache key inherit if set to "default"
+- Added encoding to property forms
+- Fixed so infoglueRemoteUser allways gets transferred to portlets
+- Fixed a way to mix velocity templates and freemarker templates - just add <#-- IG:FreeMarker --> at the top of the component and that will be rendered as a freemarker template
+- Cleaned up the code a bit - less html in mydesktop for example
+- Fixed warning if to long comments on publishing - limiting to 255 chars
+- Fixed issue with empty comments on oracle - defaults to no comment
+- Added logic to be able to track an kill hung threads
+- Fixed so the edit on sight scripts are referenced fully
+- Added disable languages to export/import
+- Fixed so one can see when and by who when in submit to publish screen 
+- Added modifyer to list of items up for publication
+- Removed unneccesairy html/css and made it more strict / validated. Added more defeat browser cache tags as well in tools.
+- Upgraded jtds till 1.2 and added new versions of db2 and oracle jdbc-drivers as well.
+- Made it possible to state direct publication when creating contents through webservice from deliver.
+- Added checks in all binding dialogs actually demands the user to select a page / content before saving. 
+- Added anonymous account in application settings
+- Made textareas in application settings deletable as are textfields now.
+- Made deliver app recognise application settings from property set and made Filter initialize extra properties correct. Anonymous account is fetched correct also.
+
+Changes:
+- Success url not needed default in web.xml under the cms-application - removed it.
+- Added webservices url
+- More memory and less disk in OSCache configs - much faster and less errors.
+- Upgraded to OS-Workflow 2.8 as well as the accompanying libs oscore and ospropertyset
+- Fixed so only 20 references are shown at a time in structure/content
+- Unpublish is allways shown on folders to enable mass unpublish
+- Changed some api:s to throw exceptions
+- Changed language derivation so a browser language is not choosen if the meta info is not there for that page
+- Made it default so the working version of a deliver instance returns any error message as text in the site - for debug puposes. Can be turned off with the paratmeter disableTemplateDebug=true
+- Added scripts for upgrade to 2.5
+- Added FAQ entry of questions around oracle 10.2 XE
+- Added FAQ entry of questions around oracle RAC
+- Fixed so portlets with .(dot) in the warfile/context name also can be used. 
+  Instead it is not possible to have individual Portlets with .(dot) in their names. Use other separator if needed - like _ or -. 
+
+
+Bug fixes
+- Fixed mapping bug on user/role properties mapping in deliver on oracle
+- Fixed bug in content type definition cache not being updated in deliver
+- Fixed a bug in security parameter handling
+- Fixed bugs with disableEditOnSight and also made languageId a parameter to contentAttribute-tag
+- Fixed visualization bug if long comments contains breaks
+- Fixed issues with redirect addresses and also with portlet urls.
+- Fixed so the flow works on access right
+- Fixed bug in content version compare
+- Added ordering on contentId - avoids duplicates some times
+- Fixed so users access right are not removed if not wanted
+- Made move change repository on all children as well - big bug otherwise
+- Fixed bug when anonymous is logged in and portlets
+- Fixed so taglib reuse does not mess up variables
+- Fixed bug with protected textfields etc
+- Fixed some encoding bugs
+- Fixed issue with dnsnames on oracle
+- Fixed bug when domain not available
+- Fixed property editing when site not in utf-8 and IE screws it up
+- Fixed so remote caches gets updated even if one fails
+- Fixed huge bug with url to cache update action
+- Fixed some bugs with synchronizations
+- Fixed bug when anonymous is logged in and portlets
+- Made stuff syncronized as there seem to be a possibility that they interefere
+- Fixed bug in cache key and also added missing image
+- Fixed bug in inheritence
+- Fixed bug with wrong db used
+- Fixed missed entity in cache-updates
+- Added clear of asset url when access control comes into play
+- Fixed bug when stating only digitalAssetPath
+- Added caches to clear when recache was finished
+- Fixed focus issue on mac firefox
+- Fixed issues with access control screen - small bugs
+- Fixed issue with disabled form
+- Fixed bug in save and exit
+- Fixed so &amp; is not destoyed in shortcut xml
+- Fixed bug in user filtering feature
+- Fixed so getContentVOWithContentTypeDefinition really uses the inparameter - before it was hardcoded to HTMLTemplate content type
+- Fixed bug with formatted xml and moving of components
+- Fixed bug concerning user access rights and db2(perhaps others) when entering interception points without parameter
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.1 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+InfoGlue 2.1 Final is released. 
+Although a lot of critical bugfixes has been made this is much more than a patch-upgrade. This new release has now already been running a few weeks  
+in several major production sites and has now proven that the 2.0 version has gotten rid of all the initial bugs and is production ready 
+even for high end sites. There are several medium-big changes in this release and the overall stability of the platform has been improved even further.
+Look at the huge changelog for more information.
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.0 Final 
+---------------------------------------
+
+New features
+- Added initial ROME support (RSS) 
+- Added Freemarker support (can be turned on instead of velocity which still is default)
+- Added access rights on components/slots/toolbar/component properties. If activated you can now state what roles/groups can add/delete components in what part of the page
+- Added so if two users tries to modify the same content version the last save results in a warning about concurrent modifications and the save is not made.
+- Added a very simple history and compare feature on content versions
+- Added possibility to state IP:s that are allowed to admin/update the caches
+- Added feature which lets you redirect addresses.
+- Added pageCacheKey as property on pages to override if needed, can be used to optimize cache-handling
+- New translation added for French
+- Added new recache after publication feature that lets you point to a number of sitenodes that will be recached before the old pagecache is thrown away.
+- Added a whole range of new workflow functions.
+- New WebService API:s for content creation and workflow handling.
+- Added taglibs to add contents to the cms remotely.
+- Added contribution of a JNDI authenticator
+- Added about 40 tags in 5-6 different taglibs which let's you do all needed operations templateLogic did before.
+- Added jakarta-mailer taglib and also added support for encryption in the platform.
+- Added support for storing extranet user info as cookies - allowing them to autologon.
+- Made it possible to select if the page cache should be compressed.
+- Upgraded to version 2.2 of FCKEditor (the default WYSIWYG)
+
+Improvements
+- Made publishing process much more stable and the live cache updating much more threadsafe.
+- You can now reach page structure with rightclick and not only from the palette
+- Localized more messages
+- Translated the MyDesktop tool fully
+- Fixed localization of edit on sight
+- Restricted tree to not show meta info folder if one is not root
+- Does not allow change of state on a meta info version either. Must follow site node version.
+- Meta info folder gets subfolders generated so it does not get so long.
+- Fixed so one can state if the modifyer user should change between state changes
+- Better error page handling with correct error codes etc.
+- Assets can be written to more than one location to enable better clustering.
+- Fixed so anonymous-account can be specified in deliver/cms.properties 
+- Fixed so access rights are now showing both extradata-icp and nonextradata icp.
+- Fixed so preview-buttons go right if nice-uri are used and that repository lookup works better
+- Added access rights for workflows.
+- Fixed recursive deletion of sitenode and accompanying meta info - also added more null checks
+- Better transaction handling in a few places and started another optimizing round in the toolside
+- Completed work on access control on component editor and property editor.
+- Improved the validation service in management
+- Improved the ViewApplicationState action for diagnostics
+- Added Java 5 ThreadMX-debugger JSP for debug of threadlocks.
+- Fixed the possibility to escape html-entities in content attributes upon retrieval
+- Content protection much more coverage
+- Added possibility to turn on/off logging during run 
+- Added so pageKey can regard cookies and session values as well
+- Added possibility to allways get back a full url to all resources and pages
+- Fixed so one can turn off nice uri in some url-generation by setting a tag
+- Changed so niceURI attribute name can also be fetched from deliver.properties
+- Fixed issue with nice uri page lookup - added repository name as key as well as trimmed titel
+- Added a new text2image method which supports crop and centered text etc.
+- Added so one can fetch properties from different sitesnodes - not only from the one you are on.
+- Added memory check JSP
+- Added support to turn off inheritance in a slot 
+- Fixed so delay in publication could be set - this to allow database-replication to be certain to have finished.
+- Changed so only show the first 40 chars of the names of workflows and use mouse over title instead
+- Added support to turn off inheritance in a slot
+- Fixed so preview-buttons goes correct when using nice-uris with different domain names.
+
+Changes:
+- Initial taglib doc generator added
+- AccessConstraints and Constraints exceptions are now only info in logs
+- Fixed error message for invalid configuration
+- Fixed so anonymous cannot be removed or changed
+- removed non-parameter method (some workflows can perform all their steps from init)
+- Added a quick reference from siteNode-entity to it's meta info content - for future performance use.
+- Refactored WorkflowHelper into WorkflowTag.
+
+Bug fixes
+- Fixed bugs and did some improvements on the u2date system
+- Added failsafe initiation - allways falling back to english
+- Fixed so access rights exceptions are shown upon content access
+- Fixed nullpointer exception when dns name is missing 
+- Fixed bug when saving first version in standalone mode
+- Fixed bug in mysettings password dialog 
+- Fixed issues with content type definitions and validation rules not being updated
+- Fixed transaction bug in basecontroller and affected classes - also removed static in authmodule.
+- Fixed transaction handling in IG authorization controllers
+- Made publication controller able to handle broken content/sitenode versions and added a nullcheck in the site nodeversion and contentversion controllers
+- Fixed transaction issue in asset copying
+- Fixed so any broken versions are removed so the publishing tool will not be crashed.
+- Fixed bug if siteNodeVersion is floating without a siteNode
+- Added failsafe check if a content or sitenode does not exist
+- Better handling of commit/rollback/close...
+- Fixed issue with cache key and windows filenames - uses _ instead of : 
+- Fixed null pointer when no page version
+- Fixed bug in childPages which returned non valid ones as well
+- Fixed nullpointer exception in cookie handling
+- Fixed bug with /-path 
+- Fixed issues with css-classes messing up some clients structure view
+- Fixed bug with multipart and cms contextname other than infoglueCMS
+- Fixed errornous slot indicies.
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.0 Final
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+InfoGlue 2.0 Final is finally released. 
+We have worked long and hard with this release as several big changes has been made and several big new features has been added.
+With this release InfoGlue has taken the step from being only a good CMS to now being a Portal/CMS hybrid which was allways the intention.
+This release contains many bugfixes compared to 2.0RC2 but also features a lot of new functionality and performance improvements.
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.0RC2 
+---------------------------------------
+
+New features
+- Added possibility to set a parent repository in repository properties - this in turn means properties can be inherited between repositories.
+- Added property to repository so one can set which repository should be default when looking for components
+- Added a component property editor so one can avoid the xml-mode as a developer.
+- Added a lot of InfoGlue taglibs for JSP developers.
+- Added mysettings handling. Now it's possible to set preferred language and tool and also change password yourself.
+- Made it possible to set which components are allowed in a slot
+- Fixed so hidden fields are supported in content type definitions
+
+Improvements
+- Changed all classes to use log4j
+- Fixed so validation errors does not reinitialize the old data but keep the bad one for the user
+- Fixed so one can use page templates on existing pages as well and also added filtering so only
+pageTemplates with meta info in the same language that your site has for master language can be used
+- Added methods to get info about a property on a specific sitenode.
+- Improved performance on both deliver and tools.
+- Added info-button on workflows. Also made page templates rights-protected. 
+- Added model relation between contentVersion and contentCategory and contentCategory and category and changed the logic accordingly.
+- Improved possibility to set title on workflows in the MyDesktop view.
+- Added methods for common fileupload
+- Added possibility to restrict if the image should have sizes assigned in WYSIWYG and fixed some bugs.
+- Parametirized URIEncoding
+- Updated to Pluto 1.0.1rc4
+
+Changes:
+- Had to removed so edit on sight only works in the internal page view - not in working delivery.
+
+Bug fixes
+- portlet deployment removes web.xml elements
+- Fixed issues with portlets and file uploads - now uploads reach the portlet
+- Fixed so saveAndExit works on some property screens
+- Fixed unclosed transaction in portlet handling
+- Fixed base url so graphics etc becomes correct in the login screen (for nice uri:s)
+- Fixed a bug with root nodes and nice uri:s when changing languages.
+- Added class to input-fields in the component editor and made other aspects of the component editor less sensitive.
+
+
+
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.0 RC2
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+The second release candidate for version 2.0 of InfoGlue is released.
+This release contains many bugfixes compared to 2.0RC1 and is probably the last candidate before we release 2.0 Final.
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 2.0RC1 
+---------------------------------------
+
+New features
+- Made it possible to choose URI request parameter delimiter (& normally). To support XHTML better. 
+- Added two new interception points: 
+	* Publication.Write which notifies interceptors upon a publication taking place and 
+	* Repository.ReadForBinding which is a part of the new possibility to allow sharing of info between repositories without having access to the repository in other ways.
+- A new feature in content types which lets you initialize attributes with prestated values.
+- Made ViewApplicationState.action much more informative and made it possible to empty caches from there.
+- Made hotkey Alt+S save in content editing screens - not in WYSIWYG fields though.
+- You can now add more tool-language-links in the tool interface from the cms.properties file.
+- It's now possible to state that template-choosing dialog should be by default listing components in a different repository than the user are working in. For sharing setups.
+
+Improvements
+- An improved cache update strategy which does not require database access during that reqest but rather que it up.
+- Improved registry consistency on updates all over.
+- Now allows spaces in workflow names
+- Much better expire cache strategy with Quartz jobs handling it on all applications.
+- Improved NiceURI a lot so it now handles linking between repositories, component editor and some other issues. You can now also choose which attribute/sitenode name it should work with. 
+- Cleaned up and fixed so site css does not mess up the component editors gui.
+- You can now navigate directly in component editor and still be in decorated mode.
+- Changed so the publication details of a publication is now not allways fetched. Only fetched on request and popped up in it's own window.
+- We moved email rendering out of the code as proposed by Frank Febbraro so now it's possible to style this in a velocity template. You can also choose html or plain format.
+
+Bug fixes
+- Huge bug fixed in asset copy on state change. Made all version of a content work with the same asset.
+- Preview button was not included in install
+- Settings not done correct in install, affects propertyset.xml and hibernate.conf
+- Login filter got wrong parameter which resulted in blank page after login.
+1216331 - "Check all" and "Uncheck all" does not work
+
+
+
+-------------------------------------------------------------------------------------
+- InfoGlue 2.0 RC1
+-------------------------------------------------------------------------------------
+
+Release notes
+---------------------------------------
+The InfoGlue Team is very pleased to finally announce the first Release Candidate of version 2.0.
+This release is by far the largest effort yet and since we incorporated JSR 168 and enhanced workflow support the platform has taken a big leap into the portal and enterprise content management area. As a comment we are also very happy to see that the user community is growing fast even though we have neglected marketing at the moment. 
+Quite a few large organisations are now in the last stages of launching InfoGlue-based sites and the release of 2.0 will hopefully get even more companies to consider it.
+
+Thanx to all involved!!
+
+The InfoGlue Team
+
+
+Abbreviated Changelog from 1.3.2 
+---------------------------------------
+
+New features
+- Better support for Java 5. Xalan is now included by default.
+- We now have support for JSR 168 thanx to the guys at "Myndigheten fï¿½r skolutveckling" (Jan, Robert, Gï¿½ran). Apache Pluto is incorporated nicely.
+- Categorization is implemented nicely. Brings a lot of possibilities to how to build a site and personalize it.
+- Added a new concept called "Groups" to complement users and roles in the security model. 
+- The component editor and edit on sight is now somewhat the same.
+- One can add workflow options on components so the options (like "Create News") turns up on the edit on sight menu for the news component. 
+- Support of component restricting that only contents of certain content type(s) are available to users in a particular component binding dialog
+- Support for restricting what content types a role/group can create content of
+- Support for restricting what kind of contents are allowed below a certain folder
+- Support for assigning default content type for new contents below a certain folder
+- Support for assigning a default forlder content type
+- Added possibility to move multiple contents and sitenodes at once.
+- Added direct publishing/unpublishing feature for publishers.
+- A new registry feature keeps track of what happens and what contents/sitenodes depend on what so that the user gets a warning when he does something that will result in inconsistency or broken links. 
+- When publishing, dependent changes are also listed as proposed items to publish.
+- Validation on content versions are now added at long last. Required, Required If and Match RegularExpression is available from the start but more can be added.
+- The internal search feature has been much improved and also equipped with a multiple replace feature. Whohoo..
+- The possibility to move components on a page within a slot.
+- The ability to set session timeout for tool users.
+- Improved JSP support and some InfoGlue taglibs added. More to come in later versions.
+- Webservices support added with some examples. Not to many API:s exposed yet though.
+- Added component cache and selective cache updates on that.
+- Added a simple view of the component editor for cases where the html breaks down. 
+- Thanx to Frank and Jed the project has gotten some better cvs structure and much improved workflow api:s. 
+
+Improvments
+- Much better performance and less memory consumption for all applications. Better db-pooling and more advanced caches to reduce load on dbserver.
+- Selective cache updates on page cache.
+- Added a new WYSIWYG (FCKEditor) which is far superior to the old HTMLArea we used (which is discontinued by the way). FCKEditor is now the default editor.
+- Improved dialogs in WYSIWYG and also better possibilities to customaize the toolbar etc on the WYSIWYG toolbar / css etc.
+- Possibility to link to assets and to pages with content as argument from WYSIWYG.
+- Possibility to change password easier.
+- Made workflows definitions part of the data model so it's easy to manage and distribute. Also changed to Hibernate for it's data layer.
+- The user is now directly taken to the master content version when clicking on a content. A new button shows the cover.
+- The user is now directly taken to the page component view when clicking a sitenode. A new button shows the cover.
+- Refactored the views a bit so there is only one view in management. No dropdown to repository settings.
+- SystemUser-, Group- and Role properties now has full support for assets, categories and relations just like content versions.
+- A much improved asset upload is in place. It shows direct feedback on upload and real error messages if failed. 
+- You can restrict asset size very detailed on size, width and height in the content types.
+- Made all interfaces much better and more robust. A lot of improvments and the possibility to move and resize much of the items in the component editor.
+- The tool-tree now remembers branches you used from before which helps a lot.
+- Publishing-tool now shows only 10 publications at a time.
+- Support for ImageMagic added as thumbnail generator instead of Javas own. 
+- Easier to add new languages to the gui.
+- Much improved support for Mozilla Firefox - now the primary development browser and highly recommended over IE.
+
+Bug fixes
+- 1090285	nice-uri URLComposer bug
+- 1119067	Adding Users to Roles
+- 1047710	Installation Error-FileNotFound
+- 947633	HTMLFormular drops attributes
+- 1078314	1.3: Javascript error on "Extranet login"
+- 1108936	Editing an object problem Tomcat 4.1 Java 1.5
+- 1110545	filenames with # doesn't supports

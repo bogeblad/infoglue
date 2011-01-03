@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("tool.contenttool.contentVersionHistory.label" "ContentVersionHistory" "" "0" "0" "0")
+
+<script language="JavaScript">
+<!--
+	function openVersion(contentVersionId, languageId)
+	{
+		window.location.href="ViewContentVersion.action?contentId=$contentId&contentVersionId=" + contentVersionId + "&languageId=" + languageId;
+	}	
+-->
+</script>
+
+<div class="fullymarginalized">
+
+<table width="95%" border="0">
+<tr>
+	<td colspan="2">
+
+#set($lvBorder = 0) 
+#set($lvConstraint = -1) 
+#lvHead(["Name", "Language", "State", "Date", "Modifier", "Comment" ] "Compare versions" "" "" "")
+
+#hiddenField("contentId" $contentId)
+#hiddenField("versionComment" $!versionComment)
+#hiddenField("overrideVersionModifyer" $!overrideVersionModifyer)
+#hiddenField("recipientFilter" $!recipientFilter)
+#hiddenField("attemptDirectPublishing" $!attemptDirectPublishing)
+#hiddenField("repositoryId" $!repositoryId)
+
+## $stateStrings Must match the order of state in ContentVersionVO.java
+#set ( $stateStrings = ["tool.contenttool.state.working","tool.contenttool.state.final","tool.contenttool.state.publish","tool.contenttool.state.published","tool.contenttool.state.markedForUnpublish","tool.contenttool.state.unpublished" ] )
+
+##set($lvChkBoxName = "selContentVersions")
+#set($cnt = 0)
+#foreach($cv in $contentVersionVOList)
+	#set($displayName = "$!this.getInfoGluePrincipal($cv.versionModifier).displayName")
+	#if($displayName == "")
+		#set($displayName = "$cv.versionModifier")
+	#end
+	
+	#set($nameLink = "<a href='javascript:openVersion($cv.id, $cv.languageId);'>$cv.getContentName()</a>")
+	#set($state = $ui.getString( $stateStrings.get( $cv.stateId ) ) )
+	#set($row = ["<input type='hidden' name='rowtitle' value='$cv.getLanguageName() ($cv.getId())'/> <img src='images/tree/contentRoot.gif'/> $nameLink", "$cv.getLanguageName() ($cv.getId())", "$state", "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd HH:mm:ss')","$displayName", "$cv.versionComment"] )
+	#set($cnt = $cnt + 1)
+	
+	#lvAddRow($row $cnt $cv.getId())
+
+#end
+
+#lvEnd()
+</td>
+</tr>
+</table>
+	
+</div>
+
+#endContentTool()
+

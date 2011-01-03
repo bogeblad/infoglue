@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Menus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+	<script type="text/javascript" src="script/listview.js"></script>
+
+	#includeLatestJQuery()
+	
+	<script type="text/javascript">
+	<!-- 
+		setCMSContext('$this.getCMSBaseUrl()');
+		
+		var exp;
+		var currentRepositoryId = "$!repositoryId";
+
+		function reload()
+		{
+			removeCookies()
+			window.location.reload(false);
+		}	
+		
+		/*
+		function openUrlInWorkArea(url)
+		{
+			//alert("htmlTreeItemClick:" + url);
+			if(parent.openUrlInWorkArea)
+				parent.openUrlInWorkArea(url);
+		}
+		*/
+		
+		function syncWithTree(path, repositoryId)
+		{
+			//alert("syncWithTree");
+			var timeout = 500;
+			if(repositoryId && currentRepositoryId != repositoryId)
+			{
+				parent.changeRepositoryById(repositoryId);
+				//parent.changeRepository(repositoryId, escape(path));
+				timeout = 2000;
+			}
+			
+			window.setTimeout(function () {
+				frames['itreeFrame'].syncWithTree(path);
+				}, timeout);
+		}
+		
+		function treeView()
+		{
+			return document.getElementById("itreeFrame");
+		}
+
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=" + itemId + "&repositoryId=" + repoId, path);
+		}
+		
+		function openUrlInWorkArea(url, titel)
+		{
+			//alert("openUrlInWorkArea:" + url);
+			if(parent.openUrlInWorkArea)
+				parent.openUrlInWorkArea(url, titel, 'structure', "$ui.getString("tool.common.pageTabLabelPrefix")");
+		}
+				
+		function loadMainArea(siteNodeId, repositoryId, path)
+		{
+		    //alert("siteNodeId:" + siteNodeId);
+		    parent.frames[3].location.href = "$this.getCMSBaseUrl()/ViewSiteNode!V3.action?siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
+		}
+	    
+	    function refreshNode(nodeId, changeTypeId, addedNodeId)
+		{
+			frames['itreeFrame'].refreshTreeNode(parseInt(nodeId), parseInt(changeTypeId), parseInt(addedNodeId));
+		}
+	    
+	   	function notifyIsLoaded()
+	    {
+	    	document.getElementById('treeDiv').style.left = '2px';
+	    	document.getElementById('treeDiv').style.right = '2px';
+	    }
+
+	    function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+
+		function removeCookies() 
+		{
+			//alert("document.cookie:" + document.cookie);
+			var ca = document.cookie.split(';');
+			for(var i=0;i < ca.length;i++) 
+			{
+				var c = ca[i];
+				while (c.charAt(0)==' ') 
+					c = c.substring(1,c.length);
+				
+				var eqIndex = c.indexOf("=");
+				if (eqIndex > -1)
+				{ 
+					var name = c.substring(0,eqIndex);
+					if(name.indexOf("JSESSIONID") == -1)
+						document.cookie = name + "=" + escape("null")+"; expires=Monday, 04-Apr-1970 05:00:00 GMT";
+				}
+			}
+		}
+		
+		function resizeTreeIframe(height, width)
+		{
+			if(height > 20 && width > 20)
+				$(treeView()).height(height).width(width);
+		}
+		
+		$(document).ready(function(){
+			//alert("$!path");
+			#if($path && $path != "")
+				syncWithTree("$!path", currentRepositoryId);
+ 			##else
+			##	openUrlInWorkArea("ViewStructureToolStartPage!V3.action?repositoryId=$repositoryId", '');
+			#end
+		});
+ 		
+	-->
+	</script>
+	
+</head>
+
+<body class="generaltooledit">
+
+    <div class="onlyExpanded" id="treeDiv" style="position:absolute; margin-top: 10px; margin-left: 6px; top: 0px; bottom: 6px; float: left;">
+		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}" width="220" height="150" allowtransparency="true"></iframe>
+    </div>
+	
+</body>
+</html>

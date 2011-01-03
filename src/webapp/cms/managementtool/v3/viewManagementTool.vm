@@ -1,0 +1,73 @@
+#define( $headerMarkup )
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+
+	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/adminEmbla.css" />
+
+	<script type="text/javascript" src="script/embla/admin.js"></script>
+	<script type="text/javascript">
+	
+		function openUrlInWorkArea(url)
+		{
+			//alert("url:" + url);
+			document.getElementById("workIframe").src = url;
+		}
+	
+		function callInWorkArea(script)
+		{
+			eval(document.getElementById("workIframe").contentWindow.script);
+		}
+		
+		function refreshView(viewName)
+		{
+			//alert("viewName:" + viewName + ":" + $("#workIframe").attr("src"));
+			if($("#workIframe").get(0).contentWindow.refreshView)
+				$("#workIframe").get(0).contentWindow.refreshView(viewName)
+		}
+	
+		function resize()
+		{
+			var windowHeight = getWindowHeight();
+			//alert($("#menutoolbar").height());
+			$("#toolsColumn").height(windowHeight - $("#menutoolbar").height() - 1);
+			$("#treeIframe").height($("#toolsColumn").height() - $("#repositoryChoiceDiv").height());
+			$("#work").width((document.body.clientWidth - ($("#toolsColumn").width() + 7))).height($("#toolsColumn").height());
+			$("#workIframe").width((document.body.clientWidth - ($("#toolsColumn").width() + 7))).height($("#toolsColumn").height());
+		}
+		
+		$(document).ready(function() {
+			resize();
+   			
+	   		window.onresize = function() {
+	   			resize();
+   			}
+
+			openUrlInWorkArea("ViewManagementToolStartPage!V3.action");
+		});
+		
+	</script>
+#end
+ 
+#beginLightCommonToolV3Impl("tool.common.adminTool.header" "" "" false true true $headerMarkup)
+
+<div style="float: left; width: 100%; height: 100%; overflow: hidden;">
+	<div id="menutoolbar" class="$toolbarVariant">
+		<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		</div>
+	</div>
+	<div style="clear: both"></div>
+	
+	<div id="toolsColumn">
+
+		<iframe id="treeIframe" class="repositoryListFrame" name="treeIframe" src="ViewManagementToolMenu!V3.action" width="100%" height="500" frameborder="0" allowtransparency="true"></iframe>
+	
+	</div>
+
+	<div id="work" style="float: left;">
+		<iframe id="workIframe" name="workIframe" src="" width="100%" height="100%" frameborder="0"></iframe>
+	</div>
+</div>
+
+</body>
+</html>

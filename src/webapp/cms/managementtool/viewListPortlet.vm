@@ -1,0 +1,70 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDeleteLink()
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.portletList.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.portletList.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.common.action.label")</th>
+					<th>$ui.getString("tool.managementtool.portlet.contextName")</th>
+					<th>Portlets</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach($app in $portlets.keySet())
+					#set($portletsString = "")
+	
+					#foreach($portlet in $portlets.get($app))
+					  #if($velocityCount > 1)
+						  #set($portletsString = "$portletsString<br>")
+					  #end
+					  #set($portletsString = "$portletsString $portlet")
+					#end
+					
+					<tr>
+						<td><a class="deleteCross" title="$ui.getString("tool.common.delete.label") $app" href="DeletePortlet.action?portletName=$app&igSecurityCode=$securityCode">&nbsp;#*$ui.getString("tool.common.delete.label")*#</a></td>
+						<td>
+							<a href="ViewPortlet.action?portletName=$app" class="group">$app</a>
+						</td>
+						<td>$portletsString</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+	
+		<p>
+			<a href="ViewListPortlet!simple.action">Simple</a>
+		</p>
+		
+	</div>
+		
+#endLightCommonToolV3()

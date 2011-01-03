@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>$ui.getString("tool.contenttool.contentVersionHeader")</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+#if($stateId == 1 || $stateId == 2 || $stateId == 3)
+	#set($readonly = "disabled") 
+#else
+	#set($readonly = "")
+#end
+
+<body class="contenttooledit" onload="javascript:init();">
+	<span id="assetsTable" name="assetsTable">
+	<table border="0" width="100%" cellspacing="0">
+	<tr>
+		#set($counter = 0)
+		#foreach($digitalAsset in $digitalAssets)
+			#set($digitalAssetUrl = "$this.getDigitalAssetUrl($digitalAsset.digitalAssetId)")
+			<td valign="bottom" align="center" class="bordered">
+				<input type="hidden" id="digitalAsset$digitalAsset.assetKey" value="$digitalAssetUrl">
+				<a href="javascript:openPopup('$digitalAssetUrl', 'Preview', 'width=600,height=500,resizable=yes');"><img class="scaledbordered" src="$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)">
+				<br/>$digitalAsset.assetKey</a><br/>
+				#if($readonly == "")
+					<a href="javascript:openPopup('ViewDigitalAsset!update.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId','DigitalAsset','width=500,height=400,resizable=no');">$ui.getString("tool.contenttool.editAttachment")</a> / 
+					<a href="ViewContentVersion!deleteDigitalAsset.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId">$ui.getString("tool.contenttool.deleteAttachment")</a>
+				#end
+			</td>
+			#set($counter = $counter + 1)
+			#if ($counter == 5)
+			</tr>
+			<tr>
+				#set($counter = 0)	
+			#end
+		#end
+		
+		#if($counter == 0)
+			<td>$ui.getString("tool.contenttool.noAttachmentsRightNow")</td>
+		#end	
+	</tr>
+	</table>
+	</span>
+
+	<script type="text/javascript">
+	
+		function init()
+		{
+			if(self.name=="updateframe")
+			{
+				var at = document.getElementById("assetsTable");
+				parent.setAssetsTable(at.innerHTML);
+
+				#if("$oldModifiedDateTime" == "-1")
+					parent.setOldModifiedDateTime("$!contentVersionVO.modifiedDateTime.time");
+				#else
+					parent.setOldModifiedDateTime("$!oldModifiedDateTime");
+				#end
+				
+			}
+		}
+		
+		function getDigitalAssetFile(key)
+		{
+			#foreach($digitalAsset in $digitalAssets)
+				if(key=="$digitalAsset.assetKey")
+					return "$this.getDigitalAssetUrl($digitalAsset.digitalAssetId)";
+			#end		
+		}
+		
+		function getDigitalAssetId(key)
+		{
+		    // Get available asset id:s
+			#foreach($digitalAsset in $digitalAssets)
+				if(key=="$digitalAsset.assetKey")
+					return "$digitalAsset.digitalAssetId";
+			#end		
+		}
+	</script>
+		
+#endContentTool()

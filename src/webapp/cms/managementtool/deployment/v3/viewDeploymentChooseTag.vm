@@ -1,0 +1,52 @@
+#define( $headerMarkup )
+	<script type="text/javascript">
+	<!--
+		function submitForm()
+		{
+			document.editForm.submit();
+		}
+
+		$(document).ready(function(){
+				
+			$("#closeDialog").click(function(){
+				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+		   	});
+		
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.managementtool.deploymentVC.chooseTagHeader" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<form name="editForm" method="post" action="ViewVCDeployment!inputVerifyCheckout.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="vcServerName" value="$vcServerName"/>
+		<input type="hidden" name="vcPassword" value="$vcPassword"/>
+				
+		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<h3>$ui.getString("tool.managementtool.deploymentVC.chooseTagHeader")</h3>
+
+		<p>$ui.getString("tool.managementtool.deploymentVC.chooseTagIntroduction")</p>	
+				
+		<p>
+			<select name="tagName" id="tagName">
+				#foreach($tag in $tags)
+				<option value="$tag">$tag</option>
+				#end
+			</select>
+		</p>
+		
+		#lightFooterToolbar($footerButtons)
+		
+	</form>
+
+#endLightCommonToolV3()

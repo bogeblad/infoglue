@@ -1,0 +1,138 @@
+#beginLightCommonToolV3Impl("tool.contenttool.createPageTemplateWizard.title" "" "" false true $!disableCloseButton "" false "")
+
+	<script type="text/javascript" language="JavaScript">
+		
+	<!-- 
+		var exp;
+		
+		/**
+		 * This is just a hook for the tree to notify us about whats expanded.
+		 */
+		 
+		function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+	    
+	    function notifyIsLoaded()
+	    {
+	    }
+	    
+	    function htmlTreeItemClick(entityId, repositoryId, path)
+		{
+			document.inputForm.parentContentId.value = entityId;
+			document.inputForm.repositoryId.value = repositoryId;
+			document.inputForm.path.value = path;	
+		}
+	    
+	    function changeRepository(selectBox)
+		{
+			alert("Be aware that the page structure will be stored in the language used as master in the destination repository.\n This may render the page template useless if it does not fit your repository.");
+			var repositoryId = selectBox.value;
+			var url = "ViewContentHtmlTree!V3.action?repositoryId=" + repositoryId + "&contentId=$contentId&componentId=$!componentId&tree=$tree";
+			frames['itreeFrame'].location.href = url;
+		}
+	    
+	    function showNext(divName)
+	    {
+	    	if(document.inputForm.name.value != "")
+	    	{
+	    		document.getElementById("setName").style.display = "none";
+	    		document.getElementById("chooseParent").style.display = "block";
+	    	}
+	    	else
+			{
+				alert("You must state a name for the page template.");
+			}
+	    }
+	    
+	    function validateAndSubmit()
+	    {
+	    	if(document.inputForm.parentContentId.value != "" && document.inputForm.repositoryId.value != "" && document.inputForm.contentId.value != "")
+	    	{
+			    document.inputForm.submit();
+			}
+			else
+			{
+				alert("You must state where the template should be stored - mark a folder.");
+			}
+	    }
+	    
+	-->
+	</script>
+	
+<script type="text/javascript">
+<!--
+	$(document).ready(function(){
+		$("#tabsContainer").tabs({ show:function() { resizeScrollArea(); } });
+
+		setTimeout("focusFirst();", 200);
+	});
+		
+-->
+</script>		
+
+#if($enableDateTimeDirectEditing == "true")
+	#set($dateReadonly = "")
+#else
+	#set($dateReadonly = "readonly")
+#end
+
+<div onfocus="this.blur();">
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<form enctype="multipart/form-data" name="inputForm" method="post" action="CreatePageTemplate.action">
+
+		<div id="setName" style="display: block;">
+
+			<h3>Create Page Template - step 1</h3>
+	
+			<p>
+				#editTextField("Content.name" "name" $!name "30" "normaltextfield" "")
+			</p>
+			<p>
+				$ui.getString("tool.contenttool.fileUpload.thumbnailFileLabel")<br/>
+				<input size=30 type="FILE" name="file1"><p>
+			</p>
+			<p class="buttonPane">
+				<input type="button" class="next" value="$ui.getString("tool.common.nextButton.label")" onclick="showNext('chooseParent');"/>
+				<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}"/>
+			</p>
+		</div>
+		
+		
+		<div id="chooseParent" style="display: none;">
+
+			<h3>$ui.getString("tool.contenttool.createPageTemplateWizardChooseParentFolder.title")</h3>
+			<p>
+		  		<select size="1" name="newRepositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+				    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+				    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+				    #end
+				</select>
+			<p>
+			<p>
+				<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?repositoryId=$repositoryId&exp=" + exp + "&akey=/" + contentId + "/&select=" + addedContentId" width="350" height="400" align="baseline"></iframe>
+			</p>
+			<p class="buttonPane">
+				<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="validateAndSubmit();"/>
+				<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}"/>
+			</p>
+		</div>
+	
+		<input type="hidden" name="parentContentId" value="">
+		<input type="hidden" name="repositoryId" value="$repositoryId">
+		<input type="hidden" name="path" value="">
+		<input type="hidden" name="contentId" value="$contentId">
+		<input type="hidden" name="componentId" value="$!componentId">
+	</form>
+				
+	#lightFooterToolbar($footerButtons)
+	
+</div>
+
+#endCommonToolV3()

@@ -1,0 +1,84 @@
+#define( $headerMarkup )
+	<script type="text/javascript">
+	<!-- 
+	    function notifyIsLoaded()
+	    {
+	    }
+	    
+	    function notifyExp(v)
+	    {
+	    }
+
+		function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			var url = "CreateContentWizardFinish!V3.action?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&componentId=$componentId&propertyName=$propertyName&$allowedContentTypeIdsAsUrlEncodedString&refreshAddress=$encodedRefreshAddress&showSimple=$showSimple&showDecorated=$!showDecorated";
+			document.location.href = url;
+		}
+
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			document.inputForm.parentContentId.value = itemId;
+			document.inputForm.repositoryId.value = repoId;
+			document.inputForm.path.value = path;	
+		}
+	
+		function loadMainArea(contentId, repositoryId, path)
+		{
+		    document.inputForm.newParentContentId.value = contentId;
+		}
+	    
+	    function next()
+		{
+			var parentContentId = document.inputForm.parentContentId.value;
+			if(parentContentId != "")
+			{
+				document.inputForm.submit();
+			}
+		    else
+		    {
+				alert("You must select a folder.");
+			}
+		}
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.createContentWizardChooseLocation.title" "" "" false true $!disableCloseButton $headerMarkup)
+	
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+		
+	<form name="inputForm" action="$returnAddress">
+		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
+		<input type="hidden" name="returnAddress" value="$returnAddress">
+		<input type="hidden" name="originalAddress" value="$originalAddress">
+		#foreach($allowedContentTypeId in $allowedContentTypeIds)
+		<input type="hidden" name="allowedContentTypeIds" value="$allowedContentTypeId">
+		#end
+		<input type="hidden" name="allowedContentTypeIdsAsUrlEncodedString" value="$allowedContentTypeIdsAsUrlEncodedString">
+		<input type="hidden" name="parentContentId" value="">
+		<input type="hidden" name="repositoryId" value="$repositoryId">
+		<input type="hidden" name="path" value="">
+	
+		<div id="igEditArea" class="igScrollArea">
+	
+		<h3>$ui.getString("tool.contenttool.createContentWizardChooseParentFolder.label")</h3>
+		
+		<p>
+	  		<select size="1" name="repositoryId" class="sitedropbox" onchange="javascript:changeRepository(this);" style="margin-bottom: 5px;">
+			    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+			    #foreach ($repositoryVO in $repositories)
+			    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+			    #end
+			</select><br/>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?showLeafs=no&repositoryId=${repositoryId}" width="350" height="460" ></iframe>
+		</p>
+	
+		#lightFooterToolbar($footerButtons)
+	
+	</form>
+
+#endLightCommonToolV3()
+

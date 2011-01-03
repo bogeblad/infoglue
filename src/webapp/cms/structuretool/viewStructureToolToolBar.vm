@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Toolbar</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/ig_scroll.js"></script>
+	<script type="text/javascript" src="script/ig_hscroll.js"></script>
+	<script type="text/javascript">
+	<!-- 
+		setCMSContext('$this.getCMSBaseUrl()');
+	
+		function openMainArea(url)
+		{
+			//alert('url:' + url);
+			parent.frames["main"].location.href = '' + url;
+			if(url.indexOf("ViewPage") > -1)
+			{
+				this.location.href = "$this.getCMSBaseUrl()/ViewStructureToolToolBar.action?title=tool.structuretool.siteNodeComponentsHeader&toolbarKey=tool.structuretool.siteNodeComponentsHeader&siteNodeId=$siteNodeId&repositoryId=$repositoryId&isBranch=true";
+				//document.getElementById("Site Node Components").style.display = "none";
+				//document.getElementById("SiteNode Cover").style.display = "block";
+			}
+		}
+
+		function reload(url, title)
+		{
+			//alert('url:' + url);
+			this.location.href = '$this.getCMSBaseUrl()/ViewStructureToolToolBar.action?url=' + url + '&title=' + title;
+		}
+		
+		
+		//-----------------------------------------------
+		// This function reloads the toolbar above the current 
+		// active action so that buttons related to the view 
+		// can be shown and a suitable headline be written.
+		//-----------------------------------------------
+		
+		function submitListForm(entityName)
+		{
+			var listForm = parent.frames["main"].document.listForm;
+			var selectedObjects = getSelectedObjects(listForm, entityName);
+			var selectedTexts = getSelectedTexts(listForm);
+			//alert("selectedObjects:" + selectedObjects);
+			if (selectedObjects == "")
+			{
+				alert('Select one or more objects to delete');
+			  	return;
+			}
+			else
+			{
+				listForm.message.value = listForm.message.value + selectedTexts;
+				listForm.yesDestination.value = listForm.yesDestination.value + '?' + selectedObjects;
+				listForm.submit();
+			}
+
+		}
+		
+		
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones id's to the id-List 
+		//-----------------------------------------------
+
+		function getSelectedObjects(listForm, entityName)
+		{
+			var str = '';
+		
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += '&' + entityName + 'Id=' + escape(listForm.sel.value);
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (listForm.sel[i].checked)
+			    		str += '&' + entityName + 'Id=' + escape(listForm.sel[i].value);
+			 	}
+			}
+					 	
+		 	return str;
+		}
+
+
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones names to the messagesList 
+		//-----------------------------------------------
+		
+		function getSelectedTexts(listForm)
+		{
+			var str = '';
+
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += listForm.rowtitle.value + "<br/>";
+		  	}
+		  	else
+		  	{	
+				for (i=0; i<length; i++)
+				{
+					if (listForm.sel[i].checked)
+				    	str += listForm.rowtitle[i].value + "<br/>";
+				}
+			}
+					
+			return str;
+		}
+
+		function initScrollLayer() 
+		{
+			var wndo = new dw_scrollObj('wn', 'lyr1', 't1');
+			dw_scrollObj.GeckoTableBugFix('wn'); 
+		}
+		
+		function enableScrollLayer()
+		{
+			document.getElementById("scroll").style.zIndex = "3000";
+		}
+		
+		function disableScrollLayer()
+		{
+			document.getElementById("scroll").style.zIndex = "1";
+		}
+
+		function refreshStructureToolBar(context, title, toolbarKey, arguments, repositoryId, siteNodeId, path)
+		{
+			toolbarKey 	= hexcode(toolbarKey);	
+
+			var agt=navigator.userAgent.toLowerCase();
+	   	    if(agt.indexOf("safari")!=-1)
+	   	    {
+	   	    	document.location.href = context + '/ViewStructureToolToolBar.action?title=' + title + '&toolbarKey=' + toolbarKey + '&' + arguments;
+	   		}
+	   	    else	
+	   	    {
+				if(parent.frames["toolbar"].document)
+				{
+					parent.frames["toolbar"].location.href = context + '/ViewStructureToolToolBar.action?title=' + title + '&toolbarKey=' + toolbarKey + '&' + arguments;
+			   	    	
+					parent.frames["menu"].syncWithTree(path, repositoryId);
+				}
+	   	    }
+		}
+
+		//-----------------------------------------------
+		// This function reloads the toolbar above the current 
+		// active action so that buttons related to the view 
+		// can be shown and a suitable headline be written.
+		//-----------------------------------------------
+
+		function refreshStructureToolBarAndMenu(context, title, toolbarKey, arguments, unrefreshedNodeId, changeTypeId, newNodeId)
+		{
+			//alert("unrefreshedNodeId:" + unrefreshedNodeId);
+			//alert("changeTypeId:" + changeTypeId);
+			//alert("newNodeId:" + newNodeId);
+
+			var agt=navigator.userAgent.toLowerCase();
+		    if(agt.indexOf("safari")!=-1)
+		    {
+				toolbarKey 	= hexcode(toolbarKey);	
+				
+				parent.frames[2].location = context + '/ViewStructureToolToolBar.action?title=' + title + '&toolbarKey=' + toolbarKey + '&' + arguments;
+				
+				if(unrefreshedNodeId > 0)
+				{
+					parent.frames[1].refreshNode(unrefreshedNodeId, changeTypeId, newNodeId);
+				}
+		    }
+		    else	
+		    {
+				if(parent.frames["toolbar"].document)
+				{
+					toolbarKey 	= hexcode(toolbarKey);	
+					
+					parent.frames["toolbar"].location.href = context + '/ViewStructureToolToolBar.action?title=' + title + '&toolbarKey=' + toolbarKey + '&' + arguments;
+					
+					if(unrefreshedNodeId > 0)
+					{
+						parent.frames["menu"].refreshNode(unrefreshedNodeId, changeTypeId, newNodeId);
+					}
+				}
+		    }
+		}
+				
+	-->
+	</script>
+	
+	<style type="text/css">
+	<!--
+		.menuItem {
+			  position: absolute;
+			  background-color: #F0E1B4;
+			  overflow: hidden;
+			  top: 3px; 
+			  height: 24px;
+		  }
+		.selectedMenuItem {
+			  position: absolute;
+			  background-color: #F0E1B4;
+			  overflow: hidden;
+			  top: 3px; 
+			  height: 48px;
+			  border: 1px solid gray;
+		  }
+	
+		.menuButton {
+			  background-color: #F0E1B4;
+			  border: 1px solid #F0E1B4;
+		  }
+		.selectedMenuButton {
+		  	  background-color: #E8D28F;
+		  	  border: 1px outset #C2D0E2;
+		  }
+		
+		div#hold { 
+			z-index:1;
+			}
+		
+		div#wn	{ 
+			top:0px; 
+			left:0px; 
+			width:100%; 
+			height:54px; 
+			overflow:hidden;	
+			z-index:1; 
+			}
+		
+		div#lyr1 { 
+			left:0px; 
+			top:0px; 
+			z-index:1; 
+			}
+	-->
+	</style>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body onload="initScrollLayer();" class="structuretool">
+<!-- This is a layer making it impossible to click on the buttons while it is reloading --->
+<div id="lockLayer" style="LEFT:1px; RIGHT:2px; position:absolute; TOP:1px; BOTTOM:1px; visibility:visible; display: none; z-index:10" onclick="alert('You cannot perform actions now as the toolbar is reloading.');"> 
+<table class="structuretool" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+<div id="scroll" style="left: 0px; width: 100%; border: 0px solid red; position: absolute; padding: 2px 0px 2px 0px; top: 32px; height: 10px; z-index: 500;">
+	<div style="float: left; z-index: 1000; padding-left: 4px;"">
+	<a href="javascript://" onclick="return false" onmouseover="dw_scrollObj.initScroll('wn','left')" onmouseout="dw_scrollObj.stopScroll('wn')" onmousedown="dw_scrollObj.doubleSpeed('wn')" onmouseup="dw_scrollObj.resetSpeed('wn')"><img src="images/arrowleft.gif" width="5" height="10" alt="Scroll left" border="0"/></a>    
+	</div>
+	<div style="float: right; z-index: 1000; padding-right: 4px;"">
+	<a href="javascript://" onclick="return false" onmouseover="dw_scrollObj.initScroll('wn','right')" onmouseout="dw_scrollObj.stopScroll('wn')" onmousedown="dw_scrollObj.doubleSpeed('wn')" onmouseup="dw_scrollObj.resetSpeed('wn')"><img src="images/arrowright.gif" width="5" height="10" alt="Scroll right" border="0"/></a>
+	</div>
+</div>
+
+<!-- This is the toolbar --->
+<div id="hold" style="left: 0px; border: 0px solid blue; position: absolute; padding: 0px 0px 0px 0px; top: 1px; height: 44px;">
+<div id="wn" style="float: left; margin: 0px; padding: 0px;">
+<div id="lyr1" style="border: 0px solid yellow; height: 34px; top: 1px; left: 0px; position: absolute; visibility: visible; z-index: 1; width: 1100px;">
+<table id="t1" cellpadding="0" cellspacing="0" border="0" style="border: 0px solid red; position: absolute;">
+<!--
+<div style="LEFT:1px; RIGHT:2px; position:absolute; TOP:1px; BOTTOM:1px; visibility:visible; z-index:1">
+<table class="structuretool" cellpadding="0" cellspacing="0" border="0">
+-->
+<tr>
+	<td colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="28"></td>
+	<td valign="middle" width="100%" height="100%">
+		#set($left = 2)
+		#foreach($button in $buttons)
+			#set($showed = false)
+			#set($width = $button.width + 2)
+			#if($button.isSelfContained)
+			<div class="menuItem" #if($button.subButtons.size() > 0)onmouseover="disableScrollLayer(); this.className='selectedMenuItem';" onmouseout="enableScrollLayer(); this.className='menuItem';"#end style="left: ${left}px; width: ${width}px;">
+				<a href="$button.getActionUrl()"><img src="$button.getImageUrl()" border="0" class="menuButton" onmouseover="this.className='selectedMenuButton';" onmouseout="this.className='menuButton';"></a>						 
+				#set($showed = true)
+			#else
+				#set($skip = false)
+				#if($button.title == "Site Node Components" && $title == "tool.structuretool.siteNodeComponentsHeader")
+					#set($skip = true)
+				#end
+				#if($button.title == "SiteNode Cover" && $title == "tool.structuretool.siteNodeDetailsHeader")
+					#set($skip = true)
+				#end
+				
+				#if($skip == false)
+				<div class="menuItem" #if($button.subButtons.size() > 0)onmouseover="disableScrollLayer(); this.className='selectedMenuItem';" onmouseout="enableScrollLayer(); this.className='menuItem';"#end style="left: ${left}px; width: ${width}px;">
+					<a id="$button.getTitle()" $style href="javascript:openMainArea('$button.getActionUrl()', '$button.getTitle()');"><img src="$button.getImageUrl()" border="0" class="menuButton" onmouseover="this.className='selectedMenuButton';" onmouseout="this.className='menuButton';"></a>
+			 		#set($showed = true)
+				#end
+			#end
+			
+			#if($showed == true)
+   			  #foreach($subButton in $button.subButtons)
+				#set($width = $subButton.width + 2)
+				#if($subButton.isSelfContained)
+					<a href="$subButton.getActionUrl()"><img src="$subButton.getImageUrl()" border="0" class="menuButton" onmouseover="this.className='selectedMenuButton';" onmouseout="this.className='menuButton';"></a>						 
+				#else
+					<a id="$subButton.getTitle()" $style href="javascript:openMainArea('$subButton.getActionUrl()', '$subButton.getTitle()');"><img src="$subButton.getImageUrl()" border="0" class="menuButton" onmouseover="this.className='selectedMenuButton';" onmouseout="this.className='menuButton';"></a>
+				#end
+			  #end
+			  				
+			  #if($button.subButtons.size() > 0)
+				<div style="position: absolute; right: 0px; bottom: 2px; width: 3px; height: 3px;">
+					<img src="images/expandMenu.gif">
+				</div>
+			  #end
+	 		  </div>
+
+			  #set($left = $left + $button.width + 5)
+				<div style="position: absolute; left: ${left}px; top: 5px; width: 2px; height: 20px;">
+					<img src="images/splitter.gif">
+				</div>
+			  #set($left = $left + 3)
+			#end
+ 		#end
+	</td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td colspan="3" bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+<div style="float: right;"></div>
+</div>
+</div>
+
+<!-- This is the headline --->
+<div style="LEFT:0px; RIGHT:0px; position:absolute; TOP:32px; BOTTOM:1px; visibility:visible; z-index:0">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+	<td colspan="3" bgcolor="FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td class="actionheader"><div class="leftmarginalized">$ui.getString($title) $!stateDescription - $!siteNodeVO.name</div></td>
+</tr>
+<tr class="lightgreen">
+	<td colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+</body>
+</html>

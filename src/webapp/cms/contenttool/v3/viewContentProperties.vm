@@ -1,0 +1,69 @@
+#define( $headerMarkup )
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	
+	<script type="text/javascript">
+	<!--
+	
+		function save()
+		{
+			$("form").get(0).submit();
+		}
+		
+		function saveAndExit(action)
+		{
+			$("form").get(0).action = action;
+			save();
+		}
+			
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.contentPropertiesHeader" "$!contentId" "contentId=$!contentId" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+
+	<form method="POST" name="editForm" action="ViewContentProperties!saveV3.action">
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="userSessionKey" value="$userSessionKey">
+		<input type="hidden" name="returnAddress" value="$returnAddress">
+		
+		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+
+			<h3>$ui.getString("tool.contenttool.contentPropertiesHeader")</h3>
+			
+			<p>
+				$ui.getString("entity.Content.property.defaultContentTypeName.label")<br/>
+				<select name="defaultContentTypeName">
+				#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+					<option value="$contentTypeDefinitionVO.getName()" #if($defaultContentTypeName == $contentTypeDefinitionVO.getName())selected="1"#end>$contentTypeDefinitionVO.getName()</option>
+				#end
+				</select>
+			</p>
+			<p>
+				$ui.getString("entity.Content.property.allowedContentTypeNames.label")<br/>
+				#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+					<input type="checkbox" name="allowedContentTypeName" value="$contentTypeDefinitionVO.getName()" #if($allowedContentTypeNames.indexOf("$contentTypeDefinitionVO.getName(),") > -1)checked="1"#end>$contentTypeDefinitionVO.getName()</input><br/>
+				#end
+			</p>
+			<p>
+				$ui.getString("entity.Content.property.initialLanguage.label")<br/>
+				<select name="initialLanguageId">
+					<option value="-1" #if($initialLanguageId == "-1")selected="1"#end>$ui.getString("tool.common.inherit")</option>
+					#foreach ($languageVO in $languageVOList)
+						<option value="$languageVO.id" #if($initialLanguageId == "$languageVO.getId()")selected="1"#end>$languageVO.getName()</option>
+					#end
+				</select>
+			</p>
+				
+		</div>
+		
+		#lightFooterToolbar($footerButtons)
+		
+	</form>
+		
+
+#endLightCommonToolV3()

@@ -1,0 +1,35 @@
+#define( $headerMarkup )
+	<link rel="stylesheet" type="text/css" media="all" href="css/cms.css" title="cms" />
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.common.workflowDetails.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	
+	<h3>$ui.getString("tool.common.workflowDetails.title")</h3>
+
+	<table border="0" cellpadding="4" cellspacing="0" width="100%">
+	#foreach($workflowStepVO in $workflow.declaredSteps)
+	<tr style="background-color: white;">
+		<td>$workflowStepVO.name</td>
+		<td>#if($workflowStepVO.owner)$workflowStepVO.owner#else Not specified#end</td>
+	</tr>
+	#foreach($workflowActionVO in $workflowStepVO.actions)
+	<tr style="background-color: #eeeeee;">
+		<td style="padding-left: 20px; font-size:10px;">$workflowActionVO.name</td>
+		<td style="padding-left: 20px; font-size:10px;"><!--$workflowActionVO.view--></td>
+	</tr>
+	#end
+	#end
+	</table>
+	
+	#lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()

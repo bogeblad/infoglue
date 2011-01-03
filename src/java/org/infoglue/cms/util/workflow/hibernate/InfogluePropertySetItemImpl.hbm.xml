@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN" "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.infoglue.cms.util.workflow.hibernate.InfogluePropertySetItemImpl" table="OS_PROPERTYENTRY">
+        <composite-id>
+            <key-property name="entityName" column="entity_name" length="125" />
+            <key-property name="entityId" column="entity_id" />
+            <key-property name="key" column="entity_key" />
+        </composite-id>
+
+        <property name="type" column="key_type" />
+        <property name="booleanVal" column="boolean_val" />
+        <property name="doubleVal" column="double_val" />
+        <property name="stringVal" column="string_val" />
+        <property name="longVal" column="long_val" />
+        <property name="intVal" column="int_val" />
+        <property name="dateVal" type="timestamp" column="date_val" />
+        <property name="dataVal" column="data_val" />
+    </class>
+	<query name="all_keys"><![CDATA[
+		select item.key from item in class org.infoglue.cms.util.workflow.hibernate.InfogluePropertySetItem
+		where item.entityName = :entityName and item.entityId = :entityId
+	]]></query>
+	<query name="all_keys_with_type"><![CDATA[
+		select item.key from item in class org.infoglue.cms.util.workflow.hibernate.InfogluePropertySetItem
+		where item.entityName = :entityName and item.entityId = :entityId and item.type = :type
+	]]></query>
+	<query name="all_keys_like"><![CDATA[
+		select item.key from item in class org.infoglue.cms.util.workflow.hibernate.InfogluePropertySetItem
+		where item.entityName = :entityName and item.entityId = :entityId and item.key LIKE :like
+	]]></query>
+	<query name="all_keys_with_type_like"><![CDATA[
+		select item.key from item in class org.infoglue.cms.util.workflow.hibernate.InfogluePropertySetItem
+		where item.entityName = :entityName and item.entityId = :entityId
+		and item.type = :type and item.key LIKE :like
+	]]></query>
+
+</hibernate-mapping>

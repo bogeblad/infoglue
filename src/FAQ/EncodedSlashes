@@ -1,0 +1,9 @@
+If you run Apache in front of InfoGlue and run portlets or similar you may get invalid URL-errors.
+This may be because of escaped slashes in the url - check out this:
+
+http://httpd.apache.org/docs-2.0/mod/core.html#allowencodedslashes
+
+You just need to add this to the httpd.conf
+
+AllowEncodedSlashes On 
+

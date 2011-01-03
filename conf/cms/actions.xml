@@ -1,0 +1,1829 @@
+<!-- $Id: actions.xml,v 1.99 2010/09/09 12:13:31 mattias Exp $ -->
+<actions>
+
+	<!-- MySettings -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewMySettingsAction" alias="ViewMySettings">
+		<view name="success">/cms/managementtool/v3/viewMySettings.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateMySettingsAction" alias="UpdateMySettings">
+		<view name="success">ViewMySettings.action?settingsSaved=true</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- InstallationValidator -->
+	<action name="org.infoglue.cms.applications.managementtool.InstallationValidatorAction" alias="InstallationValidator">
+		<view name="input">/cms/managementtool/viewValidationForm.vm</view>
+		<view name="success">/cms/managementtool/viewValidationResults.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Configuration Validator -->
+	<action name="org.infoglue.cms.applications.common.actions.ConfigurationAction" alias="Configuration">
+		<view name="input">/cms/managementtool/viewConfiguration.vm</view>
+		<view name="success">/cms/managementtool/viewConfiguration.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Log viewer -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewLoggingAction" alias="ViewLogging">
+		<view name="success">/cms/managementtool/viewLogging.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Inconsistencies viewer -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewInconsistenciesAction" alias="ViewInconsistencies">
+		<view name="input">/cms/managementtool/viewInconsistenciesInput.vm</view>
+		<view name="success">/cms/managementtool/viewInconsistencies.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- DatabaseDefinitions -->
+	<action name="org.infoglue.deliver.applications.actions.ViewDatabaseSettingsAction" alias="ViewDatabaseSettings">
+		<view name="input">/deliver/viewDatabaseSettings.vm</view>
+		<view name="success">/deliver/viewDatabaseSettings.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Test -->
+	<action name="org.infoglue.cms.applications.common.actions.PerformanceTestAction" alias="PerformanceTest">
+		<view name="error">/cms/managementtool/performanceResult.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Error Action -->
+	<action name="org.infoglue.deliver.applications.actions.ErrorPageAction" alias="ErrorPage">
+		<view name="success">/deliver/error.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Redirect -->
+	<action name="org.infoglue.cms.applications.common.actions.ExtendedRedirect" alias="ExtendedRedirect">
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Confirmation -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ConfirmAction" alias="Confirm">
+		<!--<view name="reroute">org.infoglue.cms.applications.common.actions.ConfirmRedirect.action?url=dest</view>-->
+		<view name="reroute">${dest}</view>
+		<view name="success">/cms/managementtool/confirm.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Loading frames -->
+	<action name="org.infoglue.cms.applications.structuretool.actions.LoadingAction" alias="Loading">
+		<view name="successStructure">/cms/structuretool/loading.vm</view>
+		<view name="successContent">/cms/contenttool/loading.vm</view>
+	</action>
+
+	<!-- CMS LOGIN -->
+	<action name="org.infoglue.cms.applications.common.actions.LoginAction" alias="Login">
+		<view name="logout">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+		<view name="success">/cms/managementtool/login.vm</view>
+		<view name="redirect">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+		<view name="userAccepted">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+		<view name="invalidLogin">/cms/managementtool/loginError.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- CMS CACHE UPDATE -->
+	<action name="org.infoglue.cms.applications.cmstool.actions.UpdateCacheAction" alias="UpdateCache">
+		<view name="input">/cms/cmstool/viewCacheUpdateForm.vm</view>
+		<view name="success">/cms/cmstool/cacheUpdated.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- AJAX-services -->
+	<action name="org.infoglue.cms.applications.common.actions.ViewCommonAjaxServicesAction" alias="ViewCommonAjaxServices">
+		<view name="successRepositories">/cms/common/viewRepositoyListAsJSON.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- CMS TOOL FRAMES -->
+	<action name="org.infoglue.cms.applications.cmstool.actions.ViewCMSToolAction" alias="ViewCMSTool">
+		<view name="success">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+		<view name="successDefault">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+		<view name="loginComplete">/cms/common/loginComplete.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.cmstool.actions.ViewCMSToolHeaderAction" alias="ViewCMSToolHeader">
+		<view name="success">/cms/cmstool/viewCMSToolHeader.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.cmstool.actions.ViewCMSToolFooterAction" alias="ViewCMSToolFooter">
+		<view name="success">/cms/cmstool/viewCMSToolFooter.vm</view>
+	</action>
+
+	<!-- CMS VERSION 3 TOOL IFRAMES CLASSIC -->
+	<action name="org.infoglue.cms.applications.cmstool.actions.ViewCMSAction" alias="ViewCMS">
+		<view name="success">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+		<view name="successDefault">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+	</action>
+	
+	<!-- CMS VERSION 3 TOOL IFRAMES MODERN-->
+	<action name="org.infoglue.cms.applications.cmstool.actions.AdminAction" alias="Admin">
+		<view name="successOutlook">/cms/cmstool/admin.vm</view>
+		<view name="success">/cms/cmstool/adminEmbla.vm</view>
+		<view name="successEmbla">/cms/cmstool/adminEmbla.vm</view>
+		<view name="successClassic">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=ViewCMS.action</view>
+		<view name="successReset">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+	</action>
+	<action name="org.infoglue.cms.applications.common.actions.ViewToolbarButtonsAction" alias="ViewToolbarButtons">
+		<view name="success">/cms/common/viewToolbarButtons.vm</view>
+	</action>
+
+	<!-- CMS MY DESKTOP TOOL FRAMES -->
+	<action name="org.infoglue.cms.applications.mydesktoptool.actions.ViewMyDesktopAction" alias="ViewMyDesktop">
+		<view name="success">/cms/mydesktoptool/v3/viewMyDesktop.vm</view>
+		<view name="ongoing">/cms/mydesktoptool/v3/viewOngoingWorkflows.vm</view>
+		<view name="available">/cms/mydesktoptool/v3/viewAvailableWorkflows.vm</view>
+		<view name="shortcuts">/cms/mydesktoptool/v3/viewShortcuts.vm</view>
+		<view name="latestPages">/cms/mydesktoptool/v3/viewLatestPages.vm</view>
+		<view name="latestContents">/cms/mydesktoptool/v3/viewLatestContents.vm</view>
+		<view name="error">/cms/mydesktoptool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.mydesktoptool.actions.WorkflowAction" alias="Workflow">
+		<view name="success">/cms/mydesktoptool/v3/workflow.vm</view>
+		<view name="successWorkflowDetails">/cms/mydesktoptool/v3/workflowDetails.vm</view>
+		<view name="successRunningWorkflowDetails">/cms/mydesktoptool/v3/runningWorkflowDetails.vm</view>
+		<view name="error">/cms/mydesktoptool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.mydesktoptool.actions.ViewMyDesktopToolAction" alias="ViewMyDesktopTool">
+		<view name="success">/cms/mydesktoptool/viewMyDesktopTool.vm</view>
+		<view name="successV3">/cms/mydesktoptool/v3/viewMyDesktopTool.vm</view>
+		<view name="error">/cms/mydesktoptool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.mydesktoptool.actions.ViewMyDesktopToolHeaderAction" alias="ViewMyDesktopToolHeader">
+		<view name="success">/cms/mydesktoptool/viewMyDesktopToolHeader.vm</view>
+		<view name="error">/cms/mydesktoptool/error.vm</view>
+	</action>
+    <action name="org.infoglue.cms.applications.mydesktoptool.actions.ViewMyDesktopToolMenuAction" alias="ViewMyDesktopToolMenu">
+    	<view name="success">/cms/mydesktoptool/v3/viewMyDesktopToolMenu.vm</view>
+        <view name="error">/cms/mydesktoptool/error.vm</view>
+    </action>
+	<action name="org.infoglue.cms.applications.mydesktoptool.actions.ViewMyDesktopToolToolBarAction" alias="ViewMyDesktopToolToolBar">
+		<view name="success">/cms/mydesktoptool/viewMyDesktopToolToolBar.vm</view>
+		<view name="error">/cms/mydesktoptool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.mydesktoptool.actions.ViewMyDesktopToolStartPageAction" alias="ViewMyDesktopToolStartPage">
+		<!-- <view name="success">/cms/mydesktoptool/viewMyDesktopToolStartPage.vm</view> -->
+		<view name="success">/cms/mydesktoptool/viewAjaxBasedMyDesktopToolStartPage.vm</view>
+		<view name="successTaskList">/cms/mydesktoptool/viewMyDesktopToolTaskList.vm</view>
+		<view name="error">/cms/mydesktoptool/error.vm</view>
+		<view name="invalidAction">/cms/mydesktoptool/invalidAction.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.mydesktoptool.actions.CreateWorkflowInstanceAction" alias="CreateWorkflowInstance">
+		<view name="success">ViewMyDesktopToolStartPage.action</view>
+		<view name="error">/cms/mydesktoptool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.mydesktoptool.actions.RegisterUserInfoAction" alias="RegisterUserInfo">
+		<view name="success">/cms/mydesktoptool/viewRegisterUserInfoAction.vm</view>
+		<view name="error">/cms/mydesktoptool/error.vm</view>
+	</action>
+
+
+	<!-- CMS MANAGEMENT TOOL FRAMES -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewManagementToolAction" alias="ViewManagementTool">
+		<view name="success">/cms/managementtool/viewManagementTool.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewManagementTool.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewManagementToolHeaderAction" alias="ViewManagementToolHeader">
+		<view name="success">/cms/managementtool/viewManagementToolHeader.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewManagementToolMenuHtmlAction" alias="ViewManagementToolMenu">
+		<view name="success">/cms/managementtool/viewManagementToolMenuHTML.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewManagementToolMenuHTML.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewManagementToolToolBarAction" alias="ViewManagementToolToolBar">
+		<view name="success">/cms/managementtool/viewManagementToolToolBar.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewManagementToolStartPageAction" alias="ViewManagementToolStartPage">
+		<view name="success">/cms/managementtool/viewManagementToolStartPage.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewManagementToolStartPage.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+
+	<!-- CMS PUBLISHING TOOL FRAMES -->
+	<action name="org.infoglue.cms.applications.publishingtool.actions.ViewPublishingToolAction" alias="ViewPublishingTool">
+		<view name="success">/cms/publishingtool/viewPublishingTool.vm</view>
+		<view name="successV3">/cms/publishingtool/v3/viewPublishingTool.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.publishingtool.actions.ViewPublishingToolHeaderAction" alias="ViewPublishingToolHeader">
+		<view name="success">/cms/publishingtool/viewPublishingToolHeader.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.publishingtool.actions.ViewPublishingToolMenuAction" alias="ViewPublishingToolMenu">
+		<view name="success">/cms/publishingtool/v3/viewPublishingToolMenu.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.publishingtool.actions.ViewPublishingToolToolBarAction" alias="ViewPublishingToolToolBar">
+		<view name="success">/cms/publishingtool/viewPublishingToolToolBar.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.publishingtool.actions.ViewPublishingToolStartPageAction" alias="ViewPublishingToolStartPage">
+		<view name="success">/cms/publishingtool/viewPublishingToolStartPage.vm</view>
+		<view name="successV3">/cms/publishingtool/v3/viewPublishingToolStartPage.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+
+
+	<!-- CMS CONTENT TOOL FRAMES -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentToolAction" alias="ViewContentTool">
+		<view name="success">/cms/contenttool/viewContentTool.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewContentTool.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentToolHeaderAction" alias="ViewContentToolHeader">
+		<view name="success">/cms/contenttool/viewContentToolHeader.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentToolMenuAction" alias="ViewContentToolMenu">
+		<view name="success">/cms/contenttool/viewContentToolMenu.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewContentToolMenu.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentToolMenuHtmlAction" alias="ViewContentToolMenuHtml">
+		<view name="success">/cms/contenttool/viewContentToolMenuHTML.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentToolMenuHtmlAction" alias="ViewContentHtmlTree">
+		<view name="success">/cms/contenttool/viewHtmlTree.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewHtmlTree.vm</view>
+		<view name="bindingView">/cms/contenttool/viewHtmlTreeForBinding.vm</view>
+		<view name="bindingViewV3">/cms/contenttool/v3/viewHtmlTreeForBinding.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ContentTreeXMLAction" alias="ViewXContentTree">
+        <view name="success">/cms/contenttool/viewNodesXML.vm</view>
+        <view name="error">/cms/contenttool/error.vm</view>
+    </action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.SimpleContentXmlAction" alias="SimpleContentXml">
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentToolAjaxServicesAction" alias="ViewContentToolAjaxServices">
+		<view name="success">/cms/contenttool/v3/viewContentToolContextMenu.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.SimpleContentXmlServiceAction" alias="SimpleContentXmlService">
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentToolToolBarAction" alias="ViewContentToolToolBar">
+		<view name="success">/cms/contenttool/viewContentToolToolBar.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentToolStartPageAction" alias="ViewContentToolStartPage">
+		<view name="success">/cms/contenttool/viewContentToolStartPage.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewContentToolStartPage.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- Stefan 040616 -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.TextToImageEditorAction" alias="TextToImageEditor">
+		<view name="success">/cms/contenttool/textToImageEditor.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<!-- Stefan 040616 End-->
+
+
+	<!-- CMS STRUCTURE TOOL FRAMES -->
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureToolAction" alias="ViewStructureTool">
+		<view name="success">/cms/structuretool/viewStructureTool.vm</view>
+		<view name="successV3">/cms/structuretool/v3/viewStructureTool.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureToolHeaderAction" alias="ViewStructureToolHeader">
+		<view name="success">/cms/structuretool/viewStructureToolHeader.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureToolMenuAction" alias="ViewStructureToolMenu">
+		<view name="success">/cms/structuretool/viewStructureToolMenu.vm</view>
+		<view name="successV3">/cms/structuretool/v3/viewStructureToolMenu.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureToolMenuHtmlAction" alias="ViewStructureToolMenuHtml">
+		<view name="success">/cms/structuretool/viewStructureToolMenuHTML.vm</view>
+		<view name="successV3">/cms/structuretool/v3/viewStructureToolMenuHTML.vm</view>
+		<view name="bindingView">/cms/structuretool/viewHtmlTreeForBinding.vm</view>
+		<view name="bindingViewV3">/cms/structuretool/v3/viewHtmlTreeForBinding.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>														  
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureToolMenuHtmlAction" alias="ViewStructureHtmlTree">
+		<view name="success">/cms/structuretool/viewHtmlTree.vm</view>
+		<view name="successV3">/cms/structuretool/v3/viewHtmlTree.vm</view>
+		<view name="bindingView">/cms/structuretool/viewHtmlTreeForBinding.vm</view>
+		<view name="bindingViewV3">/cms/structuretool/v3/viewHtmlTreeForBinding.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureToolToolBarAction" alias="ViewStructureToolToolBar">
+		<view name="success">/cms/structuretool/viewStructureToolToolBar.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureToolStartPageAction" alias="ViewStructureToolStartPage">
+		<view name="success">/cms/structuretool/viewStructureToolStartPage.vm</view>
+		<view name="successV3">/cms/structuretool/v3/viewStructureToolStartPage.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.SimpleStructureXmlAction" alias="SimpleStructureXml">
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureToolAjaxServicesAction" alias="ViewStructureToolAjaxServices">
+		<view name="successTreeContextMenu">/cms/structuretool/v3/viewStructureToolContextMenu.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewComponentPaletteAction" alias="ViewComponentPalette">
+		<view name="success">/cms/structuretool/v3/viewComponentPalette.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+
+
+	<!-- Repository -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewRepositoryOverviewAction" alias="ViewRepositoryOverview">
+		<view name="success">/cms/managementtool/viewRepositoryOverview.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListRepositoryAction" alias="ViewListRepository">
+		<view name="success">/cms/managementtool/viewListRepository.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewListRepository.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewRepositoryAction" alias="ViewRepository">
+		<view name="success">/cms/managementtool/viewRepository.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateRepositoryAction" alias="UpdateRepository">
+		<view name="input">/cms/managementtool/viewRepository.vm</view>
+		<view name="success">ViewRepository.action</view>
+		<view name="saveAndExit">ViewListRepository.action</view>
+		<view name="saveAndExitLocal">ViewRepositoryOverview.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteRepositoryAction" alias="DeleteRepository">
+		<view name="success">ViewListRepository.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+		<!--
+		<view name="error">/cms/contenttool/error.vm</view>
+		-->
+		<view name="input">/cms/managementtool/showConstraintExceptionForRepositoryDelete.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateRepositoryAction" alias="CreateRepository">
+		<view name="input">/cms/managementtool/createRepository.vm</view>
+		<view name="inputV3">/cms/managementtool/v3/createRepository.vm</view>
+		<view name="success">ViewRepository.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListRepositoryLanguageAction" alias="ViewListRepositoryLanguage">
+		<view name="success">/cms/managementtool/viewListRepositoryLanguage.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.RepositoryLanguageAction" alias="RepositoryLanguage">
+		<view name="success">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=ViewListRepositoryLanguage.action#repositoryId</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ExportRepositoryAction" alias="ExportRepository">
+		<view name="input">/cms/managementtool/viewExportRepositoryInput.vm</view>
+		<view name="success">/cms/managementtool/viewExportRepositoryFinished.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ImportRepositoryAction" alias="ImportRepository">
+		<view name="input">/cms/managementtool/viewImportRepositoryInput.vm</view>
+		<view name="inputCopy">/cms/managementtool/viewImportRepositoryInputCopy.vm</view>
+		<view name="success">/cms/managementtool/viewImportRepositoryFinished.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewRepositoryPropertiesAction" alias="ViewRepositoryProperties">
+		<view name="input">/cms/managementtool/viewRepositoryProperties.vm</view>
+		<view name="success">/cms/managementtool/viewRepositoryProperties.vm</view>
+		<view name="save">ViewRepositoryProperties.action</view>
+		<view name="saveAndExit">ViewRepository.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.RebuildRegistryAction" alias="RebuildRegistry">
+		<view name="input">/cms/managementtool/viewRebuildRegistryInput.vm</view>
+		<view name="success">/cms/managementtool/viewRebuildRegistryFinished.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Language -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListLanguageAction" alias="ViewListLanguage">
+		<view name="success">/cms/managementtool/viewListLanguage.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewLanguageAction" alias="ViewLanguage">
+		<view name="success">/cms/managementtool/viewLanguage.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateLanguageAction" alias="UpdateLanguage">
+		<view name="input">/cms/managementtool/viewLanguage.vm</view>
+		<view name="success">ViewLanguage.action</view>
+		<view name="saveAndExit">ViewListLanguage.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteLanguageAction" alias="DeleteLanguage">
+		<view name="success">ViewListLanguage.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateLanguageAction" alias="CreateLanguage">
+		<view name="input">/cms/managementtool/createLanguage.vm</view>
+		<view name="success">ViewListLanguage.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- InterceptionPoint -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListInterceptionPointAction" alias="ViewListInterceptionPoint">
+		<view name="success">/cms/managementtool/viewListInterceptionPoint.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewInterceptionPointAction" alias="ViewInterceptionPoint">
+		<view name="success">/cms/managementtool/viewInterceptionPoint.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateInterceptionPointAction" alias="UpdateInterceptionPoint">
+		<view name="input">/cms/managementtool/viewInterceptionPoint.vm</view>
+		<view name="success">ViewInterceptionPoint.action</view>
+		<view name="saveAndExit">ViewListInterceptionPoint.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteInterceptionPointAction" alias="DeleteInterceptionPoint">
+		<view name="success">ViewListInterceptionPoint.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateInterceptionPointAction" alias="CreateInterceptionPoint">
+		<view name="input">/cms/managementtool/createInterceptionPoint.vm</view>
+		<view name="success">ViewInterceptionPoint.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Interceptor -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListInterceptorAction" alias="ViewListInterceptor">
+		<view name="success">/cms/managementtool/viewListInterceptor.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewInterceptorAction" alias="ViewInterceptor">
+		<view name="success">/cms/managementtool/viewInterceptor.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateInterceptorAction" alias="UpdateInterceptor">
+		<view name="input">/cms/managementtool/viewInterceptor.vm</view>
+		<view name="success">ViewInterceptor.action</view>
+		<view name="saveAndExit">ViewListInterceptor.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteInterceptorAction" alias="DeleteInterceptor">
+		<view name="success">ViewListInterceptor.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateInterceptorAction" alias="CreateInterceptor">
+		<view name="input">/cms/managementtool/createInterceptor.vm</view>
+		<view name="success">ViewInterceptor.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- ServiceDefinition -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListServiceDefinitionAction" alias="ViewListServiceDefinition">
+		<view name="success">/cms/managementtool/viewListServiceDefinition.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewServiceDefinitionAction" alias="ViewServiceDefinition">
+		<view name="success">/cms/managementtool/viewServiceDefinition.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateServiceDefinitionAction" alias="UpdateServiceDefinition">
+		<view name="input">/cms/managementtool/viewServiceDefinition.vm</view>
+		<view name="success">ViewListServiceDefinition.action</view>
+		<view name="saveAndExit">ViewListServiceDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteServiceDefinitionAction" alias="DeleteServiceDefinition">
+		<view name="success">ViewListServiceDefinition.action</view>
+		<view name="input">/cms/managementtool/showConstraintException.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateServiceDefinitionAction" alias="CreateServiceDefinition">
+		<view name="input">/cms/managementtool/createServiceDefinition.vm</view>
+		<view name="success">ViewListServiceDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- AvailableServiceBinding -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListAvailableServiceBindingAction" alias="ViewListAvailableServiceBinding">
+		<view name="success">/cms/managementtool/viewListAvailableServiceBinding.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewAvailableServiceBindingAction" alias="ViewAvailableServiceBinding">
+		<view name="success">/cms/managementtool/viewAvailableServiceBinding.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateAvailableServiceBindingAction" alias="UpdateAvailableServiceBinding">
+		<view name="input">/cms/managementtool/viewAvailableServiceBinding.vm</view>
+		<view name="success">ViewAvailableServiceBinding.action</view>
+		<view name="saveAndExit">ViewListAvailableServiceBinding.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteAvailableServiceBindingAction" alias="DeleteAvailableServiceBinding">
+		<view name="success">ViewListAvailableServiceBinding.action</view>
+		<view name="input">/cms/managementtool/showConstraintException.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateAvailableServiceBindingAction" alias="CreateAvailableServiceBinding">
+		<view name="input">/cms/managementtool/createAvailableServiceBinding.vm</view>
+		<view name="success">ViewAvailableServiceBinding.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- SiteNodeTypeDefinition -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListSiteNodeTypeDefinitionAction" alias="ViewListSiteNodeTypeDefinition">
+		<view name="success">/cms/managementtool/viewListSiteNodeTypeDefinition.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewSiteNodeTypeDefinitionAction" alias="ViewSiteNodeTypeDefinition">
+		<view name="success">/cms/managementtool/viewSiteNodeTypeDefinition.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateSiteNodeTypeDefinitionAction" alias="UpdateSiteNodeTypeDefinition">
+		<view name="input">/cms/managementtool/viewSiteNodeTypeDefinition.vm</view>
+		<view name="success">ViewSiteNodeTypeDefinition.action</view>
+		<view name="saveAndExit">ViewListSiteNodeTypeDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteSiteNodeTypeDefinitionAction" alias="DeleteSiteNodeTypeDefinition">
+		<view name="success">ViewListSiteNodeTypeDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateSiteNodeTypeDefinitionAction" alias="CreateSiteNodeTypeDefinition">
+		<view name="input">/cms/managementtool/createSiteNodeTypeDefinition.vm</view>
+		<view name="success">ViewSiteNodeTypeDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- TransactionHistory -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListTransactionHistoryAction" alias="ViewListTransactionHistory">
+		<view name="success">/cms/managementtool/viewListTransactionHistory.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewTransactionHistoryAction" alias="ViewTransactionHistory">
+		<view name="success">/cms/managementtool/viewTransactionHistory.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- SystemUser -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListSystemUserAction" alias="ViewListSystemUser">
+		<view name="success">/cms/managementtool/v3/viewListSystemUser.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewListSystemUser.vm</view>
+		<view name="successPopup">/cms/managementtool/viewListSystemUserForPopup.vm</view>
+		<view name="successPopupV3">/cms/managementtool/v3/viewListSystemUserForPopup.vm</view>
+		<view name="userSearch">/cms/managementtool/viewListSystemUserSearch.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewSystemUserAction" alias="ViewSystemUser">
+		<view name="input">CreateSystemUserForm.action</view>
+		<view name="success">/cms/managementtool/viewSystemUser.vm</view>
+		<view name="successV3">/cms/managementtool/viewSystemUser.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateSystemUserAction" alias="UpdateSystemUser">
+		<view name="input">/cms/managementtool/viewSystemUser.vm</view>
+		<view name="inputV3">/cms/managementtool/v3/viewSystemUser.vm</view>
+		<view name="success">ViewSystemUser.action</view>
+		<view name="saveAndExit">ViewListSystemUser!v3.action</view>
+		<view name="successV3">ViewSystemUser!v3.action</view>
+		<view name="saveAndExitV3">ViewListSystemUser!v3.action</view>
+		<view name="passwordSentSuccess">ViewSystemUser.action</view>
+		<view name="passwordSentSuccessV3">ViewSystemUser!v3.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateSystemUserPasswordAction" alias="UpdateSystemUserPassword">
+		<view name="input">/cms/managementtool/viewSystemUserPasswordDialog.vm</view>
+		<view name="inputV3">/cms/managementtool/v3/viewSystemUserPasswordDialog.vm</view>
+		<view name="inputStandalone">/cms/managementtool/viewMySettingsPasswordDialog.vm</view>
+		<view name="inputStandaloneV3">/cms/managementtool/v3/viewSystemUserPasswordDialog.vm</view>
+		<view name="success">ViewSystemUser.action</view>
+		<view name="successV3">ViewSystemUser!v3.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteSystemUserAction" alias="DeleteSystemUser">
+		<view name="success">ViewListSystemUser.action</view>
+		<view name="successV3">ViewListSystemUser!v3.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateSystemUserAction" alias="CreateSystemUser">
+		<view name="input">/cms/managementtool/createSystemUser.vm</view>
+		<view name="inputV3">/cms/managementtool/v3/createSystemUser.vm</view>
+		<view name="success">ViewSystemUser.action</view>
+		<view name="saveAndExit">ViewListSystemUser.action</view>
+		<view name="successV3">ViewSystemUser!v3.action</view>
+		<view name="successSaveAndExitV3">ViewListSystemUser!v3.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteSystemUserRoleAction" alias="DeleteSystemUserRole">
+		<view name="success">ViewSystemUser.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewUserRolesAction" alias="ViewUserRoles">
+		<view name="cancel">ViewListSystemUser.action</view>
+		<view name="success">/cms/managementtool/viewUserRoles.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.AddUserRoleAction" alias="AddUserRole">
+		<view name="success">ViewListSystemUser.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- UserProperties -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewUserPropertiesAction" alias="ViewUserProperties">
+		<view name="success">/cms/managementtool/viewEntityProperties.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewEntityProperties.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateUserPropertiesAction" alias="UpdateUserProperties">
+		<view name="success">ViewUserProperties.action</view>
+		<view name="saveAndExit">ViewSystemUser.action</view>
+		<view name="saveAndExitStandalone">ViewContent!standalone.action</view>
+		<view name="successV3">ViewSystemUserProperties!v3.action?userName=${ownerEntityId}&amp;languageId=${languageId}</view>
+		<view name="saveAndExitV3">ViewSystemUser!v3.action</view>
+		<view name="saveAndExitStandaloneV3">ViewContent!standaloneV3.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Role -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListRoleAction" alias="ViewListRole">
+		<view name="success">/cms/managementtool/v3/viewListRole.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewListRole.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewRoleAction" alias="ViewRole">
+		<view name="success">/cms/managementtool/viewRole.vm</view>
+		<view name="successV3">/cms/managementtool/viewRole.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateRoleAction" alias="CreateRole">
+		<view name="input">/cms/managementtool/createRole.vm</view>
+		<view name="success">ViewRole.action</view>
+		<view name="inputV3">/cms/managementtool/v3/createRole.vm</view>
+		<view name="successV3">ViewRole.action?roleName=${roleName}</view>
+		<view name="successSaveAndExitV3">ViewListRole.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteRoleAction" alias="DeleteRole">
+		<view name="success">ViewListRole.action</view>
+		<view name="successV3">ViewListRole.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateRoleAction" alias="UpdateRole">
+		<view name="input">/cms/managementtool/viewRole.vm</view>
+		<view name="success">ViewRole.action</view>
+		<view name="saveAndExit">ViewListRole.action</view>
+		<view name="inputV3">/cms/managementtool/v3/viewRole.vm</view>
+		<view name="successV3">ViewRole.action</view>
+		<view name="saveAndExitV3">ViewListRole.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewRoleUsersAction" alias="ViewRoleUsers">
+		<view name="cancel">ViewListRole.action</view>
+		<view name="success">/cms/managementtool/viewRoleUsers.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.AddRoleUserAction" alias="AddRoleUser">
+		<view name="success">ViewListRole.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewPermissionAction" alias="ViewPermission">
+		<view name="success">/cms/managementtool/viewPermission.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- RoleProperties -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewRolePropertiesAction" alias="ViewRoleProperties">
+		<view name="success">/cms/managementtool/viewEntityProperties.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewEntityProperties.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateRolePropertiesAction" alias="UpdateRoleProperties">
+		<view name="success">ViewRoleProperties.action?roleName=${ownerEntityId}&amp;languageId=${languageId}</view>
+		<view name="saveAndExit">ViewRole.action</view>
+		<view name="saveAndExitStandalone">ViewContent!standalone.action</view>
+		<view name="successV3">ViewRoleProperties!v3.action?roleName=${ownerEntityId}&amp;languageId=${languageId}</view>
+		<view name="saveAndExitV3">ViewRole!v3.action</view>
+		<view name="saveAndExitStandaloneV3">ViewContent!standaloneV3.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Group -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListGroupAction" alias="ViewListGroup">
+		<view name="success">/cms/managementtool/v3/viewListGroup.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewListGroup.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewGroupAction" alias="ViewGroup">
+		<view name="success">/cms/managementtool/viewGroup.vm</view>
+		<view name="successV3">/cms/managementtool/viewGroup.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateGroupAction" alias="CreateGroup">
+		<view name="input">/cms/managementtool/createGroup.vm</view>
+		<view name="success">ViewGroup.action</view>
+		<view name="inputV3">/cms/managementtool/v3/createGroup.vm</view>
+		<view name="successV3">ViewGroup.action?groupName=${groupName}</view>
+		<view name="successSaveAndExitV3">ViewListGroup.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteGroupAction" alias="DeleteGroup">
+		<view name="success">ViewListGroup.action</view>
+		<view name="successV3">ViewListGroup!listManagableGroups.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateGroupAction" alias="UpdateGroup">
+		<view name="input">/cms/managementtool/viewGroup.vm</view>
+		<view name="success">ViewGroup.action</view>
+		<view name="saveAndExit">ViewListGroup.action</view>
+		<view name="inputV3">/cms/managementtool/v3/viewGroup.vm</view>
+		<view name="successV3">ViewGroup!v3.action</view>
+		<view name="saveAndExitV3">ViewListGroup!listManagableGroups.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- GroupProperties -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewGroupPropertiesAction" alias="ViewGroupProperties">
+		<view name="success">/cms/managementtool/viewEntityProperties.vm</view>
+		<view name="successV3">/cms/managementtool/v3/viewEntityProperties.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateGroupPropertiesAction" alias="UpdateGroupProperties">
+		<view name="success">ViewGroupProperties.action</view>
+		<!-- <view name="standalone">ViewContentVersion!standalone.action</view> -->
+		<view name="saveAndExit">ViewGroup.action</view>
+		<view name="saveAndExitStandalone">ViewContent!standalone.action</view>
+		<view name="successV3">ViewGroupProperties!v3.action?groupName=${ownerEntityId}&amp;languageId=${languageId}</view>
+		<view name="saveAndExitV3">ViewGroup!v3.action</view>
+		<view name="saveAndExitStandaloneV3">ViewContent!standaloneV3.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Workflow -->
+	<action name="org.infoglue.cms.applications.workflowtool.actions.ViewListWorkflowAction" alias="ViewListWorkflow">
+		<view name="success">/cms/workflowtool/viewListWorkflow.vm</view>
+		<view name="error">/cms/workflowtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.workflowtool.actions.ViewWorkflowAction" alias="ViewWorkflow">
+		<view name="success">/cms/workflowtool/viewWorkflow.vm</view>
+		<view name="error">/cms/workflowtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.workflowtool.actions.DeleteEventAction" alias="DeleteEvent">
+		<view name="error">/cms/workflowtool/error.vm</view>
+	</action>
+
+	<!-- Content -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewCalendarAction" alias="ViewCalendar">
+		<view name="success">/cms/contenttool/viewCalendar.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.SearchContentAction" alias="SearchContent">
+		<view name="input">/cms/contenttool/viewContentVersionSearch.vm</view>
+		<view name="inputBinding">/cms/contenttool/viewContentVersionSearchForBinding.vm</view>
+		<view name="inputInlineAsset">/cms/contenttool/viewContentVersionSearchResultForInlineAsset.vm</view>
+		<view name="inputInlineAssetV3">/cms/contenttool/v3/viewDigitalAssetSearchResultForInlineAsset.vm</view>
+		<view name="successBindingResult">/cms/contenttool/viewContentVersionSearchResultForBinding.vm</view>
+		<view name="successInlineAssetResult">/cms/contenttool/viewContentVersionSearchResultForInlineAsset.vm</view>
+		<view name="successInlineAssetSearchV3">/cms/contenttool/v3/viewDigitalAssetSearchResultForInlineAsset.vm</view>
+		<view name="successLatestInlineAssetsV3">/cms/contenttool/v3/viewLatestDigitalAssetsForInlineAsset.vm</view>
+		<view name="success">/cms/contenttool/viewContentVersionSearchResult.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ReplaceContentAction" alias="ReplaceContent">
+		<view name="success">SearchContent.action</view>
+		<view name="successV3">Search.action?repositoryId=${repositoryId}&amp;searchString=${searchString}</view>
+		<!--<view name="success">/cms/contenttool/viewContentVersionSearchResult.vm</view>-->
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewListContentAction" alias="ViewListContent">
+		<view name="success">/cms/contenttool/viewListContent.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentAction" alias="ViewContent">
+		<view name="success">/cms/contenttool/viewContent.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewContent.vm</view>
+		<view name="standalone">/cms/contenttool/viewContentStandalone.vm</view>
+		<view name="viewVersion">ViewContentVersion.action?contentId=${contentId}&amp;languageId=${languageId}&amp;unrefreshedContentId=${unrefreshedContentId}&amp;changeTypeId=${changeTypeId}&amp;newContentId=${newContentId}</view>
+		<view name="viewVersionV3">ViewContentVersion!v3.action?contentId=${contentId}&amp;languageId=${languageId}&amp;unrefreshedContentId=${unrefreshedContentId}&amp;changeTypeId=${changeTypeId}&amp;newContentId=${newContentId}&amp;inline=${inline}</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentPropertiesAction" alias="ViewContentProperties">
+		<view name="input">/cms/contenttool/viewContentProperties.vm</view>
+		<view name="success">/cms/contenttool/viewContentProperties.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewContentProperties.vm</view>
+		<view name="save">ViewContentProperties.action</view>
+		<view name="saveV3">ViewContentProperties!V3.action</view>
+		<view name="saveAndExit">ViewContent.action?stay=true</view>
+		<view name="saveAndExitV3">ViewInlineOperationMessages</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.contenttool.actions.UpdateContentAction" alias="UpdateContent">
+		<view name="input">/cms/contenttool/viewContent.vm</view>
+		<view name="successInputContentType">/cms/contenttool/viewChangeContentType.vm</view>
+		<view name="success">ViewContent!V3.action?stay=true</view>
+		<view name="successV3">ViewContent!v3.action?stay=true</view>
+		<view name="successStandalone">ViewContent!standalone.action</view>
+		<view name="successContentTypeChanged">/cms/contenttool/viewChangeContentTypeFinished.vm</view>
+		<view name="saveAndExit">ViewListContent.action</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ChangeContentStateAction" alias="ChangeContentState">
+		<view name="success">ExtendedRedirect.action?url=ViewContentVersion.action#contentId#languageId</view>
+		<view name="successStandalone">ExtendedRedirect.action?url=ViewContentVersion!standalone.action#contentId#languageId</view>
+		<view name="commentVersion">/cms/contenttool/viewContentVersionComment.vm</view>
+		<view name="commentVersionStandalone">/cms/contenttool/viewContentVersionCommentStandalone.vm</view>
+		<view name="input">/cms/contenttool/showConstraintException.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.DeleteContentAction" alias="DeleteContent">
+		<view name="success">ViewContent.action?stay=true</view>
+		<view name="showRelations">/cms/contenttool/showRelations.vm</view>
+		<view name="successStandalone">/cms/contenttool/operationSucceeded.vm</view>
+		<view name="fixPage">/cms/contenttool/fixPage.vm</view>
+		<view name="fixPageHeader">/cms/contenttool/fixPageHeader.vm</view>
+		<view name="input">/cms/contenttool/showConstraintException.vm</view>
+		<view name="inputV3">/cms/common/showConstraintException.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.DeleteContentChildrenAction" alias="DeleteContentChildren">
+		<view name="success">ViewInlineOperationMessages</view>
+		<view name="showRelations">/cms/contenttool/showRelationsForDeleteChildren.vm</view>
+		<view name="fixPage">/cms/contenttool/fixPage.vm</view>
+		<view name="fixPageHeader">/cms/contenttool/fixPageHeader.vm</view>
+		<view name="input">/cms/common/showConstraintException.vm</view>
+		<view name="inputV3">/cms/common/showConstraintException.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.DeleteContentVersionAction" alias="DeleteContentVersion">
+		<view name="success">ViewContent!V3.action?stay=true</view>
+		<view name="input">/cms/contenttool/showConstraintException.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.CreateContentAction" alias="CreateContent">
+		<view name="input">/cms/contenttool/createContent.vm</view>
+		<view name="inputV3">/cms/contenttool/v3/createContent.vm</view>
+		<view name="success">ViewContent.action</view>
+		<view name="successV3">ViewContent!refreshAndRedirect.action</view>
+		<view name="bindingView">ViewContentHtmlTree!bindingView.action</view>
+		<view name="treeView">ViewContentHtmlTree.action</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentTreeAction" alias="ViewContentTree">
+		<view name="success">/cms/contenttool/viewContentTree.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewMultiSelectContentTreeForServiceBindingAction" alias="ViewMultiSelectContentTreeForServiceBinding">
+		<view name="success">/cms/contenttool/viewMultiSelectContentTreeForServiceBinding.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.MoveContentAction" alias="MoveContent">
+		<view name="input">/cms/contenttool/showConstraintException.vm</view>
+		<view name="inputV3">/cms/contenttool/v3/viewContentTreeForMove.vm</view>
+		<view name="success">ViewContent.action?stay=true</view>
+		<view name="successV3">ViewInlineOperationMessages</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.MoveMultipleContentAction" alias="MoveMultipleContent">
+		<view name="input">/cms/contenttool/viewMoveMultipleContentsChooseContents.vm</view>
+		<view name="inputV3">/cms/contenttool/v3/viewMoveMultipleContentsChooseContents.vm</view>
+		<view name="chooseDestination">/cms/contenttool/viewMoveMultipleContentsChooseDestination.vm</view>
+		<view name="chooseDestinationV3">/cms/contenttool/v3/viewMoveMultipleContentsChooseDestination.vm</view>
+		<view name="success">/cms/contenttool/viewMoveMultipleContentsFinished.vm</view>
+		<view name="successV3">ViewInlineOperationMessages</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<!-- ContentAccessRights -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewAccessRightsAction" alias="ViewAccessRights">
+		<view name="success">/cms/contenttool/viewAccessRights.vm</view>
+		<view name="successV3">/cms/common/viewAccessRights.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.UpdateAccessRightsAction" alias="UpdateAccessRights">
+		<view name="input">/cms/contenttool/viewContentAccessRights.vm</view>
+		<view name="success">${url}</view>
+		<view name="saveAndExit">ViewListExtranetRole.action</view>
+		<view name="successV3">${url}</view>
+		<view name="saveAndExitV3">ViewInlineOperationMessages.action</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+
+	<!-- AssetList (Work in progress, Stefan Sik)--> 
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewAssetListAction" alias="ViewAssetList">
+		<view name="success">/cms/contenttool/viewAssetList.vm</view>
+		<view name="browser">/cms/contenttool/viewAssetBrowser.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>	
+
+	<!-- ContentVersion -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentVersionAction" alias="ViewContentVersion">
+		<view name="success">/cms/contenttool/viewContentVersion.vm</view>
+		<view name="standalone">/cms/contenttool/viewContentVersionStandalone.vm</view>
+		<view name="successForFCKEditor">/cms/contenttool/viewContentVersionForFCKEditor.vm</view>
+		<view name="successForFCKEditorV3">/cms/contenttool/v3/viewContentVersionForFCKEditor.vm</view>
+		<view name="standaloneForFCKEditor">/cms/contenttool/v3/viewContentVersionStandaloneForFCKEditor.vm</view>
+		<view name="background">/cms/contenttool/viewContentVersionBackground.vm</view>
+		<view name="viewAssetsDialog">/cms/contenttool/viewContentAssets.vm</view>
+		<view name="viewAssetsDialogForFCKEditor">/cms/contenttool/viewContentAssetsForFCKEditor.vm</view>
+		<view name="viewAssetsDialogForFCKEditorV3">/cms/contenttool/v3/viewContentAssetsForFCKEditor.vm</view>
+		<view name="viewAssetBrowserForFCKEditorV3">/cms/contenttool/v3/viewAssetBrowserForFCKEditor.vm</view>
+		<view name="viewSmallAssetBrowserForFCKEditorV3">/cms/contenttool/v3/viewSmallAssetBrowserForFCKEditor.vm</view>
+		<view name="viewAssetBrowserForComponentBindingV3">/cms/contenttool/v3/viewAssetBrowserForComponentBinding.vm</view>
+		<view name="viewAssetBrowserForMultipleComponentBindingV3">/cms/contenttool/v3/viewAssetBrowserForMultipleComponentBinding.vm</view>
+		<view name="viewAssets">/cms/contenttool/viewContentVersionAssets.vm</view>
+		<view name="viewAssetsForFCKEditor">/cms/contenttool/viewContentVersionAssetsForFCKEditor.vm</view>
+		<view name="viewAssetsForFCKEditorV3">/cms/contenttool/v3/viewContentVersionAssetsForFCKEditor.vm</view>
+		<view name="viewAssetsForFCKEditorSmallV3">/cms/contenttool/v3/viewContentVersionAssetsForFCKEditorSmall.vm</view>
+		<view name="viewContentAssetsForFCKEditorV3">/cms/contenttool/v3/viewContentVersionAssetsForFCKEditor.vm</view>
+		<view name="showContentAssetsForComponentBinding">/cms/structuretool/viewContentAssetsForComponentBinding.vm</view>
+		<view name="asXML">/cms/contenttool/viewContentVersionAsXML.vm</view>
+		<view name="asXMLV3">/cms/contenttool/v3/viewContentVersionAsXML.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="preview">/cms/contenttool/viewContentVersionPreview.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ChangeMultiContentStatePublishAction" alias="ChangeMultiContentStatePublish">
+		<view name="success">ViewContent.action?stay=true</view>
+		<view name="input">/cms/contenttool/showConstraintException.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewListContentVersionAction" alias="ViewListContentVersion">
+		<view name="success">/cms/contenttool/viewListContentVersion.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewListContentVersion.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.UpdateContentVersionAction" alias="UpdateContentVersion">
+		<view name="input">/cms/contenttool/viewContentVersionForFCKEditor.vm</view>
+		<view name="inputStandalone">/cms/contenttool/v3/viewContentVersionStandaloneForFCKEditor.vm</view>
+		<view name="success">ExtendedRedirect.action?url=ViewContentVersion.action#contentId#languageId#currentEditorId#concurrentModification#oldModifiedDateTime</view>
+		<view name="successV3">ExtendedRedirect.action?url=ViewContentVersion!V3.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad</view>
+		<view name="successXMLV3">ExtendedRedirect.action?url=ViewContentVersion!asXMLV3.action?#contentVersionId#contentId#repositoryId</view>
+		<!--<view name="success">ViewContentVersion.action</view>-->
+		<view name="background">ViewContentVersion!background.action</view>
+		<view name="standalone">ExtendedRedirect.action?url=ViewContentVersion!standalone.action#contentVersionId#contentId#languageId#attributeName#currentEditorId#concurrentModification#oldModifiedDateTime#closeOnLoad#publishOnLoad#saveAndExitURL</view>
+		<!--<view name="standalone">ViewContentVersion!standalone.action</view>-->
+		<view name="saveAndExit">ViewContent.action?stay=true</view>
+		<view name="saveAndExitStandalone">ViewContent!standalone.action</view>
+		<view name="saveAndExitInline">ViewInlineOperationMessages.action</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.RequestContentVersionUnpublishAction" alias="RequestContentVersionUnpublish">
+		<view name="success">ViewContentVersion.action</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.UnpublishContentVersionAction" alias="UnpublishContentVersion">
+		<view name="input">/cms/contenttool/viewListContentVersionToUnpublish.vm</view>
+		<view name="inputV3">/cms/contenttool/v3/viewListContentVersionToUnpublish.vm</view>
+		<view name="inputChooseContents">/cms/contenttool/viewListContentToUnpublish.vm</view>
+		<view name="inputChooseContentsV3">/cms/contenttool/v3/viewListContentToUnpublish.vm</view>
+		<view name="success">ViewContent.action?stay=true</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentVersionHistoryAction" alias="ViewContentVersionHistory">
+		<view name="success">/cms/contenttool/viewContentVersionHistory.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewContentVersionHistory.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentVersionDifferenceAction" alias="ViewContentVersionDifference">
+		<view name="success">/cms/contenttool/viewContentVersionDifference.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentReferencesAction" alias="ViewContentReferences">
+		<view name="success">/cms/contenttool/v3/viewContentReferences.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ChangeVersionLanguageAction" alias="ChangeVersionLanguage">
+		<view name="success">ExtendedRedirect.action?url=ViewContentVersion.action#contentId#languageId#repositoryId</view>
+		<view name="input">/cms/contenttool/changeVersionLanguage.vm</view>
+		<view name="inputV3">/cms/contenttool/v3/changeVersionLanguage.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- Experiment on a WYSIWYG Site Editor -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentVersionAttributeAction" alias="ViewContentVersionAttribute">
+		<view name="success">/cms/contenttool/viewContentVersionAttribute.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.UpdateContentVersionAttributeAction" alias="UpdateContentVersionAttribute">
+		<view name="success">ViewContentVersionAttribute.action</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewFormEditorAction" alias="ViewFormEditor">
+		<view name="success">/cms/contenttool/viewFormEditor.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewContentRelationEditorAction" alias="ViewContentRelationEditor">
+		<view name="success">/cms/contenttool/viewContentRelationEditor.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewContentRelationEditor.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewStructureRelationEditorAction" alias="ViewStructureRelationEditor">
+		<view name="success">/cms/contenttool/viewStructureRelationEditor.vm</view>
+		<view name="successV3">/cms/contenttool/v3/viewStructureRelationEditor.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewComponentPropertiesEditorAction" alias="ViewComponentPropertiesEditor">
+		<view name="success">/cms/contenttool/viewComponentPropertiesEditor.vm</view>
+		<view name="update">ExtendedRedirect.action?url=ViewComponentPropertiesEditor.action#contentVersionId#attributeName#closeOnLoad</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewLinkDialogAction" alias="ViewLinkDialog">
+		<view name="success">/cms/contenttool/viewLinkDialog.vm</view>
+		<view name="viewLinkDialogForFCKEditor">/cms/contenttool/viewLinkDialogForFCKEditor.vm</view>
+		<view name="viewLinkDialogForFCKEditorV3">/cms/contenttool/v3/viewLinkDialogForFCKEditor.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- Content Wizards -->
+		<action name="org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardChooseParentAction" alias="CreateContentWizardChooseParent">
+		<view name="success">/cms/contenttool/v3/createContentWizard/createContentWizardChooseParent.vm</view>
+		<view name="error">/cms/common/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInputContentAction" alias="CreateContentWizardInputContent">
+		<view name="input">/cms/contenttool/v3/createContentWizard/createContentWizardInputContent.vm</view>
+		<view name="success">CreateContentWizardFinish!V3.action</view>
+		<view name="error">/cms/common/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInputAssetsAction" alias="CreateContentWizardInputAssets">
+		<view name="input">/cms/contenttool/v3/createContentWizard/createContentWizardInputAssets.vm</view>
+		<view name="success">CreateContentWizardFinish!V3.action</view>
+		<view name="error">/cms/common/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInputContentVersionsAction" alias="CreateContentWizardInputContentVersions">
+		<view name="inputAssets">CreateContentWizardInputAssets!input.action</view>
+		<view name="inputContentVersions">/cms/contenttool/v3/createContentWizard/createContentWizardInputContentVersions.vm</view>
+		<view name="inputContentVersionsForFCKEditor">/cms/contenttool/wizards/createContentWizardInputContentVersionsForFCKEditor.vm</view>
+		<view name="success">CreateContentWizardFinish!V3.action?versionDone=true</view>
+		<view name="error">/cms/contenttool/wizards/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardFinishAction" alias="CreateContentWizardFinish">
+		<view name="stateLocation">CreateContentWizardChooseParent.action</view>
+		<view name="inputContent">CreateContentWizardInputContent!input.action</view>
+		<view name="inputAssets">CreateContentWizardInputAssets!input.action?contentVersionId=${contentVersionId}&amp;inputMoreAssets=${inputMoreAssets}</view>
+		<view name="inputContentVersionsForFCKEditor">ViewContentVersion!standalone.action?contentVersionId=${contentVersionId}&amp;saveAndExitURL=${encodedRefreshAddress}</view>
+		<!--  <view name="inputContentVersionsForFCKEditor">CreateContentWizardInputContentVersions!input.action?contentVersionId=${contentVersionId}</view>-->
+		<view name="success">ViewContent.action</view>
+		<view name="error">/cms/common/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	
+	<action name="org.infoglue.cms.applications.contenttool.actions.ExportContentAction" alias="ExportContent">
+		<view name="input">/cms/contenttool/viewExportContentInput.vm</view>
+		<view name="success">/cms/contenttool/viewExportContentFinished.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.ImportContentAction" alias="ImportContent">
+		<view name="input">/cms/contenttool/viewImportContentInput.vm</view>
+		<view name="success">/cms/contenttool/viewImportContentFinished.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- ContentTypeDefinition -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListContentTypeDefinitionAction" alias="ViewListContentTypeDefinition">
+		<view name="success">/cms/managementtool/viewListContentTypeDefinition.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewContentTypeDefinitionAction" alias="ViewContentTypeDefinition">
+		<view name="success">/cms/managementtool/viewContentTypeDefinition.vm</view>
+		<view name="useEditor">/cms/managementtool/viewContentTypeDefinitionEditor.vm</view>
+		<view name="successViewAttribute">/cms/managementtool/viewContentTypeDefinitionAttributePropertyLayer.vm</view>
+		<view name="input">/cms/managementtool/showConstraintException.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateContentTypeDefinitionAction" alias="UpdateContentTypeDefinition">
+		<view name="input">/cms/managementtool/viewContentTypeDefinition.vm</view>
+		<view name="success">ViewContentTypeDefinition.action</view>
+		<view name="saveAndExit">ViewListContentTypeDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteContentTypeDefinitionAction" alias="DeleteContentTypeDefinition">
+		<view name="success">ViewListContentTypeDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateContentTypeDefinitionAction" alias="CreateContentTypeDefinition">
+		<view name="input">/cms/managementtool/createContentTypeDefinition.vm</view>
+		<view name="success">ViewContentTypeDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Digital Assets -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.ViewDigitalAssetAction" alias="ViewDigitalAsset">
+		<view name="success">/cms/contenttool/viewDigitalAsset.vm</view>
+		<view name="successMultiple">/cms/contenttool/viewDigitalAssetMultiple.vm</view>
+		<view name="update">/cms/contenttool/updateDigitalAsset.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.CreateDigitalAssetAction" alias="CreateDigitalAsset">
+		<view name="success">/cms/contenttool/viewDigitalAsset.vm</view>
+		<view name="uploadFailed">/cms/contenttool/uploadError.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.UpdateDigitalAssetAction" alias="UpdateDigitalAsset">
+		<view name="success">/cms/contenttool/updateDigitalAsset.vm</view>
+		<view name="uploadFailed">/cms/contenttool/uploadError.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.DeleteDigitalAssetAction" alias="DeleteDigitalAsset">
+		<view name="success">$returnAddress</view>
+        <view name="error">/cms/contenttool/error.vm</view>
+    </action>
+    
+	<action name="org.infoglue.cms.applications.contenttool.actions.CreateContentAndAssetFromUploadAction" alias="CreateContentAndAssetFromUpload">
+		<view name="input">/cms/contenttool/v3/createContentAndAssetFromUpload.vm</view>
+		<view name="success">/cms/contenttool/v3/createContentAndAssetFromUploadFinished.vm</view>
+		<view name="uploadFailed">/cms/contenttool/uploadError.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- SiteNode -->
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewSiteNodeAction" alias="ViewSiteNode">
+		<view name="success">/cms/structuretool/viewSiteNode.vm</view>
+		<view name="successV3">/cms/structuretool/v3/viewSiteNode.vm</view>
+		<view name="inputSiteNodeTypeDefinition">ViewSiteNode!chooseSiteNodeTypeDefinition.action</view>
+		<view name="chooseSiteNodeTypeDefinition">/cms/structuretool/v3/chooseSiteNodeTypeDefinition.vm</view>
+		<view name="successRefreshAndRedirect">/cms/structuretool/refreshTreeAndRedirect.vm</view>
+		<!--<view name="viewVersion">${dest}</view>-->
+		<view name="blank">/cms/structuretool/blank.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="input">/cms/structuretool/viewConstraintException.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.UpdateSiteNodeAction" alias="UpdateSiteNode">
+		<view name="input">/cms/structuretool/viewSiteNode.vm</view>
+		<view name="success">ViewSiteNode.action?stay=true</view>
+		<view name="successV3">ViewSiteNode!V3.action?stay=true</view>
+		<view name="saveAndExit">ViewListSiteNode.action</view>
+		<view name="saveAndExitV3">ViewSiteNode!V3.action</view>
+		<view name="saveAndExitV3Inline">ViewInlineOperationMessages.action?automaticClose=true&amp;actionUrl=${actionUrl}&amp;target=structure&amp;targetTitle=${targetTitle}</view>
+		<view name="successChooseSiteNodeTypeDefinition">ViewSiteNode!V3.action?siteNodeId=${siteNodeId}</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.MoveMultipleSiteNodeAction" alias="MoveMultipleSiteNodes">
+		<view name="input">/cms/structuretool/viewMoveMultipleSiteNodesChooseSiteNodes.vm</view>
+		<view name="chooseDestination">/cms/structuretool/viewMoveMultipleSiteNodesChooseDestination.vm</view>
+		<view name="success">/cms/structuretool/viewMoveMultipleSiteNodesFinished.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.MoveSiteNodeAction" alias="MoveSiteNode">
+		<view name="input">/cms/structuretool/showConstraintException.vm</view>
+		<view name="inputV3">/cms/structuretool/v3/viewSiteNodeTreeForMove.vm</view>
+		<view name="success">ViewSiteNode.action</view>
+		<view name="successV3">ViewInlineOperationMessages</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+		<action name="org.infoglue.cms.applications.structuretool.actions.ChangeSiteNodeSortOrderAction" alias="ChangeSiteNodeSortOrder">
+		<view name="success">/cms/structuretool/error.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.DeleteSiteNodeAction" alias="DeleteSiteNode">
+		<view name="input">/cms/structuretool/showConstraintException.vm</view>
+		<view name="inputV3">/cms/common/showConstraintException.vm</view>
+		<view name="showRelations">/cms/structuretool/showRelations.vm</view>
+		<view name="fixPage">/cms/structuretool/fixPage.vm</view>
+		<view name="fixPageHeader">/cms/structuretool/fixPageHeader.vm</view>
+		<view name="success">ViewSiteNode.action?stay=true</view>
+		<view name="successV3">ViewSiteNode!refreshAndRedirect.action</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	
+	<!-- Page Wizards -->
+	<action name="org.infoglue.cms.applications.structuretool.wizards.actions.CreateSiteNodeWizardChooseParentAction" alias="CreateSiteNodeWizardChooseParent">
+		<view name="success">/cms/structuretool/wizards/createSiteNodeWizardChooseParent.vm</view>
+		<view name="error">/cms/structuretool/wizards/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.wizards.actions.CreateSiteNodeWizardInputSiteNodeAction" alias="CreateSiteNodeWizardInputSiteNode">
+		<view name="input">/cms/structuretool/wizards/createSiteNodeWizardInputSiteNode.vm</view>
+		<view name="success">CreateSiteNodeWizardFinish.action</view>
+		<view name="error">/cms/structuretool/wizards/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.wizards.actions.CreateSiteNodeWizardFinishAction" alias="CreateSiteNodeWizardFinish">
+		<view name="stateLocation">CreateSiteNodeWizardChooseParent.action</view>
+		<view name="inputSiteNode">CreateSiteNodeWizardInputSiteNode!input.action</view>
+		<view name="success">ViewSiteNode.action</view>
+		<view name="error">/cms/structuretool/wizards/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	
+	
+	<action name="org.infoglue.cms.applications.structuretool.actions.CreateSiteNodeAction" alias="CreateSiteNode">
+		<view name="input">/cms/structuretool/createSiteNode.vm</view>
+		<view name="success">ViewSiteNode!refreshAndRedirect.action</view>
+		<!-- <view name="success">ExtendedRedirect.action?url=ViewSiteNode!refreshAndRedirect.action#siteNodeId</view> -->
+		<view name="inputV3">/cms/structuretool/v3/createSiteNode.vm</view>
+		<!-- <view name="successV3">ExtendedRedirect.action?url=ViewSiteNode!refreshAndRedirect.action#siteNodeId</view> -->
+		<view name="successV3">ViewSiteNode!refreshAndRedirect.action</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.CreatePageTemplateAction" alias="CreatePageTemplate">
+            <view name="input">/cms/structuretool/createPageTemplate.vm</view>
+ 			<view name="success">/cms/structuretool/createPageTemplateFinished.vm</view>
+            <view name="error">/cms/structuretool/error.vm</view>
+   			<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+    </action>
+   <action name="org.infoglue.cms.applications.structuretool.actions.ViewListSiteNodeVersionAction" alias="ViewListSiteNodeVersion">
+		<view name="success">/cms/structuretool/viewListSiteNodeVersion.vm</view>
+		<view name="successV3">/cms/structuretool/v3/viewListSiteNodeVersion.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ChangeMultiSiteNodeVersionStatePublishAction" alias="ChangeMultiSiteNodeVersionStatePublish">
+		<view name="success">ViewSiteNode.action?stay=true</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ChangeSiteNodeStateAction" alias="ChangeSiteNodeState">
+		<view name="success">ViewSiteNode.action?stay=true</view>
+		<view name="commentVersion">/cms/structuretool/viewSiteNodeVersionComment.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewSiteNodeTreeAction" alias="ViewSiteNodeTree">
+		<view name="success">/cms/structuretool/viewSiteNodeTree.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.CreateServiceBindingAction" alias="CreateServiceBinding">
+		<view name="success">ViewSiteNode.action?stay=true</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.DeleteServiceBindingAction" alias="DeleteServiceBinding">
+		<view name="success">ViewSiteNode.action?stay=true</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewContentTreeForServiceBindingAction" alias="ViewContentTreeForServiceBinding">
+		<view name="success">/cms/structuretool/viewContentTreeForServiceBinding.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureTreeForServiceBindingAction" alias="ViewStructureTreeForServiceBinding">
+		<view name="success">/cms/structuretool/viewStructureTreeForServiceBinding.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewMultiSelectStructureTreeForServiceBindingAction" alias="ViewMultiSelectStructureTreeForServiceBinding">
+		<view name="success">/cms/structuretool/viewMultiSelectStructureTreeForServiceBinding.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewListTemplateAction" alias="ViewListTemplate">
+		<view name="success">/cms/structuretool/viewListTemplate.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.RequestSiteNodeVersionUnpublishAction" alias="RequestSiteNodeVersionUnpublish">
+		<view name="success">ViewSiteNode.action</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.UnpublishSiteNodeVersionAction" alias="UnpublishSiteNodeVersion">
+		<view name="input">/cms/structuretool/viewListSiteNodeVersionToUnpublish.vm</view>
+		<view name="inputChooseSiteNodes">/cms/structuretool/viewListSiteNodesToUnpublish.vm</view>
+		<view name="inputChooseSiteNodesV3">/cms/structuretool/v3/viewListSiteNodesToUnpublish.vm</view>
+		<view name="success">ViewSiteNode.action?stay=true</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewStructureTreeForInlineLinkAction" alias="ViewStructureTreeForInlineLink">
+		<view name="success">/cms/structuretool/viewStructureTreeForInlineLink.vm</view>
+		<view name="successFCKEditor">/cms/structuretool/viewStructureTreeForInlineLinkForFCKEditor.vm</view>
+		<view name="successFCKEditorV3">/cms/structuretool/v3/viewStructureTreeForInlineLinkForFCKEditor.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<!-- Experimenting with direct editing -->
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewAndCreateContentForServiceBindingAction" alias="ViewAndCreateContentForServiceBinding">
+		<view name="success">ViewContentVersion!standalone.action</view>
+		<view name="successInline">ViewContent!V3.action?contentId=${contentId}&amp;inline=true</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<!-- Experimenting with a new component based structuretool -->
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewSiteNodePageComponentsAction" alias="ViewSiteNodePageComponents">
+		<view name="success">/cms/structuretool/viewSiteNodePageComponents.vm</view>
+		<view name="listComponents">/cms/structuretool/viewListComponents.vm</view>
+		<view name="listComponentsForChange">/cms/structuretool/viewListComponentsForChange.vm</view>
+		<view name="listComponentsForPalette">/cms/structuretool/viewListComponentsForPalette.vm</view>
+		<view name="showContentTree">/cms/structuretool/viewContentTreeForComponentBinding.vm</view>
+		<view name="showContentTreeV3">/cms/contenttool/v3/viewContentTreeForComponentBinding.vm</view>
+		<view name="showContentTreeForMultipleBinding">/cms/structuretool/viewContentTreeForMultipleComponentBinding.vm</view>
+		<view name="showContentTreeForMultipleBindingV3">/cms/contenttool/v3/viewContentTreeForMultipleComponentBinding.vm</view>
+		<view name="showContentTreeForMultipleAssetBinding">/cms/structuretool/viewContentTreeForMultipleAssetComponentBinding.vm</view>
+		<view name="showStructureTree">/cms/structuretool/viewStructureTreeForComponentBinding.vm</view>
+		<view name="showStructureTreeV3">/cms/structuretool/v3/viewStructureTreeForComponentBinding.vm</view>
+		<view name="showStructureTreeForMultipleBinding">/cms/structuretool/viewStructureTreeForMultipleComponentBinding.vm</view>
+		<view name="showStructureTreeForMultipleBindingV3">/cms/structuretool/v3/viewStructureTreeForMultipleComponentBinding.vm</view>
+		<view name="showCategoryTree">/cms/structuretool/viewCategoryTreeForComponentBinding.vm</view>
+		<view name="showCategoryTreeForMultipleBinding">/cms/structuretool/viewCategoryTreeForMultipleComponentBinding.vm</view>
+		<view name="componentAdded">${url}</view>
+		<view name="componentDeleted">${url}</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewSiteNodeHistoryAction" alias="ViewSiteNodeHistory">
+		<view name="success">/cms/structuretool/v3/viewSiteNodeHistory.vm</view>
+		<view name="successDifference">/cms/structuretool/v3/viewSiteNodeVersionDifference.vm</view>
+		<view name="error">/cms/common/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewSiteNodeReferencesAction" alias="ViewSiteNodeReferences">
+		<view name="success">/cms/structuretool/v3/viewSiteNodeReferences.vm</view>
+		<view name="error">/cms/common/error.vm</view>
+	</action>
+	
+	<!-- SiteNodeAccessRights -->
+	<action name="org.infoglue.cms.applications.structuretool.actions.ViewSiteNodeAccessRightsAction" alias="ViewSiteNodeAccessRights">
+		<view name="success">/cms/contenttool/viewAccessRights.vm</view>
+		<!--<view name="success">/cms/structuretool/viewSiteNodeAccessRights.vm</view>-->
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.UpdateAccessRightsAction" alias="UpdateSiteNodeAccessRights">
+		<view name="input">/cms/structuretool/viewSiteNodeAccessRights.vm</view>
+		<view name="success">ViewSiteNodeAccessRights.action</view>
+		<view name="saveAndExit">ViewListExtranetRole.action</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+
+	<!-- Publishing -->
+	<action name="org.infoglue.cms.applications.publishingtool.actions.PreviewContentVersionAction" alias="PreviewContentVersion">
+		<view name="success">/cms/publishingtool/previewContentVersion.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.publishingtool.actions.PreviewSiteNodeVersionAction" alias="PreviewSiteNodeVersion">
+		<view name="success">/cms/publishingtool/previewSiteNodeVersion.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.publishingtool.actions.ViewPublicationsAction" alias="ViewPublications">
+		<view name="success">/cms/publishingtool/viewPublications.vm</view>
+		<view name="successV3">/cms/publishingtool/v3/viewPublications.vm</view>
+		<view name="successSystem">/cms/publishingtool/v3/viewSystemPublications.vm</view>
+		<view name="showPublicationDetails">/cms/publishingtool/viewPublicationDetails.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.publishingtool.actions.CreateEditionAction" alias="CreateEdition">
+		<view name="input">/cms/publishingtool/createEdition.vm</view>
+		<view name="inputV3">/cms/publishingtool/v3/createEdition.vm</view>
+		<view name="success">ViewPublications.action</view>
+		<view name="successV3">ViewPublications!V3.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.publishingtool.actions.DeleteEditionAction" alias="DeleteEdition">
+		<view name="success">ViewPublications.action</view>
+		<view name="successV3">ViewPublications!V3.action</view>
+		<view name="unpublishmethod">/cms/publishingtool/chooseUnpublishMethod.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.publishingtool.actions.PreviewEditionAction" alias="PreviewEdition">
+		<view name="success">/cms/publishingtool/previewEdition.vm</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.publishingtool.actions.DenyPublicationRequestAction" alias="DenyPublicationRequest">
+		<view name="comment">/cms/publishingtool/viewDenyPublicationComment.vm</view>
+		<view name="commentV3">/cms/publishingtool/v3/viewDenyPublicationComment.vm</view>
+		<view name="success">ViewPublications.action</view>
+		<view name="successV3">ViewPublications!V3.action</view>
+		<view name="error">/cms/publishingtool/error.vm</view>
+	</action>
+
+	<!-- Task Tool -->
+	<action name="org.infoglue.cms.applications.tasktool.actions.ViewExecuteTaskAction" alias="ViewExecuteTask">
+		<view name="success">/cms/tasktool/viewListTasks.vm</view>
+		<view name="error">/cms/tasktool/error.vm</view>
+	</action>
+
+	<!-- Download Action -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.DownloadAssetAction" alias="DownloadAsset">
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- WYSIWYG Configuration lookup Action -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.WYSIWYGPropertiesAction" alias="WYSIWYGProperties">
+		<view name="success">/cms/managementtool/viewWYSIWYGProperties.vm</view>
+		<view name="successStylesXML">/cms/managementtool/viewWYSIWYGStylesXML.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Redirect -->
+	<action name="org.infoglue.cms.applications.common.actions.ExtendedRedirect" alias="ExtendedRedirect">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Update Cache -->
+	<action name="org.infoglue.deliver.applications.actions.UpdateCacheAction" alias="UpdateCache">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- FILE DOWNLOAD -->
+	<action name="org.infoglue.deliver.applications.actions.DownloadAssetAction" alias="DownloadProtectedAsset">
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- AJAX API -->
+	<action name="org.infoglue.deliver.applications.actions.AjaxComponentDeliveryServiceAction" alias="AjaxComponentDeliveryService">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Site Delivery -->
+	<action name="org.infoglue.deliver.applications.actions.ViewPageAction" alias="ViewPage">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Inline operations results -->
+	<action name="org.infoglue.cms.applications.common.actions.ViewInlineOperationMessagesAction" alias="ViewInlineOperationMessages">
+		<view name="success">/cms/common/inlineOperationDone.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+	
+	<!-- Application state action - used to monitor the delivery engine -->
+	<action name="org.infoglue.deliver.applications.actions.ViewApplicationStateAction" alias="ViewApplicationState">
+		<view name="cleared">ExtendedRedirect.action?url=ViewApplicationState.action</view>
+		<view name="success">/deliver/viewApplicationState.vm</view>
+		<view name="successCacheStatistics">/deliver/viewCacheStatistics.vm</view>
+		<view name="successCacheDetailsStatistics">/deliver/viewCacheDetailsStatistics.vm</view>
+		<view name="successComponentStatistics">/deliver/viewComponentStatistics.vm</view>
+		<view name="successPageStatistics">/deliver/viewPageStatistics.vm</view>
+		<view name="successAsXML">/deliver/viewApplicationStateAsXML.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Application query action - used to ask questions about the delivery engine -->
+	<action name="org.infoglue.deliver.applications.actions.ViewApplicationSettingsAction" alias="ViewApplicationSettings">
+		<view name="templateMethods">/deliver/viewTemplateMethods.vm</view>
+		<view name="navigationTitle">/deliver/viewNavigationTitle.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Delivery engine indata entry point - used to handle form input -->
+	<action name="org.infoglue.deliver.applications.actions.InfoGlueDefaultInputHandlerAction" alias="InfoGlueDefaultInputHandler">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Extranet Login action -->
+	<action name="org.infoglue.deliver.applications.actions.ExtranetLoginAction" alias="ExtranetLogin">
+		<view name="loginForm">/deliver/extranetLoginForm.vm</view>
+		<view name="userAccepted">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=ViewPage.action#requestParameters</view>
+		<view name="invalidLogin">/deliver/extranetLoginError.vm</view>
+		<view name="noAccess">/deliver/extranetNoAccess.vm</view>
+		<!-- responses to checkUser -->
+		<view name="granted">/deliver/extranetLoginCheckAccepted.vm</view>
+		<view name="denied">/deliver/extranetLoginCheckNoAccess.vm</view>
+	</action>
+
+	<!-- Management Tool Category Commands -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.CategoryAction" alias="CategoryManagement">
+		<view name="error">/cms/managementtool/error.vm</view>
+
+		<command name="list" alias="CategoryManagement!list">
+			<view name="success">/cms/managementtool/viewListCategories.vm</view>
+		</command>
+		<command name="new" alias="CategoryManagement!new">
+			<view name="success">/cms/managementtool/categoryEditor.vm</view>
+		</command>
+		<command name="edit" alias="CategoryManagement!edit">
+			<view name="success">/cms/managementtool/categoryEditor.vm</view>
+		</command>
+		<command name="displayTreeForMove" alias="CategoryManagement!displayTreeForMove">
+			<view name="success">/cms/managementtool/moveCategory.vm</view>
+		</command>
+		<command name="move" alias="CategoryManagement!move">
+			<view name="success">/cms/managementtool/categoryEditor.vm</view>
+		</command>
+		<command name="save" alias="CategoryManagement!save">
+			<view name="success">CategoryManagement!edit.action?categoryId=${model/parentId}</view>
+			<view name="main">CategoryManagement!list.action</view>
+			<view name="error">/cms/managementtool/categoryEditor.vm</view>
+			<view name="input">/cms/managementtool/categoryEditor.vm</view>
+		</command>
+		<command name="delete" alias="CategoryManagement!delete">
+			<view name="main">CategoryManagement!list.action</view>
+			<view name="success">CategoryManagement!edit.action?categoryId=${model/parentId}</view>
+			<view name="input">/cms/managementtool/showConstraintExceptionForCategoryDelete.vm</view>
+			<view name="error">/cms/managementtool/error.vm</view>		
+		</command>
+	</action>
+
+	<!-- Category Tree Commands -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewCategoryTreeAction" alias="ViewCategoryHtmlTree">
+		<view name="error">/cms/managementtool/error.vm</view>
+
+		<command name="bindingView" alias="ViewCategoryHtmlTree!bindingView">
+			<view name="bindingView">/cms/managementtool/viewCategoryHtmlTreeForBinding.vm</view>
+		</command>
+	</action>
+
+	<!-- Content Category Commands -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.ContentCategoryAction" alias="ContentCategory">
+		<view name="error">/cms/contenttool/error.vm</view>
+
+		<command name="add" alias="ContentCategory!add">
+			<view name="success">ViewContentVersion!V3.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
+		</command>
+		<command name="delete" alias="ContentCategory!delete">
+			<view name="success">ViewContentVersion!V3.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
+		</command>
+		<command name="addStandalone" alias="ContentCategory!addStandalone">
+			<view name="success">ViewContentVersion!standalone.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
+		</command>
+		<command name="deleteStandalone" alias="ContentCategory!deleteStandalone">
+			<view name="success">ViewContentVersion!standalone.action?contentId=${contentId}&amp;languageId=${languageId}&amp;anchor=categoriesBlock</view>
+		</command>
+		<command name="addContentWizard" alias="ContentCategory!addWizard">
+			<view name="success">CreateContentWizardFinish.action?inputMoreAssets=false&amp;anchor=categoriesBlock</view>
+		</command>
+		<command name="deleteWizard" alias="ContentCategory!deleteWizard">
+			<view name="success">CreateContentWizardFinish.action?inputMoreAssets=false&amp;anchor=categoriesBlock</view>
+		</command>
+
+	</action>
+
+	<!-- Properties Category Commands -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.PropertiesCategoryAction" alias="PropertiesCategory">
+		<view name="error">/cms/managementtool/error.vm</view>
+		<view name="success">$returnAddress</view>
+	</action>
+
+	<!-- Portlet Commands -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListPortletAction" alias="ViewListPortlet">
+		<view name="success">/cms/managementtool/viewListPortlet.vm</view>
+		<view name="successSimple">/cms/managementtool/viewPortletRegistry.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdatePortletRegistryAction" alias="UpdatePortletRegistry">
+		<view name="success">/cms/managementtool/viewPortletRegistry.vm</view>
+		<view name="saveAndExit">ViewListPortlet.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UploadPortletAction" alias="UploadPortlet">
+		<view name="input">/cms/managementtool/uploadPortlet.vm</view>
+		<view name="success">ViewListPortlet.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<!-- Deploy Portlet -->
+	<action name="org.infoglue.deliver.applications.actions.DeployPortletAction" alias="DeployPortlet">
+        <view name="success">/deliver/error.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+
+	<!-- Workflows Actions -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListWorkflowDefinitionAction" alias="ViewListWorkflowDefinition">
+		<view name="success">/cms/managementtool/viewListWorkflowDefinition.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewWorkflowDefinitionAction" alias="ViewWorkflowDefinition">
+		<view name="success">/cms/managementtool/viewWorkflowDefinition.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateWorkflowDefinitionAction" alias="UpdateWorkflowDefinition">
+		<view name="input">/cms/managementtool/viewWorkflowDefinition.vm</view>
+		<view name="success">ViewWorkflowDefinition.action</view>
+		<view name="saveAndExit">ViewListWorkflowDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteWorkflowDefinitionAction" alias="DeleteWorkflowDefinition">
+		<view name="success">ViewListWorkflowDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateWorkflowDefinitionAction" alias="CreateWorkflowDefinition">
+		<view name="input">/cms/managementtool/createWorkflowDefinition.vm</view>
+		<view name="success">ViewWorkflowDefinition.action?workflowDefinitionId=${workflowDefinitionId}</view>
+		<view name="saveAndExit">ViewListWorkflowDefinition.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Redirect -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListRedirectAction" alias="ViewListRedirect">
+		<view name="success">/cms/managementtool/viewListRedirect.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewRedirectAction" alias="ViewRedirect">
+		<view name="success">/cms/managementtool/viewRedirect.vm</view>
+		<view name="successLocal">/cms/managementtool/viewRedirectLocal.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateRedirectAction" alias="UpdateRedirect">
+		<view name="input">/cms/managementtool/viewRedirect.vm</view>
+		<view name="success">ViewRedirect.action</view>
+		<view name="saveAndExit">ViewListRedirect.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteRedirectAction" alias="DeleteRedirect">
+		<view name="success">ViewListRedirect.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+		<view name="input">/cms/contenttool/showConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateRedirectAction" alias="CreateRedirect">
+		<view name="input">/cms/managementtool/createRedirect.vm</view>
+		<view name="success">ViewRedirect.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- ServerNodes -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListServerNodeAction" alias="ViewListServerNode">
+		<view name="success">/cms/managementtool/viewListServerNode.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewServerNodeAction" alias="ViewServerNode">
+		<view name="success">/cms/managementtool/viewServerNode.vm</view>
+		<view name="successLocal">/cms/managementtool/viewServerNodeLocal.vm</view>
+		<view name="redirectToList">ViewListServerNode.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateServerNodeAction" alias="UpdateServerNode">
+		<view name="input">/cms/managementtool/viewServerNode.vm</view>
+		<view name="success">ViewServerNode.action</view>
+		<view name="saveAndExit">ViewListServerNode.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteServerNodeAction" alias="DeleteServerNode">
+		<view name="success">ViewListServerNode.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+		<view name="input">/cms/contenttool/showConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateServerNodeAction" alias="CreateServerNode">
+		<view name="input">/cms/managementtool/createServerNode.vm</view>
+		<view name="success">ViewServerNode.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewServerNodePropertiesAction" alias="ViewServerNodeProperties">
+		<view name="input">/cms/managementtool/viewServerNodeProperties.vm</view>
+		<view name="success">/cms/managementtool/viewServerNodeProperties.vm</view>
+		<view name="save">ViewServerNodeProperties.action</view>
+		<view name="saveAndExit">ViewListServerNode.action</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewMessageCenterAction" alias="ViewMessageCenter">
+		<view name="success">/cms/managementtool/viewMessageCenter.vm</view>
+		<view name="successStandaloneChat">/cms/managementtool/viewStandaloneChat.vm</view>
+		<view name="successGetMessages">/cms/managementtool/viewMessages.vm</view>
+		<view name="successMessageSent">/cms/managementtool/viewMessages.vm</view>
+		<view name="successGetSystemMessages">/cms/managementtool/viewSystemMessages.vm</view>
+		<view name="successGetSystemMessagesV3">/cms/common/viewSystemMessages.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.CreateEmailAction" alias="CreateEmail">
+		<view name="inputChooseRecipients">/cms/managementtool/createEmailChooseRecipients.vm</view>
+		<view name="inputCreateEmail">/cms/managementtool/createEmailComposeText.vm</view>
+		<view name="success">/cms/managementtool/createEmailEmailSent.vm</view>
+		<view name="inputChooseRecipientsV3">/cms/managementtool/v3/createEmailChooseRecipients.vm</view>
+		<view name="inputCreateEmailV3">/cms/managementtool/v3/createEmailComposeText.vm</view>
+		<view name="successV3">/cms/managementtool/v3/createEmailEmailSent.vm</view>		
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewDiagnosticCenterAction" alias="ViewDiagnosticCenter">
+		<view name="success">/cms/managementtool/viewDiagnosticCenter.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewSystemToolsAction" alias="ViewSystemTools">
+		<view name="success">/cms/managementtool/viewSystemTools.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewArchiveToolAction" alias="ViewArchiveTool">
+		<view name="input">/cms/managementtool/viewArchiveTool.vm</view>
+		<view name="inputArchiveOldAssets">/cms/managementtool/viewArchiveToolInputArchiveOldAssets.vm</view>
+		<view name="successArchive">/cms/managementtool/viewSuccessArchive.vm</view>
+		<view name="inputRestoreAssetArchive">/cms/managementtool/viewArchiveToolInputRestoreAssetArchive.vm</view>
+		<view name="successRestoreArchive">/cms/managementtool/viewSuccessRestoreArchive.vm</view>
+		<view name="success">/cms/managementtool/viewArchiveToolResult.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewThemesAction" alias="ViewThemes">
+		<view name="success">/cms/managementtool/v3/viewThemes.vm</view>
+		<view name="input">/cms/managementtool/v3/viewThemeUpload.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewLabelsAction" alias="ViewLabels">
+		<view name="success">/cms/managementtool/v3/viewLabels.vm</view>
+		<view name="input">/cms/managementtool/v3/viewLabelUpload.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Authorization Switch Management -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.AuthorizationSwitchManagementAction" alias="AuthorizationSwitchManagement">
+		<view name="inputUser">/cms/managementtool/viewAuthorizationSwitchManagementUser.vm</view>
+		<view name="inputRole">/cms/managementtool/viewAuthorizationSwitchManagementRole.vm</view>
+		<view name="inputGroup">/cms/managementtool/viewAuthorizationSwitchManagementGroup.vm</view>
+		<view name="successUser">ViewSystemUser.action</view>
+		<view name="successRole">ViewRole.action</view>
+		<view name="successGroup">ViewGroup.action</view>
+		<view name="success">/cms/managementtool/viewListInvalidAuthorization.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- InfoGlue Image Editor -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.ImageEditorAction" alias="ImageEditor">
+		<view name="input">/cms/contenttool/viewImageEditor.vm</view>
+		<view name="success">/cms/contenttool/viewImageEditor.vm</view>
+		<view name="successResize">ExtendedRedirect.action?url=ImageEditor.action#workingFileName#digitalAssetId#contentVersionId</view>
+		<view name="successCrop">ExtendedRedirect.action?url=ImageEditor.action#workingFileName#digitalAssetId#contentVersionId</view>
+		<view name="successSaveAndExit">/cms/contenttool/viewImageEditor.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- InfoGlue Deployment Service -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.deployment.ViewDeploymentChooseServerAction" alias="ViewDeploymentChooseServer">
+		<view name="inputQuickV3">/cms/managementtool/deployment/v3/viewQuickDeploymentChooseServer.vm</view>
+		<view name="input">/cms/managementtool/deployment/viewDeploymentChooseServer.vm</view>
+		<view name="success">ViewDeploymentSynchronizeServers!input.action?deploymentServerIndex=${deploymentServerIndex}</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.deployment.ViewDeploymentSynchronizeServersAction" alias="ViewDeploymentSynchronizeServers">
+		<view name="input">/cms/managementtool/deployment/viewDeploymentChooseEntities.vm</view>
+		<view name="success">/cms/managementtool/deployment/viewDeploymentSynchronizeServersComplete.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<!-- Quick deployment -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.deployment.ViewQuickDeploymentSynchronizeContentsAction" alias="ViewQuickDeploymentSynchronizeContents">
+		<view name="input">/cms/managementtool/deployment/v3/viewQuickDeploymentChooseContents.vm</view>
+		<view name="success">/cms/managementtool/deployment/v3/viewQuickDeploymentComplete.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<!-- InfoGlue Version Control Synchronize -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.deployment.ViewVCDeploymentAction" alias="ViewVCDeployment">
+		<view name="input">/cms/managementtool/deployment/v3/viewDeploymentChooseVCServer.vm</view>
+		<view name="inputChooseTag">/cms/managementtool/deployment/v3/viewDeploymentChooseTag.vm</view>
+		<view name="inputVerifyCheckout">/cms/managementtool/deployment/v3/viewDeploymentVerifyAndCheckout.vm</view>
+		<view name="success">/cms/managementtool/deployment/v3/viewDeploymentComplete.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	
+	<!-- Property browsers -->
+	<action name="org.infoglue.cms.applications.common.actions.ViewFileBrowserAction" alias="ViewFileBrowser">
+		<view name="success">/cms/common/viewFileBrowser.vm</view>
+		<view name="error">/cms/common/error.vm</view>
+	</action>
+	
+	
+	<!-- InfoGlue Password generation service -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewPasswordToolAction" alias="ViewPasswordTool">
+		<view name="input">/cms/managementtool/viewPasswordToolInput.vm</view>
+		<view name="success">/cms/managementtool/viewPasswordToolResult.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- InfoGlue Lucene overview service -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewLuceneOverviewAction" alias="ViewLuceneOverview">
+		<view name="success">/cms/managementtool/viewLuceneOverview.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!--  InfoGlue Subscriptions -->
+	<action name="org.infoglue.cms.applications.common.actions.SubscriptionsAction" alias="Subscriptions">
+		<view name="input">/cms/common/viewSubscriptions.vm</view>
+		<view name="success">ExtendedRedirect.action?url=Subscriptions!inputGlobalSubscriptions.action#standalone</view>
+		<view name="inputGlobalSubscriptions">/cms/common/viewGlobalSubscriptions.vm</view>
+		<view name="successGlobalSubscriptions">ExtendedRedirect.action?url=Subscriptions!inputGlobalSubscriptions.action#standalone</view>
+		<view name="error">/cms/common/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.common.actions.SearchAction" alias="Search">
+		<view name="success">/cms/common/viewSearchResult.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- Inline operations results -->
+	<action name="org.infoglue.cms.applications.common.actions.ViewInlineOperationMessagesAction" alias="ViewInlineOperationMessages">
+		<view name="success">/cms/common/inlineOperationDone.vm</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+	</action>
+
+	<!--  InfoGlue Trashcan -->
+	<action name="org.infoglue.cms.applications.common.actions.TrashcanAction" alias="Trashcan">
+		<view name="success">/cms/common/viewTrashcan.vm</view>
+		<view name="error">/cms/common/error.vm</view>
+	</action>
+
+</actions>

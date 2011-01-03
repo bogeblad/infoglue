@@ -1,0 +1,371 @@
+html, body {
+	height: 100%; margin:0;
+}
+  
+#header {
+	height: 54px;
+    background-image: url(images/headerBackground.png); 
+	background-repeat: repeat-x; 
+}
+#searchForm {
+	float: left; 
+	clear: none; 
+	margin-top: 5px;
+}
+#searchField {
+	float: left; 
+	display: block; 
+	border: 0px solid #ccc; 
+	font-family: Tahoma, Verdana, Arial, sans-serif; 
+	font-size: 14px;
+	text-indent: 10px;
+	color: #ccc;
+	background-image: url(images/searchFieldBackground.png); 
+	background-repeat: no-repeat; 
+	height: 28px;
+	width: 160px;
+}
+#searchButton {
+	height: 30px;
+	width: 40px;
+	float: left; 
+	display: block;
+	background-image: url(images/searchButton.png); 
+	background-repeat: no-repeat; 
+}
+#contextMenuDiv 
+{
+    background-color: #F9F8F7;
+    background-image: url(images/tileGradient.gif);
+    background-position: left center;
+    background-repeat: repeat-y;
+    border: 1px solid #6593cf;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 14px;
+    cursor:pointer;
+    position:absolute;
+    text-align:left;
+	display: none;
+	z-index: 1;
+}
+#contextMenuDiv ul
+{
+    margin: 0px;
+	margin-right: 20px;
+	padding: 0px;
+	list-style-image: none;
+	list-style-type: none;
+}
+#contextMenuDiv ul li a
+{
+    text-indent: 32px;
+	line-height: 24px;
+	display: block;
+	color: black;
+	background-position: 4px 2px;
+	text-decoration: none;
+}
+#contextMenuDiv ul li a.movePage
+{
+	background-position: 6px 2px;
+}
+#contextMenuDiv ul li a:hover
+{
+	text-decoration: underline;
+}
+#menucontent {
+	float: left;
+	margin-top: 4px;
+}
+.middleTabPart {
+	margin-left: 10px;
+	margin-top: 10px;
+	float: left;
+	background-image: url(images/toolTabMiddle.png); 
+	background-repeat: repeat-x; 
+}
+.leftTabPart {
+	float: left;
+	background-image: url(images/toolTabLeft.png); 
+	background-repeat: no-repeat; 
+}
+.rightTabPart {
+	float: left;
+	background-image: url(images/toolTabRight.png); 
+	background-repeat: no-repeat; 
+	background-position: right top;
+}
+.middleTabPartSelected {
+	margin-left: 10px;
+	margin-top: 0px;
+	float: left;
+	background-image: url(images/toolTabMiddleSelected.png); 
+	background-repeat: repeat-x; 
+}
+.leftTabPartSelected {
+	float: left;
+	background-image: url(images/toolTabLeftSelected.png); 
+	background-repeat: no-repeat; 
+}
+.rightTabPartSelected {
+	float: left;
+	background-image: url(images/toolTabRightSelected.png); 
+	background-repeat: no-repeat; 
+	background-position: right top;
+}
+
+#initialButton {
+	display: block; 
+	float: left; 
+	background: transparent url(images/menu-button-arrow.png) no-repeat; 
+	background-position: 4px 15px;
+	padding-left: 8px;
+	margin-left: 4px;
+}
+.subButtons {
+	position: absolute; 
+	display: none; 
+	background-color: #B2B2B2; 
+	border: 1px solid #9CAABD; 
+	border-top: 0px;
+	/*background-image:url("images/menuSubButtonsShadow.png");
+	background-position: bottom left;*/
+	background-color: rgba(176, 176, 176, 0.9);
+}
+.menutab {
+	margin-top: 15px;
+	display: block;
+	height: 25px;
+	padding: 0px 20px 0px 20px;
+	font-family: Tahoma, Verdana, Arial, sans-serif; 
+	font-size: 13px;
+	text-decoration: none;
+	color: #333;
+}
+.menutabSelected {
+	margin-top: 15px;
+	display: block;
+	height: 35px;
+	padding: 0px 20px 0px 20px;
+	font-family: Tahoma, Verdana, Arial, sans-serif; 
+	font-size: 13px;
+	text-decoration: none;
+	color: #111;
+}
+#menutoolbar {
+	float: left;
+	width: 100%;
+	height: 115px;
+	padding: 0px;
+	background-image: url(images/toolbarBackground.png);
+	background-position: right top;
+	background-repeat: repeat-x;
+}
+#menutoolbar.compact {
+	height: 32px;
+	padding: 0px;
+	background-image: url(images/toolbarBackground.png);
+	background-position: right top;
+	background-repeat: repeat-x;
+}
+#menutoolbarLeft {
+	padding: 0px;
+	margin: 0px;
+	width: 90%; 
+}
+/*
+.igToolbarButton
+{
+	height: 22px;
+	line-height: 22px;
+}
+*/
+#toolsColumn {
+	float: left;
+	width: 250px; 
+	margin: 0px 0px 0px 0px;
+	padding-right: 6px;
+	background-image: url(images/verticalDivider.png);
+	background-position: right;
+	background-repeat: repeat-y;
+}
+#repositoryChoiceDiv {
+	height: 30px;
+	width: 100%;
+	background-color: #efefef;
+	border-bottom: 1px solid #9caabb;
+}
+#repositorySelect {
+	width: 200px; 
+	float: left; 
+	margin-left: 6px; 
+	margin-top: 6px;
+}
+
+#repositoriesDiv {
+	float: left;
+	width: 100%; 
+	margin: 0px;
+	padding: 0px;
+	padding-top: 4px;
+}
+#repositoriesDivHandle {
+	color: #333; 
+	background-color: #deecff;
+}
+#repositoriesDiv {
+	border-top: 1px solid #ADD1FF;
+}
+.shadow {
+	background-image: url(images/bottomShadow.png);
+	background-repeat: repeat-x;			
+}
+#structureRepositoriesDiv ul, #contentRepositoriesDiv ul {
+	background-color: white;
+}
+#structureRepositoriesDiv ul li, #contentRepositoriesDiv ul li {
+	background-color: #eef5ff;
+}
+#structureRepositoriesDiv ul li a, #contentRepositoriesDiv ul li a {
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	color: black;
+}
+#structureRepositoriesDiv ul li a.current, #contentRepositoriesDiv ul li a.current {
+	font-weight: bold;
+	color: #d27600;
+	background-image: url(images/rightarrow.png);
+	background-position: 0px 5px;
+	background-repeat: no-repeat;			
+}	
+
+#paletteDiv {
+	float: left; 
+	aheight: 150px;
+	background-image: url(images/sectionBarBackground.png);
+	background-repeat: repeat-x;
+	background-color: #transparent;
+}
+#componentPaletteHeader
+{
+	float: left;
+	width: 100%; 
+	height: 22px;
+}
+#componentPaletteHeader h3
+{
+	margin: 4px 2px 2px 6px;
+	font-family: Arial, sans-serif; 
+	font-size: 13px;
+	font-weight: bold;
+	color: #333333;
+	float: left;
+}
+
+.mainTool #work {
+	background-image: url("../../images/v3/toolBackgroundTheme.jpg");
+	background-repeat: no-repeat;
+}
+  
+#footer {
+    height: 34px;
+    background-image: url(images/footerBackground.png); 
+	background-repeat: repeat-x; 
+	background-color: #AEAEAE;
+}
+#logoButton {
+	margin-left: 4px;
+	margin-top: 2px;
+	float: left;
+	display: block;
+	width: 37px;
+	height: 26px;
+    background-image: url(images/infoglueLogoSmall.png); 
+	background-repeat: no-repeat;
+	border: 1px solid white;
+}
+iframe.tool {
+}
+
+iframe.inactiveTool {
+	display: none;
+}
+
+
+/* Styles for manipulating jquery-ui-elements */
+.ui-widget-overlay {
+opacity:0.9;
+background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
+}
+/*
+.ui-dialog {
+padding:0px;
+position:relative;
+width:400px;
+}
+.ui-dialog .ui-widget-header {
+color:transparent;
+font-weight:bold;
+font-size: 12pt;
+height:32px;
+float: left;
+margin:0;
+padding-top:2px;
+width:100%;
+}
+.ui-dialog .ui-dialog-titlebar {
+padding: 0px;
+position:relative;
+background-color:white;
+background-image:url("../../images/v3/toolbarBackground.gif");
+background-repeat:repeat-x;
+border:0px;
+border-bottom:1px solid #9CAABD;
+}
+.ui-dialog .ui-dialog-buttonpane {
+background-color:white;
+background-image:url("../../images/v3/footerBackground.gif");
+background-repeat:repeat-x;
+border-top:0 solid #9CAABD;
+border-width:0px 0 0;
+bottom:0;
+float:left;
+height:43px;
+margin:0;
+padding: 0px;
+padding-left: 10px;
+position:absolute;
+width:100%;
+text-align:left;
+}
+.ui-widget-content {
+background:url("images/ui-bg_inset-hard_100_fcfdfd_1x100.png") repeat-x scroll 50% bottom #FCFDFD;
+border:1px solid #A6C9E2;
+color:#222222;
+}
+.ui-dialog .ui-dialog-buttonpane button {
+cursor:pointer;
+float:left;
+line-height:1.4em;
+margin:8px 10px 0px 0px;
+overflow:visible;
+padding:0pxm;
+width:auto;
+}
+.ui-state-default, .ui-widget-content .ui-state-default {
+background:none;
+border:1px solid #D0D1D0;
+color:black;
+font-weight:bold;
+outline:medium none;
+}
+.okButton {
+	background:url("../../images/v3/check.png") no-repeat scroll 0 0px transparent;
+	padding-left: 20px;
+}
+.cancelButton {
+	background:url("../../images/v3/cancel.png") no-repeat scroll 0 0px transparent;
+	padding-left: 20px;
+}
+*/

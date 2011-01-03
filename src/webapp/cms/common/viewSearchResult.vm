@@ -1,0 +1,527 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		
+		//-----------------------------------------------
+		// This function reloads the toolbar above the current 
+		// active action so that buttons related to the view 
+		// can be shown and a suitable headline be written.
+		//-----------------------------------------------
+		
+		function submitReplaceForm()
+		{
+			var selectedObjectsAsDelimitedString = getSelectedObjectsAsDelimitedString("sel");
+			//alert("selectedObjectsAsDelimitedString:" + selectedObjectsAsDelimitedString);
+			if (selectedObjectsAsDelimitedString == "")
+			{
+				alert('$ui.getString("tool.contenttool.replaceAlertSelectVersions")');
+			  	return;
+			}
+			else
+			{
+				$("#replaceForm").get(0).contentVersionId.value = selectedObjectsAsDelimitedString;
+				$("#replaceForm").get(0).submit();
+			}
+
+		}
+				
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones id's to the id-List 
+		//-----------------------------------------------
+
+		function getSelectedObjectsAsDelimitedString(nameValue)
+		{
+			var str = '';
+			
+			$("input[name='" + nameValue + "']").filter(':checked').each(function() {
+				if(str != "")
+					str += ',';
+				str += $(this).val();
+			});
+				
+		 	return str;
+		}
+
+
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones names to the messagesList 
+		//-----------------------------------------------
+		
+		function getSelectedTexts(listForm)
+		{
+			var str = '';
+
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += listForm.rowtitle.value + "<br/>";
+		  	}
+		  	else
+		  	{	
+				for (i=0; i<length; i++)
+				{
+					if (listForm.sel[i].checked)
+				    	str += listForm.rowtitle[i].value + "<br/>";
+				}
+			}
+					
+			return str;
+		}
+
+		function toggleDiv(id)
+		{
+			var div = document.getElementById(id);
+			if(div && div.style.display == "none")
+			{
+				div.style.display = "block";
+		
+				if(id == "advancedOptions")
+				{
+					document.getElementById("advancedEnabled").value = "true";
+				}
+					
+			}
+			else
+			{
+				div.style.display = "none";
+				
+				if(id == "advancedOptions")
+				{
+					document.getElementById("advancedEnabled").value = "false";
+				}
+			}			
+		}
+		
+		function showReplaceDialog()
+		{
+			var searchForm = document.getElementById("searchForm");
+			searchForm.style.display = "none";
+
+			var replaceDiv = document.getElementById("replaceLayer");
+			replaceDiv.style.display = "block";
+		}
+		
+		function showSearchDialog()
+		{
+			var searchForm = document.getElementById("searchForm");
+			searchForm.style.display = "block";
+
+			var replaceDiv = document.getElementById("replaceLayer");
+			replaceDiv.style.display = "none";
+		}
+		
+		function resetSearchForm()
+		{
+			document.editForm.searchString.value = "";
+		}
+
+		function resetReplaceForm()
+		{
+			document.replaceForm.searchString.value = "";
+			document.replaceForm.replaceString.value = "";
+		}
+
+		function focusFirst() {$("input:text:visible:first").focus().select();}
+
+		var isItAnActivationCall = false;
+		function setIsItAnActivationCall(value) {
+			isItAnActivationCall=value;
+			if(isItAnActivationCall)
+			{
+				//focusFirst();
+				setTimeout("focusFirst();", 200);
+			}
+		}
+
+		$(document).ready(function(){
+			focusFirst();
+
+			$("#tabsContainer").tabs( { 
+				show:function() { resizeScrollArea(); },
+				select:function(e, ui) { 
+					resizeScrollArea();
+					//alert("ui: " + ui.index);
+	
+					if(ui.index == 1)
+			  		{
+			  			if($("#latestAssetsFrame").attr("src") == "")
+			  			{
+				  			#if($contentVO.id > -1)
+						  		$("#latestAssetsFrame").attr("src", "SearchContent!latestInlineAssetsV3.action?repositoryId=${contentVO.repositoryId}&assetTypeFilter=$assetTypeFilter"); 
+							#else
+					  			$("#latestAssetsFrame").attr("src", "SearchContent!latestInlineAssetsV3.action?assetTypeFilter=$assetTypeFilter"); 
+							#end
+						}	
+			  		}
+			  		else if(ui.index == 2)
+			  		{
+				  		if($("#contentVersionAssetSearchFrame").attr("src") == "")
+				  		{
+				  			#if($contentVO.id > -1)
+					  			$("#contentVersionAssetSearchFrame").attr("src", "SearchContent!inputInlineAssetV3.action?repositoryId=${contentVO.repositoryId}&assetTypeFilter=$assetTypeFilter"); 
+							#else
+					  			$("#contentVersionAssetSearchFrame").attr("src", "SearchContent!inputInlineAssetV3.action?assetTypeFilter=$assetTypeFilter"); 
+							#end
+						}	
+				  	}
+				} 
+			});
+			
+			#set($extraParameter = '')
+			#initDataTableImpl("contents" $extraParameter)
+			#initDataTableImpl("pages" $extraParameter)
+			#initDataTableImpl("assets" $extraParameter)
+						
+			$("#checkAllContents").click(function(event) {
+				var value = $("#checkAllContents").attr("checked");
+				if(value == true)
+					$("input[name='sel']").attr('checked', true);
+				else
+					$("input[name='sel']").attr('checked', false);
+				
+				if( event.stopPropagation ) { event.stopPropagation(); } 
+				else { event.cancelBubble = true; } 
+			});
+		});
+	-->
+	</script>
+	
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#set($advanced = false)
+#if(($name && $name != "") || $languageId || $contentTypeDefinitionId || $caseSensitive == 1 || $stateId || $advancedEnabled)
+	#set($advanced = true)
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.searchResultHeader" "" "" false true $!disableCloseButton $headerMarkup false "")
+
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+			
+	<h3>$ui.getString("tool.common.searchDialog.searchFieldDefaultText")</h3>
+			
+	<form id="searchForm">
+		<fieldset style="border: 1px solid #CCC; width: 500px;">
+			
+			<div id="searchLayer" style="display:block;">
+				<p>
+					#editTextField3($ui.getString("tool.contenttool.searchString.label") "tool.contenttool.searchString.label" "searchString" $formatter.escapeHTML($searchString) "30" "normaltextfield") 
+					<a href="javascript:toggleDiv('advancedOptions');">$ui.getString("tool.contenttool.searchAdvanced")</a> | <a href="javascript:showReplaceDialog();">$ui.getString("tool.contenttool.replace")</a>
+				</p>
+			</div>
+
+			<input type="hidden" name="repositoryId" value="$!repositoryId">
+			<input type="hidden" id="advancedEnabled" name="advancedEnabled" value="$advancedEnabled">
+					
+			<div id="advancedOptions" #*style="#if($advanced == false)display:none;#end"*# style="display:none;">
+				<p>
+					#editTextField3($ui.getString("tool.contenttool.modifierFilter.label") "tool.contenttool.modifierFilter.label" "name" $formatter.escapeHTML($name) "30" "normaltextfield") 
+				</p>
+				<p>
+					#selectFieldCSS3("tool.contenttool.languageFilter.label" "languageId" $languageId $availableLanguages "tool.contenttool.filterShowAll.label")
+				</p>
+				<p>
+					#selectFieldCSS3("tool.contenttool.contentTypeFilter.label" "contentTypeDefinitionId" $contentTypeDefinitionId $contentTypeDefinitions "tool.contenttool.filterShowAll.label")
+				</p>
+				#if($allowCaseSensitive)
+				<p>
+					$ui.getString("tool.contenttool.caseSensitive.label")<br>
+					<input type="checkbox" name="caseSensitive" value="1" #checkChecked("1" "$caseSensitive")> $ui.getString("tool.common.yes") 
+				</p>
+				#end
+				<p>
+					$ui.getString("tool.contenttool.includeAssets.label")<br>
+					<input type="checkbox" name="includeAssets" value="true" #checkChecked("true" "$includeAssets")> Yes 
+				</p>
+				<p>
+					$ui.getString("tool.contenttool.onlyIDSearch.label")<br>
+					<input type="checkbox" name="onlyIDSearch" value="true" #checkChecked("true" "$onlyIDSearch")> Yes 
+				</p>
+				<p>
+					$ui.getString("tool.contenttool.stateSearch.label")<br>
+					<select class="dropbox" name="stateId">
+						<option value="">$ui.getString("tool.contenttool.filterShowAll.label")</option>
+						<option value="">---------------</option>
+						<option value="0" #checkSelected("0" "$stateId")>$ui.getString("tool.contenttool.state.working")</option>
+						<!--
+						<option value="1" #checkSelected("1" "$stateId")>$ui.getString("tool.contenttool.state.final")</option>
+						-->				
+						<option value="2" #checkSelected("2" "$stateId")>$ui.getString("tool.contenttool.state.publish")</option>
+						<option value="3" #checkSelected("3" "$stateId")>$ui.getString("tool.contenttool.state.published")</option>
+					</select>
+				</p>
+				<p>
+					$ui.getString("tool.contenttool.chooseRepositoryLabel")<br>
+					<select class="dropbox" name="repositoryIdToSearch" multiple="true" size="10">
+						#foreach ($repositoryVO in $repositories)
+							#if(!$initSearch)
+								<option value="$repositoryVO.id" #checkSelectedByList($selectedRepositoryIdList "$repositoryVO.id")>$repositoryVO.name</option>
+							#else
+								<option value="$repositoryVO.id" selected="1">$repositoryVO.name</option>
+							#end
+					    #end
+					</select>
+				</p>		
+			</div>
+			
+			<p class="buttonPane">
+				<input type="submit" value="$ui.getString("tool.common.datatable.sSearch")" class="search"/>
+				<input type="button" value="$ui.getString("tool.common.cancelButton.label")" class="cancel" onclick="document.location.href='Search.action?initSearch=true';"/>
+			</p>
+		</fieldset>
+	</form>
+		
+	<div id="replaceLayer" style="display: none;">
+
+		<form method="post" id="replaceForm" name="replaceForm" action="ReplaceContent!V3.action">
+			<p>
+				#editTextField3($ui.getString("tool.contenttool.findString.label") "tool.contenttool.findString.label" "searchString" $searchString "30" "normaltextfield")
+				<a href="javascript:showSearchDialog();">$ui.getString("tool.contenttool.backToSearch")</a>
+				<br/>
+				#editTextField3($ui.getString("tool.contenttool.replaceString.label") "tool.contenttool.replaceString.label" "replaceString" $replaceString "30" "normaltextfield")
+			</p>
+			<p class="buttonPane">
+				<input type="button" value="$ui.getString("tool.contenttool.replace")" class="replace" onclick="submitReplaceForm();"/>
+				<input type="button" value="$ui.getString("tool.common.cancelButton.label")" class="cancel" onclick="resetReplaceForm();"/>
+			</p>
+			<input type="hidden" name="contentVersionId" value="">
+			<input type="hidden" name="repositoryId" value="$!repositoryId">
+			<input type="hidden" name="name" value="$!name">
+			<input type="hidden" name="languageId" value="$!languageId">
+			<input type="hidden" name="contentTypeDefinitionId" value="$!contentTypeDefinitionId">
+			<input type="hidden" name="caseSensitive" value="$!caseSensitive">
+			<input type="hidden" name="stateId" value="$!stateId">
+		</form>
+	</div>
+	
+	#if($searchString && $searchString != "")
+		<h3>$ui.getString("tool.common.searchDialog.searchResultHeader")</h3>
+
+		#if($contentVersionVOList.size() == 0 && $siteNodeVersionVOList.size() == 0 && $digitalAssetVOList.size() == 0 && $baseEntityVOList.size() == 0)
+			<p>Nothing found matching phrase "$searchString"</p>
+		#else
+
+			<div id="tabsContainer" class="flora transparentTop">      
+		
+				#if($onlyIDSearch == "false")
+	
+					<ul>
+						#if($contentVersionVOList.size() > 0)
+				        	<li><a href="#contentsTab"><span>$ui.getString("tool.common.searchDialog.contentTabLabel") ($contentVersionVOList.size())</span></a></li>	        
+				        #end
+						#if($siteNodeVersionVOList.size() > 0)
+				        	<li><a href="#pagesTab"><span>$ui.getString("tool.common.searchDialog.pagesTabLabel") ($siteNodeVersionVOList.size())</span></a></li>	        
+				        #end
+						#if($digitalAssetVOList.size() > 0)
+				        	<li><a href="#assetsTab"><span>$ui.getString("tool.common.searchDialog.assetsTabLabel") ($digitalAssetVOList.size())</span></a></li>	        
+				        #end
+				    </ul>
+					
+					#if($contentVersionVOList.size() > 0)
+					
+						<div id="contentsTab" class="inlineTabDiv">
+						
+							<table cellpadding="0" cellspacing="0" border="1" class="display" id="contents">
+								<thead>
+									<tr>
+										<th>
+											<input type="checkbox" id="checkAllContents" name="checkAllContents" value=""/>
+											$ui.getString("tool.contenttool.searchResultContentHeader")
+										</th>
+										<th>$ui.getString("tool.contenttool.searchResultLanguageHeader")</th>
+										<th>$ui.getString("tool.contenttool.searchResultStateHeader")</th>
+										<th>$ui.getString("tool.contenttool.searchResultLastModifiedHeader")</th>
+									</tr>
+								</thead>
+								<tbody>
+								
+									#foreach ($contentVersionVO in $contentVersionVOList)
+										#set( $contentVersionId = $contentVersionVO.id ) 
+										<tr>
+											<td>
+												<input type="checkbox" id="cv$contentVersionId" name="sel" value="$contentVersionId"/>
+												<a href="#" class="content" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentVersionVO.contentId', '$contentVersionVO.contentName', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$this.getContentPath($contentVersionVO.contentId).replaceAll(' ', '&nbsp;')</a>
+											</td>
+											<td>
+												<span>$this.getLanguageVO($contentVersionVO.languageId).name</span>
+											</td>
+											<td>
+												<span>$contentVersionVO.stateId</span>
+											</td>
+											<td>
+												<span>$formatter.formatDate($contentVersionVO.modifiedDateTime, 'yyyy-MM-dd HH:ss')</span>
+											</td>
+										</tr>
+									#end
+									
+								</tbody>
+							</table>
+						
+						</div>
+					#end
+					#if($siteNodeVersionVOList.size() > 0)		
+								
+						<div id="pagesTab" class="inlineTabDiv">
+							
+							<table cellpadding="0" cellspacing="0" border="1" class="display" id="pages">
+								<thead>
+									<tr>
+										<th>
+											##<input type="checkbox" id="checkAllPages" name="checkAllPages" value="" onclick=""/>
+											$ui.getString("tool.contenttool.searchResultPageHeader")
+										</th>
+										<th>$ui.getString("tool.contenttool.searchResultStateHeader")</th>
+										<th>$ui.getString("tool.contenttool.searchResultLastModifiedHeader")</th>
+									</tr>
+								</thead>
+								<tbody>
+								
+									#foreach ($siteNodeVersionVO in $siteNodeVersionVOList)
+										#set( $siteNodeVersionId = $siteNodeVersionVO.id ) 
+										<tr>
+											<td>
+												<input type="checkbox" id="snv$siteNodeVersionId" name="selSiteNodeVersion" value="$siteNodeVersionId"/>
+												<a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$siteNodeVersionVO.siteNodeId', '$siteNodeVersionVO.siteNodeName', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$this.getSiteNodePath($siteNodeVersionVO.siteNodeId)</a><br/>
+											</td>
+											<td>
+												<span>$siteNodeVersionVO.stateId</span>
+											</td>
+											<td>
+												<span>$formatter.formatDate($siteNodeVersionVO.modifiedDateTime, 'yyyy-MM-dd HH:ss')</span>
+											</td>
+										</tr>
+									#end
+									
+								</tbody>
+							</table>
+			
+						</div>
+					#end
+					#if($digitalAssetVOList.size() > 0)		
+						
+						<div id="assetsTab" class="inlineTabDiv">
+							
+							<table cellpadding="0" cellspacing="0" border="1" class="display" id="assets">
+								<thead>
+									<tr>
+										<th>$ui.getString("tool.contenttool.searchResultAssetHeader")</th>
+										<th>$ui.getString("tool.contenttool.searchResultAssetKeyHeader")</th>
+										<th>$ui.getString("tool.contenttool.searchResultAssetSizeHeader")</th>
+										<th>&nbsp;</th>
+									</tr>
+								</thead>
+								<tbody>
+								
+									#foreach ($digitalAssetVO in $digitalAssetVOList)
+										<tr>
+											<td>
+											 	#set($contentId = $this.getDigitalAssetContentId($digitalAssetVO.digitalAssetId))
+												<a href="#" class="content" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentId&anchor=digitalAssetsBlock', '$digitalAssetVO.assetKey', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$this.getContentPath($contentId).replaceAll(' ', '&nbsp;')</a>
+											</td>
+											<td>
+												<span>$digitalAssetVO.assetKey</span>
+											</td>
+											<td>
+												<span>$formatter.formatFileSize($digitalAssetVO.assetFileSize)</span>
+											</td>
+											<td>
+												#set($imageUrl = $this.getDigitalAssetUrl($digitalAssetVO.digitalAssetId))
+												#set($thumbnailImageUrl = $this.getDigitalAssetThumbnailUrl($digitalAssetVO.digitalAssetId, 100, 60, "ffffff", "center", "middle", 100, 60, 75))
+												<a href="$imageUrl" target="_blank"><img src="$thumbnailImageUrl" alt="$digitalAssetVO.assetKey" border="0"/></a>
+											</td>
+										</tr>
+									#end
+									
+								</tbody>
+								
+							</table>
+						</div>
+					#end		
+				#else
+		
+					<ul>
+				        <li><a href="#isSearchResultTab"><span>$ui.getString("tool.common.searchDialog.contentTabLabel")</span></a></li>
+				    </ul>
+						
+					<div id="isSearchResultTab" class="inlineTabDiv">
+					
+						<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents">
+							<thead>
+								<tr>
+									<th>Found entity</th>
+									<th>Type (class)</th>
+								</tr>
+							</thead>
+							<tbody>
+							
+								#foreach ($baseEntityVO in $baseEntityVOList)
+									#set( $baseEntityId = $baseEntityVO.id ) 
+									
+									#set( $entityName = "$baseEntityVO.name")
+									#if($baseEntityVO.class.name == "org.infoglue.cms.entities.content.ContentVO")
+										#set( $name = "$baseEntityVO.name")
+										#set( $target = "content")
+										#set( $rowUrl = "ViewContent!V3.action?contentId=$baseEntityId")
+										#set( $title = "$this.getContentPath($baseEntityId).replaceAll(' ', '&nbsp;')")
+									#elseif($baseEntityVO.class.name == "org.infoglue.cms.entities.content.ContentVersionVO")
+										#set( $name = "$baseEntityVO.contentName")
+										#set( $target = "content")
+										#set( $rowUrl = "ViewContentVersion!V3.action?contentId=$baseEntityVO.contentId&languageId=$baseEntityVO.languageId")
+										#set( $title = "$this.getContentPath($baseEntityVO.contentId).replaceAll(' ', '&nbsp;')")
+										#set( $entityName = "$baseEntityVO.contentName - $baseEntityVO.languageName")
+									#elseif($baseEntityVO.class.name == "org.infoglue.cms.entities.content.DigitalAssetVO")
+										#set( $name = "$baseEntityVO.assetKey")
+										#set( $target = "content")
+										#set( $contentId = $this.getDigitalAssetContentId($baseEntityVO.id))
+										#set( $rowUrl = "ViewContent!V3.action?contentId=$contentId")
+										#set( $title = "$this.getContentPath($contentId).replaceAll(' ', '&nbsp;')")
+										#set( $entityName = "$baseEntityVO.assetKey")
+									#elseif($baseEntityVO.class.name == "org.infoglue.cms.entities.structure.SiteNodeVO")
+										#set( $name = "$baseEntityVO.name")
+										#set( $target = "structure")
+										#set( $rowUrl = "ViewSiteNode!V3.action?siteNodeId=$baseEntityVO.siteNodeId")
+										#set( $title = "$this.getSiteNodePath($baseEntityVO.siteNodeId).replaceAll(' ', '&nbsp;')")		
+									#elseif($baseEntityVO.class.name == "org.infoglue.cms.entities.structure.SiteNodeVersionVO")
+										#set( $name = "$baseEntityVO.siteNodeName")
+										#set( $target = "structure")
+										#set( $rowUrl = "ViewSiteNode!V3.action?siteNodeId=$baseEntityVO.siteNodeId")
+										#set( $title = "$this.getSiteNodePath($baseEntityVO.siteNodeId).replaceAll(' ', '&nbsp;')")		
+										#set( $entityName = "$baseEntityVO.id of siteNodeId $baseEntityVO.siteNodeId")
+									#end
+									<tr>
+										<td>
+											<input type="checkbox" id="cv$contentVersionId" name="sel" value="$contentVersionId"/>
+											<a href="#" class="content" title=$title onclick="top.openUrlInWorkArea('$rowUrl', '$name', '$target', ''); return false;">$entityName</a>
+										</td>
+										<td>
+											<span>$baseEntityVO.class.name</span>
+										</td>
+									</tr>
+								#end
+								
+							</tbody>
+						</table>
+					
+					</div>
+					
+				#end
+			#end
+	
+		#end
+			
+	</div>
+		
+#endLightCommonToolV3()

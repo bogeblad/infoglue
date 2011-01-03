@@ -1,0 +1,3773 @@
+####################################
+##          CMS STUFF 	   	       #
+####################################
+
+#macro(workingDiv)
+<div id="working" style="border: 1px solid black; left: 30%; top: 30%; z-index: 10; visibility: hidden; position:absolute; width:300px; height:115px; z-index:1; padding:10px; background-color: buttonface;">
+	<div style="left: 0px; width: 100%; text-align: center;">
+		<font face="Verdana" size="-1" color="#006699"><strong>System is working</strong></font>
+		<hr width="80%" SIZE="2">
+	</div>
+	<div style="width: 100%; text-align: center;"><img alt="" src="images/workinganim.gif" /></div>
+</div>
+#end
+
+##*****************************************************
+## This is the header for all V3 managementtool pages *
+##*****************************************************
+
+#macro(includeLatestJQuery)
+	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+	<!--
+	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	-->
+	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.8.7.custom/css/smoothness/jquery-ui-1.8.7.custom.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.8.7.custom/js/jquery-ui-1.8.7.custom.min.js"></script>
+#end
+
+##*****************************************************
+## This is the header for all V3 managementtool pages *
+##*****************************************************
+
+#macro(beginCommonToolV3 $titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody $disableCloseButton)
+
+#set($buttons = $this.getToolbarButtons("$titleKey", "$!primaryKey", "$extraData"))
+#set($rightButtons = $this.getRightToolbarButtons("$titleKey", "$!primaryKey", "$extraData", $!disableCloseButton))
+#set($footerButtons = $this.getFooterToolbarButtons("$titleKey", "$!primaryKey", "$extraData", $!disableCloseButton))
+
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>$ui.getString($titleKey)</title>
+	
+	<script type="text/javascript" src="script/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+	<script type="text/javascript" src="script/yui/build/element/element-beta-min.js"></script>
+	<script type="text/javascript" src="script/yui/build/button/button-min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="script/yui/build/menu/assets/skins/sam/menu.css" />
+	<link rel="stylesheet" type="text/css" href="script/yui/build/button/assets/skins/sam/button.css" />
+	<script type="text/javascript" src="script/yui/build/container/container_core-min.js"></script>
+	<script type="text/javascript" src="script/yui/build/menu/menu-min.js"></script>
+	
+	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	
+	#if($hasDataTable)
+		<link rel="stylesheet" type="text/css" href="script/yui/build/fonts/fonts-min.css" />
+		<link rel="stylesheet" type="text/css" href="script/yui/build/datatable/assets/skins/sam/datatable.css" />
+		<script type="text/javascript" src="script/yui/build/utilities/utilities.js"></script>
+		<script type="text/javascript" src="script/yui/build/datasource/datasource-beta-min.js"></script>
+		<script type="text/javascript" src="script/yui/build/datatable/datatable-beta-min.js"></script>
+	#end
+
+	<script type="text/javascript" src="script/v3/infoglue.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+		
+	<style type="text/css">
+
+	#foreach($button in $buttons)
+		
+		#button${velocityCount}.yui-button {
+			border-width: 1px 0;
+			border-style: solid;
+			border-color: transparent;
+			_border-color:tomato; /*For IE6-*/  
+			_filter:chroma(color=tomato);/*For IE6-*/
+			background: transparent; 
+			margin: auto .25em;
+		}
+		#button${velocityCount}.yui-button .first-child {
+			border-width: 0 1px;
+			border-style: solid;
+			border-color: transparent;
+			_border-color:tomato; /*For IE6-*/  
+			_filter:chroma(color=tomato);/*For IE6-*/
+		}
+		
+		#button${velocityCount}.yui-button-hover {
+			border-color: #808080;
+			background-position: 0 0;
+		}
+	
+		#button${velocityCount}.yui-button-hover .first-child {
+			border-color: #808080;
+		}
+		
+		#if($button.backgroundImageAlignment == "left")
+			#button$velocityCount button {
+			    background: url($button.backgroundImageURL) 2px 6px no-repeat;
+			    text-indent: 20px;
+			    padding: 6px;
+			    border: 0px;
+			    height: 28px;
+			}
+		#else
+			#button$velocityCount button {
+				padding: 6px;
+			    padding-right:20px;
+				background-position:right center;
+				background-repeat:no-repeat;
+			    background-image: url($button.backgroundImageURL);
+			    text-indent: 0px;
+			    border: 1px;
+			    height: 28px;
+			}
+		#end
+	#end
+	
+	#foreach($button in $footerButtons)
+		
+		#footerButton${velocityCount}.yui-button {
+			border-width: 1px 0;
+			border-style: solid;
+			border-color: #808080;
+			_border-color:tomato; /*For IE6-*/  
+			_filter:chroma(color=tomato);/*For IE6-*/
+			background: url(../../script/yui/assets/skins/sam/sprite.png) repeat-x 0 0; 
+			margin: auto .25em;
+		}
+		#footerButton${velocityCount}.yui-button .first-child {
+			border-width: 0 1px;
+			border-style: solid;
+			border-color: #808080;
+			_border-color:tomato; /*For IE6-*/  
+			_filter:chroma(color=tomato);/*For IE6-*/
+		}
+		
+		#footerButton${velocityCount}.yui-button-hover {
+			border-color: #808080;
+			background-position: 0 0;
+		}
+	
+		#footerButton${velocityCount}.yui-button-hover .first-child {
+			border-color: #808080;
+		}
+		
+		#if($button.backgroundImageAlignment == "left")
+			#footerButton$velocityCount button {
+			    background: url($button.backgroundImageURL) 2px 6px no-repeat;
+			    text-indent: 20px;
+			    padding: 6px;
+			    border: 0px;
+			    height: 28px;
+			}
+		#else
+			#footerButton$velocityCount button {
+				padding: 6px;
+			    padding-right:20px;
+				background-position:right center;
+				background-repeat:no-repeat;
+			    background-image: url($button.backgroundImageURL);
+			    text-indent: 0px;
+			    border: 1px;
+			    height: 28px;
+			}
+		#end
+	#end
+	
+	#if($hasDataTable)
+		.yui-dt {
+			width: 100%;
+		}
+		.yui-dt-hd {
+			width: 100%;
+		}
+		.yui-dt-bd {
+			width: 100%;
+		}
+		table {
+			width: 100%;
+		}
+		
+		.yui-skin-sam .yui-dt th {
+			background: #D8D8DA url(images/v3/tableHeaderBackground.gif) repeat-x 0 0;
+			font-family: arial;
+			font-size: 8pt;
+			margin:0;
+			padding:0;
+			text-align: left;
+		}
+		.yui-skin-sam .yui-dt-liner { 
+		    margin:0;padding:0; 
+		    padding:1px 10px 1px 10px; 
+		} 
+		
+		.yui-skin-sam .yui-dt {
+			font-family: arial;
+			font-size: inherit;
+		}
+	
+		.yui-skin-sam .yui-dt td {
+			font-family: arial;
+			font-size: 8pt;
+		}
+		#end
+		
+	    
+	</style>
+	<script type="text/javascript">
+	<!--
+		try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}
+	
+		$(document).ready(function(){
+			/*
+			$(":input:first").focus();
+	
+	 		$("div").each(function(i,e){
+	 			$(this).attr("tabindex", "-1");
+			});
+			*/
+			
+			setTimeout("resizeScrollArea()", 100);
+			$(window).resize( function() {
+     			resizeScrollArea();
+ 			});
+			 
+	 	});
+
+		function openWindow(url, windowTitle, options) 
+		{
+			newWin = window.open(url, windowTitle, options);
+			if(newWin)
+				newWin.focus();
+			else
+				alert("Could not open in new window - if you have a popup blocker this is most likely the cause.");
+		}
+			
+	    YAHOO.example.init = function () 
+	    {
+	        YAHOO.util.Event.onContentReady("menutoolbar", function () 
+	        {
+	        	#foreach($button in $buttons)
+					#if($button.subButtons.size() == 0)
+					
+						var oButton${velocityCount} = new YAHOO.widget.Button("button${velocityCount}");
+		            	oButton${velocityCount}.on("click", function (p_oEvent){
+		            		#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false)
+			            		document.location.href = '$button.actionURL';
+			            	#else
+			            		$button.actionURL
+			            	#end
+		            	});
+
+					#else
+						
+						#foreach($subButton in $button.subButtons)
+							function onMenuItemClick${velocityCount}(p_sType, p_aArgs, p_oItem) {
+							   	oButton${velocityCount}.set("label", p_oItem.cfg.getProperty("text"));
+							   	$subButton.actionURL;
+							}
+						#end
+							
+						var aMenuButton4Menu = [
+							#foreach($subButton in $button.subButtons)
+						    #if(${velocityCount} > 1),#end
+						    { 	text: "$subButton.text", value: $subButton.id, onclick: { fn: onMenuItemClick${velocityCount} }  }
+						    #end
+						];
+						
+						var oButton${velocityCount} = new YAHOO.widget.Button("button${velocityCount}", { 
+		                            type: "menu", 
+		                            menu: aMenuButton4Menu });
+		                            
+					#end
+	            #end
+	            	            
+	            #foreach($button in $rightButtons)
+	            	#if($button.isJavascript == false)
+		         		#if($button.id != "")
+							var o${button.id} = new YAHOO.widget.Button("${button.id}");
+				        	o${button.id}.on("click", function (p_oEvent){
+								callUrlWithAlternative('http://www.infoglue.org${button.actionURL}', '/infoglueDeliverWorking${button.actionURL}');
+				        	});
+		        		#else
+							var oRightButton${velocityCount} = new YAHOO.widget.Button("rightButton${velocityCount}");
+				        	oRightButton${velocityCount}.on("click", function (p_oEvent){
+								callUrlWithAlternative('http://www.infoglue.org${button.actionURL}', '/infoglueDeliverWorking${button.actionURL}');
+							});
+		        		#end
+		        	#else
+		        		#if($button.id != "")
+							var o${button.id} = new YAHOO.widget.Button("${button.id}");
+				        	o${button.id}.on("click", function (p_oEvent){
+								$button.actionURL
+				        	});
+		        		#else
+			        		var oRightButton${velocityCount} = new YAHOO.widget.Button("rightButton${velocityCount}");
+					        oRightButton${velocityCount}.on("click", function (p_oEvent){
+								$button.actionURL
+							});
+		        		#end
+		        	#end
+	        	#end
+
+	        });
+	        
+   	        YAHOO.util.Event.onContentReady("footertoolbar", function () 
+	        {
+	        	#foreach($button in $footerButtons)
+
+					var oButton${velocityCount} = new YAHOO.widget.Button("footerButton${velocityCount}");
+	            	oButton${velocityCount}.on("click", function (p_oEvent){
+	            		#if($button.isJavascript == false)
+		            		document.location.href = '$button.actionURL';
+		            	#else
+		            		$button.actionURL
+		            	#end
+	            	});
+
+	            #end
+
+	        });
+	        
+	    }();
+		
+		function callUrlWithAlternative(url, alternateUrl)
+		{
+			jQuery.ajax({
+			    url: '' + alternateUrl,
+			    type: 'GET',
+			    dataType: 'html',
+			    timeout: 1000,
+			    error: function(){
+	        		openWindow(url, "Help", "");
+			    },
+			    success: function(xml){
+				  	openWindow(alternateUrl, "Help", "");
+			    }
+			});
+		}
+	-->
+	</script>
+	<!--
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	-->
+#if($endHeadAndDefineBody)
+</head>
+
+<body class="generaltooledit yui-skin-sam">
+#set( $lvColor = "silver")
+#end
+
+#end
+
+
+
+##*****************************************************
+## This is the header for all V3 managementtool pages *
+##*****************************************************
+
+#macro(beginLightCommonToolV3 $titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody $disableCloseButton)
+	#beginLightCommonToolV3Impl($titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody $disableCloseButton "" false)
+#end
+
+#macro(beginLightCommonToolV3Impl $titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody $disableCloseButton $customHeaderMarkup $skipResize $extraBodyClass)
+
+#set($buttons = $this.getToolbarButtons("$titleKey", "$!primaryKey", "$extraData"))
+#set($rightButtons = $this.getRightToolbarButtons("$titleKey", "$!primaryKey", "$extraData", $!disableCloseButton))
+#set($footerButtons = $this.getFooterToolbarButtons("$titleKey", "$!primaryKey", "$extraData", $!disableCloseButton))
+
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>$ui.getString($titleKey)</title>
+	
+	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	
+	<script type="text/javascript" src="script/v3/infoglue.js"></script>
+	<script type="text/javascript" src="script/v3/infoglueWidgets.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglueWidgets.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen" />
+			
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/work.css" />
+	
+	<script type="text/javascript">
+	<!--
+		try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}
+	
+		$(document).ready(function(){
+			/*
+			$(":input:first").focus();
+	
+	 		$("div").each(function(i,e){
+	 			$(this).attr("tabindex", "-1");
+			});
+			*/
+			
+			#if($skipResize != true)
+				resizeScrollArea();
+				$(window).resize( function() {
+	     			resizeScrollArea();
+	 			});
+			#end
+			
+			//alert("document.location.href:" + document.location.href);
+			//alert("document.title:" + document.title);
+			//alert("window.name:" + window.name);
+			
+			//title, toolbarKey, arguments, unrefreshedContentId, changeTypeId, newContentId
+			
+			if(window.name.indexOf("TB_iframe") == -1 && parent.refreshTopToolBar)
+			{
+				//alert("Calling parent.refreshTopToolBar: $titleKey");
+				parent.refreshTopToolBar('$titleKey', '$titleKey', '$extraData', -1, -1, -1);
+	 		}
+	 	});
+
+		function openWindow(url, windowTitle, options) 
+		{
+			newWin = window.open(url, windowTitle, options);
+			if(newWin)
+				newWin.focus();
+			else
+				alert("Could not open in new window - if you have a popup blocker this is most likely the cause.");
+		}
+		
+	   	function openInlineDiv(url, height, width, modal) 
+		{
+	   		openInlineDiv(url, height, width, modal, true, "Inline div");
+		}
+	   	
+	   	function openInlineDiv(url, height, width, modal, iframe, title) 
+		{
+			//alert("openInlineDiv:" + url);   		
+			var windowHeight = getWindowHeight();
+	   		//alert("windowHeight:" + windowHeight);
+	   		if(windowHeight < height)
+	   			height = windowHeight - 60;
+	
+			var windowWidth = getWindowWidth();
+	   		//alert("windowWidth:" + windowWidth);
+	   		if(windowWidth < width)
+	   			width = windowWidth - 60;
+	   			
+	   	  	var separatorSign = "?";
+	   		if(url.indexOf("?") > -1)
+		  		separatorSign = "&";
+	   		
+	   		var addition = separatorSign + "KeepThis=true&" + (iframe ? "TB_iframe=true&" : "") + "height=" + height + "&width=" + width + (modal ? "&modal=true" : "");
+			//alert("Showing:" + title + ":" + url + addition);   		
+	   		tb_show(title, url + addition, title);
+	   	}
+		
+		
+		function callUrlWithAlternative(url, alternateUrl)
+		{
+			jQuery.ajax({
+			    url: '' + alternateUrl,
+			    type: 'GET',
+			    dataType: 'html',
+			    timeout: 1000,
+			    error: function(){
+	        		openWindow(url, "Help", "");
+			    },
+			    success: function(xml){
+				  	openWindow(alternateUrl, "Help", "");
+			    }
+			});
+		}
+	-->
+	</script>
+	
+	<!-- -->
+	$customHeaderMarkup
+	<!-- -->
+
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+#if($endHeadAndDefineBody)
+</head>
+
+<body class="generaltooledit yui-skin-sam $!extraBodyClass">
+
+<div id="genericDialog" title="genericQuestion" style="display: none">
+	<h3>Confirmation</h3>
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>$ui.getString("tool.common.confirmation.text")</p>
+</div>
+
+#set( $lvColor = "silver")
+#end
+
+#end
+
+
+#macro(beginLightEmblaTool $titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody $disableCloseButton $customHeaderMarkup $skipResize $extraBodyClass)
+
+#set($buttons = $this.getToolbarButtons("$titleKey", "$!primaryKey", "$extraData"))
+#set($rightButtons = $this.getRightToolbarButtons("$titleKey", "$!primaryKey", "$extraData", $!disableCloseButton))
+#set($footerButtons = $this.getFooterToolbarButtons("$titleKey", "$!primaryKey", "$extraData", $!disableCloseButton))
+
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>$ui.getString($titleKey)</title>
+	
+	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	
+	<script type="text/javascript" src="script/embla/infoglue.js"></script>
+	<script type="text/javascript" src="script/embla/infoglueWidgets.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/embla/main.css" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="css/embla/widgets.css" media="screen"/> 
+	<link rel="stylesheet" type="text/css" href="css/embla/tabs.css" media="screen" />
+	
+	##<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
+	
+	<script type="text/javascript">
+	<!--
+		try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}
+	
+		$(document).ready(function(){
+
+			//alert("document.location.href:" + document.location.href);
+			//alert("document.title:" + document.title);
+			//alert("window.name:" + window.name);
+			if(window.name.indexOf("TB_iframe") == -1 && parent.refreshTopToolBar)
+			{
+				//alert("Calling parent.refreshTopToolBar: $titleKey");
+				parent.refreshTopToolBar('$titleKey', '$titleKey', '$extraData', -1, -1, -1);
+	 		}
+	 	});
+
+		function openWindow(url, windowTitle, options) 
+		{
+			newWin = window.open(url, windowTitle, options);
+			if(newWin)
+				newWin.focus();
+			else
+				alert("Could not open in new window - if you have a popup blocker this is most likely the cause.");
+		}
+		
+	   	function openInlineDiv(url, height, width, modal) 
+		{
+	   		openInlineDiv(url, height, width, modal, true, "Inline div");
+		}
+	   	
+	   	function openInlineDiv(url, height, width, modal, iframe, title) 
+		{
+			//alert("openInlineDiv:" + url);   		
+			var windowHeight = getWindowHeight();
+	   		//alert("windowHeight:" + windowHeight);
+	   		if(windowHeight < height)
+	   			height = windowHeight - 60;
+	
+			var windowWidth = getWindowWidth();
+	   		//alert("windowWidth:" + windowWidth);
+	   		if(windowWidth < width)
+	   			width = windowWidth - 60;
+	   			
+	   	  	var separatorSign = "?";
+	   		if(url.indexOf("?") > -1)
+		  		separatorSign = "&";
+	   		
+	   		var addition = separatorSign + "KeepThis=true&" + (iframe ? "TB_iframe=true&" : "") + "height=" + height + "&width=" + width + (modal ? "&modal=true" : "");
+			//alert("Showing:" + title + ":" + url + addition);   		
+	   		tb_show(title, url + addition, title);
+	   	}
+		
+		
+		function callUrlWithAlternative(url, alternateUrl)
+		{
+			jQuery.ajax({
+			    url: '' + alternateUrl,
+			    type: 'GET',
+			    dataType: 'html',
+			    timeout: 1000,
+			    error: function(){
+	        		openWindow(url, "Help", "");
+			    },
+			    success: function(xml){
+				  	openWindow(alternateUrl, "Help", "");
+			    }
+			});
+		}
+	-->
+	</script>
+	
+	<!-- -->
+	$customHeaderMarkup
+	<!-- -->
+
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+#if($endHeadAndDefineBody)
+</head>
+
+<body class="generaltooledit $extraBodyClass">
+#set( $lvColor = "silver")
+#end
+
+#end
+
+
+##**************************************************
+## This is the header for all managementtool pages *
+##**************************************************
+
+#macro(beginManagementTool $titleKey $toolbarKey $arguments)
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>$ui.getString($titleKey)</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" />
+	<script type="text/javascript" src="script/listview.js"></script>
+
+	<script type="text/javascript">
+	<!--
+		if(parent.refreshTopToolBar)
+			parent.refreshTopToolBar('$toolbarKey', '$toolbarKey', '$arguments', -1, -1, -1);
+		else
+			refreshManagementToolBar('$toolbarKey', '$arguments');
+	
+		function save(form)
+		{
+			form.submit();
+		}
+	
+		function saveAndExit(form, action)
+		{
+			form.action = action;
+			save(form);
+		}
+		
+		function getSelectedObjects(listForm, entityName)
+		{
+			var str = '';
+		
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+		  		{
+					if(str != "")
+		  				str += '&';
+					str += entityName + 'Id=' + escape(listForm.sel.value);
+		  		}
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (listForm.sel[i].checked)
+			   		{
+						if(str != "")
+			  				str += '&';
+						str += entityName + 'Id=' + escape(listForm.sel[i].value);
+			   		}
+			 	}
+			}
+					 	
+		 	return str;
+		}
+				
+		function getSelectedTexts(listForm)
+		{
+			var str = '';
+
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += listForm.rowtitle.value + "<br/>";
+		  	}
+		  	else
+		  	{	
+				for (i=0; i<length; i++)
+				{
+					if (listForm.sel[i].checked)
+				    	str += listForm.rowtitle[i].value + "<br/>";
+				}
+			}
+					
+			return str;
+		}
+		
+		function submitListForm(entityName)
+		{
+			var listForm = document.listForm;
+			var selectedObjects = getSelectedObjects(listForm, entityName);
+			var selectedTexts = getSelectedTexts(listForm);
+			if (selectedObjects == "")
+			{
+				alert('Select one or more objects to delete');
+			  	return;
+			}
+			else
+			{
+				listForm.message.value = listForm.message.value;
+				listForm.extraParameters.value = selectedTexts;
+				listForm.yesDestination.value = listForm.yesDestination.value + '?' + selectedObjects;
+				listForm.submit();
+			}
+			
+			return false;
+		}
+				
+	-->
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
+	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
+	
+	#if($this.defaultGUI != "classic")
+		<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
+		<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+		
+		<script type="text/javascript" src="script/v3/infoglue.js"></script>
+		<script type="text/javascript" src="script/v3/infoglueWidgets.js"></script>
+	
+		<script type="text/javascript">
+		<!--
+		$(document).ready(function(){
+			
+			setTimeout("focusFirst();", 200);
+		});
+		-->
+		</script>
+	
+		<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+		<link rel="stylesheet" type="text/css" href="css/v3/infoglueWidgets.css" /> 
+		<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen" />
+		
+		<link rel="stylesheet" type="text/css" href="css/skins/${theme}/work.css" />
+	#end
+
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body class="managementtooledit">
+
+#end
+
+
+##*****************************************************
+## This is the header for all V3 managementtool pages *
+##*****************************************************
+
+#macro(beginManagementToolV3 $titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody)
+
+#set($buttons = $this.getToolbarButtons("$titleKey", "$!primaryKey", "$extraData"))
+#set($rightButtons = $this.getRightToolbarButtons("$titleKey", "$!primaryKey", "$extraData"))
+
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>$ui.getString($titleKey)</title>
+	
+	<script type="text/javascript" src="script/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+	<script type="text/javascript" src="script/yui/build/element/element-beta-min.js"></script>
+	<script type="text/javascript" src="script/yui/build/button/button-min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="script/yui/build/menu/assets/skins/sam/menu.css" />
+	<link rel="stylesheet" type="text/css" href="script/yui/build/button/assets/skins/sam/button.css" />
+	<script type="text/javascript" src="script/yui/build/container/container_core-min.js"></script>
+	<script type="text/javascript" src="script/yui/build/menu/menu-min.js"></script>
+
+	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+	
+	#if($hasDataTable)
+		<link rel="stylesheet" type="text/css" href="script/yui/build/fonts/fonts-min.css" />
+		<link rel="stylesheet" type="text/css" href="script/yui/build/datatable/assets/skins/sam/datatable.css" />
+		<script type="text/javascript" src="script/yui/build/utilities/utilities.js"></script>
+		<script type="text/javascript" src="script/yui/build/datasource/datasource-beta-min.js"></script>
+		<script type="text/javascript" src="script/yui/build/datatable/datatable-beta-min.js"></script>
+	#end
+
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	
+		
+	<style type="text/css">
+
+	#foreach($button in $buttons)
+		
+		#button${velocityCount}.yui-button {
+			border-width: 1px 0;
+			border-style: solid;
+			border-color: transparent;
+			_border-color:tomato; /*For IE6-*/  
+			_filter:chroma(color=tomato);/*For IE6-*/
+			background: transparent; 
+			margin: auto .25em;
+		}
+		#button${velocityCount}.yui-button .first-child {
+			border-width: 0 1px;
+			border-style: solid;
+			border-color: transparent;
+			_border-color:tomato; /*For IE6-*/  
+			_filter:chroma(color=tomato);/*For IE6-*/
+		}
+		
+		#button${velocityCount}.yui-button-hover {
+			border-color: #808080;
+			background-position: 0 0;
+		}
+	
+		#button${velocityCount}.yui-button-hover .first-child {
+			border-color: #808080;
+		}
+		
+		#if($button.backgroundImageAlignment == "left")
+			#button$velocityCount button {
+			    background: url($button.backgroundImageURL) 2px 6px no-repeat;
+			    text-indent: 20px;
+			    padding: 6px;
+			    border: 0px;
+			    height: 28px;
+			}
+		#else
+			#button$velocityCount button {
+				padding: 6px;
+			    padding-right:20px;
+				background-position:right center;
+				background-repeat:no-repeat;
+			    background-image: url($button.backgroundImageURL);
+			    text-indent: 0px;
+			    border: 1px;
+			    height: 28px;
+			}
+		#end
+	#end
+	
+	#if($hasDataTable)
+		.yui-dt {
+			width: 100%;
+		}
+		.yui-dt-hd {
+			width: 100%;
+		}
+		.yui-dt-bd {
+			width: 100%;
+		}
+		table {
+			width: 100%;
+		}
+		
+		.yui-skin-sam .yui-dt th {
+			background: #D8D8DA url(images/v3/tableHeaderBackground.gif) repeat-x 0 0;
+			font-family: arial;
+			font-size: 8pt;
+			margin:0;
+			padding:0;
+			text-align: left;
+		}
+		.yui-skin-sam .yui-dt-liner { 
+		    margin:0;padding:0; 
+		    padding:1px 10px 1px 10px; 
+		} 
+		
+		.yui-skin-sam .yui-dt {
+			font-family: arial;
+			font-size: inherit;
+		}
+	
+		.yui-skin-sam .yui-dt td {
+			font-family: arial;
+			font-size: 8pt;
+		}
+		#end
+		
+	    
+	</style>
+	<script type="text/javascript">
+
+		$(document).ready(function(){
+			$(":input:first").focus();
+	
+	 		$("div").each(function(i,e){
+	 			$(this).attr("tabindex", "-1");
+			}); 
+	 	});
+
+		function openWindow(url, windowTitle, options) 
+		{
+			newWin = window.open(url, windowTitle, options);
+			if(newWin)
+				newWin.focus();
+			else
+				alert("Could not open in new window - if you have a popup blocker this is most likely the cause.");
+		}
+			
+	    YAHOO.example.init = function () 
+	    {
+	        YAHOO.util.Event.onContentReady("menutoolbar", function () 
+	        {
+	        	#foreach($button in $buttons)
+					#if($button.subButtons.size() == 0)
+					
+						var oButton${velocityCount} = new YAHOO.widget.Button("button${velocityCount}");
+		            	oButton${velocityCount}.on("click", function (p_oEvent){
+		            		#if($button.actionURL.indexOf("javascript") == -1)
+			            		document.location.href = '$button.actionURL';
+			            	#else
+			            		$button.actionURL
+			            	#end
+		            	});
+
+					#else
+						
+						#foreach($subButton in $button.subButtons)
+							function onMenuItemClick${velocityCount}(p_sType, p_aArgs, p_oItem) {
+							   	oButton${velocityCount}.set("label", p_oItem.cfg.getProperty("text"));
+							   	$subButton.actionURL;
+							}
+						#end
+							
+						var aMenuButton4Menu = [
+							#foreach($subButton in $button.subButtons)
+						    #if(${velocityCount} > 1),#end
+						    { 	text: "$subButton.text", value: $subButton.id, onclick: { fn: onMenuItemClick${velocityCount} }  }
+						    #end
+						];
+						
+						var oButton${velocityCount} = new YAHOO.widget.Button("button${velocityCount}", { 
+		                            type: "menu", 
+		                            menu: aMenuButton4Menu });
+		                            
+					#end
+	            #end
+	            	            
+	            #foreach($button in $rightButtons)
+	         		#if($button.id != "")
+						var o${button.id} = new YAHOO.widget.Button("${button.id}");
+			        	o${button.id}.on("click", function (p_oEvent){
+							callUrlWithAlternative('http://www.infoglue.org${button.actionURL}', '/infoglueDeliverWorking${button.actionURL}');
+			        	});
+	        		#else
+						var oRightButton${velocityCount} = new YAHOO.widget.Button("rightButton${velocityCount}");
+			        	oRightButton${velocityCount}.on("click", function (p_oEvent){
+							callUrlWithAlternative('http://www.infoglue.org${button.actionURL}', '/infoglueDeliverWorking${button.actionURL}');
+						});
+	        		#end
+	        	#end
+	        });
+	    }();
+
+		function callUrlWithAlternative(url, alternateUrl)
+		{
+			jQuery.ajax({
+			    url: '' + alternateUrl,
+			    type: 'GET',
+			    dataType: 'html',
+			    timeout: 1000,
+			    error: function(){
+	        		openWindow(url, "Help", "");
+			    },
+			    success: function(xml){
+				  	openWindow(alternateUrl, "Help", "");
+			    }
+			});
+		}
+
+	</script>
+	
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+#if($endHeadAndDefineBody)
+</head>
+
+<body class="generaltooledit yui-skin-sam">
+#set( $lvColor = "silver")
+#end
+
+#end
+
+##**************************************************
+## This is the header for all contenttool pages    *
+##**************************************************
+
+#macro(beginContentTool $titleKey $toolbarKey $arguments $unrefreshedContentId $changeTypeId $addedContentId)
+
+<html>
+<head>
+	<title>$ui.getString($titleKey)</title>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" />
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/calendar1.js"></script>
+	<script type="text/javascript" src="script/editor.js"></script>
+
+	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-igcommon15.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
+	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
+
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body class="contenttooledit" onload="javascript:refreshContentToolBar('$titleKey', '$toolbarKey', '$arguments', $unrefreshedContentId, $changeTypeId, $addedContentId);">
+#set( $lvColor = "green")
+#end
+
+##**************************************************
+## This is the header for all structuretool pages    *
+##**************************************************
+
+#macro(beginStructureTool $titleKey $toolbarKey $arguments $unrefreshedNodeId $changeTypeId $addedNodeId)
+
+<html>
+<head>
+	<title>$ui.getString($titleKey)</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" />	
+	<script language="JavaScript" type="text/javascript" src="script/listview.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
+	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
+	
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body class="structuretooledit" onload="refreshStructureToolBar('$this.getCMSBaseUrl()', '$titleKey', '$toolbarKey', '$arguments', '$unrefreshedNodeId', '$changeTypeId', '$addedNodeId');">
+#set( $lvColor = "apricot")
+#end
+
+##**************************************************
+## This is the header for all publishingtool pages *
+##**************************************************
+
+#macro(beginPublishingTool $titleKey $toolbarKey $arguments)
+
+<html>
+<head>
+	<title>$ui.getString($titleKey)</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" />	
+	<script language="JavaScript" type="text/javascript" src="script/listview.js"></script>
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body class="publishingtooledit" onload="javascript:refreshPublishingToolBar('$titleKey', '$toolbarKey', '$arguments');">
+<div class="fullymarginalized">
+#set( $lvColor = "brown")
+
+#end
+
+
+##**************************************************
+## This is the header for all mydesktoptool pages *
+##**************************************************
+
+#macro(beginMyDesktopTool $titleKey $toolbarKey $arguments)
+
+<html>
+<head>
+	<title>$ui.getString($titleKey)</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" />
+	<script language="JavaScript" type="text/javascript" src="script/listview.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/infogluecommons.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/dom-drag.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/floatDiv.js"></script>
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body class="mydesktoptooledit" onload="javascript:refreshMyDesktopToolBar('$titleKey', '$toolbarKey', '$arguments');">
+<div class="fullymarginalized">
+#set( $lvColor = "yellow")
+
+#end
+
+
+##**************************************************
+## This is the footer for all managementtool pages *
+##**************************************************
+
+#macro(endManagementTool)
+</div>
+<div id="systemMessages"></div>
+<div id="systemMessagesDialog"></div>
+</body>
+</html>
+#end
+
+##**************************************************
+## This is the footer for all managementtool pages *
+##**************************************************
+
+#macro(endManagementToolV3)
+<div id="systemMessages"></div>
+<div id="systemMessagesDialog"></div>
+</body>
+</html>
+#end
+
+
+##**************************************************
+## This is the footer for all contenttool pages    *
+##**************************************************
+
+#macro(endContentTool)
+<div id="systemMessages"></div>
+<div id="systemMessagesDialog"></div>
+</body>
+</html>
+#end
+
+
+##**************************************************
+## This is the footer for all structuretool pages *
+##**************************************************
+
+#macro(endStructureTool)
+<div id="systemMessages"></div>
+<div id="systemMessagesDialog"></div>
+</body>
+</html>
+#end
+
+##**************************************************
+## This is the footer for all publishingtool pages *
+##**************************************************
+
+#macro(endPublishingTool)
+</div>
+<div id="systemMessages"></div>
+<div id="systemMessagesDialog"></div>
+</body>
+</html>
+#end
+
+##**************************************************
+## This is the footer for all publishingtool pages *
+##**************************************************
+
+#macro(endCommonToolV3)
+</div>
+<div id="systemMessages"></div>
+<div id="systemMessagesDialog"></div>
+</body>
+</html>
+#end
+
+#macro(endLightCommonToolV3)
+</body>
+</html>
+#end
+
+##**************************************************
+## This is the header for all list-pages in the    *
+## management tool                                 *
+##**************************************************
+
+#macro(lvHead $headers $header $yesDestination $noDestination $message)
+	
+	#if(!$lvConstraint)
+		#set($lvConstraint = 0)
+	#end
+
+	#if(!$lvBorder)
+		#set($lvBorder = 0)
+	#end
+
+	#if(!$lvColor)
+		#set($lvColor = "blue")
+	#end
+
+	#if(!$extraParameters)
+		#set($extraParameters = "")
+	#end
+	
+	#if ($lvBorder == 1)
+		<table tableborder=0 border=0 bgcolor=666666 width="100%" cellpadding="1" cellspacing="0"><tr><td>
+	#end
+	
+	#set($lvChkBoxName = "sel")
+	
+	<div class="listmarginalized">
+		<script language="JavaScript" type="text/javascript" src="script/sorttable.js"></script>
+		<style type="text/css">
+			/* Sortable tables */
+			table.sortable a.sortheader {
+			    font-weight: bold;
+			    display: block;
+			    padding-left: 5px;
+			}
+			table.sortable span.sortarrow {
+			}
+		</style>
+	
+		## Inget formulär om inget kan selectas
+		#if($!lvConstraint != 0)
+			<form name="listForm" action="Confirm.action" method="post">
+				<input type="hidden" name="header" value="$!header"/>
+				<input type="hidden" name="yesDestination" value="$!yesDestination"/>
+				<input type="hidden" name="noDestination" value="$!noDestination"/>
+				<input type="hidden" name="message" value="$!message"/>
+				<input type="hidden" name="extraParameters" value="$!extraParameters"/>
+		#end
+	
+		#set( $span = $headers.size() * 2 )
+		<table class="sortable" id="sortableTable" cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr class="dark$lvColor" valign="center">
+		#set( $hcnt=0 )
+		#foreach( $header in $headers )
+			#set( $hcnt=$hcnt + 1 )
+			<td style="border-bottom: 1px solid #999999; border-top: 1px solid #ffffff; border-right: 1px solid #999999; white-space:nowrap" class="listheader">
+				<div class="minormarginalized" style="white-space:nowrap">$header</div>
+			</td>
+			#if ($velocityCount != $headers.size())
+				#set( $hcnt=$hcnt + 1 )
+			#end
+		#end
+		</tr>
+#end
+
+##********************************************************************************************
+## This is the header for many list where you want to be able to check / uncheck all options *
+##********************************************************************************************
+
+#macro(lvHeadV3 $headers $header $yesDestination $noDestination $message $allowCheckUncheckAll)
+
+#if ($lvBorder == 1)
+	<table tableborder=0 border=0 bgcolor=666666 width="100%" cellpadding="1" cellspacing="0"><tr><td>
+#end
+
+#set($lvChkBoxName = "sel")
+
+<div class="listmarginalized">
+	<script type="text/javascript" src="script/sorttable.js"></script>
+	<style type="text/css">
+		/* Sortable tables */
+		table.sortable a.sortheader {
+		    font-weight: bold;
+		    display: block;
+		    padding-left: 5px;
+		}
+		table.sortable span.sortarrow {
+		}
+	</style>
+	
+	## Inget formulär om inget kan selectas
+	#if($lvConstraint != 0)
+		<form name="listForm" action="Confirm.action" method="post">
+			<input type="hidden" name="header" value="$header"/>
+			<input type="hidden" name="yesDestination" value="$yesDestination"/>
+			<input type="hidden" name="noDestination" value="$noDestination"/>
+			<input type="hidden" name="message" value="$message"/>
+			<input type="hidden" name="extraParameters" value="$extraParameters"/>
+	#end
+
+	#set( $span = $headers.size() * 2 )
+	<table class="sortable" id="sortableTable" cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr class="dark$lvColor" valign="center">
+		#if($allowCheckUncheckAll)
+		<td style="width: 20px;" class="listheader skipSortHeader" id="headerDiv1">
+			<div class="minormarginalized" style="white-space:nowrap;"><input type='checkbox' onclick='checkUncheckAll(this);' title="Select/Unselect all"/></div>
+		</td>
+		#end
+		#set( $hcnt=0 )
+		#foreach( $header in $headers )
+			#set( $hcnt=$hcnt + 1 )
+			<td class="listheader" id="headerDiv$hcnt">
+				<div class="minormarginalized" style="white-space:nowrap;">$header</div>
+			</td>
+			#if ($velocityCount != $headers.size())
+				#set( $hcnt=$hcnt + 1 )
+			#end
+		#end
+	</tr>
+#end
+
+
+##**************************************************
+## This is the header for all list-pages in the    *
+## management tool                                 *
+##**************************************************
+
+#macro(lvHeadSlimmed $headers $header $yesDestination $noDestination $message)
+
+	<script language="JavaScript" type="text/javascript" src="script/sorttable.js"></script>
+	<style type="text/css">
+		/* Sortable tables */
+		table.sortable a.sortheader {
+		    font-weight: bold;
+		    display: block;
+		    padding-left: 5px;
+		}
+		table.sortable span.sortarrow {
+		}
+	</style>
+
+#if ($lvBorder == 1)
+	<table class="sortable" id="sortableTable" tableborder=0 border=0 bgcolor=666666 width="100%" cellpadding="1" cellspacing="0"><tr><td>
+#end
+
+#set($lvChkBoxName = "sel")
+
+<div class="listmarginalized">
+	#set( $span = $headers.size() * 2 )
+	<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	<tr class="dark$lvColor" valign="center">
+	#set( $hcnt=0 )
+	#foreach( $header in $headers )
+		#set( $hcnt=$hcnt + 1 )
+		<td style="border-bottom: 1px solid #999999; border-top: 1px solid #ffffff; border-right: 1px solid #999999;" class="listheader">
+			<div class="minormarginalized" style="white-space:nowrap">$header</div>
+		</td>
+		#if ($velocityCount != $headers.size())
+			#set( $hcnt=$hcnt + 1 )
+		#end
+	#end
+	</tr>
+#end
+
+
+##**************************************************
+## This is the row in a list-pages in the          *
+## management tool                                 *
+##**************************************************
+
+#macro(lvAddRow $row $cnt $objectId)
+	## set $lvConstraint to -1, 0 or 1
+	##		-1: unlimited number of items can be selected
+	##		0: no items can be selected (no checkboxes visible)
+	##		1: one item can be selected
+
+	#set( $loccnt = 0)
+	#set( $isOdd = $cnt % 2)
+	#if($isOdd==0)
+		#set($class = "class='light$lvColor'")
+	#else
+		#set($class = "class='white'")
+	#end
+
+
+	<tr id="r$cnt" $class>
+
+		#foreach( $item in $row )
+			<td valign='middle'>
+				<div class="minormarginalized" style="white-space:nowrap" >
+					#if($loccnt==0)
+						<!--  nobr -->
+						#if($lvConstraint==-1)
+							<input type="checkbox" id="CB$objectId" name="$lvChkBoxName" value="$objectId" rowId="r$cnt" onClick="CheckUncheck('r$cnt',this);"/>
+						#end
+						#if($lvConstraint==1)
+							<input type="checkbox" id="CB$objectId" name="$lvChkBoxName" value="$objectId" rowId="r$cnt" onClick="CheckUncheckSingle('r$cnt',this);"/>
+						#end
+						 $item
+						<!--  /nobr -->
+						#set( $loccnt = 1 )
+					#else
+						$item
+					#end
+				</div>
+			</td>
+			#if ($velocityCount != $row.size())
+				##<td></td>
+			#end
+		#end
+	</tr>
+#end
+
+##**************************************************
+## This is the row in a list-pages in the          *
+## management tool                                 *
+##**************************************************
+
+#macro(lvAddRowV3 $row $cnt $objectId $skipCheckBox)
+	## set $lvConstraint to -1, 0 or 1
+	##		-1: unlimited number of items can be selected
+	##		0: no items can be selected (no checkboxes visible)
+	##		1: one item can be selected
+
+	#set( $loccnt = 0)
+	#set( $isOdd = $cnt % 2)
+	#if($isOdd==0)
+		#set($class = "class='light$lvColor'")
+	#else
+		#set($class = "class='white'")
+	#end
+
+
+	<tr id="r$cnt" $class>
+		
+		#if(!$skipCheckBox)
+		<td valign='middle'>
+			<div class="minormarginalized">
+				#if($loccnt==0)
+					#if($lvConstraint==-1)
+						<input type="checkbox" id="CB$objectId" name="$lvChkBoxName" value="$objectId" rowId="r$cnt" onClick="CheckUncheck('r$cnt',this);"/>
+					#end
+					#if($lvConstraint==1)
+						<input type="checkbox" id="CB$objectId" name="$lvChkBoxName" value="$objectId" rowId="r$cnt" onClick="CheckUncheckSingle('r$cnt',this);"/>
+					#end
+					#set( $loccnt = 1 )
+				#end
+			</div>
+		</td>
+		#end
+		
+		#foreach( $item in $row )
+			<td valign='middle'>
+				<div class="minormarginalized" style="white-space:nowrap" >
+					$item
+				</div>
+			</td>
+		#end
+	</tr>
+#end
+
+
+##**************************************************
+## This is the end for all lists in the            *
+## management tool                                 *
+##**************************************************
+
+#macro(lvEnd)
+	</table>
+	#if($lvConstraint!=0)
+		</form>
+	#end
+
+	</div>
+
+	#if($lvBorder==1)
+		</td></tr></table>
+	#end
+
+#end
+
+
+##**************************************************
+## Usecase specific macros						   *
+##**************************************************
+
+#macro(inlineroles $rolelist)
+#foreach($roleVO in $rolelist)#if($velocityCount > 1), #end<a title="$roleVO.name">$roleVO.displayName</a>#end
+#end
+
+#macro(inlinesimpleroles $rolelist)
+#foreach($roleVO in $rolelist)#if($velocityCount > 1), #end$roleVO.displayName#end
+#end
+
+#macro(inlineusers $userlist)
+	#foreach ( $u in $userlist )
+		<a title="$u.toString()">
+			$u.displayName
+		</a>
+	#end
+#end
+
+#macro(stateInText $stateId)
+#if($stateId == 0)$ui.getString("tool.contenttool.state.working")#elseif($stateId == 1)$ui.getString("tool.contenttool.state.final")#elseif($stateId == 2)$ui.getString("tool.contenttool.state.publish")#elseif($stateId == 3)$ui.getString("tool.contenttool.state.published")#end
+#end
+
+#macro(stateAsClass $stateId)
+#if($stateId == 0)workingState#elseif($stateId == 1)finalState#elseif($stateId == 2)publishState#elseif($stateId == 3)publishedState#end
+#end
+
+##**************************************************
+## INPUT FIELD MACROS   						   *
+##**************************************************
+
+#macro(printError $fieldNameKey)
+	#if($errors.hasErrors($fieldNameKey))
+		#foreach($errorMessage in $errors.getErrors($fieldNameKey))
+		<a name="errorMessage"/><font color="red"><b> - $errorMessage</b></font>
+		#end
+	#end
+	<br/>
+#end
+
+#macro(printErrorV3 $fieldNameKey $mandatoryLineBreak)
+	#if($errors.hasErrors($fieldNameKey))
+		#foreach($errorMessage in $errors.getErrors($fieldNameKey))
+		<a name="errorMessage"/><font color="red"><b> - $errorMessage</b></font>
+		#end
+	#end
+	#if($mandatoryLineBreak || $errors.hasErrors($fieldNameKey))
+	<br/>
+	#end
+#end
+
+#macro(editTextField $fieldNameKey $fieldName $fieldValue $length $className)
+  #editTextField3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $length $className)
+#end
+
+#macro(editTextField3 $fieldNameLabel $errorKey $fieldName $fieldValue $length $className)
+  $fieldNameLabel
+  #if($errors.hasErrors($errorKey))
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    <font color="red"> - $errorMessage</font>
+    #end
+  #end
+  <br/>
+  <input type="text" class="$className" name="$fieldName" value="$!fieldValue" size="$length" onchange="setDirty();"/>
+#end
+
+#macro(editTextField $fieldNameKey $fieldName $fieldValue $length $className $isReadOnly)
+  #editTextField4($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $length $className $isReadOnly)
+#end
+
+#macro(editTextField4 $fieldNameLabel $errorKey $fieldName $fieldValue $length $className $isReadOnly)
+  $fieldNameLabel
+  #if($errors.hasErrors($errorKey))
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    <font color="red"> - $errorMessage</font>
+    #end
+  #end
+  <br/>
+  <input type="text" $isReadOnly class="$className" name="$fieldName" value="$!fieldValue" size="$length" onchange="setDirty();"/>
+#end
+
+
+#macro(editTextArea $fieldNameKey $fieldName $fieldValue $cols $rows $className)
+  #editTextArea3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $cols $rows $className)
+#end
+
+#macro(editTextArea3 $fieldNameLabel $errorKey $fieldName $fieldValue $cols $rows $className)
+  $fieldNameLabel
+  #if($errors.hasErrors($errorKey))
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    <font color="red"> - $errorMessage</font>
+    #end
+  #end
+  <br/>
+  <textarea class="$className" wrap="virtual" id="$fieldName" name="$fieldName" rows="$rows" cols="$cols">$!fieldValue</textarea>
+#end
+
+#macro(editReadOnlyTextArea $fieldNameKey $fieldName $fieldValue $cols $rows $className $readonly)
+  #editReadOnlyTextArea3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $cols $rows $className $readonly)
+#end
+
+#macro(editReadOnlyTextArea3 $fieldNameLabel $errorKey $fieldName $fieldValue $cols $rows $className $readonly)
+  $fieldNameLabel
+  #if($errors.hasErrors($errorKey))
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    <font color="red"> - $errorMessage</font>
+    #end
+  #end
+  <br/>
+  <textarea class="$className" wrap="virtual" id="$fieldName" name="$fieldName" rows="$rows" cols="$cols" $readonly>$!fieldValue</textarea>
+#end
+
+#macro(editPropertyTextArea $fieldNameKey $fieldName $fieldValue $cols $rows $className $serverNodeId)
+  #editPropertyTextArea3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $cols $rows $className $serverNodeId)
+#end
+
+#macro(editPropertyTextArea3 $fieldNameLabel $errorKey $fieldName $fieldValue $cols $rows $className $serverNodeId)
+  $fieldNameLabel
+  #if($errors.hasErrors($errorKey))
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    <font color="red"> - $errorMessage</font>
+    #end
+  #end
+  <br/>
+  <textarea class="$className" wrap="virtual" id="$fieldName" name="$fieldName" rows="$rows" cols="$cols">$!fieldValue</textarea>
+  <a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="images/delete.gif" border="0"/></a>
+#end
+
+#macro(editPropertyTextAreaCSS $fieldNameKey $fieldName $fieldValue $cols $rows $className $serverNodeId $actualCurrentValue)
+  #editPropertyTextAreaCSS3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $actualCurrentValue $cols $rows $className $serverNodeId)
+#end
+
+#macro(editPropertyTextAreaCSS3 $fieldNameLabel $errorKey $fieldName $fieldValue $actualCurrentValue $cols $rows $className $serverNodeId)
+  	<div class="row">
+		<label for="$fieldName">$fieldNameLabel</label>
+	  	<textarea class="$className" wrap="virtual" id="$fieldName" name="$fieldName" rows="$rows" cols="$cols">$!fieldValue</textarea>
+	  	<a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="images/delete.gif" border="0"/></a>
+	  	<a href="#" onclick="$('#actualCurrentValue p').html($('#currentActualValue$fieldName').html()); $('#actualCurrentValue').show('slow');">Show current value</a>
+	  	<p id="currentActualValue$fieldName" style="display:none;"><textarea>$actualCurrentValue</textarea></p>
+	</div>
+#end
+
+##**************************************************************
+## Returns true if value is equal							   *
+##**************************************************************
+#macro(checkSelected $value $currentValue)
+#if($currentValue.equalsIgnoreCase($value))
+ selected="selected"
+#end
+#end
+
+##**************************************************************
+## Returns true if value is equal							   *
+##**************************************************************
+#macro(checkChecked $value $currentValue)
+#if("$value" != "")
+#if($currentValue.indexOf($value) > -1)
+ checked="1"
+#end
+#end
+#end
+
+#macro(checkCheckedBySplit $value $currentValue)
+#if("$value" != "")
+#set($array = $currentValue.split(","))
+#foreach($item in $array)
+#if($item == $value)
+ checked="1"
+#end
+#end
+#end
+#end
+
+#macro(renderOptions $values $currentValue $shouldExist)
+#set($array = $currentValue.split(","))
+#foreach($option in $values)
+	#set($exists = false)
+    #foreach($item in $array)
+		#if($shouldExist)
+            #if($item == $option.value)
+            <option value="$option.value">$option.name</option>
+			#end
+		#else
+            #if($item == $option.value)
+				#set($exists = true)
+			#end
+		#end
+	#end
+    #if(!$shouldExist && !$exists)
+    	<option value="$option.value">$option.name</option>
+    #end
+#end
+#end
+
+##**************************************************************
+## Returns true if value is equal							   *
+##**************************************************************
+#macro(checkCheckedByList $valueList $currentValue)
+#if($valueList.contains($currentValue))
+ checked="1"
+#end
+#end
+
+##**************************************************************
+## Returns true if value is equal							   *
+##**************************************************************
+#macro(checkSelectedByList $valueList $currentValue)
+#if($valueList.contains($currentValue))
+ selected="1"
+#end
+#end
+
+##**************************************************************
+## DATE INPUTS												   *
+##**************************************************************
+
+#macro(editDateField $fieldNameKey $fieldName $fieldValue $length $className $url $readOnly)
+  #editDateField4($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $length $className $url $readOnly)
+#end
+
+#macro(editDateField4 $fieldNameLabel $errorKey $fieldName $fieldValue $length $className $url $readOnly)
+  $fieldNameLabel
+  #if($errors.hasErrors($errorKey))
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    <font color="red"> - $errorMessage</font>
+    #end
+  #end
+  <br/>
+  <input type="text" $readOnly class="$className" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>&nbsp;<a name="calendar_$fieldName" id="calendar_$fieldName"><img src="images/calendar.gif" border="0" alt="choose date"/></a>
+  <script type="text/javascript">
+    Calendar.setup({
+	        inputField     :    "$fieldName",     		// id of the input field
+	        ifFormat       :    "%Y-%m-%d %H:%M",      	// format of the input field
+	        button         :    "calendar_$fieldName",  // trigger for the calendar (button ID)
+	        align          :    "BR",           		// alignment (defaults to "Bl")
+	        singleClick    :    true,
+	        firstDay  	   : 	1,
+	        showsTime	   :    true,
+	        timeFormat     :    "24"
+	});
+  </script>
+#end
+
+#macro(editDateFieldCSS $fieldNameKey $fieldName $fieldValue $length $className $url $readOnly)
+  <label for="$fieldName">$ui.getString("${fieldNameKey}")</label>
+  <input type="text" $readOnly class="$className" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>&nbsp;<a name="calendar_$fieldName" id="calendar_$fieldName"><img src="images/calendar.gif" border="0" alt="choose date"/></a>
+  <script type="text/javascript">
+    Calendar.setup({
+	        inputField     :    "$fieldName",     		// id of the input field
+	        ifFormat       :    "%Y-%m-%d %H:%M",      	// format of the input field
+	        button         :    "calendar_$fieldName",  // trigger for the calendar (button ID)
+	        align          :    "BR",           		// alignment (defaults to "Bl")
+	        singleClick    :    true,
+	        firstDay  	   : 	1,
+	        showsTime	   :    true,
+	        timeFormat     :    "24"
+	});
+  </script>
+#end
+
+
+#macro(yesNoCheckBox $fieldNameKey $fieldName $value $label)
+$ui.getString("entity.${fieldNameKey}.label")<br/>
+<input type="checkbox" id="$fieldName" name="$fieldName" value="$value">$label</input>
+#end
+
+#macro(yesNoDropDown $fieldNameKey $fieldName $value)
+	$ui.getString("entity.${fieldNameKey}.label")<br/>
+	<select name="$fieldName" class="yesNoDropBox">
+		#if($value == true || $value == "true")
+			<option value="true" selected>$ui.getString("tool.common.yes")</option>
+			<option value="false">$ui.getString("tool.common.no")</option>
+		#else
+			<option value="true">$ui.getString("tool.common.yes")</option>
+			<option value="false" selected>$ui.getString("tool.common.no")</option>
+		#end
+	</select>
+#end
+
+#macro(yesNoDropDownWithInherit $fieldNameKey $fieldName $value)
+<table>
+	<tr>
+		<td>$ui.getString("entity.${fieldNameKey}.label")</td>
+	</tr>
+	<tr>
+		<td>
+			<select name="$fieldName" class="yesNoDropBox">
+				#if($value == "" || $value == "inherit")
+					<option value="inherit" selected="1">$ui.getString("tool.common.inherit")</option>
+					<option value="true">$ui.getString("tool.common.yes")</option>
+					<option value="false">$ui.getString("tool.common.no")</option>
+				#elseif($value == true || $value == "true")
+					<option value="inherit">$ui.getString("tool.common.inherit")</option>
+					<option value="true" selected="1">$ui.getString("tool.common.yes")</option>
+					<option value="false">$ui.getString("tool.common.no")</option>
+				#else
+					<option value="inherit">$ui.getString("tool.common.inherit")</option>
+					<option value="true">$ui.getString("tool.common.yes")</option>
+					<option value="false" selected="1">$ui.getString("tool.common.no")</option>
+				#end
+			</select>
+		</td>
+	</tr>
+</table>
+#end
+
+#macro(yesNoDropDownWithInheritCSS $fieldNameKey $fieldName $value $currentActualValue)
+	#yesNoDropDownWithInheritCSSImpl($fieldNameKey $fieldName $value $currentActualValue '')
+#end
+
+#macro(yesNoDropDownWithInheritCSSImpl $fieldNameKey $fieldName $value $currentActualValue $onChangeJS)
+	<div class="row">
+		<label for="$fieldName">$ui.getString("entity.${fieldNameKey}.label")</label>
+		<select name="$fieldName" class="yesNoDropBox" #if($onChangeJS != '') onchange="$onChangeJS" #end>
+			#if($value == "" || $value == "inherit")
+				<option value="inherit" selected="1">$ui.getString("tool.common.inherit")</option>
+				<option value="true">$ui.getString("tool.common.yes")</option>
+				<option value="false">$ui.getString("tool.common.no")</option>
+			#elseif($value == true || $value == "true")
+				<option value="inherit">$ui.getString("tool.common.inherit")</option>
+				<option value="true" selected="1">$ui.getString("tool.common.yes")</option>
+				<option value="false">$ui.getString("tool.common.no")</option>
+			#else
+				<option value="inherit">$ui.getString("tool.common.inherit")</option>
+				<option value="true">$ui.getString("tool.common.yes")</option>
+				<option value="false" selected="1">$ui.getString("tool.common.no")</option>
+			#end
+		</select>
+		
+		#if($currentActualValue == true || $currentActualValue == "true")
+			($ui.getString("tool.common.yes"))
+		#else
+			($ui.getString("tool.common.no"))
+		#end
+		
+	</div>
+#end
+
+#macro(selectField $fieldNameKey $fieldName $value $valuePairArray)
+$ui.getString("entity.${fieldNameKey}.label")
+#if($errors.hasErrors($errorKey))
+	#foreach($errorMessage in $errors.getErrors($errorKey))
+    	<font color="red"> - $errorMessage</font>
+    #end
+#end
+<br/>
+<select name="$fieldName" class="dropbox">
+	#foreach($valuePair in $valuePairArray)
+		<option value="$valuePair.get(0)" #if("$valuePair.get(0)" == "$value") selected #end>$valuePair.get(1)</option>
+	#end
+</select>
+#end
+
+#macro(selectFieldCSS $fieldNameKey $fieldName $value $valuePairArray)
+	<div class="row">
+		<label for="$fieldName">$ui.getString("entity.${fieldNameKey}.label")</label>
+		<select name="$fieldName" class="dropbox">
+			#foreach($valuePair in $valuePairArray)
+				<option value="$valuePair.get(0)" #if("$valuePair.get(0)" == "$value") selected #end>$valuePair.get(1)</option>
+			#end
+		</select>
+	</div>
+#end
+
+#macro(selectFieldCSS3 $fieldNameKey $fieldName $value $valueList $defaultChoiceNameKey)
+	<label for="$fieldName">$ui.getString("${fieldNameKey}")</label><br/>
+	<select name="$fieldName" class="dropbox">
+		<option value="">$ui.getString($defaultChoiceNameKey)</option>
+		#foreach($item in $valueList)
+			#if(!$item.id)
+				#set($itemValue = $item.name)
+			#else
+				#set($itemValue = $item.id)
+			#end
+			<option value="$itemValue" #if("$itemValue" == "$value") selected #end>$item.name</option>
+		#end
+	</select>
+#end
+
+#macro(selectBox $fieldNameKey $fieldName $value $valueList $defaultChoiceNameKey)
+<table>
+	<tr>
+		<td>$ui.getString($fieldNameKey)
+			#if($errors.hasErrors($errorKey))
+				#foreach($errorMessage in $errors.getErrors($errorKey))
+			    	<font color="red"> - $errorMessage</font>
+			    #end
+			#end
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<select name="$fieldName" class="dropbox">
+			
+				<option value="">$ui.getString($defaultChoiceNameKey)</option>
+				<option value="">-----------------------------</option>
+				#foreach($item in $valueList)
+					#if(!$item.id)
+						#set($itemValue = $item.name)
+					#else
+						#set($itemValue = $item.id)
+					#end
+					<option value="$itemValue" #if("$itemValue" == "$value") selected #end>$item.name</option>
+				#end
+			</select>
+		</td>
+	</tr>
+</table>
+#end
+
+##**********************************************************
+## This applet shows the navigationtree                    *
+##**********************************************************
+
+#macro(showJavaTree $width $height $bgColorR $bgColorG $bgColorB $entityName $repositoryId $hideLeafs)
+#if($browserBean.isIE())
+  <OBJECT id="CMSTree" name="CMSTree" classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+	width="$width" height="$height" align="baseline"
+ 	codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0">
+ 	<PARAM NAME="code" VALUE="org.infoglue.cms.plugins.opentree.OpenTree.class">
+	<PARAM NAME="archive" VALUE="applications/opentree.jar">
+ 	<PARAM NAME="type" VALUE="application/x-java-applet;version=1.4">
+	<PARAM NAME="MAYSCRIPT" VALUE="true">
+	<PARAM NAME="scriptable" VALUE="true">
+	<PARAM NAME="bgColorR" value="$bgColorR">
+	<PARAM NAME="bgColorG" value="$bgColorG">
+	<PARAM NAME="bgColorB" value="$bgColorB">
+	<PARAM NAME="entityName" value="$entityName">
+	<PARAM NAME="repositoryId" value="$repositoryId">
+	<PARAM NAME="hideLeafs" value="$hideLeafs">
+
+	<COMMENT>
+        <EMBED id="CMSTree" type="application/x-java-applet;version=1.4"
+        	width="$width"
+           	height="$height"
+           	align="baseline"
+           	code="org.infoglue.cms.plugins.opentree.OpenTree.class"
+           	archive="applications/opentree.jar"
+           	pluginspage="http://java.sun.com/products/plugin/index.html#download"
+           	MAYSCRIPT=true
+           	scriptable=true
+           	bgColorR="$bgColorR"
+           	bgColorG="$bgColorG"
+           	bgColorB="$bgColorB"
+           	entityName="$entityName"
+           	repositoryId="$repositoryId"
+           	hideLeafs="$hideLeafs">
+            <NOEMBED>
+                No Java 2 SDK, Standard Edition v 1.4 support for APPLET!!
+            </NOEMBED>
+        </EMBED>
+    </COMMENT>
+  </OBJECT>
+#else
+  <APPLET name="CMSTree" code="org.infoglue.cms.plugins.opentree.OpenTree.class" archive="applications/opentree.jar" align="baseline" width="${width}" height="$height" mayscript>
+	<PARAM NAME="bgColorR" value="$bgColorR">
+	<PARAM NAME="bgColorG" value="$bgColorG">
+	<PARAM NAME="bgColorB" value="$bgColorB">
+	<PARAM NAME="entityName" value="$entityName">
+	<PARAM NAME="repositoryId" value="$repositoryId">
+	<PARAM NAME="hideLeafs" value="$hideLeafs">
+    No JDK 1.4 support for APPLET!!
+  </APPLET>
+#end
+#end
+
+
+##**********************************************************
+## This applet shows the template editor                   *
+##**********************************************************
+
+#macro(showTemplateEditor $width $height $attributeName $deliveryBaseUrl)
+#if($browserBean.isIE())
+  <OBJECT name="${attributeName}InfoGlueCodeEditor" classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
+	width="${width}" height="${height}" align="baseline"
+ 	codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0">
+ 	<PARAM NAME="code" VALUE="org.infoglue.cms.plugins.codeeditor.InfoGlueCodeEditorApplet.class">
+	<PARAM NAME="archive" VALUE="applications/code-editor.jar">
+ 	<PARAM NAME="type" VALUE="application/x-java-applet;version=1.4">
+	<PARAM NAME="MAYSCRIPT" VALUE="true">
+	<PARAM NAME="attributeId" value="${attributeName}">
+	<PARAM NAME="deliverySettingsUrl" value="${deliveryBaseUrl}/ViewApplicationSettings!getTemplateLogicMethods.action">
+
+	<COMMENT>
+        <EMBED name="${attribute.name}InfoGlueCodeEditor" id="${attributeName}InfoGlueCodeEditor" type="application/x-java-applet;version=1.4"
+        	width="$width"
+           	height="$height"
+           	align="baseline"
+           	code="org.infoglue.cms.plugins.codeeditor.InfoGlueCodeEditorApplet.class"
+           	archive="applications/code-editor.jar"
+           	pluginspage="http://java.sun.com/products/plugin/index.html#download"
+           	MAYSCRIPT=true
+           	scriptable=true
+           	attributeId="${attributeName}"
+           	deliverySettingsUrl="${deliveryBaseUrl}/ViewApplicationSettings!getTemplateLogicMethods.action">
+            <NOEMBED>
+	        	No JDK 1.4 support for APPLET!!
+	        	<script type="text/javascript">
+	        		noJava = true;
+	        	</script>
+            </NOEMBED>
+        </EMBED>
+    </COMMENT>
+  </OBJECT>
+#else
+  <APPLET name="${attributeName}InfoGlueCodeEditor" code="org.infoglue.cms.plugins.codeeditor.InfoGlueCodeEditorApplet.class" archive="applications/code-editor.jar" align="baseline" width="${width}" height="$height" mayscript>
+	<PARAM NAME="attributeId" value="${attributeName}">
+	<PARAM NAME="deliverySettingsUrl" value="${deliveryBaseUrl}/ViewApplicationSettings!getTemplateLogicMethods.action">
+    No JDK 1.4 support for APPLET!!
+	<script type="text/javascript">
+		noJava = true;
+	</script>
+  </APPLET>
+#end
+#end
+
+##**********************************************************
+## These show a tree of objects as an indented select list
+## Used in the management tool and content version editor.
+##**********************************************************
+#macro(addCategorySelect $fieldName $categories $selectedValue)
+	<select id="$fieldName" name="$fieldName" class="categoriesSelect">
+	#foreach($c in $categories)
+		#addCategoryOption($c $selectedValue "")
+	#end
+	</select>
+#end
+
+#macro(addCategoryOption $categoryOption $selectedValue $prefix)
+	<option value="$categoryOption.categoryId" #if($selectedValue == $categoryOption.categoryId)selected="true"#end><b>$!prefix $categoryOption.getLocalizedDisplayName($this.languageCode, "none")</b></option>
+	#foreach($child in $categoryOption.children)
+		#addCategoryOption($child $selectedValue "$!{prefix}-")
+	#end
+#end
+
+##***********************************************************
+## A macro to add a toolbar to a page
+##***********************************************************
+#macro(menuToolbar $headline $buttons $rightButtons)
+<div id="menutoolbar" onfocus="this.blur();">
+	<div style="float:left">
+		#if($headline != "")
+			<div style="float: left; padding-top: 8px; padding-left: 10px;">$headline | </div>
+		#end
+		#foreach($button in $buttons)
+			<input type="button" id="button$velocityCount" name="button$velocityCount" value="$button.text" title="$button.title"/>
+		#end
+	</div>
+	<div style="float:right">
+		#foreach($button in $rightButtons)
+			#if($button.id != "")
+				<input type="button" id="$button.id" name="$button.id" value="$button.text" title="$button.title"/>
+			#else
+				<input type="button" id="rightButton$velocityCount" name="rightButton$velocityCount" value="$button.text" title="$button.title"/>
+			#end
+		#end
+	</div>
+</div>
+#end
+
+
+##***********************************************************
+## A macro to add a toolbar to a page
+##***********************************************************
+#macro(footerToolbar $buttons)
+<div style="clear: both;"></div>
+<div id="footertoolbar" onfocus="this.blur();">
+	<div style="float:left; margin-left: 10px;">
+		#foreach($button in $buttons)
+			<input type="button" id="footerButton$velocityCount" name="footerButton$velocityCount" value="$button.text" title="$button.title" style="margin-right: 10px;"/>
+		#end
+	</div>
+</div>
+#end
+
+##***********************************************************
+## A macro to add a toolbar to a page
+##***********************************************************
+#macro(lightMenuToolbar $headline $buttons $rightButtons)
+	#lightMenuToolbarImpl($headline $buttons $rightButtons "")
+#end
+
+##***********************************************************
+## A macro to add a toolbar to a page
+##***********************************************************
+#macro(lightMenuToolbarImpl $headline $buttons $rightButtons $rightExtraMarkup)
+<div id="menutoolbar">
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		#if($headline != "")
+			<div style="float: left; padding-top: 8px; padding-left: 10px;">$headline | </div>
+		#end
+		#foreach($button in $buttons)
+			#if($button.subButtons.size() == 0)
+				<a class='igToolbarButton igToolbarHeaderButton' href="#" id="button$velocityCount" name="button$velocityCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+				<script type="text/javascript">
+				<!--
+				$("#button$velocityCount").click(function(){
+	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+		           		document.location.href = '$button.actionURL';
+		           	#else
+		           		$button.actionURL
+		           	#end
+	            });
+				-->
+				</script>
+			#else
+				<div id="buttons$velocityCount" style="height: 26px; overflow: hidden; display: block; float: left;">
+				<div id="initialButton" style="display: block; float: left;">
+				<a class="igToolbarButton igToolbarHeaderButton" style="amargin-top: 0px; margin-bottom: 0px;" href="#" id="button$velocityCount" name="button$velocityCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+				</div>
+				<div style="clear:both;"></div>
+				#set($height = 26)
+				#foreach($subButton in $button.subButtons)
+					<a class="igToolbarButton igToolbarSubButton" style="margin-top: 0px; margin-bottom: 0px;" href="#" id="subButton$velocityCount" name="subButton$velocityCount" title="$subButton.title"><span class='igToolbarButtonOuterSpan igToolbarSubButtonOuterSpan'><span class='$subButton.cssClass' title="$subButton.title">$subButton.text</span></span></a>
+					<div style="clear: both;"></div>
+					#set($height = $height + 26)
+				#end
+				<script type="text/javascript">
+				<!--
+				$("#button$velocityCount").click(function(){
+					if($("#buttons$velocityCount").css("height") == "${height}px")
+					{
+		            	$("#buttons$velocityCount").css("height", "26px");
+						$("#buttons$velocityCount").css("backgroundColor", "transparent");
+					}
+					else
+					{
+		            	$("#buttons$velocityCount").css("height", "${height}px");
+						$("#buttons$velocityCount").css("backgroundColor", "#e7e7e7");
+					}
+			    });
+				#foreach($subButton in $button.subButtons)
+					$("#subButton$velocityCount").click(function(){
+						$subButton.actionURL;
+		            });
+				#end
+				-->
+				</script>
+				</div>	
+			#end
+		#end
+	</div>
+	<div id="menutoolbarRight" style="float:right">
+		$rightExtraMarkup
+		
+		#foreach($button in $rightButtons)
+			#if($button.id != "")
+				<a class='igToolbarButton igToolbarHeaderButton' href="#" id="$button.id" name="$button.id" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+			#else
+				<a class='igToolbarButton igToolbarHeaderButton' href="#" id="rightButton$velocityCount" name="rightButton$velocityCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+			#end
+			<script type="text/javascript">
+			<!--
+			#if($button.isJavascript == false)
+         		#if($button.id != "")
+		        	$("#$button.id").click(function(){
+						callUrlWithAlternative('http://www.infoglue.org${button.actionURL}', '/infoglueDeliverWorking${button.actionURL}');
+		        	});
+        		#else
+					$("#$button.id").click(function(){
+						callUrlWithAlternative('http://www.infoglue.org${button.actionURL}', '/infoglueDeliverWorking${button.actionURL}');
+					});
+        		#end
+        	#else
+        		#if($button.id != "")
+					$("#$button.id").click(function(){
+						$button.actionURL
+		        	});
+        		#else
+	        		$("#$button.id").click(function(){
+						$button.actionURL
+					});
+        		#end
+        	#end
+			-->
+			</script>
+		#end
+	</div>
+</div>
+#end
+
+##***********************************************************
+## A macro to add a toolbar to a page
+##***********************************************************
+#macro(lightLeftMenuToolbar $headline $buttons)
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		#if($headline != "")
+			<div style="float: left; padding-top: 8px; padding-left: 10px;">$headline | </div>
+		#end
+		#foreach($button in $buttons)
+			#set($parentCount = $velocityCount)
+			#if($button.subButtons.size() == 0)
+				#if($parentCount > 1)
+					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+				#end
+				<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+
+				<script type="text/javascript">
+				<!--
+				#if($button.useConfirmation())
+					//Event listener for delete option
+                	$("#button$parentCount").click(function () {
+						$("#genericDialog").dialog("destroy");
+                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+                		$("#genericDialog").dialog({
+							autoOpen: false,
+                			resizable: false,
+							//width: 400,
+                			//height:160,
+                			modal: true,
+                			overlay: {
+                				backgroundColor: '#000',
+                				opacity: 0.8
+                			},
+                			buttons: {
+                				'$button.confirmationTitle': function() {
+                					$(this).dialog('close');
+                					#if($button.target == "inlineDiv")
+                						openInlineDiv("$button.actionURL", 700, 900, true, true, "$button.confirmationTitle"); 
+									#else
+										#if($button.getIsJavascript())
+	                						window.frames["$button.target"].$button.actionURL;
+										#else
+		                					$("#$button.target").attr("src", "$button.actionURL");
+                						#end
+				    		        #end
+                				},
+                				'$ui.getString("tool.common.cancelButton.label")': function() {
+                					$(this).dialog('close');
+                				}
+                			},
+							open: function(event, ui) {
+								$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+								$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+							}
+                		});
+						$("#genericDialog").dialog('open');
+                		return false;
+                	});
+				#else
+    				$("#button$parentCount").click(function(){
+						//alert("Click on link");
+    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+    		           		#if($button.target == "inlineDiv")
+	    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
+	    		           	#else
+	    		           		$("#$button.target").attr("src", "$button.actionURL");
+	    		           	#end
+    		           	#else
+			           		#if($button.target == "inlineDiv")
+	    		           		$button.actionURL
+	    		           	#else
+	    		           		window.frames["$button.target"].$button.actionURL;
+	    		           	#end
+    		           	#end
+    		           	return false;
+    	            });
+				#end
+				-->
+				</script>
+			#else
+				#if($parentCount > 1)
+					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+				#end
+				<div id="buttons$parentCount" style="height: 26px; overflow: visible; display: block; float: left; border: 0px solid red;">
+					<div id="initialButton">
+						<a class="igToolbarButton igToolbarHeaderButton" style="amargin-top: 0px; margin-bottom: 0px;" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+					</div>
+					<div style="clear:both;"></div>
+					<div class="subButtons" style="float: left; display: none; background-color: #addaf9; border: 1px solid #9caabd; border-top: 0px; width: 100%;">
+					#set($height = 26 + 20)
+					#foreach($subButton in $button.subButtons)
+						<a class="igToolbarButton igToolbarSubButton" style="margin-top: 0px; margin-bottom: 0px;" href="#" id="subButton${parentCount}_$velocityCount" name="subButton${parentCount}_$velocityCount" title="$subButton.title"><span class='igToolbarButtonOuterSpan igToolbarSubButtonOuterSpan'><span class='$subButton.cssClass' title="$subButton.title">$subButton.text</span></span></a>
+						<div style="clear: both;"></div>
+						#set($height = $height + 26)
+					#end
+					</div>
+					<div style="clear: both;"></div>
+					<div style="width: 100%; height: 20px; float: left; display: none;" class="shadow"/>
+					
+					<script type="text/javascript">
+					<!--
+					$("#buttons$parentCount").mouseenter(function(){
+						$("#buttons$parentCount").css("height", "${height}px");
+						$("#buttons$parentCount .subButtons").show("fast");
+						$("#buttons$parentCount .shadow").css("display", "block");
+					}).mouseleave(function(){
+						$("#buttons$parentCount").css("height", "26px");
+						$("#buttons$parentCount .subButtons").hide("fast");
+						$("#buttons$parentCount .shadow").css("display", "none");
+					});
+
+					#if($button.useConfirmation())
+	    				//Event listener for delete option
+						$("#button$parentCount").click(function () {
+							$("#genericDialog").dialog("destroy");
+	                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+	                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+	                		$("#genericDialog").dialog({
+								autoOpen: false,
+	                			resizable: false,
+								//width: 400,
+	                			//height:140,
+	                			modal: true,
+	                			overlay: {
+	                				backgroundColor: '#000',
+	                				opacity: 0.8
+	                			},
+	                			buttons: {
+	                				'$button.confirmationTitle': function() {
+	                					$(this).dialog('close');
+	                					#if($button.target == "inlineDiv")
+	                						openInlineDiv("$button.actionURL", 700, 900, true, true, "$button.confirmationTitle"); 
+				    		           	#else
+											#if($button.getIsJavascript())
+		                						window.frames["$button.target"].$button.actionURL;
+											#else
+			                					$("#$button.target").attr("src", "$button.actionURL");
+	                						#end
+				    		           	#end
+	                				},
+	                				'$ui.getString("tool.common.cancelButton.label")': function() {
+	                					$(this).dialog('close');
+	                				}
+	                			},
+								open: function(event, ui) {
+									$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+									$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+								}
+	                		});
+							$("#genericDialog").dialog('open');
+	                		return false;
+	                	});
+					#else
+	    				$("#button$parentCount").click(function(){
+							//alert("Click on link");
+	    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+	    		           		#if($button.target == "inlineDiv")
+		    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
+		    		           	#else
+		    		           		$("#$button.target").attr("src", "$button.actionURL");
+		    		           	#end
+	    		           	#else
+				           		#if($button.target == "inlineDiv")
+		    		           		$button.actionURL
+		    		           	#else
+		    		           		window.frames["$button.target"].$button.actionURL;
+		    		           	#end
+	    		           	#end
+	    		           	return false;
+	    	            });
+					#end
+					
+					#foreach($subButton in $button.subButtons)
+						#if($subButton.useConfirmation())
+							$("#subButton${parentCount}_$velocityCount").click(function () {
+								$("#genericDialog").dialog("destroy");
+		                		$("#genericDialog").attr("title", "$subButton.confirmationTitle");
+		                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($subButton.confirmationText)");
+		                		$("#genericDialog").dialog({
+									autoOpen: false,
+		                			resizable: false,
+		                			height:140,
+		                			modal: true,
+		                			overlay: {
+		                				backgroundColor: '#000',
+		                				opacity: 0.8
+		                			},
+		                			buttons: {
+		                				'$subButton.confirmationTitle': function() {
+		                					$(this).dialog('close');
+		                					#if($subButton.target == "inlineDiv")
+		                						openInlineDiv("$subButton.actionURL", 700, 900, true, true, "$subButton.confirmationTitle"); 
+					    		           	#else
+												#if($button.getIsJavascript())
+			                						window.frames["$subButton.target"].$subButton.actionURL;
+												#else
+				                					$("#$subButton.target").attr("src", "$subButton.actionURL");
+		                						#end
+					    		           	#end
+		                				},
+		                				'$ui.getString("tool.common.cancelButton.label")': function() {
+		                					$(this).dialog('close');
+		                				}
+		                			},
+									open: function(event, ui) {
+										$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+										$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+									}
+		                		});
+								$("#genericDialog").dialog('open');
+		                		return false;
+		                	});
+						#else
+							$("#subButton${parentCount}_$velocityCount").click(function(){
+				            	#if($subButton.actionURL.indexOf("javascript") == -1 && $subButton.isJavascript == false && $subButton.actionURL != '')
+		    		           		#if($subButton.target == "inlineDiv")
+			    		           		openInlineDiv("$subButton.actionURL", 700, 900, true, true, "");
+			    		           	#else
+			    		           		$("#$subButton.target").attr("src", "$subButton.actionURL");
+			    		           	#end
+		    		           	#else
+					           		#if($subButton.target == "inlineDiv")
+			    		           		$subButton.actionURL
+			    		           	#else
+			    		           		window.frames["$subButton.target"].$subButton.actionURL;
+			    		           	#end
+		    		           	#end
+		    		           	return false;
+				            });
+				    	#end
+					#end
+					-->
+					</script>
+				</div>	
+			#end
+		#end
+	</div>
+#end
+
+
+##***********************************************************
+## A macro to add a toolbar to a page
+##***********************************************************
+#macro(lightFooterToolbar $buttons)
+<div style="clear: both;"></div>
+<div id="footertoolbar" onfocus="this.blur();">
+	<div style="float:left; margin-left: 10px;">
+		#foreach($button in $buttons)
+			<input type="button" class='$button.cssClass' id="footerButton$velocityCount" name="footerButton$velocityCount" title="$button.title" value="$button.text"/>
+			<script type="text/javascript">
+			<!--
+			$("#footerButton$velocityCount").click(function (){
+				#if($button.isJavascript == false)
+					#if($button.target == "inlineDiv")
+	                	openInlineDiv("$button.actionURL", $button.inlineDivPrefferredHeight, $button.inlineDivPrefferredWidth, true, true, "$button.confirmationTitle"); 
+					#else
+						document.location.href = '$button.actionURL';
+					#end
+				#else
+					$button.actionURL
+				#end
+				});
+			-->
+			</script>
+		#end
+	</div>
+</div>
+#end
+#*
+#macro(lightFooterToolbar $buttons)
+<div style="clear: both;"></div>
+<div id="footertoolbar" onfocus="this.blur();">
+	<div style="float:left; margin-left: 10px;">
+		#foreach($button in $buttons)
+			<a class='igToolbarButton' href="#" id="footerButton$velocityCount" name="footerButton$velocityCount" title="$button.title"><span class='igToolbarButtonOuterSpan'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+			<script type="text/javascript">
+			<!--
+			$("#footerButton$velocityCount").click(function (){
+				#if($button.isJavascript == false)
+					#if($button.target == "inlineDiv")
+	                	openInlineDiv("$button.actionURL", $button.inlineDivPrefferredHeight, $button.inlineDivPrefferredWidth, true, true, "$button.confirmationTitle"); 
+					#else
+						document.location.href = '$button.actionURL';
+					#end
+				#else
+					$button.actionURL
+				#end
+				});
+			-->
+			</script>
+		#end
+	</div>
+</div>
+#end
+*#
+
+##***********************************************************
+## A macro for the embla compact toolbar
+##***********************************************************
+#macro(compactEmblaLeftMenuToolbar $buttons)
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		#foreach($button in $buttons)
+			#set($parentCount = $velocityCount)
+			#if($button.subButtons.size() == 0)
+				#if($parentCount > 1)
+					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+				#end
+				<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+
+				<script type="text/javascript">
+				<!--
+				#if($button.useConfirmation())
+					//Event listener for delete option
+                	$("#button$parentCount").click(function () {
+						$("#genericDialog").dialog("destroy");
+                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+                		$("#genericDialog").dialog({
+							autoOpen: false,
+                			resizable: false,
+							//width: 400,
+                			//height:160,
+                			modal: true,
+                			overlay: {
+                				backgroundColor: '#000',
+                				opacity: 0.8
+                			},
+                			buttons: {
+                				'$button.confirmationTitle': function() {
+                					$(this).dialog('close');
+                					#if($button.target == "inlineDiv")
+                						openInlineDiv("$button.actionURL", $button.inlineDivPrefferredHeight, $button.inlineDivPrefferredWidth, true, true, "$button.confirmationTitle"); 
+									#else
+										#if($button.getIsJavascript())
+	                						window.frames["$button.target"].$button.actionURL;
+										#else
+		                					$("#$button.target").attr("src", "$button.actionURL");
+                						#end
+				    		        #end
+                				},
+                				'$ui.getString("tool.common.cancelButton.label")': function() {
+                					$(this).dialog('close');
+                				}
+                			},
+							open: function(event, ui) {
+								$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+								$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+							}
+                		});
+						$("#genericDialog").dialog('open');
+                		return false;
+                	});
+				#else
+    				$("#button$parentCount").click(function(){
+						//alert("Click on link");
+    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+    		           		#if($button.target == "inlineDiv")
+	    		           		openInlineDiv("$button.actionURL", $button.inlineDivPrefferredHeight, $button.inlineDivPrefferredWidth, true, true, "");
+	    		           	#else
+	    		           		$("#$button.target").attr("src", "$button.actionURL");
+	    		           	#end
+    		           	#else
+			           		#if($button.target == "inlineDiv")
+	    		           		$button.actionURL
+	    		           	#else
+	    		           		window.frames["$button.target"].$button.actionURL;
+	    		           	#end
+    		           	#end
+    		           	return false;
+    	            });
+				#end
+				-->
+				</script>
+			#else
+				#if($parentCount > 1)
+					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+				#end
+					<div id="initialButton">
+						<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
+					</div>
+					<div id="subButtons$parentCount" class="subButtons">
+					#set($height = 26 + 20)
+					#foreach($subButton in $button.subButtons)
+						<a class="igToolbarButton igToolbarSubButton" style="margin-top: 0px; margin-bottom: 0px;" href="#" id="subButton${parentCount}_$velocityCount" name="subButton${parentCount}_$velocityCount" title="$subButton.title"><span class='igToolbarButtonOuterSpan igToolbarSubButtonOuterSpan'><span class='$subButton.cssClass' title="$subButton.title">$subButton.text</span></span></a>
+						<div style="clear: both;"></div>
+						#set($height = $height + 26)
+					#end
+					</div>
+					
+					<script type="text/javascript">
+					<!--
+					$("#button$parentCount").mouseenter(function(){
+						var offset = $(this).offset();
+						var top = offset.top;
+						var left = offset.left;
+						//alert("top:" + top + ", left:" + left);
+						$("#subButtons$parentCount").height(${height});
+						$("#subButtons$parentCount").css("top", (top + $(this).height()) + "px")
+						$("#subButtons$parentCount").css("left", left + "px");
+						$("#subButtons$parentCount").show("fast");
+					}).mouseleave(function(){
+						$("#subButtons$parentCount").height(26);
+						$("#subButtons$parentCount").hide("fast");
+					});
+
+					#if($button.useConfirmation())
+	    				//Event listener for delete option
+						$("#button$parentCount").click(function () {
+							$("#genericDialog").dialog("destroy");
+	                		$("#genericDialog").attr("title", "$button.confirmationTitle");
+	                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($button.confirmationText)");
+	                		$("#genericDialog").dialog({
+								autoOpen: false,
+	                			resizable: false,
+								//width: 400,
+	                			//height:140,
+	                			modal: true,
+	                			overlay: {
+	                				backgroundColor: '#000',
+	                				opacity: 0.8
+	                			},
+	                			buttons: {
+	                				'$button.confirmationTitle': function() {
+	                					$(this).dialog('close');
+	                					#if($button.target == "inlineDiv")
+	                						openInlineDiv("$button.actionURL", 700, 900, true, true, "$button.confirmationTitle"); 
+				    		           	#else
+											#if($button.getIsJavascript())
+		                						window.frames["$button.target"].$button.actionURL;
+											#else
+			                					$("#$button.target").attr("src", "$button.actionURL");
+	                						#end
+				    		           	#end
+	                				},
+	                				'$ui.getString("tool.common.cancelButton.label")': function() {
+	                					$(this).dialog('close');
+	                				}
+	                			},
+								open: function(event, ui) {
+									$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+									$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+								}
+	                		});
+							$("#genericDialog").dialog('open');
+	                		return false;
+	                	});
+					#else
+	    				$("#button$parentCount").click(function(){
+							//alert("Click on link");
+	    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
+	    		           		#if($button.target == "inlineDiv")
+		    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
+		    		           	#else
+		    		           		$("#$button.target").attr("src", "$button.actionURL");
+		    		           	#end
+	    		           	#else
+				           		#if($button.target == "inlineDiv")
+		    		           		$button.actionURL
+		    		           	#else
+		    		           		window.frames["$button.target"].$button.actionURL;
+		    		           	#end
+	    		           	#end
+	    		           	return false;
+	    	            });
+					#end
+					
+					#foreach($subButton in $button.subButtons)
+						#if($subButton.useConfirmation())
+							$("#subButton${parentCount}_$velocityCount").click(function () {
+								$("#genericDialog").dialog("destroy");
+		                		$("#genericDialog").attr("title", "$subButton.confirmationTitle");
+		                		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($subButton.confirmationText)");
+		                		$("#genericDialog").dialog({
+									autoOpen: false,
+		                			resizable: false,
+		                			height:140,
+		                			modal: true,
+		                			overlay: {
+		                				backgroundColor: '#000',
+		                				opacity: 0.8
+		                			},
+		                			buttons: {
+		                				'$subButton.confirmationTitle': function() {
+		                					$(this).dialog('close');
+		                					#if($subButton.target == "inlineDiv")
+		                						openInlineDiv("$subButton.actionURL", 700, 900, true, true, "$subButton.confirmationTitle"); 
+					    		           	#else
+												#if($button.getIsJavascript())
+			                						window.frames["$subButton.target"].$subButton.actionURL;
+												#else
+				                					$("#$subButton.target").attr("src", "$subButton.actionURL");
+		                						#end
+					    		           	#end
+		                				},
+		                				'$ui.getString("tool.common.cancelButton.label")': function() {
+		                					$(this).dialog('close');
+		                				}
+		                			},
+									open: function(event, ui) {
+										$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+										$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+									}
+		                		});
+								$("#genericDialog").dialog('open');
+			                	return false;
+		                	});
+						#else
+							$("#subButton${parentCount}_$velocityCount").click(function(){
+				            	#if($subButton.actionURL.indexOf("javascript") == -1 && $subButton.isJavascript == false && $subButton.actionURL != '')
+		    		           		#if($subButton.target == "inlineDiv")
+			    		           		openInlineDiv("$subButton.actionURL", 700, 900, true, true, "");
+			    		           	#else
+			    		           		$("#$subButton.target").attr("src", "$subButton.actionURL");
+			    		           	#end
+		    		           	#else
+					           		#if($subButton.target == "inlineDiv")
+			    		           		$subButton.actionURL
+			    		           	#else
+			    		           		window.frames["$subButton.target"].$subButton.actionURL;
+			    		           	#end
+		    		           	#end
+		    		           	return false;
+				            });
+				    	#end
+					#end
+					-->
+					</script>
+			#end
+		#end
+	</div>
+#end
+
+
+##**************************************************
+## OTHER - PLEASE CLEAN UP						   *
+##**************************************************
+#macro(treeSelectorVersions $tooltarget)
+
+#if($showVersions == "yes")
+	#set($vLink ="| <a style='color: #666666' target='header' href='View${tooltarget}ToolHeader.action?showVersions=no&tree=html&repositoryId=${repositoryId}&exp=${exp}'>hide cv</a>")
+#else
+	#set($vLink ="| <a style='color: #666666' target='header' href='View${tooltarget}ToolHeader.action?showVersions=yes&tree=html&repositoryId=${repositoryId}&exp=${exp}'>show cv</a>")
+#end
+
+<div style="right:10px; left:10px; position:absolute; bottom:14px; visibility:visble; z-index:0">
+<hr size="1" noshade="noshade" />
+<small><font color="#666666">treeStyle: <a style="color: #666666" target="header" href="View${tooltarget}ToolHeader.action?tree=applet&repositoryId=${repositoryId}">applet</a> | <a style="color: #666666" target="header" href="View${tooltarget}ToolHeader.action?tree=html&repositoryId=${repositoryId}">html</a> $vLink </small></font>
+</div>
+
+#end
+
+#macro(treeSelector $tooltarget)
+
+<div class="onlyExpanded" style="right:10px; left:10px; position:absolute; bottom:14px; visibility:visible; z-index:0;">
+<hr size="1" noshade="noshade">
+<small><font color="#666666" face="Verdana">$ui.getString("tool.common.treestyleLabel"): <a style="color: #666666" target="header" href="View${tooltarget}ToolHeader.action?tree=applet&repositoryId=${repositoryId}">$ui.getString("tool.common.treestyleApplet")</a> | <a style="color: #666666" target="header" href="View${tooltarget}ToolHeader.action?tree=html&repositoryId=${repositoryId}">$ui.getString("tool.common.treestyleHTML")</a></font></small>
+</div>
+
+#end
+
+#macro(treeSelectorCell $tooltarget)
+<table cellpadding="0" cellspacing="0" width="100%">
+<tr>
+	<td align="left" colspan="3">
+		<hr size="1" noshade="noshade">
+	</td>
+</tr>
+<tr>
+	<td><img src="images/trans.gif" width="10" height="1" /></td>
+	<td align="left">
+		<small><font color="#666666" face="Verdana">$ui.getString("tool.common.treestyleLabel"): <a style="color: #666666" target="header" href="View${tooltarget}ToolHeader.action?tree=applet&repositoryId=${repositoryId}">$ui.getString("tool.common.treestyleApplet")</a> | <a style="color: #666666" target="header" href="View${tooltarget}ToolHeader.action?tree=html&repositoryId=${repositoryId}">$ui.getString("tool.common.treestyleHTML")</a></font></small>
+		<br/><br/>
+	</td>
+	<td><img src="images/trans.gif" width="10" height="1"/></td>
+</tr>
+</table>
+#end
+
+
+#macro(head $titleKey)
+<head>
+  <link rel="stylesheet" type="text/css" href="css/cms.css"/>
+  <title>$ui.getString($titleKey)</title>
+</head>
+#end
+
+
+#macro(title $titleKey)
+<p class="title">$ui.getString($titleKey)</p>
+#end
+
+#macro(subTitle $titleKey)
+<p class="subtitle">$ui.getString($titleKey)</p>
+#end
+
+#macro(localizedFieldName $key)
+  $ui.getString("entity.${key}.label")
+#end
+
+
+#macro(textarea $fieldNameLabel $errorKey $fieldName $fieldValue $rows $cols)
+  $fieldNameLabel
+  #if($errors.hasErrors($errorKey))
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    <font color="red"> - $errorMessage</font><br/>
+    #end
+  #end
+  <textarea name="$fieldName" cols="$cols" rows="$rows">$!fieldValue</textarea>
+#end
+
+#macro(editField3 $fieldNameLabel $errorKey $fieldName $fieldValue $length)
+  $fieldNameLabel
+  	#if($rule.required)
+  		&nbsp;<font color="red">* </font>
+  	#end
+
+  #if($errors.hasErrors($errorKey))
+
+	  	 #set( $MIN=$rule.getValidRange().getLowerLimit() )
+	  	 #set( $MAX=$rule.getValidRange().getUpperLimit() )
+
+	    #foreach($errorMessage in $errors.getErrors($errorKey))
+	    <font color="red"> - $errorMessage </font>
+	    #end
+
+  #end
+  <br/>
+  <input type="text" class="text" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>
+#end
+
+
+#macro(editField2 $fieldNameLabel $fieldName $fieldValue)
+  #editField3($fieldNameLabel "" $fieldName $fieldValue)
+#end
+
+#macro(editField $fieldNameKey $fieldName $fieldValue $length)
+
+  #set($rule=$this.getRule("$fieldNameKey"))
+  ## $rule
+  #editField3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $length)
+
+#end
+
+#macro(editPasswordField3 $fieldNameLabel $errorKey $fieldName $fieldValue $length)
+  $fieldNameLabel
+  	#if($rule.required)
+  		&nbsp;<font color="red">* </font>
+  	#end
+
+  #if($errors.hasErrors($errorKey))
+
+	  	 #set( $MIN=$rule.getValidRange().getLowerLimit() )
+	  	 #set( $MAX=$rule.getValidRange().getUpperLimit() )
+
+	    #foreach($errorMessage in $errors.getErrors($errorKey))
+	    <font color="red"> - $errorMessage </font>
+	    #end
+
+  #end
+  <br/>
+  <input type="password" class="text" name="$fieldName" value="$!fieldValue" size="$length"/>
+#end
+
+#macro(editPasswordField $fieldNameKey $fieldName $fieldValue $length)
+
+  #set($rule=$this.getRule("$fieldNameKey"))
+  ## $rule
+  #editPasswordField3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $length)
+
+#end
+
+#macro(editPropertyField3 $fieldNameLabel $errorKey $fieldName $fieldValue $length $serverNodeId)
+  $fieldNameLabel
+  	#if($rule.required)
+  		&nbsp;<font color="red">* </font>
+  	#end
+
+  #if($errors.hasErrors($errorKey))
+  	#set( $MIN=$rule.getValidRange().getLowerLimit() )
+  	#set( $MAX=$rule.getValidRange().getUpperLimit() )
+
+	#foreach($errorMessage in $errors.getErrors($errorKey))
+      <font color="red"> - $errorMessage </font>
+    #end
+  #end
+  <br/>
+  <input type="text" class="text" name="$fieldName" value="$!fieldValue" size="$length"/>
+  <a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="images/delete.gif" border="0"/></a>
+#end
+
+#macro(editPropertyField $fieldNameKey $fieldName $fieldValue $length $serverNodeId)
+
+  #set($rule=$this.getRule("$fieldNameKey"))
+  ## $rule
+  #editPropertyField3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $length $serverNodeId)
+
+#end
+
+
+#macro(editPropertyFieldCSS $fieldNameKey $fieldName $fieldValue $length $serverNodeId $currentActualValue)
+  #editPropertyFieldCSS3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $currentActualValue $length $serverNodeId)
+#end
+
+#macro(editPropertyFieldCSS3 $fieldNameLabel $errorKey $fieldName $fieldValue $currentActualValue $length $serverNodeId)
+	<div class="row">
+		<label for="$fieldName">$fieldNameLabel</label>
+  	  	<input type="text" class="text" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>
+  	  	<a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="images/delete.gif" border="0"/></a> ($currentActualValue)
+	</div>
+#end
+
+#macro(editTextFieldCSS $fieldNameKey $fieldName $fieldValue $length $mandatory $disabled $cssClass)
+  #editTextFieldCSS3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $length $mandatory, $disabled, false, $cssClass)
+#end
+
+#macro(editPasswordFieldCSS $fieldNameKey $fieldName $fieldValue $length $mandatory $disabled $cssClass)
+  #editTextFieldCSS3($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $length $mandatory, $disabled, true, $cssClass)
+#end
+
+#macro(editTextFieldCSS3 $fieldNameLabel $errorKey $fieldName $fieldValue $length $mandatory $disabled $password $cssClass)
+	
+	#set($errorMessageText = "")
+	#if($errors.hasErrors($errorKey))
+		#foreach($errorMessage in $errors.getErrors($errorKey))
+			#if($velocityCount > 1)
+				#set($errorMessageText = "$errorMessageText, $errorMessage")
+			#else
+				#set($errorMessageText = "$errorMessage")
+			#end
+		#end
+		#set($errorMessageText = "<font color='red'>$errorMessageText</font>")
+	#end
+	
+	<label for="$fieldName">$fieldNameLabel #if($mandatory)<em style="color:red;" title="$ui.getString("tool.common.mandatoryField")">*</em>#end</label>
+  	#if($password)
+  	  	<input type="password" class="$cssClass" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length" $disabled autocomplete="off"/> $errorMessageText
+	#else
+  	  	<input type="text" class="$cssClass" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length" $disabled/> $errorMessageText
+	#end
+#end
+
+#macro(labelCSS $labelKey $css)
+	<p class="$css">$ui.getString("$labelKey")</p>
+#end
+
+#macro(editReadOnlyField $fieldNameKey $fieldName $fieldValue $length $readonly)
+  $ui.getString("entity.${fieldNameKey}.label")<br/>
+  <input type="text" class="text" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length" $readonly/>
+#end
+
+#macro(editReadOnlyPasswordField $fieldNameKey $fieldName $fieldValue $length $readonly)
+  $ui.getString("entity.${fieldNameKey}.label")<br/>
+  <input type="password" class="text" name="$fieldName" value="$!fieldValue" size="$length" $readonly/>
+#end
+
+#macro(editTextAreaOld $fieldNameKey $fieldName $fieldValue $rows $cols)
+  #textarea($ui.getString("entity.${fieldNameKey}.label") $fieldNameKey $fieldName $fieldValue $rows $cols)
+#end
+
+#macro(hiddenField $fieldName $fieldValue)
+  <input type="hidden" name="$fieldName" value="$!fieldValue"/>
+  #if($errors.hasErrors($errorKey))
+  <td class="data-cell-left-error">
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    $errorMessage<br/>
+    #end
+  </td>
+  #elseif($errors.hasErrors())
+  <td class="data-cell-left-error">&nbsp;</td>
+  #end
+#end
+
+#macro(editInputField $fieldNameLabel $fieldName $fieldValue $typeDefinition)
+<tr>
+  <td class="data-head-left">$fieldNameLabel</td>
+  <td class="data-cell-right">
+  #if($typeDefinition.value.indexOf("freetext") > -1)
+    <input type="text" name="$fieldName" value="$!fieldValue" size="30"/>
+  #else
+  	#foreach($fieldDefinition in $typeDefinition.getFields())
+    	<input type="radio" name="$fieldName" value="$fieldDefinition.id">$fieldDefinition.label</input>
+  	#end
+  #end
+  </td>
+  #if($errors.hasErrors($errorKey))
+  <td class="data-cell-left-error">
+    #foreach($errorMessage in $errors.getErrors($errorKey))
+    $errorMessage<br/>
+    #end
+  </td>
+  #elseif($errors.hasErrors())
+  <td class="data-cell-left-error">&nbsp;</td>
+  #end
+</tr>
+#end
+
+
+#macro(submitButton)
+<tr>
+  <td class="data-cell-right" colspan="2"><input type="image" src="/images/submit.gif"/></td>
+  #if($errors.hasErrors())
+  <td class="data-cell-left-error">&nbsp;</td>
+  #end
+</tr>
+#end
+
+
+## ******************************************************* ##
+## Macros for all widget generation in forms               ##
+## ******************************************************* ##
+
+##**********************************##
+## Checkbox attribute type          ##
+##**********************************##
+
+#macro(checkboxAttribute $attribute)
+
+	#set($widget = "")
+	#set($widget = $!attribute.getContentTypeAttribute("widget").getContentTypeAttributeParameterValue().getValue("label"))
+	#if($widget == "")
+		#set($widget = "default")
+	#end
+
+	#if($widget == "transfer")
+	
+		<div id="transferListsWidget">
+        	<div class="optionsDiv">
+        		<div class="label"><p>$ui.getString("tool.contenttool.availableOptions")</p></div>
+        		<select id="leftSelect$attribute.name" name="none" multiple="multiple" size="7">
+        		#renderOptions($attribute.options "$this.getAttributeValue($attribute.name)" false)
+                </select>
+        	</div>
+            <div class="actionDiv">
+            	<p style="afloat: left; margin-top: 36px;">
+           			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
+           			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
+           		</p>
+        		<p style="afloat: left; margin-top: 5px;">
+        			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
+        			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
+        		</p>
+        	</div>
+        	<div class="optionsDiv">
+        		<div class="label"><p>$ui.getString("tool.contenttool.selectedOptions")</p></div>
+        		<select name="$attribute.name" class="optionListWidget" id="rightSelect$attribute.name" multiple="multiple" size="7">
+        		#renderOptions($attribute.options "$this.getAttributeValue($attribute.name)" true)
+                </select>
+        	</div>
+        </div>	
+		<script type="text/javascript">
+			$(document).ready(function(){
+				refreshEvents("${attribute.name}");
+			});
+		</script>
+
+	#elseif($widget == "3col")
+
+		<ul id="threecolListWidget">
+      		#foreach($option in $attribute.options)
+				<li><input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()</li>
+			#end
+		</ul>
+
+	#else
+ 
+		#foreach($option in $attribute.options)
+			<input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()
+		#end
+
+	#end
+
+#end
+
+##**********************************##
+## Radiobutton attribute type       ##
+##**********************************##
+#macro(radiobuttonAttribute $attribute)
+	
+	#set($widget = "")
+	#set($widget = $!attribute.getContentTypeAttribute("widget").getContentTypeAttributeParameterValue().getValue("label"))
+	#if($widget == "")
+		#set($widget = "default")
+	#end
+
+	#if($widget == "3col")
+    	<ul id="threecolListWidget">
+    		#foreach($option in $attribute.options)
+    			<li><input $readonly type="radio" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()</li>
+    		#end
+    	</ul>
+	#else
+		#foreach($option in $attribute.options)
+    		<input $readonly type="radio" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()
+   		#end
+	#end
+	
+#end
+
+##**********************************##
+## Select attribute type            ##
+##**********************************##
+#macro(selectAttribute $attribute)
+	
+	#set($widget = "")
+	#set($widget = $!attribute.getContentTypeAttribute("widget").getContentTypeAttributeParameterValue().getValue("label"))
+	#if($widget == "")
+		#set($widget = "default")
+	#end
+
+	<select $readonly size="1" id="$attribute.name" name="$attribute.name" class="$class" $onchange>
+		#foreach($option in $attribute.options)
+			<option value="$option.value" #checkSelected("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()</option>
+		#end
+	</select>
+	
+#end
+
+#macro(fieldErrorMessage $fieldName $inline)
+	#set($errorMessageText = "")
+	#foreach($errorMessage in $errors.getErrors($fieldName))
+		#if($velocityCount > 1)
+			#set($errorMessageText = "$errorMessageText, $errorMessage")
+		#else
+			#set($errorMessageText = "$errorMessage")
+		#end
+	#end
+	#if($inline)
+		<span class="error">$errorMessageText</span>
+	#else
+		<p class="error">$errorMessageText</p>
+	#end
+#end
+
+
+##************************************##
+## MACROS for datatables              ##
+##************************************##
+
+#macro(initDataTable $tableId)
+	#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ]')
+  #initDataTableImpl($tableId $extraParameter)
+#end
+
+#macro(initDataTableImpl $tableId $extraParameter)
+
+	$("#$tableId").dataTable({
+		"sPaginationType": "full_numbers",
+	    "iDisplayLength": 20,
+	    "bAutoWidth": false,
+	    "sDom": '<"top"lf<"clear">>rt<"bottom"ip<"clear">>',
+	    "oLanguage": {
+					"sLengthMenu": "$ui.getString("tool.common.datatable.sLengthMenu")",
+					"sZeroRecords": "$ui.getString("tool.common.datatable.sZeroRecords")",
+					"sInfo": "$ui.getString("tool.common.datatable.sInfo")",
+					"sInfoEmtpy": "$ui.getString("tool.common.datatable.sInfoEmtpy")",
+					"sInfoFiltered": "$ui.getString("tool.common.datatable.sInfoFiltered")",
+					"sSearch": "$ui.getString("tool.common.datatable.sSearch")",
+					"oPaginate": {
+						"sFirst":    "$ui.getString("tool.common.datatable.oPaginate.sFirst")",
+						"sPrevious": "$ui.getString("tool.common.datatable.oPaginate.sPrevious")",
+						"sNext":     "$ui.getString("tool.common.datatable.oPaginate.sNext")",
+						"sLast":     "$ui.getString("tool.common.datatable.oPaginate.sLast")"
+					}
+				},
+		$extraParameter
+	});
+
+#end
+
+#macro(initDeleteLink)
+
+	$(".deleteCross").click(function () {
+		var linkAddress = $(this).attr("href");
+		$("#genericDialog").dialog('destroy');
+		$("#genericDialog").attr("title", $(this).attr("title"));
+		$("#genericDialog h3").html($(this).attr("title"));
+		$("#genericDialog").dialog({
+			resizable: false,
+			width: 500,
+			minHeight: 400,
+			modal: true,
+			overlay: {
+				backgroundColor: '#000',
+				opacity: 0.8
+			},
+			buttons: {
+				'$ui.getString("tool.common.delete.label")': function() {
+					document.location.href = linkAddress;
+				},
+				'$ui.getString("tool.common.cancelButton.label")': function() {
+					$(this).dialog('close');
+				}
+			}
+		});
+		$(".ui-dialog-buttonpane button:first").addClass("ok"); 
+		$(".ui-dialog-buttonpane button:last").addClass("cancel");
+		$("#genericDialog").dialog('open');
+		return false;
+	});
+#end
+
+#macro(renderContentTypes $contentTypeDefinitionVOList $level)
+	#foreach($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+		#set($children = $this.getContentTypeDefinitions($contentTypeDefinitionVO.id))
+		#set($indent = $level * 16)
+		<tr>
+			<td><a class="deleteCross" title="$ui.getString("tool.common.delete.label") $contentTypeDefinitionVO.name" href="DeleteContentTypeDefinition.action?contentTypeDefinitionId=$contentTypeDefinitionVO.id&igSecurityCode=$securityCode">&nbsp;#*$ui.getString("tool.common.delete.label")*#</a></td>
+			<td style="text-indent:	${indent}px;">
+				<a href="ViewContentTypeDefinition!useEditor.action?contentTypeDefinitionId=$contentTypeDefinitionVO.id&title=ContentTypeDefinition%20details" class="group">$contentTypeDefinitionVO.name</a>
+			</td>
+			<td>#if($contentTypeDefinitionVO.parentName) $!contentTypeDefinitionVO.parentName ($!contentTypeDefinitionVO.parentId)#end $children.size()</td>
+		</tr>
+		#if($children.size() > 0 && $level < 10)
+			#set($newLevel = $level+1)
+			#renderContentTypes($children $newLevel)
+		#end
+	#end
+#end
+
+
+#**************************************************#
+#* Renders all attributes 						  *#
+#**************************************************#
+#macro(renderAttributes $attributes)
+
+<table border="0" width="500" id="contentTypeAttributesTable">	
+	<!-- here goes the field generation -->
+				
+	#foreach($attribute in $attributes)
+		
+		## ANNOTATION ELEMENTS
+		#set($attributeTitle = "")
+		#set($attributeTitle = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($attributeTitle == "")
+			#set($attributeTitle = "$attribute.name")
+		#end
+
+		#set($attributeDescription = "")
+		#set($attributeDescription = $!attribute.getContentTypeAttribute("description").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($attributeDescription != "")
+			#set($attributeDescription = "- $attributeDescription")
+		#end
+	
+		#set($attributeInitialData = "")
+		#set($attributeInitialData = $!attribute.getContentTypeAttribute("initialData").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($attributeInitialData != "")
+			#set($attributeInitialData = "$attributeInitialData")
+		#end
+	
+		#set($class = "")
+		#set($class = $!attribute.getContentTypeAttribute("class").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($class == "")
+			#set($class = "longtextfield")
+		#end
+
+		#set($widget = "")
+		#set($widget = $!attribute.getContentTypeAttribute("widget").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($widget == "")
+			#set($widget = "default")
+		#end
+
+		#set($rows = "")
+		#set($rows = $!attribute.getContentTypeAttribute("rows").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($rows == "")
+			#set($rows = "5")
+		#end
+
+		#set($cols = "")
+		#set($cols = $!attribute.getContentTypeAttribute("cols").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($cols == "")
+			#set($cols = "75")
+		#end
+
+		#set($enableWYSIWYG = "")
+		#set($enableWYSIWYG = $!attribute.getContentTypeAttribute("enableWYSIWYG").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableWYSIWYG == "")
+			#set($enableWYSIWYG = "false")
+		#end
+
+		#set($WYSIWYGToolbar = "")
+		#set($WYSIWYGToolbar = $!attribute.getContentTypeAttribute("WYSIWYGToolbar").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($WYSIWYGToolbar == "")
+			#set($WYSIWYGToolbar = "Default")
+		#end
+
+		#set($WYSIWYGExtraConfig = "")
+		#set($WYSIWYGExtraConfig = $!attribute.getContentTypeAttribute("WYSIWYGExtraConfig").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($WYSIWYGExtraConfig == "")
+			#set($WYSIWYGExtraConfig = "")
+		#end
+
+		#set($enableTemplateEditor = "")
+		#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableTemplateEditor == "")
+			#set($enableTemplateEditor = "false")
+		#end
+		
+		#set($enableFormEditor = "")
+		#set($enableFormEditor = $!attribute.getContentTypeAttribute("enableFormEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableFormEditor == "")
+			#set($enableFormEditor = "false")
+		#end
+
+		#set($enableContentRelationEditor = "")
+		#set($enableContentRelationEditor = $!attribute.getContentTypeAttribute("enableContentRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableContentRelationEditor == "" || $enableContentRelationEditor == "false")
+			#set($enableContentRelationEditor = $!attribute.getContentTypeAttribute("enableRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($enableContentRelationEditor == "" || $enableContentRelationEditor == "false")
+				#set($enableContentRelationEditor = "false")
+			#end
+		#end
+		
+		#set($enableStructureRelationEditor = "")
+		#set($enableStructureRelationEditor = $!attribute.getContentTypeAttribute("enableStructureRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableStructureRelationEditor == "")
+			#set($enableStructureRelationEditor = "false")
+		#end
+		
+		#set($enableComponentPropertiesEditor = "")
+		#set($enableComponentPropertiesEditor = $!attribute.getContentTypeAttribute("enableComponentPropertiesEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableComponentPropertiesEditor == "")
+			#set($enableComponentPropertiesEditor = "false")
+		#end
+		
+		#set($activateExtendedEditorOnLoad = "")
+		#set($activateExtendedEditorOnLoad = $!attribute.getContentTypeAttribute("activateExtendedEditorOnLoad").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if(!$activateExtendedEditorOnLoad || $activateExtendedEditorOnLoad == "")
+			#set($activateExtendedEditorOnLoad = "false")
+		#end
+		<script type="text/javascript">
+		<!--
+			attributesStatus["${attribute.name}ActivateExtendedEditorOnLoad"] = $activateExtendedEditorOnLoad;
+		-->
+		</script>
+		
+		#set($currentEditorId = 0)
+		
+		#set($tdClass = "")
+		#if($attribute.name == "$attributeName")
+			#set($tdClass = "highlightedAttribute")
+		#end
+		
+		<tr>
+			<td colspan="3"><a id="${attribute.name}Anchor" name="${attribute.name}Anchor"/><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3" class="$tdClass">
+				#set($value = "$!this.getAttributeValue($attribute.name)")
+				#if("$!contentVersionId" == "" && "$value" == "")
+					#set($value = $attributeInitialData)
+				#end
+							
+				#if($attribute.inputType == "hidden")
+					<input type="hidden" id="$attribute.name" name="$attribute.name" value="$value"/>
+				#elseif($attribute.inputType == "datefield")
+                    <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+					#printErrorV3("ContentVersion.$attribute.name" false)</label>
+					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="images/calendar.gif" border="0"/></a>
+					<script type="text/javascript">
+					<!--
+						Calendar.setup({
+						        inputField     :    "$attribute.name",     		// id of the input field
+						        ifFormat       :    "%Y-%m-%d %H:%M",      	// format of the input field
+						        button         :    "calendar_$attribute.name",  // trigger for the calendar (button ID)
+						        align          :    "BR",           		// alignment (defaults to "Bl")
+						        singleClick    :    true,
+						        firstDay  	   : 	1,
+						        showsTime	   :    true,
+						        timeFormat     :    "24"
+						});
+					-->
+					</script>
+				#elseif($attribute.inputType == "textfield")
+                    <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+					#printErrorV3("ContentVersion.$attribute.name" false)</label>
+					<input $readonly type="text" length="50" class="$class" maxlength="" id="$attribute.name" name="$attribute.name" value="$value"/>
+				#elseif($attribute.inputType == "textarea")
+					
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					    <tr>
+					    	<td align="left">
+                                <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+								#printErrorV3("ContentVersion.$attribute.name" false)</label>
+							</td>
+					    	<td align="right">
+					    		<label for="$attribute.name">
+								#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
+					    			<a href="javascript:changeEditor(0, '${attribute.name}');">$ui.getString("tool.contenttool.editorPlainLabel")</a> 
+								#end
+					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
+					    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
+								#end
+                                </label>
+							</td>
+					    </tr>
+					</table>
+					
+					#set($width = 0)
+					#set($width = $!attribute.getContentTypeAttribute("width").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+					#if($width == 0)
+						#set($width = 700)
+					#end
+
+					#set($height = 0)
+					#set($height = $!attribute.getContentTypeAttribute("height").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+					#if($height == 0)
+						#set($height = 150)
+					#end
+					
+					#set($wysiwygHeight = $height - 40)
+					#if($width >= 700)
+						#set($wysiwygHeight = $height - 20)
+					#end
+			
+					<textarea $readonly rows="$rows" cols="$cols" style="visibility: visible; width:${width}px; height:${height}px; border: 1px solid #C2D0E2;font-family:verdana,arial,sans-serif;font-size:8pt;" id="$attribute.name" name="$attribute.name" $readonly>$value</textarea> 
+					
+					#if($enableWYSIWYG == "true")
+						<script type="text/javascript">
+							plainEditors["${attribute.name}"] = "${attribute.name}";
+							plainEditorsToolbars["${attribute.name}"] = "${WYSIWYGToolbar}";
+							#if($prefferedWYSIWYG != "ckeditor3")
+							plainEditorsExtraConfig["${attribute.name}"] = "${WYSIWYGExtraConfig}";
+							#end
+							
+							currentEditorIdHash["${attribute.name}CurrentEditorId"] = 1;
+							#set($currentEditorId = 1)
+						</script>
+
+					#end
+					
+					#if($enableTemplateEditor == "true" && $readonly == "")
+						<!-- Here comes the Template Code editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType2IsActive" name="${attribute.name}EditorType2IsActive" value="false"/>
+						<div id="${attribute.name}EditorType2" name="${attribute.name}EditorType2" style="display:block; width:${width}px; height:${height}px; z-index:1; border: 0px none #C2D0E2;">
+							<script type="text/javascript">
+				        		noJava = false;
+				        	</script>
+						    <table cellpadding="0" cellspacing="0" border="0">
+						    <tr>
+						    	<td colspan="2" align="right" bgcolor="white">
+						    		#showTemplateEditor("${width}" "${height}" "${attribute.name}" "${deliveryBaseUrl}")						    		
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						
+						<script type="text/javascript">
+							if(!noJava)
+							{
+								document.getElementById('${attribute.name}').style.display = "none";
+								document.getElementById('${attribute.name}EditorType2').style.display = "block";	
+								
+								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 2;
+								#set($currentEditorId = 2)						
+							}
+							else
+							{
+								document.getElementById('${attribute.name}').style.display = "block";
+								document.getElementById('${attribute.name}EditorType2').style.display = "none";	
+								
+								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 0;
+							}
+						</script>
+						
+					#end
+					
+					#if($enableFormEditor == "true" && $readonly == "")
+						<!-- Here comes the Form editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType3IsActive" name="${attribute.name}EditorType3IsActive" value="false"/>
+						<div id="${attribute.name}EditorType3" name="${attribute.name}EditorType3" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+									#if($contentVersionId > -1)
+									As the form editor is somewhat complex you have to open it in a new window.
+									Click <a href="javascript:openFormEditor('ViewFormEditor.action?contentVersionId=$!contentVersionId&contentVersionAttributeName=$!attribute.name');"><strong>here</strong></a> for it.
+									Edit the form there and close the window when you are done. 
+									#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									#end
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)"/>
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType3').style.display = "block";							
+						</script>
+						
+					#end
+
+					#if($enableContentRelationEditor == "true" && $readonly == "")
+						<!-- Here comes the Content Relation editor layer -->
+						<script type="text/javascript">
+							function updateAttribute${attribute.name}(data, paths)
+							{
+								//alert("Updating ${attribute.name} with:" + data);
+								$("#${attribute.name}Hidden").val(data);
+								
+								$("#${attribute.name}RelationTable").empty();
+								for (i=0;i<paths.length;i++)
+								{
+									var path = paths[i];
+									$("#${attribute.name}RelationTable").append('<tr><td valign="middle"><img src="images/tree/xp/item.png"></td><td valign="middle">' + path + '</td></tr>');
+								}
+								allowSave = true;
+							}
+						</script>
+						<input type="hidden" id="${attribute.name}EditorType4IsActive" name="${attribute.name}EditorType4IsActive" value="false"/>
+						<div id="${attribute.name}EditorType4" name="${attribute.name}EditorType4" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+						    		#if($contentVersionId > -1)
+									$ui.getString("tool.contenttool.relatedContents") (<a href="javascript:if(top.openInlineDiv) top.openInlineDiv('ViewContentRelationEditor!V3.action?updateAction=ViewContentRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}', 600, 800, true, true, 'Relation editor'); else openRelationEditor();"><strong>Edit relations</strong></a>)
+									<hr noshade size="1">
+									#set($qualifyers = $this.getContentRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0" id="${attribute.name}RelationTable">
+									#foreach($qualifyer in $qualifyers)
+										<tr>
+											<td valign="middle">
+											<img src="images/tree/xp/item.png"> 
+											</td>
+											<td valign="middle">
+											$qualifyer.path 
+											</td>
+											<td></td>
+											<td valign="middle">
+											(<a href="#" onclick="top.openInlineDiv('ViewContentVersion!standalone.action?contentId=${qualifyer.getValue()}&languageId=$languageId&forceWorkingChange=true', 700, 900, true, true, ''); return false;">$ui.getString("tool.common.edit.label")</a>)
+											</td>
+										</tr>
+									#end
+									</table>
+									#else
+									<p>
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									</p>
+									#end
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)"/>
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType4').style.display = "block";
+							if(top.registerDataListenerWindow) top.registerDataListenerWindow(self);						
+						</script>
+					#end
+
+					#if($enableStructureRelationEditor == "true" && $readonly == "")
+						<!-- Here comes the Structure Relation editor layer -->
+						<script type="text/javascript">
+							function updateAttribute${attribute.name}(data, paths)
+							{
+								//alert("Updating ${attribute.name} with:" + data);
+								$("#${attribute.name}Hidden").val(data);
+								
+								$("#${attribute.name}RelationTable").empty();
+								for (i=0;i<paths.length;i++)
+								{
+									var path = paths[i];
+									$("#${attribute.name}RelationTable").append('<tr><td valign="middle"><img src="images/tree/xp/item.png"></td><td valign="middle">' + path + '</td></tr>');
+								}
+								allowSave = true;
+							}
+						</script>
+						<input type="hidden" id="${attribute.name}EditorType5IsActive" name="${attribute.name}EditorType5IsActive" value="false"/>
+						<div id="${attribute.name}EditorType5" name="${attribute.name}EditorType5" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+									#if($contentVersionId > -1)
+									$ui.getString("tool.contenttool.relatedPages") (<a href="javascript:if(top.openInlineDiv) top.openInlineDiv('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}', 600, 800, true, true, 'Relation editor'); else openRelationEditor('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
+									<hr noshade size="1">
+									#set($qualifyers = $this.getSiteNodeRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0" id="${attribute.name}RelationTable">
+									#foreach($qualifyer in $qualifyers)
+										<tr>
+											<td valign="middle">
+											<img src="images/tree/xp/item.png"> 
+											</td>
+											<td valign="middle">
+											$qualifyer.getPath() 
+											</td>
+										</tr>
+									#end
+									</table>
+									#else
+									<p>
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									</p>
+									#end
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)"/>
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType5').style.display = "block";	
+							if(top.registerDataListenerWindow) top.registerDataListenerWindow(self);						
+						</script>
+					#end
+					
+					#if($enableComponentPropertiesEditor == "true" && $readonly == "")
+					<!-- Here comes the Component Properties editor layer -->
+					<input type="hidden" id="${attribute.name}EditorType6IsActive" name="${attribute.name}EditorType6IsActive" value="false">
+					<div id="${attribute.name}EditorType6" name="${attribute.name}EditorType6" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+					    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+					    <tr>
+					    	<td colspan="2" bgcolor="white" valign="top">
+								<p style="margin-top:5px; margin-left:5px;">
+								#if($contentVersionId > -1)
+								Component Properties (<a href="javascript:openRelationEditor('ViewComponentPropertiesEditor.action?contentVersionId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit properties</strong></a> / <a href="#" onclick="$('#ComponentProperties').show(); $('div[name^=ComponentPropertiesEditorType]').hide(); return false;"><strong>Plain</strong></a>)
+								<hr noshade size="1">
+								#set($componentProperties = $this.getComponentPropertyDefinitions($this.getUnescapedAttributeValue($attribute.name)))
+								<table border="0" width="100%">
+									<tr style="background-color: #CCCCCC;">
+										<td valign="middle">
+										Property name 
+										</td>
+										<td valign="middle">
+										Type 
+										</td>
+										<td valign="middle">
+										Entity (if binding)
+										</td>
+										<td valign="middle">
+										Allow multiple items
+										</td>
+										<td valign="middle">
+										Asset binding
+										</td>
+										<td valign="middle">
+										Allowed content types
+										</td>
+										<td valign="middle">
+										Description
+										</td>
+									</tr>
+								#foreach($propertyDefinition in $componentProperties)
+									<tr>
+										<td valign="middle">
+										$propertyDefinition.name 
+										<td valign="middle">
+										$propertyDefinition.type 
+										</td>
+										<td valign="middle">
+										$propertyDefinition.entity 
+										</td>
+										<td valign="middle">
+										$propertyDefinition.multiple
+										</td>
+										<td valign="middle">
+										$propertyDefinition.assetBinding
+										</td>
+										<td valign="middle">
+										$propertyDefinition.allowedContentTypeNames
+										</td>
+										<td valign="middle">
+										$propertyDefinition.description
+										</td>
+									</tr>
+								#end
+								</table>
+								#else
+								You cannot use the editor until you have saved the first version of this content. Fill
+								in the rest of the form values and save without entering anything in this field. After that you
+								will be able to use the editor.
+								#end
+								</p>
+							</td>
+					    </tr>
+					    </table>
+					</div>	
+					<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)">
+					
+					<script type="text/javascript">
+						document.getElementById('${attribute.name}').style.display = "none";
+						document.getElementById('${attribute.name}EditorType6').style.display = "block";							
+						currentEditorIdHash["${attribute.name}CurrentEditorId"] = 6;
+					</script>
+				#end
+				
+		    		#if($enableFormEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+		    			document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType3');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		    		#if($enableContentRelationEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+			    		document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType4');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		    		#if($enableStructureRelationEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+			    		document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType5');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+						
+				#elseif($attribute.inputType == "select")
+				<!-- Handles the input type select = dropbox -->
+                    <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+					#printErrorV3("ContentVersion.$attribute.name" false)</label>
+					<select $readonly size="1" id="$attribute.name" name="$attribute.name" class="$class">
+						#foreach($option in $attribute.options)
+		    				<option value="$option.value" #checkSelected("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()</option>
+						#end
+		    		</select>
+				#elseif($attribute.inputType == "checkbox")
+				<!-- Handles the input type checkbox -->
+			<label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+	    	#printErrorV3("ContentVersion.$attribute.name" false)
+			#if($widget == "transfer")
+
+				<div id="transferListsWidget">
+                	<div class="optionsDiv">
+                		<div class="label"><p>$ui.getString("tool.contenttool.availableOptions")</p></div>
+                		<select id="leftSelect$attribute.name" name="none" multiple="multiple" size="7">
+                		#renderOptions($attribute.options "$this.getAttributeValue($attribute.name)" false)
+                        </select>
+                	</div>
+                    <div class="actionDiv">
+                    	<p style="afloat: left; margin-top: 36px;">
+                   			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                   			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                   		</p>
+                		<p style="afloat: left; margin-top: 5px;">
+                			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
+                			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                		</p>
+                	</div>
+                	<div class="optionsDiv">
+                		<div class="label"><p>$ui.getString("tool.contenttool.selectedOptions")</p></div>
+                		<select name="$attribute.name" class="optionListWidget" id="rightSelect$attribute.name" multiple="multiple" size="7">
+                		#renderOptions($attribute.options "$this.getAttributeValue($attribute.name)" true)
+                        </select>
+                	</div>
+                </div>	
+				<script type="text/javascript">
+					$(document).ready(function(){
+						refreshEvents("${attribute.name}");
+					});
+				</script>
+				
+			#elseif($widget == "3col")
+				<ul id="checkboxListsWidget">
+              		#foreach($option in $attribute.options)
+						<li><input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()</li>
+					#end
+				</ul>
+			#else
+          		#foreach($option in $attribute.options)
+					<input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()
+				#end
+			#end
+
+				#elseif($attribute.inputType == "radiobutton")
+				<!-- Handles the input type radiobutton -->
+					<label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+					#printErrorV3("ContentVersion.$attribute.name" false)</label>
+					<ul class="optionList">
+					#foreach($option in $attribute.options)
+						<li><input $readonly type="radio" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()</li>
+					#end
+					</ul>
+				#elseif($attribute.inputType == "customfield")
+				<!-- Handles the input type customfield -->
+					#set($attributeMarkup = $!attribute.getContentTypeAttribute("Markup").getContentTypeAttributeParameterValue().getValue("label"))
+                    <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
+					#printErrorV3("ContentVersion.$attribute.name" false)</label>
+					#set($processedMarkup = $attributeMarkup.replaceAll("attributeName", "$attribute.name"))
+					#set($processedMarkup = $processedMarkup.replaceAll("attributeValue", "$value"))
+	    			$processedMarkup
+				#end
+				
+			</td>
+		</tr>
+	#end
+
+	<!-- end fields -->
+
+</table>
+
+#end

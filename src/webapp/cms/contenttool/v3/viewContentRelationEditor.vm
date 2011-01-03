@@ -1,0 +1,418 @@
+#define( $headerMarkup )
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	<script type="text/javascript" src="script/vector.js"></script>
+	<script type="text/javascript" src="script/qualifyer.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+	
+	<script type="text/javascript">
+	<!-- 
+		var exp;
+	
+		/**
+		 * This is just a hook for the tree to notify us about whats expanded.
+		 */
+
+	    function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+	    
+		/**
+		 * This method changes to another repository.
+		 */
+		 
+ 		function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+		   	qualifyerXML = createXML();
+		    var url = "$updateAction?updateAction=$updateAction&repositoryId=" + repositoryId + "&entityName=$entityName&entityId=$entityId&attributeName=$attributeName&qualifyerXML=" + escape(qualifyerXML);
+			document.location.href = url;
+		}
+		 	    				
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;	
+		}
+
+	    function add()
+	    {
+		    addQualifyer();
+	    }
+
+	    function save()
+	    {
+		    submitBinding();
+	    }
+	    
+		/**
+		 * This method adds the choosen item to the list of qualifiers and rerenders the list.
+		 */
+
+	    function addQualifyer()
+		{
+			entityId = document.inputForm.entityId.value;
+			if(entityId == '' || entityId == '${select}' || entityId == '-1')
+			{
+				alert("$ui.getString("tool.common.content.mustChooseContent")");
+			}
+			else
+			{
+				path = document.inputForm.path.value;
+				
+			    var qualifyer = new Qualifyer("$currentEntity", entityId, path);
+				qualifyersVector.addElement(qualifyer);
+				drawList();
+			}
+		}
+		
+		var paths = new Array();
+		
+		function createXML()
+		{
+			qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+			qualifyerXML += "<qualifyer entity='$currentEntity'>";
+			
+			for (var i=0; i<qualifyersVector.getSize(); i++)
+			{
+				var qualifyer = qualifyersVector.getElementAt(i);
+				
+				entityName 	= qualifyer.getEntityName();
+				entityId   	= qualifyer.getEntityId();
+				qualifyerXML += "<" + entityName + ">" + entityId + "</" + entityName + ">";
+				paths[i] = qualifyer.getPath();
+			}
+		   	
+		   	qualifyerXML += "</qualifyer>";
+
+			return qualifyerXML;
+		}
+				
+		function submitBinding()
+		{
+		   	qualifyerXML = createXML();
+
+		    var url = "$updateAction?updateAction=$updateAction&repositoryId=$repositoryId&entityName=$entityName&entityId=$entityId&attributeName=$attributeName&qualifyerXML=" + escape(qualifyerXML);
+
+			jQuery.get(url, function(data, status, request) {
+			  	//alert('Saved data: ' + status + ":" + data);
+			  	if(status == 'success')
+			  	{
+			  		//alert("callbackMethod: $callbackMethod");
+			  		if(window.opener && window.opener.$callbackMethod)
+			  		{
+			  			//alert("Method existed");
+			  			window.opener.$callbackMethod(qualifyerXML, paths);
+			  			window.close();
+			  		}
+			  		else
+			  		{
+			  			if(top.getDataListenerWindow && top.getDataListenerWindow().$callbackMethod)
+				  			top.getDataListenerWindow().$callbackMethod(qualifyerXML, paths);
+				  		
+				  		if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+			  		}
+			  	}
+			});
+			
+			//alert("Make sure to refresh the content view afterwards - otherwise it can render inconsistent.");
+			//document.location.href = url;
+		}
+	  
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addTextLink(parent, address, text)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var linkText = document.createTextNode(text);
+			link.appendChild(linkText);
+			parent.appendChild(link);
+		}
+	
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addImageLink(parent, address, src)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+		
+			var image = document.createElement("img");
+			image.setAttribute("src", src);
+			image.setAttribute("border", "0");
+	
+			link.appendChild(image);
+			parent.appendChild(link);
+
+			var separator = document.createElement("img");
+			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("border", "0");
+			separator.setAttribute("width", "5");
+			separator.setAttribute("height", "1");
+			parent.appendChild(separator);
+		}
+		
+		/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addDividerImage(parent, width, height)
+		{
+			var separator = document.createElement("img");
+			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("border", "0");
+			separator.setAttribute("width", width);
+			separator.setAttribute("height", height);
+			parent.appendChild(separator);
+		}
+
+		/**
+		 * This method draws the list of qualifyers.
+		 */
+		 
+		function drawList()
+		{
+			var table = document.getElementById("qualifyers")
+			var parent = table.parentNode;
+			parent.removeChild(table);
+
+			mytable = document.createElement("table");
+			mytable.setAttribute("id", "qualifyers");
+			mytable.setAttribute("border", "0");
+			mytable.setAttribute("width", "100%");
+			mytable.setAttribute("cellpadding", "0");
+			mytable.setAttribute("cellspacing", "0");
+	        mytablebody = document.createElement("TBODY");
+	        for (var i=0; i<qualifyersVector.getSize(); i++)
+			{
+				var qualifyer = qualifyersVector.getElementAt(i);
+				//alert("Element:" + qualifyer.getPath());
+				var myTR = document.createElement("tr");
+				var actionTD = document.createElement("td");
+				actionTD.setAttribute("width", "50");
+				addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "images/downArrow.gif");
+				addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "images/delete.gif");
+				var qualifyerTD = document.createElement("td");
+				qualifyerTD.setAttribute("align", "left");
+				var qualifyerText = document.createTextNode(qualifyer.getPath().replace(/&quot;/,"\""));
+				myTR.appendChild(actionTD);
+				qualifyerTD.appendChild(qualifyerText);
+				myTR.appendChild(qualifyerTD);
+
+				mytablebody.appendChild(myTR);
+			}
+			 
+	        mytable.appendChild(mytablebody);
+	        parent.appendChild(mytable);
+		}
+		
+		/**
+		 * This method removes a qualifyer from the vector.
+		 */
+		 
+		function deleteQualifyer(index)
+		{
+			qualifyersVector.removeElementAt(index);
+			drawList();
+		}
+		
+		/**
+		 * This method moves a qualifyer 1 step up in the vector.
+		 */
+		 
+		function moveQualifyerUp(index)
+		{
+			if(index > 0)
+			{
+				var qualifyer 			= qualifyersVector.getElementAt(index);
+				var previousQualifyer 	= qualifyersVector.getElementAt(index - 1);
+				
+				path 		= qualifyer.getPath();
+				entityName 	= qualifyer.getEntityName();
+				entityId 	= qualifyer.getEntityId();
+				
+				qualifyer.setPath(previousQualifyer.getPath())
+				qualifyer.setEntityName(previousQualifyer.getEntityName())
+				qualifyer.setEntityId(previousQualifyer.getEntityId())
+			
+				previousQualifyer.setPath(path)
+				previousQualifyer.setEntityName(entityName)
+				previousQualifyer.setEntityId(entityId)
+				
+				drawList();
+			}			
+		}
+
+		/**
+		 * This method moves a qualifyer 1 step up in the vector.
+		 */
+		 
+		function moveQualifyerDown(index)
+		{
+			if(index < qualifyersVector.getSize() - 1)
+			{
+				var qualifyer 			= qualifyersVector.getElementAt(index);
+				var previousQualifyer 	= qualifyersVector.getElementAt(index + 1);
+				
+				path 		= qualifyer.getPath();
+				entityName 	= qualifyer.getEntityName();
+				entityId 	= qualifyer.getEntityId();
+				
+				qualifyer.setPath(previousQualifyer.getPath())
+				qualifyer.setEntityName(previousQualifyer.getEntityName())
+				qualifyer.setEntityId(previousQualifyer.getEntityId())
+			
+				previousQualifyer.setPath(path)
+				previousQualifyer.setEntityName(entityName)
+				previousQualifyer.setEntityId(entityId)
+			
+				drawList();
+			}
+		}		
+		
+		/**
+		 * This function initializes the vector of previous bindings.
+		 */
+		 
+		function init()
+		{
+			#foreach($qualifyer in $qualifyers)
+				qualifyer = new Qualifyer("$currentEntity", "$qualifyer.value", "$formatter.escapeForAdvancedJavascripts($qualifyer.path)");
+				qualifyersVector.addElement(qualifyer);
+			#end
+		
+			drawList();		
+		}
+		
+      	function treeItemDblClick(id, label)
+      	{
+      		//alert("Adding " + id + ":" + label);
+      		addQualifyer();
+      	}
+	
+		$(document).ready(function() {	
+			window.resizeTo(800,700);
+			init();
+		});
+
+		var qualifyersVector = new Vector(0);
+	-->    
+	</script>
+
+	<style>
+		#buffer { 
+			position:	absolute;
+			z-index:	1000003;
+			height:		1em;
+			width:		1em;
+			border: 	0px solid black;
+			color:		#ffffff;
+			visibility:	hidden;
+			top:		0px;
+			left:		0px;
+		}
+	</style>
+#end
+
+#beginLightCommonToolV3Impl("tool.structuretool.chooseRelatedContentsLabel" "" "" false true $!disableCloseButton $headerMarkup)
+	
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+		
+	<div style="margin: 5px;">
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td valign="top">
+				
+				<table cellpadding="0" cellspacing="0" border="0">
+				<tr>
+					<td class="smalllabel">$ui.getString("tool.structuretool.chooseContentsForRelationLabel")</td>
+				</tr>
+				<tr>
+					<td height="1"><img src="images/trans.gif" width="1" height="7"></td>
+				</tr>		
+				<tr>
+					<td>
+				  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+						    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+						    #foreach ($repositoryVO in $repositories)
+						    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+						    #end
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+				</tr>	
+				<tr>
+					<td class="menu" style="border: 1px solid #C7D1B3;">    
+						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&${allowedContentTypeIdsAsUrlEncodedString}" width="350" height="430" align="baseline"></IFRAME>
+					</td>
+				</tr>	
+				<tr>
+					<td>
+						<form name="inputForm" action="CreateServiceBinding.action">
+							<input type="hidden" name="entityId" value="">
+							<input type="hidden" name="repositoryId" value="">
+							<input type="hidden" name="path" value="">
+							<input type="hidden" name="qualifyerXML" value="">
+						</form>
+					</td>
+				</tr>		
+				</table>
+			</td>	
+			
+			<td>&nbsp;</td>
+			
+			<td valign="top">
+				<table cellpadding="0" cellspacing="0" border="0">
+				<tr>
+					<td class="smalllabel">$ui.getString("tool.structuretool.choosenContentsForBindingLabel")</td>
+				</tr>
+				<tr>
+					<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+				</tr>		
+				
+				<tr>
+					<td style="height: 30px;">
+						$ui.getString("tool.structuretool.chooseContentsForBindingInstructions")
+					</td>
+				</tr>
+				<tr>
+					<td style="border: 1px solid #C7D1B3; background-color: white;">				
+						<table id="qualifyers" border="1">
+					  	
+					  	</table>
+					</td>
+				</tr>
+						
+				</table>
+				
+			</td>
+		</tr>
+		</table>
+		
+		<form name="submitForm" method="post" action="ViewSiteNodePageComponents!addComponentPropertyBindingWithQualifyer.action" TARGET="">
+			<input type="hidden" name="siteNodeId" value="$siteNodeId">
+			<input type="hidden" name="languageId" value="$languageId">
+			<input type="hidden" name="contentId" value="$contentId">
+			<input type="hidden" name="componentId" value="$componentId">
+			<input type="hidden" name="propertyName" value="$propertyName">
+			<input type="hidden" name="showSimple" value="$showSimple">
+			<input type="hidden" name="showDecorated" value="$!showDecorated">
+			<input type="hidden" name="path" value="">
+			<input type="hidden" name="qualifyerXML" value="">
+		</form>
+	</div>
+		
+	#lightFooterToolbar($footerButtons)
+	
+#endLightCommonToolV3()

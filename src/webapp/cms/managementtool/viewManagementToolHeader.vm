@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Header</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<script type="text/javascript" language="Javascript">
+
+		function reloadMenu(selectBox)
+		{
+			//alert("top:" + top);
+		    repositoryId = selectBox.value;
+		    //alert("repositoryId:" + repositoryId);
+		    if(repositoryId != "beg")
+		    {
+				var agt=navigator.userAgent.toLowerCase();
+		   	    if(agt.indexOf("safari")!=-1)
+			    	parent.frames[1].location = "ViewManagementToolMenu.action?repositoryId=" + repositoryId;
+				else
+				    parent.frames[1].location.href = "ViewManagementToolMenu.action?repositoryId=" + repositoryId;
+		
+			    //parent.frames[1].location.href = "ViewManagementToolMenu.action?repositoryId=" + repositoryId;
+	   			selectBox.value = "beg";		    
+			}
+		}
+
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="managementtool" aonLoad="javascript:changeToolArea($toolName);">
+
+<!--<form name="selectbox" method="POST" action="">-->
+<table style="border-right:1px solid white;border-left:1px solid white; height:100%;" border="0" class="managementtool" cellspacing="0" cellpadding="0" width="100%" height="100%">
+<tr>
+	<td><img src="images/trans.gif" width="1" height="40"></a></td>
+</tr>
+<!--
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></a>
+	<td class="toolheader"><img src="images/$ui.getString("images.managementtool.repositoryLabel")" width="70" height="19"></td> 
+	<td>
+  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:reloadMenu(this);">
+		    <option value="beg" selected>$ui.getString("tool.managementtool.chooseRepositoryLabel")</option>
+		    <option value="0">All repositories</option>
+		    #foreach ($repositoryVO in $repositories)
+		    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+		    #end
+		</select>
+	</td>
+	<td class="toolheader"><img src="images/trans.gif" width="10" height="19"></td>
+	<td class="toolheader"><img src="images/trans.gif" width="48" height="19"></td>
+	<td class="toolheader" width="80%"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td colspan="7"><img src="images/trans.gif" width="1" height="10"></td>
+</tr>
+-->
+</table>
+<!--</form>-->
+
+<!--div style="LEFT:0px; position:absolute; TOP:39px; visibility:visible; z-index:0">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" height="1">
+<tr>
+	<td bgcolor="#999999" width="100%"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>	
+</div-->
+
+</body>
+
+</html>

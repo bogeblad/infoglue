@@ -1,0 +1,79 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDeleteLink()
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewAvailableServiceBindingList.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewAvailableServiceBindingList.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.common.action.label")</th>
+					<th>$ui.getString("entity.AvailableServiceBinding.name.label")</th>
+					<th>$ui.getString("entity.AvailableServiceBinding.description.label")</th>
+					<th>$ui.getString("entity.AvailableServiceBinding.isMandatory.label")</th>
+					<th>$ui.getString("entity.AvailableServiceBinding.isUserEditable.label")</th>
+					<th>$ui.getString("entity.AvailableServiceBinding.isInheritable.label")</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach($availableServiceBindingVO in $availableServiceBindings)
+					#if($availableServiceBindingVO.getIsMandatory())
+						#set( $mandatory = "Yes" )		
+					#else
+						#set( $mandatory = "No" )			
+					#end
+					#if($availableServiceBindingVO.getIsUserEditable())
+						#set( $editable = "Yes" )
+					#else
+						#set( $editable = "No" )
+					#end
+					#if($availableServiceBindingVO.getIsInheritable())
+						#set( $inheritable = "Yes" )
+					#else
+						#set( $inheritable = "No" )
+					#end
+									
+					<tr>
+						<td><a class="deleteCross" title="$ui.getString("tool.common.delete.label") $availableServiceBindingVO.name" href="DeleteAvailableServiceBinding.action?availableServiceBindingId=$availableServiceBindingVO.id&igSecurityCode=$securityCode">&nbsp;#*$ui.getString("tool.common.delete.label")*#</a></td>
+						<td>
+							<a href="ViewAvailableServiceBinding.action?availableServiceBindingId=$availableServiceBindingVO.id" class="group">$availableServiceBindingVO.name</a>
+						</td>
+						<td>$availableServiceBindingVO.description</td>
+						<td>$mandatory</td>
+						<td>$editable</td>
+						<td>$inheritable</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+				
+	</div>
+		
+#endLightCommonToolV3()

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.structuretool.chooseContentLabel")</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<script language="JavaScript"> 
+		window.resizeTo(400,600);
+	</script> 
+	
+	<script type="text/javascript" language="JavaScript">
+	<!-- 
+		var exp;
+	
+	    function notifyExp(v)
+	    {
+	    	// The html tree notifies this page about the
+	    	// current expansion key, so that we can reload
+	    	// the tree with the same expansion.
+	    	exp=v;
+	    }
+
+		function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			var url = "${currentAction}?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$componentId&propertyName=$propertyName&tree=$!tree&$allowedContentTypeIdsAsUrlEncodedString&showSimple=$showSimple&showDecorated=$showDecorated";
+			document.location.href = url;
+		}
+		
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;	
+		}
+	    
+	    function submitBindning()
+		{
+			//alert("Here we commit the binding and close the window...");
+			entityId = document.inputForm.entityId.value;
+			
+			if(entityId == '' || entityId == '${select}')
+			{
+				alert("You must choose a content before you can save");
+			}
+			else
+			{
+			    path = document.inputForm.path.value;
+			    var repositoryId = document.inputForm.repositoryId.value;
+				bindingTypeId = 0; //0 = Content, 1 = SiteNode
+				
+				qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+				qualifyerXML += "<qualifyer>";
+				qualifyerXML += 	"<contentId>" + entityId + "</contentId>";
+				qualifyerXML += "</qualifyer>";
+	
+				var url = "ViewSiteNodePageComponents!addComponentPropertyBinding.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&entity=Content&entityId=" + entityId + "&componentId=$componentId&propertyName=$propertyName&showSimple=$showSimple&showDecorated=$showDecorated&path=" + escape(path);
+				//alert('Calling:' + url);
+			    //alert('qualifyerXML:' + qualifyerXML);
+			    self.opener.location.href = url;
+			    window.close();
+			    //document.inputForm.submit();
+			}
+		}
+		
+		function toggleDiv(id, id2)
+		{
+			var div = document.getElementById(id);
+			if(div && div.style.display == "block")
+				div.style.display = "none";
+			else
+				div.style.display = "block";
+
+			var div2 = document.getElementById(id2);
+			if(div2 && div2.style.display == "block")
+				div2.style.display = "none";
+			else
+				div2.style.display = "block";
+		}
+				
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="contenttooledit">
+
+<table class="contenttooledit" cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+	<td valign="top" width="100%">
+		
+		<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr class="darkgreen">
+			<td class="smalllabel">$ui.getString("tool.structuretool.chooseContentForBindingLabel")</td>
+			<td class="smalllabel"><img src="images/spyglassIcon.gif" width="16" height="16" onclick="toggleDiv('searchDiv', 'treeDiv');"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<!-- 
+		HERE IS THE REPOSITORY-LIST FOR LATER 
+		-->
+		<tr>
+			<td colspan="2">
+		  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+				    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+				    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+				    #end
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td class="menu" colspan="2">    
+				<div id="searchDiv" style="display:none;">
+					<IFRAME frameborder="0" name="resultFrame" id="resultFrame" src="SearchContent!inputBinding.action?repositoryId=${repositoryId}&${allowedContentTypeIdsAsUrlEncodedString}" width="350" height="400" align="baseline"></IFRAME>
+				</div>
+				<div id="treeDiv" style="display:block;">
+				#if($tree == "applet")
+					#showJavaTree("350" "400" "254" "248" "208" "Content" $repositoryId "false")
+				#else
+					<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!bindingView.action?repositoryId=${repositoryId}&${allowedContentTypeIdsAsUrlEncodedString}" width="350" height="400" align="baseline"></IFRAME>
+				#end
+				</div>
+			</td>
+		</tr>	
+		<tr>
+			<td colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<a href="javascript:submitBindning();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+				<a href="javascript:window.close();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<form name="inputForm" action="CreateServiceBinding.action">
+					<input type="hidden" name="entityId" value="">
+					<input type="hidden" name="repositoryId" value="">
+					<input type="hidden" name="path" value="">
+					<input type="hidden" name="qualifyerXML" value="">
+				</form>
+			</td>
+		</tr>		
+		</table>
+	
+	</td>	
+</tr>
+</table>
+
+<div style="RIGHT:10px; LEFT:10px; position:absolute; BOTTOM:5px; visibility:visible; z-index:0">
+<hr size=1 noshade>
+<small><font color="#666666">$ui.getString("tool.common.treestyleLabel"): <a style="color: #666666" href="${currentAction}?repositoryId=${repositoryId}&siteNodeVersionId=${siteNodeVersionId}&availableServiceBindingId=$availableServiceBindingId&tree=applet">$ui.getString("tool.common.treestyleApplet")</a> | <a style="color: #666666" href="${currentAction}?repositoryId=${repositoryId}&siteNodeVersionId=${siteNodeVersionId}&availableServiceBindingId=$availableServiceBindingId&tree=html&$allowedContentTypeIdsAsUrlEncodedString">$ui.getString("tool.common.treestyleHTML")</a> </small></font>
+</div>
+
+</body>
+</html>

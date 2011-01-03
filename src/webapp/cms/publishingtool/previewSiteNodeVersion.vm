@@ -1,0 +1,12 @@
+<html>
+<head></head>
+<body>
+
+<center>
+Here is work to be done,<br>
+<textarea rows=20 cols=80>
+$siteNodeVersionVO.getVersionComment()
+</textarea>
+</center>
+
+</body>

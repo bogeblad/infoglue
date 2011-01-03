@@ -1,0 +1,63 @@
+#define($extraMarkup)
+
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+
+	<script type='text/javascript'>	
+	<!--
+		function returnToReferrer()
+		{
+			//alert("document.referrer:" + document.referrer);
+			if (document.referrer != "") 
+			{
+				var referringURL = document.referrer;
+			   	document.location.href = referringURL; 
+			}
+			else
+			{
+				history.back();
+			}
+		}
+	-->
+	</script>
+		
+	#if($useFckUploadMessages)
+	<script type='text/javascript'>	
+	<!--
+		function getRequestParameter(url, parameterName)
+		{
+			valueIndex = url.indexOf(parameterName + "=");
+			endIndex = url.indexOf("&", valueIndex);
+			if(endIndex != -1)
+				value = url.substring(valueIndex + parameterName.length + 1, endIndex);
+			else
+				value = url.substring(valueIndex + parameterName.length + 1);
+			return value;
+		}
+
+		#if($prefferedWYSIWYG == "ckeditor3")	
+			var instanceName = getRequestParameter(window.location.href, "CKEditor");
+			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
+			var message = "$ui.getString($reasonKey)";
+			window.parent.CKEDITOR.tools.callFunction(CKEditorFuncNum, '', message);
+		#else
+			window.parent.OnUploadCompleted(101, '', '', '$ui.getString("$reasonKey")');
+		#end
+	-->
+	</script>	
+	#end
+
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.fileUpload.fileUploadFailedHeader" "" "" false true false "$extraMarkup")
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.contenttool.fileUpload.fileUploadFailedHeader") $!this.uploadErrorMaxSize</h3>
+	<p>$ui.getString("$reasonKey")</p>
+					
+	#lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()

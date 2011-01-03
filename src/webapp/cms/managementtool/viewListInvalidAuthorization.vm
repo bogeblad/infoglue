@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.redirectList.header" "tool.managementtool.redirectList.header" "")
+
+#set($lvConstraint = 1) 
+#lvHead(["UserName"] "tool.managementtool.deleteRedirects.header" "DeleteRedirect.action" "ViewListRedirect.action?title=Redirects" "tool.managementtool.deleteRedirects.text")
+
+#set($cnt = 0)
+#foreach ($invalidUser in $invalidUsers)
+	#set( $userName = $invalidUser ) 
+	
+	#set( $rowUrl = "AuthorizationSwitchManagement!inputUser.action?userName=$userName")
+	#set( $row = ["<a href=$rowUrl>$userName</a>"])
+	#set($cnt = $cnt + 1)
+
+	#lvAddRow($row $cnt $userName)
+#end
+#lvEnd()
+
+
+#set($lvConstraint = 1) 
+#lvHead(["RoleName"] "tool.managementtool.deleteRedirects.header" "DeleteRedirect.action" "ViewListRedirect.action?title=Redirects" "tool.managementtool.deleteRedirects.text")
+
+#set($cnt = 0)
+#foreach ($invalidRole in $invalidRoles)
+	#set( $roleName = $invalidRole ) 
+	
+	#set( $rowUrl = "AuthorizationSwitchManagement!inputRole.action?roleName=$roleName")
+	#set( $row = ["<a href=$rowUrl>$roleName</a>"])
+	#set($cnt = $cnt + 1)
+
+	#lvAddRow($row $cnt $roleName)
+#end
+#lvEnd()
+
+
+#set($lvConstraint = 1) 
+#lvHead(["GroupName"] "tool.managementtool.deleteRedirects.header" "DeleteRedirect.action" "ViewListRedirect.action?title=Redirects" "tool.managementtool.deleteRedirects.text")
+
+#set($cnt = 0)
+#foreach ($invalidGroup in $invalidGroups)
+	#set( $groupName = $invalidGroup ) 
+	
+	#set( $rowUrl = "AuthorizationSwitchManagement!inputGroup.action?groupName=$groupName")
+	#set( $row = ["<a href=$rowUrl>$groupName</a>"])
+	#set($cnt = $cnt + 1)
+
+	#lvAddRow($row $cnt $groupName)
+#end
+#lvEnd()
+
+#endManagementTool()

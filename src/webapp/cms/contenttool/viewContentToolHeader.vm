@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#if($tree == "applet")
+	#set($preferedTree="ViewContentToolMenu.action?tree=applet&")
+#else
+	#set($preferedTree="ViewContentToolMenu.action?tree=html&exp=${exp}&")
+#end
+
+<html>
+<head>
+	<title>Header</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+
+	#includeLatestJQuery()
+
+	<script type="text/javascript">
+
+		function reloadMenu(selectBox)
+		{
+			//alert("top:" + top);
+		    repositoryId = selectBox.value;
+		    if(repositoryId != "")
+		    {
+			    document.searchForm.repositoryId.value = repositoryId;
+
+				var agt=navigator.userAgent.toLowerCase();
+			    if(agt.indexOf("safari")!=-1)
+			    	parent.frames[1].location = "${preferedTree}repositoryId=" + repositoryId;
+				else
+				    parent.frames[1].location.href = "${preferedTree}repositoryId=" + repositoryId;
+				
+				top.document.title = "Content - " + selectBox.options[selectBox.selectedIndex].text + " - InfoGlue CMS";	
+				selectBox.selectedIndex = 0;
+		    }
+		}
+
+		function reloadMenuWithPath(selectBox, path)
+		{
+			//alert("top:" + top);
+		    repositoryId = selectBox.value;
+		    document.searchForm.repositoryId.value = repositoryId;
+			
+			var agt=navigator.userAgent.toLowerCase();
+		    if(agt.indexOf("safari")!=-1)
+		    	parent.frames[1].location = "${preferedTree}repositoryId=" + repositoryId + "&path=" + path;
+			else
+			    parent.frames[1].location.href = "${preferedTree}repositoryId=" + repositoryId + "&path=" + path;
+	
+			top.document.title = "Content - " + selectBox.options[selectBox.selectedIndex].text + " - InfoGlue CMS";	
+			selectBox.selectedIndex = 0;
+		}
+		
+		function changeRepository(repositoryId, path)
+		{
+			//alert("repositoryId:" + repositoryId);
+			var listForm = document.selectbox;
+			//alert("listForm:" + listForm + " - " + listForm.repositoryId.options);
+			for(var i=0;i<listForm.repositoryId.options.length;i++)
+			{
+				if(listForm.repositoryId.options[i].value == repositoryId)
+				{
+					//alert("Yes - " + listForm.repositoryId.options[i].text);
+					listForm.repositoryId.options[i].selected = true;
+				}
+			}
+			reloadMenuWithPath(listForm.repositoryId, path);
+		}
+		
+		function loadMenu()
+		{
+			repositoryId = "$!repositoryId";
+		    parent.frames[1].location.href = "${preferedTree}repositoryId=" + repositoryId;
+		    top.document.title = "Content - $!repositoryName - InfoGlue CMS";
+		}
+		
+		function openSearchForm()
+		{
+			repositoryId = document.searchForm.repositoryId.value;
+			if(!repositoryId)
+				repositoryId = "$repositoryId";
+				
+			parent.frames["main"].location = "SearchContent!input.action?repositoryId=" + repositoryId;
+		}
+
+		function postSearchForm()
+		{	
+			var repositoryId = document.searchForm.repositoryId.value;
+			var searchString = document.searchForm.searchString.value;
+
+			var agt=navigator.userAgent.toLowerCase();
+    		if(agt.indexOf("safari")!=-1)
+    		{
+				parent.frames[3].document.location = "SearchContent.action?repositoryId=" + repositoryId + "&searchString=" + escape(searchString);
+    		}
+    		else
+    		{
+				parent.frames["main"].document.location.href = "SearchContent.action?repositoryId=" + repositoryId + "&searchString=" + escape(searchString);
+    		}
+    		
+    		return false;
+    	}
+		
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="contenttool" onload="loadMenu();">
+
+<table border="0" class="contenttool" cellspacing="0" cellpadding="0">
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td colspan="7"><img src="images/trans.gif" width="1" height="10" /></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1" /></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td class="toolheader"><img src="images/$ui.getString("images.contenttool.repositoryLabel")" width="70" height="19" /></td> 
+	<td>
+		<form name="selectbox" method="post" action="">
+		<select size="1" name="repositoryId" class="sitedropbox" onchange="reloadMenu(this);" >
+		    #if($repositories.size() > 1)
+		    	<option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+			    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()" #if($repositoryVO.id == $repositoryId)selected="selected"#end>$repositoryVO.getName()</option>
+			    #end
+			#else
+			    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()" #if($repositoryVO.id == $repositoryId)selected="selected"#end>$repositoryVO.getName()</option>
+			    #end
+		    #end
+		</select>
+		</form>
+	</td>
+	
+
+	<td class="toolheader"><img src="images/trans.gif" width="10" height="19" /></td>
+	<td class="toolheader"><img src="images/$ui.getString("images.contenttool.searchLabel")" width="48" height="19" /></td>
+	<td class="toolheader"></td>
+	<td class="toolheader" style="white-space:nowrap">
+		<form name="searchForm" method="post" action="#" target="main" onsubmit="return postSearchForm();">
+			<input type="hidden" name="repositoryId" value="$!repositoryId" />	
+			<input type="text" class="searchfield" name="searchString" value="" style="vertical-align:top"  />
+			<img src="images/trans.gif" width="5" height="19" />
+			<img onclick="return postSearchForm();" src="$ui.getString("images.contenttool.ok")" width="31px" height="19px" border="0"/>
+			<img src="images/trans.gif" width="5" height="19"/>
+			<img onclick="return openSearchForm();" src="$ui.getString("images.contenttool.advanced")" width="62" height="19" border="0"/>
+		</form>
+	</td>
+	<td class="toolheader" width="70%"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td colspan="7"><img src="images/trans.gif" width="1" height="10"/></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+</tr>
+</table>
+
+
+<div style="left:0px; position:absolute; top:39px; visibility:visible; z-index:0">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="height: 1px">
+<tr>
+	<td bgcolor="#999999" width="100%"><img src="images/trans.gif" width="1" height="1" /></td>
+</tr>
+</table>	
+</div>
+
+</body>
+
+</html>

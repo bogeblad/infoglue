@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<applications>
+	<application>
+		<warName>test-portlet</warName>
+		<entities>
+			<entity>
+				<portletName>OurTestPortlet</portletName>
+				<preferences>
+					<preference>
+						<name>name</name>
+						<value>value</value>
+					</preference>
+				</preferences>
+			</entity>
+			<entity>
+				<portletName>OurChatPortlet</portletName>
+				<preferences>
+					<preference>
+						<name>name</name>
+						<value>value</value>
+					</preference>
+				</preferences>
+			</entity>
+		</entities>
+	</application>
+	<application>
+		<warName>testsuite</warName>
+		<entities>
+			<entity>
+				<portletName>WebworkDispatcherPortlet</portletName>
+                                <preferences>
+                                        <preference>
+                                                <name>name</name>
+                                                <value>value</value>
+                                        </preference>
+                                </preferences>
+             			</entity>
+		</entities>
+	</application>
+</applications>

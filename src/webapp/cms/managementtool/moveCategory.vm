@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Select New Parent Category</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<script type="text/javascript" language="JavaScript">
+	<!--
+
+	    function submitMove()
+		{
+			categoryId = document.inputForm.categoryId.value;
+		    newParentId = document.inputForm.entityId.value;
+
+			url = "CategoryManagement!move.action?categoryId=" + categoryId;
+
+			// If the root was selected make parent null so it becomes a root
+			if(newParentId > 0)
+			{
+				url = url + "&model/parentId=" + newParentId;
+			}
+
+			if(newParentId != "")
+			{
+			    if(newParentId == categoryId)
+			    {
+			    	alert("Category cannot be a parent of itself!");
+			    	return;
+				}
+
+			    if (confirm('Are you sure you want to move the Category to the parent you have just selected?'))
+				{
+				    self.opener.parent.frames["main"].location.href = url;
+				    window.close();
+				}
+			}
+		    else
+		    {
+				alert("You must select a parent category.");
+			}
+		}
+	-->
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+</head>
+
+<body class="managementtool">
+
+<table class="managementtool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td valign="top" width="100%">
+
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td class="menu"><b>$ui.getString("tool.managementtool.moveCategory.text")</b></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"></td>
+		</tr>
+		<tr>
+			<td class="menu">
+				<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewCategoryHtmlTree!bindingView.action" width="350" height="500" align="baseline"></IFRAME>
+			</td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="5"></td>
+		</tr>
+		<tr>
+			<td><form name="inputForm" action="">
+				<input type="hidden" name="categoryId" value="$categoryId">
+				<input type="hidden" name="entityId" value="">
+				<input type="hidden" name="repositoryId" value="">
+				<input type="hidden" name="path" value="">
+				<a href="javascript:submitMove();"><img src="$ui.getString("images.contenttool.buttons.save")" border="0"></a>
+				<a href="javascript:window.close();"><img src="$ui.getString("images.contenttool.buttons.cancel")" border="0"></a>
+				</form>
+			</td>
+		</tr>
+		</table>
+
+	</td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+
+
+</body>
+</html>

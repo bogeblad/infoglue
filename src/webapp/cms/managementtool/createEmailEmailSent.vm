@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewMessageCenter.header" "tool.managementtool.viewMessageCenter.header" "")
+
+<div class="fullymarginalized" style="color: black;">
+
+	<h3>$ui.getString("tool.managementtool.messageSent.title"):</h3>
+	<p>
+	  	$ui.getString("tool.managementtool.messageSent.text"): $recipients.replaceAll(";", ", ")
+	</p>
+
+#endManagementTool()

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.contenttool.selectImageTitle")</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	
+	#includeLatestJQuery()
+	
+	<script type="text/javascript">
+	<!--		
+		#set($exp = $this.getExpansion($oldContentId))
+		var exp = "$exp";
+		
+	    function notifyExp(v)
+	    {
+	    	//alert("v:" + v);
+	    	// The html tree notifies this page about the
+	    	// current expansion key, so that we can reload
+	    	// the tree with the same expansion.
+	    	exp=v;
+	    }
+
+		function notifyIsLoaded()
+	    {
+	    	//alert("Tree was loaded - notifyIsLoaded");
+	    	treeIsLoaded = true;
+	    }
+		
+		function changeRepository(selectBox)
+		{
+			//alert("selectBox:" + selectBox);
+			var repositoryId = selectBox.value;
+			var url = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=" + repositoryId + "&contentId=-1&languageId=$languageId&treatAsLink=$treatAsLink&assetTypeFilter=$assetTypeFilter";
+			document.location.href = url;
+		}
+		
+		function htmlTreeItemClick(entityId, repositoryId, path)
+		{
+			var url = "ViewContentVersion!viewAssetsForFCKEditorSmallV3.action?contentId=" + entityId + "&languageId=$languageId&treatAsLink=$treatAsLink&assetTypeFilter=$assetTypeFilter";
+			document.getElementById("contentVersionAssetsFrame").src = url;
+		}
+		
+		function assetMarked(contentId, assetKey, assetUrl)
+		{
+			if(parent.assetMarked)
+				parent.assetMarked(contentId, assetKey, assetUrl);
+		}
+				
+		function onOk(contentId, assetKey, assetUrl)
+		{
+			if(window.top.opener)
+			{
+				if(window.top.opener.SetUrl)
+				{
+					var url = "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
+					window.top.opener.SetUrl( url );
+					window.top.close();
+					window.top.opener.focus();
+				}
+				else if(window.top.onOk)
+				{
+					//alert("Setting contentId:" + contentId + " and assetKey:" + assetKey);
+					if(contentId == '' || contentId == '${select}' || assetKey == '')
+					{
+						alert("You must choose a content and a asset before you can save");
+					}
+					else
+					{
+					    window.top.onOk(contentId, assetKey, assetUrl);
+					}
+				}
+			}
+			else
+			{
+				if(parent.SetUrl)
+				{
+					var url = "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
+					parent.SetUrl( url );
+				}
+				else if(parent.onOk)
+				{
+					//alert("Setting contentId:" + contentId + " and assetKey:" + assetKey);
+					if(contentId == '' || contentId == '${select}' || assetKey == '')
+					{
+						alert("You must choose a content and a asset before you can save");
+					}
+					else
+					{
+					    parent.onOk(contentId, assetKey, assetUrl);
+					}
+				}
+			}
+		}
+		
+		function getDownloadUrl(contentId, assetKey)
+		{
+			return "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
+		}
+		
+		function onCancel() 
+		{
+			window.top.close();
+			window.top.opener.focus();
+		}	
+
+		function getRequestParameter(url, parameterName)
+		{
+			value = "";
+			valueIndex = url.indexOf(parameterName + "=");
+			if(valueIndex > -1)
+			{
+				//alert("valueIndex:" + valueIndex);
+				endIndex = url.indexOf("&", valueIndex);
+				if(endIndex != -1)
+					value = url.substring(valueIndex + parameterName.length + 1, endIndex);
+				else
+					value = url.substring(valueIndex + parameterName.length + 1);
+				//alert("value:" + value);
+			}
+			return value;
+		}
+		
+		function init() 
+		{
+			var txtUrl = "";
+			if(top.opener && top.opener.document.getElementById("txtLnkUrl"))
+			{
+	      		if(top.opener.document.title == "Image Properties")
+				{
+					txtUrl 		= top.opener.document.getElementById("txtLnkUrl").value;
+					if(txtUrl == "")
+						txtUrl 		= top.opener.document.getElementById("txtUrl").value;
+				}
+				else
+					txtUrl 		= top.opener.document.getElementById("txtUrl").value;
+			}
+			
+			contentId 		= getRequestParameter(txtUrl, "contentId");
+			//alert("contentId:" + contentId);
+			if(!contentId || contentId == "")
+				contentId = "$!contentId";
+			languageId 		= getRequestParameter(txtUrl, "languageId");
+			assetKey 		= getRequestParameter(txtUrl, "assetKey");
+			
+			//alert("contentId:" + contentId);
+			document.getElementById("entityId").value = contentId;
+		  	
+			document.getElementById("itreeFrame").src = "ViewContentHtmlTree!V3.action?repositoryId=$!repositoryId&exp=$exp&akey=/" + contentId + "/&select=" + contentId;
+			document.getElementById("contentVersionAssetsFrame").src = "ViewContentVersion!viewAssetsForFCKEditorSmallV3.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey + "&treatAsLink=$treatAsLink&assetTypeFilter=$assetTypeFilter";
+		};
+		
+		$(document).ready(function(){
+			var dimensionsHeight = $(window).height();
+			$("#itreeFrame").height(dimensionsHeight - 40);
+			$("#contentVersionAssetsFrame").height(dimensionsHeight - 30);	
+			init();
+		});
+		
+		function toggleDiv(id, id2)
+		{
+			var div = document.getElementById(id);
+			if(div && div.style.display == "block")
+				div.style.display = "none";
+			else
+				div.style.display = "block";
+
+			var div2 = document.getElementById(id2);
+			if(div2 && div2.style.display == "block")
+				div2.style.display = "none";
+			else
+				div2.style.display = "block";
+		}
+		-->
+	</script>
+	
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+</head>
+
+<body class="generaltooledit" style="background-color: #f7f7f7; margin: 0px; padding: 0px;">
+
+<form name="inputForm" action="CreateServiceBinding.action">
+	<input type="hidden" id="entityId" name="entityId" value="">
+	<input type="hidden" name="repositoryId" value="">
+	<input type="hidden" name="path" value="">
+	<input type="hidden" name="qualifyerXML" value="">
+</form>
+
+<table border="0" width="100%" cellpadding="2" cellspacing="0">
+<tr>
+	<td valign="top" width="290">
+
+		<table cellpadding="0" cellspacing="0" border="0" width="280">
+		<!-- 
+		HERE IS THE REPOSITORY-LIST FOR LATER 
+		-->
+		<tr>
+			<td>
+		  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+				    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+				    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+				    #end
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<tr>
+			<td class="menu">  
+				<div id="treeDiv" style="display:block;">
+					<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="" width="280" height="320" ></iframe>
+				</div>
+			</td>
+		</tr>	
+		</table>
+
+	</td>
+	
+	<td valign="top">
+		<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<tr>
+			<td class="smalllabel">$ui.getString("tool.contenttool.associatedAttachments")</td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="4"></td>
+		</tr>		
+		<tr>
+			<td>
+				#if($oldContentId > 0)
+					<iframe frameborder="0" name="contentVersionAssetsFrame" id="contentVersionAssetsFrame" src="" width="95%" height="355" ></iframe>
+				#else
+					<iframe frameborder="0" name="contentVersionAssetsFrame" id="contentVersionAssetsFrame" src="" width="95%" height="355" ></iframe>
+				#end
+			</td>
+		</tr>
+		</table>
+	</td>
+</tr>
+</table>
+
+</body>
+</html>

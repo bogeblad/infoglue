@@ -1,0 +1,162 @@
+#define($headerMarkup)
+
+	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css"/>
+	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '')
+			#initDataTableImpl("dataTable" $extraParameter)
+		});
+	-->
+	</script>
+	
+	<style type="text/css">
+		#filterDiv 
+		{
+			margin: 8px;
+		}
+		
+		fieldset
+		{
+			border: 1px solid #cccccc;
+			width: 450px;
+		}
+		legend
+		{
+			color: #000000;
+			background: #c6d3e7;
+			border: 1px solid #cccccc;
+			padding: 2px 6px
+		}
+		label
+		{
+			width: 200px;
+			float: left;
+			text-align: right;
+			margin-right: 0.5em;
+			display: block;
+		}
+		.narrowLabel
+		{
+			width: 100px;
+		}
+		select
+		{
+			background: white;
+			border: 1px solid #cccccc;
+			font-family: Verdana, Arial, San serif;
+			font-size: 8pt;
+			width: 80px;
+		}
+		p
+		{
+			line-heigh: 12px;
+			margin: 0px;
+			padding-bottom: 4px;
+		}
+		.buttonRow
+		{
+			margin: 0px;
+			padding-top: 14px;
+			padding-bottom: 2px;
+			padding-left: 205px;
+		}
+	
+	</style>
+	
+	<script type="text/javascript">
+		function clearForm()
+		{
+			document.filterForm.filterStartDateTime.value = "";
+			document.filterForm.filterEndDateTime.value = "";
+		}
+	</script>
+
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewListTransactionHistory.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewListTransactionHistory.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<div id="filterDiv">
+			<form method="post" name="filterForm" action="ViewListTransactionHistory.action">
+			<fieldset>
+			<legend>List options/filters</legend>
+				<br/>
+				<label for="typeFilter">$ui.getString("tool.managementtool.transactionHistory.typeFilterLabel"):</label>
+				<select id="typeFilter" name="typeFilter" class="sitedropbox" style="width:200px;">
+					<option value="">---------</option>
+					<option value="auth" #checkSelected("$typeFilter" "auth")>Authentication/Authorization operations</option>
+					<option value="crud" #checkSelected("$typeFilter" "crud")>Create/Update/Delete operations</option>
+				</select>
+				<br/><br/>
+				
+				<label for="numberOfRows">$ui.getString("tool.managementtool.transactionHistory.numberOfRowsLabel"):</label>
+				<select id="numberOfRows" name="numberOfRows" class="sitedropbox" style="width:200px;">
+					<option value="250">Default</option>
+					<option value="500" #checkSelected("$numberOfRows" "500")>500</option>
+					<option value="1000" #checkSelected("$numberOfRows" "1000")>1000</option>
+				</select>
+				<br/><br/>
+				
+				#editDateFieldCSS("tool.managementtool.transactionHistory.filterStartDateTime.label" "filterStartDateTime" $!filterStartDateTimeString "30" "date" "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.filterStartDateTime" "readonly")
+				<br/><br/>
+				
+				#editDateFieldCSS("tool.managementtool.transactionHistory.filterEndDateTime.label" "filterEndDateTime" $!filterEndDateTimeString "30" "date" "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.filterEndDateTime" "readonly")
+				
+			    <div class="buttonRow">
+				    <input type="submit" id="searchButton" name="searchButton" value="Filter"/>
+					<input type="reset" id="clearButton" onclick="clearForm();" value="Clear"/>
+				</div>
+			</fieldset>
+			</form>
+		</div>
+				
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>User</th>
+					<th>Date/time</th>
+					<th>Type</th>
+					<th>Object id</th>
+					<th>Object name</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach ($transactionHistoryVO in $transactionHistories)
+					<tr>
+						<td>$transactionHistoryVO.getName()</td>
+						<td>$transactionHistoryVO.getSystemUserName()</td>
+						<td>$formatter.formatDate($transactionHistoryVO.getTransactionDateTime(), 'yyyy-MM-dd HH:mm')</td>
+						<td>$transactionHistoryVO.getTransactionTypeName()</td>
+						<td>$transactionHistoryVO.getTransactionObjectId()</td>
+						<td>$transactionHistoryVO.getTransactionObjectName()</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+				
+	</div>
+		
+#endLightCommonToolV3()

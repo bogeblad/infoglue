@@ -1,0 +1,198 @@
+#beginLightCommonToolV3("tool.common.trashcan.title" "" "" false true $!disableCloseButton)
+
+<link rel="stylesheet" type="text/css" href="css/cms.css" />
+
+<style type="text/css">
+	@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+</style>
+<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+<!--
+	function submitForm()
+	{
+		document.editForm.submit();
+	}
+		
+	$(document).ready(function(){
+
+		//alert("entity: $entity");
+		//alert("entityId: $entityId");
+		//alert("updateParent: $updateParent");
+		//alert("updateEntityId: $updateEntityId");
+	
+		#if($entity == "Content")
+		try
+		{
+			if(parent.refreshContent)
+				parent.refreshContent($updateEntityId, 2, $entityId);
+		}
+		catch(e) {alert("e:" + e);}
+		#end
+	
+		#if($entity == "SiteNode")
+		try
+		{
+			if(parent.refreshPage)
+				parent.refreshPage($updateEntityId, 2, $entityId);
+		}
+		catch(e) {alert("e:" + e);}
+		#end
+
+
+		#set($selectedCode = ", selected: 0")
+		#if("$entity" == "Content")
+			#set($selectedCode = ", selected: 1 ")
+		#elseif("$entity" == "SiteNode")
+			#set($selectedCode = ", selected: 2 ")
+		#end
+		$("#tabsContainer").tabs({ show:function() { resizeScrollArea(); } $selectedCode });
+
+		#set($extraParameter = '')
+		#initDataTableImpl("repositories" $extraParameter)
+		#initDataTableImpl("contents" $extraParameter)
+		#initDataTableImpl("pages" $extraParameter)
+			
+		$('#filterRepositorySelect').change(function () {
+          	$("#filterRepositorySelect option:selected").each(function () {
+                document.location.href = "Trashcan.action?repositoryFilter=" + $(this).val();
+            	});
+        	});
+	});
+	
+//-->
+</script>
+
+#set($repositories = $repositoriesMarkedForDeletion)
+#set($contents = $contentsMarkedForDeletion)
+#set($siteNodes = $siteNodesMarkedForDeletion)
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+<h3>
+	$ui.getString("tool.common.trashcan.title")
+	#if($errorMessage && $!errorMessage != "")<span style="color:red">$errorMessage</span>#end
+</h3>
+
+<div style="position: absolute; z-index: 50; top: 50px; right: 20px;">
+	<label for="filterRepositorySelect">$ui.getString("tool.common.trashcanDialog.repositoryFilterLabel")</label>
+	<select name="filterRepositorySelect" id="filterRepositorySelect">
+		<option value="-1">$ui.getString("tool.common.trashcanDialog.noFilterLabel")</option>
+		#foreach($repositoryVO in $authorizedRepositoryVOList)
+		<option value="$repositoryVO.id" #if($repositoryVO.id == $repositoryFilter) selected="selected"#end>$repositoryVO.name</option>
+		#end
+	</select>
+</div>
+
+<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+
+	<form method="POST" name="editForm" action="Trashcan!delete.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="returnAddress" value="$returnAddress"/>
+		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
+		<input type="hidden" name="filterRepositorySelect" value="$filterRepositorySelect"/>
+    
+	<div id="tabsContainer" class="flora">      
+	
+		<ul>
+	        <li><a href="#repositoriesTab"><span>$ui.getString("tool.common.trashcanDialog.repositoriesTabLabel") ($repositories.size())</span></a></li>	        
+	        <li><a href="#contentsTab"><span>$ui.getString("tool.common.trashcanDialog.contentsTabLabel") ($contents.size())</span></a></li>	        
+	        <li><a href="#siteNodesTab"><span>$ui.getString("tool.common.trashcanDialog.pagesTabLabel") ($siteNodes.size())</span></a></li>	        
+	    </ul>
+	
+		<div id="repositoriesTab" class="inlineTabDiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="display" id="repositories" width="100%">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.common.trashcanDialog.repositoriesTabLabel")</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					#foreach($repositoryVO in $repositoriesMarkedForDeletion)
+						<tr>
+							<td>
+								$repositoryVO.name
+							</td>
+							<td>
+								<a href="Trashcan!restore.action?entity=Repository&entityId=$repositoryVO.id" style="float: right;">Restore</a>
+							</td>
+							<td>
+								<a href="Trashcan!delete.action?entity=Repository&entityId=$repositoryVO.id&igSecurityCode=$securityCode" style="float: right;">Delete</a>
+							</td>
+						</tr>
+					#end
+					
+				</tbody>
+			</table>
+		</div>
+
+		<div id="contentsTab" class="inlineTabDiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="display" id="contents" width="100%">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.common.trashcanDialog.contentsTabLabel")</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					#foreach($contentVO in $contents)
+						<tr>
+							<td>
+								$this.getContentPath($contentVO.id).replaceAll(' ', '&nbsp;').replaceAll('/', '&nbsp;/&nbsp;')
+							</td>
+							<td>
+								<a href="Trashcan!restore.action?entity=Content&entityId=$contentVO.id" style="float: right;">Restore</a>
+							</td>
+							<td>
+								<a href="Trashcan!delete.action?entity=Content&entityId=$contentVO.id&igSecurityCode=$securityCode" style="float: right;">Delete</a>
+							</td>
+						</tr>
+					#end
+					
+				</tbody>
+			</table>
+		</div>
+
+		<div id="siteNodesTab" class="inlineTabDiv">
+			<table cellpadding="0" cellspacing="0" border="0" class="display" id="pages" width="100%">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.common.trashcanDialog.pagesTabLabel")</th>
+						<th></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					#foreach($siteNodeVO in $siteNodes)
+						<tr>
+							<td>
+								$this.getSiteNodePath($siteNodeVO.id).replaceAll(' ', '&nbsp;').replaceAll('/', '&nbsp;/&nbsp;')
+							</td>
+							<td>
+								<a href="Trashcan!restore.action?entity=SiteNode&entityId=$siteNodeVO.id" style="float: right;">Restore</a>
+							</td>
+							<td>
+								<a href="Trashcan!delete.action?entity=SiteNode&entityId=$siteNodeVO.id&igSecurityCode=$securityCode" style="float: right;">Delete</a>
+							</td>
+						</tr>
+					#end
+					
+				</tbody>
+			</table>
+		</div>
+				
+	</div>
+
+	</form>		
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

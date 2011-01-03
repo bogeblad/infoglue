@@ -1,0 +1,12 @@
+<html>
+<head>
+  <title>$navigationTitle</title>
+</head>
+<body onload="p=document.layers?parentLayer:window.parent;p.jsrsLoaded($siteNodeId, '$sourceId');">
+
+<form name="jsrs_Form">
+<textarea name="jsrs_Payload" id="jsrs_payload">$navigationTitle</textarea>
+</form>
+    
+</body>
+</html>

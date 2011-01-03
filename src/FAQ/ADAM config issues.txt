@@ -1,0 +1,6 @@
+Installera ADAM och sätt dsHeuristics = 00000000nåt - se nätet
+
+Skapa en instans och DC=infoglue,DC=modul1,DC=se - måste vara DC om man vill skapa OU ovanpå
+
+Sätter upp rättigheter på en user så han kan lista saker sen.
+dsacls "\\localhost:389\DC=infoglue,DC=modul1,DC=se" /I:T /G "CN=matbog,OU=Users,DC=infoglue,DC=modul1,DC=se":GA

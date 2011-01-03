@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workflow PUBLIC "-//OpenSymphony Group//DTD OSWorkflow 2.7//EN" "http://www.opensymphony.com/osworkflow/workflow_2_7.dtd">
+<workflow>
+	<meta name="created">Tue Sep 07 11:59:46 CEST 2004</meta>
+	<meta name="lastModified">Tue Sep 07 12:08:35 CEST 2004</meta>
+	<meta name="generator">OSWOrkflow Designer</meta>
+	<initial-actions>
+		<action id="0" name="Start Workflow">
+			<!--
+				<pre-functions>
+				<function type="class">
+					<arg name="class.name">org.infoglue.cms.applications.workflowtool.functions.InitializeCreateNews</arg>
+				</function>
+			</pre-functions>
+			-->
+			<results>
+				<unconditional-result id="4" old-status="Finished" status="Queued" step="1"/>
+			</results>
+		</action>
+	</initial-actions>
+
+	<global-actions>
+		<action id="200" name="Restart Workflow">
+			<meta name="icon">images/mydesktop/restart.gif</meta>
+			<meta name="altKey">Restart</meta>
+			<results>
+				<unconditional-result step="1" old-status="Restarted" status="Underway"/>
+			</results>
+		</action>
+		<action id="201" name="Finish Workflow">
+			<meta name="icon">images/mydesktop/stop.gif</meta>
+			<meta name="altKey">Finish</meta>
+			<results>
+				<unconditional-result step="4" old-status="Finished" status="Finished"/>
+			</results>
+		</action>
+	</global-actions>
+
+	<steps>
+		<step id="1" name="Create news content">
+			<actions>
+				<action id="4" name="Create news content" view="workflows/gu_create_news/createNewsForm.jsp?userName=administrator">
+					<pre-functions>
+						<function name="set.caller" type="class">
+							<arg name="class.name">com.opensymphony.workflow.util.Caller</arg>
+						</function>
+					</pre-functions>
+					<results>
+						<unconditional-result id="5" old-status="Finished" status="Queued" step="2" owner="${caller}"/>
+					</results>
+					<post-functions>
+						<function type="class">
+							<arg name="class.name">org.infoglue.cms.applications.workflowtool.functions.StoreRequestParamsInPropertySet</arg>
+						</function>
+					</post-functions>
+				</action>
+			</actions>
+		</step>
+		<step id="2" name="Preview news and approve">
+			<actions>
+				<action id="5" name="Preview news and approve" view="workflows/gu_create_news/previewNewsAndApprove.jsp">
+					<pre-functions>
+						<function name="set.caller" type="class">
+							<arg name="class.name">com.opensymphony.workflow.util.Caller</arg>
+						</function>
+					</pre-functions>
+					<results>
+						<unconditional-result id="6" old-status="Finished" status="Queued" step="3"/>
+					</results>
+					<post-functions>
+						<function name="customClass" type="class">
+							<arg name="customClass.name">org.infoglue.cms.applications.workflowtool.actions.examples.CreateNews</arg>
+							<arg name="class.name">org.infoglue.cms.util.workflow.CustomClassExecutor</arg>
+						</function>
+					</post-functions>
+				</action>
+			</actions>
+		</step>
+		<step id="3" name="Create news done">
+			<actions>
+				<action id="6" name="Create news done" view="workflows/gu_create_news/createNewsDone.jsp">
+					<pre-functions>
+						<function name="set.caller" type="class">
+							<arg name="class.name">com.opensymphony.workflow.util.Caller</arg>
+						</function>
+					</pre-functions>
+					<results>
+						<unconditional-result id="7" old-status="Finished" status="Queued" step="4"/>
+					</results>
+				</action>
+			</actions>
+		</step>
+		<step id="4" name="Finish"/>
+	</steps>
+</workflow>

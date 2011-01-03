@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#if($tree == "applet")
+	#set($preferedTree="$this.getCMSBaseUrl()/ViewStructureToolMenu.action?tree=applet&")
+#else
+	#set($preferedTree="$this.getCMSBaseUrl()/ViewStructureToolMenu.action?tree=html&exp=${exp}&")
+#end
+
+<html>
+<head>
+	<title>Header</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	
+	<script type="text/javascript" language="Javascript">
+
+		function changeRepository(repositoryId, path)
+		{
+			//alert("repositoryId:" + repositoryId);
+			//alert("path:" + path);
+			var listForm = document.selectbox;
+			//alert("listForm:" + listForm + " - " + listForm.repositoryId.options);
+			for(var i=0;i<listForm.repositoryId.options.length;i++)
+			{
+				if(listForm.repositoryId.options[i].value == repositoryId)
+				{
+					//alert("Yes - " + listForm.repositoryId.options[i].text);
+					listForm.repositoryId.options[i].selected = true;
+				}
+			}
+			reloadMenu(listForm.repositoryId, path);
+		}
+		
+		function reloadMenu(selectBox, path)
+		{
+			//alert("path:" + path);
+			//alert("top:" + top);
+		    repositoryId = selectBox.value;
+		    if(repositoryId != "")
+		    {
+				var agt=navigator.userAgent.toLowerCase();
+		   	    if(agt.indexOf("safari")!=-1)
+			    	parent.frames[1].location = "${preferedTree}repositoryId=" + repositoryId + "&path=" + path;
+				else
+				    parent.frames[1].location.href = "${preferedTree}repositoryId=" + repositoryId + "&path=" + path;
+		
+				top.document.title = "Structure - " + selectBox.options[selectBox.selectedIndex].text + " - InfoGlue CMS";
+				selectBox.selectedIndex = 0;
+		    }
+		}
+		
+		function loadMenu()
+		{
+			repositoryId = "$repositoryId";
+		    parent.frames[1].location.href = "${preferedTree}repositoryId=" + repositoryId;
+		    top.document.title = "Structure - $!repositoryName - InfoGlue CMS";
+		}
+
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="structuretool" onload="javascript:loadMenu();">
+<form name="selectbox" method="post" action="">
+
+<table border="0" class="structuretool" cellspacing="0" cellpadding="0" width="100%" height="100%">
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td colspan="7"><img src="images/trans.gif" width="1" height="10" /></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1" /></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></a>
+	<td class="toolheader"><img src="images/$ui.getString("images.structuretool.repositoryLabel")" width="70" height="19" /></td> 
+	<td>
+  		<select size="1" name="repositoryId" class="sitedropbox" onchange="javascript:reloadMenu(this, '');">
+		    #if($repositories.size() > 1)
+		    	<option value="">$ui.getString("tool.structuretool.chooseRepositoryLabel")</option>
+			    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()" #if($repositoryVO.id == $repositoryId)selected="selected"#end>$repositoryVO.getName()</option>
+			    #end
+		    #else
+			    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()" #if($repositoryVO.id == $repositoryId)selected="selected"#end>$repositoryVO.getName()</option>
+			    #end
+		    #end
+		</select>
+	</td>
+	<td class="toolheader"><img src="images/trans.gif" width="100" height="19" /></td>
+	<td class="toolheader">&nbsp;</td>
+	<td class="toolheader">&nbsp;</td>
+	<td class="toolheader">&nbsp;</td>
+	<td class="toolheader" width="70%"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1" /></a>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td colspan="7"><img src="images/trans.gif" width="1" height="10" /></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1" /></td>
+</tr>
+</table>
+</form>
+
+<div style="left:0px; position:absolute; top:39px; visibility:visible; z-index:0">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" height="1">
+<tr>
+	<td bgcolor="#999999" width="100%"><img src="images/trans.gif" width="1" height="1"/></td>
+</tr>
+</table>	
+</div>
+
+</body>
+
+</html>

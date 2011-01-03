@@ -1,0 +1,12 @@
+{
+	"title": "All repositories",
+	"repository": [
+	    #foreach($repository in $repositories)
+	    	#if($velocityCount > 1),#end
+			{
+		        "id": "${repository.id}",
+		        "name": "${repository.name}"
+		    }
+		#end
+		]
+}

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<properties>
+  <property name='Header' type='textfield' entity='' multiple='false' description='Hepp'/>
+  <property name='Category' type='select' multiple='false' description='Hepp'>
+    <option name="GU Centralt" value="Fakultet=/Fakultet/GU Centralt"/>    
+    <option name="Handels" value="Fakultet=/Fakultet/Handels"/>
+  </property>
+  <property name='FullText' type='textarea' entity='' multiple='false' description='Hepp'/>
+  <property name='News folder' type='binding' entity='Content' multiple='false' description=''/>
+  <property name='News detail page' type='binding' entity='SiteNode' multiple='false' description=''/>
+</properties>

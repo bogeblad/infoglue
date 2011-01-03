@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Link to internal page</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/editor.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+	<script type="text/javascript" src="applications/HTMLArea/popups/infogluePopup.js"></script>
+	
+	<script type="text/javascript">
+	<!-- 
+		var navigationTitleHash = new Array();
+		
+		var exp;
+	    function notifyExp(v)
+	    {
+	    	//alert("v:" + v);
+	    	// The html tree notifies this page about the
+	    	// current expansion key, so that we can reload
+	    	// the tree with the same expansion.
+	    	exp=v;
+	    }
+
+		function notifyIsLoaded()
+	    {
+	    	//alert("Tree was loaded - notifyIsLoaded");
+	    	treeIsLoaded = true;
+	    }
+		
+		function changeRepository(selectBox)
+		{
+			//alert("selectBox:" + selectBox);
+			var repositoryId = selectBox.value;
+			var url = "ViewStructureTreeForInlineLink.action?repositoryId=" + repositoryId + "&contentId=-1&languageId=1";
+			//var url = "ViewContentVersion!viewAssetsDialog.action?repositoryId=" + repositoryId + "&contentId=-1&languageId=$languageId";
+			//var url = "${currentAction}?repositoryId=" + repositoryId + "&languageId=$languageId&contentId=$contentId&componentId=$componentId&propertyName=$propertyName&tree=$tree";
+			document.location.href = url;
+		}
+		
+		function htmlTreeItemClick(entityId, repositoryId, path)
+		{
+			document.inputForm.contentId.value = entityId;
+			//var url = "ViewContentVersion!viewAssets.action?contentId=" + entityId + "&languageId=$languageId";
+			//document.getElementById("contentVersionAssetsFrame").src = url;
+			
+		}
+				
+		function Init() 
+		{
+	        __dlg_init();
+            window.resizeTo(750, 600);
+            
+	        var param = window.dialogArguments;
+		    var target_select = document.getElementById("f_target");
+		    if (param) {
+		      	document.getElementById("f_href").value = param["f_href"];
+		      	document.getElementById("f_title").value = param["f_title"];
+		      	//document.getElementById("entityId").value = param["f_title"];
+		      	document.getElementById("f_text").value = param["f_text"];
+		      	comboSelectValue(target_select, param["f_target"]);
+		      	if (target_select.value != param.f_target) {
+		      	  	var opt = document.createElement("option");
+		        	opt.value = param.f_target;
+		        	opt.innerHTML = opt.value;
+		        	target_select.appendChild(opt);
+		        	opt.selected = true;
+		      	}
+		  	}
+		  	
+		  	document.getElementById("entityId").value = "$oldSiteNodeId";
+		  	document.getElementById("contentId").value = "$oldContentId";
+		  	
+		  	var opt = document.createElement("option");
+		  	opt.value = "_other";
+		  	opt.innerHTML = "Other";
+		  	target_select.appendChild(opt);
+		  	target_select.onchange = onTargetChanged;
+		  	//document.getElementById("f_href").focus();
+		  	document.getElementById("f_href").select();
+		}
+
+	
+		function onTargetChanged() {
+		  var f = document.getElementById("f_other_target");
+		  if (this.value == "_other") {
+		    f.style.visibility = "visible";
+		    f.select();
+		    f.focus();
+		  } else f.style.visibility = "hidden";
+		};
+
+		
+
+
+		function onOk() 
+		{
+		  	siteNodeId = document.inputForm.entityId.value;
+		  	contentId = document.inputForm.contentId.value;
+			title = document.inputForm.f_title.value;
+			target = document.inputForm.f_target.value;
+			path = document.inputForm.path.value;
+			navigationTitleHash[siteNodeId] = path;
+			//alert("param: " + "<a href=\"$templateLogic.getPageUrl(" + siteNodeId + ", $templateLogic.languageId, null)\">$templateLogic.getPageNavTitle(" + siteNodeId + ")</a>");
+			document.inputForm.f_href.value = "#";
+			if(contentId && contentId > 0)
+				originalTag = transformAttribute("<a href=\"$templateLogic.getPageUrl(" + siteNodeId + ", $templateLogic.languageId, " + contentId + ")\" title=\"" + title + "\" target=\"" + target + "\">" + document.inputForm.f_text.value + "</a>", parent.opener.document);
+			else
+				originalTag = transformAttribute("<a href=\"$templateLogic.getPageUrl(" + siteNodeId + ", $templateLogic.languageId, null)\" title=\"" + title + "\" target=\"" + target + "\">" + document.inputForm.f_text.value + "</a>", parent.opener.document);
+					
+		  	var required = 
+		  	{
+		  		"f_href": "You must select a page in the tree which the link will lead to",
+		    	"f_title": "You must enter a title for the url"
+		    };
+		  
+		  	for (var i in required) {
+		    	var el = document.getElementById(i);
+			    if (!el.value) {
+			      alert(required[i]);
+			      el.focus();
+			      return false;
+			    }
+		  	}
+		  	
+			// pass data back to the calling window
+			var fields = ["f_href", "f_title", "f_target"];
+			var param = new Object();
+			for (var i in fields) {
+				var id = fields[i];
+			    var el = document.getElementById(id);
+			    param[id] = el.value;
+			}
+			
+			if (param.f_target == "_other")
+			    param.f_target = document.getElementById("f_other_target").value;
+			   
+			param.originaltag = originalTag;  
+			//alert("param.image at closing time:" + param.image);  
+			//alert("param.f_href at closing time:" + param.f_href);  
+			//alert("param.f_title at closing time:" + param.f_title);  
+			//alert("param.f_target at closing time:" + param.f_target); 
+			//alert("param.originaltag at closing time:" + param.originaltag);   
+			parent.__dlg_close(param);
+			return false;
+		};
+		
+		function onCancel() 
+		{
+            //alert("Parent: " + parent.name);
+            parent.__dlg_close(null);
+			return false;
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="structuretooledit" onload="Init();">
+
+<table class="structuretooledit" cellpadding="2" cellspacing="0" border="0" width="100%">
+<tr>
+	<td valign="top" width="100%">
+		<div id="structure" style="display: block; border: 1px solid #F0E1B4;">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr class="darkapricot">
+				<td class="smalllabel" colspan="2">Select which page to link to</td>
+			</tr>
+			<tr>
+				<td bgcolor="#FEF8D0" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr>
+				<td bgcolor="#F0E1B4" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>		
+	
+			<tr>
+				<td colspan="2">
+			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+					    #foreach ($repositoryVO in $repositories)
+					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+					    #end
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>	
+			<tr>
+				<td class="menu" colspan="2">   
+					#if($tree == "applet") 
+						#showJavaTree("350" "400" "254" "248" "208" "SiteNode" $repositoryId "false")
+					#else
+						#set($exp = $this.getExpansion($oldSiteNodeId))
+						<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingView.action?repositoryId=${repositoryId}&exp=$exp&akey=/$!oldSiteNodeId/&select=$!oldSiteNodeId" width="350" height="510" align="baseline"></IFRAME>
+					#end
+				</td>
+			</tr>	
+			<tr>
+				<td style="background-color: #F0E1B4; padding: 4px; border: 1px solid silver;">
+					<a href="javascript:openDiv('structure'); closeDiv('content');">Linked page</a>
+				</td>
+				<td style="background-color: #C7D1B3; padding: 4px; border: 1px solid silver;">
+					<a href="javascript:openDiv('content'); closeDiv('structure'); frames['itreeFrameContent'].loaded();">Additional content</a>
+				</td>
+			</tr>
+			</table>
+		</div>
+		
+		<div id="content" style="display: none; background-color: #EEF7DC; border: 1px solid #C7D1B3;">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr class="darkgreen">
+				<td class="smalllabel" colspan="2">Click on the content you wish to add to the link</td>
+			</tr>
+			<tr>
+				<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr>
+				<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>		
+			<!-- 
+			HERE IS THE REPOSITORY-LIST FOR LATER 
+			-->
+			<tr>
+				<td colspan="2">
+			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+					    #foreach ($repositoryVO in $repositories)
+					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+					    #end
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>		
+			<tr>
+				<td class="menu" colspan="2">  
+					#if($tree == "applet")
+						#showJavaTree("350" "400" "254" "248" "208" "Content" $repositoryId "false")
+					#else
+						#set($exp = $this.getContentExpansion($oldContentId))
+						<IFRAME frameborder="0" name="itreeFrameContent" id="itreeFrameContent" src="ViewContentHtmlTree.action?repositoryId=$repositoryId&exp=$exp&akey=/$!oldContentId/&select=$!oldContentId&bodyClass=contenttooledit" width="350" height="510" align="baseline"></IFRAME>
+					#end
+				</td>
+			</tr>	
+			<tr>
+				<td style="background-color: #F0E1B4; padding: 4px; border: 1px solid silver;">
+					<a href="javascript:openDiv('structure'); closeDiv('content');">Linked page</a>
+				</td>
+				<td style="background-color: #C7D1B3; padding: 4px; border: 1px solid silver;">
+					<a href="javascript:openDiv('content'); closeDiv('structure'); frames['itreeFrameContent'].loaded();">Additional content</a>
+				</td>
+			</tr>
+			</table>	
+		</div>
+				
+	</td>	
+	
+	<td valign="top">
+		<form name="inputForm" action="CreateServiceBinding.action">
+		<table cellpadding="0" cellspacing="0" border="0" width="350">
+		<tr class="darkapricot">
+			<td class="smalllabel" colspan="2">$ui.getString("tool.structuretool.linkProperties")</td>
+		</tr>
+		<tr>
+			<td bgcolor="#FEF8D0" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#F0E1B4" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>	
+		<tr>
+			<td class="label">Title&nbsp;(tooltip):&nbsp;</td>
+		    <td><input type="text" id="f_title" style="width: 250px" /></td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>	
+		<tr>
+			<td class="label">Target:</td>
+		    <td><select id="f_target">
+		      <option value="">None (use implicit)</option>
+		      <option value="_blank">New window (_blank)</option>
+		      <option value="_self">Same frame (_self)</option>
+		      <option value="_top">Top frame (_top)</option>
+		    </select>
+		    <input type="text" name="f_other_target" id="f_other_target" size="10" style="visibility: hidden" />
+		    </td>
+		</tr>	
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="15"></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<a href="javascript:onOk()"><img src="$ui.getString("images.structuretool.buttons.save")" border="0" /></a>
+				<a href="javascript:onCancel()"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0" /></a>
+			</td>
+		</tr>
+
+		</table>
+		<input type="hidden" id="f_href"/>
+		<input type="hidden" id="f_text"/>
+		<input type="hidden" id="entityId" name="entityId" value="$!oldSiteNodeId">
+		<input type="hidden" id="contentId" name="contentId" value="$!oldContentId">
+		<input type="hidden" id="repositoryId" name="repositoryId" value="">
+		<input type="hidden" id="path" name="path" value="">
+	</form>
+
+	</td>
+</tr>
+</table>
+
+<!--
+<div id="menu" style="position: absolute; bottom: 10px; left: 10px;">
+	<table cellpadding="4" cellspacing="0" border="0" style="border-left: 1px solid silver; border-right: 1px solid silver; border-bottom: 1px solid silver;">
+	<tr>
+		<td style="background-color: #F0E1B4;">
+			<a href="javascript:openDiv('structure'); closeDiv('content');">Linked page</a>
+		</td>
+		<td style="background-color: #C7D1B3;">
+			<a href="javascript:openDiv('content'); closeDiv('structure'); frames['itreeFrameContent'].loaded();">Additional content</a>
+		</td>
+	</tr>
+	</table>
+</div>
+-->
+
+<!--
+<div style="RIGHT:10px; LEFT:10px; position:absolute; BOTTOM:5px; visibility:visible; z-index:0">
+<hr size=1 noshade>
+<small><font color="#666666">$ui.getString("tool.common.treestyleLabel"): <a style="color: #666666" href="${currentAction}?repositoryId=${repositoryId}&siteNodeVersionId=${siteNodeVersionId}&availableServiceBindingId=$availableServiceBindingId&tree=applet">$ui.getString("tool.common.treestyleApplet")</a> | <a style="color: #666666" href="${currentAction}?repositoryId=${repositoryId}&siteNodeVersionId=${siteNodeVersionId}&availableServiceBindingId=$availableServiceBindingId&tree=html">$ui.getString("tool.common.treestyleHTML")</a> </small></font>
+</div>
+-->
+
+</body>
+</html>

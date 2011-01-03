@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<quartz xmlns="http://www.quartzscheduler.org/ns/quartz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.infoglue.org/xsd/quartz job_scheduling_data_1_1.xsd" version="1.1">
+	
+	<calendar class-name="org.quartz.impl.calendar.WeeklyCalendar">
+		<name>weeklyCalendar</name>
+		<description>WeeklyCalendar</description>
+		<base-calendar class-name="org.quartz.impl.calendar.AnnualCalendar">
+			<name>annualCalendar</name>
+			<description>AnnualCalendar</description>
+		</base-calendar>
+	</calendar>
+
+	<job>
+		<job-detail>
+			<name>Refresh</name>
+			<group>infoglueJobs</group>
+			<job-class>org.infoglue.cms.jobs.RefreshJob</job-class>
+			<volatility>false</volatility>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job-detail>
+			        
+		<trigger>
+			<cron>
+				<name>infoglueTrigger</name>
+				<group>infoglueJobs</group>
+				<job-name>Refresh</job-name>
+				<job-group>infoglueJobs</job-group>
+				<cron-expression>0 0 5,12,18,23 * * ?</cron-expression>
+			</cron>
+		</trigger>
+	</job>
+	<job>
+		<job-detail>
+			<name>CleanOldVersions</name>
+			<group>infoglueCleanJobs</group>
+			<job-class>org.infoglue.cms.jobs.CleanOldVersionsJob</job-class>
+			<volatility>false</volatility>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job-detail>
+			        
+		<trigger>
+			<cron>
+				<name>infoglueCleanVersionTrigger</name>
+				<group>infoglueCleanJobs</group>
+				<job-name>CleanOldVersions</job-name>
+				<job-group>infoglueJobs</job-group>
+				<cron-expression>0 0 1 * * ?</cron-expression>
+				<!--<cron-expression>0/30 * * ? * *</cron-expression>-->
+			</cron>
+		</trigger>
+	</job>
+	<job>
+		<job-detail>
+			<name>ProcessSubscriptions</name>
+			<group>infoglueJobs</group>
+			<job-class>org.infoglue.cms.jobs.SubscriptionsJob</job-class>
+			<volatility>false</volatility>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job-detail>
+			        
+		<trigger>
+			<cron>
+				<name>infoglueProcessSubscriptionsTrigger</name>
+				<group>infoglueJobs</group>
+				<job-name>ProcessSubscriptions</job-name>
+				<job-group>infoglueJobs</job-group>
+				<cron-expression>0 0 1 * * ?</cron-expression>
+				<!--<cron-expression>0/30 * * ? * *</cron-expression>-->
+			</cron>
+		</trigger>
+	</job>
+	<job>
+		<job-detail>
+			<name>IndexContents</name>
+			<group>infoglueIndexJobs</group>
+			<job-class>org.infoglue.cms.jobs.IndexContentsJob</job-class>
+			<volatility>false</volatility>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job-detail>
+			        
+		<trigger>
+			<cron>
+				<name>infoglueIndexContentsTrigger</name>
+				<group>infoglueJobs</group>
+				<job-name>IndexContents</job-name>
+				<job-group>infoglueJobs</job-group>
+				<!-- <cron-expression>0 0 1 * * ?</cron-expression> -->
+				<cron-expression>0/30 * * ? * *</cron-expression>
+			</cron>
+		</trigger>
+	</job>
+	
+	<!--
+	<job>
+		<job-detail>
+			<name>ExpireCaches</name>
+			<group>infoglueJobs</group>
+			<job-class>org.infoglue.deliver.jobs.ExpireCacheJob</job-class>
+			<volatility>false</volatility>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job-detail>
+			        
+		<trigger>
+			<cron>
+				<name>infoglueTrigger</name>
+				<group>infoglueJobs</group>
+				<job-name>ExpireCaches</job-name>
+				<job-group>infoglueJobs</job-group>
+				<cron-expression>0/30 * * ? * *</cron-expression>
+			</cron>
+		</trigger>
+	</job>
+	-->
+	
+</quartz>

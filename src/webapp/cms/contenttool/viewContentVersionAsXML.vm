@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Content version as XML</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script language="JavaScript" src="script/listview.js"></script>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>	
+</head>
+
+<body class="contenttooledit">
+
+
+<div class="fullymarginalized">
+<form method="POST" name="editForm" action="UpdateContentVersion!updateVersionValue.action">
+<table width="300" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.contentVersionAsXMLHeader")</td>
+	</tr>		
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<td colspan="3">#editTextArea("ContentVersion.versionValue" "versionValue" $!contentVersionVO.versionValue "10" "10" "normaltextarea")</td>
+	</tr>		
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<input type="hidden" name="languageId" value="$!contentVersionVO.languageId">
+		<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+		<td colspan="3">
+			<input type="image" src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0">
+		</td>
+	</tr>
+	
+</table>
+</div>
+
+</body>
+</html>

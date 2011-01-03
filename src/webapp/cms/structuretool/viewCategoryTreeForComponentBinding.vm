@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Choose Category</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<script language="JavaScript">
+		window.resizeTo(400,600);
+	</script>
+
+	<script type="text/javascript" language="JavaScript">
+	<!--
+		var exp;
+
+	    function notifyExp(v)
+	    {
+	    	// The html tree notifies this page about the
+	    	// current expansion key, so that we can reload
+	    	// the tree with the same expansion.
+	    	exp=v;
+	    }
+
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;
+		}
+
+	    function submitBinding()
+		{
+			entityId = document.inputForm.entityId.value;
+			path = document.inputForm.path.value;
+		    var repositoryId = document.inputForm.repositoryId.value;
+			var url = "ViewSiteNodePageComponents!addComponentPropertyBinding.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&entity=Category&entityId=" + entityId + "&componentId=$componentId&propertyName=$propertyName&path=" + escape(path);
+
+			//alert('Calling:' + url);
+		    self.opener.location.href = url;
+		    window.close();
+		}
+
+	    function cancel()
+		{
+		    self.opener.location.href = "ViewSiteNodePageComponents.action?siteNodeId=$siteNodeId";
+		    window.close();
+		}
+	-->
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+</head>
+
+<body class="managementtooledit">
+
+<table class="managementtooledit" cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+	<td valign="top" width="100%">
+
+		<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr class="darkblue">
+			<td class="smalllabel">Click on the category you wish to use for this binding</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td class="menu">
+				<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewCategoryHtmlTree!bindingView.action?repositoryId=${repositoryId} width="350" height="400" align="baseline"></IFRAME>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<a href="javascript:submitBinding();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+				<a href="javascript:cancel();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<form name="inputForm" action="CreateServiceBinding.action">
+					<input type="hidden" name="entityId" value="">
+					<input type="hidden" name="repositoryId" value="">
+					<input type="hidden" name="path" value="">
+					<input type="hidden" name="qualifyerXML" value="">
+				</form>
+			</td>
+		</tr>
+		</table>
+
+	</td>
+</tr>
+</table>
+</body>
+</html>

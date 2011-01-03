@@ -1,0 +1,148 @@
+#define( $headerMarkup )
+
+<style type="text/css">
+
+	#tabsContainer {
+		position: relative; 
+	}
+	
+	#basicTab > div, #search > div {
+		margin: 8px 0px 0px 8px;
+		position: relative; 
+	}
+
+	label {
+		margin-top: 6px;
+		margin-bottom: 2px;
+		display: block;
+		float: left;
+		width: 100%;
+	}
+
+	input, select {
+		margin-bottom: 4px;
+	}
+			
+	.ui-tabs .ui-tabs-panel {
+		padding: 0px;
+		background-color: #F6F6F6;
+	}
+</style>
+
+	<script type="text/javascript">
+	<!-- 
+	    function notifyIsLoaded()
+	    {
+	    }
+	    
+	    function notifyExp(v)
+	    {
+	    }
+      	
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			document.inputForm.entityId.value = itemId;
+		 	document.inputForm.repositoryId.value = repoId;
+		 	document.inputForm.path.value = path;	
+		}
+	
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;	
+		}
+	    
+	    function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			var url = "${currentAction}?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$componentId&propertyName=$propertyName&tree=$tree&showSimple=$showSimple&showDecorated=$!showDecorated";
+			document.location.href = url;
+		}
+	    
+		function treeItemDblClick(id, label)
+      	{
+      		submitBindning();
+      	}
+
+		function useSelectedAsset()
+		{
+			submitBindning();
+		}
+		    
+	    function save()
+		{
+			submitBindning();
+		}
+
+	    function submitBindning()
+		{
+			//alert("Here we commit the binding and close the window...");
+			entityId = document.inputForm.entityId.value;
+			
+			if(entityId == '' || entityId == '${select}')
+			{
+				alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
+			}
+			else
+			{
+				path = document.inputForm.path.value;
+			    var repositoryId = document.inputForm.repositoryId.value;
+				bindingTypeId = 1; //0 = Content, 1 = SiteNode
+				
+				qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+				qualifyerXML += "<qualifyer>";
+				qualifyerXML += 	"<siteNodeId>" + entityId + "</siteNodeId>";
+				qualifyerXML += "</qualifyer>";
+				 		    
+			    var url = "ViewSiteNodePageComponents!addComponentPropertyBinding.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&entity=SiteNode&entityId=" + entityId + "&componentId=$componentId&propertyName=$propertyName&showSimple=$showSimple&showDecorated=$!showDecorated&path=" + escape(path);
+			    if(self.opener)
+			    {
+				    self.opener.location.href = url;
+				    window.close();
+				}
+				else if(parent)
+				{
+					parent.location.href = url;
+				}
+			}
+		}
+		
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.structuretool.choosePageLabel" "" "" false true $!disableCloseButton $headerMarkup)
+	
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<div id="igEditArea" class="igScrollArea">
+		
+		<h3>$ui.getString("tool.structuretool.choosePageForBindingLabel")</h3>
+		
+		<p>
+			<select size="1" name="repositoryId" class="sitedropbox" onchange="changeRepository(this);">
+			    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+			    #foreach ($repositoryVO in $repositories)
+			    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+			    #end
+			</select>
+		<p>
+		
+		<p>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}" width="100%" height="426" ></iframe>
+		</p>
+	</div>
+	
+	#lightFooterToolbar($footerButtons)
+	
+	<form name="inputForm" action="CreateServiceBinding.action">
+		<input type="hidden" name="entityId" value="">
+		<input type="hidden" name="repositoryId" value="">
+		<input type="hidden" name="path" value="">
+		<input type="hidden" name="qualifyerXML" value="">
+	</form>
+
+#endLightCommonToolV3()

@@ -1,0 +1,704 @@
+#beginCommonToolV3("$toolbarKey" "$!entityId" "" false true true)
+
+<script type="text/javascript">
+	
+    YAHOO.example.init = function () 
+    {
+        YAHOO.util.Event.onContentReady("buttons", function () 
+        {	        
+			var oSaveButton = new YAHOO.widget.Button("saveButton");
+			var oSaveAndExitButton = new YAHOO.widget.Button("saveAndExitButton");
+			var oCancelButton = new YAHOO.widget.Button("cancelButton");
+			
+        	oSaveButton.on("click", function (p_oEvent){
+        		validateAndSubmitContentForm();
+        	});
+        	oSaveAndExitButton.on("click", function (p_oEvent){
+        		validateAndSubmitContentFormThenExit();
+        	});
+        	oCancelButton.on("click", function (p_oEvent){
+        		document.location.href = '$cancelAddress';
+        	});			
+        });
+    }();
+
+</script>
+
+<script type="text/javascript">
+<!--
+
+	var allowSave = true;  //Sets to false if one does not close like one should
+	var currentEditorIdHash = new Array();
+
+	//*******************************************
+	// This function changes language version
+	//*******************************************
+	
+	function changeLanguage()
+	{
+		languageId = document.editForm.languageId.value;
+		
+		if (confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
+		{
+			window.location.href="$currentAction?ownerEntityId=$formatter.encodeURI($ownerEntityId)&languageId=" + languageId;
+		}
+		else
+		{
+			document.editForm.languageId.selectedIndex = originalIndex - 1;
+		}
+	}
+
+	//*******************************************
+	// This function opens up the form editor
+	//*******************************************
+	
+	function openRelationEditor(url)
+	{
+		allowSave = false;
+		openWindow(url, "RelationEditor", "width=700,height=600,left=" + (document.body.clientWidth / 4) + ",top=50,toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+	}
+	
+	function addCategory(attributeName, selectName)
+	{
+		var categoryId = document.getElementById(selectName).value;
+		document.getElementById("model/attributeName").value = attributeName;
+		document.getElementById("model/category/categoryId").value = categoryId;
+		document.catForm.submit();
+	}
+
+	function deleteCategory(propertiesCategoryId)
+	{
+		document.catForm.action = "PropertiesCategory!delete.action";
+		document.getElementById("propertiesCategoryId").value = propertiesCategoryId;
+		document.catForm.submit();
+	}
+	
+	function cancel()
+	{
+		document.location.href = "$cancelAddress";
+	}
+
+	//*******************************************
+	// This is a timer that warns the user about saving his work once in a while so he does not
+	// get a new login-screen next time he saves.
+	//*******************************************
+	var beenWarned = false;
+	var inaktiveTime = 0;
+	var timeout = ($sessionTimeout / 60) * 60 * 1000;
+    function warnForTimeout()
+    {
+       	alert("Please save your work often to avoid loosing it due to the security timeout. If you suspect you might not have saved for 10-20 minutes or so we recommend you copy all of your text before you press save so you don't risk loosing it.");
+		beenWarned = true;
+		inaktiveTime = inaktiveTime + timeout;
+		setTimeout("warnForTimeout()", timeout);
+	}
+	
+	
+	//*******************************************
+	// This is a timer that keeps track of the number of minutes the user has been on the page without saving.
+	//*******************************************
+	var textArea;
+	//var contentVersionId 	= "$contentVersionId";
+	//var contentId 			= "$contentId";
+	var languageId 			= "$languageId";
+	
+	var count = 0;
+	var minute = 60000;
+	function doTimer()
+	{
+		count += 1;
+		setTimeout("doTimer();", minute);
+	}
+	
+	doTimer();
+	setTimeout("warnForTimeout()", timeout);
+
+	var originalValue = 1;
+	$("#languageId option:selected").each(function () {
+    	originalIndex = $(this).val();
+    });
+-->
+</script>
+	
+#menuToolbar("$ui.getString($titleKey)" $buttons $rightButtons) 
+
+<div id="igEditArea" class="igScrollArea">
+
+<form method="post" name="editForm" action="${updateAction}.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<fieldset class="ig-fieldset">
+		
+		<div id="igScrollArea" style="overflow: auto; amax-height: 600px; width: 100%;">
+		
+		<div class="ig-row">
+			<label class="ig-label-nl" for="languageId">$ui.getString("tool.contenttool.languageVersionsLabel")</label>
+			<select class="ig-select" id="languageId" name="languageId" onchange="javascript:changeLanguage();">
+			#foreach ($languageVO in $availableLanguages)
+				#if($languageVO.languageId.intValue() == $languageId.intValue())
+					<option value="$languageVO.languageId" selected="selected">$languageVO.name</option>
+				#else
+					<option value="$languageVO.languageId">$languageVO.name</option>
+				#end
+			#end
+			</select>
+		</div>
+ 
+		#if($stateId == 1 || $stateId == 2 || $stateId == 3)
+			#set($readonly = "disabled") 
+		#else
+			#set($readonly = "")
+		#end
+		
+		#set($onchange = "")
+		
+		#foreach($attribute in $contentTypeAttributes)
+			
+			## ANNOTATION ELEMENTS
+			#set($attributeTitle = "")
+			#set($attributeTitle = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($attributeTitle == "")
+				#set($attributeTitle = "$attribute.name")
+			#end
+	
+			#set($attributeDescription = "")
+			#set($attributeDescription = $!attribute.getContentTypeAttribute("description").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($attributeDescription != "")
+				#set($attributeDescription = "- $attributeDescription")
+			#end
+		
+			#set($class = "")
+			#set($class = $!attribute.getContentTypeAttribute("class").getContentTypeAttributeParameterValue().getValue("label"))
+			#if($class == "")
+				#set($class = "longtextfield")
+			#end
+	
+			#set($rows = "")
+			#set($rows = $!attribute.getContentTypeAttribute("rows").getContentTypeAttributeParameterValue().getValue("label"))
+			#if($rows == "")
+				#set($rows = "5")
+			#end
+	
+			#set($cols = "")
+			#set($cols = $!attribute.getContentTypeAttribute("cols").getContentTypeAttributeParameterValue().getValue("label"))
+			#if($cols == "")
+				#set($cols = "75")
+			#end
+	
+			#set($enableWYSIWYG = "")
+			#set($enableWYSIWYG = $!attribute.getContentTypeAttribute("enableWYSIWYG").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($enableWYSIWYG == "")
+				#set($enableWYSIWYG = "false")
+			#end
+	
+			#set($enableTemplateEditor = "")
+			#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($enableTemplateEditor == "")
+				#set($enableTemplateEditor = "false")
+			#end
+	
+			#set($enableFormEditor = "")
+			#set($enableFormEditor = $!attribute.getContentTypeAttribute("enableFormEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($enableFormEditor == "")
+				#set($enableFormEditor = "false")
+			#end
+	
+			#set($enableContentRelationEditor = "")
+			#set($enableContentRelationEditor = $!attribute.getContentTypeAttribute("enableContentRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($enableContentRelationEditor == "" || $enableContentRelationEditor == "false")
+				#set($enableContentRelationEditor = $!attribute.getContentTypeAttribute("enableRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+				#if($enableContentRelationEditor == "" || $enableContentRelationEditor == "false")
+					#set($enableContentRelationEditor = "false")
+				#end
+			#end
+			
+			#set($enableStructureRelationEditor = "")
+			#set($enableStructureRelationEditor = $!attribute.getContentTypeAttribute("enableStructureRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($enableStructureRelationEditor == "")
+				#set($enableStructureRelationEditor = "false")
+			#end
+
+			<!-- STARTING PRINTING OUT FIELDS -->
+
+			<div class="ig-row" style="margin-top: 16px;">
+			
+			#if($attribute.inputType == "textfield")
+				
+				$attributeTitle ("$attribute.name") $attributeDescription<br/>
+				<input $readonly type="text" class="$class" maxlength="" id="$attribute.name" name="$attribute.name" value="$this.getAttributeValue($attribute.name)"/>
+				
+			#elseif($attribute.inputType == "textarea")
+				
+				<div>
+			    	<div style="float: left;">
+			    		$attributeTitle ("$attribute.name") $attributeDescription 
+			    	</div>
+			    	<div style="float: right;">
+			    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false")
+			    			<a href="javascript:changeEditor(0, '${attribute.name}');">$ui.getString("tool.contenttool.editorPlainLabel")</a> 
+						#end
+			    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableWYSIWYG == "true")
+			    		| <a href="javascript:changeEditor(1, '${attribute.name}');">$ui.getString("tool.contenttool.editorHTMLWYSIWYG")</a> 
+			    		#end
+			    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
+			    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
+						#end
+					</div>
+				</div>
+				
+				<div style="clear:both;"></div>
+				
+				<div>
+			    			
+				#set($width = 0)
+				#set($width = $!attribute.getContentTypeAttribute("width").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+				#if($width == 0)
+					#set($width = 700)
+				#end
+
+				#set($height = 0)
+				#set($height = $!attribute.getContentTypeAttribute("height").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+				#if($height == 0)
+					#set($height = 150)
+				#end
+				
+				#set($wysiwygHeight = $height - 40)
+				#if($width >= 700)
+					#set($wysiwygHeight = $height - 20)
+				#end
+									
+				<textarea $readonly rows="$rows" cols="$cols" style="visibility: visible; width:${width}px; height:${height}px; border: 1px solid #C2D0E2;font-family:verdana,arial,sans-serif;font-size:8pt;" id="$attribute.name" name="$attribute.name" $readonly $onchange>$this.getAttributeValue($attribute.name)</textarea>
+									
+				#if($enableWYSIWYG == "true")
+				<script type="text/javascript">
+				<!--
+					var oFCKeditor = new FCKeditor("$attribute.name") ;
+					oFCKeditor.Width = "${width}";
+					oFCKeditor.Height = "${height}";
+					oFCKeditor.BasePath = "${root}/applications/FCKEditor/";
+					oFCKeditor.Config["CustomConfigurationsPath"] = "${root}/WYSIWYGProperties.action?repositoryId=42&contentId=7310&languageId=1";
+					oFCKeditor.Config["AutoDetectLanguage"] = false ;
+					oFCKeditor.Config["DefaultLanguage"]    = '$languageCode' ;
+					oFCKeditor.ReplaceTextarea();
+				-->
+				</script>
+				#end
+									
+				#if($enableContentRelationEditor == "true" && $readonly == "")
+					<!-- Here comes the Content Relation editor layer -->
+					<input type="hidden" id="${attribute.name}EditorType4IsActive" name="${attribute.name}EditorType4IsActive" value="false"/>
+					<div id="${attribute.name}EditorType4" name="${attribute.name}EditorType4" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+					    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+					    <tr>
+					    	<td colspan="2" bgcolor="white" valign="top">
+					    		<p style="margin-top:5px; margin-left:5px;">
+					    		#if($entityId > -1)
+									Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor!V3.action?updateAction=ViewContentRelationEditor!updateQualifyerInEntityProperties.action&amp;entityName=$!entityName&amp;entityId=$!entityId&amp;attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									<hr noshade size="1">
+									#set($qualifyers = $this.getContentRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0">
+									#foreach($qualifyer in $qualifyers)
+										<tr>
+											<td valign="middle">
+											<img src="images/tree/xp/item.png"> 
+											</td>
+											<td valign="middle">
+											$qualifyer.getPath() 
+											</td>
+											<td></td>
+											<td valign="middle">
+											(<a href="javascript:openWindow('ViewContent!standalone.action?contentId=${qualifyer.getValue()}', 'editcontent', 'width=600,height=500,resizable=yes,scrollbars=yes');">Edit</a>)
+											</td>
+										</tr>
+									#end
+									</table>
+								#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+								#end
+								</p>
+							</td>
+					    </tr>
+					    </table>
+					</div>
+					<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)"/>
+					
+					<script type="text/javascript">
+					<!--
+						document.getElementById('${attribute.name}').style.display = "none";
+						document.getElementById('${attribute.name}EditorType4').style.display = "block";							
+					-->
+					</script>
+				#end
+					
+				
+				#if($enableStructureRelationEditor == "true" && $readonly == "")
+					<!-- Here comes the Structure Relation editor layer -->
+					<input type="hidden" id="${attribute.name}EditorType5IsActive" name="${attribute.name}EditorType5IsActive" value="false"/>
+					<div id="${attribute.name}EditorType5" name="${attribute.name}EditorType5" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+					    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+					    <tr>
+					    	<td colspan="2" bgcolor="white" valign="top">
+								<p style="margin-top:5px; margin-left:5px;">
+								#if($entityId > -1)
+									Related SiteNodes (<a href="javascript:openRelationEditor('ViewStructureRelationEditor.action?updateAction=ViewStructureRelationEditor!updateQualifyerInEntityProperties.action&amp;entityName=$!entityName&amp;entityId=$!entityId&amp;attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									<hr noshade size="1">
+									#set($qualifyers = $this.getSiteNodeRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0">
+									#foreach($qualifyer in $qualifyers)
+										<tr>
+											<td valign="middle">
+											<img src="images/tree/xp/item.png"> 
+											</td>
+											<td valign="middle">
+											$qualifyer.getPath() 
+											</td>
+										</tr>
+									#end
+									</table>
+								#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+								#end
+								</p>
+							</td>
+					    </tr>
+					    </table>
+					</div>	
+					<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)"/>
+					
+					<script type="text/javascript">
+					<!--
+						document.getElementById('${attribute.name}').style.display = "none";
+						document.getElementById('${attribute.name}EditorType5').style.display = "block";							
+					-->
+					</script>
+				#end
+				
+	    		#if($enableContentRelationEditor == "true" && $readonly == "" && $contentVersionId > -1)
+	    		<script type="text/javascript">
+	    		<!--
+	    			document.getElementById('${attribute.name}').style.display = "none";
+	    			showdiv = document.getElementById('${attribute.name}EditorType4');
+					showdiv.style.visibility = "visible";
+	    		-->
+	    		</script>
+	    		#end
+	    		#if($enableStructureRelationEditor == "true" && $readonly == "" && $contentVersionId > -1)
+	    		<script type="text/javascript">
+	    		<!--
+	    			document.getElementById('${attribute.name}').style.display = "none";
+	    			showdiv = document.getElementById('${attribute.name}EditorType5');
+					showdiv.style.visibility = "visible";
+	    		-->
+	    		</script>
+	    		#end
+	    							
+				<script type="text/javascript">
+				
+		    		var plainAttribute = document.getElementById("${attribute.name}").value;
+				    		
+					#if($currentEditorId == 1)
+						changeEditor(1, "${attribute.name}");
+					#elseif($currentEditorId == 2)
+						changeEditor(2, "${attribute.name}");
+					#elseif($currentEditorId == 3)
+						changeEditor(3, "${attribute.name}");
+					#elseif($currentEditorId == 4)
+						changeEditor(4, "${attribute.name}");
+					#else
+						currentEditorIdHash["${attribute.name}CurrentEditorId"] = 0;
+					#end
+				</script>
+				</div>
+			
+			#elseif($attribute.inputType == "select")
+				<!-- Handles the input type select = dropbox -->
+				$attributeTitle ("$attribute.name") $attributeDescription <br/>
+				<select $readonly size="1" id="$attribute.name" name="$attribute.name" class="$class">
+	    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+	    				<option value="$value.id" #checkSelected("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)</option>
+	    			#end
+	    		</select>
+
+			#elseif($attribute.inputType == "checkbox")
+				<!-- Handles the input type checkbox -->
+				$attributeTitle ("$attribute.name") $attributeDescription <br/>
+    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+					<input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$value.id" #checkCheckedBySplit("$value.id" "$this.getAttributeValue($attribute.name)")/>$value.getLocalizedValue("label", $session.locale)
+    			#end
+
+			#elseif($attribute.inputType == "radiobutton")
+				<!-- Handles the input type radiobutton -->
+				$attributeTitle ("$attribute.name") $attributeDescription <br/>
+    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+					<input $readonly type="radio" id="$attribute.name" name="$attribute.name" value="$value.id" #checkCheckedBySplit("$value.id" "$this.getAttributeValue($attribute.name)")/>$value.getLocalizedValue("label", $session.locale)
+    			#end
+
+			#end
+					
+			</div>
+		#end
+		
+		#if($entityId)
+		
+			#set($allCategoryKeys = $definedCategoryKeys)
+			#if($allCategoryKeys.size() > 0)
+				<br/>
+				$ui.getString("tool.contenttool.relatedCategories")
+				#foreach($categoryKey in $allCategoryKeys)
+					#set($keyAttribute = $categoryKey.value)
+					#set($dropdownName = "${keyAttribute}${velocityCount}categoryId")
+					#set($availableCategories = $this.getAvailableCategories($categoryKey.categoryId))
+					<div class="ig-row" style="display: block; width: 750px; margin-bottom: 10px;">
+						<div style="float: left; background-color: #C2D0E2; padding: 2px; border: 1px solid #666666;">
+							<div style="float:left; margin-top: 2px;">$categoryKey.title ("$keyAttribute") - $categoryKey.description</div>
+							<div style="float:right; padding-top: 0px; margin-top: 0px;">
+								<div style="float:left; display: inline;">
+								#if($entityId)
+									#addCategorySelect($dropdownName $availableCategories "")
+								#end
+								</div>
+								<div style="float:left; display: inline;">
+		                        #if($entityId)
+									<a href="javascript:addCategory('${keyAttribute}', '${dropdownName}');"><img src="$ui.getString("images.contenttool.buttons.addCategory")" border="0"/></a>
+								#end
+								</div>
+							</div>
+						</div>
+						<div style="clear: both;"></div>
+						<div style="float: left; background-color: white; border: 1px solid #666666; border-top: 0px;">
+						#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
+						#foreach($relation in $relatedCategories)
+		                    #set($isOdd = $velocityCount % 2)
+							#set($bgcolor = "background-color: white;")
+							#if($isOdd == 0)
+								#set($bgcolor = "background-color: #E3ECF8;")
+							#end
+							<div style="float: left; $bgcolor padding: 4px;">
+								<div style="float:left;">$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)</div>
+								<div style="float:right;"><a href="javascript:deleteCategory('$relation.propertiesCategoryId');"><img src="images/delete.gif" border="0"/></a></div>
+							</div>
+							<div style="clear: both;"></div>
+						#end
+						#if($relatedCategories.size() == 0)
+							#if($entityId > -1)
+							<div>
+								<div style="float:left; padding: 4px;">
+									#if(!$entityId)
+										$ui.getString("tool.contenttool.saveToRelateCategoriesPrefix") $keyAttribute
+									#else
+										$ui.getString("tool.contenttool.noCategoriesPrefix") $keyAttribute
+									#end
+								</div>
+								<div style="float:right;"></div>
+							</div>
+							#else
+							<div>
+								<div style="float:left; padding: 4px;">
+									#if(!$entityId)
+										$ui.getString("tool.contenttool.saveToRelateCategoriesPrefix") $keyAttribute
+									#else
+										$ui.getString("tool.contenttool.noCategoriesPrefix") $keyAttribute
+									#end
+								</div>
+								<div style="float:right;"></div>
+							</div>
+							#end
+						#end
+						</div>
+					</div>
+					#end
+				#end
+			#end
+			
+			#if($entityId)
+				<div class="ig-row" style="width: 750px; float: left; border: 1px solid #666666;">
+					$ui.getString("tool.contenttool.associatedAttachments")<br/>
+					#foreach($digitalAsset in $digitalAssets)
+						#set($digitalAssetUrl = "$this.getDigitalAssetUrl($digitalAsset.digitalAssetId)")
+						<div style="border: 1px solid #cccccc; float: left; min-width: 80px; height: 90px; padding: 6px; text-align: center; font-size: 8pt; font-family: arial;">
+							<input type="hidden" id="digitalAsset$digitalAsset.assetKey" value="$digitalAssetUrl"/>
+							<a href="javascript:openWindow('$digitalAssetUrl', 'Preview', 'width=600,height=500,resizable=yes');"><img class="scaledbordered" src="$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)">
+							<br/>$digitalAsset.assetKey</a><br/>
+							#if($readonly == "")
+								<a href="javascript:openWindow('ViewDigitalAsset!update.action?digitalAssetId=$digitalAsset.digitalAssetId&amp;entity=$!entityName&amp;entityId=$entityId','DigitalAsset','width=500,height=400,resizable=no');">$ui.getString("tool.contenttool.editAttachment")</a> / 
+								<a href="DeleteDigitalAsset.action?digitalAssetId=$digitalAsset.digitalAssetId&amp;entity=$!entityName&amp;entityId=$entityId&amp;returnAddress=$formatter.encodeURI($currentURL)">$ui.getString("tool.contenttool.deleteAttachment")</a>
+							#end
+						</div>
+					#end
+					
+					#if($counter == 0)
+						$ui.getString("tool.contenttool.noAttachmentsRightNow")
+					#end	
+				</div>
+			#else
+				<div class="ig-row">
+					$ui.getString("tool.contenttool.associatedAttachments")<br/>
+					You must save the properties before you can upload any assets
+				</div>
+			#end
+							
+		<script type="text/javascript">
+		<!--
+			function validateAndSubmitContentForm()
+			{
+				if(allowSave == false)
+				{
+					alert("$ui.getString("tool.contenttool.cannotSaveBecauseInvalidClose")");
+					return;
+				}
+			
+				pastedTime = count; 
+				
+				if(beenWarned)
+				{
+					answer = confirm("You have not saved for " + pastedTime + " minutes. We strongly recommends you copy the text so you don't risk loosing it if you have been inactive for to long. Do you want to save anyway?");
+				}
+				
+				if (!beenWarned || answer)
+				{
+					isValid = true;
+					
+					#foreach($attribute in $contentTypeAttributes)
+		   				currentEditorId = currentEditorIdHash["${attribute.name}CurrentEditorId"];
+		   				if(currentEditorId)
+		   					document.getElementById("currentEditorId").value = currentEditorId;
+		   				
+		   				//alert("currentEditorId:" + currentEditorId);
+						if(currentEditorId == 1)
+						{
+							//document.getElementById("${attribute.name}WYSIWYG").
+							//alert("WYSIWYG:" + document.getElementById("${attribute.name}WYSIWYG").value);
+							//document.getElementById("${attribute.name}WYSIWYG").focus();
+							document.getElementById("$attribute.name").value = document.getElementById("${attribute.name}WYSIWYG").value;
+							document.getElementById("$attribute.name").value = untransformAttribute(document.getElementById("$attribute.name").value);
+						}
+						else if(currentEditorId == 2)
+						{
+							document.getElementById("$attribute.name").value = document.applets("InfoGlueCodeEditor").getText();
+						}
+		
+		   				#if($attribute.inputType != "digitalAsset")
+							//isCurrentValid = validate${attribute.name}();
+							//if(isCurrentValid == false)
+							//	isValid = false;
+						#end
+					#end
+					
+					if(isValid)
+					{
+						buildVersionValue(); 
+						document.editForm.submit();
+					}
+				}
+			}
+		
+			function validateAndSubmitContentFormThenExit()
+			{
+				document.editForm.action = "${updateAndExitAction}.action";
+				validateAndSubmitContentForm();		
+			}
+		
+			
+			function buildVersionValue()
+			{
+				var versionValue = "<?xml version='1.0' encoding='UTF-8'?>";
+				versionValue += "<article>";
+				versionValue += "<attributes>";
+				
+				#foreach($attribute in $contentTypeAttributes)
+	   				#if($attribute.inputType != "digitalAsset")
+						versionValue += "<$attribute.name>";
+						versionValue += "<![CDATA[" + getValue("${attribute.name}") + "]]>";
+						versionValue += "</$attribute.name>";
+					#end
+				#end
+				
+				versionValue += "</attributes>";
+				versionValue += "</article>";
+				
+				//alert("versionValue:" + versionValue);				
+				document.editForm.value.value = versionValue;
+			}
+					
+			function getValue(elementId)
+			{
+				var value = "";
+				//alert(elementId);
+				
+				var allElem = document.editForm.elements;
+				//alert("allElem:" + allElem.length);
+			  	for(i=0;i<allElem.length;i++)
+				{
+				    var element = allElem[i];
+				    //alert("element.name:" + element.name);
+				    //alert("element.type:" + element.type);
+				    
+				    if(element.name == elementId)
+				    {
+				    	if(element.type=='checkbox' || element.type=='radio')
+				        {
+				        	//alert("element.checked:" + element.checked);
+				        	if(element.checked == true)
+				          	{
+				          		if(value == "")
+					          		value += element.value;
+								else
+									value += ',' + element.value;				
+				          	}
+				        }
+						else
+						{
+							/*
+							fieldName = "document.editForm." + elementId;
+							value = eval(fieldName).value;
+							*/
+							
+							var hiddenField = document.getElementById(elementId + "Hidden");
+							if(hiddenField)
+								fieldName = "document.editForm." + elementId + "Hidden";
+							else
+								fieldName = "document.editForm." + elementId;
+							
+	
+							value = eval(fieldName).value;
+							
+						}
+				    }      
+				}	
+											
+				//alert("value:" + value);
+				return value;
+			}
+		-->							
+		</script>
+		<input type="hidden" id="value" name="value" value=""/>
+		<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
+			
+		<input type="hidden" name="ownerEntityId" value="$!ownerEntityId"/>
+		<input type="hidden" name="contentTypeDefinitionId" value="$!contentTypeDefinitionId"/>
+		<input type="hidden" name="entityId" value="$!entityId"/>
+		<input type="hidden" name="returnAddress" value="$returnAddress"/>
+		
+		</div>
+				
+	</fieldset>
+
+</form>
+</div>
+
+<form id="catForm" name="catForm" action="PropertiesCategory!add.action" method="post">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<input type="hidden" id="propertiesCategoryId" name="propertiesCategoryId" value=""/>
+	<input type="hidden" id="model/attributeName" name="model/attributeName" value=""/>
+	<input type="hidden" id="model/category/categoryId" name="model/category/categoryId" value=""/>
+	<input type="hidden" name="model/entityName" value="$entityName"/>
+	<input type="hidden" name="model/entityId" value="$entityId"/>
+	<input type="hidden" name="returnAddress" value="$returnAddress"/>
+</form>
+
+#footerToolbar($footerButtons)
+
+#endCommonToolV3()

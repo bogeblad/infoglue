@@ -1,0 +1,40 @@
+<propertysets>
+    <propertyset name="aggregate" class="com.opensymphony.module.propertyset.aggregate.AggregatePropertySet"/>
+    <propertyset name="cached" class="com.opensymphony.module.propertyset.cached.CachingPropertySet"/>
+    <propertyset name="jdbc" class="org.infoglue.cms.util.workflow.InfoGlueJDBCPropertySet">
+    	<arg name="username" value="@database.user@"/>
+		<arg name="password" value="@database.password@"/>
+		<arg name="driverClassName" value="@database.driver.class@"/>
+		<arg name="url" value="@database.url@"/>
+		
+		<!--
+		<arg name="dbcp.whenExhaustedAction" value="2"/>
+		<arg name="dbcp.maxActive" value="@database.maxConnections@"/>
+		<arg name="dbcp.maxWait" value="120000"/>
+		<arg name="dbcp.maxIdle" value="10"/>
+		<arg name="dbcp.validationQuery" value="select 1 from cmSystemUser"/>		
+		-->
+		<arg name="dbcp.validationQuery" value="@database.validationQuery@"/>		
+
+        <!--<arg name="datasource" value="jdbc/DefaultDS"/>-->
+        <arg name="table.name" value="OS_PROPERTYENTRY"/>
+        <arg name="col.globalKey" value="entity_name"/>
+        <arg name="col.entityId" value="entity_id"/>
+        <arg name="col.itemKey" value="entity_key"/>
+        <arg name="col.itemType" value="key_type"/>
+        <arg name="col.booleanVal" value="boolean_val"/>
+        <arg name="col.string" value="string_val"/>
+        <arg name="col.date" value="date_val"/>
+        <arg name="col.data" value="data_val"/>
+        <arg name="col.float" value="double_val"/>
+        <arg name="col.number" value="int_val"/>
+    </propertyset>
+    <propertyset name="ejb" class="com.opensymphony.module.propertyset.ejb.EJBPropertySet"/>
+    <propertyset name="javabeans" class="com.opensymphony.module.propertyset.javabeans.BeanIntrospectorPropertySet"/>
+    <propertyset name="map" class="com.opensymphony.module.propertyset.map.MapPropertySet"/>
+    <propertyset name="memory" class="com.opensymphony.module.propertyset.memory.MemoryPropertySet"/>
+    <propertyset name="serializable" class="com.opensymphony.module.propertyset.memory.SerializablePropertySet"/>
+    <propertyset name="ofbiz" class="com.opensymphony.module.propertyset.ofbiz.OFBizPropertySet"/>
+    <propertyset name="hibernate" class="org.infoglue.cms.util.workflow.hibernate.InfoGlueHibernatePropertySet"/>
+    <propertyset name="xml" class="com.opensymphony.module.propertyset.xml.XMLPropertySet"/>
+</propertysets>

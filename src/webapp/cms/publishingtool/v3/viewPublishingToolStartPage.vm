@@ -1,0 +1,95 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+	<!--
+		$(document).ready(function() {
+			#set($extraParameter = '')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDataTableImpl("systemChanges" $extraParameter)
+		});
+	
+		function openUrlInWorkArea(url, title, targetTab, tabLabelPrefix)
+		{
+			if(parent.openUrlInWorkArea)
+				parent.openUrlInWorkArea(url, title, targetTab, tabLabelPrefix);
+		}
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.publishingtool.welcomeHeader" "" "" false true $!disableCloseButton $headerMarkup)
+
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.publishingtool.welcomeHeader")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+					
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>$ui.getString("entity.Repository.name.label")</th>
+					<th>$ui.getString("tool.contenttool.stateLabel")</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach ($repositoryVO in $repositories)
+					#set($events = $this.getPublicationEvents($repositoryVO.getId(), "all"))
+					#set($groupEvents = $this.getPublicationEvents($repositoryVO.getId(), "groupBased"))
+					#if($events.size() > 0)
+						#set($status = "<strong>$events.size() items up for publishing ($groupEvents.size() by group members)</strong>")	
+					#else
+						#set($status = "No items")	
+					#end
+					<tr>
+						<td>
+							<a href="javascript:void(0);" onclick="openUrlInWorkArea('ViewPublications!V3.action?repositoryId=$repositoryVO.id', '$repositoryVO.getName()', 'publishing', '$publishingTabLabelPrefix');">$repositoryVO.name</a>
+						</td>
+						<td>
+							$status
+						</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+
+		<h3>$ui.getString("tool.publishingtool.globalSettings.header")</h3>
+		
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="systemChanges">
+			<thead>
+				<tr>
+					<th>Class</th>
+					<th>Type</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach ($notificationMessage in $systemNotificationMessages)
+					<tr>
+						<td>$notificationMessage.className</td>
+						<td>$notificationMessage.getTransactionTypeName($notificationMessage.type)</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+	
+		#if($systemNotificationMessages.size() > 0)
+		<p class="buttonPane">	
+			<input type="button" class="commit" onclick="document.location.href = 'ViewPublishingToolStartPage!pushSystemNotificationMessages.action';" value="Push"/>
+		</p>		
+		#end
+	</div>
+
+#endLightCommonToolV3()

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Page components</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<script type="text/javascript" language="JavaScript">
+	<!-- 
+
+	   	function resize() 
+	    {
+			/*
+		    var w_newWidth,w_newHeight;
+		    var w_maxWidth=1600, w_maxHeight=1200;
+		
+			if (window.innerWidth || window.innerHeight){ 
+				w_newWidth = window.innerWidth; 
+				w_newHeight = window.innerHeight; 
+			} 
+			//IE Mozilla 
+			if (document.body.clientWidth || document.body.clientHeight){ 
+				w_newWidth = document.body.clientWidth; 
+				w_newHeight = document.body.clientHeight; 
+			}
+			
+ 		    if (w_newWidth>w_maxWidth)
+			    w_newWidth=w_maxWidth;
+			
+			if (w_newHeight>w_maxHeight)
+			    w_newHeight=w_maxHeight;
+			
+			if (w_newHeight < 1) //For firebird cases
+			    w_newHeight=window.innerHeight;
+			    
+			//alert("w_newWidth:" + w_newWidth + " - " + "w_newHeight:" + w_newHeight);
+			//alert("w_newWidth:" + w_newWidth);
+			//alert("w_newHeight:" + w_newHeight);
+			try 
+			{
+				document.getElementById("pageComponentIFrame").setSize(w_newWidth,w_newHeight);
+			}
+			catch(e)
+			{
+			}
+					
+			document.getElementById("pageComponentIFrame").width  = w_newWidth;
+			document.getElementById("pageComponentIFrame").height = w_newHeight;
+			*/
+
+        }
+
+		window.onResize = resize;
+		window.onLoad   = resize;
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body style="width:100%; height=100%; margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px; border: 1px solid green;" class="structuretool" onload="javascript:resize();" onresize="javascript:resize();">
+
+</body>
+</html>

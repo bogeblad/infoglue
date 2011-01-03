@@ -1,0 +1,14 @@
+New items up for publication
+------------------------------
+CMS notification: The user $principal.firstName $principal.lastName submitted $events.size() items for publishing.
+
+Items: 
+#foreach($event in $events)
+	$event.name - $event.description
+#end
+
+Please visit the publishing tool to review the changes.
+
+------------------------------------------------------------------------
+This email was automatically generated and the sender is the CMS-system.<br/>
+Do not reply to this email.

@@ -1,0 +1,277 @@
+#header
+{
+	background-color: white;
+}
+#headerLeft 
+{
+	background-color: #ccc;
+}
+#headerRight 
+{
+	background-color: #ddd;
+}
+#tools
+{
+	background-color: white;
+	border: 1px solid #6593cf;
+}
+#activeTool
+{
+	background-color: white;
+}
+#activeToolHeader
+{
+	background-image:url(images/gradBackground.gif);
+	background-repeat:repeat-x;
+	border-top: 1px solid white;
+	border-bottom: 1px solid #808280;
+}
+#activeToolHeader h3
+{
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 12pt;
+	font-weight: bold;
+	color: #15428b;
+}
+
+#availableTools
+{
+	float: left;
+	width: 100%; 
+	margin: 0px;
+	padding: 0px;
+}
+#availableTools h3
+{
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 10pt;
+	font-weight: normal;
+	color: black;
+}
+#availableTools ul li
+{
+	background-image:url(images/barBackground.gif);
+	background-repeat:repeat-x;
+	border-top: 1px solid #6593cf;
+}
+#availableTools .active
+{
+	background-image:url(images/activeBarBackground.gif);
+}
+#availableTools ul li a
+{
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 8pt;
+	font-weight: bold;
+	color: #204d89;
+}
+#structureRepositoriesDiv, #contentRepositoriesDiv
+{
+	border-top: 1px solid #ADD1FF;
+}
+.shadow 
+{
+	background-image: url(images/bottomShadow.png);
+	background-repeat: repeat-x;			
+}
+#structureRepositoriesDiv ul, #contentRepositoriesDiv ul
+{
+	background-color: white;
+}
+#structureRepositoriesDiv ul li, #contentRepositoriesDiv ul li
+{
+	background-color: #eef5ff;
+}
+#structureRepositoriesDiv ul li a, #contentRepositoriesDiv ul li a
+{
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 8pt;
+	font-weight: bold;
+	color: black;
+}
+#structureRepositoriesDiv ul li a.current, #contentRepositoriesDiv ul li a.current
+{
+	font-weight: bold;
+	color: #d27600;
+	background-image: url(images/rightarrow.png);
+	background-position: 0px 5px;
+	background-repeat: no-repeat;			
+}	
+#work
+{
+	background-color: white;
+	overflow: hidden;
+	border: 1px solid #6593cf; 
+}
+#structureTabLabel
+{
+	background-image: url(images/icons/pageIcon.gif);
+	background-position: 6px 3px;
+	background-repeat: no-repeat;
+}
+.structure
+{
+	background-image: url(images/icons/pageIcon.gif);
+	background-position: 6px 2px;
+	background-repeat: no-repeat;
+}
+#contentTabLabel
+{
+	background-image: url(images/icons/contentIcon.gif);
+	background-position: 6px 3px;
+	background-repeat: no-repeat;
+}
+.content
+{
+	background-image: url(images/icons/contentIcon.gif);
+	background-position: 6px 2px;
+	background-repeat: no-repeat;
+}
+#managementTabLabel
+{
+	background-image: url(images/icons/metadataIcon.gif);
+	background-position: 6px 3px;
+	background-repeat: no-repeat;
+}
+.management
+{
+	background-image: url(images/icons/metadataIcon.gif);
+	background-position: 6px 2px;
+	background-repeat: no-repeat;
+}
+#publishingTabLabel
+{
+	background-image: url(images/icons/publishPageIcon.gif);
+	background-position: 6px 3px;
+	background-repeat: no-repeat;
+}
+.publishing
+{
+	background-image: url(images/icons/publishPageIcon.gif);
+	background-position: 6px 2px;
+	background-repeat: no-repeat;
+}
+#mydesktopTabLabel
+{
+	background-image: url(images/icons/myDesktopIcon.png);
+	background-position: 6px 3px;
+	background-repeat: no-repeat;
+}
+.mydesktop
+{
+	background-image: url(images/icons/myDesktopIcon.png);
+	background-position: 6px 2px;
+	background-repeat: no-repeat;
+}
+#formeditorTabLabel
+{
+	background-image: url(images/icons/formEditorIcon.png);
+	background-position: 6px 3px;
+	background-repeat: no-repeat;
+}
+.formeditor
+{
+	background-image: url(images/icons/formEditorIcon.png);
+	background-position: 6px 2px;
+	background-repeat: no-repeat;
+}
+#searchTabLabel
+{
+	background-image: url(images/icons/searchButtonIcon.png);
+	background-position: 6px 3px;
+	background-repeat: no-repeat;
+}
+.search
+{
+	background-image: url(images/icons/searchButtonIcon.png);
+	background-position: 6px 2px;
+	background-repeat: no-repeat;
+}
+.ui-widget-header 
+{
+	background-image:url(images/gradBackground.gif);
+	background-repeat:repeat-x;
+	border-top: 1px solid white;
+	border-bottom: 1px solid #808280;
+}
+.ui-tabs .ui-tabs-nav 
+{
+    background-color: white;
+}
+.ui-tabs .ui-tabs-nav li a  
+{
+   	font-size:8pt;
+}
+body.generaltooledit 
+{
+    color:#000000;	
+	background-color: #afb9c7;
+}
+#menutoolbar 
+{
+    background-color: #afb9c7;
+    background-image: url(images/headerToolbarBackground.gif);
+    background-repeat: repeat-x;
+    border-bottom: 1px solid #9CAABD;
+}
+#footertoolbar 
+{
+    background-color: #afb9c7;
+    background-image: url(images/footerBackground.gif);
+   	background-repeat: repeat-x;
+    border-top: 1px solid #9CAABD;
+}
+#contextMenuDiv 
+{
+    background-color: #F9F8F7;
+    background-image: url(images/tileGradient.gif);
+    background-position: left center;
+    background-repeat: repeat-y;
+    border: 1px solid #6593cf;
+    font-family: Tahoma,Arial,Helvetica,sans-serif;
+    font-size: 10pt;
+}
+#contextMenuDiv ul li a
+{
+	color: black;
+	background-position: 4px 2px;
+	text-decoration: none;
+}
+#contextMenuDiv ul li a.movePage
+{
+	background-position: 6px 2px;
+}
+#contextMenuDiv ul li a:hover
+{
+	text-decoration: underline;
+}
+#paletteDiv
+{
+	border-top: 1px solid #6593cf;
+}
+#structureRepositoryChoiceDiv, #contentRepositoryChoiceDiv
+{
+	background-color: #deecff;
+	border-top: 1px solid #add1ff;
+	border-bottom: 1px solid #add1ff;
+}
+#structureRepositoryChoiceDiv > a, #contentRepositoryChoiceDiv > a
+{
+	background-image: url(images/downArrow.gif);
+	background-position: center right;
+	background-repeat: no-repeat;
+}
+#componentPaletteHeader
+{
+	background-color: #ddebff;
+	background-repeat:repeat-x;
+	border-top: 1px solid white;
+	border-bottom: 1px solid #add1ff;
+}
+#componentPaletteHeader h3
+{
+	font-family: Lucida Grande, Lucida Sans, Arial, sans-serif;
+	font-size: 8pt;
+	font-weight: bold;
+	color: #15428b;
+}

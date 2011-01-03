@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out"/>
+		<param name="Threshold" value="DEBUG"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
+		</layout>
+	</appender>
+
+	<appender name="CONSOLE-DEBUG" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out"/>
+		<param name="Threshold" value="DEBUG"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
+		</layout>
+	</appender>
+
+	<appender name="INFOGLUE-FILE" class="org.apache.log4j.RollingFileAppender">
+		<!--<param name="File" value="${catalina.base}/logs/infoglue.log"/>-->
+		<param name="Append" value="true"/>
+ 		<param name="MaxFileSize" value="10MB"/>
+		<param name="MaxBackupIndex" value="5"/>
+		<param name="Threshold" value="WARNING"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+      		<param name="LevelMin" value="WARN" />
+      		<param name="LevelMax" value="WARN" />
+    	</filter>
+   	</appender>
+
+	<appender name="INFOGLUE-FILE-DEBUG" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/infoglue-debug.log"/>
+		<param name="Append" value="true"/>
+ 		<param name="MaxFileSize" value="10MB"/>
+		<param name="MaxBackupIndex" value="5"/>
+		<param name="Threshold" value="DEBUG"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss.SSS} [%-5p] [%t] [%c] - %m%n"/>
+		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+      		<param name="LevelMin" value="DEBUG" />
+      		<param name="LevelMax" value="INFO" />
+    	</filter>
+   	</appender>
+ 
+	<!-- Appender Chainsaw GUI Log viewer
+	<appender name="CHAINSAW" class="org.apache.log4j.net.SocketAppender">
+		<param name="remoteHost" value="localhost"/>
+		<param name="port" value="4445"/>
+		<param name="locationInfo" value="true"/>
+	</appender>
+	-->
+
+	<!--                          -->
+    <!-- Declare the SMTPAppender -->
+    <!--                          -->
+    <!--
+    <appender name="EMAIL"  class="org.apache.log4j.net.SMTPAppender">
+        <param name="BufferSize" value="512" />
+        <param name="SMTPHost" value="smtp.foobar.com" />
+        <param name="From" value="log4j@server5" />
+        <param name="To" value="neo@foobar.com" />
+        <param name="Subject" value="[SMTPAppender] Application message" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+              value="[%d{ISO8601}]%n%n%-5p%n%n%c%n%n%m%n%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="ERROR"/>
+            <param name="LevelMax" value="FATAL"/>
+        </filter>
+    </appender>
+    -->
+    
+	<!-- ==================================	-->
+	<!-- Use categories to control logging  -->
+	<!-- down to the package or class level	-->
+	<!-- ==================================	-->
+
+	<category name="org.infoglue.cms">
+		<priority value="WARN"/>
+		<appender-ref ref="INFOGLUE-FILE"/>		
+	</category>
+
+	<category name="org.infoglue.deliver">
+		<priority value="WARN"/>
+		<appender-ref ref="INFOGLUE-FILE"/>		
+	</category>
+
+	<category name="org.exolab.castor">
+		<priority value="WARN"/>
+	</category>
+
+	<category name="org.exolab.castor.jdo">
+      <priority value="WARN" />
+    </category>
+
+	<category name="webwork">
+		<priority value="WARN"/>
+	</category>
+
+	<category name="org.quartz.xml">
+		<priority value="WARN"/>
+	</category>
+
+	<category name="org.infoglue.console-debug-dummy">
+		<priority value="ERROR"/>
+		<appender-ref ref="CONSOLE-DEBUG"/>
+	</category>
+	
+	<category name="org.infoglue.file-debug-dummy">
+		<priority value="ERROR"/>
+		<appender-ref ref="INFOGLUE-FILE-DEBUG"/>
+	</category>
+
+	<!--
+	<category name="org.infoglue.deliver.portal">
+		<priority value="DEBUG"/>
+		<appender-ref ref="INFOGLUE-FILE-DEBUG"/>	
+	</category>
+	<category name="org.apache.pluto">
+		<priority value="DEBUG"/>
+		<appender-ref ref="CONSOLE-DEBUG"/>
+	</category>
+	-->
+	
+	<category name="net.sf.hibernate.util.JDBCExceptionReporter">
+		<priority value="FATAL"/>
+	</category>	
+	
+	<category name="net.sf.hibernate.cfg.SettingsFactory">
+		<priority value="FATAL"/>
+	</category>	
+	
+	<category name="com.opensymphony.workflow.spi.hibernate.HibernateWorkflowStore">
+		<priority value="FATAL"/>
+	</category>	
+	
+	<category name="com.opensymphony.workflow.AbstractWorkflow">
+		<priority value="FATAL"/>
+	</category>	
+	
+	<category name="net.sf.hibernate">
+		<priority value="WARN"/>
+	</category>
+
+	<!-- Anyhing not caught by the above categories will be caught here -->
+	<root>
+		<priority value="ERROR"/>
+		<appender-ref ref="CONSOLE"/>
+		<!--<appender-ref ref="EMAIL" />-->
+	</root>
+
+</log4j:configuration>
+
+

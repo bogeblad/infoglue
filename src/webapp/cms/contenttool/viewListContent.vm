@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("Available languages" "Languages" "")
+
+#set($lvConstraint = 1) 
+#lvHead(["Name","Language code"] "Delete language" "DeleteLanguage.action" "ViewListLanguage.action?title=Languages" "Do you really want to delete the language:<br/><br/>")
+
+#set($cnt = 0)
+#foreach ($languageVO in $languages)
+	#set( $languageId = $languageVO.getLanguageId() ) 
+	
+	#set( $rowUrl = "ViewLanguage.action?languageId=$languageVO.getLanguageId()&title=Language%20details")
+	#set( $row = ["<input type='hidden' name='rowtitle' value='$languageVO.getName()'/> <a href=$rowUrl>$languageVO.getName()</a>","$languageVO.getLanguageCode()"] )
+	#set($cnt = $cnt + 1)
+	
+	#lvAddRow($row $cnt $languageId)
+#end
+
+#lvEnd()
+#endManagementTool()

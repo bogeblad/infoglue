@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Header</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	
+	<script type="text/javascript">
+	<!--
+		function reloadMenu(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			if(repositoryId != "")
+			{
+				var agt=navigator.userAgent.toLowerCase();
+			    if(agt.indexOf("safari")!=-1)
+				    parent.frames[2].location = "ViewPublications.action?repositoryId=" + repositoryId;
+			    else
+			        parent.frames[2].location.href = "ViewPublications.action?repositoryId=" + repositoryId;
+			        
+	   			selectBox.selectedIndex = 0;		    
+			}
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="publishingtool">
+
+<form name="selectbox" method="post" action="">
+<table border="0" class="publishingtool" cellspacing="0" cellpadding="0" width="100%" height="100%">
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td colspan="7"><img src="images/trans.gif" width="1" height="10"/></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td class="toolheader"><img src="images/$ui.getString("images.publishingtool.repositoryLabel")" width="70" height="19"/></td> 
+	<td>
+  		<select size="1" name="repositoryId" class="sitedropbox" onchange="reloadMenu(this);">
+		    #if ($repositories.size() > 1)
+		    	<option value="" selected>$ui.getString("tool.publishingtool.chooseRepositoryLabel")</option>
+		    #end
+		    <!--option value="0">All repositories</option--> <!-- not yet -->
+		    #foreach ($repositoryVO in $repositories)
+		    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+		    #end
+		</select>
+	</td>
+	<td class="toolheader"><img src="images/trans.gif" width="10" height="19"/></td>
+	<td class="toolheader"><img src="images/trans.gif" width="48" height="19"/></td>
+	<td class="toolheader" width="80%"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td colspan="7"><img src="images/trans.gif" width="1" height="10"/></td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+</tr>
+</table>
+</form>
+
+</body>
+
+</html>

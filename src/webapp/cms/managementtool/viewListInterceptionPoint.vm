@@ -1,0 +1,61 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDeleteLink()
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewInterceptionPointList.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewInterceptionPointList.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.common.action.label")</th>
+					<th>$ui.getString("entity.InterceptionPoint.name.label")</th>
+					<th>$ui.getString("entity.InterceptionPoint.category.label")</th>
+					<th>$ui.getString("entity.InterceptionPoint.description.label")</th>
+					<th>$ui.getString("entity.InterceptionPoint.usesExtraDataForAccessControl.label")</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach($interceptionPointVO in $interceptionPointVOList)
+					<tr>
+						<td><a class="deleteCross" title="$ui.getString("tool.common.delete.label") $interceptionPointVO.name" href="DeleteInterceptionPoint.action?interceptionPointId=$interceptionPointVO.id&igSecurityCode=$securityCode">&nbsp;#*$ui.getString("tool.common.delete.label")*#</a></td>
+						<td>
+							<a href="ViewInterceptionPoint.action?interceptionPointId=$interceptionPointVO.id" class="group">$interceptionPointVO.name</a>
+						</td>
+						<td>$interceptionPointVO.category</td>
+						<td>$interceptionPointVO.description</td>
+						<td>$interceptionPointVO.usesExtraDataForAccessControl</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+				
+	</div>
+		
+#endLightCommonToolV3()

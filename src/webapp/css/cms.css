@@ -1,0 +1,727 @@
+/***************
+ body elements
+***************/
+ 
+body { 
+	color            : #123456;
+	#background-color : #666666;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+}
+body.cmstool {
+	color            : #FFFFFF;
+	background-color : #666666;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+}
+
+body.managementtool {
+  	color            : #FFFFFF;
+	#background-color : #C2D0E2;
+}
+
+body.managementtooledit {
+  	color            : #FFFFFF;
+	#background-color : #E3ECF8;
+}
+
+body.contenttool {
+  	color            : #FFFFFF;
+	background-color : #C7D1B3;
+}
+
+body.contenttooledit {
+  	color            : #FFFFFF;
+	background-color : #EEF7DC;
+}
+
+body.structuretool {
+  	color            : #FFFFFF;
+	background-color : #F0E1B4;
+}
+
+body.structuretooledit {
+  	color            : #FFFFFF;
+	background-color : #FEF8D0;
+}
+
+body.publishingtool {
+  	color            : #FFFFFF;
+	background-color : #D2CBBC;
+}
+
+body.publishingtooledit {
+  	color            : #FFFFFF;
+	background-color : #ECE6D9;
+}
+body.mydesktoptool {
+  	color            : #FFFFFF;
+	background-color : #dcd787;
+}
+
+body.mydesktoptooledit {
+  	color            : #FFFFFF;
+	background-color : #ededb2;
+}
+body.generaltooledit {
+	color            : #000000;
+	/*background-color: #f6f6f6;*/
+	background-color: #fff;
+	padding			 : 0px;
+	margin			 : 0px;
+	width			 : 100%; 
+	float			 : left;
+}
+
+
+/**************
+ table elements
+***************/
+
+table.managementtoolleveraged {
+	background-color : #C2D0E2;
+	border-style	 : outset;
+	border-width	 : 1px;
+	width			 : 100%;
+}
+
+table.managementtooledit {
+	background-color : #E3ECF8;
+}
+
+<!--
+table.contenttool {
+	background-color : #C7D1B3;
+}
+table.contenttooledit {
+	background-color : #EEF7DC;
+}
+-->
+
+td.bordered {
+	border-style	 : solid;
+	border-width	 : 1px;	
+	border-color     : #C2D0E2;
+}
+
+tr.managementtoolleveraged {
+	background-color : #C2D0E2;
+	border-style	 : outset;
+	border-width	 : 1px;
+	width			 : 100%;
+}
+tr.darkbrown {
+	background-color : #D2CBBC;
+	height 			 : 14pt;
+}
+
+tr.darkblue {
+	background-color : #C2D0E2;
+	height 			 : 14pt;
+}
+tr.darkgreen {
+	background-color : #C7D1B3;
+	height 			 : 12pt;
+}
+tr.darkapricot {
+	background-color : #F0E1B4;
+	height 			 : 12pt;
+}
+tr.darkyellow {
+	background-color : #dcd787;
+	height 			 : 14pt;
+}
+tr.lightbrown {
+	background-color : #ECE6D9;
+	height 			 : 14pt;
+}
+tr.lightblue {
+	background-color : #E3ECF8;
+	height 			 : 14pt;
+}
+tr.lightgreen {
+	background-color : #EEF7DC;
+	height 			 : 14pt;
+}
+tr.lightapricot {
+	background-color : #FEF8D0;
+	height 			 : 12pt;
+}
+tr.lightyellow {
+	background-color : #ededb2;
+	height 			 : 14pt;
+}
+tr.sectionDivider {
+	background-color : #e7e3e7;
+	height 			 : 14pt;
+}
+tr.white {
+	background-color : #FFFFFF;
+	height 			 : 14pt;
+}
+tr.dark {
+	background-color : #999999;
+	height 			 : 14pt;
+}
+
+tr.markedlightblue {
+	background-color : #FFCC66;
+	height 			 : 14pt;
+}
+
+tr.markedlightgreen {
+	background-color : #FFCC66;
+	height 			 : 14pt;
+}
+
+tr.markedwhite {
+	background-color : #FFCC66;
+	height 			 : 14pt;
+}
+
+tr.markedlightbrown {
+	background-color : #FFCC66;
+	height 			 : 14pt;
+}
+
+tr.hilightblue {
+	background-color : #FFF5CC;
+	height 			 : 14pt;
+}
+tr.hiwhite {
+	background-color : #FFF5CC;
+	height 			 : 14pt;
+}
+
+tr.hilightbrown {
+	background-color : #FFF5CC;
+	height 			 : 14pt;
+}
+tr.darksilver {
+	background-color : #e6e8e6;
+}
+td.highlightedAttribute {
+	background: url("../images/v3/markedAttributeBackground.gif") 0px 0px no-repeat;
+}
+
+table.bordered {	
+	border-style     : solid; 
+	border-width     : 1px;
+	border-color     : black;
+}
+
+td {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+	color		 	 : #333333;
+}
+
+td.white {
+	background-color : #FFFFFF;
+}
+
+td.dark {
+	background-color : #999999;
+}
+
+td.whitelabel {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 10pt;
+	color		 	 : #FFFFFF;
+}
+td.cmstool {
+	color            : #FFFFFF;
+	background-color : #666666;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+}
+td.toolheader {
+	font-size        : 8pt;
+}
+td.darkblue {
+	background-color : #C2D0E2;
+}
+td.lightblue {
+	background-color : #F5F8FB;
+}
+td.darkbrown {
+	background-color : #D2CBBC;
+}
+td.listwhite {
+	background-color : #FFFFFF;
+}
+td.biglabel {
+	font-size        : 10pt;
+	font-weight		 : bold;
+}
+td.smalllabel {
+	font-size        : 8pt;
+	font-weight	     : bold;
+}
+td.actionheader {	
+	font-family 	 : Verdana; 
+	font-size		 : 8pt;
+	font-weight		 : bold;
+	height			 : 22px;
+	padding-left	 : 5px;
+}
+td.titleField {	
+	font-family 	 : Verdana; 
+	font-size		 : 10pt;
+	font-weight		 : bold;
+	height			 : 18px;
+	padding-left	 : 10px;
+	/*border: 1px solid red;*/
+}
+td.propertiesheader {	
+	font-family 	 : Verdana; 
+	font-size		 : 12pt;
+	font-weight		 : bold;
+	height			 : 16px;
+	background-color : #E3ECF8;
+	border-style     : solid; 
+	border-width     : 1px;
+	border-color     : black;
+}
+
+td.listheader {	
+	font-family 	 : Verdana; 
+	font-size		 : 8pt;
+	font-weight		 : normal;
+	line-height 	 : 15px;
+	height			 : 20px;
+}
+td.managementtool {
+	background-color : #F5F8FB;
+}
+td.menu {
+	/*valign 			 : top;*/	
+	font-size		 : 8pt;
+}
+.warningText {
+	font-family 	 : Verdana; 
+	font-size		 : 8pt;
+	font-weight		 : normal;
+	color            : #FF0000;
+}
+
+/************** 
+ form elements
+***************/
+
+select, input {
+	border : 1px solid #C2D0E2;
+	font-size: 12px;
+}
+input.normaltextfield {
+	width            : 300px;
+}
+
+input.mediumtextfield {
+	width            : 400px;
+}
+
+input.longtextfield {
+	width            : 500px;
+}
+
+input.date {
+	width            : 115px;
+}
+input.searchfield {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+	border-style	 : solid;
+	border-width	 : 1px;	
+	border-color	 : #000000;	
+	width            : 200px;
+}
+select.yesNoDropBox{
+	width            : 70px;
+}
+select.sitedropbox {
+	width            : 150px;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+}
+select.contenttypes {
+	width            : 300px;
+}
+
+select.dropbox {
+	width            : 200px;
+}
+select.mediumdrop {
+	width            : 142px;
+}
+
+textarea.smalltextarea {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+	border-style	 : solid;
+	border-width	 : 1px;
+	border-color     : #C2D0E2;
+	width            : 500px;
+	height			 : 100px;
+}
+
+textarea.normaltextarea {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+	border-style	 : solid;
+	border-width	 : 1px;
+	border-color     : #C2D0E2;
+	width            : 500px;
+	height			 : 200px;
+}
+
+textarea.largetextarea {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+	border-style	 : solid;
+	border-width	 : 1px;
+	border-color     : #C2D0E2;
+	width            : 500px;
+	height			 : 200px;
+}
+textarea.greedytextarea {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+	border-style	 : solid;
+	border-width	 : 1px;
+	border-color     : #C2D0E2;
+	width            : 700px;
+	height           : 600px;
+}
+
+/******************
+ Controls checkbox lists and radiobuttons list in content editor mode
+******************/ 
+.optionList {
+	border: 1px solid #C2D0E2;
+	max-height: 100px;
+	overflow: auto;
+	background-color: white;
+	float: left;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.optionList li {
+	float: left;
+	width: 33%;
+	margin: 0;
+	padding: 0;
+}
+
+/**************
+ other elements
+***************/
+
+select.contenttool {
+	background-color : #C7D1B3;
+}
+
+div.leftmarginalized {
+	margin-left		 : 15px;
+	width 			 : 100%;	
+}
+div.leftminormarginalized {
+	margin-left		 : 5px;
+}
+div.minormarginalized {
+	margin-left		 : 5px;
+	margin-right	 : 5px;
+}
+
+div.fullymarginalized {
+	height			 : 100%;
+	color			 : black;
+	padding-left	 : 15px;
+	padding-right    : 15px;
+	padding-top		 : 15px;
+}
+
+div.listmarginalized {
+	margin-left		 : 0px;
+	margin-right     : 0px;
+	margin-top		 : 0px;
+	width 			 : 100%;	
+}
+
+div.attributedetails {
+	margin-left		 : 10px;
+	margin-right     : 10px;
+	margin-top		 : 10px;
+	background-color : white; 
+	width			 : 400px; 
+	height			 : 300px; 
+	left			 : 150px; 
+	position		 : absolute; 
+	top				 : 150px; 
+	visibility	     : hidden; 
+	z-index 		 : 0;
+}
+ 
+img.bordered {
+	border-style	 : solid;
+	border-width	 : 1px;
+	border-color     : #000000;
+}
+img.scaledbordered {
+	border-style	 : solid;
+	border-width	 : 1px;
+	border-color     : #000000;
+}
+
+
+/**************
+ Links
+***************/
+
+a.smalllabel {
+	font-size        : 8pt;
+	font-weight	     : normal;
+}
+a.whitelabel {
+	color			 : #FFFFFF;
+}
+
+a {
+  	text-decoration	 : none;
+  	color			 : #0022AA;
+}
+a:hover {
+    text-decoration	 : underline;
+}
+a:active {
+    text-decoration	 : none;
+}
+a:focus {
+	outline: none;
+	}
+
+/* MENU SS */
+
+.menucanvas { 
+	background-color	: #EEEEEE;
+	border-left			: 1px solid #666666; 
+	border-right		: 1px solid #666666; 
+	border-top			: 1px solid #666666; 
+	border-bottom		: 1px solid #666666;
+}
+.menuitem {
+	font-family		 : verdana, sans-serif;
+	font-size		 : 10px;
+	color			 : #000000;
+	cursor			 : pointer;
+}
+.menusplit{
+	font-family		 : verdana, sans-serif;
+	font-size		 : 1px;
+	border-bottom	 : 1px solid #666666; 
+}
+.menuitemhov {
+	background-color	: #316AC5;
+	font-family			: verdana, sans-serif;
+	font-size			: 10px;
+	color				: #FFFFFF;
+	cursor				: pointer;
+}
+
+/* New classes for dividers in forms */
+.subtitle {
+	font-weight			: bold;
+	font-size			: 14px;
+	height				: 20px;
+	border-bottom		: 1px solid #666666;
+}
+
+#systemMessages {
+	position 			: absolute;
+	display				: none;
+	background-color 	: #333333;
+	top 				: 0px;
+	left 				: 0px;
+	bottom				: 0px;
+	right				: 0px;
+	width 				: 100%;
+	height				: 100%;
+	opacity				: .75;
+    filter				: alpha(opacity=75);
+    z-index				: 10;
+}
+
+#systemMessagesDialog {
+	position 			: absolute;
+	display				: none;
+	color 				: black;
+	border 				: 1px solid #666666;
+	top 				: 0px;
+	left 				: 0px;
+	bottom				: 0px;
+	right				: 0px;
+	width 				: 100%;
+	height				: 100%;
+    z-index				: 20;
+}
+
+#systemMessagesMain {
+	position 			: absolute;
+	display				: inherit;
+	background-color 	: white;
+	color 				: black;
+	border 				: 1px solid black;
+	width 				: 410px;
+	height				: 370px;
+	margin				: 10%;
+}
+
+.systemMessagesDivHandle {
+	padding-top:2px;
+	padding-bottom:2px;
+	width:100%;
+	color:white;
+	background-color:navy;
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	}
+
+.systemMessagesDivLeftHandle {
+	width: 150px; 
+	float: left;
+	color:white;
+	text-align: left;
+	line-height:10px;
+	}
+.systemMessagesDivRightHandle {
+	color:white;
+	text-align: right;
+	line-height:10px;	
+	}
+
+.systemMessagesDivBody {
+    padding-top:2px;
+	padding-bottom:2px;
+	width:100%;
+	height:350px;
+	background-color: white;
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	overflow: auto;
+	}
+
+.dialogHandle {
+	margin:2px;
+	padding:2px;
+	width:440px;
+	color:white;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	background-image: url('../images/handleBackground.gif');
+	}
+
+h2 {
+	font-size        : 20pt;
+	font-weight		 : 900;
+	color			 : black;
+}
+
+.systemLinkLabel {
+	float: left;
+	font-size: 12px;
+}
+
+.systemImageLink {
+	margin: 10px;
+	float: left;
+	padding: 50px 10px 10px 10px;
+}
+
+.archiveImage {
+	background-image: url('../images/archiveIcon.gif');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+.validationImage {
+	background-image: url('../images/validationIcon.gif');
+	background-repeat: no-repeat;		
+	background-position: top center;
+}
+
+.logviewerImage {
+	background-image: url('../images/logviewerIcon.gif');
+	background-repeat: no-repeat;		
+	background-position: top center;
+}
+
+.inconsistenciesImage {
+	background-image: url('../images/inconsistenciesIcon.gif');
+	background-repeat: no-repeat;		
+	background-position: top center;
+}
+
+.deploymentImage {
+	background-image: url('../images/deploymentIcon.gif');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+.deploymentVCImage {
+	background-image: url('../images/deploymentVCIcon.png');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+.passwordImage {
+	background-image: url('../images/passwordIcon.gif');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+.luceneImage {
+	background-image: url('../images/luceneIcon.png');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+ul {
+	margin-left: 2px;
+	padding-left: 2px;
+	list-style-type: none;
+}
+li.chatitem {
+	padding-bottom: 2px;
+	border-bottom: 0px; 
+	padding-top: 2px; 
+	padding-bottom: 2px; 
+	white-space: normal;
+	cursor: text;
+}
+li.normalitemhead {
+	border-bottom: 1px solid #666666; 
+	padding-bottom: 2px;
+	padding-top: 2px; 
+	padding-bottom: 2px; 
+	white-space: normal;
+	cursor: text;
+}
+li.normalitem {
+	padding-bottom: 2px;
+	border-bottom: 0px; 
+	padding-top: 2px; 
+	padding-bottom: 2px; 
+	white-space: normal;
+	cursor: text;
+}
+.name { 
+	font-weight: bold; 
+}
+#bindings li {
+	border-bottom: 1px solid #666666; 
+	padding-top: 2px; 
+	padding-bottom: 2px; 
+	white-space: nowrap;
+	cursor: move;
+	}

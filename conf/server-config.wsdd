@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <globalConfiguration>
+  <parameter name="adminPassword" value="admin"/>
+  <parameter name="enableNamespacePrefixOptimization" value="true"/>
+  <parameter name="attachments.Directory" value="attachments"/>
+  <parameter name="disablePrettyXML" value="true"/>
+  <parameter name="sendMultiRefs" value="true"/>
+  <parameter name="sendXsiTypes" value="true"/>
+  <parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/>
+  <parameter name="sendXMLDeclaration" value="true"/>
+  <requestFlow>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="session"/>
+   </handler>
+   <handler type="java:org.apache.axis.handlers.JWSHandler">
+    <parameter name="scope" value="request"/>
+    <parameter name="extension" value=".jwr"/>
+   </handler>
+  </requestFlow>
+ </globalConfiguration>
+ <handler name="LocalResponder" type="java:org.apache.axis.transport.local.LocalResponder"/>
+ <handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper"/>
+ <handler name="Authenticate" type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+ <service name="AdminService" provider="java:MSG">
+  <parameter name="allowedMethods" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+  <namespace>http://xml.apache.org/axis/wsdd/</namespace>
+ </service>
+ <service name="RemoteContentService" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="org.infoglue.cms.webservices.RemoteContentServiceImpl"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.content.ContentVO" qname="ns1:ContentVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.content.ContentVersionVO" qname="ns1:ContentVersionVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.management.CategoryVO" qname="ns1:CategoryVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.content.ContentCategoryVO" qname="ns1:ContentCategoryVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.StatusBean" qname="ns1:StatusBean" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.CreatedEntityBean" qname="ns1:CreatedEntityBean" xmlns:ns1="infoglue"/>
+ </service>
+ <service name="RemoteSiteNodeService" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="org.infoglue.cms.webservices.RemoteSiteNodeServiceImpl"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.structure.SiteNodeVO" qname="ns1:SiteNodeVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.StatusBean" qname="ns1:StatusBean" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.CreatedEntityBean" qname="ns1:CreatedEntityBean" xmlns:ns1="infoglue"/>
+ </service>
+ <service name="RemoteUserService" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="org.infoglue.cms.webservices.RemoteUserServiceImpl"/>
+  <beanMapping languageSpecificType="java:org.infoglue.common.security.beans.InfoGluePrincipalBean" qname="ns1:InfoGluePrincipalBean" xmlns:ns1="beans.security.common.infoglue.org"/>
+  <beanMapping languageSpecificType="java:org.infoglue.common.security.beans.InfoGlueRoleBean" qname="ns1:InfoGlueRoleBean" xmlns:ns1="beans.security.common.infoglue.org"/>
+  <beanMapping languageSpecificType="java:org.infoglue.common.security.beans.InfoGlueGroupBean" qname="ns1:InfoGlueGroupBean" xmlns:ns1="beans.security.common.infoglue.org"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.StatusBean" qname="ns1:StatusBean" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.CreatedEntityBean" qname="ns1:CreatedEntityBean" xmlns:ns1="infoglue"/>
+ </service>
+ <service name="RemoteUserPropertiesService" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="org.infoglue.cms.webservices.RemoteUserPropertiesServiceImpl"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.StatusBean" qname="ns1:StatusBean" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.CreatedEntityBean" qname="ns1:CreatedEntityBean" xmlns:ns1="infoglue"/>
+ </service>
+ <service name="RemoteManagementService" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="org.infoglue.cms.webservices.RemoteManagementServiceImpl"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.StatusBean" qname="ns1:StatusBean" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.webservices.elements.CreatedEntityBean" qname="ns1:CreatedEntityBean" xmlns:ns1="infoglue"/>
+ </service>
+ <service name="RemoteWorkflowService" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="org.infoglue.cms.webservices.RemoteWorkflowServiceImpl"/>
+ </service>
+ <service name="RemoteFormService" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="org.infoglue.cms.webservices.RemoteFormServiceImpl"/>
+ </service>
+ <service name="RemoteDeploymentService" provider="java:RPC">
+  <parameter name="allowedMethods" value="*"/>
+  <parameter name="className" value="org.infoglue.cms.webservices.RemoteDeploymentServiceImpl"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.management.CategoryVO" qname="ns1:CategoryVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.workflow.WorkflowDefinitionVO" qname="ns1:WorkflowDefinitionVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.management.ContentTypeDefinitionVO" qname="ns1:ContentTypeDefinitionVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.management.RepositoryVO" qname="ns1:RepositoryVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.content.ContentVO" qname="ns1:ContentVO" xmlns:ns1="infoglue"/>
+  <beanMapping languageSpecificType="java:org.infoglue.cms.entities.content.ContentVersionVO" qname="ns1:ContentVersionVO" xmlns:ns1="infoglue"/>
+ </service>
+ <service name="Version" provider="java:RPC">
+  <parameter name="allowedMethods" value="getVersion"/>
+  <parameter name="className" value="org.apache.axis.Version"/>
+ </service>
+ <transport name="http">
+  <requestFlow>
+   <handler type="URLMapper"/>
+   <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </requestFlow>
+  <parameter name="qs:list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs:wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+  <parameter name="qs.list" value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs.method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs:method" value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs.wsdl" value="org.apache.axis.transport.http.QSWSDLHandler"/>
+ </transport>
+ <transport name="local">
+  <responseFlow>
+   <handler type="LocalResponder"/>
+  </responseFlow>
+ </transport>
+</deployment>

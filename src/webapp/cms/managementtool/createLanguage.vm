@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.createLanguage.header" "tool.managementtool.createLanguage.header" "")
+
+<div class="fullymarginalized">
+	
+	<form name="editForm" method="post" action="CreateLanguage.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="action" value="save">
+		<p>#editField("Language.name" "name" $!name "10")</p>
+		<p>#editField("Language.languageCode" "languageCode" $!languageCode "10")</p>
+		<p>#editField("Language.charset" "charset" $!charset "10")</p>
+	</form>
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListLanguage.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,326 @@
+#beginLightCommonToolV3("tool.contenttool.linkDialog.linkDialogHeader" "" "" false false $!disableCloseButton)
+
+	<script type="text/javascript">
+	<!--
+	
+	function resize()
+	{
+		var dimensionsWidth = $(window).width();
+		var dimensionsHeight = $(window).height();
+		var offsetTop = $("#tabsContainer").offset().top;
+		var availableHeight = dimensionsHeight - offsetTop - $("#footertoolbar").height();
+		$("#tabsContainer").height(availableHeight);
+		
+	  	if(dimensionsWidth != 0)
+	  	{
+			$(".inlineTabDiv").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+			$(".inlineTabDiv > iframe").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+
+	  		$(".inlineSubTabDiv").height(dimensionsHeight - 220);
+			$(".inlineSubTabDiv").width(dimensionsHeight - 40);
+			$(".inlineSubTabDiv > iframe").width(dimensionsWidth - 60);
+		}
+		else
+		{
+			setTimeout("resize()", 300);
+		}
+	}
+
+	function toggleUploadButton(active)
+	{
+		if(!active)
+			$(".attachAsset").hide();
+		else
+			$(".attachAsset").show();
+	}
+
+	function toggleUsePageButton(active)
+	{
+		//alert("toggleUsePageButton: " + active);
+		if(!active)
+			$(".linkInsert").hide();
+		else
+			$(".linkInsert").show();
+	}
+
+	function toggleUseAssetButton(active)
+	{
+		//alert("toggleUseAssetButton: " + active);
+		if(!active)
+			$(".linkInsertAsset").hide();
+		else
+			$(".linkInsertAsset").show();
+	}
+	
+	$(document).ready(function(){
+		$("#tabsContainer").tabs({ show:function(e, ui) { 
+				if(ui.index > 0) 
+				{
+					toggleUploadButton(false);
+					toggleUsePageButton(false);
+					toggleUseAssetButton(true);
+				}
+				else
+				{
+					toggleUploadButton(false);
+					toggleUsePageButton(true);
+					toggleUseAssetButton(false);
+				}
+				/*resizeInlineTabDivs();*/ 
+			} 
+		});
+		setTimeout("resize();", 100);
+		//setTimeout("resizeInlineTabDivs()", 100);
+		init();
+	});
+
+	var txtUrl = "";
+	function getTextUrl()
+	{
+		return txtUrl;
+	}
+	
+	function getRequestParameter(url, parameterName)
+	{
+		valueIndex = url.indexOf(parameterName + "=");
+		//alert("valueIndex:" + valueIndex);
+		endIndex = url.indexOf("&", valueIndex);
+		if(endIndex != -1)
+			value = url.substring(valueIndex + parameterName.length + 1, endIndex);
+		else
+			value = url.substring(valueIndex + parameterName.length + 1);
+		//alert("value:" + value);
+		return value;
+	}
+	
+	
+	function init()
+	{
+		oldSiteNodeId = "";
+		oldContentId = "";
+		
+		oldAssetContentId = "";
+		oldAssetKey = "";
+
+		var txtUrl = "";
+		if(window.top.opener && typeof(window.top.opener.CKEDITOR) != 'undefined')
+		{
+			var instanceName = getRequestParameter(window.location.href, "CKEditor");
+			if(window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.url)
+				txtUrl = window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.url._.initValue;
+			else if(window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.txtUrl)
+				txtUrl = window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.txtUrl._.initValue;
+		}
+		else if(window.top.opener)
+		{
+			if(top.opener.document.getElementById("txtLnkUrl"))
+			{
+				txtUrl = top.opener.document.getElementById("txtLnkUrl").value;
+				if(txtUrl == "")
+					txtUrl = top.opener.document.getElementById("txtUrl").value;
+			}
+		}
+
+		//alert("txtUrl:" + txtUrl);
+		
+		if(txtUrl.indexOf("getPageUrl") > -1)
+		{				
+			if(txtUrl != "")
+			{
+				siteNodeIdStartIndex = txtUrl.indexOf("(");
+				siteNodeIdEndIndex = txtUrl.indexOf(",");
+				//alert("siteNodeIdStartIndex:" + siteNodeIdStartIndex);
+				//alert("siteNodeIdEndIndex:" + siteNodeIdEndIndex);
+				
+				oldSiteNodeId = txtUrl.substring(siteNodeIdStartIndex + 1, siteNodeIdEndIndex);
+				txtUrl = txtUrl.substring(siteNodeIdEndIndex);
+				//alert("txtUrl:" + txtUrl);
+				contentIdStartIndex = txtUrl.lastIndexOf(",");
+				contentIdEndIndex = txtUrl.lastIndexOf(")");
+				oldContentId = txtUrl.substring(contentIdStartIndex + 1, contentIdEndIndex);
+				if(oldContentId == "null" || oldContentId == " null")
+					oldContentId = "-1";
+				//alert("oldSiteNodeId:" + oldSiteNodeId);
+				//alert("oldContentId:" + oldContentId + ":");
+			}
+			
+			document.getElementById("internalLinkFrame").src = "ViewStructureTreeForInlineLink!useFCKEditorV3.action?contentId=$!contentId&languageId=$!languageId&oldSiteNodeId=" + oldSiteNodeId + "&oldContentId=" + oldContentId;
+			document.getElementById("internalAssetFrame").src = "ViewContentVersion!viewSmallAssetBrowserForFCKEditorV3.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&treatAsLink=true&textAreaId=$!textAreaId&oldContentId=" + oldAssetContentId + "&assetKey=" + oldAssetKey;
+		}
+		else if(txtUrl.indexOf("DownloadAsset.action") > -1)
+		{				
+			if(txtUrl != "")
+			{
+				oldAssetContentId = getRequestParameter(txtUrl, "contentId");
+				if(!oldAssetContentId || oldAssetContentId == "")
+					oldAssetContentId = "$!contentId";
+				languageId 		= getRequestParameter(txtUrl, "languageId");
+				oldAssetKey		= getRequestParameter(txtUrl, "assetKey");
+			}
+
+			document.getElementById("internalLinkFrame").src = "ViewStructureTreeForInlineLink!useFCKEditorV3.action?contentId=$!contentId&languageId=$!languageId&oldSiteNodeId=" + oldSiteNodeId + "&oldContentId=" + oldContentId;
+			document.getElementById("internalAssetFrame").src = "ViewContentVersion!viewSmallAssetBrowserForFCKEditorV3.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&treatAsLink=true&textAreaId=$!textAreaId&oldContentId=" + oldAssetContentId + "&assetKey=" + oldAssetKey;
+		}
+		else
+		{
+			document.getElementById("internalLinkFrame").src = "ViewStructureTreeForInlineLink!useFCKEditorV3.action?contentId=$!contentId&languageId=$!languageId";
+			document.getElementById("internalAssetFrame").src = "ViewContentVersion!viewSmallAssetBrowserForFCKEditorV3.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&treatAsLink=true&textAreaId=$!textAreaId&oldContentId=" + oldAssetContentId + "&assetKey=" + oldAssetKey;
+		}
+			
+		//alert("oldContentId=" + oldContentId);
+	}
+	
+	var selectedContentId;
+	var selectedAssetKey;
+	var selectedAssetUrl;
+	function assetMarked(contentId, assetKey, assetUrl)
+	{
+		//alert("Asset was marked in link:" + contentId + assetKey + assetUrl);
+		selectedContentId = contentId;
+		selectedAssetKey = assetKey;
+		selectedAssetUrl = assetUrl;
+	}
+
+	var selectedSiteNodeId;
+	var selectedSiteNodePath;
+	function pageMarked(siteNodeId, path)
+	{
+		//alert("Page was marked in link:" + siteNodeId + ":" + selectedSiteNodePath);
+		selectedSiteNodeId = siteNodeId;
+		selectedSiteNodePath = path;
+	}
+
+	var selectedSiteNodeContentId = -1;
+	var selectedSiteNodeContentPath;
+	function contentMarked(contentId, path)
+	{
+		//alert("Content was marked in link:" + contentId + ":" + path);
+		selectedSiteNodeContentId = contentId;
+		selectedSiteNodeContentPath = path;
+	}
+	
+	function useSelectedAsset()
+	{
+		if(selectedAssetKey == "")
+			alert("$ui.getString("tool.contenttool.assetDialog.mustChooseAttachment")");
+		else
+		{
+			var url = "DownloadAsset.action?contentId=" + selectedContentId + "&languageId=$languageId&assetKey=" + selectedAssetKey;
+	
+			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
+			if(window.opener.CKEDITOR && window.opener.CKEDITOR.tools.callFunction)
+				window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
+			else
+				window.top.opener.SetUrl( url );
+			
+			window.top.close();
+			window.top.opener.focus();
+		}
+	}
+
+	function useSelectedPage()
+	{
+		//alert("selectedSiteNodeContentId:" +  selectedSiteNodeContentId);
+		if(selectedSiteNodeId == "")
+			alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
+		else
+		{
+			url = getInlineLinkUrl(selectedSiteNodeId, selectedSiteNodeContentId);
+			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
+			if(window.opener.CKEDITOR && window.opener.CKEDITOR.tools.callFunction)
+				window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
+			else
+				window.top.opener.SetUrl( url );
+	
+			window.top.close();
+			window.top.opener.focus();
+		}
+	}
+	
+	function onOk(contentId, assetKey)
+	{
+		if(assetKey == "")
+			alert("$ui.getString("tool.contenttool.assetDialog.mustChooseAttachment")");
+		else
+		{
+			url = getDownloadUrl(contentId, assetKey);
+			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
+			if(window.opener.CKEDITOR && window.opener.CKEDITOR.tools.callFunction)
+				window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
+			else
+				window.top.opener.SetUrl( url );
+			
+			window.top.close();
+			window.top.opener.focus();
+		}
+	}
+	
+	function onOkForInlineLink(siteNodeId, contentId)
+	{
+		if(selectedSiteNodeId == "")
+			alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
+		else
+		{
+			url = getInlineLinkUrl(siteNodeId, contentId);
+			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
+			if(window.opener.CKEDITOR && window.opener.CKEDITOR.tools.callFunction)
+				window.opener.CKEDITOR.tools.callFunction(CKEditorFuncNum, url);
+			else
+				window.top.opener.SetUrl( url );
+	
+			window.top.close();
+			window.top.opener.focus();
+		}
+	}
+	
+	function onCancel() 
+	{
+		window.top.close();
+		window.top.opener.focus();
+	}	
+	
+	function getDownloadUrl(contentId, assetKey)
+	{
+		return "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
+	}
+
+	function getInlineLinkUrl(siteNodeId, contentId)
+	{
+		if(typeof(contentId) == "undefined")
+			contentId = -1;
+			
+		return "$templateLogic.getPageUrl(" + siteNodeId + ", $templateLogic.languageId," + contentId + ")";
+	}
+	-->
+	</script>
+	
+</head>
+
+<body class="generaltooledit">
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3 style="text-indent: 16px;">$ui.getString("tool.contenttool.linkDialog.linkDialogHeader")</h3>
+
+	<div id="tabsContainer" class="flora">      
+
+		<ul>
+	        <li><a href="#internalLinkTab"><span>$ui.getString("tool.contenttool.linkDialog.internalPageTabLabel")</span></a></li>
+	        <li><a href="#internalAssetTab"><span>$ui.getString("tool.contenttool.linkDialog.internalAssetTabLabel")</span></a></li>	        
+	    </ul>
+	
+		<div id="internalLinkTab" class="inlineTabDiv">
+			<iframe frameborder="0" marginwidth="0" marginheight="0" scrolling="no" name="internalLinkFrame" id="internalLinkFrame" src="" width="690" height="450" ></iframe>
+		</div>
+
+		<div id="internalAssetTab" class="inlineTabDiv">
+			<iframe frameborder="0" marginwidth="0" marginheight="0" scrolling="no" name="internalAssetFrame" id="internalAssetFrame" src="" width="690" height="450" ></iframe>
+		</div>
+
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

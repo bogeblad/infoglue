@@ -1,0 +1,128 @@
+
+<html>
+<head>
+	<title>PreviewTop</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+
+	<script Language=JavaScript>
+	
+		var current = 0;
+		function showNext() 
+		{
+			current++;
+			if (current > count)
+				current=count;
+				
+			showCurrent();
+		}
+		
+		function showPrev() 
+		{
+			current--;
+			if (current==0)
+				current=1;
+				
+			showCurrent();
+		}
+		
+		function showCurrent() 
+		{
+			var theLink=document.getElementById("lnk"+current);	
+			var theNav=document.getElementById("nav");	
+			var theCounter=document.getElementById("counter");
+			
+			theNav.innerHTML = "<img src='" + theLink.getAttribute('icon') + "'> " + "<font color=#000000>" + theLink.title + "</font> (<font color=#006600>" + theLink.comment + "</font>)";
+			
+			theCounter.innerHTML = "<font color=#000000>[" + current + " of " + count + "]</font>";
+			parent.frames["previewMain"].location.href = theLink.href;
+		}
+		
+		function ruSure(txt, url)
+		{
+			question = confirm(txt);
+			if (question !="0")
+			{
+				document.location = url;
+			}
+		}
+		
+		</script>
+
+</head>
+
+<body class="cmstool" topmargin=0 leftmargin=0 rightmargin=0 onload="showNext();">
+
+<table border="0" cellspacing="0" cellpadding="0" width=100%>
+<tr>
+	<td><img src="images/trans.gif" width="14" height="22"></td>
+	<td><img src="images/publishingToolTab.gif" width="120" height="22" border="0"></td>
+	<td><img src="images/trans.gif" width="1" height="22"></td>	
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="14" height="1"></td>
+	<td class="darkbrown"><img src="images/trans.gif" width="0" height="1"></td>		
+	<td bgcolor="#FFFFFF" width="100%"><img src="images/trans.gif" width="2" height="1"></td>
+</tr>
+<tr height=26>
+
+	<td class="darkbrown" colspan=3>
+
+		<!-- DO THE STUFF -->
+
+			#set($navBar = "")
+			#set($cnt = 1)
+			## CONTENT!
+			#foreach ($contentVersionVO in $contentVersionsToPublish)
+				#set( $cId = $contentVersionVO.getContentVersionId() ) 
+				#set( $contentVO = $this.getOwningContent($cId) )
+				#set( $title = "${contentVO.getName()}")
+				#set( $comment = "${contentVersionVO.getVersionComment()}")
+				#set($navBar = "${navBar}<a icon='images/tree/contentItem.gif' title='${title}' id='lnk${cnt}' href='ViewContentVersion!preview.action?contentId=$contentVO.contentId&contentVersionId=$contentVersionVO.getContentVersionId()' target='previewMain'>${cnt}</a> ")						
+				#set($cnt = $cnt + 1)
+			#end
+
+			## SITENODE!
+			#foreach ($siteNodeVersionVO in $siteNodeVersionsToPublish)
+				#set( $cId = $siteNodeVersionVO.getSiteNodeVersionId() ) 
+				#set( $siteNodeVO = $this.getOwningSiteNode($cId) )
+				#set( $title = "${siteNodeVO.getName()}")
+				#set( $comment = "${siteNodeVersionVO.getVersionComment()}")
+				
+				#set($navBar = "${navBar}<a icon='images/tree/structureItem.gif' comment='${comment}' title='${title}' id='lnk${cnt}' href='$previewUrl?siteNodeId=$siteNodeVO.getSiteNodeId()' target='previewMain'>${cnt}</a> ")
+				#set($cnt = $cnt + 1)				
+			#end
+
+				#set($cnt = $cnt - 1)				
+				<script Language=JavaScript>
+				var count = $cnt;
+				</script>
+				
+				<table width=100%>
+					<tr>
+						<td width=10></td>
+						<td width=30>
+							<a href="JavaScript:showPrev();"><img src='images/previous.gif' border=0></a>
+						</td>
+						<td id="counter" width=60> </td>
+						<td width=50>
+							<a href="JavaScript:showNext();"><img src='images/next.gif' border=0></a>  
+						</td>
+						<td id="nav">
+						</td>
+					</tr>
+				</table>
+
+	</td>
+</tr>
+
+<tr>
+<td bgcolor="#000000" width="100%" colspan=3><img src="images/trans.gif" width="2" height="1"></td>
+</tr>
+
+</table>
+ 
+<div style="visibility:hidden"> $navBar </div>
+			
+</body>
+</html>

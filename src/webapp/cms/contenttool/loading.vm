@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<script type="text/javascript">
+		<!--
+		function hexnib(d) {
+		  	if(d<10) return d; else return String.fromCharCode(65+d-10);
+		}
+
+		function hexbyte(d) {
+			return "%"+hexnib((d&240)>>4)+""+hexnib(d&15);
+		}
+
+		function hexcode(url) {
+		    var result="";
+		   	var hex="";
+		    for(var i=0;i<url.length; i++) {
+		            var cc=url.charCodeAt(i);
+		            if (cc<128) {
+		                result+=hexbyte(cc);
+		            } else if((cc>127) && (cc<2048)) {
+		               result+=  hexbyte((cc>>6)|192)
+		                       + hexbyte((cc&63)|128);
+		            } else {
+		               result+=  hexbyte((cc>>12)|224)
+		                       + hexbyte(((cc>>6)&63)|128)
+		                       + hexbyte((cc&63)|128);
+		            }
+		    }
+		   return result;
+		}
+
+		function refreshContentToolBar(title, toolbarKey, arguments, unrefreshedContentId, changeTypeId, newContentId)
+		{
+			title		= hexcode(title);
+			toolbarKey 	= hexcode(toolbarKey);	
+			document.location.href = 'ViewContentToolToolBar.action?title=' + title + '&toolbarKey=' + toolbarKey + '&' + arguments;
+			
+			if(unrefreshedContentId > 0)
+			{
+				//alert("About to call refresh on menu:" + unrefreshedContentId + ":" + changeTypeId + ":" + newContentId);
+				if(parent.frames["menu"])
+					parent.frames["menu"].refreshContent(unrefreshedContentId, changeTypeId, newContentId);
+			}
+		}
+	-->
+	</script>
+	<link rel="stylesheet" type="text/css" href="../../css/cms.css" /> 
+</head>
+
+<body class="structuretool">
+</body>
+</html>

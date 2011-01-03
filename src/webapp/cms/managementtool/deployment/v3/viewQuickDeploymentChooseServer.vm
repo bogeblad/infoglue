@@ -1,0 +1,58 @@
+#define( $headerMarkup )
+	
+	<script type="text/javascript">
+	<!--
+		function submitForm()
+		{
+			document.editForm.submit();
+		}
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.managementtool.deploymentQuick.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<form name="editForm" method="post" action="ViewQuickDeploymentSynchronizeContents!input.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="contentId" value="$contentId"/>	
+
+		<div id="igEditArea" class="igScrollArea">
+
+			<h3>$ui.getString("tool.managementtool.deploymentQuick.header") 
+				#if($errorMessage && $errorMessage != "")
+					<span style="color:red">$errorMessage</span><br/>
+				#end
+			</h3>
+
+			#if($deploymentServers.size() == 0)
+				<p>$ui.getString("tool.managementtool.deployment.noServersText")</p>
+				<p>Example:<br>
+					0=testServer<br>
+					0.url=http://mytestserver.com/infoglueCMS<br>
+					0.user=xxxxx<br>
+					1=liveServer<br>
+					1.url=http://myliveserver.com/infoglueCMS<br>
+					1.user=xxxxx<br>
+				</p>
+			#else
+				<p>$ui.getString("tool.managementtool.deploymentQuick.introduction")</p>
+				<p>
+					<select name="deploymentServerName" class="dropbox" style="width: 300px;">
+						#foreach($deploymentServer in $deploymentServers)
+						<option value="$deploymentServer.name">$deploymentServer.name</option>
+						#end
+					</select>
+				</p>
+			#end
+	
+		</div>
+			
+		#lightFooterToolbar($footerButtons)
+		
+	</form>
+
+#endLightCommonToolV3()

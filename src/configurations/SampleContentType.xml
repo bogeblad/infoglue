@@ -1,0 +1,441 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" version="2.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:simpleType name="textarea">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="radiobutton">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="checkbox">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="select">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="textfield">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Article">
+		<xs:all>
+			<xs:element name="Attributes">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Title" type="textfield">
+							<xs:annotation>
+								<xs:appinfo>
+									<params>
+										<param id="title" inputTypeId="0">
+											<values>
+												<value id="undefined34" label="Title"/>
+											</values>
+										</param>
+										<param id="description" inputTypeId="0">
+											<values>
+												<value id="undefined53" label="This represents the article title"/>
+											</values>
+										</param>
+										<param id="class" inputTypeId="0">
+											<values>
+												<value id="undefined94" label="longtextfield"/>
+											</values>
+										</param>
+									</params>
+								</xs:appinfo>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="NavigationTitle" type="textfield">
+							<xs:annotation>
+								<xs:appinfo>
+									<params>
+										<param id="title" inputTypeId="0">
+											<values>
+												<value id="undefined58" label="Navigation title"/>
+											</values>
+										</param>
+										<param id="description" inputTypeId="0">
+											<values>
+												<value id="undefined37" label="This represents the article linktitle"/>
+											</values>
+										</param>
+										<param id="class" inputTypeId="0">
+											<values>
+												<value id="undefined95" label="longtextfield"/>
+											</values>
+										</param>
+									</params>
+								</xs:appinfo>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Leadin" type="textarea">
+							<xs:annotation>
+								<xs:appinfo>
+									<params>
+										<param id="title" inputTypeId="0">
+											<values>
+												<value id="undefined28" label="Lead in text"/>
+											</values>
+										</param>
+										<param id="description" inputTypeId="0">
+											<values>
+												<value id="undefined79" label="This is an introduction to the full text"/>
+											</values>
+										</param>
+										<param id="class" inputTypeId="0">
+											<values>
+												<value id="undefined70" label="normaltextarea"/>
+											</values>
+										</param>
+										<param id="width" inputTypeId="0">
+											<values>
+												<value id="width" label="700"/>
+											</values>
+										</param>
+										<param id="height" inputTypeId="0">
+											<values>
+												<value id="height" label="150"/>
+											</values>
+										</param>
+										<param id="enableWYSIWYG" inputTypeId="0">
+											<values>
+												<value id="enableWYSIWYG" label="true"/>
+											</values>
+										</param>
+										<param id="WYSIWYGToolbar" inputTypeId="0">
+											<values>
+												<value id="WYSIWYGToolbar" label="Default"/>
+											</values>
+										</param>
+										<param id="enableTemplateEditor" inputTypeId="0">
+											<values>
+												<value id="enableTemplateEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableFormEditor" inputTypeId="0">
+											<values>
+												<value id="enableFormEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableContentRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableContentRelationEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableStructureRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableStructureRelationEditor" label="false"/>
+											</values>
+										</param>
+										<param id="activateExtendedEditorOnLoad" inputTypeId="0">
+											<values>
+												<value id="activateExtendedEditorOnLoad" label="true"/>
+											</values>
+										</param>
+									</params>
+								</xs:appinfo>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="FullText" type="textarea">
+							<xs:annotation>
+								<xs:appinfo>
+									<params>
+										<param id="title" inputTypeId="0">
+											<values>
+												<value id="undefined45" label="Full text"/>
+											</values>
+										</param>
+										<param id="description" inputTypeId="0">
+											<values>
+												<value id="undefined8" label="This is the article fulltext"/>
+											</values>
+										</param>
+										<param id="class" inputTypeId="0">
+											<values>
+												<value id="undefined54" label="hugetextfield"/>
+											</values>
+										</param>
+										<param id="width" inputTypeId="0">
+											<values>
+												<value id="width" label="700"/>
+											</values>
+										</param>
+										<param id="height" inputTypeId="0">
+											<values>
+												<value id="height" label="500"/>
+											</values>
+										</param>
+										<param id="enableWYSIWYG" inputTypeId="0">
+											<values>
+												<value id="enableWYSIWYG" label="true"/>
+											</values>
+										</param>
+										<param id="enableTemplateEditor" inputTypeId="0">
+											<values>
+												<value id="enableTemplateEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableFormEditor" inputTypeId="0">
+											<values>
+												<value id="enableFormEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableContentRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableContentRelationEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableStructureRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableStructureRelationEditor" label="false"/>
+											</values>
+										</param>
+										<param id="activateExtendedEditorOnLoad" inputTypeId="0">
+											<values>
+												<value id="activateExtendedEditorOnLoad" label="true"/>
+											</values>
+										</param>
+									</params>
+								</xs:appinfo>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RelatedArticles" type="textarea">
+							<xs:annotation>
+								<xs:appinfo>
+									<params>
+										<param id="title" inputTypeId="0">
+											<values>
+												<value id="undefined75" label="Related Articles"/>
+											</values>
+										</param>
+										<param id="description" inputTypeId="0">
+											<values>
+												<value id="undefined5" label="Here you can add related articles"/>
+											</values>
+										</param>
+										<param id="class" inputTypeId="0">
+											<values>
+												<value id="undefined57" label="normaltextarea"/>
+											</values>
+										</param>
+										<param id="width" inputTypeId="0">
+											<values>
+												<value id="width" label="700"/>
+											</values>
+										</param>
+										<param id="height" inputTypeId="0">
+											<values>
+												<value id="height" label="150"/>
+											</values>
+										</param>
+										<param id="enableWYSIWYG" inputTypeId="0">
+											<values>
+												<value id="enableWYSIWYG" label="false"/>
+											</values>
+										</param>
+										<param id="enableTemplateEditor" inputTypeId="0">
+											<values>
+												<value id="enableTemplateEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableFormEditor" inputTypeId="0">
+											<values>
+												<value id="enableFormEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableRelationEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableContentRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableContentRelationEditor" label="true"/>
+											</values>
+										</param>
+										<param id="enableStructureRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableStructureRelationEditor" label="false"/>
+											</values>
+										</param>
+										<param id="activateExtendedEditorOnLoad" inputTypeId="0">
+											<values>
+												<value id="activateExtendedEditorOnLoad" label="false"/>
+											</values>
+										</param>
+									</params>
+								</xs:appinfo>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="RelatedAreas" type="textarea">
+							<xs:annotation>
+								<xs:appinfo>
+									<params>
+										<param id="title" inputTypeId="0">
+											<values>
+												<value id="undefined93" label="Related areas"/>
+											</values>
+										</param>
+										<param id="description" inputTypeId="0">
+											<values>
+												<value id="undefined30" label="Points out related areas on the site"/>
+											</values>
+										</param>
+										<param id="class" inputTypeId="0">
+											<values>
+												<value id="undefined83" label="normaltextfield"/>
+											</values>
+										</param>
+										<param id="width" inputTypeId="0">
+											<values>
+												<value id="width" label="700"/>
+											</values>
+										</param>
+										<param id="height" inputTypeId="0">
+											<values>
+												<value id="height" label="150"/>
+											</values>
+										</param>
+										<param id="enableWYSIWYG" inputTypeId="0">
+											<values>
+												<value id="enableWYSIWYG" label="false"/>
+											</values>
+										</param>
+										<param id="enableTemplateEditor" inputTypeId="0">
+											<values>
+												<value id="enableTemplateEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableFormEditor" inputTypeId="0">
+											<values>
+												<value id="enableFormEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableContentRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableContentRelationEditor" label="false"/>
+											</values>
+										</param>
+										<param id="enableStructureRelationEditor" inputTypeId="0">
+											<values>
+												<value id="enableStructureRelationEditor" label="true"/>
+											</values>
+										</param>
+										<param id="activateExtendedEditorOnLoad" inputTypeId="0">
+											<values>
+												<value id="activateExtendedEditorOnLoad" label="false"/>
+											</values>
+										</param>
+									</params>
+								</xs:appinfo>
+							</xs:annotation>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:simpleType name="categoryKeys">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Område">
+				<xs:annotation>
+					<xs:appinfo>
+						<params>
+							<title>Område</title>
+							<description>Vilket område</description>
+							<categoryId>3</categoryId>
+						</params>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="institution">
+				<xs:annotation>
+					<xs:appinfo>
+						<params>
+							<title>institution</title>
+							<description>institution</description>
+							<categoryId>7</categoryId>
+						</params>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="assetKeys">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ArticleImage">
+				<xs:annotation>
+					<xs:appinfo>
+						<params>
+							<description/>
+							<maximumSize>200000</maximumSize>
+							<allowedContentTypes>image</allowedContentTypes>
+							<imageWidth>>100</imageWidth>
+							<imageHeight>>99</imageHeight>
+						</params>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PuffImage">
+				<xs:annotation>
+					<xs:appinfo>
+						<params>
+							<description/>
+							<maximumSize>20000</maximumSize>
+							<allowedContentTypes>image</allowedContentTypes>
+							<imageWidth>50</imageWidth>
+							<imageHeight>50</imageHeight>
+						</params>
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Validation">
+		<xs:annotation>
+			<xs:appinfo>
+				<form-validation>
+					<global>
+						<validator name="required" classname="org.infoglue.cms.util.validators.CommonsValidator" method="validateRequired" methodParams="java.lang.Object,org.apache.commons.validator.Field" msg="300"/>
+						<validator name="requiredif" classname="org.infoglue.cms.util.validators.CommonsValidator" method="validateRequiredIf" methodParams="java.lang.Object,org.apache.commons.validator.Field,org.apache.commons.validator.Validator" msg="315"/>
+						<validator name="matchRegexp" classname="org.infoglue.cms.util.validators.CommonsValidator" method="validateRegexp" methodParams="java.lang.Object,org.apache.commons.validator.Field" msg="300"/>
+					</global>
+					<formset>
+						<form name="requiredForm">
+							<field property="Title" depends="required">
+								<msg name="required" key="300"/>
+							</field>
+							<field property="Title" depends="matchRegexp">
+								<var>
+									<var-name>regexp</var-name>
+									<var-value>[a-zA-Z]{0,20}</var-value>
+								</var>
+								<msg name="matchRegexp" key="301"/>
+							</field>
+							<field property="NavigationTitle" depends="requiredif">
+								<var>
+									<var-name>dependent</var-name>
+									<var-value>Title</var-value>
+								</var>
+								<msg name="required" key="300"/>
+							</field>
+							<field property="Leadin" depends="required">
+								<msg name="required" key="300"/>
+							</field>
+							<field property="FullText" depends="required">
+								<msg name="required" key="300"/>
+							</field>
+						</form>
+					</formset>
+				</form-validation>
+			</xs:appinfo>
+		</xs:annotation>
+	</xs:complexType>
+</xs:schema>

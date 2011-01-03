@@ -1,0 +1,1281 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Component Properties Editor 2.0</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	<script type="text/javascript" src="script/vector.js"></script>
+	<script type="text/javascript" src="script/componentPropertyDefinition.js"></script>
+	<script type="text/javascript" src="script/componentPropertyOptionDefinition.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+	
+	<style>
+		fieldset
+		{
+			border: 1px solid #cccccc;
+			width: 420px;
+		}
+		legend
+		{
+			color: #000000;
+			background: #ebeafd;
+			border: 1px solid #cccccc;
+			padding: 2px 6px
+		}
+		label
+		{
+			width: 160px;
+			float: left;
+			text-align: right;
+			margin-right: 0.5em;
+			display: block;
+		}
+		input, select
+		{
+			background: #ebeafd;
+			border: 1px solid #cccccc;
+			font-family: Verdana, Arial, San serif;
+			font-size: 8pt;
+			width: 270px;
+		}
+		p
+		{
+			line-heigh: 12px;
+			margin: 0px;
+			padding-bottom: 4px;
+		}
+	</style>
+	<script language="JavaScript"> 
+		window.resizeTo(800,600);		
+	</script> 
+		
+	<script type="text/javascript" language="JavaScript">
+	<!--	
+		var itemIndex;	
+			
+		function encodeXML(string) 
+		{
+			if(!string)
+				return "";
+				
+			var LT = new RegExp("<", "g");  
+			var GT = new RegExp(">", "g");  
+			var AMP = new RegExp("&", "g");  
+			var APOS = new RegExp('\'', "g");  
+			var QUOT = new RegExp('"', "g");  
+			
+			return string.replace(AMP,'&amp;').replace(LT,'&lt;').replace(GT,'&gt;').replace(APOS,'&apos;').replace(QUOT,'&quot;');
+		}
+
+		function decodeXML(string) 
+		{
+			if(!string)
+				return "";
+
+			var LT = new RegExp('&lt;', "g");  
+			var GT = new RegExp('&gt;', "g");  
+			var AMP = new RegExp("&amp;", "g");  
+			var APOS = new RegExp('&apos;', "g");  
+			var QUOT = new RegExp('&quot;', "g");  
+			var APOS2 = new RegExp('&#146;', "g"); 
+			return string.replace(AMP,'&').replace(LT,'<').replace(GT,'>').replace(APOS,'\'').replace(APOS2,'\'').replace(QUOT,'"');
+		}
+
+		function clean(string) 
+		{
+			if(!string)
+				return "";
+
+			var LT = new RegExp('<', "g");  
+			var GT = new RegExp('>', "g");  
+			var AMP = new RegExp("&", "g");  
+			var APOS = new RegExp('\'', "g");  
+			var QUOT = new RegExp('"', "g");  
+			return string.replace(AMP,'&amp;').replace(LT,'&lt;').replace(GT,'&gt;').replace(APOS,'').replace(QUOT,'');
+		}
+		
+		/**
+		 * This method creates a XML from the list of properties.
+		 */
+ 		
+		function createXML()
+		{
+		
+			propertiesXML = "<?xml version='1.0' encoding='UTF-8'?>";
+			propertiesXML += "<properties>";
+			
+			for (var i=0; i<propertyVector.getSize(); i++)
+			{
+				var property = propertyVector.getElementAt(i);
+				
+				propertyName 					= property.getName();
+				propertyDisplayName 			= property.getDisplayName();
+				propertyType   					= property.getType();
+				propertyEntity 					= property.getEntity();
+				propertyMultiple				= property.getMultiple();
+				propertyAssetBinding			= property.getAssetBinding();
+				propertyAssetMask				= property.getAssetMask();
+				isPuffContentForPage			= property.getIsPuffContentForPage();
+				propertyDescription				= property.getDescription();
+				propertyDefaultValue			= property.getDefaultValue();
+				propertyAllowLanguageVariations = property.getAllowLanguageVariations();
+				propertyWYSIWYGEnabled			= property.getWYSIWYGEnabled();
+				propertyWYSIWYGToolbar			= property.getWYSIWYGToolbar();
+				propertyAllowedContentTypeNames = property.getAllowedContentTypeNames();
+				propertyDataProvider 			= property.getDataProvider();
+				propertyDataProviderParameters 	= property.getDataProviderParameters();
+				propertyAllowMultipleSelections	= property.getAllowMultipleSelections();
+				
+				propertyAutoCreateContent	 	= property.getAutoCreateContent();
+				propertyAutoCreateContentMethod	= property.getAutoCreateContentMethod();
+				propertyAutoCreateContentPath	= property.getAutoCreateContentPath();
+				propertyCustomMarkup			= property.getCustomMarkup();
+				
+				//alert("propertyCustomMarkup:" + propertyCustomMarkup);
+				document.getElementById("componentPropertyDefinition_customMarkup").value = propertyCustomMarkup;
+				propertyCustomMarkup = document.getElementById("componentPropertyDefinition_customMarkup").value;
+				if(propertyCustomMarkup.indexOf("igescaped") > -1)
+					propertyCustomMarkup = decodeXML(propertyCustomMarkup);
+				
+				if(propertyType == "select" || propertyType == "checkbox")
+				{
+					propertiesXML += "<property name='" + clean(propertyName) + "' displayName='" + clean(propertyDisplayName) + "' type='" + propertyType + "' multiple='" + propertyMultiple + "' assetBinding='" + propertyAssetBinding + "' assetMask='" + propertyAssetMask + "' isPuffContentForPage='" + isPuffContentForPage + "' description='" + clean(propertyDescription) + "' defaultValue='" + clean(propertyDefaultValue) + "' allowLanguageVariations='" + propertyAllowLanguageVariations + "' dataProvider='" + propertyDataProvider + "' dataProviderParameters='" + propertyDataProviderParameters + "' allowMultipleSelections='" + propertyAllowMultipleSelections + "'>";
+
+					for (var j=0; j<property.getOptions().getSize(); j++)
+					{
+						var propertyOption = property.getOptions().getElementAt(j);
+						
+						propertyOptionName 	= propertyOption.getName();
+						propertyOptionValue	= propertyOption.getValue();
+						propertiesXML += "<option name='" + propertyOptionName + "' value='" + propertyOptionValue + "'/>";
+					}
+					
+					propertiesXML += "</property>";					
+				}
+				else
+					propertiesXML += "<property name='" + clean(propertyName) + "' displayName='" + clean(propertyDisplayName) + "' type='" + propertyType + "' entity='" + propertyEntity + "' multiple='" + propertyMultiple + "' assetBinding='" + propertyAssetBinding + "' assetMask='" + propertyAssetMask + "' isPuffContentForPage='" + isPuffContentForPage + "' allowedContentTypeDefinitionNames='" + propertyAllowedContentTypeNames + "' description='" + clean(propertyDescription) + "' defaultValue='" + clean(propertyDefaultValue) + "' allowLanguageVariations='" + propertyAllowLanguageVariations + "' WYSIWYGEnabled='" + propertyWYSIWYGEnabled + "' WYSIWYGToolbar='" + propertyWYSIWYGToolbar + "' dataProvider='" + propertyDataProvider + "' dataProviderParameters='" + propertyDataProviderParameters + "' autoCreateContent='" + propertyAutoCreateContent + "' autoCreateContentMethod='" + propertyAutoCreateContentMethod + "' autoCreateContentPath='" + propertyAutoCreateContentPath + "' customMarkup='" + encodeXML(propertyCustomMarkup) + "'/>";
+			}
+		   	
+		   	propertiesXML += "</properties>";
+
+			return propertiesXML;
+		}
+
+		/**
+		 * This submits the component properties XML and closes.
+		 */
+		 
+		function submitPropertiesXMLAndExit()
+		{
+			document.inputForm.closeOnLoad.value = "true";
+
+			submitPropertiesXML();
+		}
+		
+		/**
+		 * This submits the component properties XML.
+		 */
+		 
+		function submitPropertiesXML()
+		{
+		   	propertiesXML = createXML();
+			document.inputForm.propertiesXML.value = propertiesXML;
+		    showDiv("savingLayer");
+			//alert("propertiesXML:" + propertiesXML);
+			document.inputForm.submit();
+		}
+	
+	  
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addTextLink(parent, address, text)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var linkText = document.createTextNode(text);
+			link.appendChild(linkText);
+			parent.appendChild(link);
+		}
+	
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addImageLink(parent, address, src)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var image = document.createElement("img");
+			image.setAttribute("src", src);
+			image.setAttribute("border", "0");
+			link.appendChild(image);
+			parent.appendChild(link);
+
+			var separator = document.createElement("img");
+			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("border", "0");
+			separator.setAttribute("width", "5");
+			separator.setAttribute("height", "1");
+			parent.appendChild(separator);
+		}
+
+		function initOptions(componentPropertyDefinition)
+		{
+			//alert("Initializing options...");
+			var table = document.getElementById("options")
+			var parent = table.parentNode;
+			parent.removeChild(table);
+
+			mytable = document.createElement("TABLE");
+			mytable.setAttribute("id", "options");
+			mytable.setAttribute("border", "0");
+			mytable.setAttribute("width", "100%");
+			mytable.setAttribute("cellpadding", "2");
+			mytable.setAttribute("cellspacing", "0");
+	        mytablebody = document.createElement("TBODY");
+	        for (var i=0; i<componentPropertyDefinition.getOptions().getSize(); i++)
+			{
+				var componentPropertyOptionDefinition = componentPropertyDefinition.getOptions().getElementAt(i);
+				//alert("Element:" + componentPropertyOptionDefinition.getName());
+				var myTR = document.createElement("TR");
+				var actionTD = document.createElement("TD");
+				actionTD.setAttribute("width", "50");
+				actionTD.setAttribute("valign", "top");
+				addImageLink(actionTD, "javascript:movePropertyOptionDown(" + i + ");", "images/downArrow.gif");
+				addImageLink(actionTD, "javascript:movePropertyOptionUp(" + i + ");", "images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deletePropertyOption(" + i + ");", "images/delete.gif");
+			
+				myTR.appendChild(actionTD);
+			
+				addTD(myTR, componentPropertyOptionDefinition.name)
+				addTD(myTR, componentPropertyOptionDefinition.value)
+
+				var actionTD = document.createElement("TD");
+				addImageLink(actionTD, "javascript:showOption(" + itemIndex + "," + i + ");", "images/properties.gif");
+				myTR.appendChild(actionTD);
+				mytablebody.appendChild(myTR);
+			}
+			if(componentPropertyDefinition.getOptions().getSize() == 0)
+			{
+				var componentPropertyOptionDefinition = componentPropertyDefinition.getOptions().getElementAt(i);
+				//alert("Element:" + componentPropertyOptionDefinition.getName());
+				var myTR = document.createElement("TR");
+			
+				addTD(myTR, "No options defined")
+
+				mytablebody.appendChild(myTR);
+			}
+			
+			mytable.appendChild(mytablebody);
+	        parent.appendChild(mytable);
+		}
+		
+		
+		function showProperties(index)
+		{
+			itemIndex = index;
+			
+			componentPropertyDefinitionDiv = document.getElementById("componentPropertyDefinition");
+
+			var componentPropertyDefinition = propertyVector.getElementAt(index);
+
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_name.value = componentPropertyDefinition.name;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_displayName.value = componentPropertyDefinition.displayName;
+			
+			if(componentPropertyDefinition.type == "binding")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_type.options[0].selected = 1;
+			else if(componentPropertyDefinition.type == "textfield")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_type.options[1].selected = 1;
+			else if(componentPropertyDefinition.type == "textarea")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_type.options[2].selected = 1;
+			else if(componentPropertyDefinition.type == "select")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_type.options[3].selected = 1;
+			else if(componentPropertyDefinition.type == "checkbox")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_type.options[4].selected = 1;
+			else if(componentPropertyDefinition.type == "datefield")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_type.options[5].selected = 1;
+			else if(componentPropertyDefinition.type == "customfield")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_type.options[6].selected = 1;
+			else
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_type.options[7].selected = 1;
+
+			if(componentPropertyDefinition.entity == "Content")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_entity.options[0].selected = 1;
+			else
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_entity.options[1].selected = 1;
+			
+			if(componentPropertyDefinition.multiple == "false")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_multiple.options[0].selected = 1;
+			else
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_multiple.options[1].selected = 1;
+
+			if(componentPropertyDefinition.assetBinding == "false")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_assetBinding.options[0].selected = 1;
+			else
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_assetBinding.options[1].selected = 1;
+
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_assetMask.value = componentPropertyDefinition.assetMask;
+
+			if(componentPropertyDefinition.isPuffContentForPage == "false")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_isPuffContentForPage.options[0].selected = 1;
+			else
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_isPuffContentForPage.options[1].selected = 1;
+
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_description.value = componentPropertyDefinition.description;
+			
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_defaultValue.value 	= componentPropertyDefinition.defaultValue;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_allowLanguageVariations.value 	= componentPropertyDefinition.allowLanguageVariations;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_dataProvider.value 	= componentPropertyDefinition.dataProvider;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_dataProviderParameters.value = componentPropertyDefinition.dataProviderParameters;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_allowMultipleSelections.value = componentPropertyDefinition.allowMultipleSelections;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_WYSIWYGEnabled.value 	= componentPropertyDefinition.WYSIWYGEnabled;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_WYSIWYGToolbar.value 	= componentPropertyDefinition.WYSIWYGToolbar;
+
+			var decodedString = decodeXML(componentPropertyDefinition.customMarkup);
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_customMarkup.value 	= decodedString.substring(0, decodedString.length - 16);
+			
+			if(componentPropertyDefinition.autoCreateContent)
+			{
+				if(componentPropertyDefinition.autoCreateContent == "false")
+					document.componentPropertyDefinitionForm.componentPropertyDefinition_autoCreateContent.options[0].selected = 1;
+				else
+					document.componentPropertyDefinitionForm.componentPropertyDefinition_autoCreateContent.options[1].selected = 1;
+			}
+
+			if(componentPropertyDefinition.autoCreateContentMethod == "fixedPath")
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_autoCreateContentMethod.options[1].selected = 1;
+			else
+				document.componentPropertyDefinitionForm.componentPropertyDefinition_autoCreateContentMethod.options[0].selected = 1;
+			
+			//document.componentPropertyDefinitionForm.componentPropertyDefinition_autoCreateContent.value 		= componentPropertyDefinition.autoCreateContent;
+			//document.componentPropertyDefinitionForm.componentPropertyDefinition_autoCreateContentMethod.value 	= componentPropertyDefinition.autoCreateContentMethod;
+			document.componentPropertyDefinitionForm.componentPropertyDefinition_autoCreateContentPath.value 	= componentPropertyDefinition.autoCreateContentPath;
+			
+			var allowedContentTypeNamesArray = componentPropertyDefinition.getAllowedContentTypeNames().split(",");
+			var selObject = document.componentPropertyDefinitionForm.componentPropertyDefinition_allowedContentTypeNames;
+
+			var length = selObject.options.length;
+			for(i=0; i<length; i++)
+			{
+				isAllowed = false;
+				for(j=0; j<allowedContentTypeNamesArray.length; j++)
+				{
+					if(allowedContentTypeNamesArray[j] == selObject.options[i].value)
+					{
+						//alert("" + allowedContentTypeNamesArray[j] + " == " + selObject.options[i].value);
+						isAllowed = true;
+					}
+				}
+				
+				if (isAllowed) 
+				{
+					selObject.options[i].selected = "true";
+				}
+				else
+				{
+					selObject.options[i].selected = null;
+				}
+			}
+			
+			validateTypeChoice();
+			validateEntityChoice();
+			
+			initOptions(componentPropertyDefinition);
+			
+			componentPropertyDefinitionDiv.style.visibility = 'visible';
+		}
+
+		function hideProperties()
+		{
+			document.getElementById("componentPropertyDefinition").style.visibility = 'hidden';
+			drawList();
+		}
+
+		function showOption(index, oIndex)
+		{
+			itemIndex = index;
+			optionIndex = oIndex;
+			
+			componentPropertyOptionDefinitionDiv = document.getElementById("componentPropertyOptionDefinition");
+			var componentPropertyDefinition = propertyVector.getElementAt(itemIndex);
+			document.getElementById("componentPropertyOptionDefinition_name").value = componentPropertyDefinition.getOptions().getElementAt(optionIndex).getName();
+			document.getElementById("componentPropertyOptionDefinition_value").value = componentPropertyDefinition.getOptions().getElementAt(optionIndex).getValue();
+					
+			componentPropertyOptionDefinitionDiv.style.visibility = 'visible';
+		}
+
+		function hidePropertyOption()
+		{
+			document.getElementById("componentPropertyOptionDefinition").style.visibility = 'hidden';
+			drawOptionList();
+		}
+
+
+		function updateProperties()
+		{
+			//alert("Updating property");
+			componentPropertyDefinitionDiv = document.getElementById("componentPropertyDefinition");
+
+			var componentPropertyDefinition = propertyVector.getElementAt(itemIndex);
+			//alert("componentPropertyDefinition:" + componentPropertyDefinition.getName());
+
+			componentPropertyDefinition.setName(document.getElementById("componentPropertyDefinition_name").value);
+			componentPropertyDefinition.setDisplayName(document.getElementById("componentPropertyDefinition_displayName").value);
+			componentPropertyDefinition.setDescription(document.getElementById("componentPropertyDefinition_description").value);
+			
+			componentPropertyDefinition.setType(document.getElementById("componentPropertyDefinition_type").value);
+			if(componentPropertyDefinition.getType() == "binding")
+			{
+				componentPropertyDefinition.setEntity(document.getElementById("componentPropertyDefinition_entity").value);
+				componentPropertyDefinition.setMultiple(document.getElementById("componentPropertyDefinition_multiple").value);
+				componentPropertyDefinition.setAssetBinding(document.getElementById("componentPropertyDefinition_assetBinding").value);
+				componentPropertyDefinition.setAssetMask(document.getElementById("componentPropertyDefinition_assetMask").value);
+				componentPropertyDefinition.setIsPuffContentForPage(document.getElementById("componentPropertyDefinition_isPuffContentForPage").value);
+				
+				componentPropertyDefinition.setAutoCreateContent(document.getElementById("componentPropertyDefinition_autoCreateContent").value);
+				componentPropertyDefinition.setAutoCreateContentMethod(document.getElementById("componentPropertyDefinition_autoCreateContentMethod").value);
+				componentPropertyDefinition.setAutoCreateContentPath(document.getElementById("componentPropertyDefinition_autoCreateContentPath").value);
+				
+				var selObject = document.getElementById("componentPropertyDefinition_allowedContentTypeNames");
+				var length = selObject.options.length;
+				var allowedContentTypeNames = "";
+				for(i=0; i<length; i++)
+				{
+					if (selObject.options[i].selected) 
+					{
+				      	if(allowedContentTypeNames != "")
+							allowedContentTypeNames += ",";
+							
+						allowedContentTypeNames = allowedContentTypeNames + selObject.options[i].value;
+					}
+				}
+			
+				componentPropertyDefinition.setAllowedContentTypeNames(allowedContentTypeNames);
+			}		
+			else
+			{
+				componentPropertyDefinition.setEntity("");
+				componentPropertyDefinition.setMultiple("");
+				componentPropertyDefinition.setAssetBinding("");
+				componentPropertyDefinition.setAssetMask("");
+				componentPropertyDefinition.setIsPuffContentForPage("");
+				componentPropertyDefinition.setAllowedContentTypeNames("");
+		
+				componentPropertyDefinition.setDefaultValue(document.getElementById("componentPropertyDefinition_defaultValue").value);
+				componentPropertyDefinition.setAllowLanguageVariations(document.getElementById("componentPropertyDefinition_allowLanguageVariations").value);
+				componentPropertyDefinition.setWYSIWYGEnabled(document.getElementById("componentPropertyDefinition_WYSIWYGEnabled").value);
+				componentPropertyDefinition.setWYSIWYGToolbar(document.getElementById("componentPropertyDefinition_WYSIWYGToolbar").value);
+				componentPropertyDefinition.setDataProvider(document.getElementById("componentPropertyDefinition_dataProvider").value);
+				componentPropertyDefinition.setDataProviderParameters(document.getElementById("componentPropertyDefinition_dataProviderParameters").value);
+				componentPropertyDefinition.setAllowMultipleSelections(document.getElementById("componentPropertyDefinition_allowMultipleSelections").value);
+				componentPropertyDefinition.setCustomMarkup(document.getElementById("componentPropertyDefinition_customMarkup").value + "<!--igescaped-->");
+			}
+			
+			hideProperties();
+		}
+
+		function updatePropertyOption()
+		{
+			//alert("Updating property option");
+			componentPropertyOptionDefinitionDiv = document.getElementById("componentPropertyOptionDefinition");
+
+			var componentPropertyDefinition = propertyVector.getElementAt(itemIndex);
+			//alert("componentPropertyDefinition:" + itemIndex + ":" + componentPropertyDefinition.getName());
+			
+			var componentPropertyOptionDefinition = componentPropertyDefinition.getOptions().getElementAt(optionIndex);
+			//alert("componentPropertyOptionDefinition:" + componentPropertyOptionDefinition.getName());
+			
+			componentPropertyOptionDefinition.setName(document.getElementById("componentPropertyOptionDefinition_name").value);
+			componentPropertyOptionDefinition.setValue(document.getElementById("componentPropertyOptionDefinition_value").value);
+
+			hidePropertyOption();
+		}
+
+
+		function showAccessRights(extraParameters)
+		{
+			document.location.href = "ViewAccessRights.action?interceptionPointCategory=ComponentPropertyEditor&extraParameters=" + extraParameters + "&colorScheme=StructureTool&returnAddress=$formatter.encodeURI($this.currentURL, 'UTF-8')";
+		}
+
+		function showMultiAccessRights(extraParametersString)
+		{
+			document.location.href = "ViewAccessRights.action?interceptionPointCategory=ComponentPropertyEditor" + extraParametersString + "&colorScheme=StructureTool&returnAddress=$formatter.encodeURI($this.currentURL, 'UTF-8')";
+		}
+		
+		/**
+		 * This method draws the list of properties.
+		 */
+		 
+		function drawList()
+		{
+			//alert("Drawing list...:" + propertyVector.getSize());
+			var table = document.getElementById("properties")
+			var parent = table.parentNode;
+			parent.removeChild(table);
+
+			mytable = document.createElement("TABLE");
+			mytable.setAttribute("id", "properties");
+			mytable.setAttribute("border", "0");
+			mytable.setAttribute("width", "100%");
+			mytable.setAttribute("cellpadding", "2");
+			mytable.setAttribute("cellspacing", "0");
+	        mytablebody = document.createElement("TBODY");
+	        for (var i=0; i<propertyVector.getSize(); i++)
+			{
+				var componentPropertyDefinition = propertyVector.getElementAt(i);
+				//alert("Element:" + componentPropertyDefinition.getName());
+				var myTR = document.createElement("TR");
+				var actionTD = document.createElement("TD");
+				actionTD.setAttribute("width", "50");
+				actionTD.setAttribute("valign", "top");
+				addImageLink(actionTD, "javascript:movePropertyDown(" + i + ");", "images/downArrow.gif");
+				addImageLink(actionTD, "javascript:movePropertyUp(" + i + ");", "images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteProperty(" + i + ");", "images/delete.gif");
+				myTR.appendChild(actionTD);
+				
+				addTD(myTR, componentPropertyDefinition.name)
+				addTD(myTR, componentPropertyDefinition.displayName)
+				addTD(myTR, componentPropertyDefinition.type)
+				addTD(myTR, componentPropertyDefinition.entity)
+				addTD(myTR, componentPropertyDefinition.multiple)
+				addTD(myTR, componentPropertyDefinition.assetBinding)
+				addTD(myTR, componentPropertyDefinition.allowedContentTypeNames)
+				addTD(myTR, componentPropertyDefinition.description)
+
+				var actionTD = document.createElement("TD");
+				addImageLink(actionTD, "javascript:showProperties(" + i + ");", "images/properties.gif");
+				addImageLink(actionTD, "javascript:showAccessRights('${contentId}_" + componentPropertyDefinition.name + "');", "images/accessRights.gif");
+				myTR.appendChild(actionTD);
+
+				mytablebody.appendChild(myTR);
+			}
+			 
+	        mytable.appendChild(mytablebody);
+	        parent.appendChild(mytable);
+		}
+
+
+		/**
+		 * This method draws the list of properties.
+		 */
+		 
+		function drawOptionList()
+		{
+			//alert("Drawing list...:" + propertyVector.getSize());
+			var table = document.getElementById("options")
+			var parent = table.parentNode;
+			parent.removeChild(table);
+
+			mytable = document.createElement("TABLE");
+			mytable.setAttribute("id", "options");
+			mytable.setAttribute("border", "0");
+			mytable.setAttribute("width", "100%");
+			mytable.setAttribute("cellpadding", "2");
+			mytable.setAttribute("cellspacing", "0");
+	        mytablebody = document.createElement("TBODY");
+	        var componentPropertyDefinition = propertyVector.getElementAt(itemIndex);
+	       	//alert("componentPropertyDefinition:" + componentPropertyDefinition + ":" + itemIndex);
+	        for (var i=0; i<componentPropertyDefinition.getOptions().getSize(); i++)
+			{
+				var componentPropertyOptionDefinition = componentPropertyDefinition.getOptions().getElementAt(i);
+				//alert("Element:" + componentPropertyOptionDefinition.getName());
+				var myTR = document.createElement("TR");
+				var actionTD = document.createElement("TD");
+				actionTD.setAttribute("width", "50");
+				actionTD.setAttribute("valign", "top");
+				addImageLink(actionTD, "javascript:movePropertyOptionDown(" + i + ");", "images/downArrow.gif");
+				addImageLink(actionTD, "javascript:movePropertyOptionUp(" + i + ");", "images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deletePropertyOption(" + i + ");", "images/delete.gif");
+				myTR.appendChild(actionTD);
+				
+				addTD(myTR, componentPropertyOptionDefinition.name)
+				addTD(myTR, componentPropertyOptionDefinition.value)
+
+				var actionTD = document.createElement("TD");
+				addImageLink(actionTD, "javascript:showOption(" + itemIndex + "," + i + ");", "images/properties.gif");
+				myTR.appendChild(actionTD);
+
+				mytablebody.appendChild(myTR);
+			}
+			 
+	        mytable.appendChild(mytablebody);
+	        parent.appendChild(mytable);
+		}
+
+		function addTD(tr, text)
+		{
+			var propertyTD = document.createElement("TD");
+			propertyTD.setAttribute("align", "left");
+			propertyTD.setAttribute("valign", "top");
+			var propertyText = document.createTextNode(text);
+			propertyTD.appendChild(propertyText);
+			tr.appendChild(propertyTD);
+		}
+
+
+		/**
+		 * This method removes a property from the vector.
+		 */
+		 
+		function deleteProperty(index)
+		{
+			propertyVector.removeElementAt(index);
+			drawList();
+		}
+		
+		/**
+		 * This method adds a property to the vector.
+		 */
+
+		function addProperty()
+		{
+			property = new ComponentPropertyDefinition("NewProperty", "NewProperty", "binding", "Content", "false", "false", "", "false", "", "No description yet", "", "false", "Basic", "", "", "false", "", "", "", "false");
+			propertyVector.addElement(property);
+				
+			drawList();
+		}
+
+		
+		/**
+		 * This method moves a qualifyer 1 step up in the vector.
+		 */
+		 
+		function movePropertyUp(index)
+		{
+			if(index > 0)
+			{
+				var property 			= propertyVector.getElementAt(index);
+				var previousProperty 	= propertyVector.getElementAt(index - 1);
+				
+				name 		 			= property.getName();
+				displayName 		 	= property.getDisplayName();
+				type		 			= property.getType();
+				entity		 			= property.getEntity();
+				multiple 	 			= property.getMultiple();
+				allowedContentTypeNames = property.getAllowedContentTypeNames();
+				description  			= property.getDescription();
+				assetBinding 			= property.getAssetBinding();
+				assetMask 				= property.getAssetMask();
+				isPuffContentForPage 	= property.getIsPuffContentForPage();
+				defaultValue 			= property.getDefaultValue();
+				allowLanguageVariations = property.getAllowLanguageVariations();
+				WYSIWYGEnabled 			= property.getWYSIWYGEnabled();
+				WYSIWYGToolbar 			= property.getWYSIWYGToolbar();
+				dataProvider 			= property.getDataProvider();
+				dataProviderParameters 	= property.getDataProviderParameters();
+				allowMultipleSelections = property.getAllowMultipleSelections();
+				customMarkup 			= property.getCustomMarkup();
+				
+				property.setName(previousProperty.getName());
+				property.setDisplayName(previousProperty.getDisplayName());
+				property.setType(previousProperty.getType());
+				property.setEntity(previousProperty.getEntity());
+				property.setMultiple(previousProperty.getMultiple());
+				if(previousProperty.getAssetBinding())
+					property.setAssetBinding(previousProperty.getAssetBinding());
+				if(previousProperty.getAssetMask())
+					property.setAssetMask(previousProperty.getAssetMask());
+				property.setIsPuffContentForPage(previousProperty.getIsPuffContentForPage());
+				property.setAllowedContentTypeNames(previousProperty.getAllowedContentTypeNames());
+				property.setDescription(previousProperty.getDescription());
+				property.setDefaultValue(previousProperty.getDefaultValue());
+				property.setAllowLanguageVariations(previousProperty.getAllowLanguageVariations());
+				property.setWYSIWYGEnabled(previousProperty.getWYSIWYGEnabled());
+				property.setWYSIWYGToolbar(previousProperty.getWYSIWYGToolbar());
+				property.setDataProvider(previousProperty.getDataProvider());
+				property.setDataProviderParameters(previousProperty.getDataProviderParameters());
+				property.setAutoCreateContent(previousProperty.getAutoCreateContent());
+				property.setAutoCreateContentMethod(previousProperty.getAutoCreateContentMethod());
+				property.setAutoCreateContentPath(previousProperty.getAutoCreateContentPath());
+				property.setCustomMarkup(previousProperty.getCustomMarkup());
+				
+				previousProperty.setName(name);
+				previousProperty.setDisplayName(displayName);
+				previousProperty.setType(type);
+				previousProperty.setEntity(entity);
+				previousProperty.setMultiple(multiple);
+				if(assetBinding)
+					previousProperty.setAssetBinding(assetBinding);
+				if(assetMask)
+					previousProperty.setAssetMask(assetMask);
+				previousProperty.setIsPuffContentForPage(isPuffContentForPage);
+				previousProperty.setAllowedContentTypeNames(allowedContentTypeNames);
+				previousProperty.setDescription(description);
+				previousProperty.setDefaultValue(defaultValue);
+				previousProperty.setAllowLanguageVariations(allowLanguageVariations);
+				previousProperty.setWYSIWYGEnabled(WYSIWYGEnabled);
+				previousProperty.setWYSIWYGToolbar(WYSIWYGToolbar);
+				previousProperty.setDataProvider(dataProvider);
+				previousProperty.setDataProviderParameters(dataProviderParameters);
+				previousProperty.setAllowMultipleSelections(allowMultipleSelections);
+				previousProperty.setAutoCreateContent(property.getAutoCreateContent());
+				previousProperty.setAutoCreateContentMethod(property.getAutoCreateContentMethod());
+				previousProperty.setAutoCreateContentPath(property.getAutoCreateContentPath());
+				previousProperty.setCustomMarkup(property.getCustomMarkup());
+				
+				drawList();
+			}			
+		}
+
+		/**
+		 * This method moves a qualifyer 1 step up in the vector.
+		 */
+		 
+		function movePropertyDown(index)
+		{
+			if(index < propertyVector.getSize() - 1)
+			{
+				var property 			= propertyVector.getElementAt(index);
+				var previousProperty 	= propertyVector.getElementAt(index + 1);
+				
+				name 					= property.getName();
+				displayName 			= property.getDisplayName();
+				type					= property.getType();
+				entity					= property.getEntity();
+				multiple 				= property.getMultiple();
+				allowedContentTypeNames = property.getAllowedContentTypeNames();
+				description 			= property.getDescription();
+				assetBinding 			= property.getAssetBinding();
+				assetMask 				= property.getAssetMask();
+				isPuffContentForPage 	= property.getIsPuffContentForPage();
+				defaultValue 			= property.getDefaultValue();
+				allowLanguageVariations = property.getAllowLanguageVariations();
+				WYSIWYGEnabled 			= property.getWYSIWYGEnabled();
+				WYSIWYGToolbar 			= property.getWYSIWYGToolbar();
+				dataProvider 			= property.getDataProvider();
+				dataProviderParameters 	= property.getDataProviderParameters();
+				allowMultipleSelections = property.getAllowMultipleSelections();
+				customMarkup 			= property.getCustomMarkup();
+				
+				property.setName(previousProperty.getName())
+				property.setDisplayName(previousProperty.getDisplayName())
+				property.setType(previousProperty.getType())
+				property.setEntity(previousProperty.getEntity())
+				property.setMultiple(previousProperty.getMultiple())
+				if(previousProperty.getAssetBinding())
+					property.setAssetBinding(previousProperty.getAssetBinding());
+				if(previousProperty.getAssetMask())
+					property.setAssetMask(previousProperty.getAssetMask());
+				property.setIsPuffContentForPage(previousProperty.getIsPuffContentForPage());
+				property.setAllowedContentTypeNames(previousProperty.getAllowedContentTypeNames());
+				property.setDescription(previousProperty.getDescription());
+				property.setDefaultValue(previousProperty.getDefaultValue());
+				property.setAllowLanguageVariations(previousProperty.getAllowLanguageVariations());
+				property.setWYSIWYGEnabled(previousProperty.getWYSIWYGEnabled());
+				property.setWYSIWYGToolbar(previousProperty.getWYSIWYGToolbar());
+				property.setDataProvider(previousProperty.getDataProvider());
+				property.setDataProviderParameters(previousProperty.getDataProviderParameters());
+				property.setAutoCreateContent(previousProperty.getAutoCreateContent());
+				property.setAutoCreateContentMethod(previousProperty.getAutoCreateContentMethod());
+				property.setAutoCreateContentPath(previousProperty.getAutoCreateContentPath());
+				property.setCustomMarkup(previousProperty.getCustomMarkup());
+				
+				previousProperty.setName(name);
+				previousProperty.setDisplayName(displayName)
+				previousProperty.setType(type);
+				previousProperty.setEntity(entity);
+				previousProperty.setMultiple(multiple);
+				if(assetBinding)
+					previousProperty.setAssetBinding(assetBinding);
+				if(assetMask)
+					previousProperty.setAssetMask(assetMask);
+				previousProperty.setIsPuffContentForPage(isPuffContentForPage);
+				previousProperty.setAllowedContentTypeNames(allowedContentTypeNames);
+				previousProperty.setDescription(description);
+				previousProperty.setDefaultValue(defaultValue);
+				previousProperty.setAllowLanguageVariations(allowLanguageVariations);
+				previousProperty.setWYSIWYGEnabled(WYSIWYGEnabled);
+				previousProperty.setWYSIWYGToolbar(WYSIWYGToolbar);
+				previousProperty.setDataProvider(dataProvider);
+				previousProperty.setDataProviderParameters(dataProviderParameters);
+				previousProperty.setAllowMultipleSelections(allowMultipleSelections);
+				previousProperty.setAutoCreateContent(property.getAutoCreateContent());
+				previousProperty.setAutoCreateContentMethod(property.getAutoCreateContentMethod());
+				previousProperty.setAutoCreateContentPath(property.getAutoCreateContentPath());
+				previousProperty.setCustomMarkup(property.getCustomMarkup());
+			
+				drawList();
+			}
+		}
+
+		/**
+		 * This method removes a property option from the vector.
+		 */
+		 
+		function deletePropertyOption(index)
+		{
+			propertyVector.getElementAt(itemIndex).getOptions().removeElementAt(index);
+			drawOptionList();
+		}
+		
+		/**
+		 * This method adds a property to the vector.
+		 */
+
+		function addOption()
+		{
+			property = propertyVector.getElementAt(itemIndex);
+			propertyOption = new ComponentPropertyOptionDefinition("name", "value");
+			property.getOptions().addElement(propertyOption);
+				
+			drawOptionList();
+		}
+
+		
+		/**
+		 * This method moves a qualifyer 1 step up in the vector.
+		 */
+		 
+		function movePropertyOptionUp(index)
+		{
+			if(index > 0)
+			{
+				var property 				= propertyVector.getElementAt(itemIndex);
+				
+				var propertyOption 			= property.getOptions().getElementAt(index);
+				var previousPropertyOption 	= property.getOptions().getElementAt(index - 1);
+				
+				name 		= propertyOption.getName();
+				value		= propertyOption.getValue();
+				
+				propertyOption.setName(previousPropertyOption.getName());
+				propertyOption.setValue(previousPropertyOption.getValue());
+				
+				previousPropertyOption.setName(name);
+				previousPropertyOption.setValue(value);
+				
+				drawOptionList();
+			}			
+		}
+
+		/**
+		 * This method moves a qualifyer 1 step up in the vector.
+		 */
+		 
+		function movePropertyOptionDown(index)
+		{
+			if(index > 0)
+			{
+				var property 				= propertyVector.getElementAt(itemIndex);
+				
+				var propertyOption 			= property.getOptions().getElementAt(index);
+				var previousPropertyOption 	= property.getOptions().getElementAt(index + 1);
+				
+				name 		= propertyOption.getName();
+				value		= propertyOption.getValue();
+				
+				propertyOption.setName(previousPropertyOption.getName());
+				propertyOption.setValue(previousPropertyOption.getValue());
+				
+				previousPropertyOption.setName(name);
+				previousPropertyOption.setValue(value);
+				
+				drawOptionList();
+			}			
+		}
+
+		function validateTypeChoice()
+		{
+			selectBox = document.componentPropertyDefinitionForm.componentPropertyDefinition_type;
+			if(selectBox.value == "textfield")
+			{
+				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("dataProviderParagraph").style.display = "none";
+				document.getElementById("customMarkupParagraph").style.display = "none";
+				document.getElementById("optionsParagraph").style.display = "none";
+				document.getElementById("entityParagraph").style.display = "none";
+				document.getElementById("multipleParagraph").style.display = "none";
+				document.getElementById("assetParagraph").style.display = "none";
+				document.getElementById("wysiwygParagraph").style.display = "none";
+				document.getElementById("allowedContentTypeNamesParagraph").style.display = "none";
+				document.getElementById("autoCreateContentParagraph").style.display = "none";
+				document.getElementById("isPuffContentForPageParagraph").style.display = "none";
+			}
+			else if(selectBox.value == "textarea")
+			{							 
+				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("dataProviderParagraph").style.display = "none";
+				document.getElementById("customMarkupParagraph").style.display = "none";
+				document.getElementById("wysiwygParagraph").style.display = "block";
+				document.getElementById("optionsParagraph").style.display = "none";
+				document.getElementById("entityParagraph").style.display = "none";
+				document.getElementById("multipleParagraph").style.display = "none";
+				document.getElementById("assetParagraph").style.display = "none";
+				document.getElementById("allowedContentTypeNamesParagraph").style.display = "none";
+				document.getElementById("autoCreateContentParagraph").style.display = "none";
+				document.getElementById("isPuffContentForPageParagraph").style.display = "none";
+			}
+			else if(selectBox.value == "select" || selectBox.value == "checkbox")
+			{
+				document.getElementById("dataProviderParagraph").style.display = "block";
+			
+				var dataProvider = document.getElementById("componentPropertyDefinition_dataProvider").value;
+				if(dataProvider == '')
+					document.getElementById("optionsParagraph").style.display = "block";
+				else
+					document.getElementById("optionsParagraph").style.display = "none";
+				
+				document.getElementById("allowMultipleSelections").style.display = "block";
+				document.getElementById("customMarkupParagraph").style.display = "none";
+				document.getElementById("entityParagraph").style.display = "none";
+				document.getElementById("multipleParagraph").style.display = "none";
+				document.getElementById("assetParagraph").style.display = "none";
+				document.getElementById("wysiwygParagraph").style.display = "none";
+				document.getElementById("allowedContentTypeNamesParagraph").style.display = "none";
+				document.getElementById("autoCreateContentParagraph").style.display = "none";
+				document.getElementById("isPuffContentForPageParagraph").style.display = "none";
+			}
+			else if(selectBox.value == "datefield")
+			{							 
+				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("customMarkupParagraph").style.display = "none";
+				document.getElementById("optionsParagraph").style.display = "none";
+				document.getElementById("entityParagraph").style.display = "none";
+				document.getElementById("multipleParagraph").style.display = "none";
+				document.getElementById("assetParagraph").style.display = "none";
+				document.getElementById("wysiwygParagraph").style.display = "none";
+				document.getElementById("allowedContentTypeNamesParagraph").style.display = "none";
+				document.getElementById("autoCreateContentParagraph").style.display = "none";
+				document.getElementById("isPuffContentForPageParagraph").style.display = "none";
+				document.getElementById("dataProviderParagraph").style.display = "none";
+			}
+			else if(selectBox.value == "customfield")
+			{							 
+				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("customMarkupParagraph").style.display = "block";
+				document.getElementById("optionsParagraph").style.display = "none";
+				document.getElementById("entityParagraph").style.display = "none";
+				document.getElementById("multipleParagraph").style.display = "none";
+				document.getElementById("assetParagraph").style.display = "none";
+				document.getElementById("wysiwygParagraph").style.display = "none";
+				document.getElementById("allowedContentTypeNamesParagraph").style.display = "none";
+				document.getElementById("autoCreateContentParagraph").style.display = "none";
+				document.getElementById("isPuffContentForPageParagraph").style.display = "none";
+				document.getElementById("dataProviderParagraph").style.display = "none";
+			}
+			else
+			{
+				document.getElementById("allowMultipleSelections").style.display = "none";
+				document.getElementById("optionsParagraph").style.display = "none";
+				document.getElementById("entityParagraph").style.display = "block";
+				document.getElementById("multipleParagraph").style.display = "block";
+				document.getElementById("assetParagraph").style.display = "block";
+				document.getElementById("allowedContentTypeNamesParagraph").style.display = "block";
+				document.getElementById("isPuffContentForPageParagraph").style.display = "block";
+				document.getElementById("dataProviderParagraph").style.display = "none";
+			}
+		}
+
+		function validateEntityChoice()
+		{
+			selectBox = document.componentPropertyDefinitionForm.componentPropertyDefinition_entity;
+			if(selectBox.value == "Content")
+			{							 
+				document.getElementById("allowedContentTypeNamesParagraph").style.display = "block";
+				document.getElementById("assetParagraph").style.display = "block";
+			}
+			else
+			{
+				document.getElementById("allowedContentTypeNamesParagraph").style.display = "none";
+				document.getElementById("assetParagraph").style.display = "none";
+			}
+		}
+		
+		
+		/**
+		 * This function initializes the vector of previous properties.
+		 */
+		 
+		function init()
+		{
+			#foreach($propertyDefinition in $componentPropertyDefinitions)
+				property = new ComponentPropertyDefinition("$propertyDefinition.name", "$!propertyDefinition.displayName", "$propertyDefinition.type", "$propertyDefinition.entity", "$propertyDefinition.multiple", "$propertyDefinition.assetBinding", "$propertyDefinition.assetMask", "$propertyDefinition.isPuffContentForPage", "$propertyDefinition.allowedContentTypeNames", "$propertyDefinition.description", "$!propertyDefinition.defaultValue", "$!propertyDefinition.allowLanguageVariations", "$!propertyDefinition.WYSIWYGEnabled", "$!propertyDefinition.WYSIWYGToolbar", "$!propertyDefinition.dataProvider", "$!propertyDefinition.dataProviderParameters", "$!propertyDefinition.autoCreateContent", "$!propertyDefinition.autoCreateContentMethod", "$!propertyDefinition.autoCreateContentPath", "$!propertyDefinition.encodedCustomMarkup", "$!propertyDefinition.allowMultipleSelections");
+
+				#foreach($propertyOptionDefinition in $propertyDefinition.options)
+					propertyOption = new ComponentPropertyOptionDefinition("$propertyOptionDefinition.name", "$propertyOptionDefinition.value");
+					property.getOptions().addElement(propertyOption);
+				#end
+
+				propertyVector.addElement(property);
+					
+			#end
+	
+			//alert("propertyVector" + propertyVector.getSize());
+			drawList();		
+		}
+		
+		var propertyVector = new Vector(0);
+	
+		function refreshCaller()
+		{
+			if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+				window.opener.parent.frames['main'].location.reload();
+			else
+				window.opener.location.reload();	
+			
+			window.close();
+		}
+
+		var propertiesString = "";
+		#foreach($propertyDefinition in $componentPropertyDefinitions)
+			propertiesString = propertiesString + "&extraMultiParameters=${contentId}_${propertyDefinition.name}";
+		#end
+
+	</script>
+	
+</head>
+
+<body class="contenttooledit" onload="#if($closeOnLoad == "true") refreshCaller(); #else init(); #end">
+
+<div id="savingLayer" class="infobackground">
+	<div class="infoheader">Saving changes</div>
+	<div class="infobody">Processing input - please wait!</div>
+</div>
+
+
+<div id="componentPropertyDefinition" class="smallPropDiv" style="border-style:solid; border-width:1px; background-color: white; LEFT:150px; position:absolute; TOP:50px; visibility:hidden; z-index:1">
+<div id="componentPropertyDefinitionHandle" class="smallPropDivHandle">Edit component property</div>
+<div id="componentPropertyDefinitionBody" class="smallPropDivBody">	
+
+<form name="componentPropertyDefinitionForm">
+<br/>
+<p><label for="componentPropertyDefinition_name">Name:</label><input type="textfield" name="componentPropertyDefinition_name" id="componentPropertyDefinition_name" value=""/></p>
+<p><label for="componentPropertyDefinition_displayName">Display name:</label><input type="textfield" name="componentPropertyDefinition_displayName" id="componentPropertyDefinition_displayName" value=""/></p>
+<p><label for="componentPropertyDefinition_description">Description:</label><input type="textfield" name="componentPropertyDefinition_description" id="componentPropertyDefinition_description" value=""/></p>
+<p><label for="componentPropertyDefinition_defaultValue">Default value:</label><input type="textfield" name="componentPropertyDefinition_defaultValue" id="componentPropertyDefinition_defaultValue" value=""/></p>
+<p><label for="componentPropertyDefinition_allowLanguageVariations">Allow language variations:</label>
+	<select size="1" name="componentPropertyDefinition_allowLanguageVariations" id="componentPropertyDefinition_allowLanguageVariations" class="sitedropbox">
+		<option value="">Choose below</option>
+		<option value="true">Yes</option>
+		<option value="false">No</option>
+	</select>
+</p>
+<p><label for="componentPropertyDefinition_type">Property type:</label>
+	<select size="1" name="componentPropertyDefinition_type" id="componentPropertyDefinition_type" class="sitedropbox" onchange="validateTypeChoice();">
+		<option value="binding">binding</option>
+		<option value="textfield">textfield</option>
+		<option value="textarea">textarea</option>
+		<option value="select">select</option>
+		<option value="checkbox">checkbox</option>
+		<option value="datefield">datefield</option>
+		<option value="customfield">customfield</option>
+	</select>
+</p>
+<div id="dataProviderParagraph" style="display: none;">
+	<p><label for="componentPropertyDefinition_dataProvider">Data provider class:</label><input type="textfield" name="componentPropertyDefinition_dataProvider" id="componentPropertyDefinition_dataProvider" value=""/></p>
+	<p><label for="componentPropertyDefinition_dataProviderParameters">Data provider parameters:</label><input type="textfield" name="componentPropertyDefinition_dataProviderParameters" id="componentPropertyDefinition_dataProviderParameters" value=""/></p>
+</div>
+
+<div id="allowMultipleSelections" style="display: none;">
+	<p><label for="componentPropertyDefinition_allowMultipleSelections">Allow multiple selections:</label><input type="textfield" name="componentPropertyDefinition_allowMultipleSelections" id="componentPropertyDefinition_allowMultipleSelections" value=""/></p>
+</div>
+
+<div id="customMarkupParagraph" style="display: none;">
+	<p>
+	<label for="customMarkup">Custom Markup:</label>
+	<textarea name="componentPropertyDefinition_customMarkup" id="componentPropertyDefinition_customMarkup" class="smalltextarea" style="width: 300px;"></textarea>
+	</p>
+</div>
+
+<div id="optionsParagraph" style="display: block;">
+	<fieldset>
+	<legend>Options</legend>
+	<table id="optionsParent" border="0">
+  	<tr>
+  		<td>
+  			<table id="options" border="0">
+ 			<tr>
+ 				<td>No options at the moment</td>
+ 			</tr>
+  			</table>
+		</td>	
+	</tr>
+	</tr>
+  		<td><img src="images/trans.gif" height="5" width="1"/></td>	
+	</tr>
+	</tr>
+  		<td><a href="javascript:addOption();">Add new option</a></td>	
+	</tr>
+  	</table> 	
+  	</fieldset>
+</div>
+
+<div id="wysiwygParagraph" style="display: block;">
+	<p>
+	<label for="name">Enable WYSIWYG:</label>
+	<select size="1" name="componentPropertyDefinition_WYSIWYGEnabled" id="componentPropertyDefinition_WYSIWYGEnabled" class="sitedropbox">
+	    <option value="false">No</option>
+	    <option value="true">Yes</option>
+	</select>
+	</p>
+	<p>
+	<label for="name">Toolbar:</label>
+	<input type="textfield" name="componentPropertyDefinition_WYSIWYGToolbar" id="componentPropertyDefinition_WYSIWYGToolbar" value=""/>
+	</p>
+</div>
+<p id="entityParagraph" style="display: block;"><label for="name">Entity:</label>
+	<select size="1" name="componentPropertyDefinition_entity" id="componentPropertyDefinition_entity" class="sitedropbox" onchange="validateEntityChoice();">
+	    <option value="Content">Content</option>
+	    <option value="SiteNode">SiteNode</option>
+	</select>
+</p>
+<p id="multipleParagraph" style="display: block;"><label for="name">Multiple:</label>
+	<select size="1" name="componentPropertyDefinition_multiple" id="componentPropertyDefinition_multiple" class="sitedropbox">
+	    <option value="false">No</option>
+	    <option value="true">Yes</option>
+	</select>
+</p>
+<div id="assetParagraph" style="display: block;">
+	<p>
+		<label for="componentPropertyDefinition_assetBinding">AssetBinding:</label>
+		<select size="1" name="componentPropertyDefinition_assetBinding" id="componentPropertyDefinition_assetBinding" class="sitedropbox">
+		    <option value="false">No</option>
+		    <option value="true">Yes</option>
+		</select>
+	</p>
+	<p>
+		<label for="componentPropertyDefinition_AssetMask">AssetMask (suffix regexp):</label>
+		<input type="textfield" name="componentPropertyDefinition_AssetMask" id="componentPropertyDefinition_assetMask" value=""/>
+	</p>
+</div>
+<p id="isPuffContentForPageParagraph" style="display: block;">
+	<label for="componentPropertyDefinition_isPuffContentForPage">Puff for page:</label>
+	<select size="1" name="componentPropertyDefinition_isPuffContentForPage" id="componentPropertyDefinition_isPuffContentForPage" class="sitedropbox">
+	    <option value="false">No</option>
+	    <option value="true">Yes</option>
+	</select>
+</p>
+<p id="allowedContentTypeNamesParagraph" style="display: block;"><label for="name">Allowed content type(s):</label>
+	<select name="componentPropertyDefinition_allowedContentTypeNames" id="componentPropertyDefinition_allowedContentTypeNames" class="sitedropbox" multiple="true" size="5">
+	    <option value="">Select 0..n</option>
+	    #foreach($contentTypeDefinition in $contentTypeDefinitions)
+	    <option value="$contentTypeDefinition.name">$contentTypeDefinition.name</option>
+	    #end
+ 	</select>
+</p>
+<div id="autoCreateContentParagraph" style="display: block;">
+	<p>
+	<label for="name">Auto create content:</label>
+	<select size="1" name="componentPropertyDefinition_autoCreateContent" id="componentPropertyDefinition_autoCreateContent" class="sitedropbox">
+	    <option value="false" selected="selected">No</option>
+	    <option value="true">Yes</option>
+	</select>
+	</p>
+	<p>
+	<label for="name">Auto create content method:</label>
+	<select size="1" name="componentPropertyDefinition_autoCreateContentMethod" id="componentPropertyDefinition_autoCreateContentMethod" class="sitedropbox">
+	    <option value="siteStructure">Mimic site structure</option>
+	    <option value="fixedPath">Fixed path</option>
+	</select>
+	</p>
+	<p>
+	<label for="name">Auto create content base path:</label>
+	<input type="textfield" name="componentPropertyDefinition_autoCreateContentPath" id="componentPropertyDefinition_autoCreateContentPath" value=""/>
+	</p>
+</div>
+<p style="margin-left: 165px;">
+	<br/>
+	<a href="javascript:updateProperties();"><img src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25" border="0"></a>
+	<a href="javascript:hideDiv('componentPropertyDefinition');"><img src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25" border="0"></a>
+</p>
+</form>
+</div>
+</div>
+
+
+<div id="componentPropertyOptionDefinition" class="smallPropDiv" style="border-style:solid; border-width:1px; background-color: white; LEFT:140px; position:absolute; TOP:250px; visibility:hidden; z-index:5">
+<div id="componentPropertyOptionDefinitionHandle" class="smallPropDivHandle">
+	Edit component property option
+</div>
+<div id="componentPropertyOptionDefinitionBody" class="smallPropDivBody">	
+
+<form name="componentPropertyOptionDefinitionForm">
+<p>
+	<b>Name:</b>
+	<input type="textfield" name="componentPropertyOptionDefinition_name" id="componentPropertyOptionDefinition_name" value=""/>
+</p>
+<p>
+	<b>Value:</b>
+	<input type="textfield" name="componentPropertyOptionDefinition_value" id="componentPropertyOptionDefinition_value" value=""/>
+</p>
+<p>
+	<a href="javascript:updatePropertyOption();"><img src="$ui.getString("images.managementtool.buttons.saveAndExit")" width="80" height="25" border="0"></a>
+	<a href="javascript:hideDiv('componentPropertyOptionDefinition');"><img src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25" border="0"></a>
+</p>
+</form>
+</div>
+</div>
+
+
+
+<table class="contenttooledit" cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+	<td valign="top">
+		
+		<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr class="darkgreen">
+			<td class="smalllabel" colspan="3">Component Properties</td>
+			<td><img src="images/accessRights.gif" onclick="showMultiAccessRights(propertiesString);"/>&nbsp;</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		
+		<tr>
+			<td>
+			  	<TABLE id="properties" border="1">
+			  	
+			  	</table>
+			</td>
+		</tr>
+				
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<tr>
+			<td>
+				<a href="javascript:addProperty();">Add new property</a>
+			</td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="10"></td>
+		</tr>		
+		
+		<tr>
+			<td>
+				<a href="javascript:submitPropertiesXML();"><img src="$ui.getString("images.contenttool.buttons.save")" border="0"></a>
+				<a href="javascript:submitPropertiesXMLAndExit();"><img src="$ui.getString("images.contenttool.buttons.saveAndExit")" border="0"></a>
+				<a href="javascript:window.opener.location.reload();window.close();"><img src="$ui.getString("images.contenttool.buttons.cancel")" width="50" height="25" border="0"></a>
+			</td>
+		</tr>		
+		
+		</table>
+		
+		<form id="inputForm" name="inputForm" action="ViewComponentPropertiesEditor!update.action" method="POST">
+			<input type="hidden" name="contentVersionId" value="$contentVersionId">
+			<input type="hidden" name="attributeName" value="$attributeName">
+			<input type="hidden" name="propertiesXML" value="">
+			<input type="hidden" name="closeOnLoad" value="false">
+		</form>
+
+	</td>
+</tr>
+</table>
+
+</body>
+</html>

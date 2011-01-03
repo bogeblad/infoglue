@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginPublishingTool("tool.publishingtool.welcomeHeader" "Welcome to the publishing tool, select one repository to work with" "")
+
+<!--div class="fullymarginalized"-->
+<script type="text/javascript" language="Javascript">
+
+		function reloadMenu(id)
+		{
+			var menuFrame = parent.header;
+			var theDoc = menuFrame.document;
+			var theFrame = parent.menu;
+   			
+   			theDoc.selectbox.repositoryId.value = id;
+		    document.location.href = "ViewPublications.action?repositoryId=" + id;
+		}
+
+	</script>
+
+<table tableborder="0" border="0" bgcolor="666666" width="70%" cellpadding="1" cellspacing="0">
+<tr>
+	<td>
+
+#set($lvConstraint = 0) 
+#lvHead(["Repository name","Description","Status"] "" "" "" "")
+#set($cnt = 0)
+
+#foreach ($repositoryVO in $repositories)
+	#set($events = $this.getPublicationEvents($repositoryVO.getId(), "all"))
+	#set($groupEvents = $this.getPublicationEvents($repositoryVO.getId(), "groupBased"))
+	#if($events.size() > 0)
+		#set($status = "<strong>$events.size() items up for publishing ($groupEvents.size() by group members)</strong>")	
+	#else
+		#set($status = "No items")	
+	#end
+	#set($row = ["<a href='#' onclick='reloadMenu($repositoryVO.getId())'>$repositoryVO.getName() </a>", "$repositoryVO.getDescription()", "$status"])
+	#set($cnt = $cnt + 1)
+	#lvAddRow($row $cnt "$repositoryVO.getId()")
+#end
+
+#lvEnd()
+
+</td>
+</tr>
+</table>	
+
+#set($systemMessages = $systemNotificationMessages)
+#if($systemMessages.size() > 0)
+	<br/><br/>
+	
+	<table tableborder=0 border=0 bgcolor=666666 width=70% cellpadding="1" cellspacing="0"><tr><td>
+	
+	#set($lvConstraint = 0) 
+	#lvHead(["There are system changes that has not yet been pushed to the live instances."] "" "" "" "")
+	#set($cnt = 0)
+	
+	#foreach ($notificationMessage in $systemNotificationMessages)
+		#set($row = ["$notificationMessage.className - $notificationMessage.getTransactionTypeName($notificationMessage.type)"])
+		#set($cnt = $cnt + 1)
+		#lvAddRow($row $cnt "$cnt")
+	#end
+	
+	#lvEnd()
+	
+	</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="ViewPublishingToolStartPage!pushSystemNotificationMessages.action">
+			<img src="$ui.getString("images.contenttool.buttons.push")" width="50" height="25" border="0">
+			</a>
+		</td>
+	</tr>	
+	</table>	
+#end
+
+</body>
+</html>

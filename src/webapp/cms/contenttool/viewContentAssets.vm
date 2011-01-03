@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	#if(!$treatAsLink)
+	<title>$ui.getString("tool.contenttool.inlineImageTitle")</title>
+	#else
+	<title>$ui.getString("tool.contenttool.assetLinkTitle")</title>
+	#end
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/editor.js"></script>
+	<script type="text/javascript" src="applications/HTMLArea/popups/infogluePopup.js"></script>
+	
+	<script language="JavaScript">
+	<!--		
+		#set($exp = $this.getExpansion($oldContentId))
+		var exp = "$exp";
+		
+	    function notifyExp(v)
+	    {
+	    	//alert("v:" + v);
+	    	// The html tree notifies this page about the
+	    	// current expansion key, so that we can reload
+	    	// the tree with the same expansion.
+	    	exp=v;
+	    }
+
+		function notifyIsLoaded()
+	    {
+	    	//alert("Tree was loaded - notifyIsLoaded");
+	    	treeIsLoaded = true;
+	    }
+		
+		function changeRepository(selectBox)
+		{
+			//alert("selectBox:" + selectBox);
+			var repositoryId = selectBox.value;
+			var url = "ViewContentVersion!viewAssetsDialog.action?repositoryId=" + repositoryId + "&contentId=-1&languageId=$languageId&treatAsLink=$treatAsLink";
+			//var url = "${currentAction}?repositoryId=" + repositoryId + "&languageId=$languageId&contentId=$contentId&componentId=$componentId&propertyName=$propertyName&tree=$tree";
+			document.location.href = url;
+		}
+		
+		function htmlTreeItemClick(entityId, repositoryId, path)
+		{
+			var url = "ViewContentVersion!viewAssets.action?contentId=" + entityId + "&languageId=$languageId&treatAsLink=$treatAsLink";
+			document.getElementById("contentVersionAssetsFrame").src = url;
+		}
+		
+		function onOk(param, contentId, assetKey)
+		{
+			#if(!$treatAsLink)
+				//alert("param:" + param);			
+				//alert("contentId" + contentId);			
+				//alert("assetKey" + assetKey);			
+				
+				tag = "<img src=\"$templateLogic.getInlineAssetUrl(";
+				tag = tag + contentId;
+				tag = tag + ", \"" + assetKey + "\")\"";
+				tag = tag + " alt=\"" + param.f_alt + "\"";
+				tag = tag + " align=\"" + param.f_align + "\"";
+				tag = tag + " border=\"" + param.f_border + "\"";
+				tag = tag + " hspace=\"" + param.f_horiz + "\"";
+				tag = tag + " vspace=\"" + param.f_vert + "\">";
+				//alert("tag:" + tag);
+				imageTag = transformAttribute(tag, parent.opener.document);
+				
+				//alert(imageTag);
+				param["f_url"] = getDownloadUrl(contentId, assetKey);
+				//alert("f_url:" + param["f_url"]);
+				param["image"] = imageTag;
+				//alert("param.imageTag:" + param["image"]);
+				//alert("param.imageTag:" + param["image"]);
+				//alert("f_alt:" + param.f_alt);
+				//alert("f_align:" + param.f_align);
+				//alert("f_border:" + param.f_border);
+				//alert("f_horiz:" + param.f_horiz);
+				//alert("f_vert:" + param.f_vert);			
+				parent.__dlg_close(param);
+				return false;
+			#else
+				//alert("param:" + param);			
+				//alert("contentId" + contentId);			
+				//alert("assetKey" + assetKey);			
+				/*
+				//alert("Generating image....");
+				tag = "<img src=\"$templateLogic.getInlineAssetUrl(";
+				tag = tag + contentId;
+				tag = tag + ", \"" + assetKey + "\")\"";
+				tag = tag + " alt=\"" + param.f_alt + "\"";
+				tag = tag + " align=\"" + param.f_align + "\"";
+				tag = tag + " border=\"" + param.f_border + "\"";
+				tag = tag + " hspace=\"" + param.f_horiz + "\"";
+				tag = tag + " vspace=\"" + param.f_vert + "\">";
+				//alert("tag:" + tag);
+				imageTag = transformAttribute(tag, parent.opener.document);
+				
+				//alert(imageTag);
+				param["f_url"] = getDownloadUrl(contentId, assetKey);
+				//alert("f_url:" + param["f_url"]);
+				param["image"] = imageTag;
+				//alert("param.imageTag:" + param["image"]);
+				//alert("param.imageTag:" + param["image"]);
+				//alert("f_alt:" + param.f_alt);
+				//alert("f_align:" + param.f_align);
+				//alert("f_border:" + param.f_border);
+				//alert("f_horiz:" + param.f_horiz);
+				//alert("f_vert:" + param.f_vert);
+				*/			
+				parent.__dlg_close(param);
+				return false;
+			#end
+		}
+		
+		function getDownloadUrl(contentId, assetKey)
+		{
+			return "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
+		}
+		
+		function onCancel() {
+		    parent.__dlg_close(null);
+			return false;
+		}	
+		
+		image 		= "";
+		f_alt 		= "";
+		f_border 	= "0";
+		f_align 	= "";
+		f_vert 		= "0";
+		f_horiz 	= "0";
+
+		f_text 		= "";
+		f_title		= "";
+		f_target	= "";
+
+				
+		function init() 
+		{
+			window.resizeTo(750,600);
+			__dlg_init();
+		  	var param = window.dialogArguments;
+		  	//alert("param AA:" + param);
+		  	if (param) 
+		  	{
+		  		
+		  		//alert("image AA" + param["image"]);	
+		  		//alert("f_alt AA" + param["f_alt"]);	
+		  		//alert("f_border AA" + param["f_border"]);	
+		  		//alert("f_align AA" + param["f_align"]);	
+		  		//alert("f_vert AA" + param["f_vert"]);	
+		  		//alert("f_horiz AA" + param["f_horiz"]);		  		
+		      	
+		      	image = param["image"];
+		      	f_text = param["f_text"];
+		      	f_title = param["f_title"];
+		      	f_target = param["f_target"];
+		      	//alert("f_text:" + f_text);
+		      	//alert("f_title:" + f_title);
+		      	//alert("f_target:" + f_target);
+		      	f_alt = param["f_alt"];
+		      	f_border = param["f_border"];
+		      	f_align = param["f_align"];
+		      	f_vert = param["f_vert"];
+		      	f_horiz = param["f_horiz"];
+
+				if(document.all)
+		      	{
+		      		//frames['contentVersionAssetsFrame'].initSub();
+		      		window.frames['contentVersionAssetsFrame'].initSub();
+		      	}
+				else
+				{
+					frames['contentVersionAssetsFrame'].initSub();
+				}				
+		  	}
+		};
+		
+		-->
+	</script>
+	
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+</head>
+
+<body class="contenttooledit" onload="init();">
+
+<table border="0" width="100%" cellpadding="2" cellspacing="0">
+<tr>
+	<td valign="top">
+		<table cellpadding="0" cellspacing="0" border="0" width="350">
+		<tr class="darkgreen">
+			<td class="smalllabel">$ui.getString("tool.contenttool.chooseContentLabel")</td>
+			<td class="smalllabel"><img src="images/spyglassIcon.gif" width="16" height="16" onclick="toggleDiv('searchDiv', 'treeDiv');"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<!-- 
+		HERE IS THE REPOSITORY-LIST FOR LATER 
+		-->
+		<tr>
+			<td colspan="2">
+		  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+				    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+				    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+				    #end
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<tr>
+			<td class="menu">  
+				#if($tree == "applet")
+					#showJavaTree("350" "400" "254" "248" "208" "Content" $repositoryId "false")
+				#else
+					<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree.action?repositoryId=$repositoryId&exp=$exp&akey=/$!oldContentId/&select=$!oldContentId" width="350" height="510" align="baseline"></IFRAME>
+				#end
+			</td>
+		</tr>	
+		<!--
+		<tr>
+			<td colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<a href="javascript:submitBindning();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+				<a href="javascript:window.close();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+			</td>
+		</tr>
+		-->
+		<tr>
+			<td colspan="2">
+				<form name="inputForm" action="CreateServiceBinding.action">
+					<input type="hidden" name="entityId" value="">
+					<input type="hidden" name="repositoryId" value="">
+					<input type="hidden" name="path" value="">
+					<input type="hidden" name="qualifyerXML" value="">
+				</form>
+			</td>
+		</tr>		
+		</table>
+
+	</td>
+	
+	<td valign="top">
+		<table cellpadding="0" cellspacing="0" border="0" width="350">
+		<tr class="darkgreen">
+			<td class="smalllabel">$ui.getString("tool.contenttool.associatedAttachments")</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<tr>
+			<td>
+				#if($oldContentId > 0)
+					<IFRAME frameborder="0" name="contentVersionAssetsFrame" id="contentVersionAssetsFrame" src="ViewContentVersion!viewAssets.action?contentId=$contentId&languageId=$languageId&oldContentId=$oldContentId&assetKey=$assetKey&treatAsLink=$treatAsLink" width="370" height="540" align="baseline"></IFRAME>
+				#else
+					<IFRAME frameborder="0" name="contentVersionAssetsFrame" id="contentVersionAssetsFrame" src="ViewContentVersion!viewAssets.action?contentId=$contentId&languageId=$languageId&treatAsLink=$treatAsLink" width="370" height="540" align="baseline"></IFRAME>
+				#end
+			</td>
+		</tr>
+		</table>
+	</td>
+</tr>
+</table>
+
+</body>
+</html>

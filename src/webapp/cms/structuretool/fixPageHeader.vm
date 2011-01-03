@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Page Editor</title>
+	
+	<script type="text/javascript">
+	<!--
+	
+		function closeAndRefresh()
+		{
+			top.opener.location.reload();
+			top.window.close();
+		}
+		
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+</head>
+
+<body class="cmstool">
+
+<table border="0" cellpadding="4" cellspacing="0" width="100%">
+<tr>
+	<td class="biglabel">$ui.getString("tool.contenttool.fixReferencesOnPage.header")</td>
+	<td class="label" align="right"><a class="whitelabel" href="javascript:closeAndRefresh();"><img src="$ui.getString("images.contenttool.buttons.close")" border="0"></a></td>
+</tr>	
+</table>
+
+</body>
+</html>

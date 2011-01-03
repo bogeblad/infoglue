@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginStructureTool("Access Rights" "Access Rights" "siteNodeId=$siteNodeId&siteNodeVersionId=$siteNodeVersionId&repositoryId=$repositoryId&isBranch=$isBranch" "$!unrefreshedSiteNodeId" "$!changeTypeId" "$!siteNodeId")
+
+<div class="fullymarginalized">
+<form method="POST" name="editForm" action="UpdateSiteNodeAccessRights.action">
+<input type="hidden" name="name" value="$name">
+<input type="hidden" name="value" value="$value">
+<input type="hidden" name="returnAddress" value="$returnAddress">
+
+<table border="0" width="95%" cellpadding="0" cellspacing="0">
+	<tr class="darkapricot">
+		<td class="smalllabel">Extranet Role</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td class="smalllabel">Read</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td class="smalllabel">Write</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#FEF8D0" colspan="6" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#F0E1B4" colspan="6" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	
+	#set($extranetRoleIndex = 0)
+	#foreach ($extranetRoleVO in $extranetRoleVOList)
+		<tr>
+			<td>
+				$extranetRoleVO.name
+				<input type="hidden" name="${extranetRoleIndex}_extranetRoleId" value="$extranetRoleVO.id">
+			</td>
+			<td></td>
+			<td>
+				#set($checked = "")
+				#foreach ($extranetAccessVO in $extranetAccessVOList)
+					#if($extranetAccessVO.getExtranetRoleId() == $extranetRoleVO.getExtranetRoleId() && $extranetAccessVO.hasReadAccess == true)
+						#set($checked = "checked")
+					#end 
+				#end
+				<input type="checkbox" name="${extranetRoleVO.id}_hasReadAccess" value="true" $checked>
+			</td>
+			<td></td>
+			<td>
+				#set($checked = "")
+				#foreach ($extranetAccessVO in $extranetAccessVOList)
+					#if($extranetAccessVO.getExtranetRoleId() == $extranetRoleVO.getExtranetRoleId() && $extranetAccessVO.hasWriteAccess == true)
+						#set($checked = "checked")
+					#end 
+				#end
+				<input type="checkbox" name="${extranetRoleVO.id}_hasWriteAccess" value="true" $checked>
+			</td>
+			<td></td>						
+		</tr>
+		#set($extranetRoleIndex = $extranetRoleIndex + 1)
+	#end
+	
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>	
+		<input type="hidden" name="extranetUserId" value="$!extranetUserId">
+		<td>
+			<input type="image" src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25" border="0" onClick='JavaScript:showWorking();'>
+			<a href="javascript:saveAndExit(document.editForm, 'UpdateExtranetUser!saveAndExit.action');"><img src="$ui.getString("images.managementtool.buttons.saveAndExit")" width="80" height="25" border="0"></a>
+			<a href="ViewListExtranetUser.action"><img border="0" src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25"></a>
+		</td>
+	</tr>			
+	
+</table>
+</form>
+</div>
+</body>
+</html>

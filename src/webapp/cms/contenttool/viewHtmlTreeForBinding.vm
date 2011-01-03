@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head> 
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>Menus</title>
+
+	<script type="text/javascript" language="JavaScript">
+	<!-- 
+		// MENU STUFF
+		var ie55 = /MSIE ((5\.[56789])|([6789]))/.test( navigator.userAgent ) &&
+					navigator.platform == "Win32";
+		
+		if ( !ie55 ) {
+			window.onerror = function () {
+				return true;
+			};
+		}
+		
+		function writeNotSupported() {
+			if ( !ie55 ) {
+				document.write( "<p class=\"warning\">" +
+					"This script only works in Internet Explorer 5.5" +
+					" or greater for Windows</p>" );
+			}
+		}
+		var cssFile = "script/menu/skins/winclassic.css";
+		document.write("<link type=\"text/css\" rel=\"StyleSheet\" href=\"" + cssFile + "\" />" );
+
+		var languageCode = "$languageCode";
+
+		// OTHER STUFF
+		
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			//alert("itemId:" + itemId);
+			//alert("repoId" + repoId);
+			//alert("path" + path);
+			
+			// Call parent
+			//parent.htmlTreeItemClick(itemId, repoId);
+			setSelected(itemId, repoId, path);	
+			//setSelected(itemId);			
+		}
+		
+		var oldSelected;
+		
+		function setSelected(itemId, repoId, path)
+		{
+			// Graphical stuff
+			//if (oldSelected != null)
+			//	oldSelected.className = "";
+			
+			//var srcIdLink =	document.getElementById("link" + itemId);
+			//oldSelected = srcIdLink;
+			//if (srcIdLink != null)
+			//	srcIdLink.className = "selected";
+				
+			if(itemId)
+				parent.document.inputForm.entityId.value     = itemId;
+			if(repoId)
+				parent.document.inputForm.repositoryId.value = repoId;
+			if(path)
+			 	parent.document.inputForm.path.value         = path;
+		}
+
+		
+		function selectWhenLoaded(parentNode, contentId)
+		{
+			if(parentNode.loading) 
+			{
+				window.setTimeout(function () {
+					selectWhenLoaded(parentNode, contentId);
+				}, 10);
+			}
+			else
+			{
+				parentNode.expand();
+				var addedNode = tree.getNodeWithMyId(contentId);
+				addedNode.select();
+			}
+		}
+		
+		function markSelected(itemId)
+		{
+			var node = tree.getNodeWithMyId(itemId);
+			if(node)
+				node.select();
+		}
+		
+		var ig_expanded_nodes_cookie = "igContentTreeForBindingExpansionForRepository${repositoryId}";
+		
+		function loaded()
+		{
+			setSelected("${select}");
+			
+			path = webFXTreeHandler.cookies.getCookie(ig_expanded_nodes_cookie);
+			//alert("path:" + path);
+			if(path && path != "")
+			{
+				path = path.substring(0, path.length - 1);
+				var pathArr = path.split(',');
+				
+				expandTreeRec(pathArr, 0);
+			}		
+			
+			setTimeout("markSelected('${select}')", 500);
+		}
+
+		function expandTreeRec(pathArr, level)
+		{			
+			var node = tree.getNodeWithMyId(pathArr[level]);
+						
+			if(node == null)
+				return;
+						
+			if(!node.loading && node.parentNode != null)
+			{
+				//alert("Loading child to " + node.text + ":" + node.id + ":" + node.myId + !node.loaded + ":" + !node.loading);
+				if (!node.loaded && !node.loading && node.src) {
+					_startLoadXmlTree(node.src, node);
+				}
+				
+				if (webFXTreeHandler.behavior == 'classic') { document.getElementById(node.id + '-icon').src = node.openIcon; }
+				if (node.childNodes.length) {  document.getElementById(node.id + '-cont').style.display = 'block'; }
+				node.open = true;
+				document.getElementById(node.id + '-plus').src = node.minusIcon;
+				node.deSelect();
+				document.getElementById(node.id + '-anchor').blur();
+			 	//node.expand();
+			}
+						
+			if(node.loading && !node.loaded) 
+			{
+				//alert("loading with level:" + level + " and " + pathArr.length);
+				if(level < pathArr.length)
+				{
+					window.setTimeout(function () {
+						expandTreeRec(pathArr, level);
+					}, 10);
+				}
+			}
+			else
+			{
+				//alert("not loading");
+				if(level < pathArr.length)
+				{
+					expandTreeRec(pathArr, level+1);
+				}
+			}
+		}
+		// -->
+	</script>
+	<script type="text/javascript" src="script/menu/poslib.js"></script>
+	<script type="text/javascript" src="script/menu/scrollbutton.js"></script>
+	<script type="text/javascript" src="script/menu/menu4.js"></script>
+	
+	#if($treeMode != "classic")
+	<!-- DYNAMIC VERSION SCRIPTS -->
+	<script type="text/javascript">
+		var defaultWorkingStyleInformation = "$this.workingStyleInformation";
+		var defaultFinalStyleInformation = "$this.finalStyleInformation";
+		var defaultPublishStyleInformation = "$this.publishStyleInformation";
+		var defaultPublishedStyleInformation = "$this.publishedStyleInformation";
+	</script>
+	<script type="text/javascript" src="script/xloadtree/xtree.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xmlextras.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xloadtree.js"></script>
+	<!-- END -->
+	#end
+	
+</head>
+<body class="contenttooledit" LEFTMARGIN="0" TOPMARGIN="0" onload="parent.notifyExp('${exp}');loaded();"  onMouseUp="clearDrag(event);">
+	
+<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+
+#if($treeMode=="classic")
+	<link rel="stylesheet" type="text/css" href="css/treeview.css" /> 
+#else
+	
+	<!-- NEW DYNAMIC VERSION -->
+	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
+	<script type="text/javascript">
+	
+	#if($disableCustomIcons != "true")
+		#foreach($customContentTypeIcon in $customContentTypeIcons.entrySet())
+			webFXTreeConfig.contentTypeIcons["$customContentTypeIcon.key"] = "$customContentTypeIcon.value";
+		#end
+	#end
+	
+	webFXTreeConfig.rootIcon		= "images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/folder.png";
+	webFXTreeConfig.openRootIcon	= "images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/openfolder.png";
+	webFXTreeConfig.folderIcon		= "script/xloadtree/images/xp/folder.png";
+	webFXTreeConfig.openFolderIcon	= "script/xloadtree/images/xp/openfolder.png";
+	webFXTreeConfig.hiddenFolderIcon		= "script/xloadtree/images/xp/hiddenFolder.png";
+	webFXTreeConfig.hiddenOpenFolderIcon	= "script/xloadtree/images/xp/hiddenOpenfolder.png";
+	webFXTreeConfig.fileIcon		= "script/xloadtree/images/xp/file.png";
+	webFXTreeConfig.lMinusIcon		= "script/xloadtree/images/xp/Lminus.png";
+	webFXTreeConfig.lPlusIcon		= "script/xloadtree/images/xp/Lplus.png";
+	webFXTreeConfig.tMinusIcon		= "script/xloadtree/images/xp/Tminus.png";
+	webFXTreeConfig.tPlusIcon		= "script/xloadtree/images/xp/Tplus.png";
+	webFXTreeConfig.iIcon			= "script/xloadtree/images/xp/I.png";
+	webFXTreeConfig.lIcon			= "script/xloadtree/images/xp/L.png";
+	webFXTreeConfig.tIcon			= "script/xloadtree/images/xp/T.png";
+	webFXTreeConfig.showRoot		= true;
+	webFXTreeConfig.loadingText		= "Loading content ...";
+	
+	#set($par = "$!parent")
+	#if( $par != "")
+		#set($par = "&parent=${parent}")
+	#else
+		#set($par = "&parent=$rootNode.Id")
+	#end 
+	
+	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleContentXml.action?showLeafs=${showLeafs}&action=SimpleContentXml.action&createAction=true&repositoryId=$!{repositoryId}$par&$allowedContentTypeIdsAsUrlEncodedString", "JavaScript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
+	tree.myId = "$rootNode.Id";
+	document.write(tree);
+	var oldSelected = null;
+	function onTreeItemClick(elem, itemId, repoId, path)
+	{
+		//alert("elem:" + elem);
+		//alert("itemId:" + itemId);
+		//alert("repoId:" + repoId);
+		//alert("path:" + path);
+		
+		//if(oldSelected!=null) oldSelected.className="";
+		//elem.className="selected";
+		//oldSelected=elem;
+		htmlTreeItemClick(itemId, repoId, path);
+		
+		elementString = elem.toString();
+		startIndex = elementString.indexOf("(") + 1;
+		endIndex = elementString.indexOf(")");
+		nodeId = elementString.substring(startIndex, endIndex);
+		var node = tree.getNodeWithMyId(nodeId);
+		
+		setTimeout(function () {
+			if (node.folder) {
+				if (!node.open) { node.expand(); }
+				}			
+			//webFXTreeHandler.toggle(node);
+			}, 100);
+	}
+	
+	function onTreeItemSelect(elem)
+	{
+		//alert("elem:" + elem);
+		var aid = elem + "-anchor";
+		if (oldSelected != null)
+			oldSelected.className = "";
+		
+		var srcIdLink =	document.getElementById(aid);
+		// alert(srcIdLink.className);
+		oldSelected = srcIdLink;
+		if (srcIdLink != null)
+			srcIdLink.className = "selected";
+
+		// alert(srcIdLink.className);
+	}
+	
+	</script>	
+	<!-- END -->	
+#end
+
+
+#if($treeMode == "classic")
+
+	<!-- HTML Version of the tree: Start --->
+	##
+	## drawItem procedure (called from tree renderer for every item in the list, [se #parse below] )
+	## this is a local macro
+	#set($canDrag = ' ondragstart="startDrag();" ondragend="endDrag();"')
+	#set($imgPath="images/tree/xp/")	
+	
+	#set($parentId = 0)
+	
+	#macro(drawItem $n)
+			####
+			## Draw the item icon Container or not? 
+			
+			#set($imgStart = "emptyfolder")
+			
+			#set($nId = $n.getId() )
+			#if($nId < 0)
+				#set($nId = $n.getId() - $n.getId() * 2)
+				#set($imgStart = "emptyfolderContent")
+			#end
+			
+			#if ($n.isContainer())
+				#set($acceptdrop='ondrop="drop()" ondragover="overDrag()" ondragenter="enterDrag()" ondragleave="exitDrag()"')
+				#if ($n.isRoot())
+					<img $acceptdrop id="icon${nId}" myLabel="${n.getTitle()}" class="tree-icon" src="images/tree/contentRoot.gif">
+				#else
+					<img $canDrag $acceptdrop class="tree-icon" src="${imgPath}${imgStart}$preOCImg$postImg" id="icon${nId}" myLabel="${n.getTitle()}" />
+				#end
+			#else
+				#set($acceptdrop='')
+				#if($n.getState() == -1)
+					<img $canDrag class="tree-icon" src="${imgPath}item$postImg" id="icon${nId}" myLabel="${n.getTitle()}" />
+				#else
+					## CONTENTVERSIONS
+					#if($n.getState() == 0)
+						<img class="tree-icon" src="${imgPath}itemcvWorking$postImg" id="icon${nId}" myLabel="${n.getTitle()}" /> (w): 
+					#end			
+					#if($n.getState() == 2)
+						<img class="tree-icon" src="${imgPath}itemcvPublish$postImg" id="icon${nId}" myLabel="${n.getTitle()}" /> (p): 
+					#end			
+					#if($n.getState() == 3)
+						<img class="tree-icon" src="${imgPath}itemcvPublished$postImg" id="icon${nId}" myLabel="${n.getTitle()}" /> (Live):
+					#end			
+					
+				#end
+			#end
+			####
+			## Draw item link			
+			#if($n.getState() == -1)
+				<a $canDrag id="link${nId}" isContainer="$n.isContainer()" source="tree" 
+				repoId="${repositoryId}" entityId="${nId}"
+				myLabel="${n.getTitle()}" src="null" $acceptdrop href="JavaScript:htmlTreeItemClick('${nId}','${repositoryId}','$formatter.escapeExtendedHTML($n.title)');">$formatter.escapeHTML($n.title)</a>
+			#else
+				${n.getTitle()}
+			#end
+	#end
+	
+	## Set custom arguments to send to page
+	#set($myTreeArgs = "&repositoryId=${repositoryId}&showLeafs=${showLeafs}")
+	
+	## Explorer style rendering, draw your own folder icons in drawItem
+	#drawTreeXP()
+
+	<!-- HTML Version of the tree: End --->	
+#end
+
+
+	<!-- CONTEXT MENU STUFF AGAIN --->	
+	<script type="text/javascript">
+	//<![CDATA[
+	
+	// set css file to use for menus
+	Menu.prototype.cssFile = cssFile;
+	
+	var tmp;
+	
+	// Build context menu
+	var cMenu;
+	var folderMenu = new Menu();
+	var itemMenu = new Menu();
+	
+	//
+	// Create the folder menu ( the menu that shows when a folder is selected )
+	//
+	cMenu = new Menu();
+	cMenu.add( new MenuItem( "Folder", function () { createFolder(); }, "images/ContentfolderClosed.gif" ) );
+	cMenu.add( new MenuSeparator() );
+	// Loop through content type definitions
+	#foreach($c in  $contentTypeDefinitions)
+		cMenu.add( new MenuItem( "$c.getName()", function () { create($c.contentTypeDefinitionId, '$c.getName()'); }, "images/Contentdocument.gif" ) );
+	#end
+	folderMenu.add(tmp = new MenuItem( "Create new", null, "images/tree/contentItem.gif", cMenu))
+	folderMenu.add( new MenuSeparator() );
+	folderMenu.add( new MenuItem( "Edit", function () { editFolder(); }, null ) );
+	// folderMenu.add( new MenuItem( "Rename", function () { renameContent(); }, null ) );
+
+	//
+	// Create the item menu ( the menu that shows when a document is selected )
+	//
+	itemMenu.add( new MenuItem( "Add", function () { window.history.go(-1); }, null ) );
+	itemMenu.add( new MenuSeparator() );
+	itemMenu.add( new MenuItem( "Edit", function () { editContent(); }, null ) );
+
+	// Language submenu
+	cMenu = new Menu();
+	#foreach($l in $availableLanguages)
+		cMenu.add( new MenuItem( "$l.getName()", function () { editContentVersion($l.getLanguageId()); }, "images/ContentfolderClosed.gif" ) );
+	#end
+	itemMenu.add(tmp = new MenuItem( "Edit version", null, null, cMenu));
+	
+
+	// itemMenu.add( new MenuItem( "Rename", function () { renameContent(); }, null ) );
+
+
+
+	
+	var oldOpenState = null;	// used to only change when needed
+	var lastKeyCode = 0;
+	var srcElement = null;
+	
+	function rememberKeyCode() {
+		lastKeyCode = window.event.keyCode;
+	}
+	
+	function showContextMenu() {
+		
+		var el = window.event.srcElement;
+		srcElement = el;
+		
+		// check for edit
+		var showFolderMenu = el != null && (el.isContainer == "true");
+
+		// check for edit
+		var showItemMenu = el != null && (el.isContainer == "false");
+		
+		// find left and top
+		var left, top;
+		
+		if ( lastKeyCode == 93 ) {	// context menu key
+			left = posLib.getScreenLeft( el );
+			top = posLib.getScreenTop( el );
+		}
+		else {
+			left = window.event.screenX;
+			top = window.event.screenY;
+		}
+		
+		if ( showFolderMenu ) {
+			folderMenu.invalidate();
+			folderMenu.show( left, top );
+		}
+		else if ( showItemMenu ) {
+			itemMenu.invalidate();
+			itemMenu.show( left, top );
+		}
+		event.returnValue = false;
+		lastKeyCode = 0
+	};
+	
+	if(document.attachEvent)
+	{
+		document.attachEvent("oncontextmenu", showContextMenu);
+		document.attachEvent("onkeyup", rememberKeyCode);
+	}
+	else
+	{
+		document.addEventListener("oncontextmenu", showContextMenu, false);
+		document.addEventListener("onkeyup", rememberKeyCode, false);
+	}
+	
+	//]]>
+	</script>
+
+
+
+
+</body>
+</html>
+
+<script type="text/javascript" language="JavaScript1.2">
+<!-- 
+
+	function createFolder()
+	{
+		var parentContentId = srcElement.entityId;
+		var aKey = "/" + parentContentId + "/";
+		var repositoryId = ${repositoryId};
+		var showLeafs = "${showLeafs}";
+		var exp = "$exp";
+		var url = "CreateContent!bindingView.action?isBranch=true&parentContentId=" + parentContentId + "&repositoryId=" + repositoryId + "&showLeafs=" + showLeafs + "&exp=" + exp + "&name=New%20Folder&akey=" + aKey;
+	    self.location.href = url;
+	}
+	function create(contentTypeDefinitionId, name)
+	{
+		var parentContentId = srcElement.entityId;
+		var aKey = "/" + parentContentId + "/";
+		var repositoryId = ${repositoryId};
+		var showLeafs = "${showLeafs}";
+		var exp = "$exp";
+		var url = "CreateContent!bindingView.action?isBranch=false&parentContentId=" + parentContentId + "&repositoryId=" + repositoryId + "&showLeafs=" + showLeafs + "&exp=" + exp + "&contentTypeDefinitionId=" + contentTypeDefinitionId + "&name=New%20" + name + "&akey=" + aKey;
+	    self.location.href = url;
+		
+	}
+	function editContent()
+	{
+		var contentId = srcElement.entityId;
+		var url = "ViewContent!standalone.action?contentId=" + contentId;
+	    openPopup(url, "Editcontent", "width=480,height=400,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+	}	
+
+	function editFolder()
+	{
+		// The only differens from editContent is the popup size
+		var contentId = srcElement.entityId;
+		var url = "ViewContent!standalone.action?contentId=" + contentId;
+	    openPopup(url, "Editcontent", "width=400,height=100,toolbar=no,status=no,scrollbars=no,location=no,menubar=no,directories=no,resizable=no");
+	}	
+	
+	function MoveRequest(srcId, destId, srcLabel, destLabel)
+	{
+			return;
+			question = confirm("Do you really want to move " + srcLabel + " to folder: " + destLabel);
+			if (question !="0")
+			{
+				alert("ok, as soon as this is implemented content with id " + srcId + " will be moved to content with id " +destId);
+			}			
+	}
+	function openPopup(url, name, details)
+	{
+		newWin=window.open(url, name, details);
+		newWin.focus();
+	}
+	    
+-->
+</script>
+<script type="text/javascript" language="JavaScript1.2" src="script/dragdrop.js"></script>

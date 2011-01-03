@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" version="2.0" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:simpleType name="textarea"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:simpleType name="radiobutton"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:simpleType name="checkbox"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:simpleType name="select"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:simpleType name="textfield"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:complexType name="Content"> 
+		<xs:all> 
+			<xs:element name="Attributes"> 
+				<xs:complexType> 
+					<xs:all> 
+					</xs:all> 
+				</xs:complexType> 
+			</xs:element> 
+		</xs:all> 
+	</xs:complexType> 
+
+</xs:schema> 

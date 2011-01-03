@@ -1,0 +1,1156 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.contenttool.contentVersionHeader")</title>
+	
+	<script type="text/javascript">
+	<!--
+	
+		function cut_copy_paste(e, cmd, obj) {
+			e.execCommand(cmd);
+		};
+	
+	   _applicationContext = "${root}/";
+	   _editor_url = "${root}/applications/HTMLArea/";
+	   _editor_lang = "en";
+	   
+	   	   	var personalConfig = ""; 
+	   	var buttonConfig = "";
+	   	var allowedCSS = "";
+
+		#set($buttonConfig = "")
+		
+		#set($map = $this.getWYSIWYGProperties())
+	   	##set($map = $this.getPrincipalPropertyHashValues("WYSIWYGConfig", false))
+	   	#set($lineIndex = 0)
+	   	#set($positionIndex = 0)
+	   	#set($quote = "'")
+	   
+	   	#foreach($lineIndex in [0..3])
+	   		#foreach($positionIndex in [0..30])
+	   			#set($key = "toolbar_line${lineIndex}_position${positionIndex}")
+	   			#set($value = $map.get($key))
+	   			#if($value != "")
+					#if($lineIndex == 0 && $positionIndex == 0)
+						personalConfig = personalConfig + "["; 
+					#elseif($positionIndex == 0)
+						personalConfig = personalConfig + "], ["; 
+					#end
+					#if($positionIndex == 0)
+	   					personalConfig = personalConfig + "\"$value\""; 
+	   				#else
+	   					personalConfig = personalConfig + ", \"$value\""; 
+	   				#end
+	   			
+	   				##alert("value: $value");
+	   				#if($value == "bold") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}bold: [ ${quote}Bold${quote}, ${quote}ed_format_bold.gif${quote}, false, function(e) {e.execCommand(${quote}bold${quote});} ]") #end							
+	   				#if($value == "italic") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}italic: [ ${quote}Italic${quote}, ${quote}ed_format_italic.gif${quote}, false, function(e) {e.execCommand(${quote}italic${quote});} ]") #end							
+	   				#if($value == "underline") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}underline: [ ${quote}Underline${quote}, ${quote}ed_format_underline.gif${quote}, false, function(e) {e.execCommand(${quote}underline${quote});} ]") #end							
+	   				#if($value == "strikethrough") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}strikethrough: [ ${quote}Strikethrough${quote}, ${quote}ed_format_strike.gif${quote}, false, function(e) {e.execCommand(${quote}strikethrough${quote});} ]") #end							
+	   				#if($value == "subscript") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}subscript: [ ${quote}Subscript${quote}, ${quote}ed_format_sub.gif${quote}, false, function(e) {e.execCommand(${quote}subscript${quote});} ]") #end							
+	   				#if($value == "superscript") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}superscript: [ ${quote}Superscript${quote}, ${quote}ed_format_sup.gif${quote}, false, function(e) {e.execCommand(${quote}superscript${quote});} ]") #end							
+	   				#if($value == "justifyleft") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}justifyleft: [ ${quote}Justify Left${quote}, ${quote}ed_align_left.gif${quote}, false, function(e) {e.execCommand(${quote}justifyleft${quote});} ]") #end							
+	   				#if($value == "justifycenter") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}justifycenter: [ ${quote}Justify Center${quote}, ${quote}ed_align_center.gif${quote}, false, function(e) {e.execCommand(${quote}justifycenter${quote});} ]") #end							
+	   				#if($value == "justifyright") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}justifyright: [ ${quote}Justify Right${quote}, ${quote}ed_align_right.gif${quote}, false, function(e) {e.execCommand(${quote}justifyright${quote});} ]") #end							
+	   				#if($value == "justifyfull") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}justifyfull: [ ${quote}Justify Full${quote}, ${quote}ed_align_justify.gif${quote}, false, function(e) {e.execCommand(${quote}justifyfull${quote});} ]") #end							
+	   				#if($value == "orderedlist") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}orderedlist: [ ${quote}Ordered List${quote}, ${quote}ed_list_num.gif${quote}, false, function(e) {e.execCommand(${quote}insertorderedlist${quote});} ]") #end							
+	   				#if($value == "unorderedlist") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}unorderedlist: [ ${quote}Bulleted List${quote}, ${quote}ed_list_bullet.gif${quote}, false, function(e) {e.execCommand(${quote}insertunorderedlist${quote});} ]") #end							
+	   				#if($value == "outdent") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}outdent: [ ${quote}Decrease Indent${quote}, ${quote}ed_indent_less.gif${quote}, false, function(e) {e.execCommand(${quote}outdent${quote});} ]") #end							
+	   				#if($value == "indent") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}indent: [ ${quote}Increase Indent${quote}, ${quote}ed_indent_more.gif${quote}, false, function(e) {e.execCommand(${quote}indent${quote});} ]") #end							
+	   				#if($value == "forecolor") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}forecolor: [ ${quote}Font Color${quote}, ${quote}ed_color_fg.gif${quote}, false, function(e) {e.execCommand(${quote}forecolor${quote});} ]") #end							
+	   				#if($value == "hilitecolor") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}hilitecolor: [ ${quote}Background Color${quote}, ${quote}ed_color_bg.gif${quote}, false, function(e) {e.execCommand(${quote}hilitecolor${quote});} ]") #end							
+	   				#if($value == "inserthorizontalrule") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}inserthorizontalrule: [ ${quote}Horizontal Rule${quote}, ${quote}ed_hr.gif${quote}, false, function(e) {e.execCommand(${quote}inserthorizontalrule${quote});} ]") #end							
+	   				#if($value == "createlink") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}createlink: [ ${quote}Insert Web Link${quote}, ${quote}ed_link.gif${quote}, false, function(e) {e.execCommand(${quote}createlink${quote}, true);} ]") #end
+	   				#if($value == "inlinelink") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}inlinelink: [${quote}Lets the user create a link to an external page, a page in InfoGlue or an asset in InfoGlue${quote}, ${quote}ed_inlinelink.gif${quote}, false, function(e) {e.execCommand(${quote}createinlinelink${quote});} ]") #end
+	   				#if($value == "inlineimage") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}inlineimage: [${quote}Lets the user select a inline image${quote}, ${quote}ed_inlineimage.gif${quote}, false, function(e) {e.execCommand(${quote}insertinlineimage${quote});} ]") #end
+	   				#if($value == "insertimage") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}insertimage: [ ${quote}Insert/Modify Image${quote}, ${quote}ed_image.gif${quote}, false, function(e) {e.execCommand(${quote}insertimage${quote});} ]") #end
+	   				#if($value == "inserttable") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}inserttable: [ ${quote}Insert Table${quote}, ${quote}insert_table.gif${quote}, false, function(e) {e.execCommand(${quote}inserttable${quote});} ]") #end
+	   				#if($value == "htmlmode") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}htmlmode: [ ${quote}Toggle HTML Source${quote}, ${quote}ed_html.gif${quote}, true, function(e) {e.execCommand(${quote}htmlmode${quote});} ]") #end
+	   				#if($value == "popupeditor") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}popupeditor: [ ${quote}Enlarge Editor${quote}, ${quote}fullscreen_maximize.gif${quote}, true, function(e) {e.execCommand(${quote}popupeditor${quote});} ]") #end
+	   				#if($value == "about") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}about: [ ${quote}About this editor${quote}, ${quote}ed_about.gif${quote}, true, function(e) {e.execCommand(${quote}about${quote});} ]") #end
+	   				#if($value == "showhelp") #set($foundItem = true)#set($buttonConfig = "${buttonConfig}showhelp: [ ${quote}Help using editor${quote}, ${quote}ed_help.gif${quote}, true, function(e) {e.execCommand(${quote}showhelp${quote});} ]") #end
+	   				#if($value == "undo") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}undo: [ ${quote}Undoes your last action${quote}, ${quote}ed_undo.gif${quote}, false, function(e) {e.execCommand(${quote}undo${quote});} ]") #end
+	   				#if($value == "redo") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}redo: [ ${quote}Redoes your last action${quote}, ${quote}ed_redo.gif${quote}, false, function(e) {e.execCommand(${quote}redo${quote});} ]") #end
+	   				#if($value == "cut") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}cut: [ ${quote}Cut selection${quote}, ${quote}ed_cut.gif${quote}, false, cut_copy_paste ]") #end
+	   				#if($value == "copy") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}copy: [ ${quote}Copy selection${quote}, ${quote}ed_copy.gif${quote}, false, cut_copy_paste ]") #end
+	   				#if($value == "paste") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}paste: [ ${quote}Paste from clipboard${quote}, ${quote}ed_paste.gif${quote}, false, cut_copy_paste ]") #end
+	   				#if($value == "lefttoright") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}lefttoright: [ ${quote}Direction left to right${quote}, ${quote}ed_left_to_right.gif${quote}, false, function(e) {e.execCommand(${quote}lefttoright${quote});} ]") #end
+	   				#if($value == "righttoleft") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}righttoleft: [ ${quote}Direction right to left${quote}, ${quote}ed_right_to_left.gif${quote}, false, function(e) {e.execCommand(${quote}righttoleft${quote});} ]") #end
+	   				#if($value == "removeformat") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}removeformat: [ ${quote}Remove formatting${quote}, ${quote}ed_rmformat.gif${quote}, false, function(e) {e.execCommand(${quote}removeformat${quote});} ]") #end
+	   				#if($value == "print") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}print: [ ${quote}Print document${quote}, ${quote}ed_print.gif${quote}, false, function(e) {e._iframe.contentWindow.print();} ]") #end
+	   				#if($value == "killword") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}killword: [ ${quote}Clear MS Office tags${quote}, ${quote}ed_killword.gif${quote}, false, function(e) {e.execCommand(${quote}killword${quote});} ]") #end
+		   			#if($value == "unlink") #set($foundItem = true) #set($buttonConfig = "${buttonConfig}unlink: [ ${quote}Remove link${quote}, ${quote}ed_unlink.gif${quote}, false, function(e) {e.execCommand(${quote}unlink${quote});} ]") #end
+	
+	   				#if($foundItem)
+						//alert("value: $value");	
+						#set($buttonConfig = "$buttonConfig, ")
+	   				#end
+	   				
+	   				#set($foundItem = false)
+	   			#end
+	   		
+	   			#set($value = "")
+	   		#end
+	   	#end
+		
+		//alert("personalConfig:" + personalConfig);
+		if(personalConfig && personalConfig != "")
+	   	{
+		   	personalConfig = "[" + personalConfig + "]]"; 
+		}
+
+		#if($buttonConfig && $buttonConfig != "")
+		   	#set($length = $buttonConfig.length() - 2)
+		   	#set($buttonConfig = "$buttonConfig.substring(0, $length)")
+		   	buttonConfig = { ${buttonConfig} };
+		#end
+		
+		//alert("enableCSSPlugin:" + $this.enableCSSPlugin);
+		var enableCSSPlugin = $this.enableCSSPlugin;
+		#if($this.enableCSSPlugin)
+			#set($allowedClasses = $this.getAllowedClasses())
+			//Allowed classes $allowedClasses.size()
+			var cssPluginArgs = 
+		    {
+		      combos : 
+		      [{ 
+		        	label: "Style",
+		        	options: { "None"       	: ""
+							#foreach($allowedClass in $allowedClasses)
+		                    	,"$allowedClass" 	: "$allowedClass"
+							#end
+		                    },
+		                    context: "p"
+		          			//context: "pre"
+		          	
+		       }
+		       /*, 
+		       { 
+		          	label: "Info",
+		          	options: { 
+		          			 "None"           : "",
+		                     "title"          : "title",
+		                     "Highlight"      : "highlight",
+		                     "Deprecated"     : "deprecated"
+		                   }
+		       }
+		       */
+		    ]};
+		#else
+			var cssPluginArgs;
+		#end
+		
+		//alert("personalConfig:" + personalConfig);
+		//alert("buttonConfig:" + buttonConfig);
+		//alert("cssPluginArgs:" + cssPluginArgs);
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/calendar1.js"></script>
+	<script type="text/javascript" src="script/editor.js"></script>
+	<script type="text/javascript" src="applications/HTMLArea/InfoGlueHTMLArea.js"></script>
+	<script type="text/javascript" src="applications/HTMLArea/htmlarea.js"></script>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<script language="JavaScript"> 
+		window.resizeTo(800,700);
+	</script> 
+	
+</head>
+
+#if($stateId == 1 || $stateId == 2 || $stateId == 3)
+	#set($readonly = "disabled") 
+#else
+	#set($readonly = "")
+#end
+
+<body class="contenttooledit" onload="javascript:#if($closeOnLoad == "true")refreshCaller(); #else generateWYSIWYGS(); #end">
+
+<script language="javascript" src="script/jsrsClient.js"></script>
+
+<script type="text/javascript">
+<!--
+	HTMLArea.loadPlugin("CSS");
+
+	var allowSave = true;  //Sets to false if one does not close like one should
+	var currentEditorIdHash = new Array();
+	var attributesStatus = new Array();
+	var plainEditors = new Array();
+	var htmlEditors = new Array();
+	
+	//*******************************************
+	// This function changes language version
+	//*******************************************
+	
+	function changeLanguage(contentId)
+	{
+		languageId    = document.editForm.languageId.value;
+		attributeName = document.editForm.attributeName.value;
+		
+		if (confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
+		{
+			window.location.href="ViewContentVersion!standalone.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName;
+		}
+		else
+		{
+			document.editForm.languageId.selectedIndex = originalIndex - 1;
+		}
+	}
+
+	//*******************************************
+	// This function opens up the form editor
+	//*******************************************
+	
+	function openFormEditor(url)
+	{
+		allowSave = false;
+		openPopup(url, "FormEditor", "width=700,height=600,left=" + (document.body.clientWidth / 4) + ",top=50,toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+	}
+
+	//*******************************************
+	// This function opens up the form editor
+	//*******************************************
+	
+	function openRelationEditor(url)
+	{
+		allowSave = false;
+		openPopup(url, "RelationEditor", "width=700,height=600,left=" + (document.body.clientWidth / 4) + ",top=50,toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+	}
+
+	//*******************************************
+	// This method changes state on a content
+	//*******************************************
+	 
+	function changeContentState(contentVersionId)
+	{
+		stateId 	  = document.editForm.stateId.value;
+		languageId    = document.editForm.languageId.value;
+		contentId 	  = document.editForm.contentId.value;
+		attributeName = document.editForm.attributeName.value;
+		
+		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true))
+		if(stateId == "2")
+		{
+			alert("$ui.getString("tool.contenttool.statePublishForbidden")");
+			document.editForm.stateId.selectedIndex = originalStateIndex - 1;
+			return;
+		}
+		#end
+		
+		if (confirm('$ui.getString("tool.contenttool.stateChangeQuestion")'))
+		{
+			window.location.href="ChangeContentState!standalone.action?contentVersionId=" + contentVersionId + "&stateId=" + stateId + "&contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName;
+		}
+		else
+		{
+			document.editForm.stateId.selectedIndex = originalStateIndex - 1;
+		}		
+	}
+	
+	//*******************************************
+	//This method refreshes the caller
+	//*******************************************
+
+	function refreshCaller()
+	{
+		if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+			window.opener.parent.frames['main'].location.reload();
+		else
+			window.opener.location.reload();	
+
+		window.close();
+	}
+
+
+	var navigationTitleHash = new Array();
+	
+	function fetchPageNavigationTitle(baseUrl, params){
+		//alert("fetchPageNavigationTitle:" + baseUrl);
+	    jsrsPOST = false;
+	  	jsrsExecute(baseUrl, myCallback, "test", params);
+	}
+	
+	function myCallback( siteNodeId, navigationTitle ){
+	  //alert("Inside myCallback with " + siteNodeId + ":" + navigationTitle);
+	  navigationTitleHash[siteNodeId] = navigationTitle;
+	  //alert("Stored title: " + navigationTitleHash[siteNodeId]);
+	  //alert("navigationTitleHash:" + navigationTitleHash.length);
+	} 
+
+	/**
+	 * This method precaches all needed navigationtitles.
+	 */
+	 
+	function preCacheNavigationTitles(plainAttribute, document)
+	{
+		//alert("Inside preCacheNavigationTitles");
+		//alert("plainAttribute1:" + plainAttribute);
+		
+		siteNodeIdStartIndex = plainAttribute.indexOf("getPageNavTitle(");
+		//alert(siteNodeIdStartIndex);
+		while(siteNodeIdStartIndex > -1)
+		{
+			siteNodeIdEndIndex = plainAttribute.indexOf(")", siteNodeIdStartIndex);
+			//alert("siteNodeIdStartIndex" + siteNodeIdStartIndex);
+			//alert("siteNodeIdEndIndex" + siteNodeIdEndIndex);
+			if(siteNodeIdStartIndex < siteNodeIdEndIndex)
+			{
+				siteNodeId = plainAttribute.substring(siteNodeIdStartIndex + 16, siteNodeIdEndIndex);
+				//alert("siteNodeId:" + siteNodeId);
+				
+				if(siteNodeId > 0 && !navigationTitleHash[siteNodeId])
+				{
+					dataBaseUrl = "$deliveryBaseUrl/ViewApplicationSettings!getPageNavigationTitle.action";
+					fetchPageNavigationTitle(dataBaseUrl, "siteNodeId=" + siteNodeId + "&languageId=1&contentId=-1");
+				}
+			}
+						
+			siteNodeIdStartIndex = plainAttribute.indexOf("getPageNavTitle(", siteNodeIdEndIndex);	
+			//alert("siteNodeIdStartIndex" + siteNodeIdStartIndex);		
+		}
+		
+		return false;
+	}
+
+	//*******************************************
+	// This is a timer that warns the user about saving his work once in a while so he does not
+	// get a new login-screen next time he saves.
+	//*******************************************
+	var beenWarned = false;
+	var inaktiveTime = 0;
+	var timeout = ($sessionTimeout / 60) * 60 * 1000;
+    function warnForTimeout()
+    {
+       	alert("Please save your work often to avoid loosing it due to the security timeout. If you suspect you might not have saved for " + ($sessionTimeout / 60) + " minutes or so we recommend you copy all of your text before you press save so you don't risk loosing it.");
+		beenWarned = true;
+		inaktiveTime = inaktiveTime + timeout;
+		setTimeout("warnForTimeout()", timeout);
+	}
+	
+	
+	//*******************************************
+	// This is the method that generates the wysiwygs when the page is loaded
+	//*******************************************
+
+	function generateWYSIWYGS()
+	{
+		#if($readonly == "")
+			for (var i in plainEditors) 
+			{
+				var plainTextAreaName = plainEditors[i];
+				//alert("Creating a textarea for " + plainTextAreaName.name + " = " + i);
+	
+				//alert("Generation in progress..");
+	
+				var plainTextArea = document.getElementById(plainTextAreaName);
+				var plainAttribute = plainTextArea.value;
+				//alert(plainAttribute);
+				plainAttribute = transformAttribute(plainAttribute, document);
+				plainTextArea.value = plainAttribute;
+				
+				var config = new HTMLArea.Config();
+				configInfoGlue(config);
+										
+				//alert("Generation in progress..");
+											
+				//alert("Height:" + document.getElementById(plainTextAreaName).offsetHeight);
+				tempWYSIWYGEditor = new HTMLArea(plainTextAreaName, config);
+				//alert("css_plugin_args:" + config.css_plugin_args);
+				#if($this.enableCSSPlugin)
+					tempWYSIWYGEditor.registerPlugin(CSS, config.css_plugin_args);
+					
+					#set($cssList = $this.getCSSList())
+					#foreach($css in $cssList)
+						tempWYSIWYGEditor.config.pageStyle = "@import url($css);";
+					#end
+				#end
+				
+				htmlEditors[plainTextAreaName + "WYSIWYGEditor"] = tempWYSIWYGEditor;
+			}
+			
+			for (var i in htmlEditors) 
+			{
+				var htmlEditor = htmlEditors[i];
+				htmlEditor.generate();
+							
+				//alert("Changing status to plain...");
+				setTimeout(changeToPlainAttribute, 500);
+			}
+		#end
+		
+		#if($readonly == "disabled")
+			alert("The view is in read only mode as the content version is not in working state. If you want to edit the version you must first change state to working.");
+		#end
+	}	
+	
+	
+	function changeToPlainAttribute()
+	{
+		for (var i in plainEditors) 
+		{
+			var plainTextAreaName = plainEditors[i];
+			var plainTextArea = document.getElementById(plainTextAreaName);
+			
+			//alert("UseExdendedEditor:" + attributesStatus[plainTextAreaName + "ActivateExtendedEditorOnLoad"])
+			if(attributesStatus[plainTextAreaName + "ActivateExtendedEditorOnLoad"] == false)
+			{
+				//alert("Changing status to plain...");
+				changeEditor(0, plainTextAreaName);
+			}
+		}
+	}
+	
+	//*******************************************
+	//This method refreshes the caller
+	//*******************************************
+
+	function refreshCaller()
+	{
+		if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+			window.opener.parent.frames['main'].location.reload();
+		else
+			window.opener.location.reload();	
+
+		window.close();
+	}
+	
+	//*******************************************
+	// This is a timer that keeps track of the number of minutes the user has been on the page without saving.
+	//*******************************************
+	var textArea;
+	var contentVersionId 	= "$contentVersionId";
+	var contentId 			= "$contentId";
+	var repositoryId 		= "$repositoryId";
+	var languageId 			= "$languageId";
+	
+	var count = 0;
+	var minute = 60000;
+	function doTimer()
+	{
+		count += 1;
+		setTimeout("doTimer();", minute);
+	}
+	
+	doTimer();
+	setTimeout("warnForTimeout()", timeout);
+		
+-->
+</script>
+	
+<div class="fullymarginalized">
+
+<form method="POST" name="editForm" action="UpdateContentVersion!standalone.action">
+<table border="0" width="500">
+
+	#set($event = $this.getEvent($contentVersionId) )					
+	#if($event.id > 0)
+	<tr>
+		<td colspan="3">
+			<span class="warningText">
+				#set($close = "<a href='DeleteEvent.action?eventId=$event.id&url=$currentUrl'>$ui.getString('tool.contenttool.close')</a>")
+				#if($event.typeId == 2)
+					$ui.getString("tool.contenttool.publishRejectedText") $close
+				#elseif($event.typeId == 4)
+					$ui.getString("tool.contenttool.unblishRejectedText") $close
+				#end
+			</span> 
+		</td>
+	</tr>
+	#end
+	
+	<tr> 
+		<td>
+			$ui.getString("tool.contenttool.languageVersionsLabel")<br/>
+			<select class="mediumdrop" name="languageId" onChange="javascript:changeLanguage($!contentId);">
+			#foreach ($languageVO in $availableLanguages)
+				#if($languageVO.getLanguageId().intValue() == $languageId.intValue())
+					<option value="$languageVO.getLanguageId()" selected>$languageVO.getName()</option>
+					<script type="text/javascript">
+					<!--
+						var originalIndex = $velocityCount;	
+					-->
+					</script>
+				#else
+					<option value="$languageVO.getLanguageId()">$languageVO.getName()</option>
+				#end
+			#end
+			</select>
+		</td>
+		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td>
+			#set($dropIndex = 1)
+			$ui.getString("tool.contenttool.stateLabel")<br/>
+			<select class="mediumdrop" name="stateId" onChange="javascript:changeContentState($!contentVersionId);">
+				#if($stateId == 0)
+					<option value="0" selected>$ui.getString("tool.contenttool.state.working")</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					<option value="0">$ui.getString("tool.contenttool.state.working")</option>
+					#set($dropIndex = $dropIndex + 1)
+				#end	 	
+				<!--
+				#if($stateId == 1)
+					<option value="1" selected>$ui.getString("tool.contenttool.state.final")</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					<option value="1">$ui.getString("tool.contenttool.state.final")</option>
+					##set($dropIndex = $dropIndex + 1)
+				#end
+				-->				
+				#if($stateId == 2)
+					<option value="2" selected>$ui.getString("tool.contenttool.state.publish")</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					#if($stateId != 3 && $stateId != 4 && $stateId != 5)
+						<option value="2">$ui.getString("tool.contenttool.state.publish")</option>
+						#set($dropIndex = $dropIndex + 1)
+					#end
+				#end
+
+				#if($stateId == 3)
+					<option value="3" selected>$ui.getString("tool.contenttool.state.published")</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#end
+
+				#if($stateId == 4)
+					<option value="4" selected>$ui.getString("tool.contenttool.state.markedForUnpublish")</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#end
+
+				#if($stateId == 5)
+					<option value="5" selected>$ui.getString("tool.contenttool.state.unpublished")</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#end
+				
+			</select>
+		</td>
+	</tr>	
+	#if($contentVersionVO)
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="3">$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $contentVersionVO.versionModifier</td>
+	</tr>
+	#end
+</table>	
+ 
+<table border="0" width="500">	
+	<!-- here goes the field generation -->
+				
+	#foreach($attribute in $contentTypeAttributes)
+		
+		## ANNOTATION ELEMENTS
+		#set($attributeTitle = "")
+		#set($attributeTitle = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($attributeTitle == "")
+			#set($attributeTitle = "$attribute.name")
+		#end
+
+		#set($attributeDescription = "")
+		#set($attributeDescription = $!attribute.getContentTypeAttribute("description").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($attributeDescription != "")
+			#set($attributeDescription = "- $attributeDescription")
+		#end
+	
+		#set($class = "")
+		#set($class = $!attribute.getContentTypeAttribute("class").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($class == "")
+			#set($class = "longtextfield")
+		#end
+
+		#set($rows = "")
+		#set($rows = $!attribute.getContentTypeAttribute("rows").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($rows == "")
+			#set($rows = "5")
+		#end
+
+		#set($cols = "")
+		#set($cols = $!attribute.getContentTypeAttribute("cols").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($cols == "")
+			#set($cols = "75")
+		#end
+
+		#set($enableWYSIWYG = "")
+		#set($enableWYSIWYG = $!attribute.getContentTypeAttribute("enableWYSIWYG").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableWYSIWYG == "")
+			#set($enableWYSIWYG = "false")
+		#end
+
+		#set($enableTemplateEditor = "")
+		#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableTemplateEditor == "")
+			#set($enableTemplateEditor = "false")
+		#end
+		
+		#set($enableFormEditor = "")
+		#set($enableFormEditor = $!attribute.getContentTypeAttribute("enableFormEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableFormEditor == "")
+			#set($enableFormEditor = "false")
+		#end
+
+		#set($enableContentRelationEditor = "")
+		#set($enableContentRelationEditor = $!attribute.getContentTypeAttribute("enableContentRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableContentRelationEditor == "" || $enableContentRelationEditor == "false")
+			#set($enableContentRelationEditor = $!attribute.getContentTypeAttribute("enableRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($enableContentRelationEditor == "" || $enableContentRelationEditor == "false")
+				#set($enableContentRelationEditor = "false")
+			#end
+		#end
+		
+		#set($enableStructureRelationEditor = "")
+		#set($enableStructureRelationEditor = $!attribute.getContentTypeAttribute("enableStructureRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableStructureRelationEditor == "")
+			#set($enableStructureRelationEditor = "false")
+		#end
+		
+		#set($activateExtendedEditorOnLoad = "")
+		#set($activateExtendedEditorOnLoad = $!attribute.getContentTypeAttribute("activateExtendedEditorOnLoad").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($activateExtendedEditorOnLoad == "")
+			#set($activateExtendedEditorOnLoad = "false")
+		#end
+		<script type="text/javascript">
+		<!--
+			attributesStatus["${attribute.name}ActivateExtendedEditorOnLoad"] = $activateExtendedEditorOnLoad;
+		-->
+		</script>
+		
+		#set($currentEditorId = 0)
+		
+		#set($trClass = "")
+		#if($attribute.name == "$attributeName")
+			#set($trClass = "highlightedAttribute")
+		#end
+		
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr class="$trClass">
+			<td colspan="3">
+			
+				#if($attribute.inputType == "hidden")
+					<input type="hidden" id="$attribute.name" name="$attribute.name" value="$value"/>
+				#elseif($attribute.inputType == "textfield")
+					$attributeTitle ("$attribute.name") $attributeDescription<br/>
+					<input $readonly type="text" length="50" class="$class" maxlength="" id="$attribute.name" name="$attribute.name" value="$this.getAttributeValue($attribute.name)"/>
+				#elseif($attribute.inputType == "textarea")
+					
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					    <tr>
+					    	<td align="left">$attributeTitle ("$attribute.name") $attributeDescription </td>
+					    	<td align="right">
+					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false")
+					    			<a href="javascript:changeEditor(0, '${attribute.name}');">$ui.getString("tool.contenttool.editorPlainLabel")</a> 
+								#end
+					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableWYSIWYG == "true")
+					    		| <a href="javascript:changeEditor(1, '${attribute.name}');">$ui.getString("tool.contenttool.editorHTMLWYSIWYG")</a> 
+					    		#end
+					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
+					    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
+								#end
+							</td>
+					    </tr>
+					</table>
+					
+					#set($width = 0)
+					#set($width = $!attribute.getContentTypeAttribute("width").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+					#if($width == 0)
+						#set($width = 700)
+					#end
+
+					#set($height = 0)
+					#set($height = $!attribute.getContentTypeAttribute("height").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+					#if($height == 0)
+						#set($height = 150)
+					#end
+					
+					#set($wysiwygHeight = $height - 40)
+					#if($width >= 700)
+						#set($wysiwygHeight = $height - 20)
+					#end
+			
+					<textarea $readonly rows="$rows" cols="$cols" style="visibility: visible; width:${width}px; height:${height}px; border: 1px solid #C2D0E2;font-family:verdana,arial,sans-serif;font-size:8pt;" id="$attribute.name" name="$attribute.name" $readonly>$this.getAttributeValue($attribute.name)</textarea> 
+					
+					#if($enableWYSIWYG == "true")
+						<!-- Here comes the WYSIWYG-editor layer -->
+						
+						<script type="text/javascript">
+							// Replace an existing textarea with an HTMLArea object having the above config.
+							plainEditors["${attribute.name}"] = "${attribute.name}";
+							
+							currentEditorIdHash["${attribute.name}CurrentEditorId"] = 1;
+							#set($currentEditorId = 1)
+						</script>
+
+					#end
+					
+					#if($enableTemplateEditor == "true" && $readonly == "")
+						<!-- Here comes the Template Code editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType2IsActive" name="${attribute.name}EditorType2IsActive" value="false">
+						<div id="${attribute.name}EditorType2" name="${attribute.name}EditorType2" style="display:block; width:${width}px; height:${height}px; z-index:1; border: 0px none #C2D0E2;">
+							<script type="text/javascript">
+				        		noJava = false;
+				        	</script>
+						    <table cellpadding="0" cellspacing="0" border="0">
+						    <tr>
+						    	<td colspan="2" align="right" bgcolor="white">
+						    		#showTemplateEditor("${width}" "${height}" "${attribute.name}" "${deliveryBaseUrl}")						    		
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						
+						<script type="text/javascript">
+							if(!noJava)
+							{
+								document.getElementById('${attribute.name}').style.display = "none";
+								document.getElementById('${attribute.name}EditorType2').style.display = "block";	
+								
+								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 2;
+								#set($currentEditorId = 2)						
+							}
+							else
+							{
+								document.getElementById('${attribute.name}').style.display = "block";
+								document.getElementById('${attribute.name}EditorType2').style.display = "none";	
+								
+								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 0;
+							}
+						</script>
+						
+					#end
+					
+					#if($enableFormEditor == "true" && $readonly == "")
+						<!-- Here comes the Form editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType3IsActive" name="${attribute.name}EditorType3IsActive" value="false">
+						<div id="${attribute.name}EditorType3" name="${attribute.name}EditorType3" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+									#if($contentVersionId > -1)
+									As the form editor is somewhat complex you have to open it in a new window.
+									Click <a href="javascript:openFormEditor('ViewFormEditor.action?contentVersionId=$!contentVersionId&contentVersionAttributeName=$!attribute.name');"><strong>here</strong></a> for it.
+									Edit the form there and close the window when you are done. 
+									#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									#end
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)">
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType3').style.display = "block";							
+						</script>
+						
+					#end
+
+					#if($enableContentRelationEditor == "true" && $readonly == "")
+						<!-- Here comes the Content Relation editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType4IsActive" name="${attribute.name}EditorType4IsActive" value="false">
+						<div id="${attribute.name}EditorType4" name="${attribute.name}EditorType4" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+						    		<p style="margin-top:5px; margin-left:5px;">
+									#if($contentVersionId > -1)
+									Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor.action?updateAction=ViewContentRelationEditor!updateQualifyer.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									<hr noshade size="1">
+									#set($qualifyers = $this.getContentRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0">
+									#foreach($qualifyer in $qualifyers)
+										<tr>
+											<td valign="middle">
+											<img src="images/tree/xp/item.png"> 
+											</td>
+											<td valign="middle">
+											$qualifyer.getPath() 
+											</td>
+											<td></td>
+											<td valign="middle">
+											(<a href="javascript:openPopup('ViewContent!standalone.action?contentId=${qualifyer.getValue()}', 'editcontent', 'width=600,height=500,resizable=yes,scrollbars=yes');">Edit</a>)
+											</td>
+										</tr>
+									#end
+									</table>
+									#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									#end
+									</p>									
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)">
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType4').style.display = "block";							
+						</script>
+					#end
+
+					#if($enableStructureRelationEditor == "true" && $readonly == "")
+						<!-- Here comes the Structure Relation editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType5IsActive" name="${attribute.name}EditorType5IsActive" value="false">
+						<div id="${attribute.name}EditorType5" name="${attribute.name}EditorType5" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+									<p style="margin-top:5px; margin-left:5px;">
+									#if($contentVersionId > -1)
+									Related SiteNodes (<a href="javascript:openRelationEditor('ViewStructureRelationEditor.action?updateAction=ViewStructureRelationEditor!updateQualifyer.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									<hr noshade size="1">
+									#set($qualifyers = $this.getSiteNodeRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0">
+									#foreach($qualifyer in $qualifyers)
+										<tr>
+											<td valign="middle">
+											<img src="images/tree/xp/item.png"> 
+											</td>
+											<td valign="middle">
+											$qualifyer.getPath() 
+											</td>
+										</tr>
+									#end
+									</table>
+									#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									#end
+									</p>
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$this.getAttributeValue($attribute.name)">
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType5').style.display = "block";							
+						</script>
+					#end
+					
+		    		#if($enableFormEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+		    			document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType3');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		    		#if($enableContentRelationEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+			    		document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType4');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		    		#if($enableStructureRelationEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+			    		document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType5');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		
+					
+					<script type="text/javascript">
+						//alert("CurrentEditorId:" + currentEditorIdHash["${attribute.name}CurrentEditorId"])
+						if(!currentEditorIdHash["${attribute.name}CurrentEditorId"])
+							currentEditorIdHash["${attribute.name}CurrentEditorId"] = 0;
+						
+						var plainAttribute = document.getElementById("${attribute.name}").value;
+		    			//alert("plainAttribute:" + plainAttribute);
+		    			preCacheNavigationTitles(plainAttribute, document);
+					    
+					    #if($currentEditorId == 2 && $activateExtendedEditorOnLoad == "false")
+							changeEditor(0, '${attribute.name}');
+						#end
+						
+					</script>
+					
+				#elseif($attribute.inputType == "select")
+				<!-- Handles the input type select = dropbox -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+					<select $readonly size="1" id="$attribute.name" name="$attribute.name" class="$class">
+		    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+		    				<option value="$value.id" #checkSelected("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)</option>
+		    			#end
+		    		</select>
+
+				#elseif($attribute.inputType == "checkbox")
+				<!-- Handles the input type checkbox -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+	    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+						<input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$value.id" #checkCheckedBySplit("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)
+	    			#end
+
+				#elseif($attribute.inputType == "radiobutton")
+				<!-- Handles the input type radiobutton -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+	    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+						<input $readonly type="radio" id="$attribute.name" name="$attribute.name" value="$value.id" #checkCheckedBySplit("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)
+	    			#end
+
+				#end
+				
+			</td>
+		</tr>
+	#end
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				$ui.getString("tool.contenttool.associatedAttachments")<br/>
+				<table border="0" width="100%" cellspacing="0">
+				<tr>
+					#set($counter = 0)
+					#foreach($digitalAsset in $digitalAssets)
+						#set($digitalAssetUrl = "$this.getDigitalAssetUrl($digitalAsset.digitalAssetId)")
+						<td valign="bottom" align="center" class="bordered">
+							<input type="hidden" id="digitalAsset$digitalAsset.assetKey" value="$digitalAssetUrl">
+							<a href="javascript:openPopup('$digitalAssetUrl', 'Preview', 'width=600,height=500,resizable=yes');"><img class="scaledbordered" src="$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)">
+							<br/>$digitalAsset.assetKey</a><br/>
+							#if($readonly == "")
+								<a href="javascript:openPopup('ViewDigitalAsset!update.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId','DigitalAsset','width=500,height=400,resizable=no');">$ui.getString("tool.contenttool.editAttachment")</a> / 
+								<a href="ViewContentVersion!deleteDigitalAsset.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId">$ui.getString("tool.contenttool.deleteAttachment")</a>
+							#end
+						</td>
+						#set($counter = $counter + 1)
+						#if ($counter == 5)
+						</tr>
+						<tr>
+							#set($counter = 0)	
+						#end
+					#end
+					
+					#if($counter == 0)
+						<td>$ui.getString("tool.contenttool.noAttachmentsRightNow")
+						#if (!$contentVersionId)
+							<br />$ui.getString("tool.contenttool.saveToAddAttachment")
+						#end
+						</td>
+					#end	
+				</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">&nbsp;<br>
+				<a href="javascript:openPopup('ViewDigitalAsset.action?contentVersionId=$contentVersionId', 'DigitalAsset', 'width=400,height=200,resizable=no')">Upload new asset</a>
+			</td>
+		</tr>
+	
+	<script type="text/javascript">
+		function validateAndSubmitContentForm()
+		{
+			if(allowSave == false)
+			{
+				alert("$ui.getString("tool.contenttool.cannotSaveBecauseInvalidClose")");
+				return;
+			}
+		
+			pastedTime = count; 
+			
+			if(beenWarned)
+			{
+				answer = confirm("You have not saved for " + pastedTime + " minutes. We strongly recommends you copy the text so you don't risk loosing it if you have been inactive for to long. Do you want to save anyway?");
+			}
+			
+			if (!beenWarned || answer)
+			{
+				isValid = true;
+				
+				#foreach($attribute in $contentTypeAttributes)
+	   				currentEditorId = currentEditorIdHash["${attribute.name}CurrentEditorId"];
+	   				if(currentEditorId)
+	   					document.getElementById("currentEditorId").value = currentEditorId;
+	   				
+	   				//alert("currentEditorId:" + currentEditorId);
+					if(currentEditorId == 1)
+					{
+						var wysiwygEditor = htmlEditors["${attribute.name}WYSIWYGEditor"];
+						//alert("WYSIWYG:" + wysiwygEditor.getHTML());
+						
+						var text = wysiwygEditor.getHTML();
+						//alert("text1:" + text);
+						untransformedAttribute = untransformAttribute(text);
+						//alert("untransformedAttribute:" + untransformedAttribute);
+						document.getElementById("$attribute.name").value = untransformedAttribute;
+					}
+					else if(currentEditorId == 2)
+					{
+						document.getElementById("$attribute.name").value = document.applets("${attribute.name}InfoGlueCodeEditor").getText();
+					}
+	
+	   				#if($attribute.inputType != "digitalAsset")
+						//isCurrentValid = validate${attribute.name}();
+						//if(isCurrentValid == false)
+						//	isValid = false;
+					#end
+				#end
+				
+				if(isValid)
+				{
+					buildVersionValue(); 
+					document.editForm.submit();
+				}
+			}
+		}
+	
+		function validateAndSubmitContentFormThenExit()
+		{
+			//alert("Action:" + document.editForm.action);
+			document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
+			validateAndSubmitContentForm();		
+		}
+		
+		function validateAndSubmitContentFormThenClose()
+		{
+			//alert("Action:" + document.editForm.action);
+			document.editForm.closeOnLoad.value = "true";
+			//document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
+			validateAndSubmitContentForm();		
+		}
+	
+		
+		function buildVersionValue()
+		{
+			var versionValue = "<?xml version='1.0' encoding='UTF-8'?>";
+			versionValue += "<article xmlns='x-schema:ArticleSchema.xml'>";
+			versionValue += "<attributes>";
+			
+			#foreach($attribute in $contentTypeAttributes)
+   				#if($attribute.inputType != "digitalAsset")
+					versionValue += "<$attribute.name>";
+					versionValue += "<![CDATA[" + getValue("${attribute.name}") + "]]>";
+					//versionValue += "<![CDATA[" + document.editForm.${attribute.name}.value + "]]>";
+					versionValue += "</$attribute.name>";
+				#end
+			#end
+			
+			versionValue += "</attributes>";
+			versionValue += "</article>";
+			
+			//alert("versionValue:" + versionValue);				
+			document.editForm.versionValue.value = versionValue;
+		}
+				
+		function getValue(elementId)
+		{
+			var value = "";
+			//alert(elementId);
+			
+			var allElem = document.editForm.elements;
+			//alert("allElem:" + allElem.length);
+		  	for(i=0;i<allElem.length;i++)
+			{
+			    var element = allElem[i];
+			    //alert("element.name:" + element.name);
+			    //alert("element.type:" + element.type);
+			    
+			    if(element.name == elementId)
+			    {
+			    	if(element.type=='checkbox' || element.type=='radio')
+			        {
+			        	//alert("element.checked:" + element.checked);
+			        	if(element.checked == true)
+			          	{
+			          		if(value == "")
+				          		value += element.value;
+							else
+								value += ',' + element.value;				
+			          	}
+			        }
+					else
+					{
+						var hiddenField = document.getElementById(elementId + "Hidden");
+						if(hiddenField)
+							fieldName = "document.editForm." + elementId + "Hidden";
+						else
+							fieldName = "document.editForm." + elementId;
+							
+						//alert("elementId:" + elementId);
+						//alert(document.getElementById(elementId).value);
+						//alert(fieldName);
+						//alert(eval(fieldName).value);
+						value = eval(fieldName).value;
+						//value = document.getElementById(elementId).value;		
+					}
+			    }      
+			}	
+										
+			//alert("value:" + value);
+			return value;
+		}
+		
+		</script>
+		<input type="hidden" id="versionValue" name="versionValue" value=""/>
+		<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
+		<input type="hidden" id="attributeName" name="attributeName" value="$attributeName"/>
+		<input type="hidden" name="closeOnLoad" value="false">
+		</td>
+	</tr>
+	
+	<!-- end fields -->
+
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<td colspan="3">
+			#if($readonly == "")
+			<a href="javascript:validateAndSubmitContentFormThenClose();"><img src="$ui.getString("images.contenttool.buttons.saveAndExit")" width="80" height="25" border="0"></a>
+			<!--<a href="javascript:validateAndSubmitContentForm();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>-->
+			<a href="javascript:validateAndSubmitContentFormThenExit();"><img src="$ui.getString("images.contenttool.buttons.saveAndExitToCover")" width="80" height="25" border="0"></a>
+			#end
+			<a href="javascript:refreshCaller();"><img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25"></a></td>
+		</td>
+	</tr>
+</table>
+</form>
+
+</div>
+ 
+#endContentTool()

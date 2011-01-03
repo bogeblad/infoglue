@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#if($isBranch)
+	#beginContentTool("tool.contenttool.createFolderHeader" "New folder" "" "0" "0" "0")
+#else
+	#beginContentTool("tool.contenttool.createContentHeader" "New content" "" "0" "0" "0")
+#end
+
+<div class="fullymarginalized">
+<form name="editForm" method="post" action="CreateContent.action">
+<table>
+	<tr>
+		<td colspan="3">#editTextField("Content.name" "name" $!name "30" "normaltextfield" "")</td>
+	</tr>
+	##if(!$!isBranch)
+	
+	#if($enableDateTimeDirectEditing == "true")
+		#set($dateReadonly = "")
+	#else
+		#set($dateReadonly = "readonly")
+	#end
+	<tr> 
+		<td colspan="3">#editDateField("Content.publishDateTime" "publishDateTime" $!publishDateTime "30" "date" "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")</td>
+	</tr>
+	<tr> 
+		<td colspan="3">#editDateField("Content.expireDateTime" "expireDateTime" $!expireDateTime "30" "date" "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			##allowedContentTypeNames: $allowedContentTypeNames<br/>
+			##defaultContentTypeName: $defaultContentTypeName<br/>
+			$ui.getString("tool.contenttool.newContent.contentType")<br/>
+			<select class="contenttypes" name="contentTypeDefinitionId">
+			#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
+				#if($isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
+					<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
+				#else
+					#if($defaultContentTypeName == $contentTypeDefinitionVO.getName())
+						<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
+					#elseif(!$allowedContentTypeNames || $allowedContentTypeNames.indexOf("$contentTypeDefinitionVO.getName(),") > -1)
+						<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()">$contentTypeDefinitionVO.getName()</option>
+					#end
+				#end
+			#end
+			</select>
+		</td>
+	</tr>
+	##end	
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>		
+	<tr> 
+		<input type="hidden" name="isBranch" value="$!isBranch" />
+		<input type="hidden" name="parentContentId" value="$!parentContentId" />
+		<input type="hidden" name="repositoryId" value="$!repositoryId" />
+		<input type="hidden" name="unrefreshedContentId" value="$!parentContentId" />
+		<input type="hidden" name="changeTypeId" value="2" />
+		<td>
+			<input type="image" src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0" />
+			<a href="ViewContent.action?contentId=$!parentContentId"><img border="0" src="$ui.getString("images.contenttool.buttons.cancel")" width="50" height="25" /></a>
+		</td>
+	</tr>
+
+</table>
+</form>
+</div>
+
+<script language="JavaScript" type="text/javascript">
+<!--
+document.editForm.name.focus();
+//-->
+</script>
+
+#endContentTool()

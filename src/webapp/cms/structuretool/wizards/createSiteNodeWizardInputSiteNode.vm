@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginStructureTool("tool.structuretool.createSiteNodeHeader" "New siteNode" "" "0" "0" "0")
+
+#set($sortedPageTemplates = $this.getSortedPageTemplates($sortProperty))
+#set($pageTemplateIsOptional = $this.hasAccessTo("StructureTool.PageTemplateIsOptional", true))
+
+<script language="JavaScript">
+<!--
+		
+	var selectedAssetElement;
+	var contentId;
+		
+	function markPageTemplate(object, aContentId)
+	{
+		if(selectedAssetElement)
+			selectedAssetElement.style.background = "";
+			
+		contentId = aContentId;	
+		
+		selectedAssetElement = document.getElementById("digitalAsset" + contentId);
+		if(selectedAssetElement)
+			selectedAssetElement.style.background = "#C2D0E2";
+		
+		document.editForm.pageTemplateContentId.value = contentId;	
+	}
+		
+	/**
+	 * This method submits the form and shows a uploading-dialog.
+	 */
+		 
+	function skipAndCancel()
+	{
+		document.editForm.action = "CreateSiteNodeWizardFinish!cancel.action";
+		document.editForm.submit();
+	}		
+
+	function save()
+	{
+		#if($sortedPageTemplates.size() > 0)
+			if(document.editForm.pageTemplateContentId.value != "" || $pageTemplateIsOptional)
+				document.editForm.submit()
+			else
+				alert("$ui.getString("tool.structuretool.createSiteNodeMandatoryPageTemplateWarningText")");
+		#else
+			document.editForm.submit()
+		#end
+	}	
+	
+-->
+</script>		
+
+#if($enableDateTimeDirectEditing == "true")
+	#set($dateReadonly = "")
+#else
+	#set($dateReadonly = "readonly")
+#end
+
+<div class="fullymarginalized">
+<form name="editForm" method="POST" action="CreateSiteNodeWizardInputSiteNode.action">
+<table>
+	<tr>
+		<td colspan="3">#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" "")</td>
+	</tr>
+	<tr>
+		<td colspan="4">#editDateField("SiteNode.publishDateTime" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")
+	</tr>		
+	<tr>
+		<td colspan="4">#editDateField("SiteNode.expireDateTime" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</td>
+	</tr>		
+	##if(!$!isBranch)
+	<tr>
+		<td colspan="3">
+			SiteNode type<br/>
+			<select class="siteNodetypes" name="siteNodeTypeDefinitionId">
+			#foreach ($siteNodeTypeDefinitionVO in $siteNodeTypeDefinitions)
+				<option value="$siteNodeTypeDefinitionVO.getSiteNodeTypeDefinitionId()">$siteNodeTypeDefinitionVO.getName()</option>
+			#end
+			</select>
+		</td>
+	</tr>
+	##end	
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>	
+	<tr>
+		<td colspan="4" width=>
+			<table border="0" width="100%" cellspacing="0">
+			<tr>
+				$ui.getString("tool.structuretool.pageTemplates.header") #if(!$pageTemplateIsOptional) ($ui.getString("tool.common.mandatory.label"))#end<br>
+				#set($counter = 0)
+				#foreach ($content in $sortedPageTemplates)
+					##if($filterRepositoryId == -1 || $content.repositoryId == $filterRepositoryId)
+						#if($isOdd)
+							#set($class = "class='lightapricot'")
+							#set($isOdd = false)
+						#else
+							#set($class = "class='white'")
+							#set($isOdd = true)
+						#end
+						
+						##set($imageUrl = "images/componentIcon.gif")
+						#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
+						#if(!$imageUrl || $imageUrl == "")
+							#set($imageUrl = "images/undefinedPageTemplate.jpg")
+						#end
+						<td id="digitalAsset$content.id" valign="bottom" align="center" class="bordered">
+							<a href="javascript:markPageTemplate(this, $content.id);"><img src="$imageUrl" border="0" style="width: 100px;"></a>&nbsp;<br>
+							<a href="javascript:markPageTemplate(this, $content.id);">$content.getName()</a>
+						</td>
+						#set($counter = $counter + 1)
+						#if ($counter == 5)
+						</tr>
+						<tr>
+							#set($counter = 0)	
+						#end
+					##end
+					#set($imageUrl = "")
+				#end
+			</tr>
+			</table>		
+		</td>
+	</tr>		
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>		
+	<tr>
+		<input type="hidden" name="isBranch" value="$!isBranch">
+		<input type="hidden" name="parentSiteNodeId" value="$!parentSiteNodeId">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<input type="hidden" name="unrefreshedSiteNodeId" value="$!parentSiteNodeId">
+		<input type="hidden" name="changeTypeId" value="2">
+		<input type="hidden" name="pageTemplateContentId" value="">
+		<td>
+			<a href="javascript:save();"><img border="0" src="$ui.getString("images.structuretool.buttons.save")" width="50" height="25"></a>
+			<a href="ViewSiteNode.action?siteNodeId=$!parentSiteNodeId"><img border="0" src="$ui.getString("images.structuretool.buttons.cancel")" width="50" height="25"></a>
+		</td>
+	</tr>
+
+</table>
+</form>
+</div>
+
+<script language="JavaScript">
+<!--
+document.editForm.name.focus();
+//-->
+</script>
+
+#endStructureTool()

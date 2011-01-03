@@ -1,0 +1,50 @@
+#define($headerMarkup)
+
+	<script src="script/ajaxchat/scripts.js" type="text/javascript"></script>
+
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewMessageCenter.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewMessageCenter.header")</h3>
+	
+	<div id="igEditArea" class="" onfocus="this.blur();">
+		
+		<div style="float: left; width:90%; margin: 0px 10px 0px 16px">
+			<div style="float: left; width:65%;">
+				<b>$ui.getString("tool.managementtool.messages.header")</b><br/>
+				<div id="outputList" style="float: left; width:95%; height: 300px; overflow: auto; border: 1px solid #333333; background-color: white;"></div>
+				<form style="float: left; width:95%;" id="chatForm" name="chatForm" onsubmit="return false;" action=""> 
+					<strong>$ui.getString("tool.managementtool.yourMessage.label"):</strong><br/>
+				  	<textarea id="message" name="message" class="normaltextfield" style="width:100%; height: 50px; border: 1px solid #333333;"/></textarea><br/>
+				  	<input style="float:left;" type="checkbox" id="isSystemMessage" name="isSystemMessage" value="true" checked="1"/> $ui.getString("tool.managementtool.isSystemMessage.label")<br/><br/>
+				  	<input id="submit" type="button" value="$ui.getString("tool.managementtool.sendMessage.label")" onclick="sendComment();"/>
+			  	</form>
+			</div>
+			<div style="float: left; width:30%;">
+				<b>$ui.getString("tool.managementtool.loggedInUsers.header")</b><br/>
+				<div id="outputList" style="float: right; width:95%; height: 300px; overflow: auto; border: 1px solid #333333; background-color: white;">
+				  <table width="100%" border="0" style="float: left;">
+				  <tr style="background-color: #CCCCCC;">
+				  	<td>UserName</td><td>Last action</td>
+				  </tr>
+				  #foreach($sessionInfoBean in $sessionInfoBeanList)
+				  <tr>
+				  	<td><span title="$sessionInfoBean.principal.name">$sessionInfoBean.principal.firstName $sessionInfoBean.principal.lastName</span></td>
+				  	<td>$formatter.formatDate($sessionInfoBean.lastAccessedDate, "HH:mm:ss")</td>
+				  </tr>
+				  #end
+				  </table>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+		
+#endLightCommonToolV3()

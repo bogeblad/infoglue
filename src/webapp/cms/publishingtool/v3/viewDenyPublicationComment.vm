@@ -1,0 +1,30 @@
+#define($headerMarkup)
+	
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.publishingtool.publicationDeniedComment" "$repositoryId" "repositoryId=$!repositoryId" false true $!disableCloseButton $headerMarkup)
+	
+	<h3>$ui.getString("tool.publishingtool.publicationDeniedComment")</h3>
+	
+	<div id="igEditArea" class="igScrollArea">
+		
+		<form method="POST" name="editForm" action="DenyPublicationRequest!V3.action">
+			<input type="hidden" name="repositoryId" value="$!repositoryId">
+			<p>#editTextArea("ContentVersion.versionComment" "comment" $!comment "10" "10" "normaltextarea")</p>
+			#foreach($sel in $selList)
+			<input type="hidden" name="sel" value="$!sel">
+			#end
+		</form>
+	</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="document.editForm.submit();"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewPublications!V3.action?repositoryId=$!repositoryId';"/>
+	</div>
+</div>
+
+#endLightCommonToolV3()

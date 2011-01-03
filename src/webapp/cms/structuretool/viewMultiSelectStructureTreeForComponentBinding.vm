@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.structuretool.chooseContentLabel")</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<script language="JavaScript"> 
+		// window.moveTo(300,200); 
+		window.resizeTo(700,600);
+	</script> 
+		
+	<script type="text/javascript" language="JavaScript">
+		
+	<!-- 
+		var exp;
+	
+	    function notifyExp(v)
+	    {
+	    	// The html tree notifies this page about the
+	    	// current expansion key, so that we can reload
+	    	// the tree with the same expansion.
+	    	exp=v;
+	    }
+		function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			
+			qualifyerString = "";
+			#foreach($qualifyer in $qualifyers)
+				qualifyerString += "$qualifyer.value,";
+			#end 
+						 		    
+		    var url = "ViewMultiSelectStructureTreeForServiceBinding!changeRepository.action?serviceBindingId=$serviceBindingId&repositoryId=" + repositoryId + "&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    //alert('Calling:' + url);
+		    self.location.href = url;
+		}
+
+		function changeTree(tree)
+		{
+			qualifyerString = "";
+			#foreach($qualifyer in $qualifyers)
+				qualifyerString += "$qualifyer.value,";
+			#end 
+						 		    
+		    var url = "ViewMultiSelectStructureTreeForServiceBinding!changeTree.action?tree=" + tree + "&serviceBindingId=$serviceBindingId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    //alert('Calling:' + url);
+		    self.location.href = url;
+		}
+		
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;	
+		}
+	    
+	    function addQualifyer()
+		{
+		    //alert("Here we add the choosen siteNode to the qualifyer...");
+			entityId = document.inputForm.entityId.value;
+			if(entityId == '' || entityId == '${select}')
+			{
+				alert("You must choose a page to add");
+			}
+			else
+			{
+				bindingTypeId = 1; //0 = Content, 1 = SiteNode
+				
+				qualifyerString = "";
+				#foreach($qualifyer in $qualifyers)
+					qualifyerString += "$qualifyer.value,";
+				#end 
+							 		    
+			    // var url = 'ViewMultiSelectStructureTreeForServiceBinding!addQualifyer.action?serviceBindingId=$serviceBindingId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityId=' + entityId + "&entityName=SiteNode&qualifyerString=" + qualifyerString;
+			    var url = 'ViewMultiSelectStructureTreeForServiceBinding!addQualifyer.action?exp=' + exp + '&serviceBindingId=$serviceBindingId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityId=' + entityId + "&entityName=SiteNode&qualifyerString=" + qualifyerString;
+			    //alert('Calling:' + url);
+			    self.location.href = url;
+			}
+		}
+	    function addQualifyerAtPosition(position)
+		{
+			entityId = document.inputForm.entityId.value;
+			bindingTypeId = 1; //0 = Content, 1 = SiteNode
+			
+			qualifyerString = "";
+			#foreach($qualifyer in $qualifyers)
+				qualifyerString += "$qualifyer.value,";
+			#end 
+		    var url = 'ViewMultiSelectStructureTreeForServiceBinding!addQualifyerAtPosition.action?exp=' + exp + '&serviceBindingId=$serviceBindingId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityId=' + entityId + "&requestedPosition=" + position + "&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    self.location.href = url;
+		}
+		
+		function moveQualifyer(direction, oldSortOrder)
+		{
+			entityId = document.inputForm.entityId.value;
+			bindingTypeId = 1; //0 = Content, 1 = SiteNode
+			
+			qualifyerString = "";
+			#foreach($qualifyer in $qualifyers)
+				qualifyerString += "$qualifyer.value,";
+			#end 		    
+		   				 		    
+		    // var url = 'ViewMultiSelectStructureTreeForServiceBinding!moveQualifyer.action?serviceBindingId=$serviceBindingId&direction=' + direction + '&oldSortOrder=' + oldSortOrder + '&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityId=' + entityId + "&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    var url = 'ViewMultiSelectStructureTreeForServiceBinding!moveQualifyer.action?exp=' + exp + '&serviceBindingId=$serviceBindingId&direction=' + direction + '&oldSortOrder=' + oldSortOrder + '&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityId=' + entityId + "&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    //alert('Calling:' + url);
+		    self.location.href = url;
+		}
+		function moveQualifyerToPosition(oldSortOrder, newSortOrder)
+		{
+			entityId = document.inputForm.entityId.value;
+			bindingTypeId = 1; //0 = Content, 1 = Content
+			
+			qualifyerString = "";
+			#foreach($qualifyer in $qualifyers)
+				qualifyerString += "$qualifyer.value,";
+			#end 		    
+
+			// alert("Will move qualifyer at pos: " + oldSortOrder + " to pos: " + newSortOrder);
+		    var url = 'ViewMultiSelectStructureTreeForServiceBinding!moveQualifyerToPosition.action?exp=' + exp + '&serviceBindingId=$serviceBindingId&requestedPosition=' + newSortOrder + '&oldSortOrder=' + oldSortOrder + '&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityId=' + entityId + "&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    self.location.href = url;
+		}
+
+		function deleteQualifyer(oldSortOrder)
+		{
+			entityId = document.inputForm.entityId.value;
+			bindingTypeId = 1; //0 = Content, 1 = SiteNode
+			
+			qualifyerString = "";
+			#foreach($qualifyer in $qualifyers)
+				qualifyerString += "$qualifyer.value,";
+			#end 		    
+		   				 		    
+		    // var url = 'ViewMultiSelectStructureTreeForServiceBinding!deleteQualifyer.action?serviceBindingId=$serviceBindingId&oldSortOrder=' + oldSortOrder + '&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityId=' + entityId + "&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    var url = 'ViewMultiSelectStructureTreeForServiceBinding!deleteQualifyer.action?exp=' + exp + '&serviceBindingId=$serviceBindingId&oldSortOrder=' + oldSortOrder + '&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityId=' + entityId + "&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    //alert('Calling:' + url);
+		    self.location.href = url;
+		}
+		
+		function submitBinding()
+		{
+		    //alert("Here we commit the binding and close the window...");
+			entityId = document.inputForm.entityId.value;
+			//path = document.inputForm.path.value;
+		    var repositoryId = document.inputForm.repositoryId.value;
+			bindingTypeId = 1; //0 = Content, 1 = SiteNode
+			
+			path = "Collection: ";
+			qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+			qualifyerXML += "<qualifyer>";
+			#foreach($qualifyer in $qualifyers)
+				if(path != "Collection: ")
+					path += ", ";
+				path += "$this.getQualifyerPath($qualifyer.value)"  
+				qualifyerXML += "<$qualifyer.name>" + $qualifyer.value + "</$qualifyer.name>";
+			#end 		    
+		   	qualifyerXML += "</qualifyer>";
+			
+			var url = 'CreateServiceBinding.action?serviceBindingId=$serviceBindingId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&path=' + escape(path) + '&entityId=' + entityId + "&qualifyerXML=" + escape(qualifyerXML);
+		    //alert('Calling:' + url);
+		    self.opener.parent.frames["main"].location.href = url;
+		    window.close();
+		    //document.inputForm.submit();
+		}
+
+		function qdrop(obj)
+		{
+			var data = window.event.dataTransfer.getData('Text');
+
+			if(data.slice(0,1) == "q")
+			{
+				// From qualifyer list
+				var item = document.getElementById(data);
+				var topos = obj.pos;
+				moveQualifyerToPosition(item.pos, topos);
+			}
+			else
+			{
+				// From the treeview
+				var item = document.frames['itreeFrame'].document.getElementById(data);
+			    data = "link" + item.id.slice(4,item.id.length);
+				item = document.frames['itreeFrame'].document.getElementById(data);
+			    
+				var position=obj.pos;
+				
+				document.inputForm.entityId.value     = item.entityId;
+				document.inputForm.repositoryId.value = item.repoId;
+			 	document.inputForm.path.value         = item.myLabel;
+	
+			 	if (position==-1)
+			 		addQualifyer();
+			 	else
+			 		addQualifyerAtPosition(position);
+			}
+			
+		}
+		function qoverDrag(obj)
+		{
+			var data = window.event.dataTransfer.getData('Text');
+			
+			if(data.slice(0,1) == "q")
+			{
+				// From qualifyer list
+				var item = document.getElementById(data);
+			    window.event.returnValue = false;
+			}
+			else
+			{
+				// From the treeview
+				var item = document.frames['itreeFrame'].document.getElementById(data);
+			    data = "link" + item.id.slice(4,item.id.length);
+				item = document.frames['itreeFrame'].document.getElementById(data);
+			    window.event.returnValue = false;
+			}
+			    
+			
+		}
+		function qenterDrag(obj)
+		{
+		    var dragData = window.event.dataTransfer;
+	    	dragData.dropEffect = 'link';
+			obj.src = "images/dropqualifyer.gif";
+			obj.height="19";
+		    window.event.dataTransfer.getData('Text');
+		}
+		function qexitDrag(obj)
+		{
+			obj.src = "images/trans.gif";
+			if(obj.pos != -1) obj.height="4";
+		}
+
+		// Source qualifyer list
+		function qstartDrag(obj)
+		{
+		    var dragData = window.event.dataTransfer;
+		    dragData.setData('Text', obj.id);
+		    dragData.effectAllowed = 'move';
+		    
+		    // Get the div object
+		    var theDiv = document.getElementById("tr" + obj.pos);
+		    theDiv.style.display="none";
+		}
+		function qendDrag(obj) {
+		    window.event.dataTransfer.clearData();
+		    // Get the div object
+		    var theDiv = document.getElementById("tr" + obj.pos);
+		    theDiv.style.display="";
+		}
+
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="structuretooledit">
+
+<table class="structuretooledit" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td valign="top">
+		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr class="darkapricot">
+			<td class="smalllabel">Click on page the binding should use and then "add".</td>
+		</tr>
+		<tr>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<!-- 
+		HERE IS THE REPOSITORY-LIST FOR LATER 
+		-->
+		<tr>
+			<td>
+		  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+				    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+				    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+				    #end
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>	
+		<tr>
+			<td class="menu">    
+				#if($tree == "applet")
+					#showJavaTree("350" "400" "254" "248" "208" "SiteNode" $repositoryId "false")
+				#else
+					<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingView.action?exp=${exp}&repositoryId=${repositoryId}" width="350" height="400" align="baseline"></IFRAME>
+				#end
+			</td>
+		</tr>	
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+				<a href="javascript:addQualifyer();"><img src="images/addButtonBlue.gif" border="0"></a>
+				<a href="javascript:submitBinding();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+				<a href="javascript:window.close();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<form name="inputForm" action="CreateServiceBinding.action">
+					<input type="hidden" name="entityId" value="">
+					<input type="hidden" name="repositoryId" value="">
+					<input type="hidden" name="path" value="">
+					<input type="hidden" name="qualifyerXML" value="">
+				</form>
+			</td>
+		</tr>		
+		</table>
+	</td>	
+	<td>&nbsp;</td>
+	<td valign="top">
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr class="darkapricot">
+			<td class="smalllabel">The following pages is in the binding so far</td>
+		</tr>
+		<tr>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+
+		#set($isOdd = true)
+		#set($count = 0)
+		#foreach($qualifyer in $qualifyers)
+			#if($isOdd)
+				#set($class = "class='lightapricot'")
+				#set($isOdd = false)
+			#else
+				#set($class = "class='white'")
+				#set($isOdd = true)
+			#end
+
+			#set($value = $qualifyer.value)
+			<tr $class id="tr$qualifyer.sortOrder" style="display:">
+				<td>
+					<img pos="$qualifyer.sortOrder" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="5" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
+					#if($count < $qualifyers.size() - 1)
+						<a href="javascript:moveQualifyer(0,$qualifyer.sortOrder);"><img src="images/downArrow.gif" border="0"></a>
+					#else
+						<img src="images/trans.gif" border="0" width="11" height="10">
+					#end
+					
+					#if($count > 0)
+						<a href="javascript:moveQualifyer(1,$qualifyer.sortOrder);"><img src="images/upArrow.gif" border="0" width="11" height="10"></a>
+					#else
+						<img src="images/trans.gif" border="0" width="11" height="10">
+					#end
+					<a href="javascript:deleteQualifyer($qualifyer.sortOrder);"><img src="images/delete.gif" border="0"></a>
+					
+					<a href="JavaScript:void();" id="q$qualifyer.sortOrder" ondragstart="qstartDrag(this);" ondragend="qendDrag(this);" source="qlist" pos="$qualifyer.sortOrder">
+					$this.getQualifyerPath($value)
+					</a>
+				</td>
+			</tr>	
+			#set($count = $count + 1) 
+		#end 		    
+		<tr>
+			<td>
+			<img pos="-1" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
+			&nbsp;
+			</td>
+		</tr>
+		</table>
+	</td>
+</tr>
+</table>
+
+<div style="RIGHT:10px; LEFT:10px; position:absolute; BOTTOM:5px; visibility:visible; z-index:0">
+<hr size=1 noshade>
+<small><font color="#666666">$ui.getString("tool.common.treestyleLabel"): <a style="color: #666666" href="javascript:changeTree('applet');">$ui.getString("tool.common.treestyleApplet")</a> | <a style="color: #666666" href="javascript:changeTree('html');">$ui.getString("tool.common.treestyleHTML")</a> </small></font>
+</div>
+
+</body>
+</html>

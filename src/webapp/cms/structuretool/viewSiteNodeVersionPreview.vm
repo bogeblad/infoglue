@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Preview content</title>
+	<link rel="stylesheet" type="text/css" href="css/frovi_com.css" /> 
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>	
+</head>
+
+<body>
+
+<table border="0" width="500">
+	
+	<!-- here goes the field generation -->
+	
+	#foreach($attribute in $contentTypeAttributes)
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				$attribute.name<br/>
+				$this.getAttributeValue($attribute.name)
+				
+				#if($attribute.inputType == "digitalAsset" && $contentVersionId > 0)
+					<img class="scaledbordered" src="$this.getDigitalAssetUrl($contentId, $languageId)">
+				#end
+			</td>
+		</tr>
+	#end
+	
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<a href="javascript:window.close();">Close</a></td>
+		</td>
+	</tr>
+	
+</table>
+
+</body>
+</html>

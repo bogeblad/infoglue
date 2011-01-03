@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewGroupList.header" "tool.managementtool.viewGroupList.header" "")
+
+#set($lvConstraint = 1) 
+#lvHead(["Name","DisplayName","Description"] "tool.managementtool.deleteGroups.header" "DeleteGroup.action" "ViewListGroup.action?title=Groups" "tool.managementtool.deleteGroups.text")
+
+#set($cnt = 0)
+#foreach ($groupVO in $groups)
+	#set( $groupName = $formatter.encodeURI($groupVO.getName())) 
+	
+	#set( $rowUrl = "ViewGroup.action?groupName=$groupName&title=Group%20details")
+	#set( $row = ["<input type='hidden' name='rowtitle' value='$groupVO.getName()'/> <a href=$rowUrl>$groupVO.getName()</a>","$groupVO.displayName","$groupVO.getDescription()"] )
+	#set($cnt = $cnt + 1)
+	
+	#lvAddRow($row $cnt $groupVO.getName())
+#end
+
+#lvEnd()
+#endManagementTool()

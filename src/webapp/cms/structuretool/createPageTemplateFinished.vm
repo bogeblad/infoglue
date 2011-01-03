@@ -1,0 +1,29 @@
+#beginLightCommonToolV3Impl("tool.contenttool.createPageTemplateWizard.title" "" "" false true $!disableCloseButton "" false "")
+
+<script type="text/javascript">
+<!--
+	$(document).ready(function(){
+		$("#tabsContainer").tabs({ show:function() { resizeScrollArea(); } });
+	});
+		
+-->
+</script>		
+
+<div onfocus="this.blur();">
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>Create Page Template Completed</h3>
+	
+	<p>The page template should now be available when you create new pages</p>
+	<p class="buttonPane">
+		<input type="button" class="close" value="$ui.getString("tool.common.closeWindowButton.label")" onclick="if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}"/>
+	</p>
+					
+	#lightFooterToolbar($footerButtons)
+	
+</div>
+
+#endCommonToolV3()

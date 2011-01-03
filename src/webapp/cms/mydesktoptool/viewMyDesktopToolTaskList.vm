@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.mydesktoptool.welcomeHeader")</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" />
+	<script language="JavaScript" type="text/javascript" src="script/listview.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/infogluecommons.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/dom-drag.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/floatDiv.js"></script>
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script type="text/javascript">
+	<!--
+		function invokeWorkflowView(workflowId, actionId, view)
+		{
+			parent.invokeWorkflowView(workflowId, actionId, view);
+		}
+	-->
+	</script>
+</head>
+
+<body class="mydesktoptooledit" style="margin: 0px; padding: 0px; border: 0px solid red;">
+#set( $lvColor = "yellow")
+
+<table border="0" width="100%" cellpadding="1" cellspacing="0" style="border: 1px solid #666;">
+<tr>
+	<td>
+		#set($lvConstraint = 0)
+		#set($workflowNameLabel = $ui.getString("tool.mydesktoptool.workflowNameLabel"))
+		#set($stepNameLabel = $ui.getString("tool.mydesktoptool.stepNameLabel"))
+		#set($actionNameLabel = $ui.getString("tool.mydesktoptool.actionNameLabel"))
+		
+		#lvHeadSlimmed([$workflowNameLabel, $stepNameLabel, $actionNameLabel] "" "" "" "")
+		#set($cnt = 0)
+		#set($quote = '"')
+		#set($filter = $webwork.bean('org.infoglue.cms.util.workflow.OwnerStepFilter'))
+		#set($workflowActionVOList = $this.getWorkflowActionVOList($filter))
+		#foreach ($workflowActionVO in $workflowActionVOList)
+			#set($view = $workflowActionVO.getView())
+			#if($view == "")
+				#set($view = "ViewMyDesktopToolStartPage!invoke.action")
+			#end
+			#set($view = "$quote$view$quote")
+			
+			#set($stepWorkflow = $workflowActionVO.step.workflow)
+			#if($stepWorkflow.title)
+			  	#set($fullTitle = "$stepWorkflow.name : $stepWorkflow.title")
+			#else
+				#set($fullTitle = "$stepWorkflow.name")
+			#end
+			
+			#set($row = ["$fullTitle", $workflowActionVO.stepName, "<a href='javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), $view);'>$workflowActionVO.getName()</a>"])
+			#set($cnt = $cnt + 1)
+			#lvAddRow($row $cnt "$workflowActionVO.getId()")
+		#end
+
+		#if($cnt == 0)
+			#set($noTasks = $ui.getString("tool.mydesktoptool.noTasks"))
+			#set($row = [$noTasks, "", ""])
+			#lvAddRow($row $cnt "")
+		#end
+
+		#lvEnd()
+
+	</td>
+</tr>
+</table>
+
+</body>
+</html>

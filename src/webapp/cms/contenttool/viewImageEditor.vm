@@ -1,0 +1,378 @@
+#define($headerMarkup)
+
+	<script src="script/jqueryplugins/jcrop/js/jquery.Jcrop.min.js"></script>
+	<link rel="stylesheet" href="script/jqueryplugins/jcrop/css/jquery.Jcrop.css" type="text/css" />
+	
+	<script type="text/javascript">
+		<!--
+		
+		var workingFileName = "$workingFileName";
+		
+		
+		/**
+		 * This method submits the form and shows a uploading-dialog.
+		 */
+		 
+		function submitForm()
+		{
+			if(document.getElementById("tt").value != "")
+			{
+				if(document.getElementById("file1").value != "")
+				{
+					document.editForm.submit();
+				}
+				else
+				{
+					alert("$ui.getString("tool.contenttool.fileUpload.assetMissing")");
+				}
+			}
+			else
+			{
+				alert("$ui.getString("tool.contenttool.fileUpload.assetKeyMissing")");
+			}
+		}
+
+		/**
+		 * This method submits the form and shows a uploading-dialog.
+		 */
+		 
+		function submitAndCloseForm()
+		{
+			if(document.getElementById("tt").value != "")
+			{
+				if(document.getElementById("file1").value != "")
+				{
+					document.editForm.closeOnLoad.value = "true";
+					document.editForm.submit();
+				}
+				else
+				{
+					alert("$ui.getString("tool.contenttool.fileUpload.assetMissing")");
+				}
+			}
+			else
+			{
+				alert("$ui.getString("tool.contenttool.fileUpload.assetKeyMissing")");
+			}
+		}
+		
+		//*******************************************
+		//This method refreshes the caller
+		//*******************************************
+	
+		function refreshCaller()
+		{
+			if(parent.refreshView)
+			{
+				//alert("refreshAll:" + $!refreshAll + ":" + parent.refreshAll);
+				#if($!refreshAll)
+					parent.refreshAll();
+					//alert("selecting");
+					parent.refreshView("contentVersionAssets");
+					//alert("selected");
+				#else
+					parent.refreshView("contentVersionAssets");
+				#end
+			}
+			else
+			{
+				var parentLocation = "";
+				try
+				{
+					parentLocation = "" + window.opener.parent.document.location.href;
+				}
+				catch(err)
+				{
+					//alert("err:" + err.description);
+				}
+				
+				if(parentLocation.indexOf("ViewContentVersion!standalone.action") > -1)
+				{
+					var stopWordIndex = parentLocation.indexOf("#");
+					if(stopWordIndex > -1)
+						var newLocation = parentLocation.substring(0, stopWordIndex) + "&anchor=digitalAssetsBlock" + parentLocation.substring(stopWordIndex);
+					else
+						var newLocation = parentLocation + "&anchor=digitalAssetsBlock";
+					
+					window.opener.parent.document.location.replace(newLocation);
+				}
+				else
+				{
+					if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+						window.opener.parent.frames['main'].location.reload();
+					else
+						window.opener.location.reload();	
+				}
+				
+				window.close();
+			}
+			
+			if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+		}
+	
+		function ddClick()
+		{
+			// Show / hide list
+			var list = document.getElementById("dd");
+			
+			if (list.style.visibility == "hidden")
+			{
+				list.style.visibility = "";
+			}
+			else
+			{
+				list.style.visibility = "hidden";
+			}
+		}
+		function ddListClick()
+		{
+			// Show / hide list
+			var tt = document.getElementById("tt");
+			var list = document.getElementById("dd");
+			var val = list.options[list.selectedIndex].value
+			tt.value=val;
+			list.style.visibility = "hidden";
+			// alert(val);
+		}
+		function ddHide()
+		{
+			var list = document.getElementById("dd");
+			list.style.visibility = "hidden";
+		}
+
+		function resizeImage()
+		{
+			var width = document.getElementById("width").value;
+			var height = document.getElementById("height").value;
+			var keepRatio = document.getElementById("keepRatio").checked;
+			var bestFit = document.getElementById("bestFit").checked;
+			
+			if(width == "" && height == "")
+			{
+				alert("You must state width or height or both.");
+			}
+			else
+			{
+				if(width == "")
+					width = "-1";
+					
+				if(height == "")
+					height = "-1";
+												
+				document.location.href = "ImageEditor!resize.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&width=" + width + "&height=" + height + "&keepRatio=" + keepRatio + "&bestFit=" + bestFit;
+			}
+		} 		
+		
+		function activateCropTool()
+		{
+			if(sx && sx > 0 && sy && sy > 0 && ex && ex > 0 && ey && ey > 0 && sx != ex && sy != ey)
+			{
+				//alert("" + sx + ":" + sy + ":" + ex + ":" + ey);
+				var url = "ImageEditor!crop.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&xpos1=" + sx + "&ypos1=" + sy + "&xpos2=" + ex + "&ypos2=" + ey;
+				//alert("url:" + url);
+				document.location.href = url;
+			}
+			else
+			{
+				alert("You must define an area to crop - just mark on the image and drag an area.");
+			}
+		} 		
+
+		function openSaveImageDialog()
+		{
+			document.getElementById("saveDialog").style.display = "block";
+		} 		
+
+		function openResizeImageDialog()
+		{
+			document.getElementById("resizeDialog").style.display = "block";
+		} 		
+
+		function saveImage()
+		{
+			var digitalAssetKey = document.getElementById("tt").value;
+			if(digitalAssetKey != "")
+				document.location.href = "ImageEditor!save.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&digitalAssetKey=" + digitalAssetKey;
+			else
+				alert("Must state an asset key");
+		} 		
+		
+		var sx = -1;
+		var sy = -1;
+		var ex = -1;
+		var ey = -1;
+		
+		function showCoords(c)
+		{
+		    // variables can be accessed here as
+		    // c.x, c.y, c.x2, c.y2, c.w, c.h
+		      
+		    sx = c.x;
+			sy = c.y;
+			ex = c.x2;
+			ey = c.y2;
+		    
+		    $("#sx").val(sx);
+		    $("#sy").val(sy);
+		    $("#ex").val(ex);
+		    $("#ey").val(ey);
+		    
+		    $("#pxn8_selection_size").text(c.w + "px * " + c.h + "px");
+		    $("#pxn8_selection_size").text(c.w + "px * " + c.h + "px");
+		};
+			
+		function printScale()
+		{
+			var imageOriginalWidth = $("#pxn8_image").width();
+			var imageOriginalHeight = $("#pxn8_image").height();
+			$("#pxn8_image_size").text("" + imageOriginalWidth + "px, " + imageOriginalHeight + "px");
+			//alert("imageOriginalWidth:" + imageOriginalWidth + " - imageOriginalHeight:" + imageOriginalHeight);
+			//alert($(".jcrop-holder > img").size());
+			var imageScaledWidth = $(".jcrop-holder > img").width();
+			var imageScaledHeight = $(".jcrop-holder > img").height();
+			var zoom = imageScaledWidth / imageOriginalWidth;
+			//alert("zoom:" + zoom);
+			$("#pxn8_zoom").text("" + Math.round((100 * zoom)) + "%");
+		}
+	
+		function initJcrop()
+		{
+			var imageOriginalWidth = $("#pxn8_image").width();
+			var imageOriginalHeight = $("#pxn8_image").height();
+			
+			if(imageOriginalWidth > $("#pxn8_canvas").width() || imageOriginalHeight > $(window).height()-100)
+			{
+				$("#pxn8_image").Jcrop(
+					{
+			            onSelect: showCoords,
+			            onChange: showCoords,
+			            boxWidth: $("#pxn8_canvas").width(), 
+			            boxHeight: $(window).height()-100
+			        }
+				);
+			}
+			else
+			{
+				$("#pxn8_image").Jcrop(
+					{
+			            onSelect: showCoords,
+			            onChange: showCoords,
+			        }
+				);
+			}
+							
+			setTimeout("printScale();", 200);	
+		}
+		
+		$(document).ready(function(){
+			#if($closeOnLoad == "true")
+				refreshCaller();
+			#else 
+				
+				setTimeout("initJcrop();", 200);
+				//$("#pxn8_canvas").height($(window).height() - 100);
+
+			#end
+				
+		});
+		-->
+	</script>
+
+	
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.contenttool.imageEditorHeader" "" "" false true $!disableCloseButton $headerMarkup false "")
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+				
+	<div style="position: absolute; left: 10px; right: 10px; top: 45px;">
+	
+		<div style="float: left;">
+			<table class="infotable">
+			  <tr>
+			    <td valign="top" class="infolabel">Selection:</td>
+			    <td id="pxn8_selection_size"> ----,---- </td>
+			    <td valign="top" class="infolabel">Size:</td>
+			    <td id="pxn8_image_size"> ----,---- </td>
+			    <td valign="top" class="infolabel">Zoom:</td>
+			    <td id="pxn8_zoom"> 100% </td>
+			  </tr>
+			</table>
+		</div>
+	
+		<div id="pxn8_canvas" style="float: left; width: 100%;">
+			<div id="pxn8_image_container">
+			  
+			  <img id="pxn8_image" border="0" src="$modifiedFileUrl" style="float: left; border: 1px solid #ccc;"/>
+			  
+			</div>  
+			
+			<!-- selectBox -->
+			<div id="pxn8_select_rect" name="pxn8_select_rect" style=""></div>
+			
+			<!-- these areas surround the selection area -->
+			<div id="pxn8_left_rect"   style=""></div>
+			<div id="pxn8_top_rect"    style="border-bottom: 1px dashed white;"></div>
+			<div id="pxn8_bottom_rect" style="border-top: 1px dashed white;"></div>
+			<div id="pxn8_right_rect"  style=""></div>
+			<input type="hidden" id="sx" value=""/>
+			<input type="hidden" id="sy" value=""/>
+			<input type="hidden" id="ex" value=""/>
+			<input type="hidden" id="ey" value=""/>
+			
+		</div><!-- end of canvas -->
+		
+	</div>
+		
+	<div id="saveDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
+	<h3>State asset key</h3>
+	<p>
+		$ui.getString("tool.contenttool.fileUpload.fileUploadUpdateKeyLabel")
+	</p>
+	<div id="comboBox">
+		  <table border="0" cellspacing="0" style="border-collapse: collapse; margin-left: 16px;" id="cboBoxTable">
+		    <tr>
+		      <td width="10" style="border: 1px solid black;">
+		  	  <input type="text" name="digitalAssetKey" id="tt" size="20" onfocus="ddHide();" style="border: 1px solid #FFFFFF" value="$!digitalAssetKey"></td>
+		      <td onClick="ddClick();" style="border: 1px solid black;">
+		      <img border="0" src="images/combodown.gif" width="15" height="20"></td>
+		    </tr>
+		  </table>
+		  <select size="5" name="dd" id="dd" style="margin-left: 16px; border:0px solid #FFFFFF; width: 163px; height: 100; visibility: hidden; z-index: 100; position: absolute;" onClick="ddListClick();">
+				#foreach($assetKeyDefinition in $definedAssetKeys)
+					<option value="$assetKeyDefinition.assetKey">$assetKeyDefinition.assetKey</option>
+				#end
+		  </select>  
+ 	</div>
+	<p class="buttonPane">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="saveImage();"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.getElementById('saveDialog').style.display = 'none';"/>
+		##<a href="javascript:saveImage();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
+		##<img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" onclick="document.getElementById('saveDialog').style.display = 'none';">
+	</p>
+	</div>
+	
+	<div id="resizeDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
+	<h3>State resize options</h3>
+	<p><label for="keepRatio">Preserve aspect ratio:</label> <input type="checkbox" id="keepRatio" name="keepRatio" checked="true"/></p>
+	<p><label for="bestFit">Best fit:</label> <input type="checkbox" id="bestFit" name="bestFit" checked="true"/></p>
+	<p><label for="width">Width in pixels:</label> <input type="textfield" id="width" name="width"/></p>
+	<p><label for="height">Height in pixels:</label> <input type="textfield" id="height" name="height"/></p>
+	<p class="buttonPane">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="resizeImage();"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.getElementById('resizeDialog').style.display = 'none';"/>
+		##<a href="javascript:resizeImage();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
+		##<img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" onclick="document.getElementById('resizeDialog').style.display = 'none';">
+	</p>
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+		
+#endLightCommonToolV3()
+

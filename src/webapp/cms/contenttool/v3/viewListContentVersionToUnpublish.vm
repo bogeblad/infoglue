@@ -1,0 +1,155 @@
+#beginLightCommonToolV3("tool.common.unpublishing.unpublishContentsHeader" "$!contentId" "" false true $!disableCloseButton)
+
+<link rel="stylesheet" type="text/css" href="css/cms.css" />
+
+<script type="text/javascript">
+<!--
+		function checkMarkedVersions()
+		{
+			var lengthSel = $("input[name='sel']:checked").length;
+			
+			return lengthSel;
+		}
+		
+		function checkUncheckAll(checkbox)
+		{
+			if(checkbox.checked)
+				checkAll();
+			else
+				uncheckAll();				
+		}
+
+		function checkAll()
+		{
+			checkAllBoxes(document.listForm.sel);					
+		}
+
+		function uncheckAll()
+		{
+			uncheckAllBoxes(document.listForm.sel);		
+		}
+
+		
+		function submitToPublish(attemptDirectPublishing)
+		{
+			var listForm = document.listForm;
+			var commentElm = document.getElementById("xversionComment");
+			
+			if (commentElm.value.length > 255)
+			{
+				alert('The comment is to long - only 255 characters allowed.');
+			  	return;
+			}
+			
+			var overrideVersionModifyerElm = document.getElementById("xoverrideVersionModifyer");
+			if (checkMarkedVersions() == 0)
+			{
+				alert('Select one or more versions to publish');
+			  	return;
+			}
+			else
+			{
+				listForm.action = "UnpublishContentVersion!V3.action"
+				listForm.versionComment.value = commentElm.value;
+				if(overrideVersionModifyerElm.checked == true)
+					listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+				else
+					listForm.overrideVersionModifyer.value = "false";
+				
+				listForm.attemptDirectPublishing.value = attemptDirectPublishing;
+				listForm.submit();
+			}
+		}
+
+		$(document).ready(function(){
+			setTimeout("resizeInlineTabDivs()", 100);
+		});
+			
+-->
+</script>
+
+<div>
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+
+	<h3 style="text-indent: 16px;">$ui.getString("tool.common.unpublishing.unpublishContentsHeader")</h3>
+		
+	<div class="inlineTabDiv">	
+		
+	<table width="95%" border="0">
+	<tr>
+		<td>
+			<table width="300" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
+			</tr>		
+			<tr>
+				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			</tr>
+			<tr>
+				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "normaltextarea")</td>
+			</tr>		
+			<tr>
+				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			</tr>
+			<tr>
+				<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
+			</tr>	
+			</table>
+		</td>
+		<td align="right" valign="top">
+			<br><br><br>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			<br/><br/>
+			$ui.getString("tool.common.unpublishing.markContentsText")<br><br>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+
+		#set($versions = $contentVersions)
+		
+		#set($lvBorder = 0) 
+		#set($lvConstraint = -1) 
+		#set($nameHeader = $ui.getString("tool.common.publishing.nameLabel"))
+		#set($languageHeader = $ui.getString("tool.common.publishing.languageLabel"))
+		#set($changedHeader = $ui.getString("tool.common.publishing.changedLabel"))
+		#set($modifyerHeader = $ui.getString("tool.common.publishing.modifyerLabel"))
+		#lvHeadV3(["$nameHeader", "$languageHeader", "$modifyerHeader"] "Publish items" "" "" "", true)
+
+		#hiddenField("contentId" $contentId)
+		#hiddenField("versionComment" $!versionComment)
+		#hiddenField("overrideVersionModifyer" $!overrideVersionModifyer)
+		#hiddenField("attemptDirectPublishing" $!attemptDirectPublishing)
+		#hiddenField("repositoryId" $!repositoryId)
+		#hiddenField("returnAddress" $!returnAddress)
+		#hiddenField("userSessionKey" $!userSessionKey)
+		#hiddenField("disableCloseButton" $!disableCloseButton)		
+
+		#set($lvChkBoxName = "sel")
+
+		#set($cnt = 0)
+		#foreach($cv in $versions)
+			#set( $row = ["<img src='images/v3/contentIcon.gif'> $cv.contentName ($cv.id)", "$cv.languageName"] )
+			#set($cnt = $cnt + 1)
+			#lvAddRowV3($row $cnt $cv.id false)
+		#end
+
+		#lvEnd()
+	
+		</td>
+	</tr>
+	</table>
+
+	</div>
+		
+	#lightFooterToolbar($footerButtons)
+	
+</div>
+
+#endCommonToolV3()

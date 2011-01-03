@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Content version</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/calendar1.js"></script>
+	<script type="text/javascript" src="script/editor.js"></script>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+
+<body class="contenttooledit">
+#set( $lvColor = "green")
+
+<div class="fullymarginalized">
+
+<form method="POST" name="editForm" action="UpdateContentVersionAttribute.action">
+
+<table border="0" width="500">
+
+	#set($event = $this.getEvent($contentVersionId) )					
+	#if($event.id > 0)
+	<tr>
+		<td colspan="3">
+			<font color='red'>
+				#set($close = "<a href='DeleteEvent.action?eventId=$event.id&url=$currentUrl'>Close</a>")
+				#if($event.typeId == 2)
+					This version was not approved for publishing - revise and publish again $close
+				#elseif($event.typeId == 4)
+					The request to unpublish the last published version was denied.</font> $close
+				#end
+			</font> 
+		</td>
+	</tr>
+	#end
+	
+	<tr> 
+		<td>
+			Language versions<br/>
+			<select class="mediumdrop" name="languageId" onChange="javascript:changeLanguage($!contentId);">
+			#foreach ($languageVO in $availableLanguages)
+				#if($languageVO.getLanguageId().intValue() == $languageId.intValue())
+					<option value="$languageVO.getLanguageId()" selected>$languageVO.getName()</option>
+				#else
+					<option value="$languageVO.getLanguageId()">$languageVO.getName()</option>
+				#end
+			#end
+			</select>
+		</td>
+		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td>
+			Current state<br/>
+			<select class="mediumdrop" name="stateId" onChange="javascript:changeContentState($!contentVersionId);">
+				#if($stateId == 0)
+					<option value="0" selected>working</option>
+				#else
+					<option value="0">working</option>
+				#end	 	
+				
+				#if($stateId == 2)
+					<option value="2" selected>publish</option>
+				#else
+					#if($stateId != 3 && $stateId != 4 && $stateId != 5)
+					<option value="2">publish</option>
+					#end
+				#end
+
+				#if($stateId == 3)
+					<option value="3" selected>published</option>
+				#end
+
+				#if($stateId == 4)
+					<option value="4" selected>Marked unpublish</option>
+				#end
+
+				#if($stateId == 5)
+					<option value="5" selected>Unpublished</option>
+				#end
+				
+			</select>
+		</td>
+	</tr>	
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+<table>	
+
+
+<table border="0" width="500">	
+	<!-- here goes the field generation -->
+	
+	#if($stateId == 1 || $stateId == 2 || $stateId == 3)
+		#set($readonly = "readonly") 
+	#else
+		#set($readonly = "")
+	#end
+		
+	#foreach($attribute in $contentTypeAttributes)
+		
+		## ANNOTATION ELEMENTS
+		#set($attributeTitle = "")
+		#set($attributeTitle = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($attributeTitle == "")
+			#set($attributeTitle = "$attribute.name")
+		#end
+
+		#set($attributeDescription = "")
+		#set($attributeDescription = $!attribute.getContentTypeAttribute("description").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($attributeDescription != "")
+			#set($attributeDescription = "- $attributeDescription")
+		#end
+	
+		#set($class = "")
+		#set($class = $!attribute.getContentTypeAttribute("class").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($class == "")
+			#set($class = "longtextfield")
+		#end
+
+		#set($rows = "")
+		#set($rows = $!attribute.getContentTypeAttribute("rows").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($rows == "")
+			#set($rows = "5")
+		#end
+
+		#set($cols = "")
+		#set($cols = $!attribute.getContentTypeAttribute("cols").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($cols == "")
+			#set($cols = "75")
+		#end
+
+		#set($enableWYSIWYG = "")
+		#set($enableWYSIWYG = $!attribute.getContentTypeAttribute("enableWYSIWYG").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableWYSIWYG == "")
+			#set($enableWYSIWYG = "false")
+		#end
+
+		#set($enableTemplateEditor = "")
+		#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableTemplateEditor == "")
+			#set($enableTemplateEditor = "false")
+		#end
+		
+		
+		#if($attribute.name == "$attributeName")
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				#if($attribute.inputType == "textfield")
+					$attributeTitle ("$attribute.name") $attributeDescription<br/>
+					<input $readonly type="text" length="50" class="$class" maxlength="" name="$attribute.name" value="$this.getAttributeValue($attribute.name)"/>
+				#elseif($attribute.inputType == "textarea")
+				
+					#set($width = 0)
+					#set($width = $!attribute.getContentTypeAttribute("width").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+					#if($width == 0)
+						#set($width = 700)
+					#end
+
+					#set($height = 0)
+					#set($height = $!attribute.getContentTypeAttribute("height").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+					#if($height == 0)
+						#set($height = 150)
+					#end
+					
+					#set($wysiwygHeight = $height - 40)
+					#if($width >= 700)
+						#set($wysiwygHeight = $height - 20)
+					#end
+										
+					#if($enableWYSIWYG == "true")
+						<!-- Here comes the WYSIWYG-editor layer -->
+						<div id="${attribute.name}EditorType1" name="${attribute.name}EditorType1" style="position:absolute; visibility: hidden; width:${width}px; height:${wysiwygHeight}px; z-index:1; border: 0px none #000000;">
+						    <img src="images/trans.gif" width="1" height="12">
+						    <br>
+						    <table cellpadding="0" cellspacing="0" border="0">
+						    <tr>
+						    	<td colspan="2" align="right" bgcolor="white">
+						    		
+						    		<style type="text/css">
+									<!--
+										.headline { font-family: arial black, arial; font-size: 28px; letter-spacing: -1px; }
+									  	.headline2{ font-family: verdana, arial; font-size: 12px; }
+									  	.subhead  { font-family: arial, arial; font-size: 18px; font-weight: bold; font-style: italic; }
+									  	.backtotop{ font-family: arial, arial; font-size: xx-small;  }
+									  	.code     { background-color: #EEEEEE; font-family: Courier New; font-size: x-small; margin: 5px 0px 5px 0px; padding: 5px; border: black 1px dotted;}
+									    font { font-family: arial black, arial; font-size: 28px; letter-spacing: -1px; }
+									-->
+									</style>
+									
+									<script language="Javascript1.2">
+									<!-- // load htmlarea
+										_editor_url = "applications/WYSIWYGEditor/";  // URL to htmlarea files
+										var win_ie_ver = parseFloat(navigator.appVersion.split("MSIE")[1]);
+										if (navigator.userAgent.indexOf('Mac')        >= 0) { win_ie_ver = 0; }
+										if (navigator.userAgent.indexOf('Windows CE') >= 0) { win_ie_ver = 0; }
+										if (navigator.userAgent.indexOf('Opera')      >= 0) { win_ie_ver = 0; }
+										if (win_ie_ver >= 5.5) {
+										  document.write('<scr' + 'ipt src="' +_editor_url+ 'editor.js"');
+										  document.write(' language="Javascript1.2"></scr' + 'ipt>');  
+										} else { document.write('<scr'+'ipt>function editor_generate() { return false; }</scr'+'ipt>'); }
+									// -->
+									</script>
+										
+									<textarea $readonly name="${attribute.name}WYSIWYG" rows="$rows" cols="$cols"  style="visibility:visible; width:${width}px; height:${wysiwygHeight}px; border: 1px solid #C2D0E2; font-family:verdana,arial,sans-serif;font-size:8pt;"></textarea>				    		
+									<script language="javascript1.2">
+										editor_generate('${attribute.name}WYSIWYG');
+									</script>
+	
+						    	</td>
+						    </tr>
+						    </table>
+						</div>
+					#end
+					
+					#if($enableTemplateEditor == "true")
+						<!-- Here comes the Template Code editor layer -->
+						<input type="hidden" name="${attribute.name}EditorType2IsActive" value="false">
+						<div id="${attribute.name}EditorType2" name="${attribute.name}EditorType2" style="position:absolute; visibility: hidden; width:${width}px; height:${height}px; z-index:1; border: 0px none #000000;">
+						    <img src="images/trans.gif" width="1" height="12">
+						    <br>
+						    <table cellpadding="0" cellspacing="0" border="0">
+						    <tr>
+						    	<td colspan="2" align="right" bgcolor="white">
+						    		#showTemplateEditor("${width}" "${height}" "${attribute.name}" "${deliveryBaseUrl}")						    		
+								</td>
+						    </tr>
+						    </table>
+						</div>
+					#end
+					
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					    <tr>
+					    	<td align="left">$attributeTitle ("$attribute.name") $attributeDescription </td>
+					    	<td align="right">
+					    		<a href="javascript:changeEditor(0, '${attribute.name}');">$ui.getString("tool.contenttool.editorPlainLabel")</a> 
+					    		#if($enableWYSIWYG == "true")
+					    		| <a href="javascript:changeEditor(1, '${attribute.name}');">$ui.getString("tool.contenttool.editorHTMLWYSIWYG")</a> 
+								#end
+					    		#if($enableTemplateEditor == "true")
+					    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
+								#end
+							</td>
+					    </tr>
+					</table>
+					<textarea $readonly rows="$rows" cols="$cols" style="visibility: visible; width:${width}px; height:${height}px; border: 1px solid #C2D0E2; font-family:verdana,arial,sans-serif;font-size:8pt;" name="$attribute.name" $readonly>$this.getAttributeValue($attribute.name)</textarea> 
+					
+					<script type="text/javascript">
+						#if($currentEditorId == 1)
+							changeEditor(1, '${attribute.name}');
+						#elseif($currentEditorId == 2)
+							changeEditor(2, '${attribute.name}');
+						#end
+					</script>
+					
+				#elseif($attribute.inputType == "select")
+				<!-- Handles the input type select = dropbox -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+					<select $readonly size="1" name="$attribute.name" class="$class">
+		    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+		    				<option value="$value.id" #checkSelected("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)</option>
+		    			#end
+		    		</select>
+
+				#elseif($attribute.inputType == "checkbox")
+				<!-- Handles the input type checkbox -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+	    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+						<input $readonly type="checkbox" name="$attribute.name" value="$value.id" #checkCheckedBySplit("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)
+	    			#end
+
+				#elseif($attribute.inputType == "radiobutton")
+				<!-- Handles the input type radiobutton -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+	    			#foreach($value in $attribute.getContentTypeAttribute("values").getContentTypeAttributeParameterValues())
+						<input $readonly type="radio" name="$attribute.name" value="$value.id" #checkCheckedBySplit("$value.id" "$this.getAttributeValue($attribute.name)")>$value.getLocalizedValue("label", $session.locale)
+	    			#end
+
+				#end
+				
+			</td>
+		</tr>
+		#end
+	#end
+	<!--
+		<tr>
+			<td colspan="3">
+				Associated attachments<br/>
+				<table border="0" width="100%" cellspacing="0">
+				<tr>
+					#set($counter = 0)
+					#foreach($digitalAsset in $digitalAssets)
+						<td valign="bottom" align="center" class="bordered">
+							<a href="javascript:openPopup('$this.getDigitalAssetUrl($digitalAsset.digitalAssetId)', 'Preview', 'width=600,height=500,resizable=yes');"><img class="scaledbordered" src="$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)">
+							<br/>$digitalAsset.assetKey</a><br/>
+							#if($readonly != "readonly")
+								<a href="ViewContentVersion!deleteDigitalAsset.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId">Delete</a>
+							#end
+						</td>
+						#set($counter = $counter + 1)
+						#if ($counter == 5)
+						</tr>
+						<tr>
+							#set($counter = 0)	
+						#end
+					#end
+					
+					#if($counter == 0)
+						<td>There are no attachments right now</td>
+					#end	
+			</td>
+		</tr>
+	-->
+	
+		<script type="text/javascript">
+			function validateAndSubmitContentForm()
+			{
+				isValid = true;
+				
+				if(isValid)
+				{
+					document.editForm.submit();
+				}
+			}
+		
+			function validateAndSubmitContentFormThenExit()
+			{
+				validateAndSubmitContentForm();		
+				window.close();
+			}
+						
+		</script>
+		
+		</td>
+	</tr>
+	
+	<!-- end fields -->
+
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="languageId" value="$!languageId">
+		<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+		<input type="hidden" name="attributeName" value="$!attributeName">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<td colspan="3">
+			<a href="javascript:validateAndSubmitContentForm();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
+			<!-- <a href="javascript:validateAndSubmitContentFormThenExit();"><img src="$ui.getString("images.contenttool.buttons.saveAndExitToCover")" width="80" height="25" border="0"></a> -->
+			<a href="javascript:window.opener.location.reload(); window.close();"><img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25"></a></td>
+		</td>
+	</tr>
+</table>
+</form>
+
+</div>
+ 
+#endContentTool()

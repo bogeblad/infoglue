@@ -1,0 +1,465 @@
+#define($headerMarkup)
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	 
+	#if($useFckUploadMessages)
+	<script type='text/javascript'>
+	<!--
+		function getRequestParameter(url, parameterName)
+		{
+			valueIndex = url.indexOf(parameterName + "=");
+			endIndex = url.indexOf("&", valueIndex);
+			if(endIndex != -1)
+				value = url.substring(valueIndex + parameterName.length + 1, endIndex);
+			else
+				value = url.substring(valueIndex + parameterName.length + 1);
+			return value;
+		}
+		
+		#if($prefferedWYSIWYG == "ckeditor3")	
+			var instanceName = getRequestParameter(window.location.href, "CKEditor");
+			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
+			var fileUrl = 'DownloadAsset.action?contentId=$!contentVersionVO.contentId&languageId=$!contentVersionVO.languageId&assetKey=$!digitalAssetKey';
+			var message = "$ui.getString("tool.contenttool.fileUpload.fileUploadSuccessHeader")";
+			window.parent.CKEDITOR.tools.callFunction(CKEditorFuncNum, fileUrl, message);
+		#else
+			window.parent.OnUploadCompleted(0, 'DownloadAsset.action?contentId=$!contentVersionVO.contentId&languageId=$!contentVersionVO.languageId&assetKey=$!digitalAssetKey', 'DownloadAsset.action?contentId=$!contentVersionVO.contentId&languageId=$!contentVersionVO.languageId&assetKey=$!digitalAssetKey', 'Upload was successful');
+		#end
+	-->
+	</script>
+	#end
+
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+
+	#includeLatestJQuery()
+
+	<script type="text/javascript" src="script/v3/infoglue.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen">
+
+	<link href="applications/swfupload/css/infoglue.css" rel="stylesheet" type="text/css" />
+
+	<script type="text/javascript" src="applications/swfupload/swfupload.js"></script>
+	<script type="text/javascript" src="applications/swfupload/plugins/swfupload.queue.js"></script>
+	<script type="text/javascript" src="applications/swfupload/plugins/fileprogress.js"></script>
+	<script type="text/javascript" src="applications/swfupload/plugins/handlers.js"></script>
+
+	<script type="text/javascript">
+
+		function resize()
+		{
+			var dimensionsWidth = $(window).width();
+			var dimensionsHeight = $(window).height();
+			var offsetTop = $("#tabsContainer").offset().top;
+			var availableHeight = dimensionsHeight - offsetTop - $("#footertoolbar").height();
+			$("#tabsContainer").height(availableHeight);
+			
+			$(".inlineTabDiv").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+			$(".inlineTabDiv > iframe").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+		}
+
+		$(document).ready(function(){
+			$("#tabsContainer").tabs();
+			/*
+			window.onresize = function() {
+				resize();
+			}
+			*/
+			window.resizeTo(500,450);
+		});
+		
+		var swfu;
+	
+		window.onload = function() 
+		{
+			#if($closeOnLoad == "true")
+				refreshCaller();
+				return;
+			#end
+		
+			var settings = {
+				flash_url : "applications/swfupload/swfupload.swf",
+				upload_url: "$URLBase/CreateDigitalAsset!multiple.action",	// Relative to the SWF file
+				post_params: {
+					"contentTypeDefinitionId": "$contentTypeDefinitionVO.id",
+					"entity": "$!entity",
+					"entityId": "$!entityId",
+					"contentVersionId": "$!contentVersionId",
+					"uploadedFilesCounter": "$!uploadedFilesCounter",
+					"closeOnLoad": "$!closeOnLoad",
+					"JSESSIONID": "$this.getSessionId()"
+					},
+
+				#set($maxSizeInKB = $this.userUploadMaxSize / 1000)
+				file_size_limit : "$maxSizeInKB",
+				file_types : "*.*",
+				file_types_description : "All files",
+				file_upload_limit : 0,
+				file_queue_limit : 0,
+
+				custom_settings : {
+					progressTarget : "divFileProgressContainer",
+					cancelButtonId : "btnCancel"
+				},
+				debug: false,
+
+				// Button Settings
+				button_image_url: "applications/swfupload/images/SmallSpyGlassWithTransperancy_17x18.png",	// Relative to the Flash file
+				//button_image_url: "applications/swfupload/images/XPButtonUploadText_61x22.png",	// Relative to the Flash file
+				/*
+				button_width: "61",
+				button_height: "22",
+				*/
+				button_placeholder_id: "spanButtonPlaceHolder",
+				button_width: "180",
+				button_height: "18",
+				button_text : '<span class="button">Select Images <span class="buttonSmall">(Max $formatter.formatFileSize($this.userUploadMaxSize))</span></span>',
+				button_text_style : '.button { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; } .buttonSmall { font-size: 10pt; }',
+				button_text_top_padding: "0",
+				button_text_left_padding: "18",
+				button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
+				button_cursor: SWFUpload.CURSOR.HAND,
+				
+				// The event handler functions are defined in handlers.js
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				queue_complete_handler : queueComplete	// Queue plugin event
+			};
+	
+			swfu = new SWFUpload(settings);
+	     };
+	</script>	
+
+	<script type="text/javascript">
+	<!--
+		
+		function save()
+		{
+			submitForm();
+		}
+		
+		function saveAndExit(action)
+		{
+			submitAndCloseForm();
+		}
+		
+		function onCancel()
+		{
+			refreshCaller();
+		}
+		
+		/**
+		 * This method submits the form and shows a uploading-dialog.
+		 */
+		 
+		function submitForm()
+		{
+			var value = document.getElementById("tt").value;
+			var trimmed = value.replace(/^\s+|\s+$/g, '');
+			if(trimmed != "")
+			{
+				if(document.getElementById("file1").value != "")
+				{
+					document.editForm.submit();
+				}
+				else
+				{
+					alert("$ui.getString("tool.contenttool.fileUpload.assetMissing")");
+				}
+			}
+			else
+			{
+				alert("$ui.getString("tool.contenttool.fileUpload.assetKeyMissing")");
+			}
+		}
+
+		/**
+		 * This method submits the form and shows a uploading-dialog.
+		 */
+		 
+		function submitAndCloseForm()
+		{
+			if(document.getElementById("tt").value != "")
+			{
+				if(document.getElementById("file1").value != "")
+				{
+					document.editForm.closeOnLoad.value = "true";
+					document.editForm.submit();
+				}
+				else
+				{
+					alert("$ui.getString("tool.contenttool.fileUpload.assetMissing")");
+				}
+			}
+			else
+			{
+				alert("$ui.getString("tool.contenttool.fileUpload.assetKeyMissing")");
+			}
+		}
+		
+		//*******************************************
+		//This method refreshes the caller
+		//*******************************************
+	
+		function refreshCaller()
+		{
+			if(parent.refreshView)
+			{
+				#if($!refreshAll)
+					parent.refreshAll();
+					//alert("selecting");
+					parent.refreshView("contentVersionAssets");
+					//alert("selected");
+				#else
+					parent.refreshView("contentVersionAssets");
+				#end
+			}
+			else
+			{
+				var parentLocation = "";
+				try
+				{
+					parentLocation = "" + window.opener.parent.document.location.href;
+					if(parentLocation.indexOf("ViewContentVersion!standalone.action") > -1)
+					{
+						var stopWordIndex = parentLocation.indexOf("#");
+						if(stopWordIndex > -1)
+							var newLocation = parentLocation.substring(0, stopWordIndex) + "&anchor=digitalAssetsBlock" + parentLocation.substring(stopWordIndex);
+						else
+							var newLocation = parentLocation + "&anchor=digitalAssetsBlock";
+						
+						//alert("parentLocation:" + parentLocation);
+						//alert("newLocation:" + newLocation);
+						//window.opener.parent.document.location = parentLocation + "anchor=digitalAssetsBlock";
+						window.opener.parent.document.location.replace(newLocation);
+						//window.opener.parent.document.location.reload(true);
+					}
+					else
+					{
+						if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+						{
+							var agt=navigator.userAgent.toLowerCase();
+				    		if(agt.indexOf("safari")!=-1)
+				    			window.opener.parent.frames[3].location.reload();
+				    		else
+				    			window.opener.parent.frames['main'].location.reload();
+						}
+						else
+						{
+							window.opener.location.reload();	
+						}
+					}
+				}
+				catch(err)
+				{
+					//alert("err:" + err.description);
+				}
+			}
+						
+			if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+		}
+	
+		function ddClick()
+		{
+			// Show / hide list
+			var list = document.getElementById("dd");
+			
+			if (list.style.visibility == "hidden")
+			{
+				list.style.visibility = "";
+			}
+			else
+			{
+				list.style.visibility = "hidden";
+			}
+		}
+		function ddListClick()
+		{
+			// Show / hide list
+			var tt = document.getElementById("tt");
+			var list = document.getElementById("dd");
+			var val = list.options[list.selectedIndex].value
+			tt.value=val;
+			list.style.visibility = "hidden";
+			// alert(val);
+			//alert("New assetKey:" + val + ":" + assetSizeArray["" + val + ""]);
+			document.getElementById("maxSize").innerHTML = "(Max " + assetSizeArray["" + val + ""] + ")";
+		}
+		function ddHide()
+		{
+			var list = document.getElementById("dd");
+			list.style.visibility = "hidden";
+		}
+		
+		function keyChanged()
+		{
+			var tt = document.getElementById("tt");
+			var val = tt.value;
+			var userMaxSize = "$formatter.formatFileSize($this.userUploadMaxSize)";
+			var keySize = "" + assetSizeArray["" + val + ""];
+			//alert("userMaxSize: " + userMaxSize + ":" + keySize);
+			if(keySize != 'undefined')
+				document.getElementById("maxSize").innerHTML = "(Max " + keySize + ")";
+			else
+				document.getElementById("maxSize").innerHTML = "(Max " + userMaxSize + ")";			
+		}
+		
+		function setAssetKey()
+		{
+			var assetKeyElement = document.getElementById("tt");
+			//alert("assetKeyElement:" + assetKeyElement.value);
+			if(assetKeyElement.value == '')
+			{
+				var fileName = document.getElementById("file1").value;
+				//alert("fileName:" + fileName);
+				var indexOfLastDot = fileName.lastIndexOf(".");
+				var indexOfLastSlash = fileName.lastIndexOf("/");
+				if(indexOfLastSlash == -1)
+					indexOfLastSlash = fileName.lastIndexOf("\\");
+				//alert("indexOfLastDot:" + indexOfLastDot);	
+				//alert("indexOfLastSlash:" + indexOfLastSlash);	
+				var assetKey = fileName.substring(indexOfLastSlash + 1, indexOfLastDot);
+				//alert("assetKey:" + assetKey);	
+				assetKeyElement.value = assetKey;
+			}
+		}
+		
+		var assetSizeArray = new Array();
+		#foreach($assetKeyDefinition in $definedAssetKeys)
+			assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+		#end
+				
+	-->
+	</script>
+	
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.uploadDigitalAsset.header" "" "" false true $!disableCloseButton $headerMarkup false "highGreyBackground")
+
+<div onfocus="this.blur();">
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+		
+	<h3>$ui.getString("tool.contenttool.uploadDigitalAsset.header")</h3>
+	
+	<div id="tabsContainer" class="flora">
+	
+		<ul>
+			<li id="detailedUploadTab"><a href="#detailedUpload"><span>$ui.getString("tool.contenttool.fileUpload.fileUploadDetailedUploadLabel")</span></a></li>
+			<li id="bulkUploadTab"><a href="#bulkUpload"><span>$ui.getString("tool.contenttool.fileUpload.fileUploadBulkUploadLabel")</span></a></li>
+		</ul>
+	
+		<div id="detailedUpload" style="padding: 10px;">
+	
+			<form enctype="multipart/form-data" name="editForm" method="POST" action="CreateDigitalAsset.action">
+			<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionVO.id">
+			<input type="hidden" name="entity" value="$!entity">
+			<input type="hidden" name="entityId" value="$!entityId">
+			<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+			<input type="hidden" name="uploadedFilesCounter" value="$!uploadedFilesCounter">
+			<input type="hidden" name="closeOnLoad" value="false">
+			<table width="350" border="0">
+				<tr>
+					<td class="biglabel" width="250" height="30">
+						<strong>#if($uploadedFilesCounter == 0)
+							$ui.getString("tool.contenttool.fileUpload.fileUploadHeader")
+						#else
+							$ui.getString("tool.contenttool.fileUpload.fileUploadedSoFarLabel"): $uploadedFilesCounter
+						#end
+						</strong>
+						<span id="maxSize">(Max $formatter.formatFileSize($this.userUploadMaxSize))</span>
+					</td>
+					<td rowspan="2" width="100" style="border: 1px solid black; background-color: white;" align="center" valign="middle">
+						#if($uploadedFilesCounter != 0)
+							#set($digitalAssetUrl = "$digitalAssetUrl")
+							<a href="javascript:openPopup('$digitalAssetUrl', 'Preview', 'width=600,height=500,resizable=yes');"><img class="scaledbordered" src="$assetThumbnailUrl"><br>
+							#if($digitalAssetKey.length() > 15)
+								$digitalAssetKey.substring(0, 12)...
+							#else
+								$digitalAssetKey
+							#end
+							</a>
+						#end
+						&nbsp;
+					</td>
+				</tr>		
+				<tr>
+					<td>
+						$ui.getString("tool.contenttool.fileUpload.fileUploadKeyLabel")
+						<br/>
+						<div id="comboBox">
+						  <table border="0" cellspacing="0" id="cboBoxTable">
+						    <tr>
+						      <td width="10" style="border: 1px solid black;">
+						  		<input type="text" name="digitalAssetKey" id="tt" size="20" onfocus="ddHide();" onChange="keyChanged();" style="border: 1px solid #FFFFFF" #if($definedAssetKeys.size() > 0)value="$definedAssetKeys.get(0).assetKey" #end></td>
+						      	<td onClick="ddClick();" style="border: 1px solid black;">
+						      	<img border="0" src="images/combodown.gif" width="15" height="20">
+						      </td>
+						    </tr>
+						  </table>
+						  <select size="5" name="dd" id="dd" style="border:0px solid #FFFFFF; width: 163px; height: 100; visibility: hidden; z-index: 100; position: absolute;" onClick="ddListClick();">
+							#foreach($assetKeyDefinition in $definedAssetKeys)
+								<option value="$assetKeyDefinition.assetKey">$assetKeyDefinition.assetKey</option>
+							#end
+						  </select>
+						  <script type="text/javascript">
+						  <!--	
+							var maxSize = "$formatter.formatFileSize($this.userUploadMaxSize)";
+						 	#foreach($assetKeyDefinition in $definedAssetKeys)
+						 		#if($velocityCount == 1)
+							 		maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+						 		#end
+						  	#end
+							document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
+						  -->
+						  </script>
+						</div>
+					</td>
+				</tr>		
+				<tr>
+					<td colspan="2">
+						$ui.getString("tool.contenttool.fileUpload.fileUploadFileLabel")<br/>
+						<input size=30 type="FILE" name="file1" id="file1" onchange="setAssetKey();">
+					</td>
+				</tr>
+				</form>	
+			</table>
+		</div>
+	
+		<div id="bulkUpload" style="padding: 10px;">
+			#if(!$this.getAllowedSessionId($this.getSessionId()))
+				<span style="color: red;">Please restart your session by logging out from the administrative tools and the log in again. Your session ID is out of sync and until you log restart it you cannot use the multi upload.</span>
+			#else
+			<form>
+				<div id="intro">
+					<strong>$ui.getString("tool.contenttool.fileUpload.fileUploadHeader") <span id="maxSize"> (Max $formatter.formatFileSize($this.userUploadMaxSize))</span></strong> - <span id="divStatus">0 Files Uploaded</span><br/><br/>
+					<div style="display: inline; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-bottom: 2px;">
+						<span id="spanButtonPlaceHolder"></span>
+					</div>
+					<!-- 
+					<input id="btnCancel" type="button" value="Cancel All Uploads" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+					<button id="btnBrowse" type="button" style="margin-top: 5px; padding: 2px;" onclick="swfu.selectFiles(); this.blur();"><img src="applications/swfupload/images/page_white_add.png" style="padding-right: 3px; vertical-align: bottom;">$ui.getString("tool.contenttool.fileUpload.fileUploadFileLabel")</button> -->
+				</div>
+					
+				<div id="divFileProgressContainer"></div>
+				<div id="thumbnails" style="border: 1px solid #ccc; height: 100px; background-color: white; overflow: auto; margin-top: 5px;"></div>
+			</form>
+			#end
+		</div>
+	</div>
+  
+</div>
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

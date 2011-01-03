@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<title>Delivery engine - component statistics</title>
+	
+	<style>
+	<!--
+		table 
+		{
+			width : 900px;
+			margin-right: auto;
+			margin-left: auto;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+		.header 
+		{
+			font-family : Tahoma, Arial;
+			font-size 	: 14pt;
+			font-weight : bold;
+		}
+		.label
+		{
+			font-family		 : Tahoma, Arial;
+			font-size		 : 8pt;
+			font-weight 	 : bold;
+			background-color : #CCCCCC;
+		}
+		.labelsub
+		{
+			font-family		 : Tahoma, Arial;
+			font-size		 : 8pt;
+			font-weight 	 : bold;
+			background-color : #FFFFFF;
+		}
+		.text 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+		}
+		.texttrue 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+		}
+		.textfalse 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+			color  		:red;
+		}
+		.fullymarginalized 
+		{
+			margin-left	: 50px;
+			margin-right: 50px;
+			margin-top	: 10%;
+		}
+
+		
+	-->
+	</style>
+	<script type="text/javascript">
+	<!--	
+		function toggleDiv(id)
+		{
+			var div = document.getElementById(id);
+			if (navigator.appName == "Microsoft Internet Explorer")
+			{
+				if(div && div.style.display == 'block')
+					div.style.display = "none";
+				else
+					div.style.display = "block";			
+			}
+			else
+			{
+				if(div && div.style.display == 'table-row')
+					div.style.display = 'none';
+				else
+					div.style.display = 'table-row';				
+			}
+		}
+	-->		
+	</script>
+</head>
+
+<body>
+
+<table cellpadding="4" cellspacing="0">
+  <tr>
+    <td colspan="4" class="header">InfoGlue Component Statistics ($serverName)</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text">&nbsp;</td>
+  </tr>
+  <tr class="label">
+    <td>Item</td>
+    <td colspan="3">Value</td>
+  </tr>
+  #foreach($state in $states)
+  <tr>
+    <td class="text">$state.get(0)</td>
+    <td class="text" colspan="3">$state.get(1)</td>
+  </tr>
+  #end
+  <tr>
+    <td class="text" colspan="4"><a href="ViewApplicationState!resetComponentStatistics.action">Reset component stats</a></td>
+  </tr>
+  
+</table>
+
+</body>
+
+</html>

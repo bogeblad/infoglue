@@ -1,0 +1,267 @@
+<div id="${attribute.name}PropertyLayer" class="propertiesDiv" style="border: 1px solid black; background-color: white; position: fixed; left:20px; top:20px; z-index:0">
+
+	<div id="menutoolbar">
+		<div style="position: absolute; z-index: 5; padding-left: 10px; padding-top: 8px;" id="menutoolbarLeft"><span style="font-size: 14px;">Attribute ${attribute.name} - properties</span></div>
+		<div style="float: right;" id="menutoolbarRight">
+			<a title="$ui.getString("tool.common.closeWindowButton.title")" name="exitButton" id="exitButton" href="#" class="igToolbarButton igToolbarHeaderButton"><span class="igToolbarButtonOuterSpan igToolbarHeaderButton"><span title="$ui.getString("tool.common.closeWindowButton.title")" class="close">$ui.getString("tool.common.closeWindowButton.label")</span></span></a>
+			<script type="text/javascript">
+			<!--
+			   	$("#exitButton").click(function(){
+					hidePropertyDiv('${attribute.name}PropertyLayer');
+		        });
+       		-->
+			</script>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+		
+	<form name="${attribute.name}PropertiesForm" action="ViewContentTypeDefinition!updateAttribute.action" method="post">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionId">
+		<input type="hidden" name="currentContentTypeEditorViewLanguageCode" value="$!currentContentTypeEditorViewLanguageCode">
+		<input type="hidden" name="attributeName" value="$attribute.name">
+		<input type="hidden" id="attributeToExpand${attribute.name}" name="attributeToExpand" value="$attribute.name">
+
+		<div id="propertiesDivBody" class="propertiesDivBody">
+			<table border="0" cellpadding="2" cellspacing="0" width="90%" style="margin: 10px; 10px 10px 10px;">
+			<tr>
+				<td><b>Name</b></td>
+				<td><input type="textfield" name="newAttributeName" value="$attribute.name" class="normaltextfield"></td>
+			</tr>
+			<tr>
+				<td><b>Type</b></td>
+				<td>
+					<select size="1" name="inputTypeId" class="sitedropbox">
+					    <option value="">Choose element type</option>
+					    <!--<option value="label" #checkSelected("label" "$attribute.inputType")>Label</option>-->
+					    <option value="textfield" #checkSelected("textfield" "$attribute.inputType")>TextField</option>
+					    <option value="textarea" #checkSelected("textarea" "$attribute.inputType")>TextArea</option>
+					    <option value="checkbox" #checkSelected("checkbox" "$attribute.inputType")>CheckBox</option>
+					    <option value="radiobutton" #checkSelected("radiobutton" "$attribute.inputType")>RadioButton</option>
+					    <option value="select" #checkSelected("select" "$attribute.inputType")>SelectBox</option>
+					    <option value="hidden" #checkSelected("hidden" "$attribute.inputType")>Hidden</option>
+					    <option value="datefield" #checkSelected("datefield" "$attribute.inputType")>DateField</option>
+					    <option value="customfield" #checkSelected("customfield" "$attribute.inputType")>Custom field</option>
+					    <option value="tab" #checkSelected("tab" "$attribute.inputType")>Tab</option>
+					    <!--<option value="password" #checkSelected("password" "$attribute.inputType")>Password</option>-->
+					    <!--<option value="image" #checkSelected("image" "$attribute.inputType")>SubmitImage</option>-->
+					    <!--<option value="submit" #checkSelected("submit" "$attribute.inputType")>SubmitButton</option>-->
+					    <!--<option value="clear" #checkSelected("clear" "$attribute.inputType")>ClearButton</option>-->
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2"><img src="images/trans.gif" width="1" height="6"/></td>
+			</tr>
+			<tr class="sectionDivider">
+				<td colspan="2"><b>Validation</b></td>
+			</tr>
+			#foreach($validator in $attribute.validators)
+			<tr>
+				<td>Validator</td>
+				<td>
+					<table width="50%" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td width="90%">$validator.name</td>
+						<td>&nbsp;</td>
+						<td><a href="javascript:showDiv('${attribute.name}_${validator.name}_layer');"><img src="images/properties.gif" border="0"></a></td>
+						<td>&nbsp;</td>
+						<td><a href="ViewContentTypeDefinition!deleteAttributeValidator.action?contentTypeDefinitionId=$contentTypeDefinitionId&attributeName=${attribute.name}&attributeValidatorName=${validator.name}&attributeToExpand=$attribute.name"><img src="images/delete.gif" border="0"></a></td>
+						<td>&nbsp;</td>
+					</tr>
+					</table>					
+				</td>
+			</tr>
+			#end
+			<tr>
+				<td>
+					<a href="javascript:showAddValidatorFormDiv('$attribute.name');">Add new validation rule</a>
+				</td>
+			</tr>
+		
+			<tr>
+				<td colspan="2"><img src="images/trans.gif" width="1" height="6"/></td>
+			</tr>
+			<tr class="sectionDivider">
+				<td colspan="2"><b>Extra parameters</b></td>
+			</tr>
+		
+			#foreach($parameter in $attribute.getContentTypeAttributeParameters())
+			<tr>
+				<td valign="top">$parameter.key:</td>
+				<td>
+					<input type="hidden" name="parameterNames" value="$parameter.key">
+					#set($values = $parameter.value.getContentTypeAttributeParameterValues())
+					#set($value = $parameter.value.getContentTypeAttributeParameterValue().getLocalizedValue("label", "$!currentContentTypeEditorViewLanguageCode"))
+					#if($parameter.value.type == 0)
+						#if($parameter.key == "widget")
+							<select name="$parameter.key" class="normaltextfield">
+								#if($attribute.inputType == "select")
+									<option value="default" #checkSelected("$value" "default")>Default</option>
+		    					#elseif($attribute.inputType == "radiobutton")
+									<option value="default" #checkSelected("$value" "default")>Default</option>
+		    						<option value="3col" #checkSelected("$value" "3col")>3-column</option>
+								#elseif($attribute.inputType == "checkbox")
+		    						<option value="default" #checkSelected("$value" "default")>Default</option>
+		    						<option value="transfer" #checkSelected("$value" "transfer")>Transfer boxes</option>
+		    						<option value="3col" #checkSelected("$value" "3col")>3-column checkboxes</option>
+								#else
+									<option value="default" #checkSelected("$value" "default")>Default</option>
+								#end
+		                    </select>
+						#elseif($parameter.key == "class")
+							<select name="$parameter.key" class="normaltextfield">
+								#if($attribute.inputType == "textfield")
+		    						<option value="longtextfield" #checkSelected("$value" "longtextfield")>Default (longtextfield)</option>
+		    						<option value="smalltextfield" #checkSelected("$value" "smalltextfield")>Small textfield</option>
+		    						<option value="normaltextfield" #checkSelected("$value" "normaltextfield")>Normal textfield</option>
+		    						<option value="date" #checkSelected("$value" "date")>Datefield</option>
+		    					#elseif($attribute.inputType == "textarea")	
+									<option value="normaltextarea" #checkSelected("$value" "normaltextarea")>Normal textarea</option>
+									<option value="smalltextarea" #checkSelected("$value" "smalltextarea")>Small textarea</option>
+									<option value="largetextarea" #checkSelected("$value" "largetextarea")>Large textarea</option>
+		    					#elseif($attribute.inputType == "datefield")	
+									<option value="date" #checkSelected("$value" "date")>Normal date</option>
+								#else
+		    						<option value="default" #checkSelected("$value" "default")>Default</option>
+		                		#end
+						    </select>
+						#else
+		    				<input type="textfield" name="$parameter.key" value="$value" class="normaltextfield">
+						#end
+					#elseif($parameter.value.type == 2)
+						<textarea name="$parameter.key" class="normaltextarea">$value</textarea>
+					#else
+						<table border="0" cellpadding="2" cellspacing="0">
+						<tr>
+							<td><b>Label</b></td>
+							<td><b>Internal name</b></td>
+							<td></td>
+						</tr>
+						#foreach($value in $values)
+						<tr>
+							<td>$value.getLocalizedValue("label", "$!currentContentTypeEditorViewLanguageCode")</td>
+							<td>$value.getLocalizedValue("id", "$!currentContentTypeEditorViewLanguageCode")</td>
+							<td>
+								<nobr>
+								<a href="javascript:showDiv('${attribute.name}${parameter.key}${value.id}PropertyLayer');"><img src="images/properties.gif" border="0"></a>
+								<a href="ViewContentTypeDefinition!deleteAttributeParameterValue.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name&attributeParameterId=$parameter.key&attributeParameterValueId=$value.id&attributeToExpand=$attribute.name"><img src="images/delete.gif" border="0"></a>
+								</nobr>
+							</td>
+						</tr>
+						#end
+						<tr>
+							<td colspan="3"><a href="ViewContentTypeDefinition!insertAttributeParameterValue.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name&attributeParameterId=$parameter.key&attributeToExpand=$attribute.name">Add value</a></td>
+						</tr>
+						</table>
+					#end
+				</td>
+			</tr>
+			#end
+			<tr>
+				<td colspan="2">
+					<img src="images/trans.gif" width="80" height="5" border="0">
+				</td>
+			</tr>
+			</table>
+		</div>
+		
+		<div id="relativeFootertoolbar" class="buttonPane">
+			<div style="float: left; margin-left: 10px;">
+				<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="document.${attribute.name}PropertiesForm.submit();"/>
+				<input type="button" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")" onclick="$('#attributeToExpand${attribute.name}').val(''); document.${attribute.name}PropertiesForm.submit();"/>
+				<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="hideDiv('${attribute.name}PropertyLayer');"/>
+			</div>
+		</div>
+	</form>
+
+</div>
+
+#foreach($validator in $attribute.validators)
+	<div id="${attribute.name}_${validator.name}_layer" style="border: 1px solid black; background-color: white; LEFT:250px; position:absolute; TOP:250px; visibility:hidden; z-index:1">
+		<form name="${attribute.name}_${validator.name}ArgumentsForm" action="ViewContentTypeDefinition!updateAttributeValidatorArguments.action" method="POST">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<h3>Validator arguments</h3>
+		<table border="0" cellpadding="4" cellspacing="0" style="margin-left: 12px; margin-right: 10px;">
+		<tr>
+			<td colspan="2"><img src="images/trans.gif" height="5" width="1"></td>
+		</tr>
+		#set($index = 0)
+		#foreach($key in $validator.arguments.keySet())
+			<tr>
+				<td>
+					<input type="hidden" name="${index}_argumentName" value="$key">
+					$key:
+				</td>
+				<td>
+					<input type="textfield" name="${index}_argumentValue" value="$validator.arguments.get("$key")" class="normaltextfield">
+				</td>
+			</tr>
+			#set($index = $index + 1)
+		#end
+		<tr>
+			<td colspan="2">
+				<img src="images/trans.gif" width="80" height="25" border="0">
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="buttonPane">
+				<input type="submit" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")"/>
+				<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="hideDiv('${attribute.name}_${validator.name}_layer');"/>
+			</td>
+		</tr>
+		</table>
+		<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionId">
+		<input type="hidden" name="attributeName" value="$attribute.name">
+		<input type="hidden" name="attributeValidatorName" value="$validator.name">
+		<!--
+		<input type="hidden" name="attributeParameterValueLocale" value="$!currentContentTypeEditorViewLanguageCode">
+		<input type="hidden" name="currentContentTypeEditorViewLanguageCode" value="$!currentContentTypeEditorViewLanguageCode">
+		-->
+		<input type="hidden" name="attributeToExpand" value="${attribute.name}">
+		</form>
+	</div>
+#end
+
+#foreach($parameter in $attribute.getContentTypeAttributeParameters())
+	#set($values = $parameter.value.getContentTypeAttributeParameterValues())
+	#foreach($value in $values)
+		#if($parameter.value.type == 1)
+
+		<div id="${attribute.name}${parameter.key}${value.id}PropertyLayer" style="border: 1px solid black; background-color: white; LEFT:250px; position:absolute; TOP:250px; visibility:hidden; z-index:1">
+			<form name="${attribute.name}${parameter.key}${value.id}PropertiesForm" action="ViewContentTypeDefinition!updateAttributeParameterValue.action" method="POST">
+			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+			<h3>Edit values</h3>
+			<table border="0" cellpadding="4" cellspacing="0" style="margin-left: 12px; margin-right: 10px;">
+			<tr>
+				<td><b>Label</b></td>
+				<td><input type="textfield" name="attributeParameterValueLabel" value="$value.getLocalizedValue("label", "$!currentContentTypeEditorViewLanguageCode")" class="normaltextfield"></td>
+			</tr>
+			<tr>
+				<td><b>Internal Name</b></td>
+				<td><input type="textfield" name="newAttributeParameterValueId" value="$value.getLocalizedValue("id", "$!currentContentTypeEditorViewLanguageCode")" class="normaltextfield"></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<img src="images/trans.gif" width="80" height="25" border="0">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="buttonPane">
+					<input type="submit" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")"/>
+					<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="hideDiv('${attribute.name}${parameter.key}${value.id}PropertyLayer');"/>
+				</td>
+			</tr>
+			</table>
+			<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionId">
+			<input type="hidden" name="attributeName" value="$attribute.name">
+			<input type="hidden" name="attributeParameterId" value="$parameter.key">
+			<input type="hidden" name="attributeParameterValueId" value="$value.id">
+			<input type="hidden" name="attributeParameterValueLocale" value="$!currentContentTypeEditorViewLanguageCode">
+			<input type="hidden" name="currentContentTypeEditorViewLanguageCode" value="$!currentContentTypeEditorViewLanguageCode">
+			<input type="hidden" name="attributeToExpand" value="${attribute.name}">
+			</form>
+		</div>
+		#end
+	#end
+#end

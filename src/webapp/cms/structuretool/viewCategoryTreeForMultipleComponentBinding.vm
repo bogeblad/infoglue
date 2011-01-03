@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Choose Category</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<script language="JavaScript">
+		window.resizeTo(700,600);
+	</script>
+
+	<script type="text/javascript" src="script/vector.js"></script>
+
+	<script type="text/javascript" language="JavaScript">
+
+	<!--
+		var exp;
+
+	    function notifyExp(v)
+	    {
+	    	// The html tree notifies this page about the
+	    	// current expansion key, so that we can reload
+	    	// the tree with the same expansion.
+	    	exp=v;
+	    }
+
+		function changeTree(tree)
+		{
+			qualifyerString = "";
+			#foreach($qualifyer in $qualifyers)
+				qualifyerString += "$qualifyer.value,";
+			#end
+
+		    var url = "ViewMultiSelectStructureTreeForServiceBinding!changeTree.action?tree=" + tree + "&serviceBindingId=$serviceBindingId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&entityName=SiteNode&qualifyerString=" + qualifyerString;
+		    //alert('Calling:' + url);
+		    self.location.href = url;
+		}
+
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;
+		}
+
+	    function addQualifyer()
+		{
+		    //alert("Here we add the choosen siteNode to the qualifyer...");
+			entityId = document.inputForm.entityId.value;
+			path     = document.inputForm.path.value;
+			bindingTypeId = 1; //0 = Content, 1 = SiteNode
+
+		    var binding = new Binding("Content", entityId, path);
+			categoryVector.addElement(binding);
+			drawList();
+		}
+
+
+		function submitBinding()
+		{
+		    qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+			qualifyerXML += "<qualifyer>";
+			var path = "";
+			for (var i=0; i < categoryVector.getSize(); i++)
+			{
+				var binding = categoryVector.getElementAt(i);
+				if(i > 0)
+					path = path + ", ";
+				path 		= path + binding.getPath();
+				entityName 	= binding.getEntityName();
+				entityId   	= binding.getEntityId();
+				qualifyerXML += "<" + entityName + ">" + entityId + "</" + entityName + ">";
+			}
+		   	qualifyerXML += "</qualifyer>";
+
+			var url = "ViewSiteNodePageComponents!addComponentPropertyBindingWithQualifyer.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&qualifyerXML=" + escape(qualifyerXML) + "&path=" + escape(path) + "&componentId=$componentId&propertyName=$propertyName";
+		    //alert('Calling:' + url);
+			self.opener.location.href = url;
+		    window.close();
+		    //document.inputForm.submit();
+		}
+
+		function qdrop(obj)
+		{
+			var data = window.event.dataTransfer.getData('Text');
+
+			if(data.slice(0,1) == "q")
+			{
+				// From qualifyer list
+				var item = document.getElementById(data);
+				var topos = obj.pos;
+				moveQualifyerToPosition(item.pos, topos);
+			}
+			else
+			{
+				// From the treeview
+				var item = document.frames['itreeFrame'].document.getElementById(data);
+			    data = "link" + item.id.slice(4,item.id.length);
+				item = document.frames['itreeFrame'].document.getElementById(data);
+
+				var position=obj.pos;
+
+				document.inputForm.entityId.value     = item.entityId;
+				document.inputForm.repositoryId.value = item.repoId;
+			 	document.inputForm.path.value         = item.myLabel;
+
+			 	if (position==-1)
+			 		addQualifyer();
+			 	else
+			 		addQualifyerAtPosition(position);
+			}
+
+		}
+		function qoverDrag(obj)
+		{
+			var data = window.event.dataTransfer.getData('Text');
+
+			if(data.slice(0,1) == "q")
+			{
+				// From qualifyer list
+				var item = document.getElementById(data);
+			    window.event.returnValue = false;
+			}
+			else
+			{
+				// From the treeview
+				var item = document.frames['itreeFrame'].document.getElementById(data);
+			    data = "link" + item.id.slice(4,item.id.length);
+				item = document.frames['itreeFrame'].document.getElementById(data);
+			    window.event.returnValue = false;
+			}
+
+
+		}
+		function qenterDrag(obj)
+		{
+		    var dragData = window.event.dataTransfer;
+	    	dragData.dropEffect = 'link';
+			obj.src = "images/dropqualifyer.gif";
+			obj.height="19";
+		    window.event.dataTransfer.getData('Text');
+		}
+		function qexitDrag(obj)
+		{
+			obj.src = "images/trans.gif";
+			if(obj.pos != -1) obj.height="4";
+		}
+
+		// Source qualifyer list
+		function qstartDrag(obj)
+		{
+		    var dragData = window.event.dataTransfer;
+		    dragData.setData('Text', obj.id);
+		    dragData.effectAllowed = 'move';
+
+		    // Get the div object
+		    var theDiv = document.getElementById("tr" + obj.pos);
+		    theDiv.style.display="none";
+		}
+		function qendDrag(obj) {
+		    window.event.dataTransfer.clearData();
+		    // Get the div object
+		    var theDiv = document.getElementById("tr" + obj.pos);
+		    theDiv.style.display="";
+		}
+
+		/**
+		 * Binding object
+		 */
+
+		function Binding(entityName, entityId, path)
+		{
+			this.entityName = entityName;
+			this.entityId 	= entityId;
+			this.path 		= path;
+
+		  	this.getPath 		= getPath;
+		  	this.getEntityName 	= getEntityName;
+		  	this.getEntityId 	= getEntityId;
+		  	this.setPath 		= setPath;
+		  	this.setEntityName 	= setEntityName;
+		  	this.setEntityId 	= setEntityId;
+		}
+
+		function getPath()
+		{
+		  	return this.path;
+		}
+
+		function getEntityName()
+		{
+		  	return this.entityName;
+		}
+
+		function getEntityId()
+		{
+		  	return this.entityId;
+		}
+
+		function setPath(path)
+		{
+		  	this.path = path;
+		}
+
+		function setEntityName(entityName)
+		{
+		  	this.entityName = entityName;
+		}
+
+		function setEntityId(entityId)
+		{
+			this.entityId = entityId;
+		}
+
+
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+
+		function addTextLink(parent, address, text)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var linkText = document.createTextNode(text);
+			link.appendChild(linkText);
+			parent.appendChild(link);
+		}
+
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+
+		function addImageLink(parent, address, src)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var image = document.createElement("img");
+			image.setAttribute("src", src);
+			image.setAttribute("border", "0");
+			link.appendChild(image);
+			parent.appendChild(link);
+
+			var separator = document.createElement("img");
+			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("border", "0");
+			separator.setAttribute("width", "5");
+			separator.setAttribute("height", "1");
+			parent.appendChild(separator);
+		}
+
+
+		/**
+		 * This method draws the list of bindings.
+		 */
+
+		function drawList()
+		{
+			//alert("categoryVector :" + categoryVector.getSize());
+
+			var table = document.getElementById("bindings")
+			var parent = table.parentNode;
+			parent.removeChild(table);
+
+			mytable = document.createElement("TABLE");
+			mytable.setAttribute("id", "bindings");
+			mytable.setAttribute("border", "0");
+			mytable.setAttribute("width", "100%");
+			mytable.setAttribute("cellpadding", "0");
+			mytable.setAttribute("cellspacing", "0");
+	        mytablebody = document.createElement("TBODY");
+	        for (var i=0; i < categoryVector.getSize(); i++)
+			{
+				var binding = categoryVector.getElementAt(i);
+				//alert("Element:" + binding.getPath());
+				var myTR = document.createElement("TR");
+				var actionTD = document.createElement("TD");
+				actionTD.setAttribute("width", "50");
+				addImageLink(actionTD, "javascript:moveBindingDown(" + i + ");", "images/downArrow.gif");
+				addImageLink(actionTD, "javascript:moveBindingUp(" + i + ");", "images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteBinding(" + i + ");", "images/delete.gif");
+				var bindingTD = document.createElement("TD");
+				bindingTD.setAttribute("align", "left");
+				var bindingText = document.createTextNode(binding.getPath());
+				myTR.appendChild(actionTD);
+				bindingTD.appendChild(bindingText);
+				myTR.appendChild(bindingTD);
+
+				mytablebody.appendChild(myTR);
+
+			}
+
+	        mytable.appendChild(mytablebody);
+	        parent.appendChild(mytable);
+
+			//alert("childNodes" + parent.childNodes.length);
+		}
+
+		/**
+		 * This method removes a binding from the vector.
+		 */
+
+		function deleteBinding(index)
+		{
+			categoryVector.removeElementAt(index);
+			drawList();
+		}
+
+		/**
+		 * This method moves a binding 1 step up in the vector.
+		 */
+
+		function moveBindingUp(index)
+		{
+			if(index > 0)
+			{
+				var binding 		= categoryVector.getElementAt(index);
+				var previousBinding = categoryVector.getElementAt(index - 1);
+
+				path 		= binding.getPath();
+				entityName 	= binding.getEntityName();
+				entityId 	= binding.getEntityId();
+
+				binding.setPath(previousBinding.getPath())
+				binding.setEntityName(previousBinding.getEntityName())
+				binding.setEntityId(previousBinding.getEntityId())
+
+				previousBinding.setPath(path)
+				previousBinding.setEntityName(entityName)
+				previousBinding.setEntityId(entityId)
+
+				drawList();
+			}
+		}
+
+		/**
+		 * This method moves a binding 1 step up in the vector.
+		 */
+
+		function moveBindingDown(index)
+		{
+			if(index < categoryVector.getSize() - 1)
+			{
+				var binding 		= categoryVector.getElementAt(index);
+				var previousBinding = categoryVector.getElementAt(index + 1);
+
+				path 		= binding.getPath();
+				entityName 	= binding.getEntityName();
+				entityId 	= binding.getEntityId();
+
+				binding.setPath(previousBinding.getPath())
+				binding.setEntityName(previousBinding.getEntityName())
+				binding.setEntityId(previousBinding.getEntityId())
+
+				previousBinding.setPath(path)
+				previousBinding.setEntityName(entityName)
+				previousBinding.setEntityId(entityId)
+
+				drawList();
+			}
+		}
+
+		/**
+		 * This function initializes the vector of previous bindings.
+		 */
+
+		function init()
+		{
+			#foreach($binding in $componentBindings)
+				//alert("$binding");
+				binding = new Binding("Content", "$binding.entityId", "$binding.path");
+				categoryVector.addElement(binding);
+			#end
+
+			//alert("categoryVector :" + categoryVector.getSize());
+			drawList();
+		}
+
+		var categoryVector = new Vector(0);
+
+	    function cancel()
+		{
+		    self.opener.location.href = "ViewSiteNodePageComponents.action?siteNodeId=$siteNodeId";
+		    window.close();
+		}
+	-->
+	</script>
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+</head>
+
+<body class="managementtooledit" onload="javascript:init();">
+
+<table class="managementtooledit" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td valign="top">
+
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr class="darkblue">
+			<td class="smalllabel">Click on page the Category should use and then "add".</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td class="menu">
+				<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewCategoryHtmlTree!bindingView.action?repositoryId=${repositoryId}" width="350" height="400" align="baseline"></IFRAME>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+				<a href="javascript:addQualifyer();"><img src="images/addButtonBlue.gif" border="0"></a>
+				<a href="javascript:submitBinding();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+				<a href="javascript:cancel();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<form name="inputForm" action="CreateServiceBinding.action">
+					<input type="hidden" name="entityId" value="">
+					<input type="hidden" name="repositoryId" value="">
+					<input type="hidden" name="path" value="">
+					<input type="hidden" name="qualifyerXML" value="">
+				</form>
+			</td>
+		</tr>
+		</table>
+	</td>
+	<td>&nbsp;</td>
+	<td valign="top">
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr class="darkgreen">
+			<td class="smalllabel">The following Categories are bound so far</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+
+		<tr>
+			<td>
+			  	<TABLE id="bindings" border="1">
+
+			  	</table>
+			</td>
+		</tr>
+
+
+		<tr>
+			<td>
+			<img pos="-1" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
+			&nbsp;
+			</td>
+		</tr>
+		</table>
+	</td>
+</tr>
+</table>
+
+</body>
+</html>

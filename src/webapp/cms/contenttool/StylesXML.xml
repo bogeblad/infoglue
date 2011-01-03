@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Styles>
+	<Style name="Image on Left" element="img">
+		<Attribute name="style" value="padding: 5px; margin-right: 5px" />
+		<Attribute name="border" value="2" />
+		<Attribute name="align" value="left" />
+	</Style>
+	<Style name="Image on Right" element="img">
+		<Attribute name="style" value="padding: 5px; margin-left: 5px" />
+		<Attribute name="border" value="2" />
+		<Attribute name="align" value="right" />
+	</Style>
+	<Style name="Red Bold" element="span">
+		<Attribute name="style" value="font-color: red; font-weight: bold;" />
+	</Style>
+	<Style name="Custom Italic" element="em" />
+	<Style name="Title" element="span">
+		<Attribute name="class" value="Title" />
+	</Style>
+	<Style name="Code" element="span">
+		<Attribute name="class" value="Code" />
+	</Style>
+	<Style name="Title H3" element="h3" />
+	<Style name="Custom Ruler" element="hr">
+		<Attribute name="size" value="1" />
+		<Attribute name="color" value="#ff0000" />
+	</Style>
+</Styles>

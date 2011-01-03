@@ -1,0 +1,57 @@
+################################
+#Properties for the JNDI SETUP
+################################
+
+authenticationMethod=none
+ldapVersion=3
+socketFactory=org.infoglue.cms.security.DummySSLSocketFactory
+connectionName=anonymous
+connectionPassword=anonymous
+connectionURL=ldaps://localhost:6361
+
+#####################
+#Roles settings
+#####################
+roleBase=cn=staffadm,cn=groups,dc=gukonto,dc=gu,dc=se
+roleSearch=(CN=*)
+rolesFilter=(CN=*)
+#Should the search be recursive in the tree or on the base dn only. ONELEVEL_SCOPE, SUBTREE_SCOPE and OBJECT_SCOPE possible
+roleSearchScope=ONELEVEL_SCOPE
+roleFilter=*
+rolesAttributesFilter=CN,uniquemember
+roleNameAttribute=CN
+usersAttributesFilter=uniquemember
+
+#####################
+#Groups settings
+#####################
+groupBase=cn=staff,cn=groups,dc=gukonto,dc=gu,dc=se
+groupSearch=(CN=*)
+groupsFilter=(CN=*)
+#Should the search be recursive in the tree or on the base dn only. ONELEVEL_SCOPE, SUBTREE_SCOPE and OBJECT_SCOPE possible
+groupSearchScope=ONELEVEL_SCOPE
+groupFilter=*
+groupsAttributesFilter=CN,uniquemember
+groupNameAttribute=CN
+usersAttributesFilter=uniquemember
+
+#####################
+#Users settings
+#####################
+userBase=cn=Staffadm,dc=gukonto,dc=gu,dc=se
+#anonymousUserBase=CN=IGUsers,CN=Test,DC=Formedia,DC=SE
+userSearch=(CN={1})
+userListSearch=(CN=*)
+#Should the search be recursive in the tree or on the base dn only. ONELEVEL_SCOPE, SUBTREE_SCOPE and OBJECT_SCOPE possible
+userSearchScope=ONELEVEL_SCOPE
+userAttributesFilter=CN,givenName,sn,mail,edupersonentitlement
+userNameAttributeFilter=CN
+usersAttributeFilter=CN
+userFirstNameAttributeFilter=givenName
+userLastNameAttributeFilter=sn
+userMailAttributeFilter=mail
+memberOfAttributeFilter=edupersonentitlement
+#memberOfAttribute=memberOf
+
+userNamePattern=CN=infoglue.user,cn=Users,dc=gukonto,dc=gu,dc=se
+#anonymousUserNamePattern=CN=infoglue.user,cn=Users,dc=gukonto,dc=gu,dc=se

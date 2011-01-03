@@ -1,0 +1,145 @@
+<!-- $Id: actions.xml,v 1.12 2010/02/22 08:15:11 mattias Exp $ -->
+<actions>
+
+	<!-- InstallationValidator -->
+	<action name="org.infoglue.cms.applications.managementtool.InstallationValidatorAction" alias="InstallationValidator">
+		<view name="input">/cms/managementtool/viewValidationForm.vm</view>
+		<view name="success">/cms/managementtool/viewValidationResults.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Log viewer -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewLoggingAction" alias="ViewLogging">
+		<view name="success">/cms/managementtool/viewLogging.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- DatabaseDefinitions -->
+	<action name="org.infoglue.deliver.applications.actions.ViewDatabaseSettingsAction" alias="ViewDatabaseSettings">
+		<view name="input">/deliver/viewDatabaseSettings.vm</view>
+		<view name="success">/deliver/viewDatabaseSettings.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Test -->
+	<action name="org.infoglue.cms.applications.common.actions.PerformanceTestAction" alias="PerformanceTest">
+		<view name="error">/cms/managementtool/performanceResult.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Error Action -->
+	<action name="org.infoglue.deliver.applications.actions.ErrorPageAction" alias="ErrorPage">
+		<view name="success">/deliver/error.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+
+	<!-- Redirect -->
+	<action name="org.infoglue.cms.applications.common.actions.ExtendedRedirect" alias="ExtendedRedirect">
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Confirmation -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ConfirmAction" alias="Confirm">
+		<!--<view name="reroute">org.infoglue.cms.applications.common.actions.ConfirmRedirect.action?url=dest</view>-->
+		<view name="reroute">${dest}</view>
+		<view name="success">/cms/managementtool/confirm.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Download Action -->
+	<action name="org.infoglue.cms.applications.contenttool.actions.DownloadAssetAction" alias="DownloadAsset">
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
+	<!-- WYSIWYG Configuration lookup Action -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.WYSIWYGPropertiesAction" alias="WYSIWYGProperties">
+		<view name="success">/cms/managementtool/viewWYSIWYGProperties.vm</view>
+		<view name="successStylesXML">/cms/managementtool/viewWYSIWYGStylesXML.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<!-- Redirect -->
+	<action name="org.infoglue.cms.applications.common.actions.ExtendedRedirect" alias="ExtendedRedirect">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Update Cache -->
+	<action name="org.infoglue.deliver.applications.actions.UpdateCacheAction" alias="UpdateCache">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- FILE DOWNLOAD -->
+	<action name="org.infoglue.deliver.applications.actions.DownloadAssetAction" alias="DownloadProtectedAsset">
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
+	<action name="org.infoglue.cms.applications.common.actions.ViewFileBrowserAction" alias="ViewFileBrowser">
+		<view name="success">/cms/common/viewFileBrowser.vm</view>
+		<view name="error">/cms/common/error.vm</view>
+	</action>
+
+	<!-- AJAX API -->
+	<action name="org.infoglue.deliver.applications.actions.AjaxComponentDeliveryServiceAction" alias="AjaxComponentDeliveryService">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Site Delivery -->
+	<action name="org.infoglue.deliver.applications.actions.ViewPageAction" alias="ViewPage">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Inline operations results -->
+	<action name="org.infoglue.cms.applications.common.actions.ViewInlineOperationMessagesAction" alias="ViewInlineOperationMessages">
+		<view name="success">/cms/common/inlineOperationDone.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Application state action - used to monitor the delivery engine -->
+	<action name="org.infoglue.deliver.applications.actions.ViewApplicationStateAction" alias="ViewApplicationState">
+		<view name="cleared">ExtendedRedirect.action?url=ViewApplicationState.action</view>
+		<view name="success">/deliver/viewApplicationState.vm</view>
+		<view name="successCacheStatistics">/deliver/viewCacheStatistics.vm</view>
+		<view name="successCacheDetailsStatistics">/deliver/viewCacheDetailsStatistics.vm</view>
+		<view name="successComponentStatistics">/deliver/viewComponentStatistics.vm</view>
+		<view name="successPageStatistics">/deliver/viewPageStatistics.vm</view>
+		<view name="successAsXML">/deliver/viewApplicationStateAsXML.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Application query action - used to ask questions about the delivery engine -->
+	<action name="org.infoglue.deliver.applications.actions.ViewApplicationSettingsAction" alias="ViewApplicationSettings">
+		<view name="templateMethods">/deliver/viewTemplateMethods.vm</view>
+		<view name="navigationTitle">/deliver/viewNavigationTitle.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Delivery engine indata entry point - used to handle form input -->
+	<action name="org.infoglue.deliver.applications.actions.InfoGlueDefaultInputHandlerAction" alias="InfoGlueDefaultInputHandler">
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+	<!-- Extranet Login action -->
+	<action name="org.infoglue.deliver.applications.actions.ExtranetLoginAction" alias="ExtranetLogin">
+		<view name="loginForm">/deliver/extranetLoginForm.vm</view>
+		<view name="userAccepted">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=ViewPage.action#requestParameters</view>
+		<view name="invalidLogin">/deliver/extranetLoginError.vm</view>
+		<view name="noAccess">/deliver/extranetNoAccess.vm</view>
+		<!-- responses to checkUser -->
+		<view name="granted">/deliver/extranetLoginCheckAccepted.vm</view>
+		<view name="denied">/deliver/extranetLoginCheckNoAccess.vm</view>
+	</action>
+
+
+	<!-- Portlet Commands -->
+	<action name="org.infoglue.cms.applications.managementtool.actions.ViewListPortletAction" alias="ViewListPortlet">
+		<view name="success">/cms/managementtool/viewListPortlet.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+	<!-- Deploy Portlet -->
+	<action name="org.infoglue.deliver.applications.actions.DeployPortletAction" alias="DeployPortlet">
+        <view name="success">/deliver/error.vm</view>
+		<view name="error">/deliver/error.vm</view>
+	</action>
+
+</actions>

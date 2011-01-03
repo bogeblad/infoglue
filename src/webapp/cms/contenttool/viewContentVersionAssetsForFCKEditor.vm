@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Select inline image</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	
+	<script language="JavaScript">
+	<!--
+		var selectedDigitalAssetKey;
+		var selectedAssetElement;
+		var contentId;
+		var firstDigitalAssetId;
+		var assetKey;
+		var firstAssetKey;
+		var assetUrl;
+			
+		function markAsset(object, aContentId, digitalAssetId, anAssetKey, actualAssetKey, anAssetUrl)
+		{
+			if(selectedAssetElement)
+				selectedAssetElement.style.background = "";
+
+			contentId = aContentId;	
+			assetKey = actualAssetKey;
+			assetUrl = anAssetUrl;
+
+			#if($disableAssetKeyEncoding)
+			if(digitalAssetId)
+			{
+				try
+				{
+					selectedDigitalAssetKey = document.getElementById("digitalAsset" + digitalAssetId + "_assetKey").value;
+					assetKey = selectedDigitalAssetKey;
+				}
+				catch(err) 
+				{
+					//alert("error: digitalAssetId:" + digitalAssetId);
+				}
+			}
+			#end
+			
+			selectedAssetElement = document.getElementById("digitalAsset" + anAssetKey);
+			if(selectedAssetElement)
+				selectedAssetElement.style.background = "#C2D0E2";
+		}
+		
+		function onOk()
+		{
+			#if(!$treatAsLink)
+				parent.onOk(contentId, assetKey, assetUrl);
+			#else
+				parent.onOk(contentId, assetKey, assetUrl);
+			#end
+		}
+
+		function onCancel() 
+		{
+		    //alert("Parent:" + parent.name) 
+		    parent.onCancel(null);
+			return false;
+		}	
+		
+		function initSub() 
+		{
+			markAsset(this, '$!contentId', firstDigitalAssetId, firstAssetKey, firstAssetKey, '');
+		}
+		
+		-->
+	</script>
+	
+	<style>
+	
+		form p {
+		  margin-top: 5px;
+		  margin-bottom: 5px;
+		}
+		.fl { width: 9em; float: left; padding: 2px 5px; text-align: left; }
+		.fr { width: 6em; float: left; padding: 2px 5px; text-align: right; }
+		fieldset { padding: 0px 10px 5px 5px; height:110px;}
+		select, input, button { font: 11px Tahoma,Verdana,sans-serif; }
+		button { width: 70px; }
+		.space { padding: 2px; }
+		
+		.title { background: #ddf; color: #000; font-weight: bold; font-size: 120%; padding: 3px 10px; margin-bottom: 10px;
+		border-bottom: 1px solid black; letter-spacing: 2px;
+		}
+		form { padding: 0px; margin: 0px; }
+
+	</style>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+</head>
+
+<body class="contenttooledit" onload="initSub();" style="padding: 0px; margin: 0px;">
+
+<table border="0" width="100%" cellpadding="6" cellspacing="0" style="background-color: white; color: black;">
+#set($counter = 0)
+#foreach($digitalAsset in $inheritedDigitalAssets)
+<tr>
+	<td id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" valign="bottom" align="center" class="bordered" #if($assetKey == "$digitalAsset.assetKey") style="background-color: #C2D0E2;" #else style="background-color: white;" #end>
+		<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$this.getDigitalAssetUrl($digitalAsset.digitalAssetId)">
+		<input type="hidden" id="digitalAsset${digitalAsset.id}_assetKey" value="$digitalAsset.assetKey">
+		#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
+		#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
+		<a ondblclick="onOk();" href="javascript:markAsset(this, $!contentId, '${digitalAsset.id}', '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)');"><img class="scaledbordered" src="$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)">
+		<br/>$digitalAsset.assetKey</a><br/>
+		#if($showSelectButtonByEachImage)<a href="javascript:markAsset(this, $!contentId, '${digitalAsset.id}', '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)');onOk();"><b>Add asset to selection</b></a>#end
+	</td>
+	#if($assetKey == $digitalAsset.assetKey)
+		<script type="text/javascript">
+		<!--
+			firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+			firstDigitalAssetId = '$digitalAsset.id';
+		-->
+		</script>	
+	#else
+		#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+			<script type="text/javascript">
+			<!--
+				firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+				firstDigitalAssetId = '$digitalAsset.id';
+			-->
+			</script>
+		#end
+	#end
+	#set($counter = $counter + 1)
+</tr>
+#end
+
+#if($counter == 0)
+<tr>
+	<td id="digitalAsset$digitalAsset.assetKey" valign="bottom" align="center" class="bordered">
+		<br/>$ui.getString("tool.contenttool.noAssetsOrNoContentSelectedLabel")<br/><br/>
+	</td>
+</tr>
+#end
+
+<tr>
+	<td style="padding-top: 15px; padding-bottom: 5px;">
+		#if($contentVersionVO.id)
+		<a href="javascript:openPopup('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 'DigitalAsset', 'width=400,height=200,resizable=no');">$ui.getString("tool.contenttool.uploadNewAttachment")</a>
+		#end
+	</td>
+</tr>
+
+#if($showActionButtons)
+<tr>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>
+		<a href="javascript:onOk();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+		<a href="javascript:onCancel();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+	</td>
+</tr>
+#end
+</table>
+
+<script type="text/javascript">
+<!--
+	setTimeout("initSub()", 500);
+-->
+</script>
+</body>
+</html>

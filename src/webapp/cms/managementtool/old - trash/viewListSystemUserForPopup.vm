@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Select user</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	
+	<script language="JavaScript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+	
+	<script language="JavaScript">
+	<!--
+		
+		function hideUsers()
+		{
+			window.close();
+		}
+	
+		function selectUser(userName)
+		{
+			if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+				window.opener.parent.frames['main'].selectUser(userName);
+	
+			window.close();
+		}
+		
+	-->
+	</script>
+	
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+</head>
+
+<body class="managementtooledit">
+
+<table width="100%" bgcolor="white" cellpadding="0" cellspacing="0" border="0">
+	<tr class="darkblue">
+		<td class="smalllabel">Fullname</td>
+		<td class="smalllabel">Name</td>
+		<td class="smalllabel" width="90%" align="right"><a href="javascript:hideUsers();">Close</a></td>
+	</tr>
+	<tr>
+		<td class="lightblue" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td class="darkblue" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+		
+	#foreach($user in $infogluePrincipals)
+	
+	#set( $isOdd = $velocityCount % 2)
+	#if($isOdd==0)
+		#set($class = "class='lightblue'")
+	#else
+		#set($class = "class='white'")
+	#end	
+	
+	<tr $class>
+	  	<td style="padding: 2px;" nowrap><a href="javascript:selectUser('$user.name');">$user.firstName $user.lastName</a></td>
+	  	<td style="padding: 2px;">$user.name</td>
+	  	<td>&nbsp;</td>
+	</tr>
+	#end
+</table>			
+
+</body>
+</html>

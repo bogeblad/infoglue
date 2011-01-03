@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="infoglue" default="clean-deploy" basedir=".">
+	<!-- Use local.build.properties to set your own path to override the build.properties -->
+	<property file="local.build.properties" />
+	<property file="build.properties"/>
+	<property name="project.fullname" value="InfoGlue content management system"/>
+
+	<property name="src" value="src"/>
+	<property name="src.java" value="${src}/java"/>
+	<property name="src.test" value="${src}/test"/>
+	<property name="lib" value="lib"/>
+	<property name="conf" value="conf"/>
+
+	<property name="webapp" value="${src}/webapp"/>
+  
+	<property name="build" value="build"/>
+	<property name="build.classes" value="${build}/classes"/>
+	<property name="build.applets" value="${build}/applets"/>
+	<property name="javadoc" value="${build}/javadoc"/>
+	<property name="war.file.prefix" value="${build}/${ant.project.name}"/>
+	<property name="cms.war.file" value="${war.file.prefix}-cms.war"/>
+	<property name="deliver.war.file" value="${war.file.prefix}-deliver.war"/>
+	<property name="javadocs.destdir" value="docs/api"/>
+	
+	<property name="opentree.jar.file" value="opentree.jar"/>
+	<property name="codeeditor.jar.file" value="code-editor.jar"/>
+
+	<property name="test" value="test"/>
+	<property name="test.java" value="${test}/java"/>
+	<property name="test.classes" value="${build}/test-classes"/>
+
+	<property name="year" value="2005"/>
+
+	<!--
+	* The master filterset, created from build.properties
+	-->
+	<filterset id="project.filters">
+		<filter token="database.validationQuery" value="select 1 from cmInfoGlueProperties"/>
+		<filtersfile file="build.properties"/>
+	</filterset>
+
+	<!--
+	* lib filesets
+	-->
+	<fileset id="build.libs" dir="${lib}/build">
+		<include name="**/*.jar"/>
+	</fileset>
+
+	<fileset id="core.libs" dir="${lib}/core">
+		<include name="**/*.jar"/>
+	</fileset>
+
+	<fileset id="jdbc.libs" dir="${lib}/jdbc">
+		<include name="*.jar"/>
+	</fileset>
+
+	<fileset id="shared.libs" dir="${lib}/shared">
+		<include name="*.jar"/>
+	</fileset>
+
+	<!--
+	* fileset for deliver.properties
+	-->
+	<fileset id="deliver.properties" dir="${conf}" includes="deliver.properties"/>
+
+	<!--
+	* fileset for the deliver version of mapping.xml.
+	-->
+	<fileset id="deliver.mapping" dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml"/>
+
+	<!--
+	* fileset for the deliver version of webwork.properties.
+	-->
+	<fileset id="deliver.webwork" dir="${conf}/deliver" includes="webwork.properties"/>
+
+	<!--
+	* fileset for the deliver version of actions.xml.
+	-->
+	<fileset id="deliver.actions" dir="${conf}/deliver" includes="actions.xml"/>
+
+	<!--
+	* fileset for the cms version of actions.xml.
+	-->
+	<fileset id="cms.actions" dir="${conf}/cms" includes="actions.xml"/>
+
+	<!--
+	* paths
+	-->
+	<path id="build.classpath">
+		<pathelement location="${build.classes}"/>
+		<fileset refid="build.libs"/>
+		<fileset refid="core.libs"/>
+		<fileset refid="jdbc.libs"/>
+		<fileset refid="shared.libs"/>
+	</path>
+
+	<path id="test.classpath">
+		<pathelement location="${test.classes}"/>
+		<path refid="build.classpath"/>
+		<fileset refid="core.libs"/>
+		<fileset refid="jdbc.libs"/>
+	</path>
+
+	<path id="build.sourcepath">
+		<pathelement location="${src.java}/"/>
+		<pathelement location="${test.java}/"/>
+	</path>
+
+	<path id="test.sourcepath">
+		<pathelement location="${test.java}"/>
+	</path>
+
+	<!--
+	* Initializes the build
+	-->
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build.classes}"/>
+		<mkdir dir="${test.classes}"/>
+	</target>
+
+	<!--
+	* Removes the output directory
+	-->
+	<target name="clean">
+		<delete dir="${build}" quiet="true"/>
+	</target>
+
+    	<!-- =================================================================== -->
+    	<!--Fetches the latest code from cvs before building it                  -->
+    	<!-- =================================================================== -->
+    	<target name="fetchInfoGlue">
+        	<cvs command="update -P -d -A" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
+    	</target>    
+
+    	<!-- =================================================================== -->
+        <!--Fetches the latest code up until a date from cvs before building it  -->
+	<!-- =================================================================== -->
+	<target name="fetchInfoGlueOnDate">
+		<cvs command="update -P -d -D '${checkoutDate}'" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
+	</target>    
+			    
+    	<!-- =================================================================== -->
+	<!--Fetches the latest code up until a date from cvs before building it  -->
+	<!-- =================================================================== -->
+	<target name="fetchInfoGlueOnTag">
+		<cvs command="update -P -r '${tagName}'" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
+	</target>
+			    
+	<!--
+	* Compiles Java source files and copies resources to the build output directory
+	* that need to be on the classpath.  Also copies the Velocity templates required by
+	* the Preview app to the classpath; these are loaded by Java classes that are hard-coded
+	* to expect them here.
+	*
+	* I have enabled depend for jikes.  This means that files that are dependencies of a file
+	* whose target is out of date will be recompiled, thus sparing you the headache of a
+	* NoSuchMethodError or similar run time "surprise" as a result of the dependencies not being recompiled.
+	* I strongly encourage everyone to use jikes to compile. It is far superior to the "modern"
+	* compiler ant uses by default, not only because it does dependency checking, but it also
+	* warns you about various bad coding practices that the modern compiler allows, e.g., '$'
+	* in identifiers.  It is also more strict about checking that all classes referenced by a
+	* file are in the classpath somewhere.
+	*
+	* Note that the modern compiler does not support the depend option, and it will issue a
+	* warning to this effect.  Check out the documentation for the javac task in the Ant manual
+	* for more info.
+	-->
+	<target name="compile" depends="init">
+		<javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true">
+			<src refid="build.sourcepath"/>
+		</javac>
+		<javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true">
+			<src refid="test.sourcepath"/>
+		</javac>
+		<copy todir="${build.classes}">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+			<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
+			</filterset>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${conf}/cms" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${src.java}">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${webapp}" includes="preview/*.vm"/>
+		</copy>
+
+		<!-- Copy all supporting test files-->
+		<copy filtering="no" todir="${test.classes}">
+			<fileset dir="${test.java}">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.html"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!--
+	* Creates jar files containing InfoGlue classes and test classes. These can be
+	* imported into another codebase for custom development.
+	-->
+	<target name="jar" depends="compile" description="Creates a jar file">
+		<jar file="${build}/${ant.project.name}-${project.version}.jar">
+			<fileset dir="${build.classes}"/>
+		</jar>
+		<jar file="${build}/${ant.project.name}-${project.version}-test.jar">
+			<fileset dir="${test.classes}"/>
+		</jar>
+	</target>
+
+	<!--
+	* Creates jar files for applets needed by the CMS tool.
+	-->
+	<target name="jar-apps" depends="compile" description="Creates a applet jar file">
+		<mkdir dir="${build.applets}/applications"/>
+		<jar file="${build.applets}/applications/${opentree.jar.file}">
+			<fileset dir="${build.classes}">
+				<include name="org/infoglue/cms/plugins/opentree/**/*.class"/>
+				<include name="org/infoglue/cms/net/*.class"/>
+ 			</fileset>
+		</jar>
+		<jar file="${build.applets}/applications/${codeeditor.jar.file}">
+			<fileset dir="${build.classes}">
+				<include name="org/infoglue/cms/plugins/codeeditor/**/*.class"/>
+ 			</fileset>
+		</jar>
+		<!-- extra jar needed for the code editor -->
+		<copy todir="${build.applets}/applications" file="${lib}/build/netscape-javascript.jar"/>
+	</target>
+
+	<!--
+	* Creates the CMS war file.  Since we deploy an exploded war, the primary
+	* purpose of this target is to organize the files required to deploy.
+	-->
+	<target name="war-cms" depends="compile,jar-apps" description="Creates the CMS war file">
+		<delete>
+		    <fileset dir="${build.classes}" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
+        </delete>
+
+		<war warfile="${cms.war.file}" webxml="${conf}/cms-web.xml">
+			<fileset dir="${webapp}"/>
+			<fileset dir="${build.applets}"/>
+			<classes dir="${build.classes}"/>
+			<!--lib refid="build.libs"/-->
+			<!-- 
+			The portlet api should be installed in tomcat shared/lib/ in order 
+			to be accessed by all webapps/portlets
+			-->
+			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
+			<lib refid="core.libs"/>
+			<lib refid="jdbc.libs"/>
+			<zipfileset dir="${conf}/cms"
+                        prefix="WEB-INF/classes" includes="webwork.properties,actions.xml,jobs.xml,mapping.xml,oracle_mapping.xml,db2_mapping.xml"/>
+			<zipfileset dir="${conf}/data/xml"
+                        prefix="WEB-INF/classes"
+                        includes="*.xml"/>
+			<zipfileset dir="${conf}/data"
+                        prefix="WEB-INF/data"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}/tld"
+                        prefix="WEB-INF/tld"
+                        includes="**/*"/>
+            		<zipfileset dir="${conf}/config"
+                        prefix="WEB-INF/config"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}"
+                        prefix="WEB-INF"
+                        includes="server-config.wsdd"/>
+			<zipfileset dir="${conf}"
+			prefix="META-INF" 
+			includes="context.xml"/>
+		</war>
+	</target>
+
+	<!--
+	* Creates the deliver war file.  Since we deploy an exploded war, the primary
+	* purpose of this target is to organize the files required to deploy.
+	-->
+	<target name="war-deliver" depends="compile" description="Creates the deliver war file">
+
+		<delete>
+		    <fileset dir="${build.classes}" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
+        </delete>
+
+		<war warfile="${deliver.war.file}" webxml="${conf}/deliver-web.xml">
+			<fileset dir="${webapp}"/>
+			<classes dir="${build.classes}"/>
+			<!--lib refid="build.libs"/-->
+			<!-- 
+			The portlet api should be installed in tomcat shared/lib/ in order 
+			to be accessed by all webapps/portlets
+			-->
+			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
+			<lib refid="core.libs"/>
+			<lib refid="jdbc.libs"/>
+			<zipfileset dir="${conf}/deliver"
+                        prefix="WEB-INF/classes"
+                        includes="webwork.properties,actions.xml,jobs.xml,mapping.xml,oracle_mapping.xml,db2_mapping.xml"/>
+			<zipfileset dir="${conf}/data/xml"
+                        prefix="WEB-INF/classes"
+                        includes="*.xml"/>
+			<zipfileset dir="${conf}/data"
+                        prefix="WEB-INF/data"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}/tld"
+                        prefix="WEB-INF/tld"
+                        includes="**/*"/>
+            		<zipfileset dir="${conf}/config"
+                        prefix="WEB-INF/config"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}"
+			prefix="META-INF"
+			includes="context.xml"/>
+		</war>
+	</target>
+
+	<!--
+	* Deploys the cms app by unpacking the war file created by the war target into
+	* the CMS deploy directory.
+	-->
+	<target name="deploy-cms" depends="clean,war-cms" description="Unpacks war to deploy dir" if="deploy.dir.cms">
+		<unwar src="${cms.war.file}" dest="${deploy.dir.cms}"/>
+		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+	</target>
+
+	<!--
+	* Deploys the deliver working app by unpacking the war file created by the war target into
+	* the working deploy directory.  By default, the compile target copies deliver.properties
+	* into build/classes using the settings for the working app.  Replaces the mapping.xml from
+	* the war with the deliver version.
+	-->
+	<target name="deploy-working" depends="clean,war-deliver" description="Unpacks war to working dir" if="deploy.dir.working">
+		<unwar src="${deliver.war.file}" dest="${deploy.dir.working}"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset refid="deliver.properties"/>
+			<fileset refid="deliver.mapping"/>
+			<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
+				<filter token="portletBase" value="${portletBase.working}"/>
+			</filterset>
+		</copy>
+		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+	</target>
+
+	<!--
+	* Deploys the preview app, replacing deliver.properties with one that
+	* has context.root.deliver and operatingMode.deliver set appropriately.
+	* Replaces the mapping.xml from the war with the deliver version.
+	-->
+	<target name="deploy-preview" depends="clean,war-deliver" description="Unpacks war to preview dir" if="deploy.dir.preview">
+		<unwar src="${deliver.war.file}" dest="${deploy.dir.preview}"/>
+		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
+			<fileset refid="deliver.properties"/>
+			<fileset refid="deliver.mapping"/>
+			<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.preview}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.preview}"/>
+				<filter token="portletBase" value="${portletBase.preview}"/>
+			</filterset>
+		</copy>
+		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+	</target>
+
+	<!--
+	* Deploys the deliver live app, replacing deliver.properties with one that
+	* has context.root.deliver and operatingMode.deliver set appropriately.
+	* Replaces the mapping.xml from the war with the deliver version.
+	-->
+	<target name="deploy-live" depends="clean,war-deliver" description="Unpacks war to live dir" if="deploy.dir.live">
+		<unwar src="${deliver.war.file}" dest="${deploy.dir.live}"/>
+		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
+			<fileset refid="deliver.properties"/>
+			<fileset refid="deliver.mapping"/>
+			<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.live}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.live}"/>
+				<filter token="portletBase" value="${portletBase.live}"/>
+			</filterset>
+		</copy>
+		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+			<copy file="${conf}/robots-live.txt" tofile="${deploy.dir.live}/robots.txt" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+	</target>
+
+	<!--
+    	* Deploys the pluto classes to tomcat shared
+    	-->
+    	<target name="deploy-pluto" description="Moves pluto classes to shared/lib">
+    		<echo message="Copying pluto to ${deploy.dir.shared}lib from ${lib}/shared"/>
+		<delete verbose="true" defaultexcludes="true">
+			<fileset dir="${deploy.dir.shared}lib">
+				<include name="saxon8.jar"/>
+				<include name="saxon8-ant.jar"/>
+				<include name="saxon8-dom.jar"/>
+				<include name="saxon8-dom4j.jar"/>
+				<include name="saxon8-jdom.jar"/>
+				<include name="saxon8-sql.jar"/>
+				<include name="saxon8-xom.jar"/>
+				<include name="saxon8-xpath.jar"/>
+				<include name="saxon8-xqj.jar"/>
+	  		</fileset>
+	    	</delete>
+	        <copy todir="${deploy.dir.shared}lib" overwrite="true">
+	       		<fileset dir="${lib}/shared">
+			      	<include name="activation.jar"/>
+			      	<include name="mail.jar"/>
+			        <include name="pluto-1.0.1.jar"/>
+			        <include name="portlet-api-1.0.jar"/>
+				<include name="saxon9.jar"/>
+				<include name="saxon9-ant.jar"/>
+				<include name="saxon9-dom.jar"/>
+				<include name="saxon9-dom4j.jar"/>
+				<include name="saxon9-jdom.jar"/>
+				<include name="saxon9-sql.jar"/>
+				<include name="saxon9-xom.jar"/>
+				<include name="saxon9-xpath.jar"/>
+				<include name="saxon9-xqj.jar"/>
+				<include name="saxon9-s9api.jar"/>
+			</fileset>
+		</copy>
+	</target>																																																    
+	<target name="touch-filtered-files" depends="" description="Touch all files having filter values.">
+		<delete file="${deploy.dir.cms}/WEB-INF/classes/cms.properties"/>
+		<delete file="${deploy.dir.cms}/WEB-INF/classes/database.xml"/>
+		<delete file="${deploy.dir.cms}/WEB-INF/classes/deliver.properties"/>
+		<delete file="${deploy.dir.cms}/WEB-INF/classes/hibernate.cfg.xml"/>
+		<delete file="${deploy.dir.cms}/WEB-INF/classes/oscache.properties"/>
+		<delete file="${deploy.dir.cms}/WEB-INF/classes/propertyset.xml"/>
+
+		<delete file="${deploy.dir.working}/WEB-INF/classes/cms.properties"/>
+		<delete file="${deploy.dir.working}/WEB-INF/classes/database.xml"/>
+		<delete file="${deploy.dir.working}/WEB-INF/classes/deliver.properties"/>
+		<delete file="${deploy.dir.working}/WEB-INF/classes/hibernate.cfg.xml"/>
+		<delete file="${deploy.dir.working}/WEB-INF/classes/oscache.properties"/>
+		<delete file="${deploy.dir.working}/WEB-INF/classes/propertyset.xml"/>
+
+	</target>
+	
+	<!--
+	* Deploys the deliver live app, replacing deliver.properties with one that
+	* has context.root.deliver and operatingMode.deliver set appropriately.
+	* Replaces the mapping.xml from the war with the deliver version.
+	-->
+	<target name="fast-build" depends="" description="Compiles the classes if class and moves configs to the right spot">
+				
+		<echo message="Looking up ${resourceName}"/>
+		<echo message="Looking up ${buildType}"/>
+		<echo message="Looking up ${editedFiles}"/>
+		<echo message="Looking up ${changedFiles}"/>
+		
+		<property name="changedFilesLocation" location="${changedFiles}"/>
+		<echo message="Looking up ${changedFilesLocation}"/>
+		
+		<script language="beanshell" manager="bsf">
+		<![CDATA[
+			import java.io.File; 
+			import org.apache.tools.ant.taskdefs.Copy; 
+			
+			System.out.println("Hepp:" + changedFilesLocation);
+			String[] files = changedFilesLocation.split(" ");
+			for(int i=0; i<files.length; i++)
+			{
+				String fileName = files[i];
+				System.out.println("file: " + fileName);
+				if(!fileName.endsWith(".java"))
+				{
+					System.out.println("Yep: " + fileName);
+					outputHelper = project.createTask("echo");
+					outputHelper.setMessage("File to copy: " + fileName);
+			        outputHelper.execute();
+
+					if(fileName.indexOf("classes") > -1)
+					{
+						System.out.println("deploy.dir.cms: " + project.getProperty("deploy.dir.cms"));
+						File ffrom = new File(fileName); 
+						String path = fileName.replaceAll(".*classes", "");
+						int fileNameIndex = path.lastIndexOf("\\");			
+						if(fileNameIndex == -1)
+							fileNameIndex = path.lastIndexOf("/");
+
+						path = path.substring(0, fileNameIndex);
+						System.out.println("path: " + path);
+						File cmsDir = new File(project.getProperty("deploy.dir.cms") + "/WEB-INF/classes" + path); 
+						Copy copyTask = project.createTask("copy");
+						copyTask.setVerbose(true);
+						copyTask.setTodir(cmsDir);
+						copyTask.setFile(ffrom);
+						copyTask.perform();
+
+						File deliverDir = new File(project.getProperty("deploy.dir.working") + "/WEB-INF/classes" + path); 
+						Copy copyTask = project.createTask("copy");
+						copyTask.setVerbose(true);
+						copyTask.setTodir(deliverDir);
+						copyTask.setFile(ffrom);
+						copyTask.perform();
+					}
+					else if(fileName.indexOf("webapp") > -1)
+					{
+						File ffrom = new File(fileName); 
+						String path = fileName.replaceAll(".*webapp", "");
+						int fileNameIndex = path.lastIndexOf("\\");			
+						if(fileNameIndex == -1)
+							fileNameIndex = path.lastIndexOf("/");
+		
+						path = path.substring(0, fileNameIndex);
+						System.out.println("path: " + path);
+						File cmsDir = new File(project.getProperty("deploy.dir.cms") + path); 
+						Copy copyTask = project.createTask("copy");
+						copyTask.setVerbose(true);
+						copyTask.setTodir(cmsDir);
+						copyTask.setFile(ffrom);
+						copyTask.perform();
+		
+						File deliverDir = new File(project.getProperty("deploy.dir.working") + path); 
+						Copy copyTask = project.createTask("copy");
+						copyTask.setVerbose(true);
+						copyTask.setTodir(deliverDir);
+						copyTask.setFile(ffrom);
+						copyTask.perform();
+					}
+					else if(fileName.indexOf("conf") > -1)
+					{
+						File ffrom = new File(fileName); 
+						String path = fileName.replaceAll(".*conf", "");
+						int fileNameIndex = path.lastIndexOf("\\");			
+						if(fileNameIndex == -1)
+							fileNameIndex = path.lastIndexOf("/");
+						
+						path = path.substring(0, fileNameIndex);
+						System.out.println("path: " + path);
+									
+						boolean onlyCMS = false;
+						boolean onlyDeliver = false;
+						boolean classes = true;
+						
+						onlyCMS = (path.indexOf("cms") > -1);
+						onlyDeliver = (path.indexOf("deliver") > -1);
+
+						classes = (path.indexOf("tld") == -1 && path.indexOf("config") == -1);
+						System.out.println("classes:" + classes);
+			
+						int lastIndexOf = path.lastIndexOf("\\");
+						if(lastIndexOf == -1)
+							lastIndexOf = path.lastIndexOf("/");
+				
+						if(!onlyDeliver)
+						{
+							if(onlyCMS)
+								path = path.substring(0, lastIndexOf);
+							
+							File cmsDir = new File(project.getProperty("deploy.dir.cms") + "/WEB-INF/classes" + path); 
+							if(!classes)
+								cmsDir = new File(project.getProperty("deploy.dir.cms") + "/WEB-INF" + path); 
+		
+							Copy copyTask = project.createTask("copy");
+							copyTask.setVerbose(true);
+							copyTask.setTodir(cmsDir);
+							copyTask.setFile(ffrom);
+							copyTask.perform();
+						}
+			
+						if(!onlyCMS)
+						{
+							if(onlyDeliver)
+								path = path.substring(0, lastIndexOf);
+				
+							File deliverDir = new File(project.getProperty("deploy.dir.working") + "/WEB-INF/classes" + path); 
+							if(!classes)
+								deliverDir = new File(project.getProperty("deploy.dir.working") + "/WEB-INF" + path); 
+
+							Copy copyTask = project.createTask("copy");
+							copyTask.setVerbose(true);
+							copyTask.setTodir(deliverDir);
+							copyTask.setFile(ffrom);
+							copyTask.perform();
+						}
+					}
+				}
+			}			
+		]]>
+		</script>
+	
+	</target>
+		
+	<target name="fast-build-clean" depends="" description="Compiles the classes if class and moves configs to the right spot">
+
+		<echo message="Copying infoglueCMS/WEB-INF/lib"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/lib">
+			<fileset dir="${lib}/build">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>				
+			</fileset>
+			<fileset dir="${lib}/core">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/jdbc">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/lib"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/lib">
+			<fileset dir="${lib}/build">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/core">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/jdbc">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*"/>
+				<exclude name="cms-web.xml"/>
+				<exclude name="deliver-web.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/data/xml">
+				<include name="portletdefinitionmapping.xml"/>
+				<include name="portletentitymapping.xml"/>
+				<include name="servletdefinitionmapping.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/config">
+			<fileset dir="${conf}/config">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/data">
+			<fileset dir="${conf}/data">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*"/>
+				<exclude name="cms-web.xml"/>
+				<exclude name="deliver-web.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/data/xml">
+				<include name="portletdefinitionmapping.xml"/>
+				<include name="portletentitymapping.xml"/>
+				<include name="servletdefinitionmapping.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver"/>
+		<copy todir="${deploy.dir.working}" overwrite="true">
+			<fileset dir="${webapp}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS"/>
+		<copy todir="${deploy.dir.cms}" overwrite="true">
+			<fileset dir="${webapp}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/tld" overwrite="true">
+			<fileset dir="${conf}/tld">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
+
+
+		<echo message="Copying confs to deliver"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+			<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
+			</filterset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
+			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+			<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
+			</filterset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/tld" overwrite="true">
+			<fileset dir="${conf}/tld">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/config">
+			<fileset dir="${conf}/config">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/data">
+			<fileset dir="${conf}/data">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/META-INF" overwrite="true">
+			<fileset dir="${conf}" includes="context.xml"/>
+		</copy>
+							
+		<echo message="Copying confs to cms"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+			<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
+			</filterset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/cms" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
+			<fileset dir="${conf}/cms" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+
+		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+		<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
+			</filterset>
+		</copy>
+
+		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">
+			<fileset dir="${conf}" includes="server-config.wsdd"/>
+		</copy>
+
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${deploy.dir.cms}/META-INF" overwrite="true">
+			<fileset dir="${conf}" includes="context.xml"/>
+		</copy>					
+
+	</target>
+
+
+	<!--
+	* Deploys all the apps: cms, working, preview, and live
+	-->
+	<target name="deploy" depends="deploy-cms,deploy-working,deploy-preview,deploy-live,deploy-pluto"/>
+
+	<!--
+	* Cleans the CMS deploy dir.
+	-->
+	<target name="server-clean-cms" depends="init" if="deploy.dir.cms">
+		<delete dir="${deploy.dir.cms}"/>
+	</target>
+
+	<!--
+	* Cleans the working deploy dir.
+	-->
+	<target name="server-clean-working" depends="init" if="deploy.dir.working">
+		<delete dir="${deploy.dir.working}"/>
+	</target>
+
+	<!--
+	* Cleans the preview deploy dir.
+	-->
+	<target name="server-clean-preview" depends="init" if="deploy.dir.preview">
+		<delete dir="${deploy.dir.preview}"/>
+	</target>
+
+	<!--
+	* Cleans the live deploy dir.
+	-->
+	<target name="server-clean-live" depends="init" if="deploy.dir.live">
+		<delete dir="${deploy.dir.live}"/>
+	</target>
+
+	<!--
+	* Cleans all the deploy directories
+	-->
+	<target name="server-clean"
+			depends="server-clean-cms,server-clean-working,server-clean-preview,server-clean-live"/>
+
+	<!--
+	* Cleans the CMS deploy dir.
+	-->
+	<target name="server-clean-medium-cms" depends="init" if="deploy.dir.cms">
+		<delete dir="${deploy.dir.cms}/WEB-INF/lib"/>
+	</target>
+
+	<!--
+	* Cleans the working deploy dir.
+	-->
+	<target name="server-clean-medium-working" depends="init" if="deploy.dir.working">
+		<delete dir="${deploy.dir.working}/WEB-INF/lib"/>
+	</target>
+
+	<!--
+	* Cleans the preview deploy dir.
+	-->
+	<target name="server-clean-medium-preview" depends="init" if="deploy.dir.preview">
+		<delete dir="${deploy.dir.preview}/WEB-INF/lib"/>
+	</target>
+
+	<!--
+	* Cleans the live deploy dir.
+	-->
+	<target name="server-clean-medium-live" depends="init" if="deploy.dir.live">
+		<delete dir="${deploy.dir.live}/WEB-INF/lib"/>
+	</target>
+
+	<!--
+	* Cleans all the deploy directories
+	-->
+	<target name="server-clean-medium"
+			
+depends="server-clean-medium-cms,server-clean-medium-working,server-clean-medium-preview,server-clean-medium-live"/>
+
+	<!--
+	* Deploys after a complete rebuild
+	-->
+	<target name="clean-deploy" depends="clean,server-clean-medium,deploy"/>
+
+	<!--
+	* Generates API documentation; includes test code as well.
+	-->
+	<target name="javadoc" depends="compile" >
+		<javadoc destdir="${javadoc}" packagenames="org.*" author="true" version="true"
+					windowtitle="${project.fullname} API - ${project.version}"
+					doctitle="${project.fullname} - ${project.version}"
+					bottom="Copyright &#169; ${year} InfoGlue.org All Rights Reserved.">
+			<sourcepath refid="build.sourcepath"/>
+			<sourcepath refid="test.sourcepath"/>
+			<classpath refid="build.classpath"/>
+			<classpath refid="test.classpath"/>
+		</javadoc>
+	</target>
+
+	<!--
+	* Runs all the tests.  Requires junit.jar to be in the Ant lib
+	* directory, otherwise the JUnit task will not be able to find the
+	* JUnit classes.
+	-->
+	<target name="all-tests" depends="compile">
+		<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+		<junit printsummary="yes" haltonfailure="yes" haltonerror="yes" fork="yes">
+			<classpath refid="test.classpath"/>
+			<sysproperty key="webapp.dir" value="${basedir}/${webapp}"/>
+			<formatter type="plain"/>
+			<batchtest>
+				<fileset dir="${test.java}">
+					<exclude name="**/Abstract*.java"/>
+					<include name="**/*Test.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<!--
+	* Runs a particular test using the text test runner.  Requires
+	* junit.jar to be in the Ant lib directory, otherwise the JUnit task
+	* will not be able to find the JUnit classes.
+	-->
+	<target name="test" depends="compile">
+		<fail unless="test.class">Property test.class was not set. Usage: ant -Dtest.class=package.to.some.TestClass test</fail>
+		<taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+		<junit printsummary="yes" haltonfailure="yes" haltonerror="yes" fork="yes">
+			<classpath refid="test.classpath"/>
+			<sysproperty key="webapp.dir" value="${basedir}/${webapp}"/>
+			<formatter type="plain"/>
+			<test name="${test.class}"/>
+		</junit>
+	</target>
+
+	<!--
+	* Runs a particular test using the Swing test runner.  Requires
+	* junit.jar to be in the Ant lib directory, otherwise the JUnit task
+	* will not be able to find the JUnit classes.
+	-->
+	<target name="test-swing" depends="compile">
+		<fail unless="test.class">Property test.class was not set. Usage: ant -Dtest.class=fully.qualified.ClassName</fail>
+		<java classname="junit.swingui.TestRunner" classpathref="test.classpath" fork="true">
+			<jvmarg line="-enableassertions"/>
+			<sysproperty key="webapp.dir" value="${deploy.dir.cms}"/>
+			<arg line="-c ${test.class}"/>
+		</java>
+	</target>
+	
+    <!-- =================================================================== -->    
+    <!-- Generates the project's API documentation                           -->    
+    <!-- =================================================================== -->    
+    <target
+        name="javadocs" 
+        description="Generates the API documentation for all modules"
+        depends="init"
+    >
+        <javadoc
+            windowtitle="${project.fullname} API - ${project.version}"
+            destdir="${javadocs.destdir}"
+            sourcepath="${src.java}"
+            doctitle="${project.fullname} - ${project.version}"
+            author="true"
+            bottom="Copyright &#169; ${year} InfoGlue.org All Rights Reserved."
+            private="false"
+            packagenames="org.*"
+            use="true"
+            version="true"
+        >
+            <classpath refid="build.classpath"/>
+        </javadoc>
+        <zip destfile="${javadocs.destdir}/infoglueAPI.zip" >
+             <zipfileset dir="${javadocs.destdir}"
+                     excludes="*.zip"
+                     prefix="infoglueAPI"/>
+        </zip>
+                                                                                
+    </target>
+
+	<target name="changelog" depends="init">
+		<cvschangelog
+					dir="src"
+					cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"
+	                destfile="changelog.xml"
+	                start="5 Jun 2005"/>
+	</target>
+</project>
+

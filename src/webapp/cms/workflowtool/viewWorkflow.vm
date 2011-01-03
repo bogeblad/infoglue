@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("Workflow details" "Workflow details" "workflowId=$workflowId&name=$name")
+
+<div class="fullymarginalized">
+
+<table class="managementtooledit" cellpadding="2" cellspacing="2" border="0" width="100%" height="30">
+<form name="editForm" method="POST" action="UpdateWorkflow.action">
+	<tr>
+		<td>
+			<p>#editField("Workflow.name" "name" $!name "51")</p>
+			<p>#editField("Workflow.description" "description" $!description "51")</p>
+		</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td class="biglabel">This workflow consists of the following actions</td>
+	</tr>
+	
+	#foreach ($actionVO in $actions)
+		#set($actionDefinitionVO = $this.getActionDefinition($actionVO.getActionId()))
+		<tr>
+			<td>		
+				<b>$actionDefinitionVO.name</b> - $actionDefinitionVO.description	
+			</td>
+		</tr>
+	#end
+
+<input type="hidden" name="workflowId" value="$!workflowId">
+</form>
+</table>
+</div>
+
+</body>
+</html>
+
+

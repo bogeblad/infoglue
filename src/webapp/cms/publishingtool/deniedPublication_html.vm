@@ -1,0 +1,14 @@
+<div><h2>Publication denied</h2></div>
+<div>
+	CMS notification: The changes you wanted published concerning "$event.getName()" was rejected by ${editorName}. <br/>
+	<br/>
+	Reason: $comment<br/>
+	<br/>
+	You can go to the application now by clicking here: <a href="$referenceUrl">$referenceUrl</a> <br/>
+	<br/>
+	Please revise your changes and retry. <br/>
+	<br/>
+	<hr/>
+	This email was automatically generated and the sender is the CMS-system.<br/>
+	Do not reply to this email. <br/>
+</div>

@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("tool.contenttool.contentDetailsHeader" "Content details" "contentId=$contentId&repositoryId=$!repositoryId&isBranch=$isBranch" "$unrefreshedContentId" "$changeTypeId" "$contentId")
+#set($syncAuto = "false")
+
+
+<script language="JavaScript">
+<!--
+	#if($syncAuto == "true")
+	syncWithTree();
+	#end
+	
+	function syncWithTree()
+	{
+		#set($path="")
+		#foreach($cVO in $this.getContentPath())
+			#set($path = "$path${cVO.getContentId()},")
+		#end
+		#set($path = "$path${this.getContentVO().getContentId()}")
+		var path = "$path";
+		parent.frames[1].syncWithTree(path);
+	}
+	
+	var dirty = false;
+	//-----------------------------------------------
+	// This function changes the languageversion to edit.
+	//-----------------------------------------------
+	
+	function changeLanguageByLink(contentId, languageId)
+	{
+		if (getDirty())
+		{
+			if (confirm('$ui.getString("tool.contenttool.languageVersionSelectWarning")'))
+			{
+				window.location.href="ViewContentVersion.action?contentId=" + contentId + "&languageId=" + languageId;
+			}
+		}
+		else
+		{
+			window.location.href="ViewContentVersion.action?contentId=" + contentId + "&languageId=" + languageId;
+		}
+	}
+	
+	
+-->
+</script>
+
+<div class="fullymarginalized">
+<form method="POST" name="editForm" action="UpdateContent.action">
+<table border="0" cellpadding="0" cellspacing="0">
+
+	#set($contentEvent = $this.getContentEvent($contentId) )					
+	#if($contentEvent.typeId == 2)
+		<tr>
+			<td colspan="7"><span class="warningText">$ui.getString("tool.contenttool.publishRejectedShortText")</span></td>
+		</tr>
+		<tr>
+			<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+		</tr>
+	#elseif($contentEvent.typeId == 4)
+		<tr>
+			<td colspan="7"><span class="warningText">$ui.getString("tool.contenttool.unpublishRejectedShortText") <nobr>$contentEvent.name</nobr>.</span> - <a href="DeleteEvent.action?eventId=$contentEvent.id&url=$currentUrl">$ui.getString("tool.contenttool.close")</a></td>
+		</tr>
+		<tr>
+			<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+		</tr>
+	#end
+	
+	<tr>
+		<td colspan="7">
+			#editTextField("Content.name" "name" $formatter.escapeHTML($!name) "30" "normaltextfield" "")
+		</td>
+	</tr>
+	##if(!$isBranch)
+	
+	#if($enableDateTimeDirectEditing == "true")
+		#set($dateReadonly = "")
+	#else
+		#set($dateReadonly = "readonly")
+	#end
+	<tr> 
+		<td colspan="7">#editDateField("Content.publishDateTime" "publishDateTime" $!publishDateTime "30" "date" "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")</td>
+	</tr>
+	<tr> 
+		<td colspan="7">#editDateField("Content.expireDateTime" "expireDateTime" $!expireDateTime "30" "date" "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</td>
+	</tr>		
+	##end
+	<tr>
+		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<td colspan="7">
+			$ui.getString("tool.contenttool.lastUpdatedByLabel") $contentVO.creatorName <br/>Content ID: $contentVO.id
+		</td>
+	</tr>
+	<tr>
+		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	
+	<tr> 
+		<td colspan="7">
+			#set($isProtectedReadonly = "")
+			#set($protectedContentId = $!this.getProtectedContentId($contentId))
+			#set($isModifier = ($contentVO.creatorName == $infoGluePrincipal.name))
+			#if($protectedContentId && !$isModifier && !$this.hasAccessTo("Content.ChangeAccessRights", "$protectedContentId"))
+				#set($isProtectedReadonly = "disabled")
+				<input type="hidden" name="isProtected" value="$!isProtected"/> 
+			#end
+			$ui.getString("entity.Content.isProtected.label")<br>
+			<input type="radio" name="isProtected" value="0" #if($!isProtected == 0) checked="1" #end $isProtectedReadonly> $ui.getString("tool.common.no") 
+			<input type="radio" name="isProtected" value="1" #if($!isProtected == 1) checked="1" #end $isProtectedReadonly> $ui.getString("tool.common.yes")
+			<input type="radio" name="isProtected" value="2" #if($!isProtected == 2) checked="1" #end $isProtectedReadonly> $ui.getString("tool.common.inherit")
+		</td>
+	</tr>		
+	<tr>
+		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	
+	##if(!$isBranch)
+	#if(!$contentVO.contentTypeDefinitionId)
+	<tr>
+		<td colspan="3">
+			$ui.getString("tool.contenttool.newContent.contentType")<br/>
+			<select class="contenttypes" name="contentTypeDefinitionId">
+			##if($isBranch)<option value="">Not defined yet</option>#end
+			#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
+				#if($isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
+					<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
+				#else
+					<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()">$contentTypeDefinitionVO.getName()</option>
+				#end
+			#end
+			</select>
+		</td>
+	</tr>
+	#else
+	<tr>
+		<td colspan="7">
+			$ui.getString("tool.contenttool.contentTypeLabel") $contentTypeDefinition.getName()
+		</td>
+	</tr>
+	<tr>
+		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr class="darkgreen">
+		<td class="smalllabel" nowrap="1">$ui.getString("tool.contenttool.languageVersionsLabel")</td>
+		<td class="smalllabel"><img src="images/trans.gif" width="10" height="1"></td>
+		<td class="smalllabel" nowrap="1">$ui.getString("tool.contenttool.stateLabel")</td>
+		<td class="smalllabel"><img src="images/trans.gif" width="10" height="1"></td>
+		<td class="smalllabel" nowrap="1">$ui.getString("tool.contenttool.lastUpdatedLabel")</td>
+		<td class="smalllabel"><img src="images/trans.gif" width="10" height="1"></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="7" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#C7D1B3" colspan="7" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+		
+	#set($isOdd = true)
+	#foreach ($languageVO in $availableLanguages)
+		#if($isOdd)
+			#set($class = "class='lightgreen'")
+			#set($isOdd = false)
+		#else
+			#set($class = "class='white'")
+			#set($isOdd = true)
+		#end
+
+		#if($languageVO.languageId == $masterLanguageId)
+		    #set($master = '<a name="tooltip" title="Master language for this repository">*</a>')
+		#else
+			#set($master = "")
+		#end		
+
+		#set($contentVersionVO = false)
+		#set($contentVersionVO = $this.getLatestContentVersionVO($!contentId, $!languageVO.languageId))
+	
+		<tr $class>
+			<td nowrap="1"><a href="javascript:changeLanguageByLink($!contentId, $!languageVO.getLanguageId());">$languageVO.getName()</a> $master</td>
+			<td>&nbsp;</td>
+			<td nowrap="1">
+				#if($contentVersionVO.id > 0)
+					#set($event = false)
+					#set($event = $this.getContentVersionEvent($!contentVersionVO.id) )					
+					#if($event.typeId == 2)
+						#set($notice = "- <font color='red'>$ui.getString('tool.contenttool.publishRejectedShortText')</font>") 
+					#elseif($event.typeId == 4)
+						#set($notice = "- <font color='red'>$ui.getString('tool.contenttool.unpublishRejectedShortText')</font>")
+					#else
+						#set($notice = "")
+					#end	
+				#end
+
+				#if($contentVersionVO.stateId == 0)
+					#set($stateDescription = "$ui.getString('tool.contenttool.state.working') $!notice")
+				#elseif($contentVersionVO.stateId == 1)
+					#set($stateDescription = "$ui.getString('tool.contenttool.state.final') $!notice")
+				#elseif($contentVersionVO.stateId == 2)
+					#set($stateDescription = "$ui.getString('tool.contenttool.state.publish') $!notice")
+				#elseif($contentVersionVO.stateId == 3)
+					#set($stateDescription = "$ui.getString('tool.contenttool.state.published') $!notice")
+				#elseif($contentVersionVO.stateId == 4)
+					#set($stateDescription = "$ui.getString('tool.contenttool.state.markedForUnpublish') $!notice")
+				#elseif($contentVersionVO.stateId == 5)
+					#set($stateDescription = "$ui.getString('tool.contenttool.state.unpublished')")
+				#else
+					#set($stateDescription = "$ui.getString('tool.contenttool.state.notCreated')")
+				#end
+				
+				$stateDescription
+			</td>
+			<td>&nbsp;</td>
+			<td width="100%" nowrap="1">
+				#if($contentVersionVO.id > 0)
+					<a name="tooltip" title="$formatter.escapeHTML("$!contentVersionVO.versionComment")">$contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd"))</a>
+				#end
+			</td>
+			<td>&nbsp;</td>
+			<td>
+				#if($contentVersionVO.stateId == 0)
+					<a href="javascript:confirmAction('Do you really want to delete the languageVersion ?', 'DeleteContentVersion.action?repositoryId=${repositoryId}&contentVersionId=${contentVersionVO.contentVersionId}&contentId=${contentId}');"><img src="images/delete.gif" border="0"></a>
+				#end
+			</td>
+		</tr>	
+	#end
+
+	#end
+	##end		
+
+	<tr>
+		<td colspan="7"><img src="images/trans.gif" height="30" width="1"></td>
+	</tr>
+	</table>
+				
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<tr class="darkgreen">
+		<td class="smalllabel" colspan="3">$ui.getString("tool.contenttool.contentVersionReferences.header")</td>
+	</tr>
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#C7D1B3" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	#set($hasContentReferences = false)
+	#set($isOdd = true)
+	#set($count = 0)
+	#foreach ($referenceBean in $referenceBeanList)
+		#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
+			#if($count < 20)
+				#set($hasContentReferences = true)
+				#set($lastIndex = $referenceBean.versions.size() - 1)
+				#if($isOdd)
+					#set($class = "class='lightgreen'")
+					#set($isOdd = false)
+				#else
+					#set($class = "class='white'")
+					#set($isOdd = true)
+				#end
+				<tr $class>
+					<td width="16"><img src="images/tree/contentRoot.gif" width="16" height="16"></td>
+					<td width="100%">
+						<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.name</a>
+	 					- #if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.contenttool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.contenttool.versions"))
+	 				</td>
+					<td width="16"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+				</tr>
+			#end
+			#set($count = $count + 1)	
+		#end
+	#end
+	#if($count > 20)
+		#if($isOdd)
+			#set($class = "class='lightgreen'")
+			#set($isOdd = false)
+		#else
+			#set($class = "class='white'")
+			#set($isOdd = true)
+		#end
+		<tr $class>
+			<td colspan="3" style="color: red;">$ui.getString("tool.contenttool.moreContentReferencesFound") $count</td>		
+		</tr>	
+	#end
+	
+	#if(!$hasContentReferences)
+		<tr $class>
+			<td colspan="3">$ui.getString("tool.contenttool.noContentReferencesFound")</td>		
+		</tr>	
+	#end
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr class="darkgreen">
+		<td class="smalllabel" colspan="3">$ui.getString("tool.contenttool.siteNodeReferences.header")</td>
+	</tr>
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#C7D1B3" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	#set($hasPageReferences = false)
+	#set($isOdd = true)
+	#set($count = 0)
+	#foreach ($referenceBean in $referenceBeanList)
+		#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
+			#if($count < 20)
+				#set($hasPageReferences = true)
+				#set($lastIndex = $referenceBean.versions.size() - 1)
+				#if($isOdd)
+					#set($class = "class='lightgreen'")
+					#set($isOdd = false)
+				#else
+					#set($class = "class='white'")
+					#set($isOdd = true)
+				#end
+				<tr $class>
+					<td width="16"><img src="images/tree/structureRoot.gif"></td>
+					<td width="100%">
+						<a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$referenceBean.name</a>
+						- #if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.structuretool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.structuretool.versions"))
+					</td>
+					<td width="16"><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+				</tr>	
+			#end
+			#set($count = $count + 1)
+		#end
+	#end
+
+	#if($count > 20)
+		#if($isOdd)
+			#set($class = "class='lightgreen'")
+			#set($isOdd = false)
+		#else
+			#set($class = "class='white'")
+			#set($isOdd = true)
+		#end
+		<tr $class>
+			<td colspan="3" style="color: red;">$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
+		</tr>	
+	#end
+
+	#if(!$hasPageReferences)
+		<tr $class>
+			<td colspan="3">$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
+		</tr>	
+	#end
+	
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="isBranch" value="$!isBranch">
+		<input type="hidden" name="unrefreshedContentId" value="$!contentId">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<input type="hidden" name="changeTypeId" value="1">
+		<td colspan="3">
+			<input type="image" src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0">
+		</td>
+	</tr>
+	
+</table>
+</div>
+
+#endContentTool()

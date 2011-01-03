@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Choose assets</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	<script type="text/javascript" src="script/vector.js"></script>
+	<script type="text/javascript" src="script/qualifyer.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+	
+	<script language="JavaScript" type="text/javascript" src="script/tool-man/org/tool-man/core.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/tool-man/org/tool-man/events.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/tool-man/org/tool-man/css.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/tool-man/org/tool-man/coordinates.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/tool-man/org/tool-man/drag.js"></script>
+	<script language="JavaScript" type="text/javascript" src="script/tool-man/org/tool-man/dragsort.js"></script>
+
+	<script language="JavaScript"> 
+		window.resizeTo(900,600);
+	</script> 
+
+	<script type="text/javascript">
+	<!-- 
+		/**
+		 * AssetBinding object
+		 */
+
+		function AssetBinding(entityName, entityId, assetKey, assetUrl, path)
+		{
+			this.entityName = entityName;
+			this.entityId 	= entityId;
+			this.assetKey   = assetKey;
+			this.assetUrl 	= assetUrl;
+			this.path 		= path;
+		  
+		  	this.getPath 		= getPath;
+		  	this.getEntityName 	= getEntityName;
+		  	this.getEntityId 	= getEntityId;
+		  	this.getAssetKey 	= getAssetKey;
+		  	this.getAssetUrl 	= getAssetUrl;
+		  	this.setPath 		= setPath;
+		  	this.setAssetKey 	= setAssetKey;
+		  	this.setAssetUrl 	= setAssetUrl;
+		  	this.setEntityName 	= setEntityName;
+		  	this.setEntityId 	= setEntityId;
+		}
+		  
+		function getPath()
+		{
+		  	return this.path;
+		}
+
+		function getEntityName()
+		{
+		  	return this.entityName;
+		}
+
+		function getEntityId()
+		{
+		  	return this.entityId;
+		}
+
+		function getAssetKey()
+		{
+		  	return this.assetKey;
+		}
+
+		function getAssetUrl()
+		{
+		  	return this.assetUrl;
+		}
+
+		function setPath(path)
+		{
+		  	this.path = path;
+		}
+
+		function setEntityName(entityName)
+		{
+		  	this.entityName = entityName;
+		}
+
+		function setEntityId(entityId)
+		{
+			this.entityId = entityId;
+		}
+
+		function setAssetKey(assetKey)
+		{
+		  	this.assetKey = assetKey;
+		}
+
+		function setAssetUrl(assetUrl)
+		{
+		  	this.assetUrl = assetUrl;
+		}
+	
+		//Other
+		var dragsort = ToolMan.dragsort();
+		var junkdrawer = ToolMan.junkdrawer();
+
+		var exp;
+	
+		/**
+		 * This is just a hook for the tree to notify us about whats expanded.
+		 */
+
+	    function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+	    
+	    function htmlTreeItemClick(entityId, repositoryId, path)
+		{
+			//alert("path:" + path);
+			document.inputForm.path.value = path;
+			var url = "ViewContentVersion!viewAssetsForFCKEditor.action?contentId=" + entityId + "&languageId=$languageId&treatAsLink=$treatAsLink&showActionButtons=false&showSelectButtonByEachImage=true&disableAssetKeyEncoding=true";
+			document.getElementById("contentVersionAssetsFrame").src = url;
+		}
+	    
+		/**
+		 * This method changes to another repository.
+		 */
+		 
+		function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			var url = "${currentAction}?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$componentId&propertyName=$propertyName&tree=$tree&$allowedContentTypeIdsAsUrlEncodedString&showSimple=$showSimple&showDecorated=$!showDecorated";
+			document.location.href = url;
+		}
+		
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;	
+		}
+		/*	    
+	    function addQualifyer()
+		{
+			entityId = document.inputForm.entityId.value;
+			if(entityId == '' || entityId == '${select}')
+			{
+				alert("You must choose a content to add");
+			}
+			else
+			{
+				path     = document.inputForm.path.value;
+				bindingTypeId = 1; //0 = Content, 1 = SiteNode
+				
+			    var binding = new AssetBinding("Content", entityId, assetKey, assetUrl, path);
+				siteNodesVector.addElement(binding);
+				drawList();
+			}
+		}
+		*/
+				
+		function submitBinding()
+		{
+		    qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+			qualifyerXML += "<qualifyer>";
+			var path = "";
+			for (var i=0; i<siteNodesVector.getSize(); i++)
+			{
+				var binding = siteNodesVector.getElementAt(i);
+				if(i > 0) 
+					path = path + ", ";
+				//path 		= path + binding.getPath();
+				path 		= path + binding.getAssetKey();
+				entityName 	= binding.getEntityName();
+				entityId   	= binding.getEntityId();
+				assetKey   	= binding.getAssetKey();
+				qualifyerXML += "<" + entityName + " assetKey='" + assetKey + "'>" + entityId + "</" + entityName + ">";
+			}
+		   	qualifyerXML += "</qualifyer>";
+			
+			//alert(qualifyerXML);
+			
+			document.submitForm.target = self.opener.name;
+		    document.submitForm.path.value = path;
+		    document.submitForm.qualifyerXML.value = qualifyerXML;
+		    document.submitForm.submit();
+		    window.close();
+		}
+
+
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addTextLink(parent, address, text)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var linkText = document.createTextNode(text);
+			link.appendChild(linkText);
+			parent.appendChild(link);
+		}
+	
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addImageLink(parent, address, src, addCenter, addBreak, height)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var mainElement = link;
+			
+			if(addCenter)
+			{
+				var center = document.createElement("center");
+				mainElement = center;
+			}
+			
+			var image = document.createElement("img");
+			image.setAttribute("src", src);
+			image.setAttribute("border", "0");
+			
+			var breakElement = document.createElement("br");
+	
+			mainElement.appendChild(image);
+			if(addBreak == true)
+			{
+				//alert(addBreak);
+				mainElement.appendChild(breakElement);
+			}
+			
+			if(addCenter)
+			{
+				link.appendChild(center);
+			}	
+	
+			parent.appendChild(link);
+
+			
+			var separator = document.createElement("img");
+			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("border", "0");
+			separator.setAttribute("width", "5");
+			separator.setAttribute("height", height);
+			parent.appendChild(separator);
+		}
+		
+		/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addDividerImage(parent, width, height)
+		{
+			var separator = document.createElement("img");
+			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("border", "0");
+			separator.setAttribute("width", width);
+			separator.setAttribute("height", height);
+			parent.appendChild(separator);
+		}
+
+		/**
+		 * This method draws the list of bindings.
+		 */
+		 
+		function drawList()
+		{
+			var mytable = document.getElementById("bindings")
+			var parent = mytable.parentNode;
+			parent.removeChild(mytable);
+
+			mytable = document.createElement("TABLE");
+			mytable.setAttribute("id", "bindings");
+			mytable.setAttribute("border", "0");
+			mytable.setAttribute("width", "100%");
+			mytable.setAttribute("cellpadding", "0");
+			mytable.setAttribute("cellspacing", "0");
+	        mytablebody = document.createElement("TBODY");
+
+			var myTR = document.createElement("TR");
+			var bindingTD = document.createElement("TD");
+			bindingTD.setAttribute("width", "100%");
+			var actionTD = document.createElement("TD");
+			actionTD.setAttribute("width", "100");
+						
+			myActionList = document.createElement("ul");
+			myActionList.setAttribute("id", "actions");
+
+	        for (var i=0; i<siteNodesVector.getSize(); i++)
+			{
+				var binding = siteNodesVector.getElementAt(i);
+
+				var myLI = document.createElement("li");
+				myLI.setAttribute("itemID", i);
+				myLI.setAttribute("style", "height: 110px; padding-top: 6px;");
+				
+				addImageLink(myLI, "javascript:moveBindingDown(" + i + ");", "images/downArrow.gif", false, false, "75");
+				addImageLink(myLI, "javascript:moveBindingUp(" + i + ");", "images/upArrow.gif", false, false, "75");
+				addImageLink(myLI, "javascript:deleteBinding(" + i + ");", "images/delete.gif", false, false, "75");
+				addDividerImage(myLI, 1, 16);
+								
+				myActionList.appendChild(myLI);
+			}
+			actionTD.appendChild(myActionList);
+			
+			myList = document.createElement("ul");
+			myList.setAttribute("id", "currentBindings");
+			
+	        for (var i=0; i<siteNodesVector.getSize(); i++)
+			{
+				var binding = siteNodesVector.getElementAt(i);
+
+				var myLI = document.createElement("li");
+				myLI.setAttribute("itemID", i);
+				myLI.setAttribute("style", "text-align: center; height: 110px; padding-top: 6px;");
+				
+				//alert("AssetUrl: " + binding.getAssetUrl());
+				addImageLink(myLI, "#", "" + binding.getAssetUrl() + "", true, true, "1");
+				//addImageLink(myLI, "#", "script/xloadtree/images/xp/file.png");
+
+				var bindingText = document.createTextNode("Content: " + binding.getPath().substring(0, 10) + "...");
+				var breakElement = document.createElement("br");
+				var assetBindingText = document.createTextNode("AssetKey: " + binding.getAssetKey());
+				myLI.appendChild(bindingText);
+				myLI.appendChild(breakElement);
+				myLI.appendChild(assetBindingText);
+				addDividerImage(myLI, 5, 16);
+				
+				myList.appendChild(myLI);
+			}
+			
+			bindingTD.appendChild(myList);
+			 
+	        //alert("childNodes" + parent.childNodes.length);
+
+			myTR.appendChild(bindingTD);
+			myTR.appendChild(actionTD);
+
+			mytablebody.appendChild(myTR);
+			 
+	        mytable.appendChild(mytablebody);
+	        parent.appendChild(mytable);
+	        
+			dragsort.makeListSortable(document.getElementById("currentBindings"), verticalOnly, changeOrder);
+		}
+
+		/**
+		 * This method removes a binding from the vector.
+		 */
+		 
+		function deleteBinding(index)
+		{
+			siteNodesVector.removeElementAt(index);
+			drawList();
+		}
+		
+		/**
+		 * This method moves a binding 1 step up in the vector.
+		 */
+		 
+		function moveBindingUp(index)
+		{
+			if(index > 0)
+			{
+				var binding 		= siteNodesVector.getElementAt(index);
+				var previousBinding = siteNodesVector.getElementAt(index - 1);
+				
+				path 		= binding.getPath();
+				entityName 	= binding.getEntityName();
+				entityId 	= binding.getEntityId();
+				assetKey 	= binding.getAssetKey();
+				assetUrl 	= binding.getAssetUrl();
+				
+				binding.setPath(previousBinding.getPath());
+				binding.setEntityName(previousBinding.getEntityName());
+				binding.setEntityId(previousBinding.getEntityId());
+				binding.setAssetKey(previousBinding.getAssetKey());
+				binding.setAssetUrl(previousBinding.getAssetUrl());
+			
+				previousBinding.setPath(path);
+				previousBinding.setEntityName(entityName);
+				previousBinding.setEntityId(entityId);
+				previousBinding.setAssetKey(assetKey);
+				previousBinding.setAssetUrl(assetUrl);
+				
+				drawList();
+			}			
+		}
+
+		/**
+		 * This method moves a binding 1 step up in the vector.
+		 */
+		 
+		function moveBindingDown(index)
+		{
+			if(index < siteNodesVector.getSize() - 1)
+			{
+				var binding 		= siteNodesVector.getElementAt(index);
+				var previousBinding = siteNodesVector.getElementAt(index + 1);
+				
+				path 		= binding.getPath();
+				entityName 	= binding.getEntityName();
+				entityId 	= binding.getEntityId();
+				assetKey 	= binding.getAssetKey();
+				assetUrl 	= binding.getAssetUrl();
+				
+				binding.setPath(previousBinding.getPath());
+				binding.setEntityName(previousBinding.getEntityName());
+				binding.setEntityId(previousBinding.getEntityId());
+				binding.setAssetKey(previousBinding.getAssetKey());
+				binding.setAssetUrl(previousBinding.getAssetUrl());
+			
+				previousBinding.setPath(path);
+				previousBinding.setEntityName(entityName);
+				previousBinding.setEntityId(entityId);
+				previousBinding.setAssetKey(assetKey);
+				previousBinding.setAssetUrl(assetUrl);
+			
+				drawList();
+			}
+		}
+		
+		/**
+		 * This method moves a binding 1 step up in the vector.
+		 */
+		 
+		function dragBindingUp(originalIndex, targetIndex)
+		{
+			var currentIndex = originalIndex;
+			while(currentIndex != targetIndex)
+			{
+				//alert(currentIndex + "!=" + targetIndex);
+				var binding 		= siteNodesVector.getElementAt(currentIndex);
+				var previousBinding = siteNodesVector.getElementAt(currentIndex - 1);
+				
+				path 		= binding.getPath();
+				entityName 	= binding.getEntityName();
+				entityId 	= binding.getEntityId();
+				assetKey 	= binding.getAssetKey();
+				assetUrl 	= binding.getAssetUrl();
+				
+				binding.setPath(previousBinding.getPath());
+				binding.setEntityName(previousBinding.getEntityName());
+				binding.setEntityId(previousBinding.getEntityId());
+				binding.setAssetKey(previousBinding.getAssetKey());
+				binding.setAssetUrl(previousBinding.getAssetUrl());
+			
+				previousBinding.setPath(path);
+				previousBinding.setEntityName(entityName);
+				previousBinding.setEntityId(entityId);
+				previousBinding.setAssetKey(assetKey);
+				previousBinding.setAssetUrl(assetUrl);
+
+				
+				currentIndex = currentIndex - 1;				
+			}			
+			
+			drawList();
+		}
+
+		/**
+		 * This method moves a binding 1 step up in the vector.
+		 */
+		 
+		function dragBindingDown(originalIndex, targetIndex)
+		{
+			var currentIndex = originalIndex;
+			while(currentIndex != targetIndex)
+			{
+				var binding 	= siteNodesVector.getElementAt(currentIndex);
+				var nextIndex = currentIndex + 1;
+				var nextBinding = siteNodesVector.getElementAt(currentIndex + 1);
+				
+				path 		= binding.getPath();
+				entityName 	= binding.getEntityName();
+				entityId 	= binding.getEntityId();
+				assetKey 	= binding.getAssetKey();
+				assetUrl 	= binding.getAssetUrl();
+				
+				binding.setPath(nextBinding.getPath());
+				binding.setEntityName(nextBinding.getEntityName());
+				binding.setEntityId(nextBinding.getEntityId());
+				binding.setAssetKey(nextBinding.getAssetKey());
+				binding.setAssetUrl(nextBinding.getAssetUrl());
+			
+				nextBinding.setPath(path);
+				nextBinding.setEntityName(entityName);
+				nextBinding.setEntityId(entityId);
+				nextBinding.setAssetKey(assetKey);
+				nextBinding.setAssetUrl(assetUrl);
+
+				currentIndex = currentIndex + 1;				
+			}
+
+			drawList();
+		}		
+		
+		/**
+		 * This function initializes the vector of previous bindings.
+		 */
+		 
+		function init()
+		{
+			#foreach($binding in $componentBindings)
+				#if("$!binding.assetKey" == "")
+					#set($url = $!this.getDigitalAssetThumbnailUrl($converter.toNonNegativeInteger($binding.entityId)))
+				#else
+					#set($url = $!this.getDigitalAssetThumbnailUrl($converter.toNonNegativeInteger($binding.entityId), "$binding.assetKey"))
+				#end
+				binding = new AssetBinding("Content", "$binding.entityId", "$binding.assetKey", "$url", "$formatter.cleanForJavascriptStrings($binding.path)");
+				//alert("binding:" + binding.getAssetUrl() + " for $binding.entityId $binding.assetKey");
+				siteNodesVector.addElement(binding);
+			#end
+	
+			//alert("siteNodesVector:" + siteNodesVector.getSize());
+			drawList();		
+			
+			document.getElementById("itreeFrame").src = "ViewContentHtmlTree.action?repositoryId=$!repositoryId";
+			//document.getElementById("contentVersionAssetsFrame").src = "ViewContentVersion!viewAssetsForFCKEditor.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey + "&treatAsLink=$treatAsLink";			
+		}
+		
+		function verticalOnly(item) 
+		{
+			item.toolManDragGroup.verticalOnly()
+		}
+	
+		function changeOrder(item) 
+		{
+			var group = item.toolManDragGroup;
+			var list = group.element.parentNode;
+			var id = list.getAttribute("id");
+			var id2 = parseInt(item.getAttribute("itemID"));
+			
+			if (id == null) 
+				return;
+	
+			group.register('dragend', function() 
+			{
+				var targetId = -1;
+				if(item.previousSibling)
+					targetId = parseInt(item.previousSibling.getAttribute("itemID"));
+				
+				if(targetId > id2)
+					dragBindingDown(id2, targetId);
+				else	
+					dragBindingUp(id2, targetId + 1);
+			})
+		}
+		
+		function onOk(contentId, assetKey, assetThumbnailUrl, path)
+		{
+			//alert("Adding contentId:" + contentId + " and assetKey:" + assetKey);
+			if(contentId == '' || contentId == '${select}' || assetKey == '')
+			{
+				alert("You must choose a content and a asset before you can save");
+			}
+			else
+			{
+				path = document.inputForm.path.value;
+				
+			    var binding = new AssetBinding("Content", contentId, assetKey, assetThumbnailUrl, path);
+				siteNodesVector.addElement(binding);
+				drawList();
+				/*
+			    path = document.inputForm.path.value;
+			    var repositoryId = document.inputForm.repositoryId.value;
+				bindingTypeId = 0; //0 = Content, 1 = SiteNode
+					
+				var url = "ViewSiteNodePageComponents!addComponentPropertyBinding.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&entity=Content&entityId=" + contentId + "&assetKey=" + assetKey + "&componentId=$componentId&propertyName=$propertyName&showSimple=$showSimple&showDecorated=$!showDecorated&path=" + escape(path);
+			    //alert("url:" + url);
+			    self.opener.location.href = url;
+			    window.close();
+			    */
+			}
+		}
+					
+		var siteNodesVector = new Vector(0);
+
+	-->    
+	</script>
+
+</head>
+
+<body class="contenttooledit" onload="init();" style="margin: 5px;">
+
+<table class="contenttooledit" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td valign="top">
+		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr class="darkgreen">
+			<td class="smalllabel">Choose content to choose asset from</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<tr>
+			<td>
+		  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+				    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+				    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+				    #end
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>	
+		<tr>
+			<td class="menu">  
+				<div id="searchDiv" style="display:none;">
+					<IFRAME frameborder="0" name="resultFrame" id="resultFrame" src="SearchContent!inputInlineAsset.action?repositoryId=${repositoryId}" width="350" height="400" align="baseline"></IFRAME>
+				</div>
+				<div id="treeDiv" style="display:block;">
+				#if($tree == "applet")
+					#showJavaTree("350" "400" "254" "248" "208" "Content" $repositoryId "false")
+				#else
+					<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="" width="350" height="420" align="baseline"></IFRAME>
+				#end
+				</div>
+			</td>
+		</tr>	
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td>
+				<a href="javascript:submitBinding();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+				<a href="javascript:window.close();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				<form name="inputForm" action="CreateServiceBinding.action">
+					<input type="hidden" name="draggedComponentId" value="">
+					<input type="hidden" name="entityId" value="">
+					<input type="hidden" name="repositoryId" value="">
+					<input type="hidden" name="path" value="">
+					<input type="hidden" name="qualifyerXML" value="">
+				</form>
+			</td>
+		</tr>		
+		</table>
+	</td>	
+	
+	<td>&nbsp;</td>
+
+	<td valign="top">
+		<table cellpadding="0" cellspacing="0" border="0" width="250">
+		<tr class="darkgreen">
+			<td class="smalllabel">$ui.getString("tool.contenttool.associatedAttachments")</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+		</tr>		
+		<tr>
+			<td>Double click on an asset or drag it to the selection list to use them in binding.</td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>		
+		<tr>
+			<td>
+				#if($oldContentId > 0)
+					<IFRAME frameborder="0" name="contentVersionAssetsFrame" id="contentVersionAssetsFrame" src="cms/structuretool/noContentSelected.html" width="250" height="420" align="baseline"></IFRAME>
+				#else
+					<IFRAME frameborder="0" name="contentVersionAssetsFrame" id="contentVersionAssetsFrame" src="cms/structuretool/noContentSelected.html" width="250" height="420" align="baseline"></IFRAME>
+				#end
+			</td>
+		</tr>
+		</table>
+	</td>
+
+	<td>&nbsp;</td>
+	
+	<td valign="top">
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr class="darkgreen">
+			<td class="smalllabel">Assigned assets so far</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+		</tr>		
+		
+		<tr>
+			<td style="height: 27px;">
+				Fill this list with assets and then click "Save" to confirm the binding.
+			</td>
+		</tr>
+		<tr>
+			<td style="border: 1px solid #C7D1B3; background-color: white;">
+				<div style="height: 418px; overflow: auto;">
+				<TABLE id="bindings" border="1">
+			  	
+			  	</table>
+			  	</div>
+			</td>
+		</tr>
+				
+		</table>
+		
+	</td>
+</tr>
+</table>
+
+<form name="submitForm" method="POST" action="ViewSiteNodePageComponents!addComponentPropertyBindingWithQualifyer.action" TARGET="">
+	<input type="hidden" name="siteNodeId" value="$siteNodeId">
+	<input type="hidden" name="languageId" value="$languageId">
+	<input type="hidden" name="contentId" value="$contentId">
+	<input type="hidden" name="componentId" value="$componentId">
+	<input type="hidden" name="propertyName" value="$propertyName">
+	<input type="hidden" name="showSimple" value="$showSimple">
+	<input type="hidden" name="showDecorated" value="$!showDecorated">
+	<input type="hidden" name="path" value="">
+	<input type="hidden" name="qualifyerXML" value="">
+</form>
+
+</body>
+</html>

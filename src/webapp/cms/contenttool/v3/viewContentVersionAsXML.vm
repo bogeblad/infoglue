@@ -1,0 +1,36 @@
+#define($extraMarkup)
+	<script type="text/javascript">
+	<!--
+		function save()
+		{
+			document.editForm.submit();
+		}
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.contentVersionAsXMLHeader" "" "" false true false $extraMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons)
+
+	<div style="clear: both;" onfocus="this.blur();"></div>
+
+	<h3>$ui.getString("tool.contenttool.contentVersionAsXMLHeader")</h3>
+ 
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	
+		<form method="post" name="editForm" action="UpdateContentVersion!updateVersionXMLV3.action">
+			<input type="hidden" name="contentId" value="$!contentId">
+			<input type="hidden" name="repositoryId" value="$!repositoryId">
+			<input type="hidden" name="languageId" value="$!contentVersionVO.languageId">
+			<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+			<p>
+				<textarea name="versionValue" style="width: 800px; height: 500px">$formatter.escapeHTML($!contentVersionVO.versionValue)</textarea>
+			</p>
+		</form>
+		
+	</div>
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

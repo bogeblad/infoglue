@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.createInterceptionPoint.header" "tool.managementtool.createInterceptionPoint.header" "")
+
+<div class="fullymarginalized">
+	<form name="editForm" method="POST" action="CreateInterceptionPoint.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<p>
+			$ui.getString("entity.InterceptionPoint.interceptionPointVOName.label")
+			#if($errors.hasErrors($errorKey))
+				#foreach($errorMessage in $errors.getErrors($errorKey))
+			    	<font color="red"> - $errorMessage</font>
+			    #end
+			#end
+		</p>
+		<p>
+			<select name="interceptionPointVOName" class="dropbox">
+				<option value="">$ui.getString("entity.InterceptionPoint.chooseInterceptionPoint.label")</option>
+				#foreach($inactiveInterceptionPointVO in $inactiveInterceptionPointVOList)
+					<option value="$inactiveInterceptionPointVO.name" #if("$inactiveInterceptionPointVO.name" == "$!interceptionPointVOName") selected #end>$inactiveInterceptionPointVO.name - $inactiveInterceptionPointVO.description</option>
+				#end
+			</select>
+		</p>
+				
+		<p class="subtitle">$ui.getString("entity.InterceptionPoint.createNew.label")</p>
+		<p>#editField("InterceptionPoint.category" "category" $!category "51")</p>
+		<p>#editField("InterceptionPoint.name" "name" $!name "51")</p>
+		<p>#editField("InterceptionPoint.description" "description" $!description "51")</p>
+		<p>#selectField("InterceptionPoint.usesExtraDataForAccessControl" "usesExtraDataForAccessControl" $!usesExtraDataForAccessControl [["true", "Yes"], ["false", "No"]])</p>
+	</form>
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListInterceptionPoint.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

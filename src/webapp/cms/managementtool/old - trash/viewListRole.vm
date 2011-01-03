@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewRoleList.header" "tool.managementtool.viewRoleList.header" "")
+
+#set($lvConstraint = 1) 
+#lvHead(["Name","DisplayName","Description"] "tool.managementtool.deleteRoles.header" "DeleteRole.action" "ViewListRole.action?title=Roles" "tool.managementtool.deleteRoles.text")
+
+#set($cnt = 0)
+#foreach ($roleVO in $roles)
+	#set( $roleName = $formatter.encodeURI($roleVO.getName())) 
+	
+	#set( $rowUrl = "ViewRole.action?roleName=$roleName&title=Role%20details")
+	#set( $row = ["<input type='hidden' name='rowtitle' value='$roleVO.getName()'/> <a href=$rowUrl>$roleVO.getName()</a>","$roleVO.getDisplayName()","$roleVO.getDescription()"] )
+	#set($cnt = $cnt + 1)
+	
+	#lvAddRow($row $cnt $roleVO.getName())
+#end
+
+#lvEnd()
+#endManagementTool()

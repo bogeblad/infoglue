@@ -1,0 +1,830 @@
+.droppable-active {
+	opacity: 1.0;
+}
+.droppable-hover {
+	outline: 1px solid black;
+}
+.slotPosition {
+	padding: 0px;
+	margin: 0px;
+}
+.slotPosition-active {
+	display: table;
+	border-top: 1px solid white;
+	opacity: 1.0;
+}
+.slotPosition-hover {
+	display: table;
+	border-top: 2px solid #ff8a18;
+	aoutline: 1px solid black;
+}
+
+
+#componentStructure 
+{
+	position: absolute;
+	top: 10px;
+	left: 10px;
+}
+
+/*
+Component Properties Classes
+*/
+#componentProperties
+{
+	position: absolute;
+	background-color: #F4F4F4;
+	border: 1px solid #333333;
+	z-index: 80;
+	/*top: 100px;*/
+	width: 620px;
+}
+
+#componentPropertiesForm
+{
+	float: left;
+	margin: 0px;
+	padding: 0px;
+}
+
+#componentPropertiesBody 
+{
+	margin:0px;
+	padding:0px;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	float: left;
+	max-height: 500px;
+	overflow: auto;
+	width: 100%;
+}
+
+#componentPropertiesHandle 
+{
+	margin: 2px;
+	padding: 2px;
+	color: white;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	background-image: url('../images/handleBackground.gif');
+	border-bottom: 1px solid #CCCCCC;
+	float: left;
+	width: 610px;
+}
+
+#leftComponentPropertiesHandle 
+{
+	width: 550px; 
+	float: left;
+	color: white;
+	text-align: left;
+	line-height: 14px;
+	padding-left: 5px;
+}
+#rightComponentPropertiesHandle 
+{
+	color: white;
+	text-align: right;
+	line-height: 14px;	
+	float: right;
+	width: 50px;
+}
+
+#componentPropertiesForm fieldset
+{
+	border: 1px solid #cccccc;
+	float: left;
+	margin: 4px;
+	padding: 4px;
+}
+
+.hiddenFieldSet
+{
+	border: 0px solid #cccccc;
+	float: left;
+	width: 100%;
+}
+
+#componentPropertiesForm fieldset legend
+{
+	float: left;
+	color: #000000;
+	background: #c6d3e7;
+	border: 1px solid #cccccc;
+	padding: 2px;
+	margin-bottom: 8px;
+	font-size: 11px;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+}
+
+.propertyRow
+{
+	margin: 0px;
+	padding-top: 6px;
+	padding-bottom: 6px;
+	float: left;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	width: 580px;
+	border-bottom: 1px solid #cccccc;
+}
+.propertyRowLeft
+{
+	width: 180px;
+	float: left;
+	background-color: #eeeeee;
+	padding: 2px;
+}
+.propertyRowRight
+{
+	float: right;
+	width: 360px;
+}
+.fieldGroup
+{
+	float: left;
+	width: 340px;
+}
+.actionGroup
+{
+	float: left;
+	margin-left: 3px;
+	background-color: #eeeeee;
+}
+
+#componentPropertiesForm fieldset p
+{
+	aline-heigh: 12px;
+	margin: 0px;
+	padding-bottom: 4px;
+	float: left;
+	clear: both;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+#componentPropertiesForm fieldset div label
+{
+	min-width: 80px;
+	float: left;
+	text-align: left;
+	margin-right: 0.5em;
+	display: block;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+#componentPropertiesForm fieldset div select
+{
+	background: white;
+	border: 1px solid #cccccc;
+	width: 140px;
+	float: left;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+#componentPropertiesForm fieldset div input
+{
+	background: white;
+	border: 1px solid #cccccc;
+	width: 330px;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+#componentPropertiesForm fieldset div textarea
+{
+	background: white;
+	border: 1px solid #cccccc;
+	width: 330px;
+	height: 50px;
+	float: left;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+#componentPropertiesForm fieldset .buttonRow
+{
+	padding-top: 5px;
+	border: 0px solid black;
+}
+
+
+/* 
+Component palette classes
+*/
+
+#leftHandleNarrow {
+	width: 150px; 
+	float: left;
+	color:white;
+	text-align: left;
+	line-height:10px;
+	}
+#rightPaletteHandle {
+	color:white;
+	text-align: right;
+	line-height:10px;	
+	}
+
+/*
+.components {
+	text-align: center;
+	background: #CCCCCC;
+	border-left: solid 1px white;
+	border-bottom: solid 1px black;
+	left:0px;
+	width:100%;
+	height:30px;
+	cursor:pointer;
+	white-space: nowrap;
+	visibility:inherit;
+}
+.component {
+	text-align:center;
+	background:#CCCCCC;
+	cursor:pointer;
+	white-space: nowrap;
+	padding:0px 4px 0px 4px;
+	visibility:inherit;
+}
+.componentsBackground {
+ 	border-bottom: 1px solid gray; 
+ 	background:#CCCCCC; 
+ 	width:100%; 
+ 	height:24px; 
+ 	position:absolute; 
+ 	top:50px; 
+ 	left:10px; 
+ 	visibility: inherit;
+}
+.componentsStatus {
+	font-family:verdana,arial,helvetica;
+	font-size:11px;
+	font-weight: normal;
+	border-bottom: solid 1px black;
+	border-top: solid thin gray;
+	position:absolute; 
+	z-index:2; 
+	width:100%; 
+	top:60px; 
+	left:0px; 
+	height:16px; 
+	visibility:visible;
+	background:#CCCCCC;
+}
+.componentsStatusText {
+	font-family:verdana,arial,helvetica;
+	font-size:10px;
+	font-weight: normal;
+}
+*/
+	
+/* 
+Page components classes
+*/
+	
+#pageComponents {
+	position:absolute;
+	width:350px;
+	background-color:#F4F4F4;
+    border:1px solid #333333;
+	z-index:70;
+	top:100px;
+	height: 400px;
+	}
+
+#pageComponentsHandle {
+	margin: 2px;
+	padding: 2px;
+	color: white;
+	color: white;
+	background-color: navy;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	}
+
+#pageComponentsBody {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	width: 100%;
+	font-family: verdana, sans-serif;
+	font-size: 11px;
+	height: 380px;
+	overflow: auto;
+	}
+
+
+/*
+Edit on sight classes
+*/
+#componentTasks {
+	aposition: absolute;
+	aleft: 50px;
+	atop: 100px;
+}
+#componentMenu {
+	position:absolute;
+	left: 0px;
+	top: 0px;
+	border: 1px solid #636563;
+	width: 200px;
+	background-image: url('../images/v3/tileGradient.gif');
+	background-repeat: repeat-y;
+	background-position: left;
+	background-color: #F9F8F7;
+}
+.skin0 {
+	position:absolute;
+	z-index:90;
+	text-align:left;
+	width:350px;
+	background-color: #F9F8F7;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	cursor:default;
+	visibility:hidden;
+}
+.skin1 {
+	cursor:default;
+	position:absolute;
+	z-index:90;
+	text-align:left;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	width:200px;
+	overflow: hidden;
+	background-image: url('../images/v3/tileGradient.gif');
+	background-repeat: repeat-y;
+	background-position: left;
+	background-color: #F9F8F7;
+	border:1px solid #666666;
+	visibility:hidden;
+}
+.igmenuitems {
+	margin-left: 3px;
+	padding-left: 31px;
+	padding-right: 11px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	white-space: nowrap;
+	color: #000000;
+	line-height: 14px;
+}
+.igmenuitems a {
+	text-decoration: none;
+	color: black;
+}
+.igmenuitems a:hover {
+	text-decoration: underline;
+	color: black;
+}
+
+.igAddComponent {
+	background-color:#F9F8F7;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	border: 1px dotted #333;
+	padding: 4px;
+	line-height: 22px;
+}
+
+/*
+Properties classes
+*/
+
+/*
+.componentProperties {
+	position:absolute;
+	background-color:#F4F4F4;
+	border:1px solid #333333;
+	z-index:80;
+	top:100px;
+	width: 500px;
+	}
+
+.componentPropertiesHandle {
+	margin:2px;
+	padding:2px;
+	color:white;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	background-image: url('../images/handleBackground.gif');
+	float: left;
+	border: 1px solid red;
+	}
+
+#componentPropertiesBody {
+	margin:2px;
+	padding:2px;
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	float: left;
+	border: 0px solid blue;
+	}
+*/
+.igtable {
+	border-collapse: separate;
+	text-align: left;
+	height: 10px;
+	border:0px solid #FFFFFF;
+}
+.igtr {
+	border:0px solid #FFFFFF;
+	text-align: left;
+}
+.igtr:hover {
+	background-color: #F9F9F9;
+	color			: #000000;
+}
+.igtd {
+	text-align: left;
+	height: 10px;
+	vertical-align: top;
+	border:0px solid red;
+	line-height: 10px;
+	font-family: verdana, arial, sans-serif;
+	font-size: 11px;
+}
+.igtd:hover {
+	text-align: left;
+	height: 10px;
+	vertical-align: top;
+	border:0px solid red;
+}
+.componentEditorLink {
+	font-family	     : verdana, arial, sans-serif;
+	font-size        : 11px;
+	color		 	 : #333333;
+	text-decoration  : underline;
+}
+.componentEditorLink:visited {
+	font-family	     : verdana, arial, sans-serif;
+	font-size	     : 11px;
+	color 			 : #333333;
+	text-decoration  : underline;
+}
+.componentEditorLink:hover {
+	font-family	     : verdana, arial, sans-serif;
+	font-size        : 11px;
+	color            : #333333;
+	text-decoration  : underline;
+}
+.igpropertylabel {
+	text-align 	 	 : left;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	color		 	 : #333333;
+	font-weight		 : bold;
+	border	 		 : 0px solid #FFFFFF;
+	width			 : 40%;
+}
+.igpropertyvalue {
+	text-align	 	 : left;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	color		 	 : #333333;
+	background		 : #FFFFFF;
+	border-style	 : solid;
+	border-width	 : 1px;	
+	border-color     : #C2D0E2;
+	width			 : 40%;
+}
+
+td.propertiesheader {	
+	font-family 	 : Verdana; 
+	font-size		 : 16px;
+	font-weight		 : bold;
+	height			 : 16px;
+	background-color : #E3ECF8;
+	border-style     : solid; 
+	border-width     : 1px;
+	border-color     : black;
+}
+
+td.label {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	font-weight		 : bold;
+	color		 	 : #333333;
+}
+
+td.value {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	color		 	 : #333333;
+}
+
+/*
+Slot classes
+*/
+
+.emptyslot {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 14px;
+	color		 	 : #333333;
+}
+.filledslot {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 14px;
+	color		 	 : #333333;
+}
+.inheritedslot {
+}
+.inheritedComponentDiv {
+    border			 : dotted 0px #0070FF;
+}
+.inheritedComponentDiv:hover {
+    border 			 : solid 0px red;
+}
+.componentDiv {
+    border			 : dotted 0px #0070FF; 
+}
+.componentDiv:hover {
+    border 			 : solid 0px red;
+}
+
+input.normaltextfield {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	border-style	 : solid;
+	border-width	 : 1px;	
+	border-color     : #C2D0E2;
+	width            : 300px;
+}
+
+input.propertytextfield {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	border-style	 : solid;
+	border-width	 : 1px;	
+	border-color     : #C2D0E2;
+	width            : 200px;
+}
+input.propertydatefield {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	border-style	 : solid;
+	border-width	 : 1px;	
+	border-color     : #C2D0E2;
+	width            : 100px;
+}
+.propertytextarea {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	border-style	 : solid;
+	border-width	 : 1px;	
+	border-color     : #C2D0E2;
+	width            : 200px;
+	height			 : 150px;
+}
+select.propertyselect {
+	font-family: verdana, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+}
+
+.inheritedOverlay
+{
+ 	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+	color		 	 : #333333;
+    position:relative;
+	visibility:visible;
+	z-index:10;
+	width:100%;
+	text-align: center;
+	vertical-align: middle;
+	height:10px;
+	border-style	 : solid;
+	border-width	 : 1px;	
+	border-color     : #000000;
+}
+.inherited
+{
+    position: relative;
+	visibility:visible;
+	z-index:1;
+	width:100%;
+}
+	
+tr.lightyellow {
+	background-color : #FEF8D0;
+	height 			 : 20px;
+}
+
+tr.white {
+	background-color : #FFFFFF;
+	height 			 : 20px;
+}
+
+.smalllabel {
+	font-family:verdana, sans-serif;
+	font-size: 10px;
+	}
+
+.smallwhitelabel {
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	color:white;
+	}
+
+a.white {
+    text-decoration:none;
+    color: white;
+	font-size:10px;
+    }
+a.white:visited {
+    text-decoration:none;
+    color: white;
+	font-size:10px;
+    }
+a.white:hover {
+	text-decoration:underline;
+	}
+a.white:active {
+	font-weight: bold;
+	}
+
+.boldsmalllabel {
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	}
+	
+.slot {
+	border:0px solid #333333;
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	}
+
+.iglabel {
+	margin:0px;
+	padding:0px;
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	font-weight:normal;
+	height:12px;
+	}
+select.mediumdrop {
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	font-weight:normal;
+}
+
+.clickableLabel {
+	margin:0px;
+	padding:0px;
+	font-family:verdana, sans-serif;
+	font-size:10px;
+	font-weight:normal;
+	text-decoration:underline;
+	color:blue;
+	height:12px;
+	white-space: nowrap;
+	}
+
+.tooltipDiv {
+	border: 1px solid black; 
+	background-color: white; 
+	padding: 4px; 
+	width: 200px; 
+	display: block; 
+	visibility: hidden; 
+	z-index: 99; 
+	position: absolute; 
+	font-size: 11px; 
+	font-family: Verdana; 
+	font-weight:normal;
+	color: black;
+}
+
+/* POPUP MENU */
+
+.popupMenuLinks {
+	list-style-type:none;
+	padding: 0px 0px 0px 7px;
+	margin: 0px 0px 0px 0px;
+	}
+.editOnSightMenuDiv {
+	background:url(../images/v3/tileGradient.gif) repeat-y left;
+	margin: 0px;
+	padding: 0px;	
+}
+
+.editOnSightUL {
+	list-style-image: none;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+	float: left;
+	display: block;
+}
+.editOnSightMenuDiv li:hover{
+	abackground-color: #BBB;
+	}
+.editOnSightMenuDiv li a:hover{
+	text-decoration:underline;
+	}
+.designStuff {
+	}
+.editOnSightHref {
+	white-space:nowrap;
+	line-height:22px;
+	padding-top:2px;
+	text-decoration:none;
+	display: block;	
+	font-family: Tahoma, Arial, Helvetica, sans-serif; 
+	font-size: 14px; 
+	color: black;
+	}
+a.editOnSightHref:hover{
+	text-decoration:none;
+	color: black;
+}
+
+.linkMetadata { background:url(../images/v3/metadataIcon.gif) no-repeat left center; background-position: 4px 2px;}
+.linkCreatePage {background:url(../images/v3/createPageIcon.gif) no-repeat left center; background-position: 4px 2px;}
+.linkEditArticle {background:url(../images/v3/editContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCategorizeArticle {background:url(../images/v3/categorizeContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkPublish {background:url(../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkNotify {background:url(../images/v3/notifyIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTakeContent {background:url(../images/v3/subscribeToContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTakePage {background:url(../images/v3/subscribeToPageIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTranslate {background:url(../images/v3/translateContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCreateNews {background:url(../images/v3/createNewsForContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMySettings {background:url(../images/v3/mySettingsIcon.gif) no-repeat left center; background-position: 4px 6px;}
+
+.linkAddComponent {background:url(../images/v3/addComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkDeleteComponent {background:url(../images/v3/deleteComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkChangeComponent {background:url(../images/v3/changeComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCreatePageTemplate {background:url(../images/v3/savePageTemplateIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMoveComponentUp {background:url(../images/v3/moveComponentUpIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMoveComponentDown {background:url(../images/v3/moveComponentDownIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkComponentProperties {background:url(../images/v3/componentPropertiesIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkPageComponents {background:url(../images/v3/structureIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkOpenInNewWindow {background:url(../images/v3/openInNewWindowIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkViewSource {background:url(../images/v3/showHTMLIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkAccessRights {background:url(../images/v3/accessRightIcon.gif) no-repeat left center; background-position: 4px 6px;}
+
+.linkComponentTask {background:url(../images/v3/componentTaskIcon.gif) no-repeat left center; background-position: 4px 6px;}
+
+.linkSave {background:url(../images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px -2px;}
+.linkCancel {background:url(../images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.linkInfoGlueFunctions {background:url(../images/v3/infoglueFunctionsIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.save { background:url(../images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.saveAndExit {background:url(../images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.cancel {background:url(../images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}
+.close {background:url(../images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
+
+.linkMetadata, .linkCreatePage, .linkEditArticle, .linkCategorizeArticle, .linkPublish, .linkNotify, 
+.linkTakeContent, .linkTakePage, .linkTranslate, .linkCreateNews, .linkMySettings, .linkAddComponent, .linkDeleteComponent,
+.linkChangeComponent, .linkCreatePageTemplate, .linkMoveComponentUp, .linkMoveComponentDown, .linkComponentProperties, .linkPageComponents,
+.linkOpenInNewWindow, .linkViewSource, .linkAccessRights, .linkComponentTask {
+padding-left:28px;
+}
+
+/* Button in IG */
+.igButton
+{
+	background-image: url("../images/v3/igButtonBackground.png");
+	background-position: 100% -26px;
+	background-repeat: no-repeat;
+	line-height: 26px;
+	height: 26px;
+	padding-right: 20px;
+	color: #555;
+	display: block;
+	float: left;
+	margin: 4px;
+	margin-left: 0px;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.igButtonOuterSpan
+{
+	background-image: url("../images/v3/igButtonBackground.png");
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-size: 14px;
+	padding-left: 20px;
+	line-height: 26px;
+	text-decoration: none;
+	height: 26px;
+	display: block;
+	float: left;
+}
+
+.igButtonOuterSpan span {
+	padding-left: 24px;
+	}
+
+.igButton:hover
+{
+	abackground-position: 100% -78px;
+	color: white;
+	text-decoration: none;
+}
+
+.igButtonOuterSpan:hover
+{
+	abackground-position: 0px -52px;
+}

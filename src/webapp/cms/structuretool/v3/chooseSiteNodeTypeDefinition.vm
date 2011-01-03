@@ -1,0 +1,39 @@
+#define($extraMarkup)
+<script type="text/javascript">
+	function save()
+	{
+		$("form").get(0).submit();
+	}
+</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.structuretool.siteNodeTypeDefinitionMissingHeader" "$siteNodeId" "" false true $!disableCloseButton $extraMarkup)
+
+<div>
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.structuretool.siteNodeTypeDefinitionMissingHeader")</h3>
+
+	<form method="post" name="editForm" action="UpdateSiteNode!updateSiteNodeTypeDefinition.action">
+		
+		<div class="inlineTabDiv">
+			<label for="siteNodeTypeDefinitionId">SiteNode type</label><br/>
+			<select class="siteNodetypes" name="siteNodeTypeDefinitionId" id="siteNodeTypeDefinitionId">
+				<option value="">$ui.getString("tool.managementtool.chooseContentTypeDefinition.label")</option>
+			#foreach ($siteNodeTypeDefinitionVO in $siteNodeTypeDefinitions)
+				<option value="$siteNodeTypeDefinitionVO.getSiteNodeTypeDefinitionId()">$siteNodeTypeDefinitionVO.getName()</option>
+			#end
+			</select>
+		
+			<input type="hidden" name="siteNodeId" value="$!siteNodeId"/>
+
+		</div>
+		
+		#lightFooterToolbar($footerButtons)
+		
+	</form>
+		
+#endCommonToolV3()

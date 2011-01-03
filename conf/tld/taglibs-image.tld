@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+
+
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+<taglib>
+  <tlibversion>1.0</tlibversion>
+  <jspversion>1.1</jspversion>
+  <shortname>image</shortname>
+  <uri>http://jakarta.apache.org/taglibs/image-1.0</uri>
+  <info>
+	    This JSP tag library generates and transforms images dynamically.
+	    It exposes the imaging capability available in Java2D, Java Advanced 
+	    Imaging, ImageIO, etc., as a set of tags.
+   	
+		One of the design objectives was to keep it as simple as possible.
+		It does not require the user to have an in-depth knowledge of the underlying 
+		imaging APIs. Currently it includes the basic Java2D and Java
+		Advanced Imaging based implementations. The Java2D implementation uses
+		ImageIO if it is available or else defaults to AWT.
+    </info>
+  <tag>
+    <name>image</name>
+    <tagclass>org.apache.taglibs.image.ImageTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+      <name>src</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>name</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>usingImageNameInSession</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>dir</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>refresh</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>display</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>attributes</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>imagingType</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>quality</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  <tag>
+    <name>resize</name>
+    <tagclass>org.apache.taglibs.image.ResizeTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+      <name>scale</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>width</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>height</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>bestfit</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  <tag>
+    <name>overlay</name>
+    <tagclass>org.apache.taglibs.image.OverlayTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+      <name>x</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>y</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>color</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>tolerance</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  <tag>
+    <name>transparency</name>
+    <tagclass>org.apache.taglibs.image.TransparencyTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+      <name>level</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  <tag>
+    <name>rotate</name>
+    <tagclass>org.apache.taglibs.image.RotateTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+      <name>degrees</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  <tag>
+    <name>border</name>
+    <tagclass>org.apache.taglibs.image.BorderTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+      <name>width</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>height</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>color</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  <tag>
+    <name>grayscale</name>
+    <tagclass>org.apache.taglibs.image.GrayscaleTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+      <name>brightness</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  <tag>
+    <name>crop</name>
+    <tagclass>org.apache.taglibs.image.CropTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <attribute>
+      <name>x</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>y</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>width</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>height</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  <tag>
+    <name>text</name>
+    <tagclass>org.apache.taglibs.image.TextTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <attribute>
+      <name>x</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>y</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>text</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>font</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>size</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>color</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>bold</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>italic</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+</taglib>
+
+
+
+
+
+
+

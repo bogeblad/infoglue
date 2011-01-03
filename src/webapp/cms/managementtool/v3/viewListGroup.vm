@@ -1,0 +1,60 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+
+			#initDeleteLink()
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewGroupList.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewGroupList.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.common.action.label")</th>
+					<th>$ui.getString("entity.Group.groupName.label")</th>
+					<th>$ui.getString("entity.Group.displayName.label")</th>
+					<th>$ui.getString("entity.Group.description.label")</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach($group in $groups)
+					<tr>
+						<td><a class="deleteCross" title="$ui.getString("tool.common.delete.label") $group.name" href="DeleteGroup.action?groupName=$formatter.encodeBase64($group.name)&igSecurityCode=$securityCode">&nbsp;#*$ui.getString("tool.common.delete.label")*#</a></td>
+						<td>
+							<a class="group" href="ViewGroup.action?groupName=$formatter.encodeBase64($group.name)">$group.name</a>
+						</td>
+						<td>$group.displayName</td>
+						<td>$group.description</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+				
+	</div>
+		
+#endLightCommonToolV3()

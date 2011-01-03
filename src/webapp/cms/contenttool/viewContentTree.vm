@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Select folder to move to</title>
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<script type="text/javascript" language="JavaScript">
+	<!-- 
+
+	    function notifyIsLoaded()
+	    {
+	    }
+	    function notifyExp(v)
+	    {
+	    }
+
+		function htmlTreeItemClick(itemId, repoId)
+		{
+			// alert("itemClick " + itemId);
+		    document.inputForm.newParentContentId.value = itemId;
+		}
+	
+		function loadMainArea(contentId, repositoryId, path)
+		{
+		    document.inputForm.newParentContentId.value = contentId;
+		}
+	    
+	    function submitMove()
+		{
+			contentId = document.inputForm.contentId.value;
+		    newParentContentId = document.inputForm.newParentContentId.value;
+			changeTypeId = 3; //3 = Move...
+						
+			url = 'MoveContent.action?repositoryId=$!repositoryId&contentId=' + contentId + '&newParentContentId=' + newParentContentId + "&changeTypeId=" + changeTypeId;
+			
+			//alert(newParentContentId);    
+			if(newParentContentId != "")
+			{
+			    if (confirm('Are you sure you want to move the content to the folder you have just selected?'))
+				{
+					//alert('Calling:' + url);
+				    self.opener.parent.frames["main"].location.href = url;
+				    window.close();
+				    //document.inputForm.submit();
+				}
+			}
+		    else
+		    {
+				alert("You must select a target folder for the content.");
+			}
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="contenttool">
+
+<table class="contenttool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td valign="top" width="100%">
+		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td class="menu"><b>$ui.getString("tool.contenttool.moveContent.text")</b></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"></td>
+		</tr>
+		<tr>
+			<td class="menu">
+  
+  					#if($tree == "applet")
+	  					#showJavaTree("350" "500" "199" "209" "179" "Content" $repositoryId $hideLeafs)
+ 					#else
+						<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree.action?showLeafs=no&repositoryId=${repositoryId}" width="350" height="500" align="baseline"></IFRAME>
+					#end
+  
+ 
+			</td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="5"></td>
+		</tr>	
+		<tr>
+			<td><form name="inputForm" action="">
+				<input type="hidden" name="contentId" value="$contentId">
+				<input type="hidden" name="newParentContentId" value="">
+				<a href="javascript:submitMove();"><img src="$ui.getString("images.contenttool.buttons.save")" border="0"></a>
+				<a href="javascript:window.close();"><img src="$ui.getString("images.contenttool.buttons.cancel")" border="0"></a>
+				</form>
+			</td>
+		</tr>		
+		</table>
+	
+	</td>	
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+
+
+</body>
+</html>

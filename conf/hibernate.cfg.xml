@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration
+    PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-2.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">@database.driver.class@</property>
+		<property name="connection.url">@database.url@</property>
+		<property name="connection.username">@database.user@</property>
+		<property name="connection.password">@database.password@</property>
+
+		<property name="dialect">@hibernate.dialect@</property>
+		<property name="show_sql">@hibernate.show_sql@</property>
+		<property name="use_outer_join">true</property>
+
+		<!--
+		- Apache DBCP Connection Pool Config
+		- whenExhaustedAction for DBCP connection pool ( 0 = fail, 1 = block, 2 = grow)
+		-->
+		<property name="dbcp.whenExhaustedAction">2</property>
+		<property name="dbcp.maxActive">@database.maxConnections@</property>
+		<property name="dbcp.maxWait">120000</property>
+		<property name="dbcp.maxIdle">10</property>
+
+		<!-- prepared statement cache -->
+		<property name="dbcp.ps.whenExhaustedAction">1</property>
+		<property name="dbcp.ps.maxActive">@database.maxConnections@</property>
+		<property name="dbcp.ps.maxWait">120000</property>
+		<property name="dbcp.ps.maxIdle">100</property>
+
+		<!-- query to validate pooled connections -->
+		<property name="dbcp.validationQuery">@database.validationQuery@</property>
+
+		<!-- OS Workflow mappings -->
+		<mapping resource="com/opensymphony/workflow/spi/hibernate/HibernateCurrentStep.hbm.xml"/>
+		<mapping resource="com/opensymphony/workflow/spi/hibernate/HibernateHistoryStep.hbm.xml"/>
+		<mapping resource="com/opensymphony/workflow/spi/hibernate/HibernateWorkflowEntry.hbm.xml"/>
+
+		<!-- PropertySet mapping -->
+		<mapping resource="org/infoglue/cms/util/workflow/hibernate/InfogluePropertySetItemImpl.hbm.xml"/>
+
+	</session-factory>
+</hibernate-configuration>

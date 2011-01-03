@@ -1,0 +1,233 @@
+#define( $headerMarkup )
+
+	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
+	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!--
+		$(document).ready(function() {
+			#set($extraParameter = '"bSort": false, "aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+
+			$(".deleteCross").click(function () {
+				var linkAddress = $(this).attr("href");
+				$("#genericDialog").dialog('destroy');
+				$("#genericDialog").attr("title", $(this).attr("title"));
+				$("#genericDialog h3").html($(this).attr("title"));
+				$("#genericDialog").dialog({
+					resizable: false,
+					width: 500,
+					minHeight: 400,
+					modal: true,
+					overlay: {
+						backgroundColor: '#000',
+						opacity: 0.8
+					},
+					buttons: {
+						'$ui.getString("tool.common.delete.label")': function() {
+							#if(!$inline)
+							document.location.href = linkAddress;
+							#else
+							parent.document.location.href = linkAddress;
+							#end
+						},
+						'$ui.getString("tool.common.cancelButton.label")': function() {
+							$(this).dialog('close');
+						}
+					}
+				});
+				$(".ui-dialog-buttonpane button:first").addClass("ok"); 
+				$(".ui-dialog-buttonpane button:last").addClass("cancel");
+				$("#genericDialog").dialog('open');
+				return false;
+			});
+		});
+	
+		var dirty = false;
+		//-----------------------------------------------
+		// This function changes the languageversion to edit.
+		//-----------------------------------------------
+		
+		function changeLanguageByLink(contentId, languageId)
+		{
+			if (getDirty())
+			{
+				if (confirm('$ui.getString("tool.contenttool.languageVersionSelectWarning")'))
+				{
+					window.location.href="ViewContentVersion!V3.action?contentId=" + contentId + "&languageId=" + languageId;
+				}
+			}
+			else
+			{
+				window.location.href="ViewContentVersion!V3.action?contentId=" + contentId + "&languageId=" + languageId;
+			}
+		}
+		
+		function save()
+		{
+			document.editForm.submit();
+		}
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.contentHeader" "$!contentId" "contentId=$!contentId" false true $!disableCloseButton $headerMarkup true)
+
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<h3>$ui.getString("tool.contenttool.contentHeader") "$!name"</h3>
+	
+	<div style="clear: both;"></div>
+
+	<form method="POST" name="editForm" action="UpdateContent!v3.action">
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="isBranch" value="$!isBranch">
+		<input type="hidden" name="unrefreshedContentId" value="$!contentId">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<input type="hidden" name="changeTypeId" value="1">
+		
+		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+
+			<p>
+				#editTextFieldCSS("Content.name" "name" $formatter.escapeHTML($!name) "30" true false "longtextfield")
+			</p>
+			
+			#if(!$contentVO.contentTypeDefinitionId)
+				#if($isBranch && $this.onlyAllowFolderType)
+					#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
+						#if($defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
+							<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionVO.getContentTypeDefinitionId()"/>
+						#end
+					#end
+				#else
+					<p>
+						$ui.getString("tool.contenttool.newContent.contentType")<br/>
+						<select class="contenttypes" name="contentTypeDefinitionId">
+						##if($isBranch)<option value="">Not defined yet</option>#end
+						#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
+							#if($isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
+								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
+							#else
+								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()">$contentTypeDefinitionVO.getName()</option>
+							#end
+						#end
+						</select>
+					</p>
+				#end
+			#else
+			<p>
+				$ui.getString("tool.contenttool.contentTypeLabel") $contentTypeDefinition.getName()
+			</p>			
+			#end
+			
+			#if($enableDateTimeDirectEditing == "true")
+				#set($dateReadonly = "")
+			#else
+				#set($dateReadonly = "readonly")
+			#end
+			
+			<p>
+				#editDateField("Content.publishDateTime" "publishDateTime" $!publishDateTime "30" "date" "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")
+			</p>
+			<p>
+				#editDateField("Content.expireDateTime" "expireDateTime" $!expireDateTime "30" "date" "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")
+			</p>		
+		
+			<p>
+				$ui.getString("tool.contenttool.lastUpdatedByLabel") $contentVO.creatorName <br/>Content ID: $contentVO.id
+			</p>
+			
+			#if($contentTypeDefinition.name != "Meta info")
+			<p>
+				#set($isProtectedReadonly = "")
+				#set($protectedContentId = $!this.getProtectedContentId($contentId))
+				#set($isModifier = ($contentVO.creatorName == $infoGluePrincipal.name))
+				#if($protectedContentId && !$isModifier && !$this.hasAccessTo("Content.ChangeAccessRights", "$protectedContentId"))
+					#set($isProtectedReadonly = "disabled")
+					<input type="hidden" name="isProtected" value="$!isProtected"/> 
+				#end
+				$ui.getString("entity.Content.isProtected.label")<br>
+				<input type="radio" name="isProtected" value="0" #if($!isProtected == 0) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.no") 
+				<input type="radio" name="isProtected" value="1" #if($!isProtected == 1) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.yes")
+				<input type="radio" name="isProtected" value="2" #if($!isProtected == 2) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.inherit")
+			</p>		
+			#end
+			
+			<h4>$ui.getString("tool.contenttool.languageVersionsLabel")</h4>
+			
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.common.action.label")</th>
+						<th>$ui.getString("entity.Language.name.label")</th>
+						<th>$ui.getString("tool.contenttool.stateLabel")</th>
+						<th>$ui.getString("tool.contenttool.lastUpdatedLabel")</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					#foreach ($languageVO in $availableLanguages)
+						#if($languageVO.languageId == $masterLanguageId)
+						    #set($master = '<a name="tooltip" title="Master language for this repository">*</a>')
+						#else
+							#set($master = "")
+						#end		
+				
+						#set($contentVersionVO = false)
+						#set($contentVersionVO = $this.getLatestContentVersionVO($!contentId, $!languageVO.languageId))
+		
+						#if($contentVersionVO.stateId == 0)
+							#set($stateDescription = "$ui.getString('tool.contenttool.state.working')")
+						#elseif($contentVersionVO.stateId == 1)
+							#set($stateDescription = "$ui.getString('tool.contenttool.state.final')")
+						#elseif($contentVersionVO.stateId == 2)
+							#set($stateDescription = "$ui.getString('tool.contenttool.state.publish')")
+						#elseif($contentVersionVO.stateId == 3)
+							#set($stateDescription = "$ui.getString('tool.contenttool.state.published')")
+						#elseif($contentVersionVO.stateId == 4)
+							#set($stateDescription = "$ui.getString('tool.contenttool.state.markedForUnpublish')")
+						#elseif($contentVersionVO.stateId == 5)
+							#set($stateDescription = "$ui.getString('tool.contenttool.state.unpublished')")
+						#else
+							#set($stateDescription = "$ui.getString('tool.contenttool.state.notCreated')")
+						#end
+						<tr>
+							<td>
+								#if($contentVersionVO.stateId == 0)
+									<a class="deleteCross" title="$ui.getString("tool.common.delete.label") $languageVO.name" href="DeleteContentVersion.action?repositoryId=${repositoryId}&contentVersionId=${contentVersionVO.contentVersionId}&contentId=${contentId}">&nbsp;</a>
+								#end
+							<td>
+								#if(!$inline)
+								<a href="javascript:changeLanguageByLink($!contentId, $!languageVO.getLanguageId());">$languageVO.name</a> $master
+								#else
+								$languageVO.name $master
+								#end
+							</td>
+							<td>$stateDescription</td>
+							<td>
+								#if($contentVersionVO.id > 0)
+									<a name="tooltip" title="$formatter.escapeHTML("$!contentVersionVO.versionComment")">$contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd"))</a>
+								#end
+							</td>
+						</tr>
+					#end
+					
+				</tbody>
+			</table>
+				
+		</div>
+				
+	</form>
+	
+	#if(!$inline)
+		#lightFooterToolbar($footerButtons)
+	#end
+	
+#endLightCommonToolV3()

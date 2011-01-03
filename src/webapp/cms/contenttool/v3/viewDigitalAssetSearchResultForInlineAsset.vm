@@ -1,0 +1,170 @@
+#beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogHeader" "" "" false false $!disableCloseButton)
+
+	<script type="text/javascript">
+	<!--
+		var selectedAssetElement;
+		var contentId;
+		var assetKey;
+		var firstAssetKey;
+		var assetUrl;
+			
+		function markAsset(object, digitalAssetId, aContentId, anAssetKey, actualAssetKey, anAssetUrl)
+		{
+			if(selectedAssetElement)
+			{
+				selectedAssetElement.parentNode.style.border = "1px solid #d8d8d8";
+				selectedAssetElement.parentNode.style.background = "url(images/v3/imgbox_bg.gif) repeat";
+				selectedAssetElement.parentNode.style.backgroundImage = "url(images/v3/imgbox_bg.gif)";
+				selectedAssetElement.style.background = "url(images/v3/imgbox_bg.gif) repeat";
+				selectedAssetElement.style.backgroundImage = "url(images/v3/imgbox_bg.gif)";
+			}
+			
+			contentId = aContentId;	
+			if(actualAssetKey)
+				assetKey = actualAssetKey;
+			assetUrl = anAssetUrl;
+			
+			if(parent.assetMarked)
+				parent.assetMarked(contentId, assetKey, assetUrl);
+				
+			selectedAssetElement = document.getElementById(digitalAssetId);
+			if(selectedAssetElement)
+			{
+				selectedAssetElement.parentNode.style.border = "1px solid orange";
+				selectedAssetElement.parentNode.style.background = "url(images/v3/imgboxselected_bg.gif) repeat";
+				selectedAssetElement.parentNode.style.backgroundImage = "url(images/v3/imgboxselected_bg.gif)";
+				selectedAssetElement.style.background = "url(images/v3/imgboxselected_bg.gif) repeat";
+				selectedAssetElement.style.backgroundImage = "url(images/v3/imgboxselected_bg.gif)";
+			}
+		}
+	
+		function onOk()
+		{
+			if((!contentId || contentId == "" || contentId == "undefined") || (!assetKey || assetKey == "" || assetKey == "undefined"))
+				alert("$ui.getString("tool.contenttool.assetDialog.mustChooseAttachment")");
+			else
+			{
+				#if(!$treatAsLink)
+					parent.onOk(contentId, assetKey, assetUrl);
+				#else
+					parent.onOk(contentId, assetKey, assetUrl);
+				#end
+			}
+		}
+	
+		function onCancel() 
+		{
+		    parent.onCancel(null);
+			return false;
+		}	
+	
+		function deleteAsset(url, assetKey)
+		{
+			var returnAddress = document.location.href;  
+			if (confirm('$ui.getString("tool.contenttool.assetDialog.confirmAssetDeletionLabel") ' + assetKey))
+			{
+				window.location.href=url + "&returnAddress=" + escape(returnAddress);
+			}
+		}
+	
+		$(document).ready(function(){
+			#if($enableInlineButtons)setTimeout("resizeResizableDiv(95, 0)", 100);#end
+		});
+	
+	-->
+	</script>
+	<link rel="stylesheet" type="text/css" href="css/v3/assets.css" />
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+
+</head>
+
+<body class="generaltooledit">
+
+#set($advanced = false)
+#if(($name && $name != "") || $languageId || $contentTypeDefinitionId || $caseSensitive == 1 || $stateId || $advancedEnabled)
+	#set($advanced = true)
+#end
+
+<form method="POST" name="editForm" action="SearchContent!inlineAssetSearchV3.action">
+<input type="hidden" id="advancedEnabled" name="advancedEnabled" value="$advancedEnabled">
+<input type="hidden" id="assetTypeFilter" name="assetTypeFilter" value="$assetTypeFilter">
+<input type="hidden" name="repositoryId" value="$!repositoryId">
+#foreach($allowedContentTypeDefinitionId in $allowedContentTypeIds)
+<input type="hidden" name="allowedContentTypeIds" value="$allowedContentTypeDefinitionId">
+#end
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td colspan="7">	
+		<p>
+			#editTextField3($ui.getString("tool.contenttool.searchString.label") "tool.contenttool.searchString.label" "searchString" $searchString "30" "normaltextfield")
+		</p>
+	</td>
+	<td>
+		<p>
+			<input type="image" src="images/v3/searchButtonIcon.gif" title="Search" style="margin-left: 4px; margin-top: 12px;"/>
+		</p>
+	</td>
+</tr>
+</table>
+</form>
+
+#if($enableInlineButtons)<div id="assets" class="imgBoxContainer resizableDiv" style="height: 310px;">#end
+
+#set($counter = 0)
+#foreach($digitalAsset in $digitalAssetVOList)
+	#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
+	<div class="imgBox">
+    	<div class="imgBoxTop" id="$digitalAsset.id" #if($assetKey == "$digitalAsset.assetKey") style="background:url(images/v3/imgboxselected_bg.gif) repeat;" #else style="background:url(images/v3/imgbox_bg.gif) repeat;" #end>
+            <div id="imgBoxTopInner" class="imgBoxTopInner">
+            	<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
+				#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
+				#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
+				#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
+				#set($contentId = $this.getDigitalAssetContentId($digitalAsset.digitalAssetId))
+				#set($path = "$this.getContentPath($contentId)")
+				<img ondblclick="onOk();" onclick="markAsset(this, $digitalAsset.id, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');" src="$thumbnailImageUrl" alt="$digitalAsset.assetKey - $path - ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
+             	<p title="$digitalAsset.assetKey - $path - ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" class="assetKeyP"><a class="assetKeyHref" ondblclick="onOk();" href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');">#if($digitalAsset.assetKey.length() > 18)$digitalAsset.assetKey.substring(0,18)..#else$digitalAsset.assetKey#end</a></p>
+                #if($showSelectButtonByEachImage)<a href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');onOk();"><b>Add asset to selection</b></a>#end
+				#if($assetKey == $digitalAsset.assetKey)
+					<script type="text/javascript">
+					<!--
+						var firstAssetId = $digitalAsset.id;
+						var firstContentId = $contentId;
+					-->
+					</script>	
+				#else
+					#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+						<script type="text/javascript">
+						<!--
+							var firstAssetId = $digitalAsset.id;
+							var firstContentId = $contentId;
+						-->
+						</script>
+					#end
+				#end
+				#set($counter = $counter + 1)
+            </div>
+        </div>
+	  	<div class="imgBoxBottom">
+		</div>
+ 	</div>
+#end
+
+#if($counter == 0)
+<p>
+	$ui.getString("tool.contenttool.noAssetsOrNoContentSelectedLabel")
+</p>
+#end
+
+#if($enableInlineButtons)</div>#end
+
+#if($enableInlineButtons)
+<div style="display: block; float: left; width: 100%; height: 20px; margin-top: 6px; padding-top: 0px;"">
+
+	<a class='igButton' href="#" onclick="onOk();"><span class='igButtonOuterSpan'><span class='linkInsert'>$ui.getString("tool.contenttool.assetDialog.chooseAttachment")</span></span></a>
+
+</div>
+#end
+
+</body>
+</html>

@@ -1,0 +1,328 @@
+#beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogForMultipleBindingsHeader" "" "" false false $!disableCloseButton)
+
+<link rel="stylesheet" type="text/css" href="css/v3/assets.css" />
+<style type="text/css">
+.imgBox {
+	width:114px;
+	height:104px;
+	margin:0px 4px 4px 0;
+	}
+.imgBoxTop { 
+	height:90px; 
+	margin: 4px 4px 0px 4px;
+}
+.imgBoxTopInner { 
+	padding-top: 2px;
+}
+.imgBoxTopInner img { 
+	max-width: 100px;
+	max-height: 60px;
+}
+.imgBoxBottom { 
+	margin: 0px 6px 0px 6px;		
+}
+	
+</style>
+<script type="text/javascript" src="script/vector.js"></script>
+<script type="text/javascript">
+<!--
+	var siteNodesVector = new Vector(0);
+	
+	/**
+	 * AssetBinding object
+	 */
+
+	function AssetBinding(contentId, assetKey, assetUrl)
+	{
+		this.contentId 	= contentId;
+		this.assetKey   = assetKey;
+		this.assetUrl 	= assetUrl;
+	  
+	  	this.getContentId 	= getContentId;
+	  	this.setContentId 	= setContentId;
+	  	this.getAssetKey 	= getAssetKey;
+	  	this.setAssetKey 	= setAssetKey;
+	  	this.getAssetUrl 	= getAssetUrl;
+	  	this.setAssetUrl 	= setAssetUrl;
+	}
+
+	function getContentId()	{ return this.contentId; }
+	function setContentId(contentId) { this.contentId = contentId; }
+	function getAssetKey() { return this.assetKey; }
+	function setAssetKey(assetKey) { this.assetKey = assetKey; }
+	function getAssetUrl() { return this.assetUrl; }
+	function setAssetUrl(assetUrl) { this.assetUrl = assetUrl; }
+
+	
+	/**
+	 * This method draws the list of bindings.
+	 */
+	 
+	function drawList()
+	{
+		$("#selectedAssetsListMargin").empty();
+		
+		//var totalWidth = siteNodesVector.getSize() * 140;
+		 
+        for (var i=0; i<siteNodesVector.getSize(); i++)
+		{
+			var binding = siteNodesVector.getElementAt(i);
+
+			var shortAssetKey = binding.getAssetKey();
+			if(shortAssetKey.length > 14) 
+				shortAssetKey = shortAssetKey.substring(0,14);
+			
+			$("#selectedAssetsListMargin").append("<div class='imgBox' style='margin: 4px;'><div class='imgBoxTop' style='background:url(images/v3/imgbox_bg.gif) repeat;'><div id='imgBoxTopInner' class='imgBoxTopInner'><img src='" + binding.getAssetUrl() + "'/><p class='assetKeyP'>" + shortAssetKey + "</a></p><br/><img src='images/arrowleft.gif' style='border: 0px' onclick='moveBindingUp(" + i + ");'/> <img src='images/delete.gif' style='border: 0px' onclick='deleteBinding(" + i + ");'/> <img src='images/arrowright.gif' style='border: 0px' onclick='moveBindingDown(" + i + ");'/></div></div>");
+		}
+		/*		        
+		dragsort.makeListSortable(document.getElementById("currentBindings"), verticalOnly, changeOrder);
+		*/
+	}
+
+	/**
+	 * This method removes a binding from the vector.
+	 */
+	 
+	function deleteBinding(index)
+	{
+		siteNodesVector.removeElementAt(index);
+		drawList();
+	}
+	
+	/**
+	 * This method moves a binding 1 step up in the vector.
+	 */
+	 
+	function moveBindingUp(index)
+	{
+		if(index > 0)
+		{
+			var binding 		= siteNodesVector.getElementAt(index);
+			var previousBinding = siteNodesVector.getElementAt(index - 1);
+			
+			contentId 	= binding.getContentId();
+			assetKey 	= binding.getAssetKey();
+			assetUrl 	= binding.getAssetUrl();
+			
+			binding.setContentId(previousBinding.getContentId());
+			binding.setAssetKey(previousBinding.getAssetKey());
+			binding.setAssetUrl(previousBinding.getAssetUrl());
+		
+			previousBinding.setContentId(contentId);
+			previousBinding.setAssetKey(assetKey);
+			previousBinding.setAssetUrl(assetUrl);
+			
+			drawList();
+		}			
+	}
+
+	/**
+	 * This method moves a binding 1 step up in the vector.
+	 */
+	 
+	function moveBindingDown(index)
+	{
+		if(index < siteNodesVector.getSize() - 1)
+		{
+			var binding 		= siteNodesVector.getElementAt(index);
+			var previousBinding = siteNodesVector.getElementAt(index + 1);
+			
+			contentId 	= binding.getContentId();
+			assetKey 	= binding.getAssetKey();
+			assetUrl 	= binding.getAssetUrl();
+
+			binding.setContentId(previousBinding.getContentId());
+			binding.setAssetKey(previousBinding.getAssetKey());
+			binding.setAssetUrl(previousBinding.getAssetUrl());
+		
+			previousBinding.setContentId(contentId);
+			previousBinding.setAssetKey(assetKey);
+			previousBinding.setAssetUrl(assetUrl);
+		
+			drawList();
+		}
+	}
+	
+	function submitBinding()
+	{
+	    qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+		qualifyerXML += "<qualifyer>";
+		var path = "";
+		for (var i=0; i<siteNodesVector.getSize(); i++)
+		{
+			var binding = siteNodesVector.getElementAt(i);
+			if(i > 0) 
+				path = path + ", ";
+			//path 		= path + binding.getPath();
+			path 		= path + binding.getAssetKey();
+			contentId   = binding.getContentId();
+			assetKey   	= binding.getAssetKey();
+			qualifyerXML += "<Content assetKey='" + assetKey + "'>" + contentId + "</Content>";
+		}
+	   	qualifyerXML += "</qualifyer>";
+		
+		//alert(qualifyerXML);
+		
+		document.submitForm.path.value = path;
+	    document.submitForm.qualifyerXML.value = qualifyerXML;
+	    
+		if(self.opener)
+	    {
+			document.submitForm.target = self.opener.name;
+		    document.submitForm.submit();
+		    window.close();
+		}
+		else if(parent)
+		{
+			document.submitForm.target = parent.name;
+		    document.submitForm.submit();
+		    window.close();
+		}
+	}
+	
+
+	$(document).ready(function(){
+		window.resizeTo(968, 700);
+		$("#tabsContainer").tabs( { 
+			show:function() { resizeInlineTabDivsWithMinus(150, 0); },
+			select:function(e, ui) { 
+				//alert("ui: " + ui.index);
+				if(ui.index == 1)
+		  		{
+		  			if($("#latestAssetsFrame").attr("src") == "")
+		  			{
+			  			$("#latestAssetsFrame").attr("src", "SearchContent!latestInlineAssetsV3.action?repositoryId=$repositoryId&assetTypeFilter=$assetTypeFilter"); 
+					}	
+		  		}
+		  		else if(ui.index == 2)
+		  		{
+			  		if($("#contentVersionAssetSearchFrame").attr("src") == "")
+			  		{
+			  			$("#contentVersionAssetSearchFrame").attr("src", "SearchContent!inputInlineAssetV3.action?assetTypeFilter=$assetTypeFilter"); 
+					}	
+			  	}
+			  } 
+		});
+		
+		document.getElementById("repositoryBrowserFrame").src = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=$repositoryId&languageId=$languageId&assetTypeFilter=$assetTypeFilter";
+
+		#foreach($binding in $componentBindings)
+			#set($url = "$this.getDigitalAssetThumbnailUrl($converter.toNonNegativeInteger($binding.entityId), $languageId, $binding.assetKey, true, 100, 60, 'ffffff', 'center', 'middle', 100, 60, 75)")
+			
+			#if($url.indexOf("toNonNegativeInteger") > -1)
+				alert("Url: $url");
+				alert("binding.entityId: $binding.entityId");
+				alert("languageId: $languageId");
+				alert("binding.assetKey: $binding.assetKey");
+			#end
+			
+			binding = new AssetBinding("$binding.entityId", "$binding.assetKey", "$url");
+			siteNodesVector.addElement(binding);
+		#end
+
+		drawList();		
+
+		setTimeout("resizeInlineTabDivsWithMinus(150, 0)", 100);
+	});
+
+	function getRequestParameter(url, parameterName)
+	{
+		var value = "";
+		var valueIndex = url.indexOf(parameterName + "=");
+		if(valueIndex > -1)
+		{
+			var endIndex = url.indexOf("&", valueIndex);
+			if(endIndex != -1)
+				value = url.substring(valueIndex + parameterName.length + 1, endIndex);
+			else
+				value = url.substring(valueIndex + parameterName.length + 1);
+		}
+		return value;
+	}
+	
+	
+	function onOk(contentId, assetKey, assetUrl)
+	{
+		//alert("Adding contentId:" + contentId + " and assetKey:" + assetKey + " and assetUrl:" + assetUrl);
+		assetKey = assetKey.replace(/\+/g, " ");
+		//alert("assetKey:" + assetKey);
+		var decodedAssetKey = decodeURIComponent(assetKey);
+		//alert("decodedAssetKey:" + decodedAssetKey);
+		if(contentId == '' || contentId == '${select}' || assetKey == '')
+		{
+			alert("You must choose a content and a asset before you can save");
+		}
+		else
+		{
+			var binding = new AssetBinding(contentId, decodedAssetKey, assetUrl);
+			siteNodesVector.addElement(binding);
+			drawList();
+		}
+	}
+	
+	function save(form)
+	{
+		submitBinding();
+	}
+	
+-->
+</script>		
+</head>
+
+<body class="generaltooledit yui-skin-sam">
+
+<div onfocus="this.blur();">
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.contenttool.assetDialog.assetDialogHeader") - filtered on: "$assetTypeFilter"</h3>
+
+	<div id="tabsContainer" style="width: 100%; float: left;" class="flora">      
+
+		<ul>
+	        <li><a href="#repositoryBrowserTab"><span>$ui.getString("tool.contenttool.assetDialog.repositoryBrowserTabLabel")</span></a></li>	        
+	        <li><a href="#latestUploadedTab"><span>$ui.getString("tool.contenttool.assetDialog.latestAssetsTabLabel")</span></a></li>	        
+	        <li><a href="#searchTab"><span>$ui.getString("tool.contenttool.assetDialog.searchAssetsTabLabel")</span></a></li>	        
+	    </ul>
+
+		<div id="repositoryBrowserTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="repositoryBrowserFrame" id="repositoryBrowserFrame" src="" width="670" height="410" ></iframe>
+		</div>
+				
+		<div id="latestUploadedTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="latestAssetsFrame" id="latestAssetsFrame" src="" width="670" height="400" ></iframe>
+		</div>
+		
+		<div id="searchTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="contentVersionAssetSearchFrame" id="contentVersionAssetSearchFrame" src="" width="670" height="400" ></iframe>
+		</div>
+
+	</div>
+
+	<div style="clear: both;"></div>
+	
+	<div id="selectedAssetsListHeader" style="float: left; width: 100%; border-bottom: 1px solid #9caabd; height: 14px; padding-top: 2px; background-color: #ccc; font-size: 10px; font-family: verdana; font-weight: bold; text-indent: 16px; background-image:url(images/v3/tableHeaderBackground.gif); background-repeat:repeat-x;">$ui.getString("tool.contenttool.assetDialog.selectedAssets")</div>
+	<div id="selectedAssetsList" style="overflow: auto; width: 100%; border: 0px solid #ccc; float: left; height: 120px; background-color: white;">
+		<div id="selectedAssetsListMargin" style="float: left; margin-left: 14px; margin-right: 14px;">
+		</div>
+	</div>
+	
+	<form name="submitForm" method="POST" action="ViewSiteNodePageComponents!addComponentPropertyBindingWithQualifyer.action" TARGET="">
+		<input type="hidden" name="siteNodeId" value="$siteNodeId">
+		<input type="hidden" name="languageId" value="$languageId">
+		<input type="hidden" name="contentId" value="$contentId">
+		<input type="hidden" name="componentId" value="$componentId">
+		<input type="hidden" name="propertyName" value="$propertyName">
+		<input type="hidden" name="showSimple" value="$showSimple">
+		<input type="hidden" name="showDecorated" value="$!showDecorated">
+		<input type="hidden" name="path" value="">
+		<input type="hidden" name="qualifyerXML" value="">
+	</form>
+	
+	#lightFooterToolbar($footerButtons)
+
+</div>
+
+#endCommonToolV3()

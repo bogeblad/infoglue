@@ -1,0 +1,320 @@
+#define( $headerMarkup )
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css"/>
+	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css"/>
+	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
+	
+	<script type="text/javascript">
+	<!--
+
+		function next()
+		{
+			skipAndContinue();
+		}	
+
+		/**
+		 * This method submits the form and shows a uploading-dialog.
+		 */
+		 
+		function skipAndContinue()
+		{
+			document.editForm.inputMoreAssets.value = "false";
+			document.editForm.submit();
+		}
+
+		function submitForm()
+		{
+			var value = document.getElementById("tt").value;
+			var trimmed = value.replace(/^\s+|\s+$/g, '');
+			if(trimmed != "")
+			{
+				moveDiv("savingLayer", "20px", "20px");
+				resizeDiv("savingLayer", "350px", "150px");
+				showDiv("savingLayer");
+				document.editForm.submit();
+			}
+			else
+			{
+				alert("$ui.getString("tool.contenttool.fileUpload.assetKeyMissing")");
+			}
+		}
+
+		/**
+		 * This method submits the form and shows a uploading-dialog.
+		 */
+		 
+		function submitFormAndContinue(checkUpload, inputMoreAssetsValue)
+		{
+			var value = document.getElementById("tt").value;
+			var trimmed = value.replace(/^\s+|\s+$/g, '');
+			if(!checkUpload || trimmed != "")
+			{
+				moveDiv("savingLayer", "20px", "20px");
+				resizeDiv("savingLayer", "350px", "150px");
+				showDiv("savingLayer");
+				document.editForm.inputMoreAssets.value = inputMoreAssetsValue;
+				document.editForm.submit();
+			}
+			else
+			{
+				alert("$ui.getString("tool.contenttool.fileUpload.assetKeyMissing")");
+			}
+		}
+
+		$(document).ready(function(){
+				
+			$("#closeDialog").click(function(){
+				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+		   	});
+		
+			document.editForm.name.focus();
+			
+		});
+	-->
+	</script>
+	
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.contenttool.createContentWizardUploadDigitalAsset.title" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+
+	<form enctype="multipart/form-data" name="editForm" method="post" action="CreateContentWizardInputAssets.action">
+		<input type="hidden" name="contentVersionId" value="$!contentVersionId"/>
+		<input type="hidden" name="languageId" value="$!languageId"/>
+		<input type="hidden" name="uploadedFilesCounter" value="$!uploadedFilesCounter"/>
+		<input type="hidden" name="inputMoreAssets" value="true"/>
+		<input type="hidden" name="userSessionKey" value="$!userSessionKey"/>
+		<input type="hidden" name="returnAddress" value="$returnAddress"/>
+		<input type="hidden" name="disableCloseButton" value="$!disableCloseButton"/>
+	
+		<div id="igEditArea" class="igScrollArea">
+		
+			<h3>$ui.getString("tool.contenttool.createContentWizardUploadDigitalAsset.title")</h3>
+			
+			<table width="100%" style="margin-left: 16px;">
+				<tr>
+					<td class="biglabel">
+						#if($uploadedFilesCounter == 0)
+							$ui.getString("tool.contenttool.fileUpload.fileUploadHeader")
+						#else
+							$ui.getString("tool.contenttool.fileUpload.fileUploadedSoFarLabel"): $uploadedFilesCounter
+						#end
+						<span id="maxSize">(Max $formatter.formatFileSize($this.userUploadMaxSize))</span>
+					</td>
+				</tr>		
+				#if($inputMoreAssets == "true")
+				<tr>
+					<td class="smalllabel">
+						$ui.getString("tool.contenttool.createContentWizardUploadIntroduction.label")
+					</td>
+				</tr>
+				<tr>
+					<td>
+						$ui.getString("tool.contenttool.fileUpload.fileUploadKeyLabel")
+						<br/>
+						<div id="comboBox">
+							<table border="0" cellspacing="0" style="border-collapse: collapse;" bordercolor="#808080" id="cboBoxTable">
+						    <tr>
+						      <td width="10" style="border: solid 1px #000000;">
+						  		<input type="text" name="digitalAssetKey" id="tt" asize="20" onfocus="ddHide();" onChange="keyChanged();" style="width: 200px; border: 1px solid #FFFFFF;"></td>
+						      	<td onClick="ddClick();" style="border: solid 1px #000000;">
+						      	<img border="0" src="images/combodown.gif" width="15" height="20"></td>
+						    </tr>
+						  	</table>
+						  	<select size="5" name="dd" id="dd" style="border:0px solid #FFFFFF; width: 222px; height: 80px; visibility: hidden; z-index: 100; position: absolute;" onClick="ddListClick();">
+								#foreach($assetKeyDefinition in $definedAssetKeys)
+									<option style="width: 200px;" value="$assetKeyDefinition.assetKey">$assetKeyDefinition.assetKey</option>
+								#end
+						  	</select>  
+						  	<script type="text/javascript">
+						  	<!--	
+								var maxSize = "$formatter.formatFileSize($this.userUploadMaxSize)";
+						 		#foreach($assetKeyDefinition in $definedAssetKeys)
+						 			#if($velocityCount == 1)
+							 			maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+						 			#end
+						  		#end
+								document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
+						 	-->
+						  	</script>
+						  </div>
+					</td>
+				</tr>
+				#else
+				<tr>
+					<td class="smalllabel">									   
+						The current information type requires an asset called "$mandatoryAssetKey". Please upload it now.
+						<input type="hidden" name="digitalAssetKey" id="tt" value="$mandatoryAssetKey"></td>
+						<script type="text/javascript">
+					  	<!--	
+							var maxSize = "$formatter.formatFileSize($this.userUploadMaxSize)";
+							var mandatoryAssetMaximumSize = "$!formatter.formatFileSize($!mandatoryAssetMaximumSize)";
+							if(mandatoryAssetMaximumSize == "")
+								document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
+							else
+								document.getElementById("maxSize").innerHTML = "(Max " + mandatoryAssetMaximumSize + ")";
+					 	-->
+					  	</script>
+					</td>
+				</tr>
+				#end		
+				<tr>
+					<td>
+						$ui.getString("tool.contenttool.fileUpload.fileUploadFileLabel")<br/>
+						<input size="30" style="width: 200px;" type="FILE" name="file1" id="file1" onchange="setAssetKey();"><p>
+					</td>
+				</tr>		
+				<tr>
+					<td>
+						#if(!$mandatoryAssetKey || "$mandatoryAssetKey" == "")
+						<a href="javascript:submitForm();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
+						#end
+						#if($inputMoreAssets == "true")
+						<a href="javascript:submitFormAndContinue(false, 'false');"><img src="$ui.getString("images.contenttool.buttons.next")" border="0"></a>
+						#else
+						<a href="javascript:submitFormAndContinue(true, 'true');"><img src="$ui.getString("images.contenttool.buttons.next")" border="0"></a>
+						#end
+						<a href="javascript:skipAndCancel();"><img border="0" src="$ui.getString("images.contenttool.buttons.cancel")" width="50" height="25"></a>
+					</td>
+				</tr>
+			</table>
+			
+			#lightFooterToolbar($footerButtons)
+		
+		</div>
+		
+	</form>
+
+#endLightCommonToolV3()
+
+#*
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.contenttool.uploadDigitalAsset.header")</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	
+	<script language="JavaScript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+	
+	<script language="JavaScript">
+		<!--
+		
+
+		/**
+		 * This method submits the form and shows a uploading-dialog.
+		 */
+		 
+		function skipAndCancel()
+		{
+			document.editForm.action = "CreateContentWizardFinish!cancelV3.action";
+			document.editForm.submit();
+		}
+		
+		/**
+		 * This method closes the dialog and reloads the content version
+		 */
+		 
+		function reloadAndClose()
+		{
+			window.opener.parent.frames["main"].location.reload();
+			//document.editForm.submit();
+			window.close();
+		}
+			
+		function ddClick()
+		{
+			// Show / hide list
+			var list = document.getElementById("dd");
+			
+			if (list.style.visibility == "hidden")
+			{
+				list.style.visibility = "";
+			}
+			else
+			{
+				list.style.visibility = "hidden";
+			}
+		}
+		function ddListClick()
+		{
+			// Show / hide list
+			var tt = document.getElementById("tt");
+			var list = document.getElementById("dd");
+			var val = list.options[list.selectedIndex].value
+			tt.value=val;
+			list.style.visibility = "hidden";
+			//alert("New assetKey:" + val + ":" + assetSizeArray["" + val + ""]);
+			document.getElementById("maxSize").innerHTML = "(Max " + assetSizeArray["" + val + ""] + ")";
+		}
+		function ddHide()
+		{
+			var list = document.getElementById("dd");
+			list.style.visibility = "hidden";
+		}
+
+		function setAssetKey()
+		{
+			var assetKeyElement = document.getElementById("tt");
+			//alert("assetKeyElement:" + assetKeyElement.value);
+			if(assetKeyElement.value == '')
+			{
+				var fileName = document.getElementById("file1").value;
+				//alert("fileName:" + fileName);
+				var indexOfLastDot = fileName.lastIndexOf(".");
+				var indexOfLastSlash = fileName.lastIndexOf("/");
+				if(indexOfLastSlash == -1)
+					indexOfLastSlash = fileName.lastIndexOf("\\");
+				//alert("indexOfLastDot:" + indexOfLastDot);	
+				//alert("indexOfLastSlash:" + indexOfLastSlash);	
+				var assetKey = fileName.substring(indexOfLastSlash + 1, indexOfLastDot);
+				//alert("assetKey:" + assetKey);	
+				assetKeyElement.value = assetKey;
+			}
+		}
+
+		function keyChanged()
+		{
+			var tt = document.getElementById("tt");
+			var val = tt.value;
+			var userMaxSize = "$formatter.formatFileSize($this.userUploadMaxSize)";
+			var keySize = "" + assetSizeArray["" + val + ""];
+			//alert("userMaxSize: " + userMaxSize + ":" + keySize);
+			if(keySize != 'undefined')
+				document.getElementById("maxSize").innerHTML = "(Max " + keySize + ")";
+			else
+				document.getElementById("maxSize").innerHTML = "(Max " + userMaxSize + ")";			
+		}
+		
+		var assetSizeArray = new Array();
+		#foreach($assetKeyDefinition in $definedAssetKeys)
+			assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
+		#end
+		-->
+	</script>
+	
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+</head>
+
+<body class="contenttooledit">
+
+</div>
+
+</body>
+</html>
+*#

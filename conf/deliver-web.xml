@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" 
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+                  version="2.4"> 
+-->
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+
+	<!-- This filter clears any cache waiting to be cleared -->
+	<filter>
+	    <filter-name>CacheEvictionFilter</filter-name>
+	    <filter-class>org.infoglue.deliver.applications.filters.CacheEvictionFilter</filter-class>
+		<init-param>
+            <param-name>FilterURIs</param-name>
+            <param-value>
+                /UpdateCache.action,
+                /UpdateCache!test.action,
+				/ViewApplicationState.action,
+				/ViewLogging.action,
+                /ErrorPage.action,
+                /applications/FCKEditor/*,
+                /applications/jscalendar/*,
+                /digitalAssets/*,
+                /scripts/*,
+                /script/*,
+                /css/*,
+                /images/*,
+                /img/*,
+                /jsp/*,
+                *.gif,
+                *.jpg,
+                *.png,
+                *.ico,
+                *.css,
+                *.js
+            </param-value>
+        </init-param>
+    </filter>
+	
+	<!-- added by portal in order to wrap the request -->
+	<filter>
+	    <filter-name>PortalFilter</filter-name>
+	    <filter-class>org.infoglue.deliver.applications.filters.PortalParameterFilter</filter-class>
+    	<init-param>
+            <param-name>FilterURIs</param-name>
+            <param-value>
+                /applications/FCKEditor/*,
+                /applications/jscalendar/*,
+                /digitalAssets/*,
+                /scripts/*,
+                /script/*,
+                /css/*,
+                /images/*,
+                /jsp/*,
+        		/robots.txt,
+                *.gif,
+                *.jpg,
+                *.png,
+                *.ico,
+                *.css,
+                *.js
+            </param-value>
+        </init-param>
+    </filter>
+
+	<filter>
+		<filter-name>Set Character Encoding</filter-name>
+		<filter-class>org.infoglue.cms.util.SetCharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<!--<param-value>UTF-8</param-value>-->
+			<!--<param-value>ISO-8859-1</param-value>-->
+			<param-value>@deliverInputCharacterEncoding@</param-value>
+		</init-param>
+	</filter> 
+
+	<filter>
+        <filter-name>ViewPageFilter</filter-name>
+        <filter-class>org.infoglue.deliver.applications.filters.ViewPageFilter</filter-class>
+        <init-param>
+            <param-name>RepositoryName</param-name>
+            <param-value>localhost</param-value>
+        </init-param>
+        <init-param>
+            <param-name>FilterURIs</param-name>
+            <param-value>
+                *.action,
+                /applications/FCKEditor/*,
+                /applications/jscalendar/*,
+                /digitalAssets/*,
+                /scripts/*,
+                /script/*,
+                /css/*,
+                /images/*,
+                /jsp/*,
+        		/robots.txt,
+                *.gif,
+                *.jpg,
+                *.png,
+                *.ico,
+                *.css,
+                *.js
+		    </param-value>
+        </init-param>
+        <!--
+        <init-param>
+            <param-name>AttributeName</param-name>
+            <param-value>NavigationTitle</param-value>
+            <param-value>NiceURIName</param-value>
+            <param-value>SiteNode.name</param-value>
+        </init-param>
+        -->
+    </filter>
+
+	<filter>
+        <filter-name>RedirectFilter</filter-name>
+        <filter-class>org.infoglue.deliver.applications.filters.RedirectFilter</filter-class>
+        <init-param>
+            <param-name>FilterURIs</param-name>
+            <param-value>
+                *.action,
+                /applications/FCKEditor/*,
+                /applications/jscalendar/*,
+                /digitalAssets/*,
+                /scripts/*,
+                /script/*,
+                /css/*,
+                /images/*,
+                /jsp/*,
+           		/robots.txt,
+                *.gif,
+                *.jpg,
+                *.png,
+                *.ico,
+                *.css,
+                *.js
+            </param-value>
+        </init-param>
+    </filter>
+
+	<filter-mapping>
+		<filter-name>CacheEvictionFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>Set Character Encoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+    <filter-mapping>
+        <filter-name>PortalFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping> 
+
+    <filter-mapping>
+        <filter-name>ViewPageFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping> 
+
+    <filter-mapping>
+        <filter-name>RedirectFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping> 
+
+	<listener>
+		<listener-class>org.infoglue.deliver.util.DeliverContextListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.infoglue.cms.util.CmsSessionContextListener</listener-class>
+	</listener>
+
+	<!-- Start Quarz -->
+	<servlet>
+		<servlet-name>QuartzInitializer</servlet-name>
+		<display-name>Quartz Initializer Servlet</display-name>
+		<servlet-class>org.infoglue.deliver.jobs.QuartzInitializerServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- Start WebWork -->
+	<servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>@actionDispatcher@</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+	<servlet>
+		<servlet-name>velocity</servlet-name>
+		<servlet-class>org.infoglue.cms.applications.common.actions.VelocityServlet</servlet-class>
+		<init-param>
+			<param-name>packageNames</param-name>
+			<param-value>org.infoglue.cms.applications,org.infoglue.cms.entities</param-value>
+		</init-param>
+		<load-on-startup/>
+	</servlet>
+	<servlet>
+		<servlet-name>xslt</servlet-name>
+		<servlet-class>webwork.view.xslt.XSLTServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>dispatch</servlet-name>
+		<servlet-class>webwork.dispatcher.ClientServletDispatcher</servlet-class>
+	</servlet>
+		
+	<!-- ************************************* -->
+	<!-- This part is for webworks / velocity  -->
+	<!-- ************************************* -->
+ 
+	<servlet-mapping>
+		<servlet-name>action</servlet-name>
+		<url-pattern>*.action</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>velocity</servlet-name>
+		<url-pattern>*.vm</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>xslt</servlet-name>
+		<url-pattern>*.xslt</url-pattern>
+	</servlet-mapping>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>General Protected Area</web-resource-name>
+            <url-pattern>/jsp/protected/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>extranetUser</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+	<login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>infoglue-security-domain</realm-name>
+    </login-config>
+<!--
+	<login-config>
+      	<auth-method>FORM</auth-method>
+      	<realm-name>cds-security-domain</realm-name>
+      	<form-login-config>
+        	<form-login-page>/jsp/protected/login.jsp</form-login-page>
+        	<form-error-page>/jsp/protected/error.jsp</form-error-page>
+      	</form-login-config>
+    </login-config>
+-->
+	<security-role>
+        <description>Security role we are testing for</description>
+        <role-name>extranetUser</role-name>
+    </security-role>
+
+	<welcome-file-list>
+		<welcome-file>index-deliver.html</welcome-file>
+	</welcome-file-list>
+
+	<error-page>
+		<error-code>400</error-code>
+		<location>/ErrorPage.action?responseCode=400</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/jsp/protected/unauthorized.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/ErrorPage.action?responseCode=404</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/ErrorPage.action?responseCode=500</location>
+	</error-page>
+	<error-page>
+		<error-code>501</error-code>
+		<location>/ErrorPage.action?responseCode=501</location>
+	</error-page>
+	
+	<taglib>
+		<taglib-uri>webwork</taglib-uri>
+		<taglib-location>/WEB-INF/lib/webwork.jar</taglib-location>
+	</taglib>
+	
+	<taglib>
+	  <taglib-uri>http://jakarta.apache.org/taglibs/mailer-1.1</taglib-uri>
+	  <taglib-location>/WEB-INF/tld/taglibs-mailer.tld</taglib-location>
+	</taglib>
+	<taglib>
+	  <taglib-uri>domino</taglib-uri>
+	  <taglib-location>/WEB-INF/tld/domtags.tld</taglib-location>
+	</taglib>
+	
+	<taglib>
+		<taglib-uri>infoglue-common</taglib-uri>
+		<taglib-location>/WEB-INF/tld/infoglue-common.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>infoglue-content</taglib-uri>
+		<taglib-location>/WEB-INF/tld/infoglue-content.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>infoglue-structure</taglib-uri>
+		<taglib-location>/WEB-INF/tld/infoglue-structure.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>infoglue-management</taglib-uri>
+		<taglib-location>/WEB-INF/tld/infoglue-management.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>infoglue-page</taglib-uri>
+		<taglib-location>/WEB-INF/tld/infoglue-page.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>infoglue-workflow</taglib-uri>
+		<taglib-location>/WEB-INF/tld/infoglue-workflow.tld</taglib-location>
+	</taglib>
+</web-app>

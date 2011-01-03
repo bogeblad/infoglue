@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewAvailableServiceBinding.header" "tool.managementtool.viewAvailableServiceBinding.header" "availableServiceBindingId=$availableServiceBindingId")
+
+<div class="fullymarginalized">
+
+	<form method="post" name="editForm" action="UpdateAvailableServiceBinding.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="availableServiceBindingId" value="$!availableServiceBindingId">
+		<p>#editField("AvailableServiceBinding.name" "name" $!name "51")</p>
+		<p>#editField("AvailableServiceBinding.description" "description" $!description "51")</p>
+		<p>#editField("AvailableServiceBinding.visualizationAction" "visualizationAction" $!visualizationAction "51")</p>
+		<p>#yesNoDropDown("AvailableServiceBinding.isMandatory" "isMandatory" $isMandatory)</p>
+		<p>#yesNoDropDown("AvailableServiceBinding.isUserEditable" "isUserEditable" $isUserEditable)</p>
+		<p>#yesNoDropDown("AvailableServiceBinding.isInheritable" "isInheritable" $isInheritable)</p>
+		<h4>Right now the AvailableServiceBinding contains the marked ServiceDefinitions</h4>
+	
+		#foreach ($serviceDefinitionVO in $allServiceDefinitions)
+		<p>
+			#set($checked = "")
+			#foreach ($availableServiceDefinitionVO in $availableServiceDefinitions)
+				#if($availableServiceDefinitionVO.getServiceDefinitionId() == $serviceDefinitionVO.getServiceDefinitionId())
+					#set($checked = "checked")
+				#end 
+			#end
+			<input type="checkbox" name="serviceDefinitionId" value="$serviceDefinitionVO.getServiceDefinitionId()" $checked>$serviceDefinitionVO.getName()<br/>
+		</p>
+		#end
+	</form>
+	
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")" onclick="saveAndExit(document.editForm, 'UpdateAvailableServiceBinding!saveAndExit.action');"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListAvailableServiceBinding.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

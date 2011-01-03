@@ -1,0 +1,81 @@
+#define( $headerMarkup )
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+
+	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/adminEmbla.css" />
+
+	<script type="text/javascript" src="script/embla/admin.js"></script>
+	<script type="text/javascript">
+	
+		function openUrlInWorkArea(url)
+		{
+			//alert("url:" + url);
+			document.getElementById("workIframe").src = url;
+		}
+	
+		function submitToCreate()
+		{
+			document.getElementById("workIframe").contentWindow.submitToCreate();
+		}
+		
+		function submitToUnpublish()
+		{
+			document.getElementById("workIframe").contentWindow.submitToUnpublish();
+		}
+		
+		function submitToDeny()
+		{
+			document.getElementById("workIframe").contentWindow.submitToDeny();
+		}
+		
+		function submitToPreview()
+		{
+			document.getElementById("workIframe").contentWindow.submitToPreview();
+		}
+		
+		function resize()
+		{
+			var windowHeight = getWindowHeight();
+			//alert($("#menutoolbar").height());
+			$("#toolsColumn").height(windowHeight - $("#menutoolbar").height() - 1);
+			$("#treeIframe").height($("#toolsColumn").height() - $("#repositoryChoiceDiv").height() - $("#paletteDiv").height());
+			$("#work").width((document.body.clientWidth - ($("#toolsColumn").width() + 7))).height($("#toolsColumn").height());
+			$("#workIframe").width((document.body.clientWidth - ($("#toolsColumn").width() + 7))).height($("#toolsColumn").height());
+		}
+		
+		$(function() {
+			resize();
+   			
+	   		window.onresize = function() {
+				resize();
+   			}
+
+			openUrlInWorkArea("ViewPublishingToolStartPage!V3.action");
+		});
+		
+	</script>
+#end
+ 
+#beginLightCommonToolV3Impl("tool.common.adminTool.header" "" "" false true true $headerMarkup)
+
+<div style="float: left; width: 100%; height: 100%; overflow: hidden;">
+	<div id="menutoolbar" class="$toolbarVariant">
+		<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		</div>
+	</div>
+	<div style="clear: both"></div>
+	
+	<div id="toolsColumn">
+
+		<iframe id="treeIframe" class="repositoryListFrame" name="treeIframe" src="ViewPublishingToolMenu.action" width="100%" height="500" frameborder="0" allowtransparency="true"></iframe>
+	
+	</div>
+
+	<div id="work" style="float: left; width: 80%; height: 100%;">
+		<iframe id="workIframe" name="workIframe" src="" width="100%" height="100%" frameborder="0" allowtransparency="true"></iframe>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+#beginLightCommonToolV3("tool.managementtool.createEmailComposeEmail.title" "" "" false true $!disableCloseButton)
+
+<script type="text/javascript">
+<!--
+	function submitForm()
+	{
+		document.editForm.submit();
+	}
+//-->
+</script>
+
+<div onfocus="this.blur();">
+    
+	#lightMenuToolbar("" $buttons $rightButtons)
+
+	<form name="editForm" method="POST" action="CreateEmail!executeV3.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="recipients" value="$usersAddresses"/>
+		<input type="hidden" name="extraText" value="$!extraText"/>
+		<input type="hidden" name="extraTextProperty" value="$!extraTextProperty"/>
+		<input type="hidden" name="returnAddress" value="$!returnAddress"/>
+		<input type="hidden" name="originalUrl" value="$!originalUrl"/>
+		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
+		<input type="hidden" name="disableCloseButton" value="$!disableCloseButton"/>
+		 
+		<div style="clear: both;"></div>
+		
+		<h3 style="text-indent: 16px;">
+			$ui.getString("tool.managementtool.createEmailComposeEmail.title")
+			#if($errorMessage && $errorMessage != "")<span style="color:red">$errorMessage</span>#end
+		</h3>
+	
+		<div class="inlineTabDiv" onfocus="this.blur();">	
+	
+			$ui.getString("tool.managementtool.from.label"):<br/>
+		  	<input type="textfield" id="from" name="from" class="longtextfield" value="$infoGluePrincipal.email"/><br/>
+		  	$ui.getString("tool.managementtool.subject.label"):<br/>
+		  	<input type="textfield" id="subject" name="subject" class="longtextfield"/><br/>
+			$ui.getString("tool.managementtool.yourMessage.label"):<br/>
+			<textarea name="message" class="normaltextarea"></textarea><br/>
+	
+		</div>
+			
+  	</form>
+	
+	#lightFooterToolbar($footerButtons)
+		
+</div>
+
+#endCommonToolV3()

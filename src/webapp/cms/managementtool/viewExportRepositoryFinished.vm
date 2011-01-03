@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  
+#beginManagementTool("tool.managementtool.exportRepository.header" "tool.managementtool.exportRepository.header" "")
+
+<div class="fullymarginalized">
+
+	<h3>$ui.getString("tool.managementtool.exportRepository.headerFinished")</h3>
+	<p>
+		$ui.getString("tool.managementtool.exportRepository.finishedText")
+	</p>
+	<p>
+		<a href="$fileUrl">$fileName</a>	
+	</p>
+
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="close" value="$ui.getString("tool.common.closeWindowButton.label")" onclick="window.close();"/>
+	</div>
+</div>
+
+</body>
+</html>

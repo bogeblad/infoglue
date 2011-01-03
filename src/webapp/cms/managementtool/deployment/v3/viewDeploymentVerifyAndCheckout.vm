@@ -1,0 +1,277 @@
+#define( $headerMarkup )
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" media="all" />
+	
+	<style type="text/css">
+	<!--
+		ins 
+		{
+		  background-color: #99FF99;
+		}
+		
+		del
+		{
+		  background-color: #FF8888;
+		}
+		
+		input
+		{
+			background: white;
+			border: 1px solid #cccccc;
+			font-family: Verdana, Arial, San serif;
+			font-size: 8pt;
+		}
+	
+		table td {
+			line-height: 22px;
+		}
+		
+		tr.whiteRow
+		{
+			background-color : #FFFFFF;
+		}
+		tr.whiteRow td
+		{
+			border-bottom: 1px solid #ccc;
+		}
+	
+		tr.lightBlueRow
+		{
+			background-color : #E3ECF8;
+			border-bottom: 1px solid #ccc;
+		}
+	
+		tr.lightBlueRow td
+		{
+			border-bottom: 1px solid #ccc;
+		}
+		
+		#TB_ajaxContent {
+			padding: 6px;
+			background-color: #CCEEFF; 
+		}
+	-->
+	</style>
+	
+	<script type="text/javascript" src="script/diff_match_patch.js"></script>
+	<script type="text/javascript">
+	<!--
+		var dmp = new diff_match_patch();
+	
+		function calculateDiffSummary(compId)
+		{
+		  	var element = document.getElementById("summaryDiv" + compId);
+		  	var diffDivElement = document.getElementById("diffDiv" + compId);
+			
+		  	var text1 = document.getElementById("text1" + compId).value;
+		  	var text2 = document.getElementById("text2" + compId).value;
+		  			
+		  	dmp.Diff_Timeout = parseFloat(3);
+		  	dmp.Diff_EditCost = parseFloat(4);
+		
+		  	var ms_start = (new Date()).getTime();
+		  	var d = dmp.diff_main(text1,text2);
+		  	var ms_end = (new Date()).getTime();
+		
+		  	dmp.diff_cleanupSemantic(d);
+		  	
+		  	var diffConclusionArray = countChanges(d);
+	
+			var ds = dmp.diff_prettyHtml(d);
+			ds = ds.replace(/<article/g, "<br/><article");
+			ds = ds.replace(/&lt;article/g, "<br/>&lt;article");
+			ds = ds.replace(/&lt;attributes&gt;/g, "<br/>&lt;attributes&gt;<br/>");
+			ds = ds.replace(/]]&gt;/g, "<br/>]]&gt;<br/>");
+			ds = ds.replace(/CDATA\[/g, "CDATA[<br/>").replace(/&para;<BR>/g, "&nbsp;<br/>").replace(/#E6FFE6/g, "#99FF99").replace(/#FFE6E6/g, "#FF8888").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+
+			diffDivElement.innerHTML = "<p style='background-color: #CCEEff; margin: 0px; padding: 0px; font-family: courier new, courier, serif; font-size: 8pt;'>" + ds + "</p>";
+		  	
+			element.innerHTML = "<ins>" + diffConclusionArray[0] + " $ui.getString("tool.managementtool.deploymentQuick.additionsLabel")</ins>, <del>" + diffConclusionArray[1] + " $ui.getString("tool.managementtool.deploymentQuick.removalsLabel")</del>";
+		} 
+				
+		function countChanges(a)
+		{
+			var diffConclusionArray = [0,0];
+			for ( var x = 0; x < a.length; x++) 
+			{
+				var c = a[x][0];
+				switch (c) 
+				{
+					case DIFF_INSERT:
+						diffConclusionArray[0] = diffConclusionArray[0] + 1;
+						break;
+					case DIFF_DELETE:
+						diffConclusionArray[1] = diffConclusionArray[1] + 1;
+						break;
+				}
+			}
+			return diffConclusionArray;
+		}
+	
+		function check(id)
+		{
+			document.getElementById(id).checked = true;
+		}
+	
+		function submitForm()
+		{
+			var boxes = $('input[type=checkbox]'); 
+			if(boxes.filter(':checked').length < 1)
+				alert("$ui.getString("tool.managementtool.deploymentQuick.mustMarkAtLeastOneLabel")");
+			else
+				document.editForm.submit();
+		}
+		
+		$(document).ready(function(){
+		
+			#foreach($deviatingContent in $deviatingContents)
+				#if($deviatingContent.remoteVersion && $deviatingContent.localVersion)
+					#set($remoteVersions = $!converter.getListFromArray($!deviatingContent.remoteVersion.versions))
+					#set($localVersions = $!converter.getListFromArray($!deviatingContent.localVersion.versions))
+					
+					#if($remoteVersions.size() > 0)
+						#set($value1Clean = "$!remoteVersions.get(0)")
+					#else
+						#set($value1Clean = "")
+					#end
+					
+					#if($localVersions.size() > 0)
+						#set($value2Clean = "$!localVersions.get(0)")
+					#else
+						#set($value2Clean = "")
+					#end
+					
+					#set($oneLineValue1Clean = $value1Clean.replaceAll("(\n|\r)", ""))
+					#set($oneLineValue2Clean = $value2Clean.replaceAll("(\n|\r)", ""))
+					
+					#if("$oneLineValue1Clean" != "$oneLineValue2Clean")
+						calculateDiffSummary($deviatingContent.localVersion.id);					
+					#end
+				#end	
+			#end
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.deploymentQuick.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+
+	<form name="editForm" action="ViewVCDeployment.action" method="post">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="tagName" value="$tagName"/>
+		
+		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+
+			<h3>$ui.getString("tool.managementtool.deployment.chooseEntitiesHeader") 
+				#if($errorMessage && $errorMessage != "")
+					<span style="color:red">$errorMessage</span><br/>
+				#end
+			</h3>
+	
+			<p>$ui.getString("tool.managementtool.deployment.chooseEntitiesIntroduction")</p>
+	
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			
+			#set($indexMissingContents = 0)
+			#set( $rowCount = 0)
+
+			#foreach($deviatingContent in $deviatingContents)
+				#set( $isOdd = $rowCount % 2)
+				#if($isOdd==0)
+					#set($class = "class='whiteRow'")
+				#else
+					#set($class = "class='lightBlueRow'")
+				#end
+				
+				#if(!$deviatingContent.remoteVersion)
+				  <tr $class>
+					<td style="padding-left: 16px" colspan="3">
+						<input type="checkbox" id="missingContentId" name="missingContentId" value="$deviatingContent.localVersion.id"/> 
+						Missing remote version of $deviatingContent.localVersion.name <br/> ($deviatingContent.localVersion.fullPath)
+					<td width="20">&nbsp;</td>
+				  </tr>
+	 			  #set( $rowCount = $rowCount + 1)
+				#elseif(!$deviatingContent.localVersion)
+				  <tr $class>
+					<td style="padding-left: 16px" colspan="3">
+						<input type="checkbox" id="missingRemoteContentPath" name="missingRemoteContentPath" value="$deviatingContent.remoteVersion.fullPath"/> 
+						Missing local version of $deviatingContent.remoteVersion.name <br/> ($deviatingContent.remoteVersion.fullPath)
+					<td width="20">&nbsp;</td>
+				  </tr>
+	 			  #set( $rowCount = $rowCount + 1)
+				#else
+					#set($remoteVersions = $!converter.getListFromArray($!deviatingContent.remoteVersion.versions))
+					#set($localVersions = $!converter.getListFromArray($!deviatingContent.localVersion.versions))
+					
+					#if($remoteVersions.size() > 0)
+						#set($value1Clean = "$!remoteVersions.get(0)")
+					#else
+						#set($value1Clean = "")
+					#end
+					
+					#if($localVersions.size() > 0)
+						#set($value2Clean = "$!localVersions.get(0)")
+					#else
+						#set($value2Clean = "")
+					#end
+					
+					#set($oneLineValue1Clean = $value1Clean.replaceAll("(\n|\r)", ""))
+					#set($oneLineValue2Clean = $value2Clean.replaceAll("(\n|\r)", ""))
+					
+					#if("$oneLineValue1Clean" != "$oneLineValue2Clean")
+				      <tr $class>
+						<td style="padding-left: 16px">
+							<input type="hidden" name="deviatingRemoteVersionId_${deviatingContent.localVersion.id}" value="$deviatingContent.remoteVersion.fullPath"/>
+							<input type="checkbox" id="deviatingContentId" name="deviatingContentId" value="$deviatingContent.localVersion.id"/> 
+							$deviatingContent.localVersion.name
+						</td>
+						<td>
+							<div style="width: 300px; display: inline;" id="summaryDiv${deviatingContent.localVersion.id}"></div>
+						</td>
+						<td style="padding-right: 16px" width="20">
+							<a href="#" title="$ui.getString("tool.managementtool.deploymentQuick.compareLabel")" onclick="openInlineDiv('#TB_inline?inlineId=diffDiv${deviatingContent.localVersion.id}', 768, 980, false, false, '$ui.getString("tool.managementtool.deploymentQuick.diffViewHeaderLabel")');"><img src="images/diff.gif" alt="$ui.getString("tool.managementtool.deploymentQuick.compareLabel")" border="0"/></a>
+
+							<textarea style="display: none;" id="text1$deviatingContent.localVersion.id">$value1Clean</textarea>
+							<textarea style="display: none;" id="text2$deviatingContent.localVersion.id">$value2Clean</textarea>
+							<div id='diffDiv$deviatingContent.localVersion.id' style='display:none;'></div>
+						</td>
+					  </tr>
+	 				  #set($rowCount = $rowCount + 1)
+					#else
+				      <tr $class>
+						<td style="padding-left: 16px">
+							$deviatingContent.localVersion.name	
+						</td>
+						<td>
+							$ui.getString("tool.managementtool.deploymentQuick.localRemoteMatchLabel")
+						</td>
+						<td style="padding-right: 16px" width="20">
+							&nbsp;
+						</td>
+					  </tr>
+					#end
+				#end	
+				
+				#set($indexMissingContents = $indexMissingContents + 1)
+			#end
+			#if($deviatingContents.size() == 0)
+				<tr><td colspan="3">$ui.getString("tool.managementtool.deploymentQuick.noMissingComponentsLabel")</td></tr>
+			#end
+			</table>
+
+		</div>
+
+		#lightFooterToolbar($footerButtons)
+		
+	</form>
+
+
+#endLightCommonToolV3()

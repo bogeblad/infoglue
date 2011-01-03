@@ -1,0 +1,58 @@
+#define( $headerMarkup )
+	
+	<script type="text/javascript">
+	<!--
+		function submitForm()
+		{
+			document.editForm.submit();
+		}
+
+		$(document).ready(function(){
+				
+			$("#closeDialog").click(function(){
+				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+		   	});
+		
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.managementtool.deploymentVC.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<form name="editForm" method="post" action="ViewVCDeployment!inputChooseTag.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		
+		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<h3>$ui.getString("tool.managementtool.deploymentVC.header")</h3>
+
+		<p>$ui.getString("tool.managementtool.deploymentVC.chooseVCSystemIntroduction")</p>	
+		
+		#fieldErrorMessage("vcCommunication" false)
+		 
+		<p>
+			<label for="vcServerName">$ui.getString("tool.managementtool.deploymentVC.vcServerLabel")</label>
+			<select name="vcServerName" id="vcServerName">
+				#foreach($vcServer in $vcServers)
+				<option value="$vcServer.name">$vcServer.name</option>
+				#end
+			</select>
+		</p>
+		<p>
+			<label for="vcPassword">$ui.getString("tool.managementtool.deploymentVC.vcServerPassword")</label>
+			<input type="password" name="vcPassword" id="vcPassword"/>
+		</p>
+		
+		#lightFooterToolbar($footerButtons)
+		
+	</form>
+
+#endLightCommonToolV3()

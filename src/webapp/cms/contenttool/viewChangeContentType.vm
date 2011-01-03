@@ -1,0 +1,47 @@
+#define($extraMarkup)
+	<script type="text/javascript">
+	<!--
+		function save()
+		{
+			document.editForm.submit();
+		}
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.changeContentType.header" "" "" false true false $extraMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons)
+
+	<div style="clear: both;" onfocus="this.blur();"></div>
+
+	<h3>$ui.getString("tool.contenttool.changeContentType.header")</h3>
+ 	<p>$ui.getString("tool.contenttool.changeContentType.text")</p>
+
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	
+		<form method="post" name="editForm" action="UpdateContent!changeContentType.action">
+			<p>
+				$ui.getString("tool.contenttool.newContent.contentType")<br/>
+				<select class="contenttypes" name="newContentTypeDefinitionId">
+				#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
+					#if($contentVO.isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
+						<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
+					#else
+						<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()">$contentTypeDefinitionVO.getName()</option>
+					#end
+				#end
+				</select>
+			</p>
+			<input type="hidden" name="contentId" value="$!contentId">
+			<input type="hidden" name="isBranch" value="$!isBranch">
+			<input type="hidden" name="unrefreshedContentId" value="$!contentId">
+			<input type="hidden" name="repositoryId" value="$!repositoryId">
+			<input type="hidden" name="changeTypeId" value="1">
+		</form>
+		
+	</div>
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

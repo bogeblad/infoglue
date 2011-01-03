@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Link to internal page</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+	
+	<script type="text/javascript">
+	<!-- 
+		var navigationTitleHash = new Array();
+		
+		var exp;
+	    function notifyExp(v)
+	    {
+	    	//alert("v:" + v);
+	    	// The html tree notifies this page about the
+	    	// current expansion key, so that we can reload
+	    	// the tree with the same expansion.
+	    	exp=v;
+	    }
+
+		function notifyIsLoaded()
+	    {
+	    	//alert("Tree was loaded - notifyIsLoaded");
+	    	treeIsLoaded = true;
+	    }
+		
+		function changeRepository(selectBox)
+		{
+			//alert("selectBox:" + selectBox);
+			var repositoryId = selectBox.value;
+			var url = "ViewStructureTreeForInlineLink!useFCKEditor.action?repositoryId=" + repositoryId;
+			document.location.href = url;
+		}
+		
+		function htmlTreeItemClick(entityId, repositoryId, path)
+		{
+			document.inputForm.contentId.value = entityId;
+		}
+				
+		function Init() 
+		{
+            //window.resizeTo(750, 600);
+            
+            #if($oldSiteNodeId)
+            document.getElementById("entityId").value = "$oldSiteNodeId";
+		  	#else
+		  	document.getElementById("entityId").value = "-1";
+		  	#end
+
+            #if($oldContentId)
+            document.getElementById("contentId").value = "$oldContentId";
+		  	#else
+		  	document.getElementById("contentId").value = "-1";
+		  	#end
+		}
+
+		function onOk() 
+		{
+		  	siteNodeId = document.inputForm.entityId.value;
+		  	contentId = document.inputForm.contentId.value;
+			path = document.inputForm.path.value;
+			
+			parent.onOkForInlineLink(siteNodeId, contentId);
+			return false;
+		};
+		
+		function onCancel() 
+		{
+		    parent.onCancel(null);
+			return false;
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="structuretooledit" onload="Init();">
+
+<table class="structuretooledit" cellpadding="2" cellspacing="0" border="0" width="100%">
+<tr>
+	<td valign="top" width="100%">
+		<div id="structure" style="display: block; border: 1px solid #F0E1B4;">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr class="darkapricot">
+				<td class="smalllabel" colspan="2">Select which page to link to</td>
+			</tr>
+			<tr>
+				<td bgcolor="#FEF8D0" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr>
+				<td bgcolor="#F0E1B4" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>		
+	
+			<tr>
+				<td colspan="2">
+			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+					    #foreach ($repositoryVO in $repositories)
+					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+					    #end
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>	
+			<tr>
+				<td class="menu" colspan="2">   
+					#if($tree == "applet") 
+						#showJavaTree("350" "400" "254" "248" "208" "SiteNode" $repositoryId "false")
+					#else
+						#set($exp = $this.getExpansion($oldSiteNodeId))
+						<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingView.action?repositoryId=${repositoryId}&exp=$exp&akey=/$!oldSiteNodeId/&select=$!oldSiteNodeId" width="350" height="510" align="baseline"></IFRAME>
+					#end
+				</td>
+			</tr>	
+			<tr>
+				<td style="background-color: #F0E1B4; padding: 4px; border: 1px solid silver;">
+					<a href="javascript:openDiv('structure'); closeDiv('content');">Linked page</a>
+				</td>
+				<td style="background-color: #C7D1B3; padding: 4px; border: 1px solid silver;">
+					<a href="javascript:openDiv('content'); closeDiv('structure'); frames['itreeFrameContent'].loaded();">Additional content</a>
+				</td>
+			</tr>
+			</table>
+		</div>
+		
+		<div id="content" style="display: none; background-color: #EEF7DC; border: 1px solid #C7D1B3;">
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr class="darkgreen">
+				<td class="smalllabel" colspan="2">Click on the content you wish to add to the link</td>
+			</tr>
+			<tr>
+				<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr>
+				<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>		
+			<!-- 
+			HERE IS THE REPOSITORY-LIST FOR LATER 
+			-->
+			<tr>
+				<td colspan="2">
+			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+					    #foreach ($repositoryVO in $repositories)
+					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+					    #end
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>		
+			<tr>
+				<td class="menu" colspan="2">  
+					#if($tree == "applet")
+						#showJavaTree("350" "400" "254" "248" "208" "Content" $repositoryId "false")
+					#else
+						#if($oldContentId > -1)
+							#set($exp = $this.getContentExpansion($oldContentId))
+						#else
+							#set($oldContentId = "")
+							#set($exp = "")
+						#end
+						<IFRAME frameborder="0" name="itreeFrameContent" id="itreeFrameContent" src="ViewContentHtmlTree.action?repositoryId=$!repositoryId&exp=$exp&akey=/$!oldContentId/&select=$!oldContentId&bodyClass=contenttooledit" width="350" height="510" align="baseline"></IFRAME>
+					#end
+				</td>
+			</tr>	
+			<tr>
+				<td style="background-color: #F0E1B4; padding: 4px; border: 1px solid silver;">
+					<a href="javascript:openDiv('structure'); closeDiv('content');">Linked page</a>
+				</td>
+				<td style="background-color: #C7D1B3; padding: 4px; border: 1px solid silver;">
+					<a href="javascript:openDiv('content'); closeDiv('structure'); frames['itreeFrameContent'].loaded();">Additional content</a>
+				</td>
+			</tr>
+			</table>	
+		</div>
+				
+	</td>	
+	
+	<td valign="top">
+		<table cellpadding="0" cellspacing="0" border="0" width="350">
+		<tr class="darkapricot">
+			<td class="smalllabel" colspan="2">Select page to link to and press save</td>
+		</tr>
+		<tr>
+			<td bgcolor="#FEF8D0" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#F0E1B4" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="30"></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<a href="javascript:onOk()"><img src="$ui.getString("images.structuretool.buttons.save")" border="0" /></a>
+				<a href="javascript:onCancel()"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0" /></a>
+			</td>
+		</tr>
+		</table>
+	<form name="inputForm" action="CreateServiceBinding.action">
+		<input type="hidden" id="entityId" name="entityId" value="$!oldSiteNodeId">
+		<input type="hidden" id="contentId" name="contentId" value="">
+		<input type="hidden" id="repositoryId" name="repositoryId" value="">
+		<input type="hidden" id="path" name="path" value="">
+	</form>
+
+	</td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginPublishingTool("tool.publishtool.createEdition.header" "New edition" "")
+
+<table class="publishingtooledit" cellpadding="2" cellspacing="2" border="0" width="100%" height="30">
+<form name="editForm" method="POST" action="CreateEdition.action">
+	<tr>
+		<td>
+			<p>#editField("Publication.name" "name" $!name "51")</p>
+			<p>#editField("Publication.description" "description" $!description "51")</p>
+			#hiddenField("repositoryId" $repositoryId)
+		</td>
+	</tr>	
+	<tr>
+		<td>&nbsp;</th>
+	</tr>
+
+
+	<tr>
+		<td>
+			<strong>Items to publish in this edition</strong>
+			#set($lvConstraint = 0) 
+			#lvHead(["Name (comment)","Modified"] "Publish items" "" "" "")
+
+			#set($cnt = 0)
+			## EVENTS!
+			#foreach ($event in $events)
+				#set( $cId = $event.id ) 
+					
+			#if($event.entityClass.indexOf("ContentVersion") > -1)
+				#if($event.typeId == 3)
+					#set($icon = "<img src='images/tree/unpublishContentItem.gif' border=0>")
+				#else
+					#set($icon = "<img src='images/tree/contentItem.gif' border=0>")
+				#end
+			#else
+				#if($event.typeId == 3)
+					#set($icon = "<img src='images/tree/unpublishSiteNodeItem.gif' border=0>")
+				#else
+					#set($icon = "<img src='images/tree/siteNodeItem.gif' border=0>")
+				#end	
+			#end
+
+			#if($event.description.length() > 50)
+				#set($description = "${event.description.substring(0,50)}...")
+			#else
+				#set($description = "${event.description}")
+			#end
+
+				#set( $rowUrl = "ViewContent.action?contentId=$contentVO.getContentId()&title=Content%20details")
+				#set( $row = ["<input type='hidden' name='sel' value='$cId'/>$icon $event.name <span title='$event.description'>($description)</span>","$event.creationDateTime"] )
+				#set($cnt = $cnt + 1)
+				
+				#lvAddRow($row $cnt $cId)
+			#end
+						
+			#lvEnd()
+		</td>
+	</tr>
+
+
+
+	<tr>
+		<td>
+			<input type="image" src="$ui.getString("images.publishingtool.buttons.save")" width="50" height="25">
+			<a href="ViewPublications.action?repositoryId=$repositoryId"><img src="$ui.getString("images.publishingtool.buttons.cancel")" width="50" height="25" border="0"></a>
+		</td>
+	</tr>
+	
+	
+</form>
+</table>
+
+#endPublishingTool()

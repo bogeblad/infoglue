@@ -1,0 +1,153 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDeleteLink()
+		});
+		
+		function save(form)
+		{
+			form.submit();
+		}
+	
+		function saveAndExit(form, action)
+		{
+			form.action = action;
+			save(form);
+		}
+		
+		function composeDisplayNameString()
+		{
+			var displayNameString = "";
+	
+			$(".displayNameLanguageVariation").each(function (i) {
+				//alert("Adding:" + $(this).attr("id") + "-" + $(this).val());
+				if($(this).val() != "")
+					displayNameString = displayNameString + "," + $(this).attr("id") + "=[" + $(this).val() + "]";
+		    });
+	
+			$("input[id='model/displayName']").val(displayNameString.substring(1));
+			//$("#warningParagraph").html("<span style='color: red'>Remember to clear especially live deliver caches by hand.<br/>NiceURI settings are not immediately enforced automatically.</span>");
+			//$("#warning").show("slow");
+				
+			return true;
+		}
+		
+		$(document).ready(function(){
+			$("input[id='model/displayName']").css("color","#999999");
+	
+			$("input[id='model/displayName']").click(function () {
+				alert("Use the form below - it assists you with the syntax");
+				$("#displayNameFields").show("slow");
+		    });
+		    
+			$(":input").change(function () {
+				composeDisplayNameString();
+		    });
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#set($title = "tool.managementtool.editCategory.header")
+#if($model.unsaved)
+	#set($title = "tool.managementtool.createCategory.header")
+#end
+
+#beginLightCommonToolV3Impl($title "" "categoryId=$!model.id" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString($title)</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<form method="POST" action="CategoryManagement!save.action" name="editForm">
+			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+			<p>
+				<a href="CategoryManagement!list.action">Root Categories</a>
+				#if($model.parentId)
+				> <a href="CategoryManagement!edit.action?categoryId=$model.parentId">Parent</a>
+				#end
+				#if($model.saved)
+				> $model.name
+				#end
+				
+				(was used by $references.size() entities)
+			</p>
+			<p>
+				#editField("Category.name" "model/name" $!model.name "50")
+			</p>
+			<p>						
+				#editReadOnlyField("Category.displayName" "model/displayName" $!model.displayName "50" "READONLY")
+	
+				<fieldset id="displayNameFields" style="display:none; padding: 4px; width: 100%;">
+					<legend>Language variations for $ui.getString("entity.Category.displayName.label")</legend>
+					<p>
+						#foreach($languageVO in $languages)
+							$languageVO.name:<br/> <input class="longtextfield displayNameLanguageVariation" style="width: 600px;" type="textfield" id="$languageVO.languageCode" name="$languageVO.languageCode" value="$!model.getLocalizedDisplayName($languageVO.languageCode,"none")"/><br/><br/>
+						#end
+						<a href="#" onclick="$('#displayNameFields').hide('slow');">Close</a>
+					</p>
+				</fieldset>
+			</p>
+			<p>
+				$ui.getString("entity.Category.active.label")
+				<br/>
+				<select name="model/active">
+					<option value="true" #if($model.active) selected="true" #end>$ui.getString("tool.common.yes")</option>
+					<option value="false" #if(!$model.active) selected="true" #end>$ui.getString("tool.common.no")</option>
+				</select>
+			</p>
+			<p>
+				#editTextArea("Category.description" "model/description" $model.description "50" "3" "smalltextarea")
+			</p>
+			<p>
+				#if($model.saved)
+					<input type="hidden" name="model/categoryId" value="$model.categoryId"/>
+				#end
+				#if($model.parentId)
+					<input type="hidden" name="model/parentId" value="$model.parentId"/>
+				#end
+			</p>
+		</form>
+		#if($model.saved)
+			<h3>$ui.getString("entity.Category.subcategory.label")</h3>
+			#set($categories = $model.children)
+			#parse("/cms/managementtool/categoryList.vm")
+		#end
+			
+	</div>
+	
+	<div id="warning" style="border: 1px solid black; background-color: white; color: black; padding: 4px; display: none; position: absolute; right: 50px; top: 100px; float:left;">
+		<p id="warningParagraph">
+		</p>
+		<a href="#" onclick="$('#warning').hide('slow');">Close</a>
+	</div>
+
+	#set($cancelURL = "CategoryManagement!list.action")
+	#if($model.parentId)
+		#set($cancelURL = "CategoryManagement!edit.action?categoryId=$model.parentId")
+	#end
+
+	<div onfocus="this.blur();" id="footertoolbar">
+		<div style="float: left; margin-left: 10px;">
+			<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+			<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='$cancelURL';"/>
+		</div>
+	</div>
+		
+#endLightCommonToolV3()

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("tool.contenttool.contentPropertiesHeader" "tool.contenttool.contentPropertiesHeader" "contentId=$contentId" "0" "0" "0")
+
+<div class="fullymarginalized">
+
+<table class="contenttooledit" cellpadding="2" cellspacing="2" border="0" width="100%" height="30">
+<form name="editForm" method="POST" action="ViewContentProperties!save.action">
+<tr>
+	<td>
+		<p>
+			$ui.getString("entity.Content.property.defaultContentTypeName.label")<br/>
+			<select name="defaultContentTypeName">
+			#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+				<option value="$contentTypeDefinitionVO.getName()" #if($defaultContentTypeName == $contentTypeDefinitionVO.getName())selected="1"#end>$contentTypeDefinitionVO.getName()</option>
+			#end
+			</select>
+		</p>
+		<p>
+			$ui.getString("entity.Content.property.allowedContentTypeNames.label")<br/>
+			#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+				<input type="checkbox" name="allowedContentTypeName" value="$contentTypeDefinitionVO.getName()" #if($allowedContentTypeNames.indexOf("$contentTypeDefinitionVO.getName(),") > -1)checked="1"#end>$contentTypeDefinitionVO.getName()</input><br/>
+			#end
+		</p>
+		<p>
+			$ui.getString("entity.Content.property.initialLanguage.label")<br/>
+			<select name="initialLanguageId">
+				<option value="-1" #if($initialLanguageId == "-1")selected="1"#end>$ui.getString("tool.common.inherit")</option>
+				#foreach ($languageVO in $languageVOList)
+					<option value="$languageVO.id" #if($initialLanguageId == "$languageVO.getId()")selected="1"#end>$languageVO.getName()</option>
+				#end
+			</select>
+		</p>
+	</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>
+		<input type="image" src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25">
+		<a href="javascript:saveAndExit(document.editForm, 'ViewContentProperties!saveAndExit.action');"><img src="$ui.getString("images.managementtool.buttons.saveAndExit")" width="80" height="25" border="0"></a>
+		<a href="ViewContent.action?contentId=$contentId"><img src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25" border="0"></a>
+	</td>
+</tr>
+<input type="hidden" name="contentId" value="$!contentId">
+</form>
+</table>
+</div>
+
+</body>
+</html>
+
+

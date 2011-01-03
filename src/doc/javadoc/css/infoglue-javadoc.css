@@ -1,0 +1,28 @@
+h1.workflow {
+	font-size: large;
+}
+table.workflow {
+	border: solid black 1px;
+	width: 100%;
+}
+tbody.workflow {
+}
+td.workflow_comment {
+	background-color: #eeeeee;
+	padding: 0.25em;
+	text-align: left;
+}
+td.workflow {
+	background-color: #eeeeee;
+	padding: 0.25em;
+	text-align: center;
+}
+th.workflow {
+	background-color: #cccccc;
+	padding: 0.25em;
+	text-align: center;
+}
+thead.workflow {
+}
+tr.workflow {
+}

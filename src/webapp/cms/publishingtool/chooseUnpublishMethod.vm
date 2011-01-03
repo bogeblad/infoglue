@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginPublishingTool("Choose method of unpublishing" "Choose method" "")
+
+<table class="publishingtooledit" cellpadding="2" cellspacing="2" border="0" width="100%" height="30">
+<form name="editForm" method="POST" action="DeleteEdition.action">
+	<tr>
+		<td>There are newer working versions on some items in the publication - please choose what to do</th>
+	</tr>
+
+
+	<tr>
+		<td>
+			<strong>Items which has more recent modifictions</strong>
+			#set($lvConstraint = -1) 
+			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+			<tr class="white">
+				<td id="t0" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td id="t1" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td id="t2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr class="darkbrown" valign="center">
+				<td id='lleft' class="white" width=1><img src="images/trans.gif" width="1" height="1"></td>
+				<td class="listheader"><div class="minormarginalized">Mark those you items where you want to keep the newer version - those not marked are unpublished and the unpublished versions information overrides later changes</div></td>
+				<td id='lright' class="dark" width=1><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+			<tr class="dark">
+				<td id="b0" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td id="b1" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td id="b2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			</tr>
+					
+			
+			#set($cnt = 0)
+			## PUBLICATION_DETAILS
+			#foreach ($publicationDetail in $problematicPublicationDetails)
+				#set( $cId = $publicationDetail.id ) 
+				
+				#set( $isOdd = $cnt % 2)
+				#if($isOdd==0)
+					#set($class = "class='light$lvColor'")
+				#else
+					#set($class = "class='white'")
+				#end	
+			
+				<tr id="r$cnt" $class  onMouseOver='listRowHiLight(this);' onMouseOut='listRowUnHiLight(this);'>
+			
+					<td></td>
+					<td valign='middle'>
+						<div class="minormarginalized">	
+							<input type='checkbox' name='notOverwritablePublicationDetailId' value='$cId'/>
+							
+							#if($publicationDetail.entityClass.indexOf("ContentVersion") > -1)
+								#if($publicationDetail.typeId == 3)
+									#set($icon = "<img src='images/tree/unpublishContentItem.gif' border=0>")
+								#else
+									#set($icon = "<img src='images/tree/contentItem.gif' border=0>")
+								#end
+							#else
+								#if($publicationDetail.typeId == 3)
+									#set($icon = "<img src='images/tree/unpublishSiteNodeItem.gif' border=0>")
+								#else
+									#set($icon = "<img src='images/tree/siteNodeItem.gif' border=0>")
+								#end	
+							#end
+							$icon $publicationDetail.name ($publicationDetail.description)
+						</div>
+					</td>
+					<td></td>
+			
+				</tr>
+	
+				#set($cnt = $cnt + 1)				
+			#end
+			
+			
+			</table>
+	
+			</div>
+		</td>
+	</tr>
+		</td>
+	</tr>
+
+
+	<tr>
+		<td>
+			<input type="hidden" name="repositoryId" value="$repositoryId">
+			<input type="hidden" name="publicationId" value="$publicationId">
+			&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input type="image" src="$ui.getString("images.publishingtool.buttons.save")" width="50" height="25">
+			<a href="ViewPublications.action?repositoryId=$repositoryId"><img src="$ui.getString("images.publishingtool.buttons.cancel")" width="50" height="25" border="0"></a>
+		</td>
+	</tr>
+	
+	
+</form>
+</table>
+
+#endPublishingTool()

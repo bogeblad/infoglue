@@ -1,0 +1,92 @@
+<ul>
+    #if($contentVO.isBranch)
+    <li><a id="create" href="javascript:void(0);" class="create">$ui.getString("tool.contenttool.toolbarV3.createContentLabel")</a></li>
+    <li><a id="createFolder" href="javascript:void(0);" class="create">$ui.getString("tool.contenttool.toolbarV3.createContentFolderLabel")</a></li>
+	#end
+    <li><a id="delete" href="javascript:void(0);" class="delete">$ui.getString("tool.contenttool.toolbarV3.deleteContentLabel")</a></li>
+    <li><a id="move" href="javascript:void(0);" class="moveContent">$ui.getString("tool.contenttool.toolbarV3.moveContentLabel")</a></li>
+    <li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.contenttool.toolbarV3.editContentMetaInfoLabel")</a></li>
+    <li><a id="publish" href="javascript:void(0);" class="publish">$ui.getString("tool.contenttool.toolbarV3.publishContentLabel")</a></li>
+    #if($contentVO.isBranch)
+    <li><a id="publishTree" href="javascript:void(0);" class="publish">$ui.getString("tool.contenttool.toolbarV3.publishContentsLabel")</a></li>
+	#end
+</ul>
+#*
+<div id="deleteDialog" title="$ui.getString("tool.contenttool.toolbarV3.deleteContentLabel")" style="display: none">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>$ui.getString("tool.contenttool.toolbarV3.deleteContentConfirmationLabel", $contentVO.name)</p>
+</div>
+*#
+<script type="text/javascript">
+<!--
+	//Event listener for document click
+	$(document).click(function () { 
+    	$("#contextMenuDiv").hide();
+		});
+
+	//Event listener for create option
+	$("#contextMenuDiv #create").click(function () { 
+    	openInlineDiv("CreateContent!inputV3.action?isBranch=false&repositoryId=$repositoryId&parentContentId=$contentId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New content"); 
+		});
+
+	//Event listener for create folder option
+	$("#contextMenuDiv #createFolder").click(function () { 
+    	openInlineDiv("CreateContent!inputV3.action?isBranch=true&repositoryId=$repositoryId&parentContentId=$contentId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New content"); 
+		});
+
+	//Event listener for properties option
+	$("#contextMenuDiv #move").click(function () { 
+    	openInlineDiv("MoveContent!inputV3.action?contentId=$contentId&repositoryId=$repositoryId&hideLeafs=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for properties option
+	$("#contextMenuDiv #properties").click(function () { 
+    	openInlineDiv("ViewContentProperties!V3.action?contentId=$contentId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Metadata"); 
+		});
+
+	//Event listener for publish option
+	$("#contextMenuDiv #publish").click(function () { 
+    	openInlineDiv("ViewListContentVersion!V3.action?contentId=$contentId&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for publish option
+	$("#contextMenuDiv #publishTree").click(function () { 
+    	openInlineDiv("ViewListContentVersion!V3.action?contentId=$contentId&recurseContents=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for delete option
+	$("#contextMenuDiv #delete").click(function () {
+		$("#genericDialog").dialog("destroy");
+		$("#genericDialog").attr("title", "$ui.getString("tool.contenttool.toolbarV3.deleteContentLabel")");
+		$("#genericDialog h3").html("$ui.getString("tool.contenttool.toolbarV3.deleteContentLabel")");
+		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($ui.getString("tool.contenttool.toolbarV3.deleteContentConfirmationLabel", $contentVO.name))");
+		$("#genericDialog").dialog({
+			autoOpen: false,
+			resizable: false,
+			width: 500,
+			minHeight: 400,
+			modal: true,
+			overlay: {
+				backgroundColor: '#000',
+				opacity: 0.8
+			},
+			buttons: {
+				'$ui.getString("tool.contenttool.toolbarV3.deleteContentLabel")': function() {
+					$(this).dialog('close');
+					openInlineDiv("DeleteContent!V3.action?contentId=$contentId&repositoryId=$repositoryId&changeTypeId=4&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Delete content"); 
+				},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			},
+			open: function(event, ui) {
+				//alert("This:" + $(this).parent().html() + ":" + ui + ":" + $(this).parent().css("display"))
+				$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+				$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+			}
+		});
+		$("#genericDialog").dialog("open");
+	});
+
+
+-->
+</script>

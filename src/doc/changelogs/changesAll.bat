@@ -1,0 +1,1 @@
+cvs -d :pserver:anonymous@www.infoglue.org:2401/home/cvsroot log -d "7 apr 2006<6 Jun 2006" infoglue > changelog_2.4.log

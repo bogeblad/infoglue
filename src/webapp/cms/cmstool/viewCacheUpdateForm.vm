@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<title>Cache update page</title>
+	
+	<style>
+	<!--
+		.header 
+		{
+			font-family : Verdana;
+			font-size 	: 16pt;
+			font-weight : bold;
+		}
+		.label
+		{
+			font-family	:Verdana;
+			font-size	:10pt;
+			font-weight : bold;
+		}
+		.text 
+		{
+			font-family	:Verdana;
+			font-size	:10pt;
+		}
+		.texttrue 
+		{
+			font-family	:Verdana;
+			font-size	:10pt;
+		}
+		.textfalse 
+		{
+			font-family	:Verdana;
+			font-size	:10pt;
+			color  		:red;
+		}
+		.fullymarginalized 
+		{
+			margin-left	: 50;
+			margin-right: 50;
+			margin-top	: 20%;
+		}
+	-->
+	</style>
+
+</head>
+
+<body>
+
+<center>
+
+<form action="UpdateCache.action" method="POST">
+<table class="fullymarginalized" border="0" cellpadding="2" cellspacing="0">
+  <tr>
+    <td colspan="2" class="header">InfoGlue Manual Cache Update</td>
+  </tr>
+  <tr>
+    <td colspan="2"><hr/></td>
+  </tr>
+  <tr>
+    <td class="label" bgcolor="gray">Test case:</td>
+    <td class="label" bgcolor="gray">Ok?</td>
+  </tr>
+  <tr>
+    <td class="text">Class name</td>
+    <td class="text"><input name="className" value="org.infoglue.cms.entities.content.impl.simple.ContentImpl"></td>
+  </tr>
+  <tr>
+    <td class="text">Object Id</td>
+    <td class="text"><input name="objectId" value="36925"></td>
+  </tr>
+  <tr>
+    <td class="text">Type Id</td>
+    <td class="text"><input name="typeId" value="1"></td>
+  </tr>
+  <tr>
+    <td class="text">Object Name</td>
+    <td class="text"><input name="objectName" value="org.infoglue.cms.entities.content.impl.simple.ContentImpl%40668387"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><hr/></td>
+  </tr>
+  <tr>
+    <td colspan="2" class="text" align="center"><input type="submit"></td>
+  </tr>
+</table>
+</form>
+
+</center>
+
+</body>
+
+</html>

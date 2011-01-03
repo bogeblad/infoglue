@@ -1,0 +1,113 @@
+#macro(drawTreeXP2)
+	## (use this as href for single branch open style)
+	## ?exp=${n.getOpenCloseKey()}
+	#set($preImg = "space")
+	#set($postImg = ".png")
+	#foreach ($n in $nodes)
+		
+		#if($n.parameters && $n.parameters.get('extraMarkup') && $!{n.parameters.get('extraMarkup')} != "")
+		<div class="tree-item" style="padding-top:5px; padding-bottom: 2px; margin-bottom: 2px; margin-left: 8px; font-weight: bold; border-bottom: 1px solid #666; width: 180px;">
+			$!n.parameters.get('extraMarkup')
+		</div>
+		#end
+
+		<div class="tree-item">
+		#if ($n.isOpen())
+			#set($preOCImg = "open")
+			#set($addremove = "&rkey=")
+		#else
+			#set($preOCImg = "closed")		
+			#set($addremove = "&akey=")
+		#end
+		
+		#if (!$n.isRoot())		
+			## Fix treelines
+			#foreach ($s in $n.getRowList())
+				#if ($velocityCount != $n.getRowList().size())		
+					<img src='images/tree/xp/$preImg$s$postImg'/>
+				#else
+					#set($last = $s)
+				#end
+			#end
+			
+			## Fix openclose image
+			#if ($n.hasChildren())
+				<a class="branch" target="_self" href="?exp=$exp$addremove$n.getThisKey()"><img src="images/tree/xp/f$preOCImg$last$postImg" border="0" alt=""/></a>
+			#else
+				<img src='images/tree/xp/$preImg$last$postImg' alt=""/>
+			#end
+		#end
+
+		#drawItem($n) 
+		</div>	
+				
+	#end
+
+#end
+
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="expires" content="-1" />		
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>Menus</title>
+
+	<link rel="stylesheet" type="text/css" href="css/treeview.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" media="all" />
+
+	<script type="text/javascript">
+	<!-- 
+		function openUrlInWorkArea(url, title, targetTab)
+		{
+			//alert("htmlTreeItemClick:" + url);
+			if(parent.openUrlInWorkArea)
+				parent.openUrlInWorkArea(url, title, targetTab, "$ui.getString("tool.common.managementTabLabelPrefix")");
+		}
+	-->
+	</script>
+</head>
+
+<body class="generaltooledit">
+
+    <div style="margin-left:8px; margin-top: 10px; visibility: visible;">
+    
+    	## HTML Version of the tree: Start
+    	## drawItem procedure (called from tree renderer for every item in the list, [se #parse below] )
+    	## this is a local macro
+    	#set($canDrag = ' ondragstart="startDrag();" ondragend="endDrag();"')
+    	#set($imgPath="images/tree/xp/")	
+    	#if(!$repositoryId || $repositoryId == 0)
+    		#set($rootTitle=$ui.getString("tool.managementtool.menu.rootName"))
+    	#else
+    		#set($rootTitle="${name}")
+    	#end
+    	
+    	#macro(drawItem $n)
+    			## Draw the item icon Container or not? 
+    			
+    			#set($style = "")
+    			#if ($n.isContainer())
+    				#if ($n.isRoot())
+    					#set($nodeTitle="$rootTitle")
+    					<img class="tree-icon" src="images/tree/managementRoot.gif" alt=""/>
+    				#else
+    					#set($nodeTitle="${n.getTitle()}")				
+    					<img class="tree-icon" src="${imgPath}emptyfolder$preOCImg$postImg" alt=""/>
+    				#end
+    			#else
+    				<img class="tree-icon" src="${imgPath}item$postImg" alt=""/>
+    			#end
+    			
+    			## Draw item link			
+    			<a href="javascript:void(0);" onclick="openUrlInWorkArea('${n.action}', '${nodeTitle}', 'management');">${nodeTitle}</a>
+    			
+    	#end
+    	
+    	## Explorer style rendering, draw your own folder icons in drawItem
+    	#drawTreeXP2()
+    
+    </div>
+ 
+</body>
+</html>

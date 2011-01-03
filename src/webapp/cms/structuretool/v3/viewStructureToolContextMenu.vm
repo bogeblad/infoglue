@@ -1,0 +1,115 @@
+<ul>
+    <li><a id="create" href="javascript:void(0);" class="create">$ui.getString("tool.structuretool.toolbarV3.createPageLabel")</a></li>
+    <li><a id="delete" href="javascript:void(0);" class="delete">$ui.getString("tool.structuretool.toolbarV3.deletePageLabel")</a></li>
+    <li><a id="move" href="javascript:void(0);" class="move">$ui.getString("tool.structuretool.toolbarV3.movePageLabel")</a></li>
+    <li><a id="moveUp" href="javascript:void(0);" class="moveUp">$ui.getString("tool.structuretool.toolbarV3.movePageUpLabel")</a></li>
+    <li><a id="moveDown" href="javascript:void(0);" class="moveDown">$ui.getString("tool.structuretool.toolbarV3.movePageDownLabel")</a></li>
+    <li><a id="hidePage" href="javascript:void(0);" class="showHide">$ui.getString("tool.structuretool.toolbarV3.toggleHiddenLabel")</a></li>
+    <li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.structuretool.toolbarV3.editPageMetaInfoLabel")</a></li>
+    <li><a id="accessRights" href="javascript:void(0);" class="accessRights">$ui.getString("tool.common.accessRights.accessRightsButtonLabel")</a></li>
+    <li><a id="publish" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPageLabel")</a></li>
+    #if($siteNodeVO.childCount > 0)
+    <li><a id="publishTree" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPagesLabel")</a></li>
+    #end
+</ul>
+
+<script type="text/javascript">
+<!--
+	//Event listener for document click
+	$(document).click(function () { 
+    	$("#contextMenuDiv").hide();
+		});
+
+	//Event listener for create option
+	$("#contextMenuDiv #create").click(function () { 
+    	openInlineDiv("CreateSiteNode!inputV3.action?isBranch=true&repositoryId=$repositoryId&parentSiteNodeId=$siteNodeId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for properties option
+	$("#contextMenuDiv #properties").click(function () { 
+    	openInlineDiv("ViewAndCreateContentForServiceBinding.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&changeStateToWorking=true", 700, 850, true, true, "New page"); 
+		});
+
+	//Event listener for properties option
+	$("#contextMenuDiv #accessRights").click(function () { 
+    	openInlineDiv("ViewAccessRights!V3.action?interceptionPointCategory=SiteNodeVersion&extraParameters=$siteNodeVersionId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 700, 850, true, true, "New page"); 
+		});
+
+	//Event listener for publish option
+	$("#contextMenuDiv #publish").click(function () { 
+    	openInlineDiv("ViewListSiteNodeVersion!v3.action?siteNodeId=$siteNodeId&contentId=-1&repositoryId=$repositoryId&recurseSiteNodes=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for publish option
+	$("#contextMenuDiv #publishTree").click(function () { 
+    	openInlineDiv("ViewListSiteNodeVersion!v3.action?siteNodeId=$siteNodeId&contentId=-1&repositoryId=$repositoryId&recurseSiteNodes=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for delete option
+	$("#contextMenuDiv #delete").click(function () {
+		$("#genericDialog").dialog("destroy");
+		$("#genericDialog").attr("title", "$ui.getString("tool.structuretool.toolbarV3.deletePageLabel")");
+		$("#genericDialog h3").html("$ui.getString("tool.structuretool.toolbarV3.deletePageLabel")");
+		$("#genericDialog p").html("$formatter.escapeForAdvancedJavascripts($ui.getString("tool.structuretool.toolbarV3.deletePageConfirmationLabel", $siteNodeVO.name))");
+		$("#genericDialog").dialog({
+			autoOpen: false,
+			resizable: false,
+			width: 500,
+			minHeight: 400,
+			modal: true,
+			overlay: {
+				backgroundColor: '#000',
+				opacity: 0.8
+			},
+			buttons: {
+				'$ui.getString("tool.structuretool.toolbarV3.deletePageLabel")': function() {
+					$(this).dialog('close');
+					openInlineDiv("DeleteSiteNode!V3.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&changeTypeId=4&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Delete page"); 
+				},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			},
+			open: function(event, ui) {
+				//alert("This:" + $(this).parent().html() + ":" + ui + ":" + $(this).parent().css("display"))
+				$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+				$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+			}
+		});
+		$("#genericDialog").dialog('open');
+	});
+
+	//Event listener for move option
+	$("#contextMenuDiv #move").click(function () {
+    	openInlineDiv("MoveSiteNode!inputV3.action?repositoryId=$repositoryId&siteNodeId=$siteNodeId&hideLeafs=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Move page"); 
+	});
+		
+
+	//Event listener for moveUp option
+	$("#contextMenuDiv #moveUp").click(function () {
+		jQuery.get("ChangeSiteNodeSortOrder.action", { siteNodeId:"$siteNodeId", direction:"up"}, function(data){
+		  	$('#treeIframe').get(0).contentWindow.refreshNode($siteNodeVO.parentSiteNodeId, 4, null);
+		  	refreshWorkArea("structure");
+		});
+	});
+
+	//Event listener for moveDown option
+	$("#contextMenuDiv #moveDown").click(function () {
+		jQuery.get("ChangeSiteNodeSortOrder.action", { siteNodeId:"$siteNodeId", direction:"down"}, function(data){
+		  	//alert("Moved: " + data);
+		  	$('#treeIframe').get(0).contentWindow.refreshNode($siteNodeVO.parentSiteNodeId, 4, null);
+		  	refreshWorkArea("structure");
+		});
+	});
+
+	//Event listener for moveDown option
+	$("#contextMenuDiv #hidePage").click(function () {
+		jQuery.get("ChangeSiteNodeSortOrder!toggleHidden.action", { siteNodeId:"$siteNodeId"}, function(data){
+		  	//alert("Hidden: " + data);
+		  	$('#treeIframe').get(0).contentWindow.refreshNode($siteNodeVO.parentSiteNodeId, 2, null);
+		  	refreshWorkArea("structure");
+		});
+	});
+
+-->
+</script>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("Content version" "Content version" "contentId=$contentId&languageId=$languageId&contentVersionId=$contentVersionId" "0" "0" "0")
+
+<script language="javascript">
+
+//-----------------------------------------------
+// This function sets a different command to the editForm so that  
+// the user can be handled different after the submit
+//-----------------------------------------------
+
+function changeSiteNodeState(siteNodeVersionId)
+{
+	stateId    	  = document.editForm.stateId.value;
+	siteNodeId    = document.editForm.siteNodeId.value;
+	repositoryId  = document.editForm.repositoryId.value;
+	
+	#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true))
+	if(stateId == "2")
+	{
+		alert("$ui.getString("tool.contenttool.statePublishForbidden")");
+		document.editForm.stateId.selectedIndex = originalStateIndex - 1;
+		return;
+	}
+	#end
+
+	
+	if (confirm('Are you sure you want to change state? If you have any unsaved changes they will be lost.'))
+	{
+		//if(stateId == 2) //If publish
+		//	window.location.href="ViewSiteNode!commentVersion.action?siteNodeVersionId=" + siteNodeVersionId + "&stateId=" + stateId + "&siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
+		//else
+			window.location.href="ChangeSiteNodeState.action?siteNodeVersionId=" + siteNodeVersionId + "&stateId=" + stateId + "&siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
+	}
+}
+
+</script>
+
+<div class="fullymarginalized">
+
+<form method="POST" name="editForm" action="UpdateContentVersion.action">
+<table border="0" width="500">
+	<tr>
+		<td>
+			Language versions<br/>
+			<select class="mediumdrop" name="languageId" onChange="javascript:changeLanguage($!contentId);">
+			#foreach ($languageVO in $availableLanguages)
+				#if($languageVO.getLanguageId().intValue() == $languageId.intValue())
+					<option value="$languageVO.getLanguageId()" selected>$languageVO.getName()</option>
+				#else
+					<option value="$languageVO.getLanguageId()">$languageVO.getName()</option>
+				#end
+			#end
+			</select>
+		</td>
+		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td>
+			#set($dropIndex = 1)
+			$ui.getString("tool.contenttool.stateLabel")<br/>
+			<select class="mediumdrop" name="stateId" onChange="javascript:changeSiteNodeState($!contentVersionId);">
+				#if($stateId == 0)
+					<option value="0" selected>working</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					<option value="0">working</option>
+					#set($dropIndex = $dropIndex + 1)
+				#end
+<!--
+				#if($stateId == 1)
+					<option value="1" selected>final</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					<option value="1">final</option>
+				#end
+-->				
+				#if($stateId == 2)
+					<option value="2" selected>publish</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					#if($stateId != 3)
+					<option value="2">publish</option>
+					#set($dropIndex = $dropIndex + 1)
+					#end
+				#end
+
+				#if($stateId == 3)
+					<option value="3" selected>published</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#end
+				
+			</select>
+		</td>
+	</tr>	
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+<table>	
+
+<table border="0" width="500">	
+	<!-- here goes the field generation -->
+	
+	#if($stateId == 2)
+		#set($readonly = "readonly") 
+	#else
+		#set($readonly = "")
+	#end
+		
+	#foreach($attribute in $contentTypeAttributes)
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				#if($attribute.inputType == "shortString")
+					$attribute.name<br/>
+					<input $readonly type="text" length="50" class="longtextfield" maxlength="" name="$attribute.name" value="$this.getAttributeValue($attribute.name)"/>
+				#elseif($attribute.inputType == "shortText")
+					$attribute.name<br/>
+					<textarea $readonly class="largetextarea" rows="4" cols="35" name="$attribute.name">$this.getAttributeValue($attribute.name)</textarea> 
+				#elseif($attribute.inputType == "fullText")
+					$attribute.name<br/>
+					<textarea $readonly class="largetextarea" rows="10" cols="35" name="$attribute.name"></textarea> 
+				#elseif($attribute.inputType == "digitalAsset" && $contentVersionId > 0)
+					<a href="javascript:openPopup('$this.getDigitalAssetUrl($contentId, $languageId)', 'Preview', 'width=600,height=500,resizable=yes');"><img class="scaledbordered" src="$this.getDigitalAssetThumbnailUrl($contentId, $languageId)"></a>
+				#end
+			</td>
+		</tr>
+	#end
+	
+	<script type="text/javascript">
+		function validateAndSubmitContentForm()
+		{
+			isValid = true;
+			
+			#foreach($attribute in $contentTypeAttributes)
+   				#if($attribute.inputType != "digitalAsset")
+					//isCurrentValid = validate${attribute.name}();
+					//if(isCurrentValid == false)
+					//	isValid = false;
+				#end
+			#end
+			
+			if(isValid)
+			{
+				//alert('Jepp');
+				buildVersionValue(); 
+				document.editForm.submit();
+			}
+		}
+	
+		function validateAndSubmitContentFormThenExit()
+		{
+			//alert("Action:" + document.editForm.action);
+			document.editForm.action = "UpdateContentVersion!saveAndExit.action";
+			validateAndSubmitContentForm();		
+		}
+	
+		
+		function buildVersionValue()
+		{
+			var versionValue = "<?xml version='1.0' encoding='UTF-8'?>";
+			versionValue += "<article xmlns='x-schema:ArticleSchema.xml'>";
+			versionValue += "<attributes>";
+			
+			#foreach($attribute in $contentTypeAttributes)
+   				#if($attribute.inputType != "digitalAsset")
+					versionValue += "<$attribute.name>";
+					versionValue += document.editForm.${attribute.name}.value;
+					versionValue += "</$attribute.name>";
+				#end
+			#end
+			
+			versionValue += "</attributes>";
+			versionValue += "</article>";
+			
+			//alert("versionValue:" + versionValue);				
+			document.editForm.versionValue.value = versionValue;
+		}
+				
+		</script>
+		<input type="hidden" name="versionValue" value=""/>
+		</td>
+	</tr>
+	
+	<!-- end fields -->
+
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+		<td colspan="3">
+			<a href="javascript:validateAndSubmitContentForm();"><img src="$ui.getString("images.structuretool.buttons.save")" width="50" height="25" border="0"></a>
+			<a href="javascript:validateAndSubmitContentFormThenExit();"><img src="$ui.getString("images.structuretool.buttons.saveAndExitToCover")" width="80" height="25" border="0"></a>
+			<a href="ViewContent.action?contentId=$contentId&repositoryId=$repositoryId"><img border="0" src="$ui.getString("images.structuretool.buttons.cancel")" width="50" height="25"></a></td>
+		</td>
+	</tr>
+	
+</table>
+</div>
+
+#endContentTool()

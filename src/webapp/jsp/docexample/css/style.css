@@ -1,0 +1,41 @@
+html, body		  { text-align: center; padding: 0 } 
+#pagewidth		 { text-align: left; margin-right: auto; margin-left: auto; width: 760px; min-width: 500px; outline: solid 1px #000 } 
+#header   		 { font-family: Verdana, Arial, Helvetica, sans-serif; background-color: #575757; background-image: url("../images/header.jpg"); width: 100%; height: 50px; border-bottom: 1px solid black } 
+#outer			{ 
+				border:solid white 0px; 
+				border-left-color: #FFFFFF;   /* left column colour */ 
+				border-left-style: solid; 
+				background-color: #FFFFFF; /* center column colour */ 
+				width: auto;
+				} 
+ 
+#footer 		 { background-color: black; width: 100%; height: 15px } 
+#inner			{margin:0; width:100%;}
+#maincol  		{ border: 0px solid black; margin: 2 -8px 0 -2px; position: relative; width: 100%; float: left }
+#outer>#inner 	{ border-bottom: 1px solid #FFFFFF;  }
+.clr			{clear:both;}
+.content		{padding:8px;} /*padding for content */ 
+#header .content{padding-bottom:0;} /*padding bottom 0 to remove space in IE5 Mac*/ 
+
+p  				{ font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif }
+.header   		 { color: white; font-size: 14px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; margin-top: 1em; margin-left: 0.2em }
+.attachment   	 { }
+.event_done   	 { color: gray }
+.event_active   { color: black; background-image: url("../images/pil.gif"); background-repeat: no-repeat; background-position: 0 3px; margin-left: -8px; padding-left: 8px }
+.event_comming  { color: black; }
+.manual 		{ }
+.upload 		{ border-top: 1px solid #ccc; border-bottom: 1px solid #ccc }
+.workarea 		{ border-top: 3px double #bebebe; }
+.subject 		  { color: white; font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; background-color: #b3b3b3; padding-top: 5px; padding-bottom: 5px; padding-left: 8px; border-bottom: 1px solid #ccc }
+.workflow 		{ border-top: 3px double #bebebe; border-bottom: 5px solid #000000 }
+.rubrik 		   { color: black; font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; background-color: #dfdfdf; padding-top: 0; padding-bottom: 0; padding-left: 8px; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #ccc }
+
+textarea		{ width: 500px; height: 100px; border: 1px solid gray;}
+.longtextfield	{ width: 400px; height: 16px; border: 1px solid gray;}
+
+ /*printer styles*/ 
+@media print	{ 
+				/*hide the left column when printing*/
+				#leftcol{display:none;} 
+				#outer{border-left:0;}
+				}

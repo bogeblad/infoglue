@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>InfoGlue Administrative utilities 3.0</title>
+		
+		#includeLatestJQuery()
+	
+		<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+		<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+		
+		<script type="text/javascript" src="script/v3/infoglue.js"></script>
+	
+		<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+		<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen">
+		
+		<script type="text/javascript">
+		<!--
+			try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}
+	
+			#if($infoGluePrincipal.isAdministrator)
+				alert("You should only use this account to solve access rights issues etc as this is not a normal user account and some features are disabled because of that.");
+			#end
+			
+			function openInlineDiv(url, height, width, modal, iframe, title) 
+			{
+				var windowHeight = getWindowHeight();
+		   		//alert("windowHeight:" + windowHeight);
+		   		if(windowHeight < height)
+		   			height = windowHeight - 60;
+		
+				var windowWidth = getWindowWidth();
+		   		//alert("windowWidth:" + windowWidth);
+		   		if(windowWidth < width)
+		   			width = windowWidth - 60;
+		   		//alert("height:" + height + " - width:" + width);
+		   			
+		   	  	var separatorSign = "?";
+		   		if(url.indexOf("?") > -1)
+			  		separatorSign = "&";
+		   		
+		   		var addition = separatorSign + "KeepThis=true&" + (iframe ? "TB_iframe=true&" : "") + "height=" + height + "&width=" + width + (modal ? "&modal=true" : "");
+		   		
+		   		tb_show(title, url + addition, title);
+		   	}
+		   	
+		   	function closeInlineDiv()
+			{
+				tb_remove();
+			}
+			
+			function resize()
+			{
+				var windowHeight = getWindowHeight();
+				var windowWidth = getWindowWidth();
+				
+				$("#toolarea").attr("height", windowHeight - 88).attr("width", windowWidth - 8);
+				$("#leftmargin").css("height", windowHeight - 88 + "px");
+				$("#rightmargin").css("height", windowHeight - 88 + "px");
+			}
+			
+			$(document).ready(function(){
+				resize();
+				$(window).resize(function(){
+				  	resize();
+				});
+			});
+		-->
+		</script>
+		
+		<link rel="icon" href="images/icons/ig-16.png" type="image/png" />
+		<link rel="SHORTCUT ICON" href="images/icons/ig-16.png" />
+		<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+		<meta http-equiv="Cache-Control" content="no-cache" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	</head>
+	
+	<body class="generaltooledit">
+		<iframe name="header" id="header" style="position: absolute; top:0px; left: 0px; width: 100%; height: 58px;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="ViewCMSToolHeader.action?toolName=$!toolName"></iframe>
+  	 
+  	 	<div id="leftmargin" style="background-color: #666666; position: absolute; left: 0px; top: 58px; width: 4px; height: 600px;"></div>
+		<iframe name="toolarea" id="toolarea" style="position: absolute; top:58px; left: 4px;" width="900" height="600" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="loading.html" ></iframe>
+  	 	<div id="rightmargin" style="background-color: #666666; position: absolute; right: 0px; top: 58px; width: 4px; height: 600px;"></div>
+		
+		<iframe name="footer" id="footer" style="position: absolute; bottom:0px; left: 0px; width: 100%; height: 30px;" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="ViewCMSToolFooter.action" ></iframe>
+	</body>
+
+</html>

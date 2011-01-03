@@ -1,0 +1,245 @@
+#define( $headerMarkup )
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+
+	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/adminEmbla.css" />
+
+	<script type="text/javascript" src="script/embla/dragProxy.js"></script>
+	<script type="text/javascript" src="script/embla/admin.js"></script>
+	<script type="text/javascript">
+		
+		var currentSiteNodeId;
+		var currentRepositoryId;
+		
+		function setPageContext(siteNodeId, repositoryId)
+		{
+			currentSiteNodeId = siteNodeId;
+			currentRepositoryId = repositoryId;
+		}		
+	
+		/* Proxy functions */
+		function refreshPage(siteNodeId, changeTypeId, addedSiteNodeId)
+		{
+			$("#treeIframe").get(0).contentWindow.refreshNode(siteNodeId, changeTypeId, addedSiteNodeId);
+		}		
+	
+		function openUrlInWorkArea(url)
+		{
+			//alert("url:" + url);
+			document.getElementById("workIframe").src = url;
+		}
+	
+		function refreshWorkSurface()
+		{
+			//alert("refreshWorkSurface");
+			$("#workIframe").get(0).contentDocument.location.reload();
+		}
+		
+		function resize(isLoop)
+		{
+			var windowWidth = $(window).width();
+			var windowHeight = $(window).height();
+			$("#toolsColumn").height(windowHeight - $("#toolsColumn").offset().top);
+			$("#treeIframe").height($("#toolsColumn").height() - $("#toolsColumn").position().top - $("#paletteDiv").height());
+			$("#work").width(windowWidth - ($("#toolsColumn").width() + 6)).height($("#toolsColumn").height());
+			$("#workIframe").width($("#work").width()).height($("#work").height());
+			
+			if(!isLoop && $(window).width() > windowWidth)
+				resize(true)
+		}
+		
+		var isItAnActivationCall = false;
+		function setIsItAnActivationCall(value) {
+			isItAnActivationCall=value;
+			
+			setTimeout("refreshTreeSize();",500);			
+		}
+	
+		function refreshTreeSize()
+		{
+			if($("#treeIframe").get(0).contentWindow.resizeTreeIframe)
+				$("#treeIframe").get(0).contentWindow.resizeTreeIframe($("#treeIframe").height(), $("#treeIframe").width());
+		}
+			
+		function refreshRepositoryList()
+		{
+			jQuery.getJSON("ViewCommonAjaxServices!repositories.action", function(jsonData) {
+				if(jsonData.repository)
+				{
+					var oldVal = $("#repositorySelect").val();
+					$("#repositorySelect").empty();
+					jQuery.each(jsonData.repository, function(i,item){
+		
+						//alert("jsonData:" + item.id + ":" + item.name);
+						if(item.name != "empty")
+						{
+							if(oldVal == item.id)
+								$("#repositorySelect").append("<option value='" + item.id + "' selected='selected'>" + item.name + "</option>");
+							else
+								$("#repositorySelect").append("<option value='" + item.id + "'>" + item.name + "</option>");
+						}	
+					});
+				}
+			});
+			
+			return false;
+		}
+		
+		$(document).ready(function() {
+			resize(false);
+   			
+	   		window.onresize = function() {
+	   			resize(false);
+   			}
+
+			$("#workIframe").load(function() {
+	
+				//alert("Doc:" + $("#workIframe").get(0).contentDocument.location.href);
+				$($("#workIframe").get(0).contentDocument).mouseup(function(){
+					//alert("Dropped component maybe");
+					//emptyDragHTML();
+					$("#menuOverlayDiv").hide();
+				});
+	
+				//alert("Just loaded:" + $("#workIframe").get(0).contentDocument.location.href);
+				try
+				{
+					if(refreshTopToolBar)
+					{
+						var url = $("#workIframe").get(0).contentDocument.location.href;
+						//alert("url:" + url);
+						if(url.indexOf("siteNodeId=") > -1)
+						{
+							var loadedSiteNodeId = getRequestParameter(url, "siteNodeId");
+							//alert("loadedSiteNodeId:" + loadedSiteNodeId + ":" + currentRepositoryId);
+							refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=' + loadedSiteNodeId, -1, -1, -1);
+							syncWithTree(loadedSiteNodeId, currentRepositoryId, "treeIframe");
+						}
+					}
+				}
+				catch(e)
+				{
+					//alert("Error:" + e);
+				}
+			});
+
+
+			#set($rootSiteNode = $this.getRepositoryRootSiteNode($repositoryId))
+			openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=$rootSiteNode.id&repositoryId=$repositoryId");
+				
+		});
+		
+		function changeRepository(selectBox)
+		{
+			document.location.href = "ViewStructureTool!V3.action?repositoryId=" + selectBox.value;
+		}	
+
+		function changeRepositoryById(repositoryId)
+		{
+			document.location.href = "ViewStructureTool!V3.action?repositoryId=" + repositoryId;
+		}	
+		
+		function toggleFavourites()
+		{
+			if($("#paletteIframe").height() == 0)
+			{
+				//$("#treeIframe").height($("#treeIframe").height() - 120);
+				$("#paletteDiv").height(120 + $("#componentPaletteHeader").height());
+				$("#paletteIframe").height(120);
+				$("#componentPaletteHeader img").attr("src", "images/v3/downArrows.png");
+			}
+			else
+			{
+				$("#paletteDiv").height($("#componentPaletteHeader").height());
+				$("#paletteIframe").height(0);
+				$("#componentPaletteHeader img").attr("src", "images/v3/upArrows.png");
+			}
+			resize(false);
+		}
+				
+		var structureToolMenuUrl = "ViewStructureToolMenu!V3.action?repositoryId=";
+		var contentToolMenuUrl	 = "ViewContentToolMenu!V3.action?repositoryId=";
+		
+		var oldWidth = 0;
+		function setOldWidth(anOldWidth)
+		{
+			//alert("OldWidth:" + anOldWidth);
+			oldWidth = anOldWidth;
+		}
+		
+		function getOldWidth()
+		{
+			//alert("oldWidth:" + oldWidth);
+			return oldWidth;
+		}
+		
+		function minimizeToolColumn()
+		{
+			setOldWidth($('#toolsColumn').width()); 
+			$('#toolsColumn > *').hide(); 
+			$('#minimizedBar').show(); 
+			$('#toolsColumn').width(20);
+			resize(false); 
+		}
+
+		function restoreToolColumn()
+		{
+			//$('#work').width($('#work').width() - getOldWidth() - 20);
+			//$('#workIframe').width($('#work').width());
+			$('#toolsColumn > *').show(); 
+			$('#minimizedBar').hide(); 
+			$('#toolsColumn').width(getOldWidth());
+			resize(false); 
+		}
+	</script>
+#end
+ 
+#beginLightCommonToolV3Impl("tool.common.adminTool.header" "" "" false true true $headerMarkup)
+
+<div style="float: left; width: 100%; height: 100%; overflow: hidden;">
+	<div id="menutoolbar" class="$toolbarVariant">
+		<div id="menutoolbarLeft" style="width: 100%;">
+		</div>
+	</div>
+	<div style="clear: both"></div>
+	
+	<div id="toolsColumn">
+		<div id="minimizedBar" style="display: none; width: 100%; float: left;">
+	    	<img src="images/v3/doubleForwardArrows.png" onclick="restoreToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+		</div>
+		
+		<div class="onlyExpanded" id="repositoryChoiceDiv">
+	    	<select id="repositorySelect" onchange="changeRepository(this);">
+	    		#foreach($repository in $authorizedRepositoryVOList)
+	    		<option value="$repository.id" #if($repository.id == $repositoryId)selected="selected"#end>$repository.name</option>
+	    		#end
+	    	</select>
+	    	<img src="images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
+	    	<img src="images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+	    </div>
+	
+		<iframe id="treeIframe" name="treeIframe" src="ViewStructureToolMenu!V3.action?repositoryId=$repositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
+	
+		<div class="onlyExpanded" id="paletteDiv">
+	    	<div id="componentPaletteHeader">
+	    		<h3>$ui.getString('tool.common.favouriteComponentsHeader')</h3>
+	    		<a href="javascript:toggleFavourites();" style="float: right;"><img src="images/v3/downArrows.png" style="margin-top: 3px; margin-right: 2px;" width="16" height="16" border="0" alt="Close area"/></a>
+	        </div>
+			<iframe id="paletteIframe" name="paletteIframe" src="ViewComponentPalette.action" width="100%" height="120" frameborder="0" allowtransparency="true"></iframe>
+	    </div>
+	</div>
+
+	<div id="work" style="float: left;">
+		<iframe id="workIframe" name="workIframe" src="" width="100%" height="100%" frameborder="0" allowtransparency="true"></iframe>
+	</div>
+</div>
+
+<div id="contextMenuDiv">
+</div>
+
+<div id="menuOverlayDiv" style="display: none; position: absolute; z-index: 100;">
+</div>
+
+</body>
+</html>

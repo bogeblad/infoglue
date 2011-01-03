@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewRole.header" "tool.managementtool.viewRole.header" "roleName=$formatter.encodeBase64($roleName)")
+
+<SCRIPT type="text/javascript" SRC="script/OptionTransfer.js"></SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript">
+
+	var opt = new OptionTransfer("unassignedUserNameList","userName");
+	opt.setAutoSort(true);
+	opt.setDelimiter(",");
+	opt.saveRemovedLeftOptions("removedLeft");
+	opt.saveRemovedRightOptions("removedRight");
+	opt.saveAddedLeftOptions("addedLeft");
+	opt.saveAddedRightOptions("addedRight");
+	opt.saveNewLeftOptions("newLeft");
+	opt.saveNewRightOptions("newRight");
+	
+	function markNearestOption()
+	{
+		var searchField = document.getElementById("searchField");
+		var list        = document.getElementById("unassignedUserNameList");
+		//alert("list:" + list);
+		
+	  	sNode = list.options;
+	  	for(i=0;i<sNode.length;i++)
+		{
+			currentNode = sNode[i];
+			//alert("currentNode:" + currentNode.text);
+			//alert("searchField:" + searchField.value);
+			//alert("index:" + currentNode.text.indexOf(searchField.value));
+			if(currentNode.text.toLowerCase().indexOf(searchField.value.toLowerCase()) > -1)
+			{
+				list.selectedIndex = i;
+			  	break;		
+			}
+	  	}
+	}
+	
+	function save(form)
+	{
+		var list = document.getElementById("userName");
+		
+	  	sNode = list.options;
+	  	for(i=0;i<sNode.length;i++)
+		{
+			currentNode = sNode[i];
+			//alert("CurrentNode:" + currentNode);
+			//alert("currentNode:" + currentNode.name);
+			//alert("CurrentNode:" + currentNode.selected);
+			currentNode.selected = true;
+		}
+		form.submit();
+	}
+
+	function saveAndExit(form, action)
+	{
+		form.action = action;
+		save(form);
+	}
+
+</SCRIPT>
+
+#if($supportsUpdate == false)
+	#set($readonly = "disabled")
+#else
+	#set($readonly = "")
+#end
+#set($hasAccessToManageUsers = $this.hasAccessTo("Role.ManageUsers", "$roleName"))
+
+<div class="fullymarginalized">
+	<form method="post" name="editForm" action="UpdateRole.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="roleName" value="$!roleName">
+		<table>
+			<tr>
+				<td>#editReadOnlyField("Role.roleName" "newRoleName" $!roleName "51" "disabled")</td>
+			</tr>	
+				
+			<tr>
+				<td width="400">#editReadOnlyTextArea("Role.description" "description" $!description "50" "5" "normaltextarea" $readonly)</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+			
+			<tr>
+				<td class="biglabel">Manage the members in this role below</td>
+			</tr>
+			<tr>
+			  <td>
+				<table width="100%" border="0">
+				  <tr>
+				    <td>State a name or choose from list:<br>
+				        <input type="text" id="searchField" name="searchField" style="font-size: 10px; width:200px;"/ onkeypress="javascript:markNearestOption();" onchange="javascript:markNearestOption();" $readonly>
+				      </td>
+				    <td>&nbsp;</td>
+				    <td valign="bottom">Current Members</td>
+				  </tr>
+				  <tr>
+				    <td>
+				    	<SELECT $readonly id="unassignedUserNameList" NAME="unassignedUserNameList" MULTIPLE SIZE="10" #if($hasAccessToManageUsers)onDblClick="opt.transferRight()"#end style="font-size: 10px; width:300px;">
+							#if($supportsUpdate)
+								#if($hasAccessToManageUsers)
+						          	#foreach ($infoGluePrincipal in $allInfoGluePrincipals)
+										#set($checked = "")
+										#foreach ($assignedInfoGluePrincipal in $assignedInfoGluePrincipals)
+											#if($assignedInfoGluePrincipal.getName() == $infoGluePrincipal.getName())
+												#set($checked = "checked")
+											#end 
+										#end
+										
+										#if($checked == "")
+											<option value="$infoGluePrincipal.name" title="$infoGluePrincipal.name">$infoGluePrincipal.name</option>
+										#end
+									#end
+								#else
+									<option value="" title="You are not allowed to assign users">You are not allowed to assign users</option>
+								#end
+							#else
+								<option value="" title="No need to show users">No need to show users</option>
+							#end
+				        </select>
+				    </td>
+				    <td align="center">
+				        <INPUT TYPE="button" NAME="right" VALUE="&gt;&gt;" ONCLICK="opt.transferRight()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+						<INPUT TYPE="button" NAME="right" VALUE="All &gt;&gt;" ONCLICK="opt.transferAllRight()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+						<INPUT TYPE="button" NAME="left" VALUE="&lt;&lt;" ONCLICK="opt.transferLeft()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+						<INPUT TYPE="button" NAME="left" VALUE="All &lt;&lt;" ONCLICK="opt.transferAllLeft()" style="width:50px; font-family: verdana; font-size: 10px;">
+				    </td>
+				    <td>
+				      	<SELECT $readonly id="userName" name="userName" multiple size="10" #if($hasAccessToManageUsers)onDblClick="opt.transferLeft()"#end style="font-size: 10px; width:300px;">
+				        	#foreach ($assignedInfoGluePrincipal in $assignedInfoGluePrincipals)
+								<option value="$assignedInfoGluePrincipal.name" title="$assignedInfoGluePrincipal.name">$assignedInfoGluePrincipal.name</option>
+							#end
+					    </select>
+				    </td>
+				</tr>
+				</table>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td class="biglabel">Base role properties on content type definition</td>
+			</tr>
+			<tr>
+				<td>	
+					<select name="contentTypeDefinitionId">
+						<option value="">Choose type</option>
+						#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+							#set($selected = "")
+							#foreach ($assignedContentTypeDefinitionVO in $assignedContentTypeDefinitionVOList)
+								#if($assignedContentTypeDefinitionVO.id == $contentTypeDefinitionVO.id)
+									#set($selected = "selected")
+								#end 
+							#end
+							<option value="$contentTypeDefinitionVO.id" $selected>$contentTypeDefinitionVO.getName()</option>
+						#end
+					</select>
+				</td>
+			</tr>
+		</table>
+	</form>
+	
+</div>
+
+#if($supportsUpdate)
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")" onclick="saveAndExit(document.editForm, 'UpdateRole!saveAndExit.action');"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListRole.action';"/>
+	</div>
+</div>
+#end
+
+<script type="text/javascript">
+	//alert("Initializing form..");
+	opt.init(document.editForm);
+</script>
+
+</body>
+</html>

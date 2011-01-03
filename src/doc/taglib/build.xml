@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- ======================================================================= -->
+<!-- MSU/Infoglue CMS project file                                           -->
+<!-- ======================================================================= -->
+<project name="infoglue doc/taglib" default="generate" basedir=".">
+	<!-- ======================================================================= -->
+	<!-- I N I T                                                                 -->
+	<!-- ======================================================================= -->
+	<target name="init">
+		<property name="infoglue.dir" location="..${file.separator}..${file.separator}..${file.separator}"/>
+
+		<property name="tld.dir" value="${infoglue.dir}${file.separator}conf${file.separator}tld${file.separator}"/>  
+
+		<property name="resources.dir" value="${basedir}${file.separator}resources${file.separator}"/>
+		
+		<property name="lib.dir" value="${infoglue.dir}${file.separator}lib${file.separator}build${file.separator}"/>
+		<property name="tlddoc.jar" value="${lib.dir}tlddoc-1.2.jar"/>
+
+		<property name="output.dir" value="${infoglue.dir}${file.separator}build${file.separator}doc${file.separator}taglib${file.separator}"/>
+	</target>
+	
+	<!-- ======================================================================= -->
+	<!-- G E N E R A T E                                                         -->
+	<!-- ======================================================================= -->
+	<target name="generate" depends="init">
+		<java fork="true" jar="${tlddoc.jar}" failonerror="true">
+			<arg line="-d ${output.dir}"/>
+			<arg line="-xslt ${resources.dir}"/>
+			<arg value="${tld.dir}infoglue-cms-content.tld"/>
+			<arg value="${tld.dir}infoglue-cms-management.tld"/>
+			<arg value="${tld.dir}infoglue-common.tld"/>
+			<arg value="${tld.dir}infoglue-content.tld"/>
+			<arg value="${tld.dir}infoglue-management.tld"/>
+			<arg value="${tld.dir}infoglue-page.tld"/>
+			<arg value="${tld.dir}infoglue-structure.tld"/>
+			<arg value="${tld.dir}infoglue-workflow.tld"/>
+		</java>
+	</target>
+</project>

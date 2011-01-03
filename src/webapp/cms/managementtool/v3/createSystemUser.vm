@@ -1,0 +1,168 @@
+#beginCommonToolV3("tool.managementtool.createSystemUser.header" "$!userName" "" false true true)
+
+<script type="text/javascript" src="script/OptionTransfer.js"></script>
+
+<script type="text/javascript">
+
+	var opt1 = new OptionTransfer("unassignedRoleNameList","roleName");
+	opt1.setAutoSort(true);
+	opt1.setDelimiter(",");
+	opt1.saveRemovedLeftOptions("removedLeft");
+	opt1.saveRemovedRightOptions("removedRight");
+	opt1.saveAddedLeftOptions("addedLeft");
+	opt1.saveAddedRightOptions("addedRight");
+	opt1.saveNewLeftOptions("newLeft");
+	opt1.saveNewRightOptions("newRight");
+	
+	var opt2 = new OptionTransfer("unassignedGroupNameList","groupName");
+	opt2.setAutoSort(true);
+	opt2.setDelimiter(",");
+	opt2.saveRemovedLeftOptions("removedLeft");
+	opt2.saveRemovedRightOptions("removedRight");
+	opt2.saveAddedLeftOptions("addedLeft");
+	opt2.saveAddedRightOptions("addedRight");
+	opt2.saveNewLeftOptions("newLeft");
+	opt2.saveNewRightOptions("newRight");
+	
+	function save(form)
+	{
+		var roleList = document.getElementById("roleName");
+		
+	  	rolesNode = roleList.options;
+	  	for(i=0;i<rolesNode.length;i++)
+		{
+			currentNode = rolesNode[i];
+			currentNode.selected = true;
+		}
+		
+		var groupList = document.getElementById("groupName");
+		
+	  	groupsNode = groupList.options;
+	  	for(i=0;i<groupsNode.length;i++)
+		{
+			currentNode = groupsNode[i];
+			currentNode.selected = true;
+		}
+
+		form.submit();
+	}
+
+	function saveAndExit(form, action)
+	{
+		form.action = action;
+		save(form);
+	}
+
+</script>
+
+#menuToolbar("$ui.getString('tool.managementtool.createSystemUser.header')" $buttons $rightButtons) 
+
+<div id="igEditArea" class="igScrollArea">
+
+<form method="POST" name="inputForm" action="CreateSystemUser!v3.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<fieldset class="ig-fieldset">
+	
+		#editTextFieldCSS("SystemUser.userName" "userName" "$!userName" "51" true "")
+		#editPasswordFieldCSS("SystemUser.password" "password" "" "51" true "")
+		#editTextFieldCSS("SystemUser.firstName" "firstName" "$!firstName" "51" true, "")
+		#editTextFieldCSS("SystemUser.lastName" "lastName" "$!lastName" "51" true "")
+		#editTextFieldCSS("SystemUser.email" "email" $!email "51" true "")
+	
+		#labelCSS("tool.managementtool.userManageRoles.label" "ig-section-label")
+			
+		<div class="ig-row">
+			<table border="0">
+			  <tr>
+			    <td>
+			    	$ui.getString("tool.managementtool.availableRoles.label")<br/>
+					<SELECT id="unassignedRoleNameList" NAME="unassignedRoleNameList" MULTIPLE SIZE="10" onDblClick="opt1.transferRight()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+		          	#foreach ($roleVO in $availableRoles)
+						<option value="$roleVO.name" title="$roleVO.name">$roleVO.name</option>
+					#end
+				    </select>
+			    </td>
+			    <td align="center">
+			        <INPUT TYPE="button" NAME="roleRight" VALUE="&gt;&gt;" ONCLICK="opt1.transferRight()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+					<INPUT TYPE="button" NAME="roleRight" VALUE="All &gt;&gt;" ONCLICK="opt1.transferAllRight()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+					<INPUT TYPE="button" NAME="roleLeft" VALUE="&lt;&lt;" ONCLICK="opt1.transferLeft()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+					<INPUT TYPE="button" NAME="roleLeft" VALUE="All &lt;&lt;" ONCLICK="opt1.transferAllLeft()" style="width:50px; font-family: verdana; font-size: 10px;">
+			    </td>
+			    <td>
+			    	$ui.getString("tool.managementtool.assignedRoles.label")<br/>
+			      	<SELECT id="roleName" name="roleName" multiple size="10" onDblClick="opt1.transferLeft()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+				    </select>
+			    </td>
+			</tr>
+			</table>
+		</div>
+		
+		#labelCSS("tool.managementtool.userManageGroups.label" "ig-section-label")
+	
+		<div class="ig-row">
+			<table border="0">
+			  <tr>
+			    <td>
+			    	$ui.getString("tool.managementtool.availableRoles.label")<br/>
+			    	<SELECT id="unassignedGroupNameList" NAME="unassignedGroupNameList" MULTIPLE SIZE="10" onDblClick="opt2.transferRight()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+		          	#foreach ($groupVO in $availableGroups)
+						<option value="$groupVO.name" title="$groupVO.name">$groupVO.name</option>
+					#end
+					</select>
+			    </td>
+			    <td align="center">
+			        <INPUT TYPE="button" NAME="groupRight" VALUE="&gt;&gt;" ONCLICK="opt2.transferRight()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+					<INPUT TYPE="button" NAME="groupRight" VALUE="All &gt;&gt;" ONCLICK="opt2.transferAllRight()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+					<INPUT TYPE="button" NAME="groupLeft" VALUE="&lt;&lt;" ONCLICK="opt2.transferLeft()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+					<INPUT TYPE="button" NAME="groupLeft" VALUE="All &lt;&lt;" ONCLICK="opt2.transferAllLeft()" style="width:50px; font-family: verdana; font-size: 10px;">
+			    </td>
+			    <td>
+					$ui.getString("tool.managementtool.assignedGroups.label")<br/>
+			      	<SELECT id="groupName" name="groupName" multiple size="10" onDblClick="opt2.transferLeft()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+				    </select>
+			    </td>
+			</tr>
+			</table>
+		</div>
+	
+		<div style="clear: both;"></div>
+	
+		<div class="ig-row">
+			<label class="ig-label-nl" for="contentTypeDefinitionId">$ui.getString("tool.managementtool.userContentTypeDefinition.label")</label>
+			<select name="contentTypeDefinitionId" class="ig-select">
+				<option value="">Choose type</option>
+				#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+					#set($selected = "")
+					#foreach ($assignedContentTypeDefinitionVO in $assignedContentTypeDefinitionVOList)
+						#if($assignedContentTypeDefinitionVO.id == $contentTypeDefinitionVO.id)
+							#set($selected = "selected")
+						#end 
+					#end
+					<option value="$contentTypeDefinitionVO.id" $selected>$contentTypeDefinitionVO.getName()</option>
+				#end
+			</select>
+		</div>
+		
+		#*
+		<div style="clear: both;"></div>
+	
+		<div id="buttons" class="ig-buttonRow">
+			<input type="button" id="saveButton" name="saveButton" value="$ui.getString("tool.common.saveButton.label")" title="$ui.getString("tool.common.saveButton.title")"/>
+			<input type="button" id="saveAndExitButton" name="saveAndExitButton" value="$ui.getString("tool.common.saveAndExitButton.label")" title="$ui.getString("tool.common.saveAndExitButton.title")"/>
+			<input type="button" id="cancelButton" name="cancelButton" value="$ui.getString("tool.common.cancelButton.label")" title="$ui.getString("tool.common.cancelButton.title")"/>
+		</div>
+		*#
+
+	</fieldset>
+
+</form>
+</div>
+
+<script type="text/javascript">
+	opt1.init(document.inputForm);
+	opt2.init(document.inputForm);
+</script>
+
+#footerToolbar($footerButtons)
+
+#endCommonToolV3()

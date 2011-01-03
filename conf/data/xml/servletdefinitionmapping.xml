@@ -1,0 +1,298 @@
+<?xml version="1.0"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                           "http://castor.codehaus.org/mapping.dtd">
+<!-- 
+  Copyright 2004 The Apache Software Foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<mapping>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.DisplayNameImpl">
+
+    <field name="displayName" type="java.lang.String">
+        <bind-xml node="text"/>
+    </field>
+    <field name="castorLocale" type="java.lang.String">
+        <bind-xml name="xml:lang" node="attribute"/>
+    </field>
+  </class>
+    
+  <class name="org.apache.pluto.portalImpl.om.servlet.impl.TagDefinitionImpl">
+
+    <field name="uri" type="java.lang.String" required="true">
+      <bind-xml name="taglib-uri" node="element"/>
+    </field>
+
+    <field name="location" type="java.lang.String" required="true">
+      <bind-xml name="taglib-location" node="element"/>
+    </field>
+
+  </class>
+  
+  <class name="org.apache.pluto.portalImpl.om.servlet.impl.ResourceRef">
+
+    <field name="description" type="java.lang.String" required="false">
+      <bind-xml name="description" node="element"/>
+    </field>
+
+    <field name="name" type="java.lang.String" required="false">
+      <bind-xml name="res-ref-name" node="element"/>
+    </field>
+
+    <field name="type" type="java.lang.String" required="false">
+      <bind-xml name="res-type" node="element"/>
+    </field>
+
+    <field name="auth" type="java.lang.String" required="false">
+      <bind-xml name="res-auth" node="element"/>
+    </field>
+
+    <field name="sharing" type="java.lang.String" required="false">
+      <bind-xml name="res-sharing-scope" node="element"/>
+    </field>
+
+  </class>
+  
+  <class name="org.apache.pluto.portalImpl.om.servlet.impl.MimeTypeImpl">
+
+    <field name="extension" type="java.lang.String" required="true">
+      <bind-xml name="extension" node="element"/>
+    </field>
+
+    <field name="mimeType" type="java.lang.String" required="true">
+      <bind-xml name="mime-type" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.servlet.impl.SecurityConstraintImpl">
+
+  </class>
+
+    <class name="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl">
+
+    <field name="description" type="java.lang.String">
+        <bind-xml node="text"/>
+    </field>
+    <field name="castorLocale" type="java.lang.String">
+        <bind-xml name="xml:lang" node="attribute"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.SecurityRoleImpl">
+
+    <field name="description" type="java.lang.String" required="false" >
+        <bind-xml name="description" node="element"/>
+    </field>
+    <field name="roleName" type="java.lang.String" required="true">
+      <bind-xml name="role-name" node="element"/>
+    </field>
+  </class>
+
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.SecurityRoleRefImpl">
+
+    <field name="castorDescriptions" 
+           type="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl" 
+           collection="collection">
+      <bind-xml name="description" node="element"/>
+    </field>
+    <field name="roleName" type="java.lang.String" required="true">
+      <bind-xml name="role-name" node="element"/>
+    </field>
+    <field name="roleLink" type="java.lang.String" required="false">
+        <bind-xml name="role-link" node="element"/>
+    </field>
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.ParameterImpl">
+
+    <field name="name" type="java.lang.String" required="true">
+      <bind-xml name="param-name" node="element"/>
+    </field>
+    <field name="value" type="java.lang.String" required="true">
+      <bind-xml name="param-value" node="element"/>
+    </field>
+    <field name="castorDescriptions" 
+           type="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl" 
+           collection="collection">
+      <bind-xml name="description" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.servlet.impl.ServletMappingImpl">
+
+    <field name="id" type="java.lang.String">
+      <bind-xml name="id" node="attribute"/>
+    </field>
+
+    <field name="servletName" type="java.lang.String" required="true">
+      <bind-xml name="servlet-name" node="element"/>
+    </field>
+    <field name="urlPattern" type="java.lang.String" required="true">
+      <bind-xml name="url-pattern" node="element"/>
+    </field>
+
+  </class>
+  
+  <class name="org.apache.pluto.portalImpl.om.servlet.impl.ServletDefinitionImpl">
+
+    <field name="castorId" type="java.lang.String">
+
+      <bind-xml name="id" node="attribute"/>
+    </field>
+
+    <field name="servletName" type="java.lang.String" required="true">
+      <bind-xml name="servlet-name" node="element"/>
+    </field>
+    <field name="castorDisplayNames" 
+         type="org.apache.pluto.portalImpl.om.common.impl.DisplayNameImpl"
+         collection="collection">
+      <bind-xml name="display-name" node="element"/>
+    </field>
+    <field name="castorDescriptions" 
+         type="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl"
+         collection="collection">
+      <bind-xml name="description" node="element"/>
+    </field>
+    <field name="servletClass" type="java.lang.String">
+      <bind-xml name="servlet-class" node="element"/>
+    </field>
+    <field name="castorInitParams"
+           type="org.apache.pluto.portalImpl.om.common.impl.ParameterImpl"
+           collection="collection">
+      <bind-xml name="init-param" node="element"/>
+    </field>
+
+    <!-- only for completion, not used in class file -->
+    <field name="icon" transient="true" direct="true">
+      <bind-xml name="icon" node="element"/>
+    </field>
+    <field name="loadOnStartup" transient="true" direct="true">
+      <bind-xml name="load-on-startup" node="element"/>
+    </field>
+    <field name="jspFile" type="java.lang.String">
+      <bind-xml name="jsp-file" node="element"/>
+    </field>
+    <field name="castorInitSecurityRoleRefs"
+           type="org.apache.pluto.portalImpl.om.common.impl.SecurityRoleRefImpl"
+           collection="collection">
+      <bind-xml name="security-role-ref" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.servlet.impl.WebApplicationDefinitionImpl">
+    <map-to xml="web-app"/>
+
+    <field name="castorId" type="java.lang.String">
+      <bind-xml name="id" node="attribute"/>
+    </field>
+
+    <field name="castorDisplayNames" 
+         type="org.apache.pluto.portalImpl.om.common.impl.DisplayNameImpl"
+         collection="collection">
+      <bind-xml name="display-name" node="element"/>
+    </field>
+    <field name="castorDescriptions" 
+         type="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl"
+         collection="collection">
+      <bind-xml name="description" node="element"/>
+    </field>
+    <field name="castorInitParams"
+           type="org.apache.pluto.portalImpl.om.common.impl.ParameterImpl"
+           collection="collection">
+      <bind-xml name="context-param" node="element"/>
+    </field>
+    <field name="castorServlets"
+           type="org.apache.pluto.portalImpl.om.servlet.impl.ServletDefinitionImpl"
+           collection="collection"
+           required="true">
+      <bind-xml name="servlet" node="element"/>
+    </field>
+    <field name="servletMappings"
+           type="org.apache.pluto.portalImpl.om.servlet.impl.ServletMappingImpl"
+           collection="collection"
+           required="true">
+      <bind-xml name="servlet-mapping" node="element"/>
+    </field>
+    
+    <field name="castorTagDefinitions"
+           type="org.apache.pluto.portalImpl.om.servlet.impl.TagDefinitionImpl"
+           collection="collection">
+       <bind-xml name="taglib" node="element" />
+    </field>
+
+    <field name="castorResourceRefSet"
+           type="org.apache.pluto.portalImpl.om.servlet.impl.ResourceRef"
+           collection="collection">
+        <bind-xml name="resource-ref" node="element"/>
+    </field>
+
+    <!-- only for completion, not used in class file -->
+    <field name="icon" transient="true" direct="true">
+        <bind-xml name="icon" node="element"/>
+    </field>
+    <field name="distributable" transient="true" direct="true">
+        <bind-xml name="distributable" node="element"/>
+    </field>
+    <field name="sessionConfig" transient="true" direct="true">
+        <bind-xml name="session-config" node="element"/>
+    </field>
+    <field name="castorMimeMappings"
+    	transient="true"
+    	required="false"
+    	type="org.apache.pluto.portalImpl.om.servlet.impl.MimeTypeImpl"
+    	collection="collection">
+      <bind-xml name="mime-mapping" node="element"/>
+    </field>
+    <field name="welcomeFileList" transient="true" direct="true">
+        <bind-xml name="welcome-file-list" node="element"/>
+    </field>
+    <field name="errorPage" transient="true" direct="true">
+        <bind-xml name="error-page" node="element"/>
+    </field>
+    
+      <field name="securityConstraints"
+          transient="true"
+          required="false"
+          type="org.apache.pluto.portalImpl.om.servlet.impl.SecurityConstraintImpl"
+          collection="collection">
+          <bind-xml name="security-constraint" node="element"/>
+      </field>
+
+    <field name="loginConfig" transient="true" direct="true">
+        <bind-xml name="login-config" node="element"/>
+    </field>
+    <!--field name="securityRole" transient="false" direct="true">
+        <bind-xml name="security-role" node="element"/>
+    </field-->
+    <field name="securityRoles"
+    	transient="false"
+    	type="org.apache.pluto.portalImpl.om.common.impl.SecurityRoleImpl"
+    	required="false"
+    	collection="collection">
+      <bind-xml name="security-role" node="element"/>
+    </field>
+    <field name="envEntry" transient="true" direct="true">
+        <bind-xml name="env-entry" node="element"/>
+    </field>
+    <field name="ejbRef" transient="true" direct="true">
+        <bind-xml name="ejb-ref" node="element"/>
+    </field>
+  </class>
+  
+</mapping>

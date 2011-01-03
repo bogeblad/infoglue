@@ -1,0 +1,104 @@
+#define($headerMarkup)
+<style type="text/css">
+.systemLinkLabel {
+	float: left;
+	font-size: 12px;
+}
+
+.systemImageLink {
+	margin: 10px;
+	aheight: 30px;
+	float: left;
+	padding: 50px 10px 10px 10px;
+}
+
+.archiveImage {
+	background-image: url('images/archiveIcon.gif');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+.validationImage {
+	background-image: url('images/validationIcon.gif');
+	background-repeat: no-repeat;		
+	background-position: top center;
+}
+
+.logviewerImage {
+	background-image: url('images/logviewerIcon.gif');
+	background-repeat: no-repeat;		
+	background-position: top center;
+}
+
+.inconsistenciesImage {
+	background-image: url('images/inconsistenciesIcon.gif');
+	background-repeat: no-repeat;		
+	background-position: top center;
+}
+
+.deploymentImage {
+	background-image: url('images/deploymentIcon.gif');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+.deploymentVCImage {
+	background-image: url('images/deploymentVCIcon.png');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+.passwordImage {
+	background-image: url('images/passwordIcon.gif');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+
+.luceneImage {
+	background-image: url('images/luceneIcon.png');
+	background-repeat: no-repeat;
+	background-position: top center;
+}
+</style>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewSystemTools.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewSystemTools.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<div class="systemImageLink archiveImage">
+			<a href="ViewArchiveTool!input.action" class="systemLinkLabel">$ui.getString("tool.managementtool.archiveTool.title")</a>
+		</div>
+		<div class="systemImageLink validationImage">
+			<a href="InstallationValidator!input.action?title=Validation" class="systemLinkLabel">$ui.getString("tool.managementtool.validationTool.title")</a>
+		</div>
+		<div class="systemImageLink logviewerImage">
+			<a href="ViewLogging.action?title=Logging" class="systemLinkLabel">$ui.getString("tool.managementtool.loggingTool.title")</a>
+		</div>
+		<div class="systemImageLink inconsistenciesImage">
+			<a href="ViewInconsistencies!input.action?title=Inconsistencies" class="systemLinkLabel">$ui.getString("tool.managementtool.inconsistenciesTool.title")</a>
+		</div>
+		<div class="systemImageLink deploymentImage">
+			<a href="ViewDeploymentChooseServer!input.action?title=Deployment" class="systemLinkLabel">$ui.getString("tool.managementtool.deployment.title")</a>
+		</div>
+		<div class="systemImageLink deploymentVCImage">
+			<a href="#" onclick="if(top.openInlineDiv) top.openInlineDiv('ViewVCDeployment!input.action', 600, 800, true, true, 'Version control sync'); else openPopup('ViewVCDeployment!input.action', 'Version control sync', 'width=800,height=600,resizable=yes,scrollbars=yes');" class="systemLinkLabel">$ui.getString("tool.managementtool.deploymentVC.title")</a>
+		</div>
+		<div class="systemImageLink passwordImage">
+			<a href="ViewPasswordTool!input.action?title=Password+generation" class="systemLinkLabel">$ui.getString("tool.managementtool.password.title")</a>
+		</div>
+		<div class="systemImageLink luceneImage">
+			<a href="ViewLuceneOverview.action?title=Lucene+maintanance" class="systemLinkLabel">$ui.getString("tool.managementtool.luceneoverview.title")</a>
+		</div>
+						
+	</div>
+		
+#endLightCommonToolV3()

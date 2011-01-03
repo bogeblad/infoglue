@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<!DOCTYPE databases PUBLIC "-//EXOLAB/Castor JDO Configuration DTD Version 1.0//EN" "http://castor.org/jdo-conf.dtd">
+<jdo-conf> 
+	<database name="INFOGLUE_CMS" engine="@database.driver.engine@">
+		<data-source class-name="org.apache.commons.dbcp.BasicDataSource">
+		  	<param name="driver-class-name" value="@database.driver.class@"/>
+		  	<param name="username" value="@database.user@"/>
+		  	<param name="password" value="@database.password@"/>
+		  	<param name="url" value="@database.url@"/>
+		  	<param name="validation-query" value="@database.validationQuery@"/>
+		  	<param name="max-active" value="@database.maxConnections@"/>
+		</data-source>
+		<mapping href="classes/@database.mapping@"/>
+	</database>
+	<transaction-demarcation mode="local" />
+</jdo-conf>

@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+##set($treeMode = "classic")
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<title>Menus</title>
+
+	#includeLatestJQuery()
+
+	<script type="text/javascript" language="JavaScript">
+	<!-- 		
+		var languageCode = "$languageCode";
+		
+		var oldSelected;
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			// Call parent
+			parent.htmlTreeItemClick(itemId, repoId, path);
+			setSelected(itemId);			
+		}
+		
+		function setSelected(itemId)
+		{
+			// Graphical stuff
+			if (oldSelected != null)
+				oldSelected.className = "";
+			
+			srcIdLink =	document.getElementById("link" + itemId);
+			oldSelected = srcIdLink;
+			if (srcIdLink != null)
+				srcIdLink.className = "selected";
+		}
+		
+		function refreshTreeNode(nodeId, changeTypeId, addedNodeId)
+		{
+			if (changeTypeId == 4)
+			{
+				#if("$treeMode" == "classic")
+				document.location.reload();
+				#else
+				if(nodeId == tree.myId) 
+				{
+					document.location.reload();
+					return;
+				}
+				var node = tree.getNodeWithMyId(nodeId);
+				node.reload();
+				selectWhenLoaded(node, nodeId);
+				#end
+				
+				return;
+			}
+			#if("$treeMode" != "classic")
+			if (changeTypeId == 3)
+			{
+				var node = tree.getNodeWithMyId(addedNodeId);
+				node.parentNode.reload();				
+			}			
+			#end 
+			
+			#if("$treeMode" == "classic")
+			document.location.href="ViewStructureHtmlTree.action?exp=${exp}&repositoryId=${repositoryId}" + "&akey=/" + nodeId + "/&select=" + addedNodeId;
+			#else
+			
+			var parentNode = tree.getNodeWithMyId(nodeId);
+			if (changeTypeId == 1) 
+			{
+				parentNode = parentNode.parentNode;
+				addedNodeId = nodeId;
+			}
+
+			if(!parentNode || parentNode.myId == tree.myId) 
+			{
+				document.location.reload();
+				return;
+			}
+			parentNode.expand();
+			parentNode.reload();
+			selectWhenLoaded(parentNode, addedNodeId);
+			#end
+		}
+		
+		function selectWhenLoaded(parentNode, contentId)
+		{
+			if(parentNode.loading) 
+			{
+				window.setTimeout(function () {
+					selectWhenLoaded(parentNode, contentId);
+				}, 10);
+			}
+			else
+			{
+				parentNode.expand();
+				var addedNode = tree.getNodeWithMyId(contentId);
+				addedNode.select();
+			}
+		}
+		
+		var ig_expanded_nodes_cookie = "igStructureTreeExpansionForRepository${repositoryId}";
+		
+		function loaded()
+		{
+			setSelected("${select}");
+			
+			path = webFXTreeHandler.cookies.getCookie(ig_expanded_nodes_cookie);
+			//alert("path:" + path);
+			if(path && path != "")
+			{
+				path = path.substring(0, path.length - 1);
+				var pathArr = path.split(',');
+				
+				expandTreeRec(pathArr, 0);
+				
+				/*			
+				setTimeout(function () {
+					var addedNode = tree.getNodeWithMyId(selected);
+					addedNode.select();
+					}, 3000);
+				*/
+			}	
+		}
+		
+		// OTHER STUFF
+		function syncWithTree(path)
+		{
+			//alert('apa');
+			#if($treeMode == "classic")
+			var pathArr = path.split(',');
+			// var exp = "$exp";
+			var exp = "";
+			for(i=0;i<pathArr.length;i++)
+			{
+				exp = exp + "/" + pathArr[i] + "/";
+			}
+			document.location.href="ViewContentHtmlTree.action?exp=" + exp + "&repositoryId=${repositoryId}&select=" + pathArr[pathArr.length-1];
+			#else
+			var pathArr = path.split(',');
+			syncWithTreeRec(pathArr, 0);
+			#end			
+		}
+		
+		function syncWithTreeRec(pathArr, level)
+		{
+			if(pathArr.length <= 2)
+			{
+				var node = tree.getNodeWithMyId(pathArr[0]);
+				var id = pathArr[pathArr.length -1];
+				selectWhenLoaded(node, id);
+				return;
+			}
+		
+			if(level >= pathArr.length -1) 
+			{
+				var node = tree.getNodeWithMyId(pathArr[pathArr.length -2]);
+				var id = pathArr[pathArr.length-1];
+				selectWhenLoaded(node, id);
+				return;
+			}
+			
+			var node = tree.getNodeWithMyId(pathArr[level]);
+
+			if(!node.loading) node.expand();
+			if(node.loading) 
+			{
+				window.setTimeout(function () {
+					syncWithTreeRec(pathArr, level);
+				}, 10);
+			}
+			else
+			{
+				syncWithTreeRec(pathArr, level+1);
+			}
+		}
+		
+		
+		function expandTreeRec(pathArr, level)
+		{			
+			var node = tree.getNodeWithMyId(pathArr[level]);
+			
+			if(node == null)
+				return;
+			
+			if(!node.loading && node.parentNode != null)
+			{
+				//alert("Loading child to " + node.text + ":" + node.id + ":" + node.myId + !node.loaded + ":" + !node.loading);
+				if (!node.loaded && !node.loading && node.src) {
+					_startLoadXmlTree(node.src, node);
+				}
+				
+				if (webFXTreeHandler.behavior == 'classic') { document.getElementById(node.id + '-icon').src = node.openIcon; }
+				if (node.childNodes.length) {  document.getElementById(node.id + '-cont').style.display = 'block'; }
+				node.open = true;
+				document.getElementById(node.id + '-plus').src = node.minusIcon;
+				node.deSelect();
+				document.getElementById(node.id + '-anchor').blur();
+			 	//node.expand();
+			}
+						
+			if(node.loading && !node.loaded) 
+			{
+				//alert("loading with level:" + level + " and " + pathArr.length);
+				if(level < pathArr.length)
+				{
+					window.setTimeout(function () {
+						expandTreeRec(pathArr, level);
+					}, 10);
+				}
+			}
+			else
+			{
+				//alert("not loading");
+				if(level < pathArr.length)
+				{
+					expandTreeRec(pathArr, level+1);
+				}
+			}
+		}
+
+		// -->
+	</script>
+	#if($treeMode != "classic")
+	<!-- DYNAMIC VERSION SCRIPTS -->
+	<script type="text/javascript">
+		var defaultWorkingStyleInformation = "$this.workingStyleInformation";
+		var defaultFinalStyleInformation = "$this.finalStyleInformation";
+		var defaultPublishStyleInformation = "$this.publishStyleInformation";
+		var defaultPublishedStyleInformation = "$this.publishedStyleInformation";
+	</script>
+	<script type="text/javascript" src="script/xloadtree/xtree.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xmlextras.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xloadtree.js"></script>
+	<!-- END -->
+	#end
+	
+</head>
+<body class="structuretool" LEFTMARGIN="0" TOPMARGIN="0" onload="parent.notifyIsLoaded();parent.notifyExp('${exp}');loaded();">
+<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+
+	#if($treeMode=="classic")
+	<link rel="stylesheet" type="text/css" href="css/treeview.css" /> 
+	#else
+	
+	<!-- NEW DYNAMIC VERSION -->
+	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
+	<script type="text/javascript">
+	webFXTreeConfig.rootIcon		= "images/tree/structureRoot.gif"; // "script/xloadtree/images/xp/folder.png";
+	webFXTreeConfig.openRootIcon	= "images/tree/structureRoot.gif"; // "script/xloadtree/images/xp/openfolder.png";
+	webFXTreeConfig.folderIcon		= "script/xloadtree/images/xp/page.png";
+	webFXTreeConfig.openFolderIcon	= "script/xloadtree/images/xp/page.png";
+	webFXTreeConfig.hiddenFolderIcon		= "script/xloadtree/images/xp/pageHidden.png";
+	webFXTreeConfig.hiddenOpenFolderIcon	= "script/xloadtree/images/xp/pageHidden.png";
+	webFXTreeConfig.protectedFolderIcon		= "script/xloadtree/images/xp/pageProtected.png";
+	webFXTreeConfig.protectedOpenFolderIcon	= "script/xloadtree/images/xp/pageProtected.png";
+	webFXTreeConfig.fileIcon		= "script/xloadtree/images/xp/file.png";
+	webFXTreeConfig.lMinusIcon		= "script/xloadtree/images/xp/Lminus.png";
+	webFXTreeConfig.lPlusIcon		= "script/xloadtree/images/xp/Lplus.png";
+	webFXTreeConfig.tMinusIcon		= "script/xloadtree/images/xp/Tminus.png";
+	webFXTreeConfig.tPlusIcon		= "script/xloadtree/images/xp/Tplus.png";
+	webFXTreeConfig.iIcon			= "script/xloadtree/images/xp/I.png";
+	webFXTreeConfig.lIcon			= "script/xloadtree/images/xp/L.png";
+	webFXTreeConfig.tIcon			= "script/xloadtree/images/xp/T.png";
+	webFXTreeConfig.showRoot		= true;
+	webFXTreeConfig.loadingText		= "Loading content ...";
+	
+	#set($par = "$!parent")
+	#if( $par != "")
+		#set($par = "&parent=${parent}")
+	#else
+		#set($par = "&parent=$rootNode.Id")
+	#end 
+	
+	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}$par", "JavaScript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
+	tree.myId = "$rootNode.Id";	
+	document.write(tree);
+	var oldSelected = null;
+	function onTreeItemClick(elem, itemId, repoId, path)
+	{
+		// if(oldSelected!=null) oldSelected.className="";
+		// elem.className="selected";
+		// oldSelected=elem;
+		parent.htmlTreeItemClick(itemId, repoId, path);
+		
+		elementString = elem.toString();
+		startIndex = elementString.indexOf("(") + 1;
+		endIndex = elementString.indexOf(")");
+		nodeId = elementString.substring(startIndex, endIndex);
+		var node = tree.getNodeWithMyId(nodeId);
+		
+		setTimeout(function () {
+			if (node.folder) {
+				if (!node.open) { node.expand(); }
+				}			
+			//webFXTreeHandler.toggle(node);
+			}, 100);
+
+	}
+	function onTreeItemSelect(elem)
+	{
+		var aid = elem + "-anchor";
+		if (oldSelected != null)
+			oldSelected.className = "";
+		
+		var srcIdLink =	document.getElementById(aid);
+		// alert(srcIdLink.className);
+		oldSelected = srcIdLink;
+		if (srcIdLink != null)
+			srcIdLink.className = "selected";
+
+		// alert(srcIdLink.className);
+		
+	}
+	</script>	
+	<!-- END -->	
+	#end
+
+
+#if($treeMode == "classic")
+	<!-- HTML Version of the tree: Start --->
+	##
+	## drawItem procedure (called from tree renderer for every item in the list, [se #parse below] )
+	## this is a local macro
+	#set($canDrag = ' ondragstart="startDrag();" ondragend="endDrag();"')
+	#set($imgPath="images/tree/xp/")	
+	
+	#macro(drawItem $n)
+			####
+			## Draw the item icon Container or not? 
+			
+			#if ($n.isContainer())
+			
+				#set($acceptdrop='ondrop="drop()" ondragover="overDrag()" ondragenter="enterDrag()" ondragleave="exitDrag()"')
+				#if ($n.isRoot())
+					<img $acceptdrop id="icon${n.getId()}" myLabel="${n.getTitle()}" class="tree-icon" src="images/tree/structureRoot.gif">
+				#else
+					<img $canDrag $acceptdrop class="tree-icon" src="${imgPath}emptyfolder$preOCImg$postImg" id="icon${n.getId()}" myLabel="${n.getTitle()}" />
+				#end
+				
+			#else
+				#set($acceptdrop='')
+				<img $canDrag class="tree-icon" src="${imgPath}item$postImg" id="icon${n.getId()}" myLabel="${n.getTitle()}" />
+			#end
+			
+			####
+			## Draw item link			
+			<a $canDrag id="link${n.getId()}" myLabel="${n.getTitle()}" src="null" $acceptdrop	href="JavaScript:htmlTreeItemClick('${n.getId()}','${repositoryId}','$formatter.escapeExtendedHTML($n.title)');">$formatter.escapeHTML($n.title)</a>
+			
+	#end
+	
+	## Set custom arguments to send to page
+	#set($myTreeArgs = "&repositoryId=${repositoryId}&showLeafs=${showLeafs}")
+	
+	## Explorer style rendering, draw your own folder icons in drawItem 
+	#drawTreeXP()
+
+	<!-- HTML Version of the tree: End --->	
+#end
+</body>
+</html>
+
+<script type="text/javascript" language="JavaScript1.2">
+<!-- 
+	
+	function MoveRequest(srcId, destId, srcLabel, destLabel)
+	{
+			return;
+			question = confirm("Do you really want to move " + srcLabel + " to folder: " + destLabel);
+			if (question !="0")
+			{
+				alert("ok, as soon as this is implemented content with id " + srcId + " will be moved to content with id " +destId);
+			}			
+	}
+	    
+-->
+</script>
+<script type="text/javascript" language="JavaScript1.2" src="script/dragdrop.js"></script>

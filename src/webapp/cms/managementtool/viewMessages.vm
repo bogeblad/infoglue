@@ -1,0 +1,7 @@
+#if($messages.size() > 0)
+#foreach($message in $messages)
+${message.id}---${message.userName}---${message.text}---;
+#end
+#else
+empty
+#end

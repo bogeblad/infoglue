@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.createServiceDefinition.header" "tool.managementtool.createServiceDefinition.header" "")
+
+<div class="fullymarginalized">
+
+	<form name="editForm" method="post" action="CreateServiceDefinition.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<p>#editField("ServiceDefinition.name" "name" $!name "51")</p>
+		<p>#editField("ServiceDefinition.description" "description" $!description "51")</p>
+		<p>#editField("ServiceDefinition.className" "className" $!className "51")</p>
+	</form>
+
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListServiceDefinition.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Object Mapping DTD Version 1.0//EN"
+                         "http://castor.codehaus.org/mapping.dtd">
+
+<mapping>
+        <class name="org.infoglue.cms.entities.up2date.UpdateCollection">
+                <map-to xml="update-collection"/>
+
+                <field name="UpdatePackageList"
+                       type="org.infoglue.cms.entities.up2date.UpdatePackage"
+                          collection="vector">
+                        <bind-xml name="update-package"/>
+                </field>
+        </class>
+
+
+        <class name="org.infoglue.cms.entities.up2date.UpdatePackage">
+                <field name="PackageId" type="java.lang.String">
+					<bind-xml name="package-id" node="element"/>
+                </field>
+
+                <field name="Url" type="java.lang.String">
+					<bind-xml name="url" node="element"/>
+                </field>
+
+                <field name="DetailsUrl" type="java.lang.String">
+					<bind-xml name="details-url" node="element"/>
+                </field>
+
+                <field name="BinaryUrl" type="java.lang.String">
+					<bind-xml name="binary-url" node="element"/>
+                </field>
+                
+                <field name="Description" type="java.lang.String">
+					<bind-xml name="description" node="element"/>
+                </field>
+
+                <field name="Title" type="java.lang.String">
+					<bind-xml name="title" node="element"/>
+                </field>
+
+                <field name="BinarySize" type="java.lang.Integer">
+					<bind-xml name="binary-size" node="element"/>
+                </field>
+                
+        </class>
+
+</mapping>

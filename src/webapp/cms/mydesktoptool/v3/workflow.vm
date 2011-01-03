@@ -1,0 +1,50 @@
+#beginLightCommonToolV3("tool.common.workflowOperationDoneHeader" "" "" false true true)
+
+<link rel="stylesheet" type="text/css" href="css/cms.css"/>
+	
+<div onfocus="this.blur();">
+    
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3 style="padding-left: 16px;">Workflow operaton done</h3>
+	
+	<div class="inlineTabDiv" onfocus="this.blur();">	
+
+		<p>
+			<a href="ViewMyDesktop.action" style="display:block; padding-top: 8px; height: 20px;"><strong>Return to MyDesktop</strong></a>
+			Click here to return to the MyDesktop tool
+		</p>
+	
+		#foreach($link in $actionLinks)			
+
+			<p>
+				<a id="$link.id" 
+				#if($parentCall) 
+					href="$actionUrl"
+				#else 
+					href="$actionUrl"
+				#end 
+				
+				#if(!$parentCall && !$link.isJavascript)
+					#if($link.target) 
+						target="$link.target" 
+					#elseif(!$parentCall && $link.actionURL != "refreshParent") 
+						target="_parent"
+					#end
+				#end 
+				
+				style="display:block; #if($link.backgroundImageURL != '') background-image: url('$link.backgroundImageURL'); background-repeat: no-repeat; padding-left: 26px;#end padding-top: 8px; height: 20px;"><strong>$link.text</strong></a>
+			$link.description
+			</p>
+		#end
+	
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+		
+</div>
+
+	
+#endCommonToolV3()

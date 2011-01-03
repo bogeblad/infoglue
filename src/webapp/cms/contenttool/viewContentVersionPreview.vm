@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Preview content</title>
+	<link rel="stylesheet" type="text/css" href="css/frovi_com.css" />
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+
+<body>
+
+<table border="0" width="500">
+
+	<!-- here goes the field generation -->
+
+	#foreach($attribute in $contentTypeAttributes)
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3"><b>$attribute.name</b></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				$this.getUnescapedAttributeValue($attribute.name)
+			</td>
+		</tr>
+	#end
+
+	<!-- display category relationships too -->
+	#foreach($categoryKey in $definedCategoryKeys)
+		#set($keyAttribute = $categoryKey.value)
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3"><b>$categoryKey.title ($keyAttribute)<b></td>
+		</tr>
+		#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
+		<tr>
+			<td>
+			#foreach($relation in $relatedCategories)
+				$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)#if($velocityCount < $relatedCategories.size()), #end
+			#end
+			</td>
+		</tr>
+	#end
+
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<a href="javascript:parent.window.close();">$ui.getString("tool.contenttool.close")</a></td>
+		</td>
+	</tr>
+
+</table>
+
+</body>
+</html>

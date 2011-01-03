@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewSystemTools.header" "tool.managementtool.viewSystemTools.header" "")
+
+<div class="fullymarginalized" style="color: black;">
+
+	<h2>$ui.getString("tool.managementtool.archiveTool.header")</h2>
+	<p>
+		$ui.getString("tool.managementtool.restoreAssetArchive.intro")
+	</p>
+	<h3>$ui.getString("tool.managementtool.restoreAssetArchive.archiveFileLabel")</h3>		
+	<form enctype="multipart/form-data" name="inputForm" action="ViewArchiveTool!restoreAssetArchive.action" method="POST" style="margin-left: 16px;">
+	 	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	 	<input size=30 type="FILE" name="file1" id="file1">
+	 	<br/>
+ 		<input type="submit" value="Restore"/>
+	</form>
+	
+#endManagementTool()

@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<title>Component palette</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<style type="text/css">
+		.propertyBackground {
+			background-color:#F4F4F4;
+			}	
+	</style>
+		
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="propertyBackground" align="center">
+
+<div id="buffer" style="top: 0; left: 0"></div>
+
+<table class="propertyBackground" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td valign="top">
+		
+		<table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+		<tr class="darkapricot">
+			<td colspan="2" class="smalllabel">Drag a component to the slot</td>
+		</tr>
+		<tr>
+			<td colspan="2" height="1" bgcolor="#FEF8D0"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td colspan="2" height="1" bgcolor="#F0E1B4"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td colspan="2" height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>
+		<tr>
+			<td height="1"><strong>Icon</strong></td>
+			<td height="1"><strong>Component Name</strong></td>
+		</tr>
+		
+		#set($isOdd = true)
+		#foreach ($content in $components)
+			#if($isOdd)
+				#set($class = "class='lightapricot'")
+				#set($isOdd = false)
+			#else
+				#set($class = "class='white'")
+				#set($isOdd = true)
+			#end
+			
+			#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
+			<tr $class>
+				<td align="center">#if($imageUrl != "")<span onMouseDown="grabIt(event);" id="$content.id"><img src="$this.getDigitalAssetUrl($content.id, "thumbnail")" width="50" height="50" border="0"></span>#end&nbsp;</td>
+				<td valign="middle"><span onMouseDown="grabIt(event);" id="$content.id">$content.getName()</span></td>
+			</tr>	
+			
+			#set($imageUrl = "")
+		#end
+		
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+		</table>
+	</td>	
+</tr>
+</table>
+
+</body>
+</html>

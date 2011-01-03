@@ -1,0 +1,224 @@
+#beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogHeader" "" "" false false $!disableCloseButton)
+
+	<script type="text/javascript">
+	<!--
+		var selectedAssetElement;
+		var contentId;
+		var assetKey = "";
+		var firstAssetKey;
+		var assetUrl;
+			
+		function markAsset(object, digitalAssetId, aContentId, anAssetKey, actualAssetKey, anAssetUrl)
+		{
+			if(selectedAssetElement)
+			{
+				selectedAssetElement.parentNode.style.border = "1px solid #d8d8d8";
+				selectedAssetElement.parentNode.style.background = "url(images/v3/imgbox_bg.gif) repeat";
+				selectedAssetElement.parentNode.style.backgroundImage = "url(images/v3/imgbox_bg.gif)";
+				selectedAssetElement.style.background = "url(images/v3/imgbox_bg.gif) repeat";
+				selectedAssetElement.style.backgroundImage = "url(images/v3/imgbox_bg.gif)";
+			}
+			
+			contentId = aContentId;	
+			if(actualAssetKey)
+				assetKey = actualAssetKey;
+			assetUrl = anAssetUrl;
+			
+			if(parent.assetMarked)
+				parent.assetMarked(contentId, assetKey, assetUrl);
+				
+			selectedAssetElement = document.getElementById("digitalAsset" + digitalAssetId);
+			if(selectedAssetElement)
+			{
+				selectedAssetElement.parentNode.style.border = "1px solid orange";
+				selectedAssetElement.parentNode.style.background = "url(images/v3/imgboxselected_bg.gif) repeat";
+				selectedAssetElement.parentNode.style.backgroundImage = "url(images/v3/imgboxselected_bg.gif)";
+				selectedAssetElement.style.background = "url(images/v3/imgboxselected_bg.gif) repeat";
+				selectedAssetElement.style.backgroundImage = "url(images/v3/imgboxselected_bg.gif)";
+			}
+		}
+	
+		function onOk()
+		{
+			if(assetKey == "")
+				alert("$ui.getString("tool.contenttool.assetDialog.mustChooseAttachment")");
+			else
+			{
+				#if(!$treatAsLink)
+					//alert("ok:" + parent.onOk);
+					parent.onOk(contentId, assetKey, assetUrl);
+				#else
+					parent.onOk(contentId, assetKey, assetUrl);
+				#end
+			}
+		}
+	
+		function onCancel() 
+		{
+		    parent.onCancel(null);
+			return false;
+		}	
+	
+		function initSub(contentId) 
+		{
+			if(document.referrer != null && document.referrer != '')
+				markAsset(this, '$!contentId', firstAssetKey, firstAssetKey, '');
+			else
+				markAsset(this, '$!contentId', lastAssetKey, lastAssetKey, '');
+		};
+	
+		function deleteAsset(url, assetKey)
+		{
+			var returnAddress = document.location.href;  
+			if (confirm('$ui.getString("tool.contenttool.assetDialog.confirmAssetDeletionLabel") ' + assetKey))
+			{
+				window.location.href=url + "&returnAddress=" + escape(returnAddress);
+			}
+		}
+	
+		$(document).ready(function(){
+			setTimeout("initSub()", 500);
+			var dimensionsHeight = $(window).height();
+			$(".imgBoxContainer").height(dimensionsHeight - 40);
+		});
+	-->
+	</script>
+	<link rel="stylesheet" type="text/css" href="css/v3/assets.css" />
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	
+	<style type="text/css">
+	<!--
+		.imgBoxContainer {
+			width: 99%;
+			height: 310px;
+			border: 1px solid #ccc;
+			display: block;
+			float: left;
+			overflow: auto;
+		}
+		.imgBox {
+			width:94px;
+			height:94px;
+			background:url(../images/v3/imgbox_bg.gif) repeat;
+			border:solid 1px #d8d8d8;
+			display:block;
+			float:left;
+			margin:0px 5px 5px 0;
+			text-align:center;
+			}
+		.imgBoxTop { 
+			position:relative; 
+			height:40px; 
+			text-align:center;
+			margin: 5px 5px 0px 5px;
+			background:url(../images/v3/imgbox_bg.gif) repeat;
+		}
+		.imgBoxTopInner { 
+			padding-top: 5px;
+			text-align:center;
+			background:url(../images/v3/imgbox_bg.gif) repeat;
+		}
+		.imgBoxTopInner img {
+			border:solid 1px #d8d8d8;
+			cursor: pointer;
+		}
+		
+		.imgBoxBottom a {
+			font-family:Arial, Helvetica, sans-serif;
+			font-size:11px;
+			position:relative; 
+			width:38px;
+			height:16px;
+			display:block;
+			float:left;
+		}
+		.assetKeyP {
+			margin: 0px; 
+			padding: 0px;
+			text-align: center;
+			width: 50px;
+			width: 100%;
+			overflow: hidden;
+			float: left;
+			display: block;
+		}
+		.assetKeyHref {
+			font-family:Arial, Helvetica, sans-serif;
+			font-size:11px;
+		}			
+	-->
+	</style>
+	
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+</head>
+
+<body class="generaltooledit">
+
+<div id="assets" class="imgBoxContainer">
+
+#set($counter = 0)
+#foreach($digitalAsset in $inheritedDigitalAssetsRecursive)
+	#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
+	#set($contentId = $this.getDigitalAssetContentId($digitalAsset.digitalAssetId))
+	#set($path = "$this.getContentPath($contentId)")
+	<div class="imgBox">
+    	<div class="imgBoxTop" id="digitalAsset$digitalAsset.id" #if($assetKey == "$digitalAsset.assetKey") style="background:url(images/v3/imgboxselected_bg.gif) repeat;" #else style="background:url(images/v3/imgbox_bg.gif) repeat;" #end>
+            <div id="imgBoxTopInner" class="imgBoxTopInner">
+            	
+            	<input type="hidden" id="digitalAsset$digitalAsset.id" value="$digitalAssetUrl">
+				#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")
+				#set($doubleEncodedAssetKey = "$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')")
+				#set($thumbnailImageUrl = "$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId, 70, 50, 'ffffff', 'center', 'middle', 70, 50, 75)")
+				<img ondblclick="onOk();" onclick="markAsset(this, $digitalAsset.id, $!contentId, '$singleEncodedAssetKey', '$singleEncodedAssetKey', '$thumbnailImageUrl');" src="$thumbnailImageUrl" alt="$digitalAsset.assetKey ($digitalAsset.assetContentType - $path - $formatter.formatFileSize($digitalAsset.assetFileSize))" />
+             	<p title="$digitalAsset.assetKey - $path - ($digitalAsset.assetContentType - $formatter.formatFileSize($digitalAsset.assetFileSize))" class="assetKeyP"><a class="assetKeyHref" ondblclick="onOk();" href="javascript:markAsset(this, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl');">#if($digitalAsset.assetKey.length() > 14)$digitalAsset.assetKey.substring(0,14)..#else$digitalAsset.assetKey#end</a></p>
+                #if($showSelectButtonByEachImage)<a href="javascript:markAsset(this, $digitalAsset.id, $!contentId, '$doubleEncodedAssetKey', '$doubleEncodedAssetKey', '$thumbnailImageUrl'); onOk();"><b>Add asset to selection</b></a>#end
+				#if($assetKey == $digitalAsset.assetKey)
+					<script type="text/javascript">
+					<!--
+						var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+					-->
+					</script>	
+				#else
+					#if($counter == 0 && (!$assetKey || $!assetKey == ''))
+						<script type="text/javascript">
+						<!--
+							var firstAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+						-->
+						</script>
+					#end
+				#end
+				<script type="text/javascript">
+				<!--
+					var lastAssetKey = '$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')';
+				-->
+				</script>	
+				#set($counter = $counter + 1)
+            	
+            </div>
+        </div>
+ 	</div>
+#end
+
+#if($counter == 0)
+<p>
+	$ui.getString("tool.contenttool.noAssetsOrNoContentSelectedLabel")
+</p>
+#end
+
+</div>
+
+#if($enableInlineButtons)
+<div style="display: block; float: left; width: 100%; height: 18px; margin-top: 4px; padding-top: 0px;"">
+
+	<a class='igButton' href="#" onclick="onOk();"><span class='igButtonOuterSpan'><span class='linkInsert'>$ui.getString("tool.contenttool.assetDialog.chooseAttachment")</span></span></a>
+	
+	#if($contentVersionVO.id)
+		<a class='igButton' href="#" onclick="openPopup('ViewDigitalAsset.action?contentVersionId=$contentVersionVO.id', 'DigitalAsset', 'width=400,height=200,resizable=no');"><span class='igButtonOuterSpan'><span class='linkUpload'>$ui.getString("tool.contenttool.uploadNewAttachment")</span></span></a>
+	#end
+
+</div>
+#end
+
+</body>
+</html>

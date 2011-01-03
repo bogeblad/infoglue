@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Content differences</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	<script type="text/javascript" src="script/jsdiff.js"></script>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<style>
+	<!--
+		ins 
+		{
+		  background-color: #ccffcc;
+		}
+		
+		del 
+		{
+		  background-color: #ff6666;
+		}
+	-->
+	</style>
+
+</head>
+
+<body class="contenttooledit">
+
+<table border="0" width="500">
+
+	<!-- here goes the field generation -->
+	#foreach($attribute in $attributes)
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3"><b>$attribute.name</b></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<script type="text/javascript">
+				<!--
+				#set($value1 = $!formatter.escapeExtendedHTML($!formatter.cleanForJavascriptStrings($this.getUnescapedAttributeValue($contentVersionVO1, $attribute.name), "iglb")))
+				#set($value2 = $!formatter.escapeExtendedHTML($!formatter.cleanForJavascriptStrings($this.getUnescapedAttributeValue($contentVersionVO2, $attribute.name), "iglb")))
+				var value1 = "$value1";
+				var value2 = "$value2";
+				value1 = value1.replace(/iglb/g, "<br/>").replace(/CDATA\[/g, "CDATA[<br/>");
+				value2 = value2.replace(/iglb/g, "<br/>").replace(/CDATA\[/g, "CDATA[<br/>");
+				document.write("<div style='background-color: #FFF; border: 1px solid #333; padding: 5px; width: 100%'>" + diffString(value1, value2) + "</div>");
+				-->
+				</script>
+			</td>
+		</tr>
+	#end
+
+	<!-- display category relationships too -->
+	#foreach($categoryKey in $definedCategoryKeys)
+		#set($keyAttribute = $categoryKey.value)
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3"><b>$categoryKey.title ($keyAttribute)<b></td>
+		</tr>
+		#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
+		<tr>
+			<td>
+			#foreach($relation in $relatedCategories)
+				$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)#if($velocityCount < $relatedCategories.size()), #end
+			#end
+			</td>
+		</tr>
+	#end
+
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<a href="javascript:parent.window.close();">$ui.getString("tool.contenttool.close")</a></td>
+		</td>
+	</tr>
+
+</table>
+
+</body>
+</html>

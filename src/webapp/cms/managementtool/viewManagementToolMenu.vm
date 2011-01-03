@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Menus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<script type="text/javascript">
+	<!-- 
+		function reloadMain()
+		{
+			#if($repositoryId == 0)
+				parent.frames[3].location.href = "ViewManagementToolStartPage.action";
+			#else
+				parent.frames[3].location.href = "ViewRepositoryOverview.action?repositoryId=$repositoryId";
+			#end
+		}
+
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="managementtool" onload="reloadMain();">
+
+<div style="LEFT:0px; RIGHT:0px; position:absolute; TOP:0px; height:100%; visibility:visible; z-index:0">
+<table class="managementtool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td valign="top" width="100%" height="100%"></td>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+
+<div style="LEFT:2px; RIGHT:2px; position:absolute; TOP:1px; BOTTOM:6px; height:100%; visibility:visible; z-index:0">
+<table class="managementtool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td> 
+	<td valign="top" width="100%">
+		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"></td>
+		</tr>
+		<tr>
+			#if($repositoryId == 0)
+				<td class="menu"><img src="images/folderOpen.gif">All Repositories</td>
+			#else
+				<td class="menu"><img src="images/folderOpen.gif"><a href="ViewRepository.action?repositoryId=$repositoryId" target="main">&nbsp;$name</a></td>				
+			#end
+		</tr>
+		
+		#if($repositoryId == 0)
+
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListRepository.action?title=Repositories" target="main">Repositories</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListSystemUser.action?title=SystemUsers" target="main">SystemUsers</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListRole.action?title=Roles" target="main">Roles</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListLanguage.action?title=Languages" target="main">Languages</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListFunction.action?title=Functions" target="main">Functions</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListServiceDefinition.action?title=ServiceDefinitions" target="main">ServiceDefinitions</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListAvailableServiceBinding.action?title=AvailableServiceBindings" target="main">AvailableServiceBindings</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListSiteNodeTypeDefinition.action?title=SiteNodeTypeDefinitions" target="main">SiteNodeTypeDefinitions</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListExtranetUser.action?title=ExtranetUsers" target="main">ExtranetUsers</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListExtranetRole.action?title=ExtranetRoles" target="main">ExtranetRoles</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListTransactionHistory.action?title=TransactionHistory" target="main">TransactionHistory</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewListWorkflow.action?title=Workflows" target="main">Workflows</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/rootdottedLine.gif"><img src="images/folder.gif"><a href="ViewListContentTypeDefinition.action?title=ContentTypeDefinitions" target="main">ContentTypeDefinitions</a></td>
+		</tr>
+
+		#else
+
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/dottedLine.gif"><img src="images/folder.gif"><a href="ViewPermission.action?repositoryId=$repositoryId&title=Permissions" target="main">Permissions</a></td>
+		</tr>
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"><img src="images/rootdottedLine.gif"><img src="images/folder.gif"><a href="ViewListRepositoryLanguage.action?repositoryId=$repositoryId&title=Languages" target="main">Languages</a></td>
+		</tr>
+		#end
+
+		</table>
+	
+	</td>	
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+<!--
+<div style="RIGHT:2px; position:absolute; BOTTOM:-2px; visibility:visible; z-index:0">
+	<img src="images/dragCorner.gif" width="12" height="12"></td>
+</div>
+-->
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.createContentTypeDefinition.header" "tool.managementtool.createContentTypeDefinition.header" "")
+
+<div class="fullymarginalized">
+	<form name="editForm" method="POST" action="CreateContentTypeDefinition.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<p>#editTextField("ContentTypeDefinition.name" "name" $!name "51" "normaltextfield" "")</p>
+		<p>#selectField("ContentTypeDefinition.type" "type" $!type [["0", "Ordinary Content Type"], ["1", "Role Properties"], ["2", "User Properties"], ["3", "Group Properties"]])</p>
+		<p>
+			$ui.getString("entity.ContentTypeDefinition.parent.label")<br/>
+			<select name="parentContentTypeDefinitionId" id="parentContentTypeDefinitionId">
+				<option value="-1">-</option>
+				#foreach($contentType in $contentTypeDefinitions)
+					<option value="$contentType.id">$contentType.name</option>
+				#end
+			</select>
+		</p>
+	</form>
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListContentTypeDefinition.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<title>$title</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script language="JavaScript" src="script/listview.js"></script>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+
+<body class="structuretooledit" onload="javascript:refreshStructureToolBar('$this.getCMSBaseUrl()', 'tool.contenttool.accessDenied', '', '', '', '');">
+  
+    <table>
+      <tr>
+        <td>
+          <table aclass="structuretool">
+            <tr>
+              <td class="smalllabel">
+              	#foreach($errorList in $errors.allErrors)
+              		#foreach($error in $errorList)
+			      		<font color="red">
+			      			Error: $error
+			      		</font>
+			    	#end
+			    #end
+			    #if($returnAddress && $returnAddress != "")
+			    <br><br>
+			    <a href="$returnAddress">Ok</a>
+			    #end
+  			  </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</table>

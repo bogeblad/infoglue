@@ -1,0 +1,57 @@
+<div id="genericDialog" style="display: none;"><h3>Saving</h3><p>Saving page and refreshing the view - please wait.</p></div>
+<div id="emptySlotMenu" class="skin0">
+<div class="igmenuitems linkPublish" onclick="submitToPublish($siteNodeId, $contentId, $languageId, $repositoryId, '$originalFullURL');"><a href='#'>$submitToPublishHTML</a></div>
+<div class="igmenuitems linkNotify" onclick="openInlineDivImpl('$notifyUrl', 700, 750, true, true);"><a href='#'>$notifyHTML</a></div>
+<div class="igmenuitems linkTakePage" onclick="openInlineDivImpl('$pageSubscriptionUrl', 700, 750, true, true);"><a name='subscribePage'>$subscribeToPageHTML</a></div>
+<div class="igmenuitems linkAddComponent" onclick="insertComponent();"><a href='#'>$addComponentHTML</a></div>
+<div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
+<hr id="emptySlotMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<div id="accessRightsMenuItem" class="igmenuitems linkAccessRights" onclick="setAccessRights(slotName, slotContentId);"><a href='#'>$accessRightsHTML</a></div>
+<div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='#'>$pageComponents</a></div>
+<div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
+<div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
+</div>
+
+<div id="componentMenu" class="skin0">
+<div class="igmenuitems linkEditArticle" onclick="edit();"><a href='#'>$editHTML</a></div>
+<div class="igmenuitems linkAddComponent" onclick="insertComponent();"><a href='#'>$addComponentHTML</a></div>
+<div id="deleteComponentMenuItem" class="igmenuitems linkDeleteComponent" onclick="deleteComponent();"><a href='#'>$deleteComponentHTML</a></div>
+<div id="changeComponentMenuItem" class="igmenuitems linkChangeComponent" onclick="changeComponent();"><a href='#'>$changeComponentHTML</a></div>
+<div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
+<div class="igmenuitems linkCreatePageTemplate" onclick="$savePartTemplateUrl"><a href='#'>$savePagePartTemplateHTML</a></div>
+<hr id="componentMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<div class="igmenuitems linkComponentProperties" onclick="javascript:showComponent();"><a href='#'>$propertiesHTML</a></div>
+<hr id="componentMenuMiddleSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='#'>$pageComponents</a></div>
+<div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
+<div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
+</div>
+
+<div id="componentInTreeMenu" class="skin0">
+<div id="deleteComponentInTreeMenuItem" class="igmenuitems linkDeleteComponent" onclick="deleteComponent();"><a href='#'>$deleteComponentHTML</a></div>
+<div id="changeComponentInTreeMenuItem" class="igmenuitems linkChangeComponent" onclick="changeComponent();"><a href='#'>$changeComponentHTML</a></div>
+<div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
+<div class="igmenuitems linkCreatePageTemplate" onclick="$savePartTemplateUrl"><a href='#'>$savePagePartTemplateHTML</a></div>
+<hr id="componentInTreeMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<div class="igmenuitems linkComponentProperties" onclick="javascript:showComponent();"><a href='#'>$propertiesHTML</a></div>
+<hr id="emptySlotMenuMiddleSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='#'>$pageComponents</a></div>
+<div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
+<div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
+</div>
+
+<script type="text/javascript">
+$addComponentJavascript
+$deleteComponentJavascript
+$changeComponentJavascript
+$changeAccessJavascript
+
+$submitToPublishJavascript
+$pageStructureJavascript
+$openInNewWindowJavascript
+$allowViewSourceJavascript
+
+$submitToNotifyJavascript
+$contentNotificationsJavascript
+$pageNotificationsJavascript		    
+</script>

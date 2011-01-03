@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>Repositories</title>
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript">
+	<!--
+		window.onload = refreshManagementToolBar('tool.managementtool.repositoryList.header', '');
+	-->
+	</script>
+
+	<style type="text/css">
+		body 
+		{
+			margin:0;
+			padding:0;
+		}
+	</style>
+
+	<link rel="stylesheet" type="text/css" href="script/yui/build/fonts/fonts-min.css" />
+	<link rel="stylesheet" type="text/css" href="script/yui/build/datatable/assets/skins/sam/datatable.css" />
+	<script type="text/javascript" src="script/yui/build/utilities/utilities.js"></script>
+	<script type="text/javascript" src="script/yui/build/datasource/datasource-beta.js"></script>
+	<script type="text/javascript" src="script/yui/build/datatable/datatable-beta.js"></script>
+	
+</head>
+
+<body class=" yui-skin-sam">
+
+<div id="basic"></div>
+
+<script type="text/javascript">
+	YAHOO.example.Data = {
+	    repositories: 
+	    [
+	    	#foreach ($repositoryVO in $repositories)
+		        {sel:0,id:$repositoryVO.id, name:"$repositoryVO.name", description:"$repositoryVO.description", dnsName:"$repositoryVO.dnsName"},
+	    	#end
+	    ]
+	}
+	
+	// Override the built-in formatter
+    YAHOO.widget.DataTable.formatDnsName = function(elCell, oRecord, oColumn, oData) {
+        var dnsNameString = oData;
+        var names = dnsNameString.split(",");
+        var html = "";
+
+		for(i=0; i<names.length; i++)
+		{
+			html = html + names[i] + "<br/>"; 
+		}
+        elCell.innerHTML = html;
+    };
+</script>
+<script type="text/javascript">
+YAHOO.util.Event.addListener(window, "load", function() {
+    YAHOO.example.Basic = new function() {
+        var myColumnDefs = [
+            {key:"sel", label:"", formatter:"checkbox"},
+            {key:"id", label:"ID", sortable:true, resizeable:true},
+            {key:"name", label:"Name", sortable:true, resizeable:true, formatter:"link"},
+            {key:"description", label:"Description", sortable:true, resizeable:true},
+            {key:"dnsName", label:"DNS Names", sortable:true, resizeable:true, formatter:YAHOO.widget.DataTable.formatDnsName}
+        ];
+
+        this.myDataSource = new YAHOO.util.DataSource(YAHOO.example.Data.repositories);
+        this.myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+        this.myDataSource.responseSchema = {
+            fields: ["id","name","description","dnsName"]
+        };
+
+        this.myDataTable = new YAHOO.widget.DataTable("basic", myColumnDefs, this.myDataSource);
+        this.myDataTable.subscribe("rowClickEvent",this.myDataTable.onEventSelectRow);
+        
+		this.myDataTable.subscribe("checkboxClickEvent", this.myDataTable.onEventSelectRow);
+		
+		this.myDataTable.subscribe("linkClickEvent", function(oArgs){
+			YAHOO.util.Event.stopEvent(oArgs.event);
+            var oRecord = this.getRecord(oArgs.target);
+            //alert(YAHOO.lang.dump(oRecord.getData()));
+            document.location.href = "ViewRepository.action?repositoryId=" + oRecord.getData().id;
+        });
+        
+    };
+});
+</script>
+
+<!--END SOURCE CODE FOR EXAMPLE =============================== -->
+
+</body>
+</html>

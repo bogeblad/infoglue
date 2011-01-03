@@ -1,0 +1,208 @@
+#define( $headerMarkup )
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+		
+			#set($extraParameter = '')
+			#initDataTableImpl("contentVersions" $extraParameter)
+			#initDataTableImpl("siteNodeVersions" $extraParameter)
+			#initDataTableImpl("contentAndSiteNodes" $extraParameter)
+		
+	  		$("#tabsContainer").tabs(
+	  			{ 
+	  				cache: false, 
+	  				show:function() { resizeScrollArea();}
+	  			} 
+	  		);
+	  	});
+
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.contentHeader" "$!contentId" "contentId=$!contentId" false true $!disableCloseButton $headerMarkup false)
+
+	<div id="tabsContainer" class="flora cleanTopDiv">      
+		<ul>
+	        <li><a href="#contentReferencesTab"><span>$ui.getString("tool.structuretool.contentVersionReferences.header")</span></a></li>
+	        <li><a href="#pageReferencesTab"><span>$ui.getString("tool.structuretool.siteNodeReferences.header")</span></a></li>
+	        <li><a href="#contentAndSiteNodesReferencedTab"><span>$ui.getString("tool.structuretool.contentAndSiteNodesReferenced.header")</span></a></li>	        
+	    </ul>
+
+		<div id="contentReferencesTab" class="inlineTabDiv">
+
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="contentVersions" width="100%">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.contenttool.searchResultContentHeader")</th>
+						<th>Antal versioner med referenser</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					#set($referenceLimit = 20)
+					#set($hasContentReferences = false)
+					#set($count = 0)	
+					#foreach ($referenceBean in $referenceBeanList)
+						#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
+							#if($count < $referenceLimit)
+								#set($hasContentReferences = true)
+								#set($lastIndex = $referenceBean.versions.size() - 1)
+								<tr>
+									<td>
+										<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$this.getContentPath($referenceBean.referencingCompletingObject.contentId)</a>
+					 				</td>
+					 				<td>
+					 					#if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.contenttool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.contenttool.versions"))
+					 				</td>
+									<td><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
+								</tr>	
+							#end
+							#set($count = $count + 1)
+						#end
+					#end
+					#if($count > $referenceLimit)
+						<tr>
+							<td style="color: red;">$ui.getString("tool.contenttool.moreContentReferencesFound") $count</td>		
+							<td>&nbsp;</td>		
+							<td>&nbsp;</td>		
+						</tr>	
+					#end
+					
+					#if(!$hasContentReferences)
+						<tr>
+							<td>$ui.getString("tool.structuretool.noContentReferencesFound")</td>		
+							<td>&nbsp;</td>		
+							<td>&nbsp;</td>		
+						</tr>	
+					#end
+					
+				</tbody>
+			</table>
+
+		</div>
+
+		<div id="pageReferencesTab" class="inlineTabDiv">
+	
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="siteNodeVersions" width="100%">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
+						<th>Antal versioner med referenser</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					#set($hasPageReferences = false)
+					#set($count = 0)	
+					#foreach ($referenceBean in $referenceBeanList)
+						#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
+							#if($count < $referenceLimit)
+								#set($hasPageReferences = true)
+								#set($lastIndex = $referenceBean.versions.size() - 1)
+								<tr>
+									<td>
+										<a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)</a>
+					 				</td>
+					 				<td>
+										#if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.structuretool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.structuretool.versions"))
+					 				</td>
+									<td><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
+								</tr>	
+							#end
+							#set($count = $count + 1)
+						#end
+					#end
+					#if($count > $referenceLimit)
+						<tr>
+							<td>$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
+							<td>&nbsp;</td>		
+							<td>&nbsp;</td>		
+						</tr>	
+					#end
+					
+					#if(!$hasPageReferences)
+						<tr>
+							<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
+							<td>&nbsp;</td>		
+							<td>&nbsp;</td>		
+						</tr>	
+					#end
+					
+				</tbody>
+			</table>
+
+		</div>
+
+		<div id="contentAndSiteNodesReferencedTab" class="inlineTabDiv">
+			
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="contentAndSiteNodes" width="100%">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.contenttool.searchResultContentHeader") / $ui.getString("tool.contenttool.searchResultPageHeader")</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+				
+					#set($isOdd = true)
+					#set($count = 0)
+					#foreach ($referencingEntity in $referencingBeanList)
+						#if($count < $referenceLimit)
+							#if($referencingEntity.class.name.indexOf("Content") > -1)
+								#set($lastIndex = $referencingBeanList.size() - 1)
+								<tr>
+									<td>
+										<a href="ViewContentVersion!standalone.action?contentId=$referencingEntity.id" target="_blank">$this.getContentPath($referencingEntity.id)</a>
+					 				</td>
+									<td><a href="ViewContentVersion!standalone.action?contentId=$referencingEntity.id" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
+								</tr>	
+								
+							#elseif($referencingEntity.class.name.indexOf("SiteNode") > -1)
+								#set($lastIndex = $referencingBeanList.size() - 1)
+								#if($isOdd)
+									#set($class = "class='lightapricot'")
+									#set($isOdd = false)
+								#else
+									#set($class = "class='white'")
+									#set($isOdd = true)
+								#end
+								<tr>
+									<td>
+										<a href="ViewSiteNode!V3.action?siteNodeId=$referencingEntity.id" target="_blank">$this.getSiteNodePath($referencingEntity.id)</a>
+					 				</td>
+									<td><a href="ViewSiteNode!V3.action?siteNodeId=$referencingEntity.id" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
+								</tr>	
+					
+							#end
+						#end
+						#set($count = $count + 1)		
+					#end
+					#if($count > $referenceLimit)
+						<tr>
+							<td style="color: red;">$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
+							<td>&nbsp;</td>		
+						</tr>	
+					#end
+					
+					#if($referencingBeanList.size() == 0)
+						<tr>
+							<td>$ui.getString("tool.structuretool.noContentOrSiteNodesReferencedFound")</td>		
+							<td>&nbsp;</td>		
+						</tr>	
+					#end
+					
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+		
+#endLightCommonToolV3()

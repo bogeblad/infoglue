@@ -1,0 +1,218 @@
+.ui-tabs .ui-tabs-hide {
+     display: none;
+}
+/*
+.ui-tabs-nav, .ui-tabs-panel {
+    font-family: "Trebuchet MS", Trebuchet, Verdana, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: black;
+}
+.ui-tabs-nav {
+    list-style: none;
+    margin: 0px;
+    padding: 0px 0px 0px 11px;
+}
+.ui-tabs-nav:after { 
+    display: block;
+    clear: both;
+    content: " ";
+}
+.ui-tabs-nav li {
+    float: left;
+    margin: 0px 0px -1px 3px;
+    font-weight: normal;
+    border: 0px;
+    padding-bottom: 0px;
+}
+.ui-tabs-nav a, .ui-tabs-nav a span {
+    float: left; 
+    padding: 0 12px;
+    background: url(../../images/v3/tabs.png) no-repeat;
+}
+.ui-tabs-nav a {
+    margin: 0px; 
+    padding-left: 0;
+    background-position: 100% 0;
+    text-decoration: none;
+    white-space: nowrap; 
+    outline: 0; 
+}
+.ui-tabs-nav a:link, .ui-tabs-nav a:visited {
+    color: rgb(85, 85, 85);
+}
+.ui-tabs-nav .ui-tabs-selected a {
+    position: relative;
+    top: 0px;
+    z-index: 2;
+    margin-top: 0px;
+    background-position: 100% -28px;
+}
+.ui-tabs-nav a span {
+    padding-top: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    height: 22px;
+    background-position: 0 0;
+    line-height: 22px;
+}
+.ui-tabs-nav .ui-tabs-selected a span {
+    padding-top: 0;
+    height: 22px;
+    background-position: 0 -28px;
+    line-height: 22px;
+}
+.ui-tabs-nav .ui-tabs-selected a:link, .ui-tabs-nav .ui-tabs-selected a:visited,
+.ui-tabs-nav .ui-tabs-disabled a:link, .ui-tabs-nav .ui-tabs-disabled a:visited { 
+    cursor: text;
+}
+.ui-tabs-nav a:hover, .ui-tabs-nav a:focus, .ui-tabs-nav a:active,
+.ui-tabs-nav .ui-tabs-unselect a:hover, .ui-tabs-nav .ui-tabs-unselect a:focus, .ui-tabs-nav .ui-tabs-unselect a:active {
+    cursor: pointer;
+}
+.ui-tabs-disabled {
+    opacity: .4;
+    filter: alpha(opacity=40);
+}
+.ui-tabs-nav .ui-tabs-disabled a:link, .ui-tabs-nav .ui-tabs-disabled a:visited {
+    color: #000;
+}
+.ui-tabs-panel {
+    border-top: 1px solid rgb(209, 209, 209);
+    border-bottom: 1px solid rgb(209, 209, 209);
+    padding: 10px;
+    background-color: rgb(246, 246, 246); 
+    outline: 0;
+}
+
+* html .ui-tabs-nav {
+    display: inline-block;
+}
+*:first-child+html .ui-tabs-nav  { 
+    display: inline-block;
+}
+*/
+
+.ui-helper-reset {
+	font-size:14px;
+}
+
+.inlineTabDiv {
+	padding-left: 20px;
+	overflow: auto;
+}
+.inlineSubTabDiv {
+	padding-left: 0px;
+	display: block;
+	float: left;
+	overflow: auto;
+}
+
+#contentVersionDiv {
+	height: 550px; 
+	overflow: auto;
+}
+#contentVersionCategoriesDiv {
+	height: 550px; 
+	overflow: auto;
+}
+#contentVersionAssetsDiv {
+	height: 550px; 
+	overflow: auto;
+}
+#contentCoverDiv {
+	height: 550px; 
+	overflow: auto;
+}
+
+/* TEST TAB ISSUES */
+.ui-widget-header 
+{
+	background-image:none;
+	background-repeat:repeat-x;
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid #d0d1d0;
+	aheight: 20px;
+   }
+.ui-tabs 
+{
+	border: 0px;
+}
+.ui-tabs .ui-tabs-nav 
+{
+	border-left: 0px;
+	border-right: 0px;
+    padding:2px 2px 0px 8px;
+    position:relative;
+    background-color: #f6f6f6;
+}
+.ui-tabs .ui-tabs-nav li a 
+{
+   	font-size:11px;
+	padding: 4px 10px 4px 10px;
+    text-decoration:none;
+}
+.ui-corner-all 
+{
+	-moz-border-radius-bottomleft:0px;
+    -moz-border-radius-bottomright:0px;
+    -moz-border-radius-topleft:0px;
+    -moz-border-radius-topright:0px;
+}
+.ui-tabs
+{
+	padding:0px;
+}
+.ui-tabs .ui-tabs-panel 
+{
+	padding: 8px;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default 
+{ 
+	border: 1px solid #d0d1d0; 
+	abackground: #dfeffc url(../../images/v3/tabs.png) repeat-x; 
+	font-weight: bold; 
+	color: white; 
+	outline: none; 
+}
+
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited 
+{
+	color: #555555;
+}
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited 
+{
+	color: #555555;
+}
+.ui-tabs-nav a
+{
+	background: #dfeffc url(../../images/v3/tabs.png) repeat-x;
+	background-color: #dfeffc; 
+	color: white; 
+}
+.ui-tabs-nav .ui-tabs-selected a
+{
+	background: #dfeffc url(../../images/v3/tabs.png) repeat-x; 
+	background-color: #dfeffc; 
+	background-position: 100% -28px;
+}
+.ui-tabs-nav .ui-tabs-selected a span 
+{
+    background-position: 0 -28px;
+}
+.ui-state-active, .ui-widget-content .ui-state-active 
+{ 
+	border: 1px solid #d0d1d0;
+}
+
+.topDiv, .cleanTopDiv
+{
+	margin-top: 10px;
+}
+.cleanTopDiv .ui-tabs-nav {
+	background-color: #FFFFFF;
+}
+
+.transparentTop .ui-tabs-nav {
+	background-color: transparent;
+}

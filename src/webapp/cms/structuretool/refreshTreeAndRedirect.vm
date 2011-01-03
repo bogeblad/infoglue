@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.structuretool.siteNodeDetailsHeader")</title>
+	<script type="text/javascript" src="script/listview.js"></script>
+		
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<META HTTP-EQUIV="refresh" content="0;URL=ViewSiteNode.action?siteNodeId=$siteNodeId">
+</head>
+
+<body onload="refreshStructureToolBar('$this.getCMSBaseUrl()', 'tool.structuretool.siteNodeDetailsHeader', 'tool.structuretool.siteNodeDetailsHeader', 'siteNodeId=$siteNodeId&siteNodeVersionId=$siteNodeVersionId&repositoryId=$!repositoryId&isBranch=$isBranch', '$unrefreshedSiteNodeId', '$changeTypeId', '$siteNodeId');">
+
+<div style="top: 50px; left: 50px; width: 300px; height: 200px; position: absolute; text-align: center;">
+	<img src="images/workinganim.gif" style=""/><br>
+	Loading new page
+</div>
+
+#endStructureTool()

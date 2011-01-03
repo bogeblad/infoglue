@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewWorkflowDefinition.header" "tool.managementtool.viewWorkflowDefinition.header" "workflowDefinitionId=$workflowDefinitionId&name=$name")
+
+<div class="fullymarginalized">
+
+<table class="managementtooledit" cellpadding="2" cellspacing="2" border="0">
+	<form name="editForm" method="POST" action="UpdateWorkflowDefinition.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<tr>
+			<td>
+				<p>#editTextField("WorkflowDefinition.name" "name" $!workflowDefinitionVO.name "51" "normaltextfield" "")</p>
+				<p>#editTextArea("WorkflowDefinition.value" "value" $!workflowDefinitionVO.value "60" "25" "greedytextarea")</p>
+			</td>
+		</tr>
+	
+		<input type="hidden" name="workflowDefinitionId" value="$!workflowDefinitionId">
+	</form>
+	</table>
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")" onclick="saveAndExit(document.editForm, 'UpdateWorkflowDefinition!saveAndExit.action');"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListWorkflowDefinition.action';"/>
+	</div>
+</div>
+
+</body>
+</html>
+
+

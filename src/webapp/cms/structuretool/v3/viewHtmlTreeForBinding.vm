@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	
+	<title>Menus</title>
+
+	#includeLatestJQuery()
+
+	<script type="text/javascript">
+	<!-- 		
+		var languageCode = "$languageCode";
+		
+		var oldSelected;
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			setSelected(itemId, repoId, path);			
+		}
+		
+		function setSelected(itemId, repoId, path)
+		{
+			if(itemId)
+				parent.document.inputForm.entityId.value     = itemId;
+			if(repoId)
+				parent.document.inputForm.repositoryId.value = repoId;
+			if(path)
+			 	parent.document.inputForm.path.value         = path;
+			
+			if(parent.structureTreeItemClick)
+				parent.structureTreeItemClick(itemId, repoId, path);
+		}
+		
+		function markSelected(itemId)
+		{
+			var node = tree.getNodeWithMyId(itemId);
+			if(node)
+				node.select();
+		}
+		
+		var ig_expanded_nodes_cookie = "igStructureTreeForBindingExpansionForRepository${repositoryId}";
+		
+		function loaded()
+		{			
+			setSelected("${select}");
+			
+			path = webFXTreeHandler.cookies.getCookie(ig_expanded_nodes_cookie);
+			//alert("path:" + path);
+			if(path && path != "")
+			{
+				path = path.substring(0, path.length - 1);
+				var pathArr = path.split(',');
+				
+				expandTreeRec(pathArr, 0);
+			}	
+			
+			setTimeout("markSelected('${select}')", 500);
+		}
+		
+		function expandTreeRec(pathArr, level)
+		{			
+			var node = tree.getNodeWithMyId(pathArr[level]);
+			
+			if(node == null)
+				return;
+			
+			if(!node.loading && node.parentNode != null)
+			{
+				//alert("Loading child to " + node.text + ":" + node.id + ":" + node.myId + !node.loaded + ":" + !node.loading);
+				if (!node.loaded && !node.loading && node.src) {
+					_startLoadXmlTree(node.src, node);
+				}
+				
+				if (webFXTreeHandler.behavior == 'classic') { document.getElementById(node.id + '-icon').src = node.openIcon; }
+				if (node.childNodes.length) {  document.getElementById(node.id + '-cont').style.display = 'block'; }
+				node.open = true;
+				document.getElementById(node.id + '-plus').src = node.minusIcon;
+				node.deSelect();
+				document.getElementById(node.id + '-anchor').blur();
+			 	//node.expand();
+			}
+						
+			if(node.loading && !node.loaded) 
+			{
+				//alert("loading with level:" + level + " and " + pathArr.length);
+				if(level < pathArr.length)
+				{
+					window.setTimeout(function () {
+						expandTreeRec(pathArr, level);
+					}, 10);
+				}
+			}
+			else
+			{
+				//alert("not loading");
+				if(level < pathArr.length)
+				{
+					expandTreeRec(pathArr, level+1);
+				}
+			}
+		}
+
+		// -->
+	</script>
+
+	<!-- DYNAMIC VERSION SCRIPTS -->
+	<script type="text/javascript">
+		var defaultWorkingStyleInformation = "$this.workingStyleInformation";
+		var defaultFinalStyleInformation = "$this.finalStyleInformation";
+		var defaultPublishStyleInformation = "$this.publishStyleInformation";
+		var defaultPublishedStyleInformation = "$this.publishedStyleInformation";
+	</script>
+	<script type="text/javascript" src="script/v3/infoglue.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xtree.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xmlextras.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xloadtree.js"></script>
+	<!-- END -->
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+
+	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+</head>
+<body class="generaltooledit" onload="if(parent.notifyIsLoaded)parent.notifyIsLoaded();parent.notifyExp('${exp}');loaded();" style="margin:0px">
+
+
+	<!-- NEW DYNAMIC VERSION -->
+	<script type="text/javascript">
+	<!--
+	//webFXTreeConfig.rootIcon		= "images/v3/pageTreeIcon.gif"; 
+	//webFXTreeConfig.openRootIcon	= "images/v3/pageTreeIcon.gif"; 
+	//webFXTreeConfig.folderIcon		= "images/v3/pageTreeIcon.gif";
+	//webFXTreeConfig.openFolderIcon	= "images/v3/pageTreeIcon.gif";
+
+	//webFXTreeConfig.rootIcon		= "images/tree/structureRoot.gif"; 
+	//webFXTreeConfig.openRootIcon	= "images/tree/structureRoot.gif"; 
+	webFXTreeConfig.rootIcon		= "script/xloadtree/images/xp/page.png"; 
+	webFXTreeConfig.openRootIcon	= "script/xloadtree/images/xp/page.png"; 
+	webFXTreeConfig.folderIcon		= "script/xloadtree/images/xp/page.png";
+	webFXTreeConfig.openFolderIcon	= "script/xloadtree/images/xp/page.png";
+	webFXTreeConfig.hiddenFolderIcon		= "script/xloadtree/images/xp/pageHidden.png";
+	webFXTreeConfig.hiddenOpenFolderIcon	= "script/xloadtree/images/xp/pageHidden.png";
+	webFXTreeConfig.protectedFolderIcon		= "script/xloadtree/images/xp/pageProtected.png";
+	webFXTreeConfig.protectedOpenFolderIcon	= "script/xloadtree/images/xp/pageProtected.png";
+	webFXTreeConfig.fileIcon		= "script/xloadtree/images/xp/file.png";
+	webFXTreeConfig.lMinusIcon		= "script/xloadtree/images/xp/Lminus.png";
+	webFXTreeConfig.lPlusIcon		= "script/xloadtree/images/xp/Lplus.png";
+	webFXTreeConfig.tMinusIcon		= "script/xloadtree/images/xp/Tminus.png";
+	webFXTreeConfig.tPlusIcon		= "script/xloadtree/images/xp/Tplus.png";
+	webFXTreeConfig.iIcon			= "script/xloadtree/images/xp/I.png";
+	webFXTreeConfig.lIcon			= "script/xloadtree/images/xp/L.png";
+	webFXTreeConfig.tIcon			= "script/xloadtree/images/xp/T.png";
+	webFXTreeConfig.showRoot		= true;
+	webFXTreeConfig.loadingText		= "Loading content ...";
+	
+	#set($par = "$!parent")
+	#if( $par != "")
+		#set($par = "&parent=${parent}")
+	#else
+		#set($par = "&parent=$rootNode.Id")
+	#end 
+	
+	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}$par", "javascript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
+	tree.myId = "$rootNode.Id";	
+	document.write(tree);
+	var oldSelected = null;
+	function onTreeItemClick(elem, itemId, repoId, path)
+	{
+		// if(oldSelected!=null) oldSelected.className="";
+		// elem.className="selected";
+		// oldSelected=elem;
+		htmlTreeItemClick(itemId, repoId, path);
+		
+		elementString = elem.toString();
+		startIndex = elementString.indexOf("(") + 1;
+		endIndex = elementString.indexOf(")");
+		nodeId = elementString.substring(startIndex, endIndex);
+		var node = tree.getNodeWithMyId(nodeId);
+		
+		setTimeout(function () {
+			if (node.folder) {
+				if (!node.open) { node.expand(); }
+				}			
+			//webFXTreeHandler.toggle(node);
+			}, 100);
+	}
+	
+	function onTreeItemDblClick(id, label)
+	{
+		if(parent.treeItemDblClick)
+			parent.treeItemDblClick(id, label);
+	}
+	
+	function onTreeItemSelect(elem)
+	{
+		/*
+		var aid = elem + "-anchor";
+		if (oldSelected != null)
+			oldSelected.className = "";
+		
+		var srcIdLink =	document.getElementById(aid);
+		// alert(srcIdLink.className);
+		oldSelected = srcIdLink;
+		if (srcIdLink != null)
+			srcIdLink.className = "selected";
+
+		// alert(srcIdLink.className);
+		*/		
+	}
+	-->
+	</script>	
+
+</body>
+</html>

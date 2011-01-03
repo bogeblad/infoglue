@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/cms.css"/>
+    <title>$error.getName()</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  </head>
+  <body>
+    <table class="outer">
+      <tr>
+        <td style="width:91"><img src="images/tomcat.gif" alt="Holigrow" width="91" height="91"/></td>
+        <td><p class="application-title">$error.getName()</p></td>
+      </tr><tr>
+        <td colspan="2"><hr/></td>
+      </tr>
+    </table>
+    <table class="outer">
+      <tr>
+        <td>
+          <table class="data-vertical">
+            <tr>
+              <td class="data-head-left">Message</td>
+              <td class="data-cell-left">$error.getMessage()</td>
+            </tr><tr>
+              <td class="data-head-left">Stack trace</td>
+              <td class="data-cell-left" style="font-size:8pt;">$error.getStackTrace()</td>
+            </tr>
+            #if($error.hasCause())
+            <tr>
+              <td class="data-head-left">Nested message</td>
+              <td class="data-cell-left">$error.getCauseMessage()</td>
+            </tr><tr>
+              <td class="data-head-left">Nested stack trace</td>
+              <td class="data-cell-left" style="font-size:8pt;">$error.getCauseStackTrace()</td>
+            </tr>
+            #end
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</table>

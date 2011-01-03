@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginStructureTool("tool.structuretool.siteNodeDetailsHeader" "tool.structuretool.siteNodeDetailsHeader" "siteNodeId=$siteNodeId&siteNodeVersionId=$siteNodeVersionId&repositoryId=$!repositoryId&isBranch=$isBranch" "$unrefreshedSiteNodeId" "$changeTypeId" "$siteNodeId")
+
+<script language="javascript">
+function editContent(contentId)
+{
+	var url = "ViewContent!standalone.action?contentId=" + contentId;
+    openPopup(url, "Editcontent", "width=480,height=400,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+}
+
+//-----------------------------------------------
+// This function sets a different command to the editForm so that  
+// the user can be handled different after the submit
+//-----------------------------------------------
+
+function changeSiteNodeState(siteNodeVersionId)
+{
+	stateId    	  = document.editForm.stateId.value;
+	siteNodeId    = document.editForm.siteNodeId.value;
+	repositoryId  = document.editForm.repositoryId.value;
+	
+	#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true))
+	if(stateId == "2")
+	{
+		alert("$ui.getString("tool.contenttool.statePublishForbidden")");
+		document.editForm.stateId.selectedIndex = originalStateIndex - 1;
+		return;
+	}
+	#end
+
+	
+	if (confirm('Are you sure you want to change state? If you have any unsaved changes they will be lost.'))
+	{
+		//if(stateId == 2) //If publish
+		//	window.location.href="ViewSiteNode!commentVersion.action?siteNodeVersionId=" + siteNodeVersionId + "&stateId=" + stateId + "&siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
+		//else
+			window.location.href="ChangeSiteNodeState.action?siteNodeVersionId=" + siteNodeVersionId + "&stateId=" + stateId + "&siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
+	}
+}
+
+</script>
+
+#if($stateId == 1 || $stateId == 2 || $stateId == 3)
+	#set($readonly = "disabled") 
+#else
+	#set($readonly = "")
+#end
+
+<div class="fullymarginalized">
+<form method="POST" name="editForm" action="UpdateSiteNode.action">
+<table border="0" cellpadding="0" cellspacing="0">
+	
+	#set($event = $this.getSiteNodeVersionEvent($siteNodeVersion.getSiteNodeVersionId()) )					
+	#if($event.typeId == 2)
+		<tr>
+			<td colspan="3">
+				<font color="red">This version was denied by publisher - revise and publish again</font> <a href="DeleteEvent.action?eventId=$event.id&url=$currentUrl">Close</a>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		</tr>
+	#end
+
+	#set($siteNodeEvent = $this.getSiteNodeEvent($siteNodeId) )					
+	#if($siteNodeEvent.typeId == 2)
+		<tr>
+			<td colspan="3">
+				<font color="red">This version was denied by publisher - revise and publish again</font> <a href="DeleteEvent.action?eventId=$siteNodeEvent.id&url=$currentUrl">Close</a>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		</tr>
+	#elseif($siteNodeEvent.typeId == 4)
+		<tr>
+			<td colspan="3">
+				<font color='red'>The editor has denied your request to unpublish <nobr>$siteNodeEvent.name</nobr>.</font> - <a href="DeleteEvent.action?eventId=$siteNodeEvent.id&url=$currentUrl">Close</a>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		</tr>
+	#end
+
+	<tr>
+		<td>#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" $readonly)</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td>
+			#set($dropIndex = 1)
+			$ui.getString("tool.contenttool.stateLabel")<br/>
+			<select class="mediumdrop" name="stateId" onChange="javascript:changeSiteNodeState($siteNodeVersion.getSiteNodeVersionId());">
+				#if($stateId == 0)
+					<option value="0" selected>working</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					<option value="0">working</option>
+					#set($dropIndex = $dropIndex + 1)
+				#end
+<!--
+				#if($stateId == 1)
+					<option value="1" selected>final</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					<option value="1">final</option>
+				#end
+-->				
+				#if($stateId == 2)
+					<option value="2" selected>publish</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#else
+					#if($stateId != 3)
+					<option value="2">publish</option>
+					#set($dropIndex = $dropIndex + 1)
+					#end
+				#end
+
+				#if($stateId == 3)
+					<option value="3" selected>published</option>
+					<script type="text/javascript">
+					<!-- 
+					var originalStateIndex = $dropIndex; 
+					-->
+					</script>
+				#end
+
+			</select>
+		</td>
+		<td></td>
+	</tr>		
+	<tr>
+		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>	
+	<tr>
+		<td colspan="4">
+			This version was last updated by $siteNodeVersionVO.versionModifier
+		</td>
+	</tr>
+	<tr>
+		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>	
+	
+	#if($enableDateTimeDirectEditing == "true")
+		#set($dateReadonly = "")
+	#else
+		#set($dateReadonly = "readonly")
+	#end
+	
+	<tr>
+		<td>#editDateField("SiteNode.publishDateTime" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td>
+			#set($isProtectedReadonly = "")
+			#set($protectedSiteNodeVersionId = $!this.getProtectedSiteNodeVersionId($siteNodeVersionId))
+			#set($isModifier = ($siteNodeVersionVO.versionModifier == $infoGluePrincipal.name))
+			#if($protectedSiteNodeVersionId && !$isModifier && !$this.hasAccessTo("SiteNodeVersion.ChangeAccessRights", "$protectedSiteNodeVersionId"))
+				#set($isProtectedReadonly = "disabled")
+				<input type="hidden" name="isProtected" value="$!isProtected"/> 
+			#end
+			$ui.getString("entity.SiteNode.isProtected.label")<br>
+			<input type="radio" name="isProtected" value="0" #if($!isProtected == 0) checked="1" #end $readonly $isProtectedReadonly> $ui.getString("tool.common.no") 
+			<input type="radio" name="isProtected" value="1" #if($!isProtected == 1) checked="1" #end $readonly $isProtectedReadonly> $ui.getString("tool.common.yes")
+			<input type="radio" name="isProtected" value="2" #if($!isProtected == 2) checked="1" #end $readonly $isProtectedReadonly> $ui.getString("tool.common.inherit")
+		</td>
+		<td></td>
+	</tr>		
+	<tr>
+		<td>#editDateField("SiteNode.expireDateTime" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td>
+			$ui.getString("entity.SiteNode.disablePageCache.label")<br>
+			<input type="radio" name="disablePageCache" value="0" #if($!disablePageCache == 0) checked="1" #end $readonly> $ui.getString("tool.common.no")
+			<input type="radio" name="disablePageCache" value="1" #if($!disablePageCache == 1) checked="1" #end $readonly> $ui.getString("tool.common.yes")
+			<input type="radio" name="disablePageCache" value="2" #if($!disablePageCache == 2) checked="1" #end $readonly> $ui.getString("tool.common.inherit")
+		</td>
+		<td></td>
+	</tr>		
+	<tr>
+		<td>#editTextField("SiteNode.contentType" "contentType" $!contentType "30" "date" $readonly)</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td>
+			$ui.getString("entity.SiteNode.disableEditOnSight.label")<br>
+			<input type="radio" name="disableEditOnSight" value="0" #if($!disableEditOnSight == 0) checked="1" #end $readonly> $ui.getString("tool.common.no")
+			<input type="radio" name="disableEditOnSight" value="1" #if($!disableEditOnSight == 1) checked="1" #end $readonly> $ui.getString("tool.common.yes")
+			<input type="radio" name="disableEditOnSight" value="2" #if($!disableEditOnSight == 2) checked="1" #end $readonly> $ui.getString("tool.common.inherit")
+		</td>
+		<td></td>
+	</tr>		
+	<tr>
+		<td>#editTextField("SiteNode.pageCacheKey" "pageCacheKey" $!pageCacheKey "30" "date" $readonly)</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td>
+			$ui.getString("entity.SiteNode.disableLanguages.label")<br>
+			<input type="radio" name="disableLanguages" value="0" #if($!disableLanguages == 0) checked="1" #end $readonly> $ui.getString("tool.common.no")
+			<input type="radio" name="disableLanguages" value="1" #if($!disableLanguages == 1) checked="1" #end $readonly> $ui.getString("tool.common.yes")
+			<input type="radio" name="disableLanguages" value="2" #if($!disableLanguages == 2) checked="1" #end $readonly> $ui.getString("tool.common.inherit")
+		</td>
+		<td></td>
+	</tr>		
+	<tr>
+		<td>#editTextField("SiteNode.pageCacheTimeout" "pageCacheTimeout" $!pageCacheTimeout "30" "date" $readonly)</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td>
+			$ui.getString("entity.SiteNode.disableForceIdentityCheck.label")<br>
+			<input type="radio" name="disableForceIdentityCheck" value="0" #if($!disableForceIdentityCheck == 0) checked="1" #end $readonly> $ui.getString("tool.common.no")
+			<input type="radio" name="disableForceIdentityCheck" value="1" #if($!disableForceIdentityCheck == 1) checked="1" #end $readonly> $ui.getString("tool.common.yes")
+			<input type="radio" name="disableForceIdentityCheck" value="2" #if($!disableForceIdentityCheck == 2) checked="1" #end $readonly> $ui.getString("tool.common.inherit")
+		</td>
+		<td></td>
+	</tr>
+	#if($useAccessBasedProtocolRedirects)		
+	<tr>
+		<td>
+			$ui.getString("entity.SiteNode.forceProtocolChange.label")<br>
+			<select name="forceProtocolChange" style="width: 115px;">
+				<option value="0" #if($!forceProtocolChange == 0) selected="1" #end $readonly> $ui.getString("tool.common.inherit")</option>	
+				<option value="1" #if($!forceProtocolChange == 1) selected="1" #end $readonly> $ui.getString("entity.SiteNode.forceProtocolChangeNormallabel")</option>	
+				<option value="2" #if($!forceProtocolChange == 2) selected="1" #end $readonly> $ui.getString("entity.SiteNode.forceProtocolChangeAllowSecurelabel")</option>	
+				<option value="3" #if($!forceProtocolChange == 3) selected="1" #end $readonly> $ui.getString("entity.SiteNode.forceProtocolChangeForceSecurelabel")</option>	
+			</select>
+		</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td>&nbsp;</td>
+		<td></td>
+	</tr>
+	#else
+		<input type="hidden" name="forceProtocolChange" value="$forceProtocolChange"/>
+	#end		
+	<tr>
+		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	
+	#if(!$isSiteNodeTypeDefinitionAssigned)
+		<tr>
+			<td colspan="4">
+				SiteNode type<br/>
+				<select class="siteNodetypes" name="siteNodeTypeDefinitionId">
+					<option value="">Choose page type</option>
+				#foreach ($siteNodeTypeDefinitionVO in $siteNodeTypeDefinitions)
+					<option value="$siteNodeTypeDefinitionVO.getSiteNodeTypeDefinitionId()">$siteNodeTypeDefinitionVO.getName()</option>
+				#end
+				</select>
+			</td>
+		</tr>	
+	#else	
+		<tr>
+			<td colspan="4">
+				The siteNode is of type $siteNodeTypeDefinition.getName()
+			</td>
+		</tr>
+		<tr>
+			<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+		</tr>
+	</table>
+	
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	#if($disableLanguages == 1)
+	<tr class="darkapricot">
+		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.disableLanguages.header")</td>
+	</tr>
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td width="100%" colspan="3">
+		#foreach ($language in $availableLanguages)
+			<input type="checkbox" name="disabledLanguageId" value="$language.id" #if($disabledLanguages.contains($language))checked="1"#end>$language.name
+		#end
+		</td>
+	</tr>	
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr class="darkapricot">
+		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.enableLanguages.header")</td>
+	</tr>
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td width="100%" colspan="3">
+		#foreach ($language in $availableLanguages)
+			<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language))checked="1"#end>$language.name
+		#end
+		</td>
+	</tr>	
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	#end
+	
+	<tr class="darkapricot">
+		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.contentVersionReferences.header")</td>
+	</tr>
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	#set($referenceLimit = 20)
+	#set($hasContentReferences = false)
+	#set($isOdd = true)
+	#set($count = 0)	
+	#foreach ($referenceBean in $referenceBeanList)
+		#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
+			#if($count < $referenceLimit)
+				#set($hasContentReferences = true)
+				#set($lastIndex = $referenceBean.versions.size() - 1)
+				#if($isOdd)
+					#set($class = "class='lightapricot'")
+					#set($isOdd = false)
+				#else
+					#set($class = "class='white'")
+					#set($isOdd = true)
+				#end
+				<tr $class>
+					<td width="16"><img src="images/tree/contentRoot.gif" width="16" height="16"></td>
+					<td width="100%">
+						<a title="$this.getContentPath($referenceBean.referencingCompletingObject.contentId)" href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.name</a>
+	 					- #if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.contenttool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.contenttool.versions"))
+	 				</td>
+					<td width="16"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+				</tr>	
+			#end
+			#set($count = $count + 1)
+		#end
+	#end
+	#if($count > $referenceLimit)
+		#if($isOdd)
+			#set($class = "class='lightapricot'")
+			#set($isOdd = false)
+		#else
+			#set($class = "class='white'")
+			#set($isOdd = true)
+		#end
+		<tr $class>
+			<td colspan="3" style="color: red;">$ui.getString("tool.contenttool.moreContentReferencesFound") $count</td>		
+		</tr>	
+	#end
+	
+	#if(!$hasContentReferences)
+		<tr $class>
+			<td colspan="3">$ui.getString("tool.structuretool.noContentReferencesFound")</td>		
+		</tr>	
+	#end
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr class="darkapricot">
+		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.siteNodeReferences.header")</td>
+	</tr>
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	#set($hasPageReferences = false)
+	#set($isOdd = true)
+	#set($count = 0)	
+	#foreach ($referenceBean in $referenceBeanList)
+		#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
+			#if($count < $referenceLimit)
+				#set($hasPageReferences = true)
+				#set($lastIndex = $referenceBean.versions.size() - 1)
+				#if($isOdd)
+					#set($class = "class='lightapricot'")
+					#set($isOdd = false)
+				#else
+					#set($class = "class='white'")
+					#set($isOdd = true)
+				#end
+				<tr $class>
+					<td width="16"><img src="images/tree/structureRoot.gif"></td>
+					<td width="100%">
+						<a title="$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)" href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$referenceBean.name</a>
+						- #if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.structuretool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.structuretool.versions"))
+					</td>
+					<td width="16"><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+				</tr>	
+			#end
+			#set($count = $count + 1)			
+		#end
+	#end
+	#if($count > $referenceLimit)
+		#if($isOdd)
+			#set($class = "class='lightapricot'")
+			#set($isOdd = false)
+		#else
+			#set($class = "class='white'")
+			#set($isOdd = true)
+		#end
+		<tr $class>
+			<td colspan="3" style="color: red;">$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
+		</tr>	
+	#end
+	
+	#if(!$hasPageReferences)
+		<tr $class>
+			<td colspan="3">$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
+		</tr>	
+	#end
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	
+	<tr class="darkapricot">
+		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.contentAndSiteNodesReferenced.header")</td>
+	</tr>
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	#set($isOdd = true)
+	#set($count = 0)
+	#foreach ($referencingEntity in $referencingBeanList)
+		#if($count < $referenceLimit)
+			#if($referencingEntity.class.name.indexOf("Content") > -1)
+				#set($lastIndex = $referencingBeanList.size() - 1)
+				#if($isOdd)
+					#set($class = "class='lightapricot'")
+					#set($isOdd = false)
+				#else
+					#set($class = "class='white'")
+					#set($isOdd = true)
+				#end
+				<tr $class>
+					<td width="16"><img src="images/tree/contentRoot.gif" width="16" height="16"></td>
+					<td width="100%">
+						<a title="$this.getContentPath($referencingEntity.id)" href="ViewContent.action?contentId=$referencingEntity.id" target="_blank">$referencingEntity.name</a>
+	 				</td>
+					<td width="16"><a href="ViewContent.action?contentId=$referencingEntity.id" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+				</tr>	
+				
+			#elseif($referencingEntity.class.name.indexOf("SiteNode") > -1)
+				#set($lastIndex = $referencingBeanList.size() - 1)
+				#if($isOdd)
+					#set($class = "class='lightapricot'")
+					#set($isOdd = false)
+				#else
+					#set($class = "class='white'")
+					#set($isOdd = true)
+				#end
+				<tr $class>
+					<td width="16"><img src="images/tree/contentRoot.gif" width="16" height="16"></td>
+					<td width="100%">
+						<a title="$this.getSiteNodePath($referencingEntity.id)" href="ViewSiteNode.action?contentId=$referencingEntity.id" target="_blank">$referencingEntity.name</a>
+	 				</td>
+					<td width="16"><a href="ViewSiteNode.action?contentId=$referencingEntity.id" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+				</tr>	
+	
+			#end
+		#end
+		#set($count = $count + 1)		
+	#end
+	#if($count > $referenceLimit)
+		#if($isOdd)
+			#set($class = "class='lightapricot'")
+			#set($isOdd = false)
+		#else
+			#set($class = "class='white'")
+			#set($isOdd = true)
+		#end
+		<tr $class>
+			<td colspan="3" style="color: red;">$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
+		</tr>	
+	#end
+	
+	#if($referencingBeanList.size() == 0)
+		<tr $class>
+			<td colspan="3">$ui.getString("tool.structuretool.noContentOrSiteNodesReferencedFound")</td>		
+		</tr>	
+	#end
+
+	<!-- END TEST -->
+	
+	</table>
+	
+	
+	
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">		
+		<tr>
+		  <td colspan="4" valign="top">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+		</tr>
+		<tr class="darkapricot">
+			<td class="smalllabel" nowrap>Content Bindings</td>
+			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td class="smalllabel">State</td>
+			<td><img src="images/trans.gif" width="20" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="300" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		#set($isOdd = true)
+		#foreach ($availableServiceBindingVO in $sortedAvailableContentServiceBindings)
+			
+			##if($availableServiceBindingVO.name != "Meta information")
+			
+				#if($isOdd)
+					#set($class = "class='lightapricot'")
+					#set($isOdd = false)
+				#else
+					#set($class = "class='white'")
+					#set($isOdd = true)
+				#end
+				
+				<tr $class>
+					<td>
+						#set($qualifyer = "Undefined")
+						#set($qualifyerDescription = "$qualifyer")
+						#set($qualifyerFullPath = "")
+						#set($serviceBindingId = 0)
+						#foreach ($serviceBindningVO in $serviceBindings)
+							#if($serviceBindningVO.getAvailableServiceBindingId() == $availableServiceBindingVO.getAvailableServiceBindingId())
+								#set($qualifyerFullPath = "$!serviceBindningVO.path")
+								#set($index = $serviceBindningVO.path.lastIndexOf("/"))
+								#if($index && $index > -1)
+									#set($index = $index + 1)
+									#set($qualifyer = "$serviceBindningVO.path.substring($index)")
+								#else
+									#set($qualifyer = "$serviceBindningVO.path")
+								#end
+								#set($serviceBindingId = $serviceBindningVO.getServiceBindingId())
+	
+								#set($qualifyerDescription = "")							
+								#foreach($q in $this.getListPreparedQualifyers($serviceBindningVO.getServiceBindingId()))
+									#set($tmp = "<a href='javascript:editContent($q.getValue())'>$q.getPath()</a>")
+									#if($qualifyerDescription != "")
+										#set($qualifyerDescription = "${qualifyerDescription}, ")
+									#end
+									#set($qualifyerDescription = "$qualifyerDescription$tmp")
+								#end
+							#end 
+						#end
+						
+						#if($serviceBindingId > 0 && $readonly == "") 
+							#if($availableServiceBindingVO.visualizationAction.indexOf("MultiSelect") > 0)
+							    <a href="javascript:openPopup('$availableServiceBindingVO.visualizationAction?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&availableServiceBindingId=$!availableServiceBindingVO.getAvailableServiceBindingId()&serviceBindingId=$serviceBindingId', 'UpdateBindning', 'width=400,height=525,resizable=no,status=yes,scrollbars=yes');">$availableServiceBindingVO.getName()</a>
+							#else
+								$availableServiceBindingVO.getName()			
+							#end
+						#elseif($readonly == "")
+							<a href="javascript:openPopup('$availableServiceBindingVO.visualizationAction?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&availableServiceBindingId=$!availableServiceBindingVO.getAvailableServiceBindingId()', 'CreateBindning', 'width=400,height=525,resizable=no,status=yes,scrollbars=yes');">$availableServiceBindingVO.getName()</a>
+						#else
+							$availableServiceBindingVO.getName()
+						#end
+					</td>
+					<td></td>
+					
+					<td>
+						$qualifyerDescription
+					</td>
+					
+					<td align="center">
+						#if($serviceBindingId > 0 && $readonly == "") 
+							<a href="javascript:confirmAction('Do you really want to remove the binding to the content $formatter.escapeForJavascripts($qualifyer)?', 'DeleteServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&serviceBindingId=$serviceBindingId');"><img src="images/delete.gif" border="0"></a>
+						#end	
+					</td>
+				</tr>	
+			##end
+		#end	
+			</table>
+		</td>
+		<td>&nbsp;</td>
+		<td colspan="4" valign="top">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+		</tr>
+		<tr class="darkapricot">
+			<td class="smalllabel" nowrap>Structure Bindings</td>
+			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td class="smalllabel" width="60%">State</td>
+			<td><img src="images/trans.gif" width="20" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="300" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		#set($isOdd = true)
+		#foreach ($availableServiceBindingVO in $sortedAvailableStructureServiceBindings)
+			
+			#if($availableServiceBindingVO.name != "Meta information")
+			
+				#if($isOdd)
+					#set($class = "class='lightapricot'")
+					#set($isOdd = false)
+				#else
+					#set($class = "class='white'")
+					#set($isOdd = true)
+				#end
+				
+				<tr $class>
+					<td>
+						#set($qualifyer = "Undefined")
+						#set($qualifyerFullPath = "")
+						#set($serviceBindingId = 0)
+						#foreach ($serviceBindningVO in $serviceBindings)
+							#if($serviceBindningVO.getAvailableServiceBindingId() == $availableServiceBindingVO.getAvailableServiceBindingId())
+								#set($qualifyerFullPath = "$!serviceBindningVO.path")
+								#set($index = $serviceBindningVO.path.lastIndexOf("/"))
+								#if($index && $index > -1)
+									#set($index = $index + 1)
+									#set($qualifyer = "$serviceBindningVO.path.substring($index)")
+								#else
+									#set($index = $serviceBindningVO.path.indexOf(":"))
+									#if($index && $index > -1)
+										#set($qualifyer = "$serviceBindningVO.path.substring(0, $index)...")
+									#else
+										#set($qualifyer = "$serviceBindningVO.path")
+									#end
+								#end
+								#set($serviceBindingId = $serviceBindningVO.getServiceBindingId())
+							#end 
+						#end
+						
+						#if($serviceBindingId > 0 && $readonly == "") 
+							#if($availableServiceBindingVO.visualizationAction.indexOf("MultiSelect") > 0)
+							    <a href="javascript:openPopup('$availableServiceBindingVO.visualizationAction?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&availableServiceBindingId=$!availableServiceBindingVO.getAvailableServiceBindingId()&serviceBindingId=$serviceBindingId', 'UpdateBindning', 'width=400,height=525,resizable=no,status=yes,scrollbars=yes');">$availableServiceBindingVO.getName()</a>
+							#else
+								$availableServiceBindingVO.getName()			
+							#end
+						#elseif($readonly == "")
+							<a href="javascript:openPopup('$availableServiceBindingVO.visualizationAction?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&availableServiceBindingId=$!availableServiceBindingVO.getAvailableServiceBindingId()', 'CreateBindning', 'width=400,height=525,resizable=no,status=yes,scrollbars=yes');">$availableServiceBindingVO.getName()</a>
+						#else
+							$availableServiceBindingVO.getName()
+						#end
+					</td>
+					<td></td>
+					<td><a title="$qualifyerFullPath">$qualifyer</a></td>
+					<td align="center">
+						#if($serviceBindingId > 0 && $readonly == "") 
+							<a href="javascript:confirmAction('Do you really want to remove the binding to the content $formatter.escapeForJavascripts($qualifyer)?', 'DeleteServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&serviceBindingId=$serviceBindingId');"><img src="images/delete.gif" border="0"></a>
+						#end	
+					</td>
+				</tr>	
+			#end
+		#end	
+			</table>
+		</td>
+		</tr>
+	#end
+	
+	<tr>
+		<td colspan="8"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<td colspan="8">
+			#if($readonly == "")
+			<input type="image" src="$ui.getString("images.structuretool.buttons.save")" width="50" height="25" border="0">
+			#end
+		</td>
+	</tr>
+	</table>
+	
+	<input type="hidden" name="siteNodeId" value="$!siteNodeId">
+	<input type="hidden" name="isBranch" value="$!isBranch">
+	<input type="hidden" name="repositoryId" value="$!repositoryId">
+	<input type="hidden" name="unrefreshedSiteNodeId" value="$!siteNodeId">
+	<input type="hidden" name="changeTypeId" value="1">
+</form>
+</div>
+
+#endStructureTool()

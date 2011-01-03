@@ -1,0 +1,7 @@
+<osworkflow>
+	<persistence class="org.infoglue.cms.util.workflow.hibernate.ImprovedInfoglueHibernateWorkflowStore"/>
+	<!--<persistence class="org.infoglue.cms.util.workflow.hibernate.InfoglueHibernateWorkflowStore"/>-->
+	<!--<persistence class="com.opensymphony.workflow.spi.hibernate.NewHibernateWorkflowStore"/>-->
+	<!--<factory class="com.opensymphony.workflow.loader.XMLWorkflowFactory"/>-->
+	<factory class="org.infoglue.cms.util.workflow.InfoGlueWorkflowFactory"/>
+</osworkflow>

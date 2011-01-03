@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Insert link</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+		
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+	
+	<script language="JavaScript">
+	<!--	
+		
+		function getRequestParameter(url, parameterName)
+		{
+			valueIndex = url.indexOf(parameterName + "=");
+			//alert("valueIndex:" + valueIndex);
+			endIndex = url.indexOf("&", valueIndex);
+			if(endIndex != -1)
+				value = url.substring(valueIndex + parameterName.length + 1, endIndex);
+			else
+				value = url.substring(valueIndex + parameterName.length + 1);
+			//alert("value:" + value);
+			return value;
+		}
+		
+		
+		function init()
+		{
+			//alert("intializing....");
+			//window.resizeTo(800,700);
+
+			oldSiteNodeId = "";
+			oldContentId = "";
+			
+			oldAssetContentId = "";
+			oldAssetKey = "";
+
+			if(top.opener.document.title == "Image Properties")
+				var txtUrl 		= top.opener.document.getElementById("txtLnkUrl").value;
+				if(txtUrl == "")
+					txtUrl 		= top.opener.document.getElementById("txtUrl").value;
+			else
+				var txtUrl 		= top.opener.document.getElementById("txtUrl").value;
+			//alert("txtUrl:" + txtUrl);
+			
+			if(txtUrl.indexOf("getPageUrl") > -1)
+			{				
+				if(txtUrl != "")
+				{
+					siteNodeIdStartIndex = txtUrl.indexOf("(");
+					siteNodeIdEndIndex = txtUrl.indexOf(",");
+					//alert("siteNodeIdStartIndex:" + siteNodeIdStartIndex);
+					//alert("siteNodeIdEndIndex:" + siteNodeIdEndIndex);
+					
+					oldSiteNodeId = txtUrl.substring(siteNodeIdStartIndex + 1, siteNodeIdEndIndex);
+					txtUrl = txtUrl.substring(siteNodeIdEndIndex);
+					//alert("txtUrl:" + txtUrl);
+					contentIdStartIndex = txtUrl.lastIndexOf(",");
+					contentIdEndIndex = txtUrl.lastIndexOf(")");
+					oldContentId = txtUrl.substring(contentIdStartIndex + 1, contentIdEndIndex);
+					if(oldContentId == "null" || oldContentId == " null")
+						oldContentId = "-1";
+					//alert("oldSiteNodeId:" + oldSiteNodeId);
+					//alert("oldContentId:" + oldContentId + ":");
+				}
+				
+				changeTab("internalLink");
+			}
+			else if(txtUrl.indexOf("DownloadAsset.action") > -1)
+			{				
+				if(txtUrl != "")
+				{
+					oldAssetContentId = getRequestParameter(txtUrl, "contentId");
+					if(!oldAssetContentId || oldAssetContentId == "")
+						oldAssetContentId = "$!contentId";
+					languageId 		= getRequestParameter(txtUrl, "languageId");
+					oldAssetKey		= getRequestParameter(txtUrl, "assetKey");
+				}
+			
+				changeTab("internalAsset");
+			}
+			else
+				changeTab("internalLink");
+				
+			//alert("oldContentId=" + oldContentId);
+		}
+		
+		var previousTabId;
+		
+		function changeTab(id)
+		{
+			if(previousTabId)
+			{
+				//document.getElementById(previousTabId).style.display = "none";
+				document.getElementById(previousTabId).className = "inactiveTab";
+				document.getElementById(previousTabId + "TD").className = "inactiveTabControl";
+			}
+			
+			//document.getElementById(id).style.display = "block";
+			document.getElementById(id).className = "activeTab";
+			document.getElementById(id + "TD").className = "activeTabControl";
+
+			//alert("oldContentId=" + oldContentId);
+			
+			//alert("src" + document.getElementById("internalAssetFrame").src);
+			if(id == "internalLink" && document.getElementById("internalLinkFrame").src.indexOf("ViewStructureTreeForInlineLink!useFCKEditor.action") == -1)
+				document.getElementById("internalLinkFrame").src = "ViewStructureTreeForInlineLink!useFCKEditor.action?contentId=$!contentId&languageId=$!languageId&textAreaId=$!textAreaId&oldSiteNodeId=" + oldSiteNodeId + "&oldContentId=" + oldContentId;
+				//document.getElementById("internalLinkFrame").src = "ViewStructureTreeForInlineLink!useFCKEditor.action?contentId=$!contentId&languageId=$languageId&textAreaId=$!textAreaId&oldSiteNodeId=$!oldSiteNodeId&oldContentId=$!oldContentId";
+			else if(id == "internalAsset" && document.getElementById("internalAssetFrame").src.indexOf("ViewContentVersion!viewAssetsDialogForFCKEditor.action") == -1)
+				document.getElementById("internalAssetFrame").src = "ViewContentVersion!viewAssetsDialogForFCKEditor.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&treatAsLink=true&textAreaId=$!textAreaId&oldContentId=" + oldAssetContentId + "&assetKey=" + oldAssetKey;
+				//document.getElementById("internalAssetFrame").src = "ViewContentVersion!viewAssetsDialogForFCKEditor.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&treatAsLink=true&textAreaId=$!textAreaId&oldContentId=$!oldContentId&assetKey=$!assetKey";
+			
+			previousTabId = id;
+		}
+		
+		
+		function onOk(contentId, assetKey)
+		{
+			url = getDownloadUrl(contentId, assetKey);
+			window.top.opener.SetUrl( url );
+			window.top.close();
+			window.top.opener.focus();
+		}
+		
+		function onOkForInlineLink(siteNodeId, contentId)
+		{
+			url = getInlineLinkUrl(siteNodeId, contentId);
+			window.top.opener.SetUrl( url );
+			window.top.close();
+			window.top.opener.focus();
+		}
+		
+		function onCancel() 
+		{
+			window.top.close();
+			window.top.opener.focus();
+		}	
+		
+		function getDownloadUrl(contentId, assetKey)
+		{
+			return "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
+		}
+
+		function getInlineLinkUrl(siteNodeId, contentId)
+		{
+			return "$templateLogic.getPageUrl(" + siteNodeId + ", $templateLogic.languageId," + contentId + ")";
+		}
+	-->
+	</script>
+	
+	<style>
+		.tabHeader
+		{
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 12px;
+			font-weight: bold;
+		}
+		.activeTabControl 
+		{
+			background-color: white;
+			position: relative;
+			width: 120px; 
+			border-top:1px solid black; 
+			border-left:1px solid black; 
+			border-right:1px solid black; 
+			padding: 4px 4px 4px 4px;
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 12px;
+			font-weight: bold;
+		}
+		.inactiveTabControl 
+		{
+			background-color: silver;		
+			position: relative;
+			width: 120px; 
+			border-top:1px solid black; 
+			border-left:1px solid black; 
+			border-right:1px solid black; 
+			padding: 4px 4px 4px 4px;
+			font-family: Verdana, Arial, Helvetica;
+			font-size: 10px;
+			font-weight: normal;
+		}
+		.activeTab 
+		{
+			position: relative;
+			width: 100%; 
+			height: 620px;
+			border:1px solid black; 
+			display: block;
+			padding: 2px 2px 2px 2px;
+		}
+		.inactiveTab
+		{
+			position: relative;
+			width: 100%; 
+			height: 620px;
+			border:1px solid black;
+			display: none;
+			padding: 2px 2px 2px 2px;
+		}
+
+	</style>
+</head>
+
+
+<body class="contenttooledit" onload="init();">
+
+<div>
+
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+	<td class="inactiveTabControl" id="internalLinkTD" style="background-color: #F0E1B4;"><a href="javascript:changeTab('internalLink');">$ui.getString("tool.contenttool.inlineImageInternalLinkTitle")</a></td>
+	<td><img src="images/trans.gif" width="3" height="1"></td>
+	<td class="inactiveTabControl" id="internalAssetTD" style="background-color: #C7D1B3; border-right:1px solid black;"><a href="javascript:changeTab('internalAsset');">$ui.getString("tool.contenttool.inlineImageUploadedAssetTitle")</a></td>
+</tr>
+</table>
+
+<div id="internalLink" style="background-color: #FEF8D0;" class="inactiveTab">
+	<IFRAME frameborder="0" id="internalLinkFrame" src="" width="100%" height="100%" align="baseline"></IFRAME>
+</div>
+<div id="internalAsset" class="inactiveTab">
+	<IFRAME frameborder="0" id="internalAssetFrame" src="" width="100%" height="100%" align="baseline"></IFRAME>
+</div>
+
+</div>
+
+</body>
+</html>

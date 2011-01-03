@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+<title>DigitalAsset Browser</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+<META HTTP-EQUIV="expires" CONTENT="-1" />
+
+<!-- Work in progress, Stefan Sik -->
+
+<link rel="stylesheet" type="text/css" href="css/cms.css" />
+<!--  script type="text/javascript" src="script/listview.js"></script -->
+<style>
+html, body, iframe {
+height: 100%;
+}
+body {margin:0;}
+</style>
+
+<script language="JavaScript">
+
+	#set($exp = $this.getExpansion($oldContentId))
+	var exp = "$exp";
+	
+	var contentId;
+	var assetContentId;
+	var assetKey;
+	var showLeafs = $showLeafs;
+	var filter = "$filter";
+	
+    function notifyExp(v)
+    {
+    	exp=v;
+    }
+
+	function notifyIsLoaded()
+    {
+    	treeIsLoaded = true;
+    }
+	
+	function treeView()
+	{
+		try 
+		{ 
+			return document.getElementById("itreeFrame");
+		}
+		catch(er) 
+		{
+			//alert("Error:" + er);
+		} 
+	}
+	
+	function changeRepository(selectBox)
+	{
+		var repositoryId = selectBox.value;
+		var url = "ViewAssetList!browser.action?showLeafs=" + showLeafs + "&repositoryId=" + repositoryId + "&contentId=-1&languageId=$languageId&filter=" + filter;
+		document.location.href = url;
+	}
+
+	function changeFilter(selectBox)
+	{
+		filter = selectBox.value;
+		reloadList();
+	}
+	
+	function changeShowLeafs(checkBox)
+	{
+		showLeafs = checkBox.checked;
+		reloadTree();
+	}
+	
+	function htmlTreeItemClick(entityId, repositoryId, path)
+	{
+		contentId = entityId;
+		reloadList();
+	}
+	
+	function syncWithTree(path)
+	{
+		document.frames("itreeFrame").syncWithTree(path);
+	}
+	
+	function markAsset(aContentId, anAssetId, anAssetKey, contentPath)
+	{
+		assetContentId = aContentId;
+		assetKey = anAssetKey;
+	}
+		
+	function onOk()
+	{
+		var url = "DownloadAsset.action?contentId=" + assetContentId + "&languageId=$languageId&assetKey=" + assetKey;
+		try 
+		{
+			if(window.top.opener)
+			{
+				window.top.opener.SetUrl( url );
+				window.top.close();
+				window.top.opener.focus();
+			}
+			else
+			{
+				//alert(url);
+			}
+		}
+		catch(e)
+		{
+		}
+	}
+	
+	function getDownloadUrl(aContentId, assetKey)
+	{
+		return "DownloadAsset.action?contentId=" + aContentId + "&languageId=$languageId&assetKey=" + assetKey;
+	}
+	
+	function onCancel() 
+	{
+		window.top.close();
+		window.top.opener.focus();
+	}	
+
+	function reloadTree()
+	{
+		var doShowLeafs = "no";
+		if(showLeafs) doShowLeafs = "yes";
+	
+		var url = "ViewContentHtmlTree.action?showLeafs=" + doShowLeafs + "&repositoryId=$!repositoryId&exp=$exp&akey=/" + contentId + "/&select=" + contentId;
+		document.getElementById("itreeFrame").src = url;
+	}
+	
+	function reloadList()
+	{
+		var url= "ViewAssetList.action?showLeafs=" + showLeafs + "&contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey + "&filter=" + filter;
+		document.getElementById("contentVersionAssetsFrame").src = url;
+	}
+	
+	function init() 
+	{
+		contentId = "$!contentId";
+		assetContentId = "$!contentId";
+		languageId = "$!languageId";
+		assetKey = "$!assetKey";
+		
+		reloadTree();
+		reloadList();
+	}
+	
+</script>
+
+</head>
+
+<body class="contenttool" onload="init();">
+<table border="0" width="100%" height="100%" cellspacing="8">
+
+	<tr>
+		<td colspan="2">
+		<select size="1" name="repositoryId"
+			class="sitedropbox" onChange="javascript:changeRepository(this);"
+			class="contenttool">
+			<option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+			#foreach ($repositoryVO in $repositories)
+			<option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+			#end
+		</select>
+		
+		#set($selected = "")
+		<select size="1" name="filter"
+			class="sitedropbox" onChange="javascript:changeFilter(this);"
+			class="contenttool">
+			#foreach ($filterVO in $filters)
+				#if($filterVO.value == $filter)
+				<option selected value="$filterVO.value">$filterVO.name</option>
+				#else
+				<option value="$filterVO.value">$filterVO.name</option>
+				#end
+			#end
+		</select>
+		
+		#set($checked = "")
+		#if($showLeafs)		
+			#set($checked = "CHECKED")
+		#end
+		<input $checked onclick="javascript:changeShowLeafs(this);" type="checkbox" name="showLeafs" id="showLeafs">Browse individual contents</input>
+		</td>
+	</tr>
+
+	<tr height="100%">
+		<td width="20%" height="100%" valign="top">
+			<IFRAME marginwidth="0"
+			marginheight="0" frameborder="0" name="itreeFrame" id="itreeFrame"
+			src="" width="100%" height="100%"></IFRAME></td>
+
+		<td width="80%" height="100%" valign="top">
+			<IFRAME frameborder="0"
+			name="contentVersionAssetsFrame" id="contentVersionAssetsFrame"
+			src="" width="100%" height="100%" align="baseline" style="border: 1px solid #888888;"></IFRAME></td>
+	</tr>
+	
+	<tr>
+		<td colspan="2" height="0" align="right">
+			<a href="javascript:onOk();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+			<a href="javascript:onCancel();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
+		</td>
+	</tr>
+</table>
+
+</body>
+
+</html>

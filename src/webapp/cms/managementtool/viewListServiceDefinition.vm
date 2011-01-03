@@ -1,0 +1,59 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDeleteLink()
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewServiceDefinitionList.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewServiceDefinitionList.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.common.action.label")</th>
+					<th>$ui.getString("entity.ServiceDefinition.name.label")</th>
+					<th>$ui.getString("entity.ServiceDefinition.description.label")</th>
+					<th>$ui.getString("entity.ServiceDefinition.className.label")</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach($serviceDefinitionVO in $serviceDefinitions)
+					<tr>
+						<td><a class="deleteCross" title="$ui.getString("tool.common.delete.label") $serviceDefinitionVO.name" href="DeleteServiceDefinition.action?serviceDefinitionId=$serviceDefinitionVO.id&igSecurityCode=$securityCode">&nbsp;#*$ui.getString("tool.common.delete.label")*#</a></td>
+						<td>
+							<a href="ViewServiceDefinition.action?serviceDefinitionId=$serviceDefinitionVO.id" class="group">$serviceDefinitionVO.name</a>
+						</td>
+						<td>$serviceDefinitionVO.description</td>
+						<td>$serviceDefinitionVO.className</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+				
+	</div>
+		
+#endLightCommonToolV3()

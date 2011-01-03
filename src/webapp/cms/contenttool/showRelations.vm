@@ -1,0 +1,117 @@
+#define( $headerMarkup )
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 
+	    function addComponent(componentId)
+	    {
+	    	//alert("siteNodeId: $siteNodeId");
+	    	//alert("languageId: $languageId");
+	    	//alert("parentComponentId: $!parentComponentId");
+	    	//alert("contentId: $!contentId");
+	    	//alert("$slotId: $slotId");
+	    	//alert("componentId:" + componentId);
+	    	url = "ViewSiteNodePageComponents!addComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&componentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple";
+		    //alert("url" + url);
+		    
+		    parent.document.location.href = url;
+	    }
+	
+		function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			var url = "ViewSiteNodePageComponents!listComponents.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString&filterRepositoryId=" + repositoryId;
+			//alert("url:" + url);
+			document.location.href = url;
+		}
+
+		function toggleDiv(id)
+		{
+			var div = document.getElementById(id);
+			if(div.style.display == 'none')
+				div.style.display = 'block';
+			else
+				div.style.display = 'none';
+		}
+		
+		$(document).ready(function(){
+
+			#set($extraParameter = '')
+			#initDataTableImpl("dataTable" $extraParameter)
+			
+		});
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.deleteContent.header" "$originalContentId" "contentId=$originalContentId&repositoryId=$!repositoryId&isBranch=$isBranch" false true $!disableCloseButton $headerMarkup)
+
+#lightMenuToolbar("" $buttons $rightButtons) 
+
+<div style="clear: both;"></div>
+
+<h3>$ui.getString("tool.contenttool.fixReferencesBeforeDelete.header")</h3>
+
+<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+
+	<form method="POST" name="editForm" action="DeleteContent.action" style="margin: 0px 16px 0px 16px;">
+		<table border="0" cellpadding="2" cellspacing="0" width="100%">
+			<tr>
+				<td colspan="4" width="100%"><b>$ui.getString("tool.contenttool.siteNodeReferences.header")</b></td>
+			</tr>
+			#set($hasPageReferences = false)
+			#foreach ($referenceBean in $referenceBeanList)
+				#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
+					#set($hasPageReferences = true)
+					<tr>
+						<td><img src="images/tree/structureRoot.gif"></td>
+						<td width="100%"><a href="DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1&returnAddress=$returnAddress" target="_blank">$referenceBean.name</a> #if($referenceBean.registryVOList.size() > 1)- $referenceBean.registryVOList.size() $ui.getString("tool.structuretool.referencesFound")#end</td>
+						<td><a href="DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1&returnAddress=$returnAddress" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+						<td nowrap="1"><a href="DeleteContent!deleteReference.action?contentId=$originalContentId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey"><img src="images/ok_icon.gif" border="0"></a><img src="images/trans.gif" border="0" width="5" height="5"></td>
+					</tr>																						  		
+				#end
+			#end
+			#if(!$hasPageReferences)
+				<tr>
+					<td colspan="4">$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
+				</tr>	
+			#end
+			
+			<tr>
+				<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+			</tr>
+			<tr>
+				<td colspan="4" width="100%"><b>$ui.getString("tool.contenttool.contentVersionReferences.header")</b></td>
+			</tr>
+			#set($hasContentReferences = false)
+			#foreach ($referenceBean in $referenceBeanList)
+				#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
+					#set($hasContentReferences = true)
+					#set($lastIndex = $referenceBean.versions.size() - 1)
+					#set($languageId = $referenceBean.versions.get($lastIndex).referencingObject.languageId)
+					<tr>
+						<td><img src="images/tree/contentRoot.gif"></td>
+						<td width="100%"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$languageId" target="_blank">$referenceBean.name</a> #if($referenceBean.registryVOList.size() > 1)- $referenceBean.registryVOList.size() $ui.getString("tool.structuretool.referencesFound")#end</td>
+						<td nowrap="1"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$languageId" target="_blank"><img src="images/edit.gif" border="0"></a><img src="images/trans.gif" border="0" width="5" height="5"></td>
+						<td nowrap="1"><a href="DeleteContent!deleteReference.action?contentId=$originalContentId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey"><img src="images/ok_icon.gif" border="0"></a><img src="images/trans.gif" border="0" width="5" height="5"></td>		
+					</tr>																						 		
+				#end
+			#end
+			#if(!$hasContentReferences)
+				<tr>
+					<td colspan="4">$ui.getString("tool.structuretool.noContentReferencesFound")</td>		
+				</tr>	
+			#end
+		
+		</table>
+	</form>
+
+</div>
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

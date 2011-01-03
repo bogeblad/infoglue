@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Palette</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	#includeLatestJQuery()
+
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+
+	<script type="text/javascript">
+	<!--
+		jQuery.fn.outerHTML = function() {
+	        return $('<div>').append( this.eq(0).clone() ).html();
+	    };
+	
+		var activeDragElement;
+		
+		$(function() {
+			$(".componentSpan").draggable({ 
+				helper: 'clone',
+				//axis: 'x',
+				containment: 'window',
+				start: function(event, ui) {
+					if(top.notifyDragHTML)
+					{
+						//alert($(ui.helper).outerHTML());
+						top.notifyDragHTML($(ui.helper).outerHTML());
+						activeDragElement = ui.helper;
+					}
+				}
+			});
+			
+			$(document).mouseenter(function(e){
+				//alert("Enter:" + top.getIsDragCompleted());
+				if(!top.getIsDragCompleted())
+				{
+					$(activeDragElement).css("display", "block");
+					top.disableDrag();
+				}
+				else
+				{
+					$(".componentSpan").draggable("disable");
+					$(".componentSpan").draggable("enable");
+				}
+	        });
+	        
+	        $(document).mouseleave(function(e){
+				$(activeDragElement).css("display", "none");
+				if(!top.getIsDragCompleted())
+					top.enableDrag();
+			});
+	
+		});
+	-->	
+	</script>
+
+</head>
+
+<body class="generaltooledit">
+	<div id="paletteContent">
+		<ul class="componentList">
+			#foreach($componentContent in $components)
+				#set($assetUrl = $this.getDigitalAssetUrl($componentContent.id, $masterLanguageVO.id, 'paletteThumbnail'))
+				#if(!$assetUrl || $assetUrl == "")
+					#set($assetUrl = "images/v3/commonComponentIcon.png")
+				#end
+				
+				#set($description = "$!componentContent.extraProperties.get('Description')")
+				<li>
+					<span id="span$componentContent.contentId" class="componentSpan">
+						<img id="comp_$componentContent.contentId" class="component" src="$assetUrl" title="$componentContent.name#if($description != "") - $description#end" style="width: 40px; height: 40px;" alt="$componentContent.name"/>
+						<input type="hidden" name="encodedComponentName" value="$formatter.replaceNonAscii($formatter.escapeForAdvancedJavascripts($componentContent.name),'_')"/>
+						#set($separatedNames = $componentContent.extraProperties.get('GroupName').replaceAll(",","igcommaig"))
+						#set($separatedNames = $formatter.replaceNonAscii($formatter.escapeForAdvancedJavascripts("$separatedNames"),'_').replaceAll("igcommaig",","))
+						<input type="hidden" name="encodedGroupNames" value="$!separatedNames"/>
+					</span>
+				</li>
+				#set($assetUrl = "")
+			#end
+		</ul>
+		#if($components.size() == 0)
+			No components tagged as "favourites". Consult the documentation on how to set it up.
+		#end
+	</div>
+</body>
+</html>

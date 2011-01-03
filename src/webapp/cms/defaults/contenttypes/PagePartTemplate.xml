@@ -1,0 +1,44 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" version="2.4" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:simpleType name="textarea"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:simpleType name="radiobutton"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:simpleType name="checkbox"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:simpleType name="select"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:simpleType name="textfield"> 
+		<xs:restriction base="xs:string"> 
+			<xs:maxLength value="100"></xs:maxLength> 
+		</xs:restriction> 
+	</xs:simpleType> 
+	
+	<xs:complexType name="Content"> 
+		<xs:all> 
+			<xs:element name="Attributes"> 
+				<xs:complexType> 
+					<xs:all> 
+					<xs:element name="Name" type="textfield"><xs:annotation><xs:appinfo><params><param id="title" inputTypeId="0"><values><value id="undefined63" label="Name"></value></values></param><param id="description" inputTypeId="0"><values><value id="undefined73" label="undefined28"></value></values></param><param id="initialData" inputTypeId="0"><values><value id="undefined28" label="undefined51"></value></values></param><param id="class" inputTypeId="0"><values><value id="undefined16" label="undefined55"></value></values></param><param id="enableComponentPropertiesEditor" inputTypeId="0"><values><value id="enableComponentPropertiesEditor" label="false"></value></values></param></params></xs:appinfo></xs:annotation></xs:element><xs:element name="ComponentStructure" type="textarea"><xs:annotation><xs:appinfo><params><param id="title" inputTypeId="0"><values><value id="undefined89" label="Page part ComponentStructure"></value></values></param><param id="description" inputTypeId="0"><values><value id="undefined90" label="undefined42"></value></values></param><param id="initialData" inputTypeId="0"><values><value id="undefined95" label=""></value></values></param><param id="class" inputTypeId="0"><values><value id="undefined15" label="undefined78"></value></values></param><param id="width" inputTypeId="0"><values><value id="width" label="700"></value></values></param><param id="height" inputTypeId="0"><values><value id="height" label="150"></value></values></param><param id="enableWYSIWYG" inputTypeId="0"><values><value id="enableWYSIWYG" label="false"></value></values></param><param id="enableTemplateEditor" inputTypeId="0"><values><value id="enableTemplateEditor" label="false"></value></values></param><param id="enableFormEditor" inputTypeId="0"><values><value id="enableFormEditor" label="false"></value></values></param><param id="enableContentRelationEditor" inputTypeId="0"><values><value id="enableContentRelationEditor" label="false"></value></values></param><param id="enableStructureRelationEditor" inputTypeId="0"><values><value id="enableStructureRelationEditor" label="false"></value></values></param><param id="enableComponentPropertiesEditor" inputTypeId="0"><values><value id="enableComponentPropertiesEditor" label="false"></value></values></param><param id="activateExtendedEditorOnLoad" inputTypeId="0"><values><value id="activateExtendedEditorOnLoad" label="false"></value></values></param></params></xs:appinfo></xs:annotation></xs:element><xs:element name="ComponentProperties" type="textarea"><xs:annotation><xs:appinfo><params><param id="title" inputTypeId="0"><values><value id="undefined25" label="ComponentProperties"></value></values></param><param id="description" inputTypeId="0"><values><value id="undefined80" label="undefined62"></value></values></param><param id="initialData" inputTypeId="0"><values><value id="undefined75" label=""></value></values></param><param id="class" inputTypeId="0"><values><value id="undefined1" label="normaltextarea"></value></values></param><param id="width" inputTypeId="0"><values><value id="width" label="700"></value></values></param><param id="height" inputTypeId="0"><values><value id="height" label="150"></value></values></param><param id="enableWYSIWYG" inputTypeId="0"><values><value id="enableWYSIWYG" label="false"></value></values></param><param id="enableTemplateEditor" inputTypeId="0"><values><value id="enableTemplateEditor" label="false"></value></values></param><param id="enableFormEditor" inputTypeId="0"><values><value id="enableFormEditor" label="false"></value></values></param><param id="enableContentRelationEditor" inputTypeId="0"><values><value id="enableContentRelationEditor" label="false"></value></values></param><param id="enableStructureRelationEditor" inputTypeId="0"><values><value id="enableStructureRelationEditor" label="false"></value></values></param><param id="enableComponentPropertiesEditor" inputTypeId="0"><values><value id="enableComponentPropertiesEditor" label="true"></value></values></param><param id="activateExtendedEditorOnLoad" inputTypeId="0"><values><value id="activateExtendedEditorOnLoad" label="false"></value></values></param></params></xs:appinfo></xs:annotation></xs:element></xs:all> 
+				</xs:complexType> 
+			</xs:element> 
+		</xs:all> 
+	</xs:complexType> 
+
+<xs:complexType name="Validation" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:annotation><xs:appinfo><form-validation><global><validator classname="org.infoglue.cms.util.validators.CommonsValidator" method="validateRequired" methodParams="java.lang.Object,org.apache.commons.validator.Field" msg="300" name="required"></validator><validator classname="org.infoglue.cms.util.validators.CommonsValidator" method="validateRequiredIf" methodParams="java.lang.Object,org.apache.commons.validator.Field,org.apache.commons.validator.Validator" msg="315" name="requiredif"></validator><validator classname="org.infoglue.cms.util.validators.CommonsValidator" method="validateRegexp" methodParams="java.lang.Object,org.apache.commons.validator.Field" msg="300" name="matchRegexp"></validator></global><formset><form name="requiredForm"></form></formset></form-validation></xs:appinfo></xs:annotation></xs:complexType></xs:schema>

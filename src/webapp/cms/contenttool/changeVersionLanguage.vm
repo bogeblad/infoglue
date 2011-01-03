@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("tool.contenttool.changeVersionLanguage.header" "Change language" "contentId=$contentId&repositoryId=$!repositoryId&isBranch=$isBranch" "$unrefreshedContentId" "$changeTypeId" "$contentId")
+
+<div class="fullymarginalized">
+<form method="POST" name="editForm" action="ChangeVersionLanguage.action">
+<table border="0" cellpadding="0" cellspacing="0">
+	
+	<tr>
+		<td colspan="7">
+			$ui.getString("tool.contenttool.changeVersionLanguage.text")
+		</td>
+	</tr>
+	<tr>
+		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	
+	<tr>
+		<td colspan="3">
+			$ui.getString("tool.managementtool.repositoryLanguages.header")<br/>
+			<select class="languageId" name="languageId">
+			#foreach ($languageVO in $languageVOList)
+				<option value="$languageVO.id">$languageVO.getName()</option>
+			#end
+			</select>
+		</td>
+	</tr>
+	
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+		<input type="hidden" name="isBranch" value="$!isBranch">
+		<input type="hidden" name="unrefreshedContentId" value="$!contentId">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<input type="hidden" name="changeTypeId" value="1">
+		<td colspan="3">
+			<input type="image" src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0">
+		</td>
+	</tr>
+	
+</table>
+</div>
+
+#endContentTool()

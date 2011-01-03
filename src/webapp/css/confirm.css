@@ -1,0 +1,24 @@
+body { 
+	color            : #FFFFFF;
+	background-color : #FFFFFF;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+}
+
+table.main
+{
+	background-color : #FFFFFF;
+}
+
+table.detail
+{
+	background-color : #123456;
+	border-style	 : outset;
+	border-width	 : 1;
+}
+
+.buttonface
+{
+	color : #D4D0C8;
+	background-color : #D4D0C8;
+}

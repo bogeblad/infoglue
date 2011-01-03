@@ -1,0 +1,46 @@
+#define($headerMarkup)
+	<style type="text/css">
+		.greedytextarea {
+			width: 90%;
+			height: 400px;
+		}
+	</style>
+	
+	<script type="text/javascript">
+		function resizeGreedyTextArea()
+		{
+			var windowHeight = $(window).height();
+			var offset = $(".greedytextarea").offset().top;
+			//alert(windowHeight + ":" + offset);
+			$(".greedytextarea").height(windowHeight - offset - 60);
+		}
+
+		$(document).ready(function() {
+			setTimeout("resizeGreedyTextArea();", 300);
+		});
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewContentTypeDefinitionSimple.header" "$!contentTypeDefinitionId" "contentTypeDefinitionId=$!contentTypeDefinitionId" false true $!disableCloseButton $headerMarkup false "")
+
+
+#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+
+	<h3>$ui.getString("tool.managementtool.viewContentTypeDefinition.header") "$!name"</h3>
+	
+	<div style="clear: both;"></div>
+
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		<form name="editForm" method="POST" action="UpdateContentTypeDefinition.action">
+			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+			<input type="hidden" name="contentTypeDefinitionId" value="$!contentTypeDefinitionId">
+			<p>#editTextField("ContentTypeDefinition.name" "name" $!name "51" "normaltextfield" "")</p>
+			<p>#editTextArea("ContentTypeDefinition.schemaValue" "schemaValue" $!schemaValue "60" "25" "greedytextarea")</p>
+		</form>
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+	
+#endLightCommonToolV3()

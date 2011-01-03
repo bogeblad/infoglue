@@ -1,0 +1,367 @@
+#define( $headerMarkup )
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	
+	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
+	##<link rel="stylesheet" type="text/css" href="css/skins/${theme}/adminEmbla.css" />
+	
+	<script type="text/javascript">
+	<!--	
+		/* Proxy functions */
+		function refreshContent(contentId, changeTypeId, addedContentId)
+		{
+			$("#ContentToolIframe").get(0).contentWindow.refreshContent(contentId, changeTypeId, addedContentId);
+		}		
+
+		function refreshPage(siteNodeId, changeTypeId, addedSiteNodeId)
+		{
+			$("#StructureToolIframe").get(0).contentWindow.refreshPage(siteNodeId, changeTypeId, addedSiteNodeId);
+		}		
+	
+		function resize()
+		{
+			$("#work").height((document.body.clientHeight - $("#header").height() - $("#footer").height()));
+			$("#work > iframe").height((document.body.clientHeight - $("#header").height() - $("#footer").height()));
+		}
+		
+		$(function() {
+	
+			#if($infoGluePrincipal.isAdministrator)
+				alert("You should only use this account to solve access rights issues etc as this is not a normal user account and some features are disabled because of that.");
+			#end
+			
+    		resize();
+    		
+	   		window.onresize = function() {
+	   			resize()
+    		}
+			
+			#foreach($tool in $availableTools)
+				#if($initialToolName == "$tool.toolName")
+					activateTool('${tool.toolName}', '$tool.title', '$tool.actionUrl', '');			
+				#end
+			#end
+			
+			$(document).mouseover(function(e) {
+		    	$("#debug").text("mouseover: " + isDragActive + ":"/* + getDragHTML()*/);
+				if(isDragActive && !isLocalDragActive && getDragHTML() != "")
+				{
+					isLocalDragActive = true;
+					//var offset = $("#structureMarkup").offset();
+					//$("#menuOverlayDiv").css("top", offset.top).css("left", offset.left).width($("#structureMarkup").width()).height($("#structureMarkup").height()).show();
+					//$("#tempDraggable").remove();
+					//$("body").append("<div id=\"tempDraggable\" style=\"position: absolute; top: 0px; left: 0px;\">" + getDragHTML() + "</div>");
+					//$("#debug").text("Added tempDraggable and size:" + $("#tempDraggable").size());
+				}
+		    });
+		
+			$(document).mousemove(function(e) {
+				if(isLocalDragActive)
+				{
+					var pageCoords = "( " + e.pageX + ", " + e.pageY + " )";
+				    var clientCoords = "( " + e.clientX + ", " + e.clientY + " )";
+					$("#tempDraggable").css("top", e.pageY + "px").css("left", e.pageX + "px");
+					//$("#debug").text("Size:" + $("#tempDraggable").size());
+				}
+			});
+			
+			$(document).mouseup(function(e) {
+				if(isDragActive)
+				{
+					isDragActive = false;
+					isLocalDragActive = false;
+					isDragCompleted = true;
+					$("#menuOverlayDiv").hide();
+					$("#tempDraggable").remove();
+		    	}
+			});
+			
+			$(document).mouseout(function() {
+		    	$("#debug").text("mouseout");
+		      	//$("#tempDraggable").remove();
+		    });
+		    
+			$("#searchField").focus(function () {
+		    	$(this).val("").css("color", "black");
+		    }).blur(function () {
+		    	if($(this).val() == "")
+		    		$(this).val("$ui.getString("tool.common.searchDialog.searchFieldDefaultText")").css("color", "#ccc");
+		    	else if($(this).val() == "$ui.getString("tool.common.searchDialog.searchFieldDefaultText")")
+		     		$(this).css("color", "#ccc");
+			});
+		
+			initMessageSystem();
+		});
+				
+	-->
+	</script>
+	
+	<script type="text/javascript">
+		
+		var dataListenerWindow;
+		function registerDataListenerWindow(aDataListenerWindow) { dataListenerWindow = aDataListenerWindow; }
+		function getDataListenerWindow() { return dataListenerWindow; }
+	
+		
+		var activeToolName = "none";
+		function getActiveToolName() { return activeToolName; }
+	
+		function activateTool(toolName, windowTitle, url, workAreaUrl)
+		{
+			//alert("" + activeToolName + "=" + toolName + "," + url + ":" + workAreaUrl);
+			if(activeToolName == toolName && workAreaUrl == "")
+				return false;
+
+			if(activeToolName != toolName)
+			{
+				document.title = "" + toolName;
+	
+				$("#" + toolName + "Tab").removeClass("middleTabPart").addClass("middleTabPartSelected");
+				$("#" + toolName + "Tab .leftTabPart").removeClass("leftTabPart").addClass("leftTabPartSelected");
+				$("#" + toolName + "Tab .rightTabPart").removeClass("rightTabPart").addClass("rightTabPartSelected");
+				$("#" + toolName + "Tab .menutab").removeClass("menutab").addClass("menutabSelected");
+	
+				$("#" + activeToolName + "Tab").removeClass("middleTabPartSelected").addClass("middleTabPart");
+				$("#" + activeToolName + "Tab .leftTabPartSelected").removeClass("leftTabPartSelected").addClass("leftTabPart");
+				$("#" + activeToolName + "Tab .rightTabPartSelected").removeClass("rightTabPartSelected").addClass("rightTabPart");
+				$("#" + activeToolName + "Tab .menutabSelected").removeClass("menutabSelected").addClass("menutab");
+			}
+			
+			var oldIframe = document.getElementById("" + activeToolName + "Iframe");
+			var targetIframe = document.getElementById("" + toolName + "Iframe");
+			
+			//alert("src:" + targetIframe.src);
+			if(targetIframe.src.indexOf("loading.html") > -1)
+			{
+				targetIframe.src = url;
+				if(workAreaUrl && workAreaUrl != "")
+				{
+					$(targetIframe).load(function() {
+						//alert("workAreaUrl:" + workAreaUrl);
+						//alert("targetIframe:" + targetIframe + ":" + targetIframe.contentWindow.openUrlInWorkArea);
+						if(workAreaUrl && workAreaUrl != "" && targetIframe && targetIframe.contentWindow.openUrlInWorkArea)
+						{
+							//alert("targetIframe:" + targetIframe + ":" + targetIframe.contentWindow.openUrlInWorkArea);
+							targetIframe.contentWindow.openUrlInWorkArea(workAreaUrl);
+						}
+					});
+				}
+			}
+			else
+			{	
+				//alert("workAreaUrl:" + workAreaUrl);
+				if(workAreaUrl && workAreaUrl != "" && targetIframe && targetIframe.contentWindow.openUrlInWorkArea)
+				{
+					//alert("targetIframe:" + targetIframe + ":" + targetIframe.contentWindow.openUrlInWorkArea);
+					targetIframe.contentWindow.openUrlInWorkArea(workAreaUrl);
+				}
+			}
+			
+			if(oldIframe)
+			{
+				if(oldIframe.contentWindow.setIsItAnActivationCall)
+					oldIframe.contentWindow.setIsItAnActivationCall(false);
+				oldIframe.className = "inactiveTool";
+			}
+			
+			if(targetIframe.contentWindow.setIsItAnActivationCall)
+				targetIframe.contentWindow.setIsItAnActivationCall(true);
+				
+			targetIframe.className = "";
+	
+			activeToolName = toolName;
+			
+			return false;
+		}
+		
+		function openUrlInWorkArea(url, tabLabel, targetTab, tabLabelPrefix, toolName)
+		{
+			//alert("url:" + url + " - " + tabLabel + " - " + targetTab + " - " + tabLabelPrefix + " - " + toolName);
+		
+			var toolUrl = $("#" + toolName + "Link").attr("href");
+			activateTool(toolName, toolName, toolUrl, url);
+		}
+		
+		/*		
+		var getUrl = "ViewMessageCenter!getSystemMessages.action";
+		var lastId = -1; //initial value will be replaced by the latest known id
+		
+		function initMessageSystem() 
+		{
+			receiveSystemMessagesText(true); //initiates the first data query
+		}
+		
+		var messageUserName = "";
+		
+		//initiates the first data query
+		function receiveSystemMessagesText(loopAfter) 
+		{
+			jQuery.getJSON("ViewMessageCenter!getSystemMessagesV3.action?lastId=" + lastId + "&rand=" + Math.floor(Math.random() * 1000000), function(jsonData) {
+		
+					//alert("jsonData:" + jsonData.title + ":" + jsonData.messages);
+					if(jsonData.messages)
+					{
+						jQuery.each(jsonData.messages, function(i,item){
+			
+							//alert("jsonData:" + item.id + ":" + item.type + ":" + item.text);
+							
+							if(item.text != "empty")
+							{
+								i = 0;
+								lastId = item.id;
+						    	extradata = item.text;
+						    	type = item.type;
+						    	messageUserName = item.userName;
+						    	
+						    	//alert("lastId:" + lastId);
+						    	//alert("extradata:" + extradata);
+						    	//alert("type:" + type);
+						    	if(type != "-1")
+						    		setTimeout(extradata, "200");
+							}	
+						});
+					}
+					
+					if(loopAfter)
+						setTimeout('receiveSystemMessagesText(true);',15000); //executes the next data query in 30 seconds
+				});
+		}
+		*/
+		
+		/*
+		function openChat(message)
+		{
+			var d = new Date();
+			var curr_date = d.getDate();
+			var curr_month = d.getMonth();
+			curr_month++;
+			var curr_year = d.getFullYear();
+			var curr_hour = d.getHours();
+			if(curr_hour < 10)
+				curr_hour = "0" + curr_hour;
+			
+			var curr_min = d.getMinutes();
+			if(curr_min < 10)
+				curr_min = "0" + curr_min;
+		
+			var curr_sec = d.getSeconds();
+			if(curr_sec < 10)
+				curr_sec = "0" + curr_sec;
+		
+			var nowDateTime = "" + curr_hour + ":" + curr_min + ":" + curr_sec;
+			$("#messages").prepend("<p><span style='font-weight: bold'>" + messageUserName + "(" + nowDateTime + ")" + "" + ":</span> " + message + "</p>")
+			$("#messagesDiv").dialog({ title: 'System messages', modal: true, maxHeight: 500, maxWeight: 600, width: 700, minHeight: 200 }).dialog( 'open' );
+		}
+		
+		function sendMessage()
+		{
+			var chatMessage = $("#chatMessage").val();
+			jQuery.post("ViewMessageCenter!sendMessage.action", { isSystemMessage: "true", message: chatMessage }, function(data){ 
+					receiveSystemMessagesText(false);
+					$("#chatMessage").val("");
+			});
+		}
+		*/
+		
+		function refreshRepositoryList()
+		{
+			#foreach($tool in $availableTools)
+				if($("#${tool.toolName}Iframe").get(0).contentWindow.refreshRepositoryList)
+					$("#${tool.toolName}Iframe").get(0).contentWindow.refreshRepositoryList();
+			#end
+		}
+	</script>
+	
+	<script type="text/javascript" src="script/embla/drag.js"></script>
+	<script type="text/javascript" src="script/embla/admin.js"></script>
+	
+	<link rel="icon" href="images/icons/ig-16.png" type="image/png" />
+	<link rel="SHORTCUT ICON" href="images/icons/ig-16.png" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+#end
+
+#beginLightEmblaTool("tool.common.adminTool.header" "" "" false true true $headerMarkup false "mainTool")
+
+  	<div id="header">
+  		<div id="menucontent">
+			#foreach($tool in $availableTools)
+				<span id="${tool.toolName}Tab" class="middleTabPart">
+				<span class="leftTabPart">
+				<span class="rightTabPart">
+				<a href="$tool.actionUrl" id="${tool.toolName}Link" class="menutab $tool.cssClass" onclick="return activateTool('${tool.toolName}', '$tool.title', '$tool.actionUrl', '');">$tool.title</a>
+				</span>
+				</span>
+				</span>
+			#end
+		</div>
+		
+		<div style="float: right; padding-top: 10px;">
+		
+			#*
+			<form name="searchForm" id="searchForm" method="post" action="" onsubmit="return search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" style="float: left;">
+				<input type="text" name="searchField" id="searchField" value="$ui.getString("tool.common.searchDialog.searchFieldDefaultText")"/> <img id="searchButton" src="images/trans.gif" onclick="if($('#searchField').val() == '$ui.getString("tool.common.searchDialog.searchFieldDefaultText")') alert('State search text'); else search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" alt="Search"/>
+			</form>
+			*#
+				
+			<a style="margin-top: 8px;" class='igToolbarButton igToolbarHeaderButton' href="#" id="logoutButton" name="logoutButton" title="$ui.getString("header.link.signout")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='logout' title="$ui.getString("header.link.signout")">$ui.getString("header.link.signout")</span></span></a>
+			<script type="text/javascript">
+			<!--
+				$("#logoutButton").click(function(){
+					document.location.href = "Login!logout.action";
+	        	});
+			-->
+			</script>
+		</div>
+  	</div>
+  	
+  	<div id="work">
+		#foreach($tool in $availableTools)
+  		<iframe id="${tool.toolName}Iframe" name="${tool.toolName}Iframe" class="inactiveTool" src="loading.html" width="100%" height="350" frameborder="0" allowtransparency="true"></iframe>
+		#end
+  	</div>
+  	
+  	<div id="footer">
+
+  		<div id="leftFooter" style="float: left;">
+
+			<button id="logoButton"></button>
+
+			<a class='igToolbarButton igToolbarHeaderButton' href="#" id="trashcanButton" name="trashcanButton" title="$ui.getString("header.link.trashcan")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='trashcan' title="$ui.getString("header.link.trashcan")">$ui.getString("header.link.trashcan")</span></span></a>
+			<script type="text/javascript">
+			<!--
+				$("#trashcanButton").click(function(){
+					openInlineDiv("Trashcan.action", 600, 800, true, true, "Trashcan");
+	        	});
+			-->
+			</script>
+	
+			<a class='igToolbarButton igToolbarHeaderButton' href="#" id="mySettingsButton" name="mySettingsButton" title="$ui.getString("tool.managementtool.mysettings.header")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='mySettings' title="$ui.getString("tool.managementtool.mysettings.header")">$ui.getString("tool.managementtool.mysettings.header")</span></span></a>
+			<script type="text/javascript">
+			<!--
+				$("#mySettingsButton").click(function(){
+					javascript:openMySettings();
+	        	});
+			-->
+			</script>
+	  	</div>
+
+  		<div id="rightFooter" style="float: right; margin-top: 10px; margin-right: 10px;">
+	  		$ui.getString("tool.common.loggedInAsLabel"): $infoGluePrincipal.displayName
+	  		<!--Version: $infoGlueVersion ($infoGlueVersionReleaseDate)-->
+	  	</div>
+
+  	</div>
+
+	<div id="messagesDiv" style="display: none;">
+		<div id="messages" style="border: 1px solid #ccc; height: 400px; overflow: auto;"></div>
+		<div id="messageInput" style="margin-top: 4px; padding: 2px; border: 1px solid #ccc; background-color: #dff0fc;"><input type="text" style="width: 80%;" id="chatMessage" name="chatMessage"/> <input type="button" onclick="sendMessage();" value="Send"/></div>
+	</div>
+
+</body>
+</html> 

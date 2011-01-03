@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE workflow PUBLIC "-//OpenSymphony Group//DTD OSWorkflow 2.7//EN" "http://www.opensymphony.com/osworkflow/workflow_2_7.dtd">
+<workflow>
+	<meta name="created">Tue Okt 21 11:00:00 CEST 2004</meta>
+	<meta name="lastModified">Tue Okt 21 11:00:00 CEST 2004</meta>
+	<meta name="generator">Mattias Bogeblad</meta>
+	<initial-actions>
+		<action id="0" name="Start Workflow" view="ViewMyDesktopToolStartPage!invoke.action">
+			<restrict-to>
+				<conditions>
+					<condition type="class">
+						<arg name="class.name">org.infoglue.cms.util.workflow.InfoGlueAuthorizationCondition</arg>
+						<arg name="roleName">ProcessCreator</arg>
+						<arg name="userName">administrator</arg>
+					</condition>
+				</conditions>
+			</restrict-to>
+	
+			<pre-functions>
+				<function name="set.caller" type="class">
+					<arg name="class.name">com.opensymphony.workflow.util.Caller</arg>
+				</function>
+				
+				<function name="beanshell function" type="beanshell">
+					<arg name="script">
+					<![CDATA[
+	            		System.out.println("Caller:" + caller);
+	            		propertySet.setString("Create news content with IG-templates_owner", "ymattias");
+	            		propertySet.setString("Preview news and approve with IG-templates_owner", "yniklas");
+	            		propertySet.setString("Finish Registration_owner", "ymagnus");
+            		]]>
+            		</arg>
+				</function>
+			</pre-functions>
+			
+			<results>
+				<unconditional-result id="4" old-status="Finished" status="Queued" step="1"/>
+			</results>
+		</action>
+	</initial-actions> 
+
+	<global-actions>
+		<action id="200" name="Restart Workflow">
+			<meta name="icon">images/mydesktop/restart.gif</meta>
+			<meta name="altKey">Restart</meta>
+			<restrict-to>
+				<conditions>
+					<condition type="class">
+						<arg name="class.name">org.infoglue.cms.util.workflow.InfoGlueAuthorizationCondition</arg>
+						<arg name="roleName">ProcessCreator</arg>
+					</condition>
+				</conditions>
+			</restrict-to>
+			<results>
+				<unconditional-result step="1" old-status="Restarted" status="Queued"/>
+			</results>
+		</action>
+		<action id="201" name="Finish Workflow">
+			<meta name="icon">images/mydesktop/stop.gif</meta>
+			<meta name="altKey">Finish</meta>
+			<restrict-to>
+				<conditions>
+					<condition type="class">
+						<arg name="class.name">org.infoglue.cms.util.workflow.InfoGlueAuthorizationCondition</arg>
+						<arg name="roleName">ProcessCreator</arg>
+					</condition>
+				</conditions>
+			</restrict-to>
+			<results>
+				<unconditional-result step="3" old-status="Finished" status="Finished"/>
+			</results>
+		</action>
+	</global-actions>
+<!--
+	<common-actions>
+		<action id="100" name="Restart Workflow">
+			<results>
+				<unconditional-result step="1" old-status="Restarted" status="Underway"/>
+			</results>
+		</action>
+		<action id="101" name="Stop Workflow">
+			<results>
+				<unconditional-result step="3" old-status="Finished" status="Finished"/>
+			</results>
+		</action>
+	</common-actions>
+-->
+	<steps> 
+		<step id="1" name="Create news content with IG-templates">
+			<actions>
+				<action id="4" name="Create news content with IG-templates" view="http://localhost:8080/infoglueDeliver2Dev/ViewPage.action?siteNodeId=127">
+					<restrict-to>
+						<conditions>
+							<condition type="class">
+								<arg name="class.name">org.infoglue.cms.util.workflow.InfoGlueAuthorizationCondition</arg>
+								<arg name="roleName">Officer</arg>
+							</condition>
+						</conditions>
+					</restrict-to>
+					<pre-functions>
+						<function name="set.caller" type="class">
+							<arg name="class.name">com.opensymphony.workflow.util.Caller</arg>
+						</function>
+						
+						<function name="beanshell function" type="beanshell">
+							<arg name="script">
+							<![CDATA[
+		            			System.out.println("transientVars:" + transientVars.getClass().getName());
+			            		Iterator iterator = transientVars.keySet().iterator();
+			            		while(iterator.hasNext())
+			            		{
+			            			Object key = iterator.next();
+			            			System.out.println("key:" + key);
+			            			Object value = transientVars.get(key);
+			            			System.out.println("value:" + value.getClass().getName());
+			            		}
+		            		]]>
+		            		</arg>
+						</function>
+					</pre-functions>
+					<results>
+						<unconditional-result id="5" old-status="Finished" status="Queued" step="2"/>
+					</results>
+					<post-functions>
+						<function name="beanshell function" type="beanshell">
+							<arg name="script">
+							<![CDATA[
+            		
+			            		javax.servlet.http.HttpServletRequest request = transientVars.get("request");
+			            		
+			            		String name = request.getParameter("name");
+			            		String title = request.getParameter("title");
+			            		String navigationTitle = request.getParameter("navigationTitle");
+			            		String leadIn = request.getParameter("leadIn");
+			            		String fullText = request.getParameter("fullText");
+			            		
+			            		System.out.println("Caller - ${caller}");
+			            		System.out.println("name:" + name);
+			            		System.out.println("title:" + title);
+			            		System.out.println("navigationTitle:" + navigationTitle);
+			            		System.out.println("leadIn:" + leadIn);
+			            		System.out.println("fullText:" + fullText);
+			            		
+			            		propertySet.setString("name", name);
+			            		propertySet.setString("title", title);
+			            		propertySet.setString("navigationTitle", navigationTitle);
+			            		propertySet.setString("leadIn", leadIn);
+			            		propertySet.setString("fullText", fullText);
+			            	]]>
+			            	</arg>
+						</function>
+					</post-functions>
+				</action>
+			</actions>
+		</step>
+		<step id="2" name="Preview news and approve with IG-templates">
+			<actions>
+				<action id="5" name="Preview news and approve" view="http://localhost:8080/infoglueDeliver2Dev/ViewPage.action?siteNodeId=128">
+					<restrict-to>
+						<conditions>
+							<condition type="class">
+								<arg name="class.name">org.infoglue.cms.util.workflow.InfoGlueAuthorizationCondition</arg>
+								<arg name="roleName">Publisher</arg>
+							</condition>
+						</conditions>
+					</restrict-to>
+					<pre-functions>
+						<function name="set.caller" type="class">
+							<arg name="class.name">com.opensymphony.workflow.util.Caller</arg>
+						</function>
+					</pre-functions>
+					<results>
+						<unconditional-result id="6" old-status="Finished" status="Queued" step="3"/>
+					</results>
+					<post-functions>
+						<function name="customClass" type="class">
+							<arg name="customClass.name">org.infoglue.cms.applications.workflowtool.actions.examples.CreateNews</arg>
+							<arg name="class.name">org.infoglue.cms.util.workflow.CustomClassExecutor</arg>
+						</function>
+					</post-functions>
+				</action>
+			</actions>
+		</step>
+		<step id="3" name="Finish Registration">
+		</step>
+	</steps>
+</workflow>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewMessageCenter.header" "tool.managementtool.viewMessageCenter.header" "")
+
+<div class="fullymarginalized" style="color: black;">
+
+	<p class="subtitle">$ui.getString("tool.managementtool.createEmailComposeEmail.title")</p>
+	<p>$ui.getString("tool.managementtool.createEmailComposeEmail.intro")</p>
+
+	<p>
+		<form name="mailForm" method="POST" action="CreateEmail.action"> 
+			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+			<input type="hidden" name="recipients" value="$usersAddresses"/>
+			#if($errorMessage && $errorMessage != "")
+			<span style="color:red">$errorMessage</span><br/>
+			#end
+		  	$ui.getString("tool.managementtool.from.label"):<br/>
+		  	<input type="textfield" id="from" name="from" class="longtextfield"/><br/>
+		  	$ui.getString("tool.managementtool.subject.label"):<br/>
+		  	<input type="textfield" id="subject" name="subject" class="longtextfield"/><br/>
+			$ui.getString("tool.managementtool.yourMessage.label"):<br/>
+			<textarea name="message" class="normaltextarea"></textarea><br/><br/>
+			<input type="image" src="$ui.getString("images.managementtool.buttons.ok")" width="50" height="25" border="0">
+			<a href="ViewMessageCenter.action"><img border="0" src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25"></a>
+	  	</form>
+	</p>
+
+#endManagementTool()

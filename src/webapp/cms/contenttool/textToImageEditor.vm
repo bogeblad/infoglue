@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!-- WORK IN PROGRESS -->
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>TextToImage Studio</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	
+	<style>
+	body { font-family: Verdana, arial; }
+	.tool {
+		font-family: Courier; font-size: xx-small; 
+	}
+	.code 
+	{ 
+		font-family: Verdana; font-size: xx-small; 
+		border-top: solid;
+		border-top-width: 1px;
+		border-top-color: #CECECE;
+
+		border-bottom: solid;
+		border-bottom-width: 1px;
+		border-bottom-color: #CECECE;
+
+		border-left: solid;
+		border-left-width: 1px;
+		border-left-color: #CECECE;
+
+		border-right: solid;
+		border-right-width: 1px;
+		border-right-color: #CECECE;
+
+		padding: 10px;
+	}
+	#imgDiv {
+		overflow: hidden;
+		width: ${canvasWidth}px;
+		height: ${canvasHeight}px;
+		border: 1px outset white;
+		margin: 0;
+		background: buttonface;
+		color: black;
+		padding: 0px;
+		zz-index: 2;
+	}
+	
+	</style>
+	<script language="javascript" src="script/genresize.js"></script>
+	<script language="javascript">
+		function onResize(el)
+		{
+			if(el.id=="imgDiv")
+			{
+				var w = el.style.width;
+				var h = el.style.height;
+				h = h.replace("px", "");
+				w = w.replace("px", "");
+				if(w!="") document.dForm.canvasWidth.value=w;
+				if(h!="")document.dForm.canvasHeight.value=h;
+				document.dForm.submit();
+			}
+		}
+	</script>
+</head>
+
+<body class="contenttooledit">
+
+<h3>TextToImage Studio</h3>
+
+<form name="dForm" id="dForm" method="POST" action="?">
+<input type="hidden" name="siteNodeId" value="$siteNodeId">
+<input type="hidden" name="languageId" value="$languageId">
+<input type="hidden" name="contentId" value="$contentId">
+
+<input type="hidden" name="canvasWidth" value="${canvasWidth}">
+<input type="hidden" name="canvasHeight" value="${canvasHeight}">
+
+
+<table class="tool">
+<!--tr>
+<td>Font</td><td>Size</td><td>Foreground</td><td>Background</td><td> </td>
+</tr-->
+
+<tr>
+
+
+<td>
+<!-- FONT NAME -->
+<select name="fontName">
+#foreach ($f in $fontNames)
+	#if($f==$fontName)
+		<option selected value="$f">$f</option>
+	#else
+		<option value="$f">$f</option>
+	#end
+#end
+</select>
+</td>
+
+<td>
+<!-- FONT SIZE -->
+<select name="fontSize">
+#foreach ($s in $sizes)
+	#if($s==$fontSize)
+		<option selected value="$s">$s</option>
+	#else
+		<option value="$s">$s</option>
+	#end
+#end
+</select>
+</td>
+
+<td><input name="foregroundColor" type="text" value="$foregroundColor" size="6"></td>
+<td><input name="backgroundColor" type="text" value="$backgroundColor" size="6"></td>
+
+
+<td>
+<input type="submit" value="Refresh">
+</td>
+</tr>
+</table>
+
+Enter Text: <input type="text" name="text" value="$text"> or Select Binding:
+
+<select name="contentBinding">
+#foreach ($b in $sortedAvailableSingleContentServiceBindings)
+		<option value="$b">$b</option>
+#end
+</select>
+
+
+
+</form>
+<div id="imgDiv" class="resizeMe">
+<img src="$generatedImage" border=0 title='$generatedCommand'>
+</div>
+
+<br><br>
+<span class="code" nobr>
+
+&lt;img src="$generatedCommand" width="${canvasWidth}" height="${canvasHeight}" /&gt; 
+
+<br><br><br>
+</span>
+
+<span class="small">
+Todo: 
+<ul>
+<li>Look and feel</li>
+<li>Implement color pickers</li>
+<li>Context selecting (siteNodeTree)</li>
+<li>ContentAttribute selection</li>
+<li>Alignment, vertical, horizontal</li>
+<li>Font style, italic, bold</li>
+<li>Background image picker</li>
+<li>Hover image generation (including javascript)</li>
+<li>Integration with editors (plain/wysiwyg)</li>
+</ul>
+<span>
+
+</body>
+
+</html>

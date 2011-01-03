@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("tool.contenttool.searchResultHeader" $ui.getString("tool.contenttool.searchResultHeader") "" "0" "0" "0")
+
+	<script type="text/javascript" src="script/overlib.js"></script>
+	<script type="text/javascript" language="JavaScript">
+	<!-- 		
+		
+		//-----------------------------------------------
+		// This function reloads the toolbar above the current 
+		// active action so that buttons related to the view 
+		// can be shown and a suitable headline be written.
+		//-----------------------------------------------
+		
+		function submitListForm(entityName)
+		{
+			//var searchString = document.editForm.searchString.value;
+			//var replaceString = document.editForm.replaceString.value;
+			
+			var listForm = document.listForm;
+			var selectedObjectsAsDelimitedString = getSelectedObjectsAsDelimitedString(listForm, entityName);
+				
+			/*
+			
+			var selectedObjects = getSelectedObjects(listForm, entityName);
+			var selectedTexts = getSelectedTexts(listForm);
+			*/
+			//alert("selectedObjects:" + selectedObjects);
+			if (selectedObjectsAsDelimitedString == "")
+			{
+				alert('$ui.getString("tool.contenttool.replaceAlertSelectVersions")');
+			  	return;
+			}
+			else
+			{
+				document.replaceForm.contentVersionId.value = selectedObjectsAsDelimitedString;
+				//listForm.message.value = listForm.message.value;
+				//listForm.extraParameters.value = selectedTexts;
+				//listForm.yesDestination.value = listForm.yesDestination.value + '?searchString=' + searchString + '&replaceString=' + replaceString + selectedObjects; //
+				//listForm.submit();
+				document.replaceForm.submit();
+			}
+
+		}
+		
+		
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones id's to the id-List 
+		//-----------------------------------------------
+
+		function getSelectedObjects(listForm, entityName)
+		{
+			var str = '';
+		
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += '&' + entityName + 'Id=' + escape(listForm.sel.value);
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (listForm.sel[i].checked)
+			    		str += '&' + entityName + 'Id=' + escape(listForm.sel[i].value);
+			 	}
+			}
+					 	
+		 	return str;
+		}
+		
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones id's to the id-List 
+		//-----------------------------------------------
+
+		function getSelectedObjectsAsDelimitedString(listForm, entityName)
+		{
+			var str = '';
+		
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += ',' + escape(listForm.sel.value);
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (listForm.sel[i].checked)
+			    		str += ',' + escape(listForm.sel[i].value);
+			 	}
+			}
+					 	
+		 	return str;
+		}
+
+
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones names to the messagesList 
+		//-----------------------------------------------
+		
+		function getSelectedTexts(listForm)
+		{
+			var str = '';
+
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += listForm.rowtitle.value + "<br/>";
+		  	}
+		  	else
+		  	{	
+				for (i=0; i<length; i++)
+				{
+					if (listForm.sel[i].checked)
+				    	str += listForm.rowtitle[i].value + "<br/>";
+				}
+			}
+					
+			return str;
+		}
+
+		function toggleDiv(id)
+		{
+			var div = document.getElementById(id);
+			if(div && div.style.display == "none")
+			{
+				div.style.display = "block";
+		
+				if(id == "advancedOptions")
+				{
+					var resultDiv = document.getElementById("resultsLayer");
+					document.getElementById("advancedEnabled").value = "true";
+					resultDiv.style.top = "400px";
+				}
+					
+			}
+			else
+			{
+				div.style.display = "none";
+				
+				if(id == "advancedOptions")
+				{
+					var resultDiv = document.getElementById("resultsLayer");
+					document.getElementById("advancedEnabled").value = "false";
+					resultDiv.style.top = "100px";
+				}
+			}			
+		}
+		
+		function showReplaceDialog()
+		{
+			var advancedDiv = document.getElementById("advancedOptions");
+			advancedDiv.style.display = "none";
+
+			var searchDiv = document.getElementById("searchLayer");
+			searchDiv.style.display = "none";
+
+			var replaceDiv = document.getElementById("replaceLayer");
+			replaceDiv.style.display = "block";
+			
+			var resultDiv = document.getElementById("resultsLayer");
+			resultDiv.style.top = "150px";
+		}
+		
+		function showSearchDialog()
+		{
+			//var advancedDiv = document.getElementById("advancedOptions");
+			//advancedDiv.style.display = "block";
+
+			var searchDiv = document.getElementById("searchLayer");
+			searchDiv.style.display = "block";
+
+			var replaceDiv = document.getElementById("replaceLayer");
+			replaceDiv.style.display = "none";
+			
+			var resultDiv = document.getElementById("resultsLayer");
+			resultDiv.style.top = "100px";
+		}
+		
+		function resetSearchForm()
+		{
+			document.editForm.searchString.value = "";
+		}
+
+		function resetReplaceForm()
+		{
+			document.replaceForm.searchString.value = "";
+			document.replaceForm.replaceString.value = "";
+		}
+
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			parent.htmlTreeItemClick(itemId, repoId, path);
+		}
+		
+		function setSelected(itemId, repoId, path)
+		{
+			if(itemId)
+				parent.document.inputForm.entityId.value     = itemId;
+			if(repoId)
+				parent.document.inputForm.repositoryId.value = repoId;
+			if(path)
+			 	parent.document.inputForm.path.value         = path;
+			
+			parent.submitBindning();
+		}
+	-->
+	</script>
+	
+#set($advanced = false)
+#if(($name && $name != "") || $languageId || $contentTypeDefinitionId || $caseSensitive == 1 || $stateId || $advancedEnabled)
+	#set($advanced = true)
+#end
+
+<form method="POST" name="editForm" action="SearchContent!inlineAssetResult.action">
+<input type="hidden" id="advancedEnabled" name="advancedEnabled" value="$advancedEnabled">
+<input type="hidden" name="repositoryId" value="$!repositoryId">
+#foreach($allowedContentTypeDefinitionId in $allowedContentTypeIds)
+<input type="hidden" name="allowedContentTypeIds" value="$allowedContentTypeDefinitionId">
+#end
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td colspan="7">	
+		<p>
+		#editTextField3($ui.getString("tool.contenttool.searchString.label") "tool.contenttool.searchString.label" "searchString" $searchString "30" "normaltextfield") 
+		<input type="image" src="images/okButton_se.gif" style="width: 31px; height: 19px;" />
+		</p>
+	</td>
+</tr>
+</table>
+</form>
+
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000; border: 1px solid #333333; background-color: #CCCCFF;"></div>
+
+<table tableborder=0 border=0 bgcolor="#C7D1B3" width="100%" cellpadding="1" cellspacing="0"><tr><td>
+#set($lvConstraint = 0)
+
+#lvHead([$ui.getString("tool.contenttool.searchResultContentHeader"), ""] "tool.contenttool.replace.header" "ReplaceContent.action" "SearchContent.action" "tool.contenttool.replaceStringInContentVersions.text")
+
+#set($cnt = 0)
+#foreach ($contentVO in $contentVOSet)
+	#set( $contentRepositoryId = $contentVO.repositoryId ) 
+	#set( $path = $this.getContentPath($contentVO.contentId))
+	#set( $fnutt = '"')
+	#set( $rowUrl = "javascript:htmlTreeItemClick($contentVO.contentId, $contentRepositoryId, ${fnutt}path${fnutt});")
+	#set( $row = ["<a href='$rowUrl'>$contentVO.name</a>", "<span onmouseover='return overlib(${fnutt}$path${fnutt}, WIDTH, 400, BGCOLOR, ${fnutt}#FFFFFF${fnutt});' onmouseout='return nd();'><img src='images/questionMarkGrad.gif'/></span>"] )
+	#set($cnt = $cnt + 1)
+	
+	#lvAddRow($row $cnt $contentId)
+#end
+#if($cnt == 0)
+	#lvAddRow([$ui.getString("tool.contenttool.searchResultNoMatchesText"), ""] 1 0)
+#end
+
+#lvEnd()
+
+#endContentTool()

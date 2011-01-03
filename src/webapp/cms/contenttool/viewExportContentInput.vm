@@ -1,0 +1,109 @@
+#define( $headerMarkup )
+
+	<script language="JavaScript">
+	<!--
+		function submitForm()
+		{
+			document.editForm.submit();
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css"/>
+
+	<style>
+		fieldset
+		{
+			border: 1px solid #cccccc;
+			width: 300px;
+		}
+		legend
+		{
+			color: #000000;
+			background: #c6d3e7;
+			border: 1px solid #cccccc;
+			padding: 2px 6px
+		}
+		label
+		{
+			width: 200px;
+			float: left;
+			text-align: right;
+			margin-right: 0.5em;
+			display: block;
+		}
+		.narrowLabel
+		{
+			width: 100px;
+		}
+		select
+		{
+			background: white;
+			border: 1px solid #cccccc;
+			font-family: Verdana, Arial, San serif;
+			font-size: 8pt;
+			width: 80px;
+		}
+		.wideButton
+		{
+			background: #d6d3ce;
+			border: 1px solid #848284;
+			font-family: Verdana, Arial, San serif;
+			font-size: 10pt;
+			width: 100px;
+		}
+		p
+		{
+			line-heigh: 12px;
+			margin: 0px;
+			padding-bottom: 4px;
+		}
+	</style>
+
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.contenttool.exportContent.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<div style="margin-left: 16px;">
+	
+		<h1>$ui.getString("tool.contenttool.exportContent.header")</h1>
+	
+		<form name="editForm" method="POST" action="ExportContent.action">
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		
+		<p>
+			$ui.getString("tool.contenttool.exportContent.introduction")
+		</p>
+		<p>
+	 		<fieldset>
+			<legend>Export limitations</legend>
+	 		<label for="assetMaxSize">$ui.getString("tool.contenttool.exportContent.assetMaxSizeLabel"):</label>
+	 		<select name="assetMaxSize">
+	 			<option value="-1" #checkSelected("-1" "$assetMaxSize")>No limit</option>
+	 			<option value="50000" #checkSelected("50000" "$assetMaxSize")>50 KB</option>
+	 			<option value="100000" #checkSelected("100000" "$assetMaxSize")>100 KB</option>
+	 			<option value="300000" #checkSelected("300000" "$assetMaxSize")>300 KB</option>
+	 			<option value="500000" #checkSelected("500000" "$assetMaxSize")>500 KB</option>
+	 			<option value="1000000" #checkSelected("1000000" "$assetMaxSize")>1 MB</option>
+	 			<option value="5000000" #checkSelected("5000000" "$assetMaxSize")>5 MB</option>
+	 			<option value="10000000" #checkSelected("10000000" "$assetMaxSize")>10 MB</option>
+	 			<option value="100000000" #checkSelected("100000000" "$assetMaxSize")>100 MB</option>
+	 		</select>
+			</fieldset><br/>
+		</p>
+		<p>
+			<a href="javascript:submitForm();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
+			<a href="ViewContent.action?contentId=$!contentId&repositoryId=$!repositoryId"><img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25"></a>
+		</p>
+		</form>	
+	</div>
+	
+#endLightCommonToolV3()

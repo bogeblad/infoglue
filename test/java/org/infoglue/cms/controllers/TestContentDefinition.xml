@@ -1,0 +1,113 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" version="2.1" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:simpleType name="textarea">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"></xs:maxLength>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="radiobutton">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"></xs:maxLength>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="checkbox">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"></xs:maxLength>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="select">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"></xs:maxLength>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="textfield">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="100"></xs:maxLength>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="Content">
+		<xs:all>
+			<xs:element name="Attributes">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="textfield" type="textfield">
+							<xs:annotation>
+								<xs:appinfo>
+									<params>
+										<param id="title" inputTypeId="0">
+											<values>
+												<value id="undefined21" label="textfield"></value>
+											</values>
+										</param>
+										<param id="description" inputTypeId="0">
+											<values>
+												<value id="undefined55" label="textfield description"></value>
+											</values>
+										</param>
+										<param id="class" inputTypeId="0">
+											<values>
+												<value id="undefined91" label=""></value>
+											</values>
+										</param>
+									</params>
+								</xs:appinfo>
+							</xs:annotation>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:simpleType name="assetKeys">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="image"></xs:enumeration>
+			<xs:enumeration value="second-image"></xs:enumeration>
+			<xs:enumeration value="other-image"></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="categoryKeys">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="first">
+				<xs:annotation>
+					<xs:appinfo>
+						<params>
+							<title>First Title</title>
+							<description>First Description</description>		
+							<categoryId>100</categoryId>
+						</params>
+ 					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="second">
+				<xs:annotation>
+					<xs:appinfo>
+						<params>
+							<title>Second Title</title>
+							<description>Second Description</description>
+							<categoryId>200</categoryId>
+						</params>
+ 					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="third">
+				<xs:annotation>
+					<xs:appinfo>
+						<params>
+							<title>Third Title</title>
+							<description>Third Description</description>
+							<categoryId>300</categoryId>
+						</params>
+ 					</xs:appinfo>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

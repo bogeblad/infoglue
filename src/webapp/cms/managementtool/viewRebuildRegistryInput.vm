@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.rebuildRegistry.header" "tool.managementtool.rebuildRegistry.header" "userName=$formatter.encodeURI($userName)")
+
+<div class="fullymarginalized">
+
+	<form name="editForm" method="POST" action="RebuildRegistry.action">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+
+		<h3>$ui.getString("tool.managementtool.rebuildRegistry.header")</h3>
+		<p>$ui.getString("tool.managementtool.rebuildRegistry.introduction")</p>
+	</form>	
+
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="next" value="$ui.getString("tool.common.nextButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="window.close();"/>
+	</div>
+</div>
+
+</body>
+</html>

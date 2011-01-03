@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>StructureTool</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<script type="text/javascript">
+
+	    cookie_name = "structureMenuWidth";
+		var defaultMenuSize = "225,*";
+	
+		function setInitialPosition()
+		{
+			//alert("Setting initial position...");
+			if(document.cookie)
+			{
+				index = document.cookie.indexOf(cookie_name);
+				//alert("index:" + index);
+				if (index != -1)
+				{
+					namestart = (document.cookie.indexOf("=", index) + 1);
+					nameend = document.cookie.indexOf(";", index);
+					if (nameend == -1) {nameend = document.cookie.length;}
+					defaultMenuSize = document.cookie.substring(namestart, nameend);
+					//alert("defaultMenuSize" + defaultMenuSize);
+				}
+			}
+
+			//alert("defaultMenuSize" + defaultMenuSize)
+			this.document.getElementById('mainarea').cols=defaultMenuSize;
+		}
+
+		function minimizeMenu()
+		{
+			var size = "20,*";
+			this.document.getElementById('mainarea').cols=size;
+			
+			if(document.cookie != document.cookie)
+				index = document.cookie.indexOf(cookie_name);
+			else
+				index = -1;
+			
+			if (index == -1)
+				document.cookie=cookie_name+"="+size+"; expires=Monday, 04-Apr-2010 05:00:00 GMT";
+		}
+		
+		function increaseSize()
+		{
+			size = this.document.getElementById('mainarea').cols;
+			//alert("size:" + size);
+			if(size.indexOf("225") > -1)
+				size = "300,*";
+			else if(size.indexOf("300") > -1)
+				size = "350,*";
+			else if(size.indexOf("350") > -1)
+				size = "400,*";
+			else
+				size = "225,*";
+			
+			this.document.getElementById('mainarea').cols=size;
+			
+			if(document.cookie != document.cookie)
+				index = document.cookie.indexOf(cookie_name);
+			else
+				index = -1;
+			
+			if (index == -1)
+				document.cookie=cookie_name+"="+size+"; expires=Monday, 04-Apr-2010 05:00:00 GMT";
+		}
+		
+    </script>
+</head>
+
+<frameset rows="40,*" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
+  <frame name="header" marginwidth="0" marginheight="0" scrolling="no" noresize target="menu" src="ViewStructureToolHeader.action?repositoryId=$repositoryId">
+  <frameset id="mainarea" cols="225,*" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
+    <frame name="menu" marginwidth="0" marginheight="0" scrolling="no" target="main" src="">
+	  <frameset rows="57,*" onload="setInitialPosition();" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
+		<frame name="toolbar" marginwidth="0" marginheight="0" scrolling="no" target="none" src="Loading!executeStructure.action">
+		<frame name="main" marginwidth="0" marginheight="0" scrolling="auto" target="none" src="Loading!executeStructure.action">
+	  </frameset>
+  </frameset>
+</frameset>
+
+</html>

@@ -1,0 +1,9 @@
+If you get the error:
+
+java.sql.SQLException: Listener refused the connection with the following error:
+ORA-12519, TNS:no appropriate service handler found
+The Connection descriptor used by the client was:
+xxxxxx:1521:xe
+
+This is a known issue which is solved by running:
+ALTER SYSTEM SET PROCESSES=150 SCOPE=SPFILE

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html>
+<head>
+	<title>ContentTool</title>
+   	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+
+    <script type="text/javascript" language="javascript">
+	    cookie_name = "contentMenuWidth";
+		var defaultMenuSize = "225,*";
+	
+		function setInitialPosition()
+		{
+			//alert("Setting initial position...");
+			if(document.cookie)
+			{
+				index = document.cookie.indexOf(cookie_name);
+				//alert("index:" + index);
+				if (index != -1)
+				{
+					namestart = (document.cookie.indexOf("=", index) + 1);
+					nameend = document.cookie.indexOf(";", index);
+					if (nameend == -1) {nameend = document.cookie.length;}
+					defaultMenuSize = document.cookie.substring(namestart, nameend);
+					//alert("defaultMenuSize" + defaultMenuSize);
+				}
+			}
+
+			//alert("defaultMenuSize" + defaultMenuSize)
+			this.document.getElementById('mainarea').cols=defaultMenuSize;
+		}
+		
+		function increaseSize()
+		{
+			size = this.document.getElementById('mainarea').cols;
+			//alert("size:" + size);
+			if(size.indexOf("225") > -1)
+				size = "300,*";
+			else if(size.indexOf("300") > -1)
+				size = "350,*";
+			else if(size.indexOf("350") > -1)
+				size = "400,*";
+			else
+				size = "225,*";
+			
+			this.document.getElementById('mainarea').cols=size;
+			
+			if(document.cookie != document.cookie)
+				index = document.cookie.indexOf(cookie_name);
+			else
+				index = -1;
+			
+			if (index == -1)
+				document.cookie=cookie_name+"="+size+"; expires=Monday, 04-Apr-2010 05:00:00 GMT";
+		}
+		
+    </script>
+</head>
+
+<frameset rows="40,*" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0" style="border:none; margin: 0px; padding: 0px;" >
+  <frame name="header" id="header" marginwidth="0" marginheight="0" scrolling="no" noresize="noresize" target="menu" src="ViewContentToolHeader.action?repositoryId=$!repositoryId" />
+  <frameset id="mainarea" cols="225,*" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
+    <frame name="menu" id="menu" marginwidth="0" marginheight="0" scrolling="no" target="main" src="" />
+	  <frameset rows="57,*" onload="setInitialPosition();" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
+		<frame name="toolbar" id="toolbar" marginwidth="0" marginheight="0" scrolling="no" target="none" src="Loading!executeContent.action" />
+		<frame name="main" id="main" marginwidth="0" marginheight="0" scrolling="auto" target="none" src="Loading!executeContent.action" />
+	  </frameset>
+  </frameset>
+</frameset>
+</html>

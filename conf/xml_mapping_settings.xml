@@ -1,0 +1,307 @@
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" 
+						"http://castor.codehaus.org/mapping.dtd">
+
+<mapping>
+
+<!--  Mapping for InfoGlueExport  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.InfoGlueSettingsExportImpl" identity="infoGlueSettingsExportId" key-generator="IDENTITY">
+    <description>InfoGlueSettingsExport</description>
+    <cache-type type="none"/>
+    <map-to xml="InfoGlueSettingsExport"/>
+    <field name="infoGlueSettingsExportId" type="java.lang.Integer">
+      	<bind-xml node="attribute"/>
+    </field>
+    <field name="rootContent" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl">
+      	<bind-xml node="element"/>
+    </field>
+    <field name="rootSiteNode" type="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl">
+      	<bind-xml node="element"/>
+    </field>
+  </class>
+
+<!--  Mapping for SiteNodeTypeDefinition  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl" identity="siteNodeTypeDefinitionId" key-generator="IDENTITY">
+    <description>SiteNodeTypeDefinition</description>
+    <cache-type type="unlimited" capacity="100"/>
+    <map-to table="cmSiteNodeTypeDefinition"/>
+    <field name="siteNodeTypeDefinitionId" type="java.lang.Integer">
+      <bind-xml node="attribute"/>
+    </field>
+    <field name="invokerClassName" type="java.lang.String">
+      <bind-xml name="invokerClassName" node="element"/>
+    </field>
+    <field name="name" type="java.lang.String">
+	  <bind-xml name="name" node="element"/>
+    </field>
+    <field name="description" type="java.lang.String">
+      <bind-xml name="description" node="element"/>
+    </field>
+	<!--
+    <field name="availableServiceBindings" type="org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl" lazy="true" collection="collection">
+      <sql many-key="siteNodeTypeDefinitionId" many-table="cmAvailableServiceBindingSiteNodeTypeDefinition"/>
+    </field>
+    -->
+  </class>
+ 
+ <!--  Mapping for ServiceDefinition  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.ServiceDefinitionImpl" identity="serviceDefinitionId" key-generator="IDENTITY">
+    <description>ServiceDefinition</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmServiceDefinition"/>
+    <field name="serviceDefinitionId" type="java.lang.Integer">
+      <bind-xml node="attribute"/>
+    </field>
+    <field name="className" type="java.lang.String">
+      <bind-xml name="className" node="element"/>
+    </field>
+    <field name="name" type="java.lang.String">
+      <bind-xml name="name" node="element"/>
+    </field>
+    <field name="description" type="java.lang.String">
+      <bind-xml name="description" node="element"/>
+    </field>
+    <!--
+    <field name="availableServiceBindings" type="org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl" lazy="true" collection="collection">
+      <sql many-key="serviceDefinitionId" many-table="cmServiceDefinitionAvailableServiceBinding"/>
+    </field>
+    <field name="serviceBindings" type="org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl" lazy="true" collection="collection">
+      <sql many-key="availableServiceBindingId"/>
+    </field>
+    -->    
+  </class>
+ 
+
+<!--  Mapping for AvailableServiceBinding  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl" identity="availableServiceBindingId" key-generator="IDENTITY">
+    <description>AvailableServiceBinding</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmAvailableServiceBinding"/>
+    <field name="availableServiceBindingId" type="java.lang.Integer">
+   	  <bind-xml node="attribute"/>
+    </field>
+    <field name="name" type="java.lang.String">
+      <bind-xml name="name" node="element"/>
+    </field>
+    <field name="description" type="java.lang.String">
+     <bind-xml name="description" node="element"/>
+    </field>
+    <field name="visualizationAction" type="java.lang.String">
+      <bind-xml name="visualizationAction" node="element"/>
+    </field>
+    <field name="isMandatory" type="java.lang.Boolean">
+      <bind-xml name="isMandatory" node="element"/>
+    </field>
+    <field name="isUserEditable" type="java.lang.Boolean">
+      <bind-xml name="isUserEditable" node="element"/>
+    </field>
+    <field name="isInheritable" type="java.lang.Boolean">
+      <bind-xml name="isInheritable" node="element"/>
+    </field>
+    <!--
+    <field name="siteNodeTypeDefinitions" type="org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl" lazy="true" collection="collection">
+      <sql many-key="availableServiceBindingId" many-table="cmAvailableServiceBindingSiteNodeTypeDefinition"/>
+      <bind-xml name="siteNodeTypeDefinitions" node="element"/>
+    </field>
+    <field name="serviceDefinitions" type="org.infoglue.cms.entities.management.impl.simple.ServiceDefinitionImpl" lazy="true" collection="collection">
+      <sql many-key="availableServiceBindingId" many-table="cmServiceDefinitionAvailableServiceBinding"/>
+      <bind-xml name="serviceDefinitions" node="element"/>
+    </field>    
+    <field name="serviceBindings" type="org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl" lazy="true" collection="collection">
+      <sql many-key="availableServiceBindingId"/>
+      <bind-xml name="serviceBindings" node="element"/>
+    </field>
+    -->    
+  </class>
+
+<!--  Mapping for ContentTypeDefinition  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl" identity="contentTypeDefinitionId" key-generator="IDENTITY">
+    <description>ContentTypeDefinition</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmContentTypeDefinition"/>
+    <field name="contentTypeDefinitionId" type="java.lang.Integer">
+      <bind-xml node="attribute"/>
+    </field>
+    <field name="name" type="java.lang.String">
+      <bind-xml name="name" node="element"/>
+    </field>
+    <field name="schemaValue" type="java.lang.String">
+      <bind-xml name="schemaValue" node="element"/>
+    </field>
+    <field name="type" type="java.lang.Integer">
+      <bind-xml name="type" node="element"/>
+    </field>
+    <!--
+    <field name="contents" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl" lazy="true" collection="collection">
+      <sql many-key="contentTypeDefinitionId"/>
+    </field>
+    -->
+  </class>
+
+
+<!--  Mapping for SystemUser  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.SystemUserImpl" identity="userName">
+    <description>SystemUser</description>
+    <cache-type type="unlimited" capacity="10000"/>
+    <map-to table="cmSystemUser"/>
+    <field name="userName" type="java.lang.String">
+      <sql name="userName" type="varchar" dirty="check" />
+    </field>
+    <field name="password" type="java.lang.String">
+      <sql name="password" type="varchar" dirty="check" />
+    </field>
+    <field name="firstName" type="java.lang.String">
+      <sql name="firstName" type="varchar" dirty="check" />
+    </field>
+    <field name="lastName" type="java.lang.String">
+      <sql name="lastName" type="varchar" dirty="check" />
+    </field>
+    <field name="email" type="java.lang.String">
+      <sql name="email" type="varchar" dirty="check" />
+    </field>
+    <field name="roles" type="org.infoglue.cms.entities.management.impl.simple.RoleImpl" lazy="true" collection="collection">
+      <sql many-key="userName" many-table="cmSystemUserRole"/>
+    </field>
+  </class>
+
+<!--  Mapping for UserProperties  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl" identity="userPropertiesId" key-generator="IDENTITY">
+    <description>UserProperties</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmUserProperties"/>
+    <field name="userPropertiesId" type="java.lang.Integer">
+      <sql name="userPropertiesId" type="integer" dirty="check" />
+    </field>
+    <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
+      <sql name="contentTypeDefinitionId"/>
+    </field>
+    <field name="userName" type="java.lang.String">
+      <sql name="userName" type="varchar" dirty="check" />
+    </field>
+    <field name="language" type="org.infoglue.cms.entities.management.impl.simple.LanguageImpl">
+      <sql name="languageId"/>
+    </field>
+    <field name="value" type="java.lang.String">
+      <sql name="value" type="varchar" dirty="check" />
+    </field>
+  </class>
+  
+  <!--  Mapping for UserContentTypeDefinition  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.UserContentTypeDefinitionImpl" identity="userContentTypeDefinitionId" key-generator="IDENTITY">
+    <description>UserContentTypeDefinition</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmUserContentTypeDefinition"/>
+    <field name="userContentTypeDefinitionId" type="java.lang.Integer">
+      <sql name="userContentTypeDefinitionId" type="integer" dirty="check" />
+    </field>
+    <field name="userName" type="java.lang.String">
+      <sql name="userName" type="varchar" dirty="check" />
+    </field>
+    <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
+      <sql name="contentTypeDefinitionId"/>
+    </field>
+  </class>
+
+<!--  Mapping for Role  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.RoleImpl" identity="roleName">
+    <description>Role</description>
+    <cache-type type="unlimited" capacity="10000"/>
+    <map-to table="cmRole"/>
+    <field name="roleName" type="java.lang.String">
+      <sql name="roleName" type="varchar" dirty="check" />
+    </field>
+    <field name="description" type="java.lang.String">
+      <sql name="description" type="varchar" dirty="check" />
+    </field>
+    <field name="systemUsers" type="org.infoglue.cms.entities.management.impl.simple.SystemUserImpl" lazy="false" collection="collection">
+      <sql many-key="roleName" many-table="cmSystemUserRole"/>
+    </field>
+  </class>
+
+  <!--  Mapping for RoleProperties  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.RolePropertiesImpl" identity="rolePropertiesId" key-generator="IDENTITY">
+    <description>RoleProperties</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmRoleProperties"/>
+    <field name="rolePropertiesId" type="java.lang.Integer">
+      <sql name="rolePropertiesId" type="integer" dirty="check" />
+    </field>
+    <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
+      <sql name="contentTypeDefinitionId"/>
+    </field>
+    <field name="roleName" type="java.lang.String">
+      <sql name="roleName" type="varchar" dirty="check" />
+    </field>
+    <field name="language" type="org.infoglue.cms.entities.management.impl.simple.LanguageImpl">
+      <sql name="languageId"/>
+    </field>
+    <field name="value" type="java.lang.String">
+      <sql name="value" type="varchar" dirty="check" />
+    </field>
+  </class>
+
+  <!--  Mapping for RoleContentTypeDefinition  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.RoleContentTypeDefinitionImpl" identity="roleContentTypeDefinitionId" key-generator="IDENTITY">
+    <description>RoleContentTypeDefinition</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmRoleContentTypeDefinition"/>
+    <field name="roleContentTypeDefinitionId" type="java.lang.Integer">
+      <sql name="roleContentTypeDefinitionId" type="integer" dirty="check" />
+    </field>
+    <field name="roleName" type="java.lang.String">
+      <sql name="roleName" type="varchar" dirty="check" />
+    </field>
+    <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
+      <sql name="contentTypeDefinitionId"/>
+    </field>
+  </class>
+  
+  <!--  Mapping for InterceptionPoint  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.InterceptionPointImpl" identity="interceptionPointId" key-generator="IDENTITY">
+    <description>InterceptionPoint</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmInterceptionPoint"/>
+    <field name="interceptionPointId" type="java.lang.Integer">
+      <sql name="interceptionPointId" type="integer" dirty="check" />
+    </field>
+    <field name="category" type="java.lang.String">
+      <sql name="category" type="varchar" dirty="check" />
+    </field>
+    <field name="name" type="java.lang.String">
+      <sql name="name" type="varchar" dirty="check" />
+    </field>
+    <field name="description" type="java.lang.String">
+      <sql name="description" type="varchar" dirty="check" />
+    </field>
+    <field name="usesExtraDataForAccessControl" type="java.lang.Boolean">
+      <sql name="usesExtraDataForAccessControl" type="integer" dirty="check" />
+    </field>
+    <field name="interceptors" type="org.infoglue.cms.entities.management.impl.simple.InterceptorImpl" lazy="false" collection="collection">
+      <sql many-key="interceptionPointId" many-table="cmInterceptionPointInterceptor"/>
+    </field>    
+  </class>
+  
+  <!--  Mapping for Interceptor  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.InterceptorImpl" identity="interceptorId" key-generator="IDENTITY">
+    <description>Interceptor</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmInterceptor"/>
+    <field name="interceptorId" type="java.lang.Integer">
+      <sql name="interceptorId" type="integer" dirty="check" />
+    </field>
+    <field name="name" type="java.lang.String">
+      <sql name="name" type="varchar" dirty="check" />
+    </field>
+    <field name="description" type="java.lang.String">
+      <sql name="description" type="varchar" dirty="check" />
+    </field>
+    <field name="className" type="java.lang.String">
+      <sql name="className" type="varchar" dirty="check" />
+    </field>
+    <field name="interceptionPoints" type="org.infoglue.cms.entities.management.impl.simple.InterceptionPointImpl" lazy="false" collection="collection">
+      <sql many-key="interceptorId" many-table="cmInterceptionPointInterceptor"/>
+    </field>    
+  </class>
+      
+      
+</mapping>
+

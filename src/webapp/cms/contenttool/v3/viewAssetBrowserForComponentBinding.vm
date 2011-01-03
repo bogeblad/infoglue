@@ -1,0 +1,162 @@
+#beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogForComponentHeader" "" "" false false $!disableCloseButton)
+
+<script type="text/javascript">
+<!--
+	function resize()
+	{
+		var dimensionsWidth = $(window).width();
+		var dimensionsHeight = $(window).height();
+		var offsetTop = $("#tabsContainer").offset().top;
+		var availableHeight = dimensionsHeight - offsetTop - $("#footertoolbar").height();
+		$("#tabsContainer").height(availableHeight);
+		
+	  	//alert("dimensionsWidth:" + dimensionsWidth);
+	  	if(dimensionsWidth != 0)
+	  	{
+			$(".inlineTabDiv").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+			$(".inlineTabDiv > iframe").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+		}
+		else
+		{
+			setTimeout("resize()", 300);
+		}
+	}
+
+	function getRequestParameter(url, parameterName)
+	{
+		var value = "";
+		var valueIndex = url.indexOf(parameterName + "=");
+		if(valueIndex > -1)
+		{
+			var endIndex = url.indexOf("&", valueIndex);
+			if(endIndex != -1)
+				value = url.substring(valueIndex + parameterName.length + 1, endIndex);
+			else
+				value = url.substring(valueIndex + parameterName.length + 1);
+		}
+		return value;
+	}
+		
+	var selectedContentId;
+	var selectedAssetKey;
+	var selectedAssetUrl;
+	function assetMarked(contentId, assetKey, assetUrl)
+	{
+		//alert("Asset was marked:" + contentId + assetKey);
+		selectedContentId = contentId;
+		selectedAssetKey = assetKey;
+		selectedAssetUrl = assetUrl;
+	}
+	
+	function useSelectedAsset()
+	{
+		onOk(selectedContentId, selectedAssetKey);
+	}
+	
+	function onOk(contentId, assetKey)
+	{
+		//alert("onOk:" + contentId + assetKey);
+		if(assetKey == "")
+			alert("$ui.getString("tool.contenttool.assetDialog.mustChooseAttachment")");
+		else
+		{
+			var url = "ViewSiteNodePageComponents!addComponentPropertyBinding.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&entity=Content&entityId=" + contentId + "&assetKey=" + assetKey + "&componentId=$componentId&propertyName=$propertyName&showSimple=$showSimple&showDecorated=$!showDecorated&path=temp";
+		    if(self.opener)
+		    {
+			    self.opener.location.href = url;
+			    window.close();
+			}
+			else if(parent)
+			{
+				parent.location.href = url;
+			}
+		}
+	}
+	
+	function init() 
+	{
+		//alert("contentVO: $contentVO.id");
+		#if($contentVO.id > -1)
+			document.getElementById("repositoryBrowserFrame").src = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=$contentVO.repositoryId&contentId=$contentId&languageId=$languageId&assetTypeFilter=$assetTypeFilter";
+		#else
+			document.getElementById("repositoryBrowserFrame").src = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=$repositoryId&languageId=$languageId&assetTypeFilter=$assetTypeFilter";
+		#end
+	}
+	
+	$(document).ready(function(){
+		$("#tabsContainer").tabs( { 
+			show:function(e, ui) { 
+				},
+			select:function(e, ui) { 
+				//alert("ui: " + ui.index);
+
+				if(ui.index == 1)
+		  		{
+		  			if($("#latestAssetsFrame").attr("src") == "")
+		  			{
+			  			#if($contentVO.id > -1)
+					  		$("#latestAssetsFrame").attr("src", "SearchContent!latestInlineAssetsV3.action?repositoryId=${contentVO.repositoryId}&assetTypeFilter=$assetTypeFilter"); 
+						#else
+				  			$("#latestAssetsFrame").attr("src", "SearchContent!latestInlineAssetsV3.action?repositoryId=$repositoryId&assetTypeFilter=$assetTypeFilter"); 
+						#end
+					}	
+		  		}
+		  		else if(ui.index == 2)
+		  		{
+			  		if($("#contentVersionAssetSearchFrame").attr("src") == "")
+			  		{
+			  			#if($contentVO.id > -1)
+				  			$("#contentVersionAssetSearchFrame").attr("src", "SearchContent!inputInlineAssetV3.action?repositoryId=${contentVO.repositoryId}&assetTypeFilter=$assetTypeFilter"); 
+						#else
+				  			$("#contentVersionAssetSearchFrame").attr("src", "SearchContent!inputInlineAssetV3.action?repositoryId=$repositoryId&assetTypeFilter=$assetTypeFilter"); 
+						#end
+					}	
+			  	}
+			  } 
+		});
+		setTimeout("init();", 200);
+		setTimeout("resize();", 100);
+		//setTimeout("resizeInlineTabDivsImproved()", 100);
+	});
+	
+-->
+</script>		
+</head>
+
+<body class="generaltooledit yui-skin-sam">
+
+<div onfocus="this.blur();">
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.contenttool.assetDialog.assetDialogHeader") - filtered on: "$assetTypeFilter"</h3>
+
+	<div id="tabsContainer" class="flora">      
+
+		<ul>
+	        <li><a href="#repositoryBrowserTab"><span>$ui.getString("tool.contenttool.assetDialog.repositoryBrowserTabLabel")</span></a></li>	        
+	        <li><a href="#latestUploadedTab"><span>$ui.getString("tool.contenttool.assetDialog.latestAssetsTabLabel")</span></a></li>	        
+	        <li><a href="#searchTab"><span>$ui.getString("tool.contenttool.assetDialog.searchAssetsTabLabel")</span></a></li>	        
+	    </ul>
+
+		<div id="repositoryBrowserTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="repositoryBrowserFrame" id="repositoryBrowserFrame" src="" width="670" height="410"></iframe>
+		</div>
+				
+		<div id="latestUploadedTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="latestAssetsFrame" id="latestAssetsFrame" src="" width="670" height="410" ></iframe>
+		</div>
+		
+		<div id="searchTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="contentVersionAssetSearchFrame" id="contentVersionAssetSearchFrame" src="" width="670" height="410" ></iframe>
+		</div>
+
+	</div>
+				
+	#lightFooterToolbar($footerButtons)
+
+</div>
+
+#endCommonToolV3()

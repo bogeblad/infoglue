@@ -1,0 +1,189 @@
+#define($scripts)
+	<script type="text/javascript">
+	<!--
+		function closeDialog()
+		{
+			if(parent && parent.closeInlineDiv) 
+				parent.closeInlineDiv(); 
+			else if(parent && parent.closeDialog) 
+				parent.closeDialog(); 
+			else if(top.closeInlineDiv)
+				top.closeInlineDiv();
+			else if(top.closeDialog)
+				top.closeDialog();
+			else 
+				window.close();		
+		}
+
+		function reloadAllGUI()
+		{
+			top.location.reload();
+		}
+		
+		function refreshParent(actionUrl, target, targetTitle)
+		{
+			//alert("actionUrl: " + actionUrl + ":" + target + ":" + targetTitle);
+			if(parent.refreshNode)
+			{
+				#if($siteNodeId)
+					parent.refreshNode($siteNodeId, 2, $siteNodeId);
+				#else
+					parent.refreshNode($this.getActionExtraData("unrefreshedNodeId"), $changeTypeId, $newSiteNodeId);
+				#end
+				
+				var currentMenutoolbarLeftUrl = parent.getCurrentMenutoolbarLeftUrl();
+				//alert("currentMenutoolbarLeftUrl:" + currentMenutoolbarLeftUrl);
+   	   	  		var position = currentMenutoolbarLeftUrl.indexOf("siteNodeId=${newSiteNodeId}&");
+   	   	  		//alert("position:" + position + ": changeType: $changeTypeId");
+				if("$changeTypeId" == "3")
+				{
+					#if($siteNodeId)
+						parent.openUrlInWorkArea(actionUrl, "AAAAAAA", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
+					#else
+						parent.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "$!this.getActionExtraData('siteNodeName')", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
+					#end
+				}
+				else if(position == -1) 
+				{
+					if(window.name.indexOf("TB_iframe") == -1)
+					{
+    					parent.refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=$newSiteNodeId&repositoryId=$repositoryId&isBranch=true', $unrefreshedNodeId, $changeTypeId, -1);
+						#if($siteNodeId)
+	    					parent.openUrlInWorkArea(actionUrl, "AAAAAAAA", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
+						#else
+	    					parent.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "$!this.getActionExtraData('siteNodeName')", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
+						#end
+					}
+				  	else
+				  		parent.refreshWorkArea("structure");
+				}
+			}
+			else 
+			{
+				if(top.getIsIGStandardTools && top.getIsIGStandardTools() == true)
+				{
+					if(top.getActiveToolName() == "ContentTool")
+					{
+						#if($unrefreshedNodeId && $changeTypeId && $newContentId)
+							top.frames["contentTreeIframe"].refreshContent($unrefreshedNodeId, $changeTypeId, $newContentId);
+						#end
+						
+						//if($changeTypeId == "4")
+							
+						/*
+						var currentMenutoolbarLeftUrl = top.getCurrentMenutoolbarLeftUrl();
+						//alert("currentMenutoolbarLeftUrl:" + currentMenutoolbarLeftUrl);
+						
+		   	   	  		var position = currentMenutoolbarLeftUrl.indexOf("contentId=${newContentId}&");
+						if(position == -1) 
+						{
+							if(window.name.indexOf("TB_iframe") == -1)
+							{
+		    					top.refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=$newSiteNodeId&repositoryId=$repositoryId&isBranch=true', $unrefreshedNodeId, $changeTypeId, -1);
+		    					top.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "");
+							}
+						}
+						*/
+					}
+					else
+					{
+						#if($siteNodeId)
+							top.frames["structureTreeIframe"].refreshNode($siteNodeId, 2, $siteNodeId);
+						#else
+							top.frames["structureTreeIframe"].refreshNode($this.getActionExtraData("unrefreshedNodeId"), $changeTypeId, $newSiteNodeId);
+						#end
+						
+						var currentMenutoolbarLeftUrl = top.getCurrentMenutoolbarLeftUrl();
+						//alert("currentMenutoolbarLeftUrl:" + currentMenutoolbarLeftUrl);
+		   	   	  		var position = currentMenutoolbarLeftUrl.indexOf("siteNodeId=${newSiteNodeId}&");
+		   	   	  		//alert("position:" + position + ": changeType: $changeTypeId");
+						if("$changeTypeId" == "3")
+						{
+							#if($siteNodeId)
+								top.openUrlInWorkArea(actionUrl, "AAAAAAA", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
+							#else
+								top.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "$!this.getActionExtraData('siteNodeName')", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
+							#end
+						}
+						else if(position == -1) 
+						{
+							if(window.name.indexOf("TB_iframe") == -1)
+							{
+		    					top.refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=$newSiteNodeId&repositoryId=$repositoryId&isBranch=true', $unrefreshedNodeId, $changeTypeId, -1);
+								#if($siteNodeId)
+			    					top.openUrlInWorkArea(actionUrl, "AAAAAAAA", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
+								#else
+			    					top.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "$!this.getActionExtraData('siteNodeName')", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
+								#end
+							}
+						  	else
+						  		top.refreshWorkArea("structure");
+						}
+					}
+					
+					if(actionUrl && target && targetTitle)
+						top.openUrlInWorkArea(actionUrl, targetTitle, target);
+				}
+			}
+			
+			closeDialog();
+		}
+    -->
+	</script>
+	
+#end
+
+#if($automaticClose)
+	$scripts
+	<script type="text/javascript">
+		//alert("actionUrl: $actionUrl");
+		refreshParent('$actionUrl', '$target', '$targetTitle');
+	</script>	
+#elseif($isAutomaticRedirect)		
+	<script type="text/javascript">
+		top.location.href = "$firstActionLink.actionURL";
+	</script>	
+#else
+
+	#beginLightCommonToolV3("tool.common.inlineOperationDoneHeader" "" "" false true true)
+	
+	#set($repositoryId = $this.getActionExtraData("repositoryId"))
+	#set($newSiteNodeId = $this.getActionExtraData("siteNodeId"))
+	#set($unrefreshedNodeId = $this.getActionExtraData("unrefreshedNodeId"))
+	#set($newContentId = $this.getActionExtraData("contentId"))
+	#set($changeTypeId = $this.getActionExtraData("changeTypeId"))
+
+	$scripts
+	<link rel="stylesheet" type="text/css" href="css/cms.css"/>
+		
+	<div onfocus="this.blur();">
+	    
+		#lightMenuToolbar("" $buttons $rightButtons) 
+	
+		<div style="clear: both;"></div>
+		
+		<h3 style="padding-left: 16px;">$ui.getString($header)</h3>
+		
+		<div class="inlineTabDiv" onfocus="this.blur();">	
+		
+			<form name="confirmForm" method="POST" action="Confirm.action">
+				<p>
+					$ui.getString($message)<br><br>#if($extraParameters && $extraParameters != "")$!extraParameters#end
+				</p>
+				<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+				<input type="hidden" name="yesDestination" value="$yesDestination"/>	
+				<input type="hidden" name="noDestination" value="$noDestination"/>
+				<input type="hidden" name="choice" value="no"/>
+				<input style="WIDTH: 88px; HEIGHT: 24px" type="button" name="choiceButton" value="$ui.getString("tool.common.yes")" onclick="javascript:submitConfirmForm('yes');"/>
+				<input style="WIDTH: 88px; HEIGHT: 24px" type="button" name="choiceButton" value="$ui.getString("tool.common.no")" onclick="javascript:submitConfirmForm('no');"/>
+			</form>
+		
+		</div>
+	
+		#lightFooterToolbar($footerButtons)
+			
+	</div>
+		
+	#endCommonToolV3()
+
+#end

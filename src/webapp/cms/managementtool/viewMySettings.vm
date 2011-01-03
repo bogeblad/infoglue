@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>My Settings</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	
+	<script language="JavaScript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />	
+</head>
+
+<body class="managementtooledit">
+
+<div class="fullymarginalized">
+
+<table class="managementtooledit" cellpadding="2" cellspacing="2" border="0">
+<form name="editForm" method="POST" action="UpdateMySettings.action">
+<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<tr>
+		<td class="biglabel">
+			$ui.getString("tool.managementtool.mysettings.header")
+		</td>
+	</tr>
+	<tr>
+		<td>$ui.getString("tool.managementtool.mysettings.introduction")
+	</tr>
+	<tr>
+		<td>
+			$ui.getString("entity.Language.property.defaultLanguageCode.label")<br/>
+			<select name="languageCode" class="sitedropbox" style="width: 100px;">
+			#foreach($toolLocale in $toolLocales)
+				<option value="$toolLocale.language" #if($languageCode == $toolLocale.language)selected="1"#end>$toolLocale.displayName</option>
+			#end
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			$ui.getString("entity.Repository.property.defaultRepository.label")<br/>
+			<select name="defaultRepositoryId" class="sitedropbox" style="width: 100px;">
+			#foreach($repository in $repositories)
+				<option value="$repository.id" #if($defaultRepositoryId == $repository.id)selected="1"#end>$repository.name</option>
+			#end
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>	
+			$ui.getString("tool.managementtool.mysettings.defaultToolName.label")<br/>
+			<select class="sitedropbox" name="defaultToolName">
+				#if($this.hasAccessTo("ContentTool.Read"))
+				<option value="0" #if($defaultToolName == "ContentTool")selected="1"#end>$ui.getString("tool.common.contentTool.name")</option>
+				#end
+				#if($this.hasAccessTo("StructureTool.Read"))
+				<option value="1" #if($defaultToolName == "StructureTool")selected="1"#end>$ui.getString("tool.common.structureTool.name")</option>
+				#end
+				#if($this.hasAccessTo("ManagementTool.Read"))
+				<option value="2" #if($defaultToolName == "ManagementTool")selected="1"#end>$ui.getString("tool.common.managementTool.name")</option>
+				#end
+				#if($this.hasAccessTo("PublishingTool.Read"))
+				<option value="3" #if($defaultToolName == "PublishingTool")selected="1"#end>$ui.getString("tool.common.publishingTool.name")</option>
+				#end
+				#if($this.hasAccessTo("MyDesktopTool.Read"))
+				<option value="4" #if($defaultToolName == "MyDesktopTool")selected="1"#end>$ui.getString("tool.common.myDesktopTool.name")</option>
+				#end
+			</select>				
+		</td>
+	</tr>
+	<tr>
+		<td>	
+			$ui.getString("tool.managementtool.mysettings.defaultGUI.label")<br/>
+			<select class="sitedropbox" name="defaultGUI">
+				<option value="default" #if($defaultGUI == "default")selected="1"#end>$ui.getString("tool.common.default")</option>
+				<option value="classic" #if($defaultGUI == "classic")selected="1"#end>$ui.getString("tool.common.classic")</option>
+			</select>				
+		</td>
+	</tr>
+	<tr>
+		<td>	
+			$ui.getString("tool.managementtool.mysettings.theme.label")<br/>
+			<select class="sitedropbox" name="theme">
+				<option value="">Default (Outlook 2007)</option>
+				#foreach($availableTheme in $themes)
+					<option value="$availableTheme" #if($theme == "$availableTheme")selected="1"#end>$availableTheme</option>
+				#end
+			</select>				
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="UpdateSystemUserPassword!inputStandalone.action?userName=$infoGluePrincipal.name&returnAddress=ViewMySettings.action">$ui.getString("tool.managementtool.changePassword.label")</a>
+		</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>
+			<input type="image" src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25">
+			<a href="javascript:self.opener.top.location.href='ViewCMSTool.action?languageCode=$languageCode'; window.close();"><img src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25" border="0"></a>
+		</td>
+	</tr>
+</form>
+</table>
+</div>
+
+</body>
+</html>
+
+

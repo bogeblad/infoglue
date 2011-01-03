@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<title>Delivery engine status page</title>
+	
+	<style>
+	<!--
+		table 
+		{
+			width : 900px;
+			margin-right: auto;
+			margin-left: auto;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+		.header 
+		{
+			font-family : Tahoma, Arial;
+			font-size 	: 14pt;
+			font-weight : bold;
+		}
+		.label
+		{
+			font-family		 : Tahoma, Arial;
+			font-size		 : 8pt;
+			font-weight 	 : bold;
+			background-color : #CCCCCC;
+		}
+		.labelsub
+		{
+			font-family		 : Tahoma, Arial;
+			font-size		 : 8pt;
+			font-weight 	 : bold;
+			background-color : #FFFFFF;
+		}
+		.text 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+		}
+		.texttrue 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+		}
+		.textfalse 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+			color  		:red;
+		}
+		.fullymarginalized 
+		{
+			margin-left	: 50px;
+			margin-right: 50px;
+			margin-top	: 10%;
+		}
+		
+	-->
+	</style>
+	<script type="text/javascript">
+	<!--	
+		function toggleDiv(id)
+		{
+			var div = document.getElementById(id);
+			if (navigator.appName == "Microsoft Internet Explorer")
+			{
+				if(div && div.style.display == 'block')
+					div.style.display = "none";
+				else
+					div.style.display = "block";			
+			}
+			else
+			{
+				if(div && div.style.display == 'table-row')
+					div.style.display = 'none';
+				else
+					div.style.display = 'table-row';				
+			}
+		}
+	-->		
+	</script>
+</head>
+
+<body>
+
+<table cellpadding="4" cellspacing="0">
+  <tr>
+    <td colspan="4" class="header">InfoGlue Status Page ($serverName)</td>
+  </tr>
+  <tr>
+    <td colspan="1" class="label">Version</td>
+    <td colspan="3" class="label">Release date</td>
+  </tr>
+  <tr>
+    <td colspan="1" class="text">$infoGlueVersion</td>
+    <td colspan="3" class="text">$infoGlueVersionReleaseDate</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text">&nbsp;</td>
+  </tr>
+  <tr class="label">
+    <td>Item</td>
+    <td colspan="3">Value</td>
+  </tr>
+  #foreach($state in $states)
+  <tr>
+    <td style="border-bottom: 1px solid #999999;" class="text">$state.get(0)</td>
+    <td  style="border-bottom: 1px solid #999999;" class="text" colspan="3">$state.get(1)</td>
+  </tr>
+  #end
+  <tr>
+    <td class="text" colspan="4"><a href="ViewApplicationState!resetAverageResponseTimeStatistics.action">Reset average response time</a></td>
+  </tr>
+  <tr>
+    <td class="text" colspan="4"><a href="ViewApplicationState!decreaseActiveCount.action">Decrease active user count (only in special situations)</a></td>
+  </tr>
+  
+  <!--	
+  <tr class="label">
+    <td>Test case</td>
+    <td colspan="3">Ok?</td>
+  </tr>
+  <tr>
+    <td class="text">Database connection</td>
+    <td class="text$isDatabaseConnectionOk" colspan="3">$isDatabaseConnectionOk</td>
+  </tr>
+  <tr>
+    <td class="text">Application settings</td>
+    <td class="text$isApplicationSettingsOk" colspan="3">$isApplicationSettingsOk</td>
+  </tr>
+  <tr>
+    <td class="text">Test queries</td>
+    <td class="text$isTestQueriesOk" colspan="3">$isTestQueriesOk</td>
+  </tr>
+  <tr>
+    <td class="text">Disk permissions</td>
+    <td class="text$isDiskPermissionOk" colspan="3">$isDiskPermissionOk</td>
+  </tr>
+  <tr>
+    <td colspan="4"><hr/></td>
+  </tr>
+  -->
+  <tr><td colspan="4">&nbsp;</td></tr>
+  
+  <tr class="label">
+    <td colspan="4">Log settings</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text" align="left">
+    	<form action="ViewApplicationState!setLogLevel.action"> 
+	    	ClassName:
+	    	<input type="textfield" name="className">
+	    	Log level:
+	    	<select name="logLevel">
+	    		<option value="debug">Debug</option>
+	    		<option value="info">Information</option>
+	    		<option value="warn">Warning</option>
+	    		<option value="error">Error</option>
+	    	</select>
+	    	<input type="submit" value="Submit"/>
+	    </form>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text" align="left">
+	    <a href="ViewLogging.action">Logfiles viewer</a>
+    </td>
+  </tr>
+
+  <tr><td colspan="4">&nbsp;</td></tr>
+
+  <tr class="label">
+    <td colspan="4">InfoGlue caches</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text" align="left">
+	    <a href="ViewApplicationState!cacheStatistics.action">Cache statistics</a>
+    </td>
+  </tr>
+
+#*
+  <tr class="label">
+    <td>InfoGlue cache name</td>
+    <td>Cached items</td>
+    <td>Statistics</td>
+    <td>Actions <a href="ViewApplicationState!clearCaches.action">Clear All</a></td>
+  </tr>
+  #foreach($cacheName in $caches.keySet())
+      #set($cache = $caches.get($cacheName))
+	  <tr>
+	    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">$cacheName</td>
+	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top">#if($caches.get($cacheName).class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") $cache.getCache().getSize() #else $cache.size() #end</td>
+	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top">
+	    	#if($cache.class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") 
+	    		<span style="font-size: 8pt; font-style: italic;">$eventListeners.get("${cacheName}_cacheEntryEventListener").toString()
+		        <br/>
+		        $eventListeners.get("${cacheName}_cacheMapAccessEventListener").toString()</span>
+	    	#else 
+	    		No additional statistics
+	    	#end
+	    </td>
+	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top"><a href="ViewApplicationState!clearCache.action?cacheName=$cacheName">Clear</a> | <a href="ViewApplicationState!clearCache.action?cacheName=$cacheName&clearFileCache=true">Clear (also fileCache)</a></td>
+	  </tr>
+  #end
+*#
+  <tr>
+    <td colspan="4" class="text"><a href="ViewApplicationState!clearCastorCaches.action">Clear castor caches</a> | <a href="ViewApplicationState!clearCaches.action">Clear All</a> | <a href="ViewApplicationState!clearCaches.action?clearFileCache=true">Clear All (also fileCache)</a> | <a href="ViewApplicationState!reCache.action">Recache sitenodes</a></td>
+  </tr>
+
+  <tr><td colspan="4">&nbsp;</td></tr>
+
+  <tr class="label">
+    <td>OSCache cache name</td>
+    <td>Cached items</td>
+    <td>Statistics</td>
+    <td>Actions</td>
+  </tr>
+  #set($osCache = $this.getOSCache())
+  <tr>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">$osCache</td>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">$osCache.getSize()</td>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">
+    	No additional statistics
+    </td>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">
+    	&nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text"><a href="ViewApplicationState!clearOSCaches.action">Clear All</a></td>
+  </tr>
+
+  <tr><td colspan="4">&nbsp;</td></tr>
+
+  <tr class="label">
+    <td colspan="4">Clear individual castor caches</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text" align="left">
+    	<form action="ViewApplicationState!clearCastorCache.action"> 
+	    	ClassName:
+	    	<select name="className">
+				<option value="org.infoglue.cms.entities.content.impl.simple.SmallContentImpl">SmallContentImpl</option>
+		    	<option value="org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl">SmallishContentImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.MediumContentImpl">MediumContentImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.ContentImpl">ContentImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.ContentRelationImpl">ContentRelationImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl">SmallContentVersionImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl">SmallestContentVersionImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl">ContentVersionImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl">DigitalAssetImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl">SmallDigitalAssetImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl">MediumDigitalAssetImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl">SmallAvailableServiceBindingImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl">AvailableServiceBindingImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">ContentTypeDefinitionImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.LanguageImpl">LanguageImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.RepositoryImpl">RepositoryImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl">RepositoryLanguageImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.RoleImpl">RoleImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.GroupImpl">GroupImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.ServiceDefinitionImpl">ServiceDefinitionImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl">SiteNodeTypeDefinitionImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.SystemUserImpl">SystemUserImpl</option>
+				<option value="org.infoglue.cms.entities.structure.impl.simple.QualifyerImpl">QualifyerImpl</option>
+				<option value="org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl">ServiceBindingImpl</option>
+				<option value="org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl">SmallSiteNodeImpl</option>
+				<option value="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl">SiteNodeImpl</option>
+				<option value="org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl">SiteNodeVersionImpl</option>
+				<option value="org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl">SmallSiteNodeVersionImpl</option>
+				<option value="org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl">PublicationImpl</option>
+				<option value="org.infoglue.cms.entities.workflow.impl.simple.ActionImpl">ActionImpl</option>
+				<option value="org.infoglue.cms.entities.workflow.impl.simple.ActionDefinitionImpl">ActionDefinitionImpl</option>
+				<option value="org.infoglue.cms.entities.workflow.impl.simple.ActorImpl">ActorImpl</option>
+				<option value="org.infoglue.cms.entities.workflow.impl.simple.ConsequenceImpl">ConsequenceImpl</option>
+				<option value="org.infoglue.cms.entities.workflow.impl.simple.ConsequenceDefinitionImpl">ConsequenceDefinitionImpl</option>
+				<option value="org.infoglue.cms.entities.workflow.impl.simple.EventImpl">EventImpl</option>
+				<option value="org.infoglue.cms.entities.workflow.impl.simple.WorkflowImpl">WorkflowImpl</option>
+				<option value="org.infoglue.cms.entities.workflow.impl.simple.WorkflowDefinitionImpl">WorkflowDefinitionImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.CategoryImpl">CategoryImpl</option>
+				<option value="org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl">ContentCategoryImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.RegistryImpl">RegistryImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.RedirectImpl">RedirectImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.InterceptionPointImpl">InterceptionPointImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.InterceptorImpl">InterceptorImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.AccessRightImpl">AccessRightImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.RolePropertiesImpl">RolePropertiesImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl">UserPropertiesImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.GroupPropertiesImpl">GroupPropertiesImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.UserContentTypeDefinitionImpl">UserContentTypeDefinitionImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.RoleContentTypeDefinitionImpl">RoleContentTypeDefinitionImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.GroupContentTypeDefinitionImpl">GroupContentTypeDefinitionImpl</option>			
+				<option value="org.infoglue.cms.entities.management.impl.simple.PropertiesCategoryImpl">PropertiesCategoryImpl</option>
+				<option value="org.infoglue.cms.entities.management.impl.simple.ServerNodeImpl">ServerNodeImpl</option>	
+	    	</select>
+	    	<input type="submit" value="Submit"/>
+	    </form>
+    </td>
+  </tr>
+  
+  <tr><td colspan="4">&nbsp;</td></tr>
+
+  <tr class="label">
+    <td colspan="3">Application attributes</td>
+    <td><a href="javascript:toggleDiv('applicationAttributes');">Show/Hide</a></td>
+  </tr>
+  <tr id="applicationAttributes" style="display: none;">
+  	<td colspan="4">
+	  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+	  <tr class="labelsub">
+	    <td>Application attribute name</td>
+	    <td>ClassName</td>
+	    <td>Actions</td>
+	  </tr>
+	  #set($applicationAttributesMap = $this.getApplicationMap())
+	  #foreach($applicationAttribute in $applicationAttributesMap.keySet())
+	    <tr>
+			<td style="border-bottom: 1px solid #999999;" class="text">$applicationAttribute</td>
+			<td style="border-bottom: 1px solid #999999;" class="text">$applicationAttributesMap.get($applicationAttribute)</td>
+			<td style="border-bottom: 1px solid #999999;" class="text"><a href="ViewApplicationState!clearApplicationCache.action?attributeName=$applicationAttribute">Remove</a></td>
+	    </tr>
+	  #end
+	    <tr>
+			<td class="text" colspan="3"><a href="ViewApplicationState!clearApplicationCache.action?attributeName=all">Clear all</td>
+		</tr>
+	  </table>
+	</td>
+  </tr>  
+  
+  <tr><td colspan="4">&nbsp;</td></tr>
+  
+  <tr>
+    <td colspan="4" class="text" align="left">
+	    <a href="ViewApplicationState!restoreWorkflows.action">Restore workflows</a>
+    </td>
+  </tr>
+  <!--
+  <tr>
+    <td colspan="4" class="text" align="left">
+	    <a href="ViewApplicationState!setLogInfo.action">Set loglevel to info</a>
+	    <a href="ViewApplicationState!setLogWarning.action">Set loglevel to warning</a>
+	    <a href="ViewApplicationState!setLogError.action">Set loglevel to error</a>
+    </td>
+  </tr>
+  -->
+  <tr><td colspan="4">&nbsp;</td></tr>
+  
+  <tr class="label">
+    <td colspan="4" style>Analysis tools</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text" align="left">
+    <ul>
+    	<li><a href="ViewApplicationState!cacheStatistics.action">Cache statistics</a></li>
+    	<li><a href="ViewApplicationState!componentStatistics.action">Component statistics</a></li>
+    	<li><a href="ViewApplicationState!pageStatistics.action">Page statistics</a></li>
+    	<li><a href="jsp/BlockedThread.jsp">Suspected thread locks (On Java 5-setups only).</a></li>
+		<li><a href="jsp/ThreadAnalysis.jsp">List of all active threads (On Java 5-setups only).</a></li>
+		<li><a href="jsp/PermGen.jsp">Detailed memory info (On Java 5-setups only).</a></li>
+	</ul>
+	</td>
+  </tr>
+<!--
+  <tr>
+    <td colspan="4" class="text" align="center"><a href="ViewApplicationSettings.action">Click here for delivery settings</a></td>
+  </tr>
+
+  <tr><td colspan="4">&nbsp;</td></tr>
+  
+  <tr class="label">
+    <td>User</td>
+    <td colspan="3">Last visited</td>
+  </tr>
+  #if($sessionInfoBeanList.size() < 50)
+	  #foreach($sessionInfoBean in $sessionInfoBeanList)
+	  <tr>
+	    <td class="text">$sessionInfoBean.principal.firstName $sessionInfoBean.principal.lastName ($sessionInfoBean.principal.name)</td>
+	    <td class="text" colspan="3">$sessionInfoBean.lastAccessedDate</td>
+	  </tr>
+	  #end
+  #else  
+  	  <tr>
+	    <td class="text">To many users to show</td>
+	    <td class="text" colspan="3">$sessionInfoBeanList.size</td>
+	  </tr>
+  #end
+-->
+</table>
+
+</body>
+
+</html>

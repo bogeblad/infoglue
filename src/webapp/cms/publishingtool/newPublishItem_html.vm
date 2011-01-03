@@ -1,0 +1,15 @@
+<div><h2>New items up for publication</h2></div>
+<div>
+	CMS notification: The user $principal.firstName $principal.lastName submitted $events.size() items for publishing.<br/>
+	<br/>
+	<h3>Items</h3> 
+	#foreach($event in $events)
+		$event.name - $event.description<br/>
+	#end
+	<br/>
+	Please visit the publishing tool to review the changes. <br/>
+	<br/>
+	<hr/>
+	This email was automatically generated and the sender is the CMS-system.<br/>
+	Do not reply to this email. <br/>
+</div>

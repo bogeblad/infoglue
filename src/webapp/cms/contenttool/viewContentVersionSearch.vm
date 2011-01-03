@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("tool.contenttool.searchHeader" "tool.contenttool.searchHeader" "" "0" "0" "0")
+
+<div class="fullymarginalized">
+
+<form method="POST" name="editForm" action="SearchContent.action">
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td colspan="7">	
+		<p>
+			#editTextField3($ui.getString("tool.contenttool.searchString.label") "tool.contenttool.searchString.label" "searchString" $searchString "30" "normaltextfield") 
+		</p>
+		<p>
+			#selectBox("tool.contenttool.modifierFilter.label" "name" $name $principals "tool.contenttool.filterShowAll.label")
+		</p>
+		<p>
+			#selectBox("tool.contenttool.languageFilter.label" "languageId" $languageId $availableLanguages "tool.contenttool.filterShowAll.label")
+		</p>
+		<p>
+			#selectBox("tool.contenttool.contentTypeFilter.label" "contentTypeDefinitionId" $contentTypeDefinitionId $contentTypeDefinitions "tool.contenttool.filterShowAll.label")
+		</p>
+		#if($allowCaseSensitive)
+		<p>
+			$ui.getString("tool.contenttool.caseSensitive.label")<br>
+			<input type="checkbox" name="caseSensitive" value="1" #checkChecked("1" "$caseSensitive")> Yes 
+		</p>
+		#end
+		<p>
+			$ui.getString("tool.contenttool.includeAssets.label")<br>
+			<input type="checkbox" name="includeAssets" value="true" #checkChecked("true" "$includeAssets")> Yes 
+		</p>
+		<p>
+			$ui.getString("tool.contenttool.onlyIDSearch.label")<br>
+			<input type="checkbox" name="onlyIDSearch" value="true" #checkChecked("true" "$onlyIDSearch")> Yes 
+		</p>
+		<p>
+			$ui.getString("tool.contenttool.stateSearch.label")<br>
+			<select class="dropbox" name="stateId">
+				<option value="">$ui.getString("tool.contenttool.filterShowAll.label")</option>
+				<option value="">---------------</option>
+				<option value="0" #checkSelected("0" $stateId)>$ui.getString("tool.contenttool.state.working")</option>
+				<!--
+				<option value="1" #checkSelected("1" $stateId)>$ui.getString("tool.contenttool.state.final")</option>
+				-->				
+				<option value="2" #checkSelected("2" $stateId)>$ui.getString("tool.contenttool.state.publish")</option>
+				<option value="3" #checkSelected("3" $stateId)>$ui.getString("tool.contenttool.state.published")</option>
+			</select>
+		</p>
+		<p>
+			$ui.getString("tool.contenttool.chooseRepositoryLabel")<br>
+			<select class="dropbox" name="repositoryIdToSearch" multiple="true" size="10">
+				#foreach ($repositoryVO in $repositories)
+					<option value="$repositoryVO.id" #checkSelected("$repositoryVO.id" "$repositoryId")>$repositoryVO.name</option>
+			    #end
+			</select>
+		</p>
+	</td>
+</tr>
+<tr>
+	<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+</tr>
+
+<tr>
+	<input type="hidden" name="repositoryId" value="$!repositoryId">
+	<td colspan="7">
+		<input type="image" src="$ui.getString("images.managementtool.buttons.searchLong")">
+		<a href="javascript:clearForm();"><img src="$ui.getString("images.managementtool.buttons.clearLong")" border="0"></a>
+	</td>
+</tr>
+</table>
+</form>
+
+</div>
+
+#endContentTool()
+

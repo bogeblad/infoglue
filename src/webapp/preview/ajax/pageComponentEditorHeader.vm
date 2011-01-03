@@ -1,0 +1,190 @@
+<head>
+
+<script type="text/javascript">
+	var componentEditorUrl = "${componentEditorUrl}";
+	var currentContext = "${contextName}";
+	var currentUrl = "${currentUrl}";
+	var userPrefferredLanguageCode = "${userPrefferredLanguageCode}";
+	var userPrefferredWYSIWYG = "${userPrefferredWYSIWYG}";
+	var editOnSightAttributeNames = new Array();
+
+	var repositoryId = ${repositoryId};
+	var siteNodeId = ${siteNodeId};
+	var languageId = ${languageId};
+	var contentId = ${contentId};
+	var metaInfoContentId = ${metaInfoContentId};
+	var stopDragAndDrop = false;
+	
+	${limitedUserWarning}
+	
+	try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}
+	try 
+	{ 
+		if(parent.setPageContext)
+			parent.setPageContext("${siteNodeId}", "${repositoryId}");
+	
+		var agt=navigator.userAgent.toLowerCase();
+   	    if(agt.indexOf("safari")!=-1)
+   	    {
+   	 		if(parent && parent.frames[2] && parent.frames[2].refreshStructureToolBar) 
+   	 		{
+   	   	  		var position = parent.frames[2].document.location.href.indexOf("siteNodeId=${siteNodeId}&");
+   	   	  		if(position == -1)
+ 	  	 			parent.frames[2].refreshStructureToolBar('${componentEditorUrl}', 'tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=${siteNodeId}&repositoryId=${repositoryId}&isBranch=true', '${repositoryId}', '${siteNodeId}', '${path}'); 
+   	 		}
+   		}
+   	    else	
+   	    {
+			if(parent && parent.frames["toolbar"] && parent.frames["toolbar"].refreshStructureToolBar) 
+			{
+				var position = parent.frames["toolbar"].document.location.href.indexOf("siteNodeId=${siteNodeId}&");
+				if(position == -1) 
+					parent.frames["toolbar"].refreshStructureToolBar('${componentEditorUrl}', 'tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=${siteNodeId}&repositoryId=${repositoryId}&isBranch=true', '${repositoryId}', '${siteNodeId}', '${path}'); 
+			}
+		}
+	} 
+	catch(e) {/*alert("e:" + e);*/}
+
+	setTimeout("keepSession()", 60000);
+</script>
+<script type="text/javascript" src="${contextName}/script/ajaxComponentEditor.js"></script>
+
+<script type="text/javascript" src="${contextName}/script/jquery/jquery-1.4.4.min.js"></script>
+<link type="text/css" href="${contextName}/script/jqueryplugins/ui/jquery-ui-1.8.7.custom/css/smoothness/jquery-ui-1.8.7.custom.css" rel="stylesheet" />	
+<script type="text/javascript" src="${contextName}/script/jqueryplugins/ui/jquery-ui-1.8.7.custom/js/jquery-ui-1.8.7.custom.min.js"></script>
+
+<script type="text/javascript" src="${contextName}/script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+<style type="text/css" media="all">@import "${contextName}/script/jqueryplugins/thickbox/thickbox.css";</style>
+
+<script type="text/javascript" src="${contextName}/applications/${WYSIWYGEditorJS}"></script>
+#set($userPreferredWYSIWYG = "${userPrefferredWYSIWYG}")
+#if($userPreferredWYSIWYG == "ckeditor3")
+<script type="text/javascript" src="${contextName}/script/ckeditorplugins/autogrow/ckeditor_autogrow.js"></script>
+<script type="text/javascript">
+<!--
+	if(typeof CKEDITOR == "undefined")
+	{
+	 	var maxAutogrowHeight = $(window).height()-200;
+		CKEDITOR.config.extraPlugins = 'ckeditor_autogrow';
+		CKEDITOR.config.minHeight = 200;
+	    CKEDITOR.config.maxHeight = maxAutogrowHeight;
+	}    
+-->
+</script>
+#end
+
+<script type="text/javascript" src="${contextName}/applications/jscalendar/calendar.js"></script>
+<script type="text/javascript" src="${contextName}/applications/jscalendar/lang/calendar-en.js"></script>
+<script type="text/javascript" src="${contextName}/applications/jscalendar/calendar-setup.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="${contextName}/applications/jscalendar/skins/aqua/theme.css" title="aqua" />
+
+<script type="text/javascript">
+			
+	$(document).ready(function()
+	{
+		try
+		{
+			$("#pageComponents").bind("oncontextmenu", function() {
+											if (event && event.stopPropagation) 
+												event.stopPropagation();
+											else if (window.event) 
+												window.event.cancelBubble = true;
+											return false;
+											});
+			$(".componentProperties").bind("oncontextmenu", function() {
+											if (event && event.stopPropagation) 
+												event.stopPropagation();
+											else if (window.event) 
+												window.event.cancelBubble = true;
+											return false;
+											});
+		
+			$(".dragableComponent").draggable({cursorAt: {left: -10 }, distance: 5, cursor: 'move', helper: 'clone', stop: function(ev, ui) {
+					clearMovedComponent = true;
+				}, start: function(ev, ui) {
+					//if(!stopDragAndDrop)
+					//{
+						$(ui.helper).css('border', '1px solid #ccc');
+				    	$(ui.helper).css('background-color', 'white');
+				    	var currentMovedComponentId = $(ui.helper).attr("id");
+						if(currentMovedComponentId != '-1' && currentMovedComponentId != movedComponentId)
+						{
+							movedElementId = currentMovedComponentId;
+							currentMovedComponentId = currentMovedComponentId.substring(currentMovedComponentId.indexOf("_") + 1, currentMovedComponentId.indexOf("Comp"));
+							movedComponentId = currentMovedComponentId;
+						}
+				    //}
+				}
+			}).draggable('disable'); //.hover(function(e){$(this).draggable('enable');},function(e){$(this).draggable('disable');}); ;
+			
+		}
+		catch(e)
+		{
+			alert("Error 3:" + e);
+		}
+
+		try
+		{
+			$(".dropArea").droppable({ 
+			    accept: ".dragableComponent, .ui-draggable", 
+			    hoverClass: "droppable-hover",
+			    tolerance: "touch",
+			    over: function(ev, ui) { 
+					$("#ghost").remove(); 
+			    }
+			});
+		}
+		catch(e)
+		{
+			alert("Error 3:" + e);
+		}
+				
+        var $activeElement = $('#${focusElementId}Comp');
+        if($activeElement && $activeElement.offset())
+        {
+			$(window)[0].scrollTo(0, $activeElement.offset().top - 300);
+		}
+		var activatedComponentId = ${activatedComponentId};
+
+        if(activatedComponentId > 0)
+        {
+            //var alternateComponentPropertiesDivSize = $("#alternateComponentPropertiesDiv").size();
+			//if(alternateComponentPropertiesDivSize == 1)
+			//	showComponentInDiv('alternateComponentPropertiesDiv', '${parameters}', true);
+			//else
+				showComponentInDiv('componentPropertiesDiv', '${parameters}', false);
+		}
+	});	
+
+	function keepSession() 
+	{ 
+		jQuery.get("UpdateCache!testV3.action"); 
+		setTimeout("keepSession()", 60000); 
+	}
+	
+   	function openInlineDiv(url, height, width, modal) {
+		var windowHeight = getWindowHeight();
+   		//alert("windowHeight:" + windowHeight);
+   		if(windowHeight < height)
+   			height = windowHeight - 60;
+
+		var windowWidth = getWindowWidth();
+   		//alert("windowWidth:" + windowWidth);
+   		if(windowWidth < width)
+   			width = windowWidth - 60;
+   			
+	  	var separatorSign = "?";
+   		if(url.indexOf("?") > -1)
+	  		separatorSign = "&";
+
+   		var addition = separatorSign + "KeepThis=true&TB_iframe=true&height=" + height + "&width=" + width + "&modal=true";
+			   		
+   		tb_show('Redigera', url + addition, 'Redigera');
+   		hideIGMenu();
+   		
+   		return false;
+   	}
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="${contextName}/css/ajaxComponentEditor.css" />

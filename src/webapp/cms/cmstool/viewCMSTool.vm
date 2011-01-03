@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+
+<html>
+<head>
+	<title>InfoGlue Administrative utilities</title>
+	<link rel="icon" href="images/icons/ig-16.png" type="image/png" />
+	<link rel="SHORTCUT ICON" href="images/icons/ig-16.png" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	#includeLatestJQuery()
+	
+	<script language="JavaScript" type="text/javascript"> 
+	<!--		
+		#if($infoGluePrincipal.isAdministrator)
+			alert("You should only use this account to solve access rights issues etc as this is not a normal user account and some features are disabled because of that.");
+		#end
+	-->		
+	</script> 
+
+</head>
+
+<frameset rows="58,*,30" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0" >
+  <frame name="header" id="header" marginwidth="0" marginheight="0" scrolling="no" noresize target="header" src="ViewCMSToolHeader.action?toolName=$!toolName"/>
+  
+	<frameset cols="4,*,4" FRAMESPACING="0" FRAMEBORDER="NO" BORDER="0">
+	  <frame name="leftmargin" id="leftmargin" marginwidth="0" marginheight="0" scrolling="no" noresize target="leftmargin" src="cmsToolBackground.html" />
+	  <frame name="toolarea" id="toolarea" marginwidth="0" marginheight="0" scrolling="no" noresize src="loading.html" />
+	  <frame name="rightmargin" id="rightmargin" marginwidth="0" marginheight="0" scrolling="no" noresize target="rightmargin" src="cmsToolBackground.html" />
+	</frameset>
+  <frame name="footer" id="footer" marginwidth="0" marginheight="0" scrolling="no" noresize target="footer" src="ViewCMSToolFooter.action" />
+</frameset>
+
+</html>

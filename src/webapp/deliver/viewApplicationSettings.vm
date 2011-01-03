@@ -1,0 +1,12 @@
+<html>
+<head><title>InfoGlue Settings</title></head>
+
+<body>
+TO BE DONE
+InfoGlue Settings<br>
+#foreach($)
+
+#end
+</body>
+
+</html>

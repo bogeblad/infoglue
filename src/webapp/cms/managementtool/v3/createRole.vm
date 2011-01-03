@@ -1,0 +1,158 @@
+#beginCommonToolV3("tool.managementtool.createRole.header" "" "" false true true)
+
+<script type="text/javascript">
+	
+    YAHOO.example.init = function () 
+    {
+
+        YAHOO.util.Event.onContentReady("buttons", function () 
+        {
+			#*
+			var oSaveButton = new YAHOO.widget.Button("saveButton");
+			var oSaveAndExitButton = new YAHOO.widget.Button("saveAndExitButton");
+			var oCancelButton = new YAHOO.widget.Button("cancelButton");
+			*#
+			
+			var oRightButton = new YAHOO.widget.Button("transferRightButton");
+			var oLeftButton = new YAHOO.widget.Button("transferLeftButton");
+
+        	#*
+        	oSaveButton.on("click", function (p_oEvent){
+        		save(document.inputForm);
+        	});
+        	oSaveAndExitButton.on("click", function (p_oEvent){
+        		saveAndExit(document.inputForm, "CreateRole!saveAndExitV3.action");
+        	});
+        	oCancelButton.on("click", function (p_oEvent){
+        		document.location.href = 'ViewListRole!listManagableRoles.action';
+        	});
+			*#
+			
+        	oRightButton.on("click", function (p_oEvent){
+	   			!$('#unassignedUserNameList option:selected').remove().appendTo('#userName');  
+        	});
+        	oLeftButton.on("click", function (p_oEvent){
+				!$('#userName option:selected').remove().appendTo('#unassignedUserNameList');  
+        	});
+        });
+        
+    }();
+
+	function markNearestOption()
+	{
+		var searchField = document.getElementById("searchField");
+		var list        = document.getElementById("unassignedUserNameList");
+		
+	  	sNode = list.options;
+	  	for(i=0;i<sNode.length;i++) 
+	  	{
+			currentNode = sNode[i];
+			if(currentNode.text.toLowerCase().indexOf(searchField.value.toLowerCase()) > -1) 
+			{
+				list.selectedIndex = i;
+			  	break;		
+			}
+	  	}
+	}
+	
+	function save(form)
+	{
+		$('#userName option').each(function(i) {  
+			$(this).attr("selected", "selected");  
+			});
+		form.submit();
+	}
+
+	function saveAndExit(form, action)
+	{
+		form.action = action;
+		save(form);
+	}
+
+</script>
+
+#menuToolbar("$ui.getString('tool.managementtool.createRole.header')" $buttons $rightButtons) 
+
+<div style="clear: both;"></div>
+
+<div id="igEditArea" class="igScrollArea">
+
+	<form id="inputForm" name="inputForm" class="ig-form" method="post" action="CreateRole!v3.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<fieldset class="ig-fieldset">
+			<!--<legend class="ig-legend">$ui.getString("tool.managementtool.createRole.header")</legend>-->
+			#editTextFieldCSS("Role.roleName" "roleName" "$!roleName" "51" true "")
+			#editTextFieldCSS("Role.description" "description" "$!description" "51" true "")
+
+			#labelCSS("tool.managementtool.roleManageMemebers.label" "ig-section-label")
+			
+			<div>
+				<table cellpadding="0" cellspacing="0">
+					<tr>
+					  <td>
+						<table width="100%" border="0" cellpadding="0" cellspacing="2">
+						  <tr>
+						    <td>$ui.getString("tool.managementtool.stateNameOrChooseFromList.label"):<br>
+						        <input type="text" id="searchField" name="searchField" class="ig-textfield" style="width:300px;" onkeypress="javascript:markNearestOption();" onchange="javascript:markNearestOption();">
+						      </td>
+						    <td>&nbsp;</td>
+						    <td valign="bottom">$ui.getString("tool.managementtool.members.label")</td>
+						  </tr>
+						  <tr>
+						    <td>
+						    	<select class="ig-select" id="unassignedUserNameList" name="unassignedUserNameList" MULTIPLE SIZE="10" style="width:300px;">
+						          	#foreach ($infoGluePrincipal in $infoGluePrincipals)
+										<option value="$infoGluePrincipal.name" title="$infoGluePrincipal.name">$infoGluePrincipal.name</option>
+									#end
+						        </select>
+						    </td>
+						    <td align="center">
+						        <input id="transferRightButton" name="transferRightButton" type="button" name="right" value=" &gt;&gt; " style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+								<input id="transferLeftButton" name="transferLeftButton" type="button" name="left" value=" &lt;&lt; " style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
+							</td>
+						    <td>
+						      	<select class="ig-select" id="userName" name="userName" multiple size="10" style="width:300px;">
+							    </select>
+						    </td>
+						</tr>
+						</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+						
+			<div style="clear: both;"></div>
+
+			<div class="ig-row">
+				<label class="ig-label-nl" for="contentTypeDefinitionId">$ui.getString("tool.managementtool.roleContentTypeDefinition.label")</label>
+				<select name="contentTypeDefinitionId" class="ig-select">
+					<option value="">$ui.getString("tool.managementtool.chooseContentTypeDefinition.label")</option>
+					#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+						#set($selected = "")
+						#foreach ($assignedContentTypeDefinitionVO in $assignedContentTypeDefinitionVOList)
+							#if($assignedContentTypeDefinitionVO.id == $contentTypeDefinitionVO.id)
+								#set($selected = "selected")
+							#end 
+						#end
+						<option value="$contentTypeDefinitionVO.id" $selected>$contentTypeDefinitionVO.getName()</option>
+					#end
+				</select>
+			</div>
+		
+			#*	
+			<div style="clear: both;"></div>
+
+			<div id="buttons" class="ig-buttonRow">
+				<input type="button" id="saveButton" name="saveButton" value="$ui.getString("tool.common.saveButton.label")" title="$ui.getString("tool.common.saveButton.title")"/>
+				<input type="button" id="saveAndExitButton" name="saveAndExitButton" value="$ui.getString("tool.common.saveAndExitButton.label")" title="$ui.getString("tool.common.saveAndExitButton.title")"/>
+				<input type="button" id="cancelButton" name="cancelButton" value="$ui.getString("tool.common.cancelButton.label")" title="$ui.getString("tool.common.cancelButton.title")"/>
+			</div>
+			*#
+		</fieldset>
+	
+	</form>
+
+</div>
+#footerToolbar($footerButtons)
+
+#endCommonToolV3()

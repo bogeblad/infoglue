@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.deployment.header" "tool.managementtool.deployment.header" "")
+
+<div class="fullymarginalized">
+<h2>$ui.getString("tool.managementtool.deployment.header")</h2>
+#if($deploymentServers.size() == 0)
+	<p>$ui.getString("tool.managementtool.deployment.noServersText")</p>
+	<p>Example:<br>
+		0=testServer<br>
+		0.url=http://mytestserver.com/infoglueCMS<br>
+		0.user=xxxxx<br>
+		1=liveServer<br>
+		1.url=http://myliveserver.com/infoglueCMS<br>
+		1.user=xxxxx<br>
+	</p>
+#else
+	<p>$ui.getString("tool.managementtool.deployment.introduction")</p>
+
+	<form method="POST" action="ViewDeploymentChooseServer.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<p>
+		<select name="deploymentServerName" class="dropbox">
+			#foreach($deploymentServer in $deploymentServers)
+				<option value="$deploymentServer.name">$deploymentServer.name</option>
+			#end
+		</select>
+	</p>
+	<h3>Items to synchronize</h3>
+	<p>
+		#*
+		<select name="deploymentServerName" class="dropbox">
+			<option value="synchronizeContentTypeDefinitions">Content types</option>
+			<option value="synchronizeCategories">Categories</option>
+			<option value="synchronizeWorkflows">Workflows</option>
+			<option value="synchronizeComponents">Components (HTMLTemplates)</option>
+		</select>
+		*#
+		<input type="checkbox" name="synchronizeContentTypeDefinitions" value="true"/> Content types<br>
+		<input type="checkbox" name="synchronizeCategories" value="true"/> Categories<br>
+		<input type="checkbox" name="synchronizeWorkflows" value="true"/> Workflows<br>
+		<input type="checkbox" name="synchronizeComponents" value="true"/> Components (HTMLTemplates)<br>
+	</p>
+	<h3>Synchronization method</h3>
+	<p>
+		<select name="synchronizationMethod" class="dropbox">
+			<option value="pull">Pull</option>
+			<option value="push">Push</option>
+		</select>
+	</p>
+	<p>
+		<input type="image" src="$ui.getString("images.contenttool.buttons.next")" width="50" height="25">
+	</p>
+	</form>
+#end
+
+</div>
+</body>
+</html>

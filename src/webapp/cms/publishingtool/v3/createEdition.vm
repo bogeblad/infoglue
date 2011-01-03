@@ -1,0 +1,99 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+	<!--
+		function invokeWorkflowView(workflowId, actionId, view)
+		{
+			var url = "";
+			if(view.indexOf("?") > -1)
+				url="" + view + "&workflowId=" + workflowId + "&actionId=" + actionId + "&returnAddress=$URLBase/Workflow!invoke.action&finalReturnAddress=$URLBase/ViewMyDesktop.action";
+			else
+				url="" + view + "?workflowId=" + workflowId + "&actionId=" + actionId + "&returnAddress=$URLBase/Workflow!invoke.action&finalReturnAddress=$URLBase/ViewMyDesktop.action";
+			
+			//alert(url);
+	
+			document.location.href = url;
+		}
+
+		$(document).ready(function() {
+			#set($extraParameter = '')
+			#initDataTableImpl("dataTable" $extraParameter)
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.publishtool.createEdition.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	
+	<h3>$ui.getString("tool.publishtool.createEdition.header")</h3>
+			
+	<form name="editForm" method="POST" action="CreateEdition!V3.action">
+		<p>#editField("Publication.name" "name" $!name "51")</p>
+		<p>#editField("Publication.description" "description" $!description "51")</p>
+		#hiddenField("repositoryId" $repositoryId)
+		
+		<h4>Items to publish in this edition</h4>
+		
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.common.publishing.nameLabel")</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+			
+				#foreach ($publicationEvent in $events)
+					
+					#if($publicationEvent.entityClass.indexOf("ContentVersion") > -1)
+						#if($publicationEvent.typeId == 3)
+							#set($class = "contentItem unpublishItem")
+						#else
+							#set($class = "contentItem")
+						#end
+					#else
+						#if($publicationEvent.typeId == 3)
+							#set($class = "pageItem unpublishItem")
+						#else
+							#set($class = "pageItem")
+						#end
+					#end
+					<tr>
+						<td>
+							<input type="hidden" name="sel" value="$publicationEvent.id"/> <span class="$class">$publicationEvent.name</span>
+						</td>
+						<td>
+							$formatter.formatDate($publicationEvent.creationDateTime, "yyyy-MM-dd HH:mm")
+						</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+
+	</form>
+	
+</form>
+</table>
+	
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="document.editForm.submit();"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewPublications!V3.action?repositoryId=$!repositoryId';"/>
+	</div>
+</div>
+
+#endLightCommonToolV3()

@@ -1,0 +1,30 @@
+#beginManagementToolV3("tool.managementtool.messageSent.title" "" false)
+
+<link rel="stylesheet" href="script/jqueryplugins/ui/themes/flora/flora.all.css" type="text/css" media="screen" title="Flora (Default)">
+<script type="text/javascript">
+	function closeDialog()
+	{
+		if(parent && parent.refreshWorkSurface) 
+			parent.refreshWorkSurface(); 
+
+		if(parent && parent.closeInlineDiv) 
+			parent.closeInlineDiv(); 
+		else if(parent && parent.closeDialog) 
+			parent.closeDialog(); 
+		else if (window.opener)
+			window.close();
+		else
+			history.back();
+	}
+</script>
+
+<h3>$ui.getString("tool.contenttool.changeContentType.header")</h3>
+<p>
+  	Close this dialog and reload the content to see the new dialog
+</p>
+
+<p>
+	<a href="javascript:closeDialog();">Close</a>
+</p>
+
+#endManagementTool()

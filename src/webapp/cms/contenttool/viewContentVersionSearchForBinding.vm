@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("tool.contenttool.searchHeader" "tool.contenttool.searchHeader" "" "0" "0" "0")
+
+<form method="POST" name="editForm" action="SearchContent!bindingResult.action">
+<input type="hidden" name="repositoryId" value="$!repositoryId">
+#foreach($allowedContentTypeDefinitionId in $allowedContentTypeIds)
+<input type="hidden" name="allowedContentTypeIds" value="$allowedContentTypeDefinitionId">
+#end
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td colspan="7">	
+		<p>
+		#editTextField3($ui.getString("tool.contenttool.searchString.label") "tool.contenttool.searchString.label" "searchString" $searchString "30" "normaltextfield")
+		<input type="image" src="images/okButton_se.gif" style="width: 31px; height: 19px;" />
+		</p>
+	</td>
+</tr>
+</table>
+</form>
+
+#endContentTool()
+

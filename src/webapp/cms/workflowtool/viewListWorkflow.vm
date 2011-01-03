@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("Available workflows" "Workflows" "")
+
+#set($lvConstraint = 0) 
+#lvHead(["Name","Description"] "Delete workflows" "DeleteWorkflow.action" "ViewListWorkflow.action?title=Workflows" "Do you really want to delete the workflows:<br/><br/>")
+
+#set($cnt = 0)
+#foreach ($workflowVO in $workflows)
+	#set( $workflowId = $workflowVO.getWorkflowId() ) 
+	
+	#set( $rowUrl = "ViewWorkflow.action?workflowId=$workflowVO.getWorkflowId()&title=Workflow%20details")
+	#set( $row = ["<input type='hidden' name='rowtitle' value='$workflowVO.getName()'/> <a href=$rowUrl>$workflowVO.getName()</a>","$workflowVO.getDescription()"])
+	#set($cnt = $cnt + 1)
+
+	#lvAddRow($row $cnt $workflowId)
+#end
+#lvEnd()
+
+#endManagementTool()

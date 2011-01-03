@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  
+#beginManagementTool("tool.managementtool.luceneoverview.header" "tool.managementtool.luceneoverview.header" "")
+
+<div class="fullymarginalized">
+
+	<h3>$ui.getString("tool.managementtool.luceneoverview.header")</h3>
+	<p>$ui.getString("tool.managementtool.luceneoverview.introduction")</p>
+
+	#if($statusMessage != "")
+		<h3 style="color: red;">$statusMessage</h3>
+	#end
+	<p>
+		<b>Number of indexed docs:</b> $indexInformation.get("numDoc")<br/>
+		<b>Maximum docs:</b> $indexInformation.get("maxDoc")<br/>
+		<b>Index last modified:</b> $indexInformation.get("lastModified")<br/>
+		<br>
+		<a href="ViewLuceneOverview.action">Refresh view</a><br>
+		<br>
+		<a href="ViewLuceneOverview!deleteIndex.action">Delete index</a> | <a href="ViewLuceneOverview!indexAll.action">Reindex all</a> 
+	</p>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,376 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript">
+	<!--
+		$(document).ready(function() {
+			$("#tabsContainer").tabs({ show:function() { resizeScrollArea }, select: function(event, ui) { resizeScrollArea(); } });
+
+			#set($extraParameter = '')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDataTableImpl("editions" $extraParameter)
+		});
+	-->
+	</script>
+	
+	<script type="text/javascript" src="script/overlib.js"></script>
+	<script type="text/javascript">
+	<!--
+		function showHide(a)
+		{
+			parent.openInlineDiv("ViewPublications!showPublicationDetails.action?publicationId=" + a, 500, 600, true, true, "PublicationDetails");
+		}
+		
+		function ruSure(txt, url)
+		{
+			question = confirm(txt);
+			if (question !="0")
+			{
+				document.location = url;
+			}
+		}
+		
+		function filter(select)
+		{
+			var filterValue = select.options[select.selectedIndex].value
+			var url = "ViewPublications.action?repositoryId=$repositoryId&filter=" + filterValue;
+			document.location.href = url;
+		}
+		
+		function submitToCreate()
+		{
+			var lengthSel = $("input[name='sel']:checked").length;
+			if(lengthSel == 0)
+			{
+				alert('Select one or more versions to publish');
+			  	return;
+			}
+			else
+			{
+				document.editForm.action = "CreateEdition!inputV3.action";
+				$("input[name='sel']:checked").each(function(index) {
+					$("#editForm").prepend("<input type='text' name='sel' value='" + this.value + "'/>");
+				});
+				document.editForm.submit();
+			}
+		}
+		
+		function submitToUnpublish(entityName)
+		{
+			var lengthSel = $("input[name='selPublication']:checked").length;
+			if (lengthSel != 1)
+			{
+				alert('Select exactly one edition to unpublish');
+			  	return;
+			}
+			else
+			{
+				document.editForm.action = "DeleteEdition!V3.action?repositoryId=$repositoryId";
+				$("input[name='selPublication']:checked").each(function(index) {
+					$("#editForm").prepend("<input type='text' name='publicationId' value='" + this.value + "'/>");
+				});
+				document.editForm.submit();
+			}
+		
+		}
+		
+		function submitToDeny()
+		{
+			var lengthSel = $("input[name='sel']:checked").length;
+			if (lengthSel == 0)
+			{
+				alert('Select one or more items to deny');
+			  	return;
+			}
+			else
+			{
+				document.editForm.action = "DenyPublicationRequest!commentV3.action";
+				$("input[name='sel']:checked").each(function(index) {
+					$("#editForm").prepend("<input type='text' name='sel' value='" + this.value + "'/>");
+				});
+				document.editForm.submit();
+			}
+		}
+		
+		function submitToPreview()
+		{
+			var lengthSel = $("input[name='sel']:checked").length;
+			if (lengthSel == 0)
+			{
+				alert('Select one or more versions to preview');
+			  	return;
+			}
+			else
+			{
+				arguments = getSelectedChkObjects("event");
+				previewWindow=window.open("PreviewEdition.action?" + arguments, "Preview", "toolbar=no, width=800, height=650, directories=no,  status=no, scrollbars=yes, resize=no, menubar=no");
+				previewWindow.focus();
+				
+				previewWindow.document.write("<html><head><title>Preview edition</title></head>");
+				previewWindow.document.write("<frameset FRAMESPACING='0' FRAMEBORDER='NO' BORDER='0' rows='50,600'>");
+				previewWindow.document.write("<frame noresize frameborder=0 scrolling=no name='previewTop' src='PreviewEdition.action?" + getSelectedChkObjects("event") +"'>");
+				previewWindow.document.write("<frame name='previewMain' src=''>");
+				previewWindow.document.write("</frameset></html>");
+			}
+		}
+		
+		function checkMarkedVersions(listForm)
+		{
+			var lengthsel = null;
+			var lengthsit = null;
+			var ret = 0;
+			if (listForm.sel != null)
+				lengthsel = listForm.sel.length;
+			if (listForm.sit != null)
+				lengthsit = listForm.sit.length;
+		
+			if (lengthsel == null && listForm.sel != null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	ret++;
+		  	}
+			else
+			{
+			  	for (i=0; i<lengthsel; i++)
+			   		if (listForm.sel[i].checked)
+			    		ret++;
+			}
+			    		
+			if (lengthsit == null && listForm.sit != null)
+		  	{
+		  		if (listForm.sit.checked)
+			    	ret++;
+		  	}
+		  	else
+		  	{
+			  	for (i=0; i<lengthsit; i++)
+			   		if (listForm.sit[i].checked)
+			    		ret++;
+			}
+		    		
+			return ret;
+		}
+				
+		function getSelectedObjects(listForm, entityName)
+		{
+			var str = '';
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += '&' + entityName + 'Id=' + escape(listForm.sel.value);
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (listForm.sel[i].checked)
+			    		str += '&' + entityName + 'Id=' + escape(listForm.sel[i].value);
+			 	}
+			}
+					 	
+		 	return str;
+		}
+		
+		function getSelectedChkObjects(entityName)
+		{
+			var str = "";
+			$("input[name='sel']:checked").each(function(index) {
+				str += '&' + entityName + 'Id=' + escape(this.value);
+			});
+								 	
+		 	return str;
+		}
+		
+		function getSelectedTexts(listForm)
+		{
+			var str = '';
+		
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += listForm.rowtitle.value + "<br/>";
+		  	}
+		  	else
+		  	{	
+				for (i=0; i<length; i++)
+				{
+					if (listForm.sel[i].checked)
+				    	str += listForm.rowtitle[i].value + "<br/>";
+				}
+			}
+					
+			return str;
+		}
+		
+		function checkUncheckAll(checkbox)
+		{
+			if(checkbox.checked)
+				$("input[name='sel']").attr('checked', true);
+			else
+				$("input[name='sel']").attr('checked', false);
+		}
+			
+	-->	
+	</script>
+	
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.publishingtool.repositoryPublications" "$repositoryId" "repositoryId=$!repositoryId" false true $!disableCloseButton $headerMarkup)
+	
+	<h3>$ui.getString("tool.publishingtool.repositoryPublications")</h3>
+	
+	<div id="igEditArea" class="igScrollArea">
+			
+		<div id="tabsContainer" class="flora">
+	
+			<ul>
+				<li><a href="#itemsForPublication">Submitted for publishing</a></li>
+				<li><a href="#publishedEditions">Published editions</a></li>
+			</ul>
+
+			<div class="inlineTabDiv" id="itemsForPublication">
+				
+				#set($eh = $editionBrowser.editions.size())
+				#set($vh = $contentToPublish.size() + $siteNodeToPublish.size())
+				
+				#if($eh > $vh)
+					#set($vh=$eh)
+				#end
+				
+				#set($vh=$vh * 30)
+				
+				
+				<!--   *****  VERSIONS FOR PUBLISHING  *******  -->
+				<div>
+				<div style="width: 40%; float: left">
+				<h4>Submitted for publishing</h4> 
+				</div>
+				<div style="float: right; text-align: right;">
+				Filter: 
+				#if($allowPublicationEventFilter == "true")
+					<select style="width: 200px;" name="filter" onChange="filter(this);">
+						<option value="all" #checkSelected("$filter" "all")>$ui.getString("entity.ServerNode.property.allPublicationEventFilter.label")</option>
+						<option value="groupBased" #checkSelected("$filter" "groupBased")>$ui.getString("entity.ServerNode.property.groupBasedPublicationEventFilter.label")</option>
+						#foreach($group in $infoGluePrincipal.groups)
+							<option value="groupNameBased_$group.name" #checkSelected("$filter" "groupNameBased_$group.name")>$ui.getString("entity.ServerNode.property.groupNameBasedPublicationEventFilter.label") $group.name</option>
+						#end
+					</select>
+				#else
+					Not enabled
+				#end
+				</div>
+				</div>
+				<br/><br/>
+			
+				<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+					<thead>
+						<tr>
+							<th><input type="checkbox" onclick="checkUncheckAll(this);"/></th>
+							<th>$ui.getString("tool.common.publishing.nameLabel")</th>
+							<th>$ui.getString("tool.common.publishing.changedLabel")</th>
+							<th>$ui.getString("tool.common.publishing.modifyerLabel")</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						#foreach ($publicationEvent in $publicationEvents)
+							
+							#set($rowUrl = "ViewContent.action?contentId=$contentVO.getContentId()&title=Content%20details")
+						
+							#if($publicationEvent.entityClass.indexOf("ContentVersion") > -1)
+								#if($publicationEvent.typeId == 3)
+									#set($class = "contentItem unpublishItem")
+								#else
+									#set($class = "contentItem")
+								#end
+							#else
+								#if($publicationEvent.typeId == 3)
+									#set($class = "pageItem unpublishItem")
+								#else
+									#set($class = "pageItem")
+								#end
+							#end
+						
+							#if($publicationEvent.description.length() > 50)
+								#set($description = "${publicationEvent.description.substring(0,50)}...")
+							#else
+								#set($description = "${publicationEvent.description}")
+							#end
+							
+							<tr>
+								<td>
+									<input type="checkbox" name="sel" value="$publicationEvent.id" />
+								</td>
+								<td>
+									<span class="$class">$publicationEvent.name</span> &nbsp; <span onmouseover="return overlib('${formatter.cleanForJavascriptStrings($publicationEvent.description)}', WIDTH, 400, BGCOLOR, '#FFFFFF');" onmouseout="return nd();">($description)</span>
+								</td>
+								<td>$formatter.formatDate($publicationEvent.creationDateTime, "yyyy-MM-dd HH:mm")</td>
+								<td>
+									#if($!this.getInfoGluePrincipal($publicationEvent.creator).displayName == "")
+										$publicationEvent.creator
+									#else
+										$!this.getInfoGluePrincipal($publicationEvent.creator).displayName
+									#end
+								</td>
+							</tr>
+						#end
+						
+					</tbody>
+				</table>
+				
+			</div>
+
+			<div class="inlineTabDiv" id="publishedEditions">
+
+				#set( $start = $editionBrowser.startIndex + 1 )
+				#set( $end = $editionBrowser.startIndex + $editionBrowser.editions.size() )
+				<h4>Previous published editions ($start - $end of $editionBrowser.totalEditions)</h4>
+				
+				<table cellpadding="0" cellspacing="0" border="1" class="display" id="editions">
+					<thead>
+						<tr>
+							<th><!--<input type="checkbox" onclick="checkUncheckAll(this);"/>--></th>
+							<th>$ui.getString("tool.common.publishing.nameLabel")</th>
+							<th>$ui.getString("entity.Repository.description.label")</th>
+							<th>$ui.getString("tool.common.publishing.changedLabel")</th>
+							<th>$ui.getString("tool.common.publishing.modifyerLabel")</th>
+						</tr>
+					</thead>
+					<tbody>
+				
+					#foreach ($publicationVO in $editionBrowser.editions)
+						<tr>
+							<td><input type="checkbox" name="selPublication" value="$publicationVO.getPublicationId()" /></td>
+							<td>
+							 	<a onclick="showHide('$publicationVO.getPublicationId()');"></a><a href="javascript:showHide('$publicationVO.getPublicationId()');">$publicationVO.getName()</a>
+							</td>
+							<td>$publicationVO.description</td>
+							<td>$formatter.formatDate($publicationVO.getPublicationDateTime(), "yyyy-MM-dd HH:mm")</td>
+							<td>$publicationVO.publisher</td>
+						</tr>
+					#end
+					
+					</tbody>
+				</table>
+
+			</div>
+
+		</div>				
+						
+	</div>
+
+<form id="editForm" name="editForm" action="" method="post">
+	#hiddenField("repositoryId" $repositoryId)
+</form>	
+
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000; border: 1px solid #333333; background-color: #CCCCFF;"></div>
+
+#endLightCommonToolV3()

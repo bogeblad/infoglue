@@ -1,0 +1,49 @@
+#define( $headerMarkup )
+	
+	<script type="text/javascript">
+	<!--
+		function submitForm()
+		{
+			document.editForm.submit();
+		}
+
+		$(document).ready(function(){
+				
+			$("#closeDialog").click(function(){
+				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+		   	});
+		
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.managementtool.deploymentVC.finishedHeader" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.deploymentVC.finishedHeader")
+		#if($errorMessage && $errorMessage != "")
+			<span style="color:red">$errorMessage</span><br/>
+		#end
+	</h3>
+
+	<p>$ui.getString("tool.managementtool.deploymentVC.finishedIntroduction")</p>
+	
+	<p>
+		#if($repositoryCreated)
+		<a id="closeDialog" href="javascript:parent.refreshRepositoryList();" style="display:block;  padding-top: 8px; height: 20px;"><strong>$ui.getString("tool.common.closeDialogLinkText")</strong></a> 
+		#else
+		<a id="closeDialog" href="javascript:parent.closeDialog();" style="display:block;  padding-top: 8px; height: 20px;"><strong>$ui.getString("tool.common.closeDialogLinkText")</strong></a> 
+		#end
+		$ui.getString("tool.common.closeDialogLinkTitle")
+	</p>
+	
+	#lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()

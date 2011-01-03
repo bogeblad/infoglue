@@ -1,0 +1,91 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" charset="utf-8">
+	<!--
+		function invokeWorkflowView(workflowId, actionId, view)
+		{
+			var url = "";
+			if(view.indexOf("?") > -1)
+				url="" + view + "&workflowId=" + workflowId + "&actionId=" + actionId + "&returnAddress=$URLBase/Workflow!invoke.action&finalReturnAddress=$URLBase/ViewMyDesktop.action";
+			else
+				url="" + view + "?workflowId=" + workflowId + "&actionId=" + actionId + "&returnAddress=$URLBase/Workflow!invoke.action&finalReturnAddress=$URLBase/ViewMyDesktop.action";
+			
+			//alert(url);
+	
+			document.location.href = url;
+		}
+
+		$(document).ready(function() {
+			#set($extraParameter = '')
+			#initDataTableImpl("workflows" $extraParameter)
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.mydesktoptool.availableWorkflows" "" "" false true $!disableCloseButton $headerMarkup)
+
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	
+	<h3>$ui.getString("tool.mydesktoptool.availableWorkflows")</h3>
+
+	<p>$ui.getString("tool.mydesktoptool.ongoingWorkflows.intro")</p>	
+			
+	<table cellpadding="0" cellspacing="0" border="1" class="display" id="workflows">
+		<thead>
+			<tr>
+				<th>$ui.getString("tool.mydesktoptool.workflowNameLabel")</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+		
+			#foreach ($availableWorkflowVO in $availableWorkflowVOList)
+				#set($view = "$availableWorkflowVO.getView()")
+				
+				#set($fullTitle = "$availableWorkflowVO.getName()")
+				#if($availableWorkflowVO.status == 1)
+					#set($fullTitle = "$availableWorkflowVO.name - $availableWorkflowVO.statusMessage")
+				#end
+				
+				#set($visibleTitle = $fullTitle)
+				#if($fullTitle.length() > 40)
+					#set($visibleTitle = "$fullTitle.substring(0,37)...")
+				#end
+				
+				<tr>
+					<td>
+						#if($availableWorkflowVO.status == 0)
+							<a title="$fullTitle" href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())">$visibleTitle</a>
+						#else
+							<a title="$fullTitle" style="color:red">$visibleTitle</a>
+						#end
+					</td>
+					<td>
+						#if($availableWorkflowVO.status == 0)
+							<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="images/v3/start.png" border="0" alt="Start workflow"></a>
+							<a href="#" onclick="parent.openInlineDiv('Workflow!showWorkflowDetails.action?workflowName=$formatter.encodeURI($availableWorkflowVO.name)', 600, 800, true, true, 'Workflow');"><img src="images/v3/info.png" border="0" alt="info"></a>
+						#end
+					</td>
+				</tr>
+				#set($cnt = $cnt + 1)
+
+			#end
+			
+		</tbody>
+	</table>
+	
+	##lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()

@@ -1,0 +1,7 @@
+url="jdbc:oracle:thin:@(DESCRIPTION= 
+     (LOAD_BALANCE=on) 
+        (ADDRESS=(PROTOCOL=TCP)(HOST=clusnode-1vip)(PORT=1521)) 
+        (ADDRESS=(PROTOCOL=TCP)(HOST=clusnode-2vip)(PORT=1521)) 
+        (ADDRESS=(PROTOCOL=TCP)(HOST=clusnode-3vip)(PORT=1521)) 
+        (ADDRESS=(PROTOCOL=TCP)(HOST=clusnode-4vip)(PORT=1521)) 
+        (CONNECT_DATA=(SERVICE_NAME=ERP)))" 

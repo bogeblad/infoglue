@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ 
+<html>
+<head>
+	<title>Menus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	
+	#includeLatestJQuery()
+
+	<script type="text/javascript">
+	<!-- 		
+		var exp;
+		var treeIsLoaded = false;
+		var currentRepositoryId = "$!repositoryId";
+		
+		function syncWithTree(path, repositoryId)
+		{
+			try
+			{
+    			//alert("AAA:" + path + " - " + repositoryId + ":" + currentRepositoryId + ":" + parent);
+    			//if(repositoryId && currentRepositoryId != repositoryId)
+    			//	parent.frames['header'].changeRepository(repositoryId, escape(path));
+   				frames['itreeFrame'].syncWithTree(path);
+			}
+			catch(er) 
+			{
+				//alert("Error syncWithTree:" + er);
+			} 
+		}
+		
+		function reload()
+		{
+			removeCookies()
+			window.location.reload(false);
+		}	
+		
+		function treeView()
+		{
+			try 
+			{ 
+				return document.getElementById("itreeFrame");
+ 		 	}
+			catch(er) 
+			{
+				//alert("Error content menu v3:" + er);
+			} 
+		}
+		
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			//alert("htmlTreeItemClick:" + itemId + repoId);
+			//if(parent.htmlTreeItemClick)
+			//	parent.htmlTreeItemClick(itemId, repoId, path);
+			openUrlInWorkArea("ViewContent!V3.action?contentId=" + itemId + "&repositoryId=" + repoId, path, "$ui.getString("tool.common.contentTabLabelPrefix")");
+		}
+		   
+		function openUrlInWorkArea(url, titel, tabLabelPrefix)
+		{
+			//alert("openUrlInWorkArea:" + url);
+			if(parent.openUrlInWorkArea)
+				parent.openUrlInWorkArea(url, titel, 'content', tabLabelPrefix);
+		}
+
+		function loadMainArea(contentId, repositoryId, path)
+		{
+		    //alert("contentId:" + contentId);
+		    parent.frames[3].location.href = "ViewContent.action?contentId=" + contentId + "&repositoryId=" + repositoryId;
+		}
+	    
+	    function refreshContent(contentId, changeTypeId, addedContentId)
+		{
+			frames['itreeFrame'].refreshTreeNode(parseInt(contentId), parseInt(changeTypeId), parseInt(addedContentId));
+		}
+
+	    function notifyIsLoaded()
+	    {
+	    	//alert("Tree was loaded - notifyIsLoaded");
+	    	treeIsLoaded = true;
+	    	document.getElementById('treeDiv').style.left = '2px';
+	    	document.getElementById('treeDiv').style.right = '2px';	   
+	    	setTimeout("expandTreeAfterLoaded();", 500); 	
+	    }
+	    
+	    function expandTreeAfterLoaded()
+	    {
+	    	#if($path && $path != "")
+				#if($tree == "applet")
+					alert('Not implemented in this tree');
+				#else
+					frames['itreeFrame'].syncWithTree("$path");
+				#end
+	    	#end
+	    }
+	    
+	    function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+	    
+	    function removeCookies() 
+		{
+			//alert("document.cookie:" + document.cookie);
+			var ca = document.cookie.split(';');
+			for(var i=0;i < ca.length;i++) 
+			{
+				var c = ca[i];
+				while (c.charAt(0)==' ') 
+					c = c.substring(1,c.length);
+				
+				var eqIndex = c.indexOf("=");
+				if (eqIndex > -1)
+				{ 
+					var name = c.substring(0,eqIndex);
+					if(name.indexOf("JSESSIONID") == -1)
+						document.cookie = name + "=" + escape("null")+"; expires=Monday, 04-Apr-1970 05:00:00 GMT";
+				}
+			}
+		}
+
+		function resizeTreeIframe(height, width)
+		{
+			$(treeView()).height(height).width(width);
+		}
+
+		$(document).ready(function(){
+			#if($path && $path != "")
+				syncWithTree("$path", currentRepositoryId);
+			##else
+			##	reloadMain();
+			#end
+ 		});
+
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+</head>
+
+<body class="generaltooledit">
+
+    <div id="treeDiv" style="position:absolute; margin-top: 10px; margin-left: 6px; top: 0px; bottom: 6px; float: left;">
+    	<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?repositoryId=${repositoryId}" width="220" height="950" align="bottom" allowtransparency="true"></iframe>
+	</div>
+	
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+	"title": "All new messages",
+	"messages": [
+	    #foreach($message in $messages)
+	    	#if($velocityCount > 1),#end
+			{
+		        "id": "${message.id}",
+		        "userName": "${message.userName}",
+				"type": "${message.type}",
+				"text": "${message.text}"
+		    }
+		#end
+		]
+}

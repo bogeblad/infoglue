@@ -1,0 +1,14 @@
+#define( $headerMarkup )
+	
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.welcomeHeader" "" "" false true $!disableCloseButton $headerMarkup)
+
+	<div id="igEditArea" class="igScrollArea">
+
+		<h3>$ui.getString("tool.contenttool.welcomeHeader")</h3>
+		<p>$ui.getString("tool.contenttool.welcomeText")</p>
+
+	</div>
+
+#endLightCommonToolV3()

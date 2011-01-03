@@ -1,0 +1,227 @@
+#beginLightCommonToolV3("tool.contenttool.linkDialog.internalPageTabLabel" "" "" false false $!disableCloseButton)
+
+	<script type="text/javascript">
+	<!--
+		$(document).ready(function(){
+			$("#tabsContainer").tabs({ show:function() { resizeInlineTabDivs();} });
+			setTimeout("resizeInlineTabDivs()", 500);
+						
+			init();
+		});
+
+		var navigationTitleHash = new Array();
+		
+		var exp;
+	    function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+
+		function notifyIsLoaded()
+	    {
+	    	//alert("Tree was loaded - notifyIsLoaded");
+	    	treeIsLoaded = true;
+	    }
+		
+		function changeRepository(selectBox, iframeName)
+		{
+			var repositoryId = selectBox.value;
+
+			if(iframeName == "itreeFrame")
+				document.getElementById("itreeFrame").src = "ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=" + repositoryId;
+			else
+				document.getElementById("itreeFrameContent").src = "ViewContentHtmlTree.action?repositoryId=" + repositoryId + "&bodyClass=generaltooledit";
+		}
+
+		var previousPath = "";
+		var previousContentPath = "";
+		function htmlTreeItemClick(entityId, repositoryId, path)
+		{
+			if(parent.contentMarked)
+				parent.contentMarked(entityId, path);
+		
+			document.inputForm.contentId.value = entityId;
+			var shortPath = "";
+			if(path != "")
+				shortPath = previousPath.substring(0, 12) + "... + " + path.substring(0, 8) + "...";
+			else
+				shortPath = previousPath.substring(0, 20) + "...";
+				
+			$("#selectedPagePath").text("$ui.getString("tool.contenttool.linkDialog.insertPage") \"" + shortPath + "\"");
+		
+			previousContentPath = path;
+		}
+
+		function structureTreeItemClick(entityId, repositoryId, path)
+		{
+			if(parent.pageMarked)
+				parent.pageMarked(entityId, path);
+				
+			if(path && path != "undefined")
+			{
+				var shortPath = "";
+				if(previousContentPath != "")
+					shortPath = path.substring(0, 12) + "... + " + previousContentPath.substring(0, 8) + "...";
+				else
+					shortPath = path.substring(0, 20) + "...";
+
+				$("#selectedPagePath").text("$ui.getString("tool.contenttool.linkDialog.insertPage") \"" + shortPath + "\"");
+				previousPath = path;
+			}
+		}
+		
+				
+		function init() 
+		{
+            #if($oldSiteNodeId)
+            document.getElementById("entityId").value = "$oldSiteNodeId";
+		  	#else
+		  	document.getElementById("entityId").value = "-1";
+		  	#end
+
+            #if($oldContentId)
+            document.getElementById("contentId").value = "$oldContentId";
+		  	#else
+		  	document.getElementById("contentId").value = "-1";
+		  	#end
+		}
+
+		function enableContentDiv()
+		{
+			document.getElementById("content").style.display = "block";
+		}
+		
+		function onOk() 
+		{
+		  	siteNodeId = document.inputForm.entityId.value;
+		  	contentId = document.inputForm.contentId.value;
+			path = document.inputForm.path.value;
+
+			if(siteNodeId != "" && siteNodeId.indexOf("select") == -1)
+				parent.onOkForInlineLink(siteNodeId, contentId);
+			else
+				alert("$ui.getString("tool.contenttool.linkDialog.pageMandatoryWarning")");
+			
+			return false;
+		};
+		
+		function onCancel() 
+		{
+		    parent.onCancel(null);
+			return false;
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/v3/assets.css" />
+	<style type="text/css">
+		.linkContainer {
+			width: 660px;
+			aheight: 420px;
+			display: block;
+			float: left;
+			aoverflow: auto;
+		}
+		
+		.optionalContent {
+			background:url(images/v3/optionalLinkContent.gif) no-repeat center;
+			background-position: 0px 0px;
+			font-family:Arial, Helvetica, sans-serif;
+			font-size:11px;
+			width:20px;
+			height:20px;
+			display:block;
+			float:left;		
+		}
+		
+	</style>
+</head>
+
+<body class="generaltooledit">
+
+<form name="inputForm" action="CreateServiceBinding.action">
+	<input type="hidden" id="entityId" name="entityId" value="$!oldSiteNodeId">
+	<input type="hidden" id="contentId" name="contentId" value="">
+	<input type="hidden" id="repositoryId" name="repositoryId" value="">
+	<input type="hidden" id="path" name="path" value="">
+</form>
+
+<div id="linkDiv" class="linkContainer">
+
+<table cellpadding="2" cellspacing="0" border="0" width="200">
+<tr>
+	<td valign="top">
+		<div id="structure" style="display: block;">
+			<table cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td colspan="2">
+			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this, 'itreeFrame');" class="contenttool">
+					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+					    #foreach ($repositoryVO in $repositories)
+					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+					    #end
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>	
+			<tr>
+				<td class="menu" colspan="2" style="border: 1px solid silver;">   
+					#set($exp = $this.getExpansion($oldSiteNodeId))
+					<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?repositoryId=${repositoryId}&exp=$exp&akey=/$!oldSiteNodeId/&select=$!oldSiteNodeId" width="310" height="385" ></iframe>
+				</td>
+			</tr>	
+			</table>
+		</div>
+	</td>	
+	<td valign="middle" width="20">
+		<img src="images/trans.gif" width="20" height="1"/>
+		<a href="javascript:enableContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentTitle')"></a>
+	</td>
+	<td valign="top">
+		<div id="content" style="display: none;">
+			<table cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td colspan="2">
+			  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this, 'itreeFrameContent');" class="contenttool">
+					    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+					    #foreach ($repositoryVO in $repositories)
+					    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+					    #end
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			</tr>		
+			<tr>
+				<td class="menu" colspan="2" style="border: 1px solid silver;">  
+					#if($oldContentId > -1)
+						#set($exp = $this.getContentExpansion($oldContentId))
+					#else
+						#set($oldContentId = "")
+						#set($exp = "")
+					#end
+					<iframe frameborder="0" name="itreeFrameContent" id="itreeFrameContent" src="ViewContentHtmlTree.action?repositoryId=$!repositoryId&exp=$exp&akey=/$!oldContentId/&select=$!oldContentId&bodyClass=generaltooledit" width="310" height="385" ></iframe>
+				</td>
+			</tr>	
+			</table>	
+		</div>
+		
+	</td>
+</tr>
+</table>
+</div>
+
+#*
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="linkInsert" value="$ui.getString("tool.contenttool.linkDialog.choosePageToLinkToHeader")" onclick="onOk();"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="onCancel();"/>
+	</div>
+</div>
+*#
+
+</body>
+</html>

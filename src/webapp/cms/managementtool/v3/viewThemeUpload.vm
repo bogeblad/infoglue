@@ -1,0 +1,43 @@
+#define( $headerMarkup )
+	
+	<script type="text/javascript">
+	<!--
+		function save()
+		{
+			document.editForm.submit();
+		}
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.uploadTheme.header" "" "" false true $!disableCloseButton $headerMarkup)
+									
+<div onfocus="this.blur();">
+    
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<form enctype="multipart/form-data" name="editForm" method="POST" action="ViewThemes!add.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+
+		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+			<h3>$ui.getString("tool.managementtool.uploadTheme.header")</h3>
+			
+			<p>
+				$ui.getString("tool.managementtool.uploadTheme.chooseFileLabel")<br/>
+				<input size=30 type="FILE" name="file1" id="file1">
+			</p>
+		</div>
+			
+		#lightFooterToolbar($footerButtons)
+	
+	</form>
+
+</div>
+
+#endCommonToolV3()

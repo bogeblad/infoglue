@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link rel="stylesheet" type="text/css" href="css/confirm.css" /> 
+	<script type="text/javascript">
+	<!--
+		function submitConfirmForm(action)
+		{
+			document.confirmForm.choice.value = action;
+			document.confirmForm.submit();
+		}
+	-->
+	</script>
+</head>
+
+<body align="center">
+<center>
+<form name="confirmForm" method="POST" action="Confirm.action">
+<table class='main' width="500" height="90%" border="0">
+<tr>
+	<td align="center" width="100%">
+		<TABLE border="0" bgcolor="666666" cellpadding="1" cellspacing="0" width="100%">
+		<TR>
+			<TD>
+				<TABLE width="100%" style="BORDER-RIGHT: 2px outset; BORDER-TOP: 2px outset; BORDER-LEFT: 2px outset; BORDER-BOTTOM: 2px outset" cellSpacing="0" cellPadding="0" border="0">
+				<TR height="25" bgColor="blue">
+					<TD style="padding-left: 5px;" background="images/dialogHeaderBG.gif" noWrap colSpan="1" rowSpan="1" width=100%><FONT face="Tahoma" color="#ffffff" size="2"> $ui.getString($header) </FONT></TD>
+				</TR>
+				<tr height="3">
+					<td colspan="2"><img src="images/trans.gif" width="1" height="1"></td>
+				</tr>
+				<TR>
+					<TD colspan="2" valign="top">
+						<table bgColor="#D4D0C8" height=100% border=0 width=100%>
+						<tr>
+							<td width=1>&nbsp;</td>
+							<td valign="top" align=left width=1><img src="images/confirmIcon.gif"/></td>
+							<td valign="top" width=100%><br><font face="verdana, tahoma, arial" color="#000000" size=-1>$ui.getString($message)<br><br>#if($extraParameters && $extraParameters != "")$!extraParameters#end<br/><br/></font></td>
+							<td width=3><img src="images/trans.gif" width="1" height="1"></td>
+						</tr>
+						<tr height=100%>
+							<td colspan=4 align=center valign=bottom>
+							<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+							<input type="hidden" name="yesDestination" value="$yesDestination"/>	
+							<input type="hidden" name="noDestination" value="$noDestination"/>
+							<input type="hidden" name="choice" value="no"/>
+							<input style="WIDTH: 88px; HEIGHT: 24px" type="button" name="choiceButton" value="$ui.getString("tool.common.yes")" onclick="javascript:submitConfirmForm('yes');"/>
+							<input style="WIDTH: 88px; HEIGHT: 24px" type="button" name="choiceButton" value="$ui.getString("tool.common.no")" onclick="javascript:submitConfirmForm('no');"/>
+							</td>
+						</tr>
+						<tr height="6">
+							<td colspan="4"><img src="images/trans.gif" width="1" height="1"></td>
+						</tr>
+					</table>
+					</TD>
+				</TR>
+			</TABLE>
+			</TD>
+		</TR>
+		</TABLE>
+	</td>
+</tr>
+</table>
+
+</form>
+
+</center>
+</body>
+</html>

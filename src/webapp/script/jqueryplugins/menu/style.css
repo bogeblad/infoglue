@@ -1,0 +1,90 @@
+html>body div.outerbox
+{
+	padding: 0 5px 5px 0;
+}
+html>body div.outerbox div.shadowbox1
+{
+	position: absolute;
+	right: 0;
+	bottom: 5px;
+	width: 5px;
+	height: 100%;
+	background: url(myshadow.png) no-repeat right top;
+}
+html>body div.outerbox div.shadowbox2
+{
+	position: absolute;
+	bottom: 0;
+	right: 5px;
+	height: 5px;
+	width: 100%;
+	background: url(myshadow.png) left bottom;
+}
+html>body div.outerbox div.shadowbox3
+{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	height: 5px;
+	width: 5px;
+	background: url(myshadow.png) no-repeat right bottom;
+}
+html>body .innerbox
+{
+	margin: 0;
+	display: inherit;
+	background:url(../../../images/v3/tileGradient.gif) repeat-y left;
+}
+
+#root-menu-div ul {
+	border: 1px solid #000;
+}
+#root-menu-div li{
+	white-space:nowrap;
+}
+* html #root-menu-div li{
+	height: 1.5em; /* fixing ie6 problem */
+}
+ul.menu,
+#root-menu-div ul {
+	background-color: #fff;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+li.menu-separator.active{
+	background-color: transparent;
+}
+li.active {
+	background-image:url(../../../images/v3/tileGradientActive.gif);
+	background-repeat: repeat-y;
+	background-position: left;
+	background-color: #bbb;
+}
+.activetarget{
+	background-color: white;
+}
+
+* html div.menu-item {
+	display: inline; /* fixes problem in ie6 */
+}
+
+li.menumain {
+	float: left;
+	padding: 0 10px;
+}
+div.menu-item {
+	padding: 1px 10px 1px 4px;
+}
+img.menu-item-arrow{
+	position: absolute;
+	right: 4px;
+	top: 8px;
+}
+li.menu-separator{
+	border-bottom: 1px solid #000;
+	font-size: 0; /* for ie */
+	height: 0;
+	line-height: 0; /* for ie */
+	margin: 2px 0;
+}

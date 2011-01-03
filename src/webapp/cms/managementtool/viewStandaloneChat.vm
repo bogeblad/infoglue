@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Messages</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" />
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" />
+	<script language="JavaScript" src="script/listview.js"></script>
+	<script src="script/ajaxchat/scripts.js" language="JavaScript" type="text/javascript"></script> 
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+
+<body class="managementtooledit">
+
+<div class="fullymarginalized" style="color: black;">
+
+	<h3>Messages:</h3>
+	<div id="outputList" style="width:100%; height: 200px; overflow: auto; border: 1px solid #333333; background-color: white;"></div>
+	<p>
+		<form id="chatForm" name="chatForm" onsubmit="return false;" action=""> 
+			<input type="hidden" id="isSystemMessage" name="isSystemMessage" value="false"/>
+		  	<input type="textfield" id="message" name="message" class="normaltextfield"/>
+		  	<input id="submit" type="button" value="Send message" onclick="sendComment();"/>
+	  	</form>
+	</p>
+
+</div>
+
+</body>
+</html>

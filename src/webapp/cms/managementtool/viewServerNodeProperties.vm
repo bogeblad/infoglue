@@ -1,0 +1,472 @@
+#define($extraMarkup)
+
+<style type="text/css">
+	fieldset
+	{
+		border: 1px solid #cccccc;
+		width: 95%;
+	}
+	legend
+	{
+		color: #000000;
+		background: #c6d3e7;
+		border: 1px solid #cccccc;
+		padding: 2px 6px
+	}
+	label
+	{
+		width: 60%;
+		float: left;
+		text-align: left;
+		margin-right: 0.5em;
+		margin-top: 4px;
+		margin-bottom: 0px;
+		display: block;
+		aborder-bottom: 1px solid #666666;
+	}
+	.narrowLabel
+	{
+		width: 200px;
+		float: left;
+		text-align: left;
+		margin-right: 0.5em;
+		margin-top: 4px;
+		margin-bottom: 0px;
+		display: block;
+	}
+	select
+	{
+		background: white;
+		border: 1px solid #cccccc;
+		font-family: Verdana, Arial, San serif;
+		font-size: 8pt;
+		width: 200px;
+		margin-top: 4px;
+		margin-bottom: 4px;
+	}
+	/*
+	input
+	{
+		background: white;
+		border: 1px solid #cccccc;
+		font-family: Verdana, Arial, San serif;
+		font-size: 8pt;
+		width: 200px;
+	}
+	*/
+	.righttextarea
+	{
+		background: white;
+		border: 1px solid #cccccc;
+		font-family: Verdana, Arial, San serif;
+		font-size: 8pt;
+		width: 500px;
+	}
+	.row
+	{
+		margin: 0px;
+		padding-top: 4px;
+		padding-bottom: 2px;
+		border-bottom: 1px solid #999;
+		overflow: auto;
+	}
+	
+	.ui-tabs .ui-tabs-panel {
+		padding:8px;
+	}
+	
+</style>
+<script type="text/javascript">
+<!--
+	$(document).ready(function(){
+		$("#tabsContainer").tabs({ show:function() { resizeScrollArea(); }, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
+		$("#tabsContainer").tabs( "select", "$activeDivId");
+	});
+		
+	function save()
+	{
+		document.editForm.submit();
+	}	
+	
+	function deleteProperty(serverNodeId, fieldName)
+	{
+		document.deleteForm.key.value = fieldName;
+		document.deleteForm.submit();
+	}
+-->
+</script>		
+
+#end
+
+#beginLightCommonToolV3Impl("tool.managementtool.serverNodeProperties.header" "serverNodeId=$serverNodeId" "" false true $!disableCloseButton $extraMarkup false "")
+
+<form name="deleteForm" method="POST" action="ViewServerNodeProperties!deleteProperty.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode">
+	<input type="hidden" name="serverNodeId" value="$!serverNodeId">
+	<input type="hidden" name="key" id="key" value="">
+	<input type="hidden" name="activeDivId" id="deleteActiveDivId" value="$!activeDivId">
+</form
+
+<div id="actualCurrentValue" style="border: 1px solid black; background-color: white; color: black; padding: 4px; display: none; position: absolute; left: 50px; margin-top: 30%; margin-bottom: 30%; float:left;">
+	<p id="actualCurrentValueParagraph">
+	</p>
+
+	<a href="#" onclick="$('#actualCurrentValue').hide('slow');">Close</a>
+</div>
+
+<div onfocus="this.blur();">
+    
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.serverNodeProperties.header") #if($serverNodeVO.id > -1) for node "$serverNodeVO.name"#end</h3>
+	#if($serverNodeVOList.size() > 0)
+		<select style="margin-left: 16px;" onchange="document.location.href = 'ViewServerNodeProperties.action?serverNodeId=' + this.value;">
+			<option value="">Select servernode to edit</option>
+			#foreach($serverNodeVO in $serverNodeVOList) 
+			<option value="$serverNodeVO.id">$serverNodeVO.name</option>
+			#end 
+		</select>
+	#end
+	<form name="editForm" method="post" action="ViewServerNodeProperties!save.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode">
+		<input type="hidden" name="serverNodeId" value="$!serverNodeId">
+		<input type="hidden" name="activeDivId" id="activeDivId" value="$!activeDivId">
+
+		<div id="tabsContainer" class="flora">
+	
+			<ul>
+				<li><a href="#commonSettings"><span>$ui.getString("entity.ServerNode.property.commonSettings.label")</span></a></li>
+				<li><a href="#niceURISettings"><span>$ui.getString("entity.ServerNode.property.niceURISettings.label")</span></a></li>
+				<li><a href="#cacheSettings"><span>$ui.getString("entity.ServerNode.property.cacheSettings.label")</span></a></li>
+				<li><a href="#cmsConnection"><span>$ui.getString("entity.ServerNode.property.cmsConnection.label")</span></a></li>
+				##<li><a href="#templateProcessing"><span>$ui.getString("entity.ServerNode.property.templateProcessing.label")</span></a></li>
+				<li><a href="#webSpecifics"><span>$ui.getString("entity.ServerNode.property.webSpecifics.label")</span></a></li>
+				##<li><a href="#urlFormatting"><span>$ui.getString("entity.ServerNode.property.urlFormatting.label")</span></a></li>
+				##<li><a href="#errorHandling"><span>$ui.getString("entity.ServerNode.property.errorHandling.label")</span></a></li>
+				##<li><a href="#thumbnailGeneration"><span>$ui.getString("entity.ServerNode.property.thumbnailGeneration.label")</span></a></li>
+				<li><a href="#urlEncoding"><span>$ui.getString("entity.ServerNode.property.urlEncoding.label")</span></a></li>
+				##<li><a href="#databaseSettings"><span>$ui.getString("entity.ServerNode.property.databaseSettings.label")</span></a></li>
+				##<li><a href="#logSettings"><span>$ui.getString("entity.ServerNode.property.logSettings.label")</span></a></li>
+				##<li><a href="#portalSettings"><span>$ui.getString("entity.ServerNode.property.portalSettings.label")</span></a></li>
+				<li><a href="#mailSettings"><span>$ui.getString("entity.ServerNode.property.mailSettings.label")</span></a></li>
+				<li><a href="#protectionSettings"><span>$ui.getString("entity.ServerNode.property.protectionSettings.label")</span></a></li>
+				<li><a href="#securitySettings"><span>$ui.getString("entity.ServerNode.property.securitySettings.label")</span></a></li>
+				<li><a href="#deliverSecuritySettings"><span>$ui.getString("entity.ServerNode.property.deliverSecuritySettings.label")</span></a></li>
+				<li><a href="#cmsGUI"><span>$ui.getString("entity.ServerNode.property.cmsGUI.label")</span></a></li>
+				<li><a href="#specialSettings"><span>$ui.getString("entity.ServerNode.property.specialSettings.label")</span></a></li>
+			</ul>
+
+			#set($cmsPH = $cmsPropertyHandler)
+		
+			<div class="inlineTabDiv" id="commonSettings">
+				#editPropertyFieldCSS("ServerNode.property.session.timeout" "session.timeout" "$this.getPropertyValue('session.timeout')" "51" "$!serverNodeId" "$!cmsPH.sessionTimeout")
+	
+				#set($requestArgumentDelimiter = $this.getPropertyValue('requestArgumentDelimiter'))
+				#set($requestArgumentDelimiter = $requestArgumentDelimiter.replaceAll("&amp;", "&amp;amp;"))
+				#editPropertyFieldCSS("ServerNode.property.requestArgumentDelimiter" "requestArgumentDelimiter" "$requestArgumentDelimiter" "51" "$!serverNodeId" "$!cmsPH.requestArgumentDelimiter")
+				#editPropertyFieldCSS("ServerNode.property.errorUrl" "errorUrl" "$this.getPropertyValue('errorUrl')" "51" "$!serverNodeId" "$!cmsPH.errorUrl")	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useShortTableNames" "useShortTableNames" "$this.getPropertyValue('useShortTableNames')" "$!cmsPH.useShortTableNames")
+				#editPropertyFieldCSS("ServerNode.property.numberOfVersionsToKeepDuringClean" "numberOfVersionsToKeepDuringClean" "$this.getPropertyValue('numberOfVersionsToKeepDuringClean')" "51" "$!serverNodeId" "$!cmsPH.numberOfVersionsToKeepDuringClean")
+				
+				#set($option1 = ["-1", "Choose difference"])
+				#set($option2 = ["28800000", "8 hours"])
+				#set($option3 = ["86400000", "24 hours"])
+				#set($option4 = ["172800000", "2 days"])
+				#set($option5 = ["604800000", "7 days"])
+				#set($option6 = ["2678400000", "1 month"])
+				#set($minimumTimeBetweenVersionsDuringCleanOptions = [$option1, $option2, $option3, $option4, $option5, $option6]) 
+				
+				#selectFieldCSS("ServerNode.property.minimumTimeBetweenVersionsDuringClean" "minimumTimeBetweenVersionsDuringClean" $this.getPropertyValue('minimumTimeBetweenVersionsDuringClean') $minimumTimeBetweenVersionsDuringCleanOptions "$!cmsPH.minimumTimeBetweenVersionsDuringCleanOptions")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.duplicateAssetsBetweenVersions" "duplicateAssetsBetweenVersions" "$this.getPropertyValue('duplicateAssetsBetweenVersions')" "$!cmsPH.duplicateAssetsBetweenVersions")
+				#editPropertyTextAreaCSS("ServerNode.property.assetUploadTransformationsSettings" "assetUploadTransformationsSettings" "$this.getDataPropertyValue('assetUploadTransformationsSettings')" "40" "6" "righttextarea" "$!serverNodeId" "$!cmsPH.assetUploadTransformationsSettings")
+			</div>
+		
+			<div class="inlineTabDiv" id="niceURISettings">
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURIInWorking" "enableNiceURIInWorking" "$this.getPropertyValue('enableNiceURIInWorking')" "$!cmsPH.enableNiceURIInWorking")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURI" "enableNiceURI" "$this.getPropertyValue('enableNiceURI')" "$!cmsPH.enableNiceURI")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURIForLanguage" "enableNiceURIForLanguage" "$this.getPropertyValue('enableNiceURIForLanguage')" "$!cmsPH.enableNiceURIForLanguage")
+				#editPropertyFieldCSS("ServerNode.property.niceURIEncoding" "niceURIEncoding" "$this.getPropertyValue('niceURIEncoding')" "51" "$!serverNodeId" "$!cmsPH.niceURIEncoding")
+				#editPropertyFieldCSS("ServerNode.property.niceURIAttributeName" "niceURIAttributeName" "$this.getPropertyValue('niceURIAttributeName')" "51" "$!serverNodeId" "$!cmsPH.niceURIAttributeName")
+				$!cmsPH.getServerNodeDataProperty(null, 'niceURICharacterReplacingMapping', true, null)
+				#editPropertyTextAreaCSS("ServerNode.property.niceURICharacterReplacingMapping" "niceURICharacterReplacingMapping" "$this.getDataPropertyValue('niceURICharacterReplacingMapping')" "40" "6" "righttextarea" "$!serverNodeId" "$!cmsPH.getServerNodeDataProperty(null, 'niceURICharacterReplacingMapping', true, null)")
+				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacter" "niceURIDefaultReplacementCharacter" "$this.getPropertyValue('niceURIDefaultReplacementCharacter')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacter")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.niceURIUseLowerCase" "niceURIUseLowerCase" "$this.getPropertyValue('niceURIUseLowerCase')" "$!cmsPH.niceURIUseLowerCase")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.niceURIDisableNiceURIForContent" "niceURIDisableNiceURIForContent" "$this.getPropertyValue('niceURIDisableNiceURIForContent')" "$!cmsPH.niceURIDisableNiceURIForContent")
+				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacterForContent" "niceURIDefaultReplacementCharacterForContent" "$this.getPropertyValue('niceURIDefaultReplacementCharacterForContent')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacterForContent")
+			</div>
+		
+			<div class="inlineTabDiv" id="cacheSettings">
+				#yesNoDropDownWithInheritCSS("ServerNode.property.isPageCacheOn" "isPageCacheOn" "$this.getPropertyValue('isPageCacheOn')" "$!cmsPH.isPageCacheOn")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useSelectivePageCacheUpdate" "useSelectivePageCacheUpdate" "$this.getPropertyValue('useSelectivePageCacheUpdate')" "$!cmsPH.useSelectivePageCacheUpdate")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.expireCacheAutomatically" "expireCacheAutomatically" "$this.getPropertyValue('expireCacheAutomatically')" "$!cmsPH.expireCacheAutomatically")
+				#editPropertyFieldCSS("ServerNode.property.cacheExpireInterval" "cacheExpireInterval" "$this.getPropertyValue('cacheExpireInterval')" "51" "$!serverNodeId" "$!cmsPH.cacheExpireInterval")
+				#editPropertyFieldCSS("ServerNode.property.deliverRequestTimeout" "deliverRequestTimeout" "$this.getPropertyValue('deliverRequestTimeout')" "51" "$!serverNodeId" "$!cmsPH.deliverRequestTimeout")
+				#editPropertyFieldCSS("ServerNode.property.liveDeliverRequestTimeout" "liveDeliverRequestTimeout" "$this.getPropertyValue('liveDeliverRequestTimeout')" "51" "$!serverNodeId" "$!cmsPH.liveDeliverRequestTimeout")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.killLiveRequestWhichTimedout" "killLiveRequestWhichTimedout" "$this.getPropertyValue('killLiveRequestWhichTimedout')" "$!cmsPH.killLiveRequestWhichTimedout")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useHighLoadLimiter" "useHighLoadLimiter" "$this.getPropertyValue('useHighLoadLimiter')" "$!cmsPH.useHighLoadLimiter")
+				#editPropertyFieldCSS("ServerNode.property.maxActiveRequests" "maxActiveRequests" "$this.getPropertyValue('maxActiveRequests')" "51" "$!serverNodeId" "$!cmsPH.maxActiveRequests")
+				#editPropertyFieldCSS("ServerNode.property.maxRequestTime" "maxRequestTime" "$this.getPropertyValue('maxRequestTime')" "51" "$!serverNodeId" "$!cmsPH.maxRequestTime")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.compressPageCache" "compressPageCache" "$this.getPropertyValue('compressPageCache')" "$!cmsPH.compressPageCache")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.compressPageResponse" "compressPageResponse" "$this.getPropertyValue('compressPageResponse')" "$!cmsPH.compressPageResponse")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.disableDecoratedFinalRendering" "disableDecoratedFinalRendering" "$this.getPropertyValue('disableDecoratedFinalRendering')" "$!cmsPH.disableDecoratedFinalRendering")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useUpdateSecurity" "useUpdateSecurity" "$this.getPropertyValue('useUpdateSecurity')" "$!cmsPH.useUpdateSecurity")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.allowXForwardedIPCheck" "allowXForwardedIPCheck" "$this.getPropertyValue('allowXForwardedIPCheck')" "$!cmsPH.allowXForwardedIPCheck")
+				#if("$this.getPropertyValue('allowedAdminIP')" == "")
+					#editPropertyFieldCSS("ServerNode.allowedAdminIP" "allowedAdminIP" "$!cmsPH.allowedAdminIP" "51" "$!serverNodeId" "$!cmsPH.allowedAdminIP")
+				#else
+					#editPropertyFieldCSS("ServerNode.allowedAdminIP" "allowedAdminIP" "$this.getPropertyValue('allowedAdminIP')" "51" "$!serverNodeId" "$!cmsPH.allowedAdminIP")
+				#end
+				#editPropertyFieldCSS("ServerNode.property.pageKey" "pageKey" "$this.getPropertyValue('pageKey')" "51" "$!serverNodeId" "$!cmsPH.pageKey")
+				#editPropertyFieldCSS("ServerNode.property.componentKey" "componentKey" "$this.getPropertyValue('componentKey')" "51" "$!serverNodeId" "$!cmsPH.componentKey")
+				#editPropertyTextAreaCSS("ServerNode.property.cacheSettings" "cacheSettings" "$this.getDataPropertyValue('cacheSettings')" "40" "6" "righttextarea" "$!serverNodeId" "$!cmsPH.cacheSettings")
+				#editPropertyTextAreaCSS("ServerNode.property.extraPublicationPersistentCacheNames" "extraPublicationPersistentCacheNames" "$this.getDataPropertyValue('extraPublicationPersistentCacheNames')" "40" "6" "righttextarea" "$!serverNodeId" "$!cmsPH.extraPublicationPersistentCacheNames")
+				#editPropertyFieldCSS("ServerNode.property.siteNodesToRecacheOnPublishing" "siteNodesToRecacheOnPublishing" "$this.getPropertyValue('siteNodesToRecacheOnPublishing')" "51" "$!serverNodeId" "$!cmsPH.siteNodesToRecacheOnPublishing")
+				#editPropertyFieldCSS("ServerNode.property.recachePublishingMethod" "recachePublishingMethod" "$this.getPropertyValue('recachePublishingMethod')" "51" "$!serverNodeId" "$!cmsPH.recachePublishingMethod")
+				#editPropertyFieldCSS("ServerNode.property.recacheUrl" "recacheUrl" "$this.getPropertyValue('recacheUrl')" "51" "$!serverNodeId" "$!cmsPH.recacheUrl")
+			</div>
+		
+			<div class="inlineTabDiv" id="cmsConnection">
+				#editPropertyFieldCSS("ServerNode.property.cmsFullBaseUrl" "cmsFullBaseUrl" "$this.getPropertyValue('cmsFullBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.cmsFullBaseUrl")
+				#editPropertyFieldCSS("ServerNode.property.cmsBaseUrl" "cmsBaseUrl" "$this.getPropertyValue('cmsBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.cmsBaseUrl")
+				#editPropertyFieldCSS("ServerNode.property.componentEditorUrl" "componentEditorUrl" "$this.getPropertyValue('componentEditorUrl')" "51" "$!serverNodeId" "$!cmsPH.componentEditorUrl")
+				#editPropertyFieldCSS("ServerNode.property.componentRendererUrl" "componentRendererUrl" "$this.getPropertyValue('componentRendererUrl')" "51" "$!serverNodeId" "$!cmsPH.componentRendererUrl")
+				#editPropertyFieldCSS("ServerNode.property.componentRendererAction" "componentRendererAction" "$this.getPropertyValue('componentRendererAction')" "51" "$!serverNodeId" "$!cmsPH.componentRendererAction")
+				#editPropertyFieldCSS("ServerNode.property.editOnSiteUrl" "editOnSiteUrl" "$this.getPropertyValue('editOnSiteUrl')" "51" "$!serverNodeId" "$!cmsPH.editOnSiteUrl")
+				#editPropertyFieldCSS("ServerNode.property.webServicesBaseUrl" "webServicesBaseUrl" "$this.getPropertyValue('webServicesBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.webServicesBaseUrl")
+			</div>
+		
+			<div class="inlineTabDiv" id="webSpecifics">
+				#editPropertyFieldCSS("ServerNode.property.webServerAddress" "webServerAddress" "$this.getPropertyValue('webServerAddress')" "51" "$!serverNodeId" "$!cmsPH.webServerAddress")
+				#editPropertyFieldCSS("ServerNode.property.applicationBaseAction" "applicationBaseAction" "$this.getPropertyValue('applicationBaseAction')" "51" "$!serverNodeId" "$!cmsPH.applicationBaseAction")
+				#editPropertyFieldCSS("ServerNode.property.digitalAssetBaseUrl" "digitalAssetBaseUrl" "$this.getPropertyValue('digitalAssetBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetBaseUrl")
+				#editPropertyFieldCSS("ServerNode.property.imagesBaseUrl" "imagesBaseUrl" "$this.getPropertyValue('imagesBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.imagesBaseUrl")
+				#editPropertyFieldCSS("ServerNode.property.digitalAssetPath" "digitalAssetPath" "$this.getPropertyValue('digitalAssetPath')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetPath")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableDiskAssets" "enableDiskAssets" "$this.getPropertyValue('enableDiskAssets')" "$!cmsPH.enableDiskAssets")
+				#editPropertyFieldCSS("ServerNode.property.disableAssetDeletionInWorkThread" "disableAssetDeletionInWorkThread" "$this.getPropertyValue('disableAssetDeletionInWorkThread')" "51" "$!serverNodeId" "$!cmsPH.disableAssetDeletionInWorkThread")
+				#editPropertyFieldCSS("ServerNode.property.disableAssetDeletionInLiveThread" "disableAssetDeletionInLiveThread" "$this.getPropertyValue('disableAssetDeletionInLiveThread')" "51" "$!serverNodeId" "$!cmsPH.disableAssetDeletionInLiveThread")
+				
+				#yesNoDropDownWithInheritCSS("ServerNode.property.setDerivedLastModifiedInLive" "setDerivedLastModifiedInLive" "$this.getPropertyValue('setDerivedLastModifiedInLive')" "$!cmsPH.setDerivedLastModifiedInLive")
+				#set($option2 = ["25", "25"])
+				#set($option1 = ["50", "Inherit"])
+				#set($option4 = ["100", "100"])
+				#set($option5 = ["150", "150"])
+				#set($option6 = ["200", "200"])
+				#set($option7 = ["300", "300"])
+				#set($option8 = ["1000", "1000"])
+				#set($maxNumberOfVersionsForDerivedLastModifiedInLiveOptions = [$option1, $option2, $option3, $option4, $option5, $option6, $option7, $option8]) 
+				#selectFieldCSS("ServerNode.property.maxNumberOfVersionsForDerivedLastModifiedInLive" "maxNumberOfVersionsForDerivedLastModifiedInLive" $this.getPropertyValue('maxNumberOfVersionsForDerivedLastModifiedInLive') $maxNumberOfVersionsForDerivedLastModifiedInLiveOptions "$!cmsPH.setDerivedLastModifiedInLive")
+			</div>
+		
+			<div class="inlineTabDiv" id="urlEncoding">
+				#editPropertyFieldCSS("ServerNode.property.inputCharacterEncoding" "inputCharacterEncoding" "$this.getPropertyValue('inputCharacterEncoding')" "51" "$!serverNodeId" "$!cmsPH.inputCharacterEncoding")
+				#editPropertyFieldCSS("ServerNode.property.inputCharacterEncodingDeliver" "deliver_inputCharacterEncoding" "$this.getPropertyValue('deliver', 'inputCharacterEncoding')" "51" "$!serverNodeId" "$!cmsPH.inputCharacterEncoding")
+				#editPropertyFieldCSS("ServerNode.property.URIEncoding" "URIEncoding" "$this.getPropertyValue('URIEncoding')" "51" "$!serverNodeId" "$!cmsPH.URIEncoding")
+				#editPropertyFieldCSS("ServerNode.property.workflowEncoding" "workflowEncoding" "$this.getPropertyValue('workflowEncoding')" "51" "$!serverNodeId" "$!cmsPH.workflowEncoding")
+				#editPropertyFieldCSS("ServerNode.property.formsEncoding" "formsEncoding" "$this.getPropertyValue('formsEncoding')" "51" "$!serverNodeId" "$!cmsPH.formsEncoding")
+				#editPropertyFieldCSS("ServerNode.property.uploadFromEncoding" "uploadFromEncoding" "$this.getPropertyValue('uploadFromEncoding')" "51" "$!serverNodeId" "$!cmsPH.uploadFromEncoding")
+				#editPropertyFieldCSS("ServerNode.property.uploadToEncoding" "uploadToEncoding" "$this.getPropertyValue('uploadToEncoding')" "51" "$!serverNodeId" "$!cmsPH.uploadToEncoding")
+				#editPropertyFieldCSS("ServerNode.property.assetKeyFromEncoding" "assetKeyFromEncoding" "$this.getPropertyValue('assetKeyFromEncoding')" "51" "$!serverNodeId" "$!cmsPH.assetKeyFromEncoding")
+				#editPropertyFieldCSS("ServerNode.property.assetKeyToEncoding" "assetKeyToEncoding" "$this.getPropertyValue('assetKeyToEncoding')" "51" "$!serverNodeId" "$!cmsPH.assetKeyToEncoding")		
+			</div>
+		
+			<div class="inlineTabDiv" id="mailSettings">
+				#editPropertyFieldCSS("ServerNode.property.mail.smtp.host" "mail.smtp.host" "$this.getPropertyValue('mail.smtp.host')" "51" "$!serverNodeId" "$!cmsPH.mailSmtpHost")
+				#editPropertyFieldCSS("ServerNode.property.mail.smtp.port" "mail.smtp.port" "$this.getPropertyValue('mail.smtp.port')" "51" "$!serverNodeId" "$!cmsPH.mailSmtpPort")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.mail.smtp.auth" "mail.smtp.auth" "$this.getPropertyValue('mail.smtp.auth')" "$!cmsPH.mailSmtpAuth")
+				#editPropertyFieldCSS("ServerNode.property.mail.smtp.user" "mail.smtp.user" "$this.getPropertyValue('mail.smtp.user')" "51" "$!serverNodeId" "$!cmsPH.mailSmtpUser")
+				#editPropertyFieldCSS("ServerNode.property.mail.smtp.password" "mail.smtp.password" "$this.getPropertyValue('mail.smtp.password')" "51" "$!serverNodeId" "$!cmsPH.mailSmtpPassword")
+				#editPropertyFieldCSS("ServerNode.property.systemEmailSender" "systemEmailSender" "$this.getPropertyValue('systemEmailSender')" "51" "$!serverNodeId" "$!cmsPH.systemEmailSender")
+				#editPropertyFieldCSS("ServerNode.property.warningEmailReceiver" "warningEmailReceiver" "$this.getPropertyValue('warningEmailReceiver')" "51" "$!serverNodeId" "$!cmsPH.warningEmailReceiver")
+				#editPropertyFieldCSS("ServerNode.property.emailRecipientLimit" "emailRecipientLimit" "$this.getPropertyValue('emailRecipientLimit')" "51" "$!serverNodeId" "$!cmsPH.emailRecipientLimit")
+			</div>
+				
+		
+			<div class="inlineTabDiv" id="securitySettings">
+				#editPropertyFieldCSS("ServerNode.property.loginUrl" "loginUrl" "$this.getPropertyValue('loginUrl')" "51" "$!serverNodeId" "$!cmsPH.loginUrl")
+				#editPropertyFieldCSS("ServerNode.property.logoutUrl" "logoutUrl" "$this.getPropertyValue('logoutUrl')" "51" "$!serverNodeId" "$!cmsPH.logoutUrl")
+				#editPropertyFieldCSS("ServerNode.property.invalidLoginUrl" "invalidLoginUrl" "$this.getPropertyValue('invalidLoginUrl')" "51" "$!serverNodeId" "$!cmsPH.invalidLoginUrl")
+				#editPropertyFieldCSS("ServerNode.property.successLoginBaseUrl" "successLoginBaseUrl" "$this.getPropertyValue('successLoginBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.successLoginBaseUrl")
+				#editPropertyFieldCSS("ServerNode.property.authenticatorClass" "authenticatorClass" "$this.getPropertyValue('authenticatorClass')" "51" "$!serverNodeId" "$!cmsPH.authenticatorClass")
+				#editPropertyFieldCSS("ServerNode.property.authorizerClass" "authorizerClass" "$this.getPropertyValue('authorizerClass')" "51" "$!serverNodeId" "$!cmsPH.authorizerClass")
+				#editPropertyFieldCSS("ServerNode.property.serverName" "serverName" "$this.getPropertyValue('serverName')" "51" "$!serverNodeId" "$!cmsPH.serverName")
+				#editPropertyFieldCSS("ServerNode.property.authConstraint" "authConstraint" "$this.getPropertyValue('authConstraint')" "51" "$!serverNodeId" "$!cmsPH.authConstraint")
+				##editPropertyFieldCSS("ServerNode.property.extraParametersFile" "extraParametersFile" "$this.getPropertyValue('extraParametersFile')" "51" "$!serverNodeId" "$!cmsPH.extraParametersFile")
+				#editPropertyTextAreaCSS("ServerNode.property.extraSecurityParameters" "extraSecurityParameters" "$this.getDataPropertyValue('extraSecurityParameters')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.extraSecurityParameters")
+				#editPropertyFieldCSS("ServerNode.property.casValidateUrl" "casValidateUrl" "$this.getPropertyValue('casValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.casValidateUrl")
+				#editPropertyFieldCSS("ServerNode.property.casProxyValidateUrl" "casProxyValidateUrl" "$this.getPropertyValue('casProxyValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.casProxyValidateUrl")
+				#editPropertyFieldCSS("ServerNode.property.casServiceUrl" "casServiceUrl" "$this.getPropertyValue('casServiceUrl')" "51" "$!serverNodeId" "$!cmsPH.casServiceUrl")
+				#editPropertyFieldCSS("ServerNode.property.casLogoutUrl" "casLogoutUrl" "$this.getPropertyValue('casLogoutUrl')" "51" "$!serverNodeId" "$!cmsPH.casLogoutUrl")
+			</div>
+		
+			<div class="inlineTabDiv" id="deliverSecuritySettings">
+				#editPropertyFieldCSS("ServerNode.property.loginUrl" "deliver_loginUrl" "$this.getPropertyValue('deliver', 'loginUrl')" "51" "$!serverNodeId" "$!cmsPH.loginUrl")
+				#editPropertyFieldCSS("ServerNode.property.logoutUrl" "deliver_logoutUrl" "$this.getPropertyValue('deliver', 'logoutUrl')" "51" "$!serverNodeId" "$!cmsPH.casLogoutUrl")
+				#editPropertyFieldCSS("ServerNode.property.invalidLoginUrl" "deliver_invalidLoginUrl" "$this.getPropertyValue('deliver', 'invalidLoginUrl')" "51" "$!serverNodeId" "$!cmsPH.invalidLoginUrl")
+				#editPropertyFieldCSS("ServerNode.property.successLoginBaseUrl" "deliver_successLoginBaseUrl" "$this.getPropertyValue('deliver', 'successLoginBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.successLoginBaseUrl")
+				#editPropertyFieldCSS("ServerNode.property.authenticatorClass" "deliver_authenticatorClass" "$this.getPropertyValue('deliver', 'authenticatorClass')" "51" "$!serverNodeId" "$!cmsPH.authenticatorClass")
+				#editPropertyFieldCSS("ServerNode.property.authorizerClass" "deliver_authorizerClass" "$this.getPropertyValue('deliver', 'authorizerClass')" "51" "$!serverNodeId" "$!cmsPH.authorizerClass")
+				#editPropertyFieldCSS("ServerNode.property.serverName" "deliver_serverName" "$this.getPropertyValue('deliver', 'serverName')" "51" "$!serverNodeId" "$!cmsPH.serverName")
+				#editPropertyFieldCSS("ServerNode.property.authConstraint" "deliver_authConstraint" "$this.getPropertyValue('deliver', 'authConstraint')" "51" "$!serverNodeId" "$!cmsPH.authConstraint")
+				#editPropertyFieldCSS("ServerNode.property.security.anonymous.username" "deliver_security.anonymous.username" "$this.getPropertyValue('deliver', 'security.anonymous.username')" "51" "$!serverNodeId" "$!cmsPH.securityAnonymousUsername")
+				#editPropertyFieldCSS("ServerNode.property.security.anonymous.password" "deliver_security.anonymous.password" "$this.getPropertyValue('deliver', 'security.anonymous.password')" "51" "$!serverNodeId" "$!cmsPH.securityAnonymousPassword")
+				#editPropertyTextAreaCSS("ServerNode.property.extraSecurityParameters" "deliver_extraSecurityParameters" "$this.getDataPropertyValue('deliver', 'extraSecurityParameters')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.extraSecurityParameters")
+				#editPropertyFieldCSS("ServerNode.property.casValidateUrl" "deliver_casValidateUrl" "$this.getPropertyValue('deliver', 'casValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.casValidateUrl")
+				#editPropertyFieldCSS("ServerNode.property.casProxyValidateUrl" "deliver_casProxyValidateUrl" "$this.getPropertyValue('deliver', 'casProxyValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.casProxyValidateUrl")
+				#editPropertyFieldCSS("ServerNode.property.casServiceUrl" "deliver_casServiceUrl" "$this.getPropertyValue('deliver', 'casServiceUrl')" "51" "$!serverNodeId" "$!cmsPH.casServiceUrl")
+				#editPropertyFieldCSS("ServerNode.property.casLogoutUrl" "deliver_casLogoutUrl" "$this.getPropertyValue('deliver', 'casLogoutUrl')" "51" "$!serverNodeId" "$!cmsPH.casLogoutUrl")
+			</div>
+		
+			<div class="inlineTabDiv" id="cmsGUI">
+				#editPropertyFieldCSS("ServerNode.property.helpUrl" "helpUrl" "$this.getPropertyValue('helpUrl')" "51" "$!serverNodeId" "$!cmsPH.helpUrl")
+				
+				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyAllowFolderType" "onlyAllowFolderType" "$this.getPropertyValue('onlyAllowFolderType')" "$!cmsPH.onlyAllowFolderType")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.skipResultDialogIfPossible" "skipResultDialogIfPossible" "$this.getPropertyValue('skipResultDialogIfPossible')" "$!cmsPH.skipResultDialogIfPossible")
+				
+				#set($SQLSearch = ["$ui.getString('entity.ServerNode.property.sqlSearch.value')", "$ui.getString('entity.ServerNode.property.sqlSearch.label')"])
+				#set($luceneSearch = ["$ui.getString('entity.ServerNode.property.luceneSearch.value')", "$ui.getString('entity.ServerNode.property.luceneSearch.label')"])
+				#set($searchEngineOptions = [$SQLSearch, $luceneSearch]) 
+	
+				#selectFieldCSS("ServerNode.property.internalSearchEngine" "internalSearchEngine" $this.getPropertyValue('internalSearchEngine') $searchEngineOptions "$!cmsPH.internalSearchEngine")
+				#editPropertyFieldCSS("ServerNode.property.maxRows" "maxRows" "$this.getPropertyValue('maxRows')" "51" "$!serverNodeId" "$!cmsPH.maxRows")
+	
+				#editPropertyFieldCSS("ServerNode.property.maxNumberOfAssetInSearches" "maxNumberOfAssetInSearches" "$this.getPropertyValue('maxNumberOfAssetInSearches')" "51" "$!serverNodeId" "$!cmsPH.maxNumberOfAssetInSearches")
+	
+				#set($option1 = ["fckeditor2", "FCKEditor 2.x"])
+				#set($option2 = ["ckeditor3", "CKEditor 3.x"])
+				#set($editorOptions = [$option1, $option2]) 
+				#selectFieldCSS("ServerNode.property.prefferedWYSIWYG" "prefferedWYSIWYG" $this.getPropertyValue('prefferedWYSIWYG') $editorOptions "$!cmsPH.prefferedWYSIWYG")
+	
+				#set($option1 = ["default", "Inherit"])
+				#set($option2 = ["classic", "Classic"])
+				#set($componentBindningAssetBrowserOptions = [$option1, $option2]) 
+				#selectFieldCSS("ServerNode.property.componentBindningAssetBrowser" "componentBindningAssetBrowser" $this.getPropertyValue('componentBindningAssetBrowser') $componentBindningAssetBrowserOptions "$!cmsPH.componentBindningAssetBrowser")
+				
+				#editPropertyFieldCSS("ServerNode.property.workingStyleInformation" "workingStyleInformation" "$this.getPropertyValue('workingStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.workingStyleInformation")
+				#editPropertyFieldCSS("ServerNode.property.finalStyleInformation" "finalStyleInformation" "$this.getPropertyValue('finalStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.finalStyleInformation")
+				#editPropertyFieldCSS("ServerNode.property.publishStyleInformation" "publishStyleInformation" "$this.getPropertyValue('publishStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.publishStyleInformation")
+				#editPropertyFieldCSS("ServerNode.property.publishedStyleInformation" "publishedStyleInformation" "$this.getPropertyValue('publishedStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.publishedStyleInformation")
+	
+				#editPropertyTextAreaCSS("ServerNode.property.headerHTML" "headerHTML" "$this.getDataPropertyValue('headerHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.headerHTML")
+	
+				#set($customContentTypeIcons = $this.getDataPropertyValue("customContentTypeIcons"))
+				#set($customContentTypeIcons = $customContentTypeIcons.replaceAll("&amp;", "&amp;amp;"))
+				#editPropertyTextAreaCSS("ServerNode.property.customContentTypeIcons" "customContentTypeIcons" "$customContentTypeIcons" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.customContentTypeIcons")
+	
+				#set($shortcuts = $this.getDataPropertyValue("shortcuts"))
+				#set($shortcuts = $shortcuts.replaceAll("&amp;", "&amp;amp;"))
+				#editPropertyTextAreaCSS("ServerNode.property.shortcuts" "shortcuts" "$shortcuts" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.shortcuts")
+	
+				#set($WYSIWYGToolbarComboPreviewCSS = $this.getDataPropertyValue("WYSIWYGToolbarComboPreviewCSS"))
+				#set($WYSIWYGToolbarComboPreviewCSS = $WYSIWYGToolbarComboPreviewCSS.replaceAll("&amp;", "&amp;amp;"))
+				#editPropertyTextAreaCSS("ServerNode.property.WYSIWYGToolbarComboPreviewCSS" "WYSIWYGToolbarComboPreviewCSS" "$WYSIWYGToolbarComboPreviewCSS" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.WYSIWYGToolbarComboPreviewCSS")
+	
+				#set($WYSIWYGEditorAreaCSS = $this.getDataPropertyValue("WYSIWYGEditorAreaCSS"))
+				#set($WYSIWYGEditorAreaCSS = $WYSIWYGEditorAreaCSS.replaceAll("&amp;", "&amp;amp;"))
+				#editPropertyTextAreaCSS("ServerNode.property.WYSIWYGEditorAreaCSS" "WYSIWYGEditorAreaCSS" "$WYSIWYGEditorAreaCSS" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.WYSIWYGEditorAreaCSS")
+			</div>
+		
+			<div class="inlineTabDiv" id="protectionSettings">
+				#yesNoDropDownWithInheritCSSImpl("ServerNode.property.usePasswordEncryption" "usePasswordEncryption" "$this.getPropertyValue('usePasswordEncryption')" "alert('Be aware that changing this may require you to reset the users passwords as the are stored with the old setting and automatic conversion is only possible one way.')" "$!cmsPH.usePasswordEncryption")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.disableImageEditor" "disableImageEditor" "$this.getPropertyValue('disableImageEditor')" "$!cmsPH.disableImageEditor")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.protectContentTypes" "protectContentTypes" "$this.getPropertyValue('protectContentTypes')" "$!cmsPH.protectContentTypes")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.protectWorkflows" "protectWorkflows" "$this.getPropertyValue('protectWorkflows')" "$!cmsPH.protectWorkflows")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.protectCategories" "protectCategories" "$this.getPropertyValue('protectCategories')" "$!cmsPH.protectCategories")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.allowPublicationEventFilter" "allowPublicationEventFilter" "$this.getPropertyValue('allowPublicationEventFilter')" "$!cmsPH.allowPublicationEventFilter")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.hideProtectedProperties" "hideProtectedProperties" "$this.getPropertyValue('hideProtectedProperties')" "$!cmsPH.hideProtectedProperties")
+					
+				#set($option1 = ["$ui.getString('tool.common.inherit')", "$ui.getString('tool.common.inherit')"])
+				#set($option2 = ["$ui.getString('entity.ServerNode.property.allPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.allPublicationEventFilter.label')"])
+				#set($option3 = ["$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.label')"])
+				#set($publicationEventFilterOptions = [$option1, $option2, $option3]) 
+				
+				#selectFieldCSS("ServerNode.property.defaultPublicationEventFilter" "defaultPublicationEventFilter" $this.getPropertyValue('defaultPublicationEventFilter') $publicationEventFilterOptions "$!cmsPH.defaultPublicationEventFilter")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.protectDeliverWorking" "protectDeliverWorking" "$this.getPropertyValue('protectDeliverWorking')" "$!cmsPH.protectDeliverWorking")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.protectDeliverPreview" "protectDeliverPreview" "$this.getPropertyValue('protectDeliverPreview')" "$!cmsPH.protectDeliverPreview")
+				
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useAccessBasedProtocolRedirects" "useAccessBasedProtocolRedirects" "$this.getPropertyValue('useAccessBasedProtocolRedirects')" "$!cmsPH.useAccessBasedProtocolRedirects")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.deriveProtocolWhenUsingProtocolRedirects" "deriveProtocolWhenUsingProtocolRedirects" "$this.getPropertyValue('deriveProtocolWhenUsingProtocolRedirects')" "$!cmsPH.deriveProtocolWhenUsingProtocolRedirects")
+				#editPropertyFieldCSS("ServerNode.property.unprotectedProtocolName" "unprotectedProtocolName" "$this.getPropertyValue('unprotectedProtocolName')" "51" "$!serverNodeId" "$!cmsPH.unprotectedProtocolName")
+				#editPropertyFieldCSS("ServerNode.property.protectedProtocolName" "protectedProtocolName" "$this.getPropertyValue('protectedProtocolName')" "51" "$!serverNodeId" "$!cmsPH.protectedProtocolName")
+				#editPropertyFieldCSS("ServerNode.property.unprotectedProtocolPort" "unprotectedProtocolPort" "$this.getPropertyValue('unprotectedProtocolPort')" "51" "$!serverNodeId" "$!cmsPH.unprotectedProtocolPort")
+				#editPropertyFieldCSS("ServerNode.property.protectedProtocolPort" "protectedProtocolPort" "$this.getPropertyValue('protectedProtocolPort')" "51" "$!serverNodeId" "$!cmsPH.protectedProtocolPort")
+				#editPropertyFieldCSS("ServerNode.property.accessBasedProtocolRedirectHTTPCode" "accessBasedProtocolRedirectHTTPCode" "$this.getPropertyValue('accessBasedProtocolRedirectHTTPCode')" "51" "$!serverNodeId" "$!cmsPH.accessBasedProtocolRedirectHTTPCode")
+				
+				#yesNoDropDownWithInheritCSS("ServerNode.property.allowInternalCallsBasedOnIP" "allowInternalCallsBasedOnIP" "$this.getPropertyValue('allowInternalCallsBasedOnIP')" "$!cmsPH.allowInternalCallsBasedOnIP")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.forceIdentityCheck" "forceIdentityCheck" "$this.getPropertyValue('forceIdentityCheck')" "$!cmsPH.forceIdentityCheck")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enforceRigidContentAccess" "enforceRigidContentAccess" "$this.getPropertyValue('enforceRigidContentAccess')" "$!cmsPH.enforceRigidContentAccess")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.allowCrossSiteSubmitToPublish" "allowCrossSiteSubmitToPublish" "$this.getPropertyValue('allowCrossSiteSubmitToPublish')" "$!cmsPH.allowCrossSiteSubmitToPublish")
+	
+				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfYearsBeforeExpire" "defaultNumberOfYearsBeforeExpire" "$this.getPropertyValue('defaultNumberOfYearsBeforeExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfYearsBeforeExpire")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableDateTimeDirectEditing" "enableDateTimeDirectEditing" "$this.getPropertyValue('enableDateTimeDirectEditing')" "$!cmsPH.enableDateTimeDirectEditing")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.showContentVersionFirst" "showContentVersionFirst" "$this.getPropertyValue('showContentVersionFirst')" "$!cmsPH.showContentVersionFirst")
+				#editPropertyFieldCSS("ServerNode.property.tree" "tree" "$this.getPropertyValue('tree')" "51" "$!serverNodeId" "$!cmsPH.tree")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.disableCustomIcons" "disableCustomIcons" "$this.getPropertyValue('disableCustomIcons')" "$!cmsPH.disableCustomIcons")
+				#editPropertyFieldCSS("ServerNode.property.showComponentsFirst" "showComponentsFirst" "$this.getPropertyValue('showComponentsFirst')" "51" "$!serverNodeId" "$!cmsPH.showComponentsFirst")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.showAllWorkflows" "showAllWorkflows" "$this.getPropertyValue('showAllWorkflows')" "$!cmsPH.showAllWorkflows")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.editOnSight" "editOnSight" "$this.getPropertyValue('editOnSight')" "$!cmsPH.editOnSight")
+				
+				#editPropertyFieldCSS("ServerNode.property.previewDeliveryUrl" "previewDeliveryUrl" "$this.getPropertyValue('previewDeliveryUrl')" "51" "$!serverNodeId" "$!cmsPH.previewDeliveryUrl")
+				#editPropertyFieldCSS("ServerNode.property.stagingDeliveryUrl" "stagingDeliveryUrl" "$this.getPropertyValue('stagingDeliveryUrl')" "51" "$!serverNodeId" "$!cmsPH.stagingDeliveryUrl")
+				#editPropertyTextAreaCSS("ServerNode.property.internalDeliveryUrls" "internalDeliveryUrls" "$this.getDataPropertyValue('internalDeliveryUrls')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.internalDeliveryUrls")
+				#editPropertyTextAreaCSS("ServerNode.property.publicDeliveryUrls" "publicDeliveryUrls" "$this.getDataPropertyValue('publicDeliveryUrls')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.publicDeliveryUrls")
+				#editPropertyTextAreaCSS("ServerNode.property.deploymentServers" "deploymentServers" "$this.getDataPropertyValue('deploymentServers')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.deploymentServers")
+				#editPropertyTextAreaCSS("ServerNode.property.vcServers" "vcServers" "$this.getDataPropertyValue('vcServers')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.vcServers")
+				#editPropertyTextAreaCSS("ServerNode.property.toolLanguages" "toolLanguages" "$this.getDataPropertyValue('toolLanguages')" "50" "3" "normaltextarea" "$!serverNodeId" "$!cmsPH.toolLanguages")
+	
+				#editPropertyFieldCSS("ServerNode.property.edition.pageSize" "edition.pageSize" "$this.getPropertyValue('edition.pageSize')" "51" "$!serverNodeId" "$!cmsPH.editionPageSize")
+				#editPropertyFieldCSS("ServerNode.property.content.tree.sort" "content.tree.sort" "$this.getPropertyValue('content.tree.sort')" "51" "$!serverNodeId" "$!cmsPH.contentTreeSort")
+				#editPropertyFieldCSS("ServerNode.property.structure.tree.sort" "structure.tree.sort" "$this.getPropertyValue('structure.tree.sort')" "51" "$!serverNodeId" "$!cmsPH.structureTreeSort")
+				#editPropertyFieldCSS("ServerNode.property.structure.tree.isHidden" "structure.tree.isHidden" "$this.getPropertyValue('structure.tree.isHidden')" "51" "$!serverNodeId" "$!cmsPH.structureTreeIsHidden")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.content.tree.hideForbidden" "content.tree.hideForbidden" "$this.getPropertyValue('content.tree.hideForbidden')" "$!cmsPH.contentTreeHideForbidden")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.structure.tree.hideForbidden" "structure.tree.hideForbidden" "$this.getPropertyValue('structure.tree.hideForbidden')" "$!cmsPH.structureTreeHideForbidden")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.disableEmptyUrls" "disableEmptyUrls" "$this.getPropertyValue('disableEmptyUrls')" "$!cmsPH.disableEmptyUrls")
+				#editPropertyFieldCSS("ServerNode.property.cacheUpdateAction" "cacheUpdateAction" "$this.getPropertyValue('cacheUpdateAction')" "51" "$!serverNodeId" "$!cmsPH.cacheUpdateAction")
+				#editPropertyFieldCSS("ServerNode.property.logPath" "logPath" "$this.getPropertyValue('logPath')" "51" "$!serverNodeId" "$!cmsPH.logPath")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.logTransactions" "logTransactions" "$this.getPropertyValue('logTransactions')" "$!cmsPH.logTransactions")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableExtranetCookies" "enableExtranetCookies" "$this.getPropertyValue('enableExtranetCookies')" "$!cmsPH.enableExtranetCookies")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useAlternativeBrowserLanguageCheck" "useAlternativeBrowserLanguageCheck" "$this.getPropertyValue('useAlternativeBrowserLanguageCheck')" "$!cmsPH.useAlternativeBrowserLanguageCheck")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.caseSensitiveRedirects" "caseSensitiveRedirects" "$this.getPropertyValue('caseSensitiveRedirects')" "$!cmsPH.caseSensitiveRedirects")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useDNSNameInURI" "useDNSNameInURI" "$this.getPropertyValue('useDNSNameInURI')" "$!cmsPH.useDNSNameInURI")
+				#editPropertyFieldCSS("ServerNode.property.extranetCookieTimeout" "extranetCookieTimeout" "$this.getPropertyValue('extranetCookieTimeout')" "51" "$!serverNodeId" "$!cmsPH.extranetCookieTimeout")
+				#editPropertyFieldCSS("ServerNode.property.livePublicationThreadClass" "livePublicationThreadClass" "$this.getPropertyValue('livePublicationThreadClass')" "51" "$!serverNodeId" "$!cmsPH.livePublicationThreadClass")
+				#editPropertyFieldCSS("ServerNode.property.publicationThreadDelay" "publicationThreadDelay" "$this.getPropertyValue('publicationThreadDelay')" "51" "$!serverNodeId" "$!cmsPH.publicationThreadDelay")
+				#editPropertyFieldCSS("ServerNode.property.pathsToRecacheOnPublishing" "pathsToRecacheOnPublishing" "$this.getPropertyValue('pathsToRecacheOnPublishing')" "51" "$!serverNodeId" "$!cmsPH.pathsToRecacheOnPublishing")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.disableTemplateDebug" "disableTemplateDebug" "$this.getPropertyValue('disableTemplateDebug')" "$!cmsPH.disableTemplateDebug")
+				#editPropertyFieldCSS("ServerNode.property.exportFormat" "exportFormat" "$this.getPropertyValue('exportFormat')" "51" "$!serverNodeId" "$!cmsPH.exportFormat")
+				#editPropertyFieldCSS("ServerNode.property.digitalAssetUploadPath" "digitalAssetUploadPath" "$this.getPropertyValue('digitalAssetUploadPath')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetUploadPath")
+				#editPropertyFieldCSS("ServerNode.property.decoratedPageInvoker" "decoratedPageInvoker" "$this.getPropertyValue('decoratedPageInvoker')" "51" "$!serverNodeId" "$!cmsPH.decoratedPageInvoker")
+			</div>
+		
+			<div class="inlineTabDiv" id="specialSettings">
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useFreeMarker" "useFreeMarker" "$this.getPropertyValue('useFreeMarker')" "$!cmsPH.useFreeMarker")
+				#editPropertyFieldCSS("ServerNode.property.errorBusyUrl" "errorBusyUrl" "$this.getPropertyValue('errorBusyUrl')" "51" "$!serverNodeId" "$!cmsPH.errorBusyUrl")
+				#editPropertyFieldCSS("ServerNode.property.externalThumbnailGeneration" "externalThumbnailGeneration" "$this.getPropertyValue('externalThumbnailGeneration')" "51" "$!serverNodeId" "$!cmsPH.externalThumbnailGeneration")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enablePortal" "enablePortal" "$this.getPropertyValue('enablePortal')" "$!cmsPH.enablePortal")
+				#editPropertyFieldCSS("ServerNode.property.portletBase" "portletBase" "$this.getPropertyValue('portletBase')" "51" "$!serverNodeId" "$!cmsPH.portletBase")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.logDatabaseMessages" "logDatabaseMessages" "$this.getPropertyValue('logDatabaseMessages')" "$!cmsPH.logDatabaseMessages")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.statistics.enabled" "statistics.enabled" "$this.getPropertyValue('statistics.enabled')" "$!cmsPH.statisticsEnabled")
+				#editPropertyFieldCSS("ServerNode.property.statisticsLogPath" "statisticsLogPath" "$this.getPropertyValue('statisticsLogPath')" "51" "$!serverNodeId" "$!cmsPH.statisticsLogPath")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.statisticsLogOneFilePerDay" "statisticsLogOneFilePerDay" "$this.getPropertyValue('statisticsLogOneFilePerDay')" "$!cmsPH.statisticsLogOneFilePerDay")
+				#editPropertyFieldCSS("ServerNode.property.statisticsLogger" "statisticsLogger" "$this.getPropertyValue('statisticsLogger')" "51" "$!serverNodeId" "$!cmsPH.statisticsLogger")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useImprovedContentCategorySearch" "useImprovedContentCategorySearch" "$this.getPropertyValue('useImprovedContentCategorySearch')" "$!cmsPH.useImprovedContentCategorySearch")
+				#editPropertyFieldCSS("ServerNode.property.dbRelease" "dbRelease" "$this.getPropertyValue('dbRelease')" "51" "$!serverNodeId" "$!cmsPH.dbRelease")
+				#editPropertyFieldCSS("ServerNode.property.dbUser" "dbUser" "$this.getPropertyValue('dbUser')" "51" "$!serverNodeId" "$!cmsPH.dbUser")
+				#editPropertyFieldCSS("ServerNode.property.dbPassword" "dbPassword" "$this.getPropertyValue('dbPassword')" "51" "$!serverNodeId" "$!cmsPH.dbPassword")
+				#editPropertyFieldCSS("ServerNode.property.masterServer" "masterServer" "$this.getPropertyValue('masterServer')" "51" "$!serverNodeId" "$!cmsPH.masterServer")
+				#editPropertyFieldCSS("ServerNode.property.slaveServer" "slaveServer" "$this.getPropertyValue('slaveServer')" "51" "$!serverNodeId" "$!cmsPH.slaveServer")
+				#editPropertyFieldCSS("ServerNode.property.buildName" "buildName" "$this.getPropertyValue('buildName')" "51" "$!serverNodeId" "$!cmsPH.buildName")
+				#editPropertyFieldCSS("ServerNode.property.adminToolsPath" "adminToolsPath" "$this.getPropertyValue('adminToolsPath')" "51" "$!serverNodeId" "$!cmsPH.adminToolsPath")
+				#editPropertyFieldCSS("ServerNode.property.dbScriptPath" "dbScriptPath" "$this.getPropertyValue('dbScriptPath')" "51" "$!serverNodeId" "$!cmsPH.dbScriptPath")	
+			</div>
+		
+		</div>
+	
+	</form>
+
+</div>
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

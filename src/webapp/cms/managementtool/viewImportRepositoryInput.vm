@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  
+#beginManagementTool("tool.managementtool.importRepository.header" "tool.managementtool.importRepository.header" "")
+
+<script language="JavaScript">
+<!--
+	function submitForm()
+	{
+		document.editForm.submit();
+	}
+-->
+</script>
+
+<div class="fullymarginalized">
+
+<form enctype="multipart/form-data" name="editForm" method="POST" action="ImportRepository.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<table width="300" border="0">
+		<tr>
+			<td class="biglabel">
+				$ui.getString("tool.managementtool.importRepository.header")
+			</td>
+		</tr>		
+		<tr>
+			<td>
+				$ui.getString("tool.managementtool.importRepository.introduction")<br/><br/>
+			</td>
+		</tr>	
+		<tr>
+			<td>
+				$ui.getString("tool.managementtool.importRepository.fileUploadFileLabel")<br/>
+				<input size=30 type="FILE" name="file1">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				$ui.getString("tool.managementtool.importRepository.replacementsLabel")<br/>
+				<textarea name="replacements" style="width: 500px; height: 200px;">$standardReplacement</textarea>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				$ui.getString("tool.managementtool.importRepository.onlyLatestVersionsLabel")<br/>
+				<input type="checkbox" name="onlyLatestVersions" value="true" checked="checked">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				$ui.getString("tool.managementtool.importRepository.mergeExistingRepositoriesLabel")<br/>
+				<input type="checkbox" name="mergeExistingRepositories" value="true">
+			</td>
+		</tr>
+		</form>	
+	</table>
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="submitForm();"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="window.close();"/>
+	</div>
+</div>
+
+</body>
+</html>

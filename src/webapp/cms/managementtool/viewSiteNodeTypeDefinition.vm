@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewSiteNodeTypeDefinition.header" "tool.managementtool.viewSiteNodeTypeDefinition.header" "siteNodeTypeDefinitionId=$siteNodeTypeDefinitionId")
+
+<div class="fullymarginalized">
+
+	<form method="post" name="editForm" action="UpdateSiteNodeTypeDefinition.action">
+		<input type="hidden" name="siteNodeTypeDefinitionId" value="$!siteNodeTypeDefinitionId">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+
+		<p>#editField("SiteNodeTypeDefinition.name" "name" $!name "51")</p>
+		<p>#editField("SiteNodeTypeDefinition.description" "description" $!description "51")</p>
+		<p>#editField("SiteNodeTypeDefinition.invokerClassName" "invokerClassName" $!invokerClassName "51")</p>
+		<h4>Right now this siteNodeTypeDefinition has the following AvailableServiceBindings</h4>
+		
+		<p>
+		#foreach ($availableServiceBindingVO in $allAvailableServiceBindings)
+			#set($checked = "")
+			#foreach ($assignedAvailableServiceBindingVO in $assignedAvailableServiceBindings)
+				#if($assignedAvailableServiceBindingVO.getAvailableServiceBindingId() == $availableServiceBindingVO.getAvailableServiceBindingId())
+					#set($checked = "checked")
+				#end 
+			#end
+			<input type="checkbox" name="availableServiceBindingId" value="$availableServiceBindingVO.getAvailableServiceBindingId()" $checked>$availableServiceBindingVO.getName()<br>
+		#end
+		<p>
+
+	</form>
+	
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")" onclick="saveAndExit(document.editForm, 'UpdateSiteNodeTypeDefinition!saveAndExit.action');"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListSiteNodeTypeDefinition.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

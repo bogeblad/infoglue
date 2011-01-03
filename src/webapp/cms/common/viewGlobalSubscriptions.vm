@@ -1,0 +1,266 @@
+#if($standalone != "false")
+	#beginLightCommonToolV3("tool.common.globalSubscriptions.header" "" "" false true false)
+#else
+
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>$ui.getString("tool.common.globalSubscriptions.header")</title>
+	
+	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-dragDropTabs-1.6rc2.min.js"></script>
+	
+	<script type="text/javascript" src="script/v3/infoglue.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css">
+
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+</head>
+
+<body class="generaltooledit">
+	
+#end
+
+<link rel="stylesheet" type="text/css" href="css/cms.css" title="cms" />
+
+<script type="text/javascript">
+<!--
+	function showDiv(id)
+	{
+		document.getElementById(id).style.display = 'block';
+	}
+	
+	function hideDiv(id)
+	{
+		document.getElementById(id).style.display = 'none';
+	}
+	
+	function loadExistingSubscription(id)
+	{
+		//alert("Init Subscriptions!getSubscriptionForm.action?subscriptionId=" + id);
+		$("#dialogDivBody").load("Subscriptions!getSubscriptionForm.action?subscriptionId=" + id);
+		$("#newSubscriptionForm").css("display", "block"); 
+	}
+	
+	var i=1;
+	function addFilterRow()
+	{
+		var addition = ' <div id="filterRow_' + i + '" class="formRow" style="min-height: 50px; border: 0px solid red; border-bottom: 1px solid #bbb;">';
+		addition += ' <label id="filterRow_' + i + 'Label" for="filterType_' + i + '">$ui.getString("tool.common.subscriptionFilterType.label")</label>';
+		addition += ' <select id="filterType_' + i + '" name="filterType_' + i + '" onchange="updateConditionInput(' + i + ');">';
+		addition += '	<option value="">$ui.getString("tool.common.chooseFilterType.label")</option>';
+		addition += '	<option value="0">Content types</option>';
+		addition += '	<option value="1">Categories</option>';
+		addition += ' </select>';
+
+		addition += ' <label id="filterCondition_' + i + 'Label" for="filterCondition_' + i + '">$ui.getString("tool.common.subscriptionFilterCondition.label")</label>';
+		addition += ' <select id="filterCondition_' + i + '" name="filterCondition_' + i + '" multiple="multiple" size="3" style="width: 130px;">';
+		addition += '	<option value="-1">$ui.getString("tool.common.chooseFilterType.label")</option>';
+		addition += ' </select>';
+
+		addition += ' &nbsp; <a id="removeFilterRowLink' + i + '" href="javascript:removeFilterRow(' + i + ');">$ui.getString("tool.common.deleteFilter.label")</a>';
+		
+		addition += ' <p id="andParagraph_' + i + '" style="padding-left: 300px; display: none; float: left; text-align: center;"><!--<label for="isAndCondition_' + i + '">isAndCondition</label>-->';
+		addition += ' <select id="isAndCondition_' + i + '" name="isAndCondition_' + i + '">';
+		addition += '	<option value="true">AND</option>';
+		addition += '	<option value="false">OR</option>';
+		addition += ' </select></p>';
+		addition += ' </div>';
+		
+		addition += ' <div id="break_' + i + '" style="clear:both"></div>';
+		
+		$("#break_" + (i-1)).after(addition);
+		$("#andParagraph_" + (i-1)).css("display", "block"); 
+		
+		i++;
+	}
+
+
+	function removeFilterRow(index)
+	{
+		$("#filterRow_" + index).remove(); 
+		$("#break_" + index).remove(); 
+		
+		var currentIndex = index;
+		while(currentIndex < i)
+		{
+			//alert("Changing " + (currentIndex + 1) + " to " + currentIndex);
+			$("#filterRow_" + (currentIndex + 1) + "Label").attr("id", "filterRow_" + currentIndex + "Label");
+			$("#filterRow_" + (currentIndex + 1)).attr("id", "filterRow_" + currentIndex).attr("name", "filterRow_" + currentIndex);
+			$("#filterType_" + (currentIndex + 1) + "Label").attr("id", "filterType_" + currentIndex + "Label");
+			$("#filterType_" + (currentIndex + 1)).attr("id", "filterType_" + currentIndex).attr("name", "filterType_" + currentIndex);
+			$("#filterCondition_" + (currentIndex + 1)).attr("id", "filterCondition_" + currentIndex).attr("name", "filterCondition_" + currentIndex);
+			$("#andParagraph_" + (currentIndex + 1)).attr("id", "andParagraph_" + currentIndex).attr("name", "andParagraph_" + currentIndex);
+			$("#removeFilterRowLink" + (currentIndex + 1)).attr("id", "removeFilterRowLink" + currentIndex).attr("href", "javascript:removeFilterRow(" + currentIndex + ");");
+			$("#break_" + (currentIndex + 1)).attr("id", "break_" + currentIndex);
+			currentIndex++;
+		}
+		i--;
+	}
+	
+	var contentTypes = '<option value="">Choose filter type</option>';
+	#foreach($contentTypeDefintionVO in $contentTypeDefintionVOList)
+		contentTypes += '<option value="$contentTypeDefintionVO.id">$contentTypeDefintionVO.name</option>';
+	#end
+
+	var categories = '<option value="">Choose filter type</option>';
+	#foreach($categoryVO in $categoryVOList)
+		categories += '<option value="$categoryVO.id">$categoryVO.getLocalizedDisplayName($this.languageCode, "none")</option>';
+	#end
+	
+	function updateConditionInput(filterIndex)
+	{
+		//alert("filterIndex:" + filterIndex);
+		var value = $("#filterType_" + filterIndex).val();
+		//alert("value:" + value + " - " + filterIndex);
+		if(value == -1)
+		{
+			$("#filterCondition_" + filterIndex).html("<option value='-1'>Choose filter type</option>");
+		}
+		if(value == 0)
+		{
+			$("#filterCondition_" + filterIndex).html(contentTypes);
+		}
+		else if(value == 1)
+		{
+			$("#filterCondition_" + filterIndex).html(categories);
+		}
+	}
+	
+	$(document).ready(function(){
+    	$("#filterType_0 option:first").attr( "selected", "selected" );
+	});
+
+	function submitForm()
+	{
+		document.editForm.submit();
+	}
+
+//-->
+</script>
+
+#if($standalone != "false")
+	#lightMenuToolbar("" $buttons $rightButtons)
+#end
+
+<div style="clear: both;" onfocus="this.blur();"></div>
+
+<h3>
+	$ui.getString("tool.common.globalSubscriptions.title") #if($standalone == "false") - <a href="Subscriptions!inputGlobalSubscriptions.action" target="_blank">$ui.getString("tool.managementtool.openSubscriptionsInNewWindow.label")</a>#end
+	#if($errorMessage && $errorMessage != "")<span style="color:red">$errorMessage</span>#end
+</h3>
+ 
+<div onfocus="this.blur();">
+
+	<div class="inlineTabDiv" onfocus="this.blur();">
+	#foreach($subscriptionVO in $subscriptionVOList)
+	
+		<a href="javascript:loadExistingSubscription($subscriptionVO.id);">$subscriptionVO.name</a> - 
+		<a href="Subscriptions!deleteGlobalSubscription.action?subscriptionId=$subscriptionVO.id&standalone=$standalone">$ui.getString("tool.common.delete.label")</a><br/>
+	
+	#end
+		
+	#if($subscriptionVOList.size() == 0)
+		$ui.getString("tool.common.noSubscriptionsFount.label")
+	#end
+	
+	#if($standalone == "false")
+	<div style="height: 10px; clear: both;"></div>
+	<a class='igButton' href="#" onclick="showDiv('newSubscriptionForm');"><span class='igButtonOuterSpan'><span class='create'>$ui.getString("tool.common.createSubscription.header")</span></span></a>
+	#end
+
+	<div style="clear: both;" onfocus="this.blur();"></div>
+	
+	<h3 style="margin-left: 0px;">$ui.getString("tool.common.detailedSubscriptions.label")</h3>
+	<ul>
+	#foreach($detailedSubscriptionVO in $detailedSubscriptionVOList)
+	    
+		<li>
+			$this.getSubscriptionPresentationString($detailedSubscriptionVO)
+		 	- 
+		 	<a href="Subscriptions!deleteGlobalSubscription.action?subscriptionId=$detailedSubscriptionVO.id&standalone=$standalone">$ui.getString("tool.common.delete.label")</a>
+		</li>
+	
+	#end
+	</ul>
+	
+	</div>
+</div>
+	
+<div id="newSubscriptionForm" style="display: none; position: absolute; z-index: 100; top: 20px; left: 20px; width: 650px; background-color: white; border: 1px solid black;">
+	<div id="dialogHandle" class="dialogDivHandle"><div id="dialogDivLeftHandle" class="dialogDivLeftHandle">$ui.getString("tool.common.createChangeSubscriptions.label")</div><div id="dialogDivRightHandle" class="dialogDivRightHandle"><a href="javascript:hideDiv('newSubscriptionForm');">$ui.getString("tool.common.closeWindowButton.label")</a></div></div>
+	<div id="dialogDivBody" class="dialogDivBody" #if($standalone == "false")style="height: 380px; overflow: auto;"#end>
+		<form action="Subscriptions!globalSubscriptions.action" name="inputForm" method="post">
+			<fieldset style="width: 90%; border: 0px solid red; margin: 0px; padding-left: 10px;">
+	
+				<h3>$ui.getString("tool.common.subscriptionBasics.label")</h3>
+				<p style="clear: both;">
+				<label for="name">$ui.getString("tool.common.subscriptionName.label")</label>
+				<input type="text" name="name"/>
+				</p>
+				
+				<p style="clear: both;">
+				<label for="interceptionPointId">$ui.getString("tool.common.subscriptionType.label")</label>
+				<select name="interceptionPointId">
+					#foreach($interceptionPointVO in $interceptionPointVOList)
+					<option value="$interceptionPointVO.id">$ui.getString($interceptionPointVO.name)</option>
+					#end
+				</select>
+				</p>
+				
+				<div style="clear: both;"></div>
+				
+				<h4 style="border-bottom: 1px solid #bbb;">$ui.getString("tool.common.subscriptionsFilters.label")</h4>
+				
+				<div id="break_-1" style="clear:both"></div>
+				
+				<div id="filterRow_0" class="formRow" style="min-height: 50px; border: 0px solid red; border-bottom: 1px solid #bbb;">
+					<label for="filterType_0">$ui.getString("tool.common.subscriptionFilterType.label")</label>
+					<select id="filterType_0" name="filterType_0" onchange="updateConditionInput(0);">
+						<option value="-1" selected="selected">$ui.getString("tool.common.chooseFilterType.label")</option>
+						<option value="0">Content types</option>
+						<option value="1">Categories</option>
+					</select>
+			
+					<label for="filterCondition_0">$ui.getString("tool.common.subscriptionFilterCondition.label")</label>
+					<select id="filterCondition_0" name="filterCondition_0" multiple="multiple" size="3" style="width: 130px;">
+						<option value="">$ui.getString("tool.common.chooseFilterType.label")</option>
+					</select>
+					
+					&nbsp; <a href="javascript:removeFilterRow(0);">$ui.getString("tool.common.deleteFilter.label")</a>
+					
+					<p id="andParagraph_0" style="padding-left: 300px; display: none; float: left; text-align: center;">
+						<!-- <label for="isAndCondition_0">tool.common.subscriptionFilterIsAndCondition.label</label> -->
+						<select id="isAndCondition_0" name="isAndCondition_0">';
+							<option value="true">AND</option>';
+							<option value="false">OR</option>';
+						</select>
+					</p>
+				</div>
+									
+				<div id="break_0" style="clear:both"></div>
+				
+				<a href="javascript:addFilterRow();">$ui.getString("tool.common.addFilter.label")</a>
+				<br/>
+				<br/>
+				
+				<input type="hidden" name="standalone" value="$standalone"/>
+				<input type="submit" value="$ui.getString("tool.common.saveButton.label")"/>
+	
+			</fieldset>
+		</form>
+	</div>
+</div>
+
+#if($standalone != "false")
+	#lightFooterToolbar($footerButtons)
+#end
+
+#endCommonToolV3()

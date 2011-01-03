@@ -1,0 +1,60 @@
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.common.constraintException.title" "" "" false true true "")
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.common.constraintException.title")</h3>
+
+	#foreach($errorList in $errors.allErrors)
+		#foreach($error in $errorList)
+	    <p>
+	    	$error
+	    </p>
+      	#end
+	#end
+
+	#foreach($link in $linkBeans)			
+
+		#set($parentCall = false)
+		#if($link.target == 'structure' || $link.target == 'content' || $link.target == 'management')
+			#set($parentCall = true)
+		#end
+
+		#if($link.actionURL == "refreshParent")
+			#set($actionUrl = "javascript:refreshParent(null,null,null);")
+		#else 
+			#set($actionUrl = $link.actionURL)
+			#if($parentCall)
+				#set($actionUrl = "javascript:refreshParent('$actionUrl','$link.target','$link.targetTitle');")
+			#end
+		#end
+		
+		<p>
+			<a id="$link.id" 
+				#if($parentCall) 
+					href="$actionUrl"
+				#else 
+					href="$actionUrl"
+				#end 
+				
+				#if(!$parentCall && !$link.isJavascript)
+					#if($link.target) 
+						target="$link.target" 
+					#elseif(!$parentCall && $link.actionURL != "refreshParent") 
+						target="_parent"
+					#end
+				#end 
+				
+				style="display:block; #if($link.backgroundImageURL != '') background-image: url('$link.backgroundImageURL'); background-repeat: no-repeat; padding-left: 26px;#end padding-top: 8px; height: 20px;"><strong>$link.text</strong></a>
+			$link.description
+		</p>
+		
+	#end
+				
+	#lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()

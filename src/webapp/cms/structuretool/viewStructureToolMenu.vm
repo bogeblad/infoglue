@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Menus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<script type="text/javascript" src="script/listview.js"></script>
+
+	#includeLatestJQuery()
+	
+	<script type="text/javascript" language="JavaScript">
+	<!-- 
+		setCMSContext('$this.getCMSBaseUrl()');
+		
+		var exp;
+		var currentRepositoryId = "$!repositoryId";
+
+		/*		
+		function syncWhenReady(path)
+		{
+			functionExists = false;
+			try
+			{
+				functionExists = frames['itreeFrame'].syncWithTree;
+			}
+			catch (e) {alert("Hepp:" + e);}
+			
+			if(functionExists)
+				frames['itreeFrame'].syncWithTree(path);
+			else
+			{
+				window.setTimeout(function () {
+					syncWhenReady(path);
+					}, 1000);
+			}
+		}
+		*/
+		
+		function syncWithTree(path, repositoryId)
+		{
+			var timeout = 500;
+			//alert("AAA:" + path + " - " + repositoryId + ":" + currentRepositoryId + ":" + parent);
+			if(repositoryId && currentRepositoryId != repositoryId)
+			{
+				parent.frames['header'].changeRepository(repositoryId, escape(path));
+				timeout = 2000;
+			}
+			
+			#if($tree == "applet")
+				alert('Not implemented in this tree');
+			#else
+				//syncWhenReady(path);
+				//window.setTimeout(function () {syncWhenReady(path);}, 1000);
+				
+				window.setTimeout(function () {
+					frames['itreeFrame'].syncWithTree(path);
+					}, timeout);
+			
+			#end
+		}
+		
+		function treeView()
+		{
+			#if($tree == "applet")
+				return document.getElementById("CMSTree");
+			#else
+				return document.getElementById("itreeFrame");
+			#end
+		}
+
+		
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			refreshStructureToolBar('$this.getCMSBaseUrl()', 'tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=' + itemId + '&repositoryId=' + repoId + '&isBranch=true', '$!unrefreshedNodeId', '$!changeTypeId', '$!siteNodeId');
+
+			parent.frames['main'].location.href="$this.getCMSBaseUrl()/ViewSiteNode.action?siteNodeId=" + itemId + "&repositoryId=" + repoId;
+		}
+	
+		function reloadMain()
+		{
+			resize();
+			//alert('Setting the main area');
+			parent.frames[3].location.href = "$this.getCMSBaseUrl()/ViewStructureToolStartPage.action?repositoryId=$repositoryId";
+		}
+		
+		function loadMainArea(siteNodeId, repositoryId, path)
+		{
+		    //alert("siteNodeId:" + siteNodeId);
+		    parent.frames[3].location.href = "$this.getCMSBaseUrl()/ViewSiteNode.action?siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
+		}
+	    
+	    function refreshNode(nodeId, changeTypeId, addedNodeId)
+		{
+			//alert("Refreshing tree...");
+			#if($tree == "applet")			
+				treeView().refreshTreeNode(nodeId, changeTypeId, addedNodeId);
+			#else
+				frames['itreeFrame'].refreshTreeNode(parseInt(nodeId), parseInt(changeTypeId), parseInt(addedNodeId));
+			#end
+			
+		}
+	    
+	   	function notifyIsLoaded()
+	    {
+	    	document.getElementById('treeDiv').style.left = '2px';
+	    	document.getElementById('treeDiv').style.right = '2px';
+	    }
+
+	    function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+
+		function removeCookies() 
+		{
+			//alert("document.cookie:" + document.cookie);
+			var ca = document.cookie.split(';');
+			for(var i=0;i < ca.length;i++) 
+			{
+				var c = ca[i];
+				while (c.charAt(0)==' ') 
+					c = c.substring(1,c.length);
+				
+				var eqIndex = c.indexOf("=");
+				if (eqIndex > -1)
+				{ 
+					var name = c.substring(0,eqIndex);
+					if(name.indexOf("JSESSIONID") == -1)
+						document.cookie = name + "=" + escape("null")+"; expires=Monday, 04-Apr-1970 05:00:00 GMT";
+				}
+			}
+		}
+
+	   	function resize() 
+	    {
+			var w_newWidth;
+		    var w_newHeight;
+		    var w_maxWidth  = 1600;
+		    var w_maxHeight = 1200;
+		
+			if (window.innerWidth || window.innerHeight)
+			{ 
+				w_newWidth = window.innerWidth; 
+				w_newHeight = window.innerHeight; 
+			} 
+
+			//IE Mozilla 
+			if (document.body.clientWidth || document.body.clientHeight)
+			{ 
+				w_newWidth = document.body.clientWidth; 
+				//w_newHeight = document.body.clientHeight - 10; 
+				if(document.body.clientHeight == 0)
+					w_newHeight = document.documentElement.clientHeight - 10;
+				else
+					w_newHeight = document.body.clientHeight - 10; 
+			}
+			
+ 		    if (w_newWidth>w_maxWidth)
+			    w_newWidth=w_maxWidth;
+			
+			if (w_newHeight>w_maxHeight)
+			    w_newHeight=w_maxHeight;
+			
+			if (w_newHeight < 1) //For firebird cases
+			    w_newHeight=window.innerHeight - 10;
+			    
+			//alert("w_newWidth:" + w_newWidth);
+			//alert("w_newHeight:" + w_newHeight);
+			try 
+			{
+				document.getElementById("loadingDiv").style.visibility = "hidden";
+				treeView().setSize(w_newWidth - 10,w_newHeight - 50);
+				treeView().style.visibility = "visible";
+			}
+			catch(e)
+			{
+			}
+					
+			//window.scroll(0,0);
+			try 
+			{
+				treeView().width  = w_newWidth - 10;
+				treeView().height = w_newHeight - 50;
+				treeView().style.height = w_newHeight - 50;
+			}
+			catch(e)
+			{
+			}
+
+			switchArrows();
+        }
+
+	   	function switchArrows()
+	   	{
+	   		if(window.innerWidth < 30)
+			   	$(".onlyExpanded").css("visibility", "hidden");
+	   		else
+	   		   	$(".onlyExpanded").css("visibility", "visible");
+	   	}
+	   	
+		$(document).ready(function(){
+			resize();
+			//alert('path: $!path');
+			//alert('exp: $!exp');
+			if("$!path" == "")
+				reloadMain();
+			else
+				syncWithTree("$!path", currentRepositoryId);
+				
+			$(window).resize( function() {
+     			resize();
+ 			});
+ 		});
+ 		
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="structuretool">
+
+<div style="LEFT:0px; RIGHT:0px; position:absolute; TOP:0px; height:100%; visibility:visible; z-index:0">
+<table class="structuretool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td valign="top" width="100%" height="100%"></td>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+<!-- This div is the tree before it's loaded.... -->
+<div class="onlyExpanded" style="LEFT:2px; RIGHT:2px; position:absolute; TOP:1px; BOTTOM:6px; height:100%; visibility:visible; z-index:0;">
+<table class="structuretool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td valign="top" width="100%">
+		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"></td>
+		</tr>
+		<tr>
+			<td class="menu" width="100%" height="100%">
+				#if($repositoryId > -1)
+					Loading...	
+				#else
+					Either the system contains no repositories or you do not have access to any of them. Contact your administrator if you have questions.
+				#end
+			</td>
+		</tr>	
+		</table>
+	</td>	
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+
+<div class="onlyExpanded" id="treeDiv" style="LEFT:-500px; RIGHT:500px; position:absolute; TOP:1px; BOTTOM:6px; height:100%; visibility:visible; z-index:0; background-color: #F0E1B4;">
+<table class="structuretool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td valign="top" width="100%">
+		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td class="menu" style="background-color: #F0E1B4;"><img src="images/trans.gif" height="15"></td>
+		</tr>
+		<tr>
+			<td class="menu">    
+					#if($tree == "applet")
+						#showJavaTree("220" "550" "240" "225" "180" "SiteNode" $repositoryId "false")
+					#else
+						<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree.action?repositoryId=${repositoryId}" width="220" height="550" align="baseline"></IFRAME>
+					#end					
+			</td>
+		</tr>	
+		</table>
+	
+	</td>	
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+
+#treeSelector("Structure")
+
+<div class="onlyExpanded" style="RIGHT:26px; position:absolute; BOTTOM: 3px; visibility:visible; z-index:0">
+	<a href="javascript:removeCookies(); window.location.reload(false);"><img src="images/refresh.gif" width="13" height="16" border="0" alt="Refresh the menu and reset all tool cookies"></a>
+</div>
+
+<div style="RIGHT:6px; position:absolute; BOTTOM:0px; visibility:visible; z-index:0; margin: 0px; padding: 0px; float: left; display: block;">
+	<a class="onlyExpanded" href="javascript:this.parent.minimizeMenu();"><img src="images/arrowleft.gif" width="5" height="10" border="0" alt="Click to minimize menu" style="padding-bottom: 4px;"></a><a href="javascript:this.parent.increaseSize();">&nbsp;<img src="images/arrowright.gif" width="5" height="10" border="0" alt="Click to make menu bigger" style="padding-bottom: 4px;"></a>
+</div>
+
+
+</body>
+</html>

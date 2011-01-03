@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                           "http://castor.codehaus.org/mapping.dtd">
+<!-- 
+Copyright 2004 The Apache Software Foundation
+Licensed  under the  Apache License,  Version 2.0  (the "License");
+you may not use  this file  except in  compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed  under the  License is distributed on an "AS IS" BASIS,
+WITHOUT  WARRANTIES OR CONDITIONS  OF ANY KIND, either  express  or
+implied.
+
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<mapping xmlns:portlet="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd">
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.DisplayNameImpl">
+
+    <field name="displayName" type="java.lang.String">
+        <bind-xml node="text"/>
+    </field>
+    <field name="castorLocale" type="java.lang.String">
+        <bind-xml name="xml:lang" node="attribute"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl">
+
+    <field name="description" type="java.lang.String">
+        <bind-xml node="text"/>
+    </field>
+    <field name="castorLocale" type="java.lang.String">
+        <bind-xml name="xml:lang" node="attribute"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.SecurityRoleRefImpl">
+
+    <field name="castorDescriptions" 
+           type="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl" 
+           collection="collection">
+      <bind-xml name="portlet:description" node="element"/>
+    </field>
+    <field name="roleName" type="java.lang.String" required="true">
+      <bind-xml name="portlet:role-name" node="element"/>
+    </field>
+    <field name="roleLink" type="java.lang.String">
+        <bind-xml name="portlet:role-link" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.ParameterImpl">
+    <field name="castorDescriptions" 
+           type="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl" 
+           collection="collection">
+      <bind-xml name="portlet:description" node="element"/>
+    </field>
+    <field name="name" type="java.lang.String" required="true">
+      <bind-xml name="portlet:name" node="element"/>
+    </field>
+    <field name="value" type="java.lang.String" required="true">
+      <bind-xml name="portlet:value" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.PreferenceImpl">
+      
+    <field name="name" type="java.lang.String" required="true">
+      <bind-xml name="portlet:name" node="element"/>
+    </field>
+    <field name="castorValues" type="java.lang.String" collection="collection" required="true">
+      <bind-xml name="portlet:value" node="element"/>
+    </field>
+    <!--field name="modifiable" type="java.lang.Boolean">
+      <bind-xml name="portlet:modifiable" node="element"/>
+    </field-->
+    <field name="readOnly" type="java.lang.String">
+      <bind-xml name="portlet:read-only" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.portlet.impl.ContentTypeImpl">
+
+    <field name="contentType" type="java.lang.String">
+      <bind-xml name="portlet:mime-type" node="element"/>
+    </field>
+
+    <field name="castorPortletModes"
+           type="java.lang.String"
+           collection="collection">
+      <bind-xml name="portlet:portlet-mode" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.PreferenceSetImpl">
+      
+    <field name="castorPreferences" type="org.apache.pluto.portalImpl.om.common.impl.PreferenceImpl" collection="collection">
+      <bind-xml name="portlet:preference" node="element"/>
+    </field>
+    <field name="castorPreferencesValidator" type="java.lang.String">
+      <bind-xml name="portlet:preferences-validator" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.common.impl.LanguageSetImpl">
+
+    <field name="title" type="java.lang.String">
+      <bind-xml name="portlet:title" node="element"/>
+    </field>
+    <field name="shortTitle" type="java.lang.String">
+      <bind-xml name="portlet:short-title" node="element"/>
+    </field>
+    <field name="castorKeywords" type="java.lang.String">
+      <bind-xml name="portlet:keywords" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.portlet.impl.PortletDefinitionImpl">
+      
+    <field name="id" type="java.lang.String" direct="true">        
+      <bind-xml name="id" node="attribute"/>
+    </field>
+    <field name="castorDescriptions" 
+         type="org.apache.pluto.portalImpl.om.common.impl.DescriptionImpl"
+         collection="collection">
+      <bind-xml name="portlet:description" node="element"/>
+    </field>
+    <field name="name" type="java.lang.String">
+      <bind-xml name="portlet:portlet-name" node="element"/>
+    </field>
+    <field name="castorDisplayNames" 
+         type="org.apache.pluto.portalImpl.om.common.impl.DisplayNameImpl"
+         collection="collection">
+      <bind-xml name="portlet:display-name" node="element"/>
+    </field>
+    <field name="className" type="java.lang.String">
+      <bind-xml name="portlet:portlet-class" node="element"/>
+    </field>
+    <field name="castorInitParams"
+           type="org.apache.pluto.portalImpl.om.common.impl.ParameterImpl"
+           collection="collection">
+      <bind-xml name="portlet:init-param" node="element"/>
+    </field>
+
+    <field name="expirationCache" type="java.lang.String">
+      <bind-xml name="portlet:expiration-cache" node="element"/>
+    </field>
+    <field name="castorContentTypes"
+           type="org.apache.pluto.portalImpl.om.portlet.impl.ContentTypeImpl"
+           collection="collection">
+      <bind-xml name="portlet:supports" node="element"/>
+    </field>
+    <field name="castorSupportedLocales" type="java.lang.String" collection="collection">
+      <bind-xml name="portlet:supported-locale" node="element"/>
+    </field>
+    <field name="resourceBundle" type="java.lang.String">
+      <bind-xml name="portlet:resource-bundle" node="element"/>
+    </field>
+    <field name="castorResources" type="org.apache.pluto.portalImpl.om.common.impl.LanguageSetImpl">
+      <bind-xml name="portlet:portlet-info" node="element"/>
+    </field>
+
+   <field name="castorPreferences"
+           type="org.apache.pluto.portalImpl.om.common.impl.PreferenceSetImpl">
+      <bind-xml name="portlet:portlet-preferences" node="element"/>
+    </field>
+    <field name="castorInitSecurityRoleRefs"
+           type="org.apache.pluto.portalImpl.om.common.impl.SecurityRoleRefImpl"
+           collection="collection">
+      <bind-xml name="portlet:security-role-ref" node="element"/>
+    </field>
+
+  </class>
+
+  <class name="org.apache.pluto.portalImpl.om.portlet.impl.PortletApplicationDefinitionImpl">
+    <map-to xml="portlet-app" ns-uri="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"/>
+
+    <field name="version" type="java.lang.String">
+      <bind-xml name="version" node="attribute"/>
+    </field>
+    <field name="appId" type="java.lang.String">
+      <bind-xml name="id" node="attribute"/>
+    </field>
+
+    <field name="castorPortlets"
+           type="org.apache.pluto.portalImpl.om.portlet.impl.PortletDefinitionImpl"
+           collection="collection">
+      <bind-xml name="portlet:portlet" node="element"/>
+    </field>
+    <field name="customPortletMode" type="java.lang.String" collection="collection">
+      <bind-xml name="portlet:custom-portlet-mode" node="element"/>
+    </field>
+    <field name="customPortletState" type="java.lang.String" collection="collection">
+      <bind-xml name="portlet:custom-window-state" node="element"/>
+    </field>
+    <field name="userAttribute" type="java.lang.String" collection="collection">
+      <bind-xml name="portlet:user-attribute" node="element"/>
+    </field>
+    <field name="securityConstraint" type="java.lang.String" collection="collection">
+      <bind-xml name="portlet:security-constraint" node="element"/>
+    </field>
+
+  </class>
+
+</mapping>

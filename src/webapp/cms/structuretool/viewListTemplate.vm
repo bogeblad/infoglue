@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Choose template</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<script type="text/javascript" language="JavaScript">
+	<!-- 
+	    
+	    function submitBindning(entityId, path)
+		{
+		    //alert("Here we commit the binding and close the window...");
+			bindingTypeId = 0; //0 = Content, 1 = SiteNode
+			
+			qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+			qualifyerXML += "<qualifyer>";
+			qualifyerXML += 	"<contentId>" + entityId + "</contentId>";
+			qualifyerXML += "</qualifyer>";
+			 		    
+		    url = 'CreateServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&stay=true&path=' + path + '&entityId=' + entityId + "&qualifyerXML=" + escape(qualifyerXML);
+		    //alert('Calling:' + url);
+		    self.opener.parent.frames["main"].location.href = url;
+		    window.close();
+		    //document.inputForm.submit();
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="structuretooledit"  align="center">
+
+<table class="structuretooledit" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td valign="top">
+		
+		<table cellpadding="0" cellspacing="0" border="0" align="center">
+		<tr>
+			<td><img src="images/trans.gif" height="10"></td>
+		</tr>
+		<tr class="darkapricot">
+			<td class="smalllabel">Click on the template(layout) the page should use</td>
+		</tr>
+		<tr>
+			<td height="1" bgcolor="#FEF8D0"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1" bgcolor="#F0E1B4"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		
+		#set($isOdd = true)
+		#foreach ($template in $templates)
+			#if($isOdd)
+				#set($class = "class='lightapricot'")
+				#set($isOdd = false)
+			#else
+				#set($class = "class='white'")
+				#set($isOdd = true)
+			#end
+			
+			<tr $class>
+				<td>
+					<a href="javascript:submitBindning($template.contentId, '$template.getName()');">$template.getName()</a>
+				</td>
+			</tr>	
+		#end
+		
+		<tr>
+			<td colspan="3">&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="3"><a href="javascript:window.close();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a></td>
+		</tr>
+
+		<tr>
+			<td>
+				<form name="inputForm" action="CreateServiceBinding.action">
+					<input type="hidden" name="entityId" value="">
+					<input type="hidden" name="repositoryId" value="">
+					<input type="hidden" name="qualifyerXML" value="">
+				</form>
+			</td>
+		</tr>		
+		</table>
+	
+	</td>	
+</tr>
+</table>
+
+</body>
+</html>

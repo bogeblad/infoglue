@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Access denied</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+
+	<style>
+		
+		body {
+			color            : #123456;
+			background-color : #FFFFFF;
+			font-family      : verdana, arial, sans-serif;
+			font-size        : 8pt;
+		}
+		
+		.messagebox {
+			background-color : #FFFFFF;
+			border-style	 : solid;
+			border-width	 : 1px;
+			border-color	 : #cecbce;
+			margin-top		 : 20%;
+			margin-bottom	 : 20%;
+			margin-left	 	 : 25%;
+			margin-right	 : 25%;
+		}
+
+		.messagebox h1 {
+			font-size        : 14pt;
+			font-weight		 : bold;
+			margin			 : 0px;
+			padding-top	     : 10px;
+			text-indent		 : 10px;
+			background		 : url(images/v3/messageHeaderBackground.gif) repeat-x; 
+			height			 : 40px;
+		}
+
+		.messagebox p {
+			font-size        : 10pt;
+			font-weight		 : bold;
+			padding	     	 : 10px;
+			margin: 0px;
+		}
+		
+		.messagebox ul {
+			list-style       : none;
+			margin-left		 : 10px;
+			padding			 : 0;
+		}
+		.messagebox ul li {
+			margin-bottom	 : 10px;
+		}
+
+		.messagebox ul li a {
+			color			 : #0022AA;
+			font-size        : 10pt;
+			font-weight		 : bold;
+			margin-bottom	 : 4px;
+			display 		 : block;
+		}
+	</style> 	
+
+</head>
+
+<body>
+
+<div class="messagebox">
+	<h1>Access denied</h1>
+	<p>The page you requested was protected and you do not have enough credentials to view it.</p>
+	<ul>
+		<li>
+			<a href="$referer">Back to referring page</a>
+			Click here to go back to the page you came from if any
+		</li>
+		<li>
+			<a href="ExtranetLogin!logout.action?returnAddress=$this.urlEncode($referer, "UTF-8")">Logout</a>
+			Click here to logout if you wish to use another account
+		</li>
+	<ul>
+</div>
+
+ 
+</body>
+</html>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?> 
+<?xml:stylesheet type="text/xsl" href="ContentInput.xsl"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<xs:simpleType name="shortString">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="50"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="shortText">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="1024"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="fullText">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="30720"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="sex">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Choose sex"/>
+			<xs:enumeration value="Male"/>
+			<xs:enumeration value="Female"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="basicColor">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Red"/>
+			<xs:enumeration value="Green"/>
+			<xs:enumeration value="Yellow"/>
+			<xs:enumeration value="Blue"/>
+			<xs:enumeration value="White"/>
+			<xs:enumeration value="Black"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="movies">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Snatch"/>
+			<xs:enumeration value="Fight Club"/>
+			<xs:enumeration value="Lock Stock Two Smoking Barrels"/>
+			<xs:enumeration value="Fifth element"/>
+			<xs:enumeration value="Leon"/>
+			<xs:enumeration value="The Godfather"/>
+		</xs:restriction>
+	</xs:simpleType>	
+
+	<xs:complexType name="Article">
+		<xs:all>
+			<xs:element name="Name" type="shortString"/>
+			<xs:element name="Attributes">
+				<xs:complexType>
+					<xs:all>
+						<xs:element name="Title" type="shortString"/>
+						<xs:element name="NavigationTitle" type="shortString"/>
+						<!-- Here is an example on how to extend the schema with helpful attributes for the GUI -->
+						<xs:element name="Leadin" type="shortText">
+							<xs:annotation>
+								<xs:appinfo>
+									<extraParameters> 
+										<externalName>Title</externalName>  
+										<description>The titel is what will catch the readers eye...</description>  
+									</extraParameters>
+								</xs:appinfo>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="Text" type="fullText"/>
+						<xs:element name="Sex" type="sex"/>
+						<xs:element name="PreferredColor" type="basicColor"/>
+						<xs:element name="FavouriteMovies" type="movies"/>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+</xs:schema>

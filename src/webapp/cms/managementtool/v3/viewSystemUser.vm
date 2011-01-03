@@ -1,0 +1,204 @@
+#beginCommonToolV3("tool.managementtool.viewSystemUser.header" "$!userName" "" false true true)
+
+<script type="text/javascript" src="script/OptionTransfer.js"></script>
+
+<script type="text/javascript">
+
+	var opt1 = new OptionTransfer("unassignedRoleNameList","roleName");
+	opt1.setAutoSort(true);
+	opt1.setDelimiter(",");
+	opt1.saveRemovedLeftOptions("removedLeft");
+	opt1.saveRemovedRightOptions("removedRight");
+	opt1.saveAddedLeftOptions("addedLeft");
+	opt1.saveAddedRightOptions("addedRight");
+	opt1.saveNewLeftOptions("newLeft");
+	opt1.saveNewRightOptions("newRight");
+	
+	var opt2 = new OptionTransfer("unassignedGroupNameList","groupName");
+	opt2.setAutoSort(true);
+	opt2.setDelimiter(",");
+	opt2.saveRemovedLeftOptions("removedLeft");
+	opt2.saveRemovedRightOptions("removedRight");
+	opt2.saveAddedLeftOptions("addedLeft");
+	opt2.saveAddedRightOptions("addedRight");
+	opt2.saveNewLeftOptions("newLeft");
+	opt2.saveNewRightOptions("newRight");
+	
+	function save(form)
+	{
+		var roleList = document.getElementById("roleName");
+		
+	  	rolesNode = roleList.options;
+	  	for(i=0;i<rolesNode.length;i++)
+		{
+			currentNode = rolesNode[i];
+			currentNode.selected = true;
+		}
+		
+		var groupList = document.getElementById("groupName");
+		
+	  	groupsNode = groupList.options;
+	  	for(i=0;i<groupsNode.length;i++)
+		{
+			currentNode = groupsNode[i];
+			currentNode.selected = true;
+		}
+
+		form.submit();
+	}
+
+	function saveAndExit(form, action)
+	{
+		form.action = action;
+		save(form);
+	}
+
+</script>
+
+#menuToolbar("$!primaryKey" $buttons $rightButtons) 
+
+#if($supportsUpdate == false)
+	#set($readonly = "disabled")
+#else
+	#set($readonly = "")
+#end
+
+<div id="igEditArea" class="igScrollArea">
+
+<form method="POST" name="inputForm" action="UpdateSystemUser!v3.action">
+<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+<input type="hidden" name="userName" value="$!userName">
+<fieldset class="ig-fieldset">
+
+	#editTextFieldCSS("SystemUser.userName" "userName" "$!userName" "51" true "disabled")
+	#editTextFieldCSS("SystemUser.password" "password" "********" "51" true "disabled")
+	#editTextFieldCSS("SystemUser.firstName" "firstName" "$!firstName" "51" true, "$readonly")
+	#editTextFieldCSS("SystemUser.lastName" "lastName" "$!lastName" "51" true "$readonly")
+	#editTextFieldCSS("SystemUser.email" "email" $!email "51" true "$readonly")
+	<br/>
+	<a href="UpdateSystemUser!changePasswordV3.action?userName=$formatter.encodeURI($userName)">Send me a new password</a>
+		
+	#labelCSS("tool.managementtool.userManageRoles.label" "ig-section-label")
+		
+	<div class="ig-row">
+		<table border="0">
+		<tr>
+		  <td>
+		  	$ui.getString("tool.managementtool.availableRoles.label")<br/>
+			<SELECT $readonly id="unassignedRoleNameList" NAME="unassignedRoleNameList" MULTIPLE SIZE="10" onDblClick="opt1.transferRight()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+	        #if($supportsUpdate)
+	          	#foreach ($roleVO in $allRoles)
+					#set($hasAccessToManageUsersInRole = $this.hasAccessTo("Role.ManageUsers", "$roleVO.name"))
+					#set($checked = "")
+					#foreach ($assignedRoleVO in $assignedRoles)
+						#if($assignedRoleVO.name == $roleVO.name)
+							#set($checked = "checked")
+						#end 
+					#end
+					
+					#if($checked == "")
+						<option value="$roleVO.name" title="$roleVO.name" #if(!$hasAccessToManageUsersInRole)disabled="1" style="color:#999; background:white;"#end>$roleVO.name</option>
+					#end
+				#end
+			#else
+				<option value="" disabled="1" style="color:#999;>No need to show roles</option>
+			#end	
+	        </select>
+		  </td>
+		  <td align="center"><br>
+	        <INPUT TYPE="button" id="roleRight" NAME="roleRight" VALUE="&gt;&gt;" ONCLICK="opt1.transferRight()" style="width:60px; font-family: verdana; font-size: 10px;"><BR><BR>
+			<INPUT TYPE="button" id="rolesRight" NAME="roleRight" VALUE="All &gt;&gt;" ONCLICK="opt1.transferAllRight()" style="width:60px; font-family: verdana; font-size: 10px;"><BR><BR>
+			<INPUT TYPE="button" id="roleLeft" NAME="roleLeft" VALUE="&lt;&lt;" ONCLICK="opt1.transferLeft()" style="width:60px; font-family: verdana; font-size: 10px;"><BR><BR>
+			<INPUT TYPE="button" id="rolesLeft" NAME="roleLeft" VALUE="All &lt;&lt;" ONCLICK="opt1.transferAllLeft()" style="width:60px; font-family: verdana; font-size: 10px;">
+		  </td>
+		  <td>
+		  	$ui.getString("tool.managementtool.assignedRoles.label")<br/>
+		  	<SELECT $readonly id="roleName" name="roleName" multiple size="10" onDblClick="opt1.transferLeft()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+	        	#foreach ($assignedRoleVO in $assignedRoles)
+					#set($hasAccessToManageUsersInRole = $this.hasAccessTo("Role.ManageUsers", "$assignedRoleVO.name"))
+					<option value="$assignedRoleVO.name" title="$assignedRoleVO.name" #if(!$hasAccessToManageUsersInRole)disabled="1" style="color:#999; background:white;"#end>$assignedRoleVO.name</option>
+				#end
+		    </select>
+		  </td>
+		</tr>
+		</table>
+	</div>
+	
+	#labelCSS("tool.managementtool.userManageGroups.label" "ig-section-label")
+
+	<div class="ig-row">
+		<table>
+		<tr>
+		    <td>
+		    	$ui.getString("tool.managementtool.availableGroups.label")<br/>
+		    	<SELECT $readonly id="unassignedGroupNameList" NAME="unassignedGroupNameList" MULTIPLE SIZE="10" onDblClick="opt2.transferRight()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+		        #if($supportsUpdate)
+		          	#foreach ($groupVO in $allGroups)
+						#set($hasAccessToManageUsersInGroup = $this.hasAccessTo("Group.ManageUsers", "$groupVO.name"))
+						#set($checked = "")
+						#foreach ($assignedGroupVO in $assignedGroups)
+							#if($assignedGroupVO.name == $groupVO.name)
+								#set($checked = "checked")
+							#end 
+						#end
+						
+						#if($checked == "")
+							<option value="$groupVO.name" title="$groupVO.name" #if(!$hasAccessToManageUsersInGroup)disabled="1" style="color:#999; background:white;"#end>$groupVO.name</option>
+						#end
+					#end
+				#else
+					<option value="">No need to show groups</option>
+				#end						
+		        </select>
+		    </td>
+		    <td align="center"><br>
+		        <INPUT TYPE="button" id="groupRight" NAME="groupRight" VALUE="&gt;&gt;" ONCLICK="opt2.transferRight()" style="width:60px; font-family: verdana; font-size: 10px;"><BR><BR>
+				<INPUT TYPE="button" id="groupsRight" NAME="groupsRight" VALUE="All &gt;&gt;" ONCLICK="opt2.transferAllRight()" style="width:60px; font-family: verdana; font-size: 10px;"><BR><BR>
+				<INPUT TYPE="button" id="groupLeft" NAME="groupLeft" VALUE="&lt;&lt;" ONCLICK="opt2.transferLeft()" style="width:60px; font-family: verdana; font-size: 10px;"><BR><BR>
+				<INPUT TYPE="button" id="groupsLeft" NAME="groupsLeft" VALUE="All &lt;&lt;" ONCLICK="opt2.transferAllLeft()" style="width:60px; font-family: verdana; font-size: 10px;">
+		    </td>
+		    <td>
+		    	$ui.getString("tool.managementtool.assignedGroups.label")<br/>
+		      	<SELECT $readonly id="groupName" name="groupName" multiple size="10" onDblClick="opt2.transferLeft()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+		        	#foreach ($assignedGroupVO in $assignedGroups)
+		        		#set($hasAccessToManageUsersInGroup = $this.hasAccessTo("Group.ManageUsers", "$assignedGroupVO.name"))
+						<option value="$assignedGroupVO.name" title="$assignedGroupVO.name" #if(!$hasAccessToManageUsersInGroup)disabled="1" style="color:#999; background:white;"#end>$assignedGroupVO.name</option>
+					#end
+			    </select>
+		    </td>
+		</tr>
+		</table>
+	</div>
+	
+	<div class="ig-row">
+		<label class="ig-label-nl" for="contentTypeDefinitionId">$ui.getString("tool.managementtool.userContentTypeDefinition.label")</label>
+		<select name="contentTypeDefinitionId" class="ig-select">
+			<option value="">Choose type</option>
+			#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+				#set($selected = "")
+				#foreach ($assignedContentTypeDefinitionVO in $assignedContentTypeDefinitionVOList)
+					#if($assignedContentTypeDefinitionVO.id == $contentTypeDefinitionVO.id)
+						#set($selected = "selected")
+					#end 
+				#end
+				<option value="$contentTypeDefinitionVO.id" $selected>$contentTypeDefinitionVO.getName()</option>
+			#end
+		</select>
+	</div>
+		
+	</fieldset>
+
+</form>
+</div>
+
+#if($supportsUpdate)
+<script type="text/javascript">
+	//alert("Initializing form..");
+	opt1.init(document.inputForm);
+	opt2.init(document.inputForm);
+</script>
+#end
+
+#footerToolbar($footerButtons)
+
+#endCommonToolV3()

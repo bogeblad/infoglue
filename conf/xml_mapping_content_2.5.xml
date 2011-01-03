@@ -1,0 +1,307 @@
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN" 
+							"http://castor.codehaus.org/mapping.dtd">
+
+<mapping>
+
+<!--  Mapping for InfoGlueContentExport  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.InfoGlueExportImpl" identity="infoGlueExportId" key-generator="IDENTITY">
+    <description>InfoGlueContentExport</description>
+    <cache-type type="none"/>
+    <map-to xml="InfoGlueExport"/>
+    <field name="infoGlueExportId" type="java.lang.Integer">
+      	<bind-xml node="attribute"/>
+    </field>
+    <field name="rootContent" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl" collection="collection">
+      	<bind-xml node="element"/>
+    </field>
+    <!-- 
+    <field name="rootSiteNode" type="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl" collection="collection">
+      	<bind-xml node="element"/>
+    </field>
+    -->
+    <field name="contentTypeDefinitions" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl" collection="collection">
+      	<bind-xml node="element"/>
+    </field>
+    <field name="categories" type="org.infoglue.cms.entities.management.CategoryVO" collection="collection">
+      	<bind-xml node="element"/>
+    </field>
+
+  </class>
+
+
+<!--  Mapping for Language  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.LanguageImpl" identity="languageId" key-generator="IDENTITY">
+    <description>Language</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmLanguage"/>
+    <field name="languageId" type="java.lang.Integer">
+   	  <bind-xml node="attribute"/>
+    </field>
+    <field name="name" type="java.lang.String">
+      <bind-xml name="name" node="element"/>
+    </field>
+    <field name="languageCode" type="java.lang.String">
+      <bind-xml name="languageCode" node="element"/>
+    </field>
+    <field name="charset" type="java.lang.String">
+      <bind-xml name="charset" node="element"/>
+    </field>
+  </class> 
+
+
+<!--  Mapping for ContentTypeDefinition  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl" identity="contentTypeDefinitionId" key-generator="IDENTITY">
+    <description>ContentTypeDefinition</description>
+    <cache-type type="unlimited" capacity="1000"/>
+    <map-to table="cmContentTypeDefinition"/>
+    <field name="contentTypeDefinitionId" type="java.lang.Integer">
+      <bind-xml node="attribute"/>
+    </field>
+    <field name="name" type="java.lang.String">
+      <bind-xml name="name" node="element"/>
+    </field>
+    <field name="schemaValue" type="java.lang.String">
+      <bind-xml name="schemaValue" node="element"/>
+    </field>
+    <field name="type" type="java.lang.Integer">
+      <bind-xml name="type" node="element"/>
+    </field>
+    <!--
+    <field name="contents" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl" lazy="true" collection="collection">
+      <sql many-key="contentTypeDefinitionId"/>
+    </field>
+    -->
+  </class>
+
+<!--  Mapping for Category  -->
+	<class name="org.infoglue.cms.entities.management.CategoryVO" identity="categoryId" key-generator="IDENTITY">
+		<description>Category</description>
+		<cache-type type="unlimited" capacity="10000"/>
+		<map-to table="cmCategory"/>
+		<field name="categoryId" type="java.lang.Integer">
+			<bind-xml node="attribute"/>
+		</field>
+		<field name="name" type="java.lang.String">
+			<bind-xml name="name" node="element"/>
+		</field>
+		<field name="displayName" type="java.lang.String">
+			<bind-xml name="displayName" node="element"/>
+		</field>
+		<field name="description" type="java.lang.String">
+		    <bind-xml name="description" node="element"/>
+		</field>
+		<field name="active" type="boolean" get-method="isActive" set-method="setActive">
+      		<bind-xml name="active" node="element"/>
+		</field>
+		<field name="children" type="org.infoglue.cms.entities.management.CategoryVO" collection="collection">
+      		<bind-xml name="children" node="element"/>
+    	</field>
+	</class>
+
+    <!--  Mapping for ContentCategory  -->
+	<class name="org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl" identity="contentCategoryId" key-generator="IDENTITY">
+		<description>ContentCategory</description>
+		<cache-type type="unlimited" capacity="10000"/>
+		<map-to table="cmContentCategory"/>
+		<field name="contentCategoryId" type="java.lang.Integer">
+			<bind-xml node="attribute"/>
+		</field>
+		<field name="attributeName" type="java.lang.String">
+			<bind-xml name="attributeName" node="element"/>
+		</field>
+		<field name="contentVersionId" type="java.lang.Integer">
+			<bind-xml name="contentVersionId" node="element"/>
+		</field>
+		<field name="categoryId" type="java.lang.Integer">
+			<bind-xml name="categoryId" node="element"/>
+		</field>
+	</class>
+
+    <!--  Mapping for PropertiesCategory  -->
+	<class name="org.infoglue.cms.entities.management.impl.simple.PropertiesCategoryImpl" identity="propertiesCategoryId" key-generator="IDENTITY">
+		<description>PropertiesCategory</description>
+		<cache-type type="unlimited" capacity="10000"/>
+		<map-to table="cmPropertiesCategory"/>
+		<field name="propertiesCategoryId" type="java.lang.Integer">
+			<sql name="propertiesCategoryId" type="integer" dirty="check" />
+		</field>
+		<field name="attributeName" type="java.lang.String">
+			<bind-xml name="attributeName" node="element"/>
+		</field>
+		<field name="entityName" type="java.lang.String">
+			<bind-xml name="entityName" node="element"/>
+		</field>
+		<field name="entityId" type="java.lang.Integer">
+			<bind-xml name="entityId" node="element"/>
+		</field>
+		<!--
+		<field name="categoryId" type="java.lang.Integer">
+			<bind-xml name="categoryId" node="element"/>
+		</field>
+		-->
+	</class>
+
+<!-- ************************************* -->
+<!-- ****   CONTENT SPECIFIC PARTS   **** -->
+<!-- ************************************* -->
+
+
+<!--  Mapping for Content  -->
+  <class name="org.infoglue.cms.entities.content.impl.simple.ContentImpl" identity="contentId" key-generator="IDENTITY">
+    <description>Content</description>
+    <cache-type type="unlimited" capacity="5000"/>
+    <map-to table="cmContent"/>
+    <field name="contentId" type="java.lang.Integer">
+      <bind-xml node="attribute"/>
+    </field>
+    <field name="name" type="java.lang.String">
+      <bind-xml name="name" node="element"/>
+    </field>
+    <field name="publishDateTime" type="java.util.Date">
+      <bind-xml name="publishDateTime" node="element"/>
+    </field>
+    <field name="expireDateTime" type="java.util.Date">
+      <bind-xml name="expireDateTime" node="element"/>
+    </field>
+    <field name="isBranch" type="java.lang.Boolean">
+      <bind-xml name="isBranch" node="element"/>
+    </field>
+    <field name="isProtected" type="java.lang.Integer">
+      <bind-xml name="isProtected" node="element"/>
+    </field>
+    
+    <field name="contentTypeDefinitionId" type="java.lang.Integer">
+      <bind-xml name="contentTypeDefinitionId" node="element"/>
+    </field>
+
+	<!--    
+    <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
+      <bind-xml name="contentTypeDefinition" node="element"/>
+    </field>
+	-->
+    <!--
+    <field name="parentContent" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl">
+      <sql name="parentContentId"/>
+      <bind-xml name="parentContent" node="element"/>
+    </field>
+    <field name="repository" type="org.infoglue.cms.entities.management.impl.simple.RepositoryImpl">
+      <sql name="repositoryId"/>
+      <bind-xml name="repository" node="element"/>
+    </field>
+	-->
+	<!-- 
+    <field name="repositoryId" type="java.lang.Integer">
+      <bind-xml name="repositoryId" node="element"/>
+    </field>
+	 -->
+    <field name="children" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl" collection="collection">
+      <bind-xml name="children" node="element"/>
+    </field>
+    <field name="contentVersions" type="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" lazy="true" collection="collection">
+      <bind-xml name="contentVersions" node="element"/>
+    </field>
+    <field name="creator" type="java.lang.String">
+      <bind-xml name="creator" node="element"/>
+    </field>
+    <!--
+    <field name="relatedContents" type="org.infoglue.cms.entities.content.impl.simple.ContentRelationImpl" lazy="true" collection="collection">
+      <sql many-key="sourceContentId"/>
+      <bind-xml name="relatedContents" node="element"/>
+    </field>
+    <field name="relatedByContents" type="org.infoglue.cms.entities.content.impl.simple.ContentRelationImpl" lazy="true" collection="collection">
+      <sql many-key="destinationContentId"/>
+      <bind-xml name="relatedByContents" node="element"/>
+    </field>
+    -->
+  </class>
+
+<!--  Mapping for ContentVersion  -->
+  <class name="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" identity="contentVersionId" key-generator="IDENTITY">
+    <description>ContentVersion</description>
+    <cache-type type="unlimited" capacity="10000"/>
+    <map-to table="cmContentVersion"/>
+    <field name="contentVersionId" type="java.lang.Integer">
+      <bind-xml node="attribute"/>
+    </field>
+    <field name="stateId" type="java.lang.Integer">
+      <bind-xml name="stateId" node="element"/>
+    </field>
+    <field name="modifiedDateTime" type="java.util.Date">
+      <bind-xml name="modifiedDateTime" node="element"/>
+    </field>
+    <field name="versionComment" type="java.lang.String">
+      <bind-xml name="versionComment" node="element"/>
+    </field>
+    <field name="isCheckedOut" type="java.lang.Boolean">
+      <bind-xml name="isCheckedOut" node="element"/>
+    </field>
+    <field name="isActive" type="java.lang.Boolean">
+      <bind-xml name="isActive" node="element"/>
+    </field>
+    <!--
+    <field name="owningContent" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl">
+      <sql name="contentId"/>
+      <bind-xml name="owningContent" node="element"/>
+    </field>
+    -->
+    <field name="language" type="org.infoglue.cms.entities.management.impl.simple.LanguageImpl">
+      <bind-xml name="language" node="element"/>
+    </field>
+    <field name="versionModifier" type="java.lang.String">
+      <bind-xml name="versionModifier" node="element"/>
+    </field>
+    <field name="digitalAssets" type="org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl" collection="collection">
+      <bind-xml name="digitalAssets" node="element"/>
+    </field>
+    <field name="escapedVersionValue" type="java.lang.String">
+      <bind-xml name="escapedVersionValue" node="element"/>
+    </field>
+
+    <field name="contentCategories" type="org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl" collection="collection">
+      <bind-xml name="contentCategories" node="element"/>
+    </field>
+    
+  </class>
+
+<!--  Mapping for DigitalAsset  -->
+  <class name="org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl" identity="digitalAssetId" key-generator="IDENTITY">
+    <description>DigitalAsset</description>
+    <cache-type type="unlimited" capacity="10000"/>
+    <map-to table="cmDigitalAsset"/>
+    <field name="digitalAssetId" type="java.lang.Integer">
+      <bind-xml node="attribute"/>
+    </field>
+    <field name="assetFileName" type="java.lang.String">
+      <bind-xml name="assetFileName" node="element"/>
+    </field>
+    <field name="assetKey" type="java.lang.String">
+      <bind-xml name="assetKey" node="element"/>
+    </field>
+    <field name="assetFilePath" type="java.lang.String">
+      <bind-xml name="assetFilePath" node="element"/>
+    </field>
+    <field name="assetContentType" type="java.lang.String">
+      <bind-xml name="assetContentType" node="element"/>
+    </field>
+    <field name="assetFileSize" type="java.lang.Integer">
+      <bind-xml name="assetFileSize" node="element"/>
+    </field>
+    <!--
+    <field name="contentVersions" type="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" lazy="true" collection="collection">
+      <sql many-key="digitalAssetId" many-table="cmContentVersionDigitalAsset"/>
+    </field>
+    -->
+    <field name="assetBytes" type="bytes" handler="org.infoglue.cms.util.handlers.DigitalAssetBytesHandler">
+      <bind-xml name="assetBytes" node="element"/>
+    </field>
+	<!--
+    <field name="assetBlob" type="stream" >
+      <sql name="assetBlob" type="blob" dirty="ignore" />
+      <bind-xml name="assetBlob" node="element"/>
+    </field>
+    -->
+  </class>
+    
+      
+</mapping>
+

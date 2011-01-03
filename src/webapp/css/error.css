@@ -1,0 +1,32 @@
+<!-- ************* -->
+<!-- body elements -->
+<!-- ************* -->
+
+body { 
+	color            : #123456;
+	background-color : #F3EFEC;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+}
+
+td {
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 8pt;
+}
+
+<!-- ************* -->
+<!-- Links -->
+<!-- ************* -->
+a 
+{
+  text-decoration:none;
+  color: #0022AA;
+}
+a:hover
+{
+    text-decoration:underline;
+}
+a:active
+{
+	font: bold;
+}

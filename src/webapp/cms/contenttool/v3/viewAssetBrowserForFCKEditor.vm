@@ -1,0 +1,262 @@
+#beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogHeader" "" "" false false $!disableCloseButton)
+
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+
+	<script type="text/javascript" src="script/embla/admin.js"></script>
+
+<script type="text/javascript">
+<!--
+	function refreshView(viewName)
+	{
+		//alert("viewName:" + viewName);
+		if(viewName == "contentVersionAssets")
+		{	
+			$("#contentVersionAssetsFrame").get(0).contentWindow.location.reload(true);
+		}
+	}
+	
+	function resize()
+	{
+		var dimensionsWidth = $(window).width();
+		var dimensionsHeight = $(window).height();
+		var offsetTop = $("#tabsContainer").offset().top;
+		var availableHeight = dimensionsHeight - offsetTop - $("#footertoolbar").height();
+		$("#tabsContainer").height(availableHeight);
+		
+	  	//alert("dimensionsWidth:" + dimensionsWidth);
+	  	if(dimensionsWidth != 0)
+	  	{
+			$(".inlineTabDiv").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+			$(".inlineTabDiv > iframe").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+		}
+		else
+		{
+			setTimeout("resize()", 300);
+		}
+	}
+	
+
+	$(document).ready(function(){
+		$("#tabsContainer").tabs( { 
+			show:function(e, ui) { 
+				if(ui.index > 0) 
+					$(".attachAsset").parent().parent().hide();
+				else
+					$(".attachAsset").parent().parent().show();
+				/*resizeInlineTabDivs();*/ 
+				},
+			select:function(e, ui) { 
+				//alert("ui: " + ui.index);
+				if(ui.index == 1)
+				{
+					if($("#latestAssetsFrame").attr("src") == "")
+					{
+						#if($contentVO.id)
+			 				$("#latestAssetsFrame").attr("src", "SearchContent!latestInlineAssetsV3.action?repositoryId=${contentVO.repositoryId}&assetTypeFilter=$assetTypeFilter"); 
+						#else
+					  		$("#latestAssetsFrame").attr("src", "SearchContent!latestInlineAssetsV3.action?assetTypeFilter=$assetTypeFilter"); 
+						#end
+			  		}
+			  	}
+				else if(ui.index == 2)
+		  		{
+		  			if($("#repositoryBrowserFrame").attr("src") == "")
+		  			{
+			  			#if($contentVO.id)
+					  		$("#repositoryBrowserFrame").attr("src", "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=$contentVO.repositoryId&contentId=$contentId&languageId=$languageId&assetTypeFilter=$assetTypeFilter"); 
+						#else
+				  			$("#repositoryBrowserFrame").attr("src", "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?languageId=$languageId&assetTypeFilter=$assetTypeFilter"); 
+						#end
+					}	
+		  		}
+		  		else if(ui.index == 3)
+		  		{
+			  		if($("#contentVersionAssetSearchFrame").attr("src") == "")
+			  		{
+			  			#if($contentVO.id)
+				  			$("#contentVersionAssetSearchFrame").attr("src", "SearchContent!inputInlineAssetV3.action?repositoryId=${contentVO.repositoryId}&assetTypeFilter=$assetTypeFilter"); 
+						#else
+				  			$("#contentVersionAssetSearchFrame").attr("src", "SearchContent!inputInlineAssetV3.action?assetTypeFilter=$assetTypeFilter"); 
+						#end
+					}	
+			  	}
+			} 
+		});
+		setTimeout("init();", 50);
+		setTimeout("resize();", 100);
+		//setTimeout("resizeInlineTabDivs()", 100);
+	});
+
+	var txtUrl = "";
+	function getTextUrl()
+	{
+		return txtUrl;
+	}
+
+	function getRequestParameter(url, parameterName)
+	{
+		var value = "";
+		var valueIndex = url.indexOf(parameterName + "=");
+		if(valueIndex > -1)
+		{
+			var endIndex = url.indexOf("&", valueIndex);
+			if(endIndex != -1)
+				value = url.substring(valueIndex + parameterName.length + 1, endIndex);
+			else
+				value = url.substring(valueIndex + parameterName.length + 1);
+		}
+		return value;
+	}
+	
+	function init() 
+	{
+		#if($contentVO)
+			//alert(top.opener.document.title);
+			
+			var txtUrl = "";
+			if(typeof(window.top.opener.CKEDITOR) != 'undefined')
+			{
+				var instanceName = getRequestParameter(window.location.href, "CKEditor");
+				if(window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.url)
+					txtUrl = window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.url._.initValue;
+				else if(window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.txtUrl)
+					txtUrl = window.top.opener.CKEDITOR.instances[instanceName]._.filebrowserSe.getDialog()._.contents.info.txtUrl._.initValue;
+			}
+			else
+			{
+				if(top.opener.document.getElementById("txtLnkUrl"))
+					txtUrl = top.opener.document.getElementById("txtLnkUrl").value;
+			}
+			
+			var contentId = getRequestParameter(txtUrl, "contentId");
+			if(!contentId || contentId == "")
+				contentId = "$!contentId";
+			var languageId = getRequestParameter(txtUrl, "languageId");
+			var assetKey = getRequestParameter(txtUrl, "assetKey");
+			
+			document.getElementById("contentVersionAssetsFrame").src = "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey + "&treatAsLink=$treatAsLink&assetTypeFilter=$assetTypeFilter";
+		#end
+	};
+	
+	var selectedContentId;
+	var selectedAssetKey;
+	var selectedAssetUrl;
+	function assetMarked(contentId, assetKey, assetUrl)
+	{
+		//alert("Asset was marked:" + contentId + assetKey + assetUrl);
+		selectedContentId = contentId;
+		selectedAssetKey = assetKey;
+		selectedAssetUrl = assetUrl;
+	}
+	
+	function useSelectedAsset()
+	{
+		if(selectedAssetKey == "")
+			alert("$ui.getString("tool.contenttool.assetDialog.mustChooseAttachment")");
+		else
+		{
+			var url = "DownloadAsset.action?contentId=" + selectedContentId + "&languageId=$languageId&assetKey=" + selectedAssetKey;
+	
+			if(window.top.opener)
+		    {
+				#if($prefferedWYSIWYG == "ckeditor3")
+					window.top.opener.CKEDITOR.tools.callFunction( '$CKEditorFuncNum', url, '');
+				#else
+					window.top.opener.SetUrl( url );
+				#end
+				window.top.close();
+				window.top.opener.focus();
+			}
+			else if(parent)
+			{
+				#if($prefferedWYSIWYG == "ckeditor3")
+					parent.CKEDITOR.tools.callFunction( '$CKEditorFuncNum', url, '');
+				#else
+					parent.SetUrl( url );
+				#end
+			}
+		}
+	}
+	
+	function onOk(contentId, assetKey)
+	{
+		if(assetKey == "")
+			alert("$ui.getString("tool.contenttool.assetDialog.mustChooseAttachment")");
+		else
+		{
+			var url = "DownloadAsset.action?contentId=" + contentId + "&languageId=$languageId&assetKey=" + assetKey;
+	
+			if(window.top.opener)
+		    {
+				#if($prefferedWYSIWYG == "ckeditor3")
+					window.top.opener.CKEDITOR.tools.callFunction( '$CKEditorFuncNum', url, '');
+				#else
+					window.top.opener.SetUrl( url );
+				#end
+				window.top.close();
+				window.top.opener.focus();
+			}
+			else if(parent)
+			{
+				#if($prefferedWYSIWYG == "ckeditor3")
+					parent.CKEDITOR.tools.callFunction( '$CKEditorFuncNum', url, '');
+				#else
+					parent.SetUrl( url );
+				#end
+			}
+		}
+	}
+-->
+</script>		
+</head>
+
+<body class="generaltooledit yui-skin-sam">
+
+<div onfocus="this.blur();">
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3 style="text-indent: 16px;">$ui.getString("tool.contenttool.assetDialog.assetDialogHeader")</h3>
+
+	<div id="tabsContainer" class="flora">      
+
+		<ul>
+			#if($contentVO.id)
+		    <li><a href="#currentContentAssetsTab"><span>$ui.getString("tool.contenttool.assetDialog.currentContentAssetsTabLabel")</span></a></li>
+	    	#end
+	        <li><a href="#latestUploadedTab"><span>$ui.getString("tool.contenttool.assetDialog.latestAssetsTabLabel")</span></a></li>	        
+	        <li><a href="#repositoryBrowserTab"><span>$ui.getString("tool.contenttool.assetDialog.repositoryBrowserTabLabel")</span></a></li>	        
+	        <li><a href="#searchTab"><span>$ui.getString("tool.contenttool.assetDialog.searchAssetsTabLabel")</span></a></li>	        
+	    </ul>
+		#if($contentVO.id)
+		<div id="currentContentAssetsTab" class="inlineTabDiv">
+			#if($oldContentId > 0)
+				<iframe frameborder="0" name="contentVersionAssetsFrame" id="contentVersionAssetsFrame" src="" width="670" height="410" ></iframe>
+			#else
+				<iframe frameborder="0" name="contentVersionAssetsFrame" id="contentVersionAssetsFrame" src="" width="670" height="410" ></iframe>
+			#end
+		</div>
+		#end
+		
+		<div id="latestUploadedTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="latestAssetsFrame" id="latestAssetsFrame" src="" width="670" height="410" ></iframe>
+		</div>
+		
+		<div id="repositoryBrowserTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="repositoryBrowserFrame" id="repositoryBrowserFrame" src="" width="670" height="410" ></iframe>
+		</div>
+			
+		<div id="searchTab" class="inlineTabDiv">
+			<iframe frameborder="0" name="contentVersionAssetSearchFrame" id="contentVersionAssetSearchFrame" src="" width="670" height="410" ></iframe>
+		</div>
+
+	</div>
+				
+	#lightFooterToolbar($footerButtons)
+
+</div>
+
+#endCommonToolV3()

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginContentTool("tool.contenttool.contentDetailsHeader" "Submit for publish" "" "0" "0" "0")
+
+<script language="JavaScript">
+<!--
+		function checkMarkedVersions()
+		{
+			var listForm = document.listForm;
+			var lengthsel = null;
+			var lengthsit = null;
+			var ret = 0;
+			if (listForm.sel != null)
+				lengthsel = listForm.sel.length;
+			if (listForm.sit != null)
+				lengthsit = listForm.sit.length;
+
+			if (lengthsel == null && listForm.sel != null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	ret++;
+		  	}
+			else
+			{
+			  	for (i=0; i<lengthsel; i++)
+			   		if (listForm.sel[i].checked)
+			    		ret++;
+			}
+			    		
+			if (lengthsit == null && listForm.sit != null)
+		  	{
+		  		if (listForm.sit.checked)
+			    	ret++;
+		  	}
+		  	else
+		  	{
+			  	for (i=0; i<lengthsit; i++)
+			   		if (listForm.sit[i].checked)
+			    		ret++;
+			}
+		    		
+			return ret;
+		}
+		
+		function checkAll()
+		{
+		 	var field = document.listForm.sel;
+		 	for (i = 0; i < field.length; i++)
+				field[i].checked = true ;
+		}
+		
+		function uncheckAll()
+		{
+			var field = document.listForm.sel;
+			for (i = 0; i < field.length; i++)
+				field[i].checked = false ;
+		}
+
+		
+		function submitToPublish(attemptDirectPublishing)
+		{
+			var listForm = document.listForm;
+			var commentElm = document.getElementById("xversionComment");
+			
+			/*
+			if (commentElm.value == "")
+			{
+				alert('You must state a comment');
+			  	return;
+			}
+			*/
+			if (commentElm.value.length > 255)
+			{
+				alert('The comment is to long - only 255 characters allowed.');
+			  	return;
+			}
+			
+			var overrideVersionModifyerElm = document.getElementById("xoverrideVersionModifyer");
+			if (checkMarkedVersions() == 0)
+			{
+				alert('Select one or more versions to publish');
+			  	return;
+			}
+			else
+			{
+				listForm.action = "UnpublishContentVersion!unpublishAll.action"
+				listForm.versionComment.value = commentElm.value;
+				if(overrideVersionModifyerElm.checked == true)
+					listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+				else
+					listForm.overrideVersionModifyer.value = "false";
+				
+				listForm.attemptDirectPublishing.value = attemptDirectPublishing;
+				listForm.submit();
+			}
+		}
+-->
+</script>
+
+#set($versions = $contents)
+
+<div class="fullymarginalized">
+
+		#if($this.hasAccessTo("PublishingTool.Read") && $this.hasAccessTo("Repository.Read", "$!repositoryId"))
+		<a href="javascript:submitToPublish('true');">
+		<img src="$ui.getString("images.contenttool.buttons.unpublishVersions")" width="60" height="25" border="0">
+		</a>
+		#end
+		
+		<a href="javascript:submitToPublish('false');">
+		<img src="$ui.getString("images.contenttool.buttons.requestUnpublishVersions")" width="60" height="25" border="0">
+		</a>
+		
+		<a href="ViewContent.action?contentId=$contentId&repositoryId=$!repositoryId">
+		<img src="$ui.getString("images.contenttool.buttons.cancel60x25")" width="60" height="25" border="0">
+		</a> &nbsp;&nbsp;
+		
+		#if($versions.size() > 1)
+			<a href="javascript:checkAll();">
+			<img src="$ui.getString("images.contenttool.buttons.checkAll60x25")" width="60" height="25" border="0">
+			</a>
+			
+			<a href="javascript:uncheckAll();">
+			<img src="$ui.getString("images.contenttool.buttons.uncheckAll60x25")" width="60" height="25" border="0">
+			</a>
+		#end
+
+		<br/><br/>
+		
+<table width="95%" border="0">
+<tr>
+	<td>
+		<table width="300" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
+			</tr>		
+			<tr>
+				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			</tr>
+			<tr>
+				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "normaltextarea")</td>
+			</tr>		
+			<tr>
+				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			</tr>
+			<tr>
+				<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
+			</tr>	
+			
+		</table>
+	</td>
+	<td align="right" valign="top">
+		<br><br><br>
+		
+	</td>
+</tr>
+<tr>
+	<td colspan="2">
+		<br/><br/>
+		All published versions for the marked contents will be submitted for unpublishing.<br><br>
+	</td>
+</tr>
+<tr>
+	<td colspan="2">
+
+#set($lvBorder = 0) 
+#set($lvConstraint = -1) 
+#lvHead(["Name", "Owner"] "Publish items" "" "" "")
+
+#hiddenField("contentId" $contentId)
+#hiddenField("versionComment" $!versionComment)
+#hiddenField("overrideVersionModifyer" $!overrideVersionModifyer)
+#hiddenField("attemptDirectPublishing" $!attemptDirectPublishing)
+#hiddenField("repositoryId" $!repositoryId)
+
+#set($cnt = 0)
+#foreach($cv in $versions)
+
+	#set( $row = ["$cv.getContentId() - $cv.getName()", ""] )
+	#set($cnt = $cnt + 1)
+	#lvAddRow($row $cnt $cv.getContentId())
+
+#end
+
+#lvEnd()
+</td>
+</tr>
+</table>
+	
+		<br/><br/>
+		
+		#if($this.hasAccessTo("PublishingTool.Read") && $this.hasAccessTo("Repository.Read", "$!repositoryId"))
+		<a href="javascript:submitToPublish('true');">
+		<img src="$ui.getString("images.contenttool.buttons.unpublishVersions")" width="60" height="25" border="0">
+		</a>
+		#end
+		
+		<a href="javascript:submitToPublish('false');">
+		<img src="$ui.getString("images.contenttool.buttons.requestUnpublishVersions")" width="60" height="25" border="0">
+		</a>
+		
+		<a href="ViewContent.action?contentId=$contentId&repositoryId=$!repositoryId">
+		<img src="$ui.getString("images.contenttool.buttons.cancel60x25")" width="60" height="25" border="0">
+		</a> &nbsp;&nbsp;
+		
+		#if($versions.size() > 1)
+			<a href="javascript:checkAll();">
+			<img src="$ui.getString("images.contenttool.buttons.checkAll60x25")" width="60" height="25" border="0">
+			</a>
+			
+			<a href="javascript:uncheckAll();">
+			<img src="$ui.getString("images.contenttool.buttons.uncheckAll60x25")" width="60" height="25" border="0">
+			</a>
+		#end
+
+		<br/><br/>
+	
+</div>
+
+#endContentTool()
+

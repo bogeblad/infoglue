@@ -1,0 +1,150 @@
+#define( $headerMarkup )
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript" src="script/diff_match_patch.js"></script>
+	<script type="text/javascript">
+	<!--
+		var dmp = new diff_match_patch();
+	
+		function calculateDiffSummary(version1Id, version2Id)
+		{
+		  	var element = document.getElementById("summaryDiv");
+		  	var diffDivElement = document.getElementById("diffDiv");
+			
+		  	//alert("version1Id:" + version1Id);
+		  	//alert("version2Id:" + version2Id);
+		  	var text1 = document.getElementById("text_" + version1Id).value;
+		  	var text2 = document.getElementById("text_" + version2Id).value;
+		  	//alert("text1:" + text1);
+		  	//alert("text2:" + text2);
+		  			
+		  	dmp.Diff_Timeout = parseFloat(3);
+		  	dmp.Diff_EditCost = parseFloat(4);
+		
+		  	var ms_start = (new Date()).getTime();
+		  	var d = dmp.diff_main(text1,text2);
+		  	var ms_end = (new Date()).getTime();
+		
+		  	dmp.diff_cleanupSemantic(d);
+		  	
+		  	var diffConclusionArray = countChanges(d);
+	
+			var ds = dmp.diff_prettyHtml(d);
+			ds = ds.replace(/<article/g, "<br/><article");
+			ds = ds.replace(/&lt;article/g, "<br/>&lt;article");
+			ds = ds.replace(/&lt;attributes&gt;/g, "<br/>&lt;attributes&gt;<br/>");
+			ds = ds.replace(/]]&gt;/g, "<br/>]]&gt;<br/>");
+			ds = ds.replace(/CDATA\[/g, "CDATA[<br/>").replace(/&para;<BR>/g, "&nbsp;<br/>").replace(/#E6FFE6/g, "#99FF99").replace(/#FFE6E6/g, "#FF8888").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+
+			diffDivElement.innerHTML = "<p style='background-color: #CCEEff; margin: 0px; padding: 0px; font-family: courier new, courier, serif; font-size: 8pt;'>" + ds + "</p>";
+		  	
+			element.innerHTML = "Comparison results: <ins>" + diffConclusionArray[0] + " $ui.getString("tool.managementtool.deploymentQuick.additionsLabel")</ins>, <del>" + diffConclusionArray[1] + " $ui.getString("tool.managementtool.deploymentQuick.removalsLabel")</del>";
+		} 
+				
+		function countChanges(a)
+		{
+			var diffConclusionArray = [0,0];
+			for ( var x = 0; x < a.length; x++) 
+			{
+				var c = a[x][0];
+				switch (c) 
+				{
+					case DIFF_INSERT:
+						diffConclusionArray[0] = diffConclusionArray[0] + 1;
+						break;
+					case DIFF_DELETE:
+						diffConclusionArray[1] = diffConclusionArray[1] + 1;
+						break;
+				}
+			}
+			return diffConclusionArray;
+		}
+
+	
+		function compare()
+		{
+			var text1VersionId = "";
+			var text2VersionId = "";
+			
+			$('input[type=checkbox]').filter(':checked').each(function(index) {
+															if(text1VersionId == "")
+															 	text1VersionId = $(this).val();
+															else if(text2VersionId == "")
+																text2VersionId = $(this).val();
+														 });
+			
+			if(text1VersionId != "" && text2VersionId != "")
+			{
+				calculateDiffSummary(text1VersionId, text2VersionId);					
+
+				$("#compareDiv").show();
+			}
+			else
+			{
+				alert("Choose two versions to compare");
+			}
+		}
+	
+		$(document).ready(function(){
+			
+			#set($extraParameter = '')
+			#initDataTableImpl("dataTable" $extraParameter)
+					
+		});
+	
+	</script>
+#end
+
+
+#beginLightCommonToolV3Impl("tool.contenttool.contentVersionHistory.label" "$!contentId" "" false true $!disableCloseButton $headerMarkup)
+
+<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+    	
+	<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable" width="100%">
+		<thead>
+			<tr>
+				<th>&nbsp;</th>
+				<th>$ui.getString("tool.contenttool.versionID")</th>
+				<th>$ui.getString("tool.contenttool.language.header")</th>
+				<th>$ui.getString("tool.contenttool.versionState")</th>
+				<th>$ui.getString("tool.contenttool.versionModifiedDateTime")</th>
+				<th>$ui.getString("tool.contenttool.versionModifier")</th>
+				<th>$ui.getString("tool.contenttool.versionComment")</th>
+			</tr>
+		</thead>
+		<tbody>
+		
+			#foreach($contentVersionVO in $contentVersionVOList)
+				<tr>
+					<td><input type="checkbox" id="contentVersionId" value="$contentVersionVO.id"/></td>
+					<td>$contentVersionVO.id</td>
+					<td>$contentVersionVO.languageName</td>
+					<td>#stateInText($contentVersionVO.stateId)</td>
+					<td>$contentVersionVO.modifiedDateTime</td>
+					<td>$contentVersionVO.versionModifier</td>
+					<td>$contentVersionVO.versionComment</td>
+				</tr>
+			#end
+			
+		</tbody>
+	</table>
+		
+</div>
+
+#if(!$inline)
+	#lightFooterToolbar($footerButtons)
+#end
+
+<div id="compareDiv" style="display: none; position: absolute; margin: 0px; top: 0px; background-color: yellow;">
+	<div style="float: left; width: 100%;"><div id="summaryDiv" style="float: left; padding: 4px;"></div><div style="float: right; padding: 4px;"><a href="#" onclick="$('#compareDiv').hide();">Close</a></div></div>
+	<div style="float: left; width: 100%" id="diffDiv"></div>
+</div>
+#foreach($contentVersionVO in $contentVersionVOList)
+	<textarea id="text_$contentVersionVO.id" style="visibility: hidden;">$contentVersionVO.versionValue</textarea>
+#end
+	
+#endCommonToolV3()

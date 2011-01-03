@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+	<title>AddRoleUser</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+
+<body>
+<table>
+		#set( $roleList = $this.getRoles($systemUserId) )
+	<th colspan="2" align="left"><u>Roles Defined for user</u></th>
+	<tr>
+		<td>
+			#foreach ( $roleVO in $roleList )
+				$roleVO.getName()
+				<br>
+			#end 
+		</td>
+	</tr>	
+	<br>
+		<td>
+							
+		</td>
+	</tr>
+</table>
+</form>
+
+
+<table>
+	<tr>
+		<td>
+		<form method="POST" action="AddUserRole.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		#set( $allRoleList = $this.getRoles() )
+		<select name="roleId">
+				#foreach ( $roleVO in $allRoleList )
+					<option value="$roleVO.getRoleId()">$roleVO.getName()</option>
+				#end 
+		</select>				
+		</td>
+		<input type="hidden" name="systemUserId" value="$systemUserId">
+	</tr>
+	<tr>
+		<td>
+			<input type="submit" name="action" value="Add role">
+		</td>
+		</form>
+	</tr>			
+</table>
+
+</body>
+</html>
+

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/cms.css"/>
+    <title>$error.getName()</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+  </head>
+  <body class="contenttool">
+    <table>
+      <tr>
+        <td>
+          <table class="outer">
+	      #foreach($errorList in $errors.allErrors)
+	      #foreach($error in $errorList)
+	      <tr>
+	        <td>$error</td>
+	      </tr>
+	      #end
+	      #end
+	    </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</table>

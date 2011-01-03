@@ -1,0 +1,51 @@
+#define( $headerMarkup )
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css"/>
+	<style type="text/css">
+		p
+		{
+			line-heigh: 12px;
+			margin: 0px;
+			padding-bottom: 4px;
+		}
+		
+	</style>
+	
+	<script type="text/javascript">
+		
+		function close()
+		{
+			if(!parent)
+			{
+				document.location.href = "ViewContent.action?contentId=$!parentContentId&repositoryId=$!repositoryId";
+			}
+			else
+			{
+				top.frames['contentTreeIframe'].location.reload(true);
+				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+			}
+		}	
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.contenttool.importContent.header" "" "" false true $!disableCloseButton $headerMarkup)
+
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+
+	<div style="margin-left: 16px;">
+
+		<h1>$ui.getString("tool.contenttool.importContent.headerFinished")</h1>
+		<p>
+			$ui.getString("tool.contenttool.importContent.finishedText")
+		</p>
+		<p>
+			<a href="javascript:close();"><img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25"></a>
+		</p>
+	</div>
+
+#endLightCommonToolV3()

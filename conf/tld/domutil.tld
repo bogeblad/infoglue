@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib
+        PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+	"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<!-- a tag library descriptor -->
+
+<taglib>
+  <!-- after this the default space is
+	"http://java.sun.com/j2ee/dtds/jsptaglibrary_1_2.dtd"
+   -->
+	 <!-- Table of Contents  -->
+	 <!--
+			 if_valid   - obsolete
+			 if_invalid - obsolete
+			 if
+			 elseif
+			 else
+			 condition
+			 nocache
+			 switch
+			 case
+			 switchvalue
+			 browsertag
+	 -->
+	
+  <tlibversion>1.0</tlibversion>
+  <jspversion>1.1</jspversion>
+  <shortname>domutil</shortname>
+  <uri>domutil</uri>
+  <info>
+	Lotus Domino Utilities tag library
+  </info>
+
+  <!-- if tag -->
+  <tag>
+    <name>if</name>
+    <tagclass>lotus.domino.taglib.IfTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>condition</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>isblank</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>inrole</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>isnull</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>browser</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>trueaction</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <name>elseif</name>
+    <tagclass>lotus.domino.taglib.ElseIfTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>condition</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>isblank</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>isnull</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>browser</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <name>else</name>
+    <tagclass>lotus.domino.taglib.ElseTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>default</name>
+    <tagclass>lotus.domino.taglib.CaseDefaultTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>condition</name>
+    <tagclass>lotus.domino.taglib.IfConditionTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>nocache</name>
+    <tagclass>lotus.domino.taglib.NoCacheTag</tagclass>
+    <bodycontent>empty</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+
+  <tag>
+    <name>switch</name>
+    <tagclass>lotus.domino.taglib.SwitchTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>ignorecase</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>autotrim</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>partialmatch</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>case</name>
+    <tagclass>lotus.domino.taglib.CaseTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>value</name>
+      <required>true</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <name>switchvalue</name>
+    <tagclass>lotus.domino.taglib.SwitchConditionTag</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Control flow tag
+    </info>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+	<!-- Browser info tag ** created 10/3/00 mpb -->
+	<tag>
+	  <name>browsertag</name>
+    <tagclass>lotus.domino.taglib.BrowserTag</tagclass>
+    <teiclass>lotus.domino.taglib.BrowserTagExtraInfo</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Browser information tag
+    </info>
+    <attribute>
+      <name>useragent</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>supports</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <!-- format tag -->
+  <tag>
+    <name>format</name>
+    <tagclass>lotus.domino.taglib.FormatTag</tagclass>
+    <teiclass>lotus.domino.taglib.FormatTagExtraInfo</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		Allows for formatting of arbitrary strings
+    </info>
+
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+    </attribute>
+
+    <attribute>
+      <name>format</name>
+      <required>true</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+
+    <attribute>
+      <name>locale</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+
+    <attribute>
+      <name>timezone</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>      
+    </attribute>
+
+    <attribute>
+      <name>value</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+
+    <attribute>
+      <name>type</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+	<!-- string converter tag ** created 4/3/02 mpb -->
+	<tag>
+	  <name>urlconverter</name>
+    <tagclass>lotus.domino.taglib.URLConvertTag</tagclass>
+    <teiclass>lotus.domino.taglib.URLConvertTagExtraInfo</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+		convert URL parameters for form processing
+    </info>
+    <attribute>
+      <name>id</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>charset</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>time</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>debug</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+     <attribute>
+      <name>onfailure</name>
+      <required>false</required>
+	  <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+</taglib>

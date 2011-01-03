@@ -1,0 +1,195 @@
+#define( $extraMarkup )
+#end
+
+#beginLightCommonToolV3Impl("tool.managementtool.mysettings.header" "" "" false true $!disableCloseButton $extraMarkup)
+
+<script type="text/javascript">
+	<!--
+
+	function closeDialog()
+	{
+		if(parent && parent.closeInlineDiv) 
+			parent.closeInlineDiv(); 
+		else if(parent && parent.closeDialog) 
+			parent.closeDialog(); 
+		else if (window.opener)
+			window.close();
+		else
+			history.back();
+	}
+
+	function save()
+	{
+		document.editForm.submit();
+	}
+
+	function closeAndReload()
+	{
+		if(!window.opener && parent)
+			parent.location.reload();
+		else
+			window.close();
+	}
+
+	function reloadFull()
+	{
+		if(!window.opener && parent)
+			parent.location.href = "Admin!resetGUI.action";
+		else
+			window.close();
+	}
+	
+	$(document).ready(function(){
+		$("#tabsContainer").tabs( {
+			show:function() { resizeInlineTabDivs(); },
+			select:function(e, ui) { 
+				//alert("ui: " + ui.index);
+				if(ui.index == 0)
+				{
+			  		$("#footertoolbar > div").css("visibility","visible");
+			  	}
+				else if(ui.index == 1)
+		  		{
+			  		$("#footertoolbar > div").css("visibility","hidden");
+		  		}
+		  		else if(ui.index == 2)
+		  		{
+			  		$("#footertoolbar > div").css("visibility","hidden");
+			  	}
+			  } 
+		});
+
+		#if($settingsSaved)
+			$("#reloadDialog").dialog({
+				bgiframe: true,
+				resizable: false,
+				height:200,
+				width: 400,
+				modal: true,
+				overlay: {
+					backgroundColor: '#000',
+					opacity: 0.5
+				},
+				buttons: {
+					'$ui.getString("tool.managementtool.mysettings.fullReloadYesLabel")': function() {
+						$(this).dialog('close');
+						reloadFull(); 
+					},
+					'$ui.getString("tool.common.cancelButton.label")': function() {
+						$(this).dialog('close');
+					}
+				}
+			});
+		#end
+	});
+	-->
+</script>
+
+<div>
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3 style="text-indent: 16px;">$ui.getString("tool.managementtool.mysettings.header") 
+		#if($errorMessage && $errorMessage != "")
+			<span style="color:red">$errorMessage</span><br/>
+		#end
+	</h3>
+	<p style="text-indent: 16px;">
+		$ui.getString("tool.managementtool.mysettings.introduction")
+	</p>
+
+	<div id="tabsContainer" class="flora">      
+		<ul>
+	        <li><a href="#generalSettingsTab"><span>$ui.getString("tool.managementtool.mysettings.generalTabLabel")</span></a></li>
+	        <li><a href="#subscriptionsTab"><span>$ui.getString("tool.managementtool.mysettings.subscriptionsTabLabel")</span></a></li>
+	        <li><a href="#passwordTab"><span>$ui.getString("tool.managementtool.mysettings.changePasswordTabLabel")</span></a></li>
+	    </ul>
+
+		<div id="generalSettingsTab" class="recipientTab inlineTabDiv">
+
+			<form name="editForm" method="POST" action="UpdateMySettings.action">
+				<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+				<fieldset style="width: 90%; border: 0px solid red; margin: 0px; padding-left: 10px;">
+	
+				<p style="clear: both;">
+					<label for="languageCode">$ui.getString("entity.Language.property.defaultLanguageCode.label")</label>
+					<select name="languageCode" id="languageCode" class="sitedropbox" style="width: 100px;">
+					#foreach($toolLocale in $toolLocales)
+						<option value="$toolLocale.language" #if($languageCode == $toolLocale.language)selected="1"#end>$toolLocale.displayName</option>
+					#end
+					</select>
+				</p>
+						
+				<p style="clear: both;">
+					<label for="defaultRepositoryId">$ui.getString("entity.Repository.property.defaultRepository.label")</label>
+					<select name="defaultRepositoryId" id="defaultRepositoryId" class="sitedropbox" style="width: 100px;">
+					#foreach($repository in $repositories)
+						<option value="$repository.id" #if($defaultRepositoryId == $repository.id)selected="1"#end>$repository.name</option>
+					#end
+					</select>
+				</p>
+
+				<p style="clear: both;">
+					<label for="defaultToolName">$ui.getString("tool.managementtool.mysettings.defaultToolName.label")</label>
+					<select class="sitedropbox" id="defaultToolName" name="defaultToolName">
+						#foreach($tool in $availableTools)
+							#if($this.hasAccessTo("${tool.toolName}.Read"))
+								<option value="${tool.toolName}" #if($defaultToolName == "${tool.toolName}")selected="1"#end>${tool.toolName}</option>
+							#end
+						#end
+					</select>	
+				</p>
+
+				<p style="clear: both;">	
+					<label for="defaultGUI">$ui.getString("tool.managementtool.mysettings.defaultGUI.label")</label>
+					<select class="sitedropbox" name="defaultGUI">
+						<option value="default" #if($defaultGUI == "default")selected="1"#end>$ui.getString("tool.common.default")</option>
+						<option value="outlook" #if($defaultGUI == "outlook")selected="1"#end>$ui.getString("tool.common.outlook")</option>
+						<option value="classic" #if($defaultGUI == "classic")selected="1"#end>$ui.getString("tool.common.classic")</option>
+					</select>				
+				</p>
+				
+				<p style="clear: both;">		
+					<label for="theme">$ui.getString("tool.managementtool.mysettings.theme.label")</label>
+					<select class="sitedropbox" name="theme">
+						<option value="">Default (Outlook 2007)</option>
+						#foreach($availableTheme in $themes)
+							<option value="$availableTheme" #if($theme == "$availableTheme")selected="1"#end>$availableTheme</option>
+						#end
+					</select>				
+				</p>
+
+				<p style="clear: both;">		
+					<label for="toolbarVariant">$ui.getString("tool.managementtool.mysettings.toolbarVariant.label")</label>
+					<select class="sitedropbox" name="toolbarVariant">
+						<option value="default" #if($toolbarVariant == "default")selected="1"#end>Default</option>
+						<option value="compact" #if($toolbarVariant == "compact")selected="1"#end>Compact</option>
+					</select>				
+				</p>
+
+			</form>
+		</div>
+		
+		<div id="subscriptionsTab" class="recipientTab inlineTabDiv">
+			<iframe frameborder="0" marginwidth="0" marginheight="0" scrolling="no" name="subscriptionsFrame" id="subscriptionsFrame" src="Subscriptions!inputGlobalSubscriptions.action?standalone=false" width="690" height="450" ></iframe>
+		</div>
+
+		<div id="passwordTab" class="recipientTab inlineTabDiv">
+			<iframe frameborder="0" marginwidth="0" marginheight="0" scrolling="no" name="passwordFrame" id="passwordFrame" src="UpdateSystemUserPassword!inputStandaloneV3.action?userName=$infoGluePrincipal.name&returnAddress=ViewMySettings.action" width="690" height="450" ></iframe>
+		</div>
+
+	</div>		
+	
+	#lightFooterToolbar($footerButtons)
+	
+	</form>
+
+</div>
+
+<div id="reloadDialog" title="$ui.getString("tool.managementtool.mysettings.fullReloadQuestionTitle")" style="display: none">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>$ui.getString("tool.managementtool.mysettings.fullReloadQuestionLabel")</p>
+</div>
+
+#endCommonToolV3()

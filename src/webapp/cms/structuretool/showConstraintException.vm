@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/cms.css"/>
+    <title>$error.getName()</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  </head>
+  <body class="structuretool">
+  	    <table>
+      <tr>
+        <td>
+          <table class="outer">
+	      #foreach($errorList in $errors.allErrors)
+	      #foreach($error in $errorList)
+	      <tr>
+	        <td>$error
+			  <!--
+	          <table class="data-vertical">
+	            <tr>
+	              <td class="data-head-left">Message</td>
+	              <td class="data-cell-left">$error.getMessage()</td>
+	            </tr><tr>
+	              <td class="data-head-left">Stack trace</td>
+	              <td class="data-cell-left" style="font-size:8pt;">$error.getStackTrace()</td>
+	            </tr>
+	            #if($error.hasCause())
+	            <tr>
+	              <td class="data-head-left">Nested message</td>
+	              <td class="data-cell-left">$error.getCauseMessage()</td>
+	            </tr><tr>
+	              <td class="data-head-left">Nested stack trace</td>
+	              <td class="data-cell-left" style="font-size:8pt;">$error.getCauseStackTrace()</td>
+	            </tr>
+	            #end
+	          </table>
+	          -->
+	        </td>
+	      </tr>
+	      #end
+	      #end
+	      <tr>
+	      	<td><a href="$returnAddress">Ok</a></td>
+	      </tr>	
+	      	
+	    </table>
+ <!-- 	
+    <table>
+      <tr>
+        <td>
+          <table class="structuretool">
+            <tr>
+              <td class="smalllabel">
+              	#if($errors.hasErrors($errorKey))
+  			      #foreach($errorMessage in $errors.getErrors($errorKey))
+			      <font color="red">Error: $errorMessage</font> 
+			      #end
+			    #end
+			    <br><br>
+			    <a href="$returnAddress">Ok</a>
+  			  </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  -->
+  </body>
+</table>

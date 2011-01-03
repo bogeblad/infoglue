@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewSystemTools.header" "tool.managementtool.viewSystemTools.header" "")
+
+<div class="fullymarginalized" style="color: black;">
+
+	<h2>$ui.getString("tool.managementtool.archiveTool.header")</h2>
+	<p>
+		<a href="$archiveUrl">Download archive ($archiveFileSize MB) </a>
+	</p>
+	
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="close" value="$ui.getString("tool.common.closeWindowButton.label")" onclick="document.location.href='ViewArchiveTool!input.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

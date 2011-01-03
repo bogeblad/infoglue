@@ -1,0 +1,37 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDeleteLink()
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewCategoryList.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewCategoryList.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+		#set($categories = $models)
+		#parse("/cms/managementtool/categoryList.vm")
+				
+	</div>
+		
+#endLightCommonToolV3()

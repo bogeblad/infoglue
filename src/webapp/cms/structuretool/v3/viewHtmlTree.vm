@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	
+	<title>Menus</title>
+
+	#includeLatestJQuery()
+
+	<script type="text/javascript">
+	<!-- 		
+		var languageCode = "$languageCode";
+		
+		var oldSelected;
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			//alert("htmlTreeItemClick");
+			if(parent.htmlTreeItemClick)
+				parent.htmlTreeItemClick(itemId, repoId, path);
+		}
+
+		function openUrlInWorkArea(url, titel)
+		{
+			//alert("openUrlInWorkArea:" + url + " - " + titel);
+			if(parent.openUrlInWorkArea)
+				parent.openUrlInWorkArea(url, titel, "$ui.getString("tool.common.pageTabLabelPrefix")");
+		}
+		
+		function setSelected(itemId)
+		{
+			// Graphical stuff
+			if (oldSelected != null)
+				oldSelected.className = "";
+			
+			srcIdLink =	document.getElementById("link" + itemId);
+			oldSelected = srcIdLink;
+			if (srcIdLink != null)
+				srcIdLink.className = "selected";
+		}
+		
+		function refreshTreeNode(nodeId, changeTypeId, addedNodeId)
+		{
+			//alert("nodeId:" + nodeId);
+			//alert("changeTypeId:" + changeTypeId);
+			//alert("addedNodeId:" + addedNodeId);
+			if (changeTypeId == 4)
+			{
+				if(nodeId == tree.myId) 
+				{
+					document.location.reload();
+					return;
+				}
+				var node = tree.getNodeWithMyId(nodeId);
+				if(node)	
+				{
+					node.reload();
+					selectWhenLoaded(node, nodeId);
+				}				
+				return;
+			}
+			if (changeTypeId == 3)
+			{
+				var node = tree.getNodeWithMyId(addedNodeId);
+				try
+				{
+					node.parentNode.reload();
+				}
+				catch(e)
+				{
+					//alert("Error:" + e);
+				}
+			}			
+			
+			var parentNode = tree.getNodeWithMyId(nodeId);
+			//alert("parentNode:" + parentNode.id)
+			if(changeTypeId == 1) 
+			{
+				parentNode = parentNode.parentNode;
+				addedNodeId = nodeId;
+			}
+
+			if(!parentNode || parentNode.myId == tree.myId) 
+			{
+				document.location.reload();
+				return;
+			}
+
+			parentNode.expand();
+			parentNode.reload();
+			selectWhenLoaded(parentNode, addedNodeId);
+		}
+		
+		function selectWhenLoaded(parentNode, contentId)
+		{
+			if(parentNode.loading) 
+			{
+				window.setTimeout(function () {
+					selectWhenLoaded(parentNode, contentId);
+				}, 100);
+			}
+			else
+			{
+				parentNode.expand();
+				var addedNode = tree.getNodeWithMyId(contentId);
+				addedNode.select();
+			}
+		}
+		
+		var ig_expanded_nodes_cookie = "igStructureTreeExpansionForRepository${repositoryId}";
+		
+		function loaded()
+		{
+			setSelected("${select}");
+			
+			path = webFXTreeHandler.cookies.getCookie(ig_expanded_nodes_cookie);
+			//alert("path:" + path);
+			if(path && path != "")
+			{
+				path = path.substring(0, path.length - 1);
+				var pathArr = path.split(',');
+				
+				expandTreeRec(pathArr, 0);
+			}	
+		}
+		
+		// OTHER STUFF
+		function syncWithTree(path)
+		{
+			//alert('path:' + path);
+			#if($treeMode == "classic")
+			var pathArr = path.split(',');
+			// var exp = "$exp";
+			var exp = "";
+			for(i=0;i<pathArr.length;i++)
+			{
+				exp = exp + "/" + pathArr[i] + "/";
+			}
+			document.location.href="ViewContentHtmlTree.action?exp=" + exp + "&repositoryId=${repositoryId}&select=" + pathArr[pathArr.length-1];
+			#else
+			var pathArr = path.split(',');
+			syncWithTreeRec(pathArr, 0);
+			#end			
+		}
+		
+		function syncWithTreeRec(pathArr, level)
+		{
+			if(pathArr.length <= 2)
+			{
+				var node = tree.getNodeWithMyId(pathArr[0]);
+				var id = pathArr[pathArr.length -1];
+				selectWhenLoaded(node, id);
+				return;
+			}
+		
+			if(level >= pathArr.length -1) 
+			{
+				var node = tree.getNodeWithMyId(pathArr[pathArr.length -2]);
+				var id = pathArr[pathArr.length-1];
+				selectWhenLoaded(node, id);
+				return;
+			}
+			
+			var node = tree.getNodeWithMyId(pathArr[level]);
+
+			if(!node.loading) node.expand();
+			if(node.loading) 
+			{
+				window.setTimeout(function () {
+					syncWithTreeRec(pathArr, level);
+				}, 10);
+			}
+			else
+			{
+				syncWithTreeRec(pathArr, level+1);
+			}
+		}
+		
+		
+		function expandTreeRec(pathArr, level)
+		{			
+			var node = tree.getNodeWithMyId(pathArr[level]);
+			
+			if(node == null)
+				return;
+			
+			if(!node.loading && node.parentNode != null)
+			{
+				//alert("Loading child to " + node.text + ":" + node.id + ":" + node.myId + !node.loaded + ":" + !node.loading);
+				if (!node.loaded && !node.loading && node.src) {
+					_startLoadXmlTree(node.src, node);
+				}
+				
+				if (webFXTreeHandler.behavior == 'classic') { document.getElementById(node.id + '-icon').src = node.openIcon; }
+				if (node.childNodes.length) {  document.getElementById(node.id + '-cont').style.display = 'block'; }
+				node.open = true;
+				document.getElementById(node.id + '-plus').src = node.minusIcon;
+				node.deSelect();
+				document.getElementById(node.id + '-anchor').blur();
+			 	//node.expand();
+			}
+						
+			if(node.loading && !node.loaded) 
+			{
+				//alert("loading with level:" + level + " and " + pathArr.length);
+				if(level < pathArr.length)
+				{
+					window.setTimeout(function () {
+						expandTreeRec(pathArr, level);
+					}, 10);
+				}
+			}
+			else
+			{
+				//alert("not loading");
+				if(level < pathArr.length)
+				{
+					expandTreeRec(pathArr, level+1);
+				}
+			}
+		}	
+
+		function showContextMenu(element, e)
+		{
+    		//alert("e:" + e);
+			//alert("element:" + element);
+
+			if(!e)
+		        e = window.event;
+     		
+     		sendSignal = false;
+     		
+     		if(parent && parent.showContextMenu)
+				return parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e);
+			else if(parent.parent && parent.parent.showContextMenu)
+				return parent.parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e);
+			else if(top.showContextMenu)
+				return top.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e);
+			else
+			{
+    			var clientX = getEventPositionX(e);
+    			var clientY = getEventPositionY(e);
+    			
+    			var rightedge = document.body.clientWidth - clientX;
+    			var bottomedge = getWindowHeight() - clientY;
+    	
+    			var menuDiv = document.getElementById("contextMenuDiv");
+    			
+    			if (rightedge < menuDiv.offsetWidth)
+            		clientX = (clientX - menuDiv.offsetWidth);
+            	
+            	if (bottomedge < menuDiv.offsetHeight && (clientY - menuDiv.offsetHeight > 0))
+            		clientY = (clientY - menuDiv.offsetHeight);
+            		
+            	menuDiv.style.left 	= clientX + "px";
+            	menuDiv.style.top 	= clientY + "px";
+            	
+    			$("#contextMenuDiv").show();
+    	
+    			return false;
+			}
+		}
+
+		function treeResized()
+		{
+			if(parent.resizeTreeIframe)
+				parent.resizeTreeIframe($("#treeDiv").height() + 10, $("#treeDiv").width() + 20);
+		}
+
+		// -->
+	</script>
+
+	<!-- DYNAMIC VERSION SCRIPTS -->
+	<script type="text/javascript">
+		var defaultWorkingStyleInformation = "$this.workingStyleInformation";
+		var defaultFinalStyleInformation = "$this.finalStyleInformation";
+		var defaultPublishStyleInformation = "$this.publishStyleInformation";
+		var defaultPublishedStyleInformation = "$this.publishedStyleInformation";
+	</script>
+	<script type="text/javascript" src="script/v3/infoglue.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xtree.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xmlextras.js"></script>
+	<script type="text/javascript" src="script/xloadtree/xloadtree.js"></script>
+	<!-- END -->
+
+	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+
+	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+
+</head>
+<body class="generaltooledit" onload="parent.notifyIsLoaded();parent.notifyExp('${exp}');loaded();" style="margin:0px">
+	
+	<div id="treeDiv" style="float: left; min-width: 200px;">
+	
+	<!-- NEW DYNAMIC VERSION -->
+	<script type="text/javascript">
+	<!--
+	
+	//webFXTreeConfig.rootIcon		= "images/v3/pageTreeIcon.gif"; 
+	//webFXTreeConfig.openRootIcon	= "images/v3/pageTreeIcon.gif"; 
+	//webFXTreeConfig.folderIcon		= "images/v3/pageTreeIcon.gif";
+	//webFXTreeConfig.openFolderIcon	= "images/v3/pageTreeIcon.gif";
+
+	//webFXTreeConfig.rootIcon		= "images/tree/structureRoot.gif"; 
+	//webFXTreeConfig.openRootIcon	= "images/tree/structureRoot.gif"; 
+	webFXTreeConfig.rootIcon		= "script/xloadtree/images/xp/page.png"; 
+	webFXTreeConfig.openRootIcon	= "script/xloadtree/images/xp/page.png"; 
+	webFXTreeConfig.folderIcon		= "script/xloadtree/images/xp/page.png";
+	webFXTreeConfig.openFolderIcon	= "script/xloadtree/images/xp/page.png";
+	webFXTreeConfig.hiddenFolderIcon		= "script/xloadtree/images/xp/pageHidden.png";
+	webFXTreeConfig.hiddenOpenFolderIcon	= "script/xloadtree/images/xp/pageHidden.png";
+	webFXTreeConfig.protectedFolderIcon		= "script/xloadtree/images/xp/pageProtected.png";
+	webFXTreeConfig.protectedOpenFolderIcon	= "script/xloadtree/images/xp/pageProtected.png";
+	webFXTreeConfig.fileIcon		= "script/xloadtree/images/xp/file.png";
+	webFXTreeConfig.lMinusIcon		= "script/xloadtree/images/xp/Lminus.png";
+	webFXTreeConfig.lPlusIcon		= "script/xloadtree/images/xp/Lplus.png";
+	webFXTreeConfig.tMinusIcon		= "script/xloadtree/images/xp/Tminus.png";
+	webFXTreeConfig.tPlusIcon		= "script/xloadtree/images/xp/Tplus.png";
+	webFXTreeConfig.iIcon			= "script/xloadtree/images/xp/I.png";
+	webFXTreeConfig.lIcon			= "script/xloadtree/images/xp/L.png";
+	webFXTreeConfig.tIcon			= "script/xloadtree/images/xp/T.png";
+	webFXTreeConfig.showRoot		= true;
+	webFXTreeConfig.loadingText		= "Loading content ...";
+	webFXTreeConfig.allowDropOnLeafs= true;
+	
+	#if($parent && $parent != "")
+		#set($par = "&parent=${parent}")
+	#else
+		#set($par = "&parent=$rootNode.Id")
+	#end 
+	
+	var tree = new WebFXLoadTree("$rootNode.Title", "SimpleStructureXml.action?action=SimpleStructureXml.action&createAction=true&repositoryId=$!{repositoryId}$par", "javascript:htmlTreeItemClick('$rootNode.Id','${repositoryId}','$formatter.escapeExtendedHTML($rootNode.Title)');");
+	tree.myId = "$rootNode.Id";	
+	document.write(tree);
+	
+	$("#" + tree.id + " a").droppable({
+		hoverClass: 'ui-state-active',
+		tolerance: 'pointer',
+	    drop: function(event, ui) { 
+			var dragEl = $(ui.draggable); 
+			var movedNodeId = dragEl.attr("entityId");
+			var parentNodeId = dragEl.attr("parentEntityId");
+			var newParentNodeId = $("#" + tree.id + " a").attr("entityId");
+			//alert('dropped:' + movedNodeId + " on " + newParentNodeId);
+			moveNode(movedNodeId, newParentNodeId, parentNodeId);
+		}
+	});
+	
+	var oldSelected = null;
+	function onTreeItemClick(elem, itemId, repoId, path)
+	{
+		// if(oldSelected!=null) oldSelected.className="";
+		// elem.className="selected";
+		// oldSelected=elem;
+		htmlTreeItemClick(itemId, repoId, path);
+		
+		elementString = elem.toString();
+		startIndex = elementString.indexOf("(") + 1;
+		endIndex = elementString.indexOf(")");
+		nodeId = elementString.substring(startIndex, endIndex);
+		var node = tree.getNodeWithMyId(nodeId);
+		
+		setTimeout(function () {
+			if (node.folder) {
+				if (!node.open) { node.expand(); }
+				}			
+			//webFXTreeHandler.toggle(node);
+			}, 100);
+
+	}
+	
+	function onTreeItemSelect(elem)
+	{
+		/*
+		var aid = elem + "-anchor";
+		if (oldSelected != null)
+			oldSelected.className = "";
+		
+		var srcIdLink =	document.getElementById(aid);
+		// alert(srcIdLink.className);
+		oldSelected = srcIdLink;
+		if (srcIdLink != null)
+			srcIdLink.className = "selected";
+
+		// alert(srcIdLink.className);
+		*/
+	}
+	
+	function moveNode(siteNodeId, newParentSiteNodeId, oldParentSiteNodeId)
+	{
+		jQuery.get("MoveSiteNode!ajax.action", { siteNodeId:"" + siteNodeId, newParentSiteNodeId:"" + newParentSiteNodeId }, function(data){
+		  	//alert("Moved: " + data);
+		  	parent.refreshNode(oldParentSiteNodeId, 4, null);
+		  	parent.refreshNode(newParentSiteNodeId, 4, null);
+		});
+	}
+	
+	var sendSignal = false;
+    $(document).click(function () { 
+    	if(sendSignal)
+    	{
+	    	if(parent.closeContextMenu)
+				parent.closeContextMenu();
+			else if(parent.parent.closeContextMenu)
+				parent.parent.closeContextMenu();
+	    	else if(top.closeContextMenu)
+				top.closeContextMenu();
+		}
+		else
+			sendSignal = true;
+   	});
+	-->
+	</script>	
+	
+	</div>
+	
+	<div id="debug" style="display: none; background-color: white; position: absolute; left: 0px; bottom: 0px; width: 100%; height: 100px;"></div>
+</body>
+</html>

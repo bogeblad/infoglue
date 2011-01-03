@@ -1,0 +1,52 @@
+#beginLightCommonToolV3("tool.common.subscriptions.header" "" "" false true $!disableCloseButton)
+
+<link rel="stylesheet" type="text/css" href="css/cms.css" />
+
+<script type="text/javascript">
+<!--
+	function submitForm()
+	{
+		document.editForm.submit();
+	}
+//-->
+</script>
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+<h3 style="text-indent: 16px;">
+	$ui.getString("tool.common.subscriptions.title")
+	#if($errorMessage && $errorMessage != "")<span style="color:red">$errorMessage</span>#end
+</h3>
+
+<div onfocus="this.blur();">
+    
+	<form method="POST" name="editForm" action="Subscriptions.action">
+		<input type="hidden" name="name" value="detailSubscription"/>
+		<input type="hidden" name="extraParameters" value="$extraParameters"/>
+		<input type="hidden" name="interceptionPointIdString" value="$interceptionPointIdString"/>
+		<input type="hidden" name="entityName" value="$entityName"/>
+		<input type="hidden" name="entityId" value="$entityId"/>
+		<input type="hidden" name="returnAddress" value="$returnAddress"/>
+		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
+		
+		<div class="inlineTabDiv" onfocus="this.blur();">
+			#foreach($interceptionPointsGroup in $interceptionPointsGroupsMap.entrySet())
+				##<strong>$interceptionPointsGroup.key</strong><br/>
+				#foreach($interceptionPointVO in $interceptionPointsGroup.value)
+				#set($dotIndex = $interceptionPointVO.name.indexOf(".") + 1)
+				#set($hasSubscription = $subscriptions.get($interceptionPointVO.id))
+				<input type="checkbox" name="subscribedInterceptionPointId" value="$interceptionPointVO.id" #if($hasSubscription) checked="1" #end/> $ui.getString($interceptionPointVO.name)<br/>
+				#end
+				</p>
+			#end
+		</div>
+
+	</form>
+		
+</div>
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

@@ -1,0 +1,4 @@
+If you get that the object has been modified by a concurrent transaction it could very well be:
+
+1. The encoding you have on you database is not in sync with your driver-settings. Could render the same message.
+2. The date type in your database perhaps is not as exact as the applications. On oracle this is a known issue for exampl.

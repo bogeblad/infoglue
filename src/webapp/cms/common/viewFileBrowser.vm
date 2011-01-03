@@ -1,0 +1,148 @@
+#beginLightCommonToolV3("tool.common.trashcan.title" "" "" false true $!disableCloseButton)
+
+<link rel="stylesheet" type="text/css" href="css/cms.css" />
+
+<style type="text/css">
+	table.filelisttable
+	{
+		border-collapse: collapse;
+		border-top: 1px solid rgb(220, 220, 220);
+		border-left: 1px solid rgb(220, 220, 220);
+		border-right: 1px solid rgb(220, 220, 220);
+	}
+	table.filelisttable tr td
+	{
+		padding: 2px;
+		border-bottom: 1px solid rgb(220, 220, 220);
+		vertical-align: top;
+	}
+	table.filelisttable tr td.filenametd
+	{
+		overflow: hidden;
+		width: 230px;
+	}
+	table.filelisttable tr td.buttontd
+	{
+		border-left: 1px solid rgb(220, 220, 220);
+	}
+	.menubar
+	{
+		padding: 5px 5px 5px 5px;
+		position: fixed;
+		background-color: rgb(230, 230, 230);
+		border-bottom: 1px solid rgb(200, 200, 200);
+	}
+	.filelistcontainer
+	{
+		float: left;
+		clear: both;
+		padding: 5px;
+		margin-top: 30px;
+	}
+	.currentfilepath
+	{
+		background-color: rgb(255, 255, 255);
+		border: 1px solid rgb(200, 200, 200);
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+		width: 225px;
+		height: 22px;
+		float: left;
+		margin: 0px;
+		padding-left: 4px;
+	}
+	.upbutton
+	{
+		float: left;
+		margin-right: 5px;
+		border: 1px solid rgb(200, 200, 200);
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+		background-image: url("$URLBase/images/v3/up.png");
+		background-repeat: no-repeat;
+		padding: 2px 2px 2px 18px;
+		line-height: 20px;
+		background-position: 0px 4px;
+		background-color: rgb(210, 210, 210);
+	}	
+	.selectbutton
+	{
+		
+	}
+	.clear
+	{
+		clear: both;
+		display: block;
+		float: left;
+	}
+	.igdirectory
+	{
+		font-weight: bold;
+		background-image: url("$URLBase/images/tree/xp/emptyfolderopen.png");
+		background-repeat: no-repeat;
+		padding: 2px 2px 2px 22px;
+		line-height: 20px;
+	}
+	.igfile
+	{
+		background-image: url("$URLBase/images/tree/xp/item.png");
+		background-repeat: no-repeat;
+		padding: 2px 2px 2px 22px;
+		line-height: 20px;
+	}
+</style>
+
+<script type="text/javascript">
+<!--
+	$(document).ready(function(){
+	  //$("#currentFilePath").focus();
+	});
+//-->
+</script>
+
+##lightMenuToolbar("" $buttons $rightButtons)
+
+<div class="menubar clear">
+	<a href="ViewFileBrowser.action?path=$this.getPortablePath($file.parentFile)" class="upbutton">Up</a>
+	<input type="text" id="currentFilePath" class="currentfilepath" value="$file.path">
+</div>
+
+<div onfocus="this.blur();" class="filelistcontainer">
+	<table class="filelisttable">
+		#if($file.path.trim().equals(""))
+			#foreach($drive in $drives)
+			<tr>
+				<td>
+					<a href="ViewFileBrowser.action?path=$this.getPortablePath($drive)">$drive</a>
+				</td>
+			</tr>
+			#end
+		#end
+		#foreach($childFile in $file.listFiles())
+			<tr>
+				<td class="filenametd">
+					#if($childFile.isDirectory())
+						#set($fileClass = "igdirectory")
+					#else
+						#set($fileClass = "igfile")
+					#end
+					
+					#if($childFile.name.length() > 25)
+						#set($fileName = $childFile.name.substring(0, 25) + "...")
+					#else
+						#set($fileName = $childFile.name)
+					#end
+					
+					<a href="ViewFileBrowser.action?path=$this.getPortablePath($childFile)" class="$fileClass">$fileName</a>
+				</td>
+				<td class="buttontd">
+					<a href="#" onclick="parent.selectFile('$this.getPortablePath($childFile)');">Select</a>
+				</td>
+			</tr>
+		#end
+	</table>
+##lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

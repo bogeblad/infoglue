@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewSystemUserList.header" "tool.managementtool.viewSystemUserList.header" "")
+
+<div id="filterDiv" style="position:relative; visibility: visible; overflow:hidden; margin: 0px 10px 0px 10px;">
+<form method="POST" name="filterForm" action="ViewListSystemUser.action">
+<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+<input type="hidden" name="mode" value="search">
+<table border="0">
+	<tr>
+	    <td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<td>#editField("SystemUser.firstName" "filterFirstName" $!filterFirstName "31")</td>
+		<td rowspan="5" style="width:10px;">&nbsp;</td>
+		<td rowspan="5" valign="top" id="roleFilters" style="width:250px;">
+			Roles to filter on<br>
+			#set($index = 0) 
+			#foreach($roleName in $filterRoleNames)
+			  #if($roleName != "")
+			    <select id="filterRoleName" name="filterRoleName" class="sitedropbox" style="width:200px;" onchange="javascript:generateNewDropBox(this, $index);">
+					<option value="">Select another role to filter on</option>
+					<option value="">-------------</option>
+					#foreach ($roleVO in $roles)
+					<option value="$roleVO.name" #if("$roleName" == "$roleVO.name") selected #end>$roleVO.name</option>
+					#end
+				</select><br>
+				#set($index = $index + 1)
+			  #end
+			#end
+			
+			<select id="filterRoleName" name="filterRoleName" class="sitedropbox" style="width:200px;" onchange="javascript:generateNewDropBox(this, $index);">
+				<option value="">Select another role to filter on</option>
+				<option value="">-------------</option>
+				#foreach ($roleVO in $roles)
+				<option value="$roleVO.name">$roleVO.name</option>
+				#end
+			</select>
+		</td>
+	</tr>
+	<tr>	
+		<td>#editField("SystemUser.lastName" "filterLastName" $!filterLastName "31")</td>
+	</tr>
+	<tr>
+		<td>#editField("SystemUser.userName" "filterUserName" $!filterUserName "31")</td>
+	</tr>
+	<tr>
+		<td>#editField("SystemUser.email" "filterEmail" $!filterEmail "31")</td>
+	</tr>
+	<tr>
+	    <td>&nbsp;</td>
+	</tr>
+	<tr>
+	    <td>
+	        <input type="image" src="$ui.getString("images.managementtool.buttons.searchLong")">
+			<a href="javascript:clearForm();"><img src="$ui.getString("images.managementtool.buttons.clearLong")" border="0"></a>
+		</td>
+	</tr>
+	
+</table>	
+</form>
+</div>
+
+#set($lvConstraint = 1) 
+#lvHead(["Username", "Full Name","Defined Roles"] "tool.managementtool.deleteSystemUsers.header" "DeleteSystemUser.action" "ViewListSystemUser.action?title=SystemUsers" "tool.managementtool.deleteSystemUsers.text")
+
+#set($cnt = 0)
+#foreach($infogluePrincipal in $infogluePrincipals)
+	#set($infogluePrincipalId = $formatter.encodeURI($infogluePrincipal.getName())) 
+
+	#set( $row = ["<input type=hidden name=rowtitle value='$infogluePrincipal.getFirstName() $infogluePrincipal.getLastName()'/><a href='ViewSystemUser.action?userName=$infogluePrincipalId'>$infogluePrincipal.getName() </a>", "<a href='ViewSystemUser.action?userName=$infogluePrincipal.getName()'>$infogluePrincipal.getFirstName() $infogluePrincipal.getLastName()</a>","#inlineroles($infogluePrincipal.getRoles())"] )
+	#set($cnt = $cnt + 1)
+
+	#lvAddRow($row $cnt $infogluePrincipal.getName())
+#end
+
+#lvEnd()
+
+<div style="color: black; padding-left: 32px;">
+<br/>
+#if($slotId > 0)
+#set($previousSlotId = $slotId - 1)
+<a href="ViewListSystemUser.action?slotId=$previousSlotId">Previous</a>
+#end
+#foreach($additionalSlotId in [0..$numberOfSlots])
+	#if($slotId == $additionalSlotId)<strong>$additionalSlotId</strong>
+	#else<a href="ViewListSystemUser.action?slotId=$additionalSlotId">$additionalSlotId</a>#end
+#end
+#if($slotId < $numberOfSlots)
+#set($nextSlotId = $slotId + 1)
+ <a href="ViewListSystemUser.action?slotId=$nextSlotId">Next</a>
+#end
+<br/>
+</div>
+
+<script type="text/javascript">
+<!--
+	
+	//------------------------------------------------
+	// This method invokes the method toggleSearchForm on the main area if it exists.
+	//------------------------------------------------
+	
+	function toggleSearchForm()
+	{
+		//alert("Toggle");
+		var div = document.getElementById("filterDiv");
+		//if(div && div.style.visibility == "hidden")
+		if(div && div.style.display == "none")
+		{
+			//div.style.visibility = "visible";
+			//div.style.overflow = "visible";
+			div.style.display = "block";
+		}
+		else
+		{
+			div.style.display = "none";
+			//div.style.height = "1px";
+			//div.style.visibility = "hidden";
+			//div.style.overflow = "hidden";
+		}
+	}
+	
+	/**
+	 * This method clears the form to enable a new search
+	 */
+	 
+	function clearForm()
+	{
+		document.location.href = "ViewListSystemUser.action";
+	}
+	
+	
+	/**
+	 * This method generates a new dropbox for choosing extranet roles to filter on.
+	 */
+	 
+	function generateNewDropBox(selectBox, index)
+	{
+		if(selectBox.value != "")
+		{
+			var roleFiltersElement = document.getElementById("roleFilters")
+			
+			br = document.createElement("br");
+			roleFiltersElement.appendChild(br);
+			
+			newSelect = document.createElement("select");
+			roleFiltersElement.appendChild(newSelect);
+			
+			newSelect.setAttribute("id", "filterRoleName");
+			newSelect.setAttribute("name", "filterRoleName");
+			newSelect.setAttribute("class", "sitedropbox");
+			newSelect.setAttribute("style", "width:200px;");
+			
+			newOption = document.createElement("option");
+			newOption.setAttribute("value", "");
+			newOption.setAttribute("selected", "true");
+			newSelect.appendChild(newOption);
+			var roleNameElement = document.createTextNode("Select another role to filter on");
+			newOption.appendChild(roleNameElement);
+	
+			newOption = document.createElement("option");
+			newOption.setAttribute("value", "");
+			newSelect.appendChild(newOption);
+			var roleNameElement = document.createTextNode("---------------------");
+			newOption.appendChild(roleNameElement);
+			
+			#foreach ($roleVO in $roles)
+				newOption = document.createElement("option");
+				newOption.setAttribute("value", "$roleVO.name");
+				newSelect.appendChild(newOption);
+				var roleNameElement = document.createTextNode("$roleVO.name");
+				newOption.appendChild(roleNameElement);
+			#end
+			
+			//index = index + 1;
+			newSelect.style.width = "200px";
+			newSelect.onchange = function(){generateNewDropBox(newSelect, (index + 1))};
+		}		
+	}
+	 	 
+-->
+</script>
+
+#endManagementTool()

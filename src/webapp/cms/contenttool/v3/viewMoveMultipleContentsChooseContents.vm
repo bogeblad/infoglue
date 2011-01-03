@@ -1,0 +1,308 @@
+#define( $headerMarkup )
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	<script type="text/javascript" src="script/vector.js"></script>
+	<script type="text/javascript" src="script/qualifyer.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+		
+	<script type="text/javascript" language="JavaScript">
+		
+	<!-- 
+		var exp;
+		
+		/**
+		 * This is just a hook for the tree to notify us about whats expanded.
+		 */
+		 
+		function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+	    
+	    function add()
+	    {
+	    	addQualifyer();
+	    }
+
+		function next()
+		{
+			submitQualifyer();
+		}
+
+		/**
+		 * This method changes to another repository.
+		 */
+		 
+		function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			submitQualifyerWhenRepositoryChanges(repositoryId);
+		}
+
+		/**
+		 * This method adds the choosen item to the list of qualifyers and rerenders the list.
+		 */
+
+	    function addQualifyer()
+		{
+			entityId = document.inputForm.entityId.value;
+			path     = document.inputForm.path.value;
+			
+			if(entityId == '' || entityId == '${select}' || entityId == '-1')
+			{
+				alert("$ui.getString("tool.common.content.mustChooseContent")");
+			}
+			else
+			{
+			    var qualifyer = new Qualifyer("Content", entityId, path);
+				qualifyersVector.addElement(qualifyer);
+				drawList();
+			}
+		}
+		
+		/**
+		 * This method creates a XML from the list of qualifyers.
+		 */
+		 		
+		function createXML()
+		{
+			qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+			qualifyerXML += "<qualifyer entity='Content'>";
+			
+			for (var i=0; i<qualifyersVector.getSize(); i++)
+			{
+				var qualifyer = qualifyersVector.getElementAt(i);
+				
+				entityName 	= qualifyer.getEntityName();
+				entityId   	= qualifyer.getEntityId();
+				qualifyerXML += "<id>" + entityId + "</id>";
+			}
+		   	
+		   	qualifyerXML += "</qualifyer>";
+
+			return qualifyerXML;
+		}
+		
+		/**
+		 * This submits the qalifyers.
+		 */
+		 
+		function submitQualifyer()
+		{
+		   	var xml = createXML();
+			
+			document.inputForm.qualifyerXML.value = xml;
+			document.inputForm.submit();
+		}
+	
+		/**
+		 * This submits the qalifyers.
+		 */
+		 
+		function submitQualifyerWhenRepositoryChanges(repositoryId)
+		{
+		   	var xml = createXML();
+			
+			document.inputForm.qualifyerXML.value = xml;
+			document.inputForm.repositoryId.value = repositoryId;
+			
+			document.inputForm.action = 'MoveMultipleContent!inputV3.action';
+			document.inputForm.submit();
+		}
+	  
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addTextLink(parent, address, text)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var linkText = document.createTextNode(text);
+			link.appendChild(linkText);
+			parent.appendChild(link);
+		}
+	
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addImageLink(parent, address, src)
+		{
+			var link = document.createElement("a");
+			link.setAttribute("href", address);
+			var image = document.createElement("img");
+			image.setAttribute("src", src);
+			image.setAttribute("border", "0");
+			link.appendChild(image);
+			parent.appendChild(link);
+
+			var separator = document.createElement("img");
+			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("border", "0");
+			separator.setAttribute("width", "5");
+			separator.setAttribute("height", "1");
+			parent.appendChild(separator);
+		}
+		
+
+		/**
+		 * This method draws the list of qualifyers.
+		 */
+		 
+		function drawList()
+		{
+			var table = document.getElementById("qualifyers")
+			var parent = table.parentNode;
+			parent.removeChild(table);
+
+			mytable = document.createElement("TABLE");
+			mytable.setAttribute("id", "qualifyers");
+			mytable.setAttribute("border", "0");
+			mytable.setAttribute("width", "100%");
+			mytable.setAttribute("cellpadding", "0");
+			mytable.setAttribute("cellspacing", "0");
+	        mytablebody = document.createElement("TBODY");
+	        for (var i=0; i<qualifyersVector.getSize(); i++)
+			{
+				var qualifyer = qualifyersVector.getElementAt(i);
+				//alert("Element:" + qualifyer.getPath());
+				var myTR = document.createElement("TR");
+				var actionTD = document.createElement("TD");
+				actionTD.setAttribute("width", "15");
+				//addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "images/downArrow.gif");
+				//addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "images/delete.gif");
+				var qualifyerTD = document.createElement("TD");
+				qualifyerTD.setAttribute("align", "left");
+				var qualifyerText = document.createTextNode(qualifyer.getPath());
+				myTR.appendChild(actionTD);
+				qualifyerTD.appendChild(qualifyerText);
+				myTR.appendChild(qualifyerTD);
+
+				mytablebody.appendChild(myTR);
+			}
+			 
+	        mytable.appendChild(mytablebody);
+	        parent.appendChild(mytable);
+		}
+
+		/**
+		 * This method removes a qualifyer from the vector.
+		 */
+		 
+		function deleteQualifyer(index)
+		{
+			qualifyersVector.removeElementAt(index);
+			drawList();
+		}
+		
+		/**
+		 * This function initializes the vector of previous qualifyers.
+		 */
+		 
+		function init()
+		{
+			#foreach($content in $qualifyers)
+				//alert("$qualifyer");
+				qualifyer = new Qualifyer("Content", "$content.id", "$content.name");
+				qualifyersVector.addElement(qualifyer);
+			#end
+	
+			//alert("qualifyersVector" + qualifyersVector.getSize());
+			drawList();		
+		}
+		
+		var qualifyersVector = new Vector(0);
+	
+		var IE  = (document.all)? true: false;
+		var Mac = (navigator.cpuClass && navigator.cpuClass.match(/PPC/))? true: false;
+
+      	function treeItemDblClick(id, label)
+      	{
+      		//alert("Adding " + id + ":" + label);
+      		addQualifyer();
+      	}
+	
+		$(document).ready(function() {
+			window.resizeTo(900,800);
+			init();
+		});
+	    
+	</script>
+	
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.moveMultipleContent.header" "" "" false true $!disableCloseButton $headerMarkup)
+	
+	#lightMenuToolbar("" $buttons $rightButtons) 
+	
+	<div style="clear: both;"></div>
+
+	<h3>$ui.getString("tool.contenttool.moveMultipleContent.header")</h3>
+		
+	<div style="margin: 16px;">
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td class="smalllabel" colspan="2">$ui.getString("tool.contenttool.moveMultipleContent.selectedContentsInstructions")</td>
+		</tr>
+		<tr>
+			<td valign="top" width="50%">
+				
+				<table cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td style="padding-bottom: 5px; padding-top: 5px;">
+				  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+						    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+						    #foreach ($repositoryVO in $repositories)
+						    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+						    #end
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="menu" style="border: 1px solid #C7D1B3;">    
+						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&${allowedContentTypeIdsAsUrlEncodedString}" width="100%" height="500" align="baseline"></iframe>
+					</td>
+				</tr>	
+				</table>
+			</td>	
+			
+			<td valign="top" width="40%" style="padding-left: 10px;">
+				<table cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td style="height: 30px;">
+						$ui.getString("tool.contenttool.moveMultipleContent.selectedContentsText")
+					</td>
+				</tr>
+				<tr>
+					<td style="border: 1px solid #C7D1B3; background-color: white;">				
+						<TABLE id="qualifyers" border="1" width="100%">
+					  	
+					  	</table>
+					</td>
+				</tr>
+						
+				</table>
+				
+			</td>
+		</tr>
+		</table>
+		
+	</div>
+
+	<form name="inputForm" action="MoveMultipleContent!V3.action">
+		<input type="hidden" name="draggedComponentId" value="">
+		<input type="hidden" name="contentId" value="$contentId">
+		<input type="hidden" name="entityId" value="">
+		<input type="hidden" name="path" value="">
+		<input type="hidden" name="repositoryId" value="$repositoryId">
+		<input type="hidden" name="newParentContentId" value="">
+		<input type="hidden" name="qualifyerXML" value="">
+		<input type="hidden" name="returnAddress" value="$returnAddress">
+		<input type="hidden" name="originalAddress" value="$originalAddress">
+	</form>
+	
+	#lightFooterToolbar($footerButtons)
+	
+#endLightCommonToolV3()

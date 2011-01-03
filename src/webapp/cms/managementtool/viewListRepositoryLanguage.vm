@@ -1,0 +1,109 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			
+			#set($extraParameter = '"bSort": false, "aoColumns": [ { "sWidth": "50%" }, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDeleteLink()
+		});
+
+		function save()
+		{
+			document.editForm.submit(); 
+		}
+		
+		function cancel()
+		{
+			document.location.href = "ViewRepository.action?repositoryId=$repository.id"; 
+		}
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.repositoryLanguages.header" "" "" false true $!disableCloseButton $headerMarkup true)
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.repositoryLanguages.header")</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+
+		<form name="editForm" action="RepositoryLanguage!update.action">
+			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+			<input type="hidden" name="repositoryId" value="$repository.repositoryId"/>
+			
+		
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+				<thead>
+					<tr>
+						<th>$ui.getString("tool.common.action.label")</th>
+						<th>$ui.getString("entity.Language.name.label")</th>
+						<th>$ui.getString("entity.Language.languageCode.label")</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+						#foreach ($repositoryLanguageVO in $availableLanguages)
+							#set($languageVO = $this.getLanguage($repositoryLanguageVO.repositoryLanguageId))
+							#set($status = $repositoryLanguageVO.isPublished)
+							#if($status == false)
+								#set ($state = "Unpublished")
+								#set ($act = "<a href='RepositoryLanguage.action?repositoryId=$repository.repositoryId&repositoryLanguageId=$repositoryLanguageVO.repositoryLanguageId&igSecurityCode=$securityCode'>Publish</a>")			
+							#else
+								#set ($state = "Published")
+								#set ($act = "<a href='RepositoryLanguage!unpublish.action?repositoryId=$repository.repositoryId&repositoryLanguageId=$repositoryLanguageVO.repositoryLanguageId&igSecurityCode=$securityCode'>Unpublish</a>")
+							#end
+						
+							#if($velocityCount == 1)
+						   		#set($moveUp = "<img src='images/trans.gif' width='10' border='0'>")
+						   	#else
+							 	#set ($moveUp = "<a href='RepositoryLanguage!moveUp.action?repositoryId=$repository.repositoryId&repositoryLanguageId=$repositoryLanguageVO.repositoryLanguageId&igSecurityCode=$securityCode'><img src='images/upArrow.gif' border='0'></a>")
+							#end
+							
+							#if($velocityCount == $availableLanguages.size())
+						   		#set($moveDown = "<img src='images/trans.gif' width='10' border='0'>")
+						   	#else
+								#set ($moveDown = "<a href='RepositoryLanguage!moveDown.action?repositoryId=$repository.repositoryId&repositoryLanguageId=$repositoryLanguageVO.repositoryLanguageId&igSecurityCode=$securityCode'><img src='images/downArrow.gif' border='0'></a>")
+							#end
+	
+							<tr>
+								<td>
+									<input type='checkbox' name='languageId' value='$languageVO.getLanguageId()' checked></input>
+									$state $act $moveDown $moveUp
+								</td>
+								<td>$languageVO.getName()</td>
+								<td>$languageVO.getLanguageCode()</td>
+							</tr>
+						#end
+						
+						#foreach ($languageVO in $allRemainingLanguages)
+							<tr>
+								<td>
+									<input type='checkbox' name='languageId' value='$languageVO.getLanguageId()'></input>
+								</td>
+								<td>$languageVO.getName()</td>
+								<td>$languageVO.getLanguageCode()</td>
+							</tr>
+						#end
+					
+				</tbody>
+			</table>
+
+		<form>
+				
+	</div>
+
+#lightFooterToolbar($footerButtons)
+		
+#endLightCommonToolV3()

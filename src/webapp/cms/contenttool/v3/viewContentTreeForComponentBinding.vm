@@ -1,0 +1,179 @@
+#define( $headerMarkup )
+
+<style type="text/css">
+
+	#tabsContainer {
+		position: relative; 
+	}
+	
+	#basicTab > div, #search > div {
+		margin: 8px 0px 0px 8px;
+		position: relative; 
+	}
+
+	label {
+		margin-top: 6px;
+		margin-bottom: 2px;
+		display: block;
+		float: left;
+		width: 100%;
+	}
+
+	input, select {
+		margin-bottom: 4px;
+	}
+			
+	h4, p {
+		text-indent: 0px;
+		margin-left: 0px;
+	}
+	
+	.ui-tabs .ui-tabs-panel {
+		padding: 0px;
+		background-color: #F6F6F6;
+	}
+</style>
+
+	<script type="text/javascript">
+	<!-- 
+	    function notifyIsLoaded()
+	    {
+	    }
+	    
+	    function notifyExp(v)
+	    {
+	    }
+      	
+		function htmlTreeItemClick(itemId, repoId, path)
+		{
+			document.inputForm.entityId.value = itemId;
+		 	document.inputForm.repositoryId.value = repoId;
+		 	document.inputForm.path.value = path;	
+		}
+	
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;	
+		}
+	    
+	    function changeRepository(selectBox)
+		{
+			var repositoryId = selectBox.value;
+			var url = "${currentAction}?repositoryId=" + repositoryId + "&siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$componentId&propertyName=$propertyName&tree=$!tree&$allowedContentTypeIdsAsUrlEncodedString&showSimple=$showSimple&showDecorated=$showDecorated";
+			document.location.href = url;
+		}
+	    
+		function treeItemDblClick(id, label)
+      	{
+      		submitBindning();
+      	}
+	    
+	    function save()
+		{
+			submitBindning();
+		}
+
+	    function submitBindning()
+		{
+			//alert("Here we commit the binding and close the window...");
+			entityId = document.inputForm.entityId.value;
+			
+			if(entityId == '' || entityId == '${select}')
+			{
+				alert("You must choose a content before you can save");
+			}
+			else
+			{
+			    path = document.inputForm.path.value;
+			    var repositoryId = document.inputForm.repositoryId.value;
+				bindingTypeId = 0; //0 = Content, 1 = SiteNode
+				
+				qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+				qualifyerXML += "<qualifyer>";
+				qualifyerXML += 	"<contentId>" + entityId + "</contentId>";
+				qualifyerXML += "</qualifyer>";
+	
+				var url = "ViewSiteNodePageComponents!addComponentPropertyBinding.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&entity=Content&entityId=" + entityId + "&componentId=$componentId&propertyName=$propertyName&showSimple=$showSimple&showDecorated=$showDecorated&path=" + escape(path);
+				//alert('Calling:' + url);
+			    //alert('qualifyerXML:' + qualifyerXML);
+			    if(self.opener)
+			    {
+				    self.opener.location.href = url;
+				    window.close();
+				}
+				else if(parent)
+				{
+					parent.location.href = url;
+				}
+			}
+		}
+		
+		function toggleDiv(id, id2)
+		{
+			var div = document.getElementById(id);
+			if(div && div.style.display == "block")
+				div.style.display = "none";
+			else
+				div.style.display = "block";
+
+			var div2 = document.getElementById(id2);
+			if(div2 && div2.style.display == "block")
+				div2.style.display = "none";
+			else
+				div2.style.display = "block";
+		}
+
+		$(document).ready(function(){
+			$("#tabsContainer").tabs({ show:function(event, ui) { resizeInlineTabDivsFullOnPosition(ui.panel.id);} });
+		});
+
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.structuretool.chooseContentLabel" "" "" false true $!disableCloseButton $headerMarkup)
+	
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+		
+	<h3>$ui.getString("tool.structuretool.chooseContentForBindingLabel")</h3>
+	
+	<div id="tabsContainer" class="flora">      
+		<ul>
+	        <li><a href="#basicTab"><span>$ui.getString("tool.contenttool.assetDialog.repositoryBrowserTabLabel")</span></a></li>
+	        <li><a href="#searchTab"><span>$ui.getString("tool.common.searchTabLabelPrefix")</span></a></li>	        
+	    </ul>
+
+		<div id="basicTab" class="inlineTabDiv">
+			<div>
+				<select size="1" name="repositoryId" class="sitedropbox" onchange="changeRepository(this);">
+				    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+				    #foreach ($repositoryVO in $repositories)
+				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+				    #end
+				</select><br/>
+				
+				<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&${allowedContentTypeIdsAsUrlEncodedString}" width="100%" height="426" ></iframe>
+				##<iframe frameborder="0" name="itreeFrame" id="bindingItreeFrame" src="ViewContentHtmlTree!V3.action?repositoryId=${repositoryId}&${allowedContentTypeIdsAsUrlEncodedString}" width="100%" height="460" ></iframe>	
+			</div>
+		</div>
+		<div id="searchTab" class="inlineTabDiv">
+			<div>
+				<iframe frameborder="0" name="itreeFrame" id="searchItreeFrame" src="SearchContent!inputBinding.action?repositoryId=${repositoryId}&${allowedContentTypeIdsAsUrlEncodedString}" width="100%" height="426" ></iframe>
+			</div>
+		</div>
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+	
+	<form name="inputForm" action="CreateServiceBinding.action">
+		<input type="hidden" name="entityId" value=""/>
+		<input type="hidden" name="repositoryId" value=""/>
+		<input type="hidden" name="path" value=""/>
+		<input type="hidden" name="qualifyerXML" value=""/>
+	</form>
+
+#endLightCommonToolV3()

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+
+	<title>Toolbar</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<script language="JavaScript" src="script/listview.js"></script>
+	
+	<script type="text/javascript" language="JavaScript">
+	<!-- 
+		function openMainArea(url)
+		{
+			//alert('url:' + url);
+			parent.frames["main"].location.href = '' + url;
+		}
+
+		function reload(url, title)
+		{
+			//alert('url:' + url);
+			this.location.href = 'ViewPublishingToolToolBar.action?url=' + url + '&title=' + title;
+		}
+		
+		//-----------------------------------------------
+		// This function reloads the toolbar above the current 
+		// active action so that buttons related to the view 
+		// can be shown and a suitable headline be written.
+		//-----------------------------------------------
+		
+		function submitListForm(entityName)
+		{
+			var listForm = parent.frames["main"].document.listForm;
+			var selectedObjects = getSelectedObjects(listForm, entityName);
+			var selectedTexts = getSelectedTexts(listForm);
+			//alert("selectedObjects:" + selectedObjects);
+			if (selectedObjects == "")
+			{
+				alert('Select one or more objects to delete');
+			  	return;
+			}
+			else
+			{
+				listForm.message.value = listForm.message.value + selectedTexts;
+				listForm.yesDestination.value = listForm.yesDestination.value + '?' + selectedObjects;
+				listForm.submit();
+			}
+
+		}
+
+		function submitToUnpublish(entityName)
+		{
+			var listForm = parent.frames["main"].document.listFormPublication;
+
+			if (listForm.sel == null)
+			{
+				alert("There is no editions available to unpublish");
+				return;
+			}
+
+			var selectedObjects = getSelectedObjects(listForm, entityName);
+			var selectedTexts = getSelectedTexts(listForm);
+			
+			// alert("selectedObjects:" + selectedObjects);
+			
+			if (selectedObjects == "")
+			{
+				alert('Select one edition to unpublish');
+			  	return;
+			}
+			else
+			{
+				listForm.header.value = "tool.publishtool.unpublishEdition.header";
+				listForm.message.value = "tool.publishtool.unpublishEdition.text"; 
+				listForm.extraParameters.value = selectedTexts;
+				listForm.yesDestination.value = listForm.yesDestination.value + selectedObjects;
+				listForm.submit();
+			}
+
+		}
+		
+		function checkMarkedVersions()
+		{
+			var listForm = parent.frames["main"].document.listForm;
+			var lengthsel = null;
+			var lengthsit = null;
+			var ret = 0;
+			if (listForm.sel != null)
+				lengthsel = listForm.sel.length;
+			if (listForm.sit != null)
+				lengthsit = listForm.sit.length;
+
+			if (lengthsel == null && listForm.sel != null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	ret++;
+		  	}
+			else
+			{
+			  	for (i=0; i<lengthsel; i++)
+			   		if (listForm.sel[i].checked)
+			    		ret++;
+			}
+			    		
+			if (lengthsit == null && listForm.sit != null)
+		  	{
+		  		if (listForm.sit.checked)
+			    	ret++;
+		  	}
+		  	else
+		  	{
+			  	for (i=0; i<lengthsit; i++)
+			   		if (listForm.sit[i].checked)
+			    		ret++;
+			}
+		    		
+			return ret;
+		}
+
+		function submitToCreate()
+		{
+			var listForm = parent.frames["main"].document.listForm;
+			if (checkMarkedVersions() == 0)
+			{
+				alert('Select one or more versions to publish');
+			  	return;
+			}
+			else
+			{
+				listForm.action = "CreateEdition!input.action";
+				listForm.submit();
+			}
+		}
+
+		function submitToDeny()
+		{
+			var listForm = parent.frames["main"].document.listForm;
+			if (checkMarkedVersions() == 0)
+			{
+				alert('Select one or more items to deny');
+			  	return;
+			}
+			else
+			{
+				listForm.action = "DenyPublicationRequest!comment.action";
+				listForm.submit();
+			}
+		}
+
+		function submitToPreview()
+		{
+			var listForm = parent.frames["main"].document.listForm;
+			if (checkMarkedVersions() == 0)
+			{
+				alert('Select one or more versions to preview');
+			  	return;
+			}
+			else
+			{
+				arguments = getSelectedChkObjects(listForm.sel, "event");
+				//alert("arguments:" + arguments);
+				previewWindow=window.open("PreviewEdition.action?" + arguments, "Preview", "toolbar=no, width=800, height=650, directories=no,  status=no, scrollbars=yes, resize=no, menubar=no");
+				previewWindow.focus();
+				
+				previewWindow.document.write("<html><head><title>Preview edition</title></head>");
+				previewWindow.document.write("<frameset FRAMESPACING='0' FRAMEBORDER='NO' BORDER='0' rows='50,600'>");
+				previewWindow.document.write("<frame noresize frameborder=0 scrolling=no name='previewTop' src='PreviewEdition.action?" + getSelectedChkObjects(listForm.sel, "event") +"'>");
+				previewWindow.document.write("<frame name='previewMain' src=''>");
+				previewWindow.document.write("</frameset></html>");
+
+				// listForm.action = "PreviewEdition.action"
+				// listForm.submit();
+			}
+		}
+
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones id's to the id-List 
+		//-----------------------------------------------
+
+		function getSelectedObjects(listForm, entityName)
+		{
+			var str = '';
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += '&' + entityName + 'Id=' + escape(listForm.sel.value);
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (listForm.sel[i].checked)
+			    		str += '&' + entityName + 'Id=' + escape(listForm.sel[i].value);
+			 	}
+			}
+					 	
+		 	return str;
+		}
+
+		function getSelectedChkObjects(chkBox, entityName)
+		{
+			if (chkBox == null)
+				return "";
+				
+			var str = '';
+			var length = chkBox.length;
+		  	if(length == null)
+		  	{
+		  		if (chkBox.checked)
+			    	str += '&' + entityName + 'Id=' + escape(chkBox.value);
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (chkBox[i].checked)
+			    		str += '&' + entityName + 'Id=' + escape(chkBox[i].value);
+			 	}
+			}
+					 	
+		 	return str;
+		}
+
+
+
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones names to the messagesList 
+		//-----------------------------------------------
+		
+		function getSelectedTexts(listForm)
+		{
+			var str = '';
+
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += listForm.rowtitle.value + "<br/>";
+		  	}
+		  	else
+		  	{	
+				for (i=0; i<length; i++)
+				{
+					if (listForm.sel[i].checked)
+				    	str += listForm.rowtitle[i].value + "<br/>";
+				}
+			}
+					
+			return str;
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="publishingtool">
+
+<!-- This is the toolbar --->
+<div style="LEFT:1px; RIGHT:2px; position:absolute; TOP:1px; BOTTOM:1px; visibility:visible; z-index:0">
+<table class="publishingtool" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="28"></td>
+	<td valign="middle" width="100%" height="100%">
+		
+		#foreach($button in $buttons)
+			#if($button.isSelfContained)
+				<a title="$button.getTooltip()" href="$button.getActionUrl()"><img src="$button.getImageUrl()" height="22" width="76" border="0"></a><img src="images/splitter.gif">						 
+			#else
+				<a title="$button.getTooltip()" href="javascript:openMainArea('$button.getActionUrl()', '$button.getTitle()');"><img src="$button.getImageUrl()" height="22" width="76" border="0"></a><img src="images/splitter.gif">
+			#end
+		#end
+		<a valign=middle height=27 id='progress' name='progress' style='visibility:hidden'>
+			<img valign=middle src='images/working.gif' border='0' /> <font color=black size=-1 valign=middel>Loading...</font>
+		</a> 		
+	</td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"> 
+	</td>
+	
+	
+</tr>
+<tr>
+	<td colspan="3" bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+<!-- This is the headline --->
+<div style="LEFT:0px; RIGHT:0px; position:absolute; TOP:32px; BOTTOM:1px; visibility:visible; z-index:0">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr class="darkbrown">
+	<td class="actionheader"><div class="leftmarginalized">$ui.getString($title)</div></td>
+</tr>
+</table>
+
+</body>
+</html>

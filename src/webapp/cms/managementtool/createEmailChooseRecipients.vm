@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewMessageCenter.header" "tool.managementtool.viewMessageCenter.header" "")
+
+<script type="text/javascript">
+
+function toggleBlock(id)
+{
+	div = document.getElementById(id);
+	if(div.style.display == 'none')
+		div.style.display = 'block';
+	else
+		div.style.display = 'none';
+}
+
+</script>
+
+<div class="fullymarginalized">
+
+<p class="subtitle">$ui.getString("tool.managementtool.createEmailChooseRecipients.title")</p>
+<p>$ui.getString("tool.managementtool.createEmailChooseRecipients.intro")</p>
+
+<form method="POST" name="editForm" action="CreateEmail!inputCreateEmail.action">
+<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+
+<div id="roles"> 
+<h3>$ui.getString("tool.managementtool.roles.title")</h3>
+#foreach ($roleVO in $roles)
+	<input type="checkbox" name="roleName" value="$roleVO.name"/> $roleVO.name<br/>
+#end
+</div>
+
+<div id="groups"> 
+<h3>$ui.getString("tool.managementtool.groups.title")</h3>
+#foreach ($groupVO in $groups)
+	<input type="checkbox" name="groupName" value="$groupVO.name"/> $groupVO.name<br/>
+#end
+</div>
+
+<div id="usersTitle"> 
+	<div><span style="font-size: 12px; font-weight: bold;">$ui.getString("tool.managementtool.users.title")</span>&nbsp;<a href="javascript:toggleBlock('users');"><img src="images/downArrow.gif" border="0"></a></div>
+
+	<div id="users" style="display:none; height:200px; overflow:auto; border: 1px solid #666666;"> 
+	#foreach ($userVO in $users)
+		<input type="checkbox" name="userName" value="$userVO.name"/> $userVO.name<br/>
+	#end
+	</div>
+	<br/>
+	<input type="image" src="$ui.getString("images.contenttool.buttons.next")" width="50" height="25" border="0">
+	<a href="ViewMessageCenter.action"><img border="0" src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25"></a>
+	
+	</form>
+	</div>
+</div>
+
+#endManagementTool()

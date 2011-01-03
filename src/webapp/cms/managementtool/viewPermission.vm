@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+#beginManagementTool("tool.managementtool.viewPermission.header" "tool.managementtool.viewPermission.header" "")
+	
+## DEFINED ROLES
+#set( $lvConstraint =0 )
+    
+#lvHead(["Role Name"] "" "" "" "")
+<form name="editForm" action="ViewPermission!update.action">
+<input type="hidden" name="repositoryId" value="$repositoryId">
+	
+	#set($cnt = 0)
+	#foreach ($role in $definedRoles)
+		#set($checked = "")
+		#foreach ($assignedInfoGlueRole in $assignedInfoGlueRoles)
+			#if($assignedInfoGlueRole.getName() == $role.getName())
+				#set($checked = "checked")
+			#end 
+		#end
+		
+		#set ($cb = "<input type='checkbox' name='roleName' value='$role.name' $checked></input>")
+		#set( $row = ["$cb $role.name"] )
+
+		#set($cnt = $cnt + 1)
+		#lvAddRow($row $cnt $role.getRoleId)
+	#end
+	
+	#lvEnd()
+	<table>
+		<tr>
+			<td>
+				<input type="image" src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25" border="0"></a>
+				<a href="ViewRepositoryOverview.action?repositoryId=$repositoryId"><img border="0" src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25"></a>
+			</td>
+		</tr>
+	</table>
+</form>
+#endManagementTool()

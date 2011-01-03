@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.createRole.header" "tool.managementtool.createRole.header" "")
+
+<div class="fullymarginalized">
+
+	<form name="editForm" method="post" action="CreateRole.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<p>#editField("Role.roleName" "roleName" $!roleName "51")</p>
+		<p>#editTextArea("Role.description" "description" $description "50" "5" "normaltextarea")</p>
+	</form>
+
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListRole.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

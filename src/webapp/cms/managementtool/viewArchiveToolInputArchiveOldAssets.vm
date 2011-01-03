@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewSystemTools.header" "tool.managementtool.viewSystemTools.header" "")
+
+<script type="text/javascript">
+<!--
+function checkAll(element)
+{
+	if(element)
+	{
+		var length = element.length;
+	  	if(length == null)
+	  	{
+	  		element.checked = true;
+	  	}
+	  	else
+	  	{	
+		 	var field = element;
+		 	for (i = 0; i < field.length; i++)
+			{
+				field[i].checked = true;
+			}
+		}
+	}
+}
+
+function uncheckAll(element)
+{
+	if(element)
+	{
+		var length = element.length;
+	  	if(length == null)
+	  	{
+	  		element.checked = false;
+	  	}
+	  	else
+	  	{	
+		 	var field = element;
+		 	for (i = 0; i < field.length; i++)
+			{
+				field[i].checked = false;
+			}
+		}
+	}
+}
+-->
+</script>
+
+<style>
+	form 
+	{
+		margin-left: 16px;
+	}
+	fieldset
+	{
+		border: 1px solid #cccccc;
+		width: 450px;
+	}
+	legend
+	{
+		color: #000000;
+		background: #c6d3e7;
+		border: 1px solid #cccccc;
+		padding: 2px 6px
+	}
+	label
+	{
+		width: 300px;
+		float: left;
+		text-align: right;
+		margin-right: 0.5em;
+		display: block;
+	}
+	.narrowLabel
+	{
+		width: 100px;
+	}
+	select
+	{
+		background: white;
+		border: 1px solid #cccccc;
+		font-family: Verdana, Arial, San serif;
+		font-size: 8pt;
+		width: 80px;
+	}
+</style>
+
+<div class="fullymarginalized" style="color: black;">
+
+	<h2>$ui.getString("tool.managementtool.archiveTool.header")</h2>
+	<p>
+		$ui.getString("tool.managementtool.archiveAssets.intro")
+	</p>
+	<p>
+		<form name="inputForm" action="ViewArchiveTool!inputArchiveOldAssets.action" method="POST">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+ 		<fieldset>
+		<legend>Asset criterias</legend>
+ 		<label for="assetFileSizeLimit">$ui.getString("tool.managementtool.archiveAssets.assetSizeLabel"):</label>
+ 		<select name="assetFileSizeLimit">
+ 			<option value="50000" #checkSelected("50000" "$assetFileSizeLimit")>50 KB</option>
+ 			<option value="100000" #checkSelected("100000" "$assetFileSizeLimit")>100 KB</option>
+ 			<option value="300000" #checkSelected("300000" "$assetFileSizeLimit")>300 KB</option>
+ 			<option value="500000" #checkSelected("500000" "$assetFileSizeLimit")>500 KB</option>
+ 			<option value="1000000" #checkSelected("1000000" "$assetFileSizeLimit")>1 MB</option>
+ 			<option value="5000000" #checkSelected("5000000" "$assetFileSizeLimit")>5 MB</option>
+ 			<option value="10000000" #checkSelected("10000000" "$assetFileSizeLimit")>10 MB</option>
+ 		</select>
+ 		<br/><br/>
+ 		<label for="numberOfVersionsToKeep">$ui.getString("tool.managementtool.archiveAssets.numberOfNewerVersionsLabel"):</label>
+ 		<select name="numberOfVersionsToKeep">
+ 			<option value="0" #checkSelected("0" "$numberOfVersionsToKeep")>0 (harmful - only for cleanup)</option>
+ 			<option value="1" #checkSelected("1" "$numberOfVersionsToKeep")>1</option>
+ 			<option value="2" #checkSelected("2" "$numberOfVersionsToKeep")>2</option>
+ 			<option value="3" #checkSelected("3" "$numberOfVersionsToKeep")>3</option>
+ 			<option value="4" #checkSelected("4" "$numberOfVersionsToKeep")>4</option>
+ 			<option value="5" #checkSelected("5" "$numberOfVersionsToKeep")>5</option>
+ 			<option value="6" #checkSelected("6" "$numberOfVersionsToKeep")>6</option>
+ 		</select>
+ 		<br/><br/>
+ 		<label for="assetNumberLimit">Max assets:</label>
+ 		<select name="assetNumberLimit">
+ 			<option value="10" #checkSelected("10" "$assetNumberLimit")>10</option>
+ 			<option value="50" #checkSelected("50" "$assetNumberLimit")>50</option>
+ 			<option value="100" #checkSelected("100" "$assetNumberLimit")>100</option>
+ 			<option value="250" #checkSelected("250" "$assetNumberLimit")>250</option>
+ 			<option value="500" #checkSelected("500" "$assetNumberLimit")>500</option>
+ 			<option value="1000" #checkSelected("1000" "$assetNumberLimit")>1000</option>
+ 			<option value="10000" #checkSelected("10000" "$assetNumberLimit")>10000</option>
+ 		</select>
+ 		<br/>
+ 		<br/>
+ 		<input type="submit" value="Calculate"/>
+		</fieldset>
+ 		</form>
+	</p>
+
+	<h3>$ui.getString("tool.managementtool.archiveAssets.foundAssetsLabel")</h3>		
+	<p>
+		<form name="resultForm" action="ViewArchiveTool!archiveOldAssets.action" method="POST">
+			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+						
+			<input type="button" class="checkAll" value="$ui.getString("tool.common.checkAll.label")" onclick="checkAll(document.resultForm.digitalAssetId);"/>
+			<input type="button" class="uncheckAll" value="$ui.getString("tool.common.uncheckAll.label")" onclick="uncheckAll(document.resultForm.digitalAssetId);"/>
+			
+			<br/>		
+			<br/>		
+		 	#foreach($digitalAssetVO in $optimizationBeanList.digitalAssetVOList)
+				<input type="checkbox" name="digitalAssetId" value="$digitalAssetVO.digitalAssetId"/>$digitalAssetVO.assetKey ($formatter.formatFileSize($digitalAssetVO.assetFileSize)) - $optimizationBeanList.getContentPath($digitalAssetVO.id)<br>
+			#end
+			<br/>
+			In total $optimizationBeanList.totalAssetSizeInMB MB would be removed ($optimizationBeanList.totalAssets assets - $optimizationBeanList.totalAssetsWithoutVersion was not owned by a content version).
+			<br/>
+			<br/>
+			<input type="checkbox" onclick="javascript:alert('Warning: this option should not be used normally as it nullifies the asset blob and can lead to other errors later. Only of interest to oracle users who want to shrink their schema. For other databases you also have to set the assetBlob-column to allow nulls.');" name="nullAssets" value="true"/> Null assets when archiving?<br>
+			
+			<br>
+	 		<input type="submit" value="Archive selected files"/>
+			<br>
+		</form>
+	</p>
+</div>
+		
+</body>
+</html>

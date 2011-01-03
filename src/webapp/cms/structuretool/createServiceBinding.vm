@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Menus</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<script type="text/javascript" language="JavaScript">
+	<!-- 
+		function loadMainArea(entityId, repositoryId, path)
+		{
+			document.inputForm.entityId.value = entityId;
+		 	document.inputForm.repositoryId.value = repositoryId;
+		 	document.inputForm.path.value = path;	
+		}
+	    
+	    function submitBindning()
+		{
+		    //alert("Here we commit the binding and close the window...");
+			entityId = document.inputForm.entityId.value;
+			path = document.inputForm.path.value;
+		    repositoryId = document.inputForm.repositoryId.value;
+			bindingTypeId = 0; //0 = Content, 1 = SiteNode
+			
+			qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
+			qualifyerXML += "<qualifyer>";
+			qualifyerXML += 	"<contentId>" + entityId + "</contentId>";
+			qualifyerXML += "</qualifyer>";
+			 		    
+		    url = 'CreateServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&stay=true&path=' + escape(path) + '&entityId=' + entityId + "&qualifyerXML=" + escape(qualifyerXML);
+		    //alert('Calling:' + url);
+		    self.opener.parent.frames["main"].location.href = url;
+		    window.close();
+		    //document.inputForm.submit();
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="structuretool">
+
+<div style="LEFT:0px; RIGHT:0px; position:absolute; TOP:0px; height:100%; visibility:visible; z-index:0">
+<table class="structuretool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td valign="top" width="100%" height="100%"></td>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+
+<div style="LEFT:2px; RIGHT:2px; position:absolute; TOP:1px; BOTTOM:6px; height:100%; visibility:visible; z-index:0">
+<table class="structuretool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td valign="top" width="100%">
+		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td class="menu"><img src="images/trans.gif" height="15"></td>
+		</tr>
+		<tr>
+			<td class="menu">    
+				#showJavaTree("250" "400" "240" "225" "180" "Content" "1" "false")
+			</td>
+		</tr>	
+		<tr>
+			<td><form name="inputForm" action="CreateServiceBinding.action">
+				<input type="text" name="entityId" value="">
+				<input type="text" name="repositoryId" value="">
+				<input type="text" name="path" value="">
+				<input type="text" name="qualifyerXML" value="">
+				<a href="javascript:submitBindning();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
+				</form>
+			</td>
+		</tr>		
+		</table>
+	
+	</td>	
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+</body>
+</html>

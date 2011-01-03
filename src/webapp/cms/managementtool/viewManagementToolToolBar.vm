@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Toolbar</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript">
+	<!-- 
+		function openMainArea(url)
+		{
+			var agt=navigator.userAgent.toLowerCase();
+			if(agt.indexOf("safari")!=-1)
+			{
+				parent.frames['main'].location = '' + url;
+			}
+			else	
+			{
+				parent.frames["main"].location.href = '' + url;
+			}
+		}
+
+		function reload(url, title)
+		{
+			//alert('url:' + url);
+			this.location.href = 'ViewManagementToolToolBar.action?url=' + url + '&title=' + title;
+		}
+		
+		//-----------------------------------------------
+		// This function reloads the toolbar above the current 
+		// active action so that buttons related to the view 
+		// can be shown and a suitable headline be written.
+		//-----------------------------------------------
+		
+		function submitListForm(entityName)
+		{
+			var listForm = parent.frames["main"].document.listForm;
+			var selectedObjects = getSelectedObjects(listForm, entityName);
+			var selectedTexts = getSelectedTexts(listForm);
+			if (selectedObjects == "")
+			{
+				alert('Select one or more objects to delete');
+			  	return;
+			}
+			else
+			{
+				listForm.message.value = listForm.message.value;
+				listForm.extraParameters.value = selectedTexts;
+				listForm.yesDestination.value = listForm.yesDestination.value + '?' + selectedObjects;
+				listForm.submit();
+			}
+
+		}
+
+		//-----------------------------------------------
+		// This function reloads the toolbar above the current 
+		// active action so that buttons related to the view 
+		// can be shown and a suitable headline be written.
+		//-----------------------------------------------
+		
+		function submitListFormWithPrimaryKey(entityName, primaryKey)
+		{
+			var listForm = parent.frames["main"].document.listForm;
+			var selectedObjects = getSelectedObjectsWithPrimaryKey(listForm, entityName, primaryKey);
+			var selectedTexts = getSelectedTexts(listForm);
+			if (selectedObjects == "")
+			{
+				alert('Select one or more objects to delete');
+			  	return;
+			}
+			else
+			{
+				listForm.message.value = listForm.message.value;
+				listForm.extraParameters.value = selectedTexts;
+				listForm.yesDestination.value = listForm.yesDestination.value + '?' + selectedObjects;
+				listForm.submit();
+			}
+
+		}
+		
+		
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones id's to the id-List 
+		//-----------------------------------------------
+
+		function getSelectedObjects(listForm, entityName)
+		{
+			var str = '';
+		
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += '&' + entityName + 'Id=' + escape(listForm.sel.value);
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (listForm.sel[i].checked)
+			    		str += '&' + entityName + 'Id=' + escape(listForm.sel[i].value);
+			 	}
+			}
+					 	
+		 	return str;
+		}
+
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones id's to the id-List 
+		//-----------------------------------------------
+
+		function getSelectedObjectsWithPrimaryKey(listForm, entityName, primaryKey)
+		{
+			var str = '';
+		
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += '&' + primaryKey + '=' + listForm.sel.value;
+		  	}
+		  	else
+		  	{	
+			  	for (i=0; i<length; i++)
+			  	{
+			   		if (listForm.sel[i].checked)
+			    		str += '&' + primaryKey + '=' + listForm.sel[i].value;
+			 	}
+			}
+					 	
+		 	return str;
+		}
+
+
+		//-----------------------------------------------
+		// This function iterates through the list of select-boxes 
+		// and add the selected ones names to the messagesList 
+		//-----------------------------------------------
+		
+		function getSelectedTexts(listForm)
+		{
+			var str = '';
+
+			var length = listForm.sel.length;
+		  	if(length == null)
+		  	{
+		  		if (listForm.sel.checked)
+			    	str += listForm.rowtitle.value + "<br/>";
+		  	}
+		  	else
+		  	{	
+				for (i=0; i<length; i++)
+				{
+					if (listForm.sel[i].checked)
+				    	str += listForm.rowtitle[i].value + "<br/>";
+				}
+			}
+					
+			return str;
+		}
+
+		//------------------------------------------------
+		// This method invokes the method toggleSearchForm on the main area if it exists.
+		//------------------------------------------------
+		
+		function toggleSearchForm()
+		{
+			parent.frames["main"].toggleSearchForm();
+		}
+	-->
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+</head>
+
+<body class="managementtool">
+
+<!-- This is the toolbar --->
+<div style="border-right: 1px solid white; LEFT:1px; RIGHT:0px; position:absolute; TOP:0px; BOTTOM:1px; visibility:visible; z-index:0">
+<table class="managementtool" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+<tr>
+	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="28"></td>
+	<td valign="middle" width="100%" height="100%">
+		
+		#foreach($button in $buttons)
+			#if($button.isSelfContained)
+				<a href="$button.getActionUrl()"><img src="$button.getImageUrl()" height="$button.getHeight()" width="$button.getWidth()" border="0"></a><img src="images/splitter.gif">						 
+			#else
+				<a href="javascript:openMainArea('$button.getActionUrl()');"><img src="$button.getImageUrl()" height="$button.getHeight()" width="$button.getWidth()" border="0"></a><img src="images/splitter.gif">		
+			#end
+		#end
+		<!-- SS, 2002-09-15 Modification for progress information -->			
+			<a height=27 id='progress' name='progress' style='visibility:hidden'>
+				<img src='images/working.gif' border='0' />
+			</a>			
+		<!-- SS, end mod -->
+		
+	</td>
+	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"> 
+	</td>
+	
+	
+</tr>
+<tr>
+	<td colspan="3" bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+</tr>
+</table>
+</div>
+
+<!-- This is the headline --->
+<div style="border-right: 1px solid white; LEFT:0px; RIGHT:0px; position:absolute; TOP:32px; BOTTOM:0px; visibility:visible; z-index:0">
+<table cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr class="darkblue">
+	<td class="titleField">$ui.getString($title)</td>
+</tr>
+</table>
+
+</body>
+</html>

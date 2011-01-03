@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#if($colorScheme == "ManagementTool")
+	#beginManagementTool("tool.contenttool.accessRights.header" "tool.contenttool.accessRights.header" "null")
+#elseif($colorScheme == "StructureTool")
+	#beginStructureTool("tool.contenttool.accessRights.header" "tool.contenttool.accessRights.header" "null" "null" "null" "null")
+#elseif($colorScheme == "PublishingTool")
+	#beginPublishingTool("tool.contenttool.accessRights.header" "tool.contenttool.accessRights.header" "null" "null" "null" "null")
+#else
+	#beginContentTool("tool.contenttool.accessRights.header" "tool.contenttool.accessRights.header" "null" "null" "null" "null")
+#end
+
+#includeLatestJQuery()
+
+<script type="text/javascript">
+<!--
+	function showUsers()
+	{
+		openPopup('ViewListSystemUser!userListForPopup.action', 'Users', 'width=400,height=600,resizable=yes,scrollbars=yes');
+	}
+	
+	function selectUser(userName)
+	{
+		document.getElementById("userName").value = userName;
+	}
+
+	function selectMyself()
+	{
+		document.getElementById("userName").value = "$infoGluePrincipal.name";
+	}
+	
+	function deleteUser(userName)
+	{
+		document.addUserForm.action = "UpdateAccessRights!deleteUser.action";
+		document.getElementById("userName").value = userName;
+		document.addUserForm.submit();
+	}
+	
+	#set($anonymousPrincipal = $anonymousPrincipal)
+	//alert("anonymousPrincipal: + $anonymousPrincipal.roles");
+	//alert("anonymousPrincipal: + $anonymousPrincipal.groups");
+	var roles = new Array($!anonymousPrincipal.roles.size());
+	var groups = new Array($!anonymousPrincipal.groups.size());
+	
+	var hasGroupLimitation = false;
+	
+	function confirmSave()
+	{
+		var x=0;
+		var selected = false;
+		
+		//alert("roles:" + roles.length);
+		for (x=0; x<roles.length; x++)
+		{
+			var roleElementId = roles[x];
+			//alert("roleElementId:" + roleElementId);
+			var element = document.getElementById(roleElementId);
+			//alert("element:" + element.checked);
+			if(element && element.checked)
+			{
+				//alert("element:" + element.name + ":" + element.checked);
+				selected = true;
+			}
+		}
+		
+		#set($anonymousGroupsSize = $anonymousPrincipal.groups.size())
+		#if($anonymousGroupsSize > 0)
+		//alert("hasGroupLimitation:" + hasGroupLimitation);
+		if(selected && hasGroupLimitation)
+		{
+			var y=0;
+			var selected = false;
+			//alert("groups:" + groups.length);
+			for (y=0; y<groups.length; y++)
+			{
+				var groupElementId = groups[y];
+				//alert("groupElementId:" + groupElementId);
+				var element = document.getElementById(groupElementId);
+				//alert("element:" + element.checked);
+				if(element && element.checked)
+				{
+					selected = true;
+				}
+			}
+		} 
+		#end
+		
+		//alert("selected:" + selected);
+		//alert("useAnonymousWarningCheck:" + useAnonymousWarningCheck);
+		if(!selected && useAnonymousWarningCheck)
+		{
+			if(confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
+			{
+				document.editForm.submit();
+			}
+		}
+		else
+		{
+			document.editForm.submit();
+		}
+	}
+
+	function confirmSaveAndExit()
+	{
+		var x=0;
+		var selected = false;
+		
+		//alert("roles:" + roles.length);
+		for (x=0; x<roles.length; x++)
+		{
+			var roleElementId = roles[x];
+			//alert("roleElementId:" + roleElementId);
+			var element = document.getElementById(roleElementId);
+			//alert("element:" + element.checked);
+			if(element && element.checked)
+			{
+				//alert("element:" + element.name + ":" + element.checked);
+				selected = true;
+			}
+		}
+		
+		#set($anonymousGroupsSize = $anonymousPrincipal.groups.size())
+		#if($anonymousGroupsSize > 0)
+		//alert("hasGroupLimitation:" + hasGroupLimitation);
+		if(selected && hasGroupLimitation)
+		{
+			var y=0;
+			var selected = false;
+			//alert("groups:" + groups.length);
+			for (y=0; y<groups.length; y++)
+			{
+				var groupElementId = groups[y];
+				//alert("groupElementId:" + groupElementId);
+				var element = document.getElementById(groupElementId);
+				//alert("element:" + element.checked);
+				if(element && element.checked)
+				{
+					selected = true;
+				}
+			}
+		} 
+		#end
+
+		document.editForm.returnAddress.value = "$returnAddress";
+		//alert("selected:" + selected);
+		//alert("useAnonymousWarningCheck:" + useAnonymousWarningCheck);
+		if(!selected && useAnonymousWarningCheck)
+		{
+			if(confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
+			{
+				document.editForm.submit();
+			}
+		}
+		else
+		{
+			document.editForm.submit();
+		}
+	}
+
+	#if($saved == "true")
+	$(document).ready(function() {
+		setTimeout(function() {$("#saved").hide("slow");}, 1000);
+	});
+	#end
+-->
+</script>
+
+<div class="fullymarginalized">
+<form method="POST" name="editForm" action="UpdateAccessRights.action">
+<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory">
+<input type="hidden" name="parameters" value="$extraParameters">
+#foreach($extraMultiParameter in $extraMultiParameters)
+<input type="hidden" name="extraMultiParameter" value="$extraMultiParameter">
+#end
+<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl">
+
+#set($interceptionPointIndex = 0)
+#foreach($interceptionPointVO in $interceptionPointVOList)
+	#set($accessRightId = -1)
+	#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
+	#set($accessRightIds = $this.getAccessRightIds($interceptionPointVO.id, $extraParameters))
+	#foreach($currentAccessRightId in $accessRightIds)
+		#set($accessRightGroups = $this.getAccessRightGroups($currentAccessRightId))
+		#if($accessRightGroups.size() > 0)
+			#set($accessRightId = $currentAccessRightId)
+		#end
+	#end
+
+	#if($accessRightId > -1)
+		#set($accessRightGroupIndex = 0)
+		#foreach($accessRightGroup in $this.getAccessRightGroups($accessRightId))
+			<input type="hidden" name="${interceptionPointVO.id}_${accessRightGroupIndex}_groupName" value="$accessRightGroup.groupName">
+			#set($accessRightGroupIndex = $accessRightGroupIndex + 1)
+		#end
+	#end
+	#set($interceptionPointIndex = $interceptionPointIndex + 1)
+#end
+
+<script type="text/javascript">var useAnonymousWarningCheck = false;</script>
+
+#if($saved == "true")
+<p id="saved" style="color: red; width: 300px; font-weight: bold; border: 1px solid black; padding: 10px 2px 10px 4px; margin: 0px 0px 5px 0px;">
+Rights saved...
+</p>
+#end
+
+<table border="0" width="95%" cellpadding="0" cellspacing="0">
+	<tr class="darkgreen">
+		<td class="smalllabel">Role</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		#set($colspan = 1)
+		#foreach($interceptionPointVO in $interceptionPointVOList)
+			#if($interceptionPointVO.name == "Content.Read" || $interceptionPointVO.name == "SiteNodeVersion.Read")
+				<script type="text/javascript">useAnonymousWarningCheck = true;</script>	
+			#end
+			#*
+			$interceptionPointVO.name<br/>
+			getUsesExtraDataForAccessControl: $interceptionPointVO.getUsesExtraDataForAccessControl()<br/>
+			extraParameters: $extraParameters<br/>
+			extraMultiParameters: $extraMultiParameters<br/>
+			*#
+			##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
+			#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
+				#set($accessRightId = -1)
+				#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
+				#set($accessRightIds = $this.getAccessRightIds($interceptionPointVO.id, $extraParameters))
+				#set($hasGroupLimitations = false)
+				#foreach($currentAccessRightId in $accessRightIds)
+					#set($accessRightGroups = $this.getAccessRightGroups($currentAccessRightId))
+					#if($accessRightGroups.size() > 0)
+						#set($hasGroupLimitations = true)
+						#set($accessRightId = $currentAccessRightId)
+					#end
+				#end
+				#set($dotIndex = $interceptionPointVO.name.indexOf(".") + 1)
+				<td align="center" class="smalllabel">$interceptionPointVO.name.substring($dotIndex)
+				#if($accessRightId > -1)
+					#if($hasGroupLimitations)
+						<script type="text/javascript">hasGroupLimitation = true;</script>
+						<br/><a href="javascript:showDiv('groups$accessRightId');" title="Limited by groups also - click to view."><img src="images/groups.gif" border="0"/></a>
+					#else
+						<br/><a href="javascript:showDiv('groups$accessRightId');" title="Not limited by groups at the moment"><img src="images/groupsInactive.gif" border="0"/></a>
+					#end
+				#end
+				</td>
+				<td><img src="images/trans.gif" width="20" height="1"></td>
+				#set($colspan = $colspan + 3)
+			#end
+		#end
+		<td></td>
+	</tr>
+	
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="$colspan" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#C7D1B3" colspan="$colspan" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	
+	#set($roleIndex = 0)
+	#foreach ($role in $roleList)
+	
+		#set($isOdd = $velocityCount % 2)
+		#if($isOdd==0)
+			#set($class = "class='lightGreen'")
+		#else
+			#set($class = "class='white'")
+		#end
+		
+		<tr>
+			<td $class>
+				$role.displayName
+				<input type="hidden" name="${roleIndex}_roleName" value="$role.name">
+			</td>
+			<td $class></td>
+			#set($interceptionPointIndex = 0)
+			#foreach($interceptionPointVO in $interceptionPointVOList)
+				##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
+				#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
+					<td $class align="center" nowrap>
+						#set($checked = "")
+						#if($this.getHasAccessRight($interceptionPointVO.id, $extraParameters, $role.name))
+							#set($checked = "checked")
+							#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
+						#end 
+						
+						#if($interceptionPointVO.name == "Content.Read" || $interceptionPointVO.name == "SiteNodeVersion.Read")
+							#set($anonymousRolesCount = 0)
+							#foreach($anonymousRole in $anonymousPrincipal.roles)
+								#if($anonymousRole.name == $role.name)
+									<script type="text/javascript">
+										//alert("Anonymous role found $role.name");
+										roles[$anonymousRolesCount] = "${interceptionPointVO.id}_${role.name}_hasAccess";
+									</script>
+									#set($anonymousRolesCount = $anonymousRolesCount + 1)
+								#end
+							#end
+						#end
+																	
+						<input type="hidden" name="${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id">
+						<input type="hidden" name="${interceptionPointVO.id}_${roleIndex}_roleName" value="$role.name">
+						<input type="checkbox" id="${interceptionPointVO.id}_${role.name}_hasAccess" name="${interceptionPointVO.id}_${role.name}_hasAccess" value="true" $checked>
+						
+					</td>
+					<td $class></td>
+					#set($interceptionPointIndex = $interceptionPointIndex + 1)
+				#end
+			#end
+			<td $class></td>
+		</tr>
+		#set($roleIndex = $roleIndex + 1)
+	#end
+	
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>	
+		<td colspan="$interceptionPointIndex">
+			<a href="javascript:confirmSave();"><img src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25" border="0"></a>
+			<a href="javascript:confirmSaveAndExit();"><img src="$ui.getString("images.managementtool.buttons.saveAndExit")" width="80" height="25" border="0"></a>
+			<a href="$returnAddress"><img border="0" src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25"></a>
+		</td>
+	</tr>			
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+</form>
+	
+<form method="POST" name="addUserForm" action="UpdateAccessRights!addUser.action">
+<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory">
+<input type="hidden" name="parameters" value="$extraParameters">
+#foreach($extraMultiParameter in $extraMultiParameters)
+<input type="hidden" name="extraMultiParameter" value="$extraMultiParameter">
+#end
+<input type="hidden" name="returnAddress" value="$returnAddress">
+
+	<tr class="darkgreen">
+		<td class="smalllabel">Individual users with access</td>
+		<td><img src="images/trans.gif" width="20" height="1"></td>
+		#set($colspan = 1)
+		#foreach($interceptionPointVO in $interceptionPointVOList)
+			##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
+			#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
+				#set($accessRightId = -1)
+				#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
+				#set($dotIndex = $interceptionPointVO.name.indexOf(".") + 1)
+				<td align="center" class="smalllabel">$interceptionPointVO.name.substring($dotIndex)</td>
+				<td><img src="images/trans.gif" width="20" height="1"></td>
+				#set($colspan = $colspan + 3)
+			#end
+		#end
+		<td><img src="images/trans.gif" width="20" height="1"></td>		
+	</tr>
+	
+	<tr>
+		<td bgcolor="#EEF7DC" colspan="$colspan" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	<tr>
+		<td bgcolor="#C7D1B3" colspan="$colspan" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+	</tr>
+	#foreach($accessRightsUserRow in $accessRightsUserRows)
+	<tr>
+		<td>
+			$accessRightsUserRow.userName
+		</td>
+		<td></td>
+		#set($interceptionPointIndex = 0)
+		#foreach($interceptionPointVO in $interceptionPointVOList)
+			##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
+			#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
+				<td align="center" nowrap>
+					#set($checked = "")
+					#if($accessRightsUserRow.accessRights.get($interceptionPointVO.id) == true)
+						#set($checked = "checked")
+					#end 
+					
+					<input type="hidden" name="${interceptionPointVO.id}_${userIndex}_userName" value="$accessRightsUserRow.userName">
+					<!--<input type="checkbox" name="${interceptionPointVO.id}_${accessRightsUserRow.userName}_hasAccess" value="true" $checked>-->
+					<input type="checkbox" name="${interceptionPointVO.id}_${accessRightsUserRow.userName}_hasAccess" value="true" disabled="true" $checked>
+					
+				</td>
+				<td></td>
+				#set($interceptionPointIndex = $interceptionPointIndex + 1)
+			#end
+		#end
+		<td><a href="javascript:deleteUser('$accessRightsUserRow.userName');"><img src="images/delete.gif" width="12" height="12" border="0"></a></td>
+	</tr>
+	#end	
+
+	<tr>
+		<td nowrap>
+			<input astyle="border: 1px solid #666; width: 110px;" type="textfield" id="userName" name="userName" value=""/>
+			<a href="javascript:showUsers();"><img src="images/spyglassIcon.gif" width="16" height="16" border="0"/></a>
+			<a href="javascript:selectMyself();"><img src="images/user18.gif" width="16" height="16" border="0"/></a>
+		</td>
+		<td></td>
+		#set($interceptionPointIndex = 0)
+		#foreach($interceptionPointVO in $interceptionPointVOList)
+			##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
+			#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
+				<td align="center" nowrap>
+					#set($checked = "")
+					##if($this.getHasAccessRight($interceptionPointVO.id, $extraParameters, $role.name))
+						##set($checked = "checked")
+						##set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
+					##end 
+					
+					<input type="hidden" name="${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id">
+					<input type="hidden" name="interceptionPointId" value="$interceptionPointVO.id">
+					<input type="checkbox" name="${interceptionPointVO.id}_hasAccess" value="true" $checked>
+					
+				</td>
+				<td></td>
+				#set($interceptionPointIndex = $interceptionPointIndex + 1)
+			#end
+		#end
+	</tr>
+	
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>	
+		<td colspan="$interceptionPointIndex">
+			<a href="javascript:document.addUserForm.submit();"><img src="$ui.getString("images.contenttool.buttons.addButton")" width="50" height="25" border="0"></a>
+		</td>
+	</tr>			
+	
+</table>
+</form>
+</div>
+
+
+<script type="text/javascript">
+
+	function showDiv(id)
+	{
+		document.getElementById(id).style.visibility = 'visible';
+	}
+	
+	function hideDiv(id)
+	{
+		document.getElementById(id).style.visibility = 'hidden';
+	}
+	
+</script>
+						
+#set($interceptionPointIndex = 0)
+#foreach($interceptionPointVO in $interceptionPointVOList)
+	#set($accessRightId = -1)
+	#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
+	#set($accessRightIds = $this.getAccessRightIds($interceptionPointVO.id, $extraParameters))
+	
+	#if($accessRightId > -1)
+		#set($accessRightGroups = $this.getAccessRightGroups($accessRightId))
+		#foreach($currentAccessRightId in $accessRightIds)
+			#set($accessRightGroupsCandidate = $this.getAccessRightGroups($currentAccessRightId))
+			#if($accessRightGroupsCandidate.size() > 0)
+				#set($accessRightGroups = $accessRightGroupsCandidate)
+				#set($accessRightId = $currentAccessRightId)
+			#end
+		#end						
+		
+		<script type="text/javascript">
+		
+			function confirmGroupSave(form, field, interceptionPointName)
+			{
+				var y=0;
+				var selected = false;
+				//alert("groups:" + groups.length);
+				for (y=0; y<groups.length; y++)
+				{
+					var groupElementId = groups[y];
+					//alert("groupElementId:" + groupElementId);
+					var element = document.getElementById(groupElementId);
+					//alert("element:" + element.checked);
+					if(element && element.checked)
+					{
+						selected = true;
+					}
+				}
+				
+				var skipGroupCheck = true;
+				#set($anonymousGroupsSize = $anonymousPrincipal.groups.size())
+				#if($anonymousGroupsSize > 0)
+					skipGroupCheck = false;
+					var allUnchecked = true;
+					//alert("field: document.groups${accessRightId}Form.groupName");
+				 	//alert("field: " + field.length);
+					for (i = 0; i < field.length; i++)
+					{
+						//alert("Field:" + field[i].value + field[i].checked);
+						if(field[i] && field[i].checked)
+						{
+							//alert("Field checked:" + field[i].value);
+							allUnchecked = false;
+						}
+					}	
+				#end
+				
+				//alert("allUnchecked:" + allUnchecked);
+				//alert("interceptionPointName:" + interceptionPointName);
+				if(!skipGroupCheck && !selected && !allUnchecked && (interceptionPointName == "SiteNodeVersion.Read" || interceptionPointName == "Content.Read"))
+				{
+					if(confirm('$ui.getString("tool.contenttool.accessRightsAnonymousWarning")'))
+					{
+						form.submit();
+					}
+				}
+				else
+				{
+					form.submit();
+				}
+			}
+				
+		</script>
+	<div id="groups$accessRightId" style="position: absolute; overflow: auto; top: 10px; left: 150px; visibility: hidden; width:400px; height:500px; background-color: white; border:1px solid black;">
+		<form method="POST" name="groups${accessRightId}Form" action="UpdateAccessRights!addGroups.action">
+		<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory">
+		<input type="hidden" name="parameters" value="$extraParameters">
+		<input type="hidden" name="accessRightId" value="$accessRightId">
+		<input type="hidden" name="returnAddress" value="$returnAddress">
+		
+		<table width="100%" bgcolor="white" cellpadding="0" cellspacing="0" border="0">
+		<tr class="darkgreen">
+			<td class="smalllabel">&nbsp;</td>
+			<td class="smalllabel" width="90%">Group</td>
+		</tr>
+		<tr>
+			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		
+		#foreach($group in $groupList)
+		
+			#set($selected = "")
+			#foreach($accessRightGroup in $accessRightGroups)
+				#if($accessRightGroup.groupName == $group.name)
+					#set($selected = "checked='1'")
+				#end
+			#end
+
+			#if($interceptionPointVO.name == "Content.Read" || $interceptionPointVO.name == "SiteNodeVersion.Read")
+				#set($anonymousGroupsCount = 0)
+				#foreach($anonymousGroup in $anonymousPrincipal.groups)
+					#if($anonymousGroup.name == $group.name)
+						<script type="text/javascript">
+							//alert("Anonymous group found $group.name");
+							groups[$anonymousGroupsCount] = "${interceptionPointVO.id}_${group.name}_hasAccess";
+						</script>
+						#set($anonymousGroupsCount = $anonymousGroupsCount + 1)
+					#end
+				#end
+			#end
+
+		<tr>
+			  	<td><input type="checkbox" id="${interceptionPointVO.id}_${group.name}_hasAccess" name="groupName" value="${group.name}" $selected></td>
+		  	<td>$group.displayName</td>
+		</tr>
+		#end
+		<tr>
+		  	<td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+		  	<td colspan="2">
+		  	<a href="javascript:confirmGroupSave(document.groups${accessRightId}Form, document.groups${accessRightId}Form.groupName, '$interceptionPointVO.name');"><img src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25" border="0"></a>
+		  	<img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" onclick="hideDiv('groups$accessRightId');">
+		  	</td>
+		</tr>
+		</table>
+		</form>
+	</div>			
+	#end
+	#set($interceptionPointIndex = $interceptionPointIndex + 1)
+#end
+	
+</body>
+</html>

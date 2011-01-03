@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginStructureTool("tool.structuretool.publishSiteNode.header" "tool.structuretool.publishSiteNode.header" "" "0" "0" "0")
+
+<script language="JavaScript">
+<!--
+		function checkMarkedVersions()
+		{
+			var listForm = document.listForm;
+			var lengthselSiteNodeVersions = null;
+			var lengthselContentVersions = null;
+			var lengthsit = null;
+			var ret = 0;
+			if (listForm.selSiteNodeVersions != null)
+				lengthselSiteNodeVersions = listForm.selSiteNodeVersions.length;
+			if (listForm.selContentVersions != null)				
+				lengthselContentVersions = listForm.selContentVersions.length;
+			if (listForm.sit != null)
+				lengthsit = listForm.sit.length;
+
+			if (lengthselSiteNodeVersions == null && listForm.selSiteNodeVersions != null)
+		  	{
+		  		if (listForm.selSiteNodeVersions.checked)
+			    	ret++;
+		  	}
+			else
+			{
+			  	for (i=0; i<lengthselSiteNodeVersions; i++)
+			   		if (listForm.selSiteNodeVersions[i].checked)
+			    		ret++;
+			}
+
+			if (lengthselContentVersions == null && listForm.selContentVersions != null)
+		  	{
+		  		if (listForm.selContentVersions.checked)
+			    	ret++;
+		  	}
+			else
+			{
+			  	for (i=0; i<lengthselContentVersions; i++)
+			   		if (listForm.selContentVersions[i].checked)
+			    		ret++;
+			}
+			    		
+			if (lengthsit == null && listForm.sit != null)
+		  	{
+		  		if (listForm.sit.checked)
+			    	ret++;
+		  	}
+		  	else
+		  	{
+			  	for (i=0; i<lengthsit; i++)
+			   		if (listForm.sit[i].checked)
+			    		ret++;
+			}
+		    		
+			return ret;
+		}
+		
+		function checkAll()
+		{
+			checkAllBoxes(document.listForm.selSiteNodeVersions);
+			checkAllBoxes(document.listForm.selContentVersions);					
+		}
+
+		function uncheckAll()
+		{
+			uncheckAllBoxes(document.listForm.selSiteNodeVersions);
+			uncheckAllBoxes(document.listForm.selContentVersions);		
+		}
+				
+		
+		function submitToPublish(attemptDirectPublishing)
+		{
+			var listForm = document.listForm;
+			var commentElm = document.getElementById("xversionComment");
+			
+			/*
+			if (commentElm.value == "")
+			{
+				alert('You must state a comment');
+			  	return;
+			}
+			*/
+			if (commentElm.value.length > 255)
+			{
+				alert('The comment is to long - only 255 characters allowed.');
+			  	return;
+			}
+			
+			var overrideVersionModifyerElm = document.getElementById("xoverrideVersionModifyer");
+			if (checkMarkedVersions() == 0)
+			{
+				alert('Select one or more versions to publish');
+			  	return;
+			}
+			else
+			{
+				listForm.action = "ChangeMultiSiteNodeVersionStatePublish.action"
+				listForm.versionComment.value = commentElm.value;
+				if(overrideVersionModifyerElm.checked == true)
+					listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+				else
+					listForm.overrideVersionModifyer.value = "false";
+					
+				#if($allowPublicationEventFilter == "true")
+					var xrecipientFilter = document.getElementById("xrecipientFilter");
+					#if($infoGluePrincipal.groups.size() > 1)
+						listForm.recipientFilter.value = xrecipientFilter.options[xrecipientFilter.selectedIndex].value;
+					#else
+						listForm.recipientFilter.value = xrecipientFilter.value;
+					#end
+				#end
+					
+				listForm.attemptDirectPublishing.value = attemptDirectPublishing;
+				listForm.submit();
+			}
+		}
+-->
+</script>
+
+<div class="fullymarginalized">
+
+#if($this.hasAccessTo("PublishingTool.Read") && $this.hasAccessTo("Repository.Read", "$!repositoryId"))
+<a href="javascript:submitToPublish('true');">
+<img src="$ui.getString("images.contenttool.buttons.publish")" width="60" height="25" border="0">
+</a>
+#end
+
+#if($this.hasAccessTo("Common.SubmitToPublishButton", true))
+<a href="javascript:submitToPublish('false');">
+<img src="$ui.getString("images.contenttool.buttons.submitToPublish")" width="60" height="25" border="0">
+</a>
+#end
+
+<a href="ViewSiteNode.action?siteNodeId=$siteNodeId&repositoryId=$!repositoryId&stay=true">
+<img src="$ui.getString("images.contenttool.buttons.cancel60x25")" width="60" height="25" border="0">
+</a> &nbsp;&nbsp;
+
+#set($items = $siteNodeVersionVOList.size() + $contentVersionVOList.size())
+#if($items > 0)
+	<a href="javascript:checkAll();">
+	<img src="$ui.getString("images.contenttool.buttons.checkAll60x25")" width="60" height="25" border="0">
+	</a>
+	
+	<a href="javascript:uncheckAll();">
+	<img src="$ui.getString("images.contenttool.buttons.uncheckAll60x25")" width="60" height="25" border="0">
+	</a>
+#end
+<br/><br/>
+		
+<table width="95%" border="0">
+<tr>
+	<td>
+		<table width="300" border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td colspan="3" class="biglabel">$ui.getString("tool.structuretool.stateChangeComment")</td>
+			</tr>		
+			<tr>
+				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			</tr>
+			<tr>
+				<td colspan="3">#editTextArea("SiteNodeVersion.versionComment" "xversionComment" $!versionComment "10" "10" "normaltextarea")</td>
+			</tr>		
+			<tr>
+				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			</tr>
+			<tr>
+				<td colspan="3">#yesNoCheckBox("SiteNodeVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
+			</tr>	
+			
+			#if($allowPublicationEventFilter == "true")
+				#if($infoGluePrincipal.groups.size() > 1)
+					<tr>
+						<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							$ui.getString("tool.common.recipientFilter.label")<br>
+							<select name="xrecipientFilter" id="xrecipientFilter">
+								<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
+								<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
+								<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
+								#if($infoGluePrincipal.groups.size() > 1)
+									#foreach($group in $infoGluePrincipal.groups)
+										<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
+									#end
+								#end
+							</select>
+						</td>
+					</tr>		
+				#else
+					<input type="hidden" name="xrecipientFilter" id="xrecipientFilter" value="groupBased"/>		
+				#end	
+			#end
+			
+		</table>
+	</td>
+	<td align="right" valign="top">
+		<br><br><br>
+		
+	</td>
+</tr>
+<tr>
+	<td colspan="2">
+		<br/><br/>
+		$ui.getString("tool.common.publishing.markVersionsText")<br><br>
+	</td>
+</tr>
+<tr>
+	<td colspan="2">
+
+#set($lvBorder = 0) 
+#set($lvConstraint = -1)
+#set($nameHeader = $ui.getString("tool.common.publishing.nameLabel"))
+#set($typeHeader = $ui.getString("tool.common.publishing.typeLabel"))
+#set($changedHeader = $ui.getString("tool.common.publishing.changedLabel"))
+#set($modifyerHeader = $ui.getString("tool.common.publishing.modifyerLabel"))
+
+#lvHead(["$nameHeader", "$typeHeader", "$changedHeader", "$modifyerHeader"] "Publish items" "" "" "")
+
+#hiddenField("siteNodeId" $siteNodeId)
+#hiddenField("siteNodeVersionId" $siteNodeVersionId)
+#hiddenField("versionComment" $!versionComment)
+#hiddenField("overrideVersionModifyer" $!overrideVersionModifyer)
+#hiddenField("recipientFilter" $!recipientFilter)
+#hiddenField("attemptDirectPublishing" $!attemptDirectPublishing)
+#hiddenField("repositoryId" $!repositoryId)
+#hiddenField("returnAddress" $!returnAddress)
+
+#set($lvChkBoxName = "selSiteNodeVersions")
+
+#set($cnt = 0)
+#foreach($snv in $siteNodeVersionVOList)
+	#set($displayName = "$!this.getInfoGluePrincipal($snv.versionModifier).displayName")
+	#if($displayName == "")
+		#set($displayName = "$snv.versionModifier")
+	#end
+
+	#set( $row = ["<img src='images/tree/structureRoot.gif'> $snv.getSiteNodeName() ($snv.getId())", $ui.getString("tool.common.publishing.typePageLabel"), "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+	#set($cnt = $cnt + 1)
+	
+	#lvAddRow($row $cnt $snv.getId())
+
+#end
+
+
+#set($lvChkBoxName = "selContentVersions")
+
+##set($cnt = 0)
+#foreach($cv in $contentVersionVOList)
+	#set($displayName = "$!this.getInfoGluePrincipal($cv.versionModifier).displayName")
+	#if($displayName == "")
+		#set($displayName = "$cv.versionModifier")
+	#end
+	
+	#set( $row = ["<img src='images/tree/contentRoot.gif'> $cv.getContentName() ($cv.getId())", $ui.getString("tool.common.publishing.typeContentLabel"), "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+	#set($cnt = $cnt + 1)
+	
+	#lvAddRow($row $cnt $cv.getId())
+
+#end
+
+
+#lvEnd()
+</td>
+</tr>
+</table>
+<br/><br/>
+#if($this.hasAccessTo("PublishingTool.Read") && $this.hasAccessTo("Repository.Read", "$!repositoryId"))
+<a href="javascript:submitToPublish('true');">
+<img src="$ui.getString("images.contenttool.buttons.publish")" width="60" height="25" border="0">
+</a>
+#end
+
+#if($this.hasAccessTo("Common.SubmitToPublishButton", true))
+<a href="javascript:submitToPublish('false');">
+<img src="$ui.getString("images.contenttool.buttons.submitToPublish")" width="60" height="25" border="0">
+</a>
+#end
+
+<a href="ViewSiteNode.action?siteNodeId=$siteNodeId&repositoryId=$!repositoryId&stay=true">
+<img src="$ui.getString("images.contenttool.buttons.cancel60x25")" width="60" height="25" border="0">
+</a> &nbsp;&nbsp;
+
+#set($items = $siteNodeVersionVOList.size() + $contentVersionVOList.size())
+#if($items > 0)
+	<a href="javascript:checkAll();">
+	<img src="$ui.getString("images.contenttool.buttons.checkAll60x25")" width="60" height="25" border="0">
+	</a>
+	
+	<a href="javascript:uncheckAll();">
+	<img src="$ui.getString("images.contenttool.buttons.uncheckAll60x25")" width="60" height="25" border="0">
+	</a>
+#end
+<br/><br/>
+	
+</div>
+
+#endStructureTool()
+

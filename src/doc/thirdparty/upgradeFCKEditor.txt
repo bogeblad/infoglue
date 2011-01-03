@@ -1,0 +1,138 @@
+*************************************************************************
+* Files to change when upgrading to keep the InfoGlue specific features *
+*************************************************************************
+*
+* /editor/dialog/fck_image.html
+*
+* Attach this in the table-section instead of the code there. Compare between the fck-releases if uncertain.
+*
+*************************************************************************
+
+<script type="text/javascript">
+
+	if(FCKConfig.ImageClasses && FCKConfig.ImageClassesNames)
+	{
+		document.write("<tr>");
+		document.write("	<td colspan=\"2\" nowrap=\"nowrap\"><span fckLang=\"DlgLnkStyle\">Image style</span><br />");
+		document.write("<select id=\"txtAttClasses\">");
+		document.write("	<option value=\"\" fcklang=\"DlgLnkStyleLinkIcon\" selected=\"selected\">None</option>");
+	
+		var imageClasses=FCKConfig.ImageClasses.split(',');
+		var imageClassesNames=FCKConfig.ImageClassesNames.split(',');
+		for (var i=0;i<imageClasses.length;i++)
+		{
+			imageClass = imageClasses[i]; 
+			imageClassName = imageClassesNames[i]; 
+			document.write("	<option value=\"" + imageClass + "\" fcklang=\"DlgLnkStyleLinkIcon\">" + imageClassName + "</option>");
+		}
+		
+		document.write("</select><br/><br/>");
+		document.write("	</td>");
+		document.write("</tr>");
+	}
+	
+	if(!FCKConfig.AllowImageSizes && FCKConfig.AllowImageSizes != 'false')
+	{
+		document.write("<tr>");
+		document.write("	<td nowrap=\"nowrap\"><span fcklang=\"DlgImgWidth\">Width</span>&nbsp;</td>");
+		document.write("	<td>");
+		document.write("		<input type=\"text\" size=\"3\" id=\"txtWidth\" onkeyup=\"OnSizeChanged('Width',this.value);\" />");
+		document.write("	</td>");
+		document.write("	<td rowspan=\"2\">");
+		document.write("		<div id=\"btnLockSizes\" class=\"BtnLocked\" onmouseover=\"this.className = (bLockRatio ? 'BtnLocked' : 'BtnUnlocked' ) + ' BtnOver';\"");
+		document.write("			onmouseout=\"this.className = (bLockRatio ? 'BtnLocked' : 'BtnUnlocked' );\" title=\"Lock Sizes\"");
+		document.write("			onclick=\"SwitchLock(this);\"></div>");
+		document.write("		<div id=\"btnResetSize\" class=\"BtnReset\" onmouseover=\"this.className='BtnReset BtnOver';\"");
+		document.write("			onmouseout=\"this.className='BtnReset';\" title=\"Reset Size\" onclick=\"ResetSizes();\"></div>");
+		document.write("	</td>");
+		document.write("</tr>");
+		document.write("<tr>");
+		document.write("	<td nowrap=\"nowrap\"><span fcklang=\"DlgImgHeight\">Height</span>&nbsp;</td>");
+		document.write("	<td>");
+		document.write("		<input type=\"text\" size=\"3\" id=\"txtHeight\" onkeyup=\"OnSizeChanged('Height',this.value);\"/></td>");
+		document.write("</tr>");
+	}
+	else
+	{
+		document.write("		<input type=\"hidden\" id=\"txtWidth\" > ");
+		document.write("		<input type=\"hidden\" id=\"txtHeight\" > ");
+	
+	}
+</script>
+
+
+***************************************
+* /editor/dialog/fck_link.html
+***************************************
+
+<span fckLang="DlgLnkStyle">Link style</span><br />
+				
+<script type="text/javascript">
+	
+	if(FCKConfig.LinkClasses && FCKConfig.LinkClassesNames)
+	{
+		document.write("<select id=\"txtAttClasses\">");
+		document.write("	<option value='' fckLang='DlgLnkStyleLinkIcon' selected='selected'>None</option>");
+		
+		var linkClasses=FCKConfig.LinkClasses.split(',');
+		var linkClassesNames=FCKConfig.LinkClassesNames.split(',');
+		for (var i=0;i<linkClasses.length;i++)
+		{
+			linkClass = linkClasses[i]; 
+			linkClassName = linkClassesNames[i]; 
+			document.write("	<option value=\"" + linkClass + "\" fckLang=\"DlgLnkStyleLinkIcon\">" + linkClassName + "</option>");
+		}
+		
+		document.write("</select>");
+	}
+	else
+	{
+		document.write("<select id=\"txtAttClasses\">");
+		document.write("	<option value=\"\" fckLang=\"DlgLnkStyleLinkIcon\" selected=\"selected\">None</option>");
+		document.write("	<option value=\"dotlink\" fckLang=\"DlgLnkStyleLinkIcon\">L&auml;nkicon</option>");
+		document.write("	<option value=\"pdficon\" fckLang=\"DlgLnkStylePdfIcon\">Pdf</option>");
+		document.write("	<option value=\"wordicon\" fckLang=\"DlgLnkStyleWordIcon\">Word</option>");
+		document.write("	<option value=\"excelicon\" fckLang=\"DlgLnkStyleExcelIcon\">Excel</option>");
+		document.write("	<option value=\"powerpointicon\" fckLang=\"DlgLnkStylePowerPointIcon\">Powerpoint</option>");
+		document.write("</select>");
+	}
+</script>
+
+
+***************************************
+* /editor/dialog/fck_listprop.html
+***************************************
+A lot of small changes - compare mot cvs...
+
+
+***************************************
+* /editor/dialog/fck_table.html
+***************************************
+Just set so default width is 70% instead of 200px and percent is preferred width.
+
+
+***************************************
+* /editor/dialog/fck_image/fck_image.js
+***************************************
+A lot of small changes - mostly if-statements.
+
+
+***************************************
+* /editor/js/fckeditorcode_gecko.js
+***************************************
+Replace 
+//var B=FCKLang['FontFormats'].split(';');
+if(FCKConfig.FontFormatNames)
+	var B=FCKConfig.FontFormatNames.split(';');
+else
+	var B=FCKLang['FontFormats'].split(';');
+		
+
+***************************************
+* /editor/js/fckeditorcode_ie.js
+***************************************
+//var B=FCKLang['FontFormats'].split(';');
+if(FCKConfig.FontFormatNames)
+	var B=FCKConfig.FontFormatNames.split(';');
+else
+	var B=FCKLang['FontFormats'].split(';');

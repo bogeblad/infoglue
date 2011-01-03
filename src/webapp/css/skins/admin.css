@@ -1,0 +1,393 @@
+#header
+{
+	position: absolute; 
+	top:0px; 
+	left: 0px; 
+	width: 100%; 
+	height: 58px;
+}
+#headerLeft 
+{
+	float: left;
+}
+#headerRight 
+{
+	float: right;
+}
+#tools
+{
+	float: left;
+	width: 250px; 
+	margin: 4px 4px 4px 4px;
+}
+#activeTool
+{
+	display: block;
+	width: 100%; 
+	height: 500px;
+}
+#activeToolHeader
+{
+	float: left;
+	width: 100%; 
+	height: 25px;
+}
+#activeToolHeader h3
+{
+	margin: 4px 4px 4px 6px;
+}
+#availableTools
+{
+	float: left;
+	width: 100%; 
+	margin: 0px;
+	padding: 0px;
+}
+#availableTools h3
+{
+	margin: 4px;
+	margin-left: 6px;
+}
+#availableToolsSizeControlBar
+{
+	border-top: 1px solid #567db1; 
+	height: 7px; 
+	background-image: url(../../images/v3/tinyBarBackground.png); 
+	background-repeat: repeat-x;
+}
+#availableToolsSizeControlBar img
+{
+	 margin-top: 0px; 
+	 display: block; 
+	 margin-left: auto; 
+	 margin-right: auto;"
+}
+
+#availableTools ul
+{
+	margin: 0px;
+	padding: 0px;
+}
+#availableTools ul li
+{
+	margin: 0px;
+}
+#availableTools ul li
+{
+	float: left;
+	width: 100%; 
+	height: 26px;
+	list-style-type: none;
+}
+#availableTools ul li a
+{
+	display: block;
+	text-decoration: none;
+	text-indent: 26px;
+    margin-top: 4px;
+	line-height: 20px;
+}
+#structureRepositoriesDiv, #contentRepositoriesDiv
+{
+	float: left;
+	width: 100%; 
+	margin: 0px;
+	padding: 0px;
+	padding-top: 4px;
+}
+#structureRepositoriesDivHandle, #contentRepositoriesDivHandle, .generalToolRepositoriesDivHandle
+{
+	color: #333; 
+	background-color: #deecff;
+}
+#structureRepositoriesDiv ul, #contentRepositoriesDiv ul
+{
+	max-height: 200px; 
+	overflow: auto;
+	margin: 0px;
+	padding: 0px;
+}
+#structureRepositoriesDiv ul li, #contentRepositoriesDiv ul li
+{
+	margin: 0px;
+	float: left;
+	width: 100%; 
+	height: 18px;
+	list-style-type: none;
+}
+#structureRepositoriesDiv ul li a, #contentRepositoriesDiv ul li a
+{
+	display: block;
+	text-decoration: none;
+	text-indent: 8px;
+	line-height: 16px;
+}
+#structureRepositoriesDiv ul li a.current, #contentRepositoriesDiv ul li a.current
+{
+	text-decoration: none;
+	text-indent: 8px;
+}	
+#work
+{
+	float: left;
+	left: 200px;
+	width: 700px; 
+	height: 600px;
+	overflow: hidden;
+	margin: 4px 4px 4px 0px;
+}
+#tabsContainer
+{
+	float: left;
+}
+#singleTabDiv
+{
+	height: 800px;
+}
+.inlineTabDiv
+{
+	aheight: 700px;
+}
+#structureTabLabel
+{
+	text-indent: 16px;
+}
+.structure
+{
+}
+#contentTabLabel
+{
+	text-indent: 16px;
+}
+#managementTabLabel
+{
+	text-indent: 16px;
+}
+#publishingTabLabel
+{
+	text-indent: 16px;
+}
+#mydesktopTabLabel
+{
+	text-indent: 16px;
+}
+#formeditorTabLabel
+{
+	text-indent: 16px;
+}
+#searchTabLabel
+{
+	text-indent: 16px;
+}
+.ui-tabs 
+{
+	border: 0px;
+}
+.ui-tabs .ui-tabs-nav 
+{
+	border-left: 0px;
+	border-right: 0px;
+    padding:2px 2px 0;
+    position:relative;
+}
+.ui-tabs .ui-tabs-nav li a  
+{
+   	font-size:11px;
+	padding: 4px 10px 4px 10px;
+  	text-decoration:none;
+}
+.ui-corner-all {
+    -moz-border-radius-bottomleft:0px;
+    -moz-border-radius-bottomright:0px;
+    -moz-border-radius-topleft:0px;
+    -moz-border-radius-topright:0px;
+}
+.ui-tabs
+{
+	padding:0px;
+}
+.ui-tabs .ui-tabs-panel 
+{
+	padding:0px;
+}
+
+body.generaltooledit 
+{
+    color:#000000;	
+	background-color: #bedafe;
+}
+#contextMenuDiv 
+{
+    cursor:pointer;
+    position:absolute;
+    text-align:left;
+	display: none;
+	z-index: 1;
+}
+#contextMenuDiv ul
+{
+    margin: 0px;
+	margin-right: 20px;
+	padding: 0px;
+	list-style-image: none;
+	list-style-type: none;
+}
+#contextMenuDiv ul li a
+{
+    text-indent: 32px;
+	line-height: 24px;
+	display: block;
+	color: black;
+	background-position: 4px 2px;
+	text-decoration: none;
+}
+#contextMenuDiv ul li a.movePage
+{
+	background-position: 6px 2px;
+}
+#contextMenuDiv ul li a:hover
+{
+	text-decoration: underline;
+}
+#paletteDiv
+{
+	height: 120px;
+}
+#structureRepositoryChoiceDiv, #contentRepositoryChoiceDiv
+{
+	height: 25px;
+	width: 100%;
+}
+#componentPaletteHeader
+{
+	float: left;
+	width: 100%; 
+	height: 18px;
+}
+#componentPaletteHeader h3
+{
+	margin: 2px 4px 2px 6px;
+}
+
+img.divider
+{
+	background-image: url(../../images/v3/divider.gif);
+	float: left; 
+	display: block; 
+	margin-top: 6px;
+}
+
+#versionBox
+{
+	float: left; 
+	border: 1px solid #6593cf; 
+	background-color: white; 
+	padding: 2px;
+}
+#logotypeBox
+{
+	float: right; 
+	margin-right: 4px; 
+	padding-top: 8px;
+}
+#logotypeBox img
+{
+	border: 1px solid #6593cf
+}
+#searchForm
+{
+	float: left; 
+	clear: none; 
+	margin-top: 5px;
+}
+#searchField
+{
+	float: left; 
+	display: block; 
+	border: 1px solid #ccc; 
+	font-family: Tahoma, Verdana, Arial, sans-serif; 
+	font-size: 14px; 
+	color: #ccc;
+}
+#searchButton
+{
+	margin-top: 2px; 
+	margin-left: 2px; 
+	float: left; 
+	display: block;
+}
+
+/* Styles for manipulating jquery-ui-elements */
+.ui-widget-overlay {
+opacity:0.9;
+background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
+}
+.ui-dialog {
+padding:0px;
+position:relative;
+width:400px;
+}
+.ui-dialog .ui-widget-header {
+color:transparent;
+font-weight:bold;
+font-size: 12pt;
+height:32px;
+float: left;
+margin:0;
+padding-top:2px;
+width:100%;
+}
+.ui-dialog .ui-dialog-titlebar {
+padding: 0px;
+position:relative;
+background-color:white;
+background-image:url("../../images/v3/toolbarBackground.gif");
+background-repeat:repeat-x;
+border:0px;
+border-bottom:1px solid #9CAABD;
+}
+.ui-dialog .ui-dialog-buttonpane {
+background-color:white;
+background-image:url("../../images/v3/footerBackground.gif");
+background-repeat:repeat-x;
+border-top:0 solid #9CAABD;
+border-width:0px 0 0;
+bottom:0;
+float:left;
+height:43px;
+margin:0;
+padding: 0px;
+padding-left: 10px;
+position:absolute;
+width:100%;
+text-align:left;
+}
+.ui-widget-content {
+background:url("images/ui-bg_inset-hard_100_fcfdfd_1x100.png") repeat-x scroll 50% bottom #FCFDFD;
+border:1px solid #A6C9E2;
+color:#222222;
+}
+.ui-dialog .ui-dialog-buttonpane button {
+cursor:pointer;
+float:left;
+line-height:1.4em;
+margin:8px 10px 0px 0px;
+overflow:visible;
+padding:0pxm;
+width:auto;
+}
+.ui-state-default, .ui-widget-content .ui-state-default {
+background:none;
+border:1px solid #D0D1D0;
+color:black;
+font-weight:bold;
+outline:medium none;
+}
+.okButton {
+	background:url("../../images/v3/check.png") no-repeat scroll 0 0px transparent;
+	padding-left: 20px;
+}
+.cancelButton {
+	background:url("../../images/v3/cancel.png") no-repeat scroll 0 0px transparent;
+	padding-left: 20px;
+}

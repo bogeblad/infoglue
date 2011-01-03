@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#if($colorScheme == "ManagementTool")
+	#beginManagementTool("Error" "Error" "null")
+#elseif($colorScheme == "StructureTool")
+	#beginStructureTool("Error" "Error" "null" "null" "null" "null")
+#elseif($colorScheme == "PublishingTool")
+	#beginPublishingTool("Error" "Error" "null" "null" "null" "null")
+#else
+	#beginContentTool("Error" "Error" "null" "null" "null" "null")
+#end
+
+<table>
+<tr>
+	<td>
+    	<table>
+        <tr>
+        	<td class="biglabel">An error occurred</td>
+        </tr>
+        <tr>
+        	<td>An error occurred so the wizard could not complete. Please contact your administrator for further advice.</td>
+        </tr>
+        <tr>
+  			<td class="smalllabel">
+  			#foreach($errorList in $errors.allErrors)
+  				#foreach($error in $errorList)
+      			<font color="red">Error: $error</font>
+				#end
+			#end
+		
+			#if($returnAddress && $returnAddress != "")
+				<br><br>
+				<a href="$returnAddress">Ok</a>
+		    #end
+  			</td>
+        </tr>
+        </table>
+    </td>
+</tr>
+</table>
+</body>

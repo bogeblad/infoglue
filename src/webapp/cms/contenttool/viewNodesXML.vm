@@ -1,0 +1,90 @@
+<html>
+<head>
+<title>ContentTree Dynamic Demo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="script/xloadtree/xtree.js"></script>
+<script type="text/javascript" src="script/xloadtree/xmlextras.js"></script>
+<script type="text/javascript" src="script/xloadtree/xloadtree.js"></script>
+<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
+
+<style type="text/css">
+
+body {
+	background:	white;
+	color:		black;
+}
+
+</style>
+</head>
+<body class="contenttool" LEFTMARGIN="0" TOPMARGIN="0" >
+<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+
+<script type="text/javascript">
+webFXTreeConfig.rootIcon		= "script/xloadtree/images/xp/folder.png";
+webFXTreeConfig.openRootIcon	= "script/xloadtree/images/xp/openfolder.png";
+webFXTreeConfig.folderIcon		= "script/xloadtree/images/xp/folder.png";
+webFXTreeConfig.openFolderIcon	= "script/xloadtree/images/xp/openfolder.png";
+webFXTreeConfig.hiddenFolderIcon		= "script/xloadtree/images/xp/hiddenFolder.png";
+webFXTreeConfig.hiddenOpenFolderIcon	= "script/xloadtree/images/xp/hiddenOpenfolder.png";
+webFXTreeConfig.fileIcon		= "script/xloadtree/images/xp/file.png";
+webFXTreeConfig.lMinusIcon		= "script/xloadtree/images/xp/Lminus.png";
+webFXTreeConfig.lPlusIcon		= "script/xloadtree/images/xp/Lplus.png";
+webFXTreeConfig.tMinusIcon		= "script/xloadtree/images/xp/Tminus.png";
+webFXTreeConfig.tPlusIcon		= "script/xloadtree/images/xp/Tplus.png";
+webFXTreeConfig.iIcon			= "script/xloadtree/images/xp/I.png";
+webFXTreeConfig.lIcon			= "script/xloadtree/images/xp/L.png";
+webFXTreeConfig.tIcon			= "script/xloadtree/images/xp/T.png";
+webFXTreeConfig.showRoot		= false;
+
+#set($par = "$!parent")
+#if( $par != "")
+	#set($par = "&parent=${parent}")
+#end
+	
+var tree = new WebFXLoadTree("\\", "ViewXContentTree.action?createAction=true&repositoryId=$!{repositoryId}$par");
+document.write(tree);
+var oldSelected = null;
+function onTreeItemClick(elem, itemId, repoId, path)
+{
+	// Call parent
+	if (parent != null)
+		parent.htmlTreeItemClick(itemId, repoId, path);
+	// setSelected(elem);			
+}
+
+function selectVersion(contentId, languageId, contentVersionId)
+{
+	parent.parent.frames['main'].location.href="ViewContentVersion.action?contentId=" + contentId + "&languageId=" + languageId + "&contentVersionId=" + contentVersionId;
+	setSelected(contentVersionId);
+}
+
+function setSelected(elem)
+{
+	// Graphical stuff
+	if (oldSelected != null)
+		oldSelected.className = "";
+	
+	srcIdLink =	elem;
+	oldSelected = srcIdLink;
+	if (srcIdLink != null)
+		srcIdLink.className = "selected";
+}
+
+function loaded()
+{
+	setSelected("${select}");
+}
+
+/*function onTreeItemClick(itemId, repoId, path)
+{
+	// Call parent
+	// if(parent != null)
+		//parent.htmlTreeItemClick(itemId, repoId, path);
+	var url = "ViewContent!standalone.action?contentId=" + itemId;
+	alert("click: " + path);
+}*/
+</script>
+
+</body>
+</html>
+

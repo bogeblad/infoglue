@@ -1,0 +1,1175 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#set($syncAuto = "false")
+
+<html>
+<head>
+	<title>$ui.getString("tool.contenttool.contentVersionHeader")</title>
+
+	<script type="text/javascript" src="${root}/applications/FCKEditor/fckeditor.js"></script>
+	
+	<script type="text/javascript">
+		
+		function hotkeyS()
+		{
+			validateAndSubmitContentForm();
+		}
+		
+		var inlineImageDefaultRepositoryId = null;
+		#set($inlineImageDefaultRepositoryId = $map.get("inlineImageDefaultRepositoryId"))
+		#if($inlineImageDefaultRepositoryId && $inlineImageDefaultRepositoryId != "")
+			var inlineImageDefaultRepositoryId = $inlineImageDefaultRepositoryId;
+		#end
+
+	</script>
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script type="text/javascript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+	<script type="text/javascript" src="script/editorForFCKEditor.js"></script>
+	<script type="text/javascript" src="script/hotkeys.js"></script>
+
+	<link rel="stylesheet" type="text/css" media="all" href="applications/jscalendar/skins/aqua/theme.css" />
+	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/lang/calendar-en.js"></script>
+	<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
+
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+</head>
+
+#if($stateId == 1 || $stateId == 2 || $stateId == 3)
+	#set($readonly = "disabled") 
+#else
+	#if($contentTypeDefinitionVO.name == "Meta info")
+		#set($masterContentVersionVO = $this.getMasterContentVersionVO($contentId, $repositoryId))
+		#if($masterContentVersionVO.stateId == 1 || $masterContentVersionVO.stateId == 2 || $masterContentVersionVO.stateId == 3)
+			#set($readonly = "disabled") 
+		#else
+			#set($readonly = "")
+		#end
+	#else
+		#set($latestContentVersionVO = $this.getLatestContentVersionVO($contentId, $languageId))
+		#if($latestContentVersionVO.id != $contentVersionId)
+			#set($readonly = "disabled") 
+		#else
+			#set($readonly = "")
+		#end	
+	#end
+#end
+
+<body class="contenttooledit" onkeypress="hotKeys(event);">
+#set( $lvColor = "green")
+
+<script type="text/javascript">
+<!--
+	
+	var allowSave = true;  //Sets to false if one does not close like one should
+	var currentEditorIdHash = new Array();
+	var attributesStatus = new Array();
+	var plainEditors = new Array();
+	var plainEditorsToolbars = new Array();
+	var htmlEditors = new Array();
+	var attributeNames = new Array();
+	var attributeTypes = new Array();
+
+	function checkWYSIWYGDirty()
+	{
+		var isDirty = false;
+		for (var i in plainEditors) 
+		{
+			var plainTextAreaName = plainEditors[i];
+			oEditor = FCKeditorAPI.GetInstance(plainTextAreaName);
+			if(oEditor.IsDirty())
+				isDirty = true;
+		}
+		
+		return isDirty;
+	}
+	
+	//*******************************************
+	// This function changes language version
+	//*******************************************
+	
+	function changeLanguage(contentId)
+	{
+		languageId = document.editForm.languageId.value;
+		
+		if (confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
+		{
+			window.location.href="ViewContentVersion.action?contentId=" + contentId + "&languageId=" + languageId;
+		}
+		else
+		{
+			document.editForm.languageId.selectedIndex = originalIndex - 1;
+		}
+	}
+
+	//*******************************************
+	// This function opens up the form editor
+	//*******************************************
+	
+	function openFormEditor(url)
+	{
+		if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+		{
+			allowSave = false;
+			openPopup(url, "FormEditor", "width=700,height=600,left=" + (document.body.clientWidth / 4) + ",top=" + (document.body.clientHeight / 4) + ",toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+		}
+	}
+
+	//*******************************************
+	// This function opens up the form editor
+	//*******************************************
+	
+	function openRelationEditor(url)
+	{
+		if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+		{
+			allowSave = false;
+			openPopup(url, "RelationEditor", "width=700,height=600,left=" + (document.body.clientWidth / 4) + ",top=" + (document.body.clientHeight / 4) + ",toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+		}
+	}
+
+	//*******************************************
+	// This method changes state on a content
+	//*******************************************
+	 
+	function changeContentState(contentVersionId)
+	{
+		stateId = document.editForm.stateId.value;
+		languageId = document.editForm.languageId.value;
+		contentId = document.editForm.contentId.value;
+		
+		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true))
+		if(stateId == "2")
+		{
+			alert("$ui.getString("tool.contenttool.statePublishForbidden")");
+			document.editForm.stateId.selectedIndex = originalStateIndex - 1;
+			return;
+		}
+		#end
+		
+		if (confirm('$ui.getString("tool.contenttool.stateChangeQuestion")'))
+		{
+			window.location.href="ChangeContentState.action?contentVersionId=" + contentVersionId + "&stateId=" + stateId + "&contentId=" + contentId + "&languageId=" + languageId;
+		}
+		else
+		{
+			document.editForm.stateId.selectedIndex = originalStateIndex - 1;
+		}
+	}
+	
+	/**
+	 * This method submits the form and shows a uploading-dialog.
+	 */
+	 
+	function skipAndCancel()
+	{
+		document.editForm.action = "CreateContentWizardFinish!cancelV3.action";
+		document.editForm.submit();
+	}		
+	
+			
+	//*******************************************
+	// This is the method that generates the wysiwygs when the page is loaded
+	//*******************************************
+
+	function generateWYSIWYGS()
+	{
+		#if($readonly == "")
+			for (var i in plainEditors) 
+			{
+				var plainTextAreaName = plainEditors[i];
+				var WYSIWYGToolbar = plainEditorsToolbars[plainTextAreaName];
+				//alert("Creating a textarea for " + plainTextAreaName + " = " + i);
+				document.getElementById(plainTextAreaName).value = transformAttribute(document.getElementById(plainTextAreaName).value);
+				
+				var oFCKeditor = new FCKeditor(plainTextAreaName) ;
+				oFCKeditor.Width = document.getElementById(plainTextAreaName).style.width;
+				oFCKeditor.Height = document.getElementById(plainTextAreaName).style.height;
+				oFCKeditor.BasePath = "${root}/applications/FCKEditor/";
+				oFCKeditor.Config["CustomConfigurationsPath"] = "${root}/WYSIWYGProperties.action?repositoryId=$repositoryId&contentId=$contentId&languageId=$languageId&contentVersionId=$!contentVersionId";
+				oFCKeditor.Config["AutoDetectLanguage"] = false ;
+				oFCKeditor.Config["DefaultLanguage"]    = '$languageCode' ;
+				oFCKeditor.ToolbarSet = WYSIWYGToolbar ;
+				oFCKeditor.ReplaceTextarea();
+				
+				htmlEditors[plainTextAreaName + "WYSIWYGEditor"] = oFCKeditor;
+			}
+		#end
+		
+		#if($readonly == "disabled")
+			#if($contentTypeDefinitionVO.name == "Meta info")
+				alert("$ui.getString("tool.contenttool.readOnlyFollowingSiteNodeVersionLabel")");
+			#else
+				alert("$ui.getString("tool.contenttool.readOnlyLabel")");
+			#end
+		#end
+		
+		#if($concurrentModification)
+			alert("$ui.getString("tool.contenttool.concurrentModificationLabel")");
+		#end
+	}	
+	
+	function addCategory(attributeName, selectName)
+	{
+		if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+		{
+			var categoryId = document.getElementById(selectName).value;
+			document.getElementById("model/attributeName").value = attributeName;
+			document.getElementById("model/category/categoryId").value = categoryId;
+			document.catForm.submit();
+		}
+	}
+
+	function deleteCategory(contentCategoryId)
+	{
+		if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+		{
+			var url = "ContentCategory!delete.action?contentCategoryId=" + contentCategoryId;
+			url += "&contentId=" + contentId;
+			url += "&languageId=" + languageId;
+			window.location.href = url;
+		}
+	}
+
+
+	//*******************************************
+	// This is a timer that warns the user about saving his work once in a while so he does not
+	// get a new login-screen next time he saves.
+	//*******************************************
+    function warnForTimeout()
+    {
+       	alert("Please save your work often to avoid loosing it due to the security timeout. If you suspect you might not have saved for " + ($sessionTimeout / 60) + " minutes or so we recommend you copy all of your text before you press save so you don't risk loosing it.");
+		beenWarned = true;
+		inaktiveTime = inaktiveTime + timeout;
+		setTimeout("warnForTimeout()", timeout);
+	}
+
+	function doTimer()
+	{
+		count += 1;
+		setTimeout("doTimer();", minute);
+	}
+
+	//*****************************************
+	// Variables
+	//*****************************************
+	
+	var beenWarned = false;
+	var inaktiveTime = 0;
+	var timeout = ($sessionTimeout / 60) * 60 * 1000;
+
+	var textArea;
+	var contentVersionId 	= "$contentVersionId";
+	var repositoryId 		= "$repositoryId";
+	var contentId 			= "$contentId";
+	var languageId 			= "$languageId";
+	var name 				= "$formatter.cleanForJavascriptStrings($name)";
+	var contentTypeDefinitionName = "$contentTypeDefinitionName";
+	
+	var count = 0;
+	var minute = 60000;
+	
+	doTimer();
+	setTimeout("warnForTimeout()", timeout);
+		
+-->
+</script>
+
+<div class="fullymarginalized">
+
+<form method="POST" name="editForm" id="editForm" action="CreateContentWizardInputContentVersions.action">
+<table border="0" width="500">
+			
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+	</tr>
+	<tr>
+		<td colspan="3">
+		    #if($readonly == "")
+			<a href="javascript:validateAndSubmitContentForm();"><img src="$ui.getString("images.contenttool.buttons.next")" width="50" height="25" border="0"></a>
+			#end
+			<a href="javascript:skipAndCancel();"><img border="0" src="$ui.getString("images.contenttool.buttons.cancel")" width="50" height="25"></a>
+		</td>
+	</tr>
+	
+</table>	
+ 
+<table border="0" width="500" id="contentTypeAttributesTable">	
+	<!-- here goes the field generation -->
+		
+	## Need to figure out how to tell if the HTMLArea contents have changed
+	##set($onchange = "onChange='javascript:setDirty()'")
+	#set($onchange = "")
+
+	#foreach($attribute in $contentTypeAttributes)
+		
+		## ANNOTATION ELEMENTS
+		#set($attributeTitle = "")
+		#set($attributeTitle = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($attributeTitle == "")
+			#set($attributeTitle = "$attribute.name")
+		#end
+
+		#set($attributeDescription = "")
+		#set($attributeDescription = $!attribute.getContentTypeAttribute("description").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($attributeDescription != "")
+			#set($attributeDescription = "- $attributeDescription")
+		#end
+
+		#set($attributeInitialData = "")
+		#set($attributeInitialData = $!attribute.getContentTypeAttribute("initialData").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($attributeInitialData != "")
+			#set($attributeInitialData = "$attributeInitialData")
+		#end
+		
+		#set($class = "")
+		#set($class = $!attribute.getContentTypeAttribute("class").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($class == "")
+			#set($class = "longtextfield")
+		#end
+
+		#set($rows = "")
+		#set($rows = $!attribute.getContentTypeAttribute("rows").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($rows == "")
+			#set($rows = "5")
+		#end
+
+		#set($cols = "")
+		#set($cols = $!attribute.getContentTypeAttribute("cols").getContentTypeAttributeParameterValue().getValue("label"))
+		#if($cols == "")
+			#set($cols = "75")
+		#end
+
+		#set($enableWYSIWYG = "")
+		#set($enableWYSIWYG = $!attribute.getContentTypeAttribute("enableWYSIWYG").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableWYSIWYG == "")
+			#set($enableWYSIWYG = "false")
+		#end
+
+		#set($WYSIWYGToolbar = "")
+		#set($WYSIWYGToolbar = $!attribute.getContentTypeAttribute("WYSIWYGToolbar").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($WYSIWYGToolbar == "")
+			#set($WYSIWYGToolbar = "Default")
+		#end
+
+		#set($enableTemplateEditor = "")
+		#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableTemplateEditor == "")
+			#set($enableTemplateEditor = "false")
+		#end
+
+		#set($enableFormEditor = "")
+		#set($enableFormEditor = $!attribute.getContentTypeAttribute("enableFormEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableFormEditor == "")
+			#set($enableFormEditor = "false")
+		#end
+
+		#set($enableContentRelationEditor = "")
+		#set($enableContentRelationEditor = $!attribute.getContentTypeAttribute("enableContentRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableContentRelationEditor == "" || $enableContentRelationEditor == "false")
+			#set($enableContentRelationEditor = $!attribute.getContentTypeAttribute("enableRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+			#if($enableContentRelationEditor == "" || $enableContentRelationEditor == "false")
+				#set($enableContentRelationEditor = "false")
+			#end
+		#end
+		
+		#set($enableStructureRelationEditor = "")
+		#set($enableStructureRelationEditor = $!attribute.getContentTypeAttribute("enableStructureRelationEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableStructureRelationEditor == "")
+			#set($enableStructureRelationEditor = "false")
+		#end
+
+		#set($enableComponentPropertiesEditor = "")
+		#set($enableComponentPropertiesEditor = $!attribute.getContentTypeAttribute("enableComponentPropertiesEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($enableComponentPropertiesEditor == "")
+			#set($enableComponentPropertiesEditor = "false")
+		#end
+
+		#set($activateExtendedEditorOnLoad = "")
+		#set($activateExtendedEditorOnLoad = $!attribute.getContentTypeAttribute("activateExtendedEditorOnLoad").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
+		#if($activateExtendedEditorOnLoad == "")
+			#set($activateExtendedEditorOnLoad = "false")
+		#end
+
+		<script type="text/javascript">
+		<!--
+			attributeNames["$velocityCount"] = "${attribute.name}";
+			attributeTypes["$velocityCount"] = "${attribute.inputType}";
+			attributesStatus["${attribute.name}ActivateExtendedEditorOnLoad"] = $activateExtendedEditorOnLoad;
+		-->
+		</script>
+	
+		#set($currentEditorId = 0)
+		
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				#set($value = "$!this.getAttributeValue($attribute.name)")
+				#if("$value" == "")
+					#set($value = $attributeInitialData)
+				#end
+				
+				#if($attribute.inputType == "hidden")
+					<input type="hidden" id="$attribute.name" name="$attribute.name" value="$value"/>
+				#elseif($attribute.inputType == "datefield")
+					$attributeTitle ("$attribute.name") $attributeDescription
+					#printError("ContentVersion.$attribute.name")
+					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="images/calendar.gif" border="0"/></a>
+					<script type="text/javascript">
+						Calendar.setup({
+						        inputField     :    "$attribute.name",     		// id of the input field
+						        ifFormat       :    "%Y-%m-%d %H:%M",      	// format of the input field
+						        button         :    "calendar_$attribute.name",  // trigger for the calendar (button ID)
+						        align          :    "BR",           		// alignment (defaults to "Bl")
+						        singleClick    :    true,
+						        firstDay  	   : 	1,
+						        showsTime	   :    true,
+						        timeFormat     :    "24"
+						});
+					</script>
+				#elseif($attribute.inputType == "textfield")
+					$attributeTitle ("$attribute.name") $attributeDescription
+					#printError("ContentVersion.$attribute.name")
+					<input $readonly type="text" length="50" class="$class" maxlength="" id="$attribute.name" name="$attribute.name" value="$value" $onchange/>
+				#elseif($attribute.inputType == "textarea")
+					
+					<table cellpadding="0" cellspacing="0" border="0" width="100%">
+					    <tr>
+					    	<td align="left">
+						    	$attributeTitle ("$attribute.name") $attributeDescription 
+						    	#printError("ContentVersion.$attribute.name")
+						    </td>
+					    	<td align="right">
+								
+					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
+					    			<a href="javascript:changeEditor(0, '${attribute.name}');">$ui.getString("tool.contenttool.editorPlainLabel")</a> 
+								#end
+					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
+					    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
+								#end
+								#if($enableComponentPropertiesEditor == "true")
+									<a href="javascript:changeEditor(0, '${attribute.name}');">$ui.getString("tool.contenttool.editorPlainLabel")</a> 
+								#end
+								<span id="editor_plugin_space_${attribute.name}"></span>
+							</td>
+					    </tr>
+					</table>
+					
+					#set($width = 0)
+					#set($width = $!attribute.getContentTypeAttribute("width").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+					#if($width == 0)
+						#set($width = 700)
+					#end
+
+					#set($height = 0)
+					#set($height = $!attribute.getContentTypeAttribute("height").getContentTypeAttributeParameterValue().getLocalizedValueAsInt("label", $session.locale))
+					#if($height == 0)
+						#set($height = 150)
+					#end
+					
+					#set($wysiwygHeight = $height - 40)
+					#if($width >= 700)
+						#set($wysiwygHeight = $height - 20)
+					#end
+					<textarea $readonly rows="$rows" cols="$cols" style="visibility: visible; width:${width}px; height:${height}px; border: 1px solid #C2D0E2;font-family:verdana,arial,sans-serif;font-size:8pt;" id="$attribute.name" name="$attribute.name" $readonly $onchange>$value</textarea>
+					
+					#if($enableWYSIWYG == "true")
+						<!-- Here comes the WYSIWYG-editor layer -->
+						
+						<script type="text/javascript">
+							// Replace an existing textarea with an HTMLArea object having the above config.
+							plainEditors["${attribute.name}"] = "${attribute.name}";
+							plainEditorsToolbars["${attribute.name}"] = "${WYSIWYGToolbar}";
+							
+							currentEditorIdHash["${attribute.name}CurrentEditorId"] = 1;
+							#set($currentEditorId = 1)
+						</script>
+
+					#end
+					
+					#if($enableTemplateEditor == "true" && $readonly == "")
+						<!-- Here comes the Template Code editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType2IsActive" name="${attribute.name}EditorType2IsActive" value="false">
+						<div id="${attribute.name}EditorType2" name="${attribute.name}EditorType2" style="display:block; width:${width}px; height:${height}px; z-index:1; border: 0px none #C2D0E2;">
+							<script type="text/javascript">
+				        		noJava = false;
+				        	</script>
+						    <table cellpadding="0" cellspacing="0" border="0">
+						    <tr>
+						    	<td colspan="2" align="right" bgcolor="white">
+						    		#showTemplateEditor("${width}" "${height}" "${attribute.name}" "${deliveryBaseUrl}")						    		
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						
+						<script type="text/javascript">
+							if(!noJava)
+							{
+								document.getElementById('${attribute.name}').style.display = "none";
+								document.getElementById('${attribute.name}EditorType2').style.display = "block";	
+								
+								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 2;
+								#set($currentEditorId = 2)						
+							}
+							else
+							{
+								document.getElementById('${attribute.name}').style.display = "block";
+								document.getElementById('${attribute.name}EditorType2').style.display = "none";	
+								
+								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 0;
+							}
+						</script>
+						
+					#end
+					
+					#if($enableFormEditor == "true" && $readonly == "")
+						<!-- Here comes the Form editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType3IsActive" name="${attribute.name}EditorType3IsActive" value="false">
+						<div id="${attribute.name}EditorType3" name="${attribute.name}EditorType3" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+									#if($contentVersionId > -1)
+									As the form editor is somewhat complex you have to open it in a new window.
+									Click <a href="javascript:openFormEditor('ViewFormEditor.action?contentVersionId=$!contentVersionId&contentVersionAttributeName=$!attribute.name');"><strong>here</strong></a> for it.
+									Edit the form there and close the window when you are done. 
+									#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									#end
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$!this.getAttributeValue($attribute.name)">
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType3').style.display = "block";							
+						</script>
+						
+					#end
+
+					#if($enableContentRelationEditor == "true" && $readonly == "")
+						<!-- Here comes the Content Relation editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType4IsActive" name="${attribute.name}EditorType4IsActive" value="false">
+						<div id="${attribute.name}EditorType4" name="${attribute.name}EditorType4" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+						    		<p style="margin-top:5px; margin-left:5px;">
+									#if($contentVersionId > -1)
+									Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor.action?updateAction=ViewContentRelationEditor!updateQualifyer.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									<hr noshade size="1">
+									#set($qualifyers = $this.getContentRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0">
+									#foreach($qualifyer in $qualifyers)
+										<tr>
+											<td valign="middle">
+											<img src="images/tree/xp/item.png"> 
+											</td>
+											<td valign="middle">
+											$qualifyer.getPath() 
+											</td>
+											<td></td>
+											<td valign="middle">
+											(<a href="javascript:openPopup('ViewContent!standalone.action?contentId=${qualifyer.getValue()}', 'editcontent', 'width=600,height=500,resizable=yes,scrollbars=yes');">Edit</a>)
+											</td>
+										</tr>
+									#end
+									</table>
+									#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									#end
+									</p>
+								</td>
+						    </tr>
+						    </table>
+						</div>
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$!this.getAttributeValue($attribute.name)">
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType4').style.display = "block";							
+						</script>
+					#end
+
+					#if($enableStructureRelationEditor == "true" && $readonly == "")
+						<!-- Here comes the Structure Relation editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType5IsActive" name="${attribute.name}EditorType5IsActive" value="false">
+						<div id="${attribute.name}EditorType5" name="${attribute.name}EditorType5" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+									<p style="margin-top:5px; margin-left:5px;">
+									#if($contentVersionId > -1)
+									Related SiteNodes (<a href="javascript:openRelationEditor('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyer.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									<hr noshade size="1">
+									#set($qualifyers = $this.getSiteNodeRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0">
+									#foreach($qualifyer in $qualifyers)
+										<tr>
+											<td valign="middle">
+											<img src="images/tree/xp/item.png"> 
+											</td>
+											<td valign="middle">
+											$qualifyer.getPath() 
+											</td>
+										</tr>
+									#end
+									</table>
+									#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									#end
+									</p>
+								</td>
+						    </tr>
+						    </table>
+						</div>	
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$!this.getAttributeValue($attribute.name)">
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType5').style.display = "block";							
+						</script>
+					#end
+					
+					#if($enableComponentPropertiesEditor == "true" && $readonly == "")
+						<!-- Here comes the Component Properties editor layer -->
+						<input type="hidden" id="${attribute.name}EditorType6IsActive" name="${attribute.name}EditorType6IsActive" value="false">
+						<div id="${attribute.name}EditorType6" name="${attribute.name}EditorType6" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
+						    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+						    <tr>
+						    	<td colspan="2" bgcolor="white" valign="top">
+									<p style="margin-top:5px; margin-left:5px;">
+									#if($contentVersionId > -1)
+									Component Properties (<a href="javascript:openRelationEditor('ViewComponentPropertiesEditor.action?contentVersionId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit properties</strong></a>)
+									<hr noshade size="1">
+									#set($componentProperties = $this.getComponentPropertyDefinitions($this.getUnescapedAttributeValue($attribute.name)))
+									<table border="0" width="100%">
+										<tr style="background-color: #CCCCCC;">
+											<td valign="middle">
+											Property name 
+											</td>
+											<td valign="middle">
+											Type 
+											</td>
+											<td valign="middle">
+											Entity (if binding)
+											</td>
+											<td valign="middle">
+											Allow multiple items
+											</td>
+											<td valign="middle">
+											Allowed content types
+											</td>
+											<td valign="middle">
+											Description
+											</td>
+										</tr>
+									#foreach($propertyDefinition in $componentProperties)
+										<tr>
+											<td valign="middle">
+											$propertyDefinition.name 
+											<td valign="middle">
+											$propertyDefinition.type 
+											</td>
+											<td valign="middle">
+											$propertyDefinition.entity 
+											</td>
+											<td valign="middle">
+											$propertyDefinition.multiple
+											</td>
+											<td valign="middle">
+											$propertyDefinition.allowedContentTypeNames
+											</td>
+											<td valign="middle">
+											$propertyDefinition.description
+											</td>
+										</tr>
+									#end
+									</table>
+									#else
+									You cannot use the editor until you have saved the first version of this content. Fill
+									in the rest of the form values and save without entering anything in this field. After that you
+									will be able to use the editor.
+									#end
+									</p>
+								</td>
+						    </tr>
+						    </table>
+						</div>	
+						<input type="hidden" id="${attribute.name}Hidden" name="${attribute.name}Hidden" value="$!this.getAttributeValue($attribute.name)">
+						
+						<script type="text/javascript">
+							document.getElementById('${attribute.name}').style.display = "none";
+							document.getElementById('${attribute.name}EditorType6').style.display = "block";							
+							currentEditorIdHash["${attribute.name}CurrentEditorId"] = 6;
+						</script>
+					#end
+					
+					
+		    		#if($enableFormEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+		    			document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType3');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		    		#if($enableContentRelationEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+		    			document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType4');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		    		#if($enableStructureRelationEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+		    			document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType5');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		    		#if($enableComponentPropertiesEditor == "true" && $readonly == "" && $contentVersionId > -1)
+		    		<script type="text/javascript">
+		    			document.getElementById('${attribute.name}').style.display = "none";
+		    			showdiv = document.getElementById('${attribute.name}EditorType6');
+						showdiv.style.visibility = "visible";
+		    		</script>
+		    		#end
+		
+					
+				#elseif($attribute.inputType == "select")
+				<!-- Handles the input type select = dropbox -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+					#printErrorV3("ContentVersion.$attribute.name" false)
+					<select $readonly size="1" id="$attribute.name" name="$attribute.name" class="$class" $onchange>
+						#foreach($option in $attribute.options)
+		    				<option value="$option.value" #checkSelected("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()</option>
+						#end
+		    		</select>
+
+				#elseif($attribute.inputType == "checkbox")
+				<!-- Handles the input type checkbox -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+	    			#printErrorV3("ContentVersion.$attribute.name" false)
+					<ul class="optionList">
+						#foreach($option in $attribute.options)
+							<li><input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()</li>
+						#end
+					</ul>
+				#elseif($attribute.inputType == "radiobutton")
+				<!-- Handles the input type radiobutton -->
+					$attributeTitle ("$attribute.name") $attributeDescription <br/>
+	    			#printErrorV3("ContentVersion.$attribute.name" false)
+					<ul class="optionList">
+						#foreach($option in $attribute.options)
+							<input $readonly type="radio" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")>$option.getName()</li>
+						#end
+					</ul>
+				#elseif($attribute.inputType == "customfield")
+				<!-- Handles the input type customfield -->
+					#set($attributeMarkup = $!attribute.getContentTypeAttribute("Markup").getContentTypeAttributeParameterValue().getValue("label"))
+					$attributeTitle ("$attribute.name") $attributeDescription
+					#printError("ContentVersion.$attribute.name")
+					#set($processedMarkup = $attributeMarkup.replaceAll("attributeName", "$attribute.name"))
+					#set($processedMarkup = $processedMarkup.replaceAll("attributeValue", "$value"))
+	    			$processedMarkup
+
+				#end
+				
+			</td>
+		</tr>
+	#end
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		#set($allCategoryKeys = $definedCategoryKeys)
+		#if($allCategoryKeys.size() > 0)
+		<tr>
+			<tr>
+				<td colspan="3">$ui.getString("tool.contenttool.relatedCategories")</td>
+			</tr>
+			<td colspan="3" class="bordered">
+				#foreach($categoryKey in $allCategoryKeys)
+					#if($velocityCount > 1)
+					<br>
+					#end
+					
+					#set($keyAttribute = $categoryKey.value)
+					#set($dropdownName = "${keyAttribute}${velocityCount}categoryId")
+					#set($availableCategories = $this.getAvailableCategories($categoryKey.categoryId))
+					<table border="0" width="100%" cellspacing="0" style="background-color: white;">
+						<tr valign="bottom" class="darkgreen">
+							<td width="80%">$categoryKey.title ("$keyAttribute") - $categoryKey.description</td>
+							<td align="right">
+                            #if($contentVersionId)
+								#addCategorySelect($dropdownName $availableCategories "")
+							#end
+							</td>
+							<td align="right">
+                            #if($contentVersionId)
+								<a href="javascript:addCategory('${keyAttribute}', '${dropdownName}');"><img src="$ui.getString("images.contenttool.buttons.addCategory")" border="0"/></a>
+							#end
+							</td>
+						</tr>
+					</table>
+					<table border="0" width="100%" cellspacing="0" cellpadding="2" aclass="bordered" style="border-top: 1px solid black;">
+					#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
+					#foreach($relation in $relatedCategories)
+                        #set($isOdd = $velocityCount % 2)
+						#set($class = "class='white'")
+						#if($isOdd == 0)
+							##set($class = "class='darkgreen'")
+							#set($class = "class='lightgreen'")
+						#end
+						<tr $class>
+							<td width="50%">$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)</td>
+							<td width="50%" align="right">
+								<a href="javascript:deleteCategory('$relation.contentCategoryId');"><img src="images/delete.gif" border="0"/></a>
+							</td>
+						</tr>
+					#end
+					#if($relatedCategories.size() == 0)
+						<tr class="white">
+							<td colspan="2">
+							#if(!$contentVersionId)
+								$ui.getString("tool.contenttool.saveToRelateCategoriesPrefix") $keyAttribute
+							#else
+								$ui.getString("tool.contenttool.noCategoriesPrefix") $keyAttribute
+							#end
+							</td>
+						</tr>
+					#end
+					</table>
+				#end
+			</td>
+		</tr>
+		#end
+		<tr>
+			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				$ui.getString("tool.contenttool.associatedAttachments")<br/>
+				<span id="assetsTable" name="assetsTable">
+				<table border="0" width="100%" cellspacing="0">
+				<tr>
+					#set($counter = 0)
+					#foreach($digitalAsset in $digitalAssets)
+						#set($digitalAssetUrl = "$this.getDigitalAssetUrl($digitalAsset.digitalAssetId)")
+						<td valign="bottom" align="center" class="bordered">
+							<input type="hidden" id="digitalAsset$digitalAsset.assetKey" value="$digitalAssetUrl">
+							<a href="javascript:openPopup('$digitalAssetUrl', 'Preview', 'width=600,height=500,resizable=yes');"><img class="scaledbordered" src="$this.getDigitalAssetThumbnailUrl($digitalAsset.digitalAssetId)">
+							<br/>$digitalAsset.assetKey</a><br/>
+							#*
+							#if($readonly == "")
+								<a href="javascript:openPopup('ViewDigitalAsset!update.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId','DigitalAsset','width=500,height=400,resizable=no');">$ui.getString("tool.contenttool.editAttachment")</a> / 
+								<a href="ViewContentVersion!deleteDigitalAsset.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId">$ui.getString("tool.contenttool.deleteAttachment")</a>
+							#end
+							*#
+						</td>
+						#set($counter = $counter + 1)
+						#if ($counter == 5)
+						</tr>
+						<tr>
+							#set($counter = 0)	
+						#end
+					#end
+					
+					#if($counter == 0)
+						<td>$ui.getString("tool.contenttool.noAttachmentsRightNow")
+						#if (!$contentVersionId)
+							<br />$ui.getString("tool.contenttool.saveToAddAttachment")
+						#end
+						</td>
+					#end	
+				</tr>
+				</table>
+				</span>
+			</td>
+		</tr>
+				
+	<script type="text/javascript">
+		function validateAndSubmitContentForm()
+		{
+			if(allowSave == false)
+			{
+				alert("$ui.getString("tool.contenttool.cannotSaveBecauseInvalidClose")");
+				return;
+			}
+			
+			pastedTime = count; 
+			
+			if(beenWarned)
+			{
+				answer = confirm("You have not saved for " + pastedTime + " minutes. We strongly recommends you copy the text so you don't risk loosing it if you have been inactive for to long. Do you want to save anyway?");
+			}
+			
+			if (!beenWarned || answer)
+			{
+				isValid = true;
+				
+				if(isValid)
+				{
+					buildVersionValue(); 
+					document.editForm.submit();
+				}
+			}
+		}
+
+		function syncToPlainEditor(elementId)
+		{
+   				currentEditorId = currentEditorIdHash[elementId + "CurrentEditorId"];
+   				
+   				if(currentEditorId)
+   					document.getElementById("currentEditorId").value = currentEditorId;
+   				
+				if(currentEditorId == 1)
+				{
+					var oEditor = FCKeditorAPI.GetInstance(elementId);
+					document.getElementById(elementId).value = untransformAttribute(oEditor.GetXHTML(false));
+				}
+				else if(currentEditorId == 2)
+				{
+					var codeEditor = document.getElementById(elementId + "InfoGlueCodeEditor");
+					document.getElementById(elementId).value = codeEditor.getText();	
+				}
+				else if(currentEditorId == 0 && elementId == "ComponentProperties")
+				{
+					document.getElementById(elementId + "Hidden").value = document.getElementById(elementId).value	
+				}
+		}
+		function syncToExtendedEditor(elementId)
+		{
+   				currentEditorId = currentEditorIdHash[elementId + "CurrentEditorId"];
+   				
+   				if(currentEditorId)
+   					document.getElementById("currentEditorId").value = currentEditorId;
+   				
+				if(currentEditorId == 1)
+				{
+					var oEditor = FCKeditorAPI.GetInstance(elementId);
+					oEditor.SetHTML(transformAttribute(document.getElementById(elementId).value));
+				}
+				else if(currentEditorId == 2)
+				{
+					var codeEditor = document.getElementById(elementId + "InfoGlueCodeEditor");
+					codeEditor.setText(document.getElementById(elementId).value);	
+				}
+				/*
+				else if(currentEditorId == 0 && elementId == "ComponentProperties")
+				{
+					document.getElementById(elementId).value = document.getElementById(elementId + "Hidden").value
+				}
+				*/
+		}
+	
+		function validateAndSubmitContentFormThenExit()
+		{
+			//alert("Action:" + document.editForm.action);
+			document.editForm.action = "UpdateContentVersion!saveAndExit.action";
+			validateAndSubmitContentForm();		
+		}
+	
+		function validateAndSubmitContentFormBackground()
+		{
+			/*
+			 * Save current target and action
+			 */
+			var target = document.editForm.target;
+			var action = document.editForm.action;
+			
+			document.editForm.target = "updateframe";
+			document.editForm.action = "UpdateContentVersion!background.action";
+			validateAndSubmitContentForm();		
+			inaktiveTime = 0;
+		
+			/*
+			 * Restore target and action
+			 */
+			document.editForm.target = target;
+			document.editForm.action = action;
+		}
+		
+		function buildVersionValue()
+		{
+			var versionValue = "<?xml version='1.0' encoding='UTF-8'?>";
+			versionValue += "<article xmlns='x-schema:ArticleSchema.xml'>";
+			versionValue += "<attributes>";
+			
+			#foreach($attribute in $contentTypeAttributes)
+   				#if($attribute.inputType != "digitalAsset")
+					versionValue += "<$attribute.name>";
+					versionValue += "<![CDATA[" + getValue("${attribute.name}") + "]]>";
+					//versionValue += "<![CDATA[" + document.editForm.${attribute.name}.value + "]]>";
+					versionValue += "</$attribute.name>";
+				#end
+			#end
+			
+			versionValue += "<IGAuthorFullName>";
+			versionValue += "<![CDATA[$infoGluePrincipal.firstName $infoGluePrincipal.lastName]]>";
+			versionValue += "</IGAuthorFullName>";
+
+			versionValue += "<IGAuthorEmail>";
+			versionValue += "<![CDATA[$infoGluePrincipal.email]]>";
+			versionValue += "</IGAuthorEmail>";
+
+			versionValue += "</attributes>";
+			versionValue += "</article>";
+			
+			//alert("versionValue:" + versionValue);				
+			document.editForm.versionValue.value = versionValue;
+		}
+				
+		/*
+		 * This function sets the raw value of the elementId
+		 * regardless of what editor is active for the element.
+		 *
+		 */
+		function setValue(elementId, content)
+		{
+			var plainTextArea = document.getElementById(elementId);
+			plainTextArea.value = content;
+			syncToExtendedEditor(elementId);
+		}
+	
+		/*
+		 * This function returns the raw value of the elementId
+		 * regardless of what editor is active for the element.
+		 *
+		 */
+		function getValue(elementId)
+		{
+			syncToPlainEditor(elementId);
+		
+			var value = "";
+			//alert(elementId);
+			
+			var allElem = document.editForm.elements;
+			//alert("allElem:" + allElem.length);
+		  	for(i=0;i<allElem.length;i++)
+			{
+			    var element = allElem[i];
+			    //alert("element.name:" + element.name);
+			    //alert("element.type:" + element.type);
+			    
+			    if(element.name == elementId)
+			    {
+			    	if(element.type=='checkbox' || element.type=='radio')
+			        {
+			        	//alert("element.checked:" + element.checked);
+			        	if(element.checked == true)
+			          	{
+			          		if(value == "")
+				          		value += element.value;
+							else
+								value += ',' + element.value;				
+			          	}
+			        }
+					else
+					{
+						var hiddenField = document.getElementById(elementId + "Hidden");
+						if(hiddenField)
+							fieldName = "document.editForm." + elementId + "Hidden";
+						else
+							fieldName = "document.editForm." + elementId;
+						
+						value = eval(fieldName).value;
+						//alert(fieldName + " value:" + value);
+						//value = document.getElementById(elementId).value;
+						
+						//alert("elementId:" + elementId);
+						//alert(document.getElementById(elementId).value);
+						//alert(document.getElementById(elementId + "Hidden").value);
+						//alert(fieldName);
+						//alert(eval(fieldName).value);
+						//alert(eval(fieldNameHidden).value);
+						//alert("value:" + value);
+					}
+			    }      
+			}	
+										
+			//alert("value:" + value);
+			return value;
+		}
+		
+		</script>
+		<input type="hidden" id="versionValue" name="versionValue" value=""/>
+		<input type="hidden" id="currentEditorId" name="currentEditorId" value=""/>
+		</td>
+	</tr>
+	
+	<!-- end fields -->
+
+	<tr>
+		<td colspan="3">&nbsp;</td>
+	</tr>
+	<tr>
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<input type="hidden" name="contentId" value="$!contentId">
+		#if($contentVersionId > -1)
+			<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+			#if("$oldModifiedDateTime" == "-1")
+				<input type="hidden" name="oldModifiedDateTime" value="$!contentVersionVO.modifiedDateTime.time">
+			#else
+				<input type="hidden" name="oldModifiedDateTime" value="$!oldModifiedDateTime">
+			#end
+		#end
+		
+		<td colspan="3">
+			<input type="hidden" id="languageId" name="languageId" value="$languageId"/>
+			
+		    #if($readonly == "")
+			<a href="javascript:validateAndSubmitContentForm();"><img src="$ui.getString("images.contenttool.buttons.next")" width="50" height="25" border="0"></a>
+			#end
+			<a href="javascript:skipAndCancel();"><img border="0" src="$ui.getString("images.contenttool.buttons.cancel")" width="50" height="25"></a>
+		</td>
+	</tr>
+</table>
+</form>
+
+<form id="catForm" name="catForm" action="ContentCategory!add.action" method="POST">
+	<input type="hidden" id="model/attributeName" name="model/attributeName" value="">
+	<input type="hidden" id="model/category/categoryId" name="model/category/categoryId" value="">
+	<input type="hidden" name="model/contentVersionId" value="$contentVersionId">
+	<input type="hidden" name="contentId" value="$contentId">
+	<input type="hidden" name="languageId" value="$languageId">
+</form>
+
+</div>
+
+<div style="display:none;">
+<iframe width=0 height=0 border=0 frameborder=0 name="updateframe"></iframe>
+</div>
+
+<script type="text/javascript">
+	generateWYSIWYGS();
+
+	$("#contentTypeAttributesTable :input").change(function () {
+		if($(this).attr("id").indexOf("categoryId") == -1)
+		{		  
+			setDirty();
+		}
+    });
+				
+	$("#editForm").submit(function () { return false; });
+	
+</script>
+
+#endContentTool()

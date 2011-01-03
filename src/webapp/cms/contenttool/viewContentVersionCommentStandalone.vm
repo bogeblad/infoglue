@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Comment Version</title>
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<script language="JavaScript" src="script/listview.js"></script>
+	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
+	<META HTTP-EQUIV="expires" CONTENT="-1" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>	
+</head>
+
+<body class="contenttooledit">
+
+
+<div class="fullymarginalized">
+<form method="POST" name="editForm" action="ChangeContentState!standalone.action">
+<table width="300" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
+	</tr>		
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<td colspan="3">#editTextArea("ContentVersion.versionComment" "versionComment" $!versionComment "10" "10" "normaltextarea")</td>
+	</tr>		
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "overrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
+	</tr>	
+		
+	#if($allowPublicationEventFilter == "true")
+		#if($infoGluePrincipal.groups.size() > 1)
+			<tr>
+				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			</tr>
+			<tr>
+				<td colspan="3">
+					$ui.getString("tool.common.recipientFilter.label")<br>
+					<select name="recipientFilter" id="recipientFilter">
+						<option value="">$ui.getString("entity.ServerNode.property.nonePublishersFilter.label")</option>
+						<!--<option value="all">$ui.getString("entity.ServerNode.property.allPublishersFilter.label")</option>-->
+						<option value="groupBased" selected="1">$ui.getString("entity.ServerNode.property.groupBasePublishersFilter.label")</option>
+						#if($infoGluePrincipal.groups.size() > 1)
+							#foreach($group in $infoGluePrincipal.groups)
+								<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
+							#end
+						#end
+					</select>
+				</td>
+			</tr>		
+		#else
+			<input type="hidden" name="recipientFilter" id="recipientFilter" value="groupBased"/>		
+		#end	
+	#end
+	
+	<tr>
+		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+	</tr>
+	<tr>
+		<input type="hidden" name="contentId" value="$!contentId">
+		<input type="hidden" name="languageId" value="$!languageId">
+		<input type="hidden" name="contentVersionId" value="$!contentVersionId">
+		<input type="hidden" name="stateId" value="$!stateId">
+		<input type="hidden" name="attributeName" value="$!attributeName">
+		<td colspan="3">
+			<input type="image" src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0">
+		</td>
+	</tr>
+	
+</table>
+</div>
+
+</body>
+</html>

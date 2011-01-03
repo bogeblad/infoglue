@@ -1,0 +1,943 @@
+.movezone-hover {
+	background-color: #ffff6d !important;
+}
+.dropObject {
+	border: 1px dotted #ccc;
+	background-color: white;
+	font-size: 13px;
+	padding: 2px;
+	z-index: 1001;
+}
+.componentDropArea {
+	position: absolute;
+	border: 1px dotted #ccc;
+	background-color: #ffffcd;
+	font-size: 13px;
+	padding: 2px;
+	z-index: 1000;
+}
+/* 
+Component palette classes
+*/
+#paletteDiv {
+	position: absolute;
+	background-color: #F4F4F4;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	z-index: 50;
+	height: 80px;
+	width: 100%;
+	left: 0px;
+	top: 0px;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	line-height: 100%;
+}
+
+#paletteHandle {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: white;
+	overflow: hidden;
+	line-height: 10px;
+	background-color: navy;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	width: 100%;
+	height: 10px;
+}
+
+#leftPaletteHandle {
+	width: 150px;
+	float: left;
+	color: white;
+	text-align: left;
+	line-height: 10px;
+}
+
+#leftPaletteHandleCompProps,.leftPaletteHandleCompProps {
+	width: 80%;
+	float: left;
+	color: #333;
+	height: 25px;
+	padding: 10px 0px 0px 6px;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}
+
+.rightPaletteHandleCompProps {
+	float: right;
+	height: 30px;
+	width: 16px;
+	margin: 4px 6px 0px 0px;
+}
+
+#rightPaletteHandle {
+	color: white;
+	text-align: right;
+	line-height: 10px;
+}
+
+#paletteHeader {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	width: 244px;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	height: 30px;
+}
+
+#statusListBg {
+	position: absolute;
+	top: 65px;
+	left: 0px;
+	border-bottom: 1px solid gray;
+	background: #CCCCCC;
+	width: 100%;
+	height: 15px;
+}
+
+#paletteBody {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	overflow: auto;
+	background-color: #999999;
+	height: 30px;
+	width: 100%;
+	left: 0px;
+	top: 0px;
+}
+
+.tabPanel {
+	position: absolute;
+	width: 100%;
+	height: 24px;
+	overflow: hidden;
+}
+
+.thistab {
+	font-family: verdana, arial, helvetica;
+	font-size: 11px;
+	font-weight: bold;
+	text-align: center;
+	color: #000000;
+	background: #cccccc;
+	border-top: thin solid white;
+	border-right: thin solid transparent;
+	border-left: thin solid white;
+	border-bottom: 0px solid white;
+	cursor: pointer;
+	visibility: inherit;
+	z-index: 1;
+	overflow: auto;
+	white-space: nowrap;
+	padding: 0px 4px 0px 4px;
+}
+
+.igtab {
+	font-family: verdana, arial, helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	text-align: center;
+	background: #999999;
+	color: #000000;
+	border-top: solid 1px black;
+	border-right: none 1px black;
+	border-left: solid 1px black;
+	border-bottom: solid 1px white;
+	cursor: pointer;
+	visibility: inherit;
+	z-index: 20;
+	overflow: auto;
+	space: nowrap;
+	padding: 0px 4px 0px 4px;
+}
+
+.igpalettetd {
+	background-color: #CCCCCC;
+	text-align: left;
+	height: 10px;
+	vertical-align: top;
+	border: 0px solid blue;
+}
+
+.igpalettetd:hover {
+	background-color: #CCCCCC;
+	color: #000000;
+}
+
+.igmenuitems {
+	margin-left: 3px;
+	padding-left: 31px;
+	padding-right: 11px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	white-space: nowrap;
+	color: #000000;
+	line-height: 14px;
+}
+.igmenuitems a {
+	text-decoration: none;
+	color: black;
+}
+.igmenuitems a:hover {
+	text-decoration: underline;
+	color: black;
+}
+
+/*
+This can be replaced by componentEditor.js:highighi5 and lowlighti5
+when explorer get better support for hover.
+.igmenuitems:hover {
+	background-color: #B6BDD2;
+	border:1px solid black;
+	}
+*/
+.menudivider {
+	height: 1px;
+	text-align: right;
+	margin: 0 0 0 auto;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.draggableItem {
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	white-space: nowrap;
+}
+
+.components {
+	text-align: center;
+	background: #CCCCCC;
+	border-left: solid 1px white;
+	border-bottom: solid 1px black;
+	left: 0px;
+	width: 100%;
+	height: 30px;
+	cursor: pointer;
+	white-space: nowrap;
+	visibility: inherit;
+}
+
+.component {
+	text-align: center;
+	background-color: white;
+	cursor: pointer;
+	white-space: nowrap;
+	padding: 0px 4px 0px 4px;
+	visibility: inherit;
+}
+
+.componentsBackground {
+	border-bottom: 1px solid gray;
+	background: #CCCCCC;
+	width: 100%;
+	height: 24px;
+	position: absolute;
+	top: 50px;
+	left: 10px;
+	visibility: inherit;
+}
+
+.componentsStatus {
+	font-family: verdana, arial, helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	border-bottom: solid 1px black;
+	border-top: solid thin gray;
+	position: absolute;
+	z-index: 2;
+	width: 100%;
+	top: 60px;
+	left: 0px;
+	height: 16px;
+	visibility: visible;
+	background: #CCCCCC;
+}
+
+.componentsStatusText {
+	font-family: verdana, arial, helvetica;
+	font-size: 10px;
+	font-weight: normal;
+}
+
+/*
+Buffer
+*/
+#buffer {
+	position: absolute;
+	z-index: 80;
+	height: 1em;
+	width: 1em;
+	background: #777777;
+	border: 0px solid black;
+	color: #ffffff;
+	visibility: hidden;
+	top: 0px;
+	left: 0px;
+}
+
+/* 
+Other classes
+*/ /*	
+.siteBody {
+	position: absolute; 
+	border: 0px solid blue; 
+	margin: 0px 0px 0px 0px; 
+	padding: 0px 0px 0px 0px;
+	}
+*/ /* 
+Page components classes
+*/
+#pageComponents {
+	position: absolute;
+	width: 250px;
+	background-color: #F4F4F4;
+	border: 1px solid #333333;
+	z-index: 70;
+	right: 5px;
+	top: 100px;
+	height: 400px;
+}
+
+#pageComponentsHandle {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	width: 100%;
+	color: white;
+	background-color: navy;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+}
+
+#pageComponentsBody {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	width: 100%;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	height: 380px;
+	overflow: auto;
+}
+
+/*
+Edit on sight classes
+*/
+.skin0 {
+	position: absolute;
+	z-index: 1000004;
+	text-align: left;
+	width: 350px;
+	background-color: #F9F8F7;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	line-height: 20px;
+	cursor: default;
+	display: none;
+	/*visibility: hidden;*/
+	border: 0px solid red;
+}
+
+.skin1 {
+	cursor: pointer;
+	position: absolute;
+	z-index: 1000004;
+	text-align: left;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	width: 200px;
+	overflow: hidden;
+	background-image: url('../images/v3/tileGradient.gif');
+	background-repeat: repeat-y;
+	background-position: left;
+	background-color: #F9F8F7;
+	border: 1px solid #666666;
+	visibility: hidden;
+}
+
+/*
+.igAddComponent {
+	background-color:#F9F8F7;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+}
+*/ /*
+Properties classes
+*/
+.componentProperties {
+	position: absolute;
+	max-width: 600px;
+	background-color: #F4F4F4;
+	border: 1px solid #333333;
+	z-index: 80;
+	right: 5px;
+	top: 100px;
+}
+
+.componentPropertiesHandle {
+font-weight:bold;
+font-size: 12pt;
+height:32px;
+float: left;
+margin:0;
+apadding-top:2px;
+width:100%;
+padding: 0px;
+aposition:relative;
+background-color:white;
+background-image:url("../images/v3/toolbarBackground.gif");
+background-repeat:repeat-x;
+border:0px;
+border-bottom:1px solid #9CAABD;
+/*
+margin: 2px;
+	padding: 2px;
+	width: 440px;
+	color: white;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	background-image: url('../images/handleBackground.gif');
+	*/
+}
+
+.componentPropertiesBody {
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	max-height: 500px;
+	min-height: 100px;
+	overflow: auto;
+	float: left;
+}
+/*
+.componentPropertiesFooter {
+	padding-left: 6px;
+}
+*/
+.componentPropertiesFooter input[type="button"]
+{ 
+	border: 1px solid #555; 
+	padding: 4px;
+	padding-left: 28px; 
+	font-size: 13px; 
+	font-family: Arial,sans-serif;
+	color: #555555;
+	border:1px solid #D0D1D0;
+	font-weight:bold;
+	outline:medium none;
+	background-position: 8px 3px;
+	line-height:1.4em;
+	margin:8px 4px 0px 0px;
+}
+.componentPropertiesFooter input[type="button"]:hover
+{ 
+	background-color: #d0e5f5;
+}
+.save { background:url(../images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.saveAndExit {background:url(../images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.cancel {background:url(../images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}
+.close {background:url(../images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
+
+.igPropertiesTable {
+	border-collapse: separate;
+	border: 0px solid #FFFFFF;
+	text-align: left;
+	width: 100%;
+	/*height: 10px;*/
+	/*display: none;*/
+}
+
+.igtable {
+	border-collapse: separate;
+	text-align: left;
+	height: 10px;
+	border: 0px solid #FFFFFF;
+}
+
+.igtr {
+	border: 0px solid #FFFFFF;
+	text-align: left;
+}
+/*
+.igtr:hover {
+	background-color: #F9F9F9;
+	color: #000000;
+}
+*/
+.igtd {
+	text-align: left;
+	height: 10px;
+	vertical-align: top;
+	border: 0px solid red;
+	line-height: 10px;
+	padding: 2px;
+	color: #000000;
+}
+
+.igtd span {
+	color: #000000;
+}
+/*
+.igtd:hover {
+	text-align: left;
+	height: 10px;
+	vertical-align: top;
+	border: 0px solid red;
+}
+*/
+
+.componentEditorLink {
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	text-decoration: underline;
+}
+.componentEditorLink:visited {
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	text-decoration: underline;
+}
+.componentEditorLink:hover {
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	text-decoration: underline;
+}
+
+.igpropertylabel {
+	text-align: left;
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	font-weight: normal;
+	border: 0px solid #FFFFFF;
+	width: 40%;
+	padding: 2px;
+}
+
+.igpropertyvalue {
+	text-align: left;
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	/*
+	background: #FFFFFF;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #C2D0E2;
+	*/
+	width: 40%;
+	padding: 2px;
+}
+.igpropertyDivider {
+	border: 0px solid #ccc;	
+	border-bottom: 1px solid #CCC;
+}
+
+td.propertiesheader {
+	font-family: Verdana;
+	font-size: 16px;
+	font-weight: bold;
+	height: 16px;
+	background-color: #E3ECF8;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+
+td.label {
+	font-family: verdana, arial, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	color: #333333;
+}
+
+td.value {
+	font-family: verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+}
+
+/*
+Slot classes
+*/
+.emptyslot {
+	font-family: verdana, arial, sans-serif;
+	font-size: 14px;
+	color: #333333;
+}
+
+.filledslot {
+	font-family: verdana, arial, sans-serif;
+	font-size: 14px;
+	color: #333333;
+}
+
+.inheritedslot {
+	
+}
+
+.inheritedComponentDiv {
+	border: dotted 0px #0070FF;
+}
+
+.inheritedComponentDiv:hover {
+	border: solid 0px red;
+}
+
+.componentDiv {
+	border: dotted 0px #0070FF;
+}
+
+.componentDiv:hover {
+	border: solid 0px red;
+}
+
+input.normaltextfield {
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #C2D0E2;
+	width: 300px;
+	color: black;
+}
+
+input.propertytextfield {
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #C2D0E2;
+	width: 200px;
+	color: black;
+}
+
+input.propertydatefield {
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #C2D0E2;
+	width: 100px;
+	color: black;
+}
+
+.propertytextarea {
+	font-family: Tahoma, verdana, arial, sans-serif;
+	font-size: 11px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #C2D0E2;
+	width: 200px;
+	height: 150px;
+	color: black;
+}
+
+select.propertyselect {
+	font-family: Tahoma, verdana, sans-serif;
+	font-size: 11px;
+	font-weight: normal;
+	color: black;
+	min-width: 100px;
+	max-width: 200px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #C2D0E2;
+}
+
+.inheritedOverlay {
+	font-family: verdana, arial, sans-serif;
+	font-size: 11px;
+	color: #333333;
+	position: relative;
+	visibility: visible;
+	z-index: 10;
+	width: 100%;
+	text-align: center;
+	vertical-align: middle;
+	height: 10px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #000000;
+}
+
+.inherited {
+	position: relative;
+	visibility: visible;
+	z-index: 1;
+	width: 100%;
+}
+
+tr.lightyellow {
+	background-color: #FEF8D0;
+	height: 20px;
+}
+
+tr.white {
+	background-color: #FFFFFF;
+	height: 20px;
+}
+
+.smalllabel {
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+}
+
+.smallwhitelabel {
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	color: white;
+}
+
+a.white {
+	text-decoration: none;
+	color: white;
+	font-size: 10px;
+}
+
+a.white:visited {
+	text-decoration: none;
+	color: white;
+	font-size: 10px;
+}
+
+a.white:hover {
+	text-decoration: underline;
+}
+
+a.white:active {
+	font-weight: bold;
+}
+
+.boldsmalllabel {
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	font-weight: bold;
+}
+
+.slot {
+	border: 0px solid #333333;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+}
+
+.iglabel {
+	margin: 0px;
+	padding: 0px;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	font-weight: normal;
+	height: 12px;
+	color: #000000;
+}
+
+select.mediumdrop {
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	font-weight: normal;
+	color: black;
+	min-width: 100px;
+	max-width: 200px;
+}
+
+.clickableLabel {
+	margin: 0px;
+	padding: 0px;
+	font-family: verdana, sans-serif;
+	font-size: 10px;
+	font-weight: normal;
+	text-decoration: underline;
+	color: blue;
+	height: 12px;
+	white-space: nowrap;
+}
+
+.acomponentsBackground {
+	border: 0px solid red;
+	border-left: solid thin white;
+	position: absolute;
+	z-index: 2;
+	width: 2000px;
+	top: 20px;
+	left: 0px;
+	height: 30px;
+	clip: rect(0px, 10px, 10px, 0px);
+	visibility: inherit;
+}
+
+.tooltipDiv {
+	border: 1px solid black;
+	background-color: white;
+	padding: 4px;
+	width: 200px;
+	display: block;
+	visibility: hidden;
+	z-index: 99;
+	position: absolute;
+	font-size: 11px;
+	font-family: Verdana;
+	font-weight: normal;
+	color: black;
+}
+
+
+.editOnSightDiv {
+	border: 1px solid black;
+	background-color: #F9F8F7;
+	background-image: url('../images/contextBackground.gif');
+	background-repeat: repeat-y;
+	text-align: left;
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	display: block;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: auto;
+	padding: 0px;
+}
+
+.editOnSightDiv a {
+	text-decoration: none;
+	color: black;
+}
+
+.editOnSightDiv a:hover {
+	color: black;
+}
+
+/* POPUP MENU */
+
+.popupMenuLinks {
+	list-style-type:none;
+	padding: 0px 0px 0px 7px;
+	margin: 0px 0px 0px 0px;
+	}
+.editOnSightMenuDiv {
+	background:url(../images/v3/tileGradient.gif) repeat-y left;
+	margin: 0px;
+	padding: 0px;	
+}
+
+.editOnSightUL {
+	list-style-image: none;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+	float: left;
+	display: block;
+}
+.editOnSightMenuDiv li:hover{
+	/*background-color: #BBB;*/
+	}
+.editOnSightMenuDiv li a:hover{
+	text-decoration:underline;
+	}
+.designStuff {
+	}
+.editOnSightHref {
+	white-space:nowrap;
+	line-height:22px;
+	padding-top:2px;
+	text-decoration:none;
+	display: block;	
+	font-family: Tahoma, Arial, Helvetica, sans-serif; 
+	font-size: 14px; 
+	color: black;
+	}
+a.editOnSightHref:hover{
+	text-decoration:none;
+	color: black;
+}
+.linkMetadata { background:url(../images/v3/metadataIcon.gif) no-repeat left center; background-position: 4px 2px;}
+.linkCreatePage {background:url(../images/v3/createPageIcon.gif) no-repeat left center; background-position: 4px 2px;}
+.linkEditArticle {background:url(../images/v3/editContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCategorizeArticle {background:url(../images/v3/categorizeContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkPublish {background:url(../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkNotify {background:url(../images/v3/notifyIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTakeContent {background:url(../images/v3/subscribeToContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTakePage {background:url(../images/v3/subscribeToPageIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTranslate {background:url(../images/v3/translateContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCreateNews {background:url(../images/v3/createNewsForContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMySettings {background:url(../images/v3/mySettingsIcon.gif) no-repeat left center; background-position: 4px 6px;}
+
+.linkAddComponent {background:url(../images/v3/addComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkDeleteComponent {background:url(../images/v3/deleteComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkChangeComponent {background:url(../images/v3/changeComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCreatePageTemplate {background:url(../images/v3/savePageTemplateIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMoveComponentUp {background:url(../images/v3/moveComponentUpIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMoveComponentDown {background:url(../images/v3/moveComponentDownIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkEnableSortComponent {background:url(../images/v3/moveIcon.png) no-repeat left center; background-position: 4px 6px;}
+.linkComponentProperties {background:url(../images/v3/componentPropertiesIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkPageComponents {background:url(../images/v3/structureIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkOpenInNewWindow {background:url(../images/v3/openInNewWindowIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkViewSource {background:url(../images/v3/showHTMLIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkAccessRights {background:url(../images/v3/accessRightIcon.gif) no-repeat left center; background-position: 4px 6px;}
+
+.linkComponentTask {background:url(../images/v3/componentTaskIcon.gif) no-repeat left center; background-position: 4px 6px;}
+
+.linkSave {background:url(../images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px -2px;}
+.linkCancel {background:url(../images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.linkInfoGlueFunctions {background:url(../images/v3/infoglueFunctionsIcon.gif) no-repeat left center; background-position: 0px 0px;}
+
+.linkMetadata, .linkCreatePage, .linkEditArticle, .linkCategorizeArticle, .linkPublish, .linkNotify, 
+.linkTakeContent, .linkTakePage, .linkTranslate, .linkCreateNews, .linkMySettings, .linkAddComponent, .linkDeleteComponent,
+.linkChangeComponent, .linkCreatePageTemplate, .linkMoveComponentUp, .linkMoveComponentDown, .linkEnableSortComponent, .linkComponentProperties, .linkPageComponents,
+.linkOpenInNewWindow, .linkViewSource, .linkAccessRights, .linkComponentTask {
+padding-left:28px;
+}
+
+/* Button in IG */
+.igButton
+{
+	background-image: url("../images/v3/igButtonBackground.png");
+	background-position: 100% -26px;
+	background-repeat: no-repeat;
+	line-height: 26px;
+	height: 26px;
+	padding-right: 20px;
+	color: #555;
+	display: block;
+	float: left;
+	margin: 4px;
+	margin-left: 0px;
+	margin-right: 10px;
+	cursor: pointer;
+}
+
+.igButtonOuterSpan
+{
+	background-image: url("../images/v3/igButtonBackground.png");
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-size: 14px;
+	padding-left: 20px;
+	line-height: 26px;
+	text-decoration: none;
+	height: 26px;
+	display: block;
+	float: left;
+}
+
+.igButtonOuterSpan span {
+	padding-left: 24px;
+	}
+
+.igButton:hover
+{
+	/*background-position: 100% -78px;*/
+	color: white;
+	text-decoration: none;
+}
+
+.igButtonOuterSpan:hover
+{
+	/*background-position: 0px -52px;*/
+}

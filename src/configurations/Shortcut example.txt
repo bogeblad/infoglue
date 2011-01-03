@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<shortcuts>
+  <shortcut>
+    <name>InfoGlue Official homepage</name>
+    <url>http://www.infoglue.org</url>
+    <popup>true</popup>
+  </shortcut>
+  <shortcut>
+    <name>Modul1.se</name>
+    <url>http://www.modul1.se</url>
+    <popup>true</popup>
+  </shortcut>
+  <shortcut>
+    <name>Aftonbladet</name>
+    <url>http://www.aftonbladet.se</url>
+    <popup>false</popup>
+  </shortcut>
+</shortcuts>

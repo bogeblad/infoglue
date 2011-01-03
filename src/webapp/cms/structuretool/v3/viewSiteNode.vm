@@ -1,0 +1,333 @@
+#beginLightCommonToolV3Impl("tool.structuretool.siteNodeDetailsHeader" "$siteNodeId" "" false true $!disableCloseButton "" false "highGreyBackground")
+
+<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
+<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
+<script type="text/javascript" src="applications/jscalendar/lang/calendar-en.js"></script>
+<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
+
+<script type="text/javascript">
+<!--
+	function editContent(contentId)
+	{
+		var url = "ViewContent!standalone.action?contentId=" + contentId;
+	    openPopup(url, "Editcontent", "width=480,height=400,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
+	}
+	
+	//-----------------------------------------------
+	// This function sets a different command to the editForm so that  
+	// the user can be handled different after the submit
+	//-----------------------------------------------
+	
+	function changeSiteNodeState(siteNodeVersionId)
+	{
+		stateId    	  = document.editForm.stateId.value;
+		siteNodeId    = document.editForm.siteNodeId.value;
+		repositoryId  = document.editForm.repositoryId.value;
+		
+		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true))
+		if(stateId == "2")
+		{
+			alert("$ui.getString("tool.contenttool.statePublishForbidden")");
+			document.editForm.stateId.selectedIndex = originalStateIndex - 1;
+			return;
+		}
+		#end
+	
+		
+		if (confirm('Are you sure you want to change state? If you have any unsaved changes they will be lost.'))
+		{
+			window.location.href="ChangeSiteNodeState.action?siteNodeVersionId=" + siteNodeVersionId + "&stateId=" + stateId + "&siteNodeId=" + siteNodeId + "&repositoryId=" + repositoryId;
+		}
+	}
+
+	function loadFrame(index)
+	{
+		var pageMetaDataSrcUrl 					= "ViewAndCreateContentForServiceBinding!inline.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId";
+		var pageHistorySrcUrl 					= "ViewSiteNodeHistory.action?siteNodeId=$!siteNodeId&inline=true";
+		var pageReferencesSrcUrl 				= "ViewSiteNodeReferences.action?siteNodeId=$!siteNodeId&inline=true";
+		var pageAccessRightsSrcUrl 				= "ViewAccessRights!V3.action?interceptionPointCategory=SiteNodeVersion&extraParameters=$!siteNodeVersionId&showInline=true";
+		//alert("index:" + index);
+		//alert("pageAccessRightsSrcUrl:" + pageAccessRightsSrcUrl);
+		$("input.compare").hide();
+		if(index == 0) 
+		{
+			$("#pageMetaDataFrame").attr("src", pageMetaDataSrcUrl);
+		}
+		else if(index == 3) 
+		{
+			$("#pageHistoryFrame").attr("src", pageHistorySrcUrl);
+			$("input.compare").show();
+		}
+		else if(index == 4) 
+		{
+			$("#pageReferencesFrame").attr("src", pageReferencesSrcUrl);
+		}
+		resizeScrollArea();
+	}
+	
+	/*
+	 * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
+	 */	
+	 	
+	function compare()
+	{
+		if($("#pageHistoryFrame").get(0).contentWindow.compare)
+			$("#pageHistoryFrame").get(0).contentWindow.compare();
+	}
+	
+	function save()
+	{
+		$("form").get(0).submit();
+	}
+
+	function saveAndExit(action)
+	{
+		$("form").get(0).action = action;
+		save();
+	}
+
+	function saveFormAndExit(windowToCall)
+	{
+		windowToCall.validateAndSubmitForm();
+		
+		if(top.refreshWorkArea)
+		{
+			setTimeout(function() { top.refreshWorkArea('structure'); }, 500);
+			setTimeout(function() {
+				if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+				}, 1000);
+		}
+		else
+			if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+	}
+	
+	$(document).ready(function(){
+  		$("#tabsContainer").tabs({ 
+  				cache: false, 
+  				show: function(event, ui) { resizeScrollArea(); },
+  				select: function(e, ui) { loadFrame(ui.index); }
+  			} 
+  		);
+  		loadFrame(0);
+  	});
+		
+-->
+</script>
+
+#set($event = $this.getSiteNodeVersionEvent($siteNodeVersion.getSiteNodeVersionId()) )					
+#set($publicationMessage = "")
+#if($event.typeId == 2)
+	#set($publicationMessage = "This version was denied by publisher - revise and publish again</font> <a href=\"DeleteEvent.action?eventId=$event.id&url=$currentUrl\">Close</a>")
+#end
+
+#set($siteNodeEvent = $this.getSiteNodeEvent($siteNodeId) )					
+#if($siteNodeEvent.typeId == 2)
+	#set($publicationMessage = "This version was denied by publisher - revise and publish again</font> <a href=\"DeleteEvent.action?eventId=$siteNodeEvent.id&url=$currentUrl\">Close</a>")
+#elseif($siteNodeEvent.typeId == 4)
+	#set($publicationMessage = "The editor has denied your request to unpublish <nobr>$siteNodeEvent.name</nobr>.</font> - <a href=\"DeleteEvent.action?eventId=$siteNodeEvent.id&url=$currentUrl\">Close</a>")
+#end
+
+<div onfocus="this.blur();">
+    
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3 style="text-indent: 16px;">$ui.getString("tool.structuretool.siteNodeDetailsHeader") "$name" (#if($stateId == 0)$ui.getString("tool.contenttool.state.working")#elseif($stateId == 2)$ui.getString("tool.contenttool.state.publish")#elseif($stateId == 3)$ui.getString("tool.contenttool.state.published")#end)
+	</h3>
+
+	<form method="POST" name="editForm" action="UpdateSiteNode!V3.action">
+		<div id="tabsContainer" class="flora">      
+			<ul>
+		        ##<li><a href="#pageMetaDataTab"><span>$ui.getString("tool.structuretool.toolbarV3.editPageMetaInfoLabel")</span></a></li>	        
+		        <li><a href="#basicTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
+		        <li><a href="#advancedTab"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
+		        <li><a href="#languagesTab"><span>$ui.getString("tool.managementtool.viewLanguageList.header")</span></a></li>	        
+	            <li><a href="#pageHistoryTab"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
+	            <li><a href="#pageReferencesTab"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+	            ##<li><a href="#pageAccessRightsTab"><span>$ui.getString('tool.common.accessRights.accessRightsButtonLabel')</span></a></li>
+		    </ul>
+
+			#*	
+    		<div id="pageMetaDataTab" class="inlineTabDiv">
+    			<iframe id="pageMetaDataFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+    		</div>
+			*#
+			
+			<div id="basicTab" class="inlineTabDiv">
+				
+				#if($publicationMessage != "")
+					<p><font color='red'>$publicationMessage</font></p>
+				#end
+				<p>					
+					#editTextFieldCSS("SiteNode.name" "name" $!name "30" true false false "normaltextfield")
+				</p>
+
+					#if($enableDateTimeDirectEditing == "true")
+						#set($dateReadonly = "")
+					#else
+						#set($dateReadonly = "readonly")
+					#end
+				<p>					
+					#editDateFieldCSS("entity.SiteNode.publishDateTime.label" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")<br/>
+				</p>
+				<p>
+					#editDateFieldCSS("entity.SiteNode.expireDateTime.label" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")<br/>
+				</p>
+				<p>
+					#set($hasAccessToChange = "true")
+					#set($protectedSiteNodeVersionId = $!this.getProtectedSiteNodeVersionId($siteNodeVersionId))
+					#if($protectedSiteNodeVersionId)
+						#set($protectedSiteNodeVersionVO = $this.getSiteNodeVersionVO($protectedSiteNodeVersionId))
+						#set($protectedSiteNodePath = $this.getSiteNodePath($protectedSiteNodeVersionVO.siteNodeId))
+						#if($protectedSiteNodeVersionId && !$this.hasAccessTo("SiteNodeVersion.ChangeAccessRights", "$protectedSiteNodeVersionId"))
+							#set($hasAccessToChange = "false")
+						#end
+					#end
+					
+					<label for="isProtected">$ui.getString("entity.SiteNode.isProtected.label")</label>
+					<select name="isProtected" style="width: 115px;" #if(!$hasAccessToChange)disabled="disabled"#end>
+						<option value="0" #if($!isProtected == 0) selected="1" #end> $ui.getString("tool.common.no")</option>
+						<option value="1" #if($!isProtected == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>
+						<option value="2" #if($!isProtected == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>
+					</select><br/>
+					#if($!isProtected == 2 && $protectedSiteNodeVersionId)Inherited rights defined on <strong>$protectedSiteNodePath</strong><br/>#end
+				</p>
+				<p>					
+					<label for="isHidden">$ui.getString("entity.SiteNode.isHidden.label")</label>
+					<select name="isHidden" style="width: 115px;">
+						<option value="false" #if($!isHidden == false) selected="1" #end> $ui.getString("tool.common.no")</option>	
+						<option value="true" #if($!isHidden == true) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+					</select><br/>
+				</p>
+				#if(!$isSiteNodeTypeDefinitionAssigned)
+				<p>	
+					<label for="siteNodeTypeDefinitionId">SiteNode type</label>
+					<select class="siteNodetypes" name="siteNodeTypeDefinitionId">
+						<option value="">Choose page type</option>
+					#foreach ($siteNodeTypeDefinitionVO in $siteNodeTypeDefinitions)
+						<option value="$siteNodeTypeDefinitionVO.getSiteNodeTypeDefinitionId()">$siteNodeTypeDefinitionVO.getName()</option>
+					#end
+					</select>
+				</p>
+				#else	
+					<p>The siteNode is of type $siteNodeTypeDefinition.name</p>
+				#end
+			
+				<p>This version was last updated by $siteNodeVersionVO.versionModifier</p>
+								
+			</div>
+			
+			<div id="advancedTab" class="inlineTabDiv">
+				
+				<p>
+					#editTextFieldCSS("SiteNode.contentType" "contentType" $!contentType "30" true false false "date")
+				</p>
+				<p>	
+					#if($useAccessBasedProtocolRedirects)		
+						<label for="forceProtocolChange">$ui.getString("entity.SiteNode.forceProtocolChange.label")</label>
+						<select name="forceProtocolChange" style="width: 115px;">
+							<option value="0" #if($!forceProtocolChange == 0) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+							<option value="1" #if($!forceProtocolChange == 1) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeNormallabel")</option>	
+							<option value="2" #if($!forceProtocolChange == 2) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeAllowSecurelabel")</option>	
+							<option value="3" #if($!forceProtocolChange == 3) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeForceSecurelabel")</option>	
+						</select>
+					#else
+						<input type="hidden" name="forceProtocolChange" value="$forceProtocolChange"/>
+					#end
+				</p>
+				<p>						
+					<label for="disableForceIdentityCheck">$ui.getString("entity.SiteNode.disableForceIdentityCheck.label")</label>
+					<select name="disableForceIdentityCheck" style="width: 115px;">
+						<option value="0" #if($!disableForceIdentityCheck == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+						<option value="1" #if($!disableForceIdentityCheck == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+						<option value="2" #if($!disableForceIdentityCheck == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+					</select>
+				</p>
+				<p>	
+					<label for="disableEditOnSight">$ui.getString("entity.SiteNode.disableEditOnSight.label")</label>
+					<select name="disableEditOnSight" style="width: 115px;">
+						<option value="0" #if($!disableEditOnSight == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+						<option value="1" #if($!disableEditOnSight == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+						<option value="2" #if($!disableEditOnSight == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+					</select>
+				</p>
+	
+				<h4>Cache settings</h4>
+					
+				<p>	
+					<label for="disablePageCache">$ui.getString("entity.SiteNode.disablePageCache.label")</label>
+					<select name="disablePageCache" style="width: 115px;">
+						<option value="0" #if($!disablePageCache == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+						<option value="1" #if($!disablePageCache == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+						<option value="2" #if($!disablePageCache == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+					</select>
+				</p>
+				<p>	
+					#editTextFieldCSS("SiteNode.pageCacheKey" "pageCacheKey" $!pageCacheKey "30" true false false "date")
+				</p>
+				<p>	
+					#editTextFieldCSS("SiteNode.pageCacheTimeout" "pageCacheTimeout" $!pageCacheTimeout "30" true false false "date")
+				</p>
+				
+			</div>
+
+    		<div id="languagesTab" class="inlineTabDiv">
+
+				<p>	
+					<label for="disableLanguages">$ui.getString("entity.SiteNode.disableLanguages.label")</label>
+					<select name="disableLanguages" style="width: 115px;">
+						<option value="0" #if($!disableLanguages == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+						<option value="1" #if($!disableLanguages == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+						<option value="2" #if($!disableLanguages == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+					</select>
+				</p>
+				#if($disableLanguages == 1)
+					<h4>$ui.getString("tool.structuretool.disableLanguages.header")</h4>
+					<p>
+					#foreach ($language in $availableLanguages)
+						<input type="checkbox" name="disabledLanguageId" value="$language.id" #if($disabledLanguages.contains($language))checked="1"#end>$language.name
+					#end
+					</p>
+					
+					<h4>$ui.getString("tool.structuretool.enableLanguages.header")</h4>
+					<p>
+					#foreach ($language in $availableLanguages)
+						<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language))checked="1"#end>$language.name
+					#end
+					</p>
+				#end
+
+    		</div>
+
+    		<div id="pageHistoryTab" class="inlineTabDiv">
+    			<iframe id="pageHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+    		</div>
+			
+			<div id="pageReferencesTab" class="inlineTabDiv">
+    			<iframe id="pageReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+    		</div>
+    		
+			#*
+    		<div id="pageAccessRightsTab" class="inlineTabDiv">
+    			<iframe id="pageAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+    		</div>
+			*#
+		</div>
+	
+		<input type="hidden" name="siteNodeId" value="$!siteNodeId">
+		<input type="hidden" name="isBranch" value="$!isBranch">
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+		<input type="hidden" name="unrefreshedSiteNodeId" value="$!siteNodeId">
+		<input type="hidden" name="changeTypeId" value="1">
+		<input type="hidden" name="userSessionKey" value="$!userSessionKey"/>
+		<input type="hidden" name="returnAddress" value="$returnAddress"/>
+		<input type="hidden" name="disableCloseButton" value="$!disableCloseButton"/>
+	
+	</form>
+
+</div>
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#beginManagementTool("tool.managementtool.viewRepository.header" "tool.managementtool.viewRepository.header" "repositoryId=$repositoryId&name=$name")
+
+<script type="text/javascript">
+<!--
+	function composeDNSString()
+	{
+		var dnsString = "";
+	
+		var workingUrl 	= $("#workingUrl").val();
+		var previewUrl 	= $("#previewUrl").val();
+		var liveUrl 	= $("#liveUrl").val();
+		var extraUrls 	= $("#extraUrls").val();
+		var workingPath = $("#workingPath").val();
+		var livePath 	= $("#livePath").val();
+	
+		if(workingUrl == null || liveUrl == null)
+		{
+			alert("Must state working and live urls");
+			return false;
+		}
+		else
+		{
+			if(workingUrl != "")
+				dnsString = "working=" + workingUrl;
+			if(previewUrl != "")
+				dnsString = dnsString + ",preview=" + previewUrl;
+			if(liveUrl != "")
+				dnsString = dnsString + ",live=" + liveUrl;
+			if(extraUrls != "")
+				dnsString = dnsString + "," + extraUrls.replace(/\n\r?/g, ',');
+			if(workingPath != "")
+				dnsString = dnsString + ",workingPath=" + workingPath;
+			if(livePath != "")
+				dnsString = dnsString + ",path=" + livePath;
+			
+			$("#dnsName").val(dnsString);
+			$("#warningParagraph").html("<span style='color: red'>Remember to clear especially live deliver caches by hand.<br/>NiceURI settings are not immediately enforced automatically.</span>");
+			$("#warning").show("slow");
+			
+			return true;
+		}
+	}
+
+	function explainNiceURI()
+	{
+		var workingUrl 	= $("#workingUrl").val();
+		var previewUrl 	= $("#previewUrl").val();
+		var liveUrl 	= $("#liveUrl").val();
+		var extraUrls 	= $("#extraUrls").val();
+		var workingPath = $("#workingPath").val();
+		var livePath 	= $("#livePath").val();
+
+		var actualWorkingPath = "";
+		if(workingPath != "")
+			actualWorkingPath = "/" + workingPath; 
+		else if(livePath != "")
+			actualWorkingPath = "/" + livePath; 
+
+		var actualLivePath = "";
+		if(livePath != "")
+		{
+			actualLivePath = "/" + livePath; 
+		}
+		
+		var explanation = "<p><b>$ui.getString("entity.Repository.dnsNameExplainIntro.label")</b><br/><br/>";
+		explanation += "1. $ui.getString("entity.Repository.dnsNameExplain1.label"):<br/> <a href='" + workingUrl + "'><b>" + workingUrl + "</b></a><br/><br/>";
+		explanation += "2. $ui.getString("entity.Repository.dnsNameExplain2.label"):<br/> <a href='" + previewUrl + "'><b>" + previewUrl + "</b></a><br/><br/>";
+		explanation += "3. $ui.getString("entity.Repository.dnsNameExplain3.label"):<br/> <a href='" + workingUrl + actualWorkingPath + "'><b>" + workingUrl + actualWorkingPath + "</b></a><br/><br/>";
+		explanation += "4. $ui.getString("entity.Repository.dnsNameExplain4.label"):<br/> <a href='" + liveUrl + actualLivePath + "'><b>" + liveUrl + actualLivePath + "</b></a><br/><br/>";
+		explanation += "5. $ui.getString("entity.Repository.dnsNameExplain5.label"):<br/> <b>" + extraUrls + " (Path: " + actualWorkingPath + ")</b><br/><br/>";
+		explanation += "6. $ui.getString("entity.Repository.dnsNameExplain6.label"):<br/> <b>" + extraUrls + " (Path: " + actualLivePath + ")</b><br/><br/></p>";
+		
+		$("#explanationParagraph").html("" + explanation).show("slow");
+		$("#explanation").show("slow");
+	}
+	
+	$(document).ready(function(){
+
+		$("#dnsName").css("color","#999999");
+
+		$("#dnsName").click(function () {
+			alert("$ui.getString("entity.Repository.dnsNameAlert.label")");
+			$("#dnsFields").show("slow");
+	    });
+	    
+		$(":input").change(function () {
+			composeDNSString();
+	    });
+	});
+	
+//-->
+</script>
+
+<div id="warning" style="border: 1px solid black; background-color: white; color: black; padding: 4px; display: none; position: absolute; right: 50px; top: 100px; float:left;">
+	<p id="warningParagraph">
+	</p>
+	<a href="#" onclick="$('#warning').hide('slow');">$ui.getString("tool.common.closeWindowButton.label")</a>
+</div>
+
+<div id="explanation" style="border: 1px solid black; background-color: white; color: black; padding: 4px; display: none; position: absolute; left: 50px; top: 100px; float:left;">
+	<p id="explanationParagraph">
+	</p>
+	<a href="#" onclick="$('#explanation').hide('slow');">$ui.getString("tool.common.closeWindowButton.label")</a>
+</div>
+
+<div class="fullymarginalized">
+
+	<table class="managementtooledit" cellpadding="2" cellspacing="2" border="0">
+	<form name="editForm" method="POST" action="UpdateRepository.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<tr>
+			<td>
+				<p>#editField("Repository.name" "name" $!name "51")</p>
+				<p>#editField("Repository.description" "description" $!description "51")</p>
+				<p>#editReadOnlyField("Repository.dnsName" "dnsName" $!dnsName "51" "READONLY") <a href="javascript:explainNiceURI();">$ui.getString("entity.Repository.explainNiceURI.label")</a></p>
+				
+				<fieldset id="dnsFields" style="display:none; padding: 4px; width: 100%;">
+					<legend>Domain/Host/Nice URI settings</legend>
+					<p>
+						$ui.getString("entity.Repository.explainNiceURIWorkingUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingUrl" name="workingUrl" value="$!repositoryVO.workingBaseUrl"/><br/><br/>
+						$ui.getString("entity.Repository.explainNiceURIPreviewUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="previewUrl" name="previewUrl" value="$!repositoryVO.previewBaseUrl"/><br/><br/>
+						$ui.getString("entity.Repository.explainNiceURILiveUrl.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="liveUrl" name="liveUrl" value="$!repositoryVO.liveBaseUrl"/><br/><br/>
+						$ui.getString("entity.Repository.explainNiceURIExtraUrl.label"):<br/> <textarea class="normaltextarea" style="width: 600px; height: 50px;" id="extraUrls" name="extraUrls">$!repositoryVO.extraUrlsFormatted</textarea><br/><br/>
+						$ui.getString("entity.Repository.explainNiceURIWorkingPath.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingPath" name="workingPath" value="$!repositoryVO.workingPath"/><br/><br/>
+						$ui.getString("entity.Repository.explainNiceURILivePath.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="livePath" name="livePath" value="$!repositoryVO.path"/><br/><br/>
+						<a href="#" onclick="$('#dnsFields').hide('slow');">$ui.getString("tool.common.closeWindowButton.label")</a>
+					</p>
+				</fieldset>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><p><b>$ui.getString("entity.Repository.addedLanguages.label")</b></p></td>
+		</tr>
+		<tr>
+			<td>
+				#if($languageVOList.size() > 0)
+					<ul style="list-style-type: none; margin: 0px; padding-left: 16px; float: left;">
+					#foreach ($languageVO in $languageVOList)
+						<li style="height: 16px; background-repeat: no-repeat; background-position: 0px 0px; padding-left: 18px; background-image: url(images/v3/check.png);">$languageVO.name #if($velocityCount == 1) (Master) #end</li>
+					#end
+					</ul>
+				#else
+					$ui.getString("entity.Repository.noLanguagesYet.label")
+				#end
+			</td>
+		</tr>
+		<input type="hidden" name="repositoryId" value="$!repositoryId">
+	</form>
+	</table>
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="save(document.editForm);"/>
+		<input type="button" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")" onclick="saveAndExit(document.editForm, 'UpdateRepository!saveAndExit.action');"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewListRepository.action';"/>
+	</div>
+</div>
+
+</body>
+</html>
+
+

@@ -139,6 +139,9 @@ public class ManagementToolNodeSupplier extends BaseNodeSupplier
 			if(hasAccessTo("ManagementToolMenu.MessageCenter", infogluePrincipal, true))
 				r.add(new ManagementNodeImpl(cnt++, "Labels", "ViewLabels.action"));
 
+			if(hasAccessTo("ManagementToolMenu.Marketplace", infogluePrincipal, true))
+				r.add(new ManagementNodeImpl(cnt++, "Marketplace", "http://www.infoglue.org/marketplace"));/*ViewMarketplace.action*/
+
 			parameters.put("extraMarkup", "Extra");
 
 			if(hasAccessTo("ManagementToolMenu.InterceptionPoints", infogluePrincipal, true))

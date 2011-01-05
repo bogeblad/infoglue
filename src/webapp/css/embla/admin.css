@@ -275,9 +275,7 @@ html, body {
 	background-color: #AEAEAE;
 }
 #logoButton {
-	margin-left: 4px;
-	margin-top: 2px;
-	float: left;
+	float: right;
 	display: block;
 	width: 37px;
 	height: 26px;

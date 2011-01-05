@@ -184,87 +184,7 @@
 			var toolUrl = $("#" + toolName + "Link").attr("href");
 			activateTool(toolName, toolName, toolUrl, url);
 		}
-		
-		/*		
-		var getUrl = "ViewMessageCenter!getSystemMessages.action";
-		var lastId = -1; //initial value will be replaced by the latest known id
-		
-		function initMessageSystem() 
-		{
-			receiveSystemMessagesText(true); //initiates the first data query
-		}
-		
-		var messageUserName = "";
-		
-		//initiates the first data query
-		function receiveSystemMessagesText(loopAfter) 
-		{
-			jQuery.getJSON("ViewMessageCenter!getSystemMessagesV3.action?lastId=" + lastId + "&rand=" + Math.floor(Math.random() * 1000000), function(jsonData) {
-		
-					//alert("jsonData:" + jsonData.title + ":" + jsonData.messages);
-					if(jsonData.messages)
-					{
-						jQuery.each(jsonData.messages, function(i,item){
-			
-							//alert("jsonData:" + item.id + ":" + item.type + ":" + item.text);
-							
-							if(item.text != "empty")
-							{
-								i = 0;
-								lastId = item.id;
-						    	extradata = item.text;
-						    	type = item.type;
-						    	messageUserName = item.userName;
-						    	
-						    	//alert("lastId:" + lastId);
-						    	//alert("extradata:" + extradata);
-						    	//alert("type:" + type);
-						    	if(type != "-1")
-						    		setTimeout(extradata, "200");
-							}	
-						});
-					}
-					
-					if(loopAfter)
-						setTimeout('receiveSystemMessagesText(true);',15000); //executes the next data query in 30 seconds
-				});
-		}
-		*/
-		
-		/*
-		function openChat(message)
-		{
-			var d = new Date();
-			var curr_date = d.getDate();
-			var curr_month = d.getMonth();
-			curr_month++;
-			var curr_year = d.getFullYear();
-			var curr_hour = d.getHours();
-			if(curr_hour < 10)
-				curr_hour = "0" + curr_hour;
-			
-			var curr_min = d.getMinutes();
-			if(curr_min < 10)
-				curr_min = "0" + curr_min;
-		
-			var curr_sec = d.getSeconds();
-			if(curr_sec < 10)
-				curr_sec = "0" + curr_sec;
-		
-			var nowDateTime = "" + curr_hour + ":" + curr_min + ":" + curr_sec;
-			$("#messages").prepend("<p><span style='font-weight: bold'>" + messageUserName + "(" + nowDateTime + ")" + "" + ":</span> " + message + "</p>")
-			$("#messagesDiv").dialog({ title: 'System messages', modal: true, maxHeight: 500, maxWeight: 600, width: 700, minHeight: 200 }).dialog( 'open' );
-		}
-		
-		function sendMessage()
-		{
-			var chatMessage = $("#chatMessage").val();
-			jQuery.post("ViewMessageCenter!sendMessage.action", { isSystemMessage: "true", message: chatMessage }, function(data){ 
-					receiveSystemMessagesText(false);
-					$("#chatMessage").val("");
-			});
-		}
-		*/
+				
 		
 		function refreshRepositoryList()
 		{
@@ -330,8 +250,6 @@
 
   		<div id="leftFooter" style="float: left;">
 
-			<button id="logoButton"></button>
-
 			<a class='igToolbarButton igToolbarHeaderButton' href="#" id="trashcanButton" name="trashcanButton" title="$ui.getString("header.link.trashcan")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='trashcan' title="$ui.getString("header.link.trashcan")">$ui.getString("header.link.trashcan")</span></span></a>
 			<script type="text/javascript">
 			<!--
@@ -354,6 +272,8 @@
   		<div id="rightFooter" style="float: right; margin-top: 10px; margin-right: 10px;">
 	  		$ui.getString("tool.common.loggedInAsLabel"): $infoGluePrincipal.displayName
 	  		<!--Version: $infoGlueVersion ($infoGlueVersionReleaseDate)-->
+	  		
+	  		<!--<button id="logoButton"></button>-->	
 	  	</div>
 
   	</div>

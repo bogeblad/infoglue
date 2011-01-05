@@ -487,6 +487,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 
 		    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), object.toString());
 		    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+		    
+			NotificationMessage deleteNotificationMessage = new NotificationMessage("Object deleted:", object.getClass().getName(), userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), object.toString());
+			TransactionHistoryController.getController().create(deleteNotificationMessage);
+			
 			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && !object.getClass().getName().equals(RegistryImpl.class.getName()))
 			    RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
 

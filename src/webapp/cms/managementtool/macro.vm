@@ -3739,7 +3739,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 				</ul>
 			#else
           		#foreach($option in $attribute.options)
-					<input $readonly type="checkbox" id="$attribute.name" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()
+					<input $readonly type="checkbox" name="$attribute.name" value="$option.value" #checkCheckedBySplit("$option.value" "$this.getAttributeValue($attribute.name)")/>$option.getName()
 				#end
 			#end
 

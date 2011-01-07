@@ -3,6 +3,7 @@ Added webdav support and new interception point to control access to it
 Fixed a bug in asset dialog and also added preview button to assets.
 Added so all deletes are registered in transaction history
 Added marketplace-menu-option in management tool
+Added performance test in management tool --> system tools. Also usable in deliver.
 
 ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId INT NOT NULL DEFAULT '-1'; --MŒste in i alla script
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) NOT NULL DEFAULT '';

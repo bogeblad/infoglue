@@ -24,6 +24,12 @@
 	background-position: top center;
 }
 
+.performanceImage {
+	background-image: url('images/performanceIcon.png');
+	background-repeat: no-repeat;		
+	background-position: top center;
+}
+
 .logviewerImage {
 	background-image: url('images/logviewerIcon.gif');
 	background-repeat: no-repeat;		
@@ -79,6 +85,9 @@
 		</div>
 		<div class="systemImageLink validationImage">
 			<a href="InstallationValidator!input.action?title=Validation" class="systemLinkLabel">$ui.getString("tool.managementtool.validationTool.title")</a>
+		</div>
+		<div class="systemImageLink performanceImage">
+			<a href="jsp/PerformanceTest.jsp" class="systemLinkLabel">$ui.getString("tool.managementtool.performanceTool.title")</a>
 		</div>
 		<div class="systemImageLink logviewerImage">
 			<a href="ViewLogging.action?title=Logging" class="systemLinkLabel">$ui.getString("tool.managementtool.loggingTool.title")</a>

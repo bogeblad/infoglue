@@ -1,6 +1,8 @@
 Added new tags: <content:scriptExtensionUrl which allows you to upload a js-plugin or similar as an zip-asset which are then deployed. It also supports bundling of many scripts / css-files. Also added page:htmlBodyItem which let's you add html to the bottom of the html body element.
 Added webdav support and new interception point to control access to it
 Fixed a bug in asset dialog and also added preview button to assets.
+Added so all deletes are registered in transaction history
+Added marketplace-menu-option in management tool
 
 ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId INT NOT NULL DEFAULT '-1'; --MŒste in i alla script
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) NOT NULL DEFAULT '';

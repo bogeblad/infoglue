@@ -50,6 +50,7 @@ public class Counter
     private static Map allComponentsStatistics = new HashMap();
     private static Map allPageStatistics = new HashMap();
     private static LinkedBlockingQueue latestPublications = new LinkedBlockingQueue(10);
+    private static Integer numberOfPublicationsSinceStart = new Integer(0);
     
     private Counter(){}
 
@@ -95,8 +96,21 @@ public class Counter
         return latestPublicationsList;
     }
 
+    static Integer getNumberOfPublicationsSinceStart()
+    {
+    	return numberOfPublicationsSinceStart;
+    }
+
+    static void resetNumberOfPublicationsSinceStart()
+    {
+    	numberOfPublicationsSinceStart = 0;
+    }
+
     synchronized static void addPublication(String description)
     {
+    	if(description.indexOf("ServerNodeProperties") == -1)
+    		numberOfPublicationsSinceStart++;
+
     	synchronized (latestPublications)
 		{
     		if(latestPublications.remainingCapacity() == 0)

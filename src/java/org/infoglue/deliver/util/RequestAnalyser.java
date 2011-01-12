@@ -93,6 +93,16 @@ public class RequestAnalyser
         return Counter.getMaxElapsedTime();
     }
 
+    public Integer getNumberOfPublicationsSinceStart()
+    {
+        return Counter.getNumberOfPublicationsSinceStart();
+    }
+
+    public void resetNumberOfPublicationsSinceStart()
+    {
+        Counter.resetNumberOfPublicationsSinceStart();
+    }
+
     public List getLatestPublications()
     {
         return Counter.getLatestPublications();

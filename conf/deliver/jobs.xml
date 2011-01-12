@@ -26,8 +26,8 @@
 				<group>infoglueJobs</group>
 				<job-name>ExpireCaches</job-name>
 				<job-group>infoglueJobs</job-group>
-				<!--<cron-expression>0/30 * * ? * *</cron-expression>-->
-				<cron-expression>* 0/5 * ? * *</cron-expression>
+				<!--<cron-expression>0/30 * * * * ?</cron-expression>-->
+				<cron-expression>0 0/5 * * * ?</cron-expression>
 			</cron>
 		</trigger>
 	</job>

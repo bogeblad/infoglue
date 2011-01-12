@@ -57,6 +57,7 @@ public class ViewListContentVersionAction extends InfoGlueAbstractAction
 	private List siteNodeVersionVOList = new ArrayList();
 	private Integer contentId;
 	private Integer repositoryId;
+	private Integer languageId;
 
 	private String returnAddress;
     private String originalAddress;
@@ -104,6 +105,14 @@ public class ViewListContentVersionAction extends InfoGlueAbstractAction
         userSessionKey = "" + System.currentTimeMillis();
         
         addActionLink(userSessionKey, new LinkBean("currentPageUrl", getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentContentLinkText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentContentTitleText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentContentTitleText"), this.originalAddress, false, ""));
+        
+        setActionExtraData(userSessionKey, "repositoryId", "" + this.repositoryId);
+        setActionExtraData(userSessionKey, "contentId", "" + this.contentId);
+        setActionExtraData(userSessionKey, "unrefreshedContentId", "" + this.contentId);
+        setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + this.contentId);
+        setActionExtraData(userSessionKey, "languageId", "" + this.languageId);
+        setActionExtraData(userSessionKey, "changeTypeId", "1");
+
         setActionExtraData(userSessionKey, "disableCloseLink", "true");
         
 	    return "successV3";	
@@ -129,7 +138,17 @@ public class ViewListContentVersionAction extends InfoGlueAbstractAction
     {
         return repositoryId;
     }
+
+    public void setLanguageId(Integer languageId) 
+	{
+		this.languageId = languageId;
+	}
     
+    public Integer getLanguageId()
+    {
+        return languageId;
+    }
+
     public List getContentVersionVOList()
     {
         return contentVersionVOList;

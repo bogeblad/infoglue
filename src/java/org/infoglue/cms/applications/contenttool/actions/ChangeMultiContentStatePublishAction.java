@@ -56,7 +56,10 @@ public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
 	private String recipientFilter = null;
 	private Integer repositoryId;
 	private String attemptDirectPublishing = "false";
-	private String returnAddress = null;
+
+	private String returnAddress;
+   	private String userSessionKey;
+    private String originalAddress;
 		    
 	/**
 	 * This method gets called when calling this action. 
@@ -98,9 +101,12 @@ public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
 		
 		if(returnAddress != null && !returnAddress.equals(""))
 		{
-			this.getResponse().sendRedirect(returnAddress);
-	    
-			return NONE;
+	        String arguments 	= "userSessionKey=" + userSessionKey;
+	        String messageUrl 	= returnAddress + (returnAddress.indexOf("?") > -1 ? "&" : "?") + arguments;
+	        
+	        this.getResponse().sendRedirect(messageUrl);
+
+	       	return NONE;
 		}
 		
        	return "success";
@@ -208,16 +214,43 @@ public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
         this.overrideVersionModifyer = overrideVersionModifyer;
     }
 
+	public String getReturnAddress() 
+	{
+		return returnAddress;
+	}
+
 	public void setReturnAddress(String returnAddress) 
 	{
 		this.returnAddress = returnAddress;
 	}
 
-	public String getRecipientFilter() {
+	public String getUserSessionKey()
+	{
+		return userSessionKey;
+	}
+
+	public void setUserSessionKey(String userSessionKey)
+	{
+		this.userSessionKey = userSessionKey;
+	}
+
+	public String getOriginalAddress()
+	{
+		return originalAddress;
+	}
+
+	public void setOriginalAddress(String originalAddress)
+	{
+		this.originalAddress = originalAddress;
+	}
+
+	public String getRecipientFilter() 
+	{
 		return recipientFilter;
 	}
 
-	public void setRecipientFilter(String recipientFilter) {
+	public void setRecipientFilter(String recipientFilter) 
+	{
 		this.recipientFilter = recipientFilter;
 	}
 }

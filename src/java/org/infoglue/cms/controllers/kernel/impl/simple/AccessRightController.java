@@ -1590,6 +1590,9 @@ public class AccessRightController extends BaseController
 		if(interceptionPointVO == null && returnFailureIfInterceptionPointNotDefined)
 			return false;
 		
+		if(interceptionPointVO == null)
+			return true;
+			
 		Timer t = new Timer();
 		//List accessRightList = this.getAccessRightList(interceptionPointVO.getId(), db);
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), db);

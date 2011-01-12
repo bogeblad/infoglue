@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -160,6 +161,41 @@ public class PublicationController extends BaseController
         return res;
 	}
 
+	/**
+	 * This method returns a list of earlier editions for this site.
+	 */
+	public List<PublicationVO> getPublicationsSinceDate(Date startDate) throws SystemException
+	{
+    	Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		List<PublicationVO> res = new ArrayList<PublicationVO>();
+        try
+        {
+            OQLQuery oql = db.getOQLQuery( "SELECT p FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl p WHERE p.publicationDateTime > $1 order by publicationDateTime desc");
+			oql.bind(startDate);
+
+        	QueryResults results = oql.execute(Database.ReadOnly);
+
+			while (results.hasMore())
+            {
+            	Publication publication = (Publication)results.next();
+            	res.add(publication.getValueObject());
+            }
+
+			results.close();
+			oql.close();
+
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return res;
+	}
 	/**
 	 * This method returns a list of earlier editions for this site.
 	 */

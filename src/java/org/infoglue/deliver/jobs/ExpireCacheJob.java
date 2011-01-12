@@ -24,9 +24,13 @@ package org.infoglue.deliver.jobs;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
+import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.quartz.Job;
@@ -49,14 +53,71 @@ public class ExpireCacheJob implements Job
     
     private static long lastRun = System.currentTimeMillis();
     
+    private static Date systemPublicationSyncDate = CmsPropertyHandler.getStartupTime();
+
     public synchronized void execute(JobExecutionContext context) throws JobExecutionException
     {
+    	System.out.println("context:" + CmsPropertyHandler.getContextRootPath());
     	long diffLastRun = ((System.currentTimeMillis() - lastRun) / 1000);
-    	if(diffLastRun < 10000)
+    	if(diffLastRun < 300)
     		return;
     	
     	lastRun = System.currentTimeMillis();
     	
+    	long diffLastCacheCheck1 = ((System.currentTimeMillis() - lastCacheCheck) / 1000);
+		System.out.println("diffLastCacheCheck1 " + diffLastCacheCheck1 + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
+	    if(diffLastCacheCheck1 > 30)
+		{
+	        synchronized(RequestAnalyser.getRequestAnalyser()) 
+		    {
+		       	if(RequestAnalyser.getRequestAnalyser().getBlockRequests())
+			    {
+				    logger.warn("evictWaitingCache allready in progress - returning to avoid conflict");
+			        return;
+			    }
+	
+		       	RequestAnalyser.getRequestAnalyser().setBlockRequests(true);
+			}
+	
+			try
+	        {
+		    	if(CmsPropertyHandler.getOperatingMode().equals("3"))
+		    	{
+		    		System.out.println("Checking publications...");
+		    		//Check if we should check for publications just to make sure the system has not lost connection to the cms. If we have not received the latest publications we clear all.
+		    		Integer numberOfPublicationsSinceStart = RequestAnalyser.getRequestAnalyser().getNumberOfPublicationsSinceStart();
+		    		System.out.println("numberOfPublicationsSinceStart:" + numberOfPublicationsSinceStart);
+		    		List<PublicationVO> publicationsVOListSinceStart = PublicationController.getController().getPublicationsSinceDate(systemPublicationSyncDate);
+		    		System.out.println("publicationsVOListSinceStart:" + publicationsVOListSinceStart.size());
+		    		if(numberOfPublicationsSinceStart != publicationsVOListSinceStart.size())
+		    		{
+		    			logger.error("Telling infoglue to recache all as the number of publications processed are not the same as the number of publications made - could be a sync issue.");
+					    CacheEvictionBean cacheEvictionBean = new CacheEvictionBean("ServerNodeProperties", "100", "0", "ServerNodeProperties");
+					    synchronized(CacheController.notifications)
+				        {	
+					    	CacheController.notifications.add(cacheEvictionBean);
+					    	systemPublicationSyncDate = new Date();
+					    	RequestAnalyser.getRequestAnalyser().resetNumberOfPublicationsSinceStart();
+				        }
+		    		}
+		    		else
+		    		{
+				    	systemPublicationSyncDate = new Date();
+				    	RequestAnalyser.getRequestAnalyser().resetNumberOfPublicationsSinceStart();
+		    		}
+		    	}		
+
+		    	lastCacheCheck = System.currentTimeMillis();
+	        }
+	        catch(Exception e)
+	        {
+	            logger.error("An error occurred when we tried to validate caches:" + e.getMessage(), e);
+	        }
+		    
+		    logger.info("releasing block");
+		    RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
+    	}
+	    
     	long diffLastCacheCheck = ((System.currentTimeMillis() - lastCacheCheck) / 1000);
 		logger.info("diffLastCacheCheck " + diffLastCacheCheck + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
 	    if(diffLastCacheCheck > 600)
@@ -256,7 +317,7 @@ public class ExpireCacheJob implements Job
             synchronized (intervalCount)
 			{
                 intervalCount++;
-	            if(intervalCount > 5000)
+	            if(intervalCount > 500)
 	            {
 	                logger.info("Cleaning cache directory as intervalCount:" + intervalCount);
 	                String dir = CmsPropertyHandler.getDigitalAssetPath() + File.separator + "caches";

@@ -363,31 +363,6 @@
 	</ul>
 	</td>
   </tr>
-<!--
-  <tr>
-    <td colspan="4" class="text" align="center"><a href="ViewApplicationSettings.action">Click here for delivery settings</a></td>
-  </tr>
-
-  <tr><td colspan="4">&nbsp;</td></tr>
-  
-  <tr class="label">
-    <td>User</td>
-    <td colspan="3">Last visited</td>
-  </tr>
-  #if($sessionInfoBeanList.size() < 50)
-	  #foreach($sessionInfoBean in $sessionInfoBeanList)
-	  <tr>
-	    <td class="text">$sessionInfoBean.principal.firstName $sessionInfoBean.principal.lastName ($sessionInfoBean.principal.name)</td>
-	    <td class="text" colspan="3">$sessionInfoBean.lastAccessedDate</td>
-	  </tr>
-	  #end
-  #else  
-  	  <tr>
-	    <td class="text">To many users to show</td>
-	    <td class="text" colspan="3">$sessionInfoBeanList.size</td>
-	  </tr>
-  #end
--->
 </table>
 
 </body>

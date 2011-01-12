@@ -898,6 +898,12 @@ public class ToolbarController implements ToolbarProvider
 		String contentIdString = request.getParameter("contentId");
 		if(contentIdString == null || contentIdString.equals(""))
 			contentIdString = (String)request.getAttribute("contentId");
+
+		String languageIdString = request.getParameter("languageId");
+		if(languageIdString == null || languageIdString.equals(""))
+			languageIdString = (String)request.getAttribute("languageId");
+		if(languageIdString != null && languageIdString.equals(""))
+			languageIdString = null;
 		
 		if(contentIdString == null || contentIdString.equals(""))
 		{
@@ -998,7 +1004,7 @@ public class ToolbarController implements ToolbarProvider
 		ToolbarButton publishButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentTitle"),
-				  "ViewListContentVersion!v3.action?contentId=" + contentId + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "ViewListContentVersion!v3.action?contentId=" + contentId + (languageIdString != null ? "&languageId=" + languageIdString : "") + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 				  "",
 				  "publish");
 
@@ -1007,7 +1013,7 @@ public class ToolbarController implements ToolbarProvider
 			ToolbarButton submitToPublishButton = new ToolbarButton("",
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentsLabel"), 
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentsTitle"),
-					  "ViewListContentVersion!v3.action?contentId=" + contentId + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+					  "ViewListContentVersion!v3.action?contentId=" + contentId + (languageIdString != null ? "&languageId=" + languageIdString : "") + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 					  "",
 					  "submitToPublish");
 	
@@ -1021,14 +1027,14 @@ public class ToolbarController implements ToolbarProvider
 			ToolbarButton unpublishButton = new ToolbarButton("",
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.unpublishContentsLabel"), 
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.unpublishContentsTitle"),
-					  "UnpublishContentVersion!inputV3.action?contentId=" + contentId + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+					  "UnpublishContentVersion!inputV3.action?contentId=" + contentId + (languageIdString != null ? "&languageId=" + languageIdString : "") + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 					  "",
 					  "unpublish");
 	
 			ToolbarButton unpublishAllButton = new ToolbarButton("",
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.unpublishContentsAllLabel"), 
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.unpublishContentsAllTitle"),
-					  "UnpublishContentVersion!inputChooseContentsV3.action?contentId=" + contentId + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+					  "UnpublishContentVersion!inputChooseContentsV3.action?contentId=" + contentId + (languageIdString != null ? "&languageId=" + languageIdString : "") + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 					  "",
 					  "unpublish");
 	

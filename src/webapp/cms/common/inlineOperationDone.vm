@@ -39,7 +39,15 @@
 					catch(e) {alert("e:" + e);}
 					#end
 					
-					if("$changeTypeId" == "4")
+					if("$changeTypeId" == "1" || "$changeTypeId" == "3") //The item was published - lets reload the views.
+					{
+						#if($languageId && "$languageId" != "null")
+							parent.openUrlInWorkArea("ViewContentVersion!V3.action?contentId=$unrefreshedNodeId&languageId=$languageId");
+						#else
+							parent.openUrlInWorkArea("ViewContent!V3.action?contentId=$unrefreshedNodeId");
+						#end
+					}
+					else if("$changeTypeId" == "4")
 						parent.openUrlInWorkArea("ViewContent!V3.action?contentId=$unrefreshedNodeId");
 				}
 				else if(top.getActiveToolName() == "StructureTool")
@@ -207,11 +215,12 @@
 	#set($unrefreshedNodeId = $this.getActionExtraData("unrefreshedNodeId"))
 	#set($newContentId = $this.getActionExtraData("contentId"))
 	#set($changeTypeId = $this.getActionExtraData("changeTypeId"))
+	#set($languageId = $this.getActionExtraData("languageId"))
 
 	$scripts
 	<script type="text/javascript">
 		#if($this.skipResultDialogIfPossible)
-						#set($parentCall = false)
+			#set($parentCall = false)
 			#if($firstActionLink.target == 'structure' || $firstActionLink.target == 'content' || $firstActionLink.target == 'management')
 				#set($parentCall = true)
 			#end
@@ -243,6 +252,7 @@
 	#set($unrefreshedNodeId = $this.getActionExtraData("unrefreshedNodeId"))
 	#set($newContentId = $this.getActionExtraData("contentId"))
 	#set($changeTypeId = $this.getActionExtraData("changeTypeId"))
+	#set($languageId = $this.getActionExtraData("languageId"))
 
 	$scripts
 	<link rel="stylesheet" type="text/css" href="css/cms.css"/>

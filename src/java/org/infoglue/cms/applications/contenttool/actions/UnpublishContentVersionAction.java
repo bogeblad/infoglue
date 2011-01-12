@@ -107,6 +107,14 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
         userSessionKey = "" + System.currentTimeMillis();
         
         addActionLink(userSessionKey, new LinkBean("currentPageUrl", getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentPageLinkText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentPageTitleText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentPageTitleText"), this.originalAddress, false, ""));
+
+        setActionExtraData(userSessionKey, "repositoryId", "" + this.repositoryId);
+        setActionExtraData(userSessionKey, "contentId", "" + this.contentId);
+        setActionExtraData(userSessionKey, "unrefreshedContentId", "" + this.contentId);
+        setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + this.contentId);
+        setActionExtraData(userSessionKey, "languageId", "" + this.languageId);
+        setActionExtraData(userSessionKey, "changeTypeId", "3");
+
         setActionExtraData(userSessionKey, "disableCloseLink", "true");
 
 	    return "inputV3";
@@ -142,6 +150,14 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	        userSessionKey = "" + System.currentTimeMillis();
 	        
 	        addActionLink(userSessionKey, new LinkBean("currentPageUrl", getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentPageLinkText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentPageTitleText"), getLocalizedString(getLocale(), "tool.common.publishing.publishingInlineOperationBackToCurrentPageTitleText"), this.originalAddress, false, ""));
+
+	        setActionExtraData(userSessionKey, "repositoryId", "" + this.repositoryId);
+	        setActionExtraData(userSessionKey, "contentId", "" + this.contentId);
+	        setActionExtraData(userSessionKey, "unrefreshedContentId", "" + this.contentId);
+	        setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + this.contentId);
+	        setActionExtraData(userSessionKey, "languageId", "" + this.languageId);
+	        setActionExtraData(userSessionKey, "changeTypeId", "3");
+
 	        setActionExtraData(userSessionKey, "disableCloseLink", "true");
         
 		}

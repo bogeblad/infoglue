@@ -87,6 +87,30 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 		return "successContentTypeChanged";
 	}
 
+	public String doSwitchToFolder() throws Exception
+	{
+		super.initialize(getContentId());
+
+		ContentVO oldContentVO = ContentController.getContentController().getContentVOWithId(getContentId());
+		oldContentVO.setIsBranch(true);
+		
+    	ContentControllerProxy.getController().acUpdate(this.getInfoGluePrincipal(), oldContentVO, null);
+
+		return "successV3";
+	}
+
+	public String doSwitchToContent() throws Exception
+	{
+		super.initialize(getContentId());
+
+		ContentVO oldContentVO = ContentController.getContentController().getContentVOWithId(getContentId());
+		oldContentVO.setIsBranch(false);
+		
+    	ContentControllerProxy.getController().acUpdate(this.getInfoGluePrincipal(), oldContentVO, null);
+
+		return "successV3";
+	}
+
 	public String doExecute() throws Exception
 	{
 		super.initialize(getContentId());

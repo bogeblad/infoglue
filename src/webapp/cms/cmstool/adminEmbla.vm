@@ -249,6 +249,15 @@
   	<div id="footer">
 
   		<div id="leftFooter" style="float: left;">
+			
+			<a class='igToolbarButton igToolbarHeaderButton' href="#" id="versionInfoButton" name="versionInfoButton" title="$ui.getString("header.link.versionInfo")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='versionInfo' title="$ui.getString("header.link.versionInfo")">$ui.getString("header.link.versionInfo")</span></span></a>
+			<script type="text/javascript">
+			<!--
+				$("#versionInfoButton").click(function(){
+					openInlineDiv("VersionInfo.action", 600, 800, true, true, "Version");
+	        	});
+			-->
+			</script>
 
 			<a class='igToolbarButton igToolbarHeaderButton' href="#" id="trashcanButton" name="trashcanButton" title="$ui.getString("header.link.trashcan")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='trashcan' title="$ui.getString("header.link.trashcan")">$ui.getString("header.link.trashcan")</span></span></a>
 			<script type="text/javascript">

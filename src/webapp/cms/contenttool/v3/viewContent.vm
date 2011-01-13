@@ -101,6 +101,9 @@
 			
 			#if(!$contentVO.contentTypeDefinitionId)
 				#if($isBranch && $this.onlyAllowFolderType)
+					<p style="color:red">
+						This folder has no content type - save and it will receive the default folder content type
+					</p>
 					#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
 						#if($defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
 							<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionVO.getContentTypeDefinitionId()"/>
@@ -160,68 +163,82 @@
 			</p>		
 			#end
 			
-			<h4>$ui.getString("tool.contenttool.languageVersionsLabel")</h4>
+			<p>
+				#if($contentVO.isBranch)
+					<a href="UpdateContent!switchToContent.action?contentId=$contentVO.id">$ui.getString("tool.contenttool.switchToContentLabel")</a>
+				#else
+					<a href="UpdateContent!switchToFolder.action?contentId=$contentVO.id">$ui.getString("tool.contenttool.switchToFolderLabel")</a>
+				#end
+			</p>
 			
-			<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
-				<thead>
-					<tr>
-						<th>$ui.getString("tool.common.action.label")</th>
-						<th>$ui.getString("entity.Language.name.label")</th>
-						<th>$ui.getString("tool.contenttool.stateLabel")</th>
-						<th>$ui.getString("tool.contenttool.lastUpdatedLabel")</th>
-					</tr>
-				</thead>
-				<tbody>
+			#if(!$contentVO.contentTypeDefinitionId)
+				<p>
+					This folder has no content type yet - select or save to get one
+				</p>
+			#else
+				<h4>$ui.getString("tool.contenttool.languageVersionsLabel")</h4>
 				
-					#foreach ($languageVO in $availableLanguages)
-						#if($languageVO.languageId == $masterLanguageId)
-						    #set($master = '<a name="tooltip" title="Master language for this repository">*</a>')
-						#else
-							#set($master = "")
-						#end		
-				
-						#set($contentVersionVO = false)
-						#set($contentVersionVO = $this.getLatestContentVersionVO($!contentId, $!languageVO.languageId))
-		
-						#if($contentVersionVO.stateId == 0)
-							#set($stateDescription = "$ui.getString('tool.contenttool.state.working')")
-						#elseif($contentVersionVO.stateId == 1)
-							#set($stateDescription = "$ui.getString('tool.contenttool.state.final')")
-						#elseif($contentVersionVO.stateId == 2)
-							#set($stateDescription = "$ui.getString('tool.contenttool.state.publish')")
-						#elseif($contentVersionVO.stateId == 3)
-							#set($stateDescription = "$ui.getString('tool.contenttool.state.published')")
-						#elseif($contentVersionVO.stateId == 4)
-							#set($stateDescription = "$ui.getString('tool.contenttool.state.markedForUnpublish')")
-						#elseif($contentVersionVO.stateId == 5)
-							#set($stateDescription = "$ui.getString('tool.contenttool.state.unpublished')")
-						#else
-							#set($stateDescription = "$ui.getString('tool.contenttool.state.notCreated')")
-						#end
+				<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+					<thead>
 						<tr>
-							<td>
-								#if($contentVersionVO.stateId == 0)
-									<a class="deleteCross" title="$ui.getString("tool.common.delete.label") $languageVO.name" href="DeleteContentVersion.action?repositoryId=${repositoryId}&contentVersionId=${contentVersionVO.contentVersionId}&contentId=${contentId}">&nbsp;</a>
-								#end
-							<td>
-								#if(!$inline)
-								<a href="javascript:changeLanguageByLink($!contentId, $!languageVO.getLanguageId());">$languageVO.name</a> $master
-								#else
-								$languageVO.name $master
-								#end
-							</td>
-							<td>$stateDescription</td>
-							<td>
-								#if($contentVersionVO.id > 0)
-									<a name="tooltip" title="$formatter.escapeHTML("$!contentVersionVO.versionComment")">$contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd"))</a>
-								#end
-							</td>
+							<th>$ui.getString("tool.common.action.label")</th>
+							<th>$ui.getString("entity.Language.name.label")</th>
+							<th>$ui.getString("tool.contenttool.stateLabel")</th>
+							<th>$ui.getString("tool.contenttool.lastUpdatedLabel")</th>
 						</tr>
-					#end
+					</thead>
+					<tbody>
 					
-				</tbody>
-			</table>
-				
+						#foreach ($languageVO in $availableLanguages)
+							#if($languageVO.languageId == $masterLanguageId)
+							    #set($master = '<a name="tooltip" title="Master language for this repository">*</a>')
+							#else
+								#set($master = "")
+							#end		
+					
+							#set($contentVersionVO = false)
+							#set($contentVersionVO = $this.getLatestContentVersionVO($!contentId, $!languageVO.languageId))
+			
+							#if($contentVersionVO.stateId == 0)
+								#set($stateDescription = "$ui.getString('tool.contenttool.state.working')")
+							#elseif($contentVersionVO.stateId == 1)
+								#set($stateDescription = "$ui.getString('tool.contenttool.state.final')")
+							#elseif($contentVersionVO.stateId == 2)
+								#set($stateDescription = "$ui.getString('tool.contenttool.state.publish')")
+							#elseif($contentVersionVO.stateId == 3)
+								#set($stateDescription = "$ui.getString('tool.contenttool.state.published')")
+							#elseif($contentVersionVO.stateId == 4)
+								#set($stateDescription = "$ui.getString('tool.contenttool.state.markedForUnpublish')")
+							#elseif($contentVersionVO.stateId == 5)
+								#set($stateDescription = "$ui.getString('tool.contenttool.state.unpublished')")
+							#else
+								#set($stateDescription = "$ui.getString('tool.contenttool.state.notCreated')")
+							#end
+							<tr>
+								<td>
+									#if($contentVersionVO.stateId == 0)
+										<a class="deleteCross" title="$ui.getString("tool.common.delete.label") $languageVO.name" href="DeleteContentVersion.action?repositoryId=${repositoryId}&contentVersionId=${contentVersionVO.contentVersionId}&contentId=${contentId}">&nbsp;</a>
+									#end
+								<td>
+									#if(!$inline)
+									<a href="javascript:changeLanguageByLink($!contentId, $!languageVO.getLanguageId());">$languageVO.name</a> $master
+									#else
+									$languageVO.name $master
+									#end
+								</td>
+								<td>$stateDescription</td>
+								<td>
+									#if($contentVersionVO.id > 0)
+										<a name="tooltip" title="$formatter.escapeHTML("$!contentVersionVO.versionComment")">$contentVersionVO.versionModifier ($formatter.formatDate($contentVersionVO.modifiedDateTime, "yyyy-MM-dd"))</a>
+									#end
+								</td>
+							</tr>
+						#end
+						
+					</tbody>
+				</table>
+			#end
+							
 		</div>
 				
 	</form>

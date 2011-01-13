@@ -86,8 +86,6 @@
 	</select>
 </div>
 
-<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
-
 	<form method="POST" name="editForm" action="Trashcan!delete.action">
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 		<input type="hidden" name="returnAddress" value="$returnAddress"/>

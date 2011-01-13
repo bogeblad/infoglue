@@ -1,0 +1,54 @@
+#beginLightCommonToolV3Impl("tool.common.versionInfo.title" "" "" false true $!disableCloseButton "" false "highGreyBackground")
+
+<script type="text/javascript">
+<!--
+		
+	$(document).ready(function(){
+
+		$("#tabsContainer").tabs({ show:function() { resizeScrollArea(); } });
+	});
+	
+//-->
+</script>
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+	<h3>
+		$ui.getString("tool.common.versionInfo.title")
+	</h3>
+
+	<div id="tabsContainer" class="flora">      
+	
+		<ul>
+	        <li><a href="#versionInfoTab"><span>$ui.getString("tool.common.versionDialog.versionInfoTabLabel")</span></a></li>	        
+	        <!--<li><a href="#developersTab"><span>$ui.getString("tool.common.versionDialog.developersTabLabel")</span></a></li>-->        
+	        <li><a href="#supportTab"><span>$ui.getString("tool.common.versionDialog.supportTabLabel")</span></a></li>	        
+	    </ul>
+	
+		<div id="versionInfoTab" class="inlineTabDiv">
+			<h3>$ui.getString("tool.common.versionDialog.versionInfoTabLabel")</h3>
+			<p>
+				Version: $infoGlueVersion<br>
+				Release date: $infoGlueVersionReleaseDate<br/>
+			</p>
+		</div>
+		<!--
+		<div id="developersTab" class="inlineTabDiv">
+		</div>
+		-->
+		<div id="supportTab" class="inlineTabDiv">
+			<h3>$ui.getString("tool.common.versionDialog.supportTabLabel")</h3>
+			<p>
+				<a href="http://www.infoglue.org/support" target="_blank">Click here for support options</a>
+			</p>
+		</div>
+				
+	</div>
+
+	</form>		
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

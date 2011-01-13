@@ -1826,4 +1826,10 @@
 		<view name="error">/cms/common/error.vm</view>
 	</action>
 
+	<!--  InfoGlue version information -->
+	<action name="org.infoglue.cms.applications.common.actions.VersionInfoAction" alias="VersionInfo">
+		<view name="success">/cms/common/viewVersionInfo.vm</view>
+		<view name="error">/cms/common/error.vm</view>
+	</action>
+
 </actions>

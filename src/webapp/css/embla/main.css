@@ -455,7 +455,8 @@ img.scaledbordered {
 .create {background:url(../../images/v3/createBackgroundPenPaper.gif) no-repeat left center; background-position: 0px 2px;}
 .next {background:url(../../images/v3/nextBackground.gif) no-repeat left center; background-position: 0px 2px;}
 .add {background:url(../../images/v3/addIcon.png) no-repeat left center; background-position: 0px 2px;}
-.mySettings {background:url(../../images/v3/mySettingsIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.versionInfo {background:url(../../images/v3/versionInfo.png) no-repeat left center; background-position: 0px 2px;}
+.mySettings {background:url(../../images/v3/kuser.png) no-repeat left center; background-position: 0px 2px;}
 .properties { background:url(../../images/v3/metadataIcon.gif) no-repeat left center; background-position: 4px 2px;}
 .showHide { background:url(../../images/v3/showHideIcon.png) no-repeat left center; background-position: 4px 2px;}
 .move { background:url(../../images/v3/moveIcon.png) no-repeat left center; background-position: 6px 2px;}

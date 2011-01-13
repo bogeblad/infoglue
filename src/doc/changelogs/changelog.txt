@@ -6,6 +6,8 @@ Added marketplace-menu-option in management tool
 Added performance test in management tool --> system tools. Also usable in deliver.
 Added check in live instances of deliver so any publications that did not get through for some reason (like network problems etc) are included within 5 minutes.
 -Made minor changes to chron-expressions in quartz - some were triggered to often
+- Added option to change from/to folder on a content if mistake is made
+- Added version info button and dialog in footer
 
 ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId INT NOT NULL DEFAULT '-1'; --MŒste in i alla script
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) NOT NULL DEFAULT '';

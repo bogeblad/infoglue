@@ -63,10 +63,11 @@ public class WebappIntegrator
 		this.proxyPort = proxyPort;
 	}
 
-	public String integrate(Map<String,String> returnCookies, Map<String,String> returnHeaders, Map<String,String> statusData, List<String> blockedParameters) throws Exception
+	public String integrate(Map<String,String> returnCookies, Map<String,String> returnHeaders, Map<String,String> statusData, List<String> blockedParameters, String hrefExclusionRegexp, String linkExclusionRegexp, String srcExclusionRegexp) throws Exception
 	{
 		String responseBody = new PageFetcher().fetchPage(this.urlToIntegrate, method.name(), this.proxyHost, this.proxyPort, cookies, requestProperties, requestParameters, returnCookies, returnHeaders, statusData, blockedParameters);
-
+		//System.out.println("responseBody:\n" + responseBody);
+		
 		String baseURI = this.urlToIntegrate;
 		if(baseURI.indexOf("?") > -1)
 			baseURI = baseURI.substring(0, baseURI.indexOf("?"));
@@ -80,23 +81,25 @@ public class WebappIntegrator
 		Element sourceElement = doc.select(elementSelector).first();
 		//System.out.println("ipbwrapper:" + ipbwrapper.html());
 		if(sourceElement == null)
+			sourceElement = doc.select("#pageContent").first();
+
+		if(sourceElement == null)
 			sourceElement = doc.body();
 
 		if(sourceElement != null)
 		{	
 			Elements links = sourceElement.select("a[href]");
-			Elements forms = sourceElement.select("form[action]");
+			Elements forms = sourceElement.select("form");
 	        Elements media = doc.select("[src]");
 	        Elements imports = doc.select("link[href]");
-	
-	        
+
 	        for (Element link : links) 
 	        {
 	        	String href = link.attr("href");
-	        	System.out.println("href:" + href);
+	        	//System.out.println("href:" + href);
 	        	String oldUrl = link.attr("abs:href");
-	        	System.out.println("oldUrl:" + oldUrl);
-	        	if(href.indexOf("javascript:") == -1 && oldUrl != null)
+	        	//System.out.println("oldUrl:" + oldUrl);
+	        	if(!href.matches(hrefExclusionRegexp) && href.indexOf("javascript:") == -1 && oldUrl != null)
 	        	{
 		        	String newUrl = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + URLEncoder.encode(oldUrl, "utf-8");
 		        	link.attr("href", newUrl);
@@ -106,25 +109,41 @@ public class WebappIntegrator
 	        for (Element src : media) 
 	        {
 	        	String oldSrc = src.attr("abs:src");
-	        	src.attr("src", oldSrc);
+	        	if(!oldSrc.matches(srcExclusionRegexp) && oldSrc != null)
+	        	{
+	        		System.out.println("Changing to oldSrc:" + oldSrc);
+		        	src.attr("src", oldSrc);
+	        	}
 	        }
 	        
 	        for (Element link : imports) 
 	        {
 	        	String oldHref = link.attr("abs:href");
-	        	link.attr("href", oldHref);
+	        	if(!oldHref.matches(linkExclusionRegexp) && oldHref != null)
+	        	{
+		        	System.out.println("Changing to oldHref:" + oldHref);
+		        	link.attr("href", oldHref);
+	        	}
 	        }
 	        
 	        for (Element form : forms) 
 	        {
 	        	String oldAction = form.attr("abs:action");
 	        	System.out.println("oldAction:" + oldAction);
-	        	System.out.println("encodedOldAction:" + URLEncoder.encode(oldAction, "utf-8"));
-	        	String escapedOldAction = new URI(oldAction).getEscapedURI();
-	        	System.out.println("escapedOldAction:" + escapedOldAction);
-	        	
-	        	String newAction = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + URLEncoder.encode(URLEncoder.encode(oldAction, "utf-8"),"utf-8");
-	        	form.attr("action", newAction);
+	        	if(oldAction == null || oldAction.equals(""))
+	        	{
+	        		oldAction = this.urlToIntegrate;
+		        	System.out.println("oldAction:" + oldAction);
+		        	String newAction = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + oldAction;
+		        	form.attr("action", newAction);
+	        	}
+	        	else
+	        	{
+	        		System.out.println("oldAction:" + oldAction);
+		        	//String newAction = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + URLEncoder.encode(URLEncoder.encode(oldAction, "utf-8"),"utf-8");
+		        	String newAction = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + URLEncoder.encode(oldAction, "utf-8");
+		        	form.attr("action", newAction);
+	        	}
 	        }
 	
 	        return sourceElement.html();
@@ -196,7 +215,7 @@ public class WebappIntegrator
 		
 		try 
 		{
-			wi.integrate(new HashMap<String,String>(), new HashMap<String,String>(), new HashMap<String,String>(), new ArrayList<String>());
+			wi.integrate(new HashMap<String,String>(), new HashMap<String,String>(), new HashMap<String,String>(), new ArrayList<String>(), "", "", "");
 		} 
 		catch (Exception e) 
 		{

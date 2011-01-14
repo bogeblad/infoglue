@@ -63,6 +63,13 @@ public class PortalServletRequest extends HttpServletRequestWrapper
         // TODO paramMap should be immutable
         paramMap.putAll(PathParser.parsePathParameters(PortalControlURL.IG, req.getServletPath(), false));
 
+        if(paramMap.containsKey("proxyUrl") && req.getParameter("command") != null && !req.getParameter("command").equals(""))
+        {
+	        System.out.println("\n\nCommand:" + req.getParameter("command") + " on " + req.getRequestURI());
+	        paramMap.put("igproxy_command", new String[] {req.getParameter("command")});     
+	        paramMap.remove("command");
+        }
+        
         if (log.isDebugEnabled()) 
         {
             StringBuffer str = new StringBuffer();

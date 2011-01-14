@@ -438,12 +438,32 @@
 	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
+		    <name>elementSelector</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	    <attribute>
 		    <name>proxyHost</name>
 	    	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
 		</attribute>
 	    <attribute>
 		    <name>proxyPort</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	    <attribute>
+		    <name>hrefExclusionRegexp</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	    <attribute>
+		    <name>linkExclusionRegexp</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	    <attribute>
+		    <name>srcExclusionRegexp</name>
 	    	<required>false</required>
 	        <rtexprvalue>true</rtexprvalue>
 		</attribute>

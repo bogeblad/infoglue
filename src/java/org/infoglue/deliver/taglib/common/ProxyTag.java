@@ -54,6 +54,10 @@ public class ProxyTag extends TemplateControllerTag
 	private String proxyHost = null;
 	private Integer proxyPort = null;
 
+	private String hrefExclusionRegexp = "";
+	private String linkExclusionRegexp = "";
+	private String srcExclusionRegexp = "";
+
 	/*
 	private Boolean useCache = false;
 	private String cacheName = "importTagResultCache";
@@ -121,8 +125,12 @@ public class ProxyTag extends TemplateControllerTag
 				if(parameterName.equals("siteNodeId") || parameterName.equals("originalRequestURL") || parameterName.equals("refresh"))
 					continue;
 				
-				//System.out.println("parameterName:" + parameterName + "=" + getController().getHttpServletRequest().getParameter(parameterName));
-				requestParameters.put(parameterName, getController().getHttpServletRequest().getParameter(parameterName));
+				String value = getController().getHttpServletRequest().getParameter(parameterName);
+				
+				if(parameterName.startsWith("igproxy_"))
+					parameterName = parameterName.replaceAll("igproxy_", "");
+					
+				requestParameters.put(parameterName, value);
 			}
 			wi.setRequestParameters(requestParameters);
 
@@ -154,7 +162,7 @@ public class ProxyTag extends TemplateControllerTag
 			blockedParameters.add("contentId");
 			blockedParameters.add("languageId");
 			blockedParameters.add("proxyUrl");
-			produceResult(wi.integrate(returnCookies, returnHeaders, returnStatus, blockedParameters));
+			produceResult(wi.integrate(returnCookies, returnHeaders, returnStatus, blockedParameters, hrefExclusionRegexp, linkExclusionRegexp, srcExclusionRegexp));
 			
 			pageContext.setAttribute("returnCookies", returnCookies);
 			pageContext.setAttribute("returnHeaders", returnHeaders);
@@ -194,6 +202,9 @@ public class ProxyTag extends TemplateControllerTag
 		this.elementSelector = null;
 		this.proxyHost = null;
 		this.proxyPort = null;
+		this.hrefExclusionRegexp = "";
+		this.srcExclusionRegexp = "";
+		this.linkExclusionRegexp = "";
 		
 		/*
 		this.useCache = false;
@@ -234,6 +245,21 @@ public class ProxyTag extends TemplateControllerTag
     {
         this.proxyPort = evaluateInteger("proxyTag", "proxyPort", proxyPort);
     }
+
+	public void setHrefExclusionRegexp(String hrefExclusionRegexp) throws JspException
+	{
+		this.hrefExclusionRegexp = evaluateString("proxyTag", "hrefExclusionRegexp", hrefExclusionRegexp);
+	}
+
+	public void setLinkExclusionRegexp(String linkExclusionRegexp) throws JspException 
+	{
+		this.linkExclusionRegexp = evaluateString("proxyTag", "linkExclusionRegexp", linkExclusionRegexp);
+	}
+
+	public void setSrcExclusionRegexp(String srcExclusionRegexp) throws JspException 
+	{
+		this.srcExclusionRegexp = evaluateString("proxyTag", "srcExclusionRegexp", srcExclusionRegexp);
+	}
 
     /*
     public void setUseCache(String useCache) throws JspException

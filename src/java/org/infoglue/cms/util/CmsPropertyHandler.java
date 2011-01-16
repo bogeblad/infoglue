@@ -170,7 +170,7 @@ public class CmsPropertyHandler
 	    	timer.setActive(false);
 	    	
 			System.out.println("Initializing properties from file.....");
-			Thread.dumpStack();
+			//Thread.dumpStack();
 			
 			cachedProperties = new Properties();
 			if(propertyFile != null)

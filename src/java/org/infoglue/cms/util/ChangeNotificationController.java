@@ -66,8 +66,8 @@ public class ChangeNotificationController
 	
 	public void put(NotificationMessage notificationMessage) 
 	{
-		if(notificationMessage.getClassName().equalsIgnoreCase("ServerNodeProperties"))
-			Thread.dumpStack();
+		//if(notificationMessage.getClassName().equalsIgnoreCase("ServerNodeProperties"))
+		//	Thread.dumpStack();
 	
 		//logger.info("Adding notificationMessage:" + notificationMessage);
 	    list.getList().add(notificationMessage);

@@ -224,8 +224,8 @@ public class RemoteFormServiceImpl extends RemoteInfoGlueService
 							newAsset.setFileName(remoteAttachment.getFileName());
 							newAsset.setFileSize(new Integer(new Long(remoteAttachment.getBytes().length).intValue()));
 							byte[] bytes = remoteAttachment.getBytes();
-							for(int i=0; i<bytes.length; i++)
-								System.out.print(bytes[i]);
+							//for(int i=0; i<bytes.length; i++)
+							//	System.out.print(bytes[i]);
 							InputStream is = new ByteArrayInputStream(bytes);
 		
 							formEntryController.createAsset(newAsset, newFormEntry, is, newFormEntry.getId(), principal, db2);

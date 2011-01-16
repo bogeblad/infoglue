@@ -188,7 +188,6 @@ public class ContentVersionImpl implements ContentVersion
         this.language = language;
         if(language != null)
         {
-        	System.out.println("Lang: " + language.getId() + ":" + language.getLanguageId());
         	this.valueObject.setLanguageId(language.getLanguageId());
         	this.valueObject.setLanguageName(language.getName());
         }

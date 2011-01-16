@@ -259,7 +259,6 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 	    		ContentVersionController.getContentVersionController().update(this.contentId, this.languageId, this.contentVersionVO, this.getInfoGluePrincipal());
 	    		logger.info("*************************************************");
 			
-	    		System.out.println("getDeliverContext:" + getDeliverContext());
 	    		attributeValue = PageEditorHelper.parseAttributeForInlineEditing(attributeValue, true, getDeliverContext(), contentId, languageId);
 			}
 	

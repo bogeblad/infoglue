@@ -163,14 +163,19 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         while (repositoriesIterator.hasNext()) 
         {
             RepositoryVO repositoryVO = (RepositoryVO) repositoriesIterator.next();
-            logger.info("\n\nrepository:" + repositoryVO.getDnsName());
-            System.out.println("repository:" + repositoryVO.getDnsName());
+            if(logger.isInfoEnabled())
+            	logger.info("\n\nrepository:" + repositoryVO.getDnsName());
+            if(logger.isInfoEnabled())
+            	logger.info("repository:" + repositoryVO.getDnsName());
             String[] dnsNames = splitStrings(repositoryVO.getDnsName().replaceAll("\\[.*?\\]", ""));
-            logger.info("dnsNames:" + dnsNames);
-            System.out.println("dnsNames:" + dnsNames);
+            if(logger.isInfoEnabled())
+            	logger.info("dnsNames:" + dnsNames);
+            if(logger.isInfoEnabled())
+            	logger.info("dnsNames:" + dnsNames);
             for (int i=0;i<dnsNames.length;i++) 
             {
-            	logger.info("dnsNames[i]:" + dnsNames[i]);
+            	if(logger.isInfoEnabled())
+                	logger.info("dnsNames[i]:" + dnsNames[i]);
                 String dnsName = dnsNames[i];
             	int protocolIndex = dnsName.indexOf("://");
                 if(protocolIndex > -1)
@@ -180,9 +185,10 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 if(portIndex > -1)
                     dnsName = dnsName.substring(0, portIndex);
 
-                logger.info("Matching only server name - removed protocol if there:" + dnsName);
-                
-                System.out.println("dnsName:" + dnsName + ", serverName:" + serverName + ", repositoryName:" + repositoryName);
+                if(logger.isInfoEnabled())
+                	logger.info("Matching only server name - removed protocol if there:" + dnsName);
+                if(logger.isInfoEnabled())
+                	logger.info("dnsName:" + dnsName + ", serverName:" + serverName + ", repositoryName:" + repositoryName);
                 int index = dnsName.indexOf("working=,");
                 int indexMode = dnsName.indexOf("working=");
                 if(CmsPropertyHandler.getOperatingMode().equals("2"))
@@ -200,16 +206,19 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 {
             	    if(repositoryName != null && repositoryName.length() > 0)
             	    {
-            	        logger.info("Has to check repositoryName also:" + repositoryName);
+            	    	if(logger.isInfoEnabled())
+                        	logger.info("Has to check repositoryName also:" + repositoryName);
                         if(repositoryVO.getName().equalsIgnoreCase(repositoryName))
                         {
-                        	System.out.println("Adding " + repositoryVO.getName());
+                        	if(logger.isInfoEnabled())
+                            	logger.info("Adding " + repositoryVO.getName());
             	            repositories.add(repositoryVO);
                         }
                     }
             	    else
             	    {
-            	    	System.out.println("Adding " + repositoryVO.getName());
+            	    	if(logger.isInfoEnabled())
+                        	logger.info("Adding " + repositoryVO.getName());
             	        repositories.add(repositoryVO);
             	    }
             	}
@@ -334,17 +343,20 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	public String getPropertyValue(Integer repositoryId, String propertyName) 
 	{
 		String key = "parentRepository_" + repositoryId + "_" + propertyName;
-	    logger.info("key:" + key);
+		if(logger.isInfoEnabled())
+        	logger.info("key:" + key);
 	    Object object = CacheController.getCachedObject("parentRepository", key);
 		
 	    if(object instanceof NullObject)
 		{
-			logger.info("There was an cached property but it was null:" + object);
+	    	if(logger.isInfoEnabled())
+            	logger.info("There was an cached property but it was null:" + object);
 			return null;
 		}
 		else if(object != null)
 		{
-			logger.info("There was an cached property:" + object);
+			if(logger.isInfoEnabled())
+            	logger.info("There was an cached property:" + object);
 			return (String)object;
 		}
 		
@@ -355,7 +367,9 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 	    
 	    propertyValue = ps.getString("repository_" + repositoryId + "_" + propertyName);
-	    logger.info("propertyValue:" + propertyValue);
+	    if(logger.isInfoEnabled())
+        	logger.info("propertyValue:" + propertyValue);
+	    
 	    if(propertyValue != null)
 	        CacheController.cacheObject("parentRepository", key, propertyValue);
 	    else
@@ -405,7 +419,8 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 				propertyValue = properties.getProperty(propertyName);
 			}
 	    
-		    logger.info("propertyValue:" + propertyValue);
+		    if(logger.isInfoEnabled())
+            	logger.info("propertyValue:" + propertyValue);
 		    if(propertyValue != null)
 		        CacheController.cacheObject("parentRepository", key, propertyValue);
 		    else

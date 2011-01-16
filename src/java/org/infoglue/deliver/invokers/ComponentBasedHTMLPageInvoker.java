@@ -244,7 +244,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getPageComponentsWithXPP3", t.getElapsedTime());
 				
 				//System.out.println("pageComponents:" + pageComponents.size());
-
 				preProcessComponents(nodeDeliveryController, repositoryId, unsortedPageComponents, pageComponents);
 				
 				if(pageComponents.size() > 0)
@@ -332,13 +331,15 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		while(sortedPageComponentsIterator.hasNext())
 		{
 			InfoGlueComponent component = (InfoGlueComponent)sortedPageComponentsIterator.next();
-
+			//System.out.println("component:" + component.getName() + ":" + component.getIsInherited());
 			this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), component));
 			this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
 			
 			ContentVO metaInfoContentVO = nodeDeliveryController.getBoundContent(getDatabase(), this.getTemplateController().getPrincipal(), this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), true, "Meta information", this.getDeliveryContext());
-			preProcessComponent(component, this.getTemplateController(), repositoryId, this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), this.getDeliveryContext().getContentId(), metaInfoContentVO.getId());
+			if(!component.getIsInherited()) //Wrong maybe? 
+				preProcessComponent(component, this.getTemplateController(), repositoryId, this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), this.getDeliveryContext().getContentId(), metaInfoContentVO.getId(), sortedPageComponents);
 		}
+
 	}
 	
 	/*
@@ -1663,7 +1664,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method renders the base component and all it's children.
 	 */
 
-	private String preProcessComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId) throws Exception
+	private String preProcessComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, List sortedPageComponents) throws Exception
 	{
 		if(logger.isDebugEnabled())
 		{
@@ -1746,10 +1747,10 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				while(subComponentsIterator.hasNext())
 				{
 					InfoGlueComponent subComponent = (InfoGlueComponent)subComponentsIterator.next();
-					
+					//System.out.println("subComponent:" + subComponent.getName() + ":" + subComponent.getIsInherited());
 					if(subComponent.getIsInherited())
 					{
-						String subComponentString = preProcessComponent(subComponent, templateController, repositoryId, siteNodeId, languageId, contentId, metainfoContentId);
+						String subComponentString = preProcessComponent(subComponent, templateController, repositoryId, siteNodeId, languageId, contentId, metainfoContentId, sortedPageComponents);
 					}
 				}
 				

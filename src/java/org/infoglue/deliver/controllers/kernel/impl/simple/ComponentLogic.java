@@ -1426,8 +1426,8 @@ public class ComponentLogic
 			}
 			else
 			{
-				property = getComponentProperty(propertyName, useInheritance, useStructureInheritance, contentVersionIdList, useRepositoryInheritance);
-		    	if(property == null)
+				property = getComponentProperty(propertyName, useInheritance, useStructureInheritance, contentVersionIdList, useRepositoryInheritance, useComponentInheritance);
+				if(property == null)
 				{	
 					property = (Map)component.getProperties().get(propertyName);
 					InfoGlueComponent parentComponent = component.getParentComponent();
@@ -1435,6 +1435,7 @@ public class ComponentLogic
 					while(property == null && parentComponent != null && useComponentInheritance)
 					{
 						property = (Map)parentComponent.getProperties().get(propertyName);
+						//System.out.println("Checking property on parentComponent:" + parentComponent.getName());
 						parentComponent = parentComponent.getParentComponent();
 					}
 				}
@@ -1801,13 +1802,25 @@ public class ComponentLogic
 	 * This method fetches the component named component property. If not available on the current page metainfo we go up recursive.
 	 */
 	
-	private Map getComponentProperty(String propertyName, boolean useInheritance, boolean useStructureInheritance, Set contentVersionIdList, boolean useRepositoryInheritance) throws Exception
+	private Map getComponentProperty(String propertyName, boolean useInheritance, boolean useStructureInheritance, Set contentVersionIdList, boolean useRepositoryInheritance, boolean useComponentInheritance) throws Exception
 	{
 		Map property = (Map)this.infoGlueComponent.getProperties().get(propertyName);
     	//Map property = getInheritedComponentProperty(this.templateController, templateController.getSiteNodeId(), this.templateController.getLanguageId(), this.templateController.getContentId(), this.infoGlueComponent.getId(), propertyName, contentVersionIdList);
 		
 		if(useInheritance)
 		{
+			if(property == null)
+			{	
+				InfoGlueComponent parentComponent = this.infoGlueComponent.getParentComponent();
+				//logger.info("parentComponent: " + parentComponent);
+				while(property == null && parentComponent != null && useComponentInheritance)
+				{
+					property = (Map)parentComponent.getProperties().get(propertyName);
+					//System.out.println("Checking property on parentComponent:" + parentComponent.getName());
+					parentComponent = parentComponent.getParentComponent();
+				}
+			}
+			
 			try
 			{
 				if(property == null)

@@ -8,6 +8,7 @@ Added check in live instances of deliver so any publications that did not get th
 -Made minor changes to chron-expressions in quartz - some were triggered to often
 - Added option to change from/to folder on a content if mistake is made
 - Added version info button and dialog in footer
+Fixed bug in componentPropertyValue handling and also improved preTemplate-state so inherited components are not processed twice.
 
 ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId INT NOT NULL DEFAULT '-1'; --MŒste in i alla script
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) NOT NULL DEFAULT '';

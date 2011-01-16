@@ -57,7 +57,7 @@ public class ExpireCacheJob implements Job
 
     public synchronized void execute(JobExecutionContext context) throws JobExecutionException
     {
-    	System.out.println("context:" + CmsPropertyHandler.getContextRootPath());
+    	//System.out.println("context:" + CmsPropertyHandler.getContextRootPath());
     	long diffLastRun = ((System.currentTimeMillis() - lastRun) / 1000);
     	if(diffLastRun < 300)
     		return;

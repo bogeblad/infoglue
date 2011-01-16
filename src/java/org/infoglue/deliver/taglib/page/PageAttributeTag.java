@@ -43,7 +43,7 @@ public class PageAttributeTag extends TemplateControllerTag
 			produceResult(getController().getDeliveryContext().getPageAttributes().get(name));
 		else
 			getController().getDeliveryContext().getPageAttributes().put(name, value);
-        
+		
 		name = null;
 		value = null;
 		

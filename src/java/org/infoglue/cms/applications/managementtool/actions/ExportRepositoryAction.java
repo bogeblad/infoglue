@@ -148,7 +148,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 				Repository repository 	= RepositoryController.getController().getRepositoryWithId(repositoryId, db);
 				SiteNode siteNode 		= SiteNodeController.getController().getRootSiteNode(repositoryId, db);
 				Content content 		= ContentController.getContentController().getRootContent(repositoryId, db);
-
+				
 			    InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Repository.Read", db);
 			    if(interceptionPointVO != null)
 			    	allAccessRights.addAll(AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), repository.getId().toString(), db));
@@ -158,9 +158,11 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 			    	allAccessRights.addAll(AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), repository.getId().toString(), db));
 
 				getContentPropertiesAndAccessRights(ps, allContentProperties, allAccessRights, content, db);
-				getSiteNodePropertiesAndAccessRights(ps, allSiteNodeProperties, allAccessRights, siteNode, db);
+				if(siteNode != null)
+					getSiteNodePropertiesAndAccessRights(ps, allSiteNodeProperties, allAccessRights, siteNode, db);
 				
-				siteNodes.add(siteNode);
+				if(siteNode != null)
+					siteNodes.add(siteNode);
 				contents.add(content);
 				names = names + "_" + repository.getName();
 				allRepositoryProperties.putAll(getRepositoryProperties(ps, repositoryId));
@@ -297,7 +299,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 
 	public static void getSiteNodePropertiesAndAccessRights(PropertySet ps, Hashtable<String, String> allSiteNodeProperties, List<AccessRight> allAccessRights, SiteNode siteNode, Database db) throws SystemException, Exception
 	{
-	    String disabledLanguagesString = "" + ps.getString("siteNode_" + siteNode.getId() + "_disabledLanguages");
+		String disabledLanguagesString = "" + ps.getString("siteNode_" + siteNode.getId() + "_disabledLanguages");
 	    String enabledLanguagesString = "" + ps.getString("siteNode_" + siteNode.getId() + "_enabledLanguages");
 
 	    if(disabledLanguagesString != null && !disabledLanguagesString.equals("") && !disabledLanguagesString.equals("null"))

@@ -331,7 +331,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		while(sortedPageComponentsIterator.hasNext())
 		{
 			InfoGlueComponent component = (InfoGlueComponent)sortedPageComponentsIterator.next();
-			//System.out.println("component:" + component.getName() + ":" + component.getIsInherited());
 			this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), component));
 			this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
 			
@@ -1747,7 +1746,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				while(subComponentsIterator.hasNext())
 				{
 					InfoGlueComponent subComponent = (InfoGlueComponent)subComponentsIterator.next();
-					//System.out.println("subComponent:" + subComponent.getName() + ":" + subComponent.getIsInherited());
 					if(subComponent.getIsInherited())
 					{
 						String subComponentString = preProcessComponent(subComponent, templateController, repositoryId, siteNodeId, languageId, contentId, metainfoContentId, sortedPageComponents);
@@ -1909,7 +1907,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			//logger.info("id:" + id);
 			
 			String key = "" + parentSiteNodeVO.getId() + "_" + componentXML.hashCode();
-			String mapKey = "" + parentSiteNodeVO.getId() + "_" + componentXML.hashCode() + "_" + id + "_components";
+			//String mapKey = "" + parentSiteNodeVO.getId() + "_" + componentXML.hashCode() + "_" + id + "_components"; //
+			String mapKey = "" + parentSiteNodeVO.getId() + "_" + componentXML.hashCode() + "_" + id + "_"  + siteNodeId + "_" + component.getId() + "_components";
 			
 			Map components = (Map)CacheController.getCachedObjectFromAdvancedCache("componentPropertyCache", mapKey);
 			if(components == null)
@@ -1928,9 +1927,9 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		        XmlDocument doc = builder.parseReader(new StringReader( componentXML ) );
 				components = getComponentWithXPP3(db, doc.getDocumentElement(), id, templateController, component);
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("INHERITING COMPONENTS WITH XPP3", t.getElapsedTime());
-
-				//logger.info("components:" + components);
 				
+				//logger.info("components:" + components);
+
 				if(components != null)
 					CacheController.cacheObjectInAdvancedCache("componentPropertyCache", mapKey, components, null, false);
 			}

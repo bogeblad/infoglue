@@ -1435,7 +1435,6 @@ public class ComponentLogic
 					while(property == null && parentComponent != null && useComponentInheritance)
 					{
 						property = (Map)parentComponent.getProperties().get(propertyName);
-						//System.out.println("Checking property on parentComponent:" + parentComponent.getName());
 						parentComponent = parentComponent.getParentComponent();
 					}
 				}
@@ -1809,14 +1808,15 @@ public class ComponentLogic
 		
 		if(useInheritance)
 		{
-			if(property == null)
+			if(property == null && useComponentInheritance)
 			{	
+				//System.out.println("Checking inherited property on:" + this.infoGlueComponent.getName() + "=" + propertyName + " on component:" + this.infoGlueComponent.getName() + ":" + this.infoGlueComponent.getId() + "\n" + this.infoGlueComponent + "\nparentComponent=" + this.infoGlueComponent.getParentComponent());
 				InfoGlueComponent parentComponent = this.infoGlueComponent.getParentComponent();
 				//logger.info("parentComponent: " + parentComponent);
-				while(property == null && parentComponent != null && useComponentInheritance)
+				while(property == null && parentComponent != null)
 				{
 					property = (Map)parentComponent.getProperties().get(propertyName);
-					//System.out.println("Checking property on parentComponent:" + parentComponent.getName());
+					//System.out.println("Checking property on parentComponent:" + parentComponent.getName() + "=" + property);
 					parentComponent = parentComponent.getParentComponent();
 				}
 			}
@@ -3412,7 +3412,7 @@ public class ComponentLogic
 	
 	private ComponentPropertyDefinition getComponentPropertyDefinition(Integer componentContentId, String propertyName, Integer siteNodeId, Integer languageId, Integer contentId, Database db, InfoGluePrincipal principal) throws Exception
 	{
-		//TODO - här kan vi säkert cache:a.
+		//TODO - hï¿½r kan vi sï¿½kert cache:a.
 		
 		ComponentPropertyDefinition propertyDefinition = null;
 		

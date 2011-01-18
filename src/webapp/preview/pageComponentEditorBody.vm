@@ -7,7 +7,7 @@
 <div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
 <hr id="emptySlotMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
 <div id="accessRightsMenuItem" class="igmenuitems linkAccessRights" onclick="setAccessRights(slotName, slotContentId);"><a href='#'>$accessRightsHTML</a></div>
-<div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='#'>$pageComponents</a></div>
+<div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='javascript:void(0);'>$pageComponents</a></div>
 <div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
 <div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
 </div>

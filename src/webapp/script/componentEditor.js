@@ -235,46 +235,7 @@ function getCookieValue(name)
 	}
 	
 	return value;
-} 
-
-function expandWindow()
-{
-	width = document.getElementById('pageComponents').style.width;
-	if(width.indexOf("400") > -1)
-	{
-		width = "450";
-		height = "500";	
-	}
-	else if(width.indexOf("450") > -1)
-	{
-		width = "500";
-		height = "550";	
-	}
-	else if(width.indexOf("500") > -1)
-	{
-		width = "550";
-		height = "600";	
-	}
-	else
-	{
-		width = "400";
-		height = "450";	
-	}
-	
-	width = width+"px";
-	heightBody = height-20+"px";
-	height = height+"px";
-	
-	document.getElementById('pageComponents').style.width=width;
-	document.getElementById('pageComponents').style.height=height;
-	document.getElementById('pageComponentsBody').style.height=heightBody;
-	
-	setCookie(pageStructureDivWidthCookieName, width);
-	setCookie(pageStructureDivHeightCookieName, height);
-	setCookie(pageStructureDivHeightBodyCookieName, heightBody);
-	
-} 
- 
+}  
  
 /****************************
  * Hook method to get informed when a drag starts
@@ -305,11 +266,6 @@ function dragEnded(object, left, top)
 		setCookie(toolbarTopPositionCookieName, topPosition);
 	}
 
-	if(object.id == "pageComponentsHandle")
-	{
-		setCookie(pageComponentsTopPositionCookieName, top);
-		setCookie(pageComponentsLeftPositionCookieName, left);
-	}
 }
 
 var defaultToolbarTopPosition;
@@ -337,7 +293,7 @@ function setToolbarInitialPosition()
 		pageComponentsTopPosition = (getScrollY() + ((document.body.clientHeight - propertiesDiv.offsetHeight) / 2));
 		pageComponentsLeftPosition = (getScrollX() + ((document.body.clientWidth - propertiesDiv.offsetWidth) / 2));
 	
-		floatDiv("pageComponents", 200, 50).flt();
+		//floatDiv("pageComponents", 200, 50).flt();
 	}	
 	
 	//alert("document:" + document.getElementById("paletteDiv").id);
@@ -999,6 +955,20 @@ function showDiv(id)
 	{
 		document.getElementById(id).style.display = 'block';
 		setCookie(pageStructureDivVisibleCookieName, "visible");
+
+		var element = $("#" + id);
+		
+		var scrollTop = $(window).scrollTop();
+		var scrollLeft = $(window).scrollLeft();
+		
+		var newTop = $(window).height()/2-element.height()/2 + scrollTop;
+		var newLeft = $(window).width()/2-element.width()/2 + scrollLeft;
+		
+		element.css('top', newTop + "px");
+		element.css('left', newLeft + "px");
+		
+		$('#pageComponentsHandle').css('cursor', 'move');
+		$('#pageComponents').draggable({handle: '#pageComponentsHandle', cursor: 'move', distance: 10});
 	}
 }
 
@@ -1026,8 +996,23 @@ function toggleDiv(id)
 		if(div.style.visibility == 'hidden')
 			document.getElementById(id).style.display = 'none';
 		else
+		{
 			document.getElementById(id).style.display = 'block';
 			
+			var element = $("#" + id);
+			
+			var scrollTop = $(window).scrollTop();
+			var scrollLeft = $(window).scrollLeft();
+			
+			var newTop = $(window).height()/2-element.height()/2 + scrollTop;
+			var newLeft = $(window).width()/2-element.width()/2 + scrollLeft;
+			
+			element.css('top', newTop + "px");
+			element.css('left', newLeft + "px");
+			
+			$('#pageComponentsHandle').css('cursor', 'move');
+			$('#pageComponents').draggable({handle: '#pageComponentsHandle', cursor: 'move', distance: 10});
+		}	
 		setCookie(pageStructureDivVisibleCookieName, div.style.visibility);
 	}
 		

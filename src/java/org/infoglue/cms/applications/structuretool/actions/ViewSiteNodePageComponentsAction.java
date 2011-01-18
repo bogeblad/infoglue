@@ -1532,7 +1532,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		
 		logger.info("newComponentId:" + newComponentId);
 		
-		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + newComponentId + "&showSimple=" + this.showSimple;
+		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + this.componentId + "&showSimple=" + this.showSimple;
 		//this.getResponse().sendRedirect(url);		
 		
 		this.url = this.getResponse().encodeURL(url);

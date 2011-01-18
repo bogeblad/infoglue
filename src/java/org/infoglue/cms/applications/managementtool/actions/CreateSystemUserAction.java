@@ -95,7 +95,7 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 	{
 		ceb = this.systemUserVO.validate();
     	ceb.throwIfNotEmpty();		
-		
+
 		String[] roles = getRequest().getParameterValues("roleName");
 		String[] groups = getRequest().getParameterValues("groupName");
 		String[] contentTypeDefinitionIds = getRequest().getParameterValues("contentTypeDefinitionId");
@@ -105,7 +105,7 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 		logger.info("contentTypeDefinitionIds:" + contentTypeDefinitionIds);
 
 		this.infoGluePrincipal = UserControllerProxy.getController().createUser(this.systemUserVO);
-		if(roles != null && groups != null)
+		if(roles != null || groups != null)
 		{
 			UserControllerProxy.getController().updateUser(systemUserVO, roles, groups);
 		}

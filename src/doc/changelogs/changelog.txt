@@ -9,6 +9,11 @@ Added check in live instances of deliver so any publications that did not get th
 - Added option to change from/to folder on a content if mistake is made
 - Added version info button and dialog in footer
 Fixed bug in componentPropertyValue handling and also improved preTemplate-state so inherited components are not processed twice.
+Made so component inheritance works over page structure inheritance on component properties
+Fixed bug in component properties cache which made component-inheritance invalid.
+Added better controls in export/import to handle less perfect sites.
+Fixed bug in change component where the base components properties was allways shown after the change instead of the properties of the new component.
+Fixed bug where roles was not saved when creating a new user.
 
 ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId INT NOT NULL DEFAULT '-1'; --MŒste in i alla script
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) NOT NULL DEFAULT '';

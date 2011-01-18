@@ -373,7 +373,7 @@
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.CreateRepositoryAction" alias="CreateRepository">
-		<view name="input">/cms/managementtool/createRepository.vm</view>
+		<view name="input">/cms/managementtool/v3/createRepository.vm</view>
 		<view name="inputV3">/cms/managementtool/v3/createRepository.vm</view>
 		<view name="success">ViewRepository.action</view>
 		<view name="error">/cms/managementtool/error.vm</view>

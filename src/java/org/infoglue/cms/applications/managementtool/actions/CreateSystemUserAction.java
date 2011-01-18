@@ -93,25 +93,37 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception 
 	{
-		ceb = this.systemUserVO.validate();
-    	ceb.throwIfNotEmpty();		
+    	try
+    	{
+    		ceb = this.systemUserVO.validate();
+        	ceb.throwIfNotEmpty();		
 
-		String[] roles = getRequest().getParameterValues("roleName");
-		String[] groups = getRequest().getParameterValues("groupName");
-		String[] contentTypeDefinitionIds = getRequest().getParameterValues("contentTypeDefinitionId");
-
-		logger.info("roles:" + roles);
-		logger.info("groups:" + groups);
-		logger.info("contentTypeDefinitionIds:" + contentTypeDefinitionIds);
-
-		this.infoGluePrincipal = UserControllerProxy.getController().createUser(this.systemUserVO);
-		if(roles != null || groups != null)
-		{
-			UserControllerProxy.getController().updateUser(systemUserVO, roles, groups);
+        	String[] roles = getRequest().getParameterValues("roleName");
+			String[] groups = getRequest().getParameterValues("groupName");
+			String[] contentTypeDefinitionIds = getRequest().getParameterValues("contentTypeDefinitionId");
+	
+			logger.info("roles:" + roles);
+			logger.info("groups:" + groups);
+			logger.info("contentTypeDefinitionIds:" + contentTypeDefinitionIds);
+	
+			this.infoGluePrincipal = UserControllerProxy.getController().createUser(this.systemUserVO);
+			if(roles != null || groups != null)
+			{
+				UserControllerProxy.getController().updateUser(systemUserVO, roles, groups);
+			}
+			
+			if(contentTypeDefinitionIds != null && contentTypeDefinitionIds.length > 0 && !contentTypeDefinitionIds[0].equals(""))
+				UserPropertiesController.getController().updateContentTypeDefinitions(this.getUserName(), contentTypeDefinitionIds);
 		}
-		
-		if(contentTypeDefinitionIds != null && contentTypeDefinitionIds.length > 0 && !contentTypeDefinitionIds[0].equals(""))
-			UserPropertiesController.getController().updateContentTypeDefinitions(this.getUserName(), contentTypeDefinitionIds);
+		catch(ConstraintException e) 
+	    {
+			this.availableRoles 				= RoleControllerProxy.getController().getAvailableRoles(this.getInfoGluePrincipal(), "Role.ManageUsers");
+			this.availableGroups 				= GroupControllerProxy.getController().getAvailableGroups(this.getInfoGluePrincipal(), "Group.ManageUsers");
+			this.contentTypeDefinitionVOList 	= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_USER_PROPERTIES);
+	
+			e.setResult(INPUT);
+			throw e;
+	    }
 
 		return "success";
 	}

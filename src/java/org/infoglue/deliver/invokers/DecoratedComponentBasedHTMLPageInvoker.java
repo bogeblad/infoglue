@@ -1898,9 +1898,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		if(hasPageStructureAccess || hasOpenInNewWindowAccess || hasViewSourceAccess)
 			sb.append("<div style='border-top: 1px solid #bbb; height: 1px; margin:0px; padding: 0px; line-height: 1px;'></div>");
 		if(hasPageStructureAccess)
-			sb.append("<div class=\"igmenuitems linkPageComponents\" onclick=\"javascript:toggleDiv('pageComponents');\"><a href='#'>" + pageComponentsHTML + "</a></div>");
+			sb.append("<div class=\"igmenuitems linkPageComponents\" onclick=\"javascript:toggleDiv('pageComponents');\"><a href='javascript:void(0);'>" + pageComponentsHTML + "</a></div>");
 		if(hasOpenInNewWindowAccess)
-			sb.append("<div id=\"componentEditorInNewWindowDiv" + component.getId() + "\" class=\"igmenuitems linkOpenInNewWindow\"  onclick=\"window.open(document.location.href,'PageComponents','');\"><a href='#'>" + componentEditorInNewWindowHTML + "</a></div>");
+			sb.append("<div id=\"componentEditorInNewWindowDiv" + component.getId() + "\" class=\"igmenuitems linkOpenInNewWindow\" onclick=\"window.open(document.location.href,'PageComponents','');\"><a href='#'>" + componentEditorInNewWindowHTML + "</a></div>");
 		if(hasViewSourceAccess)
 			sb.append("<div class=\"igmenuitems linkViewSource\" onclick=\"javascript:viewSource();\"><a href='javascript:viewSource();'>" + viewSourceHTML + "</a></div>");
 		if(hasMySettingsAccess)
@@ -1932,12 +1932,10 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		
 		String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
 
-		sb.append("<div id=\"pageComponents\" style=\"right:5px; top:5px; visibility:hidden; display: none;\">");
-
-		sb.append("	<div id=\"dragCorner\" style=\"position: absolute; width: 16px; height: 16px; background-color: white; bottom: 0px; right: 0px;\"><a href=\"javascript:expandWindow('pageComponents');\"><img src=\"" + this.getRequest().getContextPath() + "/images/enlarge.gif\" border=\"0\" width=\"16\" height=\"16\" alt=\"Enlarge\"/></a></div>");
+		sb.append("<div id=\"pageComponents\" class=\"igDialog ui-draggable\" style=\"right:5px; top:5px; visibility:hidden; display: none;\">");
 			
-		sb.append("		<div id=\"pageComponentsHandle\"><div id=\"leftPaletteHandle\">Page components</div><div id=\"rightPaletteHandle\"><a href=\"javascript:hideDiv('pageComponents');\" class=\"white\">close</a></div></div>");
-		sb.append("		<div id=\"pageComponentsBody\"><table class=\"igtable\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+		sb.append("		<div id=\"pageComponentsHandle\" class=\"igDialogHandle\"><div class=\"igDialogLeftHandleContent\">Page components</div><div class=\"igDialogRightHandleContent close\" onclick=\"hideDiv('pageComponents');\">&nbsp;</div></div>");
+		sb.append("		<div class=\"igDialogBody\"><table class=\"igtable\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
 
 		sb.append("		<tr class=\"igtr\">");
 	    sb.append("			<td class=\"igtd\" colspan=\"20\"><img src=\"" + this.getRequest().getContextPath() + "/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/><span id=\"ClickableDiv" + component.getId() + component.getSlotName() + "\" class=\"iglabel\"><img src=\"" + this.getRequest().getContextPath() + "/images/slotIcon.gif\" width=\"16\" height=\"16\" alt=\"Slot\"/><img src=\"" + this.getRequest().getContextPath() + "/images/trans.gif\" width=\"5\" height=\"1\" alt=\"trans\"/>" + component.getName() + "</span><script type=\"text/javascript\">$(function() { initializeSlotEventHandler('ClickableDiv" + component.getId() + component.getSlotName() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=base&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '', '', 'base', '" + component.getContentId() + "'); });</script></td>");
@@ -1953,6 +1951,12 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("		</tr>");
 		sb.append("		</table>");
 		sb.append("		</div>");
+		sb.append("		<div class=\"igDialogFooter buttonPane\" id=\"pageComponentsFooter\">");
+		sb.append("			<div style=\"float: left; margin-left: 8px; margin-bottom: 6px;\">");
+		sb.append("				<input type=\"button\" onclick=\"hideDiv('pageComponents');\" value=\"Close\" class=\"close\">");
+		sb.append("			</div>");
+		sb.append("		</div>");
+		
 		sb.append("	</div>");
 		
 		return sb.toString();

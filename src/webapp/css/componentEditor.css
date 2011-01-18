@@ -47,7 +47,7 @@ Component palette classes
 	height: 10px;
 }
 
-#leftPaletteHandle {
+#leftPaletteHandle, .igDialogLeftHandle {
 	width: 150px;
 	float: left;
 	color: white;
@@ -55,7 +55,7 @@ Component palette classes
 	line-height: 10px;
 }
 
-#leftPaletteHandleCompProps,.leftPaletteHandleCompProps {
+#leftPaletteHandleCompProps, .leftPaletteHandleCompProps, .igDialogLeftHandleContent {
 	width: 80%;
 	float: left;
 	color: #333;
@@ -65,14 +65,14 @@ Component palette classes
 	font-size: 12px;
 }
 
-.rightPaletteHandleCompProps {
+.rightPaletteHandleCompProps, .igDialogRightHandleContent {
 	float: right;
 	height: 30px;
 	width: 16px;
 	margin: 4px 6px 0px 0px;
 }
 
-#rightPaletteHandle {
+#rightPaletteHandle, .igDialogRightHandle {
 	color: white;
 	text-align: right;
 	line-height: 10px;
@@ -293,16 +293,16 @@ Other classes
 Page components classes
 */
 #pageComponents {
-	position: absolute;
-	width: 250px;
-	background-color: #F4F4F4;
-	border: 1px solid #333333;
+	aposition: fixed;
+	awidth: 250px;
+	abackground-color: #F4F4F4;
+	aborder: 1px solid #333333;
 	z-index: 70;
-	right: 5px;
-	top: 100px;
-	height: 400px;
+	aright: 5px;
+	atop: 100px;
+	aheight: 400px;
 }
-
+/*
 #pageComponentsHandle {
 	padding-top: 2px;
 	padding-bottom: 2px;
@@ -322,7 +322,7 @@ Page components classes
 	height: 380px;
 	overflow: auto;
 }
-
+*/
 /*
 Edit on sight classes
 */
@@ -366,7 +366,7 @@ Edit on sight classes
 */ /*
 Properties classes
 */
-.componentProperties {
+.igDialog, .componentProperties {
 	position: absolute;
 	max-width: 600px;
 	background-color: #F4F4F4;
@@ -376,7 +376,7 @@ Properties classes
 	top: 100px;
 }
 
-.componentPropertiesHandle {
+.igDialogHandle, .componentPropertiesHandle {
 font-weight:bold;
 font-size: 12pt;
 height:32px;
@@ -391,18 +391,9 @@ background-image:url("../images/v3/toolbarBackground.gif");
 background-repeat:repeat-x;
 border:0px;
 border-bottom:1px solid #9CAABD;
-/*
-margin: 2px;
-	padding: 2px;
-	width: 440px;
-	color: white;
-	font-family: Tahoma, Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	background-image: url('../images/handleBackground.gif');
-	*/
 }
 
-.componentPropertiesBody {
+.igDialogBody, .componentPropertiesBody {
 	margin: 0px;
 	padding: 0px;
 	width: 100%;
@@ -413,12 +404,18 @@ margin: 2px;
 	overflow: auto;
 	float: left;
 }
-/*
-.componentPropertiesFooter {
-	padding-left: 6px;
+.igDialogFooter, .componentPropertiesFooter {
+    background-color: white;
+    background-image: url("../images/v3/footerBackground.gif");
+    background-repeat: repeat-x;
+    border-top: 0 solid #9CAABD;
+    abottom: 0;
+    float: left;
+    height: 43px;
+    margin: 0;
+    width: 100%;
 }
-*/
-.componentPropertiesFooter input[type="button"]
+.igDialogFooter input[type="button"], .componentPropertiesFooter input[type="button"]
 { 
 	border: 1px solid #555; 
 	padding: 4px;
@@ -433,7 +430,7 @@ margin: 2px;
 	line-height:1.4em;
 	margin:8px 4px 0px 0px;
 }
-.componentPropertiesFooter input[type="button"]:hover
+.igDialogFooter input[type="button"]:hover, .componentPropertiesFooter input[type="button"]:hover
 { 
 	background-color: #d0e5f5;
 }

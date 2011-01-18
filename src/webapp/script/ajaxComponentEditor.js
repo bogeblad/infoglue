@@ -789,11 +789,13 @@ function toggleDiv(id)
 
 function submitForm(id)
 {
+	isDirty = false;
 	document.getElementById(id).submit();
 }
 
 function submitFormAndExit(id)
 {
+	isDirty = false;
 	try{document.getElementById(id).hideComponentPropertiesOnLoad.value = "true";}catch(err){alert("Err:" + err);}
 	document.getElementById(id).submit();
 }
@@ -835,6 +837,7 @@ var clearMovedComponent = false;
 
 function assignComponent(e, siteNodeId, languageId, contentId, parentComponentId, slotId, specifyBaseTemplate, allowedComponentNamesUrlEncodedString, disallowedComponentNamesUrlEncodedString, allowedComponentGroupNamesAsUrlEncodedString, slotPositionComponentId) 
 {	
+	isDirty = false;
 	//alert("slotPositionComponentId:" + slotPositionComponentId);
 	//alert("parentComponentId:" + parentComponentId);
 	//alert("slotId:" + slotId);
@@ -948,15 +951,8 @@ function openAssignDialog(warningText, assignUrl)
 {
  	if(checkDirty(warningText))
  	{
+ 		isDirty = false;
  		openInlineDiv(assignUrl, 600, 750, true);
- 		/*
- 		details = "toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=no,width=300,height=600,left=5,top=5";
- 		newWin = window.open(assignUrl, 'Assign', details);
- 		if(newWin)
-			newWin.focus();
-		else
-			alert("Could not save - if you have a popup blocker this is most likely the cause.");
- 		*/
  	}
 }
 
@@ -1511,27 +1507,19 @@ function executeTask(url, openInPopup)
 
 function insertComponent() 
 {
-	//alert("insertUrl in insertComponent:" + insertUrl.substring(0, 50) + '\n' + insertUrl.substring(50));
-	details = "width=600,height=700,left=" + (document.body.clientWidth / 4) + ",top=" + (document.body.clientHeight / 4) + ",toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=no";
-	newWin=window.open(insertUrl, "Edit", details);
-	if(newWin)
-		newWin.focus();
-	else
-		alert("Could not open component list - if you have a popup blocker this is most likely the cause.");
+	isDirty = false;
+	openInlineDiv(insertUrl, 600, 750, true);
 }
 
 function insertComponentByUrl(insertUrl) 
 {
-	details = "width=600,height=700,left=" + (document.body.clientWidth / 4) + ",top=" + (document.body.clientHeight / 4) + ",toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=no";
-	newWin=window.open(insertUrl, "Edit", details);
-	if(newWin)
-		newWin.focus();
-	else
-		alert("Could not open component list - if you have a popup blocker this is most likely the cause.");
+	isDirty = false;
+	openInlineDiv(insertUrl, 600, 750, true);
 }
 
 function setAccessRights(slotId, slotContentId) 
 {
+	isDirty = false;
 	//alert("slotId in setAccessRights:" + slotId);
 	//alert("currentUrl:" + document.location.href);
 	//alert("slotId: " + slotId + " - slotContentId:" + slotContentId);
@@ -1540,34 +1528,28 @@ function setAccessRights(slotId, slotContentId)
 
 function deleteComponent() 
 {
+	isDirty = false;
 	//alert("deleteUrl in deleteComponent:" +  + deleteUrl.substring(0, 50) + '\n' + deleteUrl.substring(50));
 	document.location.href = deleteUrl;
 }
 
 function deleteComponentByUrl(url) 
 {
+	isDirty = false;
 	//alert("deleteUrl in deleteComponent:" +  + deleteUrl.substring(0, 50) + '\n' + deleteUrl.substring(50));
 	document.location.href = url;
 }
 
 function changeComponent() 
 {
-	details = "width=600,height=700,left=" + (document.body.clientWidth / 4) + ",top=" + (document.body.clientHeight / 4) + ",toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=no";
-	newWin=window.open(changeUrl, "Change", details);
-	if(newWin)
-		newWin.focus();
-	else
-		alert("Could not open component list - if you have a popup blocker this is most likely the cause.");
+	isDirty = false;
+	openInlineDiv(changeUrl, 600, 750, true);
 }
 
 function changeComponentByUrl(url) 
 {
-	details = "width=600,height=700,left=" + (document.body.clientWidth / 4) + ",top=" + (document.body.clientHeight / 4) + ",toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=no";
-	newWin=window.open(url, "Change", details);
-	if(newWin)
-		newWin.focus();
-	else
-		alert("Could not open component list - if you have a popup blocker this is most likely the cause.");
+	isDirty = false;
+	openInlineDiv(url, 600, 750, true);
 }
 
 function invokeAddress(url) 

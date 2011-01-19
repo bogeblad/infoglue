@@ -146,8 +146,8 @@
 					<label for="defaultGUI">$ui.getString("tool.managementtool.mysettings.defaultGUI.label")</label>
 					<select class="sitedropbox" name="defaultGUI">
 						<option value="default" #if($defaultGUI == "default")selected="1"#end>$ui.getString("tool.common.default")</option>
-						<option value="outlook" #if($defaultGUI == "outlook")selected="1"#end>$ui.getString("tool.common.outlook")</option>
-						<option value="classic" #if($defaultGUI == "classic")selected="1"#end>$ui.getString("tool.common.classic")</option>
+						##<option value="outlook" #if($defaultGUI == "outlook")selected="1"#end>$ui.getString("tool.common.outlook")</option>
+						##<option value="classic" #if($defaultGUI == "classic")selected="1"#end>$ui.getString("tool.common.classic")</option>
 					</select>				
 				</p>
 				
@@ -164,8 +164,8 @@
 				<p style="clear: both;">		
 					<label for="toolbarVariant">$ui.getString("tool.managementtool.mysettings.toolbarVariant.label")</label>
 					<select class="sitedropbox" name="toolbarVariant">
-						<option value="default" #if($toolbarVariant == "default")selected="1"#end>Default</option>
-						<option value="compact" #if($toolbarVariant == "compact")selected="1"#end>Compact</option>
+						##<option value="default" #if($toolbarVariant == "default")selected="1"#end>Default</option>
+						<option value="compact" #if($toolbarVariant == "compact")selected="1"#end>Compact (Default)</option>
 					</select>				
 				</p>
 

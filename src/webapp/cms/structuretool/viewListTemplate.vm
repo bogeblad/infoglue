@@ -22,7 +22,7 @@
 			 		    
 		    url = 'CreateServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId&availableServiceBindingId=$availableServiceBindingId&serviceDefinitionId=$serviceDefinitionId&stay=true&path=' + path + '&entityId=' + entityId + "&qualifyerXML=" + escape(qualifyerXML);
 		    //alert('Calling:' + url);
-		    self.opener.parent.frames["main"].location.href = url;
+		    self.opener.location.href = url;
 		    window.close();
 		    //document.inputForm.submit();
 		}

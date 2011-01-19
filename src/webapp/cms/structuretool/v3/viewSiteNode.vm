@@ -146,6 +146,9 @@
 	            <li><a href="#pageHistoryTab"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
 	            <li><a href="#pageReferencesTab"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
 	            ##<li><a href="#pageAccessRightsTab"><span>$ui.getString('tool.common.accessRights.accessRightsButtonLabel')</span></a></li>
+	            #if($siteNodeTypeDefinition.name == "HTMLPage")
+	            <li><a href="#availableServiceBindingsTab"><span>Available service bindings</span></a></li>
+	            #end
 		    </ul>
 
 			#*	
@@ -313,6 +316,13 @@
     			<iframe id="pageAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
     		</div>
 			*#
+
+			#if($siteNodeTypeDefinition.name == "HTMLPage")	            
+			<div id="availableServiceBindingsTab" class="inlineTabDiv">
+				<iframe id="oldSiteNodeFrame" src="ViewSiteNode.action?siteNodeId=$siteNodeId&stay=true" border="0" width="100%" height="500px" frameborder="0"></iframe>
+			</div>
+			#end
+						
 		</div>
 	
 		<input type="hidden" name="siteNodeId" value="$!siteNodeId">

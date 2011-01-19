@@ -64,6 +64,9 @@
     <field name="dnsName" type="java.lang.String">
 	    <bind-xml name="dnsName" node="element"/>
     </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <bind-xml name="isDeleted" node="element"/>
+    </field>
     <field name="repositoryLanguages" type="org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl" collection="collection">
       <bind-xml name="repositoryLanguages" node="element" />
     </field>
@@ -159,6 +162,9 @@
     <field name="metaInfoContentId" type="java.lang.Integer">
       <bind-xml name="metaInfoContentId" node="element"/>
     </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <bind-xml name="isDeleted" node="element"/>
+    </field>
     <!--
     <field name="parentSiteNode" type="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl">
       <sql name="parentSiteNodeId"/>
@@ -224,13 +230,26 @@
     <field name="contentType" type="java.lang.String">
       <bind-xml name="contentType" node="element"/>
     </field>
-    <!--
-    <field name="owningSiteNode" type="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl">
-      <sql name="siteNodeId"/>
-    </field>
-    -->
     <field name="versionModifier" type="java.lang.String">
       <bind-xml name="versionModifier" node="element"/>
+    </field>
+    <field name="pageCacheKey" type="java.lang.String">
+   		<bind-xml name="pageCacheKey" node="element"/>
+    </field>
+    <field name="pageCacheTimeout" type="java.lang.String">
+   		<bind-xml name="pageCacheTimeout" node="element"/>
+    </field>
+    <field name="disableForceIdentityCheck" type="java.lang.Integer">
+   		<bind-xml name="disableForceIdentityCheck" node="element"/>
+    </field>
+    <field name="forceProtocolChange" type="java.lang.Integer">
+   		<bind-xml name="forceProtocolChange" node="element"/>
+    </field>
+    <field name="sortOrder" type="java.lang.Integer">
+   		<bind-xml name="sortOrder" node="element"/>
+    </field>
+    <field name="isHidden" type="java.lang.Boolean">
+   		<bind-xml name="isHidden" node="element"/>
     </field>
     <field name="serviceBindings" type="org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl" collection="collection">
       <bind-xml name="serviceBindings" node="element"/>
@@ -431,6 +450,15 @@
     <field name="type" type="java.lang.Integer">
       <bind-xml name="type" node="element"/>
     </field>
+    <field name="detailPageResolverClass" type="java.lang.String">
+       <bind-xml name="detailPageResolverClass" node="element"/>
+    </field>
+    <field name="detailPageResolverData" type="java.lang.String">
+       <bind-xml name="detailPageResolverData" node="element"/>
+    </field>
+	<field name="children" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl" collection="collection">
+     	<bind-xml name="children" node="element"/>
+   	</field>
     <!--
     <field name="contents" type="org.infoglue.cms.entities.content.impl.simple.ContentImpl" lazy="true" collection="collection">
       <sql many-key="contentTypeDefinitionId"/>
@@ -533,6 +561,9 @@
     </field>
     <field name="isProtected" type="java.lang.Integer">
       <bind-xml name="isProtected" node="element"/>
+    </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
     </field>
     
     <field name="contentTypeDefinitionId" type="java.lang.Integer">

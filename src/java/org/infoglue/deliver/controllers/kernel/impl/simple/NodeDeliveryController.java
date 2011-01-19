@@ -1274,6 +1274,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 			}
 			else
 			{
+				boundContentVOList = new ArrayList();
+				
 				if(availableServiceBindingName.equalsIgnoreCase("Meta information"))
 					logger.warn("Entering the old logic - bad for performance - why is siteNode with id:" + siteNodeId + " not getting it's metaInfoContentId:" + metaInfoContentId);
 

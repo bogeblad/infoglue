@@ -25,14 +25,10 @@ package org.infoglue.cms.entities.management.impl.simple;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 
-import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.management.AccessRight;
-import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 
 public class InfoGlueExportImpl
 {

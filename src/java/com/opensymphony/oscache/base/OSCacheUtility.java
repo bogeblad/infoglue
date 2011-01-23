@@ -4,9 +4,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.util.CacheController;
 
-import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.web.ServletCacheAdministrator;
 
 public final class OSCacheUtility

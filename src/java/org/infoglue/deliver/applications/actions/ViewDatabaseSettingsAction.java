@@ -24,7 +24,6 @@
 package org.infoglue.deliver.applications.actions;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;

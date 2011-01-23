@@ -27,17 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.databeans.InfoglueTool;
-import org.infoglue.cms.controllers.kernel.impl.simple.ToolbarController;
 import org.infoglue.cms.providers.DefaultToolsProvider;
-import org.infoglue.cms.providers.ToolbarProvider;
 import org.infoglue.cms.providers.ToolsProvider;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This service supplies the admin tool with the buttons for the context sensitive toolbar. It is also appropriate for extending the platform with plugins.

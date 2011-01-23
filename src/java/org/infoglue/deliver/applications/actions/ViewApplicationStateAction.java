@@ -26,7 +26,6 @@ package org.infoglue.deliver.applications.actions;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,13 +34,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.event.EventListenerList;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.RollingFileAppender;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.portalImpl.services.ServiceManager;
 import org.apache.pluto.portalImpl.services.portletentityregistry.PortletEntityRegistry;
@@ -53,18 +50,16 @@ import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.CmsSessionContextListener;
 import org.infoglue.cms.util.sorters.AverageInvokingTimeComparator;
-import org.infoglue.deliver.invokers.ComponentBasedHTMLPageInvoker;
 import org.infoglue.deliver.portal.ServletConfigContainer;
-import org.infoglue.deliver.portal.services.PortletEntityRegistryServiceDBImpl;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
+
+import webwork.action.ActionContext;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.OSCacheUtility;
 import com.opensymphony.oscache.web.ServletCache;
 import com.opensymphony.oscache.web.ServletCacheAdministrator;
-
-import webwork.action.ActionContext;
 
 /**
  * This is the action that shows the application state and also can be used to set up surveilence.

@@ -26,12 +26,9 @@ package org.infoglue.cms.entities.management;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.regex.Pattern;
 
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.impl.simple.SubscriptionImpl;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.infoglue.cms.util.validators.ValidatorFactory;
 
 public class SubscriptionVO implements BaseEntityVO
 {

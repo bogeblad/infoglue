@@ -23,20 +23,13 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.BaseController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.entities.management.Chat;
-import org.infoglue.cms.entities.management.Message;
 import org.infoglue.cms.entities.management.TableCount;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.CmsSessionContextListener;
 
 /**
  * This class represents the diagnostic screen of the system

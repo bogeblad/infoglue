@@ -32,7 +32,6 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.cms.util.RemoteCacheUpdater;
-import org.infoglue.deliver.util.Timer;
 
 /**
  * This class implements the action class for the startpage in the management tool.

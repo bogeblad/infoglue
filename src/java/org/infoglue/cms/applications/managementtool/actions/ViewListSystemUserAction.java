@@ -25,11 +25,8 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
 
@@ -38,7 +35,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
-import org.infoglue.deliver.util.Timer;
 
 
 /**

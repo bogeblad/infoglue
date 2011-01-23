@@ -61,7 +61,6 @@ import org.infoglue.cms.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import webwork.action.Action;
 import webwork.action.ActionContext;

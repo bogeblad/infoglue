@@ -1,7 +1,5 @@
 package org.infoglue.common.settings.controllers;
 
-import java.util.List;
-
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.entities.management.InfoGlueProperty;
 

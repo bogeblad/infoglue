@@ -24,7 +24,6 @@
 package org.infoglue.cms.applications.contenttool.actions;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 
 /**
  * This class implements the action class for the startpage in the content tool.

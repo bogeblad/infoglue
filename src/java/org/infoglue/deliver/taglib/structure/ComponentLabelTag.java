@@ -29,11 +29,10 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.ExtendedSearchController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
-import org.infoglue.deliver.util.Support;
 import org.infoglue.deliver.taglib.content.ContentAttributeTag;
+import org.infoglue.deliver.util.Support;
 
 /**
  * This is a new tag which get's a label from the current template. 

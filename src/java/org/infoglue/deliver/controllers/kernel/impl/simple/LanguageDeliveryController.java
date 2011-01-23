@@ -52,7 +52,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
-import org.infoglue.deliver.util.Timer;
 
 
 public class LanguageDeliveryController extends BaseDeliveryController

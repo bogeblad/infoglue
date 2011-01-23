@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.security.SimplifiedFallbackJNDIBasicAuthorizationModule;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class ContentVersionValidator 

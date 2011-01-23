@@ -24,7 +24,6 @@
 package org.infoglue.cms.applications.publishingtool.actions;
 
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
-import org.infoglue.cms.treeservice.ss.ManagementToolNodeSupplier;
 import org.infoglue.cms.treeservice.ss.PublishingToolNodeSupplier;
 
 import com.frovi.ss.Tree.INodeSupplier;

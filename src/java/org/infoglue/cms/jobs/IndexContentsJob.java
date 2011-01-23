@@ -22,32 +22,12 @@
 */
 package org.infoglue.cms.jobs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
-import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.PersistenceException;
-import org.exolab.castor.jdo.TransactionNotInProgressException;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
-import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.NotificationMessage;
-import org.infoglue.cms.util.RemoteCacheUpdater;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-
-import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.module.propertyset.PropertySetManager;
 
 /**
  * @author mattias

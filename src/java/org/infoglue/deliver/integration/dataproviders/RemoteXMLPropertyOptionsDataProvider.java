@@ -11,11 +11,10 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.databeans.GenericOptionDefinition;
-import org.infoglue.cms.entities.management.ContentTypeAttributeOptionDefinition;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.applications.databeans.ComponentPropertyOption;
 import org.infoglue.deliver.util.CacheController;
-import org.infoglue.cms.util.dom.DOMBuilder;
 
 public class RemoteXMLPropertyOptionsDataProvider implements PropertyOptionsDataProvider
 {

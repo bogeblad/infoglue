@@ -30,7 +30,6 @@ import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.deliver.applications.actions.UpdateCacheAction;
 import org.infoglue.deliver.util.CacheController;
 
 

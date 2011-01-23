@@ -24,7 +24,6 @@
 package org.infoglue.cms.webservices;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +49,6 @@ import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.webservices.DynamicWebserviceSerializer;
 
 

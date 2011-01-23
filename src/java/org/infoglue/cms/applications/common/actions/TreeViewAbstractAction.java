@@ -2,8 +2,6 @@ package org.infoglue.cms.applications.common.actions;
 
 import java.util.Collection;
 
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-
 import com.frovi.ss.Tree.INodeSupplier;
 import com.frovi.ss.Tree.MakeTree;
 

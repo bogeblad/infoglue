@@ -4,23 +4,35 @@
  */
 package com.opensymphony.oscache.base;
 
-import com.opensymphony.oscache.base.algorithm.AbstractConcurrentReadCache;
-import com.opensymphony.oscache.base.algorithm.LRUCache;
-import com.opensymphony.oscache.base.algorithm.UnlimitedCache;
-import com.opensymphony.oscache.base.events.*;
-import com.opensymphony.oscache.base.persistence.PersistenceListener;
-import com.opensymphony.oscache.util.FastCronParser;
+import java.io.Serializable;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.event.EventListenerList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.Serializable;
-
-import java.text.ParseException;
-
-import java.util.*;
-
-import javax.swing.event.EventListenerList;
+import com.opensymphony.oscache.base.algorithm.AbstractConcurrentReadCache;
+import com.opensymphony.oscache.base.algorithm.LRUCache;
+import com.opensymphony.oscache.base.algorithm.UnlimitedCache;
+import com.opensymphony.oscache.base.events.CacheEntryEvent;
+import com.opensymphony.oscache.base.events.CacheEntryEventListener;
+import com.opensymphony.oscache.base.events.CacheEntryEventType;
+import com.opensymphony.oscache.base.events.CacheEventListener;
+import com.opensymphony.oscache.base.events.CacheGroupEvent;
+import com.opensymphony.oscache.base.events.CacheMapAccessEvent;
+import com.opensymphony.oscache.base.events.CacheMapAccessEventListener;
+import com.opensymphony.oscache.base.events.CacheMapAccessEventType;
+import com.opensymphony.oscache.base.events.CachePatternEvent;
+import com.opensymphony.oscache.base.events.CachewideEvent;
+import com.opensymphony.oscache.base.events.CachewideEventType;
+import com.opensymphony.oscache.base.persistence.PersistenceListener;
+import com.opensymphony.oscache.util.FastCronParser;
 
 /**
  * Provides an interface to the cache itself. Creating an instance of this class

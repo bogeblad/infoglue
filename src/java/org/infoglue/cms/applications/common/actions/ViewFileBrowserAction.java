@@ -27,38 +27,11 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
-import org.infoglue.cms.controllers.kernel.impl.simple.SubscriptionController;
-import org.infoglue.cms.entities.content.Content;
-import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.management.CategoryVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
-import org.infoglue.cms.entities.management.InterceptionPointVO;
-import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.management.SubscriptionFilterVO;
-import org.infoglue.cms.entities.management.SubscriptionVO;
-import org.infoglue.cms.entities.structure.SiteNode;
-import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.util.DesEncryptionHelper;
 
 import webwork.action.Action;

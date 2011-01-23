@@ -38,7 +38,6 @@ import org.infoglue.cms.security.AuthorizationModule;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 
 /**

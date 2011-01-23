@@ -2,8 +2,6 @@ package org.infoglue.cms.security;
 
 import java.security.AccessControlException;
 
-import org.infoglue.cms.jobs.SubscriptionsJob;
-
 public class BasicMethodAccessManager
 {
 	

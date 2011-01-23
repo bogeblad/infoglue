@@ -27,7 +27,6 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 
-import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
 
 /**

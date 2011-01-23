@@ -29,7 +29,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.DateHelper;
-import org.infoglue.cms.util.validators.ContentVersionValidator;
 
 public class SmallestContentVersionVO implements BaseEntityVO
 {

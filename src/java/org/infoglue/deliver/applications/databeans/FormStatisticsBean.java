@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.FormEntryValueVO;
-import org.infoglue.deliver.taglib.management.FormStatisticsTag;
 
 /**
  * This class represents a databean for statistics around form entries

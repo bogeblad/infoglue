@@ -3,22 +3,17 @@ package org.infoglue.cms.util.workflow.hibernate;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.infoglue.cms.applications.workflowtool.util.InfogluePropertySet;
-import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.Timer;
-
 import net.sf.hibernate.HibernateException;
 import net.sf.hibernate.Session;
 import net.sf.hibernate.SessionFactory;
-import net.sf.hibernate.cfg.Configuration;
+
+import org.infoglue.deliver.util.CacheController;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
 import com.opensymphony.module.propertyset.cached.CachingPropertySet;
 import com.opensymphony.workflow.StoreException;
 import com.opensymphony.workflow.spi.hibernate.AbstractHibernateWorkflowStore;
-import com.opensymphony.workflow.spi.hibernate.HibernateWorkflowStore;
-import com.opensymphony.workflow.spi.hibernate.NewHibernateWorkflowStore;
 import com.opensymphony.workflow.util.PropertySetDelegate;
 
 

@@ -11,10 +11,8 @@ import javax.servlet.jsp.JspTagException;
 import javax.xml.namespace.QName;
 
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.entities.management.UserPropertiesVO;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.webservices.elements.CreatedEntityBean;
 import org.infoglue.cms.webservices.elements.StatusBean;
 import org.infoglue.deliver.taglib.TemplateControllerTag;

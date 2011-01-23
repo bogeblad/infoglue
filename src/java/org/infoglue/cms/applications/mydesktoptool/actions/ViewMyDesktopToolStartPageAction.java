@@ -34,7 +34,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.applications.managementtool.actions.WYSIWYGPropertiesAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ShortcutController;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
 import org.infoglue.cms.entities.mydesktop.WorkflowActionVO;

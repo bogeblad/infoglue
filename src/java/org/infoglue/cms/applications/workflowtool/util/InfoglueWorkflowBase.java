@@ -33,7 +33,6 @@ import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.provider.BeanProvider;
 import com.opensymphony.provider.bean.DefaultBeanProvider;
 import com.opensymphony.workflow.WorkflowException;
-//import com.opensymphony.workflow.util.ScriptVariableParser;
 
 /**
  * Base class containing logic used by both <code>InfoglueFunction</code> and <code>InfoglueCondition</code>.

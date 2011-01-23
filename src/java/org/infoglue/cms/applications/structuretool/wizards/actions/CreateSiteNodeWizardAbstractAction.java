@@ -25,7 +25,6 @@ package org.infoglue.cms.applications.structuretool.wizards.actions;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 
 
 /**

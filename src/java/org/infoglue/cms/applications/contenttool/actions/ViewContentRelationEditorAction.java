@@ -25,7 +25,6 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.util.CmsPropertyHandler;
 
 
 /**

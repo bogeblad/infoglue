@@ -1,7 +1,5 @@
 package org.infoglue.cms.util.webdav;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
 import com.bradmcevoy.http.AuthenticationService;

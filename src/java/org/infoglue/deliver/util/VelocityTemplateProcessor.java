@@ -24,20 +24,12 @@
 package org.infoglue.deliver.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayWriter;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringReader;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -57,24 +49,19 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.portal.PortalController;
 
 import com.caucho.java.WorkDir;
-import com.caucho.quercus.Quercus;
 import com.caucho.quercus.QuercusContext;
-import com.caucho.quercus.QuercusEngine;
 import com.caucho.quercus.env.Env;
 import com.caucho.quercus.env.Value;
 import com.caucho.quercus.page.QuercusPage;
-import com.caucho.quercus.program.QuercusProgram;
 import com.caucho.util.Alarm;
 import com.caucho.util.CharBuffer;
 import com.caucho.vfs.FilePath;
 import com.caucho.vfs.Path;
 import com.caucho.vfs.ReadStream;
-import com.caucho.vfs.StreamImpl;
 import com.caucho.vfs.StringWriter;
 import com.caucho.vfs.Vfs;
 import com.caucho.vfs.VfsStream;
 import com.caucho.vfs.WriteStream;
-import com.caucho.vfs.WriterStreamImpl;
 
 /**
  *

@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.DeploymentController;
 import org.infoglue.common.util.cvsclient.CVSRoot;
 import org.infoglue.common.util.cvsclient.HistoryCommandWithCVSListener;
 import org.infoglue.common.util.cvsclient.MyConnection;

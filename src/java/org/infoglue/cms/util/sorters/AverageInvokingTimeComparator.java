@@ -3,8 +3,6 @@ package org.infoglue.cms.util.sorters;
 import java.util.Comparator;
 import java.util.List;
 
-import org.infoglue.cms.entities.management.InterceptionPointVO;
-
 
 /**
  * @author Mattias Bogeblad

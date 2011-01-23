@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
-import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 

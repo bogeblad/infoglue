@@ -27,8 +27,8 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;

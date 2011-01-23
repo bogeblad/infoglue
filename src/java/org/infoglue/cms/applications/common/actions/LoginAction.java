@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.common.actions;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 
 import org.infoglue.cms.controllers.usecases.common.LoginUCC;

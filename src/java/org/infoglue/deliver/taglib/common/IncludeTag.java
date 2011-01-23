@@ -31,8 +31,6 @@ import javax.servlet.jsp.JspException;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.providers.ComponentModel;
-import org.infoglue.cms.providers.ContentDetailPageResolver;
-import org.infoglue.deliver.invokers.ComponentBasedHTMLPageInvoker;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 public class IncludeTag extends TemplateControllerTag 

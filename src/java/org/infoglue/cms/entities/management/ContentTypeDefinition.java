@@ -24,10 +24,8 @@
 package org.infoglue.cms.entities.management;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.infoglue.cms.entities.kernel.IBaseEntity;
-import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.exception.ConstraintException;
 
 public interface ContentTypeDefinition extends IBaseEntity

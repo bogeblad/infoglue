@@ -24,14 +24,12 @@
 package org.infoglue.cms.applications.managementtool.actions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
-import org.infoglue.cms.util.sorters.ReflectionComparator;
 
 
 /**

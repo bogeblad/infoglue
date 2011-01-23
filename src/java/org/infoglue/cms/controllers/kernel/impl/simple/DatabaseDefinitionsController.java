@@ -25,39 +25,15 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
-import org.apache.xpath.XPathAPI;
-import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.OQLQuery;
-import org.exolab.castor.jdo.QueryResults;
-import org.infoglue.cms.entities.content.ContentVersion;
-import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.CategoryAttribute;
-import org.infoglue.cms.entities.management.Repository;
-import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
-import org.infoglue.cms.entities.structure.SiteNodeVersion;
-import org.infoglue.cms.entities.workflow.Event;
-import org.infoglue.cms.entities.workflow.EventVO;
-import org.infoglue.cms.entities.workflow.impl.simple.EventImpl;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
-import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 

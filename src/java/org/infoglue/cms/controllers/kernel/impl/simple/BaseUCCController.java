@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.infoglue.cms.applications.workflowtool.function.email.UsersAddressProvider;
 import org.infoglue.cms.exception.SystemException;
 
 public abstract class BaseUCCController

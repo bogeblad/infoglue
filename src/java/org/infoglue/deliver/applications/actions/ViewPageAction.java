@@ -756,7 +756,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 
 				String invokerClassName = siteNode.getSiteNodeTypeDefinition().getInvokerClassName();
 				
-				if(invokerClassName == null && invokerClassName.equals(""))
+				if(invokerClassName == null || invokerClassName.equals(""))
 				{
 				    throw new SystemException("There was no page invoker class assigned to this page type.");
 				}

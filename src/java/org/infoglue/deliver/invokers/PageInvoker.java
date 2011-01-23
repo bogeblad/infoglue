@@ -536,7 +536,7 @@ public abstract class PageInvoker
 			this.generateExtensionBundles(this.getTemplateController().getDeliveryContext().getCSSExtensionBundles(), "text/css", "head");
 			
 			Set htmlHeadItems = this.getTemplateController().getDeliveryContext().getHtmlHeadItems();
-			if(htmlHeadItems != null || htmlHeadItems.size() > 0)
+			if(htmlHeadItems != null && htmlHeadItems.size() > 0)
 			{
 				int indexOfHeadEndTag = pageString.indexOf("</head");
 				if(indexOfHeadEndTag == -1)
@@ -559,7 +559,7 @@ public abstract class PageInvoker
 			}
 
 			Set htmlBodyEndItems = this.getTemplateController().getDeliveryContext().getHtmlBodyEndItems();
-			if(htmlBodyEndItems != null || htmlBodyEndItems.size() > 0)
+			if(htmlBodyEndItems != null && htmlBodyEndItems.size() > 0)
 			{
 				if(sb == null)
 					sb = new StringBuilder(pageString);

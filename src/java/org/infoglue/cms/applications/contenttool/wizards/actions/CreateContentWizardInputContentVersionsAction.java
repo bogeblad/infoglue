@@ -35,7 +35,6 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
  * This action represents the create content versions including assets in the wizards.
@@ -45,10 +44,6 @@ public class CreateContentWizardInputContentVersionsAction extends CreateContent
 {
 	private ContentTypeDefinitionVO contentTypeDefinitionVO = null;
 	private List contentTypeAttributes						= null;
-	private String returnAddress							= null;
-	private ConstraintExceptionBuffer ceb					= new ConstraintExceptionBuffer();
-
-	private String versionValue								= null;
 	private Integer currentEditorId 						= null;
 	private Integer languageId 								= null;
 	private ContentVersionVO contentVersionVO 				= new ContentVersionVO();
@@ -74,7 +69,6 @@ public class CreateContentWizardInputContentVersionsAction extends CreateContent
 		this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentTypeDefinitionId);
 		
 		this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().validateAndUpdateContentType(this.contentTypeDefinitionVO);
-		List assetKeys = ContentTypeDefinitionController.getController().getDefinedAssetKeys(this.contentTypeDefinitionVO, true);
 		
 		if(this.languageId == null)
 		{

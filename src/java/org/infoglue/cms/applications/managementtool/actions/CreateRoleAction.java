@@ -35,7 +35,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -54,7 +53,6 @@ public class CreateRoleAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = 1L;
 	
 	private RoleVO roleVO;
-	private InfoGlueRole infoGlueRole;
 	private List infoGluePrincipals = new ArrayList();
 	private List contentTypeDefinitionVOList;
 	private ConstraintExceptionBuffer ceb;
@@ -91,7 +89,7 @@ public class CreateRoleAction extends InfoGlueAbstractAction
 		String[] userNames = getRequest().getParameterValues("userName");
 		String[] contentTypeDefinitionIds = getRequest().getParameterValues("contentTypeDefinitionId");
 
-		this.infoGlueRole = RoleControllerProxy.getController().createRole(this.roleVO);
+		RoleControllerProxy.getController().createRole(this.roleVO);
 		if(userNames != null)
 		{
 			RoleControllerProxy.getController().updateRole(this.roleVO, userNames);

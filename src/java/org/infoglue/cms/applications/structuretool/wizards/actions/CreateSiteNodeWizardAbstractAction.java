@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.structuretool.wizards.actions;
 
-import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 
 
@@ -33,8 +32,6 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 
 public abstract class CreateSiteNodeWizardAbstractAction extends InfoGlueAbstractAction
 {
-    private final static Logger logger = Logger.getLogger(CreateSiteNodeWizardAbstractAction.class.getName());
-
 	/**
 	 * This methods returns a new or the stored InfoBean for the wizard. 
 	 * @return

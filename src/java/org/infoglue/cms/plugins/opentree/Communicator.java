@@ -46,13 +46,11 @@ import org.infoglue.cms.net.Node;
 public class Communicator
 {
     private String serverAddress = null;
-    private String entityName    = null;
     private Integer repositoryId = null;
     
     public Communicator(String serverAddress, String entityName, Integer repositoryId)
     {
         this.serverAddress = serverAddress;
-        this.entityName = entityName;
         this.repositoryId = repositoryId;
     }
      
@@ -71,15 +69,11 @@ public class Communicator
         
         Node rootNode = null;
         int status = Integer.parseInt(responseEnvelope.getStatus());
-
-        //System.out.println("status:" + status);
         
         if(status == 0)
         {
         	List nodes = responseEnvelope.getNodes();
-        	//System.out.println("nodes:" + nodes);
             rootNode = (Node)nodes.get(0);   
-            //System.out.println("Node:" + rootNode);
         }
         
         return rootNode;
@@ -104,9 +98,7 @@ public class Communicator
         if(status == 0)
         {
         	List nodes = responseEnvelope.getNodes();
-        	//System.out.println("nodes:" + nodes);
             node = (Node)nodes.get(0);   
-            //System.out.println("Node:" + node);
         }
         
         return node;
@@ -130,8 +122,6 @@ public class Communicator
         Node rootVO = null;
         int status = Integer.parseInt(responseEnvelope.getStatus());
 
-        //System.out.println("status:" + status);
-        
         if(status == 0)
         {
             childContents = responseEnvelope.getNodes();  
@@ -157,12 +147,9 @@ public class Communicator
             try
             {
             	Hashtable hash = serializeEnvelope(requestEnvelope);
-            	//System.out.println("Sending the envelope to the servlet...");
             	String response = postToUrl(serverAddress, hash);
-	            //System.out.println("response:" + response);
 	            
 	            responseEnvelope = deserializeEnvelope(httpEncodedStringToHashtable(response));
-	            //System.out.println("Status response:" + responseEnvelope.getStatus());
             }
             catch (Exception e)
             {
@@ -309,8 +296,6 @@ public class Communicator
 		CommunicationEnvelope communicationEnvelope = new CommunicationEnvelope();
 		communicationEnvelope.setAction("" + hash.get("action"));
 		communicationEnvelope.setStatus("" + hash.get("status"));
-		//System.out.println("Action:" + communicationEnvelope.getAction());
-		//System.out.println("Status:" + communicationEnvelope.getStatus());
 		
 		List nodes = new ArrayList();
 		int i = 0;
@@ -322,7 +307,6 @@ public class Communicator
 			n.setName((String)hash.get("nodeList." + i + ".name"));
 			n.setIsBranch(new Boolean((String)hash.get("nodeList." + i + ".isBranch")));
 			nodes.add(n);
-			//System.out.println("Node:" + n);
 			i++;
 			id = (String)hash.get("nodeList." + i + ".id");
 		}	

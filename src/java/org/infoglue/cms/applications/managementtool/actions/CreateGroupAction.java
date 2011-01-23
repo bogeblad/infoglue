@@ -35,7 +35,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -52,7 +51,6 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 public class CreateGroupAction extends InfoGlueAbstractAction
 {
 	private GroupVO groupVO;
-	private InfoGlueGroup infoGlueGroup;
 	private List infoGluePrincipals = new ArrayList();
 	private List contentTypeDefinitionVOList;
 	private ConstraintExceptionBuffer ceb;
@@ -89,7 +87,7 @@ public class CreateGroupAction extends InfoGlueAbstractAction
 		String[] userNames = getRequest().getParameterValues("userName");
 		String[] contentTypeDefinitionIds = getRequest().getParameterValues("contentTypeDefinitionId");
 
-		this.infoGlueGroup = GroupControllerProxy.getController().createGroup(this.groupVO);
+		GroupControllerProxy.getController().createGroup(this.groupVO);
 		if(userNames != null)
 		{
 			GroupControllerProxy.getController().updateGroup(this.groupVO, userNames);

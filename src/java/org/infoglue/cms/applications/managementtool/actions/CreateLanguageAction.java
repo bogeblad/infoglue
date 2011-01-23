@@ -36,10 +36,8 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 public class CreateLanguageAction extends InfoGlueAbstractAction
 {
 
-    private Integer languageId;
     private String name;
     private String languageCode;
-    private String charset;
    	private ConstraintExceptionBuffer ceb;
    	private LanguageVO languageVO;
   

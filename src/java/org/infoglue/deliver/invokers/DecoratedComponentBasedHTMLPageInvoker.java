@@ -3249,35 +3249,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			
 		return contentBindings;
 	}
-	 
-	 
-	private void printComponentHierarchy(List pageComponents, int level)
-	{
-		Iterator pageComponentIterator = pageComponents.iterator();
-		while(pageComponentIterator.hasNext())
-		{
-			InfoGlueComponent tempComponent = (InfoGlueComponent)pageComponentIterator.next();
-			
-			for(int i=0; i<level; i++)
-			    logger.info(" ");
-			
-			logger.info("  component:" + tempComponent.getName());
-			
-			Iterator slotIterator = tempComponent.getSlotList().iterator();
-			while(slotIterator.hasNext())
-			{
-				Slot slot = (Slot)slotIterator.next();
-				
-				for(int i=0; i<level; i++)
-					logger.info(" ");
-					
-				logger.info(" slot for " + tempComponent.getName() + ":" + slot.getId());
-				printComponentHierarchy(slot.getComponents(), level + 1);
-			}
-		}			
-	}
-	
-  	public String getLocalizedString(Locale locale, String key) 
+
+	public String getLocalizedString(Locale locale, String key) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
 

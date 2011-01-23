@@ -29,7 +29,6 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.controllers.kernel.impl.simple.ToolbarController;
 import org.infoglue.cms.providers.ToolbarProvider;
@@ -42,8 +41,6 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 
 public class AdminToolbarService
 {
-	private final static Logger logger = Logger.getLogger(AdminToolbarService.class.getName());
-
 	private static final long serialVersionUID = 1L;
 	
 	private List<ToolbarProvider> toolbarProviders = new ArrayList<ToolbarProvider>();

@@ -50,7 +50,6 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 {
 	private ConstraintExceptionBuffer ceb 		= null;
 	private String returnAddress 				= "CreateContentWizardFinish!V3.action";
-	private String refreshAddress 				= null;
 	private Integer contentId					= null;
 	private Integer contentVersionId 			= null;
 	private String versionDone 					= null;
@@ -109,14 +108,12 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(createContentWizardInfoBean.getContentTypeDefinitionId());
 			List assetKeys = ContentTypeDefinitionController.getController().getDefinedAssetKeys(contentTypeDefinitionVO, true);
 			
-			boolean hasMandatoryAssets = false;
 			Iterator assetKeysIterator = assetKeys.iterator();
 			while(assetKeysIterator.hasNext())
 			{
 				AssetKeyDefinition assetKeyDefinition = (AssetKeyDefinition)assetKeysIterator.next();
 				if(assetKeyDefinition.getIsMandatory().booleanValue())
 				{
-					hasMandatoryAssets = true;
 					DigitalAssetVO asset = DigitalAssetController.getController().getDigitalAssetVO(createContentWizardInfoBean.getContentVO().getId(), languageId, assetKeyDefinition.getAssetKey(), false);
 					if(asset == null)
 					{

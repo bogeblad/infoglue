@@ -27,14 +27,9 @@ import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 
 public class DecoratedComponentLogic extends ComponentLogic 
 {
-	private TemplateController templateController = null;
-	private InfoGlueComponent infoGlueComponent = null;
-
 	public DecoratedComponentLogic(TemplateController templateController, InfoGlueComponent infoGlueComponent)
 	{
 		super(templateController, infoGlueComponent);
-		this.templateController = templateController;
-		this.infoGlueComponent = infoGlueComponent;
 	}
 	
 	/**

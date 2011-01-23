@@ -49,7 +49,6 @@ public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule
 	protected Properties extraProperties = null;
 	private Database transactionObject 	= null;
 
-	private AuthorizationModule mainAuthorizationModule = null;
 	private AuthorizationModule authorizationModule = null;
 
 	private AuthorizationModule getMainAuthorizationModule() throws SystemException
@@ -61,7 +60,6 @@ public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule
 			logger.info("authorizationModule:" + authorizationModule);
 			authorizationModule.setExtraProperties(this.extraProperties);
 			authorizationModule.setTransactionObject(this.getTransactionObject());
-			//logger.info("InfoGlueAuthenticationFilter.extraProperties:" + this.extraProperties);
     	}
     	catch(Exception e)
     	{
@@ -81,7 +79,6 @@ public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule
 			logger.info("authorizationModule:" + authorizationModule);
 			authorizationModule.setExtraProperties(this.extraProperties);
 			authorizationModule.setTransactionObject(this.getTransactionObject());
-			//logger.info("InfoGlueAuthenticationFilter.extraProperties:" + this.extraProperties);
     	}
     	catch(Exception e)
     	{
@@ -268,13 +265,6 @@ public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule
 		
 		return users;
 	}
-/*
-	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws Exception
-	{
-		throw new Exception("Unsupported operation");
-		//return null;
-	}
-*/
 	
 	public List getUsers(String roleName) throws Exception
 	{

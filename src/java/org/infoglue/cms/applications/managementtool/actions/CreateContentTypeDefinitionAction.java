@@ -41,8 +41,6 @@ public class CreateContentTypeDefinitionAction extends InfoGlueAbstractAction
 	
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
 	private ConstraintExceptionBuffer ceb;
-    private String name;
-    private String description;
 	
 	public CreateContentTypeDefinitionAction()
 	{

@@ -51,7 +51,6 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
     private final static Logger logger = Logger.getLogger(DeleteSiteNodeAction.class.getName());
 
 	private SiteNodeVO siteNodeVO;
-	private Integer siteNodeId;
 	private SiteNodeVO parentSiteNodeVO;
 	private Integer parentSiteNodeId;
 	private Integer changeTypeId;

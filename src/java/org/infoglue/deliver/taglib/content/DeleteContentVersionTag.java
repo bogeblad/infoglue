@@ -6,8 +6,6 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.infoglue.cms.security.InfoGluePrincipal;
-
 /**
  * This tag helps update a content in the cms from the delivery application.
  */
@@ -19,9 +17,6 @@ public class DeleteContentVersionTag extends InfoGlueWebServiceTag
      */
     private static final long serialVersionUID = -1904980538720103871L;
 
-    /**
-     *  
-     */
     private String operationName = "deleteContentVersion";
 
     /**
@@ -32,14 +27,6 @@ public class DeleteContentVersionTag extends InfoGlueWebServiceTag
 
 	private Integer contentVersionId;
 
-    /**
-     *  
-     */
-    private InfoGluePrincipal principal;
-
-    /**
-     *  
-     */
     public DeleteContentVersionTag()
     {
         super();
@@ -58,9 +45,6 @@ public class DeleteContentVersionTag extends InfoGlueWebServiceTag
         return EVAL_BODY_INCLUDE;
     }
 
-    /**
-     *  
-     */
     public int doEndTag() throws JspException
     {
         try
@@ -88,14 +72,6 @@ public class DeleteContentVersionTag extends InfoGlueWebServiceTag
     public void setOperationName(final String operationName)
     {
         this.operationName = operationName;
-    }
-
-    /**
-     *  
-     */
-    public void setPrincipal(final String principalString) throws JspException
-    {
-        this.principal = (InfoGluePrincipal) this.evaluate("remoteContentService", "principal", principalString, InfoGluePrincipal.class);
     }
 
     public void setContentVersionId(String contentVersionId) throws JspException

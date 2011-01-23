@@ -46,8 +46,6 @@ import com.opensymphony.oscache.base.OSCacheUtility;
 
 public final class CmsContextListener implements ServletContextListener 
 {
-    private final static Logger logger = Logger.getLogger(CmsContextListener.class.getName());
-
 	/**
 	 * This method is called when the servlet context is 
 	 * initialized(when the Web Application is deployed). 

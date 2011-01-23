@@ -29,14 +29,11 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.exception.SystemException;
 
 public abstract class BaseUCCController
 {
-    private final static Logger logger = Logger.getLogger(BaseUCCController.class.getName());
-
     /**
      * Begins a transaction on the named database
      */

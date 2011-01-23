@@ -26,7 +26,6 @@ package org.infoglue.cms.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.infoglue.cms.providers.ContentDetailPageResolver;
 import org.infoglue.cms.providers.DefaultContentDetailPageResolver;
 
@@ -37,8 +36,6 @@ import org.infoglue.cms.providers.DefaultContentDetailPageResolver;
 
 public class ContentDetailPageResolversService
 {
-	private final static Logger logger = Logger.getLogger(ContentDetailPageResolversService.class.getName());
-
 	private static final long serialVersionUID = 1L;
 	
 	private List<ContentDetailPageResolver> contentDetailPageResolvers = new ArrayList<ContentDetailPageResolver>();

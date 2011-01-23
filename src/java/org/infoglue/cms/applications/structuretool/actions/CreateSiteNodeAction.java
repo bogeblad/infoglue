@@ -65,9 +65,6 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 {
     private final static Logger logger = Logger.getLogger(CreateSiteNodeAction.class.getName());
 
-    private Integer siteNodeId;
-    private String name;
-    private Boolean isBranch;
     private Integer parentSiteNodeId;
     private Integer siteNodeTypeDefinitionId;
     private Integer pageTemplateContentId;
@@ -244,7 +241,6 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     	logger.info("isBranch:" + this.siteNodeVO.getIsBranch());
     	
     	Database db = CastorDatabaseService.getDatabase();
-        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
         beginTransaction(db);
 

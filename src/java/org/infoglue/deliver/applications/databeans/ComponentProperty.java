@@ -60,7 +60,6 @@ public class ComponentProperty
 	private Integer componentId;
 	private String entityClass;
 	private Integer entityId;
-	private String assetKey;
 	private String value;
 	private boolean isMultipleBinding 		= false;
 	private boolean isAssetBinding 			= false;
@@ -168,11 +167,6 @@ public class ComponentProperty
 		}
 		
 		return sb.toString();
-	}
-
-	public void setAssetKey(String assetKey)
-	{
-		this.assetKey = assetKey;
 	}
 
 	public void setId(Integer integer)

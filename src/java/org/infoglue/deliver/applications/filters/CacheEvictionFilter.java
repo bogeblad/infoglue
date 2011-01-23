@@ -54,12 +54,10 @@ public class CacheEvictionFilter implements Filter
 
     private static String FILTER_URIS_PARAMETER = "FilterURIs";
     
-    private FilterConfig filterConfig = null;
     private URIMatcher uriMatcher = null;
     
     public void init(FilterConfig filterConfig) throws ServletException 
     {
-        this.filterConfig = filterConfig;
         String filterURIs = filterConfig.getInitParameter(FILTER_URIS_PARAMETER);
         uriMatcher = URIMatcher.compilePatterns(splitString(filterURIs, ","), false);
     }

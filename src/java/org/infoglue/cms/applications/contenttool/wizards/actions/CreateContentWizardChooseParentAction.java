@@ -28,12 +28,10 @@ import java.util.List;
 
 import org.infoglue.cms.applications.contenttool.actions.ViewContentTreeActionInterface;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
  * This action represents a tree where the user can select where to save his new content.
@@ -49,27 +47,15 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 	private Integer languageId;
 	private String componentId;
 	private String propertyName;
-	private String refreshAddress;
 	private String showSimple;
 	
 	private Integer parentContentId;
 	private Integer repositoryId;
-	private ConstraintExceptionBuffer ceb;
 	
 	private String returnAddress;
 	private String[] allowedContentTypeIds	 = null;
 	
 	private List repositories;
-	
-	public CreateContentWizardChooseParentAction()
-	{
-		this(new ContentVO());
-	}
-	
-	public CreateContentWizardChooseParentAction(ContentVO contentVO)
-	{
-		this.ceb = new ConstraintExceptionBuffer();			
-	}	
 
 	public String doExecute() throws Exception
 	{

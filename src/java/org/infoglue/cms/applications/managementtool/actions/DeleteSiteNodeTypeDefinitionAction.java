@@ -37,7 +37,6 @@ import org.infoglue.cms.exception.SystemException;
 public class DeleteSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
 {
 	private SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO;
-	private Integer siteNodeTypeDefinitionId;
 	
 	public DeleteSiteNodeTypeDefinitionAction()
 	{
@@ -65,6 +64,4 @@ public class DeleteSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
     {
         return this.siteNodeTypeDefinitionVO.getSiteNodeTypeDefinitionId();
     }
-        
-	
 }

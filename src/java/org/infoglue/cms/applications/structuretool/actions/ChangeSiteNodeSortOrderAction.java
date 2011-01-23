@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
-import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 
@@ -33,8 +32,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 
 public class ChangeSiteNodeSortOrderAction extends InfoGlueAbstractAction
 {
-    private final static Logger logger = Logger.getLogger(ChangeSiteNodeSortOrderAction.class.getName());
-
     private Integer siteNodeId;
     private Integer beforeSiteNodeId; //If used overrides direction
     private String direction;

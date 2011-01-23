@@ -65,7 +65,6 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 	private boolean showLeafs = true;
 	private String[] allowedContentTypeIds = null;
 	private InfoGluePrincipal infogluePrincipal = null;
-	private Integer repositoryId = null;
 	private List languageVOList = null;
 	
 	public ContentNodeSupplier(Integer repositoryId, InfoGluePrincipal infogluePrincipal) throws SystemException
@@ -74,7 +73,6 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 		try
 		{
 		    this.infogluePrincipal = infogluePrincipal;
-		    this.repositoryId = repositoryId;
 		    this.languageVOList = LanguageController.getController().getLanguageVOList(repositoryId);
 
 			Timer t = new Timer();

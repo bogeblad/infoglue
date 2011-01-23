@@ -39,7 +39,7 @@ import org.infoglue.cms.security.InfoGluePrincipal;
  * This controller is made for cleaning old versions.
  */
 
-@SuppressWarnings({"unused", "unchecked", "static-access"})
+@SuppressWarnings({"unchecked", "static-access"})
 public class ContentCleanerController  extends BaseController
 {
     private final static Logger logger                                     = Logger.getLogger(ContentCleanerController.class);

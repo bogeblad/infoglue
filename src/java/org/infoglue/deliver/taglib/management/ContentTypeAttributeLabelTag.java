@@ -288,7 +288,6 @@ public class ContentTypeAttributeLabelTag extends TemplateControllerTag
 	 * @return
 	 * @throws SystemException
 	 */
-	@SuppressWarnings("unchecked")
 	private static ContentTypeAttribute getContentTypeDefinitionAttribute(ContentTypeDefinitionVO ctd, String attributeName) throws SystemException
 	{
 		List<ContentTypeAttribute> attrs = ContentTypeDefinitionController.getController().getContentTypeAttributes(ctd, true);

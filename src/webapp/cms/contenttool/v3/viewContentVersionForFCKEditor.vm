@@ -83,7 +83,7 @@
 		var plainEditorsToolbars = new Array();
 		var plainEditorsExtraConfig = new Array();
 		var htmlEditors = new Array();
-	
+
 		function getContentVersionId()
 		{
 			return "$!contentVersionId";
@@ -288,6 +288,7 @@
 
 		function refreshAll()
 		{
+			//alert("document.location:" + document.location.href);
 			document.location.reload(true);
 		}
 
@@ -301,9 +302,10 @@
 				//$("#tabsContainer").tabs("load", 2)
 			}
 		}
-	
+		
 		function loadFrame(index)
 		{
+			//("$!contentVersionId in loadFrame");
 			var assetSrcUrl 						= "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentVersionId=$!contentVersionId&assetTypeFilter=.*";
 			var contentCoverSrcUrl 					= "ViewContent!V3.action?contentId=$!contentId&stay=true&inline=true";
 			var contentHistorySrcUrl 				= "ViewContentVersionHistory!V3.action?contentId=$!contentId&inline=true";
@@ -344,11 +346,11 @@
 			resizeScrollArea();
 		}
 		
-		$(document).ready(function(){
+		$(document).ready(function() {
 			
 			$("input.compare").hide();
 			$("input.attachAsset").hide();
-		
+			
 			#if($anchor)
 		    	#if($!anchor == "contentVersionBlock")
 			    	$("#tabsContainer").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
@@ -388,188 +390,188 @@
 	  	});
 	  	
 
-	    					/*
-	    					 * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
-	    					 */	
-	    					 	
-	    					function compare()
-	    					{
-	    						if($("#contentHistoryFrame").get(0).contentWindow.compare)
-	    							$("#contentHistoryFrame").get(0).contentWindow.compare();
-	    					}
+		/*
+		 * This method acts as a proxy to the frame that has the view in the tabbed world we live in.
+		 */	
+		 	
+		function compare()
+		{
+			if($("#contentHistoryFrame").get(0).contentWindow.compare)
+				$("#contentHistoryFrame").get(0).contentWindow.compare();
+		}
 
-	    					/*
-	    					 * This method is a hook
-	    					 */	
-	    					 	
-	    					function save()
-	    					{
-		    					if($("#contentCoverFrame").get(0).contentWindow.save)
-									$("#contentCoverFrame").get(0).contentWindow.save();
-								if($("#contentAccessRightsFrame").size() && $("#contentAccessRightsFrame").get(0).contentWindow.save)
-									$("#contentAccessRightsFrame").get(0).contentWindow.save();
-								if($("#contentVersionAccessRightsFrame").size() && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
-									$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
+		/*
+		 * This method is a hook
+		 */	
+		 	
+		function save()
+		{
+			if($("#contentCoverFrame").get(0).contentWindow.save)
+				$("#contentCoverFrame").get(0).contentWindow.save();
+			if($("#contentAccessRightsFrame").size() && $("#contentAccessRightsFrame").get(0).contentWindow.save)
+				$("#contentAccessRightsFrame").get(0).contentWindow.save();
+			if($("#contentVersionAccessRightsFrame").size() && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
+				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
+
+			validateAndSubmitContentForm();
+		}
+		
+		function saveAndExit(url)
+		{
+			if($("#contentCoverFrame").get(0).contentWindow.save)
+				$("#contentCoverFrame").get(0).contentWindow.save();
+			if($("#contentAccessRightsFrame").size() && $("#contentAccessRightsFrame").get(0).contentWindow.save)
+				$("#contentAccessRightsFrame").get(0).contentWindow.save();
+			if($("#contentVersionAccessRightsFrame").size() && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
+				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
+
+			document.editForm.closeOnLoad.value = "true";
+			validateAndSubmitContentFormThenClose();		
+		}
+					
+		/*
+		 * This method is a hook
+		 */	
+		 	
+		function validateAndSubmitForm()
+		{
+			validateAndSubmitContentForm();
+		}
+		
+		function validateAndSubmitContentForm()
+		{
+			if(allowSave == false)
+			{
+				alert("$ui.getString("tool.contenttool.cannotSaveBecauseInvalidClose")");
+				return;
+			}
+		
+			pastedTime = count; 
+			
+			if(beenWarned)
+			{
+				answer = confirm("You have not saved for " + pastedTime + " minutes. We strongly recommends you copy the text so you don't risk loosing it if you have been inactive for to long. Do you want to save anyway?");
+			}
+			
+			if (!beenWarned || answer)
+			{
+				isValid = true;
+				
+				#foreach($attribute in $contentTypeAttributes)
+	   				currentEditorId = currentEditorIdHash["${attribute.name}CurrentEditorId"];
+	   				if(currentEditorId)
+	   					document.getElementById("currentEditorId").value = currentEditorId;
+	   				
+	   				//alert("currentEditorId:" + currentEditorId);
+					if(currentEditorId == 1)
+					{
+						#if($prefferedWYSIWYG == "ckeditor3")
+							var editor_data = CKEDITOR.instances.${attribute.name}.getData();
+							document.getElementById("$attribute.name").value = untransformAttribute(editor_data);
+						#else
+							var wysiwygEditor = htmlEditors["${attribute.name}WYSIWYGEditor"];
+							var oEditor = FCKeditorAPI.GetInstance('${attribute.name}') ;
+							//alert("untransformedAttribute:" + untransformedAttribute);
+							document.getElementById("$attribute.name").value = untransformAttribute(oEditor.GetXHTML(false));
+						#end
+					}
+					else if(currentEditorId == 2)
+					{
+						document.getElementById("$attribute.name").value = document.applets("${attribute.name}InfoGlueCodeEditor").getText();
+					}
 	
-	    						validateAndSubmitContentForm();
-	    					}
-	    					
-	    					function saveAndExit(url)
-							{
-								if($("#contentCoverFrame").get(0).contentWindow.save)
-									$("#contentCoverFrame").get(0).contentWindow.save();
-								if($("#contentAccessRightsFrame").size() && $("#contentAccessRightsFrame").get(0).contentWindow.save)
-									$("#contentAccessRightsFrame").get(0).contentWindow.save();
-								if($("#contentVersionAccessRightsFrame").size() && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
-									$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
-
-								document.editForm.closeOnLoad.value = "true";
-								validateAndSubmitContentFormThenClose();		
-							}
-	    								
-	    					/*
-	    					 * This method is a hook
-	    					 */	
-	    					 	
-	    					function validateAndSubmitForm()
-	    					{
-	    						validateAndSubmitContentForm();
-	    					}
-	    					
-	    					function validateAndSubmitContentForm()
-	    					{
-	    						if(allowSave == false)
-	    						{
-	    							alert("$ui.getString("tool.contenttool.cannotSaveBecauseInvalidClose")");
-	    							return;
-	    						}
-	    					
-	    						pastedTime = count; 
-	    						
-	    						if(beenWarned)
-	    						{
-	    							answer = confirm("You have not saved for " + pastedTime + " minutes. We strongly recommends you copy the text so you don't risk loosing it if you have been inactive for to long. Do you want to save anyway?");
-	    						}
-	    						
-	    						if (!beenWarned || answer)
-	    						{
-	    							isValid = true;
-	    							
-	    							#foreach($attribute in $contentTypeAttributes)
-	    				   				currentEditorId = currentEditorIdHash["${attribute.name}CurrentEditorId"];
-	    				   				if(currentEditorId)
-	    				   					document.getElementById("currentEditorId").value = currentEditorId;
-	    				   				
-	    				   				//alert("currentEditorId:" + currentEditorId);
-	    								if(currentEditorId == 1)
-	    								{
-	    									#if($prefferedWYSIWYG == "ckeditor3")
-		    									var editor_data = CKEDITOR.instances.${attribute.name}.getData();
-		    									document.getElementById("$attribute.name").value = untransformAttribute(editor_data);
-	    									#else
-		    									var wysiwygEditor = htmlEditors["${attribute.name}WYSIWYGEditor"];
-		    									var oEditor = FCKeditorAPI.GetInstance('${attribute.name}') ;
-		    									//alert("untransformedAttribute:" + untransformedAttribute);
-		    									document.getElementById("$attribute.name").value = untransformAttribute(oEditor.GetXHTML(false));
-	    									#end
-	    								}
-	    								else if(currentEditorId == 2)
-	    								{
-	    									document.getElementById("$attribute.name").value = document.applets("${attribute.name}InfoGlueCodeEditor").getText();
-	    								}
-	    				
-	    				   				#if($attribute.inputType != "digitalAsset")
-	    									//isCurrentValid = validate${attribute.name}();
-	    									//if(isCurrentValid == false)
-	    									//	isValid = false;
-	    								#end
-	    							#end
-	    							
-	    							if(isValid)
-	    							{
+	   				#if($attribute.inputType != "digitalAsset")
+						//isCurrentValid = validate${attribute.name}();
+						//if(isCurrentValid == false)
+						//	isValid = false;
+					#end
+				#end
+				
+				if(isValid)
+				{
 					$(".optionListWidget option").attr('selected', 'selected');
-	    								buildVersionValue(); 
-	    								document.editForm.submit();
-	    							}
-	    						}
-	    					}
-	    								    				
-	    					function validateAndSubmitContentFormThenExit()
-	    					{
-	   							document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
-	   							validateAndSubmitContentForm();		
-	    					}
-	    					
-	    					function validateAndSubmitContentFormThenClose()
-	    					{
-	    						validateAndSubmitContentForm();
-	    					}
-	    			
-	    					function validateAndSubmitContentFormThenSubmitToPublish()
-	    					{
-	    						//alert("Action:" + document.editForm.action);
-	    						document.editForm.publishOnLoad.value = "true";
-	    						//document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
-	    						validateAndSubmitContentForm();
-	    					}
-	    				
-	    					
-	    					function buildVersionValue()
-	    					{
-	    						var versionValue = "<?xml version='1.0' encoding='UTF-8'?>";
-	    						versionValue += "<article xmlns='x-schema:ArticleSchema.xml'>";
-	    						versionValue += "<attributes>";
-	    						
-	    						#foreach($attribute in $contentTypeAttributes)
-	    			   				#if($attribute.inputType != "digitalAsset")
-	    								versionValue += "<$attribute.name>";
-	    								versionValue += "<![CDATA[" + getValue("${attribute.name}") + "]]>";
-	    								//versionValue += "<![CDATA[" + document.editForm.${attribute.name}.value + "]]>";
-	    								versionValue += "</$attribute.name>";
-	    							#end
-	    						#end
-	    
-	    						versionValue += "<IGAuthorFullName>";
-	    						versionValue += "<![CDATA[$infoGluePrincipal.firstName $infoGluePrincipal.lastName]]>";
-	    						versionValue += "</IGAuthorFullName>";
-	    
-	    						versionValue += "<IGAuthorEmail>";
-	    						versionValue += "<![CDATA[$infoGluePrincipal.email]]>";
-	    						versionValue += "</IGAuthorEmail>";
-	    						
-	    						versionValue += "</attributes>";
-	    						versionValue += "</article>";
-	    						
-	    						//alert("versionValue:" + versionValue);				
-	    						document.editForm.versionValue.value = versionValue;
-	    					}
-	    							
-	    					function getValue(elementId)
-	    					{
-	    						var value = "";
-	    						//alert(elementId);
-	    						
-	    						var allElem = document.editForm.elements;
-	    						//alert("allElem:" + allElem.length);
-	    					  	for(i=0;i<allElem.length;i++)
-	    						{
-	    						    var element = allElem[i];
-	    						    //alert("element.name:" + element.name);
-	    						    //alert("element.type:" + element.type);
-	    						    
-	    						    if(element.name == elementId)
-	    						    {
-	    						    	if(element.type=='checkbox' || element.type=='radio')
-	    						        {
-	    						        	//alert("element.checked:" + element.checked);
-	    						        	if(element.checked == true)
-	    						          	{
-	    						          		if(value == "")
-	    							          		value += element.value;
-	    										else
-	    											value += ',' + element.value;				
-	    						          	}
-	    						        }
+					buildVersionValue(); 
+					document.editForm.submit();
+				}
+			}
+		}
+					    				
+		function validateAndSubmitContentFormThenExit()
+		{
+			document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
+			validateAndSubmitContentForm();		
+		}
+		
+		function validateAndSubmitContentFormThenClose()
+		{
+			validateAndSubmitContentForm();
+		}
+
+		function validateAndSubmitContentFormThenSubmitToPublish()
+		{
+			//alert("Action:" + document.editForm.action);
+			document.editForm.publishOnLoad.value = "true";
+			//document.editForm.action = "UpdateContentVersion!saveAndExitStandalone.action";
+			validateAndSubmitContentForm();
+		}
+	
+		
+		function buildVersionValue()
+		{
+			var versionValue = "<?xml version='1.0' encoding='UTF-8'?>";
+			versionValue += "<article xmlns='x-schema:ArticleSchema.xml'>";
+			versionValue += "<attributes>";
+			
+			#foreach($attribute in $contentTypeAttributes)
+   				#if($attribute.inputType != "digitalAsset")
+					versionValue += "<$attribute.name>";
+					versionValue += "<![CDATA[" + getValue("${attribute.name}") + "]]>";
+					//versionValue += "<![CDATA[" + document.editForm.${attribute.name}.value + "]]>";
+					versionValue += "</$attribute.name>";
+				#end
+			#end
+
+			versionValue += "<IGAuthorFullName>";
+			versionValue += "<![CDATA[$infoGluePrincipal.firstName $infoGluePrincipal.lastName]]>";
+			versionValue += "</IGAuthorFullName>";
+
+			versionValue += "<IGAuthorEmail>";
+			versionValue += "<![CDATA[$infoGluePrincipal.email]]>";
+			versionValue += "</IGAuthorEmail>";
+			
+			versionValue += "</attributes>";
+			versionValue += "</article>";
+			
+			//alert("versionValue:" + versionValue);				
+			document.editForm.versionValue.value = versionValue;
+		}
+				
+		function getValue(elementId)
+		{
+			var value = "";
+			//alert(elementId);
+			
+			var allElem = document.editForm.elements;
+			//alert("allElem:" + allElem.length);
+		  	for(i=0;i<allElem.length;i++)
+			{
+			    var element = allElem[i];
+			    //alert("element.name:" + element.name);
+			    //alert("element.type:" + element.type);
+			    
+			    if(element.name == elementId)
+			    {
+			    	if(element.type=='checkbox' || element.type=='radio')
+			        {
+			        	//alert("element.checked:" + element.checked);
+			        	if(element.checked == true)
+			          	{
+			          		if(value == "")
+				          		value += element.value;
+							else
+								value += ',' + element.value;				
+			          	}
+			        }
 					else if(element.type=='select-multiple')
 			        {
 			        	//alert("element.selected:" + element.selected + ":" + element.value);
@@ -577,27 +579,27 @@
 						//alert("Val:" + arr.join(","));
 						value = arr.join(",");
 			        }
-	    								else
-	    								{
-	    									var hiddenField = document.getElementById(elementId + "Hidden");
-	    									if(hiddenField)
-	    										fieldName = "document.editForm." + elementId + "Hidden";
-	    									else
-	    										fieldName = "document.editForm." + elementId;
-	    										
-	    									//alert("elementId:" + elementId);
-	    									//alert(document.getElementById(elementId).value);
-	    									//alert(fieldName);
-	    									//alert(eval(fieldName).value);
-	    									value = eval(fieldName).value;
-	    									//value = document.getElementById(elementId).value;		
-	    								}
-	    						    }      
-	    						}	
-	    													
-	    						//alert("value:" + value);
-	    						return value;
-	    					}
+					else
+					{
+						var hiddenField = document.getElementById(elementId + "Hidden");
+						if(hiddenField)
+							fieldName = "document.editForm." + elementId + "Hidden";
+						else
+							fieldName = "document.editForm." + elementId;
+							
+						//alert("elementId:" + elementId);
+						//alert(document.getElementById(elementId).value);
+						//alert(fieldName);
+						//alert(eval(fieldName).value);
+						value = eval(fieldName).value;
+						//value = document.getElementById(elementId).value;		
+					}
+			    }      
+			}	
+										
+			//alert("value:" + value);
+			return value;
+		}
 	//]]>
 	 </script>
 	    					

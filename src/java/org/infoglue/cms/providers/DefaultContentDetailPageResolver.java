@@ -75,19 +75,16 @@ public class DefaultContentDetailPageResolver implements ContentDetailPageResolv
 		return detailSiteNodeVO;
 	}
 
-	@Override
 	public Boolean usesSiteNodeSelectionDialog() 
 	{
 		return true;
 	}
 
-	@Override
 	public String getName() 
 	{
 		return "Standard detail page resolver";
 	}
 
-	@Override
 	public String getDescription() 
 	{
 		return "This resolver first checks if you have set a detail page for this content-type hard. If not it looks into the registry for any page binding directly to this content and uses the first one";

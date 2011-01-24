@@ -42,7 +42,6 @@ public class DefaultToolsProvider implements ToolsProvider
 {
     private final static Logger logger = Logger.getLogger(DefaultToolsProvider.class.getName());
 
-	@Override
 	public List<InfoglueTool> getTools(InfoGluePrincipal principal, Locale locale) 
 	{
 		List<InfoglueTool> tools = new ArrayList<InfoglueTool>();

@@ -1411,15 +1411,16 @@ public class ContentDeliveryController extends BaseDeliveryController
 		DigitalAssetVO digitalAssetVO = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
 		if(digitalAssetVO != null)
 		{
-			String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+			//String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAssetVO, contentId, languageId, db);
+			//String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
+			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAssetVO, contentId, languageId, db);
+
+			logger.info("folderName:" + folderName);
+			String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 			
 			int i = 0;
 			File masterFile = null;
-
-			String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
-			logger.info("folderName:" + folderName);
-			String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
-
 			while(filePath != null)
 			{
 				try
@@ -1465,14 +1466,16 @@ public class ContentDeliveryController extends BaseDeliveryController
 		DigitalAssetVO digitalAsset = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
 		if(digitalAsset != null)
 		{
-			String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+			//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
+			//String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
+			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
+
 			String thumbnailFileName = "thumbnail_" + width + "_" + height + "_" + fileName;
 
 			int i = 0;
 			File masterFile = null;
 			File masterThumbFile = null;
-			String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-			logger.info("folderName:" + folderName);
 			String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 			while(filePath != null)
 			{
@@ -1563,12 +1566,13 @@ public class ContentDeliveryController extends BaseDeliveryController
 			
 			if(digitalAsset != null)
 			{
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
+				//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
+				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
 
 				int i = 0;
 				File masterFile = null;
-				String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-				logger.info("folderName:" + folderName);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 				while(filePath != null)
 				{
@@ -1635,12 +1639,13 @@ public class ContentDeliveryController extends BaseDeliveryController
     	DigitalAssetVO digitalAsset = DigitalAssetController.getSmallDigitalAssetVOWithId(digitalAssetId, db);
 		if(digitalAsset != null)
 		{
-			String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+			//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, null, null, db);
+			//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
+			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, null, null, db);
 
 			int i = 0;
 			File masterFile = null;
-			String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-			logger.info("folderName:" + folderName);
 			String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 			while(filePath != null)
 			{
@@ -1746,12 +1751,13 @@ public class ContentDeliveryController extends BaseDeliveryController
 			
 			if(digitalAsset != null)
 			{
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
+				//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
+				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
 
 				int i = 0;
 				File masterFile = null;
-				String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-				logger.info("folderName:" + folderName);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 				while(filePath != null)
 				{
@@ -1799,12 +1805,13 @@ public class ContentDeliveryController extends BaseDeliveryController
 				
 				if(digitalAsset != null)
 				{
-					String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+					//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+					String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
+					//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
+					String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
 					
 					int i = 0;
 					File masterFile = null;
-					String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-					logger.info("folderName:" + folderName);
 					String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 					while(filePath != null)
 					{
@@ -1866,12 +1873,13 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    	DigitalAssetVO digitalAsset = DigitalAssetController.getSmallDigitalAssetVOWithId(digitalAssetId, db);
 			if(digitalAsset != null)
 			{
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, null, null, db);
+				//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
+				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, null, null, db);
 	
 				int i = 0;
 				File masterFile = null;
-				String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-				logger.info("folderName:" + folderName);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 				while(filePath != null)
 				{
@@ -1929,14 +1937,16 @@ public class ContentDeliveryController extends BaseDeliveryController
 			
 			if(digitalAsset != null)
 			{
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, db);
+				//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
+				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, db);
+
 				String thumbnailFileName = "thumbnail_" + width + "_" + height + "_" + fileName;
 
 				int i = 0;
 				File masterFile = null;
 				File masterThumbFile = null;
-				String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-				logger.info("folderName:" + folderName);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 				while(filePath != null)
 				{
@@ -2011,14 +2021,16 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		if(digitalAsset != null)
 		{
-			String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+			//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+			String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, null, null, db);
+			//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
+			String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, null, null, db);
+
 			String thumbnailFileName = "thumbnail_" + width + "_" + height + "_" + fileName;
 
 			int i = 0;
 			File masterFile = null;
 			File masterThumbFile = null;
-			String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-			logger.info("folderName:" + folderName);
 			String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 			while(filePath != null)
 			{
@@ -2087,14 +2099,16 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 			if(digitalAsset != null)
 			{
-				String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+				String fileName = DigitalAssetDeliveryController.getAssetFileName(digitalAsset, contentId, languageId, null);
+				//String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
+				String folderName = DigitalAssetDeliveryController.getAssetFolderName(digitalAsset, contentId, languageId, null);
+
 				String thumbnailFileName = "thumbnail_" + width + "_" + height + "_" + fileName;
 
 				int i = 0;
 				File masterFile = null;
 				File masterThumbFile = null;
-				String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
-				logger.info("folderName:" + folderName);
 				String filePath = CmsPropertyHandler.getDigitalAssetPath0() + File.separator + folderName;
 				while(filePath != null)
 				{

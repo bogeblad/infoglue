@@ -29,6 +29,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.entities.content.ContentVersion;
+import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
@@ -215,9 +220,21 @@ public class WorkingPublicationThread extends Thread
 								String disableAssetDeletionInWorkThread = CmsPropertyHandler.getDisableAssetDeletionInWorkThread();
 								if(disableAssetDeletionInWorkThread != null && !disableAssetDeletionInWorkThread.equals("true"))
 								{
+									System.out.println("*********************************************************");
+									System.out.println("We should delete all images with digitalAssetId " + objectId);
 									logger.info("We should delete all images with digitalAssetId " + objectId);
 									DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
+									System.out.println("*********************************************************");
 								}
+
+								List<ContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(new Integer(objectId));	
+					    		Iterator<ContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();
+					    		while(contentVersionVOListIterator.hasNext())
+					    		{
+					    			ContentVersionVO contentVersionVO = contentVersionVOListIterator.next();
+					    			System.out.println("Invoking clearCaches for ContentVersionImpl with id:" + contentVersionVO.getId());
+						    		CacheController.clearCaches(ContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);					    			
+					    		}
 
 								//Removing all scriptExtensionBundles to make sure
 								CacheController.removeScriptExtensionBundles();							    	
@@ -247,6 +264,7 @@ public class WorkingPublicationThread extends Thread
 					catch (Exception e) 
 					{
 						logger.error("Error handling cache update message:" + className + ":" + objectId);
+						e.printStackTrace();
 					}
 				}
 			} 

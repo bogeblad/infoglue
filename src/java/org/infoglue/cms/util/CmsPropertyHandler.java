@@ -798,7 +798,7 @@ public class CmsPropertyHandler
 	
 	public static String getLivePublicationThreadClass() 
 	{
-		return getServerNodeProperty("livePublicationThreadClass", true, "org.infoglue.deliver.util.PublicationThread");
+		return getServerNodeProperty("livePublicationThreadClass", true, "org.infoglue.deliver.util.SelectiveLivePublicationThread");
 	}
 
 	public static String getPublicationThreadDelay()
@@ -2284,6 +2284,11 @@ public class CmsPropertyHandler
         }
         
         return useSQLServerDialect.booleanValue();
+	}
+
+	public static String getAssetFileNameForm() 
+	{
+		return getServerNodeProperty("assetFileNameForm", true, "contentId_languageId_assetKey");
 	}
 
 }

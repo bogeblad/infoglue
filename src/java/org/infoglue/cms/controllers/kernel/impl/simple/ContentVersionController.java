@@ -2435,7 +2435,7 @@ public class ContentVersionController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public DigitalAssetVO checkStateAndChangeIfNeeded(Integer contentVersionId, Integer digitalAssetId, InfoGluePrincipal principal) throws SystemException, Bug
+	public DigitalAssetVO checkStateAndChangeIfNeeded(Integer contentVersionId, Integer digitalAssetId, InfoGluePrincipal principal, List<Integer> newContentVersionIdList) throws SystemException, Bug
     {
 		DigitalAssetVO resultingDigitalAssetVO = null;
 			
@@ -2451,6 +2451,7 @@ public class ContentVersionController extends BaseController
 			{
 				List events = new ArrayList();
 				contentVersion = ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, principal, contentVersionVO.getContentId(), db, events);
+				newContentVersionIdList.add(contentVersion.getId());
 				digitalAssetVO = DigitalAssetController.getController().getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
 			}
     	    

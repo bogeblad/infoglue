@@ -730,10 +730,10 @@ CREATE TABLE cmSubscription (
   name varchar(100) NOT NULL,
   isGlobal tinyint(4) NOT NULL default '0',
   entityName varchar(100),
-  entityId varchar(200),
+  entityId varchar(200) DEFAULT NULL,
   userName varchar(150) NOT NULL,
   userEmail varchar(150),
-  lastNotifiedDateTime timestamp(14) NOT NULL,
+  lastNotifiedDateTime timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY(id)
 ) TYPE = InnoDB DEFAULT CHARSET=utf8;
 
@@ -747,7 +747,6 @@ CREATE TABLE cmSubscriptionFilter (
   isAndCondition tinyint(4) NOT NULL default '1',
   PRIMARY KEY(id)
 ) TYPE = InnoDB DEFAULT CHARSET=utf8;
-
 
 INSERT INTO cmInfoGlueProperties(name, value) VALUES
   ('version', '2.9');

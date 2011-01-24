@@ -22,8 +22,36 @@
 */
 package org.infoglue.deliver.util;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
+import org.infoglue.cms.entities.content.Content;
+import org.infoglue.cms.entities.content.ContentVersion;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
+import org.infoglue.cms.entities.publishing.PublicationDetailVO;
+import org.infoglue.cms.entities.publishing.PublicationVO;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersion;
+import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
+import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
 
 /**
  * @author mattias
@@ -33,9 +61,8 @@ import org.infoglue.cms.util.CmsPropertyHandler;
  */
 public class PublicationThread extends Thread
 {
-
     public final static Logger logger = Logger.getLogger(PublicationThread.class.getName());
-
+	
 	public synchronized void run() 
 	{
         logger.info("setting block");
@@ -54,6 +81,50 @@ public class PublicationThread extends Thread
 		    logger.info("\n\n\nUpdating all caches as this was a publishing-update\n\n\n");
 		    CacheController.clearCastorCaches();
 
+			System.out.println("**************************************");
+			System.out.println("*    HERE THE MAGIC SHOULD HAPPEN    *");
+			System.out.println("**************************************");
+			Calendar calendar = Calendar.getInstance();
+			calendar.add(Calendar.HOUR, -1);
+			List<PublicationVO> publicationVOList = PublicationController.getController().getPublicationsSinceDate(calendar.getTime());
+			Iterator<PublicationVO> publicationVOListIterator = publicationVOList.iterator();
+			while(publicationVOListIterator.hasNext())
+			{
+				PublicationVO publicationVO = publicationVOListIterator.next();
+				
+				List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(publicationVO.getId());
+				Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
+				while(publicationDetailVOListIterator.hasNext())
+				{
+					PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
+					logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
+					logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
+					System.out.println("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
+					System.out.println("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
+					if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(ContentVersion.class.getName()))
+					{
+						System.out.println("YES......");
+						logger.info("We clear all caches having references to contentVersion: " + publicationDetailVO.getEntityId());
+						Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
+						
+						String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
+						System.out.println("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
+						if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
+						{
+							List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(publicationDetailVO.getEntityId());
+							Iterator<DigitalAssetVO> digitalAssetVOListIterator = digitalAssetVOList.iterator();
+				    		while(digitalAssetVOListIterator.hasNext())
+				    		{
+				    			DigitalAssetVO digitalAssetVO = digitalAssetVOListIterator.next();
+								System.out.println("We should delete all images with digitalAssetId " + digitalAssetVO.getId());
+								logger.info("We should delete all images with digitalAssetId " + digitalAssetVO.getId());
+								DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(digitalAssetVO.getId());
+				    		}
+						}
+					}				
+				}
+			}
+			
 		    String[] excludedCaches = CacheController.getPublicationPersistentCacheNames();
 			logger.info("\n\n\nclearing all except " + excludedCaches + " as we are in publish mode..\n\n\n");
 			//CacheController.clearCaches(null, null, new String[] {"ServerNodeProperties", "serverNodePropertiesCache", "pageCache", "pageCacheExtra", "componentCache", "NavigationCache", "pagePathCache", "userCache", "pageCacheParentSiteNodeCache", "pageCacheLatestSiteNodeVersions", "pageCacheSiteNodeTypeDefinition", "JNDIAuthorizationCache", "WebServiceAuthorizationCache", "importTagResultCache"});

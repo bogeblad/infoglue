@@ -13,7 +13,12 @@
 	{
 		document.editForm.submit();
 	}
-		
+	
+	function emptyTrash()
+	{
+		document.deleteAllForm.submit();
+	}
+	
 	$(document).ready(function(){
 
 		//alert("entity: $entity");
@@ -21,7 +26,7 @@
 		//alert("updateParent: $updateParent");
 		//alert("updateEntityId: $updateEntityId");
 	
-		#if($entity == "Content")
+		#if($entity == "Content" && $updateParent)
 		try
 		{
 			if(parent.refreshContent)
@@ -30,7 +35,7 @@
 		catch(e) {alert("e:" + e);}
 		#end
 	
-		#if($entity == "SiteNode")
+		#if($entity == "SiteNode" && $updateParent)
 		try
 		{
 			if(parent.refreshPage)
@@ -190,6 +195,14 @@
 	</div>
 
 	</form>		
+	
+	<form method="POST" name="deleteAllForm" action="Trashcan!empty.action">
+		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="returnAddress" value="$returnAddress"/>
+		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
+		<input type="hidden" name="filterRepositorySelect" value="$filterRepositorySelect"/>
+	</form>		
+	
 
 #lightFooterToolbar($footerButtons)
 

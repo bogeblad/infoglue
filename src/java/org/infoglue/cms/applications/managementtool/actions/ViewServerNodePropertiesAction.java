@@ -338,6 +338,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "setDerivedLastModifiedInLive");
 	    populate(ps, "maxNumberOfVersionsForDerivedLastModifiedInLive");
 	    populate(ps, "allowInternalCallsBasedOnIP");
+	    
+	    populate(ps, "assetFileNameForm");
 
 	    populate(ps, "deriveProtocolWhenUsingProtocolRedirects");
 	    populate(ps, "useAccessBasedProtocolRedirects");

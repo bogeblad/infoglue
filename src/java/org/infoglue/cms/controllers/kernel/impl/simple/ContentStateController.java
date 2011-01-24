@@ -126,7 +126,7 @@ public class ContentStateController extends BaseController
 		{
 			ContentVersion oldContentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(oldContentVersionId, db);
 			logger.info("oldContentVersion:" + oldContentVersion.getId());
-			
+				
 			if (contentId == null)
 				contentId = new Integer(oldContentVersion.getOwningContent().getContentId().intValue());
 
@@ -135,6 +135,13 @@ public class ContentStateController extends BaseController
 			//Here we create a new version if it was a state-change back to working, it's a copy of the publish-version
 			if (stateId.intValue() == ContentVersionVO.WORKING_STATE.intValue())
 			{
+				ContentVersion oldWorkingContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentId, oldContentVersion.getValueObject().getLanguageId(), db);
+				if(oldWorkingContentVersion.getId() > oldContentVersion.getId())
+				{
+					oldContentVersion = oldWorkingContentVersion;
+					System.out.println("oldContentVersion set to latest working version - special fix for cases where user uploads asset in wysiwyg on published copy and then also saves text with new image:" + oldContentVersion.getId());
+				}
+				
 				logger.info("About to create a new working version");
 				ContentVersionVO newContentVersionVO = new ContentVersionVO();
 				newContentVersionVO.setStateId(stateId);

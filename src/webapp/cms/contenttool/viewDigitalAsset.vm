@@ -214,12 +214,15 @@
 			if(parent.refreshView)
 			{
 				#if($!refreshAll)
-					parent.refreshAll();
+					if(parent.refreshAll)
+						parent.refreshAll();
 					//alert("selecting");
-					parent.refreshView("contentVersionAssets");
+					if(parent.refreshView)
+						parent.refreshView("contentVersionAssets");
 					//alert("selected");
 				#else
-					parent.refreshView("contentVersionAssets");
+					if(parent.refreshView)
+						parent.refreshView("contentVersionAssets");
 				#end
 			}
 			else

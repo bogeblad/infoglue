@@ -81,16 +81,29 @@
 		}
 	
 		$(document).ready(function(){
+			//alert("Loaded:" + document.location.href);
 			setTimeout("initSub()", 500);
 			if(parent && parent.getContentVersionId)
 			{
 				var parentContentVersionId = parent.getContentVersionId();
 				var contentVersionId = "$!contentVersionId";
+				//alert("parentContentVersionId:" + parentContentVersionId + "=" + contentVersionId);
 				if(contentVersionId != parentContentVersionId)
 				{
 					alert("You have switched to a working version - we must reload the dialog.");
 					//alert("parent.location.href:" + parent.location.href + ":" + parentContentVersionId + "=" + contentVersionId);
+					//alert("parent.location.href:" + document.location.href + ":" + parentContentVersionId + "=" + contentVersionId);
 					parent.location.reload(true);
+					parent.loadFrame(2);
+					/*
+					if(parent.location.href.indexOf("contentVersionId") > -1)
+					{
+						parent.location.href = "ViewContent!V3.action?contentId=$!contentId&repositoryId=$!repositoryId"
+					}
+					else if(confirm("Reload?")){
+						parent.location.reload(true);
+					}
+					*/
 				}
 				
 			}
@@ -148,7 +161,7 @@
 			##<a class="editImg" href="#" onclick="openPopup('ImageEditor.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId','DigitalAsset','width=800,height=600,resizable=yes');" title="$ui.getString("tool.contenttool.editAttachment")"></a>
 			<a class="editImg" href="#" onclick="parent.openInlineDiv('ImageEditor.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, ''); " title="$ui.getString("tool.contenttool.editAttachment")"></a>
 			#end
-			<a class="updateImg" href="#" onclick="openPopup('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId','DigitalAsset','width=500,height=400,resizable=no');" title="$ui.getString("tool.contenttool.updateAttachment")"></a>
+			<a class="updateImg" href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, ''); " title="$ui.getString("tool.contenttool.updateAttachment")"></a>
 			<a class="deleteImg" href="#" onclick="deleteAsset('ViewContentVersion!deleteDigitalAssetStandalone.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId&returnAddress=$formatter.encodeURI($currentURL)', '$digitalAsset.assetKey');" title="$ui.getString("tool.contenttool.deleteAttachment")"></a>
 		</div>
  	</div>

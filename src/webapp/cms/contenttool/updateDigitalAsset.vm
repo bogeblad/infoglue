@@ -58,6 +58,63 @@
 	
 		function refreshCaller()
 		{
+			if(parent.refreshView)
+			{
+				#if($!refreshAll)
+					//alert("function:" + parent.refreshAll);
+					parent.refreshAll();
+					//alert("selecting");
+					parent.refreshView("contentVersionAssets");
+					//alert("selected");
+				#else
+					parent.refreshView("contentVersionAssets");
+				#end
+			}
+			else
+			{
+				var parentLocation = "";
+				try
+				{
+					parentLocation = "" + window.opener.parent.document.location.href;
+					if(parentLocation.indexOf("ViewContentVersion!standalone.action") > -1)
+					{
+						var stopWordIndex = parentLocation.indexOf("#");
+						if(stopWordIndex > -1)
+							var newLocation = parentLocation.substring(0, stopWordIndex) + "&anchor=digitalAssetsBlock" + parentLocation.substring(stopWordIndex);
+						else
+							var newLocation = parentLocation + "&anchor=digitalAssetsBlock";
+						
+						//alert("parentLocation:" + parentLocation);
+						//alert("newLocation:" + newLocation);
+						//window.opener.parent.document.location = parentLocation + "anchor=digitalAssetsBlock";
+						window.opener.parent.document.location.replace(newLocation);
+						//window.opener.parent.document.location.reload(true);
+					}
+					else
+					{
+						if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
+						{
+							var agt=navigator.userAgent.toLowerCase();
+				    		if(agt.indexOf("safari")!=-1)
+				    			window.opener.parent.frames[3].location.reload();
+				    		else
+				    			window.opener.parent.frames['main'].location.reload();
+						}
+						else
+						{
+							window.opener.location.reload();	
+						}
+					}
+				}
+				catch(err)
+				{
+					//alert("err:" + err.description);
+				}
+			}
+						
+			if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+		
+			/*
 			var parentLocation = "";
 			try
 			{
@@ -87,6 +144,7 @@
 			}
 			
 			window.close();
+			*/
 		}
 	
 		function ddClick()

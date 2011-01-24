@@ -348,6 +348,10 @@ public class ToolbarController implements ToolbarProvider
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.mysettings.header"))
 				return getMySettingsFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
 			
+			if(toolbarKey.equalsIgnoreCase("tool.common.trashcan.title"))
+				return getTrashcanFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
+			
+			
 			/*
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.repositoryList.header"))
 				return getRepositoriesButtons();
@@ -1775,6 +1779,24 @@ public class ToolbarController implements ToolbarProvider
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
+		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+						
+		return buttons;
+	}
+
+	private List<ToolbarButton> getTrashcanFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	{
+		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
+
+		buttons.add(new ToolbarButton("",
+				  getLocalizedString(locale, "tool.common.emptyTrashButton.label"), 
+				  getLocalizedString(locale, "tool.common.emptyTrashButton.label"),
+				  "emptyTrash();",
+				  "",
+				  "left",
+				  "clearTrashcan",
+				  true));
+
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 						
 		return buttons;

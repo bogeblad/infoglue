@@ -529,7 +529,7 @@ public class ContentController extends BaseController
 	
     private static void deleteRecursive(Content content, Iterator parentIterator, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
     {
-        if(!skipRelationCheck)
+        if(!skipRelationCheck && !content.getIsDeleted())
         {
 	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, db);
 			if(referenceBeanList != null && referenceBeanList.size() > 0)

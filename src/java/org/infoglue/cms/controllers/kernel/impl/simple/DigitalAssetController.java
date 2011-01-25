@@ -111,12 +111,43 @@ public class DigitalAssetController extends BaseController
     /**
      * returns a digitalasset
      */
-    
+
+
     public static DigitalAsset getDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
     {
 		return (DigitalAsset) getObjectWithId(DigitalAssetImpl.class, digitalAssetId, db);
     }
 
+    public static List<ContentVersionVO> getContentVersionVOListConnectedToAssetWithId(Integer digitalAssetId) throws SystemException, Bug
+    {
+    	List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
+    	
+    	Database db = CastorDatabaseService.getDatabase();
+
+	    beginTransaction(db);
+
+        try
+        {
+        	DigitalAsset da = getMediumDigitalAssetWithId(digitalAssetId, db);
+        	Iterator digitalAssetIterator = da.getContentVersions().iterator();
+    		while(digitalAssetIterator.hasNext())
+    		{
+    			ContentVersion contentVersion = (ContentVersion)digitalAssetIterator.next();
+    			versions.add(contentVersion.getValueObject());
+    		}
+    		
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+        
+        return versions;
+    }
+    
     public static DigitalAsset getMediumDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
     {
 		return (DigitalAsset) getObjectWithId(MediumDigitalAssetImpl.class, digitalAssetId, db);
@@ -130,7 +161,13 @@ public class DigitalAssetController extends BaseController
     /**
      * returns a shallow digitalasset
      */
-    
+
+    public static DigitalAssetVO getSmallDigitalAssetVOWithId(Integer digitalAssetId) throws SystemException, Bug
+    {
+    	return (DigitalAssetVO) getVOWithId(SmallDigitalAssetImpl.class, digitalAssetId);
+    }
+
+
     public static DigitalAssetVO getSmallDigitalAssetVOWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
     {
     	return (DigitalAssetVO) getVOWithId(SmallDigitalAssetImpl.class, digitalAssetId, db);

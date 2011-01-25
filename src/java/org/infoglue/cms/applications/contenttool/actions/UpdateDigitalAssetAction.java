@@ -81,7 +81,8 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
 	private DigitalAssetVO updatedDigitalAssetVO = null;
 	private String closeOnLoad;
 	private Integer contentTypeDefinitionId;
-
+	private boolean refreshAll = false;
+	
 	private String entity;
 	private Integer entityId;
 	private UserPropertiesVO userPropertiesVO;
@@ -133,9 +134,18 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
 			
 			this.digitalAssetKey = new String(this.digitalAssetKey.getBytes(fromEncoding), toEncoding);
 
-			DigitalAssetVO digitalAssetVO = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionId, digitalAssetId, getInfoGluePrincipal());
-    	    //DigitalAssetVO digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
-    	    digitalAssetVO.setAssetKey(this.digitalAssetKey);
+			List<Integer> newContentVersionIdList = new ArrayList<Integer>();
+
+			DigitalAssetVO digitalAssetVO = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionId, digitalAssetId, getInfoGluePrincipal(), newContentVersionIdList);
+			if(newContentVersionIdList.size() > 0)
+	    	{
+	    		Integer newContentVersionId = newContentVersionIdList.get(0);
+	    		if(this.contentVersionId != newContentVersionId)
+		    		refreshAll = true;
+	    		setContentVersionId(newContentVersionId);
+	    	}
+			
+			digitalAssetVO.setAssetKey(this.digitalAssetKey);
 
     		if(mpr != null)
     		{ 
@@ -262,6 +272,7 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
     		}
     		
     		updatedDigitalAssetVO = DigitalAssetController.update(digitalAssetVO, is);
+    		
 			isUpdated = true;
 
       	} 
@@ -433,4 +444,9 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
 		return ContentTypeDefinitionController.getController().getDefinedAssetKeys(this.contentTypeDefinitionVO, true);
 	}
     
+	public boolean getRefreshAll()
+	{
+		return this.refreshAll;
+	}
+
 }

@@ -243,6 +243,11 @@
 				#editPropertyFieldCSS("ServerNode.property.digitalAssetBaseUrl" "digitalAssetBaseUrl" "$this.getPropertyValue('digitalAssetBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetBaseUrl")
 				#editPropertyFieldCSS("ServerNode.property.imagesBaseUrl" "imagesBaseUrl" "$this.getPropertyValue('imagesBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.imagesBaseUrl")
 				#editPropertyFieldCSS("ServerNode.property.digitalAssetPath" "digitalAssetPath" "$this.getPropertyValue('digitalAssetPath')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetPath")
+				#set($option1 = ["contentId_languageId_assetKey", "Default since 3.0 (contentId_languageId_assetKey)"])
+				#set($option2 = ["digitalAssetId_assetFileName", "Old key used in 2.x (digitalAssetId_assetFileName)"])
+				#set($assetFileNameFormOptions = [$option1, $option2]) 
+				#selectFieldCSS("ServerNode.property.assetFileNameForm" "assetFileNameForm" $this.getPropertyValue('assetFileNameForm') $assetFileNameFormOptions "$!cmsPH.assetFileNameForm")
+				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enableDiskAssets" "enableDiskAssets" "$this.getPropertyValue('enableDiskAssets')" "$!cmsPH.enableDiskAssets")
 				#editPropertyFieldCSS("ServerNode.property.disableAssetDeletionInWorkThread" "disableAssetDeletionInWorkThread" "$this.getPropertyValue('disableAssetDeletionInWorkThread')" "51" "$!serverNodeId" "$!cmsPH.disableAssetDeletionInWorkThread")
 				#editPropertyFieldCSS("ServerNode.property.disableAssetDeletionInLiveThread" "disableAssetDeletionInLiveThread" "$this.getPropertyValue('disableAssetDeletionInLiveThread')" "51" "$!serverNodeId" "$!cmsPH.disableAssetDeletionInLiveThread")

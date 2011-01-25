@@ -23,6 +23,7 @@
 package org.infoglue.deliver.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -34,11 +35,14 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVersion;
+import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
@@ -49,6 +53,9 @@ import org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
+import org.infoglue.cms.entities.management.Language;
+import org.infoglue.cms.entities.management.Repository;
+import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl;
 import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
@@ -72,7 +79,10 @@ import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
+import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 
 /**
  * @author mattias
@@ -254,8 +264,10 @@ public class SelectiveLivePublicationThread extends PublicationThread
 							CacheController.clearCache(typesExtraMedium, idsExtraMedium);
 
 							String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
+							System.out.println("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
 							if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
 							{
+								System.out.println("We should delete all images with digitalAssetId " + objectId);
 								logger.info("We should delete all images with digitalAssetId " + objectId);
 								DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
 							}
@@ -280,6 +292,9 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						}
 						else if(Class.forName(className).getName().equals(PublicationImpl.class.getName()))
 						{
+							System.out.println("**************************************");
+							System.out.println("*    HERE THE MAGIC SHOULD HAPPEN    *");
+							System.out.println("**************************************");
 							List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(new Integer(objectId));
 							Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
 							while(publicationDetailVOListIterator.hasNext())
@@ -287,8 +302,11 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
 								logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
 								logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
+								System.out.println("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
+								System.out.println("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
 								if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(ContentVersion.class.getName()))
 								{
+									System.out.println("YES");
 									logger.info("We clear all caches having references to contentVersion: " + publicationDetailVO.getEntityId());
 									Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
 								    CacheController.clearCaches(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), null);
@@ -307,6 +325,21 @@ public class SelectiveLivePublicationThread extends PublicationThread
 									Class typesExtraMedium = MediumContentImpl.class;
 									Object[] idsExtraMedium = {contentId};
 									CacheController.clearCache(typesExtraMedium, idsExtraMedium);
+									
+									String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
+									System.out.println("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
+									if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
+									{
+										List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(publicationDetailVO.getEntityId());
+										Iterator<DigitalAssetVO> digitalAssetVOListIterator = digitalAssetVOList.iterator();
+							    		while(digitalAssetVOListIterator.hasNext())
+							    		{
+							    			DigitalAssetVO digitalAssetVO = digitalAssetVOListIterator.next();
+											System.out.println("We should delete all images with digitalAssetId " + objectId);
+											logger.info("We should delete all images with digitalAssetId " + objectId);
+											DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(digitalAssetVO.getId());
+							    		}
+									}
 								}
 								else if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(SiteNodeVersion.class.getName()))
 								{

@@ -28,7 +28,6 @@ public class RepositoryResourceFactory implements ResourceFactory
 	{
 	}	
 	
-	@Override
 	public Resource getResource(String host, String p) 
 	{		
 		Path path = Path.path(p).getStripFirst();

@@ -45,13 +45,11 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		this.contentVersion = contentVersion;
 	}	
 	
-	@Override
 	public Date getCreateDate() {
 		// Unknown
 		return null;
 	}
 
-	@Override
 	public Object authenticate(String user, String pwd) 
 	{
 		if(logger.isInfoEnabled())
@@ -76,7 +74,6 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		return null;
 	}
 	
-	@Override
 	public boolean authorise(Request arg0, Method arg1, Auth arg2) 
 	{
 		try 
@@ -93,34 +90,28 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		return true;
 	}
 	
-	@Override
 	public String checkRedirect(Request arg0) {
 		// No redirects
 		return null;
 	}
 
-	@Override
 	public Date getModifiedDate() {
 		// Unknown
 		return null;
 	}
 
-	@Override
 	public String getName() {
 		return contentVersion.getLanguageName();
 	}
 
-	@Override
 	public String getRealm() {
 		return "infoglue";
 	}
 
-	@Override
 	public String getUniqueId() {
 		return contentVersion.getId().toString();
 	}
 
-	@Override
 	public Resource child(String name) 
 	{
 		if(logger.isInfoEnabled())
@@ -139,7 +130,6 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		return null;
 	}
 
-	@Override
 	public List<? extends Resource> getChildren() 
 	{
 		if(logger.isInfoEnabled())
@@ -166,7 +156,6 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		return assets;
 	}
 
-	@Override
 	public CollectionResource createCollection(String arg0)
 			throws NotAuthorizedException, ConflictException {
 		// TODO Auto-generated method stub
@@ -188,7 +177,6 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		return p;
 	}
 
-	@Override
 	public Resource createNew(String newName, InputStream inputStream, Long length, String contentType) throws IOException, ConflictException 
 	{
 		if(logger.isInfoEnabled())
@@ -247,48 +235,36 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		return resource;
 	}
 
-	@Override
 	public void copyTo(CollectionResource arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
 	public void delete() throws NotAuthorizedException, ConflictException,
 			BadRequestException {
 		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
 	public Long getContentLength() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String getContentType(String arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Long getMaxAgeSeconds(Auth arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void sendContent(OutputStream arg0, Range arg1, Map<String, String> arg2, String arg3) throws IOException, NotAuthorizedException, BadRequestException 
 	{
-		
 	}
 
-	@Override
 	public void moveTo(CollectionResource arg0, String arg1)
 			throws ConflictException {
 		// TODO Auto-generated method stub
-		
 	}
-
 }

@@ -37,55 +37,42 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		this.cv = cv;
 	}	
 	
-	@Override
 	public Date getCreateDate() {
 		return new Date();
 	}
 
-	@Override
 	public Object authenticate(String user, String pwd) {
 		return user;
 	}
 
-	@Override
 	public boolean authorise(Request arg0, Method arg1, Auth arg2) {
 		return true;
 	}
 
-	@Override
 	public String checkRedirect(Request arg0) {
 		return null;
 	}
 
-	@Override
 	public Date getModifiedDate() {
 		return new Date();
 	}
 
-	@Override
 	public String getName() {
 		return digitalAsset.getAssetFileName().toString(); //.getLanguageName();
 	}
 
-	@Override
 	public String getRealm() {
 		return "infoglue";
 	}
 
-	@Override
 	public String getUniqueId() {
 		return digitalAsset.getId().toString();
 	}
 
-
-
-	@Override
 	public void copyTo(CollectionResource arg0, String arg1) 
 	{
-		
 	}
 
-	@Override
 	public void delete() throws NotAuthorizedException, ConflictException, BadRequestException 
 	{
 		if(logger.isInfoEnabled())
@@ -102,23 +89,19 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		}
 	}
 
-	@Override
 	public Long getContentLength() {
 		return new Long(digitalAsset.getAssetFileSize());
 	}
 
-	@Override
 	public String getContentType(String arg0) {
 		return digitalAsset.getAssetContentType();
 	}
 
-	@Override
 	public Long getMaxAgeSeconds(Auth arg0) 
 	{
 		return null;
 	}
 
-	@Override
 	public void sendContent(OutputStream out, Range arg1, Map<String, String> params, String contentType) throws IOException, NotAuthorizedException, BadRequestException 
 	{
 		try
@@ -148,7 +131,6 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		}
 	}
 
-	@Override
 	public void moveTo(CollectionResource newTargetResource, String newName) throws ConflictException 
 	{
 		try
@@ -178,12 +160,10 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		}
 	}
 
-	@Override
 	public String processForm(Map<String, String> arg0,
 			Map<String, FileItem> arg1) throws BadRequestException,
 			NotAuthorizedException, ConflictException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

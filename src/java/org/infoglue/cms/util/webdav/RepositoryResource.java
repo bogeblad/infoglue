@@ -52,7 +52,6 @@ public class RepositoryResource implements PropFindableResource, FolderResource
 	}
 	*/
 
-	@Override
 	public Object authenticate(String user, String pwd) 
 	{
 		if(logger.isInfoEnabled())
@@ -77,7 +76,6 @@ public class RepositoryResource implements PropFindableResource, FolderResource
 		return null;
 	}
 
-	@Override
 	public boolean authorise(Request arg0, Method arg1, Auth arg2) 
 	{
 		if(logger.isInfoEnabled())
@@ -96,34 +94,28 @@ public class RepositoryResource implements PropFindableResource, FolderResource
 		return true;
 	}
 
-	@Override
 	public String checkRedirect(Request arg0) {
 		// No redirects
 		return null;
 	}
 
-	@Override
 	public Date getModifiedDate() {
 		// Unknown
 		return null;
 	}
 
-	@Override
 	public String getName() {
 		return repository.getName();
 	}
 
-	@Override
 	public String getRealm() {
 		return "infoglue";
 	}
 
-	@Override
 	public String getUniqueId() {
 		return repository.getId().toString();
 	}
 
-	@Override
 	public Resource child(String name) 
 	{
 		if(logger.isInfoEnabled())
@@ -142,7 +134,6 @@ public class RepositoryResource implements PropFindableResource, FolderResource
 		return null;
 	}
 		
-	@Override
 	public List<? extends Resource> getChildren() 
 	{
 		if(logger.isInfoEnabled())
@@ -167,70 +158,55 @@ public class RepositoryResource implements PropFindableResource, FolderResource
 		return contentChildren;
 	}
 
-	@Override
 	public CollectionResource createCollection(String arg0)
 			throws NotAuthorizedException, ConflictException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Resource createNew(String arg0, InputStream arg1, Long arg2,
 			String arg3) throws IOException, ConflictException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void copyTo(CollectionResource arg0, String arg1) {
 		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
 	public void delete() throws NotAuthorizedException, ConflictException,
 			BadRequestException {
 		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
 	public Long getContentLength() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String getContentType(String arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Long getMaxAgeSeconds(Auth arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void sendContent(OutputStream arg0, Range arg1,
 			Map<String, String> arg2, String arg3) throws IOException,
 			NotAuthorizedException, BadRequestException {
 		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
 	public void moveTo(CollectionResource arg0, String arg1)
 			throws ConflictException {
 		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
 	public Date getCreateDate() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

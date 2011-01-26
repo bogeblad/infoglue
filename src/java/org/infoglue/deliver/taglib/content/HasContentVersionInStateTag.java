@@ -25,11 +25,6 @@ package org.infoglue.deliver.taglib.content;
 
 import javax.servlet.jsp.JspException;
 
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
 
 /**

@@ -25,7 +25,6 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -42,7 +41,6 @@ import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.util.Timer;
 
 import webwork.action.Action;
 

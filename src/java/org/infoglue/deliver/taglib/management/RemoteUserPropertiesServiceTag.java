@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.infoglue.cms.entities.management.UserPropertiesVO;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.webservices.elements.RemoteAttachment;

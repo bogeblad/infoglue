@@ -24,46 +24,17 @@
 package org.infoglue.cms.applications.structuretool.actions;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
-import org.infoglue.cms.controllers.kernel.impl.simple.InfoGlueSettingsController;
-import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
-import org.infoglue.cms.entities.content.Content;
-import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.ContentVersion;
-import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
-import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-import org.infoglue.cms.entities.workflow.EventVO;
-import org.infoglue.cms.exception.AccessConstraintException;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
-import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.sorters.ReflectionComparator;
 
 import webwork.action.Action;
-
-import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.module.propertyset.PropertySetManager;
 
 public class ViewSiteNodeReferencesAction extends InfoGlueAbstractAction
 {

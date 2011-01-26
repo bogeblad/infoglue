@@ -22,19 +22,13 @@
 */
 package org.infoglue.deliver.taglib.common;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
 
 import org.apache.log4j.Logger;
-import org.apache.pluto.om.window.PortletWindow;
 import org.infoglue.deliver.portal.PortletWindowIG;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 

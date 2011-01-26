@@ -24,7 +24,6 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,7 +33,6 @@ import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Subscription;
-import org.infoglue.cms.entities.management.SubscriptionFilter;
 import org.infoglue.cms.entities.management.SubscriptionFilterVO;
 import org.infoglue.cms.entities.management.SubscriptionVO;
 import org.infoglue.cms.entities.management.impl.simple.SubscriptionFilterImpl;

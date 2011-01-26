@@ -26,7 +26,6 @@ package org.infoglue.cms.applications.managementtool.actions;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
@@ -38,8 +37,6 @@ import org.infoglue.cms.util.mail.MailServiceFactory;
 
 public class CreateEmailAction extends InfoGlueAbstractAction
 {
-    private final static Logger logger = Logger.getLogger(CreateEmailAction.class.getName());
-
 	private static final long serialVersionUID = 1L;
 	
 	private List users = null;

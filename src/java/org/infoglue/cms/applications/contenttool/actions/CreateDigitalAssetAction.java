@@ -59,15 +59,13 @@ import org.infoglue.cms.entities.management.UserPropertiesVO;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.CmsSessionContextListener;
-import org.infoglue.cms.util.XMLHelper;
 import org.infoglue.cms.util.dom.DOMBuilder;
+
+import webwork.action.ActionContext;
+import webwork.multipart.MultiPartRequestWrapper;
 
 import com.mullassery.imaging.Imaging;
 import com.mullassery.imaging.ImagingFactory;
-
-import webwork.action.ActionContext;
-import webwork.config.Configuration;
-import webwork.multipart.MultiPartRequestWrapper;
 
 
 public class CreateDigitalAssetAction extends ViewDigitalAssetAction

@@ -39,7 +39,6 @@ public class DeleteLanguageAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = 1L;
 	
 	private LanguageVO languageVO;
-	private Integer languageId;
 	
 	public DeleteLanguageAction()
 	{

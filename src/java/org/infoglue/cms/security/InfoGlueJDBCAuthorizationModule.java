@@ -38,20 +38,16 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.BaseController;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SystemUserController;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Group;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.Role;
 import org.infoglue.cms.entities.management.RoleVO;
-import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.util.Timer;
 
 /**
  * @author Mattias Bogeblad

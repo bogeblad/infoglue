@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.applications.common.actions.SubscriptionsAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
@@ -37,7 +36,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.UserPropertiesController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -56,7 +54,6 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 	
 	private ConstraintExceptionBuffer ceb;
 	private SystemUserVO systemUserVO;
-	private InfoGluePrincipal infoGluePrincipal;
 
 	private List availableRoles = new ArrayList();
 	private List availableGroups = new ArrayList();
@@ -106,7 +103,7 @@ public class CreateSystemUserAction extends InfoGlueAbstractAction
 			logger.info("groups:" + groups);
 			logger.info("contentTypeDefinitionIds:" + contentTypeDefinitionIds);
 	
-			this.infoGluePrincipal = UserControllerProxy.getController().createUser(this.systemUserVO);
+			UserControllerProxy.getController().createUser(this.systemUserVO);
 			if(roles != null || groups != null)
 			{
 				UserControllerProxy.getController().updateUser(systemUserVO, roles, groups);

@@ -39,7 +39,6 @@ import org.infoglue.cms.exception.SystemException;
 public class DeleteRepositoryAction extends InfoGlueAbstractAction
 {
 	private RepositoryVO repositoryVO;
-	private Integer repositoryId;
 	private String returnAddress = null;
 	
 	public DeleteRepositoryAction()
@@ -150,5 +149,4 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 	{
 		return this.returnAddress;
 	}
-
 }

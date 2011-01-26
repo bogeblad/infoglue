@@ -26,7 +26,6 @@ package org.infoglue.deliver.taglib.structure;
 import javax.servlet.jsp.JspException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.structuretool.actions.CreateSiteNodeAction;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;

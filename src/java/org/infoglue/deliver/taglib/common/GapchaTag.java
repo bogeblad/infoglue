@@ -30,7 +30,6 @@ import javax.servlet.jsp.JspException;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
 
 /**
  * A Tag used for rendering distorted images with random text.  

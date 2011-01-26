@@ -23,16 +23,13 @@
 
 package org.infoglue.common.settings.controllers;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import org.dom4j.Document;
 import org.dom4j.Element;

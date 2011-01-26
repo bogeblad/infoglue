@@ -24,7 +24,6 @@
 package org.infoglue.cms.security;
 
 import java.net.URLEncoder;
-import java.security.MessageDigest;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;

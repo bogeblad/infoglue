@@ -26,7 +26,6 @@ package org.infoglue.cms.applications.cmstool.actions;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.applications.common.actions.SimpleXmlServiceAction;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
@@ -38,11 +37,7 @@ import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
 import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl;
-import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
-import org.infoglue.cms.entities.management.impl.simple.InterceptionPointImpl;
-import org.infoglue.cms.entities.management.impl.simple.InterceptorImpl;
-import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl;
@@ -53,8 +48,6 @@ import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
-import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 
 

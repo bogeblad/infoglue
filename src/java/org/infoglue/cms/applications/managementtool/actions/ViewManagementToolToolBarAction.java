@@ -25,7 +25,6 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;

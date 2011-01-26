@@ -33,7 +33,6 @@ public class CastorDatabaseService //extends DatabaseService
     public final static Logger logger = Logger.getLogger(CastorDatabaseService.class.getName());
 
     private static JDO jdo = null;
-    private static boolean block = false;
     
     public synchronized static JDO getJDO() throws SystemException
     {
@@ -70,10 +69,5 @@ public class CastorDatabaseService //extends DatabaseService
         {
             throw new SystemException("An error occurred while trying to get a Database object. Castor message:" + e, e);
         }
-    }
-    
-    public static synchronized void setBlock(boolean block)
-    {
-        CastorDatabaseService.block = block;
     }
 }

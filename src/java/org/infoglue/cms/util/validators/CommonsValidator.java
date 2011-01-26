@@ -191,12 +191,4 @@ public class CommonsValidator {
       final String dependentValue = ValidatorUtils.getValueAsString(bean, field.getVarValue("dependent"));
       return dependentValue == null || dependentValue.length() == 0 || (value != null && value.length() > 0);  
   }
-  
-  private static Class stringClass = new String().getClass();
-
-  private static boolean isString(Object o) {
-    if (o == null) return true;
-    return (stringClass.isInstance(o));
-  }
-      
 }                                                         

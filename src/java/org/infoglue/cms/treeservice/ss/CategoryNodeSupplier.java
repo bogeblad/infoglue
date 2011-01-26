@@ -48,8 +48,6 @@ public class CategoryNodeSupplier extends BaseNodeSupplier
 
 	private CategoryController controller = CategoryController.getController();
 
-	private ArrayList cacheLeafs;
-
 	public CategoryNodeSupplier()
 	{
 		BaseNode rootNode =  new ContentNodeImpl();
@@ -68,7 +66,6 @@ public class CategoryNodeSupplier extends BaseNodeSupplier
 	public Collection getChildContainerNodes(Integer parentNode)
 	{
 		ArrayList ret = new ArrayList();
-		cacheLeafs = new ArrayList();
 
 		List children = null;
 		try

@@ -23,16 +23,12 @@
 
 package org.infoglue.cms.applications.structuretool.wizards.actions;
 
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.applications.structuretool.actions.CreateSiteNodeAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;

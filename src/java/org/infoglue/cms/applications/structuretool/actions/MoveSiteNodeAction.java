@@ -24,19 +24,12 @@
 package org.infoglue.cms.applications.structuretool.actions;
 
 import org.apache.log4j.Logger;
-import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
-import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
-import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**

@@ -26,7 +26,6 @@ package org.infoglue.common.security.beans;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

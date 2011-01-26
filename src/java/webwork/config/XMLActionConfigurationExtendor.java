@@ -6,31 +6,23 @@
  */
 package webwork.config;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
-import org.w3c.dom.DOMException;
-import org.apache.commons.logging.*;
-import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.common.actions.WebworkAbstractAction;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.io.File;
 import java.io.StringReader;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.Iterator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import webwork.util.ClassLoaderUtils;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.log4j.Logger;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Access view configuration from an XML file and adds it to existing webwork config so plugins can register actions as well.

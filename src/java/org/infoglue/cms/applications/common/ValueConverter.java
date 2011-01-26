@@ -24,7 +24,6 @@
 package org.infoglue.cms.applications.common;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;

@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,12 +44,10 @@ import org.infoglue.cms.entities.management.AccessRightRole;
 import org.infoglue.cms.entities.management.AccessRightRoleVO;
 import org.infoglue.cms.entities.management.AccessRightUser;
 import org.infoglue.cms.entities.management.AccessRightUserVO;
-import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.InfoGlueRole;
-import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This class is responsible for checking and fixing errors when one changes authsystem from one to another.

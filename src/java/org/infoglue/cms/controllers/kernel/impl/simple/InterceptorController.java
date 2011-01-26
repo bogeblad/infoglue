@@ -33,7 +33,6 @@ import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.AccessRightUser;
 import org.infoglue.cms.entities.management.InterceptionPoint;
 import org.infoglue.cms.entities.management.Interceptor;
 import org.infoglue.cms.entities.management.InterceptorVO;

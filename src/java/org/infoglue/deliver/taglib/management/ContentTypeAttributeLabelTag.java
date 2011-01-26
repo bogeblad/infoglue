@@ -57,7 +57,6 @@ import org.infoglue.cms.entities.management.ContentTypeAttribute;
 import org.infoglue.cms.entities.management.ContentTypeAttributeParameter;
 import org.infoglue.cms.entities.management.ContentTypeAttributeParameterValue;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
@@ -289,7 +288,6 @@ public class ContentTypeAttributeLabelTag extends TemplateControllerTag
 	 * @return
 	 * @throws SystemException
 	 */
-	@SuppressWarnings("unchecked")
 	private static ContentTypeAttribute getContentTypeDefinitionAttribute(ContentTypeDefinitionVO ctd, String attributeName) throws SystemException
 	{
 		List<ContentTypeAttribute> attrs = ContentTypeDefinitionController.getController().getContentTypeAttributes(ctd, true);

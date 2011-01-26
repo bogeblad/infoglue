@@ -23,11 +23,6 @@
 
 package org.infoglue.cms.entities.content.impl.simple;
 
-import java.util.ArrayList;
-
-import org.infoglue.cms.entities.content.ContentVersion;
-import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.kernel.BaseEntityVO;
 
 public class FullContentVersionImpl extends ContentVersionImpl
 {

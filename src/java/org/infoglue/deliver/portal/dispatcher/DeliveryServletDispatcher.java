@@ -7,24 +7,17 @@
 package org.infoglue.deliver.portal.dispatcher;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.infoglue.cms.extensions.InfoglueExtension;
-import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.util.Timer;
@@ -32,7 +25,6 @@ import org.infoglue.deliver.util.Timer;
 import webwork.action.Action;
 import webwork.action.ActionContext;
 import webwork.action.ServletActionContext;
-import webwork.config.XMLActionConfigurationExtendor;
 import webwork.dispatcher.ActionResult;
 import webwork.dispatcher.GenericDispatcher;
 import webwork.dispatcher.ServletDispatcher;

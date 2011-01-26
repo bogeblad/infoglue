@@ -4,10 +4,8 @@ import java.util.Comparator;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
-import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
 
 /**
  * Sort on the content version modifyer

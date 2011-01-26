@@ -23,7 +23,6 @@
 package org.infoglue.deliver.applications.filters;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;

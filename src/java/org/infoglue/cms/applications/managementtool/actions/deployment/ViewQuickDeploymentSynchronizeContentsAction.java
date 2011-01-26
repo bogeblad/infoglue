@@ -25,8 +25,6 @@ package org.infoglue.cms.applications.managementtool.actions.deployment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +46,6 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.sorters.ComponentDeploymentComparator;
 import org.infoglue.deliver.util.webservices.DynamicWebservice;
 
 import webwork.action.Action;

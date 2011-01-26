@@ -70,7 +70,6 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 	private Integer languageId;
 	private Integer contentVersionId;
 	private Integer currentEditorId;
-	private String attributeName = "";
 	private String textAreaId = "";
 	private ContentVersionVO contentVersionVO;
 	public List attributes = null;

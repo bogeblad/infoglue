@@ -22,9 +22,6 @@
 */
 package org.infoglue.deliver.taglib.management;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 

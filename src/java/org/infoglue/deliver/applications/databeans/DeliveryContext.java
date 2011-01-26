@@ -24,7 +24,6 @@
 package org.infoglue.deliver.applications.databeans;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -101,7 +100,6 @@ public class DeliveryContext implements UsageListener
 	private Set usedPageComponentsMetaInfoContentVersionIdSet = new HashSet();
 	
 	private Date lastModifiedDateTime = null;
-	private boolean registerLastModifiedDate = false;
 	
 	//private InfoGluePrincipal infoGluePrincipal = null;
 	
@@ -155,7 +153,6 @@ public class DeliveryContext implements UsageListener
 
 	private DeliveryContext(boolean registerLastModifiedDate)
 	{
-		this.registerLastModifiedDate = registerLastModifiedDate;
 	}
 	
 	public void clear()

@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,9 +35,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.GroupPropertiesController
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.GroupPropertiesVO;
-import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.security.InfoGlueGroup;
-import org.infoglue.cms.util.CmsPropertyHandler;
 
 public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 {

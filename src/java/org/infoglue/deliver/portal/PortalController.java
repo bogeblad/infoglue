@@ -27,14 +27,11 @@ import javax.portlet.PortletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.pluto.PortletContainerException;
 import org.apache.pluto.om.window.PortletWindow;
 import org.apache.pluto.portalImpl.services.ServiceManager;
 import org.infoglue.deliver.portal.services.PortletWindowRegistryService;
-import org.infoglue.deliver.util.ThreadMonitor;
 
 /**
  * @author robert lerner

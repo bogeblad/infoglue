@@ -38,7 +38,6 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.log4j.Logger;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.security.InfoGluePrincipal;
 
 /**

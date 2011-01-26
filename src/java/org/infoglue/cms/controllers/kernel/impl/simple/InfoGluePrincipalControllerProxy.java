@@ -25,7 +25,6 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.ByteArrayInputStream;
-import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -38,19 +37,14 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.entities.management.UserProperties;
 import org.infoglue.cms.entities.management.UserPropertiesVO;
-import org.infoglue.cms.entities.content.DigitalAssetVO;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.jobs.SubscriptionsJob;
-import org.infoglue.cms.security.AuthorizationModule;
-import org.infoglue.cms.security.BasicMethodAccessManager;
-import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.InfoGlueRole;

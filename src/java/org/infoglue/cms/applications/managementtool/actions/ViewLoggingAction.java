@@ -24,33 +24,23 @@
 package org.infoglue.cms.applications.managementtool.actions;
 
 import java.io.File;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.FileUploadHelper;
 import org.infoglue.cms.util.sorters.FileComparator;
-import org.infoglue.cms.util.sorters.ReflectionComparator;
-import org.infoglue.deliver.applications.actions.ViewApplicationStateAction;
 import org.infoglue.deliver.util.MathHelper;
-
-import webwork.action.ActionContext;
 
 /**
  * This class acts as a system tail on the logfiles available.

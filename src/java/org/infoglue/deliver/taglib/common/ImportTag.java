@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.taglib.TemplateControllerTag;

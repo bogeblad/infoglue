@@ -55,7 +55,10 @@ public class ConvertedDocumentBean
 	{
 		this.tocString = tocString;
 	}
-	
+	public String getOdtFileUrl() 
+	{
+		return odtFileUrl;
+	}
 	public void setOdtFileUrl(String odtFileUrl)
 	{
 		this.odtFileUrl = odtFileUrl;

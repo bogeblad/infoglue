@@ -26,7 +26,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
-import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 
 /**
  * @author Mattias Bogeblad

@@ -39,7 +39,6 @@ public class DeleteAvailableServiceBindingAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = 1L;
 	
 	private AvailableServiceBindingVO availableServiceBindingVO;
-	private Integer availableServiceBindingId;
 	
 	public DeleteAvailableServiceBindingAction()
 	{

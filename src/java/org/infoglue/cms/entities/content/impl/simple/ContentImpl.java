@@ -79,10 +79,6 @@ public class ContentImpl implements Content
     private java.util.Collection relatedContents = new java.util.ArrayList();
     private java.util.Collection relatedByContents = new java.util.ArrayList();
 
-  	// SS - 021007: TODO: Is this ok?
-  	private Integer childCount;
-  
-    
     public java.lang.Integer getContentId()
     {
         return this.valueObject.getContentId();

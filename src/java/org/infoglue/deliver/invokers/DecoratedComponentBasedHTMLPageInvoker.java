@@ -46,10 +46,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PageTemplateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -59,7 +57,6 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
-import org.infoglue.cms.util.XMLHelper;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.ComponentBinding;
@@ -68,11 +65,9 @@ import org.infoglue.deliver.applications.databeans.ComponentPropertyOption;
 import org.infoglue.deliver.applications.databeans.ComponentTask;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.applications.databeans.Slot;
-import org.infoglue.deliver.applications.databeans.WebPage;
 import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.DecoratedComponentLogic;
-import org.infoglue.deliver.controllers.kernel.impl.simple.IntegrationDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.PageEditorHelper;
@@ -3254,35 +3249,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			
 		return contentBindings;
 	}
-	 
-	 
-	private void printComponentHierarchy(List pageComponents, int level)
-	{
-		Iterator pageComponentIterator = pageComponents.iterator();
-		while(pageComponentIterator.hasNext())
-		{
-			InfoGlueComponent tempComponent = (InfoGlueComponent)pageComponentIterator.next();
-			
-			for(int i=0; i<level; i++)
-			    logger.info(" ");
-			
-			logger.info("  component:" + tempComponent.getName());
-			
-			Iterator slotIterator = tempComponent.getSlotList().iterator();
-			while(slotIterator.hasNext())
-			{
-				Slot slot = (Slot)slotIterator.next();
-				
-				for(int i=0; i<level; i++)
-					logger.info(" ");
-					
-				logger.info(" slot for " + tempComponent.getName() + ":" + slot.getId());
-				printComponentHierarchy(slot.getComponents(), level + 1);
-			}
-		}			
-	}
-	
-  	public String getLocalizedString(Locale locale, String key) 
+
+	public String getLocalizedString(Locale locale, String key) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
 

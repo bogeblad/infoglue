@@ -39,7 +39,6 @@ public class DeleteContentTypeDefinitionAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = 1L;
 	
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
-	private Integer contentTypeDefinitionId;
 	
 	public DeleteContentTypeDefinitionAction()
 	{
@@ -65,6 +64,4 @@ public class DeleteContentTypeDefinitionAction extends InfoGlueAbstractAction
     {
         return this.contentTypeDefinitionVO.getContentTypeDefinitionId();
     }
-        
-	
 }

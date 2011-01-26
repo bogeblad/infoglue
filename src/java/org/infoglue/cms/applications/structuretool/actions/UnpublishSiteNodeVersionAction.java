@@ -47,8 +47,6 @@ import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.AccessConstraintException;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 
 /**

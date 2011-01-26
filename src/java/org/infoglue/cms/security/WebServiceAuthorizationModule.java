@@ -23,16 +23,15 @@
 
 package org.infoglue.cms.security;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -42,7 +41,6 @@ import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.util.CacheController;

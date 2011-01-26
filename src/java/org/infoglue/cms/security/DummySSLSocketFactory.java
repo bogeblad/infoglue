@@ -23,11 +23,14 @@
 
 package org.infoglue.cms.security;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+
 import javax.net.SocketFactory;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.*;
+import javax.net.ssl.TrustManager;
 
 
 /**

@@ -1,19 +1,15 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.common.ImageButton;
-import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.ContentVO;

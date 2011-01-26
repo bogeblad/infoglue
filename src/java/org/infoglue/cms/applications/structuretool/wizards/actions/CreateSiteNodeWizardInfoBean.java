@@ -23,15 +23,7 @@
 
 package org.infoglue.cms.applications.structuretool.wizards.actions;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.infoglue.cms.entities.content.Content;
-import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
-import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 
 /**
  * @author mattias

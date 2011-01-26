@@ -27,10 +27,8 @@ import java.util.Map;
 
 import org.infoglue.deliver.util.CacheController;
 
-import com.opensymphony.workflow.AbstractWorkflow;
 import com.opensymphony.workflow.WorkflowException;
 import com.opensymphony.workflow.basic.BasicWorkflow;
-import com.opensymphony.workflow.basic.BasicWorkflowContext;
 
 
 /**

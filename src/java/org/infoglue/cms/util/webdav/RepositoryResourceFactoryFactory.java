@@ -1,7 +1,5 @@
 package org.infoglue.cms.util.webdav;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 
 import com.bradmcevoy.http.AuthenticationService;
@@ -18,17 +16,14 @@ public class RepositoryResourceFactoryFactory implements ResourceFactoryFactory
 	private static AuthenticationService authenticationService;
 	private static RepositoryResourceFactory resourceFactory;
 
-	@Override
 	public ResourceFactory createResourceFactory() {
 		return resourceFactory;
 	}
 
-	@Override
 	public WebDavResponseHandler createResponseHandler() {
 		return new DefaultWebDavResponseHandler(authenticationService);
 	}
 
-	@Override
 	public void init() 
 	{
 		
@@ -40,5 +35,4 @@ public class RepositoryResourceFactoryFactory implements ResourceFactoryFactory
 			resourceFactory = new RepositoryResourceFactory();			
 		}
 	}
-
 }

@@ -38,7 +38,6 @@ import org.infoglue.cms.exception.SystemException;
 public class DeleteServerNodeAction extends InfoGlueAbstractAction
 {
 	private ServerNodeVO serverNodeVO;
-	private Integer serverNodeId;
 	
 	public DeleteServerNodeAction()
 	{
@@ -66,6 +65,4 @@ public class DeleteServerNodeAction extends InfoGlueAbstractAction
     {
         return this.serverNodeVO.getServerNodeId();
     }
-        
-	
 }

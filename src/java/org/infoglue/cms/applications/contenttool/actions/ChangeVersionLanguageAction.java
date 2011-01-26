@@ -23,11 +23,9 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 

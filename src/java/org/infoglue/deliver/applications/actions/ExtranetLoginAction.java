@@ -25,7 +25,6 @@ package org.infoglue.deliver.applications.actions;
 
 import java.net.URLEncoder;
 import java.security.Principal;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;

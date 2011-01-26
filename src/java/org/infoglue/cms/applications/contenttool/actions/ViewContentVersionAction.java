@@ -42,7 +42,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ComponentPropertyDefiniti
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionControllerProxy;

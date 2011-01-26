@@ -42,14 +42,13 @@ import org.infoglue.cms.entities.management.AccessRightUser;
 import org.infoglue.cms.entities.management.InterceptionPoint;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.Interceptor;
-import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.management.impl.simple.InterceptionPointImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.NullObject;
 
 /**
  * This class is a helper class for the use case handle InterceptionPoint

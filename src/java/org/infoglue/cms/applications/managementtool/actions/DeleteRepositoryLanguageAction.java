@@ -37,7 +37,6 @@ import org.infoglue.cms.exception.SystemException;
 public class DeleteRepositoryLanguageAction extends InfoGlueAbstractAction
 {
 	private RepositoryLanguageVO repositoryLanguageVO;
-	private Integer repositoryLanguageId;
 	private Integer repositoryId;
 	
 	public DeleteRepositoryLanguageAction()
@@ -77,5 +76,4 @@ public class DeleteRepositoryLanguageAction extends InfoGlueAbstractAction
     {
         return this.repositoryId;
     }
-	
 }

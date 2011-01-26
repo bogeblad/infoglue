@@ -32,7 +32,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.applications.contenttool.actions.ViewMultiSelectContentTreeForServiceBindingAction;
 import org.infoglue.cms.applications.databeans.AssetKeyDefinition;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;

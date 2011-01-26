@@ -22,29 +22,21 @@
 */
 package org.infoglue.cms.jobs;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.PersistenceException;
-import org.exolab.castor.jdo.TransactionNotInProgressException;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InfoGluePrincipalControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptorController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
@@ -56,10 +48,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.interceptors.SubscriptionsInterceptor;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.interceptors.InfoGlueInterceptor;
-import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.NotificationMessage;
-import org.infoglue.cms.util.RemoteCacheUpdater;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

@@ -25,21 +25,9 @@ package org.infoglue.cms.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.common.ToolbarButton;
-import org.infoglue.cms.applications.databeans.InfoglueTool;
-import org.infoglue.cms.controllers.kernel.impl.simple.ToolbarController;
 import org.infoglue.cms.providers.ContentDetailPageResolver;
 import org.infoglue.cms.providers.DefaultContentDetailPageResolver;
-import org.infoglue.cms.providers.DefaultToolsProvider;
-import org.infoglue.cms.providers.ToolbarProvider;
-import org.infoglue.cms.providers.ToolsProvider;
-import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
  * This service supplies the tool with content detail page resolver classes available. It is also appropriate for extending the platform with plugins.
@@ -48,8 +36,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 
 public class ContentDetailPageResolversService
 {
-	private final static Logger logger = Logger.getLogger(ContentDetailPageResolversService.class.getName());
-
 	private static final long serialVersionUID = 1L;
 	
 	private List<ContentDetailPageResolver> contentDetailPageResolvers = new ArrayList<ContentDetailPageResolver>();

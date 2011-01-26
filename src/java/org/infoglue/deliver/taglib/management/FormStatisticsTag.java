@@ -22,33 +22,25 @@
 */
 package org.infoglue.deliver.taglib.management;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.infoglue.cms.controllers.kernel.impl.simple.FormEntryController;
 import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.management.FormEntryVO;
 import org.infoglue.cms.entities.management.FormEntryValueVO;
 import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.util.XMLHelper;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.applications.databeans.FormStatisticsBean;
 import org.infoglue.deliver.applications.databeans.FormStatisticsOptionBean;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
-import org.infoglue.deliver.taglib.AbstractTag;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
-import org.infoglue.deliver.taglib.common.GetCookieTag;
 
 public class FormStatisticsTag extends TemplateControllerTag 
 {

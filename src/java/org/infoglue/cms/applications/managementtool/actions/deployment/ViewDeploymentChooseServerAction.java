@@ -23,9 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions.deployment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;

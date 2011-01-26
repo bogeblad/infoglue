@@ -29,7 +29,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ServiceBindingController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
 /**
@@ -43,10 +42,8 @@ public class CreateServiceBindingAction extends InfoGlueAbstractAction
     private Integer siteNodeVersionId;
     private Integer repositoryId;
     private Integer availableServiceBindingId;
-    //private Integer serviceBindingId;
     private Integer serviceDefinitionId;
     private Integer bindingTypeId;
-    private ConstraintExceptionBuffer ceb;
    	private Integer siteNodeId;
    	private ServiceDefinitionVO singleServiceDefinitionVO;
    	private String qualifyerXML;
@@ -62,7 +59,6 @@ public class CreateServiceBindingAction extends InfoGlueAbstractAction
 	public CreateServiceBindingAction(ServiceBindingVO serviceBindingVO)
 	{
 		this.serviceBindingVO = serviceBindingVO;
-		this.ceb = new ConstraintExceptionBuffer();			
 	}	
 
 	public void setSiteNodeVersionId(Integer siteNodeVersionId)

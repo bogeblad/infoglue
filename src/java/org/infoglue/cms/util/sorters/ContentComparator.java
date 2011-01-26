@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
-import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
 
@@ -20,7 +19,6 @@ public class ContentComparator implements Comparator
 	private String sortProperty;
 	private String sortOrder;
 	private BasicTemplateController basicTemplateController;
-	private Database db;
 	public long extractTime = 0;
 
 	public ContentComparator(String sortProperty, String sortOrder, BasicTemplateController basicTemplateController)

@@ -22,10 +22,9 @@
 */
 package org.infoglue.deliver.taglib.common;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.jsp.JspException;

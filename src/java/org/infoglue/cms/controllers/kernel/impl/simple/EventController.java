@@ -47,7 +47,6 @@ import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.deliver.util.Timer;
 
 /**
  * @author Mattias Bogeblad

@@ -27,7 +27,6 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServiceBindingController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
  * This action represents the CreateSiteNode Usecase.
@@ -38,7 +37,6 @@ public class DeleteServiceBindingAction extends InfoGlueAbstractAction
 
     private Integer siteNodeVersionId;
    	private Integer siteNodeId;
-   	private ConstraintExceptionBuffer ceb;
    	
    	private ServiceBindingVO serviceBindingVO = null;
    
@@ -51,7 +49,6 @@ public class DeleteServiceBindingAction extends InfoGlueAbstractAction
 	public DeleteServiceBindingAction(ServiceBindingVO serviceBindingVO)
 	{
 		this.serviceBindingVO = serviceBindingVO;
-		this.ceb = new ConstraintExceptionBuffer();			
 	}	
 
 	public void setSiteNodeVersionId(Integer siteNodeVersionId)
@@ -77,12 +74,10 @@ public class DeleteServiceBindingAction extends InfoGlueAbstractAction
     /**
      * This method deletes a serviceBinding.
      */
-     
     public String doExecute() throws Exception
     {
     	ServiceBindingController.delete(this.serviceBindingVO);	
 	    this.siteNodeId = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(this.siteNodeVersionId).getSiteNodeId();
 	    return "success";	
     }
-        
 }

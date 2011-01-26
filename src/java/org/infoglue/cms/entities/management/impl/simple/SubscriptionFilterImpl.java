@@ -24,14 +24,10 @@
 package org.infoglue.cms.entities.management.impl.simple;
 
 
-import java.util.Collection;
-import java.util.Date;
-
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Subscription;
 import org.infoglue.cms.entities.management.SubscriptionFilter;
 import org.infoglue.cms.entities.management.SubscriptionFilterVO;
-import org.infoglue.cms.entities.management.SubscriptionVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 

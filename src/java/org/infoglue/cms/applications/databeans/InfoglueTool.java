@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.applications.databeans;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This bean represents a tool in InfoGlue.

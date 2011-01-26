@@ -22,34 +22,18 @@
 */
 package org.infoglue.deliver.util;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.exolab.castor.jdo.Database;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
-import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
-import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
-import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
-import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
-import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
-import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
 import org.infoglue.cms.entities.publishing.PublicationDetailVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
-import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.entities.structure.SiteNodeVersion;
-import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
-import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
 

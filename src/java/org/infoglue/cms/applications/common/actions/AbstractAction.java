@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.common.actions;
 
-import org.apache.log4j.Logger;
 
 
 /**

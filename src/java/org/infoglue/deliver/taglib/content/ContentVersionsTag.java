@@ -28,7 +28,6 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 
 import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 /**

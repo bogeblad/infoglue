@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.net.URLEncoder;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -31,11 +30,8 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserPropertiesController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
@@ -43,7 +39,6 @@ import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.UserPropertiesVO;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
 
 public class ViewSystemUserPropertiesAction extends ViewEntityPropertiesAction

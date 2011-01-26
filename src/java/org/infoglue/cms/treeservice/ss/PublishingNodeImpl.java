@@ -26,8 +26,6 @@ package org.infoglue.cms.treeservice.ss;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.velocity.runtime.parser.node.SetExecutor;
-
 /**
  * @author ss
  *

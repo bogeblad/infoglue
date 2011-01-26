@@ -76,7 +76,6 @@ public class ContentVersionImpl implements ContentVersion
 
     private org.infoglue.cms.entities.content.impl.simple.ContentImpl owningContent;
     private org.infoglue.cms.entities.management.impl.simple.LanguageImpl language;
-    private java.util.Collection publications = new ArrayList();
 	private java.util.Collection digitalAssets = new ArrayList();; 
 	private java.util.Collection contentCategories = new ArrayList();; 
 	

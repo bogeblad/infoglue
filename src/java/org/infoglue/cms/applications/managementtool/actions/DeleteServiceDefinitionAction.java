@@ -37,7 +37,6 @@ import org.infoglue.cms.exception.SystemException;
 public class DeleteServiceDefinitionAction extends InfoGlueAbstractAction
 {
 	private ServiceDefinitionVO serviceDefinitionVO;
-	private Integer serviceDefinitionId;
 	
 	public DeleteServiceDefinitionAction()
 	{

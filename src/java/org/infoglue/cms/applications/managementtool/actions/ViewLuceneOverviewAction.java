@@ -23,18 +23,10 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
-import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.entities.management.RepositoryVO;
 
 /**
  * This class implements the action class for looking at the lucene index.

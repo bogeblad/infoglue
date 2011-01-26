@@ -23,32 +23,23 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.LockNotGrantedException;
-import org.exolab.castor.jdo.TransactionAbortedException;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 
 /**
  * This controller is made for cleaning old versions.
  */
 
-@SuppressWarnings({"unused", "unchecked", "static-access"})
+@SuppressWarnings({"unchecked", "static-access"})
 public class ContentCleanerController  extends BaseController
 {
     private final static Logger logger                                     = Logger.getLogger(ContentCleanerController.class);

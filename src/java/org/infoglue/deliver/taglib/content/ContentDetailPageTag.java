@@ -30,16 +30,12 @@ import javax.servlet.jsp.JspException;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.StructureToolbarController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.providers.ContentDetailPageResolver;
 import org.infoglue.deliver.applications.databeans.WebPage;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
-
-import com.bradmcevoy.http.GetableResource;
-import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 /**
  * This class returns a WebPage containing info of which detail page this content is bound if any.

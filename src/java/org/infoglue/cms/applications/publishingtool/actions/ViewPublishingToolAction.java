@@ -24,7 +24,6 @@
 package org.infoglue.cms.applications.publishingtool.actions;
 
 import org.infoglue.cms.applications.cmstool.actions.ViewCMSAbstractToolAction;
-import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 
 /**
  * This class implements the action class for the framed page in the management tool.

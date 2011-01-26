@@ -30,8 +30,6 @@ import javax.servlet.jsp.JspException;
 
 import org.infoglue.cms.util.sorters.ContentSort;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
-import org.infoglue.deliver.util.RequestAnalyser;
-import org.infoglue.deliver.util.Timer;
 
 public class ContentSortTag extends TemplateControllerTag {
 	/**

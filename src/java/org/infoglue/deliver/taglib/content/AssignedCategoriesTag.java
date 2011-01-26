@@ -24,14 +24,10 @@
 package org.infoglue.deliver.taglib.content;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 
-import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
-import org.infoglue.deliver.util.Support;
 
 /**
  * This is a tag which lets you get the categories assigned to a content on a specific category key.

@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.applications.managementtool.actions.deployment;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class DeploymentCompareBean
 {

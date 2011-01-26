@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,49 +30,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
-import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
-import org.infoglue.cms.entities.management.FormEntry;
-import org.infoglue.cms.entities.management.FormEntryAsset;
-import org.infoglue.cms.entities.management.FormEntryAssetVO;
-import org.infoglue.cms.entities.management.FormEntryVO;
-import org.infoglue.cms.entities.management.FormEntryValue;
-import org.infoglue.cms.entities.management.FormEntryValueVO;
-import org.infoglue.cms.entities.management.Repository;
-import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.management.impl.simple.FormEntryAssetImpl;
-import org.infoglue.cms.entities.management.impl.simple.FormEntryImpl;
-import org.infoglue.cms.entities.management.impl.simple.FormEntryValueImpl;
-import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
-import org.infoglue.cms.entities.structure.SiteNode;
-import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.infoglue.deliver.applications.databeans.DeliveryContext;
-import org.infoglue.deliver.controllers.kernel.URLComposer;
-import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
-import org.infoglue.deliver.portal.deploy.Deploy;
-import org.infoglue.deliver.portal.dispatcher.PortalServletDispatcher;
-import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.Timer;
 
 
 /**

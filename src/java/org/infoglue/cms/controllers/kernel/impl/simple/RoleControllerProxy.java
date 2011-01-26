@@ -39,7 +39,6 @@ import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
-import org.infoglue.deliver.util.CacheController;
 
 /**
  * @author Mattias Bogeblad

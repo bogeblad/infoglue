@@ -26,12 +26,10 @@ package org.infoglue.cms.applications.publishingtool.actions;
 import java.util.List;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
-import org.infoglue.cms.entities.publishing.PublicationVO;
 
 public class DeleteEditionAction extends ViewPublicationsAction
 {
 
-	private PublicationVO publicationVO;
     private Integer repositoryId;
     private Integer publicationId;
     private List problematicPublicationDetails;
@@ -96,7 +94,7 @@ public class DeleteEditionAction extends ViewPublicationsAction
 		// Editions to delete (support many, for now template allows only one)
         if(publicationId != null)
 		{
-			this.publicationVO = PublicationController.unPublish(publicationId, this.getInfoGluePrincipal());
+			PublicationController.unPublish(publicationId, this.getInfoGluePrincipal());
 		}
         
         return "success";

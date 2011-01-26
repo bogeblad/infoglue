@@ -25,7 +25,6 @@ package org.infoglue.cms.applications.workflowtool.condition;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.tasktool.actions.ViewExecuteTaskAction;
 import org.infoglue.cms.applications.workflowtool.util.InfoglueWorkflowBase;
 
 import com.opensymphony.module.propertyset.PropertySet;

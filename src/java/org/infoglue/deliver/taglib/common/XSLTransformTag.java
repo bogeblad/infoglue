@@ -26,7 +26,6 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.Reader;
 import java.io.StringReader;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,13 +41,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.Controller;
-import net.sf.saxon.FeatureKeys;
-import net.sf.saxon.TransformerFactoryImpl;
-import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.tinytree.TinyBuilder;
 import net.sf.saxon.tinytree.TinyDocumentImpl;
 

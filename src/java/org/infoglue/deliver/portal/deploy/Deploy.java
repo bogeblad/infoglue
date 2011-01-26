@@ -22,7 +22,6 @@
  */
 package org.infoglue.deliver.portal.deploy;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -39,7 +38,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -96,8 +94,6 @@ public class Deploy {
     private static final String WEB_XML = "WEB-INF/web.xml";
 
     private static final String PORTLET_MAPPING = "portletdefinitionmapping.xml";
-
-    private static final String SERVLET_MAPPING = "servletdefinitionmapping.xml";
 
     /**
      * Deploy a portlet. Creates a .war-file in webapps and waits until it is
@@ -535,46 +531,6 @@ public class Deploy {
             numEntries++;
         }
         return numEntries;
-    }
-
-    private static int createArchive(File dir, File archive) throws IOException {
-        int BUFFER = 2048;
-        BufferedInputStream origin = null;
-        FileOutputStream dest = new FileOutputStream(archive);
-        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
-        //out.setMethod(ZipOutputStream.DEFLATED);
-        byte data[] = new byte[BUFFER];
-        // get a list of files from current directory
-        File files[] = dir.listFiles();
-
-        for (int i = 0; i < files.length; i++) {
-            File curr = files[i];
-            if (curr.isDirectory()) {
-                // TODO
-            } else {
-                FileInputStream fi = new FileInputStream(curr);
-                origin = new BufferedInputStream(fi, BUFFER);
-                ZipEntry entry = new ZipEntry(curr.getName());
-                out.putNextEntry(entry);
-                int count;
-                while ((count = origin.read(data, 0, BUFFER)) != -1) {
-                    out.write(data, 0, count);
-                }
-                origin.close();
-            }
-        }
-        out.close();
-        return files.length;
-    }
-
-    private static void removeAll(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                removeAll(files[i]);
-            }
-        }
-        file.delete();
     }
 
     public static void main(String[] args) {

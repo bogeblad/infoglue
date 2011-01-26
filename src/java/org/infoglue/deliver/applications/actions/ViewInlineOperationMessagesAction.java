@@ -23,29 +23,8 @@
 
 package org.infoglue.deliver.applications.actions;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
-import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
-import org.infoglue.deliver.controllers.kernel.impl.simple.ComponentLogic;
-import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
-import org.infoglue.deliver.controllers.kernel.impl.simple.IntegrationDeliveryController;
-import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
-import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 
 /**
  * This action is used as a jump-point from inline actions in deliver edit on sight back to other actions.

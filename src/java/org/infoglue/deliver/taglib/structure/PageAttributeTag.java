@@ -28,10 +28,8 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.deliver.controllers.kernel.impl.simple.ComponentLogic;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
 import org.infoglue.deliver.util.Support;

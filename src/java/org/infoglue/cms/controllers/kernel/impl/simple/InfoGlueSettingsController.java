@@ -23,13 +23,8 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -43,12 +38,11 @@ import org.infoglue.cms.entities.management.InfoGlueProperty;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.common.settings.controllers.CastorSettingsController;
 import org.infoglue.common.settings.controllers.CastorSettingsPersister;
-import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.NullObject;
 
 import webwork.action.ActionContext;
 

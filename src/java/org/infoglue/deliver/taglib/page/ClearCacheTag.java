@@ -26,12 +26,8 @@ package org.infoglue.deliver.taglib.page;
 import javax.servlet.jsp.JspException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.PublicationThread;
-import org.infoglue.deliver.util.RequestAnalyser;
 
 /**
  * Tag for programatically clearing the deliver caches. Very useful when working with intranets.

@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.entities.management.impl.simple;
 
-import java.util.ArrayList;
-
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
 import org.infoglue.cms.exception.ConstraintException;

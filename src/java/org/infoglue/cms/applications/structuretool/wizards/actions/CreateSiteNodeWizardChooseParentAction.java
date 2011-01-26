@@ -27,12 +27,11 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
  * This action represents a tree where the user can select where to save his new SiteNode.
@@ -52,7 +51,6 @@ public class CreateSiteNodeWizardChooseParentAction extends CreateSiteNodeWizard
 	
 	//private Integer parentSiteNodeId;
 	private Integer repositoryId;
-	private ConstraintExceptionBuffer ceb;
 	
 	private String returnAddress;
 	private String[] allowedSiteNodeTypeIds	 = null;
@@ -66,7 +64,6 @@ public class CreateSiteNodeWizardChooseParentAction extends CreateSiteNodeWizard
 	
 	public CreateSiteNodeWizardChooseParentAction(SiteNodeVO SiteNodeVO)
 	{
-		this.ceb = new ConstraintExceptionBuffer();			
 	}	
 
 	public String doExecute() throws Exception

@@ -23,10 +23,6 @@
 
 package org.infoglue.deliver.integration.dataproviders;
 
-import java.util.List;
-import java.util.Map;
-
-import org.infoglue.deliver.applications.databeans.ComponentPropertyOption;
 
 public interface PropertyDataProvider
 {

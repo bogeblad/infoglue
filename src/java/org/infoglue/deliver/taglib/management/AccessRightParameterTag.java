@@ -30,10 +30,8 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.infoglue.cms.webservices.elements.RemoteAttachment;
 import org.infoglue.deliver.taglib.AbstractTag;
 import org.infoglue.deliver.taglib.content.ContentParameterTag;
-import org.infoglue.deliver.taglib.content.ContentVersionParameterInterface;
 
 /**
  * This class implements support for adding access rights to a content

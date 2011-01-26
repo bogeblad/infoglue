@@ -33,7 +33,6 @@ import javax.servlet.jsp.JspException;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
-import org.infoglue.deliver.util.SelectiveLivePublicationThread;
 import org.infoglue.deliver.util.Timer;
 
 public class MatchingContentsTag extends TemplateControllerTag 

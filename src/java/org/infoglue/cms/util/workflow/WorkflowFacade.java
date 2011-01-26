@@ -23,9 +23,6 @@
 
 package org.infoglue.cms.util.workflow;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -46,10 +43,7 @@ import org.infoglue.cms.entities.mydesktop.WorkflowStepVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.Timer;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.AbstractWorkflow;

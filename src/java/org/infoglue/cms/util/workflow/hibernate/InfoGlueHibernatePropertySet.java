@@ -3,8 +3,6 @@ package org.infoglue.cms.util.workflow.hibernate;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import org.infoglue.deliver.util.Timer;
-
 import com.opensymphony.module.propertyset.PropertyException;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.hibernate.HibernateConfigurationProvider;

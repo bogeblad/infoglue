@@ -25,17 +25,12 @@ package org.infoglue.cms.security;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.CookieHandler;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -60,11 +55,8 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.DesEncryptionHelper;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.deliver.applications.filters.URIMatcher;
-import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
-
-import webwork.action.ActionContext;
 
 /**
  * This filter protects actions withing InfoGlue from access without authentication. 

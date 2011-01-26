@@ -33,7 +33,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.validators.ValidatorFactory;
 
 public class SiteNodeVO implements BaseEntityVO

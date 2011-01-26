@@ -99,9 +99,6 @@ public class DesEncryptionHelper
         catch (UnsupportedEncodingException e) 
         {
         } 
-        catch (java.io.IOException e) 
-        {
-        }
         
         return null;
     }
@@ -134,9 +131,6 @@ public class DesEncryptionHelper
         catch (UnsupportedEncodingException e) 
         {
         } 
-        catch (java.io.IOException e) 
-        {
-        }
         
         return null;
     }

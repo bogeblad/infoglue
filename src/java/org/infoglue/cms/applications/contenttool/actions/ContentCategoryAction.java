@@ -2,7 +2,6 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import org.infoglue.cms.applications.common.actions.ModelAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
 import org.infoglue.cms.entities.kernel.Persistent;
 import org.infoglue.cms.exception.SystemException;

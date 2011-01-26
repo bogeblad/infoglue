@@ -31,14 +31,12 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.AssetKeyDefinition;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
-import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
@@ -52,7 +50,6 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 {
 	private ConstraintExceptionBuffer ceb 		= null;
 	private String returnAddress 				= "CreateContentWizardFinish!V3.action";
-	private String refreshAddress 				= null;
 	private Integer contentId					= null;
 	private Integer contentVersionId 			= null;
 	private String versionDone 					= null;
@@ -111,14 +108,12 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(createContentWizardInfoBean.getContentTypeDefinitionId());
 			List assetKeys = ContentTypeDefinitionController.getController().getDefinedAssetKeys(contentTypeDefinitionVO, true);
 			
-			boolean hasMandatoryAssets = false;
 			Iterator assetKeysIterator = assetKeys.iterator();
 			while(assetKeysIterator.hasNext())
 			{
 				AssetKeyDefinition assetKeyDefinition = (AssetKeyDefinition)assetKeysIterator.next();
 				if(assetKeyDefinition.getIsMandatory().booleanValue())
 				{
-					hasMandatoryAssets = true;
 					DigitalAssetVO asset = DigitalAssetController.getController().getDigitalAssetVO(createContentWizardInfoBean.getContentVO().getId(), languageId, assetKeyDefinition.getAssetKey(), false);
 					if(asset == null)
 					{

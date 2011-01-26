@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.common.actions;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;

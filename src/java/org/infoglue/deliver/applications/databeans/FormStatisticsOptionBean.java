@@ -23,10 +23,6 @@
 
 package org.infoglue.deliver.applications.databeans;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.infoglue.cms.entities.management.FormEntryValueVO;
 
 /**
  * This class represents a databean for statistics around form entries

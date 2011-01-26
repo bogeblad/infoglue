@@ -4,10 +4,12 @@
  */
 package com.opensymphony.oscache.base.algorithm;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.*;
 
 /**
  * <p>LRU (Least Recently Used) algorithm for the cache.</p>

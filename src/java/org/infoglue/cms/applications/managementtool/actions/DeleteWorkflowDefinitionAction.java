@@ -37,7 +37,6 @@ import org.infoglue.cms.exception.SystemException;
 public class DeleteWorkflowDefinitionAction extends InfoGlueAbstractAction
 {
 	private WorkflowDefinitionVO workflowDefinitionVO = new WorkflowDefinitionVO();
-	private Integer workflowDefinitionId;
 		
 	protected String doExecute() throws Exception 
 	{
@@ -54,6 +53,4 @@ public class DeleteWorkflowDefinitionAction extends InfoGlueAbstractAction
     {
         return this.workflowDefinitionVO.getWorkflowDefinitionId();
     }
-        
-	
 }

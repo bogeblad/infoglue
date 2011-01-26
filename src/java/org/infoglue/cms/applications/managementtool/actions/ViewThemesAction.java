@@ -32,16 +32,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ThemeController;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
-import org.infoglue.cms.entities.management.Chat;
-import org.infoglue.cms.entities.management.Message;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.CmsSessionContextListener;
 import org.infoglue.cms.util.FileUploadHelper;
 
 import webwork.action.ActionContext;

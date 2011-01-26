@@ -23,14 +23,11 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInputAssetsAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
-import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -44,8 +41,6 @@ public class CreateContentTypeDefinitionAction extends InfoGlueAbstractAction
 	
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
 	private ConstraintExceptionBuffer ceb;
-    private String name;
-    private String description;
 	
 	public CreateContentTypeDefinitionAction()
 	{

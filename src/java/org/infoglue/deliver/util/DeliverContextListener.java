@@ -46,8 +46,6 @@ import com.opensymphony.oscache.base.OSCacheUtility;
 
 public final class DeliverContextListener implements ServletContextListener 
 {
-    private final static Logger logger = Logger.getLogger(DeliverContextListener.class.getName());
-
 	private static CacheController cacheController = new CacheController();
 	
 	private static ServletContext servletContext = null;

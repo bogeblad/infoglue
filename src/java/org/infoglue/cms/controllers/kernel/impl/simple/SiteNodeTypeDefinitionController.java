@@ -37,14 +37,11 @@ import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl;
-import org.infoglue.cms.entities.structure.ServiceBinding;
-import org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
-import org.infoglue.deliver.util.Timer;
 
 
 public class SiteNodeTypeDefinitionController extends BaseController

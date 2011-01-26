@@ -44,7 +44,6 @@ import javax.swing.text.StyleConstants;
 
 public class CodeHelperDialog extends JDialog implements MouseListener, KeyListener
 {
-	private Frame parentFrame = null;
     private InfoGlueTextArea infoGlueTextArea = null;
     private JList list = new JList();
     
@@ -52,7 +51,6 @@ public class CodeHelperDialog extends JDialog implements MouseListener, KeyListe
     public CodeHelperDialog(Frame parentFrame, InfoGlueTextArea infoGlueTextArea, Object[] items)
     {
         super(parentFrame, true);
-        this.parentFrame = parentFrame;
         this.infoGlueTextArea = infoGlueTextArea;
         
         DefaultListModel model = new DefaultListModel();

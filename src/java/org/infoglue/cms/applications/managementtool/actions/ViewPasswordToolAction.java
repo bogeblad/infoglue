@@ -23,16 +23,9 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.util.List;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
-import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.entities.management.RepositoryVO;
 
 /**
  * This class implements the action class for generating passwords. Also let's an admin change users passwords.

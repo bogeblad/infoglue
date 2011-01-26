@@ -2,10 +2,7 @@ package org.infoglue.cms.util.sorters;
 
 import java.io.File;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 
 /**

@@ -47,11 +47,6 @@ import com.frovi.ss.Tree.BaseNodeSupplier;
  */
 public class ContentNodeVersionSupplier extends BaseNodeSupplier
 {
-
-	// private BaseNode rootNode;
-	private ArrayList cacheLeafs;
-
-	
 	public ContentNodeVersionSupplier(Integer repositoryId, String userName) throws SystemException
 	{
 		ContentVO vo =null;
@@ -87,7 +82,6 @@ public class ContentNodeVersionSupplier extends BaseNodeSupplier
 	public Collection getChildContainerNodes(Integer parentNode)
 	{
 		ArrayList ret = new ArrayList();
-		cacheLeafs = new ArrayList();
 		
 		if (parentNode.intValue() < 0 )
 		{

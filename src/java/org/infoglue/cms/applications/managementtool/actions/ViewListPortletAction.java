@@ -23,7 +23,6 @@
 package org.infoglue.cms.applications.managementtool.actions;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Iterator;

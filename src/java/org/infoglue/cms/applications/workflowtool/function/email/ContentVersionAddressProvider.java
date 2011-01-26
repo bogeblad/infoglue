@@ -24,7 +24,6 @@ package org.infoglue.cms.applications.workflowtool.function.email;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.workflowtool.function.ContentFunction;
-import org.infoglue.cms.applications.workflowtool.function.defaultvalue.StringPopulator;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 

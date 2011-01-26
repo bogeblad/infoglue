@@ -28,10 +28,6 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.ToolbarButtonGroup;
-import org.infoglue.cms.controllers.kernel.impl.simple.ToolbarController;
-import org.infoglue.cms.exception.ConfigurationError;
-
-import webwork.util.ServletValueStack;
 
 
 /**

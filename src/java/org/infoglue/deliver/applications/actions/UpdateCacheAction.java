@@ -35,7 +35,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.ThreadMonitor;
 
 

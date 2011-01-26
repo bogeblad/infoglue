@@ -24,19 +24,15 @@
 package org.infoglue.deliver.invokers;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
@@ -50,8 +46,6 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
-import org.infoglue.cms.entities.content.ContentVersion;
-import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNode;
@@ -63,7 +57,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
-import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
@@ -543,7 +536,7 @@ public abstract class PageInvoker
 			this.generateExtensionBundles(this.getTemplateController().getDeliveryContext().getCSSExtensionBundles(), "text/css", "head");
 			
 			Set htmlHeadItems = this.getTemplateController().getDeliveryContext().getHtmlHeadItems();
-			if(htmlHeadItems != null || htmlHeadItems.size() > 0)
+			if(htmlHeadItems != null && htmlHeadItems.size() > 0)
 			{
 				int indexOfHeadEndTag = pageString.indexOf("</head");
 				if(indexOfHeadEndTag == -1)
@@ -566,7 +559,7 @@ public abstract class PageInvoker
 			}
 
 			Set htmlBodyEndItems = this.getTemplateController().getDeliveryContext().getHtmlBodyEndItems();
-			if(htmlBodyEndItems != null || htmlBodyEndItems.size() > 0)
+			if(htmlBodyEndItems != null && htmlBodyEndItems.size() > 0)
 			{
 				if(sb == null)
 					sb = new StringBuilder(pageString);

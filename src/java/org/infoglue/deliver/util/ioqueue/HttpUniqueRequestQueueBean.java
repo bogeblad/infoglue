@@ -26,9 +26,6 @@ package org.infoglue.deliver.util.ioqueue;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.infoglue.cms.entities.content.ContentCategoryVO;
-import org.infoglue.cms.util.DomainUtils;
-
 public class HttpUniqueRequestQueueBean
 {
 	private String urlAddress;

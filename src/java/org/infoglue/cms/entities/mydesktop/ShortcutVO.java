@@ -38,8 +38,6 @@ public class ShortcutVO implements BaseEntityVO
 	private String URL; 
 	private boolean popup = true;
 	
-	private ShortcutVO() {}
-
 	public ShortcutVO(String name, String URL, boolean popup)
 	{
 		setName(name);

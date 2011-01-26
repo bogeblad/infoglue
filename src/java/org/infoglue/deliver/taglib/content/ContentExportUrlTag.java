@@ -23,8 +23,8 @@
 
 package org.infoglue.deliver.taglib.content;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;

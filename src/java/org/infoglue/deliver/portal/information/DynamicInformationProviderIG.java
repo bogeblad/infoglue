@@ -51,12 +51,10 @@ public class DynamicInformationProviderIG implements DynamicInformationProvider 
     private final static int NumberOfKnownMimetypes = 15;
 
     //private HttpServletRequest request;
-    private ServletConfig config;
     private PortalControlURL url;
 
     public DynamicInformationProviderIG(HttpServletRequest request, ServletConfig config) {
         //this.request = request;
-        this.config = config;
         this.url = new PortalControlURL(request);
     }
 

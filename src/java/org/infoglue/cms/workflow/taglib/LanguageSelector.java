@@ -27,11 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
 
-import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
-import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 
 /**

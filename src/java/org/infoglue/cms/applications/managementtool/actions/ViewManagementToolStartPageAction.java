@@ -23,11 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.util.List;
-
-import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 
 /**
  * This class implements the action class for the startpage in the management tool.

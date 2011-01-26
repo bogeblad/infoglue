@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.infoglue.cms.applications.common.ImageButton;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
@@ -66,9 +65,6 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 {
     private final static Logger logger = Logger.getLogger(CreateSiteNodeAction.class.getName());
 
-    private Integer siteNodeId;
-    private String name;
-    private Boolean isBranch;
     private Integer parentSiteNodeId;
     private Integer siteNodeTypeDefinitionId;
     private Integer pageTemplateContentId;
@@ -245,7 +241,6 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     	logger.info("isBranch:" + this.siteNodeVO.getIsBranch());
     	
     	Database db = CastorDatabaseService.getDatabase();
-        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
         beginTransaction(db);
 

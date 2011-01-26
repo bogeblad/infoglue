@@ -54,7 +54,6 @@ import org.infoglue.cms.util.workflow.WorkflowFacade;
 import org.infoglue.deliver.util.CacheController;
 
 import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.workflow.AbstractWorkflow;
 import com.opensymphony.workflow.WorkflowException;
 
 /**

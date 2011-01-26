@@ -25,9 +25,7 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -57,9 +55,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 
 import webwork.action.Action;
-
-import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.module.propertyset.PropertySetManager;
 
 public class ViewContentAction extends InfoGlueAbstractAction
 {

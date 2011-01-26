@@ -33,10 +33,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 
@@ -44,7 +42,6 @@ public class DefaultToolsProvider implements ToolsProvider
 {
     private final static Logger logger = Logger.getLogger(DefaultToolsProvider.class.getName());
 
-	@Override
 	public List<InfoglueTool> getTools(InfoGluePrincipal principal, Locale locale) 
 	{
 		List<InfoglueTool> tools = new ArrayList<InfoglueTool>();

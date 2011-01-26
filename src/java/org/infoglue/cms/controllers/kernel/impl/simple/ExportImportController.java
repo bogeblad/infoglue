@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import org.exolab.castor.jdo.Database;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 import org.infoglue.cms.applications.common.VisualFormatter;
-import org.infoglue.cms.applications.contenttool.actions.ExportContentAction;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.impl.simple.InfoGlueExportImpl;
@@ -22,7 +20,7 @@ import org.infoglue.cms.util.handlers.DigitalAssetBytesHandler;
 
 public class ExportImportController extends BaseController
 {
-    private final static Logger logger = Logger.getLogger(ExportContentAction.class.getName());
+    private final static Logger logger = Logger.getLogger(ExportImportController.class.getName());
 
 	public static ExportImportController getController()
 	{

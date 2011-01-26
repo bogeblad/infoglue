@@ -24,18 +24,9 @@
 package org.infoglue.cms.util.handlers;
 
 import org.apache.log4j.Logger;
-import org.exolab.castor.xml.TypeValidator;
-import org.exolab.castor.xml.ValidationException;
 import org.exolab.castor.mapping.FieldHandler;
 import org.exolab.castor.mapping.ValidityException;
-import org.exolab.castor.xml.XMLFieldHandler;
-import org.exolab.castor.xml.handlers.CollectionFieldHandler;
-import org.infoglue.cms.applications.managementtool.actions.ImportRepositoryAction;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
-
-import java.util.StringTokenizer;
-
-import java.lang.reflect.Array;
 
 /**
  * A  FieldHandler for the XML Schema Collection type.

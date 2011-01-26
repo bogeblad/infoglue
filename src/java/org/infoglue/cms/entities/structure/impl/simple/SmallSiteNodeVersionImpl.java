@@ -23,10 +23,7 @@
 
 package org.infoglue.cms.entities.structure.impl.simple;
 
-import java.util.ArrayList;
-
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 
 public class SmallSiteNodeVersionImpl extends SiteNodeVersionImpl

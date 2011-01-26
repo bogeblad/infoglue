@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.apache.commons.httpclient.URI;
 import org.jsoup.Connection;
-import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -66,7 +63,6 @@ public class WebappIntegrator
 	public String integrate(Map<String,String> returnCookies, Map<String,String> returnHeaders, Map<String,String> statusData, List<String> blockedParameters, String hrefExclusionRegexp, String linkExclusionRegexp, String srcExclusionRegexp) throws Exception
 	{
 		String responseBody = new PageFetcher().fetchPage(this.urlToIntegrate, method.name(), this.proxyHost, this.proxyPort, cookies, requestProperties, requestParameters, returnCookies, returnHeaders, statusData, blockedParameters);
-		//System.out.println("responseBody:\n" + responseBody);
 		
 		String baseURI = this.urlToIntegrate;
 		if(baseURI.indexOf("?") > -1)
@@ -79,7 +75,6 @@ public class WebappIntegrator
 		System.out.println("title:" + title);
 		System.out.println("elementSelector:" + elementSelector);
 		Element sourceElement = doc.select(elementSelector).first();
-		//System.out.println("ipbwrapper:" + ipbwrapper.html());
 		if(sourceElement == null)
 			sourceElement = doc.select("#pageContent").first();
 
@@ -96,9 +91,7 @@ public class WebappIntegrator
 	        for (Element link : links) 
 	        {
 	        	String href = link.attr("href");
-	        	//System.out.println("href:" + href);
 	        	String oldUrl = link.attr("abs:href");
-	        	//System.out.println("oldUrl:" + oldUrl);
 	        	if(!href.matches(hrefExclusionRegexp) && href.indexOf("javascript:") == -1 && oldUrl != null)
 	        	{
 		        	String newUrl = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + URLEncoder.encode(oldUrl, "utf-8");
@@ -189,19 +182,6 @@ public class WebappIntegrator
 	{
 		this.timeout = timeout;
 	}
-
-	private static void print(String msg, Object... args) 
-	{
-        System.out.println(String.format(msg, args));
-    }
-
-	private static String trim(String s, int width) 
-	{
-        if (s.length() > width)
-            return s.substring(0, width-1) + ".";
-        else
-            return s;
-    }
 
 	/**
 	 * @param args

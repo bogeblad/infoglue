@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.entities.management;
 
-import java.util.Locale;
-
 import org.infoglue.cms.applications.databeans.GenericOptionDefinition;
 
 /**

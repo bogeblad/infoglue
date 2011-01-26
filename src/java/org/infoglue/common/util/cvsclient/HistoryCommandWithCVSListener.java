@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.netbeans.lib.cvsclient.command.history.HistoryCommand;
 import org.netbeans.lib.cvsclient.event.BinaryMessageEvent;
-import org.netbeans.lib.cvsclient.event.CVSListener;
 import org.netbeans.lib.cvsclient.event.FileAddedEvent;
 import org.netbeans.lib.cvsclient.event.FileInfoEvent;
 import org.netbeans.lib.cvsclient.event.FileRemovedEvent;

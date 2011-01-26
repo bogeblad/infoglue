@@ -124,19 +124,7 @@ public class SublistTag extends AbstractTag
 		
 		return result;
 	}
-	
-	/**
-	 * Returns the count to use which might be different from the specified count depending
-	 * on the size of the list. 
-	 * 
-	 * @return the count to use.
-	 */
-	private int getRealCount() 
-	{
-		return (count.intValue() == 0 || count.intValue() > list.size() - startIndex) ? list.size() - startIndex + 1 : count.intValue();
-		//return (count.intValue() == 0 || count.intValue() > list.size() - startIndex) ? list.size() - startIndex : count.intValue();
-	}
-	
+
 	/**
 	 * Sets the list attribute to the specified list.
 	 * 

@@ -24,8 +24,6 @@
 package org.infoglue.cms.entities.management;
 
 import org.infoglue.cms.entities.kernel.IBaseEntity;
-import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
 
 public interface FormEntryAsset extends IBaseEntity
 {	  

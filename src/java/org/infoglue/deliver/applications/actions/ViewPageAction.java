@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.URLEncoder;
 import java.security.Principal;
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +38,6 @@ import java.util.Random;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
@@ -57,7 +54,6 @@ import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.exception.NoBaseTemplateFoundException;
 import org.infoglue.cms.exception.PageNotFoundException;
 import org.infoglue.cms.exception.SystemException;
@@ -70,7 +66,6 @@ import org.infoglue.cms.util.DesEncryptionHelper;
 import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
-import org.infoglue.deliver.applications.filters.ViewPageFilter;
 import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.EditOnSiteBasicTemplateController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
@@ -81,13 +76,11 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryCon
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 import org.infoglue.deliver.invokers.PageInvoker;
 import org.infoglue.deliver.portal.PortalService;
-//import org.infoglue.deliver.services.StatisticsService;
 import org.infoglue.deliver.util.BrowserBean;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.ThreadMonitor;
-import org.infoglue.deliver.util.Timer;
 
 import webwork.action.ActionContext;
 
@@ -763,7 +756,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 
 				String invokerClassName = siteNode.getSiteNodeTypeDefinition().getInvokerClassName();
 				
-				if(invokerClassName == null && invokerClassName.equals(""))
+				if(invokerClassName == null || invokerClassName.equals(""))
 				{
 				    throw new SystemException("There was no page invoker class assigned to this page type.");
 				}

@@ -23,24 +23,16 @@
 
 package org.infoglue.cms.providers;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.deliver.applications.databeans.WebPage;
-import org.infoglue.deliver.util.CacheController;
 
 /**
  * The default implementation checks first if the content-type has a fixed page assigned for this purpose and returns that page if that is the case.
@@ -83,19 +75,16 @@ public class DefaultContentDetailPageResolver implements ContentDetailPageResolv
 		return detailSiteNodeVO;
 	}
 
-	@Override
 	public Boolean usesSiteNodeSelectionDialog() 
 	{
 		return true;
 	}
 
-	@Override
 	public String getName() 
 	{
 		return "Standard detail page resolver";
 	}
 
-	@Override
 	public String getDescription() 
 	{
 		return "This resolver first checks if you have set a detail page for this content-type hard. If not it looks into the registry for any page binding directly to this content and uses the first one";

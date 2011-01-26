@@ -25,7 +25,6 @@ package org.infoglue.deliver.taglib.management;
 
 import javax.servlet.jsp.JspException;
 
-import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 public class CategoryPathTag extends TemplateControllerTag 

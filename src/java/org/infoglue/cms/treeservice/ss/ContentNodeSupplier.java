@@ -30,9 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
-import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
@@ -47,7 +45,6 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
-import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
 import org.infoglue.deliver.util.Timer;
 
 import com.frovi.ss.Tree.BaseNode;
@@ -68,7 +65,6 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 	private boolean showLeafs = true;
 	private String[] allowedContentTypeIds = null;
 	private InfoGluePrincipal infogluePrincipal = null;
-	private Integer repositoryId = null;
 	private List languageVOList = null;
 	
 	public ContentNodeSupplier(Integer repositoryId, InfoGluePrincipal infogluePrincipal) throws SystemException
@@ -77,7 +73,6 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 		try
 		{
 		    this.infogluePrincipal = infogluePrincipal;
-		    this.repositoryId = repositoryId;
 		    this.languageVOList = LanguageController.getController().getLanguageVOList(repositoryId);
 
 			Timer t = new Timer();

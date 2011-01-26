@@ -23,7 +23,6 @@
 
 package org.infoglue.cms.applications.databeans;
 
-import java.util.Locale;
 
 /**
  * This bean represents a Asset Key definition. Used mostly by the content type definition editor.

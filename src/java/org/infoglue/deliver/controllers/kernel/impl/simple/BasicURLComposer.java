@@ -42,9 +42,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
-import org.infoglue.deliver.applications.filters.FilterConstants;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
-import org.infoglue.deliver.invokers.PageInvoker;
 import org.infoglue.deliver.util.CacheController;
 
 import webwork.action.ActionContext;

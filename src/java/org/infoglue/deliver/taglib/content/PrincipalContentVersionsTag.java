@@ -25,9 +25,9 @@ package org.infoglue.deliver.taglib.content;
 
 import java.util.Date;
 
-import org.infoglue.deliver.taglib.TemplateControllerTag;
-
 import javax.servlet.jsp.JspException;
+
+import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 
 public class PrincipalContentVersionsTag extends TemplateControllerTag 

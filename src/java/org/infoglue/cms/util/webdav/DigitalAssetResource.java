@@ -4,39 +4,23 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
-import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
-import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
 
 import com.bradmcevoy.http.Auth;
 import com.bradmcevoy.http.CollectionResource;
 import com.bradmcevoy.http.FileItem;
 import com.bradmcevoy.http.FileResource;
-import com.bradmcevoy.http.FolderResource;
 import com.bradmcevoy.http.PropFindableResource;
 import com.bradmcevoy.http.Range;
 import com.bradmcevoy.http.Request;
-import com.bradmcevoy.http.Resource;
 import com.bradmcevoy.http.Request.Method;
-import com.bradmcevoy.http.ResourceFactory;
 import com.bradmcevoy.http.exceptions.BadRequestException;
 import com.bradmcevoy.http.exceptions.ConflictException;
 import com.bradmcevoy.http.exceptions.NotAuthorizedException;
@@ -53,55 +37,42 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		this.cv = cv;
 	}	
 	
-	@Override
 	public Date getCreateDate() {
 		return new Date();
 	}
 
-	@Override
 	public Object authenticate(String user, String pwd) {
 		return user;
 	}
 
-	@Override
 	public boolean authorise(Request arg0, Method arg1, Auth arg2) {
 		return true;
 	}
 
-	@Override
 	public String checkRedirect(Request arg0) {
 		return null;
 	}
 
-	@Override
 	public Date getModifiedDate() {
 		return new Date();
 	}
 
-	@Override
 	public String getName() {
 		return digitalAsset.getAssetFileName().toString(); //.getLanguageName();
 	}
 
-	@Override
 	public String getRealm() {
 		return "infoglue";
 	}
 
-	@Override
 	public String getUniqueId() {
 		return digitalAsset.getId().toString();
 	}
 
-
-
-	@Override
 	public void copyTo(CollectionResource arg0, String arg1) 
 	{
-		
 	}
 
-	@Override
 	public void delete() throws NotAuthorizedException, ConflictException, BadRequestException 
 	{
 		if(logger.isInfoEnabled())
@@ -118,23 +89,19 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		}
 	}
 
-	@Override
 	public Long getContentLength() {
 		return new Long(digitalAsset.getAssetFileSize());
 	}
 
-	@Override
 	public String getContentType(String arg0) {
 		return digitalAsset.getAssetContentType();
 	}
 
-	@Override
 	public Long getMaxAgeSeconds(Auth arg0) 
 	{
 		return null;
 	}
 
-	@Override
 	public void sendContent(OutputStream out, Range arg1, Map<String, String> params, String contentType) throws IOException, NotAuthorizedException, BadRequestException 
 	{
 		try
@@ -164,7 +131,6 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		}
 	}
 
-	@Override
 	public void moveTo(CollectionResource newTargetResource, String newName) throws ConflictException 
 	{
 		try
@@ -194,12 +160,10 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		}
 	}
 
-	@Override
 	public String processForm(Map<String, String> arg0,
 			Map<String, FileItem> arg1) throws BadRequestException,
 			NotAuthorizedException, ConflictException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

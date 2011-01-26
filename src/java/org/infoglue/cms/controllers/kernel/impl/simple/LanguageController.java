@@ -45,7 +45,6 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.Timer;
 
 /**
  * This class handles all interaction with Languages and persistence of them.

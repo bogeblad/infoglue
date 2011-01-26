@@ -26,7 +26,6 @@ import java.util.Calendar;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.workflowtool.function.ContentPopulator;
-import org.infoglue.cms.applications.workflowtool.function.UserCreator;
 import org.infoglue.cms.applications.workflowtool.util.ContentValues;
 
 import com.opensymphony.workflow.WorkflowException;

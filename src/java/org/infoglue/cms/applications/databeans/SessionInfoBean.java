@@ -38,10 +38,6 @@ public class SessionInfoBean
     private InfoGluePrincipal principal;
     private Date lastAccessedDate;
     
-    private SessionInfoBean()
-    {
-    }
-    
     public SessionInfoBean(String id)
     {
     	this.id = id;

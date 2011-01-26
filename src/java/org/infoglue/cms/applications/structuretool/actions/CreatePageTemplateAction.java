@@ -45,7 +45,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
@@ -56,12 +55,10 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import webwork.action.Action;
 import webwork.action.ActionContext;
@@ -86,7 +83,6 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
 	private Integer componentId;
 	private Integer pagePartContentId;
 	private Boolean attemptDirectPublication;
-	private ConstraintExceptionBuffer ceb;
 
 	private Integer siteNodeId;
 	private String name;
@@ -265,7 +261,6 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
         ContentVO pagePartContentVO = ContentController.getContentController().getContentVOWithId(pagePartContentId);
 		Integer pagePartMasterLanguageId = LanguageController.getController().getMasterLanguage(pagePartContentVO.getRepositoryId()).getId();
 		ContentVersionVO pagePartContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(pagePartContentId, pagePartMasterLanguageId);
-		Locale pagePartMasterLocale = LanguageController.getController().getLocaleWithId(pagePartMasterLanguageId);
 		
 		ContentVO metaInfoContentVO = ContentController.getContentController().getContentVOWithId(this.contentId);
 		Integer originalMetaInfoMasterLanguageId = LanguageController.getController().getMasterLanguage(metaInfoContentVO.getRepositoryId()).getId();
@@ -314,7 +309,7 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
 		{
 			List events = new ArrayList();
 
-			ContentVersion contentVersion = ContentStateController.changeState(updateContentVersionVO.getId(), ContentVersionVO.PUBLISH_STATE, "Auto publish", false, null, this.getInfoGluePrincipal(), null, events);
+			ContentStateController.changeState(updateContentVersionVO.getId(), ContentVersionVO.PUBLISH_STATE, "Auto publish", false, null, this.getInfoGluePrincipal(), null, events);
 
 		    PublicationVO publicationVO = new PublicationVO();
 		    publicationVO.setName("Direct publication by " + this.getInfoGluePrincipal().getName());

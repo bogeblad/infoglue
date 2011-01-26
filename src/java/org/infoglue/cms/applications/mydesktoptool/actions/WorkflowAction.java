@@ -26,29 +26,16 @@ package org.infoglue.cms.applications.mydesktoptool.actions;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
-import org.infoglue.cms.applications.databeans.LinkBean;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ShortcutController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
-import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowActionVO;
-import org.infoglue.cms.entities.mydesktop.WorkflowStepVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowVO;
-import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.sorters.ReflectionComparator;
-import org.infoglue.cms.util.workflow.StepFilter;
 
 import webwork.action.ActionContext;
 

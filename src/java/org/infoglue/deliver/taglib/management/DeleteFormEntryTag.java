@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.taglib.content.InfoGlueWebServiceTag;
 
@@ -23,9 +22,6 @@ public class DeleteFormEntryTag extends InfoGlueWebServiceTag
 
     private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteFormService";
 
-    /**
-     *  
-     */
     private String operationName = "deleteFormEntry";
 
     /**
@@ -36,15 +32,7 @@ public class DeleteFormEntryTag extends InfoGlueWebServiceTag
 
 	private Integer formEntryId;
 	private Boolean forceDelete = null;
-	
-    /**
-     *  
-     */
-    private InfoGluePrincipal principal;
 
-    /**
-     *  
-     */
     public DeleteFormEntryTag()
     {
         super();
@@ -63,9 +51,6 @@ public class DeleteFormEntryTag extends InfoGlueWebServiceTag
         return EVAL_BODY_INCLUDE;
     }
 
-    /**
-     *  
-     */
     public int doEndTag() throws JspException
     {
         try
@@ -91,20 +76,9 @@ public class DeleteFormEntryTag extends InfoGlueWebServiceTag
         return EVAL_PAGE;
     }
 
-    /**
-     *  
-     */
     public void setOperationName(final String operationName)
     {
         this.operationName = operationName;
-    }
-
-    /**
-     *  
-     */
-    public void setPrincipal(final String principalString) throws JspException
-    {
-        this.principal = (InfoGluePrincipal) this.evaluate("remoteContentService", "principal", principalString, InfoGluePrincipal.class);
     }
 
     public void setFormEntryId(String formEntryId) throws JspException

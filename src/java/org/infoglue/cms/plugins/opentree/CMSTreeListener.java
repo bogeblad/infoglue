@@ -38,12 +38,10 @@ import javax.swing.tree.TreePath;
 public class CMSTreeListener extends MouseAdapter implements TreeWillExpandListener
 {        
     private JTree tree = null;
-    private Controller controller = null;
     
     public CMSTreeListener(JTree tree, Controller controller)
     {
         this.tree = tree;
-        this.controller = controller;
     }
     
     public void mouseClicked(MouseEvent e) 

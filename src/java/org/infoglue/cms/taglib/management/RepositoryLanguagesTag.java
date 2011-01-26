@@ -27,8 +27,6 @@ import java.util.Collection;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspTagException;
 
-import org.infoglue.cms.applications.workflowtool.function.ContentCreator;
-import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.deliver.taglib.AbstractTag;
 

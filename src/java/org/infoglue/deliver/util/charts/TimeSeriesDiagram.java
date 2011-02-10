@@ -25,7 +25,6 @@ package org.infoglue.deliver.util.charts;
 
 import java.awt.Color;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,19 +35,20 @@ import org.dom4j.io.XMLWriter;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.StandardLegend;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.DateTickMarkPosition;
 import org.jfree.chart.axis.DateTickUnit;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.time.Month;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.time.Week;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.Spacer;
+import org.jfree.ui.RectangleInsets;
+import org.jfree.util.UnitType;
 
 /**
  * An example of a time series chart.  For the most part, default settings are used, except that
@@ -100,21 +100,21 @@ public class TimeSeriesDiagram implements XMLDataDiagram
         
 		chart.setBackgroundPaint(Color.white);
 
-		StandardLegend sl = (StandardLegend) chart.getLegend();
-		sl.setDisplaySeriesShapes(true);
+		LegendTitle legend = chart.getLegend();
+		//legend.set .setDisplaySeriesShapes(true);
 
 		XYPlot plot = chart.getXYPlot();
 		plot.setBackgroundPaint(Color.lightGray);
 		plot.setDomainGridlinePaint(Color.white);
 		plot.setRangeGridlinePaint(Color.white);
-		plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
+		plot.setAxisOffset(new RectangleInsets(UnitType.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
 		plot.setDomainCrosshairVisible(true);
 		plot.setRangeCrosshairVisible(true);
         
 		XYItemRenderer renderer = plot.getRenderer();
 		if (renderer instanceof StandardXYItemRenderer) {
 			StandardXYItemRenderer rr = (StandardXYItemRenderer) renderer;
-			rr.setPlotShapes(true);
+			//rr.setPlotShapes(true);
 			rr.setShapesFilled(true);
 		}
         
@@ -122,8 +122,7 @@ public class TimeSeriesDiagram implements XMLDataDiagram
 		
 		if(this.timeGranulariry.equalsIgnoreCase("Week"))
 		{
-			
-			DateTickUnit unit = new DateTickUnit(DateTickUnit.DAY, 7, Calendar.getInstance().getFirstDayOfWeek(), new SimpleDateFormat(this.dateFormat));
+			DateTickUnit unit = new DateTickUnit(DateTickUnit.DAY, 7, new SimpleDateFormat(this.dateFormat));
 			axis.setTickUnit(unit);
 			axis.setTickMarkPosition(DateTickMarkPosition.START);
 			 

@@ -49,6 +49,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
@@ -108,11 +109,26 @@ public class ViewPageFilter implements Filter
         uriCache = new URIMapperCache();
     }
 
+	private static Boolean configurationFinished = null;
+
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException 
     {       
         long end, start = System.currentTimeMillis();
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+
+		try 
+		{
+			if(configurationFinished == null || configurationFinished == false)
+				configurationFinished = InstallationController.getController().validateApplicationFile();
+		} 
+		catch (Exception e1) 
+		{
+			e1.printStackTrace();
+		}
+		
+		if(!configurationFinished && (httpRequest.getRequestURI().indexOf("Install") == -1 && httpRequest.getRequestURI().indexOf("/script") == -1 && httpRequest.getRequestURI().indexOf("/css") == -1 && httpRequest.getRequestURI().indexOf("/images") == -1))
+			httpResponse.sendRedirect("" + httpRequest.getContextPath() + "/Install!input.action");
 
         /*
         if(RequestAnalyser.getBlockRequests() && 

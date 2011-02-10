@@ -117,14 +117,14 @@
 #set($event = $this.getSiteNodeVersionEvent($siteNodeVersion.getSiteNodeVersionId()) )					
 #set($publicationMessage = "")
 #if($event.typeId == 2)
-	#set($publicationMessage = "This version was denied by publisher - revise and publish again</font> <a href=\"DeleteEvent.action?eventId=$event.id&url=$currentUrl\">Close</a>")
+	#set($publicationMessage = "This version was denied by publisher - revise and publish again</font> <a href='DeleteEvent.action?eventId=$event.id&url=$currentUrl'>Close</a>")
 #end
 
 #set($siteNodeEvent = $this.getSiteNodeEvent($siteNodeId) )					
 #if($siteNodeEvent.typeId == 2)
-	#set($publicationMessage = "This version was denied by publisher - revise and publish again</font> <a href=\"DeleteEvent.action?eventId=$siteNodeEvent.id&url=$currentUrl\">Close</a>")
+	#set($publicationMessage = "This version was denied by publisher - revise and publish again</font> <a href='DeleteEvent.action?eventId=$siteNodeEvent.id&url=$currentUrl'>Close</a>")
 #elseif($siteNodeEvent.typeId == 4)
-	#set($publicationMessage = "The editor has denied your request to unpublish <nobr>$siteNodeEvent.name</nobr>.</font> - <a href=\"DeleteEvent.action?eventId=$siteNodeEvent.id&url=$currentUrl\">Close</a>")
+	#set($publicationMessage = "The editor has denied your request to unpublish <nobr>$siteNodeEvent.name</nobr>.</font> - <a href=\'DeleteEvent.action?eventId=$siteNodeEvent.id&url=$currentUrl'>Close</a>")
 #end
 
 <div onfocus="this.blur();">

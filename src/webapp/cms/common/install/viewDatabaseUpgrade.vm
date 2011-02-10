@@ -1,0 +1,48 @@
+#beginLightCommonToolV3("tool.common.install.databaseUpgrade.title" "" "" false true $!disableCloseButton)
+
+<script type="text/javascript">
+	function next()
+	{
+		document.editForm.submit();
+	}
+</script>
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+<h1>$ui.getString("tool.common.install.title")</h1>
+
+#installProgressDiv(2)
+
+<h3>
+	$ui.getString("tool.common.install.databaseUpgrade.title")
+</h3>
+
+#if($errorMessage && $!errorMessage != "")
+<h4><span style="color:red">$errorMessage</span></h4>
+#end
+
+<p>
+	$ui.getString("tool.common.install.databaseUpgrade.text")
+</p>
+
+<form method="POST" name="editForm" action="Install.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	
+	<p>
+		Your version: $dbVersion
+	</p>
+	<p>
+		The following scripts should be run to upgrade to current version
+	</p>
+	<div style="height: 400px; overflow: auto; margin-left: 16px; margin-bottom: 40px; border: 1px solid #ccc;">
+		<pre>$!sqlScript</pre>
+	</div>
+	
+</form>		
+	
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

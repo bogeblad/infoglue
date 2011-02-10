@@ -1,0 +1,120 @@
+#beginLightCommonToolV3("tool.common.install.database.title" "" "" false true $!disableCloseButton)
+
+<script type="text/javascript">
+	function next()
+	{
+		document.editForm.submit();
+	}
+	
+	$(document).ready(function(){
+
+		if("$!createDatabase" != "true")
+			$("#dbaAccount").hide();
+		
+		$("#createDatabase").change(function () {
+          	$("#dbaAccount").toggle();
+        });
+        
+        $("#dbProvider").change(function () {
+        	//alert("Provider selected:" + $(this).val());
+        	if($(this).val() == "mssqlserver")
+	          	$("#dbInstance").attr("disabled", "");
+	        else
+	          	$("#dbInstance").attr("disabled", "disabled");
+	          	
+	        setDefaulPort($(this).val());
+        });
+          
+	});
+	
+	function setDefaulPort(provider)
+    {
+    	var portNumer = "";
+        if(provider == "mysql")
+   			portNumer = "3306";
+   		else if(provider == "oracle")
+   			portNumer = "1521";
+		else if(provider == "mssqlserver")
+   			portNumer = "1433";
+   		else if(provider == "db2")
+   			portNumer = "50000";
+   			
+    	$("#dbPort").val(portNumer);      
+    }
+	
+</script>
+
+<style type="text/css">
+	label{
+		margin-top:10px;
+	}
+</style>
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+<h1>$ui.getString("tool.common.install.title")</h1>
+
+#installProgressDiv(1)
+
+<h3>
+	$ui.getString("tool.common.install.database.title")
+</h3>
+
+#if($!errorMessage != "")
+<h4><span style="color:red">$!errorMessage</span></h4>
+#end
+
+<form method="POST" name="editForm" action="Install.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<input type="hidden" name="operation" value="updateDatabase"/>
+	
+	<p>
+	    <label for="dbProvider">$ui.getString("tool.common.install.database.dbProvider")</label>
+		<select name="dbProvider" id="dbProvider">
+			<option value="mysql">MySQL</option>
+			<option value="oracle">Oracle</option>
+			<option value="mssqlserver">SQL Server</option>
+			<option value="db2">DB2</option>
+		</select>
+	    
+	    <label for="dbName">$ui.getString("tool.common.install.database.dbName")</label>
+		<input type="text" name="dbName" value="$!dbName"/>
+		
+	    <label for="dbServer">$ui.getString("tool.common.install.database.dbServer")</label>
+		<input type="text" name="dbServer" value="$!dbServer"/>
+	
+	    <label for="dbPort">$ui.getString("tool.common.install.database.dbPort")</label>
+		<input type="text" id="dbPort" name="dbPort" value="$!dbPort"/>
+	
+	    <label for="dbInstance">$ui.getString("tool.common.install.database.dbInstance")</label>
+		<input type="text" name="dbInstance" id="dbInstance" value="$!dbInstance" disabled="disabled"/>
+	
+	    <label for="igUser">$ui.getString("tool.common.install.database.igUser")</label>
+		<input type="text" name="igUser" value="$!igUser"/>
+	
+	    <label for="igPassword">$ui.getString("tool.common.install.database.igPassword")</label>
+		<input type="password" name="igPassword" value=""/>	    
+
+	    <label for="createDatabase">$ui.getString("tool.common.install.database.createDatabase")</label>
+		<input type="checkbox" id="createDatabase" name="createDatabase" value="true" #if($!createDatabase == "true")checked="checked"#end/>
+
+		<span id="dbaAccount">
+		    <label for="dbUser">$ui.getString("tool.common.install.database.dbUser")</label>
+			<input type="text" name="dbUser" value="$!dbUser"/>
+		
+		    <label for="dbPassword">$ui.getString("tool.common.install.database.dbPassword")</label>
+			<input type="password" name="dbPassword" value=""/>
+	
+		    <label for="addExampleRepositories">$ui.getString("tool.common.install.database.addExampleRepositories")</label>
+			<input type="checkbox" name="addExampleRepositories" value="true"/>
+		</span>
+	</p>
+	
+</form>		
+	
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

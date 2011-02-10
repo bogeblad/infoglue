@@ -1,0 +1,80 @@
+#beginLightCommonToolV3("tool.common.install.server.title" "" "" false true $!disableCloseButton)
+
+<script type="text/javascript">
+	function next()
+	{
+		document.editForm.submit();
+	}
+</script>
+<style type="text/css">
+	label{
+		margin-top:10px;
+	}
+</style>
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+<h1>$ui.getString("tool.common.install.title")</h1>
+
+#installProgressDiv(3)
+
+<h3>
+	$ui.getString("tool.common.install.server.title")
+</h3>
+
+#if($!errorMessage != "")
+<h4><span style="color:red">$!errorMessage</span></h4>
+#end
+
+<form method="POST" name="editForm" action="Install.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<input type="hidden" name="operation" value="updateServer"/>
+	<input type="hidden" name="dbProvider" value="$!dbProvider"/>
+	
+	<p>
+	    <label for="appServer">$ui.getString("tool.common.install.server.appServer")</label>
+		<select name="appServer">
+			<option value="tomcat5">Tomcat 5.x</option>
+			<option value="tomcat6">Tomcat 6.x</option>
+			<option value="tomcat7">Tomcat 7.x</option>
+			<option value="JBoss">JBoss</option>
+		</select>
+
+	    <label for="hostName">$ui.getString("tool.common.install.server.hostName")</label>
+		<input type="text" name="hostName" value="$!hostName"/>
+	
+	    <label for="superUserName">$ui.getString("tool.common.install.server.superUserName")</label>
+		<input type="text" name="superUserName" value="$!superUserName"/>
+	
+	    <label for="superUserPassword">$ui.getString("tool.common.install.server.superUserPassword")</label>
+		<input type="text" name="superUserPassword" value="$!superUserPassword"/>
+	
+	    <label for="superUserEmail">$ui.getString("tool.common.install.server.superUserEmail")</label>
+		<input type="text" name="superUserEmail" value="$!superUserEmail"/>	   
+		 
+
+	    <label for="smtpServer">$ui.getString("tool.common.install.server.smtpServer")</label>
+		<input type="text" name="smtpServer" value="$!smtpServer"/>	    
+
+	    <label for="smtpAuth">$ui.getString("tool.common.install.server.smtpAuth")</label>
+		<input type="text" name="smtpAuth" value="$!smtpAuth"/>	    
+
+	    <label for="smtpUser">$ui.getString("tool.common.install.server.smtpUser")</label>
+		<input type="text" name="smtpUser" value="$!smtpUser"/>	    
+
+	    <label for="smtpPassword">$ui.getString("tool.common.install.server.smtpPassword")</label>
+		<input type="text" name="smtpPassword" value="$!smtpPassword"/>	    
+
+	    <label for="systemEmailSender">$ui.getString("tool.common.install.server.systemEmailSender")</label>
+		<input type="text" name="systemEmailSender" value="$!systemEmailSender"/>	    
+	
+	</p>
+	
+</form>		
+	
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

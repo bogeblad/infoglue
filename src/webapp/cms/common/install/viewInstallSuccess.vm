@@ -1,0 +1,33 @@
+#beginLightCommonToolV3("tool.common.install.installationFinished.title" "" "" false true $!disableCloseButton)
+
+<script type="text/javascript">
+	function next()
+	{
+		document.editForm.submit();
+	}
+</script>
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+<h1>$ui.getString("tool.common.install.title")</h1>
+
+#installProgressDiv(4)
+
+<h3>
+	$ui.getString("tool.common.install.installationFinished.title")
+</h3>
+
+<p>
+    $ui.getString("tool.common.install.installationFinished.text")
+</p>
+#if($this.getURLBase().indexOf("CMS") > -1)
+<p>
+	<a href="Admin.action">Start Infoglue</a>
+</p>
+#end	
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

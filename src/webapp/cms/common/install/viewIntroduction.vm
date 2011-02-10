@@ -1,0 +1,34 @@
+#beginLightCommonToolV3("tool.common.install.introduction.title" "" "" false true $!disableCloseButton)
+
+<script type="text/javascript">
+	function next()
+	{
+		document.editForm.submit();
+	}
+</script>
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+<h1>$ui.getString("tool.common.install.title")</h1>
+
+#installProgressDiv(0)
+
+<h3>
+	$ui.getString("tool.common.install.introduction.title")
+</h3>
+
+<form method="POST" name="editForm" action="Install.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	
+	<p>
+	    $ui.getString("tool.common.install.introduction.text")
+	</p>
+	
+</form>		
+	
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

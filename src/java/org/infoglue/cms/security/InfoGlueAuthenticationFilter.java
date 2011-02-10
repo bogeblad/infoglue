@@ -49,6 +49,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
+import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -138,14 +139,17 @@ public class InfoGlueAuthenticationFilter implements Filter
 	}
     
 	
+	private static Boolean configurationFinished = null;
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc) throws ServletException, IOException 
     {	
     	HttpServletRequest httpServletRequest = (HttpServletRequest)request;
 		HttpServletResponse httpServletResponse = (HttpServletResponse)response;
 
-    	try
+		try
 		{			
+    		
+    		
 	        if (CmsPropertyHandler.getServletContext() == null) 
 	        {
 	        	CmsPropertyHandler.setServletContext(httpServletRequest.getContextPath());
@@ -193,12 +197,32 @@ public class InfoGlueAuthenticationFilter implements Filter
 		        uriMatcher = URIMatcher.compilePatterns(splitString(filterURIs, ","), false);
 			}
 			
+			try 
+			{
+				if(configurationFinished == null || configurationFinished == false)
+					configurationFinished = InstallationController.getController().validateApplicationFile();
+			} 
+			catch (Exception e1) 
+			{
+				e1.printStackTrace();
+			}
+			
+			if(!configurationFinished && (URI.indexOf("Install") == -1 && URI.indexOf(".action") > -1))
+			{
+				httpServletResponse.sendRedirect("Install!input.action");
+				return;
+			}
+
+			//System.out.println("Yep - here:" + URI + ":" + requestURI);
 			if(URI != null && URL != null && (URI.indexOf(loginUrl) > -1 || URL.indexOf(loginUrl) > -1 || URI.indexOf(invalidLoginUrl) > -1 || URL.indexOf(invalidLoginUrl) > -1 || URI.indexOf(logoutUrl) > -1 || URI.indexOf("Login!logout.action") > -1 || URL.indexOf(logoutUrl) > -1 || URI.indexOf("UpdateCache") > -1 || URI.indexOf("protectedRedirect.jsp") > -1 || uriMatcher.matches(requestURI)))
 			{
+				//System.out.println("Yep - here also");
 				fc.doFilter(request, response); 
 				return;
 	   	 	}
 	
+			//System.out.println("Nope...");
+
 			// make sure we've got an HTTP request
 			if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse))
 			  throw new ServletException("InfoGlue Filter protects only HTTP resources");

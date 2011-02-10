@@ -66,7 +66,7 @@ public class DefaultToolsProvider implements ToolsProvider
 					SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getId());
 					if(siteNodeVO != null)
 					{
-						tools.add(new InfoglueTool("FormsTool", "ViewSiteNode.action?siteNodeId=" + siteNodeVO.getId(), "", LabelController.getController(locale).getLocalizedString(locale, "tool.common.formEditorTool.name"), "A place to manage your sites", "formeditor", ""));
+						tools.add(new InfoglueTool("FormsTool", "ViewSiteNode.action?siteNodeId=" + siteNodeVO.getId(), "", LabelController.getController(locale).getLocalizedString(locale, "tool.common.formEditorTool.name"), "A place to manage your forms", "formeditor", ""));
 					}
 				}
 			} 
@@ -75,8 +75,26 @@ public class DefaultToolsProvider implements ToolsProvider
 				logger.error("Problem loading form system:" + e.getMessage(), e);
 			}
 		}
-		//if(hasAccessTo(principal, "CalendarEditor.Read", true))
-		//	tools.add(new InfoglueTool("CalendarTool", "ViewStructureTool.action", "", "Form editor", "A place to manage your sites", "formeditor", ""));
+		if(hasAccessTo(principal, "CalendarTool.Read", true))
+		{
+			try 
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithName("Infoglue calendar system");
+				if(repositoryVO != null)
+				{
+					SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getId());
+					if(siteNodeVO != null)
+					{
+						tools.add(new InfoglueTool("CalendarTool", "ViewSiteNode.action?siteNodeId=" + siteNodeVO.getId(), "", LabelController.getController(locale).getLocalizedString(locale, "tool.common.calendarTool.name"), "A place to manage your calendars", "calendareditor", ""));
+					}
+				}
+			} 
+			catch (Exception e) 
+			{
+				logger.error("Problem loading calendar system:" + e.getMessage(), e);
+			}
+		}
+
 		if(hasAccessTo(principal, "SearchTool.Read", true))
 			tools.add(new InfoglueTool("SearchTool", "Search.action?initSearch=true", "", LabelController.getController(locale).getLocalizedString(locale, "tool.common.searchTool.name"), "Global search", "search", ""));
 

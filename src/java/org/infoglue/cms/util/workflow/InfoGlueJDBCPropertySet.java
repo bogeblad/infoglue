@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.util.workflow;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbcp.ConnectionFactory;
@@ -43,7 +46,13 @@ import org.apache.commons.dbcp.PoolingDriver;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.Timer;
 
@@ -97,6 +106,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     private boolean enableCache = true;
     private boolean allKeysCached = false;
     private static boolean isRecacheCall = false;
+    private static boolean reloadConfiguration = false;
     
     private static Map typeMap = null;
     private static Map valueMap = null;
@@ -361,6 +371,8 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
     public void init(Map config, Map args) 
     {
+    	reloadConfiguration = false;
+    	
         // args
         globalKey = (String) args.get("globalKey");
         
@@ -378,6 +390,9 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         this.password = (String) config.get("password");
         this.driverClassName = (String) config.get("driverClassName");
         this.url = (String) config.get("url");
+        System.out.println("Whe got " + this.url + " in " + this.hashCode());
+        if(this.url.equalsIgnoreCase("@database.url@"))
+        	reloadConfiguration = true;
 
         this.dbcpWhenExhaustedAction = (String) config.get("dbcp.whenExhaustedAction");
         this.dbcpMaxActive = (String) config.get("dbcp.maxActive");
@@ -728,10 +743,26 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     protected Connection getConnection() throws SQLException 
     {
         Connection conn = null;
+        boolean reloadingConfiguration = false;
 		
+        if(reloadConfiguration)
+        {
+        	try 
+        	{
+        		reloadingConfiguration = true;
+        		System.out.println("Reloading config........");
+        		reloadConfiguration();
+	        	//connectionPool = null;
+			} 
+        	catch (Exception e) 
+        	{
+				e.printStackTrace();
+			}
+        }
+        	
 		try 
 		{
-	        if(connectionPool == null)
+	        if(connectionPool == null || reloadingConfiguration)
 	        {
 	            logger.info("Establishing connection to database '" + this.url + "'");
 		        
@@ -741,7 +772,9 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 	            } 
 	            catch (Exception e) 
 	            {
-	                e.printStackTrace();
+	            	//if(CmsPropertyHandler.getIsConfigurationFinished())
+	            		logger.error("Error setting up driver for [" + this.url + "]: " + e.getMessage());
+	                    System.out.println("Whe got " + this.url + " in " + this.hashCode());
 	            }
 	            logger.info("Done.");
 	        }
@@ -757,7 +790,8 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 		} 
 		catch (Exception ex) 
 		{
-			ex.printStackTrace();
+        	//if(CmsPropertyHandler.getIsConfigurationFinished())
+        		logger.error("Error connecting to [" + this.url + "]: " + ex.getMessage(), ex);
 		}
 		
         return conn;
@@ -878,4 +912,37 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     	//System.out.println("Recached keys");
     }
 
+    public void reloadConfiguration() throws Exception
+    {
+    	DOMBuilder domBuilder = new DOMBuilder();
+    	String propertySetXMLPath = CastorDatabaseService.class.getResource("/propertyset.xml").getPath();
+    	String content = FileHelper.getFileAsString(new File(propertySetXMLPath));
+    	System.out.println("propertyset.xml:\n" + content);
+    	Document doc = domBuilder.getDocument(content);
+    	
+    	Element propertySet = (Element)doc.selectSingleNode("//propertyset[@name='jdbc']");
+    	
+        String name = propertySet.attributeValue("name");
+        String clazz = propertySet.attributeValue("class");
+        
+        // get args now
+        List args = propertySet.selectNodes("arg");
+        Map argsMap = new HashMap();
+        Iterator argsIterator = args.iterator();
+        while(argsIterator.hasNext())
+        {
+            Element arg = (Element) argsIterator.next();
+            String argName = arg.attributeValue("name");
+            String argValue = arg.attributeValue("value");
+            argsMap.put(argName, argValue);
+            System.out.println("" + argName + "=" + argValue);
+        }
+        
+        init(argsMap, argsMap);
+    }
+    
+    public static void initReloadConfiguration() throws Exception
+    {
+    	reloadConfiguration = true;
+    }
 } 

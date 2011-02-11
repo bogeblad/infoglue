@@ -1,7 +1,7 @@
 #define( $extraMarkup )
 #end
 
-#beginLightCommonToolV3Impl("tool.managementtool.mysettings.header" "" "" false true $!disableCloseButton $extraMarkup)
+#beginLightCommonToolV3Impl("tool.managementtool.mysettings.header" "" "" false true $!disableCloseButton $extraMarkup false "")
 
 <script type="text/javascript">
 	<!--
@@ -41,7 +41,7 @@
 	
 	$(document).ready(function(){
 		$("#tabsContainer").tabs( {
-			show:function() { resizeInlineTabDivs(); },
+			show:function() { resizeScrollArea(); },
 			select:function(e, ui) { 
 				//alert("ui: " + ui.index);
 				if(ui.index == 0)
@@ -85,8 +85,6 @@
 	-->
 </script>
 
-<div>
-    
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
 	<div style="clear: both;"></div>
@@ -100,6 +98,9 @@
 		$ui.getString("tool.managementtool.mysettings.introduction")
 	</p>
 
+<form name="editForm" method="POST" action="UpdateMySettings.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	
 	<div id="tabsContainer" class="flora">      
 		<ul>
 	        <li><a href="#generalSettingsTab"><span>$ui.getString("tool.managementtool.mysettings.generalTabLabel")</span></a></li>
@@ -109,8 +110,6 @@
 
 		<div id="generalSettingsTab" class="recipientTab inlineTabDiv">
 
-			<form name="editForm" method="POST" action="UpdateMySettings.action">
-				<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 				<fieldset style="width: 90%; border: 0px solid red; margin: 0px; padding-left: 10px;">
 	
 				<p style="clear: both;">
@@ -182,14 +181,12 @@
 
 	</div>		
 	
-	#lightFooterToolbar($footerButtons)
-	
 	</form>
-
-</div>
 
 <div id="reloadDialog" title="$ui.getString("tool.managementtool.mysettings.fullReloadQuestionTitle")" style="display: none">
 	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>$ui.getString("tool.managementtool.mysettings.fullReloadQuestionLabel")</p>
 </div>
+
+#lightFooterToolbar($footerButtons)
 
 #endCommonToolV3()

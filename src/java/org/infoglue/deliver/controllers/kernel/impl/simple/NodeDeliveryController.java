@@ -1699,6 +1699,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         if(parentSiteNodeId == null || parentSiteNodeId.intValue() == -1)
         {
             SiteNodeVO rootSiteNodeVO = this.getRootSiteNode(db, repositoryId);
+            if(rootSiteNodeVO != null)
             siteNodes.add(rootSiteNodeVO);
         }
         else

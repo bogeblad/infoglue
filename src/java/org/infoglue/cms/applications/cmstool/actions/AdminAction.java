@@ -25,6 +25,7 @@ package org.infoglue.cms.applications.cmstool.actions;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.contenttool.actions.CreateContentAndAssetFromUploadAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
@@ -39,10 +40,6 @@ public class AdminAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {
-		Object o = Class.forName("org.infoglue.cms.applications.contenttool.actions.CreateContentAndAssetFromUploadAction").newInstance();
-		System.out.println("o:" + o);
-		System.out.println("o:" + ((CreateContentAndAssetFromUploadAction)o).doInput());
-
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";

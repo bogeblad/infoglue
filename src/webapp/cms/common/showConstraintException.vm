@@ -1,7 +1,7 @@
 ################################
 ##BEGIN REAL CODE
 ################################
-#beginLightCommonToolV3Impl("tool.common.constraintException.title" "" "" false true true "")
+#beginLightCommonToolV3Impl("tool.common.constraintException.title" "" "" false true true "" false "")
 
 	#lightMenuToolbar("" $buttons $rightButtons) 
 

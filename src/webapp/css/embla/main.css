@@ -50,7 +50,7 @@ body.generaltooledit {
 	display: inline;
 	/*background-color: #d6e7f7;*/
 }
-#igEditArea h1,h2,h3,h4,p {
+h1, h2, h3, h4, p {
 	margin-left: 16px;
 }
 

@@ -197,12 +197,6 @@
 					#set($enableWYSIWYG = "false")
 				#end
 		
-				#set($enableTemplateEditor = "")
-				#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
-				#if($enableTemplateEditor == "")
-					#set($enableTemplateEditor = "false")
-				#end
-		
 				#set($enableFormEditor = "")
 				#set($enableFormEditor = $!attribute.getContentTypeAttribute("enableFormEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
 				#if($enableFormEditor == "")
@@ -244,9 +238,6 @@
 							    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableWYSIWYG == "true")
 							    		| <a href="javascript:changeEditor(1, '${attribute.name}');">$ui.getString("tool.contenttool.editorHTMLWYSIWYG")</a> 
 							    		#end
-							    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
-							    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
-										#end
 									</td>
 							    </tr>
 							</table>
@@ -310,22 +301,6 @@
 											</script>
 			
 								    	</td>
-								    </tr>
-								    </table>
-								</div>
-							#end
-							
-							#if($enableTemplateEditor == "true")
-								<!-- Here comes the Template Code editor layer -->
-								<input type="hidden" name="${attribute.name}EditorType2IsActive" value="false">
-								<div id="${attribute.name}EditorType2" name="${attribute.name}EditorType2" style="position:absolute; visibility: hidden; width:${width}px; height:${height}px; z-index:1; border: 0px none #000000;">
-								    <img src="images/trans.gif" width="1" height="12">
-								    <br>
-								    <table cellpadding="0" cellspacing="0" border="0">
-								    <tr>
-								    	<td colspan="2" align="right" bgcolor="white">
-								    		#showTemplateEditor("${width}" "${height}" "${attribute.name}" "${deliveryBaseUrl}")						    		
-										</td>
 								    </tr>
 								    </table>
 								</div>

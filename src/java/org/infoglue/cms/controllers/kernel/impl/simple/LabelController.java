@@ -197,7 +197,9 @@ public class LabelController extends BaseController implements StringManager
 				}
 				catch (Exception e) 
 				{
-					logger.error("Could not get value from bundle:" + e.getMessage(), e);
+					logger.error("Could not get value from bundle:" + e.getMessage());
+					if(logger.isDebugEnabled())
+						logger.debug("Could not get value from bundle:" + e.getMessage(), e);
 				}
 			}
 		}			
@@ -503,7 +505,7 @@ public class LabelController extends BaseController implements StringManager
 		}
         catch(Exception e)
         {
-        	logger.error("An error occurred when caching theme:" + e.getMessage(), e);
+        	logger.error("An error occurred when caching theme:" + e.getMessage());
         }
         finally
         {

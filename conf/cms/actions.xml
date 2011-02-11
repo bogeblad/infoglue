@@ -1,6 +1,17 @@
 <!-- $Id: actions.xml,v 1.99 2010/09/09 12:13:31 mattias Exp $ -->
 <actions>
 
+	<!-- Installer / database upgrader -->
+	<action name="org.infoglue.cms.applications.common.actions.InstallAction" alias="Install">
+		<view name="input">/cms/common/install/viewIntroduction.vm</view>
+		<view name="inputDatabase">/cms/common/install/viewDatabase.vm</view>
+		<view name="inputDatabaseUpgrade">/cms/common/install/viewDatabaseUpgrade.vm</view>
+		<view name="inputServer">/cms/common/install/viewServer.vm</view>
+		<view name="inputInitialData">/cms/common/install/viewInitialData.vm</view>
+		<view name="success">/cms/common/install/viewInstallSuccess.vm</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
+
 	<!-- MySettings -->
 	<action name="org.infoglue.cms.applications.managementtool.actions.ViewMySettingsAction" alias="ViewMySettings">
 		<view name="success">/cms/managementtool/v3/viewMySettings.vm</view>

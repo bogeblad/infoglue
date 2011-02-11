@@ -5,7 +5,7 @@
 ################################
 ##BEGIN REAL CODE
 ################################
-#beginLightCommonToolV3Impl("tool.publishingtool.publicationDeniedComment" "$repositoryId" "repositoryId=$!repositoryId" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.publishingtool.publicationDeniedComment" "$repositoryId" "repositoryId=$!repositoryId" false true $!disableCloseButton $headerMarkup false "")
 	
 	<h3>$ui.getString("tool.publishingtool.publicationDeniedComment")</h3>
 	

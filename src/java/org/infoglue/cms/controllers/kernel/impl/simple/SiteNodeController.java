@@ -185,6 +185,7 @@ public class SiteNodeController extends BaseController
 			while(results.hasMore()) 
             {
 				SiteNode siteNode = (SiteNode)results.next();
+				siteNode.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", siteNode.getRepository().getIsDeleted());
                 siteNodeVOListMarkedForDeletion.add(siteNode.getValueObject());
             }
             
@@ -1272,6 +1273,31 @@ public class SiteNodeController extends BaseController
 	 */
 
 	public List getRepositorySiteNodes(Integer repositoryId, Database db) throws SystemException, Exception
+    {
+		List siteNodes = new ArrayList();
+		
+		OQLQuery oql = db.getOQLQuery("SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl sn WHERE sn.repository.repositoryId = $1");
+    	oql.bind(repositoryId);
+    	
+    	QueryResults results = oql.execute();
+		
+		while(results.hasMore()) 
+        {
+        	SiteNode siteNode = (SiteNodeImpl)results.next();
+        	siteNodes.add(siteNode);
+        }
+		
+		results.close();
+		oql.close();
+
+		return siteNodes;    	
+    }
+
+	/**
+	 * This method returns a list of all siteNodes in a repository.
+	 */
+
+	public List getRepositorySiteNodesReadOnly(Integer repositoryId, Database db) throws SystemException, Exception
     {
 		List siteNodes = new ArrayList();
 		

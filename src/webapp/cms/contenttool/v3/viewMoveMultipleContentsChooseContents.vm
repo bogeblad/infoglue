@@ -233,7 +233,7 @@
 	
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.moveMultipleContent.header" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.contenttool.moveMultipleContent.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
 	#lightMenuToolbar("" $buttons $rightButtons) 
 	

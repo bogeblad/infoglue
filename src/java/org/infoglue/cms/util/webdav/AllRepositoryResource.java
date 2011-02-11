@@ -75,11 +75,18 @@ public class AllRepositoryResource implements PropFindableResource, FolderResour
 
 	public boolean authorise( Request request, Method method, Auth auth ) 
 	{
+		if(this.principal == null || auth == null)
+		{
+			logger.info("Invalid authorize in webdav:" + this.principal + ":" + auth);	
+			return false;
+		}
+			
 		if(logger.isInfoEnabled())
 			logger.info("authorise user in represource:" + this.principal + ":" + auth.getTag() + ":" + auth.getUser());
 		try 
 		{
 			boolean hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(this.principal, "WebDAV.Read", true);
+			logger.info("hasAccess:" + hasAccess);
 			if(!hasAccess)
 				return false;
 		} 

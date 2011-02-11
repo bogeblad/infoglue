@@ -81,8 +81,9 @@ while(contentsIterator.hasNext())
 {
 	ContentVO contentVO = (ContentVO)contentsIterator.next();
 	LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
-
-	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), masterLanguageVO.getId());
+	ContentVersionVO contentVersionVO = null;
+	if(contentVO != null && masterLanguageVO != null)
+		contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), masterLanguageVO.getId());
 }
 
 elapsedTime = timer.getElapsedTime();

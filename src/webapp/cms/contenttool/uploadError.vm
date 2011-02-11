@@ -49,7 +49,7 @@
 
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.fileUpload.fileUploadFailedHeader" "" "" false true false "$extraMarkup")
+#beginLightCommonToolV3Impl("tool.contenttool.fileUpload.fileUploadFailedHeader" "" "" false true false "$extraMarkup" false "")
 
 	#lightMenuToolbar("" $buttons $rightButtons) 
 

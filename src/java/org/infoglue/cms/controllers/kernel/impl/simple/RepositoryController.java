@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
+import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Language;
@@ -39,6 +40,7 @@ import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
+import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
@@ -105,24 +107,40 @@ public class RepositoryController extends BaseController
 			repository.setIsDeleted(true);
 			
 			/*
+			List<Content> contentList = ContentControllerProxy.getContentController().getRepositoryContents(repositoryId, db);
+			Iterator<Content> contentListIterator = contentList.iterator();
+			while(contentListIterator.hasNext())
+			{
+				Content content = contentListIterator.next();
+				content.setIsDeleted(false);
+			}
+			
+			List<SiteNode> siteNodeList = SiteNodeControllerProxy.getController().getRepositorySiteNodes(repositoryId, db);
+			Iterator<SiteNode> siteNodeListIterator = siteNodeList.iterator();
+			while(siteNodeListIterator.hasNext())
+			{
+				SiteNode siteNode = siteNodeListIterator.next();
+				siteNode.setIsDeleted(false);
+			}
+			*/
+
 			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), userName, false);
 			if(contentVO != null)
 			{
 				if(forceDelete)
-					ContentController.getContentController().markForDelete(contentVO, db, true, true, true, infoGluePrincipal);
+					ContentController.getContentController().markForDeletion(contentVO, db, true, true, true, infoGluePrincipal);
 				else
-					ContentController.getContentController().markForDelete(contentVO, infoGluePrincipal, db);
+					ContentController.getContentController().markForDeletion(contentVO, infoGluePrincipal, db);
 			}
 			
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getRepositoryId());
 			if(siteNodeVO != null)
 			{
 				if(forceDelete)
-					SiteNodeController.getController().markForDelete(siteNodeVO, db, true, infoGluePrincipal);
+					SiteNodeController.getController().markForDeletion(siteNodeVO, db, true, infoGluePrincipal);
 				else
-					SiteNodeController.getController().markForDelete(siteNodeVO, db, infoGluePrincipal);
+					SiteNodeController.getController().markForDeletion(siteNodeVO, db, infoGluePrincipal);
 			}
-			*/
 			
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
 			ceb.throwIfNotEmpty();
@@ -161,25 +179,21 @@ public class RepositoryController extends BaseController
 			repository = getRepositoryWithId(repositoryId, db);
 			repository.setIsDeleted(false);
 			
-			/*
-			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), userName, false);
-			if(contentVO != null)
+			List<Content> contentList = ContentControllerProxy.getContentController().getRepositoryContents(repositoryId, db);
+			Iterator<Content> contentListIterator = contentList.iterator();
+			while(contentListIterator.hasNext())
 			{
-				if(forceDelete)
-					ContentController.getContentController().markForDelete(contentVO, db, true, true, true, infoGluePrincipal);
-				else
-					ContentController.getContentController().markForDelete(contentVO, infoGluePrincipal, db);
+				Content content = contentListIterator.next();
+				content.setIsDeleted(false);
 			}
 			
-			SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getRepositoryId());
-			if(siteNodeVO != null)
+			List<SiteNode> siteNodeList = SiteNodeControllerProxy.getController().getRepositorySiteNodes(repositoryId, db);
+			Iterator<SiteNode> siteNodeListIterator = siteNodeList.iterator();
+			while(siteNodeListIterator.hasNext())
 			{
-				if(forceDelete)
-					SiteNodeController.getController().markForDelete(siteNodeVO, db, true, infoGluePrincipal);
-				else
-					SiteNodeController.getController().markForDelete(siteNodeVO, db, infoGluePrincipal);
+				SiteNode siteNode = siteNodeListIterator.next();
+				siteNode.setIsDeleted(false);
 			}
-			*/
 			
 			//If any of the validations or setMethods reported an error, we throw them up now before create.
 			ceb.throwIfNotEmpty();

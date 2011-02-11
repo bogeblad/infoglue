@@ -240,6 +240,12 @@
 			var imageOriginalWidth = $("#pxn8_image").width();
 			var imageOriginalHeight = $("#pxn8_image").height();
 			
+			if(imageOriginalWidth <= 0)
+			{
+				setTimeout("initJcrop();", 500);
+			}
+			else
+			{
 			if(imageOriginalWidth > $("#pxn8_canvas").width() || imageOriginalHeight > $(window).height()-100)
 			{
 				$("#pxn8_image").Jcrop(
@@ -262,6 +268,7 @@
 			}
 							
 			setTimeout("printScale();", 200);	
+		}
 		}
 		
 		$(document).ready(function(){
@@ -360,8 +367,8 @@
 	
 	<div id="resizeDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
 	<h3>State resize options</h3>
-	<p><label for="keepRatio">Preserve aspect ratio:</label> <input type="checkbox" id="keepRatio" name="keepRatio" checked="true"/></p>
-	<p><label for="bestFit">Best fit:</label> <input type="checkbox" id="bestFit" name="bestFit" checked="true"/></p>
+	<p><label for="keepRatio">Preserve aspect ratio:</label> <input type="checkbox" id="keepRatio" name="keepRatio" checked="true" readonly="readonly"/></p>
+	<p><label for="bestFit">Best fit:</label> <input type="checkbox" id="bestFit" name="bestFit" checked="true" readonly="readonly"/></p>
 	<p><label for="width">Width in pixels:</label> <input type="textfield" id="width" name="width"/></p>
 	<p><label for="height">Height in pixels:</label> <input type="textfield" id="height" name="height"/></p>
 	<p class="buttonPane">

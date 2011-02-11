@@ -2,7 +2,7 @@
 	
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.welcomeHeader" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.contenttool.welcomeHeader" "" "" false true $!disableCloseButton $headerMarkup false "")
 
 	<div id="igEditArea" class="igScrollArea">
 

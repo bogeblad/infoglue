@@ -171,7 +171,6 @@ public class ExtendedSearchController extends BaseController
 			    Object o = i.next();
 			    if(logger.isDebugEnabled())
 			    	logger.debug("o:" + o.toString());
-		    	//System.out.println("o:" + o.toString());
 			    oql.bind(o);
 			}
 			

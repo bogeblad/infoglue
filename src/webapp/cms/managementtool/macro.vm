@@ -368,7 +368,7 @@
 ##*****************************************************
 
 #macro(beginLightCommonToolV3 $titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody $disableCloseButton)
-	#beginLightCommonToolV3Impl($titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody $disableCloseButton "" false)
+	#beginLightCommonToolV3Impl($!titleKey $!primaryKey $!extraData $!hasDataTable $!endHeadAndDefineBody $!disableCloseButton "" false "")
 #end
 
 #macro(beginLightCommonToolV3Impl $titleKey $primaryKey $extraData $hasDataTable $endHeadAndDefineBody $disableCloseButton $customHeaderMarkup $skipResize $extraBodyClass)
@@ -1955,55 +1955,6 @@ $ui.getString("entity.${fieldNameKey}.label")
 
 
 ##**********************************************************
-## This applet shows the template editor                   *
-##**********************************************************
-
-#macro(showTemplateEditor $width $height $attributeName $deliveryBaseUrl)
-#if($browserBean.isIE())
-  <OBJECT name="${attributeName}InfoGlueCodeEditor" classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
-	width="${width}" height="${height}" align="baseline"
- 	codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0">
- 	<PARAM NAME="code" VALUE="org.infoglue.cms.plugins.codeeditor.InfoGlueCodeEditorApplet.class">
-	<PARAM NAME="archive" VALUE="applications/code-editor.jar">
- 	<PARAM NAME="type" VALUE="application/x-java-applet;version=1.4">
-	<PARAM NAME="MAYSCRIPT" VALUE="true">
-	<PARAM NAME="attributeId" value="${attributeName}">
-	<PARAM NAME="deliverySettingsUrl" value="${deliveryBaseUrl}/ViewApplicationSettings!getTemplateLogicMethods.action">
-
-	<COMMENT>
-        <EMBED name="${attribute.name}InfoGlueCodeEditor" id="${attributeName}InfoGlueCodeEditor" type="application/x-java-applet;version=1.4"
-        	width="$width"
-           	height="$height"
-           	align="baseline"
-           	code="org.infoglue.cms.plugins.codeeditor.InfoGlueCodeEditorApplet.class"
-           	archive="applications/code-editor.jar"
-           	pluginspage="http://java.sun.com/products/plugin/index.html#download"
-           	MAYSCRIPT=true
-           	scriptable=true
-           	attributeId="${attributeName}"
-           	deliverySettingsUrl="${deliveryBaseUrl}/ViewApplicationSettings!getTemplateLogicMethods.action">
-            <NOEMBED>
-	        	No JDK 1.4 support for APPLET!!
-	        	<script type="text/javascript">
-	        		noJava = true;
-	        	</script>
-            </NOEMBED>
-        </EMBED>
-    </COMMENT>
-  </OBJECT>
-#else
-  <APPLET name="${attributeName}InfoGlueCodeEditor" code="org.infoglue.cms.plugins.codeeditor.InfoGlueCodeEditorApplet.class" archive="applications/code-editor.jar" align="baseline" width="${width}" height="$height" mayscript>
-	<PARAM NAME="attributeId" value="${attributeName}">
-	<PARAM NAME="deliverySettingsUrl" value="${deliveryBaseUrl}/ViewApplicationSettings!getTemplateLogicMethods.action">
-    No JDK 1.4 support for APPLET!!
-	<script type="text/javascript">
-		noJava = true;
-	</script>
-  </APPLET>
-#end
-#end
-
-##**********************************************************
 ## These show a tree of objects as an indented select list
 ## Used in the management tool and content version editor.
 ##**********************************************************
@@ -2437,33 +2388,6 @@ $ui.getString("entity.${fieldNameKey}.label")
 	</div>
 </div>
 #end
-#*
-#macro(lightFooterToolbar $buttons)
-<div style="clear: both;"></div>
-<div id="footertoolbar" onfocus="this.blur();">
-	<div style="float:left; margin-left: 10px;">
-		#foreach($button in $buttons)
-			<a class='igToolbarButton' href="#" id="footerButton$velocityCount" name="footerButton$velocityCount" title="$button.title"><span class='igToolbarButtonOuterSpan'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
-			<script type="text/javascript">
-			<!--
-			$("#footerButton$velocityCount").click(function (){
-				#if($button.isJavascript == false)
-					#if($button.target == "inlineDiv")
-	                	openInlineDiv("$button.actionURL", $button.inlineDivPrefferredHeight, $button.inlineDivPrefferredWidth, true, true, "$button.confirmationTitle"); 
-					#else
-						document.location.href = '$button.actionURL';
-					#end
-				#else
-					$button.actionURL
-				#end
-				});
-			-->
-			</script>
-		#end
-	</div>
-</div>
-#end
-*#
 
 ##***********************************************************
 ## A macro for the embla compact toolbar
@@ -3260,12 +3184,6 @@ $ui.getString("entity.${fieldNameKey}.label")
 			#set($WYSIWYGExtraConfig = "")
 		#end
 
-		#set($enableTemplateEditor = "")
-		#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
-		#if($enableTemplateEditor == "")
-			#set($enableTemplateEditor = "false")
-		#end
-		
 		#set($enableFormEditor = "")
 		#set($enableFormEditor = $!attribute.getContentTypeAttribute("enableFormEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
 		#if($enableFormEditor == "")
@@ -3358,9 +3276,6 @@ $ui.getString("entity.${fieldNameKey}.label")
 								#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
 					    			<a href="javascript:changeEditor(0, '${attribute.name}');">$ui.getString("tool.contenttool.editorPlainLabel")</a> 
 								#end
-					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
-					    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
-								#end
                                 </label>
 							</td>
 					    </tr>
@@ -3397,42 +3312,6 @@ $ui.getString("entity.${fieldNameKey}.label")
 							#set($currentEditorId = 1)
 						</script>
 
-					#end
-					
-					#if($enableTemplateEditor == "true" && $readonly == "")
-						<!-- Here comes the Template Code editor layer -->
-						<input type="hidden" id="${attribute.name}EditorType2IsActive" name="${attribute.name}EditorType2IsActive" value="false"/>
-						<div id="${attribute.name}EditorType2" name="${attribute.name}EditorType2" style="display:block; width:${width}px; height:${height}px; z-index:1; border: 0px none #C2D0E2;">
-							<script type="text/javascript">
-				        		noJava = false;
-				        	</script>
-						    <table cellpadding="0" cellspacing="0" border="0">
-						    <tr>
-						    	<td colspan="2" align="right" bgcolor="white">
-						    		#showTemplateEditor("${width}" "${height}" "${attribute.name}" "${deliveryBaseUrl}")						    		
-								</td>
-						    </tr>
-						    </table>
-						</div>
-						
-						<script type="text/javascript">
-							if(!noJava)
-							{
-								document.getElementById('${attribute.name}').style.display = "none";
-								document.getElementById('${attribute.name}EditorType2').style.display = "block";	
-								
-								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 2;
-								#set($currentEditorId = 2)						
-							}
-							else
-							{
-								document.getElementById('${attribute.name}').style.display = "block";
-								document.getElementById('${attribute.name}EditorType2').style.display = "none";	
-								
-								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 0;
-							}
-						</script>
-						
 					#end
 					
 					#if($enableFormEditor == "true" && $readonly == "")
@@ -3770,4 +3649,19 @@ $ui.getString("entity.${fieldNameKey}.label")
 
 </table>
 
+#end
+####################################
+##          Installer macros       #
+####################################
+
+#macro(installProgressDiv $step)
+<div id="progress">
+	<ul id="progressList">
+		<li #if($step == 0)class="active"#end#if($step > 0)class="previous"#end>$ui.getString("tool.common.install.introduction.title")</li>
+		<li #if($step == 1)class="active"#end#if($step > 1)class="previous"#end>$ui.getString("tool.common.install.database.title")</li>
+		<li #if($step == 2)class="active"#end#if($step > 2)class="previous"#end>$ui.getString("tool.common.install.databaseUpgrade.title")</li>
+		<li #if($step == 3)class="active"#end#if($step > 3)class="previous"#end>$ui.getString("tool.common.install.server.title")</li>
+		<li #if($step == 5)class="active"#end#if($step > 5)class="previous"#end>$ui.getString("tool.common.install.installationFinished.title")</li>
+	</ul>
+</div>
 #end

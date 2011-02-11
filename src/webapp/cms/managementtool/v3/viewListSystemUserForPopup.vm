@@ -37,7 +37,7 @@
 ##BEGIN REAL CODE
 ################################
 
-#beginLightCommonToolV3Impl("tool.managementtool.viewSystemUserList.header" "" "" false true $!disableCloseButton $headerMarkup false)
+#beginLightCommonToolV3Impl("tool.managementtool.viewSystemUserList.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 
 	<div style="clear: both;"></div>
 	
@@ -45,13 +45,24 @@
 	
 	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
 		
-		<ul id="index" style="height: 16px; margin: 0 10px 0 10px; background-color:#F5F5F5; border:1px solid #CCCCCC; padding:4px;">
+		<ul id="index" style="list-style: none; height: 16px; margin: 0 10px 0 10px; background-color:#F5F5F5; border:1px solid #CCCCCC; padding:4px;">
 			<li style="float: left;">Alphabetic: </li>
 			#foreach($char in $usersFirstNameChars)
-			<li style="float: left; margin-left: 4px;">
+			<li style="float: left; margin-left: 4px; text-transform: capitalize;">
+				#if("$filterChar" == "$char")
+					$char
+				#else
 				<a href="ViewListSystemUser!userListForPopupV3.action?filterChar=$char" style="text-decoration: underline;">$char</a>
+				#end
 			</li>
 			#end
+			<li style="float: left; margin-left: 4px;">
+				#if("$filterChar" == "all")
+					All
+				#else
+					<a href="ViewListSystemUser!userListForPopupV3.action?filterChar=all" style="text-decoration: underline;">All</a>
+				#end
+			</li>
 		</ul>
 
 		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
@@ -63,6 +74,9 @@
 				</tr>
 			</thead>
 			<tbody>
+				#if(("$!filterChar" == "" && $infogluePrincipals.size() < 300) || "$!filterChar" == "all")
+					#set($filteredInfogluePrincipals = $infogluePrincipals)
+				#end
 			
 				#foreach($user in $filteredInfogluePrincipals)
 

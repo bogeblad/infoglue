@@ -14,7 +14,7 @@
 ##BEGIN REAL CODE
 ################################
 
-#beginLightCommonToolV3Impl("tool.managementtool.uploadTheme.header" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.managementtool.uploadTheme.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 									
 <div onfocus="this.blur();">
     

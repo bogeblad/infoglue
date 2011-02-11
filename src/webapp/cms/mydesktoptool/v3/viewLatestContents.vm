@@ -18,7 +18,7 @@
 ################################
 ##BEGIN REAL CODE
 ################################
-#beginLightCommonToolV3Impl("tool.mydesktoptool.myContents" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.mydesktoptool.myContents" "" "" false true $!disableCloseButton $headerMarkup false "")
 
 	##lightMenuToolbar("" $buttons $rightButtons) 
 

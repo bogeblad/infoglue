@@ -64,7 +64,7 @@
 	</script>
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.moveContent.header" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.contenttool.moveContent.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
 	#lightMenuToolbar("" $buttons $rightButtons) 
 

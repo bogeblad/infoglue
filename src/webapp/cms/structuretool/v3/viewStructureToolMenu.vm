@@ -116,7 +116,7 @@
 		}
 		
 		$(document).ready(function(){
-			//alert("$!path");
+			##alert("$!path");
 			#if($path && $path != "")
 				syncWithTree("$!path", currentRepositoryId);
  			##else

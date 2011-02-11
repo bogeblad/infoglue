@@ -10,7 +10,7 @@
 
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.changeVersionLanguage.header" "$!contentId" "contentId=$contentId&repositoryId=$!repositoryId&isBranch=$isBranch" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.contenttool.changeVersionLanguage.header" "$!contentId" "contentId=$contentId&repositoryId=$!repositoryId&isBranch=$isBranch" false true $!disableCloseButton $headerMarkup false "")
 
 	#lightMenuToolbar("" $buttons $rightButtons) 
 

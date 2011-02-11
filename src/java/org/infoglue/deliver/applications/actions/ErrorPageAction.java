@@ -179,7 +179,10 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 	    }
     	catch(Throwable t)
     	{
-    		t.printStackTrace();
+    		logger.error("Error executing ErrorPage action:" + t.getMessage());
+    		if(logger.isDebugEnabled())
+        		logger.debug("Error executing ErrorPage action:" + t.getMessage(), t);
+    			
     		return SUCCESS;
     	}
     }

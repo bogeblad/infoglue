@@ -7,7 +7,7 @@
 </script>
 #end
 
-#beginLightCommonToolV3Impl("tool.structuretool.siteNodeTypeDefinitionMissingHeader" "$siteNodeId" "" false true $!disableCloseButton $extraMarkup)
+#beginLightCommonToolV3Impl("tool.structuretool.siteNodeTypeDefinitionMissingHeader" "$siteNodeId" "" false true $!disableCloseButton $extraMarkup false "")
 
 <div>
     

@@ -8,7 +8,7 @@
 ##BEGIN REAL CODE
 ################################
 
-#beginLightCommonToolV3Impl("tool.managementtool.viewMessageCenter.header" "" "" false true $!disableCloseButton $headerMarkup true)
+#beginLightCommonToolV3Impl("tool.managementtool.viewMessageCenter.header" "" "" false true $!disableCloseButton $headerMarkup true "")
 
 	<div style="clear: both;"></div>
 	

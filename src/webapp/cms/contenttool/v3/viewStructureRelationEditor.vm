@@ -326,7 +326,7 @@
 	</style>
 #end
 
-#beginLightCommonToolV3Impl("tool.structuretool.chooseRelatedContentsLabel" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.structuretool.chooseRelatedContentsLabel" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
 	#lightMenuToolbar("" $buttons $rightButtons) 
 

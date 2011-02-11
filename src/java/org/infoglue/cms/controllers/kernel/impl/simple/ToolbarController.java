@@ -220,6 +220,18 @@ public class ToolbarController implements ToolbarProvider
 				
 		try
 		{
+			if(toolbarKey.equalsIgnoreCase("tool.common.install.introduction.title") ||
+			   toolbarKey.equalsIgnoreCase("tool.common.install.database.title") ||
+			   toolbarKey.equalsIgnoreCase("tool.common.install.databaseUpgrade.title") ||
+			   toolbarKey.equalsIgnoreCase("tool.common.install.server.title") ||
+			   toolbarKey.equalsIgnoreCase("tool.common.install.initialData.title"))
+			{
+				return getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			}
+
+			if(toolbarKey.equalsIgnoreCase("tool.common.install.installationFinished.title"))
+				asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, false));
+			
 			if(toolbarKey.equalsIgnoreCase("tool.common.constraintException.title"))
 				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, false));
 			
@@ -1765,7 +1777,8 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
-		buttons.addAll(getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+		//Fix this dialog later
+		//buttons.addAll(getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 
 		return buttons;
 	}

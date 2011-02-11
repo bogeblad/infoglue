@@ -101,7 +101,7 @@
 #end
 
 
-#beginLightCommonToolV3Impl("tool.structuretool.siteNodeHistory.header" "$!siteNodeId" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.structuretool.siteNodeHistory.header" "$!siteNodeId" "" false true $!disableCloseButton $headerMarkup false "")
 
 <div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
     	

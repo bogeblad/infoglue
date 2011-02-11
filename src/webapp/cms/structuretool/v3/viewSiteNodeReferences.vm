@@ -24,7 +24,7 @@
 	</script>
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.contentHeader" "$!contentId" "contentId=$!contentId" false true $!disableCloseButton $headerMarkup false)
+#beginLightCommonToolV3Impl("tool.contenttool.contentHeader" "$!contentId" "contentId=$!contentId" false true $!disableCloseButton $headerMarkup false "")
 
 	<div id="tabsContainer" class="flora cleanTopDiv">      
 		<ul>

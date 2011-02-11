@@ -24,7 +24,7 @@
 ################################
 ##BEGIN REAL CODE
 ################################
-#beginLightCommonToolV3Impl("tool.publishingtool.welcomeHeader" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.publishingtool.welcomeHeader" "" "" false true $!disableCloseButton $headerMarkup false "")
 
 	##lightMenuToolbar("" $buttons $rightButtons) 
 

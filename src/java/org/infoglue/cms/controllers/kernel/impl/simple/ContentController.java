@@ -157,6 +157,7 @@ public class ContentController extends BaseController
 			while(results.hasMore()) 
             {
 				Content content = (Content)results.next();
+				content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", content.getRepository().getIsDeleted());
 				contentVOListMarkedForDeletion.add(content.getValueObject());
             }
             
@@ -529,7 +530,7 @@ public class ContentController extends BaseController
 	
     private static void deleteRecursive(Content content, Iterator parentIterator, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
     {
-        if(!skipRelationCheck && !content.getIsDeleted())
+        if(!skipRelationCheck)
         {
 	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, db);
 			if(referenceBeanList != null && referenceBeanList.size() > 0)
@@ -730,6 +731,16 @@ public class ContentController extends BaseController
     		throw new ConstraintException("ContentVersion.stateId", "3300", content.getName());
     	}			
     }        
+
+    /**
+	 * This method restored a content.
+	 */
+	    
+    public void restoreContent(Integer contentId, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException
+    {
+		Content content = getContentWithId(contentId, db);
+		content.setIsDeleted(false);
+    }  
 
     /**
 	 * This method restored a content.
@@ -1924,7 +1935,7 @@ public class ContentController extends BaseController
 	 * This method returns the contents belonging to a certain repository.
 	 */
 	
-	public List getRepositoryContents(Integer repositoryId, Database db) throws SystemException, Exception
+	public List getRepositoryMediumContents(Integer repositoryId, Database db) throws SystemException, Exception
 	{
 		List contents = new ArrayList();
 		
@@ -1936,6 +1947,31 @@ public class ContentController extends BaseController
 		while(results.hasMore()) 
         {
         	MediumContentImpl content = (MediumContentImpl)results.next();
+			contents.add(content);
+        }
+
+		results.close();
+		oql.close();
+
+		return contents;    	
+	}
+
+	/**
+	 * This method returns the contents belonging to a certain repository.
+	 */
+	
+	public List getRepositoryContents(Integer repositoryId, Database db) throws SystemException, Exception
+	{
+		List contents = new ArrayList();
+		
+		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.repository = $1 ORDER BY c.contentId");
+    	oql.bind(repositoryId);
+    	
+    	QueryResults results = oql.execute();
+		
+		while(results.hasMore()) 
+        {
+        	ContentImpl content = (ContentImpl)results.next();
 			contents.add(content);
         }
 

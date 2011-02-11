@@ -44,6 +44,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.managementtool.actions.deployment.DeploymentServerBean;
 import org.infoglue.cms.applications.managementtool.actions.deployment.VersionControlServerBean;
+import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.deliver.util.CacheController;
@@ -160,7 +161,7 @@ public class CmsPropertyHandler
 	 * This method initializes the parameter hash with values.
 	 */
 
-	private static void initializeProperties()
+	public static void initializeProperties()
 	{
 	    try
 		{
@@ -174,7 +175,10 @@ public class CmsPropertyHandler
 			if(propertyFile != null)
 			    cachedProperties.load(new FileInputStream(propertyFile));
 			else
-			    cachedProperties.load(CmsPropertyHandler.class.getResourceAsStream("/" + applicationName + ".properties"));
+				cachedProperties.load(CmsPropertyHandler.class.getClassLoader().getResource("/" + applicationName + ".properties").openStream());
+			    //cachedProperties.load(CmsPropertyHandler.class.getResourceAsStream("/" + applicationName + ".properties"));
+			
+			cachedProperties.list(System.out);
 			
 			Enumeration enumeration = cachedProperties.keys();
 			while(enumeration.hasMoreElements())
@@ -251,6 +255,7 @@ public class CmsPropertyHandler
 		String newUseAccessBasedProtocolRedirects = getUseAccessBasedProtocolRedirects(true);
 		Boolean newUseHashCodeInCaches = getUseHashCodeInCaches(true);
 		Boolean newUseSynchronizationOnCaches = getUseSynchronizationOnCaches(true);
+		String newOperatingMode = getOperatingMode(true);
 		
 		inputCharacterEncoding 				= newInputCharacterEncoding;
 		enforceRigidContentAccess 			= newEnforceRigidContentAccess;
@@ -264,6 +269,7 @@ public class CmsPropertyHandler
 		useAccessBasedProtocolRedirects 	= newUseAccessBasedProtocolRedirects;
 		useHashCodeInCaches 				= newUseHashCodeInCaches;
 		useSynchronizationOnCaches 			= newUseSynchronizationOnCaches;
+		operatingMode 						= newOperatingMode;
 		
 		System.out.println("Done resetting hard cached settings...");
 	}
@@ -627,6 +633,16 @@ public class CmsPropertyHandler
 			return operatingMode; //getProperty("operatingMode"); Concurrency issues...
 	}
 
+	public static String getOperatingMode(boolean skipHardCache)
+	{
+		if(operatingMode == null || skipHardCache)
+		{
+			operatingMode = getProperty("operatingMode");
+		}
+		
+		return operatingMode;
+	}
+	
 	public static boolean getActuallyBlockOnBlockRequests()
 	{
 		if(!getOperatingMode().equalsIgnoreCase("3"))
@@ -1485,6 +1501,11 @@ public class CmsPropertyHandler
 	    return getServerNodeProperty("infoGlueVersion", true, "3.0.0 Beta 1");
 	}
 
+	public static String getInfoGlueDBVersion()
+	{
+	    return getServerNodeProperty("infoGlueDBVersion", true, "3.0");
+	}
+
 	public static String getInfoGlueVersionReleaseDate()
 	{
 	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2011-01-16");
@@ -2289,4 +2310,24 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("assetFileNameForm", true, "contentId_languageId_assetKey");
 	}
 
+	public static String getSQLUpgradePath() 
+	{
+		return "" + getContextRootPath() + "up2date" + File.separator + "sql";
+	}
+
+	private static Boolean configurationFinished = null;
+	public static boolean getIsConfigurationFinished()
+	{
+		try 
+		{
+			if(configurationFinished == null || configurationFinished == false)
+				configurationFinished = InstallationController.getController().validateApplicationFile();
+		} 
+		catch (Exception e) 
+		{
+			logger.error("Could not check if infoglue was configured: " + e.getMessage(), e);
+		}
+		
+		return configurationFinished;
+	}
 }

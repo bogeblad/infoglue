@@ -70,4 +70,15 @@ public class CastorDatabaseService //extends DatabaseService
             throw new SystemException("An error occurred while trying to get a Database object. Castor message:" + e, e);
         }
     }
+
+    /**
+     * Set the jdo-object to null hoping to refresh the connection to the database after for example an reconfigure.
+     * @throws SystemException
+     */
+
+    public static void reconnectDatabase() throws SystemException
+    {
+       	jdo = null;
+    }
+
 }

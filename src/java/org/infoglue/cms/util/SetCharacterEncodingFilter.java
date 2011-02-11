@@ -121,7 +121,7 @@ public class SetCharacterEncodingFilter implements Filter
             }
             catch(Exception e)
             {
-                e.printStackTrace();
+            	logger.error("Error looking up language:" + e.getMessage());
             }
         }
         else if (ignore || (request.getCharacterEncoding() == null)) 

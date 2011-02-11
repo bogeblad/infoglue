@@ -521,12 +521,6 @@
 			#set($WYSIWYGToolbar = "Default")
 		#end
 
-		#set($enableTemplateEditor = "")
-		#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
-		#if($enableTemplateEditor == "")
-			#set($enableTemplateEditor = "false")
-		#end
-		
 		#set($enableFormEditor = "")
 		#set($enableFormEditor = $!attribute.getContentTypeAttribute("enableFormEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
 		#if($enableFormEditor == "")
@@ -610,9 +604,6 @@
 					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
 					    			<a href="javascript:changeEditor(0, '${attribute.name}');">$ui.getString("tool.contenttool.editorPlainLabel")</a> 
 								#end
-					    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
-					    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
-								#end
 							</td>
 					    </tr>
 					</table>
@@ -650,41 +641,6 @@
 
 					#end
 					
-					#if($enableTemplateEditor == "true" && $readonly == "")
-						<!-- Here comes the Template Code editor layer -->
-						<input type="hidden" id="${attribute.name}EditorType2IsActive" name="${attribute.name}EditorType2IsActive" value="false">
-						<div id="${attribute.name}EditorType2" name="${attribute.name}EditorType2" style="display:block; width:${width}px; height:${height}px; z-index:1; border: 0px none #C2D0E2;">
-							<script type="text/javascript">
-				        		noJava = false;
-				        	</script>
-						    <table cellpadding="0" cellspacing="0" border="0">
-						    <tr>
-						    	<td colspan="2" align="right" bgcolor="white">
-						    		#showTemplateEditor("${width}" "${height}" "${attribute.name}" "${deliveryBaseUrl}")						    		
-								</td>
-						    </tr>
-						    </table>
-						</div>
-						
-						<script type="text/javascript">
-							if(!noJava)
-							{
-								document.getElementById('${attribute.name}').style.display = "none";
-								document.getElementById('${attribute.name}EditorType2').style.display = "block";	
-								
-								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 2;
-								#set($currentEditorId = 2)						
-							}
-							else
-							{
-								document.getElementById('${attribute.name}').style.display = "block";
-								document.getElementById('${attribute.name}EditorType2').style.display = "none";	
-								
-								currentEditorIdHash["${attribute.name}CurrentEditorId"] = 0;
-							}
-						</script>
-						
-					#end
 					
 					#if($enableFormEditor == "true" && $readonly == "")
 						<!-- Here comes the Form editor layer -->

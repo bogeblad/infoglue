@@ -73,7 +73,7 @@ body.highGreyBackground {
 	/*background-color: #d6e7f7;*/
 	margin-bottom    : 43px;
 }
-#igEditArea h1,h2,h3,h4,p {
+h1, h2, h3, h4, p {
 	margin-left: 16px;
 }
 
@@ -1064,4 +1064,39 @@ tr.darkblue {
 	max-height: 450px;
 	background-color: white;
 	overflow: auto;
-	}
+	}	
+	
+/* Some classes for the installer */	
+#progress
+{
+	
+}
+
+#progressList 
+{
+	list-style: none;
+  		margin-left: 16px;
+   	padding: 0;
+  	}
+
+#progressList li
+{
+	color: black;
+	display: inline;
+	margin-right: 10px;
+	padding: 2px 20px 4px 4px;
+	border-bottom: 2px solid black;
+	background: url('../../images/next.gif') no-repeat right top;
+}
+
+#progressList li.previous
+{
+	color: #ccc;
+	border-bottom: 2px solid #ccc;
+}
+
+#progressList li.active
+{
+	color: #FF891E;
+	border-bottom: 2px solid #FF891E;
+}

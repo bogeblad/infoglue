@@ -41,9 +41,9 @@
 		$("#tabsContainer").tabs( { 
 			show:function(e, ui) { 
 				if(ui.index > 0) 
-					$(".attachAsset").parent().parent().hide();
+					$(".attachAsset").hide();
 				else
-					$(".attachAsset").parent().parent().show();
+					$(".attachAsset").show();
 				/*resizeInlineTabDivs();*/ 
 				},
 			select:function(e, ui) { 

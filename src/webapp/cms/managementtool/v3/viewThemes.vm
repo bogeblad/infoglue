@@ -18,7 +18,7 @@
 ################################
 ##BEGIN REAL CODE
 ################################
-#beginLightCommonToolV3Impl("tool.managementtool.themes.header" "" "" false true $!disableCloseButton $headerMarkup true)
+#beginLightCommonToolV3Impl("tool.managementtool.themes.header" "" "" false true $!disableCloseButton $headerMarkup true "")
 
 	##lightMenuToolbar("" $buttons $rightButtons) 
 

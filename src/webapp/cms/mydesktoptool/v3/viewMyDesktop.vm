@@ -140,7 +140,7 @@
 ################################
 ##BEGIN REAL CODE
 ################################
-#beginLightCommonToolV3Impl("tool.mydesktoptool.ongoingWorkflows" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.mydesktoptool.ongoingWorkflows" "" "" false true $!disableCloseButton $headerMarkup false "")
 
 	##lightMenuToolbar("" $buttons $rightButtons) 
 

@@ -190,12 +190,6 @@
 				#set($enableWYSIWYG = "false")
 			#end
 	
-			#set($enableTemplateEditor = "")
-			#set($enableTemplateEditor = $!attribute.getContentTypeAttribute("enableTemplateEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
-			#if($enableTemplateEditor == "")
-				#set($enableTemplateEditor = "false")
-			#end
-	
 			#set($enableFormEditor = "")
 			#set($enableFormEditor = $!attribute.getContentTypeAttribute("enableFormEditor").getContentTypeAttributeParameterValue().getLocalizedValue("label", $session.locale))
 			#if($enableFormEditor == "")
@@ -239,9 +233,6 @@
 			    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableWYSIWYG == "true")
 			    		| <a href="javascript:changeEditor(1, '${attribute.name}');">$ui.getString("tool.contenttool.editorHTMLWYSIWYG")</a> 
 			    		#end
-			    		#if($enableFormEditor == "false" && $enableContentRelationEditor == "false"  && $enableStructureRelationEditor == "false" && $enableTemplateEditor == "true")
-			    		| <a href="javascript:changeEditor(2, '${attribute.name}');">$ui.getString("tool.contenttool.editorInfoGlueTemplateEditor")</a>
-						#end
 					</div>
 				</div>
 				

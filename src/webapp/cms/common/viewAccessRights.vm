@@ -214,7 +214,7 @@
 	</style>
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.accessRights.header" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.contenttool.accessRights.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 
 	#if(!$showInline)
 		#lightMenuToolbar("" $buttons $rightButtons)

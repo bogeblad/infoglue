@@ -55,13 +55,11 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.CmsSessionContextListener;
 import org.infoglue.cms.util.dom.DOMBuilder;
+import org.infoglue.cms.util.graphics.Imaging;
 
 import webwork.action.ActionContext;
 import webwork.multipart.MultiPartRequestWrapper;
 
-import com.mullassery.imaging.Imaging;
-import com.mullassery.imaging.ImagingFactory;
-			 
 public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractAction
 {
     private final static Logger logger = Logger.getLogger(CreateContentAndAssetFromUploadAction.class.getName());
@@ -85,7 +83,6 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	private boolean refreshAll = false;
 	
 	private VisualFormatter formatter = new VisualFormatter();
-	private Imaging imaging = ImagingFactory.createImagingInstance(ImagingFactory.AWT_LOADER, ImagingFactory.JAVA2D_TRANSFORMER);
 		
     public String doInput() throws Exception 
     {
@@ -568,32 +565,15 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 
 	private void scaleAndSaveImage(DigitalAssetVO originalAssetVO, File file, int width, int height, String outputFormat, String assetSuffix, Integer contentVersionId) throws Exception
 	{
-		logger.info("Scaling image to new format:" + originalAssetVO + ":" + outputFormat);
-    	BufferedImage original = javax.imageio.ImageIO.read(file);
-    	
-    	int originalWidth = original.getWidth();
-    	int originalHeight = original.getHeight();
-    	float aspect = (float)originalWidth / (float)originalHeight;
-    	BufferedImage image = null;
-    	
-    	if(height == -1 && width != -1)
-    		aspect = (float)width / (float)originalWidth;
-    	else if(width == -1 && height != -1)
-    		aspect = (float)height / (float)originalHeight;
-    	else
-    		aspect = (float)width / (float)originalWidth;
-    	
-    	logger.info("aspect:" + aspect);
-    	
-    	image = imaging.scale(original, aspect);        	
-	
     	String workingFileName = "" + originalAssetVO.getDigitalAssetId() + "_" + assetSuffix + "." + outputFormat.toLowerCase();
     	long timeStamp = System.currentTimeMillis();
     	if(originalAssetVO.getDigitalAssetId() == null)
     		workingFileName = "" + timeStamp + "_" + assetSuffix + "." + outputFormat.toLowerCase();
     	
     	File outputFile = new File(CmsPropertyHandler.getDigitalAssetPath() + File.separator + File.separator + workingFileName);
-		javax.imageio.ImageIO.write(image, outputFormat, outputFile);
+		
+    	logger.info("Scaling image to new format:" + originalAssetVO + ":" + outputFormat);
+		Imaging.resize(file, outputFile, width, height, outputFormat, true);
 		
 		String assetContentType = "image/png";
 		if(outputFormat.equalsIgnoreCase("gif"))

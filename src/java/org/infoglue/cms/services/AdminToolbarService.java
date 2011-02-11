@@ -90,7 +90,7 @@ public class AdminToolbarService
 
 	public List<ToolbarButton> getFooterToolbarButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
-		System.out.println("toolbarKey:" + toolbarKey);
+		//System.out.println("toolbarKey:" + toolbarKey);
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		for(ToolbarProvider toolbarProvider : toolbarProviders)
 		{

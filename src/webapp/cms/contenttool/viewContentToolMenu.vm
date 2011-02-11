@@ -201,8 +201,8 @@
 
 		$(document).ready(function(){
 			resize();
-			//alert('path: $!path');
-			//alert('exp: $!exp');
+			##alert('path: $!path');
+			##alert('exp: $!exp');
 			if("$!path" == "")
 				reloadMain();
 			else

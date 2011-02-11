@@ -24,7 +24,7 @@
 			      #end
 			    </table>
 			    <br><br>
-			    <a href="$returnAddress">Back</a> | <a href="DeleteRepository!executeByForce.action?repositoryId=$repositoryId&igSecurityCode=$!securityCode">Force deletion</a>
+			    <a href="$returnAddress">Back</a> | <a href="DeleteRepository!markForDeleteByForce.action?repositoryId=$repositoryId&igSecurityCode=$!securityCode">Force deletion</a>
   			  </td>
             </tr>
           </table>

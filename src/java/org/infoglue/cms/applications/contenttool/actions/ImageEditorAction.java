@@ -43,9 +43,7 @@ import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
-
-import com.mullassery.imaging.Imaging;
-import com.mullassery.imaging.ImagingFactory;
+import org.infoglue.cms.util.graphics.Imaging;
 
 /**
  * @author Mattias Bogeblad
@@ -63,7 +61,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	private DigitalAssetVO digitalAssetVO = null;
 	private String modifiedFileUrl = "";
 	private int xpos1, ypos1, xpos2, ypos2 = 0;
-	private int width, height;
+	private int width, height = 0;
 	private String keepRatio = "false";
 	private String bestFit = "true";
 	
@@ -82,7 +80,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	private boolean refreshAll = false;
 	
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-	private Imaging imaging = ImagingFactory.createImagingInstance(ImagingFactory.AWT_LOADER, ImagingFactory.JAVA2D_TRANSFORMER);
         	
 	/**
 	 * 
@@ -121,21 +118,11 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
 
     	File file = new File(getImageEditorPath() + File.separator + workingFileName);
-    	BufferedImage original = javax.imageio.ImageIO.read(file);
 		
-    	//scaleXY()
-    	//BufferedImage image = imaging.scale(original, 1.2f, 0.6f);
+    	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + ".png";    	
+    	File outputFile = new File(getImageEditorPath() + File.separator + workingFileName);
+    	outputFile.mkdirs();
     	
-    	//scaleEqually() {
-    	//BufferedImage image = imaging.scale(original, 0.5f);
-
-    	int originalWidth = original.getWidth();
-    	int originalHeight = original.getHeight();
-    	float aspect = (float)originalWidth / (float)originalHeight;
-    	BufferedImage image = null;
-
-    	logger.info("originalWidth: " + originalWidth);
-    	logger.info("originalHeight: " + originalHeight);
     	logger.info("height: " + height);
     	logger.info("width: " + width);
     	logger.info("keepRatio: " + keepRatio);
@@ -143,36 +130,13 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     	
     	if(keepRatio.equalsIgnoreCase("true"))
     	{
-        	if(height == -1 && width != -1)
-        	{
-        		aspect = (float)width / (float)originalWidth;
-        		//logger.info("aspect1:" + aspect);
-        	}
-        	else if(width == -1 && height != -1)
-        	{
-        		aspect = (float)height / (float)originalHeight;
-        		//logger.info("aspect2:" + aspect);
-        	}
-        	else
-        	{
-        		aspect = (float)width / (float)originalWidth;
-        		//logger.info("aspect3:" + aspect + " from " + width + "/" + originalWidth + "(" + ((float)width / (float)originalWidth) + ")");
-        	}
-        	
-        	//logger.info("aspect:" + aspect);
-        	
-        	image = imaging.scale(original, aspect);        	
-    	}
-    	else
-    	{
-	    	image = imaging.resize(original, width, height, false);
+        	Imaging.resize(file, outputFile, width, height, "PNG", true);
+        }
+    	else //We don't support it for now but when the Imaging-class do it will kick in
+        {
+    		Imaging.resize(file, outputFile, width, height, "PNG", false);
     	}
     	
-    	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + ".png";    	
-    	File outputFile = new File(getImageEditorPath() + File.separator + workingFileName);
-    	outputFile.mkdirs();
-    	javax.imageio.ImageIO.write(image, "PNG", outputFile);
-
     	//logger.info("outputFile:" + outputFile.length());
 		this.modifiedFileUrl = getImageEditorBaseUrl() + workingFileName;
 		//logger.info("modifiedFileUrl:" + modifiedFileUrl);
@@ -191,7 +155,10 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     	File file = new File(getImageEditorPath() + File.separator + workingFileName);
     	BufferedImage original = javax.imageio.ImageIO.read(file);
 
-    	BufferedImage image = imaging.crop(original, xpos1, ypos1, xpos2 - xpos1, ypos2 - ypos1);
+    	// create a cropped image from the original image
+    	BufferedImage image = original.getSubimage(xpos1, ypos1, xpos2 - xpos1, ypos2 - ypos1);
+
+    	//BufferedImage image = imaging.crop(original, xpos1, ypos1, xpos2 - xpos1, ypos2 - ypos1);
 
     	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + ".png";    	
     	File outputFile = new File(getImageEditorPath() + File.separator + workingFileName);

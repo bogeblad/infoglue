@@ -48,7 +48,7 @@
 	</script>
 #end
 
-#beginLightCommonToolV3Impl("tool.contenttool.deleteContentChildren.header" "$originalContentId" "contentId=$originalContentId&repositoryId=$!repositoryId&isBranch=$isBranch" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.contenttool.deleteContentChildren.header" "$originalContentId" "contentId=$originalContentId&repositoryId=$!repositoryId&isBranch=$isBranch" false true $!disableCloseButton $headerMarkup false "")
 
 #lightMenuToolbar("" $buttons $rightButtons) 
 

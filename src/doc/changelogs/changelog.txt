@@ -14,6 +14,20 @@ Fixed bug in component properties cache which made component-inheritance invalid
 Added better controls in export/import to handle less perfect sites.
 Fixed bug in change component where the base components properties was allways shown after the change instead of the properties of the new component.
 Fixed bug where roles was not saved when creating a new user.
+    * Fixade bättre backward support for HTMLPage. Deprecated however.
+    * Fixa så man inte kan välja fel toolbar-typ - tog även bort classic etc
+    * persistence-api.jar måste in i libs
+    * Alla nya entity attributes måste in i export/import-xml:erna.
+Fixed better state change handling when updating assets etc.
+Worked on assetFileName format setting - now the default setting makes assets keep their names between versions. 
+Added empty trash button in trashcan dialog
+Selective publication routine now default - only throws changed caches.
+Improved publication process to remove deleted assets. Also refactored asset handling to allow for version independent asset names. New setting controls this.
+Removed applet modules
+Improved the user select dialog
+Fixed silent category description printout
+Removed all dependecies to deprecated pmiw and improved the quality on scaling in image editor at the same time. We should perhaps change all thumbnail generation to use this new class.
+
 
 ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId INT NOT NULL DEFAULT '-1'; --Måste in i alla script
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) NOT NULL DEFAULT '';

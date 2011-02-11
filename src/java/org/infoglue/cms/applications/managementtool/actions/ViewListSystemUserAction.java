@@ -224,6 +224,11 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 			this.filterUserName = userName;
 	}
 
+	public String getFilterChar()
+	{
+		return filterChar;
+	}
+	
 	public void setFilterChar(String filterChar)
 	{
 		if(filterChar != null && !filterChar.equals(""))

@@ -67,7 +67,7 @@
 	#set($title = "tool.managementtool.createCategory.header")
 #end
 
-#beginLightCommonToolV3Impl($title "" "categoryId=$!model.id" false true $!disableCloseButton $headerMarkup true)
+#beginLightCommonToolV3Impl($title "" "categoryId=$!model.id" false true $!disableCloseButton $headerMarkup true "")
 
 	<div style="clear: both;"></div>
 	

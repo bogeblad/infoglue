@@ -401,7 +401,7 @@
 
 #end
 
-#beginLightCommonToolV3Impl("tool.structuretool.choosePagesLabel" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.structuretool.choosePagesLabel" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
 	#lightMenuToolbar("" $buttons $rightButtons) 
 

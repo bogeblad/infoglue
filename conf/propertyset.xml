@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <propertysets>
     <propertyset name="aggregate" class="com.opensymphony.module.propertyset.aggregate.AggregatePropertySet"/>
     <propertyset name="cached" class="com.opensymphony.module.propertyset.cached.CachingPropertySet"/>

@@ -133,7 +133,7 @@
 	</script>
 #end
 
-#beginLightCommonToolV3Impl("tool.structuretool.chooseContentLabel" "" "" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.structuretool.chooseContentLabel" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
 	#lightMenuToolbar("" $buttons $rightButtons) 
 

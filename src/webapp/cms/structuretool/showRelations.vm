@@ -48,7 +48,7 @@
 	</script>
 #end
 
-#beginLightCommonToolV3Impl("tool.structuretool.deleteSiteNode.header" "$originalSiteNodeId" "siteNodeId=$originalSiteNodeId&repositoryId=$!repositoryId&changeTypeId=$changeTypeId" false true $!disableCloseButton $headerMarkup)
+#beginLightCommonToolV3Impl("tool.structuretool.deleteSiteNode.header" "$originalSiteNodeId" "siteNodeId=$originalSiteNodeId&repositoryId=$!repositoryId&changeTypeId=$changeTypeId" false true $!disableCloseButton $headerMarkup false "")
 
 #lightMenuToolbar("" $buttons $rightButtons) 
 

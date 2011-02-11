@@ -72,7 +72,7 @@
 ##BEGIN REAL CODE
 ################################
 
-#beginLightCommonToolV3Impl("tool.managementtool.viewSystemTools.header" "" "" false true $!disableCloseButton $headerMarkup true)
+#beginLightCommonToolV3Impl("tool.managementtool.viewSystemTools.header" "" "" false true $!disableCloseButton $headerMarkup true "")
 
 	<div style="clear: both;"></div>
 	

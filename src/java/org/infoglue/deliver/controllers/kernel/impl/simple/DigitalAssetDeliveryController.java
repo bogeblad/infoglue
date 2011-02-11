@@ -105,22 +105,22 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	{
 		String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
 		
-		System.out.println("fileName:" + fileName);
-		System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
+		//System.out.println("fileName:" + fileName);
+		//System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
 			{
-				Timer t = new Timer();
+				//Timer t = new Timer();
 				DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
-				System.out.println("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + asset.getContentVersions());
+				//System.out.println("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + asset.getContentVersions());
 				if(asset.getContentVersions() != null && asset.getContentVersions().size() > 0)
 				{
 					ContentVersion cv = (ContentVersion)asset.getContentVersions().iterator().next();
 					contentId = cv.getValueObject().getContentId();
 					languageId = cv.getValueObject().getLanguageId();
 				}
-				t.printElapsedTime("Finding content and language for an asset took");
+				//t.printElapsedTime("Finding content and language for an asset took");
 			}
 			
 			String assetFileName = digitalAssetVO.getAssetFileName();
@@ -130,7 +130,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 				suffix = assetFileName.substring(endingStartIndex);
 				
 			fileName = "" + contentId + "_" + languageId + digitalAssetVO.getAssetKey() + suffix;
-			System.out.println("New key is:" + fileName);
+			//System.out.println("New key is:" + fileName);
 		}
 		
 		return fileName;
@@ -144,21 +144,21 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	{
 		String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
 		
-		System.out.println("fileName:" + fileName);
-		System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
+		//System.out.println("fileName:" + fileName);
+		//System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
 			{
-				Timer t = new Timer();
-				System.out.println("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + digitalAsset.getContentVersions());
+				//Timer t = new Timer();
+				//System.out.println("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + digitalAsset.getContentVersions());
 				if(digitalAsset.getContentVersions() != null && digitalAsset.getContentVersions().size() > 0)
 				{
 					ContentVersion cv = (ContentVersion)digitalAsset.getContentVersions().iterator().next();
 					contentId = cv.getValueObject().getContentId();
 					languageId = cv.getValueObject().getLanguageId();
 				}
-				t.printElapsedTime("Finding content and language for an asset took");
+				//t.printElapsedTime("Finding content and language for an asset took");
 			}
 			
 			String assetFileName = digitalAsset.getAssetFileName();
@@ -168,7 +168,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 				suffix = assetFileName.substring(endingStartIndex);
 				
 			fileName = "" + contentId + "_" + languageId + digitalAsset.getAssetKey() + suffix;
-			System.out.println("New key is:" + fileName);
+			//System.out.println("New key is:" + fileName);
 		}
 		
 		return fileName;
@@ -182,26 +182,26 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	{
 		String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
 		
-		System.out.println("folderName:" + folderName);
-		System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
+		//System.out.println("folderName:" + folderName);
+		//System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
 			{
-				Timer t = new Timer();
+				//Timer t = new Timer();
 				DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
-				System.out.println("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + asset.getContentVersions());
+				//System.out.println("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + asset.getContentVersions());
 				if(asset.getContentVersions() != null && asset.getContentVersions().size() > 0)
 				{
 					ContentVersion cv = (ContentVersion)asset.getContentVersions().iterator().next();
 					contentId = cv.getValueObject().getContentId();
 					languageId = cv.getValueObject().getLanguageId();
 				}
-				t.printElapsedTime("Finding content and language for an asset took");
+				//t.printElapsedTime("Finding content and language for an asset took");
 			}
 
 			folderName = "" + (contentId / 1000);
-			System.out.println("New folderName is:" + folderName);
+			//System.out.println("New folderName is:" + folderName);
 		}
 		
 		return folderName;
@@ -215,25 +215,25 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	{
 		String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 		
-		System.out.println("folderName:" + folderName);
-		System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
+		//System.out.println("folderName:" + folderName);
+		//System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
 			{
-				Timer t = new Timer();
-				System.out.println("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + digitalAsset.getContentVersions());
+				//Timer t = new Timer();
+				//System.out.println("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + digitalAsset.getContentVersions());
 				if(digitalAsset.getContentVersions() != null && digitalAsset.getContentVersions().size() > 0)
 				{
 					ContentVersion cv = (ContentVersion)digitalAsset.getContentVersions().iterator().next();
 					contentId = cv.getValueObject().getContentId();
 					languageId = cv.getValueObject().getLanguageId();
 				}
-				t.printElapsedTime("Finding content and language for an asset took");
+				//t.printElapsedTime("Finding content and language for an asset took");
 			}
 
 			folderName = "" + (contentId / 1000);
-			System.out.println("New folderName is:" + folderName);
+			//System.out.println("New folderName is:" + folderName);
 		}
 		
 		return folderName;
@@ -791,7 +791,6 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			return outputFile;
 		}
 		
-		//ThumbnailGenerator tg = new ThumbnailGenerator();
 		ThumbnailGenerator tg = ThumbnailGenerator.getInstance();
 		tg.transform(filePath + File.separator + fileName, filePath + File.separator + thumbnailFile, width, height, 100);
 		

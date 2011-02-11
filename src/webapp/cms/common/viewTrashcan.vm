@@ -151,7 +151,11 @@
 								$this.getContentPath($contentVO.id).replaceAll(' ', '&nbsp;').replaceAll('/', '&nbsp;/&nbsp;')
 							</td>
 							<td>
+								#if($!contentVO.getExtraProperties().get("repositoryMarkedForDeletion"))
+									<a href="javascript:alert('You cannot restore individual contents while the repository is deleted. Restore the entire repository.');" style="float: right;">Restore</a>
+								#else
 								<a href="Trashcan!restore.action?entity=Content&entityId=$contentVO.id" style="float: right;">Restore</a>
+								#end
 							</td>
 							<td>
 								<a href="Trashcan!delete.action?entity=Content&entityId=$contentVO.id&igSecurityCode=$securityCode" style="float: right;">Delete</a>
@@ -180,7 +184,11 @@
 								$this.getSiteNodePath($siteNodeVO.id).replaceAll(' ', '&nbsp;').replaceAll('/', '&nbsp;/&nbsp;')
 							</td>
 							<td>
+								#if($!siteNodeVO.getExtraProperties().get("repositoryMarkedForDeletion"))
+									<a href="javascript:alert('You cannot restore individual contents while the repository is deleted. Restore the entire repository.');" style="float: right;">Restore</a>
+								#else
 								<a href="Trashcan!restore.action?entity=SiteNode&entityId=$siteNodeVO.id" style="float: right;">Restore</a>
+								#end
 							</td>
 							<td>
 								<a href="Trashcan!delete.action?entity=SiteNode&entityId=$siteNodeVO.id&igSecurityCode=$securityCode" style="float: right;">Delete</a>

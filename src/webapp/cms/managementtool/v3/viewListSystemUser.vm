@@ -21,7 +21,7 @@
 ##BEGIN REAL CODE
 ################################
 
-#beginLightCommonToolV3Impl("tool.managementtool.viewSystemUserList.header" "" "" false true $!disableCloseButton $headerMarkup true)
+#beginLightCommonToolV3Impl("tool.managementtool.viewSystemUserList.header" "" "" false true $!disableCloseButton $headerMarkup true "")
 
 	##lightMenuToolbar("" $buttons $rightButtons) 
 

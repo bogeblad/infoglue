@@ -127,28 +127,40 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 			byte[] bytes = Base64.decodeBase64(userName);
 			String decodedUserName = new String(bytes, "utf-8");
 			logger.info("decodedUserName:" + decodedUserName);
-			if(UserControllerProxy.getController().userExists(decodedUserName))
+			boolean userExists = false;
+			try
+			{
+				userExists = UserControllerProxy.getController().userExists(decodedUserName);
+			}
+			catch (Exception e) 
+			{
+				System.out.println("Error looking up user [" + decodedUserName + "]:" + e.getMessage());
+			}
+			
+			if(userExists)
 			{
 				userName = decodedUserName;
 			}
 			else
 			{
 				logger.info("No match on base64-based userName:" + userName);
-				
-				String fromEncoding = CmsPropertyHandler.getURIEncoding();
-				String toEncoding = "utf-8";
-				
-				logger.info("userName:" + userName);
-				String testUserName = new String(userName.getBytes(fromEncoding), toEncoding);
-				if(logger.isInfoEnabled())
+				if(!UserControllerProxy.getController().userExists(userName))
 				{
-					for(int i=0; i<userName.length(); i++)
-						logger.info("c:" + userName.charAt(i) + "=" + (int)userName.charAt(i));
+					String fromEncoding = CmsPropertyHandler.getURIEncoding();
+					String toEncoding = "utf-8";
+					
+					logger.info("userName:" + userName);
+					String testUserName = new String(userName.getBytes(fromEncoding), toEncoding);
+					if(logger.isInfoEnabled())
+					{
+						for(int i=0; i<userName.length(); i++)
+							logger.info("c:" + userName.charAt(i) + "=" + (int)userName.charAt(i));
+					}
+					if(testUserName.indexOf((char)65533) == -1)
+						userName = testUserName;
+					
+					logger.info("userName after:" + userName);
 				}
-				if(testUserName.indexOf((char)65533) == -1)
-					userName = testUserName;
-				
-				logger.info("userName after:" + userName);
 			}
 		}
 		

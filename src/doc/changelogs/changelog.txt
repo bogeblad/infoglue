@@ -27,6 +27,7 @@ Removed applet modules
 Improved the user select dialog
 Fixed silent category description printout
 Removed all dependecies to deprecated pmiw and improved the quality on scaling in image editor at the same time. We should perhaps change all thumbnail generation to use this new class.
+Implemented login feature on Status screens so you are not dependent on IP-security only
 
 
 ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId INT NOT NULL DEFAULT '-1'; --MŒste in i alla script

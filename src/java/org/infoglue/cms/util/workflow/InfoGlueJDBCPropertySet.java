@@ -390,7 +390,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         this.password = (String) config.get("password");
         this.driverClassName = (String) config.get("driverClassName");
         this.url = (String) config.get("url");
-        System.out.println("Whe got " + this.url + " in " + this.hashCode());
+        //System.out.println("Whe got " + this.url + " in " + this.hashCode());
         if(this.url.equalsIgnoreCase("@database.url@"))
         	reloadConfiguration = true;
 

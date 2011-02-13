@@ -61,17 +61,27 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 
     public String doExecute() throws Exception
     {
-        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
+    	boolean allowAccess = true;
+    	if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
         {
-        	logger.error("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call doReCache.");
-
-        	this.getResponse().setContentType("text/plain");
-            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
-            this.getResponse().getWriter().println("You have no access to this view - talk to your administrator if you should.");
-            
-            return NONE;
+    		java.security.Principal principal = (java.security.Principal)getHttpSession().getAttribute("infogluePrincipal");
+    		if(principal == null)
+    			principal = getInfoGluePrincipal();
+    		
+    		if(principal != null && org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController.getController().getIsPrincipalAuthorized((org.infoglue.cms.security.InfoGluePrincipal)principal, "ViewApplicationState.Read", false, true))
+    		{
+    			allowAccess = true;
+    		}
+    		else
+    		{
+    			allowAccess = false;
+    			this.getResponse().setContentType("text/plain");
+                this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+                this.getResponse().getWriter().println("You have no access to this view - talk to your administrator if you should. Try go through the ViewApplicationState.action if you have an account that have access.");
+                return NONE;
+    		}
         }
-
+    	
     	String catalinaBase = System.getProperty("catalina.base");
     	if(catalinaBase == null || catalinaBase.equals(""))
     	{	

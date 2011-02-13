@@ -1,18 +1,28 @@
 <%@ page import="java.lang.management.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController" %>
 
 <%@ page import="org.infoglue.deliver.util.ThreadMonitor" %>
 <%@ page import="org.infoglue.deliver.util.RequestAnalyser" %>
 
 <%
-    if(!ServerNodeController.getController().getIsIPAllowed(request))
+	boolean allowAccess = true;
+	if(!org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController.getController().getIsIPAllowed(request))
     {
-        response.setContentType("text/plain");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        out.println("You have no access to this view - talk to your administrator if you should.");
+		java.security.Principal principal = (java.security.Principal)session.getAttribute("infogluePrincipal");
+		if(principal != null && org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController.getController().getIsPrincipalAuthorized((org.infoglue.cms.security.InfoGluePrincipal)principal, "ViewApplicationState.Read", false, true))
+		{
+			allowAccess = true;
+		}
+		else
+		{
+			allowAccess = false;
+	        response.setContentType("text/plain");
+	        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+	        out.println("You have no access to this view - talk to your administrator if you should. Try go through the ViewApplicationState.action if you have an account that have access.");
+		}
     }
-	else
+	
+	if(allowAccess)
 	{
 		try
 		{

@@ -110,6 +110,10 @@
 						parent.parent.openUrlInWorkArea(actionUrl);
 				}
 			}
+			else
+			{
+				top.document.location.href = actionUrl;
+			}
 			
 			/*
 			if(parent.refreshNode)

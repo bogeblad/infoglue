@@ -382,6 +382,8 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	    int startIndex = (dnsName == null) ? -1 : dnsName.indexOf(keyword);
 	    if(startIndex != -1)
 	    {
+	    	workingUrl = CmsPropertyHandler.getComponentRendererUrl() + "ViewPage!renderDecoratedPage.action";  
+	    	/* 
 	        int endIndex = dnsName.indexOf(",", startIndex);
 		    if(endIndex > -1)
 	            dnsName = dnsName.substring(startIndex, endIndex);
@@ -393,13 +395,14 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 			    workingUrl = hostName + CmsPropertyHandler.getComponentRendererUrl() + "ViewPage!renderDecoratedPage.action";
 		    else
 		    	workingUrl = CmsPropertyHandler.getComponentRendererUrl() + "ViewPage!renderDecoratedPage.action";
+	    	*/
 	    }
 	    else
 	    {
 	        workingUrl = CmsPropertyHandler.getPreviewDeliveryUrl().replaceFirst("ViewPage.action", "ViewPage!renderDecoratedPage.action");
 	    }
 	    
-		return "" + workingUrl + "?siteNodeId=" + siteNodeId + "&contentId=-1";
+	    return "" + workingUrl + "?siteNodeId=" + siteNodeId + "&contentId=-1";
 	}
 
     public Integer getPageTemplateContentId()

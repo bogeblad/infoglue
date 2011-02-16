@@ -235,7 +235,12 @@
 				#if($parentCall)
 					refreshParent('$firstActionLink.actionURL','$firstActionLink.target','$firstActionLink.targetTitle');
 				#else
-					$firstActionLink.actionURL
+					//alert("IsJS: + $firstActionLink.isJavascript");
+					#if($firstActionLink.isJavascript)
+						$firstActionLink.actionURL
+					#else
+						parent.location.href = "$firstActionLink.actionURL";
+					#end
 				#end
 			#end
 		#else

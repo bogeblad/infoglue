@@ -196,18 +196,8 @@ public class InfoGlueAuthenticationFilter implements Filter
 		        String filterURIs = filterConfig.getInitParameter(FILTER_URIS_PARAMETER);
 		        uriMatcher = URIMatcher.compilePatterns(splitString(filterURIs, ","), false);
 			}
-			
-			try 
-			{
-				if(configurationFinished == null || configurationFinished == false)
-					configurationFinished = InstallationController.getController().validateApplicationFile();
-			} 
-			catch (Exception e1) 
-			{
-				e1.printStackTrace();
-			}
-			
-			if(!configurationFinished && (URI.indexOf("Install") == -1 && URI.indexOf(".action") > -1))
+						
+			if(!CmsPropertyHandler.getIsValidSetup() && (URI.indexOf("Install") == -1 && URI.indexOf(".action") > -1))
 			{
 				httpServletResponse.sendRedirect("Install!input.action");
 				return;

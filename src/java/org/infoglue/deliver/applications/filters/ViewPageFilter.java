@@ -117,17 +117,7 @@ public class ViewPageFilter implements Filter
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
 
-		try 
-		{
-			if(configurationFinished == null || configurationFinished == false)
-				configurationFinished = InstallationController.getController().validateApplicationFile();
-		} 
-		catch (Exception e1) 
-		{
-			e1.printStackTrace();
-		}
-		
-		if(!configurationFinished && (httpRequest.getRequestURI().indexOf("Install") == -1 && httpRequest.getRequestURI().indexOf("/script") == -1 && httpRequest.getRequestURI().indexOf("/css") == -1 && httpRequest.getRequestURI().indexOf("/images") == -1))
+		if(!CmsPropertyHandler.getIsValidSetup() && (httpRequest.getRequestURI().indexOf("Install") == -1 && httpRequest.getRequestURI().indexOf("/script") == -1 && httpRequest.getRequestURI().indexOf("/css") == -1 && httpRequest.getRequestURI().indexOf("/images") == -1))
 			httpResponse.sendRedirect("" + httpRequest.getContextPath() + "/Install!input.action");
 
         /*

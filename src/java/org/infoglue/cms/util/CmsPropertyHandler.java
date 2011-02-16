@@ -2330,4 +2330,14 @@ public class CmsPropertyHandler
 		
 		return configurationFinished;
 	}
+
+	private static Boolean isValidSetup = false;
+	public static void setIsValidSetup(Boolean isValidSetup) 
+	{
+		CmsPropertyHandler.isValidSetup = isValidSetup;
+	}
+	public static Boolean getIsValidSetup() 
+	{
+		return CmsPropertyHandler.isValidSetup;
+	}
 }

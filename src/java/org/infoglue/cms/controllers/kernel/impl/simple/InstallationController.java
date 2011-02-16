@@ -119,41 +119,49 @@ public class InstallationController extends BaseController
 	{
 		//if(true)
 		//	return "2.0";
-		
-		String dbProvider = (String)session.getAttribute("install_dbProvider");
-		String jdbcDriverName = (String)session.getAttribute("install_jdbcDriverName");
-		String jdbcURL = (String)session.getAttribute("install_jdbcURL");
-		String igUser = (String)session.getAttribute("install_dbUser");
-		String igPassword = (String)session.getAttribute("install_dbPassword");
+		String dbProvider = null;
+		String jdbcDriverName = null;
+		String jdbcURL = null;
+		String igUser = null;
+		String igPassword = null;
 
+		if(session != null)
+		{
+			dbProvider = (String)session.getAttribute("install_dbProvider");
+			jdbcDriverName = (String)session.getAttribute("install_jdbcDriverName");
+			jdbcURL = (String)session.getAttribute("install_jdbcURL");
+			igUser = (String)session.getAttribute("install_dbUser");
+			igPassword = (String)session.getAttribute("install_dbPassword");
+		}
+		
 		if(dbProvider == null)
 		{
 			dbProvider = getJDBCEngine();
-			session.setAttribute("install_dbProvider", dbProvider);
+			if(session != null) session.setAttribute("install_dbProvider", dbProvider);
 		}
 		
 		if(jdbcDriverName == null)
 		{
 			jdbcDriverName = getJDBCParamFromCastorXML("//param[@name='driver-class-name']");
-			session.setAttribute("install_jdbcDriverName", jdbcDriverName);
+			if(session != null) session.setAttribute("install_jdbcDriverName", jdbcDriverName);
 		}
 
 		if(jdbcURL == null)
 		{
 			jdbcURL = getJDBCParamFromCastorXML("//param[@name='url']");
-			session.setAttribute("install_jdbcURL", jdbcURL);
+			if(session != null) session.setAttribute("install_jdbcURL", jdbcURL);
 		}
 
 		if(igUser == null)
 		{
 			igUser = getJDBCParamFromCastorXML("//param[@name='username']");
-			session.setAttribute("install_dbUser", igUser);
+			if(session != null) session.setAttribute("install_dbUser", igUser);
 		}
 
 		if(igPassword == null)
 		{
 			igPassword = getJDBCParamFromCastorXML("//param[@name='password']");
-			session.setAttribute("install_dbPassword", igPassword);
+			if(session != null) session.setAttribute("install_dbPassword", igPassword);
 		}
 		
 		Connection conn = getConnection(jdbcDriverName, jdbcURL, igUser, igPassword);
@@ -379,7 +387,7 @@ public class InstallationController extends BaseController
 		String contents = FileHelper.getFileAsString(new File(cmsFilePath));
 		//System.out.println("contents:" + contents.substring(0, 200));
 		
-	    if(contents.indexOf("configured=true") > -1)
+	    if(contents.indexOf("configured=true") > -1 || contents.indexOf("databaseEngine=@database.driver.engine@") == -1)
 	    	return true;
 
 	    return false;
@@ -1197,6 +1205,70 @@ public class InstallationController extends BaseController
     	
     	return address;
     }
+
+	/**
+	 * This method should validate all aspects of the system. First validate if the database connection files are valid, next if the database is up2date and last if the server config files are valid.
+	 * @return
+	 */
+	public boolean validateSetup() 
+	{
+		boolean isValid = true;
+		try
+		{
+			validateDatabaseConnection();
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			logger.error("Exception reading database: " + e.getMessage() + ". Let's check the database.xml for config options.");
+			try 
+			{
+				String url = getJDBCParamFromCastorXML("//param[@name='url']");
+				if(url.indexOf("@database.url@") > -1)
+				{
+					isValid = false;
+				}
+			} 
+			catch (Exception e1) 
+			{
+				e1.printStackTrace();
+				isValid = false;
+			}
+		}
+
+		System.out.println("Was it valid based on database connection:" + isValid);
+		if(isValid)
+		{
+			try
+			{
+				String dbVersion = getCurrentDatabaseVersion(null);
+				if(!dbVersion.equalsIgnoreCase(CmsPropertyHandler.getInfoGlueDBVersion()))
+					isValid = false;
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+			}
+		}
+
+		System.out.println("Was it valid based on database version:" + isValid);
+		if(isValid)
+		{
+			try
+			{
+				Boolean serverConfigOK = validateApplicationFile();
+				if(!serverConfigOK)
+					isValid = false;
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Was it valid based on application properties:" + isValid);
+		
+		return isValid;
+	}
 
 
 }

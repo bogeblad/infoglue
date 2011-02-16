@@ -32,6 +32,7 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.RollingFileAppender;
+import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.extensions.ExtensionLoader;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -106,7 +107,11 @@ public final class DeliverContextListener implements ServletContextListener
 			//Starting the cache-expire-thread
 			if(cacheController.getExpireCacheAutomatically())
 				cacheController.start();
-			
+
+			boolean isValid = InstallationController.getController().validateSetup();
+			if(isValid)
+				CmsPropertyHandler.setIsValidSetup(true);
+
 			System.out.println("Start introspection");
 			ExtensionLoader el = new ExtensionLoader();
 			el.startExtensions();

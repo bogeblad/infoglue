@@ -40,8 +40,11 @@ import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -379,18 +382,28 @@ public class FileHelper
     	ZipFile zipFile = new ZipFile(file);
     	
       	entries = zipFile.entries();
+      	/*
+      	Map fEntries = getEntries(zipFile);
+        String[] names = (String[]) fEntries.keySet().toArray(new String[] {});
+        Arrays.sort(names);
+        
+        for (int i = 0; i < names.length; i++) 
+        {
+            String name = names[i];
+            ZipEntry entry = (ZipEntry) fEntries.get(name);
+        */
 
-      	while(entries.hasMoreElements()) 
+        while(entries.hasMoreElements()) 
       	{
         	ZipEntry entry = (ZipEntry)entries.nextElement();
         	System.out.println("entry:" + entry.getName());
         	
-	        if(entry.isDirectory() && (!skipHiddenFiles || entry.getName().startsWith(".") || entry.getName().startsWith("__"))) 
+        	if(entry.isDirectory() && (!skipHiddenFiles || entry.getName().startsWith(".") || entry.getName().startsWith("__"))) 
 	        {
-	          	(new File(targetFolder + File.separator + entry.getName())).mkdir();
+	          	(new File(targetFolder + File.separator + entry.getName())).mkdirs();
 	          	continue;
 	        }
-	
+        	
 	        //System.err.println("Extracting file: " + this.cmsTargetFolder + File.separator + entry.getName());
 	        boolean skip = false;
 	        if(skipFileTypes != null)
@@ -401,17 +414,33 @@ public class FileHelper
 		        		skip = true;
 		        }
 	        }
-	        System.out.println("entry.getName():" + entry.getName() + ":" + skipHiddenFiles);
+	        //System.out.println("entry.getName():" + entry.getName() + ":" + skipHiddenFiles + ":" + entry.isDirectory());
+
 	        if(skipHiddenFiles && (entry.getName().startsWith(".") || entry.getName().startsWith("__")))
 	        	skip = true;
 	        
 	        if(!skip)
 	        {	
 	        	File targetFile = new File(targetFolder + File.separator + entry.getName());
+	        	
+        		//System.out.println("targetFile:" + targetFile.getPath());
+        		String parent = targetFile.getParent();
+        		//System.out.println("parent:" + parent);
+        		
+                if (parent != null && parent.length() > 0) 
+                {
+                	File dir = new File(parent);
+                	//System.out.println("dir:" + dir.getPath());
+                	if (dir != null) {
+                		dir.mkdirs();
+                	}
+                }
+
 	        	//targetFile.mkdirs();
 	        	copyInputStream(zipFile.getInputStream(entry), new BufferedOutputStream(new FileOutputStream(targetFile)));
 	        	unzippedFiles.add(targetFile);
 	        }
+	        
 	    }
 	
 	    zipFile.close();
@@ -419,6 +448,19 @@ public class FileHelper
 	    return unzippedFiles;
 	}
 	
+	/** Get all the entries in a ZIP file. */
+	protected static Map getEntries(ZipFile zf) 
+	{
+	    Enumeration e = zf.entries();
+	    Map m = new HashMap();
+	    while (e.hasMoreElements()) 
+	    {
+	    	ZipEntry ze = (ZipEntry) e.nextElement();
+	    	m.put(ze.getName(), ze);
+	    }
+	    return m;
+	}
+	  
 	/**
 	 * This method unjars a file.
 	 */

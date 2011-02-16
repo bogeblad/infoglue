@@ -6,7 +6,7 @@
 	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
 	
 	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
-	##<link rel="stylesheet" type="text/css" href="css/skins/${theme}/adminEmbla.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />	
 	
 	<script type="text/javascript">
 	<!--	

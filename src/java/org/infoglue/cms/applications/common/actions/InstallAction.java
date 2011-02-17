@@ -197,6 +197,9 @@ public class InstallAction extends InfoGlueAbstractAction
 		if(!serverConfigOK)
 			return doInputServer();
 
+		boolean isValidSetup = InstallationController.getController().validateSetup();
+		CmsPropertyHandler.setIsValidSetup(isValidSetup);
+
 		getHttpSession().removeAttribute("install_dbProvider");
 		getHttpSession().removeAttribute("install_jdbcDriverName");
 		getHttpSession().removeAttribute("install_jdbcURL");

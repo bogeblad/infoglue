@@ -7,6 +7,17 @@
 	}
 </script>
 
+<style type="text/css">
+	#languages
+	{
+		margin-top:50px;
+	}
+	#languages a
+	{
+		text-transform: capitalize;
+	}
+</style>
+
 #lightMenuToolbar("" $buttons $rightButtons)
 
 <div style="clear: both;"></div>
@@ -24,6 +35,14 @@
 	
 	<p>
 	    $ui.getString("tool.common.install.introduction.text")
+	</p>
+	
+	<p id="languages">
+	#foreach($locale in $this.getToolLocales())
+		#if($locale.language != $this.locale.language)
+		<a href="Install!input.action?languageCode=$locale.language">$locale.getDisplayName($locale)</a>
+		#end
+	#end
 	</p>
 	
 </form>		

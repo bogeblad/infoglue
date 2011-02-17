@@ -385,7 +385,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         colData = (String) config.get("col.data");
         colFloat = (String) config.get("col.float");
         colNumber = (String) config.get("col.number");
-
+        
         this.userName = (String) config.get("username");
         this.password = (String) config.get("password");
         this.driverClassName = (String) config.get("driverClassName");
@@ -459,9 +459,22 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
         try 
         {
-            conn = getConnection();
+        	if(this.colItemKey == null || this.globalKey == null)
+            {
+            	try 
+                {
+    				reloadConfiguration();
+    			} 
+                catch (Exception e1) 
+    			{
+    				e1.printStackTrace();
+    			}
+            }
+            
+        	conn = getConnection();
 
             String sql = "UPDATE " + tableName + " SET " + colString + " = ?, " + colDate + " = ?, " + colData + " = ?, " + colFloat + " = ?, " + colNumber + " = ?, " + colItemType + " = ? " + " WHERE " + colGlobalKey + " = ? AND " + colItemKey + " = ?";
+            System.out.println("SQL:" + sql);
             PreparedStatement ps = conn.prepareStatement(sql);
             setValues(ps, type, key, value);
 
@@ -480,6 +493,14 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         } 
         catch (SQLException e) 
         {
+            try 
+            {
+				reloadConfiguration();
+			} 
+            catch (Exception e1) 
+			{
+				e1.printStackTrace();
+			}
             throw new PropertyException(e.getMessage());
         } 
         finally 
@@ -723,8 +744,8 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             break;
 
         case PropertySet.STRING:
-            ps.setString(1, (String) value);
-
+        	ps.setString(1, (String) value);
+            
             break;
 
         default:
@@ -914,10 +935,14 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
     public void reloadConfiguration() throws Exception
     {
+    	System.out.println("Reloading configuration...");
+    	String oldGlobalKey = this.globalKey;
+    	System.out.println("oldGlobalKey:" + oldGlobalKey);
+    	
     	DOMBuilder domBuilder = new DOMBuilder();
     	String propertySetXMLPath = CastorDatabaseService.class.getResource("/propertyset.xml").getPath();
     	String content = FileHelper.getFileAsString(new File(propertySetXMLPath));
-    	System.out.println("propertyset.xml:\n" + content);
+    	//System.out.println("propertyset.xml:\n" + content);
     	Document doc = domBuilder.getDocument(content);
     	
     	Element propertySet = (Element)doc.selectSingleNode("//propertyset[@name='jdbc']");
@@ -935,10 +960,13 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             String argName = arg.attributeValue("name");
             String argValue = arg.attributeValue("value");
             argsMap.put(argName, argValue);
-            System.out.println("" + argName + "=" + argValue);
+            //System.out.println("" + argName + "=" + argValue);
         }
         
         init(argsMap, argsMap);
+        
+        //Resetting the key to the old global key as this should not be reset
+        this.globalKey = oldGlobalKey;
     }
     
     public static void initReloadConfiguration() throws Exception

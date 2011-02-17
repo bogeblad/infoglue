@@ -73,10 +73,10 @@
 	<p>
 	    <label for="dbProvider">$ui.getString("tool.common.install.database.dbProvider")</label>
 		<select name="dbProvider" id="dbProvider">
-			<option value="mysql">MySQL</option>
-			<option value="oracle">Oracle</option>
-			<option value="mssqlserver">SQL Server</option>
-			<option value="db2">DB2</option>
+			<option value="mysql" #if($dbProvider == "mysql")selected="selected"#end>MySQL</option>
+			<option value="oracle" #if($dbProvider == "oracle")selected="selected"#end>Oracle</option>
+			<option value="mssqlserver" #if($dbProvider == "mssqlserver")selected="selected"#end>SQL Server</option>
+			<option value="db2" #if($dbProvider == "db2")selected="selected"#end>DB2</option>
 		</select>
 	    
 	    <label for="dbName">$ui.getString("tool.common.install.database.dbName")</label>

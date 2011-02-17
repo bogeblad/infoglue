@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -695,8 +696,8 @@ public class InstallationController extends BaseController
 		   igUser.equals("") || 
 		   igPassword.equals("") || 
 		   (createDatabase.equalsIgnoreCase("true") && (
-			dbUser.equals("") || 
-		    dbPassword.equals(""))))
+			dbUser.equals("") /*|| 
+		    dbPassword.equals("")*/)))
 		{
 			throw new Exception("Mandatory field(s) missing");
 		}
@@ -888,13 +889,52 @@ public class InstallationController extends BaseController
 		if(dbProvider.equalsIgnoreCase("mysql"))
 		{
 			String mysqlJdbcURL = getJDBCURL(dbProvider, "mysql", dbServer, dbPort, dbInstance);
+			String mysqlJdbcIGURL = getJDBCURL(dbProvider, dbName, dbServer, dbPort, dbInstance);
 
 			validateConnection(jdbcDriverName, mysqlJdbcURL, dbUser, dbPassword);
 			
 			issueCommand(getConnection(jdbcDriverName, mysqlJdbcURL, dbUser, dbPassword), "CREATE DATABASE " + dbName + ";");
 			createUsersMYSQL(jdbcDriverName, dbServer, dbPort, dbUser, dbPassword, dbName, igUser, igPassword);
-			createTables(jdbcDriverName, dbServer, dbPort, dbUser, dbPassword, dbName, igUser, igPassword);
-			createInitialData(jdbcDriverName, dbServer, dbPort, dbUser, dbPassword, dbName, igUser, igPassword);
+			createTables(jdbcDriverName, mysqlJdbcIGURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
+			createInitialData(jdbcDriverName, mysqlJdbcIGURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
+		}
+		else if(dbProvider.equalsIgnoreCase("mssqlserver"))
+		{
+			String sqlServerJdbcURL = getJDBCURL(dbProvider, null, dbServer, dbPort, dbInstance);
+			String sqlServerIGJdbcURL = getJDBCURL(dbProvider, dbName, dbServer, dbPort, dbInstance);
+
+			validateConnection(jdbcDriverName, sqlServerJdbcURL, dbUser, dbPassword);
+			
+			try
+			{
+				Connection conn = getConnection(jdbcDriverName, sqlServerIGJdbcURL, dbUser, dbPassword);
+				
+			    try
+			    {
+			        String sql = "SELECT * FROM cmSiteNodeVersion";
+			        if(dbProvider.equalsIgnoreCase("oracle") || dbProvider.equalsIgnoreCase("db2"))
+			            sql = "SELECT * FROM cmSiNoVer";
+			        
+			        PreparedStatement pstmt = conn.prepareStatement(sql);
+					ResultSet rs = pstmt.executeQuery();
+					rs.next();
+					
+					rs.getString("isHidden"); //If this throws exception then it's older than 2.3
+			    }
+			    catch(Exception e)
+			    {
+			        e.printStackTrace();
+			    }
+			}
+			catch(Exception e)
+			{
+				issueCommand(getConnection(jdbcDriverName, sqlServerJdbcURL, dbUser, dbPassword), "CREATE DATABASE " + dbName + ";");
+				//callProcedure(getConnection(jdbcDriverName, sqlServerJdbcURL, dbUser, dbPassword), "sp_dbcmptlevel", dbName, "80");
+			}
+			
+			createUsersSQLServer(jdbcDriverName, dbServer, dbPort, dbInstance, dbUser, dbPassword, dbName, igUser, igPassword);
+			createTables(jdbcDriverName, sqlServerIGJdbcURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
+			//createInitialData(jdbcDriverName, sqlServerIGJdbcURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
 		}
 		
 	}
@@ -920,9 +960,15 @@ public class InstallationController extends BaseController
 		if(dbProvider.equalsIgnoreCase("db2"))
 			JDBCURL = "jdbc:db2://" + dbServer + ":" + dbPort + "/" + dbName + "";
 		if(dbProvider.equalsIgnoreCase("mssqlserver"))
-			JDBCURL = "jdbc:jtds:sqlserver://" + dbServer + ":" + dbPort + ((dbInstance.equalsIgnoreCase("") ? ";DatabaseName=" + dbName + ";SelectMethod=Cursor" : ";INSTANCE=" + dbInstance + ";DatabaseName=" + dbName + ";SelectMethod=Cursor"));
+			JDBCURL = "jdbc:jtds:sqlserver://" + dbServer + ":" + dbPort + ((dbInstance.equalsIgnoreCase("") ? (dbName == null ? "" : ";DatabaseName=" + dbName) + ";SelectMethod=Cursor" : ";INSTANCE=" + dbInstance + (dbName == null ? "" : ";DatabaseName=" + dbName) + ";SelectMethod=Cursor"));
 			
 		return JDBCURL;
+	}
+
+	public String getTDSSpecficUrl(String hostName, String databasePortNumber, String database, String instance)
+	{
+		String url = "jdbc:jtds:sqlserver://" + hostName + ":" + databasePortNumber + ((instance.equalsIgnoreCase("") ? ";DatabaseName=" + database + ";SelectMethod=Cursor" : ";INSTANCE=" + instance + ";DatabaseName=" + database + ";SelectMethod=Cursor"));
+		return url;
 	}
 
 	private String getJDBCDriverName(String dbProvider) 
@@ -966,16 +1012,41 @@ public class InstallationController extends BaseController
 		issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'" + getHostAddress() + "' IDENTIFIED BY '" + igPassword + "';");
 	}
 
-	private void createTables(String driverClass, String databaseHostName, String databasePortNumber, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
+	private void createUsersSQLServer(String driverClass, String databaseHostName, String databasePortNumber, String databaseInstance, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
 	{
-		String url = "jdbc:mysql://" + databaseHostName + ":" + databasePortNumber + "/" + dbName + "";
-		Connection conn = getConnection(driverClass, url, igUser, igPassword);
+		String url = "jdbc:jtds:sqlserver://" + databaseHostName + ":" + databasePortNumber + ((databaseInstance.equalsIgnoreCase("")) ? "" : ";INSTANCE=" + databaseInstance);
+		Connection conn = getConnection(driverClass, url, dbUser, dbPassword);
+		
+		//callProcedure(conn, "sp_addlogin", igUser, igPassword, dbName);
+		issueCommand(conn, "CREATE LOGIN " + igUser + " WITH PASSWORD = '" + igPassword + "', default_database = " + dbName + ";");
+		
+		conn.close();
+		
+		url = getJDBCURL("mssqlserver", dbName, databaseHostName, databasePortNumber, databaseInstance);
+		
+		conn = getConnection(driverClass, url, dbUser, dbPassword);
+
+		issueCommand(conn, "CREATE USER " + igUser + " FOR LOGIN " + igUser + " WITH DEFAULT_SCHEMA=" + dbName + ";");
+		issueCommand(conn, "GRANT ALTER TO " + igUser + ";");
+		issueCommand(conn, "GRANT CONTROL TO " + igUser + ";");
+		
+		//callProcedure(conn, "sp_grantdbaccess", igUser, dbName);
+		//callProcedure(conn, "sp_changedbowner", igUser);		
+		callProcedure(conn, "sp_addrolemember", "db_owner", igUser);		
+		//callProcedure(conn, "sp_addrolemember", "db_owner", dbName);
+	}
+
+	private void createTables(String driverClass, String url, String dbProvider, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
+	{
+		System.out.println("Creating tables:" + CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_core_schema_" + dbProvider + ".sql");
+
+		Connection conn = getConnection(driverClass, url, dbUser, dbPassword);
 		
 		logger.warn("Setting up a new database....");		
 		
 		try
 		{
-			File coreSchemaFile = new File(CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_core_schema_mysql.sql");
+			File coreSchemaFile = new File(CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_core_schema_" + dbProvider + ".sql");
 			FileInputStream fis = new FileInputStream(coreSchemaFile);
 			StringBuffer sb = new StringBuffer();
 			int c;
@@ -987,12 +1058,16 @@ public class InstallationController extends BaseController
 			String script = sb.toString();
 			logger.info("script:" + script);
 			
+			int rows = 0;
 			StringTokenizer st = new StringTokenizer(script, ";");
 		    while (st.hasMoreTokens()) 
 		    {
 		    	String command = st.nextToken();
 		    	//Logger.logInfo("Command: " + command);
 				issueCommand(conn, command + ";");
+				rows++;
+				if(rows > 4)
+					break;
 		    }
 				
 		}
@@ -1003,14 +1078,15 @@ public class InstallationController extends BaseController
 		}
 	}
 
-	private void createInitialData(String driverClass, String databaseHostName, String databasePortNumber, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
+	private void createInitialData(String driverClass, String url, String dbProvider, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
 	{
-		String url = "jdbc:mysql://" + databaseHostName + ":" + databasePortNumber + "/" + dbName + "";
-		Connection conn = getConnection(driverClass, url, igUser, igPassword);
+		System.out.println("Creating initial data:" + CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_initial_data_" + dbProvider + ".sql");
+		//String url = "jdbc:mysql://" + databaseHostName + ":" + databasePortNumber + "/" + dbName + "";
+		Connection conn = getConnection(driverClass, url, dbUser, dbPassword);
 		
 		try
 		{
-			File initialDataFile = new File(CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_initial_data_mysql.sql");
+			File initialDataFile = new File(CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_initial_data_" + dbProvider + ".sql");
 			FileInputStream fis = new FileInputStream(initialDataFile);
 			StringBuffer sb = new StringBuffer();
 			int c;
@@ -1190,6 +1266,92 @@ public class InstallationController extends BaseController
         }
 	}
 
+	/**
+	 * This method issues command to the db.
+	 */
+	
+	private void callProcedure(Connection conn, String procedure, String arg1, String arg2, String arg3) throws Exception
+	{
+		System.out.println("procedure: " + procedure + " (" + arg1 + "," + arg2 + "," + arg3 + ")");
+        logger.debug("procedure: " + procedure + " (" + arg1 + "," + arg2 + "," + arg3 + ")");
+                
+        try 
+        {
+            CallableStatement cs = conn.prepareCall("{call " + procedure + " (?,?,?)}");
+			cs.setString(1, arg1);
+			cs.setString(2, arg2);
+			cs.setString(3, arg3);
+			cs.execute();
+			//cs.executeQuery();
+            cs.close();
+        	//conn.close();
+            
+            //System.out.println("After procedure:" + rs);
+        }
+        catch(SQLException ex) 
+        {
+        	logger.error("callProcedure failed: " + ex.getMessage());
+        	logger.error("procedure: " + procedure + " (" + arg1 + "," + arg2 + ")");
+        	throw ex;
+        }
+	}
+
+	
+	/**
+	 * This method issues command to the db.
+	 */
+	
+	private void callProcedure(Connection conn, String procedure, String arg1) throws Exception
+	{
+		System.out.println("procedure: " + procedure + " (" + arg1 + ")");
+		logger.debug("procedure: " + procedure + " (" + arg1 + ")");
+                
+        try 
+        {
+            CallableStatement cs = conn.prepareCall("{call " + procedure + " (?)}");
+			cs.setString(1, arg1);
+			cs.execute();
+			//cs.executeQuery();
+            cs.close();
+        	//conn.close();
+        }
+        catch(SQLException ex) 
+        {
+        	ex.printStackTrace();
+        	logger.error("callProcedure failed: " + ex.getMessage());
+        	logger.error("procedure: " + procedure + " (" + arg1 + ")");
+        	throw ex;
+        }
+	}
+
+	/**
+	 * This method issues command to the db.
+	 */
+	
+	private void callProcedure(Connection conn, String procedure, String arg1, String arg2) throws Exception
+	{
+		System.out.println("procedure: " + procedure + " (" + arg1 + "," + arg2 + ")");
+		logger.debug("procedure: " + procedure + " (" + arg1 + "," + arg2 + ")");
+                
+        try 
+        {
+            CallableStatement cs = conn.prepareCall("{call " + procedure + " (?,?)}");
+			cs.setString(1, arg1);
+			cs.setString(2, arg2);
+			cs.execute();
+			//cs.executeQuery();
+            cs.close();
+        	//conn.close();
+        }
+        catch(SQLException ex) 
+        {
+        	ex.printStackTrace();
+        	logger.error("callProcedure failed: " + ex.getMessage());
+        	logger.error("procedure: " + procedure + " (" + arg1 + "," + arg2 + ")");
+        	throw ex;
+        }
+	}
+	
 	public String getHostAddress()
     {
     	String address = null;
@@ -1266,7 +1428,6 @@ public class InstallationController extends BaseController
 			}
 		}
 		System.out.println("Was it valid based on application properties:" + isValid);
-		
 		return isValid;
 	}
 

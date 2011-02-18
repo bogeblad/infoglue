@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,8 +35,10 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +49,11 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import oracle.sql.BLOB;
+import oracle.sql.CLOB;
+
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.record.formula.Ptg;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.exolab.castor.jdo.Database;
@@ -171,6 +178,25 @@ public class InstallationController extends BaseController
 
 	    try
 	    {
+	        String sql = "SELECT * FROM cmInfoGlueProperties where name=?";
+	        
+	        PreparedStatement pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, "version");
+			ResultSet rs = pstmt.executeQuery();
+			rs.next();
+			
+			String versionValue = rs.getString("value");
+			System.out.println("versionValue:" + versionValue);
+			if(versionValue.equals("3.0"))
+				return "3.0";
+	    }
+	    catch(Exception e)
+	    {
+	        e.printStackTrace();
+	    }
+
+	    try
+	    {
 	        String sql = "SELECT * FROM cmSiteNodeVersion";
 	        if(dbProvider.equalsIgnoreCase("oracle") || dbProvider.equalsIgnoreCase("db2"))
 	            sql = "SELECT * FROM cmSiNoVer";
@@ -178,6 +204,14 @@ public class InstallationController extends BaseController
 	        PreparedStatement pstmt = conn.prepareStatement(sql);
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
+			
+			for(int i=0; i<rs.getMetaData().getColumnCount(); i++)
+			{
+				String columnName = rs.getMetaData().getColumnName(i);
+				System.out.println("columnName:" + columnName);
+				if(columnName.equalsIgnoreCase("isHidden"))
+					return "3.0";
+			}
 			
 			rs.getString("isHidden"); //If this throws exception then it's older than 2.3
 			return "3.0";
@@ -198,6 +232,14 @@ public class InstallationController extends BaseController
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
 			
+			
+			for(int i=0; i<rs.getMetaData().getColumnCount(); i++)
+			{
+				String columnName = rs.getMetaData().getColumnName(i);
+				System.out.println("columnName:" + columnName);
+				if(columnName.equalsIgnoreCase("forceProtocolChange"))
+					return "2.9.8.7";
+			}
 			rs.getString("forceProtocolChange"); //If this throws exception then it's older than 2.3
 			return "2.9.8.7";
 	    }
@@ -425,7 +467,19 @@ public class InstallationController extends BaseController
 			throw new Exception("Mandatory field(s) missing");
 		}
 
-		String jdbcEngine = getJDBCEngine();
+		String dbProvider = (String)request.getSession().getAttribute("install_dbProvider");
+		//String jdbcDriverName = (String)request.getSession().getAttribute("install_jdbcDriverName");
+		//String jdbcURL = (String)request.getSession().getAttribute("install_jdbcURL");
+		//String igUser = (String)request.getSession().getAttribute("install_dbUser");
+		//String igPassword = (String)request.getSession().getAttribute("install_dbPassword");
+
+		if(dbProvider == null)
+		{
+			dbProvider = getJDBCEngine();
+			request.getSession().setAttribute("install_dbProvider", dbProvider);
+		}
+		
+		//String jdbcEngine = getJDBCEngine();
 		
 		//cms.properties
 		String cmsFilePath = CastorDatabaseService.class.getResource("/cms.properties").getPath();
@@ -482,8 +536,8 @@ public class InstallationController extends BaseController
 		applicationServerRoot = applicationServerRoot.substring(0, applicationServerRoot.lastIndexOf("/"));
 		applicationServerRoot = applicationServerRoot.substring(0, applicationServerRoot.lastIndexOf("/") + 1);
 
-		contents = contents.replaceAll("@useShortTableNames@", ((jdbcEngine.equalsIgnoreCase("oracle") || jdbcEngine.equalsIgnoreCase("db2")) ? "true" : "false"));
-		contents = contents.replaceAll("@database.driver.engine@", jdbcEngine);
+		contents = contents.replaceAll("@useShortTableNames@", ((dbProvider.equalsIgnoreCase("oracle") || dbProvider.equalsIgnoreCase("db2")) ? "true" : "false"));
+		contents = contents.replaceAll("@database.driver.engine@", dbProvider);
 		contents = contents.replaceAll("@warningEmailReceiver@", superUserEmail);
 		contents = contents.replaceAll("@operatingMode.cms@", "0");
 		contents = contents.replaceAll("@administratorUserName@", superUserName);
@@ -498,7 +552,7 @@ public class InstallationController extends BaseController
 		contents = contents.replaceAll("@serverName@", "" + hostName);
 		contents = contents.replaceAll("@authConstraint@", "cmsUser");
 		
-		contents = contents.replaceAll("@databaseEngine@", jdbcEngine);
+		contents = contents.replaceAll("@databaseEngine@", dbProvider);
 		contents = contents.replaceAll("@logTransactions@", "false");
 		contents = contents.replaceAll("@errorUrl@", "/error.jsp");
 		contents = contents.replaceAll("@tree@", "html");
@@ -599,8 +653,8 @@ public class InstallationController extends BaseController
 		contentsDeliver = contentsDeliver.replaceAll("@webServerAddress@", "http://" + hostName);
 		contentsDeliver = contentsDeliver.replaceAll("@digitalAssetPath@", "");
 		
-		contentsDeliver = contentsDeliver.replaceAll("@useShortTableNames@", ((jdbcEngine.equalsIgnoreCase("oracle") || jdbcEngine.equalsIgnoreCase("db2")) ? "true" : "false"));
-		contentsDeliver = contentsDeliver.replaceAll("@database.driver.engine@", jdbcEngine);
+		contentsDeliver = contentsDeliver.replaceAll("@useShortTableNames@", ((dbProvider.equalsIgnoreCase("oracle") || dbProvider.equalsIgnoreCase("db2")) ? "true" : "false"));
+		contentsDeliver = contentsDeliver.replaceAll("@database.driver.engine@", dbProvider);
 		contentsDeliver = contentsDeliver.replaceAll("@warningEmailReceiver@", superUserEmail);
 		contentsDeliver = contentsDeliver.replaceAll("@operatingMode.cms@", "0");
 		contentsDeliver = contentsDeliver.replaceAll("@administratorUserName@", superUserName);
@@ -615,7 +669,7 @@ public class InstallationController extends BaseController
 		contentsDeliver = contentsDeliver.replaceAll("@serverName@", "" + hostName);
 		contentsDeliver = contentsDeliver.replaceAll("@authConstraint@", "cmsUser");
 
-		contentsDeliver = contentsDeliver.replaceAll("@databaseEngine@", jdbcEngine);
+		contentsDeliver = contentsDeliver.replaceAll("@databaseEngine@", dbProvider);
 		contentsDeliver = contentsDeliver.replaceAll("@logTransactions@", "false");
 		contentsDeliver = contentsDeliver.replaceAll("@errorUrl@", "/error.jsp");
 		contentsDeliver = contentsDeliver.replaceAll("@tree@", "html");
@@ -689,19 +743,39 @@ public class InstallationController extends BaseController
 
 	public void updateDatabase(String dbProvider, String dbName, String dbServer, String dbPort, String dbInstance, String createDatabase, String addExampleRepositories, String dbUser, String dbPassword, String igUser, String igPassword, HttpSession session) throws Exception 
 	{
-		if(dbProvider.equals("") || 
-		   dbName.equals("") || 
-		   dbServer.equals("") || 
-		   dbPort.equals("") ||  
-		   igUser.equals("") || 
-		   igPassword.equals("") || 
-		   (createDatabase.equalsIgnoreCase("true") && (
-			dbUser.equals("") /*|| 
-		    dbPassword.equals("")*/)))
+		if(dbProvider.equals("mysql") || dbProvider.equals("mssqlserver"))
 		{
-			throw new Exception("Mandatory field(s) missing");
+			if(dbProvider.equals("") || 
+			   dbName.equals("") || 
+			   dbServer.equals("") || 
+			   dbPort.equals("") ||  
+			   igUser.equals("") || 
+			   igPassword.equals("") || 
+			   (createDatabase.equalsIgnoreCase("true") && (
+				dbUser.equals("") /*|| 
+			    dbPassword.equals("")*/)))
+			{
+				throw new Exception("Mandatory field(s) missing");
+			}
 		}
-
+		else
+		{
+			if(dbProvider.equals("") || 
+				dbName.equals("") ||
+				dbServer.equals("") || 
+				dbPort.equals("") ||  
+				igUser.equals("") || 
+				igPassword.equals(""))
+			{
+				System.out.println("dbProvider:" + dbProvider);
+				System.out.println("dbServer:" + dbServer);
+				System.out.println("dbPort:" + dbPort);
+				System.out.println("igUser:" + igUser);
+				System.out.println("igPassword:" + igPassword);
+				throw new Exception("Mandatory field(s) missing");
+			}
+		}
+		
 		String castorProviderName = getCastorProviderName(dbProvider);
 		String jdbcDriverName = getJDBCDriverName(dbProvider);
 		String jdbcURL = getJDBCURL(dbProvider, dbName, dbServer, dbPort, dbInstance);
@@ -713,7 +787,10 @@ public class InstallationController extends BaseController
 		System.out.println("createDatabase:" + createDatabase);
 		if(createDatabase.equalsIgnoreCase("true"))
 			createDatabaseAndUsers(jdbcDriverName, jdbcURL, dbProvider, dbName, dbServer, dbPort, dbInstance, dbUser, dbPassword, igUser, igPassword);
-
+		
+		//if(true)
+		//	return;
+		
 		session.setAttribute("install_dbProvider", dbProvider);
 		session.setAttribute("install_jdbcDriverName", jdbcDriverName);
 		session.setAttribute("install_jdbcURL", jdbcURL);
@@ -898,6 +975,15 @@ public class InstallationController extends BaseController
 			createTables(jdbcDriverName, mysqlJdbcIGURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
 			createInitialData(jdbcDriverName, mysqlJdbcIGURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
 		}
+		else if(dbProvider.equalsIgnoreCase("oracle"))
+		{
+			String oracleJdbcIGURL = getJDBCURL(dbProvider, dbName, dbServer, dbPort, dbInstance);
+
+			validateConnection(jdbcDriverName, oracleJdbcIGURL, igUser, igPassword);
+			
+			createTables(jdbcDriverName, oracleJdbcIGURL, dbProvider, igUser, igPassword, dbName, igUser, igPassword);
+			createInitialData(jdbcDriverName, oracleJdbcIGURL, dbProvider, igUser, igPassword, dbName, igUser, igPassword);
+		}
 		else if(dbProvider.equalsIgnoreCase("mssqlserver"))
 		{
 			String sqlServerJdbcURL = getJDBCURL(dbProvider, null, dbServer, dbPort, dbInstance);
@@ -934,7 +1020,7 @@ public class InstallationController extends BaseController
 			
 			createUsersSQLServer(jdbcDriverName, dbServer, dbPort, dbInstance, dbUser, dbPassword, dbName, igUser, igPassword);
 			createTables(jdbcDriverName, sqlServerIGJdbcURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
-			//createInitialData(jdbcDriverName, sqlServerIGJdbcURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
+			createInitialData(jdbcDriverName, sqlServerIGJdbcURL, dbProvider, dbUser, dbPassword, dbName, igUser, igPassword);
 		}
 		
 	}
@@ -1004,12 +1090,21 @@ public class InstallationController extends BaseController
 	{
 		String url = "jdbc:mysql://" + databaseHostName + ":" + databasePortNumber + "/mysql";
 		Connection conn = getConnection(driverClass, url, dbUser, dbPassword);
-
-		issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'%' IDENTIFIED BY '" + igPassword + "';");
-		issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'localhost' IDENTIFIED BY '" + igPassword + "';");
-		issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'127.0.0.1' IDENTIFIED BY '" + igPassword + "';");
-		issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'" + databaseHostName + "' IDENTIFIED BY '" + igPassword + "';");
-		issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'" + getHostAddress() + "' IDENTIFIED BY '" + igPassword + "';");
+		
+		try
+		{
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'%' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'localhost' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'127.0.0.1' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'" + databaseHostName + "' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'" + getHostAddress() + "' IDENTIFIED BY '" + igPassword + "';");
+		}
+		catch (Exception e) 
+		{
+			System.out.println("Error creating users or database:" + e.getMessage() + ".");
+			try{conn.close();}catch(Exception e2){}
+			throw e;
+		}
 	}
 
 	private void createUsersSQLServer(String driverClass, String databaseHostName, String databasePortNumber, String databaseInstance, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
@@ -1017,6 +1112,33 @@ public class InstallationController extends BaseController
 		String url = "jdbc:jtds:sqlserver://" + databaseHostName + ":" + databasePortNumber + ((databaseInstance.equalsIgnoreCase("")) ? "" : ";INSTANCE=" + databaseInstance);
 		Connection conn = getConnection(driverClass, url, dbUser, dbPassword);
 		
+		try
+		{
+			issueCommand(conn, "use master;");
+			issueCommand(conn, "drop database " + dbName + ";");
+			issueCommand(conn, "drop login " + igUser + ";");
+		}
+		catch (Exception e) 
+		{
+			System.out.println("Dropping old objects threw error:" + e.getMessage() + ". Let's continue...");
+		}
+		
+		try
+		{
+			issueCommand(conn, "CREATE LOGIN " + igUser + " WITH PASSWORD = '" + igPassword + "';");
+			issueCommand(conn, "CREATE DATABASE " + dbName + ";");
+			issueCommand(conn, "ALTER LOGIN " + igUser + " WITH DEFAULT_DATABASE=" + dbName + ";");
+			issueCommand(conn, "use " + dbName + ";");
+			callProcedure(conn, "sp_changedbowner", igUser, "false");
+		}
+		catch (Exception e) 
+		{
+			System.out.println("Error creating users or database:" + e.getMessage() + ".");
+			try{conn.close();}catch(Exception e2){}
+			throw e;
+		}
+		
+		/* AAAA#2sss4
 		//callProcedure(conn, "sp_addlogin", igUser, igPassword, dbName);
 		issueCommand(conn, "CREATE LOGIN " + igUser + " WITH PASSWORD = '" + igPassword + "', default_database = " + dbName + ";");
 		
@@ -1034,6 +1156,7 @@ public class InstallationController extends BaseController
 		//callProcedure(conn, "sp_changedbowner", igUser);		
 		callProcedure(conn, "sp_addrolemember", "db_owner", igUser);		
 		//callProcedure(conn, "sp_addrolemember", "db_owner", dbName);
+		*/
 	}
 
 	private void createTables(String driverClass, String url, String dbProvider, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
@@ -1064,10 +1187,24 @@ public class InstallationController extends BaseController
 		    {
 		    	String command = st.nextToken();
 		    	//Logger.logInfo("Command: " + command);
-				issueCommand(conn, command + ";");
+		    	try
+		    	{
+			    	if(dbProvider.equals("oracle"))
+				    	issueCommand(conn, command);
+			    	else
+			    		issueCommand(conn, command + ";");
+		    	}
+		    	catch (SQLException sqle) 
+		    	{
+		    		System.out.println("An sql error:" + sqle.getMessage());
+		    		if(sqle.getMessage().indexOf("sequence does not exist") > -1 || sqle.getMessage().indexOf("ORA-02289") > -1 || sqle.getMessage().indexOf("ORA-00942") > -1 || command.trim().toLowerCase().startsWith("drop "))
+		    			System.out.println("Was an unharmful error - proceed");
+		    		else
+		    			throw sqle;
+				}
 				rows++;
-				if(rows > 4)
-					break;
+				//if(rows > 10)
+				//	break;
 		    }
 				
 		}
@@ -1082,7 +1219,7 @@ public class InstallationController extends BaseController
 	{
 		System.out.println("Creating initial data:" + CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_initial_data_" + dbProvider + ".sql");
 		//String url = "jdbc:mysql://" + databaseHostName + ":" + databasePortNumber + "/" + dbName + "";
-		Connection conn = getConnection(driverClass, url, dbUser, dbPassword);
+		Connection conn = getConnection(driverClass, url, igUser, igPassword);
 		
 		try
 		{
@@ -1098,25 +1235,57 @@ public class InstallationController extends BaseController
 			String script = sb.toString();
 			//Logger.logInfo("script:" + script);
 			
-			String[] commands = script.split("#endquery");
-			logger.info("Parsed " + commands.length + " commands from script");
-			
-			for(int i=0; i<commands.length; i++)
+			if(!dbProvider.equals("oracle") && !dbProvider.equals("db2"))
 			{
-				String command = commands[i];
-				if(command.indexOf("SPECIAL") > -1)
-					issueSpecialCommand(conn, command.trim());		
-				else
-					issueCommand(conn, command.trim());
-			}
+				String[] commands = script.split("#endquery");
+				logger.info("Parsed " + commands.length + " commands from script");
 				
+				for(int i=0; i<commands.length; i++)
+				{
+					String command = commands[i];
+					System.out.println("command:" + command);
+					try
+					{
+						if(command.indexOf("SPECIAL") > -1)
+							issueSpecialCommand(conn, command.trim());		
+						else
+							issueCommand(conn, command.trim());
+					}
+					catch (Exception e) 
+					{
+						System.out.println("Error:" + e.getMessage());
+					}
+				}
+			}
+			else
+			{
+				String[] commands = script.split("--endquery");
+				logger.info("Parsed " + commands.length + " commands from script");
+				
+				for(int i=0; i<commands.length; i++)
+				{
+					String command = commands[i];
+					if(command.indexOf("SPECIAL") > -1)
+						issueSpecialCommand(conn, command.trim());		
+					if(command.indexOf("BLOB") > -1)
+						issueSpecialBlobCommand(conn, command.trim());		
+					else
+					{	
+						command = command.trim();
+						if(!command.equalsIgnoreCase(""))
+						{
+						    command = command.substring(0, command.length()-1);
+							issueCommand(conn, command);
+						}
+					}
+				}
+			}
 		}
 		catch(Exception e)
 		{
 			logger.error("Problem running sql script:" + e.getMessage(), e);
 			throw e;
-		}
-		
+		}	
 	}
 
 	public void updateDatabaseTables(HttpSession session) throws Exception
@@ -1194,9 +1363,13 @@ public class InstallationController extends BaseController
 	
 	private void issueCommand(Connection conn, String sql) throws SQLException
 	{
+		sql = sql.trim();
+		
 		if(sql == null || sql.trim().length() == 0 || sql.trim().equalsIgnoreCase(";"))
 			return;
-			              
+			  
+		//System.out.println("sql: " + sql);
+		
         try 
         {
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -1266,6 +1439,139 @@ public class InstallationController extends BaseController
         }
 	}
 
+	/**
+	 * This method issues special blob-inserts command to the db. 
+	 * I had to build my own adoption of sql to make this feature.
+	 */
+
+	protected void issueSpecialBlobCommand(Connection conn, String originalSql) throws Exception
+	{
+		String sql = originalSql;
+		//Logger.logInfo("SpecialBlob Command:" + sql);
+            
+		try 
+		{
+			String valuesPart = sql.substring(sql.indexOf("VALUES") + 6).trim();
+			sql = sql.substring(0, sql.indexOf("VALUES") + 6);
+			//System.out.println("sql:" + sql);
+			//System.out.println("valuesPart:" + valuesPart);
+			
+			String tableName 		= null;
+			int blobColumn			= 0;
+			List columns 			= null;
+			List columnValues 		= null;
+			
+			StringTokenizer st = new StringTokenizer(sql, " ");
+			int i = 0;
+			while (st.hasMoreTokens()) 
+			{
+				String part = st.nextToken();
+				//Logger.logInfo("Part: " + part);
+				
+				if(i == 1)
+					blobColumn = new Integer(part).intValue();
+				if(i == 4)
+					tableName = part;
+				if(i == 5)
+				{	
+					columns = parseColumns(part);
+				}
+				
+				i++;
+			}
+			
+			columnValues = parseValues(valuesPart);
+			
+			String columnsString = "";
+			String valuesString = "";
+			Iterator columnsIterator = columns.iterator();
+			while(columnsIterator.hasNext())
+			{
+				columnsString += (columnsString.equals("")) ? (String)columnsIterator.next() : "," + columnsIterator.next();
+				valuesString += (valuesString.equals("")) ? "?" : ",?";
+			}
+			
+			sql = "INSERT INTO " + tableName + "(" + columnsString + ") VALUES (" + valuesString + ")";
+			
+			
+			PreparedStatement ps = conn.prepareStatement(sql);
+			
+			int index = 1;
+			int loopCount = 0;
+			Iterator columnValuesIterator = columnsIterator = columns.iterator();
+			while(columnsIterator.hasNext())
+			{
+				columnsIterator.next();
+				String value = (String)columnValues.get(loopCount);
+				
+				if(index == 1 || value.indexOf("'") == -1)
+				{
+					ps.setInt(index, new Integer(value).intValue());
+				}
+				else if(index == blobColumn)
+				{	
+					//Logger.logInfo("value:" + value);
+					value = value.substring(1, value.length() - 1);
+					//Logger.logInfo("value:" + value);
+					
+					if(value.indexOf("assetBlob:") > -1)
+					{
+						String fileName = value.substring(10);
+						FileInputStream fis = new FileInputStream(fileName);
+						
+						BLOB bl = BLOB.createTemporary(conn, true, BLOB.DURATION_CALL);
+						bl.open(BLOB.MODE_READWRITE);
+
+						BufferedOutputStream out = new BufferedOutputStream(bl.getBinaryOutputStream());
+		
+						byte[] buffer = new byte[1024];
+						int len;
+
+						while((len = fis.read(buffer)) >= 0)
+							out.write(buffer, 0, len);
+
+						out.flush();
+						fis.close();
+						out.close();
+
+						ps.setBlob(index, bl);
+					}
+					else
+					{	
+						CLOB cl = CLOB.createTemporary(conn, true, CLOB.DURATION_CALL);
+						cl.putString(1,value);
+						ps.setClob(index, cl);
+					}
+				}
+				else if(value.indexOf("date:") > -1)
+				{
+					value = value.substring(6);
+					Date date = parseDate(value, "yyyy-MM-dd HH:mm:ss");
+					
+					ps.setDate(index, new java.sql.Date(date.getTime()));
+				}
+				else
+				{	
+					//Logger.logInfo("value:" + value);
+					value = value.substring(1, value.length() - 1);
+					//Logger.logInfo("value:" + value);
+					ps.setString(index, value);
+				}
+				
+				index++;
+				loopCount++;
+			}
+
+			ps.executeUpdate();
+		}
+		catch(Exception ex) 
+		{
+			logger.error("Command failed: " + ex.getMessage());
+			logger.error("SQL: " + originalSql);
+			throw ex;
+		}
+	}
+	
 	/**
 	 * This method issues command to the db.
 	 */
@@ -1350,6 +1656,73 @@ public class InstallationController extends BaseController
         	logger.error("procedure: " + procedure + " (" + arg1 + "," + arg2 + ")");
         	throw ex;
         }
+	}
+	
+	protected List parseColumns(String columnDefinition)
+	{
+		List columns = new ArrayList();
+		
+		//System.out.println("columnDefinition:" + columnDefinition);
+		columnDefinition = columnDefinition.substring(1, columnDefinition.length() - 1);
+		//System.out.println("columnDefinition:" + columnDefinition);
+		
+		StringTokenizer st = new StringTokenizer(columnDefinition, ",");
+		while (st.hasMoreTokens()) 
+		{
+			String part = st.nextToken();
+			//Logger.logInfo("Part: " + part);
+			columns.add(part);
+		}
+		
+		return columns;
+	}
+	
+	public Date parseDate(String dateString, String pattern)
+	{	
+		if(dateString == null)
+			return new Date();
+    
+		Date date = new Date();    
+    
+		try
+		{
+			SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+			date = formatter.parse(dateString);
+		}
+		catch(Exception e)
+		{
+			logger.error("Error parsing date:" + dateString);
+		}
+    
+		return date;
+	}
+	
+	protected List parseValues(String values)
+	{
+		List valueList = new ArrayList();
+		
+		//System.out.println("values:" + values);
+		values = values.substring(1, values.length() - 2);
+		//System.out.println("values:" + values);
+		
+		int offset = 0;
+		int index = values.indexOf("[,]", offset);
+		//StringTokenizer st = new StringTokenizer(values, "[,]");
+		while (index > -1) 
+		{
+			String part = values.substring(offset, index);
+			//String part = st.nextToken();
+			//Logger.logInfo("Part: " + part);
+			valueList.add(part);
+			offset = index + 3;
+			index = values.indexOf("[,]", offset);
+		}
+		
+		String part = values.substring(offset);
+		//Logger.logInfo("Part: " + part);
+		valueList.add(part);
+		
+		return valueList;
 	}
 	
 	public String getHostAddress()

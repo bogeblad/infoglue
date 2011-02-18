@@ -514,6 +514,9 @@
     <field name="isBranch" type="java.lang.Boolean">
       <sql name="isBranch" type="integer" dirty="check" />
     </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
+    </field>
     <field name="creator" type="java.lang.String">
       <sql name="creator" type="varchar" dirty="check" />
     </field>
@@ -556,6 +559,9 @@
     </field>
     <field name="isBranch" type="java.lang.Boolean">
       <sql name="isBranch" type="integer" dirty="check" />
+    </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
     </field>
     <field name="parentSiteNode" type="org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl">
       <sql name="parentSiNoId"/>
@@ -684,6 +690,9 @@
     </field>
     <field name="dnsName" type="java.lang.String">
 	    <sql name="dnsName" type="varchar" dirty="check" />
+    </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
     </field>
     <!--
     <field name="availableContenTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl" lazy="true" collection="collection">
@@ -914,6 +923,9 @@
  	<field name="isProtected" type="java.lang.Integer">
       <sql name="isProtected" type="integer" dirty="check" />
     </field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
+    </field>
     <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
       <sql name="contentTypeDefId"/>
     </field>
@@ -965,6 +977,9 @@
 	<field name="isProtected" type="java.lang.Integer">
 	  <sql name="isProtected" type="integer" dirty="check" />
 	</field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
+    </field>
     <field name="creator" type="java.lang.String">
       <sql name="creator" type="varchar" dirty="check" />
     </field>
@@ -1002,6 +1017,9 @@
 	<field name="isProtected" type="java.lang.Integer">
 	  <sql name="isProtected" type="integer" dirty="check" />
 	</field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
+    </field>
     <field name="creator" type="java.lang.String">
       <sql name="creator" type="varchar" dirty="check" />
     </field>
@@ -1042,6 +1060,9 @@
 	<field name="isProtected" type="java.lang.Integer">
 	  <sql name="isProtected" type="integer" dirty="check" />
 	</field>
+    <field name="isDeleted" type="java.lang.Boolean">
+      <sql name="isDeleted" type="integer" dirty="check" />
+    </field>
     <field name="creator" type="java.lang.String">
       <sql name="creator" type="varchar" dirty="check" />
     </field>

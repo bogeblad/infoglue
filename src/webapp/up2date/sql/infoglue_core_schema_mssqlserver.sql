@@ -1,7 +1,7 @@
 if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmAvailableServiceBinding]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE infoglue.cmAvailableServiceBinding;
+DROP TABLE cmAvailableServiceBinding;
 
-CREATE TABLE infoglue.cmAvailableServiceBinding (
+CREATE TABLE cmAvailableServiceBinding (
   availableServiceBindingId [int] IDENTITY (1, 1) NOT NULL,
   name varchar(100) NOT NULL,
   description varchar(255) NOT NULL,
@@ -63,6 +63,9 @@ CREATE TABLE cmContentTypeDefinition (
   contentTypeDefinitionId [int] IDENTITY (1, 1) NOT NULL,
   name varchar(100) NOT NULL,
   schemaValue ntext NOT NULL,
+  parentContentTypeDefinitionId integer DEFAULT '-1',
+  detailPageResolverClass varchar(255) DEFAULT '',
+  detailPageResolverData varchar(1024) DEFAULT '',
   type integer NOT NULL default '0',
   PRIMARY KEY  (contentTypeDefinitionId)
 )
@@ -290,7 +293,7 @@ CREATE TABLE cmSiteNodeVersion (
   pageCacheKey varchar(255) NOT NULL default 'default',
   pageCacheTimeout varchar(20) default NULL,
   sortOrder INTEGER NOT NULL DEFAULT -1,
-  isHidden TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  isHidden TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY  (siteNodeVersionId)
 )
 
@@ -782,7 +785,7 @@ CREATE TABLE cmFormEntryAsset (
   fileSize int NOT NULL,
   assetKey VARCHAR(255) NOT NULL,
   contentType VARCHAR(50) NOT NULL,
-  assetBlob BLOB NOT NULL,
+  assetBlob image,
   PRIMARY KEY  (id)
 )
 

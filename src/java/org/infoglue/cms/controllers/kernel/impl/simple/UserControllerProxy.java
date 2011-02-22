@@ -41,6 +41,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.Timer;
 
 
 /**
@@ -132,12 +133,20 @@ public class UserControllerProxy extends BaseController
 	
     public List getAllUsers() throws ConstraintException, SystemException, Exception
     {
+    	List cachedUsers = (List)CacheController.getCachedObjectFromAdvancedCache("principalCache", "allPrincipals");
+		if(cachedUsers != null && cachedUsers.size() > 0)
+			return cachedUsers;
+
     	List users = new ArrayList();
-    	
+    	Timer t = new Timer();
 		users = getAuthorizationModule().getUsers();
+		t.printElapsedTime("Getting all users...");
 		
 		Collections.sort(users, new ReflectionComparator("displayName"));
-
+		
+		CacheController.cacheObjectInAdvancedCache("principalCache", "allPrincipals", users);
+		t.printElapsedTime("Sorting all users...");
+		
     	return users;
     }
 
@@ -154,6 +163,19 @@ public class UserControllerProxy extends BaseController
     	return users;
     }
     
+	/**
+	 * This method returns a list of all sought for users
+	 */
+	
+    public List getFilteredUsers(String searchString) throws Exception
+    {
+    	List users = new ArrayList();
+    	
+		users = getAuthorizationModule().getFilteredUsers(searchString);
+    	
+    	return users;
+    }
+
 	/**
 	 * This method returns a certain user
 	 */

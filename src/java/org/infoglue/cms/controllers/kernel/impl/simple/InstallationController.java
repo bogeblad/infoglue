@@ -205,7 +205,9 @@ public class InstallationController extends BaseController
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
 			
-			for(int i=0; i<rs.getMetaData().getColumnCount(); i++)
+			System.out.println("ColCount:" + rs.getMetaData().getColumnCount());
+
+			for(int i=1; i<=rs.getMetaData().getColumnCount(); i++)
 			{
 				String columnName = rs.getMetaData().getColumnName(i);
 				System.out.println("columnName:" + columnName);
@@ -233,7 +235,7 @@ public class InstallationController extends BaseController
 			rs.next();
 			
 			
-			for(int i=0; i<rs.getMetaData().getColumnCount(); i++)
+			for(int i=1; i<=rs.getMetaData().getColumnCount(); i++)
 			{
 				String columnName = rs.getMetaData().getColumnName(i);
 				System.out.println("columnName:" + columnName);

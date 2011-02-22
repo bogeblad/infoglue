@@ -1373,6 +1373,7 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
 		buttons.add(getCommonFooterSaveAndExitButton(toolbarKey, principal, locale, request, disableCloseButton, ""));
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "onCancel();", true));
+		buttons.add(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
 
 		return buttons;
 	}

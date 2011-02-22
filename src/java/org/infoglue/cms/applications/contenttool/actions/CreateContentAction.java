@@ -284,6 +284,8 @@ public class CreateContentAction extends InfoGlueAbstractAction
 		if(this.getIsBranch().booleanValue())
 		{
 		    this.defaultFolderContentTypeName = ps.getString("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName");
+		    if(this.defaultFolderContentTypeName == null || this.defaultFolderContentTypeName.equals(""))
+		    	this.defaultFolderContentTypeName = "Folder";
 		}
 		else
 		{
@@ -313,6 +315,8 @@ public class CreateContentAction extends InfoGlueAbstractAction
 		if(this.getIsBranch().booleanValue())
 		{
 		    this.defaultFolderContentTypeName = ps.getString("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName");
+		    if(this.defaultFolderContentTypeName == null || this.defaultFolderContentTypeName.equals(""))
+		    	this.defaultFolderContentTypeName = "Folder";
 		}
 		else
 		{

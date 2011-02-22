@@ -670,6 +670,11 @@ public class InfoGlueJDBCAuthorizationModule extends BaseController implements A
 		return getUsers();
 	}
 	
+	public List getFilteredUsers(String searchString) throws Exception 
+	{
+		return getUsers();
+	}
+
 	public List getUsers(String roleName) throws Exception
 	{
 		return getRoleUsers(roleName);
@@ -830,6 +835,5 @@ public class InfoGlueJDBCAuthorizationModule extends BaseController implements A
 	{
 		return null;
 	}
-
 
 }

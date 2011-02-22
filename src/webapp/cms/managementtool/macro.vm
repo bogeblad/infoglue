@@ -3064,7 +3064,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 
 #macro(initDeleteLink)
 
-	$(".deleteCross").click(function () {
+	$(".deleteCross").live("click", function () {
 		var linkAddress = $(this).attr("href");
 		$("#genericDialog").dialog('destroy');
 		$("#genericDialog").attr("title", $(this).attr("title"));

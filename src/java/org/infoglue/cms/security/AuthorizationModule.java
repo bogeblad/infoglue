@@ -133,6 +133,8 @@ public interface AuthorizationModule
 	
 	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws Exception;
 
+	public List getFilteredUsers(String searchString) throws Exception;
+
 	/**
 	 * This method is used to create a new user.  
 	 */

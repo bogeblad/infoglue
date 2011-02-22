@@ -266,6 +266,29 @@ public class CombinedJNDIBasicAuthorizationModule implements AuthorizationModule
 		return users;
 	}
 	
+	public List getFilteredUsers(String searchString) throws Exception 
+	{
+		List users = new ArrayList();
+		
+		try
+		{
+			users.addAll(getMainAuthorizationModule().getFilteredUsers(searchString));
+		}		
+		catch(Exception e)
+		{
+		}
+
+		try
+		{
+			users.addAll(getFallbackAuthorizationModule().getFilteredUsers(searchString));
+		}		
+		catch(Exception e)
+		{
+		}
+		
+		return users;
+	}
+
 	public List getUsers(String roleName) throws Exception
 	{
 		return getRoleUsers(roleName);

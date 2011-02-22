@@ -1963,6 +1963,13 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 		//TODO		
 		return users;
 	}
+	
+	public List getFilteredUsers(String searchString) throws SystemException, Bug, Exception
+	{
+		//TODO
+		return getUsers();
+	}
+
 
     /* (non-Javadoc)
      * @see org.infoglue.cms.security.AuthorizationModule#getRoleUsers(java.lang.String)

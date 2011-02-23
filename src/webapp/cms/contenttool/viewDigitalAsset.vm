@@ -61,12 +61,24 @@
 		}
 
 		$(document).ready(function(){
-			$("#tabsContainer").tabs();
-			/*
-			window.onresize = function() {
-				resize();
-			}
-			*/
+			$("#tabsContainer").tabs({
+				show:function(e, ui) { 
+					if(ui.index > 0) 
+					{
+						$(".save").hide();
+						$(".saveAndExit").hide();
+						$(".cancel").hide();
+						$(".close").show();
+					}
+					else
+					{	
+						$(".save").show();
+						$(".saveAndExit").show();
+						$(".cancel").show();
+						$(".close").hide();
+					}
+				}
+			});
 			window.resizeTo(500,450);
 		});
 		

@@ -322,6 +322,68 @@ public class SystemUserController extends BaseController
         return getAllObjects(SystemUserImpl.class, "userName", db);
     }
     
+	public List getFilteredSystemUserVOList(String searchString) throws SystemException, Bug
+	{
+		List filteredList = new ArrayList();
+		
+		Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+								
+			filteredList = getFilteredSystemUserList(searchString, db);
+			
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+			logger.info("An error occurred so we should not complete the transaction:" + e);
+			rollbackTransaction(db);
+			throw new SystemException("An error occurred so we should not complete the transaction:" + e, e);
+		}
+		
+		return toVOList(filteredList);
+	}
+
+	public List getFilteredSystemUserList(String searchString, Database db) throws SystemException, Bug, Exception
+	{
+		List filteredList = new ArrayList();
+		
+		OQLQuery oql = db.getOQLQuery( "SELECT u FROM org.infoglue.cms.entities.management.impl.simple.SystemUserImpl u ORDER BY u.userName");
+    	
+		QueryResults results = oql.execute(Database.ReadOnly);
+		
+		while (results.hasMore()) 
+		{
+			SystemUser extranetUser = (SystemUser)results.next();
+			boolean include = false;
+			if(searchString == null || searchString.equals(""))
+			{
+				include = true;
+			}
+			else
+			{
+				if(extranetUser.getFirstName().toLowerCase().indexOf(searchString.toLowerCase()) > -1)
+					include = true;
+				else if(extranetUser.getLastName().toLowerCase().indexOf(searchString.toLowerCase()) > -1)
+					include = true;
+				else if(extranetUser.getUserName().toLowerCase().indexOf(searchString.toLowerCase()) > -1)
+					include = true;
+				else if(extranetUser.getEmail().toLowerCase().indexOf(searchString.toLowerCase()) > -1)
+					include = true;
+			}
+			
+			if(include)
+				filteredList.add(extranetUser);
+		}
+		
+		results.close();
+		oql.close();
+
+		return filteredList;
+	}
+
 	public List getFilteredSystemUserVOList(String firstName, String lastName, String userName, String email, String[] roleNames) throws SystemException, Bug
 	{
 		List filteredList = new ArrayList();
@@ -411,6 +473,7 @@ public class SystemUserController extends BaseController
 		return filteredList;
 	}
 
+	
 	/*
 	 * CREATE
 	 * 

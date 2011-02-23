@@ -336,6 +336,35 @@ public class GenericCombinedAuthorizationModule implements AuthorizationModule, 
 		return users;
 	}
 
+	public List getFilteredUsers(String searchString) throws Exception 
+	{
+		List users = new ArrayList();
+
+		int i=0;
+		String authorizerClassName = this.extraProperties.getProperty("" + i + ".authorizerClassName");
+		while(authorizerClassName != null && !authorizerClassName.equals(""))
+		{
+			if(logger.isInfoEnabled())
+				logger.info("Looking for users in " + authorizerClassName);
+			
+			try
+			{
+				users.addAll(getAuthorizationModule(authorizerClassName, i).getFilteredUsers(searchString));
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			i++;
+			authorizerClassName = this.extraProperties.getProperty("" + i + ".authorizerClassName");
+		}
+		
+		Collections.sort(users, new ReflectionComparator("displayName"));
+
+		return users;	
+	}
+
 	/*
 	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws Exception
 	{

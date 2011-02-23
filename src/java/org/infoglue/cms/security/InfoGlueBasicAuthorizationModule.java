@@ -539,7 +539,12 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 			{
 				beginTransaction(db);
 				
+				Timer t = new Timer();
+				List systemUsersVOList = SystemUserController.getController().getSystemUserVOList(db);
+				t.printElapsedTime("AAAAAAAAAAA");
 				List systemUsers = SystemUserController.getController().getSystemUserList(db);
+				t.printElapsedTime("AAAAAAAAAAA");
+				
 				Iterator systemUserListIterator = systemUsers.iterator();
 				while(systemUserListIterator.hasNext())
 				{
@@ -569,6 +574,7 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 					
 					users.add(infoGluePrincipal);
 				}
+				t.printElapsedTime("BBBBBBBB");
 				
 				commitTransaction(db);
 			} 
@@ -655,6 +661,78 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 		else
 		{
 			List systemUserList = SystemUserController.getController().getFilteredSystemUserList(firstName, lastName, userName, email, roleIds, transactionObject);
+			Iterator systemUserListIterator = systemUserList.iterator();
+			while(systemUserListIterator.hasNext())
+			{
+				SystemUser systemUser = (SystemUser)systemUserListIterator.next();
+				
+				List roles = new ArrayList();
+				Collection roleList = RoleController.getController().getRoleList(systemUser.getUserName(), transactionObject);
+				Iterator roleListIterator = roleList.iterator();
+				while(roleListIterator.hasNext())
+				{
+					Role role = (Role)roleListIterator.next();
+					InfoGlueRole infoGlueRole = new InfoGlueRole(role.getRoleName(), role.getDescription(), this);
+					roles.add(infoGlueRole);
+				}
+				
+				List groups = new ArrayList();
+				Collection groupList = GroupController.getController().getGroupList(systemUser.getUserName(), transactionObject);
+				Iterator groupListIterator = groupList.iterator();
+				while(groupListIterator.hasNext())
+				{
+				    Group group = (Group)groupListIterator.next();
+					InfoGlueGroup infoGlueGroup = new InfoGlueGroup(group.getGroupName(), group.getDescription(), this);
+					groups.add(infoGlueGroup);
+				}
+				
+				InfoGluePrincipal infoGluePrincipal = new InfoGluePrincipal(systemUser.getUserName(), systemUser.getFirstName(), systemUser.getLastName(), systemUser.getEmail(), roles, groups, false, this);
+				users.add(infoGluePrincipal);
+			}
+		}
+		
+		return users;
+	}
+	
+	public List getFilteredUsers(String searchString) throws Exception
+	{
+		List users = new ArrayList();
+		
+		if(transactionObject == null)
+		{
+			List systemUserVOList = SystemUserController.getController().getFilteredSystemUserVOList(searchString);
+			Iterator systemUserVOListIterator = systemUserVOList.iterator();
+			while(systemUserVOListIterator.hasNext())
+			{
+				SystemUserVO systemUserVO = (SystemUserVO)systemUserVOListIterator.next();
+				
+				List roles = new ArrayList();
+				Collection roleVOList = RoleController.getController().getRoleVOList(systemUserVO.getUserName());
+				Iterator roleVOListIterator = roleVOList.iterator();
+				while(roleVOListIterator.hasNext())
+				{
+					RoleVO roleVO = (RoleVO)roleVOListIterator.next();
+					InfoGlueRole infoGlueRole = new InfoGlueRole(roleVO.getRoleName(), roleVO.getDescription(), this);
+					roles.add(infoGlueRole);
+				}
+				
+				List groups = new ArrayList();
+				Collection groupVOList = GroupController.getController().getGroupVOList(systemUserVO.getUserName());
+				Iterator groupVOListIterator = groupVOList.iterator();
+				while(groupVOListIterator.hasNext())
+				{
+				    GroupVO groupVO = (GroupVO)groupVOListIterator.next();
+					InfoGlueGroup infoGlueGroup = new InfoGlueGroup(groupVO.getGroupName(), groupVO.getDescription(), this);
+					groups.add(infoGlueGroup);
+				}
+				
+				InfoGluePrincipal infoGluePrincipal = new InfoGluePrincipal(systemUserVO.getUserName(), systemUserVO.getFirstName(), systemUserVO.getLastName(), systemUserVO.getEmail(), roles, groups, false, this);
+				users.add(infoGluePrincipal);
+			}
+		}
+		else
+		{
+			List systemUserList = SystemUserController.getController().getFilteredSystemUserList(searchString, transactionObject);
 			Iterator systemUserListIterator = systemUserList.iterator();
 			while(systemUserListIterator.hasNext())
 			{

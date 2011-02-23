@@ -956,7 +956,8 @@ public class ImportController extends BaseController
 		{
 			ContentVersion contentVersion = (ContentVersion)contentVersionsIterator.next();
 			Language language = LanguageController.getController().getLanguageWithCode(contentVersion.getLanguage().getLanguageCode(), db);
-			logger.info("Creating contentVersion for language:" + contentVersion.getLanguage().getLanguageCode() + " on content " + content.getName());
+			System.out.println("Creating contentVersion for language:" + contentVersion.getLanguage().getLanguageCode() + " on content " + content.getName());
+			System.out.println("language:" + language);
 
 			contentVersion.setOwningContent((ContentImpl)content);
 			contentVersion.setLanguage((LanguageImpl)language);
@@ -991,7 +992,10 @@ public class ImportController extends BaseController
 
 			Collection contentCategories = contentVersion.getContentCategories();
 			logger.info("contentCategories:" + contentCategories.size());
-			
+			System.out.println("contentVersion:" + contentVersion);
+			System.out.println("contentVersion:" + contentVersion.getValueObject().getLanguageId());
+			System.out.println("contentVersion:" + contentVersion.getLanguage());
+
 			db.create(contentVersion);
 
 			if(contentCategories != null)

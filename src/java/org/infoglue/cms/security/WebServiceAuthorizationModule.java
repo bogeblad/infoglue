@@ -600,6 +600,11 @@ public class WebServiceAuthorizationModule implements AuthorizationModule, Seria
 		return users;
 	}
 
+	public List getFilteredUsers(String searchString) throws Exception 
+	{
+		return getUsers();
+	}
+
     /* (non-Javadoc)
      * @see org.infoglue.cms.security.AuthorizationModule#getRoleUsers(java.lang.String)
      */

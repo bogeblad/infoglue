@@ -220,7 +220,7 @@ public class ThemeController extends BaseController
 		}
 		else
 		{
-			return "outlook2007";
+			return "embla";
 		}
 	}
 

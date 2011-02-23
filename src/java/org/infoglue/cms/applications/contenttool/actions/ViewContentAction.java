@@ -105,6 +105,9 @@ public class ViewContentAction extends InfoGlueAbstractAction
         if(this.getIsBranch().booleanValue())
 		{
        		this.defaultFolderContentTypeName = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName", "applicationProperties", null, false, false, false, false, null);
+		    if(this.defaultFolderContentTypeName == null || this.defaultFolderContentTypeName.equals(""))
+		    	this.defaultFolderContentTypeName = "Folder";
+
 		}
         
 		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(contentId, 100);

@@ -153,7 +153,7 @@
 				<p style="clear: both;">		
 					<label for="theme">$ui.getString("tool.managementtool.mysettings.theme.label")</label>
 					<select class="sitedropbox" name="theme">
-						<option value="">Default (Outlook 2007)</option>
+						<option value="">Default</option>
 						#foreach($availableTheme in $themes)
 							<option value="$availableTheme" #if($theme == "$availableTheme")selected="1"#end>$availableTheme</option>
 						#end

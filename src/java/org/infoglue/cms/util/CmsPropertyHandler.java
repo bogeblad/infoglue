@@ -1705,7 +1705,7 @@ public class CmsPropertyHandler
 	{
 		String theme = getPropertySet().getString("principal_" + userName + "_theme");
 
-		return (theme == null ? "outlook2007" : theme);
+		return (theme == null ? "" : theme);
 	}
 
 	public static String getPreferredRepositoryId(String userName)

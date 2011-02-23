@@ -195,7 +195,11 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 
     public String getDefaultFolderContentTypeName()
     {
-        return InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName", "applicationProperties", null, false, false, false, false, null);
+    	String defaultFolderContentTypeName = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName", "applicationProperties", null, false, false, false, false, null);
+	    if(defaultFolderContentTypeName == null || defaultFolderContentTypeName.equals(""))
+	    	defaultFolderContentTypeName = "Folder";
+
+        return defaultFolderContentTypeName;
     }
 
 	public void setContentId(Integer contentId)

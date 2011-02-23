@@ -9,10 +9,21 @@
 	$(document).ready(function(){
 
 		if("$!createDatabase" != "true")
+		{
+			//$("#examples").hide();
 			$("#dbaAccount").hide();
+		}
 		
 		$("#createDatabase").change(function () {
-          	$("#dbaAccount").toggle();
+        	if($("#dbProvider").val() == "mssqlserver" || $("#dbProvider").val() == "mysql")
+        	{
+        		//alert("Val: " + $("#createDatabase").attr("checked"));
+        		if($("#createDatabase").attr("checked") == true)
+	          		$("#dbaAccount").show();
+	          	else
+	          		$("#dbaAccount").hide();
+	        }
+			$("#examples").show();
         });
         
         $("#dbProvider").change(function () {
@@ -21,6 +32,19 @@
 	          	$("#dbInstance").attr("disabled", "");
 	        else
 	          	$("#dbInstance").attr("disabled", "disabled");
+
+	        if($(this).val() != "mssqlserver" && $(this).val() != "mysql")
+	        {
+	          	//$("#dbName").attr("disabled", "disabled");
+	          	//$("#dbName").attr("disabled", "disabled");
+	          	$("#dbaAccount").hide();
+	        }
+	        else
+	        {
+	        	//$("#dbName").attr("disabled", "");
+	          	//$("#dbName").attr("disabled", "");
+	          	$("#dbaAccount").show();
+	        }
 	          	
 	        setDefaulPort($(this).val());
         });
@@ -73,14 +97,14 @@
 	<p>
 	    <label for="dbProvider">$ui.getString("tool.common.install.database.dbProvider")</label>
 		<select name="dbProvider" id="dbProvider">
-			<option value="mysql">MySQL</option>
-			<option value="oracle">Oracle</option>
-			<option value="mssqlserver">SQL Server</option>
-			<option value="db2">DB2</option>
+			<option value="mysql" #if($dbProvider == "mysql")selected="selected"#end>MySQL</option>
+			<option value="oracle" #if($dbProvider == "oracle")selected="selected"#end>Oracle</option>
+			<option value="mssqlserver" #if($dbProvider == "mssqlserver")selected="selected"#end>SQL Server</option>
+			<option value="db2" #if($dbProvider == "db2")selected="selected"#end>DB2</option>
 		</select>
 	    
-	    <label for="dbName">$ui.getString("tool.common.install.database.dbName")</label>
-		<input type="text" name="dbName" value="$!dbName"/>
+	    <label for="dbName">$ui.getString("tool.common.install.database.dbName") (Or SID if oracle)</label>
+		<input type="text" id="dbName" name="dbName" value="$!dbName" #*#if($dbProvider == "oracle" || $dbProvider == "db2")disabled="disabled"#end*#/>
 		
 	    <label for="dbServer">$ui.getString("tool.common.install.database.dbServer")</label>
 		<input type="text" name="dbServer" value="$!dbServer"/>
@@ -97,18 +121,20 @@
 	    <label for="igPassword">$ui.getString("tool.common.install.database.igPassword")</label>
 		<input type="password" name="igPassword" value=""/>	    
 
-	    <label for="createDatabase">$ui.getString("tool.common.install.database.createDatabase")</label>
+	    <label for="createDatabase">$ui.getString("tool.common.install.database.createDatabase") (or tables if empty database exists)</label>
 		<input type="checkbox" id="createDatabase" name="createDatabase" value="true" #if($!createDatabase == "true")checked="checked"#end/>
-
-		<span id="dbaAccount">
+		
+		<span id="examples">
+		    <label for="addExampleRepositories">$ui.getString("tool.common.install.database.addExampleRepositories")</label>
+			<input type="checkbox" name="addExampleRepositories" value="true"/>
+		</span>
+		
+		<span id="dbaAccount" #if($dbProvider == "oracle" || $dbProvider == "db2")style="display:none;"#end>
 		    <label for="dbUser">$ui.getString("tool.common.install.database.dbUser")</label>
 			<input type="text" name="dbUser" value="$!dbUser"/>
 		
 		    <label for="dbPassword">$ui.getString("tool.common.install.database.dbPassword")</label>
 			<input type="password" name="dbPassword" value=""/>
-	
-		    <label for="addExampleRepositories">$ui.getString("tool.common.install.database.addExampleRepositories")</label>
-			<input type="checkbox" name="addExampleRepositories" value="true"/>
 		</span>
 	</p>
 	

@@ -590,6 +590,8 @@
 		<view name="successPopup">/cms/managementtool/viewListSystemUserForPopup.vm</view>
 		<view name="successPopupV3">/cms/managementtool/v3/viewListSystemUserForPopup.vm</view>
 		<view name="userSearch">/cms/managementtool/viewListSystemUserSearch.vm</view>
+		<view name="successFiltered">/cms/managementtool/v3/viewListSystemUserFiltered.vm</view>
+		<view name="successPopupFiltered">/cms/managementtool/v3/viewListSystemUserForPopupFiltered.vm</view>
 		<view name="error">/cms/managementtool/error.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.ViewSystemUserAction" alias="ViewSystemUser">

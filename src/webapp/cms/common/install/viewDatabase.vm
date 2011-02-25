@@ -7,7 +7,9 @@
 	}
 	
 	$(document).ready(function(){
-
+		
+		setDefaulPort("mysql");
+		
 		if("$!createDatabase" != "true")
 		{
 			//$("#examples").hide();

@@ -539,11 +539,7 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 			{
 				beginTransaction(db);
 				
-				Timer t = new Timer();
-				List systemUsersVOList = SystemUserController.getController().getSystemUserVOList(db);
-				t.printElapsedTime("AAAAAAAAAAA");
 				List systemUsers = SystemUserController.getController().getSystemUserList(db);
-				t.printElapsedTime("AAAAAAAAAAA");
 				
 				Iterator systemUserListIterator = systemUsers.iterator();
 				while(systemUserListIterator.hasNext())
@@ -574,7 +570,6 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 					
 					users.add(infoGluePrincipal);
 				}
-				t.printElapsedTime("BBBBBBBB");
 				
 				commitTransaction(db);
 			} 

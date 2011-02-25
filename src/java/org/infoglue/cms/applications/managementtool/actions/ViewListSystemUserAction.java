@@ -103,12 +103,8 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	}
 
 	/**
-	?_=1298318988004&sEcho=4&iColumns=5&sColumns=&iDisplayStart=30&iDisplayLength=10&sSearch=&bRegex=false&sSearch_0=&bRegex_0=false&bSearchable_0=true&sSearch_1=&bRegex_1=false&bSearchable_1=true&sSearch_2=&bRegex_2=false&bSearchable_2=true&sSearch_3=&bRegex_3=false&bSearchable_3=true&sSearch_4=&bRegex_4=false&bSearchable_4=true&iSortingCols=1&iSortCol_0=0&sSortDir_0=asc&bSortable_0=true&bSortable_1=true&bSortable_2=true&bSortable_3=true&bSortable_4=true
-	{"sEcho": 4, "iTotalRecords": 57, "iTotalDisplayRecords": 57, "aaData": [ ["Other browsers","All others","-","-","U"],["Presto","Opera 7.0","Win 95+ / OSX.1+","-","A"],["Presto","Opera 7.5","Win 95+ / OSX.2+","-","A"],["Presto","Opera 8.0","Win 95+ / OSX.2+","-","A"],["Presto","Opera 8.5","Win 95+ / OSX.2+","-","A"],["Presto","Opera 9.0","Win 95+ / OSX.3+","-","A"],["Presto","Opera 9.2","Win 88+ / OSX.3+","-","A"],["Presto","Opera 9.5","Win 88+ / OSX.3+","-","A"],["Presto","Opera for Wii","Wii","-","A"],["Presto","Nokia N800","N800","-","A"]] }
-	
-	iColumns=4&sColumns=&sNames=%2C%2C%2C&sSearch=&bRegex=false&sSearch_0=&bRegex_0=false&bSearchable_0=true&sSearch_1=&bRegex_1=false&bSearchable_1=true&sSearch_2=&bRegex_2=false&bSearchable_2=true&sSearch_3=&bRegex_3=false&bSearchable_3=true&iSortingCols=1&iSortCol_0=2&sSortDir_0=asc&bSortable_0=true&bSortable_1=true&bSortable_2=true&bSortable_3=true
-	 
-	*/
+	 * 
+	 */
 
 	public String doPopupProcessAndFilter() throws Exception 
 	{
@@ -159,6 +155,8 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 		System.out.println("Getting principals:" + start + " to " + end + " from original list:" + this.infogluePrincipals.size());
 		if(this.infogluePrincipals.size() > end)
 			this.infogluePrincipals = this.infogluePrincipals.subList(start, end);
+		else
+			this.infogluePrincipals = this.infogluePrincipals.subList(start, this.infogluePrincipals.size());
 		t.printElapsedTime("Getting subset of users took ");
 		
 	    return "successFiltered";

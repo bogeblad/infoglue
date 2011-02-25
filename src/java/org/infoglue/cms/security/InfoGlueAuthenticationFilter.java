@@ -677,28 +677,35 @@ public class InfoGlueAuthenticationFilter implements Filter
 		    String casLogoutUrl 		= CmsPropertyHandler.getServerNodeProperty("casLogoutUrl", true, null);
 		    String authConstraint		= CmsPropertyHandler.getServerNodeProperty("authConstraint", true, "cmsUser");
 		    
-		    	InfoGlueAuthenticationFilter.authenticatorClass = authenticatorClass;
-		    	InfoGlueAuthenticationFilter.authorizerClass = authorizerClass;
-		    	InfoGlueAuthenticationFilter.invalidLoginUrl = invalidLoginUrl;
-		    	InfoGlueAuthenticationFilter.successLoginBaseUrl = successLoginBaseUrl;
-		    	InfoGlueAuthenticationFilter.loginUrl = loginUrl;
-		    	InfoGlueAuthenticationFilter.logoutUrl = logoutUrl;
-		    	InfoGlueAuthenticationFilter.serverName = serverName;
-		    	InfoGlueAuthenticationFilter.casRenew = casRenew;
-		    	InfoGlueAuthenticationFilter.authConstraint = authConstraint;
-		    	InfoGlueAuthenticationFilter.casServiceUrl = casServiceUrl;
-		    	InfoGlueAuthenticationFilter.casValidateUrl = casValidateUrl;
-		    	InfoGlueAuthenticationFilter.casProxyValidateUrl = casProxyValidateUrl;
-		    	InfoGlueAuthenticationFilter.casLogoutUrl = casLogoutUrl;
+	    	InfoGlueAuthenticationFilter.authenticatorClass = authenticatorClass;
+	    	InfoGlueAuthenticationFilter.authorizerClass = authorizerClass;
+	    	InfoGlueAuthenticationFilter.invalidLoginUrl = invalidLoginUrl;
+	    	InfoGlueAuthenticationFilter.successLoginBaseUrl = successLoginBaseUrl;
+	    	InfoGlueAuthenticationFilter.loginUrl = loginUrl;
+	    	InfoGlueAuthenticationFilter.logoutUrl = logoutUrl;
+	    	InfoGlueAuthenticationFilter.serverName = serverName;
+	    	InfoGlueAuthenticationFilter.casRenew = casRenew;
+	    	InfoGlueAuthenticationFilter.authConstraint = authConstraint;
+	    	InfoGlueAuthenticationFilter.casServiceUrl = casServiceUrl;
+	    	InfoGlueAuthenticationFilter.casValidateUrl = casValidateUrl;
+	    	InfoGlueAuthenticationFilter.casProxyValidateUrl = casProxyValidateUrl;
+	    	InfoGlueAuthenticationFilter.casLogoutUrl = casLogoutUrl;
 
 		    String extraPropertiesString = CmsPropertyHandler.getServerNodeDataProperty("deliver", "extraSecurityParameters", true, null);
+		    System.out.println("extraPropertiesString 1:" + extraPropertiesString);
+		    if(extraPropertiesString == null || extraPropertiesString.equals(""))
+		    {
+		    	extraPropertiesString = CmsPropertyHandler.getServerNodeDataProperty(null, "extraSecurityParameters", true, null);
+			    System.out.println("extraPropertiesString 2:" + extraPropertiesString);
+		    }
+		    
 		    if(extraPropertiesString != null)
 			{
 			    logger.info("Loading extra properties from propertyset. extraPropertiesString:" + extraPropertiesString);
 		    	try
 				{
-		    		extraProperties = new Properties();
-					extraProperties.load(new ByteArrayInputStream(extraPropertiesString.getBytes("UTF-8")));
+		    		InfoGlueAuthenticationFilter.extraProperties = new Properties();
+		    		InfoGlueAuthenticationFilter.extraProperties.load(new ByteArrayInputStream(extraPropertiesString.getBytes("UTF-8")));
 					//extraProperties.list(System.out);
 				}	
 				catch(Exception e)
@@ -715,8 +722,8 @@ public class InfoGlueAuthenticationFilter implements Filter
 				{
 					try
 					{
-						extraProperties = new Properties();
-						extraProperties.load(CmsPropertyHandler.class.getResourceAsStream("/" + extraPropertiesFile));	
+						InfoGlueAuthenticationFilter.extraProperties = new Properties();
+						InfoGlueAuthenticationFilter.extraProperties.load(CmsPropertyHandler.class.getResourceAsStream("/" + extraPropertiesFile));	
 					}	
 					catch(Exception e)
 					{
@@ -724,9 +731,10 @@ public class InfoGlueAuthenticationFilter implements Filter
 						e.printStackTrace();
 					}
 				}
-
 		    }
-			    
+		    System.out.println("\n\nRELOADED THE AUTH FILTER PROPS...:" + extraProperties);
+		    extraProperties.list(System.out);
+		    
 		    logger.info("authenticatorClass:" + authenticatorClass);
 		    logger.info("authorizerClass:" + authorizerClass);
 		    logger.info("invalidLoginUrl:" + invalidLoginUrl);

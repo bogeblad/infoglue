@@ -257,7 +257,7 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 	/**
 	 * This method gets a Context - either by an anonymous bind or a real bind
 	 */
-	
+	/*
 	public DirContext getContext(Control[] controls) throws Exception
 	{
 		String connectionURL 		= this.extraProperties.getProperty("connectionURL");
@@ -298,6 +298,7 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 		
 		return ctx;
 	}
+	*/
 
 	/**
 	 * Gets an authorized InfoGluePrincipal 

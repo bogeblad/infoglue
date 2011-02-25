@@ -22,7 +22,9 @@ CREATE TABLE cmAvailableServiceBindingSiteNodeTypeDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS c) CHARACTER SET utf8 COLLATE utf8_general_ci TYPE=InnoDB;REATE TABLE cmContent (
+DROP TABLE IF EXISTS cmContent;
+
+CREATE TABLE cmContent (
   contentId integer(11) unsigned NOT NULL auto_increment,
   name varchar(255) NOT NULL,
   publishDateTime datetime NOT NULL default '0000-00-00 00:00:00',

@@ -574,6 +574,7 @@ public class CmsPropertyHandler
 	    if(value == null && defaultValue != null)
 	    	value = defaultValue;
 	    
+	    //HŠr skall smartare lšsning in sen fšr att lšsa fallback.
 	    if(!skipCache)
 	    	CacheController.cacheObject(cacheName, cacheKey, value);
 	    

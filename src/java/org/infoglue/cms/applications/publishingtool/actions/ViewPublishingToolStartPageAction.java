@@ -76,7 +76,7 @@ public class ViewPublishingToolStartPageAction extends InfoGlueAbstractAction
             RemoteCacheUpdater.clearSystemNotificationMessages();
         }
         
-        return doExecute();
+        return doExecute() + "V3";
     }
     
     public List getRepositories()

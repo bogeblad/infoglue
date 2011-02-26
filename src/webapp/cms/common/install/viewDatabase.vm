@@ -8,7 +8,8 @@
 	
 	$(document).ready(function(){
 		
-		setDefaulPort("mysql");
+		if($("#dbPort").val() == "")
+			setDefaulPort("mysql");
 		
 		if("$!createDatabase" != "true")
 		{
@@ -128,7 +129,7 @@
 		
 		<span id="examples">
 		    <label for="addExampleRepositories">$ui.getString("tool.common.install.database.addExampleRepositories")</label>
-			<input type="checkbox" name="addExampleRepositories" value="true"/>
+			<input type="checkbox" name="addExampleRepositories" value="true" #if($!addExampleRepositories == "true")checked="checked" #end/>
 		</span>
 		
 		<span id="dbaAccount" #if($dbProvider == "oracle" || $dbProvider == "db2")style="display:none;"#end>

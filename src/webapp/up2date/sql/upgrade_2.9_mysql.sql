@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS cmFormEntry;
 CREATE TABLE  cmFormEntry (
   id int(10) unsigned NOT NULL auto_increment,
   originAddress varchar(1024) NOT NULL,
@@ -9,7 +8,6 @@ CREATE TABLE  cmFormEntry (
   PRIMARY KEY  (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS cmFormEntryValue;
 CREATE TABLE  cmFormEntryValue (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(128) NOT NULL,
@@ -17,8 +15,6 @@ CREATE TABLE  cmFormEntryValue (
   formEntryId int(10) unsigned NOT NULL,
   PRIMARY KEY  (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS cmSubscription;
 
 CREATE TABLE cmSubscription (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -32,8 +28,6 @@ CREATE TABLE cmSubscription (
   lastNotifiedDateTime timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY(id)
 ) TYPE = InnoDB DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS cmSubscriptionFilter;
 
 CREATE TABLE cmSubscriptionFilter (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,

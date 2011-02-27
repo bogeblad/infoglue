@@ -16,7 +16,6 @@
   
 	<property name="build" value="build"/>
 	<property name="build.classes" value="${build}/classes"/>
-	<property name="build.applets" value="${build}/applets"/>
 	<property name="javadoc" value="${build}/javadoc"/>
 	<property name="war.file.prefix" value="${build}/${ant.project.name}"/>
 	<property name="cms.war.file" value="${war.file.prefix}-cms.war"/>
@@ -211,6 +210,52 @@
 		</copy>
 	</target>
 
+	<target name="compileRelease" depends="init">
+		<javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true">
+			<src refid="build.sourcepath"/>
+		</javac>
+		<javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true">
+			<src refid="test.sourcepath"/>
+		</javac>
+		<copy todir="${build.classes}">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+			<!--<filterset refid="project.filters"/>-->
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
+			</filterset>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${conf}/cms" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${src.java}">
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${build.classes}">
+			<fileset dir="${webapp}" includes="preview/*.vm"/>
+		</copy>
+
+		<!-- Copy all supporting test files-->
+		<copy filtering="no" todir="${test.classes}">
+			<fileset dir="${test.java}">
+				<exclude name="**/*.java"/>
+				<exclude name="**/package.html"/>
+			</fileset>
+		</copy>
+	</target>
+
 	<!--
 	* Creates jar files containing InfoGlue classes and test classes. These can be
 	* imported into another codebase for custom development.
@@ -235,7 +280,59 @@
 
 		<war warfile="${cms.war.file}" webxml="${conf}/cms-web.xml">
 			<fileset dir="${webapp}"/>
-			<fileset dir="${build.applets}"/>
+			<classes dir="${build.classes}"/>
+			<!--lib refid="build.libs"/-->
+			<!-- 
+			The portlet api should be installed in tomcat shared/lib/ in order 
+			to be accessed by all webapps/portlets
+			-->
+			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
+			<lib refid="core.libs"/>
+			<lib refid="jdbc.libs"/>
+			<zipfileset dir="${conf}/cms"
+                        prefix="WEB-INF/classes" includes="webwork.properties,actions.xml,jobs.xml,mapping.xml,oracle_mapping.xml,db2_mapping.xml"/>
+			<zipfileset dir="${conf}/data/xml"
+                        prefix="WEB-INF/classes"
+                        includes="*.xml"/>
+			<zipfileset dir="${conf}/data"
+                        prefix="WEB-INF/data"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}/tld"
+                        prefix="WEB-INF/tld"
+                        includes="**/*"/>
+            		<zipfileset dir="${conf}/config"
+                        prefix="WEB-INF/config"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}"
+                        prefix="WEB-INF"
+                        includes="server-config.wsdd"/>
+			<zipfileset dir="${conf}"
+			prefix="META-INF" 
+			includes="context.xml"/>
+		</war>
+	</target>
+
+	<!--
+	* Creates the CMS war file.  Since we deploy an exploded war, the primary
+	* purpose of this target is to organize the files required to deploy.
+	-->
+	<target name="war-cms-release" depends="compileRelease" description="Creates the CMS war file">
+		<delete>
+		    <fileset dir="${build.classes}" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
+        </delete>
+
+		<copy file="${conf}/cms.properties" tofile="${build.classes}/cms.properties" overwrite="true">
+	        <filterchain>
+	           <replacetokens>
+	                <token key="context.root.deliver" value="infoglueDeliverWorking"/>
+	                <token key="operatingMode.deliver" value="0"/>
+                	<token key="operatingMode.cms" value="0"/>
+	            </replacetokens>
+	        </filterchain>
+	    </copy>
+
+		<war warfile="infoglueCMS.war" webxml="${conf}/cms-web.xml">
+			<fileset dir="${webapp}"/>
 			<classes dir="${build.classes}"/>
 			<!--lib refid="build.libs"/-->
 			<!-- 
@@ -310,6 +407,122 @@
 		</war>
 	</target>
 
+	<!--
+	* Creates the deliver war file.  Since we deploy an exploded war, the primary
+	* purpose of this target is to organize the files required to deploy.
+	-->
+	<target name="war-deliver-release" depends="compileRelease" description="Creates the deliver war file">
+
+		<delete>
+		    <fileset dir="${build.classes}" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
+        </delete>
+		
+		<copy file="${conf}/deliver.properties" tofile="${build.classes}/deliver.properties" overwrite="true">
+	        <filterchain>
+	           <replacetokens>
+	                <token key="context.root.deliver" value="infoglueDeliverWorking"/>
+	                <token key="operatingMode.deliver" value="0"/>
+	            </replacetokens>
+	        </filterchain>
+	    </copy>
+
+		<war warfile="infoglueDeliverWorking.war" webxml="${conf}/deliver-web.xml">
+			<fileset dir="${webapp}"/>
+			<classes dir="${build.classes}"/>
+			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
+			<lib refid="core.libs"/>
+			<lib refid="jdbc.libs"/>
+			<zipfileset dir="${conf}/deliver"
+                        prefix="WEB-INF/classes"
+                        includes="webwork.properties,actions.xml,jobs.xml,mapping.xml,oracle_mapping.xml,db2_mapping.xml"/>
+			<zipfileset dir="${conf}/data/xml"
+                        prefix="WEB-INF/classes"
+                        includes="*.xml"/>
+			<zipfileset dir="${conf}/data"
+                        prefix="WEB-INF/data"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}/tld"
+                        prefix="WEB-INF/tld"
+                        includes="**/*"/>
+            		<zipfileset dir="${conf}/config"
+                        prefix="WEB-INF/config"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}"
+			prefix="META-INF"
+			includes="context.xml"/>
+		</war>
+		
+		<copy file="${conf}/deliver.properties" tofile="${build.classes}/deliver.properties" overwrite="true">
+	        <filterchain>
+	           <replacetokens>
+	                <token key="context.root.deliver" value="infoglueDeliverPreview"/>
+	                <token key="operatingMode.deliver" value="2"/>
+	            </replacetokens>
+	        </filterchain>
+	    </copy>
+
+		<war warfile="infoglueDeliverPreview.war" webxml="${conf}/deliver-web.xml">
+			<fileset dir="${webapp}"/>
+			<classes dir="${build.classes}"/>
+			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
+			<lib refid="core.libs"/>
+			<lib refid="jdbc.libs"/>
+			<zipfileset dir="${conf}/deliver"
+                        prefix="WEB-INF/classes"
+                        includes="webwork.properties,actions.xml,jobs.xml,mapping.xml,oracle_mapping.xml,db2_mapping.xml"/>
+			<zipfileset dir="${conf}/data/xml"
+                        prefix="WEB-INF/classes"
+                        includes="*.xml"/>
+			<zipfileset dir="${conf}/data"
+                        prefix="WEB-INF/data"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}/tld"
+                        prefix="WEB-INF/tld"
+                        includes="**/*"/>
+            		<zipfileset dir="${conf}/config"
+                        prefix="WEB-INF/config"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}"
+			prefix="META-INF"
+			includes="context.xml"/>
+		</war>
+
+		<copy file="${conf}/deliver.properties" tofile="${build.classes}/deliver.properties" overwrite="true">
+	        <filterchain>
+	           <replacetokens>
+	                <token key="context.root.deliver" value="infoglueDeliverLive"/>
+	                <token key="operatingMode.deliver" value="3"/>
+	            </replacetokens>
+	        </filterchain>
+	    </copy>
+
+		<war warfile="infoglueDeliverLive.war" webxml="${conf}/deliver-web.xml">
+			<fileset dir="${webapp}"/>
+			<classes dir="${build.classes}"/>
+			<lib dir="${lib}/build" includes="**/*.jar" excludes="pluto-1.0.1-rc2.jar,pluto-1.0.1-rc4.jar,pluto-1.0.1.jar,portlet-api-1.0.jar"/>
+			<lib refid="core.libs"/>
+			<lib refid="jdbc.libs"/>
+			<zipfileset dir="${conf}/deliver"
+                        prefix="WEB-INF/classes"
+                        includes="webwork.properties,actions.xml,jobs.xml,mapping.xml,oracle_mapping.xml,db2_mapping.xml"/>
+			<zipfileset dir="${conf}/data/xml"
+                        prefix="WEB-INF/classes"
+                        includes="*.xml"/>
+			<zipfileset dir="${conf}/data"
+                        prefix="WEB-INF/data"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}/tld"
+                        prefix="WEB-INF/tld"
+                        includes="**/*"/>
+            		<zipfileset dir="${conf}/config"
+                        prefix="WEB-INF/config"
+                        includes="**/*"/>
+			<zipfileset dir="${conf}"
+			prefix="META-INF"
+			includes="context.xml"/>
+		</war>
+	</target>
+	
 	<!--
 	* Deploys the cms app by unpacking the war file created by the war target into
 	* the CMS deploy directory.
@@ -1405,6 +1618,14 @@
 	-->
 	<target name="clean-deploy" depends="clean,server-clean-medium,deploy"/>
 
+	<!--
+	* Creates the all the release artifacts.
+	-->
+	<target name="createRelease" depends="war-cms-release,war-deliver-release" description="Creates the war files">
+		
+	</target>
+	
+	
 	<!--
 	* Generates API documentation; includes test code as well.
 	-->

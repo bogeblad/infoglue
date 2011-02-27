@@ -971,6 +971,7 @@ public class InstallationController extends BaseController
 			String mysqlJdbcIGURL = getJDBCURL(dbProvider, dbName, dbServer, dbPort, dbInstance);
 
 			validateConnection(jdbcDriverName, mysqlJdbcURL, dbUser, dbPassword);
+			System.out.println("Efter....");
 			
 			issueCommand(getConnection(jdbcDriverName, mysqlJdbcURL, dbUser, dbPassword), "CREATE DATABASE " + dbName + ";");
 			createUsersMYSQL(jdbcDriverName, dbServer, dbPort, dbUser, dbPassword, dbName, igUser, igPassword);
@@ -1095,11 +1096,11 @@ public class InstallationController extends BaseController
 		
 		try
 		{
-			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'%' IDENTIFIED BY '" + igPassword + "';");
-			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'localhost' IDENTIFIED BY '" + igPassword + "';");
-			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'127.0.0.1' IDENTIFIED BY '" + igPassword + "';");
-			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'" + databaseHostName + "' IDENTIFIED BY '" + igPassword + "';");
-			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + driverClass + "`.* TO '" + igUser + "'@'" + getHostAddress() + "' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + dbName + "`.* TO '" + igUser + "'@'%' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + dbName + "`.* TO '" + igUser + "'@'localhost' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + dbName + "`.* TO '" + igUser + "'@'127.0.0.1' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + dbName + "`.* TO '" + igUser + "'@'" + databaseHostName + "' IDENTIFIED BY '" + igPassword + "';");
+			issueCommand(conn, "GRANT ALL PRIVILEGES ON `" + dbName + "`.* TO '" + igUser + "'@'" + getHostAddress() + "' IDENTIFIED BY '" + igPassword + "';");
 		}
 		catch (Exception e) 
 		{

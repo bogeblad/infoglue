@@ -41,7 +41,7 @@
 				#foreach ($task in $tasks)
 					<tr>
 						<td>
-							<a href="ViewExecuteTask!userInput.action?taskContentId=$task.id&contentId=$contentId">$task.getName()</a>
+							<a href="ViewExecuteTask!userInput.action?taskContentId=$task.id#if($contentId)&contentId=$contentId#else&siteNodeId=$siteNodeId#end">$task.getName()</a>
 						</td>
 						<td>$repositoryVO.description</td>
 					</tr>

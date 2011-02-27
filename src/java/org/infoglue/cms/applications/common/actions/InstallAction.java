@@ -117,6 +117,7 @@ public class InstallAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
+				e.printStackTrace();
 				this.errorMessage = e.getMessage();
 				return doInputDatabase();
 			}

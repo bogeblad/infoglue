@@ -23,9 +23,6 @@
 	<property name="deliver.war.file" value="${war.file.prefix}-deliver.war"/>
 	<property name="javadocs.destdir" value="docs/api"/>
 	
-	<property name="opentree.jar.file" value="opentree.jar"/>
-	<property name="codeeditor.jar.file" value="code-editor.jar"/>
-
 	<property name="test" value="test"/>
 	<property name="test.java" value="${test}/java"/>
 	<property name="test.classes" value="${build}/test-classes"/>
@@ -228,30 +225,10 @@
 	</target>
 
 	<!--
-	* Creates jar files for applets needed by the CMS tool.
-	-->
-	<target name="jar-apps" depends="compile" description="Creates a applet jar file">
-		<mkdir dir="${build.applets}/applications"/>
-		<jar file="${build.applets}/applications/${opentree.jar.file}">
-			<fileset dir="${build.classes}">
-				<include name="org/infoglue/cms/plugins/opentree/**/*.class"/>
-				<include name="org/infoglue/cms/net/*.class"/>
- 			</fileset>
-		</jar>
-		<jar file="${build.applets}/applications/${codeeditor.jar.file}">
-			<fileset dir="${build.classes}">
-				<include name="org/infoglue/cms/plugins/codeeditor/**/*.class"/>
- 			</fileset>
-		</jar>
-		<!-- extra jar needed for the code editor -->
-		<copy todir="${build.applets}/applications" file="${lib}/build/netscape-javascript.jar"/>
-	</target>
-
-	<!--
 	* Creates the CMS war file.  Since we deploy an exploded war, the primary
 	* purpose of this target is to organize the files required to deploy.
 	-->
-	<target name="war-cms" depends="compile,jar-apps" description="Creates the CMS war file">
+	<target name="war-cms" depends="compile" description="Creates the CMS war file">
 		<delete>
 		    <fileset dir="${build.classes}" includes="mapping.xml,oracle_mapping.xml,webwork.properties,actions.xml,jobs.xml"/>
         </delete>
@@ -725,6 +702,7 @@
 
 
 		<echo message="Copying confs to deliver"/>
+		<echo message="Using properties in fast-build-clean"/>
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${conf}">
 				<include name="*.properties"/>
@@ -793,7 +771,7 @@
 		</copy>
 
 		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
-		<filterset refid="project.filters"/>
+			<filterset refid="project.filters"/>
 			<filterset>
 				<filter token="context.root.deliver" value="${context.root.working}"/>
 				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
@@ -814,6 +792,542 @@
 	</target>
 
 
+	<target name="install" depends="installCMS,installDeliverWorking,installDeliverPreview,installDeliverLive" description="Compiles the classes if class and moves configs to the right spot" >
+ 		<!--
+		<echo message="Copying infoglueCMS/WEB-INF/lib"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/lib">
+			<fileset dir="${lib}/build">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>				
+			</fileset>
+			<fileset dir="${lib}/core">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/jdbc">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/lib"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/lib">
+			<fileset dir="${lib}/build">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/core">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/jdbc">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*"/>
+				<exclude name="cms-web.xml"/>
+				<exclude name="deliver-web.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/data/xml">
+				<include name="portletdefinitionmapping.xml"/>
+				<include name="portletentitymapping.xml"/>
+				<include name="servletdefinitionmapping.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/config">
+			<fileset dir="${conf}/config">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/data">
+			<fileset dir="${conf}/data">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*"/>
+				<exclude name="cms-web.xml"/>
+				<exclude name="deliver-web.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/data/xml">
+				<include name="portletdefinitionmapping.xml"/>
+				<include name="portletentitymapping.xml"/>
+				<include name="servletdefinitionmapping.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver"/>
+		<copy todir="${deploy.dir.working}" overwrite="true">
+			<fileset dir="${webapp}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS"/>
+		<copy todir="${deploy.dir.cms}" overwrite="true">
+			<fileset dir="${webapp}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/tld" overwrite="true">
+			<fileset dir="${conf}/tld">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
+
+
+		<echo message="Copying confs to deliver"/>
+		<echo message="Using properties in fast-build-clean"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
+			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/tld" overwrite="true">
+			<fileset dir="${conf}/tld">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/config">
+			<fileset dir="${conf}/config">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/data">
+			<fileset dir="${conf}/data">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/META-INF" overwrite="true">
+			<fileset dir="${conf}" includes="context.xml"/>
+		</copy>
+							
+		<echo message="Copying confs to cms"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/cms" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
+			<fileset dir="${conf}/cms" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+
+		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+
+		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">
+			<fileset dir="${conf}" includes="server-config.wsdd"/>
+		</copy>
+
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${deploy.dir.cms}/META-INF" overwrite="true">
+			<fileset dir="${conf}" includes="context.xml"/>
+		</copy>					
+		-->
+	</target>
+
+	<target name="installDeliverWorking" depends="clean,compile" description="Compiles the classes if class and moves configs to the right spot" if="deploy.dir.working">
+
+		<echo message="Copying infoglueDeliver/WEB-INF/lib"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/lib">
+			<fileset dir="${lib}/build">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/core">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/jdbc">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*"/>
+				<exclude name="cms-web.xml"/>
+				<exclude name="deliver-web.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/data/xml">
+				<include name="portletdefinitionmapping.xml"/>
+				<include name="portletentitymapping.xml"/>
+				<include name="servletdefinitionmapping.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver"/>
+		<copy todir="${deploy.dir.working}" overwrite="true">
+			<fileset dir="${webapp}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying confs to deliver"/>
+		<echo message="Using properties in fast-build-clean"/>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
+			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/tld" overwrite="true">
+			<fileset dir="${conf}/tld">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/config">
+			<fileset dir="${conf}/config">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF/data">
+			<fileset dir="${conf}/data">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.working}/META-INF" overwrite="true">
+			<fileset dir="${conf}" includes="context.xml"/>
+		</copy>
+	</target>
+	
+	<target name="installDeliverPreview" depends="clean,compile" description="Compiles the classes if class and moves configs to the right spot" if="deploy.dir.preview">
+		<echo message="Copying infoglueDeliver/WEB-INF/lib"/>
+		<copy todir="${deploy.dir.preview}/WEB-INF/lib">
+			<fileset dir="${lib}/build">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/core">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/jdbc">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*"/>
+				<exclude name="cms-web.xml"/>
+				<exclude name="deliver-web.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/data/xml">
+				<include name="portletdefinitionmapping.xml"/>
+				<include name="portletentitymapping.xml"/>
+				<include name="servletdefinitionmapping.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver"/>
+		<copy todir="${deploy.dir.preview}" overwrite="true">
+			<fileset dir="${webapp}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying confs to deliver"/>
+		<echo message="Using properties in fast-build-clean"/>
+		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
+			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${deploy.dir.preview}/WEB-INF/tld" overwrite="true">
+			<fileset dir="${conf}/tld">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.preview}/WEB-INF/config">
+			<fileset dir="${conf}/config">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.preview}/WEB-INF/data">
+			<fileset dir="${conf}/data">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.preview}/META-INF" overwrite="true">
+			<fileset dir="${conf}" includes="context.xml"/>
+		</copy>
+	</target>
+	
+	<target name="installDeliverLive" depends="clean,compile" description="Compiles the classes if class and moves configs to the right spot" if="deploy.dir.live">
+		<echo message="Copying infoglueDeliver/WEB-INF/lib"/>
+		<copy todir="${deploy.dir.live}/WEB-INF/lib">
+			<fileset dir="${lib}/build">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/core">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/jdbc">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*"/>
+				<exclude name="cms-web.xml"/>
+				<exclude name="deliver-web.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/data/xml">
+				<include name="portletdefinitionmapping.xml"/>
+				<include name="portletentitymapping.xml"/>
+				<include name="servletdefinitionmapping.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueDeliver"/>
+		<copy todir="${deploy.dir.live}" overwrite="true">
+			<fileset dir="${webapp}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying confs to deliver"/>
+		<echo message="Using properties in fast-build-clean"/>
+		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
+			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${deploy.dir.live}/WEB-INF/tld" overwrite="true">
+			<fileset dir="${conf}/tld">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.live}/WEB-INF/config">
+			<fileset dir="${conf}/config">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.live}/WEB-INF/data">
+			<fileset dir="${conf}/data">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.live}/META-INF" overwrite="true">
+			<fileset dir="${conf}" includes="context.xml"/>
+		</copy>
+	</target>
+	
+	<target name="installCMS" depends="clean,compile" description="Compiles the classes if class and moves configs to the right spot" if="deploy.dir.cms">
+ 		
+		<echo message="Copying infoglueCMS/WEB-INF/lib"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/lib">
+			<fileset dir="${lib}/build">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>				
+			</fileset>
+			<fileset dir="${lib}/core">
+				<include name="*.*"/>
+				<exclude name="pluto-1.0.1-rc2.jar"/>
+				<exclude name="pluto-1.0.1-rc4.jar"/>
+				<exclude name="pluto-1.0.1.jar"/>
+				<exclude name="portlet-api-1.0.jar"/>
+			</fileset>
+			<fileset dir="${lib}/jdbc">
+				<include name="*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${build.classes}">
+				<include name="**/*.*"/>
+				<exclude name="cms-web.xml"/>
+				<exclude name="deliver-web.xml"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS/WEB-INF/classes"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/data/xml">
+				<include name="portletdefinitionmapping.xml"/>
+				<include name="portletentitymapping.xml"/>
+				<include name="servletdefinitionmapping.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/config">
+			<fileset dir="${conf}/config">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/data">
+			<fileset dir="${conf}/data">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<echo message="Copying infoglueCMS"/>
+		<copy todir="${deploy.dir.cms}" overwrite="true">
+			<fileset dir="${webapp}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/tld" overwrite="true">
+			<fileset dir="${conf}/tld">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
+							
+		<echo message="Copying confs to cms"/>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${conf}/cms" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
+			<fileset dir="${conf}/cms" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+
+		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+		</copy>
+
+		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">
+			<fileset dir="${conf}" includes="server-config.wsdd"/>
+		</copy>
+
+		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
+			<fileset dir="${src}" includes="workflows/*.xml"/>
+		</copy>
+		<copy todir="${deploy.dir.cms}/META-INF" overwrite="true">
+			<fileset dir="${conf}" includes="context.xml"/>
+		</copy>					
+
+	</target>
+				
 	<!--
 	* Deploys all the apps: cms, working, preview, and live
 	-->
@@ -884,9 +1398,7 @@
 	<!--
 	* Cleans all the deploy directories
 	-->
-	<target name="server-clean-medium"
-			
-depends="server-clean-medium-cms,server-clean-medium-working,server-clean-medium-preview,server-clean-medium-live"/>
+	<target name="server-clean-medium" depends="server-clean-medium-cms,server-clean-medium-working,server-clean-medium-preview,server-clean-medium-live"/>
 
 	<!--
 	* Deploys after a complete rebuild

@@ -50,6 +50,7 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 
 	private Integer taskContentId = null;
 	private Integer contentId = null;
+	private Integer siteNodeId = null;
 
 	public ViewExecuteTaskAction()
 	{
@@ -242,5 +243,16 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 	public void setContentId(Integer contentId)
 	{
 		this.contentId = contentId;
+	}
+
+
+	public Integer getSiteNodeId()
+	{
+		return siteNodeId;
+	}
+
+	public void setSiteNodeId(Integer siteNodeId)
+	{
+		this.siteNodeId = siteNodeId;
 	}
 }

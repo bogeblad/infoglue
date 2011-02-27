@@ -1,5 +1,5 @@
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmAvailableServiceBinding]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmAvailableServiceBinding;
+
+
 
 CREATE TABLE cmAvailableServiceBinding (
   availableServiceBindingId [int] IDENTITY (1, 1) NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE cmAvailableServiceBinding (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmAvailableServiceBindingSiteNodeTypeDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmAvailableServiceBindingSiteNodeTypeDefinition;
+
+
 
 CREATE TABLE cmAvailableServiceBindingSiteNodeTypeDefinition (
   availableServiceBindingSiteNodeTypeDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -24,8 +24,8 @@ CREATE TABLE cmAvailableServiceBindingSiteNodeTypeDefinition (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmContent]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmContent;
+
+
 
 CREATE TABLE cmContent (
   contentId [int] IDENTITY (1, 1) NOT NULL,
@@ -43,8 +43,8 @@ CREATE TABLE cmContent (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmContentRelation]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmContentRelation;
+
+
 
 CREATE TABLE cmContentRelation (
   contentRelationId [int] IDENTITY (1, 1) NOT NULL,
@@ -56,8 +56,8 @@ CREATE TABLE cmContentRelation (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmContentTypeDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmContentTypeDefinition;
+
+
 
 CREATE TABLE cmContentTypeDefinition (
   contentTypeDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -71,8 +71,8 @@ CREATE TABLE cmContentTypeDefinition (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmContentVersion]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmContentVersion;
+
+
 
 CREATE TABLE cmContentVersion (
   contentVersionId [int] IDENTITY (1, 1) NOT NULL,
@@ -89,8 +89,8 @@ CREATE TABLE cmContentVersion (
 ) 
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmContentVersionDigitalAsset]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmContentVersionDigitalAsset;
+
+
 
 CREATE TABLE cmContentVersionDigitalAsset (
   contentVersionDigitalAssetId [int] IDENTITY (1, 1) NOT NULL,
@@ -100,8 +100,8 @@ CREATE TABLE cmContentVersionDigitalAsset (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmDigitalAsset]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmDigitalAsset;
+
+
 
 CREATE TABLE cmDigitalAsset (
   digitalAssetId [int] IDENTITY (1, 1) NOT NULL,
@@ -115,8 +115,8 @@ CREATE TABLE cmDigitalAsset (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmLanguage]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmLanguage;
+
+
 
 CREATE TABLE cmLanguage (
   languageId [int] IDENTITY (1, 1) NOT NULL,
@@ -127,8 +127,8 @@ CREATE TABLE cmLanguage (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmPublication]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmPublication;
+
+
 
 CREATE TABLE cmPublication (
   publicationId [int] IDENTITY (1, 1) NOT NULL,
@@ -141,8 +141,8 @@ CREATE TABLE cmPublication (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmQualifyer]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmQualifyer;
+
+
 
 CREATE TABLE cmQualifyer (
   qualifyerId [int] IDENTITY (1, 1) NOT NULL,
@@ -154,8 +154,8 @@ CREATE TABLE cmQualifyer (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRepository]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRepository;
+
+
 
 CREATE TABLE cmRepository (
   repositoryId [int] IDENTITY (1, 1) NOT NULL,
@@ -167,8 +167,8 @@ CREATE TABLE cmRepository (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRepositoryContentTypeDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRepositoryContentTypeDefinition;
+
+
 
 CREATE TABLE cmRepositoryContentTypeDefinition (
   repositoryContentTypeDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -178,8 +178,8 @@ CREATE TABLE cmRepositoryContentTypeDefinition (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRepositoryLanguage]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRepositoryLanguage;
+
+
 
 CREATE TABLE cmRepositoryLanguage (
   repositoryLanguageId [int] IDENTITY (1, 1) NOT NULL,
@@ -191,8 +191,8 @@ CREATE TABLE cmRepositoryLanguage (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRole]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRole;
+
+
 
 CREATE TABLE cmRole (
   roleName varchar(100) NOT NULL,
@@ -201,8 +201,8 @@ CREATE TABLE cmRole (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmServiceBinding]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmServiceBinding;
+
+
 
 CREATE TABLE cmServiceBinding (
   serviceBindingId [int] IDENTITY (1, 1) NOT NULL,
@@ -216,8 +216,8 @@ CREATE TABLE cmServiceBinding (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmServiceDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmServiceDefinition;
+
+
 
 CREATE TABLE cmServiceDefinition (
   serviceDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -228,8 +228,8 @@ CREATE TABLE cmServiceDefinition (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmServiceDefinitionAvailableServiceBinding]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmServiceDefinitionAvailableServiceBinding;
+
+
 
 CREATE TABLE cmServiceDefinitionAvailableServiceBinding (
   serviceDefinitionAvailableServiceBindingId [int] IDENTITY (1, 1) NOT NULL,
@@ -239,8 +239,8 @@ CREATE TABLE cmServiceDefinitionAvailableServiceBinding (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmSiteNode]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmSiteNode;
+
+
 
 CREATE TABLE cmSiteNode (
   siteNodeId [int] IDENTITY (1, 1) NOT NULL,
@@ -258,8 +258,8 @@ CREATE TABLE cmSiteNode (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmSiteNodeTypeDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmSiteNodeTypeDefinition;
+
+
 
 CREATE TABLE cmSiteNodeTypeDefinition (
   siteNodeTypeDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -270,8 +270,8 @@ CREATE TABLE cmSiteNodeTypeDefinition (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmSiteNodeVersion]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmSiteNodeVersion;
+
+
 
 CREATE TABLE cmSiteNodeVersion (
   siteNodeVersionId [int] IDENTITY (1, 1) NOT NULL,
@@ -298,8 +298,8 @@ CREATE TABLE cmSiteNodeVersion (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmSystemUser]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmSystemUser;
+
+
 
 CREATE TABLE cmSystemUser (
   userName varchar(100) NOT NULL,
@@ -311,8 +311,8 @@ CREATE TABLE cmSystemUser (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmSystemUserRole]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmSystemUserRole;
+
+
 
 CREATE TABLE cmSystemUserRole (
   userName varchar(100) NOT NULL,
@@ -321,8 +321,8 @@ CREATE TABLE cmSystemUserRole (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmTransactionHistory]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmTransactionHistory;
+
+
 
 CREATE TABLE cmTransactionHistory (
   transactionHistoryId [int] IDENTITY (1, 1) NOT NULL,
@@ -336,8 +336,8 @@ CREATE TABLE cmTransactionHistory (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmPublicationDetail]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmPublicationDetail;
+
+
 
 CREATE TABLE cmPublicationDetail (
   publicationDetailId [int] IDENTITY (1, 1) NOT NULL,
@@ -353,8 +353,8 @@ CREATE TABLE cmPublicationDetail (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmEvent]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmEvent;
+
+
 
 CREATE TABLE cmEvent (
   eventId [int] IDENTITY (1, 1) NOT NULL,
@@ -370,8 +370,8 @@ CREATE TABLE cmEvent (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRoleContentTypeDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRoleContentTypeDefinition;
+
+
 
 CREATE TABLE cmRoleContentTypeDefinition (
   roleContentTypeDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -381,8 +381,8 @@ CREATE TABLE cmRoleContentTypeDefinition (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRoleProperties]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRoleProperties;
+
+
 
 CREATE TABLE cmRoleProperties (
   rolePropertiesId [int] IDENTITY (1, 1) NOT NULL,
@@ -393,8 +393,8 @@ CREATE TABLE cmRoleProperties (
   PRIMARY KEY  (rolePropertiesId)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRolePropertiesDigitalAsset]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRolePropertiesDigitalAsset;
+
+
 
 CREATE TABLE cmRolePropertiesDigitalAsset (
   rolePropertiesDigitalAssetId [int] IDENTITY (1, 1) NOT NULL,
@@ -404,8 +404,8 @@ CREATE TABLE cmRolePropertiesDigitalAsset (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmUserContentTypeDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmUserContentTypeDefinition;
+
+
 
 CREATE TABLE cmUserContentTypeDefinition (
   userContentTypeDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -415,8 +415,8 @@ CREATE TABLE cmUserContentTypeDefinition (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmUserProperties]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmUserProperties;
+
+
 
 CREATE TABLE cmUserProperties (
   userPropertiesId [int] IDENTITY (1, 1) NOT NULL,
@@ -427,8 +427,8 @@ CREATE TABLE cmUserProperties (
   PRIMARY KEY  (userPropertiesId)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmUserPropertiesDigitalAsset]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmUserPropertiesDigitalAsset;
+
+
 
 CREATE TABLE cmUserPropertiesDigitalAsset (
   userPropertiesDigitalAssetId [int] IDENTITY (1, 1) NOT NULL,
@@ -438,8 +438,8 @@ CREATE TABLE cmUserPropertiesDigitalAsset (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmAccessRight]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmAccessRight;
+
+
 
 CREATE TABLE cmAccessRight (
   accessRightId [int] IDENTITY (1, 1) NOT NULL,
@@ -449,8 +449,8 @@ CREATE TABLE cmAccessRight (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmInterceptionPoint]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmInterceptionPoint;
+
+
 
 CREATE TABLE cmInterceptionPoint (
   interceptionPointId [int] IDENTITY (1, 1) NOT NULL,
@@ -462,8 +462,8 @@ CREATE TABLE cmInterceptionPoint (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmInterceptionPointInterceptor]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmInterceptionPointInterceptor;
+
+
 
 CREATE TABLE cmInterceptionPointInterceptor (
   interceptionPointId integer NOT NULL default '0',
@@ -472,8 +472,8 @@ CREATE TABLE cmInterceptionPointInterceptor (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmInterceptor]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmInterceptor;
+
+
 
 CREATE TABLE cmInterceptor (
   interceptorId [int] IDENTITY (1, 1) NOT NULL,
@@ -483,12 +483,6 @@ CREATE TABLE cmInterceptor (
   PRIMARY KEY  (interceptorId)
 )
 
-
-if exists (select * from dbo.sysobjects where id = object_id(N'[OS_STEPIDS]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-drop table [OS_STEPIDS];
-
-if exists (select * from dbo.sysobjects where id = object_id(N'[OS_PROPERTYENTRY]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-drop table [OS_PROPERTYENTRY];
 
 CREATE TABLE OS_PROPERTYENTRY
 (
@@ -506,21 +500,6 @@ CREATE TABLE OS_PROPERTYENTRY
 	primary key (entity_name, entity_id, entity_key)
 );
 
-
-if exists (select * from dbo.sysobjects where id = object_id(N'[OS_CURRENTSTEP_PREV]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-drop table [OS_CURRENTSTEP_PREV];
-
-if exists (select * from dbo.sysobjects where id = object_id(N'[OS_HISTORYSTEP_PREV]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-drop table [OS_HISTORYSTEP_PREV];
-
-if exists (select * from dbo.sysobjects where id = object_id(N'[OS_CURRENTSTEP]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-drop table [OS_CURRENTSTEP];
-
-if exists (select * from dbo.sysobjects where id = object_id(N'[OS_HISTORYSTEP]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-drop table [OS_HISTORYSTEP];
-
-if exists (select * from dbo.sysobjects where id = object_id(N'[OS_WFENTRY]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-drop table [OS_WFENTRY];
 
 create table OS_WFENTRY
 (
@@ -583,8 +562,8 @@ create table OS_HISTORYSTEP_PREV
 );
 
  
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmCategory]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmCategory;
+
+
 
 CREATE TABLE cmCategory
 (
@@ -597,8 +576,8 @@ CREATE TABLE cmCategory
   PRIMARY KEY (categoryId)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmContentCategory]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmContentCategory;
+
+
 
 CREATE TABLE cmContentCategory
 (
@@ -610,8 +589,8 @@ CREATE TABLE cmContentCategory
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmGroupPropertiesDigitalAsset]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmGroupPropertiesDigitalAsset;
+
+
 
 CREATE TABLE cmGroupPropertiesDigitalAsset (
   groupPropertiesDigitalAssetId [int] IDENTITY (1, 1) NOT NULL,
@@ -621,8 +600,8 @@ CREATE TABLE cmGroupPropertiesDigitalAsset (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmPropertiesCategory]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmPropertiesCategory;
+
+
 
 CREATE TABLE cmPropertiesCategory
 (
@@ -635,8 +614,8 @@ CREATE TABLE cmPropertiesCategory
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRegistry]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRegistry;
+
+
 
 CREATE TABLE cmRegistry
 (
@@ -651,8 +630,8 @@ CREATE TABLE cmRegistry
     PRIMARY KEY (registryId)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmGroup]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmGroup;
+
+
   
 CREATE TABLE cmGroup (
   groupName varchar(255) NOT NULL default '',
@@ -660,8 +639,8 @@ CREATE TABLE cmGroup (
   PRIMARY KEY  (groupName)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmGroupContentTypeDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmGroupContentTypeDefinition;
+
+
 
 CREATE TABLE cmGroupContentTypeDefinition (
   groupContentTypeDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -671,8 +650,8 @@ CREATE TABLE cmGroupContentTypeDefinition (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmGroupProperties]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmGroupProperties;
+
+
 
 CREATE TABLE cmGroupProperties (
   groupPropertiesId [int] IDENTITY (1, 1) NOT NULL,
@@ -683,8 +662,8 @@ CREATE TABLE cmGroupProperties (
   PRIMARY KEY  (groupPropertiesId)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmSystemUserGroup]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmSystemUserGroup;
+
+
 
 CREATE TABLE cmSystemUserGroup (
   userName varchar(100) NOT NULL default '',
@@ -692,8 +671,8 @@ CREATE TABLE cmSystemUserGroup (
   PRIMARY KEY  (userName,groupName)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmAccessRightRole]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmAccessRightRole;
+
+
 
 CREATE TABLE cmAccessRightRole (
   accessRightRoleId [int] IDENTITY (1, 1) NOT NULL,
@@ -702,8 +681,8 @@ CREATE TABLE cmAccessRightRole (
   PRIMARY KEY  (accessRightRoleId)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmAccessRightGroup]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmAccessRightGroup;
+
+
 
 CREATE TABLE cmAccessRightGroup (
   accessRightGroupId [int] IDENTITY (1, 1) NOT NULL,
@@ -713,8 +692,8 @@ CREATE TABLE cmAccessRightGroup (
 )
 
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmWorkflowDefinition]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmWorkflowDefinition;
+
+
 
 CREATE TABLE cmWorkflowDefinition (
   workflowDefinitionId [int] IDENTITY (1, 1) NOT NULL,
@@ -723,8 +702,8 @@ CREATE TABLE cmWorkflowDefinition (
   PRIMARY KEY  (workflowDefinitionId)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmRedirect]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmRedirect;
+
+
 
 CREATE TABLE cmRedirect
 (
@@ -751,8 +730,8 @@ CREATE TABLE cmServerNode
   	PRIMARY KEY (serverNodeId)
 )  
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].cmFormEntry') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmFormEntry; 
+
+
 
 CREATE TABLE  cmFormEntry (
   id [int] IDENTITY (1, 1) NOT NULL,
@@ -764,8 +743,8 @@ CREATE TABLE  cmFormEntry (
   PRIMARY KEY  (id)
 )
  
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].cmFormEntryValue') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmFormEntryValue;
+
+
  
 CREATE TABLE  cmFormEntryValue (
   id [int] IDENTITY (1, 1) NOT NULL,
@@ -775,8 +754,8 @@ CREATE TABLE  cmFormEntryValue (
   PRIMARY KEY  (id)
 )
  
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].cmFormEntryAsset') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmFormEntryAsset;
+
+
  
 CREATE TABLE cmFormEntryAsset (
   id [int] IDENTITY (1, 1),
@@ -789,8 +768,8 @@ CREATE TABLE cmFormEntryAsset (
   PRIMARY KEY  (id)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].cmSubscription') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmSubscription;
+
+
  
 CREATE TABLE cmSubscription (
   id [int] IDENTITY (1, 1) NOT NULL,
@@ -805,8 +784,8 @@ CREATE TABLE cmSubscription (
   PRIMARY KEY(id)
 )
  
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].cmSubscriptionFilter') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmSubscriptionFilter;
+
+
  
 CREATE TABLE cmSubscriptionFilter (
   id [int] IDENTITY (1, 1) NOT NULL,
@@ -817,8 +796,8 @@ CREATE TABLE cmSubscriptionFilter (
   PRIMARY KEY(id)
 )
 
-if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[cmInfoGlueProperties]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
-DROP TABLE cmInfoGlueProperties;
+
+
 
 CREATE TABLE cmInfoGlueProperties (
   propertyId [int] IDENTITY (1, 1) NOT NULL,

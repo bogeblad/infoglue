@@ -1,5 +1,3 @@
-DROP TABLE IF EXISTS cmAvailableServiceBinding;
-
 CREATE TABLE cmAvailableServiceBinding (
   availableServiceBindingId integer(11) unsigned NOT NULL auto_increment,
   name varchar(255) NOT NULL,
@@ -12,8 +10,6 @@ CREATE TABLE cmAvailableServiceBinding (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmAvailableServiceBindingSiteNodeTypeDefinition;
-
 CREATE TABLE cmAvailableServiceBindingSiteNodeTypeDefinition (
   availableServiceBindingSiteNodeTypeDefinitionId integer(11) unsigned NOT NULL auto_increment,
   availableServiceBindingId integer(11) NOT NULL default '0',
@@ -22,7 +18,7 @@ CREATE TABLE cmAvailableServiceBindingSiteNodeTypeDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmContent;
+
 
 CREATE TABLE cmContent (
   contentId integer(11) unsigned NOT NULL auto_increment,
@@ -40,7 +36,7 @@ CREATE TABLE cmContent (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmContentRelation;
+
 
 CREATE TABLE cmContentRelation (
   contentRelationId integer(11) unsigned NOT NULL auto_increment,
@@ -52,7 +48,7 @@ CREATE TABLE cmContentRelation (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmContentTypeDefinition;
+
 
 CREATE TABLE cmContentTypeDefinition (
   contentTypeDefinitionId integer(11) unsigned NOT NULL auto_increment,
@@ -66,7 +62,7 @@ CREATE TABLE cmContentTypeDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmContentVersion;
+
 
 CREATE TABLE cmContentVersion (
   contentVersionId integer(11) unsigned NOT NULL auto_increment,
@@ -83,7 +79,7 @@ CREATE TABLE cmContentVersion (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmContentVersionDigitalAsset;
+
 
 CREATE TABLE cmContentVersionDigitalAsset (
   contentVersionDigitalAssetId integer(11) unsigned NOT NULL auto_increment,
@@ -93,7 +89,7 @@ CREATE TABLE cmContentVersionDigitalAsset (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmUserPropertiesDigitalAsset;
+
 
 CREATE TABLE cmUserPropertiesDigitalAsset (
   userPropertiesDigitalAssetId integer(11) unsigned NOT NULL auto_increment,
@@ -103,7 +99,7 @@ CREATE TABLE cmUserPropertiesDigitalAsset (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmRolePropertiesDigitalAsset;
+
 
 CREATE TABLE cmRolePropertiesDigitalAsset (
   rolePropertiesDigitalAssetId integer(11) unsigned NOT NULL auto_increment,
@@ -113,7 +109,7 @@ CREATE TABLE cmRolePropertiesDigitalAsset (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmDigitalAsset;
+
 
 CREATE TABLE cmDigitalAsset (
   digitalAssetId integer(11) unsigned NOT NULL auto_increment,
@@ -127,7 +123,7 @@ CREATE TABLE cmDigitalAsset (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmLanguage;
+
 
 CREATE TABLE cmLanguage (
   languageId integer(11) unsigned NOT NULL auto_increment,
@@ -138,7 +134,7 @@ CREATE TABLE cmLanguage (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmPublication;
+
 
 CREATE TABLE cmPublication (
   publicationId integer(11) unsigned NOT NULL auto_increment,
@@ -151,7 +147,7 @@ CREATE TABLE cmPublication (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmQualifyer;
+
 
 CREATE TABLE cmQualifyer (
   qualifyerId integer(11) unsigned NOT NULL auto_increment,
@@ -163,7 +159,7 @@ CREATE TABLE cmQualifyer (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmRepository;
+
 
 CREATE TABLE cmRepository (
   repositoryId integer(11) unsigned NOT NULL auto_increment,
@@ -175,7 +171,7 @@ CREATE TABLE cmRepository (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmRepositoryContentTypeDefinition;
+
 
 CREATE TABLE cmRepositoryContentTypeDefinition (
   repositoryContentTypeDefinitionId integer(11) unsigned NOT NULL auto_increment,
@@ -185,7 +181,7 @@ CREATE TABLE cmRepositoryContentTypeDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmRepositoryLanguage;
+
 
 CREATE TABLE cmRepositoryLanguage (
   repositoryLanguageId integer(11) unsigned NOT NULL auto_increment,
@@ -197,7 +193,7 @@ CREATE TABLE cmRepositoryLanguage (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmRole;
+
 
 CREATE TABLE cmRole (
   roleName varchar(200) NOT NULL,
@@ -206,7 +202,7 @@ CREATE TABLE cmRole (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmServiceBinding;
+
 
 CREATE TABLE cmServiceBinding (
   serviceBindingId integer(11) unsigned NOT NULL auto_increment,
@@ -220,7 +216,7 @@ CREATE TABLE cmServiceBinding (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmServiceDefinition;
+
 
 CREATE TABLE cmServiceDefinition (
   serviceDefinitionId integer(11) unsigned NOT NULL auto_increment,
@@ -231,7 +227,7 @@ CREATE TABLE cmServiceDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmServiceDefinitionAvailableServiceBinding;
+
 
 CREATE TABLE cmServiceDefinitionAvailableServiceBinding (
   serviceDefinitionAvailableServiceBindingId integer(11) unsigned NOT NULL auto_increment,
@@ -241,7 +237,7 @@ CREATE TABLE cmServiceDefinitionAvailableServiceBinding (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmSiteNode;
+
 
 CREATE TABLE cmSiteNode (
   siteNodeId integer(11) unsigned NOT NULL auto_increment,
@@ -259,7 +255,7 @@ CREATE TABLE cmSiteNode (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmSiteNodeTypeDefinition;
+
 
 CREATE TABLE cmSiteNodeTypeDefinition (
   siteNodeTypeDefinitionId integer(11) unsigned NOT NULL auto_increment,
@@ -270,7 +266,7 @@ CREATE TABLE cmSiteNodeTypeDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmSiteNodeVersion;
+
 
 CREATE TABLE cmSiteNodeVersion (
   siteNodeVersionId integer(11) unsigned NOT NULL auto_increment,
@@ -297,7 +293,7 @@ CREATE TABLE cmSiteNodeVersion (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmSystemUser;
+
 
 CREATE TABLE cmSystemUser (
   userName varchar(200) NOT NULL,
@@ -309,7 +305,7 @@ CREATE TABLE cmSystemUser (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmSystemUserRole;
+
 
 CREATE TABLE cmSystemUserRole (
   userName varchar(100) NOT NULL,
@@ -318,7 +314,7 @@ CREATE TABLE cmSystemUserRole (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmTransactionHistory;
+
 
 CREATE TABLE cmTransactionHistory (
   transactionHistoryId integer(11) unsigned NOT NULL auto_increment,
@@ -332,7 +328,7 @@ CREATE TABLE cmTransactionHistory (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmPublicationDetail;
+
 
 CREATE TABLE cmPublicationDetail (
   publicationDetailId integer(11) NOT NULL auto_increment,
@@ -348,7 +344,7 @@ CREATE TABLE cmPublicationDetail (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmEvent;
+
 
 CREATE TABLE cmEvent (
   eventId integer(11) NOT NULL auto_increment,
@@ -364,7 +360,7 @@ CREATE TABLE cmEvent (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmRoleContentTypeDefinition;
+
 
 CREATE TABLE cmRoleContentTypeDefinition (
   roleContentTypeDefinitionId int(11) NOT NULL auto_increment,
@@ -374,7 +370,7 @@ CREATE TABLE cmRoleContentTypeDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmRoleProperties;
+
 
 CREATE TABLE cmRoleProperties (
   rolePropertiesId int(11) NOT NULL auto_increment,
@@ -386,7 +382,7 @@ CREATE TABLE cmRoleProperties (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmUserContentTypeDefinition;
+
 
 CREATE TABLE cmUserContentTypeDefinition (
   userContentTypeDefinitionId int(11) NOT NULL auto_increment,
@@ -396,7 +392,7 @@ CREATE TABLE cmUserContentTypeDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmUserProperties;
+
 
 CREATE TABLE cmUserProperties (
   userPropertiesId int(11) NOT NULL auto_increment,
@@ -408,7 +404,7 @@ CREATE TABLE cmUserProperties (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmAccessRight;
+
 
 CREATE TABLE cmAccessRight (
   accessRightId int(11) NOT NULL auto_increment,
@@ -418,7 +414,7 @@ CREATE TABLE cmAccessRight (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmInterceptionPoint;
+
 
 CREATE TABLE cmInterceptionPoint (
   interceptionPointId int(11) NOT NULL auto_increment,
@@ -430,7 +426,7 @@ CREATE TABLE cmInterceptionPoint (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmInterceptionPointInterceptor;
+
 
 CREATE TABLE cmInterceptionPointInterceptor (
   interceptionPointId int(11) NOT NULL,
@@ -439,7 +435,7 @@ CREATE TABLE cmInterceptionPointInterceptor (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmInterceptor;
+
 
 CREATE TABLE cmInterceptor (
   interceptorId int(11) NOT NULL auto_increment,
@@ -451,7 +447,7 @@ CREATE TABLE cmInterceptor (
 
 
 
-DROP TABLE IF EXISTS OS_PROPERTYENTRY cascade;
+
 
 CREATE TABLE OS_PROPERTYENTRY
 (
@@ -470,7 +466,7 @@ CREATE TABLE OS_PROPERTYENTRY
 )TYPE=InnoDB;
 
 
-DROP TABLE IF EXISTS OS_WFENTRY cascade;
+
 CREATE TABLE OS_WFENTRY
 (
     ID bigint NOT NULL auto_increment,
@@ -480,7 +476,7 @@ CREATE TABLE OS_WFENTRY
 )TYPE=InnoDB;
 
 
-DROP TABLE IF EXISTS OS_CURRENTSTEP;
+
 CREATE TABLE OS_CURRENTSTEP
 (
     ID bigint NOT NULL auto_increment,
@@ -501,7 +497,7 @@ CREATE TABLE OS_CURRENTSTEP
     stepIndex integer NOT NULL default '0'
 )TYPE=InnoDB;
 
-DROP TABLE IF EXISTS OS_HISTORYSTEP;
+
 CREATE TABLE OS_HISTORYSTEP
 (
     ID bigint NOT NULL auto_increment,
@@ -522,7 +518,7 @@ CREATE TABLE OS_HISTORYSTEP
     stepIndex integer NOT NULL default '0'
 )TYPE=InnoDB;
 
-DROP TABLE IF EXISTS OS_CURRENTSTEP_PREV;
+
 CREATE TABLE OS_CURRENTSTEP_PREV
 (
     ID bigint NOT NULL,
@@ -534,7 +530,7 @@ CREATE TABLE OS_CURRENTSTEP_PREV
     foreign key (PREVIOUS_ID) references OS_HISTORYSTEP(ID)
 )TYPE=InnoDB;
 
-DROP TABLE IF EXISTS OS_HISTORYSTEP_PREV;
+
 CREATE TABLE OS_HISTORYSTEP_PREV
 (
     ID bigint NOT NULL,
@@ -546,7 +542,7 @@ CREATE TABLE OS_HISTORYSTEP_PREV
     foreign key (PREVIOUS_ID) references OS_HISTORYSTEP(ID)
 )TYPE=InnoDB;
 
-DROP TABLE IF EXISTS OS_STEPIDS;
+
 CREATE TABLE OS_STEPIDS
 (
 	 ID bigint NOT NULL AUTO_INCREMENT,
@@ -555,7 +551,7 @@ CREATE TABLE OS_STEPIDS
  
 
 
-DROP TABLE IF EXISTS cmCategory;
+
 
 CREATE TABLE cmCategory
 (
@@ -569,7 +565,7 @@ CREATE TABLE cmCategory
 );
 
 
-DROP TABLE IF EXISTS cmContentCategory;
+
 
 CREATE TABLE cmContentCategory
 (
@@ -581,7 +577,7 @@ CREATE TABLE cmContentCategory
 );
 
 
-DROP TABLE IF EXISTS cmGroupPropertiesDigitalAsset;
+
 
 CREATE TABLE cmGroupPropertiesDigitalAsset (
   groupPropertiesDigitalAssetId integer(11) unsigned NOT NULL auto_increment,
@@ -591,7 +587,7 @@ CREATE TABLE cmGroupPropertiesDigitalAsset (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmPropertiesCategory;
+
 
 CREATE TABLE cmPropertiesCategory
 (
@@ -604,7 +600,7 @@ CREATE TABLE cmPropertiesCategory
 );
 
 
-DROP TABLE IF EXISTS cmRegistry;
+
 
 CREATE TABLE cmRegistry
 (
@@ -619,7 +615,7 @@ CREATE TABLE cmRegistry
     PRIMARY KEY (registryId)
 );
 
-DROP TABLE IF EXISTS cmGroup;
+
 
 CREATE TABLE cmGroup (
   groupName varchar(255) NOT NULL default '',
@@ -627,7 +623,7 @@ CREATE TABLE cmGroup (
   PRIMARY KEY  (groupName)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS cmGroupContentTypeDefinition;
+
 
 CREATE TABLE cmGroupContentTypeDefinition (
   groupContentTypeDefinitionId int(11) NOT NULL auto_increment,
@@ -637,7 +633,7 @@ CREATE TABLE cmGroupContentTypeDefinition (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmGroupProperties;
+
 
 CREATE TABLE cmGroupProperties (
   groupPropertiesId int(11) NOT NULL auto_increment,
@@ -649,7 +645,7 @@ CREATE TABLE cmGroupProperties (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmSystemUserGroup;
+
 
 CREATE TABLE cmSystemUserGroup (
   userName varchar(150) NOT NULL default '',
@@ -658,7 +654,7 @@ CREATE TABLE cmSystemUserGroup (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci TYPE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmAccessRightRole;
+
 
 CREATE TABLE cmAccessRightRole (
   accessRightRoleId int(11) NOT NULL auto_increment,
@@ -667,7 +663,7 @@ CREATE TABLE cmAccessRightRole (
   PRIMARY KEY  (accessRightRoleId)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS cmAccessRightGroup;
+
 
 CREATE TABLE cmAccessRightGroup (
   accessRightGroupId int(11) NOT NULL auto_increment,
@@ -676,7 +672,7 @@ CREATE TABLE cmAccessRightGroup (
   PRIMARY KEY  (accessRightGroupId)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS cmAccessRightUser;
+
 
 CREATE TABLE cmAccessRightUser (
   accessRightUserId int(11) NOT NULL auto_increment,
@@ -686,7 +682,7 @@ CREATE TABLE cmAccessRightUser (
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS cmWorkflowDefinition;
+
 
 CREATE TABLE cmWorkflowDefinition (
   workflowDefinitionId int(11) NOT NULL auto_increment,
@@ -695,7 +691,7 @@ CREATE TABLE cmWorkflowDefinition (
   PRIMARY KEY  (workflowDefinitionId)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
  
-DROP TABLE IF EXISTS cmRedirect;
+
 
 CREATE TABLE cmRedirect (
   id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -704,7 +700,7 @@ CREATE TABLE cmRedirect (
   PRIMARY KEY(id)
 ) TYPE = InnoDB;
 
-DROP TABLE IF EXISTS cmAccessRightUser;
+
 
 CREATE TABLE cmAccessRightUser (
   accessRightUserId int(11) NOT NULL auto_increment,
@@ -713,7 +709,7 @@ CREATE TABLE cmAccessRightUser (
   PRIMARY KEY  (accessRightUserId)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS cmServerNode;
+
 
 CREATE TABLE cmServerNode (
   serverNodeId integer(11) unsigned NOT NULL auto_increment,
@@ -723,7 +719,7 @@ CREATE TABLE cmServerNode (
   PRIMARY KEY  (serverNodeId)
 ) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS cmFormEntry;
+
 CREATE TABLE  cmFormEntry (
   id int(10) unsigned NOT NULL auto_increment,
   userName VARCHAR(255),
@@ -736,7 +732,7 @@ CREATE TABLE  cmFormEntry (
 PRIMARY KEY  (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS cmFormEntryValue;
+
 CREATE TABLE  cmFormEntryValue (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(128) NOT NULL,
@@ -745,7 +741,7 @@ CREATE TABLE  cmFormEntryValue (
   PRIMARY KEY  (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS cmFormEntryAsset;
+
 CREATE TABLE cmFormEntryAsset (
   id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   formEntryId INTEGER UNSIGNED NOT NULL,
@@ -757,7 +753,7 @@ CREATE TABLE cmFormEntryAsset (
   PRIMARY KEY(id)
 ) ENGINE = InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS cmSubscription;
+
 CREATE TABLE cmSubscription (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
   interceptionPointId INTEGER UNSIGNED NOT NULL,
@@ -771,7 +767,7 @@ CREATE TABLE cmSubscription (
   PRIMARY KEY(id)
 ) TYPE = InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS cmSubscriptionFilter;
+
 
 CREATE TABLE cmSubscriptionFilter (
   id int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -782,7 +778,7 @@ CREATE TABLE cmSubscriptionFilter (
   PRIMARY KEY(id)
 ) TYPE = InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS cmInfoGlueProperties;
+
 
 CREATE TABLE cmInfoGlueProperties (
   propertyId int(11) NOT NULL auto_increment,

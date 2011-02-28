@@ -26,8 +26,8 @@
 
 package org.infoglue.deliver.jobs;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -109,28 +109,17 @@ public class QuartzInitializerServlet extends HttpServlet {
 
             String configFile = cfg.getInitParameter("config-file");
             String shutdownPref = cfg.getInitParameter("shutdown-on-unload");
-            if(configFile == null)
-            {
-                String contextRootPath = cfg.getServletContext().getRealPath("/");
-    			if(!contextRootPath.endsWith("/") && !contextRootPath.endsWith("\\")) 
-    				contextRootPath = contextRootPath + File.separator;
-
-    			configFile = contextRootPath + "WEB-INF" + File.separator + "classes" + File.separator + "quartz.properties";                    
+            if(configFile == null) {
+    			Properties properties = new Properties();
+    			properties.load(QuartzInitializerServlet.class.getResourceAsStream("/quartz.properties"));
+    			factory = new StdSchedulerFactory();
+            } else {
+            	factory = new StdSchedulerFactory(configFile);
             }
             
             if(shutdownPref != null)
                 performShutdown = Boolean.valueOf(shutdownPref).booleanValue();
                 
-            // get Properties
-            if (configFile != null)
-            {
-                factory = new StdSchedulerFactory(configFile);
-            }
-            else
-            {
-                factory = new StdSchedulerFactory();
-            }
-    
             Scheduler scheduler = factory.getScheduler();
             scheduler.start();
     

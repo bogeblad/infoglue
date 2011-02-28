@@ -284,11 +284,6 @@
 	</error-page>
 	
 	<taglib>
-		<taglib-uri>webwork</taglib-uri>
-		<taglib-location>/WEB-INF/lib/webwork.jar</taglib-location>
-	</taglib>
-	
-	<taglib>
 	  <taglib-uri>http://jakarta.apache.org/taglibs/mailer-1.1</taglib-uri>
 	  <taglib-location>/WEB-INF/tld/taglibs-mailer.tld</taglib-location>
 	</taglib>

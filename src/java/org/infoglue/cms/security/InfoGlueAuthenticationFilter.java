@@ -49,8 +49,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
-import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
+import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.DesEncryptionHelper;
@@ -136,6 +136,17 @@ public class InfoGlueAuthenticationFilter implements Filter
         this.filterConfig = config;
         String filterURIs = filterConfig.getInitParameter(FILTER_URIS_PARAMETER);
         uriMatcher = URIMatcher.compilePatterns(splitString(filterURIs, ","), false);
+        
+        try
+        {
+			boolean anonymousExists = UserControllerProxy.getController().userExists(CmsPropertyHandler.getAnonymousUser());
+			if(!anonymousExists)
+				logger.error("The anonymous user '" + CmsPropertyHandler.getAnonymousUser() + "' was not found. Add it immediately.");
+        }
+        catch (Exception e) 
+        {
+        	logger.error("Error checking if the anonymous user '" + CmsPropertyHandler.getAnonymousUser() + "' was not found. Message:" + e.getMessage());
+		}
 	}
     
 	
@@ -148,9 +159,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 
 		try
 		{			
-    		
-    		
-	        if (CmsPropertyHandler.getServletContext() == null) 
+    		if (CmsPropertyHandler.getServletContext() == null) 
 	        {
 	        	CmsPropertyHandler.setServletContext(httpServletRequest.getContextPath());
 	        }

@@ -52,7 +52,7 @@ CREATE TABLE cmContentRelation (
 
 CREATE TABLE cmContentTypeDefinition (
   contentTypeDefinitionId integer(11) unsigned NOT NULL auto_increment,
-  schemaValue text NOT NULL,
+  schemaValue longtext NOT NULL,
   name varchar(255) NOT NULL,
   parentContentTypeDefinitionId INT DEFAULT '-1',
   detailPageResolverClass VARCHAR(255) DEFAULT '',

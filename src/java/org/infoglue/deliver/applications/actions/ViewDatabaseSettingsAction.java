@@ -58,22 +58,6 @@ public class ViewDatabaseSettingsAction extends InfoGlueAbstractAction
 		return SUCCESS;
 	}
 
-	/*
-	<?xml version="1.0" encoding="ISO-8859-1"?>
-<databases>
-  <database id="default">
-    <property name="url" value="jdbc:mysql://localhost/infoglue20?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8"/>
-    <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-    <property name="driverEngine" value="mysql"/>
-    <property name="user" value="root"/>
-    <property name="password" value="ijikal"/>
-    <property name="useUnicode" value="true"/>
-    <property name="encoding" value="UTF-8"/>
-    <property name="maxConnections" value="100"/>
-    <property name="mapping" value="mapping.xml"/>
-  </database>
-</databases>
-	 */
 	
 	public String doUpdate() throws Exception
 	{

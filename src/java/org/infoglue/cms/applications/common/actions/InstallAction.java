@@ -146,7 +146,7 @@ public class InstallAction extends InfoGlueAbstractAction
 				return doInputServer();
 			}
 		}	
-		System.out.println("After operations...");
+		logger.debug("After operations...");
 		
 		boolean dbConfigOK = false;
 		boolean dbUpgradeOK = false;
@@ -169,7 +169,7 @@ public class InstallAction extends InfoGlueAbstractAction
 				dbUpgradeOK = true;	
 			else
 			{
-				System.out.println("Reported old database schema: " + dbVersion);
+				logger.debug("Reported old database schema: " + dbVersion);
 				this.sqlScript = InstallationController.getController().getUpgradeScripts(this.dbVersion, getHttpSession());
 			}
 		}
@@ -187,9 +187,9 @@ public class InstallAction extends InfoGlueAbstractAction
 			e.printStackTrace();
 		}
 
-		System.out.println("dbConfigOK:" + dbConfigOK);
-		System.out.println("dbUpgradeOK:" + dbUpgradeOK);
-		System.out.println("serverConfigOK:" + serverConfigOK);
+		logger.debug("dbConfigOK:" + dbConfigOK);
+		logger.debug("dbUpgradeOK:" + dbUpgradeOK);
+		logger.debug("serverConfigOK:" + serverConfigOK);
 
 		if(!dbConfigOK)
 			return doInputDatabase();

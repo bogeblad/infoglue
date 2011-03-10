@@ -112,7 +112,7 @@ public final class CmsContextListener implements ServletContextListener
 			System.out.println("Start introspection");
 			ExtensionLoader el = new ExtensionLoader();
 			el.startExtensions();
-			
+						
 			OSCacheUtility.setServletCacheParams(event.getServletContext());
 			
 			CmsPropertyHandler.setStartupTime(new Date()); 

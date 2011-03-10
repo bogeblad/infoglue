@@ -104,7 +104,7 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	    	
 	    	    setActionMessage(userSessionKey, deleteContentInlineOperationDoneHeader);
 	    										  																	
-	    	    System.out.println("originalAddress:" + originalAddress);
+	    	    logger.debug("originalAddress:" + originalAddress);
 	    	    addActionLink(userSessionKey, new LinkBean("parentContentUrl", deleteContentInlineOperationViewDeletedContentParentLinkText, deleteContentInlineOperationViewDeletedContentParentTitleText, deleteContentInlineOperationViewDeletedContentParentTitleText, this.originalAddress, false, "", "", "content"));
 	            setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
 	            setActionExtraData(userSessionKey, "repositoryId", "" + this.contentVO.getRepositoryId());

@@ -286,7 +286,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	    	if(newContentVersionIdList.size() > 0)
 	    	{
 	    		Integer newContentVersionId = newContentVersionIdList.get(0);
-	    		System.out.println("newContentVersionId:" + newContentVersionId + ":" + this.contentVersionId);
+	    		logger.debug("newContentVersionId:" + newContentVersionId + ":" + this.contentVersionId);
 	    		if(this.contentVersionId != newContentVersionId)
 		    		this.refreshAll = true;
 	    		setContentVersionId(newContentVersionId);

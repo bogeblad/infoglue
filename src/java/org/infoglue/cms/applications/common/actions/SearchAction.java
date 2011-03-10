@@ -166,7 +166,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		}
 		else
 		{
-			System.out.println("repositoryIdToSearch:" + repositoryIdToSearch);
+			logger.debug("repositoryIdToSearch:" + repositoryIdToSearch);
 			if(repositoryIdToSearch != null)
 			{
 				Integer[] repositoryIdAsIntegerToSearch = new Integer[repositoryIdToSearch.length];
@@ -184,7 +184,7 @@ public class SearchAction extends InfoGlueAbstractAction
 			}
 			else
 			{
-				System.out.println("repositoryId:" + this.repositoryId);
+				logger.debug("repositoryId:" + this.repositoryId);
 				ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
 
 				contentVersionVOList = searchController.getContentVersionVOList(new Integer[] {this.repositoryId}, this.getSearchString(), maxRows, name, languageId, new Integer[]{contentTypeDefinitionId}, new Integer[]{ctd.getId()}, caseSensitive, stateId, includeAssets);

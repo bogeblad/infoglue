@@ -1056,10 +1056,12 @@ public class ContentTypeDefinitionController extends BaseController
 			//attributes = getAttributesWithXalan(schemaValue, addPriorityAttribute);
 			//t.printElapsedTime("getAttributesWithXalan took:");
 			attributes = getAttributesWithDOM4J(schemaValue, addPriorityAttribute, languageCode, principal, db);
-			
-			if(attributes != null)
-			    CacheController.cacheObject("contentTypeDefinitionCache", key, attributes);
 		}
+		
+		if(attributes != null)
+		    CacheController.cacheObject("contentTypeDefinitionCache", key, attributes);
+		else
+			CacheController.cacheObject("contentTypeDefinitionCache", key, new NullObject());
 				
 		return attributes;
 	}

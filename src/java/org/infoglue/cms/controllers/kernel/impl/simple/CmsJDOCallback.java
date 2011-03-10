@@ -86,7 +86,7 @@ import org.infoglue.deliver.util.CacheController;
 public class CmsJDOCallback implements CallbackInterceptor
 {
     private final static Logger logger = Logger.getLogger(CmsJDOCallback.class.getName());
-
+    
     public void using(Object object, Database db)
     {
     	//System.out.println("Using " + object);
@@ -128,7 +128,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 	    {
 	        //System.out.println("Actually stored it:" + object + ":" + modified);
 	    	logger.info("Actually stored it:" + object + ":" + modified);
-    	    
+	    	
 			String userName = "SYSTEM";
 			try
 			{

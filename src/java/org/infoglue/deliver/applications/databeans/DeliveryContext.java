@@ -345,10 +345,15 @@ public class DeliveryContext implements UsageListener
     {
         this.usedContentVersions.add(usedContentVersion);
         
+        //if(this.getUsageListeners().size() > 0)
+        //	System.out.println("Found usage listeners:" + this.getUsageListeners().size());
+        
         Iterator iterator = this.getUsageListeners().iterator();
         while(iterator.hasNext())
         {
             UsageListener usageListener = (UsageListener)iterator.next();
+            //if(usageListener.equals(this))
+            //	System.out.println("Was itself... should we not skip?");
             usageListener.addUsedContentVersion(usedContentVersion);
         }
     }

@@ -1289,8 +1289,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	        	propertyValue = PageEditorHelper.untransformAttribute(propertyValue);
 				logger.info("propertyValue2:" + propertyValue);
 	 			
-				System.out.println("propertyName:" + propertyName);
-				System.out.println("propertyValue:" + propertyValue);
 				if(propertyValue != null && !propertyValue.equals("") && !propertyValue.equalsIgnoreCase("undefined"))
 				{
 					String componentPropertyXPath = "//component[@id=" + this.componentId + "]/properties/property[@name='" + propertyName + "']";

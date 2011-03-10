@@ -94,7 +94,7 @@ public class SetCharacterEncodingFilter implements Filter
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException 
     {
-        // Conditionally select and set the character encoding to be used
+    	// Conditionally select and set the character encoding to be used
     	String referer = ((HttpServletRequest)request).getHeader("referer");
         if(referer != null && referer.length() > 0 && referer.indexOf("ViewPage!renderDecoratedPage.action") > -1)
         {

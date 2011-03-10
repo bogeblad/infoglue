@@ -489,8 +489,6 @@ public class CmsPropertyHandler
 		    	CacheController.cacheObject(cacheName, cacheKey, new NullObject());
 	    }
 
-	    if(key.equalsIgnoreCase("allowedAdminIP"))
-	    	System.out.println("value:" + value);
 	    if(logger.isInfoEnabled())
 			logger.info("Getting property " + cacheKey + " took:" + timer.getElapsedTime());
 	    
@@ -1278,12 +1276,12 @@ public class CmsPropertyHandler
 		if(cmsFullBaseUrl == null || cmsFullBaseUrl.equals(""))
 		{
 			cmsFullBaseUrl = "" + defaultScheme + "://127.0.0.1:" + defaultPort + "" + getCmsBaseUrl();
-			System.out.println("Rewriting cmsFullBaseUrl - now:" + cmsFullBaseUrl); 
+			//System.out.println("Rewriting cmsFullBaseUrl - now:" + cmsFullBaseUrl); 
 		}
 		else if(cmsFullBaseUrl != null && !cmsFullBaseUrl.startsWith("http"))
 		{
 			cmsFullBaseUrl = "" + defaultScheme + "://127.0.0.1:" + defaultPort + "" + getCmsBaseUrl();
-			System.out.println("Rewriting cmsFullBaseUrl - now:" + cmsFullBaseUrl);
+			//System.out.println("Rewriting cmsFullBaseUrl - now:" + cmsFullBaseUrl);
 		}
 		
 		return cmsFullBaseUrl;

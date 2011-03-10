@@ -81,6 +81,7 @@ import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.ThreadMonitor;
+import org.infoglue.deliver.util.Timer;
 
 import webwork.action.ActionContext;
 
@@ -1018,9 +1019,14 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		{
 			if(getSiteNodeId() != null)
 			{
-				SiteNodeVO siteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(getSiteNodeId(), db);
+				SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeVOCache", "" + getSiteNodeId());
+				if(siteNodeVO == null)
+				{
+					siteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(getSiteNodeId(), db);
+					CacheController.cacheObjectInAdvancedCache("siteNodeVOCache", "" + getSiteNodeId(), siteNodeVO);
+				}
 				repositoryId = siteNodeVO.getRepositoryId();
-			}
+			}	
 		}
 	    catch(Exception e)
 	    {

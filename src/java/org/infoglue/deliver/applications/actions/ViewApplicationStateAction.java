@@ -235,6 +235,28 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /**
      * This action allows clearing of the given cache manually.
      */
+    public String doFlushCache() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+        
+        CacheController.flushCache(cacheName);
+        
+        //this.getHttpSession().invalidate();
+        if(this.returnAddress != null && !this.returnAddress.equals(""))
+        {
+            this.getResponse().sendRedirect(this.returnAddress);
+            
+            return NONE;
+        }
+ 
+        return "cleared";
+    }
+
+    /**
+     * This action allows clearing of the given cache manually.
+     */
     public String doClearCacheStartingWith() throws Exception
     {
     	String returnValue = handleAccess(this.getRequest());

@@ -474,7 +474,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         	conn = getConnection();
 
             String sql = "UPDATE " + tableName + " SET " + colString + " = ?, " + colDate + " = ?, " + colData + " = ?, " + colFloat + " = ?, " + colNumber + " = ?, " + colItemType + " = ? " + " WHERE " + colGlobalKey + " = ? AND " + colItemKey + " = ?";
-            System.out.println("SQL:" + sql);
+            //System.out.println("SQL:" + sql);
             PreparedStatement ps = conn.prepareStatement(sql);
             setValues(ps, type, key, value);
 

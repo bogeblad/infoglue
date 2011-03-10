@@ -62,13 +62,16 @@ public class SortPagesTag extends TemplateControllerTag
 	 */
 	public int doEndTag() throws JspException
     {
-	    if(this.type.equalsIgnoreCase("HardcodedPageComparator") || namesInOrderString != null)
-	        this.comparator = new HardcodedPageComparator(sortProperty, sortOrder, numberOrder, nameProperty, namesInOrderString, getController());
-	    else
-	        this.comparator = new PageComparator(sortProperty, sortOrder, numberOrder, getController());
-	        
-	    Collections.sort(input, comparator);
-		produceResult(input);
+		if(input != null && input.size() > 0)
+		{
+		    if(this.type.equalsIgnoreCase("HardcodedPageComparator") || namesInOrderString != null)
+		        this.comparator = new HardcodedPageComparator(sortProperty, sortOrder, numberOrder, nameProperty, namesInOrderString, getController());
+		    else
+		        this.comparator = new PageComparator(sortProperty, sortOrder, numberOrder, getController());
+		        
+		    Collections.sort(input, comparator);
+			produceResult(input);
+		}
 		
 		comparator = null;
 		input = new ArrayList();

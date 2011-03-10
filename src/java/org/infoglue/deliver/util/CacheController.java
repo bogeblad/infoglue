@@ -26,6 +26,8 @@ package org.infoglue.deliver.util;
 //import org.exolab.castor.jdo.CacheManager;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -118,6 +120,7 @@ import org.infoglue.cms.util.workflow.InfoGlueJDBCPropertySet;
 import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
+import org.infoglue.deliver.invokers.PageInvoker;
 import org.infoglue.deliver.portal.ServletConfigContainer;
 
 import com.opensymphony.oscache.base.AbstractCacheAdministrator;
@@ -493,7 +496,8 @@ public class CacheController extends Thread
 
 		//if(cacheName.equals("pageCache"))
 		//	System.out.println("useFileCacheFallback:" + useFileCacheFallback + " - useGroups:" + useGroups);
-	    if(useFileCacheFallback && !useGroups)
+	    
+		if(useFileCacheFallback && !useGroups)
 	    {
 	    	if(logger.isInfoEnabled())
     			logger.info("Caching value to disk also");
@@ -505,7 +509,6 @@ public class CacheController extends Thread
 	    	else
 	    		putCachedContentInFile(cacheName, key.toString(), value.toString(), fileCacheCharEncoding);				    	
 	    }
-
 		
 		//logger.info("Done cacheObjectInAdvancedCache");
 	}	
@@ -519,8 +522,6 @@ public class CacheController extends Thread
 	{
 		if(cacheName == null || key == null || key.length() == 0)
 			return null;
-		
-	    //logger.info("getCachedObjectFromAdvancedCache start:" + cacheName + ":" + key);
 		
 	    Object value = null;
 	    boolean stopUseFileCacheFallback = false;
@@ -595,7 +596,8 @@ public class CacheController extends Thread
 		    }
 
 		    if(value == null && useFileCacheFallback && !stopUseFileCacheFallback)
-	    	{				 
+	    	{				
+		    	Timer t = new Timer();
 	    		if(logger.isInfoEnabled())
 	    			logger.info("Getting cache content from file..");
 	    		value = getCachedContentFromFile(cacheName, key, fileCacheCharEncoding);
@@ -608,10 +610,181 @@ public class CacheController extends Thread
 					else
 						cacheObjectInAdvancedCache(cacheName, key, value);
 	    		}
+	    		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("File cache", t.getElapsedTime());
 	    	}
 		//}
 	    
 		return value;
+	}
+	
+	public static Object getCachedObjectFromAdvancedCache(String cacheName, String key, boolean useFileCacheFallback, String fileCacheCharEncoding, boolean cacheFileResultInMemory, Object o, Method m, Object[] args, PageInvoker pageInvoker)
+	{
+		if(cacheName == null || key == null || key.length() == 0)
+			return null;
+		
+	    Object value = null;
+	    
+    	String pageKey = key;
+    	if(CmsPropertyHandler.getUseHashCodeInCaches())
+    		pageKey = "" + key.hashCode();
+
+	    GeneralCacheAdministrator cacheAdministrator = (GeneralCacheAdministrator)caches.get(cacheName);
+	    if(cacheAdministrator == null)
+	    {
+	    	Map cacheSettings = (Map)getCachedObject("serverNodePropertiesCacheSettings", "cacheSettings");
+	    	if(cacheSettings == null)
+	    	{
+	    		cacheSettings = CmsPropertyHandler.getCacheSettings();
+	    		cacheObject("serverNodePropertiesCacheSettings", "cacheSettings", cacheSettings);
+	    	}
+	    	
+	    	String cacheCapacity = "2000";
+	    	String cacheCapacityProperty = (String)cacheSettings.get("CACHE_CAPACITY_" + cacheName);
+	    	if(cacheCapacityProperty != null && !cacheCapacityProperty.equals(""))
+	    		cacheCapacity = cacheCapacityProperty;
+	    		
+			if(cacheCapacity != null && !cacheCapacity.equals(""))
+	    	{
+				Properties p = new Properties();
+		    	
+				p.setProperty(AbstractCacheAdministrator.CACHE_ALGORITHM_KEY, "com.opensymphony.oscache.base.algorithm.ImprovedLRUCache");
+				p.setProperty(AbstractCacheAdministrator.CACHE_CAPACITY_KEY, cacheCapacity);
+				cacheAdministrator = new GeneralCacheAdministrator(p);
+			}
+			else
+			{
+				cacheAdministrator = new GeneralCacheAdministrator();
+			}
+	        
+	        CacheEntryEventListenerImpl cacheEntryEventListener = new ExtendedCacheEntryEventListenerImpl();
+	        CacheMapAccessEventListenerImpl cacheMapAccessEventListener = new CacheMapAccessEventListenerImpl(); 
+	        
+	        cacheAdministrator.getCache().addCacheEventListener(cacheEntryEventListener, CacheEntryEventListener.class);
+	        cacheAdministrator.getCache().addCacheEventListener(cacheMapAccessEventListener, CacheMapAccessEventListener.class);
+	        caches.put(cacheName, cacheAdministrator);
+	        eventListeners.put(cacheName + "_cacheEntryEventListener", cacheEntryEventListener);
+	        eventListeners.put(cacheName + "_cacheMapAccessEventListener", cacheMapAccessEventListener);
+	    }
+	    
+	    
+	    if(cacheAdministrator != null)
+	    {		    	
+		    try 
+		    {
+		    	value = (cacheAdministrator == null) ? null : cacheAdministrator.getFromCache(pageKey, CacheEntry.INDEFINITE_EXPIRY);
+		    } 
+		    catch (NeedsRefreshException nre) 
+		    {
+		    	//System.out.println("Nothing in cache - lets redo it...");
+		    	//System.out.println("Old content:" + nre.getCacheContent());
+		    	boolean isUpdated = false;
+		    	try 
+		    	{
+					String result = (String)m.invoke(o, args);
+					//System.out.println("result:" + result);
+					value = result;
+					if(result != null)
+					{
+						cacheNewResult(pageInvoker, cacheAdministrator, pageKey, result);
+						isUpdated = true;
+					}
+					//System.out.println("result:" + result);
+				} 
+		    	catch (Throwable t) 
+		    	{
+					t.printStackTrace();
+				}
+
+		    	try
+		    	{
+		    		if(!isUpdated)
+		    			cacheAdministrator.cancelUpdate(pageKey);
+		    	}
+		    	catch (Exception e) 
+		    	{
+		    		logger.error("Error:" + e.getMessage());
+				}
+			}
+	    }
+	    
+	    if(value instanceof byte[])
+	    	value = compressionHelper.decompress((byte[])value);
+	    
+	    if(value == null && useFileCacheFallback)
+    	{
+	    	Timer t = new Timer();
+	    	System.out.println("Falling back to filecache");
+    		value = getCachedContentFromFile(cacheName, key, fileCacheCharEncoding);
+    		if(value != null && cacheFileResultInMemory)
+    		{
+    	    	System.out.println("Got cached content from file as it did not exist in memory...:" + value.toString().length());
+    			if(logger.isInfoEnabled())
+        			logger.info("Got cached content from file as it did not exist in memory...:" + value.toString().length());
+				cacheObjectInAdvancedCache(cacheName, pageKey, value);
+    		}
+    		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("File cache", t.getElapsedTime());
+    	}
+	    
+		return value;
+	}
+
+	private static void cacheNewResult(PageInvoker pageInvoker, GeneralCacheAdministrator cacheAdministrator, String pageKey, String value) 
+	{
+		String pageCacheExtraName = "pageCacheExtra";
+		
+		if(!pageInvoker.getTemplateController().getIsPageCacheDisabled() && !pageInvoker.getDeliveryContext().getDisablePageCache()) //Caching page if not disabled
+		{
+			Integer newPageCacheTimeout = pageInvoker.getDeliveryContext().getPageCacheTimeout();
+			if(newPageCacheTimeout == null)
+				newPageCacheTimeout = pageInvoker.getTemplateController().getPageCacheTimeout();
+			
+			String[] allUsedEntitiesCopy = pageInvoker.getDeliveryContext().getAllUsedEntities().clone();
+			Object extraData = pageInvoker.getDeliveryContext().getExtraData();
+			
+			String compressPageCache = CmsPropertyHandler.getCompressPageCache();
+		    if(compressPageCache != null && compressPageCache.equalsIgnoreCase("true"))
+			{
+				long startCompression = System.currentTimeMillis();
+				byte[] compressedData = compressionHelper.compress(value);		
+			    //System.out.println("Compressing page for pageCache took " + (System.currentTimeMillis() - startCompression) + " with a compressionFactor of " + (this.pageString.length() / compressedData.length));
+				if(pageInvoker.getTemplateController().getOperatingMode().intValue() == 3 && !CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
+				{
+					cacheAdministrator.putInCache(pageKey, compressedData, allUsedEntitiesCopy);
+					//CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, false);
+					//CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, false);    
+				}
+				else
+				{
+					//System.out.println("cacheAdministrator:" + cacheAdministrator);
+					//System.out.println("pageKey:" + pageKey);
+					//System.out.println("compressedData:" + compressedData);
+					//System.out.println("allUsedEntitiesCopy:" + allUsedEntitiesCopy);
+					cacheAdministrator.putInCache(pageKey, compressedData, allUsedEntitiesCopy);
+					CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, true);
+					CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, true);    
+				}
+			}
+		    else
+		    {
+		        if(pageInvoker.getTemplateController().getOperatingMode().intValue() == 3 && !CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
+		        {
+		        	cacheAdministrator.putInCache(pageKey, value, allUsedEntitiesCopy);
+		        	CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, false);
+		        	CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, false);    
+		        }
+		    	else
+		    	{
+		    		cacheAdministrator.putInCache(pageKey, value, allUsedEntitiesCopy);
+		    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, true);
+		    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, true);    
+		    	}
+		    }
+		}
+		else
+		{
+			if(logger.isInfoEnabled())
+				logger.info("Page caching was disabled for the page " + pageInvoker.getDeliveryContext().getSiteNodeId() + " with pageKey " + pageInvoker.getDeliveryContext().getPageKey() + " - modifying the logic to enable page caching would boast performance.");
+		}
 	}
 
 	public static Object getCachedObjectFromAdvancedCache(String cacheName, String key, int updateInterval)
@@ -752,6 +925,39 @@ public class CacheController extends Thread
 		}
 	}
 
+	public static void flushCache(String cacheName)
+	{
+		logger.info("Flushing the cache called " + cacheName);
+		synchronized(caches) 
+		{
+			if(caches.containsKey(cacheName))
+			{
+			    Object object = caches.get(cacheName);
+			    if(object instanceof Map)
+				{
+					Map cacheInstance = (Map)object;
+					synchronized(cacheInstance) 
+					{
+						cacheInstance.clear();
+					}
+				}
+				else
+				{
+				    GeneralCacheAdministrator cacheInstance = (GeneralCacheAdministrator)object;
+					synchronized(cacheInstance)
+					{
+						cacheInstance.flushAll();
+					}
+				}
+		    	//caches.remove(cacheName);
+			    //eventListeners.remove(cacheName + "_cacheEntryEventListener");
+			    //eventListeners.remove(cacheName + "_cacheMapAccessEventListener");
+	
+			    logger.info("clearCache stop...");
+			}
+		}
+	}
+	
 	public static void clearCache(String cacheName, String key)
 	{
 		logger.info("Clearing the cache called " + cacheName + " and key: " + key);
@@ -861,16 +1067,12 @@ public class CacheController extends Thread
 		while(!forceClear && RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() > 0)
 	    {
 	        //logger.warn("Number of requests: " + RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests() + " was more than 0 - lets wait a bit.");
-	        if(wait > 6000 && RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() < 6)
+	        if(wait > 3000)
 			{
 				logger.warn("The clearCache method waited over " + ((wait * 10) / 1000) + " seconds but there seems to be " + RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests() + " requests blocking all the time. Continuing anyway.");
 				//printThreads();
 				break;
 			}
-	        /*
-			if(wait == 0)
-				System.out.println("threadMonitors:" + RequestAnalyser.getThreadMonitors().size());
-	        */
 			Thread.sleep(10);
 			wait++;
 	    }
@@ -1119,6 +1321,14 @@ public class CacheController extends Thread
 						clear = true;
 					}
 					if(cacheName.equalsIgnoreCase("rootSiteNodeCache") && entity.indexOf("SiteNode") > 0)
+					{
+						clear = true;
+					}
+					if(cacheName.equalsIgnoreCase("siteNodeCache") && entity.indexOf("SiteNode") > 0)
+					{
+						clear = true;
+					}
+					if(cacheName.equalsIgnoreCase("contentCache") && entity.indexOf("Content") > 0)
 					{
 						clear = true;
 					}
@@ -1560,7 +1770,7 @@ public class CacheController extends Thread
 		while(!forceClear && RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() > 0)
 	    {
 	        //logger.warn("Number of requests: " + RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests() + " was more than 0 - lets wait a bit.");
-	        if(wait > 6000 && RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() < 6)
+	        if(wait > 3000)
 			{
 				logger.warn("The clearCache method waited over " + ((wait * 10) / 1000) + " seconds but there seems to be " + RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests() + " requests blocking all the time. Continuing anyway.");
 				//printThreads();
@@ -1637,7 +1847,7 @@ public class CacheController extends Thread
 	    //while(RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests() > 0)
 	    while(!forceClear && RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() > 0)
 	    {
-	        if(wait > 6000 && RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() < 6)
+	        if(wait > 3000)
 			{
 				logger.warn("The clearCache method waited over " + ((wait * 10) / 1000) + " seconds but there seems to be " + RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests() + " requests blocking all the time. Continuing anyway.");
 				//printThreads();
@@ -2217,7 +2427,7 @@ public class CacheController extends Thread
     	{
     		String firstPart = ("" + key.hashCode()).substring(0, 3);
             String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + "caches" + File.separator + cacheName + File.separator + firstPart + File.separator + key.hashCode();
-        	System.out.println("Getting from file:" + filePath);
+        	//System.out.println("Getting from file:" + filePath);
 
             File file = new File(filePath);
         	//System.out.println("Existed:" + file.exists());
@@ -2240,7 +2450,7 @@ public class CacheController extends Thread
 		            	else
 		            	{
 			            	//System.out.println("getting file anyway:" + updateInterval);
-			            	contents = FileHelper.getFileAsStringOpt(file);
+			            	contents = FileHelper.getFileAsStringOpt(file, charEncoding);
 		            	}
 
 		            	//contents = FileHelper.getFileAsString(file, charEncoding);
@@ -2265,7 +2475,7 @@ public class CacheController extends Thread
 	            	else
 	            	{
 		            	//System.out.println("getting file anyway:" + updateInterval);
-		            	contents = FileHelper.getFileAsStringOpt(file);
+		            	contents = FileHelper.getFileAsStringOpt(file, charEncoding);
 	            	}
 	            	//contents = FileHelper.getFileAsString(file, charEncoding);
 	            	t.printElapsedTime("getFileAsString took");

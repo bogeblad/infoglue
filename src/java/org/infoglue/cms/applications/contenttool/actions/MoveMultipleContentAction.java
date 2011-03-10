@@ -233,11 +233,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
         setActionExtraData(userSessionKey, "unrefreshedContentId", "" + parentContentId);
         setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + parentContentId);
         setActionExtraData(userSessionKey, "changeTypeId", "" + this.changeTypeId);
-        System.out.println("newParentContentId:" + newParentContentId);
-        System.out.println("parentContentId(contentId):" + parentContentId);
-        System.out.println("changeTypeId:" + changeTypeId);
         
-    	System.out.println("newParentContentId:" + newParentContentId);
         if(this.newParentContentId == null)
         {
     		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
@@ -248,8 +244,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
     	
         try
 		{
-        	System.out.println("this.qualifyerXML:" + this.qualifyerXML);
-            if(this.qualifyerXML != null && this.qualifyerXML.length() != 0)
+        	if(this.qualifyerXML != null && this.qualifyerXML.length() != 0)
 		    {
 		        Document document = new DOMBuilder().getDocument(this.qualifyerXML);
 				List contents = parseContentsFromXML(this.qualifyerXML);

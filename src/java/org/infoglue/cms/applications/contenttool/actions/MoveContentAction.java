@@ -209,7 +209,7 @@ public class MoveContentAction extends InfoGlueAbstractAction
             ContentVO contentVO = ContentControllerProxy.getContentController().getContentVOWithId(getContentId());
             
     		this.parentContentId = contentVO.getParentContentId();
-            System.out.println("parentContentId:" + parentContentId);
+    		logger.debug("parentContentId:" + parentContentId);
             
     		ContentControllerProxy.getController().acMoveContent(this.getInfoGluePrincipal(), this.contentVO, this.newParentContentId);
         }

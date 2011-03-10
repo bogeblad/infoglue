@@ -71,7 +71,6 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	
 	protected String doExecute() throws Exception 
 	{
-		System.out.println("11111111111111111111111111");
 		this.filterRoleNames = this.getRequest().getParameterValues("filterRoleName");
 		if(filterFirstName == null && filterLastName == null && filterUserName == null && filterEmail == null && (filterRoleNames == null || filterRoleNames.length == 0 || (filterRoleNames.length == 1 && filterRoleNames[0].equals(""))))
 		{
@@ -95,7 +94,6 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 
 	public String doV3() throws Exception 
 	{
-		System.out.println("222222222222222222");
 		//this.infogluePrincipals = UserControllerProxy.getController().getAllUsers();
 		//this.infogluePrincipals = this.infogluePrincipals.subList(0, 100);
 		
@@ -115,9 +113,6 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	
 	public String doProcessAndFilter() throws Exception 
 	{
-		Timer t = new Timer();
-		System.out.println("sSearch:" + sSearch);
-		
 		String sortColNumber = getRequest().getParameter("iSortCol_0");
 		String sortDirection = getRequest().getParameter("sSortDir_0");
 		if(sortDirection == null || sortDirection.equals(""))
@@ -134,30 +129,24 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 		else if(sortColNumber != null && sortColNumber.equals("3"))
 			sortProperty = "lastName";
 		
-		t.printElapsedTime("Before with:" + sortProperty);
 		Collections.sort(this.infogluePrincipals, new ReflectionComparator(sortProperty));
-		t.printElapsedTime("Sorting took " + sortDirection);
 		if(sortDirection.equals("desc"))
 		{
 			Collections.reverse(this.infogluePrincipals);
-			t.printElapsedTime("Reverse took...");
 		}
 			
 		this.iTotalRecords = this.infogluePrincipals.size();
 		this.iTotalDisplayRecords = this.infogluePrincipals.size();
-		t.printElapsedTime("Getting all users took ");
 		
 		String iDisplayStartString = getRequest().getParameter("iDisplayStart");
 		String iDisplayLengthString = getRequest().getParameter("iDisplayLength");
 		int start = new Integer(iDisplayStartString);
 		int end = start + new Integer(iDisplayLengthString);
 		
-		System.out.println("Getting principals:" + start + " to " + end + " from original list:" + this.infogluePrincipals.size());
 		if(this.infogluePrincipals.size() > end)
 			this.infogluePrincipals = this.infogluePrincipals.subList(start, end);
 		else
 			this.infogluePrincipals = this.infogluePrincipals.subList(start, this.infogluePrincipals.size());
-		t.printElapsedTime("Getting subset of users took ");
 		
 	    return "successFiltered";
 	}
@@ -172,7 +161,6 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 
 	public String doUserListForPopupV3() throws Exception 
 	{
-		System.out.println("222222222222222222");
 		/*
 		this.infogluePrincipals = UserControllerProxy.getController().getAllUsers();
 		Collections.sort(this.infogluePrincipals, new ReflectionComparator("firstName"));

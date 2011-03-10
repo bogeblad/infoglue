@@ -49,9 +49,17 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+
+import org.apache.log4j.Logger;
+import org.infoglue.deliver.util.Timer;
 
 public class FileHelper
 {
+	private final static Logger logger = Logger.getLogger(FileHelper.class.getName());
 	
 	/**
 	 * Writes the file to the hard disk. If the file doesn't exist a new file is created.
@@ -253,6 +261,54 @@ public class FileHelper
 		return new String(b);
 	}
 			
+	public static String getFileAsStringOpt(File file, String charEncoding) throws Exception 
+	{
+		InputStream in = null;
+		byte[] b = new byte[(int)file.length()];
+		try 
+		{
+		    in = new FileInputStream(file);
+		    in.read(b);
+		} 
+		finally 
+		{
+		    if (in != null) 
+		    {
+		        try 
+		        {
+		            in.close();
+		        } 
+		        catch (IOException e) {
+		        }
+		    }
+		}
+		
+		if(logger.isInfoEnabled())
+			logger.info("charEncoding:" + charEncoding);
+		/*
+		System.out.println("charEncoding: " + charEncoding);
+		System.out.println("COOL: " + "324324234 Mattias åäö ÅÄÖ");
+		System.out.println("NONE: " + new String(b).substring(0, 200));
+		System.out.println("ISO: " + new String(b, "ISO-8859-1").substring(0, 200));
+		System.out.println("UTF8: " + new String(b, "UTF-8").substring(0, 200));
+		return new String(b, charEncoding);
+		*/
+		
+		Timer t = null;
+		if(logger.isInfoEnabled())
+			t = new Timer();
+		
+		Charset charset = Charset.forName(charEncoding); 
+		CharsetDecoder decoder = charset.newDecoder(); 
+
+		CharBuffer cbuf = decoder.decode(ByteBuffer.wrap(b)); 
+		String result = cbuf.toString(); 
+		
+		if(logger.isInfoEnabled())
+			t.printElapsedTimeMicro("Decoding took");
+		
+		return result;
+	}
 	/**
 	 * This method reads a file from the disk into a string.
 	 * @author Mattias Bogeblad

@@ -697,7 +697,8 @@ public class AccessRightController extends BaseController
 				interceptionPointIdString = request.getParameter(interceptionPointIndex + "_InterceptionPointId");
 			}
 			
-			System.out.println("accessRights:" + accessRights);
+			if(logger.isDebugEnabled())
+				logger.debug("accessRights:" + accessRights);
 			if(accessRights > 0)
 			{
 				if(interceptionPointCategory.equalsIgnoreCase("Content"))
@@ -711,7 +712,8 @@ public class AccessRightController extends BaseController
 				{	
 					Integer siteNodeVersionId = new Integer(parameters);
 					SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(siteNodeVersionId, db);
-					System.out.println("It was a siteNodeVersion and there are access rights - set it to true:" + accessRights);
+					if(logger.isDebugEnabled())
+						logger.debug("It was a siteNodeVersion and there are access rights - set it to true:" + accessRights);
 					if(!siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES))
 						siteNodeVersion.setIsProtected(SiteNodeVersionVO.YES);
 				}
@@ -719,7 +721,8 @@ public class AccessRightController extends BaseController
 			else
 			{
 				List accessRightsUsers = getAccessRightsUsers(interceptionPointCategory, parameters, db, true);
-				System.out.println("accessRightsUsers:" + accessRightsUsers.size());
+				if(logger.isDebugEnabled())
+					logger.debug("accessRightsUsers:" + accessRightsUsers.size());
 				if(accessRightsUsers == null || accessRightsUsers.size() == 0)
 				{
 					if(interceptionPointCategory.equalsIgnoreCase("Content"))
@@ -733,10 +736,12 @@ public class AccessRightController extends BaseController
 					{	
 						Integer siteNodeVersionId = new Integer(parameters);
 						SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(siteNodeVersionId, db);
-						System.out.println("It was a siteNodeVersion and there was no access rights - set it to false:" + accessRights + ":" + siteNodeVersion.getIsProtected());
+						if(logger.isDebugEnabled())
+							logger.debug("It was a siteNodeVersion and there was no access rights - set it to false:" + accessRights + ":" + siteNodeVersion.getIsProtected());
 						if(siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES))
 						{
-							System.out.println("YEPPPPPPP");
+							if(logger.isDebugEnabled())
+								logger.debug("YEPPPPPPP");
 							siteNodeVersion.setIsProtected(SiteNodeVersionVO.NO);
 							siteNodeVersion.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 						}

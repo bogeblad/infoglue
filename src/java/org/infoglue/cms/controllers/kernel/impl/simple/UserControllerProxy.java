@@ -138,14 +138,11 @@ public class UserControllerProxy extends BaseController
 			return cachedUsers;
 
     	List users = new ArrayList();
-    	Timer t = new Timer();
 		users = getAuthorizationModule().getUsers();
-		t.printElapsedTime("Getting all users...");
 		
 		Collections.sort(users, new ReflectionComparator("displayName"));
 		
 		CacheController.cacheObjectInAdvancedCache("principalCache", "allPrincipals", users);
-		t.printElapsedTime("Sorting all users...");
 		
     	return users;
     }

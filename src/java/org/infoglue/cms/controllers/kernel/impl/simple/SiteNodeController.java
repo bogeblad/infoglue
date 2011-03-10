@@ -118,7 +118,21 @@ public class SiteNodeController extends BaseController
 	 
     public static SiteNodeVO getSmallSiteNodeVOWithId(Integer siteNodeId, Database db) throws SystemException, Bug
     {
-		return (SiteNodeVO) getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
+    	String key = "" + siteNodeId;
+		SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
+		if(siteNodeVO != null)
+		{
+			//System.out.println("There was an cached siteNodeVO:" + siteNodeVO);
+		}
+		else
+		{
+			siteNodeVO = (SiteNodeVO)getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
+			if(siteNodeVO != null)
+				CacheController.cacheObjectInAdvancedCache("siteNodeCache", key, siteNodeVO);
+		}
+		
+		return siteNodeVO;
+		//return (SiteNodeVO) getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
     }
 
 
@@ -764,7 +778,7 @@ public class SiteNodeController extends BaseController
 		if(logger.isInfoEnabled())
 			logger.info("key:" + key);
 		
-		List<SiteNodeVO> childrenVOList = (List<SiteNodeVO>)CacheController.getCachedObject("childSiteNodesCache", key);
+		List<SiteNodeVO> childrenVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
 		if(childrenVOList != null)
 		{
 			if(logger.isInfoEnabled())
@@ -827,7 +841,7 @@ public class SiteNodeController extends BaseController
 		results.close();
 		oql.close();
         
-		CacheController.cacheObject("childSiteNodesCache", key, childrenVOList);
+		CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, childrenVOList);
         
 		return childrenVOList;
 	} 

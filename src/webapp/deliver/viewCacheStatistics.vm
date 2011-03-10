@@ -118,7 +118,7 @@
 	    		No additional statistics
 	    	#end
 	    </td>
-	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top"><a href="ViewApplicationState!clearCache.action?cacheName=$cacheName">Clear</a> | <a href="ViewApplicationState!clearCache.action?cacheName=$cacheName&clearFileCache=true">Clear (also fileCache)</a></td>
+	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top"><a href="ViewApplicationState!clearCache.action?cacheName=$cacheName">Clear</a> | <a href="ViewApplicationState!clearCache.action?cacheName=$cacheName&clearFileCache=true">Clear (also fileCache)</a> | <a href="ViewApplicationState!flushCache.action?cacheName=$cacheName">Flush</a></td>
 	  </tr>
   #end  <tr>
     <td class="text" colspan="4"><a href="ViewApplicationState!resetComponentStatistics.action">Reset component stats</a></td>

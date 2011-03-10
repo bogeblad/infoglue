@@ -73,6 +73,7 @@ import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.Timer;
 
 
 public class NodeDeliveryController extends BaseDeliveryController
@@ -388,8 +389,21 @@ public class NodeDeliveryController extends BaseDeliveryController
 		
 		if(deliveryContext != null)
 			deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
-
-		return (SiteNodeVO)getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
+		
+		String key = "" + siteNodeId;
+		SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
+		if(siteNodeVO != null)
+		{
+			//System.out.println("There was an cached siteNodeVO:" + siteNodeVO);
+		}
+		else
+		{
+			siteNodeVO = (SiteNodeVO)getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
+			if(siteNodeVO != null)
+				CacheController.cacheObjectInAdvancedCache("siteNodeCache", key, siteNodeVO);
+		}
+		
+		return siteNodeVO;
 	}
 
 	/**
@@ -1659,16 +1673,20 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public String getPageNavigationTitle(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String metaBindingName, String attributeName, boolean useLanguageFallback, DeliveryContext deliveryContext, boolean escapeHTML) throws SystemException, Exception
 	{
 		String navTitle = "";
+		Timer t = new Timer();
 		
 		if(contentId == null || contentId.intValue() == -1)
 		{
 			ContentVO content = getBoundContent(db, infoGluePrincipal, siteNodeId, languageId, useLanguageFallback, metaBindingName, deliveryContext);
+			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getBoundContent 1", t.getElapsedTimeNanos());
 			if(content != null)
 				navTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), languageId, attributeName, siteNodeId, useLanguageFallback, deliveryContext, infoGluePrincipal, escapeHTML, true);
+			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentAttribute 1", t.getElapsedTimeNanos());
 		}
 		else
 		{
 			navTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, contentId, languageId, attributeName, siteNodeId, useLanguageFallback, deliveryContext, infoGluePrincipal, escapeHTML, true);
+			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentAttribute 2", t.getElapsedTimeNanos());
 		}
 		
 		return navTitle;
@@ -1698,9 +1716,10 @@ public class NodeDeliveryController extends BaseDeliveryController
         
         if(parentSiteNodeId == null || parentSiteNodeId.intValue() == -1)
         {
+        	//System.out.println("Checking for root node at " + repositoryId);
             SiteNodeVO rootSiteNodeVO = this.getRootSiteNode(db, repositoryId);
             if(rootSiteNodeVO != null)
-            siteNodes.add(rootSiteNodeVO);
+            	siteNodes.add(rootSiteNodeVO);
         }
         else
         {
@@ -2161,10 +2180,16 @@ public class NodeDeliveryController extends BaseDeliveryController
 
         String key = "" + repositoryId;
 		logger.info("key in getRootSiteNode:" + key);
-		siteNodeVO = (SiteNodeVO)CacheController.getCachedObject("rootSiteNodeCache", key);
-		if(siteNodeVO != null)
+		Object siteNodeVOCandidate = CacheController.getCachedObject("rootSiteNodeCache", key);
+		if(siteNodeVOCandidate != null || siteNodeVOCandidate instanceof NullObject)
 		{
-		    logger.info("There was an cached master root siteNode:" + siteNodeVO.getName());
+			if(siteNodeVOCandidate instanceof SiteNodeVO)
+			{
+				logger.info("There was an cached master root siteNode:" + ((SiteNodeVO)siteNodeVOCandidate).getName());
+				return (SiteNodeVO)siteNodeVOCandidate;
+			}
+			else
+				return null;
 		}
 		else
 		{
@@ -2193,8 +2218,11 @@ public class NodeDeliveryController extends BaseDeliveryController
 
 			if(logger.isInfoEnabled())
 				logger.info("siteNodeVO:" + siteNodeVO);
-
-			CacheController.cacheObject("rootSiteNodeCache", key, siteNodeVO);
+			
+			if(siteNodeVO != null)
+				CacheController.cacheObject("rootSiteNodeCache", key, siteNodeVO);
+			else
+				CacheController.cacheObject("rootSiteNodeCache", key, new NullObject());
 		}
 
         return siteNodeVO;	
@@ -2214,12 +2242,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 		{
 			return null;
 		}
-
-    	//List<SiteNodeVO> siteNodeVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeId, false, db);
     	
         String key = "" + siteNodeId;
 		logger.info("key in getChildSiteNodes:" + key);
-		List siteNodeVOList = (List)CacheController.getCachedObject("childSiteNodesCache", key);
+		List siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
 		if(siteNodeVOList != null)
 		{
 		    logger.info("There was a cached list of child sitenodes:" + siteNodeVOList.size());
@@ -2253,7 +2279,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		   		SQL.append("AND snv.siteNodeId = sn.siteNodeId ");
 		   		SQL.append("AND snv.siteNodeVersionId = ( ");
 		   		SQL.append("	select max(siteNodeVersionId) from cmSiteNodeVersion snv2 ");
-		   		SQL.append("	WHERE ");
+		   		SQL.append("	WHERE ");	
 		   		SQL.append("	snv2.siteNodeId = snv.siteNodeId AND ");
 		   		SQL.append("	snv2.isActive = $3 AND snv2.stateId >= $4 ");
 		   		SQL.append("	) ");
@@ -2298,9 +2324,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 			}
 	        */
 	        
-			CacheController.cacheObject("childSiteNodesCache", key, siteNodeVOList);
+			CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeVOList);
 		}
 		
+		//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes", t.getElapsedTime());
 		//logger.warn("getChildSiteNodes end:" + siteNodeId);
 		
 		return siteNodeVOList;	

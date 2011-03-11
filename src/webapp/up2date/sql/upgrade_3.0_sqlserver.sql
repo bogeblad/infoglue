@@ -23,3 +23,34 @@
 -- $Id: sqlserver-update-db-2.9-to-3.0.sql,v 1.1 2010/09/08 15:35:20 mattias Exp $
 --
 -- This script contains the database updates required to go from 2.9 to 3.0.
+
+ALTER TABLE cmSubscription CHANGE entityName entityName varchar(100) DEFAULT NULL;
+ALTER TABLE cmSubscription CHANGE entityId entityId varchar(200) DEFAULT NULL;
+
+ALTER TABLE cmDigitalAsset CHANGE assetContentType assetContentType VARCHAR(255);
+
+ALTER TABLE cmSiteNodeVersion ADD COLUMN sortOrder INTEGER NOT NULL DEFAULT -1;
+ALTER TABLE cmSiteNodeVersion ADD COLUMN isHidden TINYINT UNSIGNED NOT NULL DEFAULT 0;
+--ALTER TABLE cmSiteNodeVersion ADD COLUMN forceProtocolChange TINYINT UNSIGNED NOT NULL DEFAULT 2;
+
+ALTER TABLE cmSiteNode ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE cmContent ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE cmRepository ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
+
+ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId integer DEFAULT '-1';
+ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) DEFAULT '';
+ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverData VARCHAR(1024) DEFAULT '';
+
+ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryAttrNameIndex;
+ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryEntityNameIndex;
+ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryEntityIdIndex;
+ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryCategoryIdIndex;
+ALTER TABLE cmCategory DROP INDEX categoryParentIdIndex;
+ALTER TABLE cmCategory DROP INDEX categoryNameIndex;
+
+create index propCategoryAttrNameIndex on cmPropertiesCategory(attributeName(100));
+create index propCategoryEntityNameIndex on cmPropertiesCategory(entityName(100));
+create index propCategoryEntityIdIndex on cmPropertiesCategory(entityId);
+create index propCategoryCategoryIdIndex on cmPropertiesCategory(categoryId);
+create index categoryParentIdIndex on cmCategory(parentId);
+create index categoryNameIndex on cmCategory(name(100));

@@ -37,6 +37,10 @@ ALTER TABLE cmSiNo ADD COLUMN isDeleted int NOT NULL DEFAULT 0;
 ALTER TABLE cmCont ADD COLUMN isDeleted int NOT NULL DEFAULT 0;
 ALTER TABLE cmRepository ADD COLUMN isDeleted int NOT NULL DEFAULT 0;
 
+ALTER TABLE cmContentTypeDef ADD COLUMN parentContentTypeDefinitionId int DEFAULT '-1';
+ALTER TABLE cmContentTypeDef ADD COLUMN detailPageResolverClass VARCHAR2(255) DEFAULT '';
+ALTER TABLE cmContentTypeDef ADD COLUMN detailPageResolverData VARCHAR2(1024) DEFAULT '';
+
 drop index propCategoryAttrNameIndex;
 drop index propCategoryEntityNameIndex;
 drop index propCategoryEntityNameIndex;

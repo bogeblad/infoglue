@@ -109,6 +109,7 @@ public class InstallAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
     {
+		System.out.println("operation:" + operation);
 		if(operation.equalsIgnoreCase("updateDatabase"))
 		{
 			try
@@ -130,6 +131,7 @@ public class InstallAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
+				e.printStackTrace();
 				this.errorMessage = e.getMessage();
 				return doInputDatabaseUpgrade();
 			}

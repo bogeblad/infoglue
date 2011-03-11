@@ -5,6 +5,13 @@
 	{
 		document.editForm.submit();
 	}
+	
+	function upgrade()
+	{
+		document.editForm.operation.value = "updateDatabaseTables";
+		document.editForm.submit();
+	}
+	
 </script>
 
 #lightMenuToolbar("" $buttons $rightButtons)
@@ -29,6 +36,7 @@
 
 <form method="POST" name="editForm" action="Install.action">
 	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<input type="hidden" id="operation" name="operation" value=""/>
 	
 	<p>
 		Your version: $dbVersion

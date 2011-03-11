@@ -222,12 +222,16 @@ public class ToolbarController implements ToolbarProvider
 		{
 			if(toolbarKey.equalsIgnoreCase("tool.common.install.introduction.title") ||
 			   toolbarKey.equalsIgnoreCase("tool.common.install.database.title") ||
-			   toolbarKey.equalsIgnoreCase("tool.common.install.databaseUpgrade.title") ||
 			   toolbarKey.equalsIgnoreCase("tool.common.install.server.title") ||
 			   toolbarKey.equalsIgnoreCase("tool.common.install.initialData.title"))
 			{
 				return getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			}
+			if(toolbarKey.equalsIgnoreCase("tool.common.install.databaseUpgrade.title"))
+			{
+				return getInstallUpgradeDatabaseFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
+			}
+				
 
 			if(toolbarKey.equalsIgnoreCase("tool.common.install.installationFinished.title"))
 				asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, false));
@@ -1807,6 +1811,33 @@ public class ToolbarController implements ToolbarProvider
 				  "clearTrashcan",
 				  true));
 
+		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+						
+		return buttons;
+	}
+
+	private List<ToolbarButton> getInstallUpgradeDatabaseFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	{
+		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
+
+		buttons.add(new ToolbarButton("",
+				  getLocalizedString(locale, "tool.common.upgradeButton.label"), 
+				  getLocalizedString(locale, "tool.common.upgradeButton.label"),
+				  "upgrade();",
+				  "",
+				  "left",
+				  "runTask",
+				  true));
+
+		buttons.add(new ToolbarButton("",
+				  getLocalizedString(locale, "tool.common.nextButton.label"), 
+				  getLocalizedString(locale, "tool.common.nextButton.label"),
+				  "next();",
+				  "images/v3/nextBackground.gif",
+				  "left",
+				  "next",
+				  true));
+		
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 						
 		return buttons;

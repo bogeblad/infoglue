@@ -1332,14 +1332,25 @@ public class InstallationController extends BaseController
 		Connection conn = getConnection(jdbcDriverName, jdbcURL, igUser, igPassword);
 		
 		String dbVersion = getCurrentDatabaseVersion(session);
+		System.out.println("dbVersion:" + dbVersion);
 		String sql = getUpgradeScripts(dbVersion, session);
+		System.out.println("sql:" + sql);
+		sql = sql.replaceAll("--.*", "");
+		System.out.println("sql:" + sql);
 		
 		StringTokenizer st = new StringTokenizer(sql, ";");
 	    while (st.hasMoreTokens()) 
 	    {
-	    	String command = st.nextToken();
-	    	//Logger.logInfo("Command: " + command);
-			issueCommand(conn, command + ";");
+	    	try
+	    	{
+	    		String command = st.nextToken();
+	    		//Logger.logInfo("Command: " + command);
+				issueCommand(conn, command + ";");
+		    }
+	        catch(SQLException ex) 
+	        {
+	        	logger.error("Command failed: " + ex.getMessage() + "\n" + "SQL: " + sql);
+	        }
 	   	}
 	}
 

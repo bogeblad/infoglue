@@ -24,33 +24,32 @@
 --
 -- This script contains the database updates required to go from 2.9 to 3.0.
 
-ALTER TABLE cmSubscription CHANGE entityName entityName varchar(100) DEFAULT NULL;
-ALTER TABLE cmSubscription CHANGE entityId entityId varchar(200) DEFAULT NULL;
+ALTER TABLE cmSubscription ALTER COLUMN entityName VARCHAR(100) NULL;
+ALTER TABLE cmSubscription ALTER COLUMN entityId varchar(200) NULL;
 
-ALTER TABLE cmDigitalAsset CHANGE assetContentType assetContentType VARCHAR(255);
+ALTER TABLE cmDigitalAsset ALTER COLUMN assetContentType VARCHAR(255);
 
-ALTER TABLE cmSiteNodeVersion ADD COLUMN sortOrder INTEGER NOT NULL DEFAULT -1;
-ALTER TABLE cmSiteNodeVersion ADD COLUMN isHidden TINYINT UNSIGNED NOT NULL DEFAULT 0;
---ALTER TABLE cmSiteNodeVersion ADD COLUMN forceProtocolChange TINYINT UNSIGNED NOT NULL DEFAULT 2;
+ALTER TABLE cmSiteNodeVersion ADD sortOrder INTEGER NOT NULL DEFAULT -1;
+ALTER TABLE cmSiteNodeVersion ADD isHidden INTEGER NOT NULL DEFAULT 0;
 
-ALTER TABLE cmSiteNode ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
-ALTER TABLE cmContent ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
-ALTER TABLE cmRepository ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
+ALTER TABLE cmSiteNode ADD isDeleted INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE cmContent ADD isDeleted INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE cmRepository ADD isDeleted INTEGER NOT NULL DEFAULT 0;
 
-ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId integer DEFAULT '-1';
-ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) DEFAULT '';
-ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverData VARCHAR(1024) DEFAULT '';
+ALTER TABLE cmContentTypeDefinition ADD parentContentTypeDefinitionId integer DEFAULT '-1';
+ALTER TABLE cmContentTypeDefinition ADD detailPageResolverClass VARCHAR(255) DEFAULT '';
+ALTER TABLE cmContentTypeDefinition ADD detailPageResolverData VARCHAR(1024) DEFAULT '';
 
-ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryAttrNameIndex;
-ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryEntityNameIndex;
-ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryEntityIdIndex;
-ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryCategoryIdIndex;
-ALTER TABLE cmCategory DROP INDEX categoryParentIdIndex;
-ALTER TABLE cmCategory DROP INDEX categoryNameIndex;
+DROP INDEX cmPropertiesCategory.propCategoryAttrNameIndex;
+DROP INDEX cmPropertiesCategory.propCategoryEntityNameIndex;
+DROP INDEX cmPropertiesCategory.propCategoryEntityIdIndex;
+DROP INDEX cmPropertiesCategory.propCategoryCategoryIdIndex;
+DROP INDEX cmCategory.categoryParentIdIndex;
+DROP INDEX cmCategory.categoryNameIndex;
 
-create index propCategoryAttrNameIndex on cmPropertiesCategory(attributeName(100));
-create index propCategoryEntityNameIndex on cmPropertiesCategory(entityName(100));
+create index propCategoryAttrNameIndex on cmPropertiesCategory(attributeName);
+create index propCategoryEntityNameIndex on cmPropertiesCategory(entityName);
 create index propCategoryEntityIdIndex on cmPropertiesCategory(entityId);
 create index propCategoryCategoryIdIndex on cmPropertiesCategory(categoryId);
 create index categoryParentIdIndex on cmCategory(parentId);
-create index categoryNameIndex on cmCategory(name(100));
+create index categoryNameIndex on cmCategory(name);

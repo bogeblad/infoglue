@@ -337,12 +337,10 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     	
     	try 
     	{
-    		//System.out.println("methodName:" + methodName);
     		protectFromCSSAttacks(this.getClass().getName(), this.commandName);
     		
       		final Method method = getClass().getMethod(methodName.toString(), new Class[0]);
       		result = (String) method.invoke(this, new Object[0]);
-      		//System.out.println("after methodName:" + methodName + ":" + result);
     	} 
     	catch(Exception ie) 
     	{

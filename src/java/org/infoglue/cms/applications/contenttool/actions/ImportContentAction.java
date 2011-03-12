@@ -124,7 +124,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 			this.repositoryId = parentContent.getRepositoryId();
 			
 			//String encoding = "ISO-8859-1";
-			System.out.println("file:" + file.exists() + ":" + file.getPath());
+			logger.debug("file:" + file.exists() + ":" + file.getPath());
 	        FileInputStream fis = new FileInputStream(file);
             InputStreamReader reader = new InputStreamReader(fis, encoding);
 			//Reader reader = new FileReader(file);

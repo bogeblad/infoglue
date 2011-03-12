@@ -110,6 +110,7 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			if(CmsPropertyHandler.getApplicationName() == null || 
 			   CmsPropertyHandler.getApplicationName().equalsIgnoreCase("deliver") ||
 			   requestURI.indexOf("ViewCMSTool.action") > -1 ||
+			   requestURI.indexOf("Admin.action") > -1 ||
 			   requestURI.indexOf("standalone") > -1 ||
 			   requestURI.indexOf("workflows") > -1 ||
 			   requestURI.indexOf("ViewDigitalAsset") > -1 ||

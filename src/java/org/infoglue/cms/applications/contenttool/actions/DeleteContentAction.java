@@ -129,7 +129,7 @@ public class DeleteContentAction extends InfoGlueAbstractAction
     	
     	    setActionMessage(userSessionKey, deleteContentInlineOperationDoneHeader);
     										  																	
-    	    System.out.println("originalAddress:" + originalAddress);
+    	    logger.debug("originalAddress:" + originalAddress);
     	    addActionLink(userSessionKey, new LinkBean("parentContentUrl", deleteContentInlineOperationViewDeletedContentParentLinkText, deleteContentInlineOperationViewDeletedContentParentTitleText, deleteContentInlineOperationViewDeletedContentParentTitleText, this.originalAddress, false, "", "", "content"));
             setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
             setActionExtraData(userSessionKey, "repositoryId", "" + this.contentVO.getRepositoryId());
@@ -152,16 +152,16 @@ public class DeleteContentAction extends InfoGlueAbstractAction
             throw new SystemException(e.getMessage());
         }
 
-        System.out.println("result:" + result);
+        logger.debug("result:" + result);
         if(!result.startsWith("success"))
         	return result;
         	
-        System.out.println("returnAddress:" + returnAddress);
+        logger.debug("returnAddress:" + returnAddress);
         if(this.returnAddress != null && !this.returnAddress.equals(""))
         {
 	        String arguments 	= "userSessionKey=" + userSessionKey + "&isAutomaticRedirect=false";
 	        String messageUrl 	= returnAddress + (returnAddress.indexOf("?") > -1 ? "&" : "?") + arguments;
-	        System.out.println("messageUrl:" + messageUrl);
+	        logger.debug("messageUrl:" + messageUrl);
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }

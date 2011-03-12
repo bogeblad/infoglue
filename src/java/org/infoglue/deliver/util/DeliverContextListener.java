@@ -119,7 +119,7 @@ public final class DeliverContextListener implements ServletContextListener
 			OSCacheUtility.setServletCacheParams(event.getServletContext());
 			
 			InfoGlueAuthenticationFilter.initializeProperties();
-			
+						
 			CmsPropertyHandler.setStartupTime(new Date()); 
 			
 			System.out.println("**************************************\n");

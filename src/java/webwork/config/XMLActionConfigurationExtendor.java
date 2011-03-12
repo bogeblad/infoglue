@@ -31,66 +31,49 @@ import org.xml.sax.SAXException;
 public class XMLActionConfigurationExtendor
 {
 
-    private final static Logger logger = Logger.getLogger(XMLActionConfigurationExtendor.class.getName());
+	private final static Logger logger = Logger.getLogger(XMLActionConfigurationExtendor.class.getName());
 
-   public void getMappingsFromString(String xmlActions, Set<String> actionClassNames)
-   {
-	   Map infoglueActionMappings = null;
+	public void getMappingsFromString(String xmlActions, Set<String> actionClassNames)
+	{
+		Map infoglueActionMappings = null;
 	   
-	   System.out.println("xmlActions:" + xmlActions);
+		logger.debug("xmlActions:" + xmlActions);
 	  
-	  System.out.println("Configuration.listImpl():" + Configuration.getConfiguration().getClass());
-	  System.out.println("Configuration.listImpl():" + Configuration.getConfiguration());
+		logger.debug("Configuration.listImpl():" + Configuration.getConfiguration().getClass());
+		logger.debug("Configuration.listImpl():" + Configuration.getConfiguration());
 	  
-	  if(Configuration.getConfiguration() instanceof DefaultConfiguration)
-	  {
-		  DefaultConfiguration config = (DefaultConfiguration)Configuration.getConfiguration();
-		  System.out.println("config:" + config.config);
-		  System.out.println("config:" + config.configurationImpl);
-		  if(config.config instanceof DelegatingConfiguration)
-		  {
-			  DelegatingConfiguration delConfig = (DelegatingConfiguration)config.config;
-			  System.out.println("delConfig:" + delConfig.configList);
-			  for(Configuration c : delConfig.configList)
-			  {
-				  System.out.println("Configuration:" + c);
-				  System.out.println("Configuration.configurationImpl:" + c.configurationImpl);
-				  if(c instanceof XMLActionConfiguration)
-				  {
-					  XMLActionConfiguration xmlActionConfiguration = (XMLActionConfiguration)c;
-					  System.out.println("Configuration:" + c);
-					  infoglueActionMappings = xmlActionConfiguration.actionMappings;
-				  }
-			  }
-		  }
-	  }
-	  
-	  /*
-	  Iterator listImplIterator = Configuration.getConfiguration().listImpl();
-      while(listImplIterator.hasNext())
-      {
-    	  Object o = listImplIterator.next();
-    	  System.out.println("Configuration:" + o);
-      }
-
-	  System.out.println("Configuration.list():");
-	  Iterator listIterator = Configuration.list();
-      while(listIterator.hasNext())
-      {
-    	  Object o = listIterator.next();
-    	  System.out.println("o:" + o);
-      }
-		*/
+		if(Configuration.getConfiguration() instanceof DefaultConfiguration)
+		{
+			DefaultConfiguration config = (DefaultConfiguration)Configuration.getConfiguration();
+			logger.debug("config:" + config.config);
+			logger.debug("config:" + config.configurationImpl);
+			if(config.config instanceof DelegatingConfiguration)
+			{
+				DelegatingConfiguration delConfig = (DelegatingConfiguration)config.config;
+				logger.debug("delConfig:" + delConfig.configList);
+				for(Configuration c : delConfig.configList)
+				{
+					logger.debug("Configuration:" + c);
+					logger.debug("Configuration.configurationImpl:" + c.configurationImpl);
+					if(c instanceof XMLActionConfiguration)
+					{
+						XMLActionConfiguration xmlActionConfiguration = (XMLActionConfiguration)c;
+						logger.debug("Configuration:" + c);
+						infoglueActionMappings = xmlActionConfiguration.actionMappings;
+					}
+				}
+			}
+		}
       
-      try
-      {
-         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-         // Parse document
-         StringReader reader = new StringReader( xmlActions );
-         InputSource inputSource = new InputSource( reader );
+		try
+		{
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			// Parse document
+			StringReader reader = new StringReader( xmlActions );
+			InputSource inputSource = new InputSource( reader );
          
-         Document document = factory.newDocumentBuilder().parse( inputSource );
-         reader.close();
+			Document document = factory.newDocumentBuilder().parse( inputSource );
+			reader.close();
          
          // Get list of actions
          NodeList actions = document.getElementsByTagName("action");

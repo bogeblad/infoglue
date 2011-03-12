@@ -243,10 +243,10 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	
 	public void protectFromCSSAttacks(String actionName, String commandName) throws Exception
 	{
-		//System.out.println("Checking if we should protect actionName:" + actionName + " : " + commandName);
+		//logger.debug("Checking if we should protect actionName:" + actionName + " : " + commandName);
 		if(commandName != null && (commandName.startsWith("input") || commandName.startsWith("new") || commandName.startsWith("list") || commandName.startsWith("edit")))
 		{
-			//System.out.println("Was input action - do not protect:" + commandName);
+			//logger.debug("Was input action - do not protect:" + commandName);
 			return;
 		}
 		//Special cases - please rewrite actions to conform
@@ -261,7 +261,8 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		}
 		if(actionNames.contains(actionName))
 		{
-			//System.out.println("Yes - we decided to protect:" + actionName);
+			if(logger.isDebugEnabled())
+				logger.debug("Yes - we decided to protect:" + actionName);
 			validateSecurityCode();
 		}
 	}
@@ -274,7 +275,8 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		{
 			throw new SystemException("Your request did not contain the correct checksum value - it was classified as a hack-attempt");
 		}
-		//System.out.println("Your security code validated");
+		if(logger.isDebugEnabled())
+			logger.debug("Your security code validated");
 	}
 	
 	public List getAuthorizedRepositoryVOList() throws Exception
@@ -316,7 +318,8 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 					{
 						RepositoryVO repositoryVO = (RepositoryVO)authorizedRepositoryVOList.get(0);
 						repositoryId = repositoryVO.getId();
-						//System.out.println("Setting session repositoryId:" + repositoryId);
+						if(logger.isDebugEnabled())
+							logger.debug("Setting session repositoryId:" + repositoryId);
 		    			getHttpSession().setAttribute("repositoryId", repositoryId);	
 					}
 				}

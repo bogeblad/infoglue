@@ -55,6 +55,7 @@ import org.infoglue.cms.util.graphics.ThumbnailGenerator;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.HttpHelper;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 
@@ -107,6 +108,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		
 		//System.out.println("fileName:" + fileName);
 		//System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
+		Timer t = new Timer();
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
@@ -132,6 +134,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			fileName = "" + contentId + "_" + languageId + digitalAssetVO.getAssetKey() + suffix;
 			//System.out.println("New key is:" + fileName);
 		}
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFileName", t.getElapsedTime());
 		
 		return fileName;
 	}
@@ -146,6 +149,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		
 		//System.out.println("fileName:" + fileName);
 		//System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
+		Timer t = new Timer();
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
@@ -170,7 +174,8 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			fileName = "" + contentId + "_" + languageId + digitalAsset.getAssetKey() + suffix;
 			//System.out.println("New key is:" + fileName);
 		}
-		
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFileName2", t.getElapsedTime());
+
 		return fileName;
 	}
 
@@ -184,6 +189,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		
 		//System.out.println("folderName:" + folderName);
 		//System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
+		Timer t = new Timer();
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
@@ -203,7 +209,8 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			folderName = "" + (contentId / 1000);
 			//System.out.println("New folderName is:" + folderName);
 		}
-		
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFolderName", t.getElapsedTime());
+
 		return folderName;
 	}
 
@@ -217,6 +224,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		
 		//System.out.println("folderName:" + folderName);
 		//System.out.println("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
+		Timer t = new Timer();
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
@@ -235,7 +243,8 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			folderName = "" + (contentId / 1000);
 			//System.out.println("New folderName is:" + folderName);
 		}
-		
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFolderName2", t.getElapsedTime());
+
 		return folderName;
 	}
 

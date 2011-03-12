@@ -42,9 +42,12 @@ import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.Content;
@@ -66,10 +69,14 @@ import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.Repository;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersion;
+import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
+import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -77,6 +84,7 @@ import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 
@@ -156,8 +164,19 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 		deliveryContext.addUsedContent("content_" + contentId);
 
-		ContentVO contentVO = (ContentVO)getVOWithId(SmallContentImpl.class, contentId, db);
-				
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//System.out.println("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO)getVOWithId(SmallContentImpl.class, contentId, db);
+			if(contentVO != null)
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+		}
+		
 		return contentVO;
 	}
 	
@@ -647,13 +666,15 @@ public class ContentDeliveryController extends BaseDeliveryController
 		}
 		else
 		{
+			Timer t = new Timer();
+			
 			//logger.info("Querying for verson: " + versionKey); 
 		    OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl cv WHERE cv.contentId = $1 AND cv.languageId = $2 AND cv.stateId >= $3 AND cv.isActive = $4 ORDER BY cv.contentVersionId desc");
 	    	oql.bind(contentId);
 	    	oql.bind(languageId);
 	    	oql.bind(operatingMode);
 	    	oql.bind(true);
-	
+	    	
 	    	QueryResults results = oql.execute(Database.ReadOnly);
 
 			if (results.hasMore()) 
@@ -677,6 +698,94 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 		return contentVersionVO;
     }
+	
+	/**
+	 * This method gets a contentVersion with a state and a language which is active.
+	 */
+
+	public void fillCaches() throws Exception
+    {
+
+		Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+
+			
+			String operatingMode = CmsPropertyHandler.getOperatingMode();
+			
+			List<RepositoryVO> repositoryVOList = RepositoryController.getController().getRepositoryVOList();
+			for(RepositoryVO repositoryVO : repositoryVOList)
+			{
+				List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList(repositoryVO.getId());
+				for(LanguageVO languageVO : languageVOList)
+				{
+				    OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl cv WHERE cv.languageId = $1 AND cv.stateId >= $2 AND cv.isActive = $3 ORDER BY cv.contentId, cv.contentVersionId desc");
+				    System.out.println("db:" + db);
+				    System.out.println("languageVO:" + languageVO);
+				    oql.bind(languageVO.getId());
+			    	oql.bind(operatingMode);
+			    	oql.bind(true);
+			    	
+			    	QueryResults results = oql.execute(Database.ReadOnly);
+			    	String oldKey = null;
+			    	while(results.hasMore()) 
+			        {
+						SmallestContentVersion contentVersion = (SmallestContentVersion)results.next();
+						SmallestContentVersionVO contentVersionVO = contentVersion.getValueObject();
+						System.out.println("contentVersion:" + contentVersionVO.getContentId() + ":" + contentVersionVO.getId());
+						getContentVO(contentVersionVO.getContentId(), db);
+						getObjectWithId(ContentVersionImpl.class, contentVersionVO.getId(), db);
+						getObjectWithId(SmallContentVersionImpl.class, contentVersionVO.getId(), db);
+						
+						String versionKey = "" + contentVersionVO.getContentId() + "_" + contentVersionVO.getLanguageId() + "_" + operatingMode + "_smallestContentVersionVO";
+			        	if(oldKey == null || !oldKey.equals(versionKey))
+			        	{
+			        		System.out.println("Caching current version:" + contentVersion.getId());
+			        		CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersionVO, new String[]{"contentVersion_" + contentVersionVO.getId(), "content_" + contentVersionVO.getContentId()}, true);
+			        		oldKey = versionKey;
+			        	}
+			        }
+	
+					results.close();
+					oql.close();
+				
+				
+				    OQLQuery oqlSN = db.getOQLQuery( "SELECT snv FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl snv WHERE snv.stateId >= $1 AND snv.isActive = $2 ORDER BY snv.owningSiteNode.siteNodeId, snv.siteNodeVersionId desc");
+				    System.out.println("db:" + db);
+				    System.out.println("languageVO:" + languageVO);
+				    oql.bind(languageVO.getId());
+			    	oql.bind(operatingMode);
+			    	oql.bind(true);
+			    	
+			    	QueryResults results2 = oql.execute(Database.ReadOnly);
+			    	String oldSiteNodeId = null;
+			    	while(results.hasMore()) 
+			        {
+			    		SiteNodeVersion siteNodeVersion = (SiteNodeVersion)results.next();
+						//SmallestContentVersionVO contentVersionVO = siteNodeVersion.getValueObject();
+						getObjectWithId(SiteNodeVersionImpl.class, siteNodeVersion.getId(), db);
+						getObjectWithId(SmallSiteNodeVersionImpl.class, siteNodeVersion.getId(), db);
+			        }
+	
+					results.close();
+					oql.close();
+
+				}
+			}
+
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			logger.info("An error occurred so we should not complete the transaction:" + e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+    }
+
 
 	private List getContentVersionVOList(Content content, Integer languageId, Integer operatingMode, DeliveryContext deliveryContext, Database db) throws Exception
     {

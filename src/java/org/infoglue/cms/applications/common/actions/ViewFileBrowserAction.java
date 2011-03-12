@@ -66,10 +66,12 @@ public class ViewFileBrowserAction extends InfoGlueAbstractAction
 		{
 			if(path != null && !path.equals(""))
 			{
-				System.out.println("path:" + path);
+				if(logger.isDebugEnabled())
+					logger.debug("path:" + path);
 				DesEncryptionHelper desEncryptionHelper = new DesEncryptionHelper();
 				String decryptedPath = desEncryptionHelper.decrypt(path);
-				System.out.println("decryptedPath:" + decryptedPath);
+				if(logger.isDebugEnabled())
+					logger.debug("decryptedPath:" + decryptedPath);
 				
 				File file = new File(decryptedPath);
 				if(file.exists() && file.isFile())
@@ -96,7 +98,7 @@ public class ViewFileBrowserAction extends InfoGlueAbstractAction
 					
 					if(contentType.equals(""))
 					{
-						System.out.println("Not allowed file type");
+						logger.warn("Not allowed file type");
 						throw new Exception("Not allowed file type");
 					}
 					
@@ -125,7 +127,7 @@ public class ViewFileBrowserAction extends InfoGlueAbstractAction
 			        return NONE;
 				}
 				else
-					System.out.println("File not found...:" + path);
+					logger.error("File not found...:" + path);
 			}
 		}
 		catch (Exception e) 

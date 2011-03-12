@@ -299,7 +299,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			InfoGlueComponent component = (InfoGlueComponent)unsortedPageComponentsIterator.next();
 
 			this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), component));
-			this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
+			//this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
 			
 			int index = 0;
 			Iterator sortedPageComponentsIterator = sortedPageComponents.iterator();
@@ -308,7 +308,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				InfoGlueComponent sortedComponent = (InfoGlueComponent)sortedPageComponentsIterator.next();
 
 				this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), sortedComponent));
-				this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
+				//this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
 
 				if(sortedComponent.getPreProcessingOrder().compareTo(component.getPreProcessingOrder()) < 0)
 					break;
@@ -324,7 +324,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		{
 			InfoGlueComponent component = (InfoGlueComponent)sortedPageComponentsIterator.next();
 			this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), component));
-			this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
+			//this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
 			
 			ContentVO metaInfoContentVO = nodeDeliveryController.getBoundContent(getDatabase(), this.getTemplateController().getPrincipal(), this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), true, "Meta information", this.getDeliveryContext());
 			if(!component.getIsInherited()) //Wrong maybe? 
@@ -1669,7 +1669,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		StringBuilder decoratedComponent = new StringBuilder();
 		
 		templateController.setComponentLogic(new ComponentLogic(templateController, component));
-		templateController.getDeliveryContext().getUsageListeners().add(templateController.getComponentLogic().getComponentDeliveryContext());
+		//System.out.println("BBBBBBBBBBBBB");
+		//templateController.getDeliveryContext().getUsageListeners().add(templateController.getComponentLogic().getComponentDeliveryContext());
 
 		try
 		{
@@ -1683,6 +1684,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		    
 			if(componentModelClassName != null && !componentModelClassName.equals(""))
 			{
+				templateController.getDeliveryContext().getUsageListeners().add(templateController.getComponentLogic().getComponentDeliveryContext());
 				try
 				{
 					ComponentModel componentModel = (ComponentModel)Thread.currentThread().getContextClassLoader().loadClass(componentModelClassName).newInstance();
@@ -1692,10 +1694,13 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				{
 					logger.error("The component '" + component.getName() + "' stated that class: " + componentModelClassName + " should be used as model. An exception was thrown when it was invoked: " + e.getMessage(), e);	
 				}
+				templateController.getDeliveryContext().getUsageListeners().remove(templateController.getComponentLogic().getComponentDeliveryContext());
 			}
 			
 			if(componentString != null && !componentString.equals(""))
 			{
+				templateController.getDeliveryContext().getUsageListeners().add(templateController.getComponentLogic().getComponentDeliveryContext());
+				
 				Map context = getDefaultContext();
 		    	context.put("templateLogic", templateController);
 		    	context.put("model", component.getModel());
@@ -1708,6 +1713,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				
 				if(logger.isDebugEnabled())
 					logger.debug("componentString:" + componentString);
+				
+				templateController.getDeliveryContext().getUsageListeners().remove(templateController.getComponentLogic().getComponentDeliveryContext());
 			}
 			
 			String templateComponentString = getComponentString(templateController, component.getContentId(), component);
@@ -1753,8 +1760,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		    logger.warn("An component with either an empty template or with no template in the sitelanguages was found:" + e.getMessage(), e);	
 		}    	
 		
-		templateController.getDeliveryContext().getUsageListeners().remove(templateController.getComponentLogic().getComponentDeliveryContext());
-
 		if(logger.isDebugEnabled())
 			logger.debug("decoratedComponent:" + decoratedComponent.toString());
 

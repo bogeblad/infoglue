@@ -526,34 +526,6 @@ public class VisualFormatter
 			return null;
 		
 		return StringEscapeUtils.escapeHtml(s);
-		
-		/*
-		StringBuffer sb = new StringBuffer();
-		int n = s.length();
-		for (int i = 0; i < n; i++) 
-		{
-			char c = s.charAt(i);
-			if(c < 128 && c > 32)
-			{
-				//System.out.println(c + "=" + (int)c);
-			    if(Character.isLetterOrDigit(c) ||  c == '-' || c == '_' || c == '.')
-			        sb.append(c);
-			    else
-			    {
-					sb.append(c);
-					//sb.append("\\u" + c);
-			    }
-			}
-			else
-			{
-				//System.out.println(c + "=" + (int)c);
-	        	sb.append("&#" + (int)c + ";");
-			}
-		}
-		
-		System.out.println("3:\n" + sb.toString() + "\n\n");
-		return sb.toString();
-		*/
 	}
 
 	/**

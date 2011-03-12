@@ -64,6 +64,7 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryControlle
 import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 /**
  *
@@ -113,27 +114,15 @@ public class ViewPageFilter implements Filter
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException 
     {       
+        Timer t = new Timer();
+
         long end, start = System.currentTimeMillis();
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-
+        
 		if(!CmsPropertyHandler.getIsValidSetup() && (httpRequest.getRequestURI().indexOf("Install") == -1 && httpRequest.getRequestURI().indexOf("/script") == -1 && httpRequest.getRequestURI().indexOf("/css") == -1 && httpRequest.getRequestURI().indexOf("/images") == -1))
 			httpResponse.sendRedirect("" + httpRequest.getContextPath() + "/Install!input.action");
-
-        /*
-        if(RequestAnalyser.getBlockRequests() && 
-           httpRequest.getRequestURI().indexOf("UpdateCache") == -1 && 
-           httpRequest.getRequestURI().indexOf("ViewApplicationState") == -1)
-        {
-            logger.info("Maximum number of clients reached in ViewPageFilter. Responding with an error.");
-            httpResponse.setContentType("text/html; charset=UTF-8");
-     		httpRequest.setAttribute("responseCode", "503");
-     		httpRequest.getRequestDispatcher("/ErrorPage!busy.action").forward(httpRequest, httpResponse);
-
-            return;
-        }
-        */
-        
+		        
         String enableNiceURI = CmsPropertyHandler.getEnableNiceURI();
         if (enableNiceURI == null)
             enableNiceURI = "false";
@@ -143,6 +132,7 @@ public class ViewPageFilter implements Filter
         if(logger.isInfoEnabled())
         	logger.info("requestURI:" + requestURI);
 
+        Timer t2 = new Timer();
         try
         {
         	//System.out.println("requestURI:" + requestURI);
@@ -164,7 +154,8 @@ public class ViewPageFilter implements Filter
         {
         	logger.warn("Error checking for unicode chars:" + e.getMessage());
 		}
-
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("IndexOf in uri-change", t2.getElapsedTime());
+        
         if(logger.isInfoEnabled())
         	logger.info("requestURI after encoding check:" + requestURI);
 
@@ -177,15 +168,7 @@ public class ViewPageFilter implements Filter
         	
 	        if (enableNiceURI.equalsIgnoreCase("true") && !uriMatcher.matches(requestURI)) 
 	        {
-	            /*
-	        	synchronized(RequestAnalyser.getCurrentRequests())
-	        	{
-	        	    httpRequest.setAttribute("startTime", new Long(start));
-	        	    RequestAnalyser.getCurrentRequests().add(httpRequest);
-	        	}
-	        	*/
-	        	
-	            while(!CmsPropertyHandler.getOperatingMode().equals("3") && RequestAnalyser.getRequestAnalyser().getBlockRequests())
+	            while(/*!CmsPropertyHandler.getOperatingMode().equals("3") &&*/ CmsPropertyHandler.getActuallyBlockOnBlockRequests() && RequestAnalyser.getRequestAnalyser().getBlockRequests())
 	            {
 	            	if(logger.isInfoEnabled())
 	            		logger.info("Queing up requests as cache eviction are taking place..");
@@ -206,8 +189,9 @@ public class ViewPageFilter implements Filter
 	            try
 	            {
 	                repositoryVOList = getRepositoryId(httpRequest, db);
-	                logger.info("repositoryVOList:" + repositoryVOList.size());
-	                
+	                if(logger.isInfoEnabled())
+	                	logger.info("repositoryVOList:" + repositoryVOList.size());
+
 	            	languageId = getLanguageId(httpRequest, httpSession, repositoryVOList, requestURI, db);
 	            
 	                Integer siteNodeId = null;
@@ -334,7 +318,6 @@ public class ViewPageFilter implements Filter
 	        else 
 	        {
 	        	//filterChain.doFilter(httpRequest, httpResponse);
-	        	
 	        	if(!httpResponse.isCommitted())
 	        	{
 	        		try
@@ -371,6 +354,9 @@ public class ViewPageFilter implements Filter
 	        else
 	            logger.error("Error and response was committed:" + e.getMessage(), e);
 	    }
+        
+        if(httpRequest.getRequestURL().indexOf("digitalAssets") == -1)
+        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewPageFilter", t.getElapsedTime());
     }
 
     public void destroy() 
@@ -465,6 +451,7 @@ public class ViewPageFilter implements Filter
         }
         else
         {
+        	Timer t = new Timer();
         	Iterator repositoryVOListIterator = repositoryVOList.iterator();
         	outer: while(repositoryVOListIterator.hasNext())
         	{
@@ -499,6 +486,7 @@ public class ViewPageFilter implements Filter
         			}
         		}
         	}
+        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("AAAAAAA", t.getElapsedTime());
         }
 
         if (languageId != null)

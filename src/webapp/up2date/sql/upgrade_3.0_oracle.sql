@@ -24,22 +24,21 @@
 --
 -- This script contains the database updates required to go from 2.9 to 3.0.
 
-ALTER TABLE cmSubscription MODIFY ( entityName VARCHAR2(100) NULL );
-ALTER TABLE cmSubscription MODIFY ( entityId VARCHAR2(200) NULL );
+ALTER TABLE cmSubscription MODIFY ( entityName VARCHAR2(100) default NULL );
+ALTER TABLE cmSubscription MODIFY ( entityId VARCHAR2(200) default NULL );
 
-ALTER TABLE cmDigAsset MODIFY ( assetContentType VARCHAR2(255) NULL );
+ALTER TABLE cmDigAsset MODIFY ( assetContentType VARCHAR2(255) default NULL );
 
-ALTER TABLE cmSiNoVer ADD COLUMN sortOrder int NOT NULL DEFAULT '-1';
-ALTER TABLE cmSiNoVer ADD COLUMN isHidden int NOT NULL DEFAULT 0;
-ALTER TABLE cmSiNoVer ADD COLUMN forceProtocolChange int NOT NULL DEFAULT 2;
+ALTER TABLE cmSiNoVer ADD sortOrder number DEFAULT '-1' NOT NULL;
+ALTER TABLE cmSiNoVer ADD isHidden number DEFAULT 0 NOT NULL;
 
-ALTER TABLE cmSiNo ADD COLUMN isDeleted int NOT NULL DEFAULT 0;
-ALTER TABLE cmCont ADD COLUMN isDeleted int NOT NULL DEFAULT 0;
-ALTER TABLE cmRepository ADD COLUMN isDeleted int NOT NULL DEFAULT 0;
+ALTER TABLE cmSiNo ADD isDeleted number DEFAULT 0 NOT NULL;
+ALTER TABLE cmCont ADD isDeleted number DEFAULT 0 NOT NULL;
+ALTER TABLE cmRepository ADD isDeleted number DEFAULT 0 NOT NULL;
 
-ALTER TABLE cmContentTypeDef ADD COLUMN parentContentTypeDefinitionId int DEFAULT '-1';
-ALTER TABLE cmContentTypeDef ADD COLUMN detailPageResolverClass VARCHAR2(255) DEFAULT '';
-ALTER TABLE cmContentTypeDef ADD COLUMN detailPageResolverData VARCHAR2(1024) DEFAULT '';
+ALTER TABLE cmContentTypeDef ADD parentContentTypeDefinitionId number DEFAULT -1;
+ALTER TABLE cmContentTypeDef ADD detailPageResolverClass varchar2(255) DEFAULT '';
+ALTER TABLE cmContentTypeDef ADD detailPageResolverData varchar2(1024) DEFAULT '';
 
 drop index propCategoryAttrNameIndex;
 drop index propCategoryEntityNameIndex;
@@ -48,10 +47,20 @@ drop index propCategoryCategoryIdIndex;
 drop index categoryParentIdIndex;
 drop index categoryNameIndex;
 
-create index propCategoryAttrNameIndex on cmPropertiesCategory(attributeName(100));
-create index propCategoryEntityNameIndex on cmPropertiesCategory(entityName(100));
-create index propCategoryEntityIdIndex on cmPropertiesCategory(entityId(255));
+create index propCategoryAttrNameIndex on cmPropertiesCategory(attributeName);
+create index propCategoryEntityNameIndex on cmPropertiesCategory(entityName);
+create index propCategoryEntityIdIndex on cmPropertiesCategory(entityId);
 create index propCategoryCategoryIdIndex on cmPropertiesCategory(categoryId);
 create index categoryParentIdIndex on cmCategory(parentId);
-create index categoryNameIndex on cmCategory(name(100));
+create index categoryNameIndex on cmCategory(name);
+
+
+
+
+
+
+
+
+
+
 

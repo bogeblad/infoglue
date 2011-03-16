@@ -2097,11 +2097,11 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	    {
 	        String direction = "asc";
 	        componentVOList = ComponentController.getController().getComponentVOList(sortProperty, direction, allowedComponentNames, disallowedComponentNames, allowedComponentGroupNames, this.getInfoGluePrincipal());
-	        System.out.println("componentVOList:" + componentVOList);
+	        //System.out.println("componentVOList:" + componentVOList);
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error getting sorted components. Message: " + e.getMessage(), e);
 	    }
 		
 	    return componentVOList;

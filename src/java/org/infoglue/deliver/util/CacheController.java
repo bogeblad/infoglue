@@ -2593,9 +2593,9 @@ public class CacheController extends Thread
             File dirFile = new File(dir);
             dirFile.mkdirs();
             File file = new File(dir + File.separator + key.hashCode());
-            System.out.println("Deleting " + file.getPath());
+            logger.info("Deleting " + file.getPath());
             boolean deleted = file.delete();
-            System.out.println("Deleted:" + deleted);
+            logger.info("Deleted:" + deleted);
     	}
     	catch (Exception e) 
     	{

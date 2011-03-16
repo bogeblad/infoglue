@@ -65,7 +65,7 @@ public class ExpireCacheJob implements Job
     	lastRun = System.currentTimeMillis();
     	
     	long diffLastCacheCheck1 = ((System.currentTimeMillis() - lastCacheCheck) / 1000);
-		System.out.println("diffLastCacheCheck1 " + diffLastCacheCheck1 + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
+    	logger.info("diffLastCacheCheck1 " + diffLastCacheCheck1 + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
 	    if(diffLastCacheCheck1 > 30)
 		{
 	        synchronized(RequestAnalyser.getRequestAnalyser()) 
@@ -83,12 +83,12 @@ public class ExpireCacheJob implements Job
 	        {
 		    	if(CmsPropertyHandler.getOperatingMode().equals("3"))
 		    	{
-		    		System.out.println("Checking publications...");
+		    		logger.debug("Checking publications...");
 		    		//Check if we should check for publications just to make sure the system has not lost connection to the cms. If we have not received the latest publications we clear all.
 		    		Integer numberOfPublicationsSinceStart = RequestAnalyser.getRequestAnalyser().getNumberOfPublicationsSinceStart();
-		    		System.out.println("numberOfPublicationsSinceStart:" + numberOfPublicationsSinceStart);
+		    		logger.debug("numberOfPublicationsSinceStart:" + numberOfPublicationsSinceStart);
 		    		List<PublicationVO> publicationsVOListSinceStart = PublicationController.getController().getPublicationsSinceDate(systemPublicationSyncDate);
-		    		System.out.println("publicationsVOListSinceStart:" + publicationsVOListSinceStart.size());
+		    		logger.debug("publicationsVOListSinceStart:" + publicationsVOListSinceStart.size());
 		    		if(numberOfPublicationsSinceStart != publicationsVOListSinceStart.size())
 		    		{
 		    			logger.error("Telling infoglue to recache all as the number of publications processed are not the same as the number of publications made - could be a sync issue.");
@@ -114,12 +114,12 @@ public class ExpireCacheJob implements Job
 	            logger.error("An error occurred when we tried to validate caches:" + e.getMessage(), e);
 	        }
 		    
-		    logger.info("releasing block");
+	        logger.debug("releasing block");
 		    RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
     	}
 	    
     	long diffLastCacheCheck = ((System.currentTimeMillis() - lastCacheCheck) / 1000);
-		logger.info("diffLastCacheCheck " + diffLastCacheCheck + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
+    	logger.debug("diffLastCacheCheck " + diffLastCacheCheck + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
 	    if(diffLastCacheCheck > 600)
 		{
 	        synchronized(RequestAnalyser.getRequestAnalyser()) 
@@ -135,7 +135,7 @@ public class ExpireCacheJob implements Job
 	
 			try
 	        {
-				logger.info("Validating caches in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
+				logger.debug("Validating caches in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
 		    	CacheController.validateCaches();
 				RequestAnalyser.shortenPageStatistics();
 		    	lastCacheCheck = System.currentTimeMillis();
@@ -145,14 +145,14 @@ public class ExpireCacheJob implements Job
 	            logger.error("An error occurred when we tried to validate caches:" + e.getMessage(), e);
 	        }
 		    
-		    logger.info("releasing block");
+	        logger.debug("releasing block");
 		    RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
     	}
     	
     	long diff = ((System.currentTimeMillis() - lastCacheCleanup) / 1000);
     	if(diff > 3600)
     	{
-    		logger.info("Cleaning heavy caches so memory footprint is kept low:" + diff);
+    		logger.debug("Cleaning heavy caches so memory footprint is kept low:" + diff);
             /*
             synchronized(RequestAnalyser.getRequestAnalyser()) 
     	    {

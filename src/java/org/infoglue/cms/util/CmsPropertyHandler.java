@@ -1507,7 +1507,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersionReleaseDate()
 	{
-	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2011-03-14");
+	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2011-03-16");
 	}
 
 	public static String getLogDatabaseMessages()
@@ -1834,7 +1834,7 @@ public class CmsPropertyHandler
 			catch(Exception e)
 			{
 			    logger.error("Error loading properties from string. Reason:" + e.getMessage());
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 	    else
@@ -1845,12 +1845,12 @@ public class CmsPropertyHandler
 			{ 
 				if(deliverUrl.indexOf("@") == -1)
 				{
-					System.out.println("internalDeliverUrl:" + deliverUrl);
+					logger.info("internalDeliverUrl:" + deliverUrl);
 					if(!deliverUrl.startsWith("http"))
 					{
 						deliverUrl = "" + defaultScheme + "://127.0.0.1:" + defaultPort + "" + deliverUrl;
 					}
-					System.out.println("internalDeliverUrl:" + deliverUrl);
+					logger.info("internalDeliverUrl:" + deliverUrl);
 						
 					urls.add(deliverUrl);
 				}
@@ -1896,12 +1896,12 @@ public class CmsPropertyHandler
 			{ 
 				if(deliverUrl.indexOf("@") == -1)
 				{
-					System.out.println("deliverUrl:" + deliverUrl);
+					logger.info("deliverUrl:" + deliverUrl);
 					if(!deliverUrl.startsWith("http"))
 					{
 						deliverUrl = "" + defaultScheme + "://127.0.0.1:" + defaultPort + "" + deliverUrl;
 					}
-					System.out.println("deliverUrl:" + deliverUrl);
+					logger.info("deliverUrl:" + deliverUrl);
 						
 					urls.add(deliverUrl);
 				}

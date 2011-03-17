@@ -178,7 +178,8 @@ public class CmsPropertyHandler
 				cachedProperties.load(CmsPropertyHandler.class.getClassLoader().getResource("/" + applicationName + ".properties").openStream());
 			    //cachedProperties.load(CmsPropertyHandler.class.getResourceAsStream("/" + applicationName + ".properties"));
 			
-			cachedProperties.list(System.out);
+			if(logger.isInfoEnabled())
+				cachedProperties.list(System.out);
 			
 			Enumeration enumeration = cachedProperties.keys();
 			while(enumeration.hasMoreElements())

@@ -685,8 +685,7 @@ public class CacheController extends Thread
 					value = result;
 					if(result != null)
 					{
-						cacheNewResult(pageInvoker, cacheAdministrator, pageKey, result);
-						isUpdated = true;
+				    	isUpdated = cacheNewResult(pageInvoker, cacheAdministrator, pageKey, result);
 					}
 					//System.out.println("result:" + result);
 				} 
@@ -698,7 +697,9 @@ public class CacheController extends Thread
 		    	try
 		    	{
 		    		if(!isUpdated)
+		    		{
 		    			cacheAdministrator.cancelUpdate(pageKey);
+		    		}
 		    	}
 		    	catch (Exception e) 
 		    	{
@@ -728,8 +729,10 @@ public class CacheController extends Thread
 		return value;
 	}
 
-	private static void cacheNewResult(PageInvoker pageInvoker, GeneralCacheAdministrator cacheAdministrator, String pageKey, String value) 
+	private static boolean cacheNewResult(PageInvoker pageInvoker, GeneralCacheAdministrator cacheAdministrator, String pageKey, String value) 
 	{
+		boolean isCached = false;
+		
 		String pageCacheExtraName = "pageCacheExtra";
 		
 		if(!pageInvoker.getTemplateController().getIsPageCacheDisabled() && !pageInvoker.getDeliveryContext().getDisablePageCache()) //Caching page if not disabled
@@ -750,6 +753,7 @@ public class CacheController extends Thread
 				if(pageInvoker.getTemplateController().getOperatingMode().intValue() == 3 && !CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
 				{
 					cacheAdministrator.putInCache(pageKey, compressedData, allUsedEntitiesCopy);
+					isCached = true;
 					//CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, false);
 					//CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, false);    
 				}
@@ -760,6 +764,7 @@ public class CacheController extends Thread
 					//System.out.println("compressedData:" + compressedData);
 					//System.out.println("allUsedEntitiesCopy:" + allUsedEntitiesCopy);
 					cacheAdministrator.putInCache(pageKey, compressedData, allUsedEntitiesCopy);
+					isCached = true;
 					CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, true);
 					CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, true);    
 				}
@@ -769,12 +774,14 @@ public class CacheController extends Thread
 		        if(pageInvoker.getTemplateController().getOperatingMode().intValue() == 3 && !CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
 		        {
 		        	cacheAdministrator.putInCache(pageKey, value, allUsedEntitiesCopy);
+					isCached = true;
 		        	CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, false);
 		        	CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, false);    
 		        }
 		    	else
 		    	{
 		    		cacheAdministrator.putInCache(pageKey, value, allUsedEntitiesCopy);
+					isCached = true;
 		    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, true);
 		    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, true);    
 		    	}
@@ -785,6 +792,7 @@ public class CacheController extends Thread
 			if(logger.isInfoEnabled())
 				logger.info("Page caching was disabled for the page " + pageInvoker.getDeliveryContext().getSiteNodeId() + " with pageKey " + pageInvoker.getDeliveryContext().getPageKey() + " - modifying the logic to enable page caching would boast performance.");
 		}
+		return isCached;
 	}
 
 	public static Object getCachedObjectFromAdvancedCache(String cacheName, String key, int updateInterval)

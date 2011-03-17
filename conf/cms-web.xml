@@ -127,6 +127,12 @@
 		
 	</filter>
 	
+	<!-- This filter sets expires headers and gzip the appropriate resources -->
+	<filter>  
+	    <filter-name>ResourceFilter</filter-name>  
+     	<filter-class>org.infoglue.deliver.applications.filters.ResourceFilter</filter-class>  
+  	</filter>  
+	
 	<!-- Define filter mappings for the defined filters -->
 	<filter-mapping>
 		<filter-name>CacheEvictionFilter</filter-name>
@@ -140,6 +146,11 @@
 	
 	<filter-mapping>
 		<filter-name>InfoGlue Authentication Filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>ResourceFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 

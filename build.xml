@@ -124,25 +124,41 @@
 		<delete dir="${build}" quiet="true"/>
 	</target>
 
-    	<!-- =================================================================== -->
-    	<!--Fetches the latest code from cvs before building it                  -->
-    	<!-- =================================================================== -->
-    	<target name="fetchInfoGlue">
-        	<cvs command="update -P -d -A" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
-    	</target>    
+	<!-- =================================================================== -->
+	<!--Fetches the latest code from cvs before building it                  -->
+	<!-- =================================================================== -->
+	<target name="fetchInfoGlue">
+    	<!--
+		<cvs command="update -P -d -A" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
+		-->
+		<copyfile dest="infogluebuild.properties" src="build.properties" forceoverwrite="true"/>
+		<echo message="Infoglue has moved to git and we will now fetch the latest source from www.infoglue.org"/>
+		<get src="http://www.infoglue.org/downloads/distributions/latest/Infoglue.zip" dest="Infoglue.zip" verbose="true" usetimestamp="true"/>
+		<unzip src="Infoglue.zip" dest="." overwrite="yes"/>
+		<delete file="Infoglue.zip"/>
+		<copyfile src="infogluebuild.properties" dest="build.properties" forceoverwrite="true"/>
+	</target>    
 
-    	<!-- =================================================================== -->
-        <!--Fetches the latest code up until a date from cvs before building it  -->
+	<!-- =================================================================== -->
+    <!--Fetches the latest code up until a date from cvs before building it  -->
 	<!-- =================================================================== -->
 	<target name="fetchInfoGlueOnDate">
-		<cvs command="update -P -d -D '${checkoutDate}'" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
+		<echo message="Infoglue has moved to git and you should not use this target any more"/>
 	</target>    
 			    
-    	<!-- =================================================================== -->
+    <!-- =================================================================== -->
 	<!--Fetches the latest code up until a date from cvs before building it  -->
 	<!-- =================================================================== -->
 	<target name="fetchInfoGlueOnTag">
+		<!--
 		<cvs command="update -P -r '${tagName}'" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
+		-->
+		<copyfile dest="infogluebuild.properties" src="build.properties" forceoverwrite="true"/>
+		<echo message="Infoglue has moved to git and we will now fetch the source for '${tagName}' from www.infoglue.org"/>
+		<get src="http://www.infoglue.org/downloads/distributions/${tagName}/Infoglue${tagName}.zip" dest="Infoglue${tagName}.zip" verbose="true" usetimestamp="true"/>
+		<unzip src="Infoglue${tagName}.zip" dest="." overwrite="yes"/>
+		<delete file="Infoglue.zip"/>
+		<copyfile src="infogluebuild.properties" dest="build.properties" forceoverwrite="true"/>
 	</target>
 			    
 	<!--

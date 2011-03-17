@@ -192,7 +192,7 @@ public class InstallationController extends BaseController
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error in table lookup:" + e.getMessage());
 	    }
 
 	    try
@@ -205,12 +205,12 @@ public class InstallationController extends BaseController
 			ResultSet rs = pstmt.executeQuery();
 			rs.next();
 			
-			System.out.println("ColCount:" + rs.getMetaData().getColumnCount());
+			logger.info("ColCount:" + rs.getMetaData().getColumnCount());
 
 			for(int i=1; i<=rs.getMetaData().getColumnCount(); i++)
 			{
 				String columnName = rs.getMetaData().getColumnName(i);
-				System.out.println("columnName:" + columnName);
+				logger.info("columnName:" + columnName);
 				if(columnName.equalsIgnoreCase("isHidden"))
 					return "3.0";
 			}
@@ -220,7 +220,7 @@ public class InstallationController extends BaseController
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error in table lookup:" + e.getMessage());
 		    previousVersion = "2.9.8.7";
 	    }
 
@@ -247,7 +247,7 @@ public class InstallationController extends BaseController
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error in table lookup:" + e.getMessage());
 		    previousVersion = "2.9.7.1";
 	    }
 	    
@@ -266,7 +266,7 @@ public class InstallationController extends BaseController
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error in table lookup:" + e.getMessage());
 		    previousVersion = "2.9";
 	    }
 
@@ -285,7 +285,7 @@ public class InstallationController extends BaseController
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error in table lookup:" + e.getMessage());
 		    previousVersion = "2.8";
 	    }
 
@@ -304,7 +304,7 @@ public class InstallationController extends BaseController
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error in table lookup:" + e.getMessage());
 		    previousVersion = "2.3";
 	    }
 
@@ -323,7 +323,7 @@ public class InstallationController extends BaseController
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error in table lookup:" + e.getMessage());
 		    previousVersion = "2.1";
 	    }
 
@@ -342,7 +342,7 @@ public class InstallationController extends BaseController
 	    }
 	    catch(Exception e)
 	    {
-	        e.printStackTrace();
+	        logger.error("Error in table lookup:" + e.getMessage());
 		    previousVersion = "2.0";
 	    }
 	    
@@ -485,9 +485,11 @@ public class InstallationController extends BaseController
 		
 		//cms.properties
 		String cmsFilePath = CastorDatabaseService.class.getResource("/cms.properties").getPath();
-		System.out.println("cmsFilePath:" + cmsFilePath);
+		if(logger.isInfoEnabled())
+			logger.info("cmsFilePath:" + cmsFilePath);
 		String contents = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/cms.properties"));
-		System.out.println("contents:" + contents);
+		if(logger.isInfoEnabled())
+			logger.info("contents:" + contents);
 		
 		contents = contents.replaceAll("@configured@", "true");
 		contents = contents.replaceAll("@useUpdateSecurity@", "true");
@@ -580,10 +582,13 @@ public class InstallationController extends BaseController
 		contents = contents.replaceAll("@logDatabaseMessages@", "false");
 		contents = contents.replaceAll("@enablePortal@", "true");
 		
-		System.out.println("contents after:" + contents);
-		System.out.println("Want to write to:" + cmsFilePath);
+		if(logger.isInfoEnabled())
+			logger.info("contents after:" + contents);
+		if(logger.isInfoEnabled())
+			logger.info("Want to write to:" + cmsFilePath);
 		File targetFile = new File(cmsFilePath);
-		System.out.println("targetFile:" + targetFile.exists());
+		if(logger.isInfoEnabled())
+			logger.info("targetFile:" + targetFile.exists());
 		
 		FileHelper.writeToFile(targetFile, contents, false);
 		
@@ -595,9 +600,11 @@ public class InstallationController extends BaseController
 
 		//deliver.properties
 		String deliverFilePath = CastorDatabaseService.class.getResource("/deliver.properties").getPath();
-		System.out.println("deliverFilePath:" + deliverFilePath);
+		if(logger.isInfoEnabled())
+			logger.info("deliverFilePath:" + deliverFilePath);
 		String contentsDeliver = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/deliver.properties"));
-		System.out.println("contentsDeliver:" + contentsDeliver);
+		if(logger.isInfoEnabled())
+			logger.info("contentsDeliver:" + contentsDeliver);
 		
 		contentsDeliver = contentsDeliver.replaceAll("@configured@", "true");
 		contentsDeliver = contentsDeliver.replaceAll("@useSelectivePageCacheUpdate@", "true");
@@ -696,10 +703,13 @@ public class InstallationController extends BaseController
 		contentsDeliver = contentsDeliver.replaceAll("@logDatabaseMessages@", "false");
 		contentsDeliver = contentsDeliver.replaceAll("@enablePortal@", "true");
 
-		System.out.println("contentsDeliver after:" + contentsDeliver);
-		System.out.println("Want to write to:" + deliverFilePath);
+		if(logger.isInfoEnabled())
+			logger.info("contentsDeliver after:" + contentsDeliver);
+		if(logger.isInfoEnabled())
+			logger.info("Want to write to:" + deliverFilePath);
 		File targetFileDeliver = new File(deliverFilePath);
-		System.out.println("targetFileDeliver:" + targetFileDeliver.exists());
+		if(logger.isInfoEnabled())
+			logger.info("targetFileDeliver:" + targetFileDeliver.exists());
 		
 		FileHelper.writeToFile(targetFileDeliver, contentsDeliver, false);
 		
@@ -707,8 +717,10 @@ public class InstallationController extends BaseController
 		CmsPropertyHandler.initializeProperties();
 		CmsPropertyHandler.resetHardCachedSettings();
 		InfoGlueAuthenticationFilter.initializeProperties();
-		System.out.println("Operatingmode:" + CmsPropertyHandler.getOperatingMode());
-		System.out.println("adminEmail:" + CmsPropertyHandler.getAdministratorEmail());
+		if(logger.isInfoEnabled())
+			logger.info("Operatingmode:" + CmsPropertyHandler.getOperatingMode());
+		if(logger.isInfoEnabled())
+			logger.info("adminEmail:" + CmsPropertyHandler.getAdministratorEmail());
 		//END deliver.properties
 
 	}
@@ -716,7 +728,8 @@ public class InstallationController extends BaseController
 	private String getJDBCEngine() throws Exception
 	{
 		String contents = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/database.xml"));
-		System.out.println("contents:" + contents);
+		if(logger.isInfoEnabled())
+			logger.info("contents:" + contents);
 		if(contents.indexOf("engine=\"mysql\"") > -1)
 			return "mysql";
 		if(contents.indexOf("engine=\"oracle\"") > -1)
@@ -732,7 +745,8 @@ public class InstallationController extends BaseController
 	private String getJDBCParamFromCastorXML(String xpath) throws Exception
 	{
 		String contents = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/database.xml"));
-		System.out.println("contents:" + contents);
+		if(logger.isInfoEnabled())
+			logger.info("contents:" + contents);
 		DOMBuilder domBuilder = new DOMBuilder();
 		Document doc = domBuilder.getDocument(contents);
 		
@@ -786,7 +800,8 @@ public class InstallationController extends BaseController
 		if(!createDatabase.equalsIgnoreCase("true"))
 			validateConnection(jdbcDriverName, jdbcURL, igUser, igPassword);
 
-		System.out.println("createDatabase:" + createDatabase);
+		if(logger.isInfoEnabled())
+			logger.info("createDatabase:" + createDatabase);
 		if(createDatabase.equalsIgnoreCase("true"))
 			createDatabaseAndUsers(jdbcDriverName, jdbcURL, dbProvider, dbName, dbServer, dbPort, dbInstance, dbUser, dbPassword, igUser, igPassword);
 		
@@ -801,9 +816,11 @@ public class InstallationController extends BaseController
 		
 		//Castor database.xml
 		String castorDatabaseXMLPath = CastorDatabaseService.class.getResource("/database.xml").getPath();
-		System.out.println("castorDatabaseXMLPath:" + castorDatabaseXMLPath);
+		if(logger.isInfoEnabled())
+			logger.info("castorDatabaseXMLPath:" + castorDatabaseXMLPath);
 		String contents = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/database.xml"));
-		System.out.println("contents:" + contents);
+		if(logger.isInfoEnabled())
+			logger.info("contents:" + contents);
 		
 		contents = contents.replaceAll("@database.driver.engine@", castorProviderName);
 		contents = contents.replaceAll("@database.driver.class@", jdbcDriverName);
@@ -814,19 +831,24 @@ public class InstallationController extends BaseController
 		contents = contents.replaceAll("@database.maxConnections@", "300");
 		contents = contents.replaceAll("@database.mapping@", databaseMappingFile);
 		
-		System.out.println("contents after:" + contents);
-		System.out.println("Want to write to:" + castorDatabaseXMLPath);
+		if(logger.isInfoEnabled())
+			logger.info("contents after:" + contents);
+		if(logger.isInfoEnabled())
+			logger.info("Want to write to:" + castorDatabaseXMLPath);
 		File targetFile = new File(castorDatabaseXMLPath);
-		System.out.println("targetFile:" + targetFile.exists());
+		if(logger.isInfoEnabled())
+			logger.info("targetFile:" + targetFile.exists());
 		
 		FileHelper.writeToFile(new File(castorDatabaseXMLPath), contents, false);
 		//END Castor database.xml
 
 		//Hibernate config
 		String hibernateXMLPath = CastorDatabaseService.class.getResource("/hibernate.cfg.xml").getPath();
-		System.out.println("castorDatabaseXMLPath:" + castorDatabaseXMLPath);
+		if(logger.isInfoEnabled())
+			logger.info("castorDatabaseXMLPath:" + castorDatabaseXMLPath);
 		String hibernateConents = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/hibernate.cfg.xml"));
-		System.out.println("hibernateConents:" + hibernateConents);
+		if(logger.isInfoEnabled())
+			logger.info("hibernateConents:" + hibernateConents);
 		
 		hibernateConents = hibernateConents.replaceAll("@database.driver.engine@", castorProviderName);
 		hibernateConents = hibernateConents.replaceAll("@database.driver.class@", jdbcDriverName);
@@ -839,19 +861,24 @@ public class InstallationController extends BaseController
 		hibernateConents = hibernateConents.replaceAll("@hibernate.dialect@", "net.sf.hibernate.dialect.MySQLDialect");
 		hibernateConents = hibernateConents.replaceAll("@hibernate.show_sql@", "false");
 		
-		System.out.println("hibernateConents after:" + hibernateConents);
-		System.out.println("Want to write to:" + hibernateXMLPath);
+		if(logger.isInfoEnabled())
+			logger.info("hibernateConents after:" + hibernateConents);
+		if(logger.isInfoEnabled())
+			logger.info("Want to write to:" + hibernateXMLPath);
 		File hibernateTargetFile = new File(hibernateXMLPath);
-		System.out.println("hibernateTargetFile:" + hibernateTargetFile.exists());
+		if(logger.isInfoEnabled())
+			logger.info("hibernateTargetFile:" + hibernateTargetFile.exists());
 		
 		FileHelper.writeToFile(new File(hibernateXMLPath), hibernateConents, false);
 		//END hibernate
 		
 		//Hibernate config
 		String propertySetXMLPath = CastorDatabaseService.class.getResource("/propertyset.xml").getPath();
-		System.out.println("propertySetXMLPath:" + propertySetXMLPath);
+		if(logger.isInfoEnabled())
+			logger.info("propertySetXMLPath:" + propertySetXMLPath);
 		String propertysetContents = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/propertyset.xml"));
-		System.out.println("propertysetContents:" + propertysetContents);
+		if(logger.isInfoEnabled())
+			logger.info("propertysetContents:" + propertysetContents);
 		
 		propertysetContents = propertysetContents.replaceAll("@database.driver.engine@", castorProviderName);
 		propertysetContents = propertysetContents.replaceAll("@database.driver.class@", jdbcDriverName);
@@ -864,10 +891,13 @@ public class InstallationController extends BaseController
 		propertysetContents = propertysetContents.replaceAll("@hibernate.dialect@", "net.sf.hibernate.dialect.MySQLDialect");
 		propertysetContents = propertysetContents.replaceAll("@hibernate.show_sql@", "false");
 		
-		System.out.println("propertysetContents after:" + propertysetContents);
-		System.out.println("Want to write to:" + propertySetXMLPath);
+		if(logger.isInfoEnabled())
+			logger.info("propertysetContents after:" + propertysetContents);
+		if(logger.isInfoEnabled())
+			logger.info("Want to write to:" + propertySetXMLPath);
 		File propertySetTargetFile = new File(propertySetXMLPath);
-		System.out.println("propertySetTargetFile:" + propertySetTargetFile.exists());
+		if(logger.isInfoEnabled())
+			logger.info("propertySetTargetFile:" + propertySetTargetFile.exists());
 		
 		FileHelper.writeToFile(propertySetTargetFile, propertysetContents, false);
 		//END hibernate		
@@ -971,7 +1001,8 @@ public class InstallationController extends BaseController
 			String mysqlJdbcIGURL = getJDBCURL(dbProvider, dbName, dbServer, dbPort, dbInstance);
 
 			validateConnection(jdbcDriverName, mysqlJdbcURL, dbUser, dbPassword);
-			System.out.println("Efter....");
+			if(logger.isInfoEnabled())
+				logger.info("Efter....");
 			
 			issueCommand(getConnection(jdbcDriverName, mysqlJdbcURL, dbUser, dbPassword), "CREATE DATABASE " + dbName + ";");
 			createUsersMYSQL(jdbcDriverName, dbServer, dbPort, dbUser, dbPassword, dbName, igUser, igPassword);
@@ -1164,7 +1195,8 @@ public class InstallationController extends BaseController
 
 	private void createTables(String driverClass, String url, String dbProvider, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
 	{
-		System.out.println("Creating tables:" + CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_core_schema_" + dbProvider + ".sql");
+		if(logger.isInfoEnabled())
+			logger.info("Creating tables:" + CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_core_schema_" + dbProvider + ".sql");
 
 		Connection conn = getConnection(driverClass, url, dbUser, dbPassword);
 		
@@ -1199,9 +1231,9 @@ public class InstallationController extends BaseController
 		    	}
 		    	catch (SQLException sqle) 
 		    	{
-		    		System.out.println("An sql error:" + sqle.getMessage());
+		    		logger.error("An sql error:" + sqle.getMessage());
 		    		if(sqle.getMessage().indexOf("sequence does not exist") > -1 || sqle.getMessage().indexOf("ORA-02289") > -1 || sqle.getMessage().indexOf("ORA-00942") > -1 || command.trim().toLowerCase().startsWith("drop "))
-		    			System.out.println("Was an unharmful error - proceed");
+		    			logger.error("Was an unharmful error - proceed");
 		    		else
 		    			throw sqle;
 				}
@@ -1220,7 +1252,7 @@ public class InstallationController extends BaseController
 
 	private void createInitialData(String driverClass, String url, String dbProvider, String dbUser, String dbPassword, String dbName, String igUser, String igPassword) throws Exception
 	{
-		System.out.println("Creating initial data:" + CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_initial_data_" + dbProvider + ".sql");
+		logger.info("Creating initial data:" + CmsPropertyHandler.getSQLUpgradePath() + File.separator + "infoglue_initial_data_" + dbProvider + ".sql");
 		//String url = "jdbc:mysql://" + databaseHostName + ":" + databasePortNumber + "/" + dbName + "";
 		Connection conn = getConnection(driverClass, url, igUser, igPassword);
 		
@@ -1246,7 +1278,7 @@ public class InstallationController extends BaseController
 				for(int i=0; i<commands.length; i++)
 				{
 					String command = commands[i];
-					System.out.println("command:" + command);
+					logger.info("command:" + command);
 					try
 					{
 						if(command.indexOf("SPECIAL") > -1)
@@ -1256,7 +1288,7 @@ public class InstallationController extends BaseController
 					}
 					catch (Exception e) 
 					{
-						System.out.println("Error:" + e.getMessage());
+						logger.error("Error:" + e.getMessage());
 					}
 				}
 			}
@@ -1332,11 +1364,11 @@ public class InstallationController extends BaseController
 		Connection conn = getConnection(jdbcDriverName, jdbcURL, igUser, igPassword);
 		
 		String dbVersion = getCurrentDatabaseVersion(session);
-		System.out.println("dbVersion:" + dbVersion);
+		logger.info("dbVersion:" + dbVersion);
 		String sql = getUpgradeScripts(dbVersion, session);
-		System.out.println("sql:" + sql);
+		logger.info("sql:" + sql);
 		sql = sql.replaceAll("--.*", "");
-		System.out.println("sql:" + sql);
+		logger.info("sql:" + sql);
 		
 		StringTokenizer st = new StringTokenizer(sql, ";");
 	    while (st.hasMoreTokens()) 
@@ -1359,13 +1391,13 @@ public class InstallationController extends BaseController
 		Connection conn = null;
     
         // Load the JDBC driver
-        System.out.println("Loading JDBC driver " + driverClass + "\n");
+		logger.info("Loading JDBC driver " + driverClass + "\n");
         Class.forName(driverClass).newInstance();
     	
         // Connect to the databse
-        System.out.println("Connecting to database on " + url);
+        logger.info("Connecting to database on " + url);
         conn = DriverManager.getConnection(url, userName, password);
-        System.out.println("Connected...");
+        logger.info("Connected...");
         
         return conn;
 	}
@@ -1382,7 +1414,7 @@ public class InstallationController extends BaseController
 		if(sql == null || sql.trim().length() == 0 || sql.trim().equalsIgnoreCase(";"))
 			return;
 			  
-		//System.out.println("sql: " + sql);
+		//logger.info("sql: " + sql);
 		
         try 
         {
@@ -1592,7 +1624,6 @@ public class InstallationController extends BaseController
 	
 	private void callProcedure(Connection conn, String procedure, String arg1, String arg2, String arg3) throws Exception
 	{
-		System.out.println("procedure: " + procedure + " (" + arg1 + "," + arg2 + "," + arg3 + ")");
         logger.debug("procedure: " + procedure + " (" + arg1 + "," + arg2 + "," + arg3 + ")");
                 
         try 
@@ -1623,7 +1654,6 @@ public class InstallationController extends BaseController
 	
 	private void callProcedure(Connection conn, String procedure, String arg1) throws Exception
 	{
-		System.out.println("procedure: " + procedure + " (" + arg1 + ")");
 		logger.debug("procedure: " + procedure + " (" + arg1 + ")");
                 
         try 
@@ -1650,7 +1680,6 @@ public class InstallationController extends BaseController
 	
 	private void callProcedure(Connection conn, String procedure, String arg1, String arg2) throws Exception
 	{
-		System.out.println("procedure: " + procedure + " (" + arg1 + "," + arg2 + ")");
 		logger.debug("procedure: " + procedure + " (" + arg1 + "," + arg2 + ")");
                 
         try 

@@ -80,11 +80,14 @@ public class ThemeController extends BaseController
 		{
 			File file = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins");
 			File[] skins = file.listFiles();
-			for(int i=0; i<skins.length; i++)
+			if(skins != null)
 			{
-				File skin = skins[i];
-				if(skin.isDirectory())
-					themes.add(skin.getName());
+				for(int i=0; i<skins.length; i++)
+				{
+					File skin = skins[i];
+					if(skin.isDirectory())
+						themes.add(skin.getName());
+				}
 			}
 		}
 		catch (Exception e) 

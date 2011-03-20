@@ -132,6 +132,12 @@
 		<cvs command="update -P -d -A" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
 		-->
 		<copyfile dest="infogluebuild.properties" src="build.properties" forceoverwrite="true"/>
+		<delete dir="build"/>
+		<delete dir="conf"/>
+		<delete dir="CVS"/>
+		<delete dir="lib"/>
+		<delete dir="src"/>
+		<delete dir="test"/>
 		<echo message="Infoglue has moved to git and we will now fetch the latest source from www.infoglue.org"/>
 		<get src="http://www.infoglue.org/downloads/distributions/latest/Infoglue.zip" dest="Infoglue.zip" verbose="true" usetimestamp="true"/>
 		<unzip src="Infoglue.zip" dest="." overwrite="yes"/>
@@ -154,6 +160,12 @@
 		<cvs command="update -P -r '${tagName}'" cvsRoot=":pserver:anonymous@www.infoglue.org:2401/home/cvsroot"/>
 		-->
 		<copyfile dest="infogluebuild.properties" src="build.properties" forceoverwrite="true"/>
+		<delete dir="build"/>
+		<delete dir="conf"/>
+		<delete dir="CVS"/>
+		<delete dir="lib"/>
+		<delete dir="src"/>
+		<delete dir="test"/>
 		<echo message="Infoglue has moved to git and we will now fetch the source for '${tagName}' from www.infoglue.org"/>
 		<get src="http://www.infoglue.org/downloads/distributions/${tagName}/Infoglue${tagName}.zip" dest="Infoglue${tagName}.zip" verbose="true" usetimestamp="true"/>
 		<unzip src="Infoglue${tagName}.zip" dest="." overwrite="yes"/>

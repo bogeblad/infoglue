@@ -815,10 +815,10 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
     */
-
+	
 	public List getReferencingObjectsForContent(Integer contentId) throws SystemException
     {
-		return getReferencingObjectsForContent(contentId, -1, false);
+		return getReferencingObjectsForContent(contentId, -1, true);
     }
 
 	public List getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences) throws SystemException
@@ -929,7 +929,7 @@ public class RegistryController extends BaseController
 	            while(versionsIterator.hasNext())
 	            {
 	                existingReferenceVersionBean = (ReferenceVersionBean)versionsIterator.next();
-	                if(existingReferenceVersionBean.getReferencingObject().equals(referenceVersionBean.getReferencingObject()))
+	                if(existingReferenceVersionBean == null || existingReferenceVersionBean.getReferencingObject() == null || referenceVersionBean.getReferencingObject() == null || referenceVersionBean == null || existingReferenceVersionBean.getReferencingObject().equals(referenceVersionBean.getReferencingObject()))
 	                {
 	                    exists = true;
 	                    break;

@@ -3467,7 +3467,7 @@ public class BasicTemplateController implements TemplateController
 			referencingPages = new ArrayList();
 			try
 			{
-				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, this.getDatabase());
+				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, false, this.getDatabase());
 				
 				Iterator referencingObjectsIterator = referencingObjects.iterator();
 				while(referencingObjectsIterator.hasNext())

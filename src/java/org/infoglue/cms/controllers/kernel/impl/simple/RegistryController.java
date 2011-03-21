@@ -815,13 +815,13 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
     */
-
+	
 	public List getReferencingObjectsForContent(Integer contentId) throws SystemException
     {
-		return getReferencingObjectsForContent(contentId, -1);
+		return getReferencingObjectsForContent(contentId, -1, true);
     }
 
-	public List getReferencingObjectsForContent(Integer contentId, int maxRows) throws SystemException
+	public List getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences) throws SystemException
     {
 		List referenceBeanList = new ArrayList();
         
@@ -831,7 +831,7 @@ public class RegistryController extends BaseController
 		{
 			beginTransaction(db);
 			
-			referenceBeanList = getReferencingObjectsForContent(contentId, maxRows, db);
+			referenceBeanList = getReferencingObjectsForContent(contentId, maxRows, excludeInternalContentReferences, db);
 	    
 	        commitTransaction(db);
 		}
@@ -848,9 +848,9 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 
-	public List getReferencingObjectsForContent(Integer contentId, int maxRows, Database db) throws SystemException, Exception
+	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences, Database db) throws SystemException, Exception
     {
-        List referenceBeanList = new ArrayList();
+        List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
         Map entries = new HashMap();
 		
@@ -868,7 +868,6 @@ public class RegistryController extends BaseController
             ReferenceBean existingReferenceBean = (ReferenceBean)entries.get(key);
             if(existingReferenceBean == null)
             {
-                
                 existingReferenceBean = new ReferenceBean();
 	            logger.info("Adding referenceBean to entries with key:" + key);
 	            entries.put(key, existingReferenceBean);
@@ -882,11 +881,19 @@ public class RegistryController extends BaseController
                 {
                     ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
 		    		logger.info("contentVersion:" + contentVersion.getContentVersionId());
-		    		existingReferenceBean.setName(contentVersion.getOwningContent().getName());
-		    		existingReferenceBean.setReferencingCompletingObject(contentVersion.getOwningContent().getValueObject());
-		    		
-		    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
-		    		referenceVersionBean.getRegistryVOList().add(registryVO);
+		    		if(excludeInternalContentReferences && contentVersion.getValueObject().getContentId().equals(contentId))
+		    		{
+		    			System.out.println("Skipping internal reference " + contentId + " had on itself.");
+		    			referenceBeanList.remove(existingReferenceBean);
+		    		}
+		    		else
+		    		{
+			    		existingReferenceBean.setName(contentVersion.getOwningContent().getName());
+			    		existingReferenceBean.setReferencingCompletingObject(contentVersion.getOwningContent().getValueObject());
+			    		
+			    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
+			    		referenceVersionBean.getRegistryVOList().add(registryVO);
+		    		}
                 }
                 catch(Exception e)
                 {
@@ -922,7 +929,7 @@ public class RegistryController extends BaseController
 	            while(versionsIterator.hasNext())
 	            {
 	                existingReferenceVersionBean = (ReferenceVersionBean)versionsIterator.next();
-	                if(existingReferenceVersionBean.getReferencingObject().equals(referenceVersionBean.getReferencingObject()))
+	                if(existingReferenceVersionBean == null || existingReferenceVersionBean.getReferencingObject() == null || referenceVersionBean.getReferencingObject() == null || referenceVersionBean == null || existingReferenceVersionBean.getReferencingObject().equals(referenceVersionBean.getReferencingObject()))
 	                {
 	                    exists = true;
 	                    break;
@@ -973,7 +980,7 @@ public class RegistryController extends BaseController
 			referencingSiteNodeVOList = new ArrayList<SiteNodeVO>();
 			try
 			{
-				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, db);
+				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, false, db);
 				
 				Iterator referencingObjectsIterator = referencingObjects.iterator();
 				while(referencingObjectsIterator.hasNext())

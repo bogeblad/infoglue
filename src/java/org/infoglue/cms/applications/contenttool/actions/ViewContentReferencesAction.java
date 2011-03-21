@@ -43,7 +43,7 @@ public class ViewContentReferencesAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
-		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(contentId, 100);
+		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(contentId, 100, true);
         
         return Action.SUCCESS;
     }

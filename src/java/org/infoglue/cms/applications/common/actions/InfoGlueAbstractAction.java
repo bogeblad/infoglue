@@ -737,7 +737,8 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		InfoGluePrincipal infoGluePrincipal = null;
 		try
 		{
-			infoGluePrincipal = (InfoGluePrincipal)ActionContext.getRequest().getSession().getAttribute("org.infoglue.cms.security.user");
+			if(ActionContext.getRequest() != null && ActionContext.getRequest().getSession() != null)
+				infoGluePrincipal = (InfoGluePrincipal)ActionContext.getRequest().getSession().getAttribute("org.infoglue.cms.security.user");
 		}
 		catch (Exception e) 
 		{

@@ -978,7 +978,9 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		}
 		catch(Exception e)
 		{
-			logger.error("Could not delete the assets for the digitalAsset " + digitalAssetId + ":" + e.getMessage(), e);
+			logger.error("Could not delete the assets for the digitalAsset " + digitalAssetId + ":" + e.getMessage());
+			if(logger.isInfoEnabled())
+				logger.info("Could not delete the assets for the digitalAsset " + digitalAssetId + ":" + e.getMessage(), e);
 		}
 	}
 	

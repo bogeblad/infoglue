@@ -523,7 +523,8 @@ public abstract class BaseController
         Object object = null;
         try
         {
-            logger.info("Loading " + arg + " in read/write mode.");
+            if(logger.isInfoEnabled())
+            	logger.info("Loading " + arg + " in read/write mode.");
             object = db.load(arg, id);
         }
         catch(Exception e)

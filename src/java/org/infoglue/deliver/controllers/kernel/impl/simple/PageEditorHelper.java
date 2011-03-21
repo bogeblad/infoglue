@@ -2794,7 +2794,7 @@ public class PageEditorHelper extends BaseDeliveryController
 			referencingPages = new ArrayList();
 			try
 			{
-				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, db);
+				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, false, db);
 				
 				Iterator referencingObjectsIterator = referencingObjects.iterator();
 				while(referencingObjectsIterator.hasNext())

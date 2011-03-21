@@ -221,7 +221,7 @@ public class WorkingPublicationThread extends Thread
 									DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
 									System.out.println("*********************************************************");
 								}
-
+								
 								List<ContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(new Integer(objectId));	
 					    		Iterator<ContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();
 					    		while(contentVersionVOListIterator.hasNext())
@@ -259,7 +259,7 @@ public class WorkingPublicationThread extends Thread
 					catch (Exception e) 
 					{
 						logger.error("Error handling cache update message:" + className + ":" + objectId);
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 				}
 			} 

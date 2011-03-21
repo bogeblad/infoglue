@@ -432,7 +432,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 						{
 							AssetKeyDefinition assetKeyDefinition = ContentTypeDefinitionController.getController().getDefinedAssetKey(contentTypeDefinitionVO, true, digitalAssetKey);
 							
-							keepOriginal = handleTransformations(newAsset, file, contentType, assetKeyDefinition);
+							keepOriginal = handleTransformations(newAsset, file, contentType, assetKeyDefinition, contentTypeDefinitionVO);
 						    if(keepOriginal)
 						    {
 						    	List<Integer> newContentVersionIdList = new ArrayList<Integer>();
@@ -520,7 +520,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
         return "success";
     }
 
-	private boolean handleTransformations(DigitalAssetVO originalAssetVO, File file, String contentType, AssetKeyDefinition assetKeyDefinition)
+	private boolean handleTransformations(DigitalAssetVO originalAssetVO, File file, String contentType, AssetKeyDefinition assetKeyDefinition, ContentTypeDefinitionVO contentTypeDefinitionVO)
 	{
 		boolean keepOriginal = true;
 		try
@@ -558,7 +558,9 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 				Element transformationElement = (Element)transformationElementsIterator.next();
 			
 				String assetKeyPattern  = transformationElement.attributeValue("assetKeyPattern");
+				String includedContentTypeDefinitionNames = transformationElement.attributeValue("includedContentTypeDefinitionNames");
 				String inputFilePattern  = transformationElement.attributeValue("inputFilePattern");
+				logger.info("includedContentTypeDefinitionNames: " + includedContentTypeDefinitionNames);
 				logger.info("inputFilePattern: " + inputFilePattern);
 				
 				boolean assetKeyMatch = false;
@@ -566,8 +568,12 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 					assetKeyMatch = true;
 				else if(originalAssetVO.getAssetKey().matches(assetKeyPattern))
 					assetKeyMatch = true;
-										
-				if(assetKeyMatch && contentType.matches(inputFilePattern))
+				
+				boolean contentTypeDefinitionNameMatch = true;
+				if(contentTypeDefinitionVO.getName() != null && includedContentTypeDefinitionNames != null && includedContentTypeDefinitionNames.indexOf(contentTypeDefinitionVO.getName()) == -1)
+					contentTypeDefinitionNameMatch = false;
+				
+				if(contentTypeDefinitionNameMatch && assetKeyMatch && contentType.matches(inputFilePattern))
 				{
 					logger.info("We got a match on contentType:" + contentType + " : " + inputFilePattern);
 

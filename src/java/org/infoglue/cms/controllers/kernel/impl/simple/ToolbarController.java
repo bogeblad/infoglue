@@ -1422,6 +1422,19 @@ public class ToolbarController implements ToolbarProvider
 				  "", 
 				  ""));
 
+		buttons.add(new ToolbarButton("rotate", 
+				  getLocalizedString(locale, "tool.contenttool.imageEditor.rotate"), 
+				  getLocalizedString(locale, "tool.contenttool.imageEditor.rotate"), 
+				  "openRotateImageDialog();", 
+				  "", 
+				  "", 
+				  "rotate", 
+				  true, 
+				  false, 
+				  "", 
+				  "", 
+				  ""));
+
 		buttons.add(new ToolbarButton("save", 
 				  getLocalizedString(locale, "tool.contenttool.save.label"), 
 				  getLocalizedString(locale, "tool.contenttool.save.label"), 

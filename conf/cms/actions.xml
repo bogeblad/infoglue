@@ -1761,6 +1761,7 @@
 		<view name="input">/cms/contenttool/viewImageEditor.vm</view>
 		<view name="success">/cms/contenttool/viewImageEditor.vm</view>
 		<view name="successResize">ExtendedRedirect.action?url=ImageEditor.action#workingFileName#digitalAssetId#contentVersionId</view>
+		<view name="successRotate">ExtendedRedirect.action?url=ImageEditor.action#workingFileName#digitalAssetId#contentVersionId</view>
 		<view name="successCrop">ExtendedRedirect.action?url=ImageEditor.action#workingFileName#digitalAssetId#contentVersionId</view>
 		<view name="successSaveAndExit">/cms/contenttool/viewImageEditor.vm</view>
 		<view name="error">/cms/contenttool/error.vm</view>

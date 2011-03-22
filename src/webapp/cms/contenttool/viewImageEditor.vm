@@ -178,6 +178,24 @@
 			}
 		} 		
 
+		function rotateImage()
+		{
+			var degrees = document.getElementById("degrees").value;
+			var direction = document.getElementById("direction").value;
+			
+			if(degrees == "" || degrees == "0")
+			{
+				alert("You must state how many degrees you wish to rotate the image.");
+			}
+			else
+			{
+				if(direction == "")
+					direction = "cw";
+												
+				document.location.href = "ImageEditor!rotate.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&degrees=" + degrees + "&direction=" + direction;
+			}
+		} 		
+		
 		function openSaveImageDialog()
 		{
 			document.getElementById("saveDialog").style.display = "block";
@@ -186,6 +204,11 @@
 		function openResizeImageDialog()
 		{
 			document.getElementById("resizeDialog").style.display = "block";
+		} 		
+
+		function openRotateImageDialog()
+		{
+			document.getElementById("rotateDialog").style.display = "block";
 		} 		
 
 		function saveImage()
@@ -366,17 +389,27 @@
 	</div>
 	
 	<div id="resizeDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
-	<h3>State resize options</h3>
-	<p><label for="keepRatio">Preserve aspect ratio:</label> <input type="checkbox" id="keepRatio" name="keepRatio" checked="true" readonly="readonly"/></p>
-	<p><label for="bestFit">Best fit:</label> <input type="checkbox" id="bestFit" name="bestFit" checked="true" readonly="readonly"/></p>
-	<p><label for="width">Width in pixels:</label> <input type="textfield" id="width" name="width"/></p>
-	<p><label for="height">Height in pixels:</label> <input type="textfield" id="height" name="height"/></p>
-	<p class="buttonPane">
-		<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="resizeImage();"/>
-		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.getElementById('resizeDialog').style.display = 'none';"/>
-		##<a href="javascript:resizeImage();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
-		##<img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" onclick="document.getElementById('resizeDialog').style.display = 'none';">
-	</p>
+		<h3>State resize options</h3>
+		<p><label for="keepRatio">Preserve aspect ratio:</label> <input type="checkbox" id="keepRatio" name="keepRatio" checked="true" readonly="readonly"/></p>
+		<p><label for="bestFit">Best fit:</label> <input type="checkbox" id="bestFit" name="bestFit" checked="true" readonly="readonly"/></p>
+		<p><label for="width">Width in pixels:</label> <input type="textfield" id="width" name="width"/></p>
+		<p><label for="height">Height in pixels:</label> <input type="textfield" id="height" name="height"/></p>
+		<p class="buttonPane">
+			<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="resizeImage();"/>
+			<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.getElementById('resizeDialog').style.display = 'none';"/>
+			##<a href="javascript:resizeImage();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
+			##<img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" onclick="document.getElementById('resizeDialog').style.display = 'none';">
+		</p>
+	</div>
+
+	<div id="rotateDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
+		<h3>State rotate options</h3>
+		<p><label for="degrees">Degrees:</label> <input type="textfield" id="degrees" name="degrees"/></p>
+		<p><label for="direction">Direction:</label> <select name="direction" id="direction"><option value="cw"/>Clockwise</option><option value="ccw"/>Counter clockwise</option></select></p>
+		<p class="buttonPane">
+			<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="rotateImage();"/>
+			<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.getElementById('rotateDialog').style.display = 'none';"/>
+		</p>
 	</div>
 
 	#lightFooterToolbar($footerButtons)

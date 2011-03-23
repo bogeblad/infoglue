@@ -151,7 +151,17 @@
 
 	<filter-mapping>
 		<filter-name>ResourceFilter</filter-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>/css/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>ResourceFilter</filter-name>
+		<url-pattern>/images/*</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+		<filter-name>ResourceFilter</filter-name>
+		<url-pattern>/script/*</url-pattern>
 	</filter-mapping>
 
 	<listener>

@@ -219,6 +219,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			else if(object.getClass().getName().equals(MediumDigitalAssetImpl.class.getName()))
 			{
 				CacheController.clearCache("digitalAssetCache");
+				CacheController.clearCache("cachedAssetFileList");
 				clearCache(SmallDigitalAssetImpl.class);
 				clearCache(DigitalAssetImpl.class);
 				//System.out.println("We should delete all images with digitalAssetId " + getObjectIdentity(object));
@@ -227,6 +228,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			else if(object.getClass().getName().equals(DigitalAssetImpl.class.getName()))
 			{
 				CacheController.clearCache("digitalAssetCache");
+				CacheController.clearCache("cachedAssetFileList");
 				clearCache(SmallDigitalAssetImpl.class);
 				clearCache(MediumDigitalAssetImpl.class);
 				//System.out.println("We should delete all images with digitalAssetId " + getObjectIdentity(object));

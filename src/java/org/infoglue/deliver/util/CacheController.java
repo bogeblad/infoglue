@@ -1148,6 +1148,9 @@ public class CacheController extends Thread
 		{
 			logger.info("Clearing some caches");
 			logger.info("entity:" + entity);
+			System.out.println("Clearing some caches");
+			System.out.println("entity:" + entity);
+			System.out.println("entityId:" + entityId);
 
 		    String useSelectivePageCacheUpdateString = CmsPropertyHandler.getUseSelectivePageCacheUpdate();
 		    boolean useSelectivePageCacheUpdate = false;

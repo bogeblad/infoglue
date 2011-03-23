@@ -47,6 +47,8 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.graphics.Imaging;
 
+import webwork.action.Action;
+
 /**
  * @author Mattias Bogeblad
  * @version 1.0
@@ -219,6 +221,150 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     }    
 
     public String doSave() throws Exception
+    {
+    	ceb.throwIfNotEmpty();
+
+    	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
+    	this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
+        this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
+
+    	File file = new File(getImageEditorPath() + File.separator + workingFileName);
+    	//logger.info("saving file:" + file.getAbsolutePath());
+    	//System.out.println("file:" + file.exists() + "\n" + file.getAbsolutePath());
+
+    	if(file.exists())
+    	{
+        	String contentType = digitalAssetVO.getAssetContentType();
+	    	this.digitalAssetVO.setAssetFileSize(new Integer(new Long(file.length()).intValue()));
+	    	//System.out.println("Setting file size to:" + new Integer(new Long(file.length()).intValue()));
+	    	this.digitalAssetVO.setAssetContentType("image/png");
+			InputStream is = new FileInputStream(file);
+			
+			if(this.contentTypeDefinitionId != null && digitalAssetVO.getAssetKey() != null)
+			{
+				AssetKeyDefinition assetKeyDefinition = ContentTypeDefinitionController.getController().getDefinedAssetKey(contentTypeDefinitionVO, true, digitalAssetKey);
+				
+				if(assetKeyDefinition != null)
+				{
+					if(assetKeyDefinition.getMaximumSize().intValue() < new Long(file.length()).intValue())
+					{   
+					    file.delete();
+					    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
+	                	return "uploadFailed";
+					}
+					if(assetKeyDefinition.getAllowedContentTypes().startsWith("image"))
+					{
+					    if(!contentType.startsWith("image"))
+					    {
+						    file.delete();
+						    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnTypeNotImageText";
+		                	return "uploadFailed";						        
+					    }
+	
+					    Image image = javax.imageio.ImageIO.read(file);
+					    int width = image.getWidth(null);
+					    int height = image.getHeight(null);
+					    
+					    String allowedWidth = assetKeyDefinition.getImageWidth();
+					    String allowedHeight = assetKeyDefinition.getImageHeight();
+					    
+					    if(!allowedWidth.equals("*"))
+					    {
+					        Integer allowedWidthNumber = new Integer(allowedWidth.substring(1));
+					        if(allowedWidth.startsWith("<") && width >= allowedWidthNumber.intValue())
+					        {
+						        file.delete();
+							    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageToWideText";
+			                	return "uploadFailed";			
+					        }
+					        if(allowedWidth.startsWith(">") && width <= allowedWidthNumber.intValue())
+					        {
+						        file.delete();
+							    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageNotWideEnoughText";
+			                	return "uploadFailed";			
+					        }
+					        if(!allowedWidth.startsWith(">") && !allowedWidth.startsWith("<") && width != new Integer(allowedWidth).intValue())
+					        {
+					            file.delete();
+							    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageWrongWidthText";
+			                	return "uploadFailed";	
+					        }
+					    }
+					    
+					    if(!allowedHeight.equals("*"))
+					    {
+					        Integer allowedHeightNumber = new Integer(allowedHeight.substring(1));
+					        if(allowedHeight.startsWith("<") && height >= allowedHeightNumber.intValue())
+					        {
+						        file.delete();
+							    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageToHighText";
+			                	return "uploadFailed";			
+					        }
+					        if(allowedHeight.startsWith(">") && height <= allowedHeightNumber.intValue())
+					        {
+						        file.delete();
+							    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageNotHighEnoughText";
+			                	return "uploadFailed";			
+					        }
+					        if(!allowedHeight.startsWith(">") && !allowedHeight.startsWith("<") && height != new Integer(allowedHeight).intValue())
+					        {
+					            file.delete();
+							    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageWrongHeightText";
+			                	return "uploadFailed";	
+					        }
+					    }
+					}
+				}
+			}
+		
+			if(this.contentVersionId != null)
+			{
+		    	List<Integer> newContentVersionIdList = new ArrayList<Integer>();
+	
+		    	DigitalAssetVO digitalAssetVO = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionId, digitalAssetId, getInfoGluePrincipal(), newContentVersionIdList);
+		    	digitalAssetVO.setAssetContentType(this.digitalAssetVO.getAssetContentType());
+		    	digitalAssetVO.setAssetFileSize(this.digitalAssetVO.getAssetFileSize());
+		    	//digitalAssetVO = DigitalAssetController.create(newAsset, is, this.contentVersionId, this.getInfoGluePrincipal(), newContentVersionIdList);
+		    	if(newContentVersionIdList.size() > 0)
+		    	{
+		    		Integer newContentVersionId = newContentVersionIdList.get(0);
+		    		logger.debug("newContentVersionId:" + newContentVersionId + ":" + this.contentVersionId);
+		    		if(this.contentVersionId != newContentVersionId)
+			    		this.refreshAll = true;
+		    		setContentVersionId(newContentVersionId);
+		    	}
+		    	
+		    	DigitalAssetVO updatedDigitalAssetVO = DigitalAssetController.update(digitalAssetVO, is);
+			}
+	
+			if(is != null)
+				is.close();
+			
+	    	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + ".png";
+	    	if(CmsPropertyHandler.getEnableDiskAssets().equals("true") && file.exists())
+	    	{
+				String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
+				String assetFileName = "" + digitalAssetVO.getAssetFilePath() + File.separator + folderName + File.separator + digitalAssetVO.getId() + "_" + digitalAssetVO.getAssetFileName();
+				//logger.info("Going to move " + file.getName() + " to " + assetFileName);
+	    		File finalAssetFile = new File(assetFileName);
+	    		boolean moved = file.renameTo(finalAssetFile);
+				//logger.info("moved:" + finalAssetFile.getAbsolutePath() + ":" + moved);    		
+	    	}
+	    	else
+	    	{
+	    		boolean deleted = file.delete();
+				//logger.info("file:" + file.getAbsolutePath() + ":" + deleted);
+	    	}
+	
+			cleanOldWorkingFiles(true);
+			
+			closeOnLoad = "true";
+    	}
+    	
+        return "successSaveAndExit";
+    }    
+    
+    public String doSaveAs() throws Exception
     {
     	ceb.throwIfNotEmpty();
 

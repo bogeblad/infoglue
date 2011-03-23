@@ -1448,6 +1448,19 @@ public class ToolbarController implements ToolbarProvider
 				  "", 
 				  ""));
 
+		buttons.add(new ToolbarButton("saveAs", 
+				  getLocalizedString(locale, "tool.contenttool.saveAs.label"), 
+				  getLocalizedString(locale, "tool.contenttool.saveAs.label"), 
+				  "openSaveAsImageDialog();", 
+				  "", 
+				  "", 
+				  "save", 
+				  true, 
+				  false, 
+				  "", 
+				  "", 
+				  ""));
+
 		return buttons;
 	}
 	

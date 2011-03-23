@@ -522,24 +522,16 @@ public class DigitalAssetController extends BaseController
 				for(int i=0; i<cachedFiles.length; i++)
 				{
 					File cachedFile = cachedFiles[i];
-					//System.out.println("cachedFile:" + cachedFile.getName());
+					//System.out.println("cachedFile:" + cachedFile.getName() + ":" + digitalAssetId);
 					if(cachedFile.getName().startsWith("" + digitalAssetId))
 					{
 						//System.out.println("Deleting:" + cachedFile.getName());
 						//File file = files[i];
-						cachedFile.delete();
+						boolean deleted = cachedFile.delete();
+						//System.out.println("Deleted:" + deleted);
 					}
 				}
 			}
-			/*
-			File assetDirectory = new File(CmsPropertyHandler.getDigitalAssetPath());
-			File[] files = assetDirectory.listFiles(new FilenameFilterImpl(digitalAssetId.toString())); 	
-			for(int i=0; i<files.length; i++)
-			{
-				File file = files[i];
-				file.delete();
-			}
-			*/
 		}
 		catch(Exception e)
 		{
@@ -2305,7 +2297,7 @@ public class DigitalAssetController extends BaseController
 
 
 }
-
+/*
 class FilenameFilterImpl implements FilenameFilter 
 {
 	private String filter = ".";
@@ -2320,3 +2312,4 @@ class FilenameFilterImpl implements FilenameFilter
     	return name.startsWith(filter);
 	}
 };
+*/

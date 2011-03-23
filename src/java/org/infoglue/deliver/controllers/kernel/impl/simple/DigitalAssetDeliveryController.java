@@ -76,7 +76,8 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 		
     	public boolean accept(File dir, String name) 
     	{
-        	return name.startsWith(filter);
+        	return (name.startsWith(filter) || (name.startsWith("thumbnail") && name.indexOf(filter) > -1));
+        	//return name.startsWith(filter);
     	}
 	};
 

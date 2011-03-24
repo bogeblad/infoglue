@@ -509,6 +509,7 @@ ul.assignedEntities li
 .resize {background:url(../../images/v3/image-resize.png) no-repeat left center; background-position: 0px 2px;}
 .crop {background:url(../../images/v3/image-crop.png) no-repeat left center; background-position: 0px 2px;}
 .rotate {background:url(../../images/v3/rotate.png) no-repeat left center; background-position: 0px 2px;}
+.undo {background:url(../../images/v3/undo.png) no-repeat left center; background-position: 0px 2px;}
 .search {background:url(../../images/v3/search.png) no-repeat left center; background-position: 0px 2px;}
 .replace {background:url(../../images/v3/replace.png) no-repeat left center; background-position: 0px 2px;}
 .commit {background:url(../../images/v3/commit.png) no-repeat left center; background-position: 0px 2px;}

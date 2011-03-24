@@ -199,6 +199,11 @@
 			}
 		} 		
 		
+		function openUndoDialog()
+		{
+			document.getElementById("undoDialog").style.display = "block";
+		} 		
+
 		function openSaveImageDialog()
 		{
 			document.getElementById("saveDialog").style.display = "block";
@@ -219,11 +224,16 @@
 			document.getElementById("rotateDialog").style.display = "block";
 		} 		
 
+		function undo()
+		{
+			document.location.href = "ImageEditor!undo.action?digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId";
+		} 		
+
 		function saveImage()
 		{
 			document.location.href = "ImageEditor!save.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId";
-		} 		
-
+		} 	
+		
 		function saveAsImage()
 		{
 			var digitalAssetKey = document.getElementById("tt").value;
@@ -371,6 +381,16 @@
 			
 		</div><!-- end of canvas -->
 		
+	</div>
+
+	<div id="undoDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
+		<h3>Undo last operation</h3>
+		<p>Press undo to skip the last modification. 
+		</p>
+		<p class="buttonPane">
+			<input type="button" class="save" value="$ui.getString("tool.contenttool.undo.label")" onclick="undo();"/>
+			<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.getElementById('undoDialog').style.display = 'none';"/>
+		</p>
 	</div>
 
 	<div id="saveDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">

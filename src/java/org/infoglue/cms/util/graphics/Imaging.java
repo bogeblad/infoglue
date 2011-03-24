@@ -65,6 +65,14 @@ public class Imaging
 
 		BufferedImage image = javax.imageio.ImageIO.read(input);
 		
+		System.out.println("image:" + image.getType() + ":" + BufferedImage.TYPE_CUSTOM);
+		if(image.getType() == BufferedImage.TYPE_CUSTOM)
+		{
+			BufferedImage image_to_save2=new BufferedImage(image.getWidth(),image.getHeight(), BufferedImage.TYPE_INT_RGB);
+	        image_to_save2.getGraphics().drawImage(image,0,0,null);
+	        image = image_to_save2; 
+		}
+		
 		BufferedImage scaledImage = null;
 		if(constrainProportions)
 		{			

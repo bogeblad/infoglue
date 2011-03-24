@@ -112,7 +112,6 @@
 	<classpathentry kind="lib" path="lib/build/jsoup-1.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/build/resin.jar"/>
 	<classpathentry kind="lib" path="lib/build/commons-httpclient-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/build/imgscalr-lib-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/build/milton-api-1.5.4IGPatched.jar"/>
 	<classpathentry kind="lib" path="lib/build/milton-servlet-1.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/build/velocity-1.7IGPatched.jar"/>
@@ -121,5 +120,6 @@
 	<classpathentry kind="lib" path="lib/jdbc/commons-dbcp-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/commons-pool-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="lib/build/imgscalr-lib-3.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

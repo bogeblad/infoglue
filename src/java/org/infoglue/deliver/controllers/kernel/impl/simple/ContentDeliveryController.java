@@ -2911,6 +2911,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(content.getContentTypeDefinition() != null && content.getContentTypeDefinition().getName().equalsIgnoreCase("Meta info"))
 			return true;
 
+		if(content.getIsDeleted().booleanValue())
+			return false;
+
 		boolean validateOnDates = true;
 		String operatingMode = CmsPropertyHandler.getOperatingMode();
 		if(!deliveryContext.getOperatingMode().equals(operatingMode))
@@ -3022,6 +3025,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(content.getContentTypeDefinitionId() != null && content.getContentTypeDefinitionId().equals(metaInfoContentTypeId))
 			return true;
 
+		if(content.getIsDeleted().booleanValue())
+			return false;
+		
 		boolean validateOnDates = true;
 		String operatingMode = CmsPropertyHandler.getOperatingMode();
 		if(!deliveryContext.getOperatingMode().equals(operatingMode))

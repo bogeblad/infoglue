@@ -158,11 +158,12 @@
 	  	<div class="imgBoxBottom">
 			<a class="previewImg" href="$digitalAssetUrl" title="$ui.getString("tool.contenttool.viewAttachment")" target="_blank"></a>
 			#if($disableImageEditor != "true" && ($digitalAssetUrl.indexOf(".gif") > -1 || $digitalAssetUrl.indexOf(".jpg") > -1 || $digitalAssetUrl.indexOf(".png") > -1))
-			##<a class="editImg" href="#" onclick="openPopup('ImageEditor.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId','DigitalAsset','width=800,height=600,resizable=yes');" title="$ui.getString("tool.contenttool.editAttachment")"></a>
-			<a class="editImg" href="#" onclick="parent.openInlineDiv('ImageEditor.action?contentVersionId=$contentVersionId&contentId=$contentId&languageId=$languageId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, ''); " title="$ui.getString("tool.contenttool.editAttachment")"></a>
+			<a class="editImg" href="#" onclick="parent.openInlineDiv('ImageEditor.action?contentVersionId=$contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId&clearHistory=true', 600, 800, true, true, ''); " title="$ui.getString("tool.contenttool.editAttachment")"></a>
 			#end
-			<a class="updateImg" href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, ''); " title="$ui.getString("tool.contenttool.updateAttachment")"></a>
-			<a class="deleteImg" href="#" onclick="deleteAsset('ViewContentVersion!deleteDigitalAssetStandalone.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId&returnAddress=$formatter.encodeURI($currentURL)', '$digitalAsset.assetKey');" title="$ui.getString("tool.contenttool.deleteAttachment")"></a>
+			##<a class="updateImg" href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, ''); " title="$ui.getString("tool.contenttool.updateAttachment")"></a>
+			##<a class="deleteImg" href="#" onclick="deleteAsset('ViewContentVersion!deleteDigitalAssetStandalone.action?contentVersionId=$!contentVersionId&contentId=$!contentId&languageId=$!languageId&digitalAssetId=$digitalAsset.digitalAssetId&returnAddress=$formatter.encodeURI($currentURL)', '$digitalAsset.assetKey');" title="$ui.getString("tool.contenttool.deleteAttachment")"></a>
+			<a class="updateImg" href="#" onclick="parent.openInlineDiv('ViewDigitalAsset!update.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');" title="$ui.getString("tool.contenttool.updateAttachment")"></a>
+			<a class="deleteImg" href="#" onclick="deleteAsset('ViewContentVersion!deleteDigitalAssetStandalone.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId&returnAddress=$formatter.encodeURI($currentURL)', '$digitalAsset.assetKey');" title="$ui.getString("tool.contenttool.deleteAttachment")"></a>
 		</div>
  	</div>
 #end

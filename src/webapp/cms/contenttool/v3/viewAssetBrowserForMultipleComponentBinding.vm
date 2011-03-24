@@ -240,6 +240,21 @@
 		return value;
 	}
 	
+	var selectedContentId;
+	var selectedAssetKey;
+	var selectedAssetUrl;
+	function assetMarked(contentId, assetKey, assetUrl)
+	{
+		//alert("Asset was marked:" + contentId + assetKey + assetUrl);
+		selectedContentId = contentId;
+		selectedAssetKey = assetKey;
+		selectedAssetUrl = assetUrl;
+	}
+	
+	function useSelectedAsset()
+	{
+		onOk(selectedContentId, selectedAssetKey, selectedAssetUrl);
+	}
 	
 	function onOk(contentId, assetKey, assetUrl)
 	{

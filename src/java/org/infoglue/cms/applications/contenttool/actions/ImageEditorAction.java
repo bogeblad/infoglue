@@ -85,6 +85,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	//private DigitalAssetVO updatedDigitalAssetVO = null;
 	private Integer contentTypeDefinitionId;
 	private boolean refreshAll = false;
+	private boolean clearHistory = false;
 	
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
         	
@@ -94,6 +95,12 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	
     public String doExecute() throws Exception
     {
+    	if(clearHistory)
+    	{
+    		System.out.println("Cleaning up all session images");
+    		getHttpSession().removeAttribute("imageEditorOldWorkingFiles");
+    	}
+    	
     	ceb.throwIfNotEmpty();
 	
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
@@ -115,6 +122,25 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     
         return "success";
     }    
+    
+	/**
+	 * 
+	 */
+	
+    public String doUndo() throws Exception
+    {
+    	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
+    	this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
+        this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
+
+    	workingFileName = getFirstOldWorkingFile();
+        System.out.println("workingFileName:" + workingFileName);
+    	this.modifiedFileUrl = getImageEditorBaseUrl() + workingFileName;
+        System.out.println("this.modifiedFileUrl:" + this.modifiedFileUrl);
+    	//logger.info("modifiedFileUrl:" + modifiedFileUrl);
+    
+        return "success";
+    }    
 
     public String doResize() throws Exception
     {
@@ -125,6 +151,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
 
     	File file = new File(getImageEditorPath() + File.separator + workingFileName);
+		addOldWorkingFile(file);
 		
     	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + ".png";    	
     	File outputFile = new File(getImageEditorPath() + File.separator + workingFileName);
@@ -160,6 +187,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
 
     	File file = new File(getImageEditorPath() + File.separator + workingFileName);
+    	addOldWorkingFile(file);
 		
     	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + ".png";    	
     	File outputFile = new File(getImageEditorPath() + File.separator + workingFileName);
@@ -202,6 +230,8 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
 
     	File file = new File(getImageEditorPath() + File.separator + workingFileName);
+    	addOldWorkingFile(file);
+		
     	BufferedImage original = javax.imageio.ImageIO.read(file);
 
     	// create a cropped image from the original image
@@ -513,11 +543,53 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     }    
 
     /**
+     * This saves old files in session so you can do undo up to 10 times.
+     */
+    private void addOldWorkingFile(File oldWorkingFile) throws Exception
+    {
+    	List imageEditorOldWorkingFiles = (List)getHttpSession().getAttribute("imageEditorOldWorkingFiles");
+    	if(imageEditorOldWorkingFiles == null)
+    	{
+    		imageEditorOldWorkingFiles = new ArrayList();
+    		getHttpSession().setAttribute("imageEditorOldWorkingFiles", imageEditorOldWorkingFiles);
+    	}
+    	
+    	System.out.println("Adding " + oldWorkingFile.getName());
+    	imageEditorOldWorkingFiles.add(0, oldWorkingFile.getName());
+    	
+    	List imageEditorOldWorkingFiles2 = (List)getHttpSession().getAttribute("imageEditorOldWorkingFiles");
+    	System.out.println("imageEditorOldWorkingFiles2: " + imageEditorOldWorkingFiles2.size());
+
+    }
+
+    /**
+     * This saves old files in session so you can do undo up to 10 times.
+     */
+    private String getFirstOldWorkingFile() throws Exception
+    {
+    	String oldWorkingFileName = null;
+    	List imageEditorOldWorkingFiles = (List)getHttpSession().getAttribute("imageEditorOldWorkingFiles");
+    	if(imageEditorOldWorkingFiles != null)
+    	{
+    		System.out.println("imageEditorOldWorkingFiles: " + imageEditorOldWorkingFiles.size());
+        	oldWorkingFileName = (String)imageEditorOldWorkingFiles.get(0);
+    		System.out.println("oldWorkingFileName:" + oldWorkingFileName);
+    		imageEditorOldWorkingFiles.remove(0);
+    	}
+    	else
+    		System.out.println("imageEditorOldWorkingFiles was null");
+        
+    	return oldWorkingFileName;
+    }
+    
+    /**
      * This method preserves space by only allowing 5 historic images and also cleaning up after a save totally.
      * All files older than 1 day are also removed.
      */
     private void cleanOldWorkingFiles(boolean cleanAll) throws Exception
     {
+    	getHttpSession().removeAttribute("imageEditorOldWorkingFiles");
+    	
     	File workingAssetsDir = new File(getImageEditorPath());
 
     	final String matchString = "_" + this.getInfoGluePrincipal().getName() + "_" + this.digitalAssetId;
@@ -712,5 +784,11 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	{
 		return this.refreshAll;
 	}
+
+	public void setClearHistory(boolean clearHistory) 
+	{
+		this.clearHistory = clearHistory;
+	}
+
 
 }

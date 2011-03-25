@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.thebuzzmedia.imgscalr.Scalr;
+import com.thebuzzmedia.imgscalr.Scalr.Mode;
 
 /**
  * An generic wrapper for all image-handling logic. Currently uses simple classes and standard java-api:s.
@@ -60,15 +61,33 @@ public class Imaging
 
 	public static void resize(File input, File output, int width, int height, String format, boolean constrainProportions) throws Exception
 	{
-		if(height <= 0) height = width;
-		if(width <= 0) width = height;
-
 		BufferedImage image = javax.imageio.ImageIO.read(input);
+		
+		Mode mode = Mode.AUTOMATIC;
+		if(height <= 0)
+		{
+			height = width;
+			mode = Mode.FIT_TO_WIDTH;
+		}
+		if(width <= 0) 
+		{
+			width = height;		
+			mode = Mode.FIT_TO_HEIGHT;
+		}
+		
+		System.out.println("image:" + image.getType() + ":" + BufferedImage.TYPE_CUSTOM);
+		if(image.getType() == BufferedImage.TYPE_CUSTOM)
+		{
+			BufferedImage image_to_save2=new BufferedImage(image.getWidth(),image.getHeight(), BufferedImage.TYPE_INT_RGB);
+	        image_to_save2.getGraphics().drawImage(image,0,0,null);
+	        image = image_to_save2; 
+		}
 		
 		BufferedImage scaledImage = null;
 		if(constrainProportions)
 		{			
-			scaledImage = Scalr.resize(image, width, height);
+			scaledImage = Scalr.resize(image, mode, width, height);
+			//scaledImage = Scalr.resize(image, width, height);
 		}
 		else
 		{

@@ -483,6 +483,19 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
+		buttons.add(new ToolbarButton("useSelectedAsset", 
+				  getLocalizedString(locale, "tool.contenttool.assetDialog.chooseAttachment"), 
+				  getLocalizedString(locale, "tool.contenttool.assetDialog.chooseAttachment"), 
+				  "useSelectedAsset();", 
+				  "", 
+				  "", 
+				  "linkInsert", 
+				  true, 
+				  false, 
+				  "", 
+				  "", 
+				  ""));
+		
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
 		//buttons.add(getCommonFooterCancelButton("ViewListGroup!listManagableGroups.action"));
 				
@@ -1422,6 +1435,32 @@ public class ToolbarController implements ToolbarProvider
 				  "", 
 				  ""));
 
+		buttons.add(new ToolbarButton("rotate", 
+				  getLocalizedString(locale, "tool.contenttool.imageEditor.rotate"), 
+				  getLocalizedString(locale, "tool.contenttool.imageEditor.rotate"), 
+				  "openRotateImageDialog();", 
+				  "", 
+				  "", 
+				  "rotate", 
+				  true, 
+				  false, 
+				  "", 
+				  "", 
+				  ""));
+
+		buttons.add(new ToolbarButton("undo", 
+				  getLocalizedString(locale, "tool.contenttool.undo.label"), 
+				  getLocalizedString(locale, "tool.contenttool.undo.label"), 
+				  "openUndoDialog();", 
+				  "", 
+				  "", 
+				  "undo", 
+				  true, 
+				  false, 
+				  "", 
+				  "", 
+				  ""));
+
 		buttons.add(new ToolbarButton("save", 
 				  getLocalizedString(locale, "tool.contenttool.save.label"), 
 				  getLocalizedString(locale, "tool.contenttool.save.label"), 
@@ -1435,6 +1474,19 @@ public class ToolbarController implements ToolbarProvider
 				  "", 
 				  ""));
 
+		buttons.add(new ToolbarButton("saveAs", 
+				  getLocalizedString(locale, "tool.contenttool.saveAs.label"), 
+				  getLocalizedString(locale, "tool.contenttool.saveAs.label"), 
+				  "openSaveAsImageDialog();", 
+				  "", 
+				  "", 
+				  "save", 
+				  true, 
+				  false, 
+				  "", 
+				  "", 
+				  ""));
+		
 		return buttons;
 	}
 	

@@ -122,6 +122,10 @@
 	-->
 	<target name="clean">
 		<delete dir="${build}" quiet="true"/>
+		<tstamp/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${build.classes}"/>
+		<mkdir dir="${test.classes}"/>
 	</target>
 
 	<!-- =================================================================== -->
@@ -193,10 +197,10 @@
 	* for more info.
 	-->
 	<target name="compile" depends="init">
-		<javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true">
+		<javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
 			<src refid="build.sourcepath"/>
 		</javac>
-		<javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true">
+		<javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
 			<src refid="test.sourcepath"/>
 		</javac>
 		<copy todir="${build.classes}">
@@ -239,10 +243,10 @@
 	</target>
 
 	<target name="compileRelease" depends="init">
-		<javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true">
+		<javac destdir="${build.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
 			<src refid="build.sourcepath"/>
 		</javac>
-		<javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true">
+		<javac destdir="${test.classes}" classpathref="build.classpath" encoding="ISO-8859-1" debug="true" depend="true" nowarn="true">
 			<src refid="test.sourcepath"/>
 		</javac>
 		<copy todir="${build.classes}">

@@ -190,6 +190,12 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 	indexMode = dnsName.indexOf("live=");
                 }
 
+            	if(index == -1 && indexMode == -1 && dnsName.indexOf("=") > -1)
+            	{
+            		System.out.println("Skipping this name [" + dnsName + "] as it was not a dnsName targeted toward this mode.");
+            		continue;
+            	}
+            	
             	int protocolIndex = dnsName.indexOf("://");
                 if(protocolIndex > -1)
                     dnsName = dnsName.substring(protocolIndex + 3);

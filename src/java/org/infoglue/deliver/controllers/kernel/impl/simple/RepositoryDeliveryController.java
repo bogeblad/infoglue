@@ -141,8 +141,8 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 		if(cachedRepositories == null)
 		{
 		    cachedRepositories = new ArrayList();
-		    
-	        OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE is_defined(r.dnsName)");
+
+	        OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE is_defined(r.dnsName) ORDER BY r.repositoryId");
 	        QueryResults results = oql.execute(Database.ReadOnly);
 		
 	        while (results.hasMore()) 
@@ -201,6 +201,12 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 	indexMode = dnsName.indexOf("live=");
                 }
                     	
+                logger.info("dnsName.indexOf(':'):" + dnsName.indexOf(":"));
+                logger.info("dnsName.indexOf(serverName) == 0:" + dnsName.indexOf(serverName));
+                logger.info("dnsName.indexOf(serverName + ':' + portNumber):" + dnsName.indexOf(serverName + ":" + portNumber));
+                logger.info("index:" + index);
+                logger.info("indexMode:" + indexMode);
+
             	if((dnsName.indexOf(":") == -1 && dnsName.indexOf(serverName) == 0) || dnsName.indexOf(serverName + ":" + portNumber) == 0 || index > -1 || indexMode == -1)
                 {
             	    if(repositoryName != null && repositoryName.length() > 0)

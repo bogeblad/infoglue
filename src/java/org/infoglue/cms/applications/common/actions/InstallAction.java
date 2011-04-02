@@ -412,4 +412,19 @@ public class InstallAction extends InfoGlueAbstractAction
 	public void setSystemEmailSender(String systemEmailSender) {
 		this.systemEmailSender = systemEmailSender;
 	}
+	
+	public void setOperatingMode(String operatingMode)
+	{
+		this.operatingMode = operatingMode;
+	}
+
+	public String getOperatingMode()
+	{
+		return this.operatingMode;
+	}
+	
+	public String getApplicationName()
+	{
+		return CmsPropertyHandler.getApplicationName();
+	}
 }

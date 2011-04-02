@@ -141,8 +141,8 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 		if(cachedRepositories == null)
 		{
 		    cachedRepositories = new ArrayList();
-		    
-	        OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE is_defined(r.dnsName)");
+
+	        OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE is_defined(r.dnsName) ORDER BY r.repositoryId");
 	        QueryResults results = oql.execute(Database.ReadOnly);
 		
 	        while (results.hasMore()) 
@@ -176,18 +176,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
             	if(logger.isInfoEnabled())
                 	logger.info("dnsNames[i]:" + dnsNames[i]);
                 String dnsName = dnsNames[i];
-            	int protocolIndex = dnsName.indexOf("://");
-                if(protocolIndex > -1)
-                    dnsName = dnsName.substring(protocolIndex + 3);
-
-            	int portIndex = dnsName.indexOf(":");
-                if(portIndex > -1)
-                    dnsName = dnsName.substring(0, portIndex);
-
-                if(logger.isInfoEnabled())
-                	logger.info("Matching only server name - removed protocol if there:" + dnsName);
-                if(logger.isInfoEnabled())
-                	logger.info("dnsName:" + dnsName + ", serverName:" + serverName + ", repositoryName:" + repositoryName);
+                
                 int index = dnsName.indexOf("working=,");
                 int indexMode = dnsName.indexOf("working=");
                 if(CmsPropertyHandler.getOperatingMode().equals("2"))
@@ -200,7 +189,36 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 	index = dnsName.indexOf("live=,");
                 	indexMode = dnsName.indexOf("live=");
                 }
-                    	
+                
+                System.out.println("" + index + ":" + indexMode + ":" + dnsName + " for operationMode:" + CmsPropertyHandler.getOperatingMode());
+            	if(index == -1 && indexMode == -1 && dnsName.indexOf("=") > -1)
+            	{
+            		System.out.println("Skipping this name [" + dnsName + "] as it was not a dnsName targeted toward this mode.");
+            		continue;
+            	}
+            	
+            	int protocolIndex = dnsName.indexOf("://");
+                if(protocolIndex > -1)
+                    dnsName = dnsName.substring(protocolIndex + 3);
+
+            	int portIndex = dnsName.indexOf(":");
+                if(portIndex > -1)
+                    dnsName = dnsName.substring(0, portIndex);
+
+                if(logger.isInfoEnabled())
+                	logger.info("Matching only server name - removed protocol if there:" + dnsName);
+                if(logger.isInfoEnabled())
+                	logger.info("dnsName:" + dnsName + ", serverName:" + serverName + ", repositoryName:" + repositoryName);
+                
+                if(logger.isInfoEnabled())
+                {
+	                logger.info("dnsName.indexOf(':'):" + dnsName.indexOf(":"));
+	                logger.info("dnsName.indexOf(serverName) == 0:" + dnsName.indexOf(serverName));
+	                logger.info("dnsName.indexOf(serverName + ':' + portNumber):" + dnsName.indexOf(serverName + ":" + portNumber));
+	                logger.info("index:" + index);
+	                logger.info("indexMode:" + indexMode);
+                }
+                
             	if((dnsName.indexOf(":") == -1 && dnsName.indexOf(serverName) == 0) || dnsName.indexOf(serverName + ":" + portNumber) == 0 || index > -1 || indexMode == -1)
                 {
             	    if(repositoryName != null && repositoryName.length() > 0)

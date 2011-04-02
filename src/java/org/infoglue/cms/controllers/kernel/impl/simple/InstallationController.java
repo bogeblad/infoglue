@@ -616,7 +616,7 @@ public class InstallationController extends BaseController
 		contentsDeliver = contentsDeliver.replaceAll("@recacheUrl@", "");
 		contentsDeliver = contentsDeliver.replaceAll("@useUpdateSecurity@", "true");
 		contentsDeliver = contentsDeliver.replaceAll("@forceImportTagFileCaching@", "false");
-		contentsDeliver = contentsDeliver.replaceAll("@operatingMode.deliver@", "0");
+		contentsDeliver = contentsDeliver.replaceAll("@operatingMode.deliver@", operatingMode);
 
 		if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 		{

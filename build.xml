@@ -1090,6 +1090,10 @@
 		<echo message="Copying confs to deliver"/>
 		<echo message="Using properties in fast-build-clean"/>
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="0"/>
+			</filterset>
 			<fileset dir="${conf}">
 				<include name="*.properties"/>
 				<include name="*.xml"/>
@@ -1177,6 +1181,9 @@
 		<echo message="Copying confs to deliver"/>
 		<echo message="Using properties in fast-build-clean"/>
 		<copy todir="${deploy.dir.preview}/WEB-INF/classes" overwrite="true">
+			<filterset>
+				<filter token="operatingMode.deliver" value="2"/>
+			</filterset>
 			<fileset dir="${conf}">
 				<include name="*.properties"/>
 				<include name="*.xml"/>
@@ -1264,6 +1271,9 @@
 		<echo message="Copying confs to deliver"/>
 		<echo message="Using properties in fast-build-clean"/>
 		<copy todir="${deploy.dir.live}/WEB-INF/classes" overwrite="true">
+			<filterset>
+				<filter token="operatingMode.deliver" value="3"/>
+			</filterset>
 			<fileset dir="${conf}">
 				<include name="*.properties"/>
 				<include name="*.xml"/>

@@ -2139,7 +2139,9 @@ public class BasicTemplateController implements TemplateController
 			if(contentId != null)
 			{
 				String unparsedAttributeValue = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, languageId, attributeName, this.siteNodeId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal, false);
-				logger.info("Found unparsedAttributeValue:" + unparsedAttributeValue);
+				
+				unparsedAttributeValue = unparsedAttributeValue.replaceAll("\\$(?!templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId))", "&#36;");
+				//logger.info("Found unparsedAttributeValue:" + unparsedAttributeValue);
 				
 				templateLogicContext.put("inlineContentId", contentId);
 				

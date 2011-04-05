@@ -2617,8 +2617,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 	        	
 	        	if(startTagIndex > 0 && startTagIndex < xml.length() && endTagIndex > startTagIndex && endTagIndex <  xml.length())
 	        		value = xml.substring(startTagIndex + key.length() + 11, endTagIndex);
-
-	    		if(escapeHTML)
+	        		        	
+	        	if(escapeHTML)
 	        	    value = formatter.escapeHTML(value);
 	        } 
 	        catch(Exception e)

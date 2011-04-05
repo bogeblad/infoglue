@@ -190,10 +190,12 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 	indexMode = dnsName.indexOf("live=");
                 }
                 
-                System.out.println("" + index + ":" + indexMode + ":" + dnsName + " for operationMode:" + CmsPropertyHandler.getOperatingMode());
+                if(logger.isInfoEnabled())
+                	logger.info("" + index + ":" + indexMode + ":" + dnsName + " for operationMode:" + CmsPropertyHandler.getOperatingMode());
             	if(index == -1 && indexMode == -1 && dnsName.indexOf("=") > -1)
             	{
-            		System.out.println("Skipping this name [" + dnsName + "] as it was not a dnsName targeted toward this mode.");
+            		if(logger.isInfoEnabled())
+            			logger.info("Skipping this name [" + dnsName + "] as it was not a dnsName targeted toward this mode.");
             		continue;
             	}
             	

@@ -64,6 +64,7 @@ public class ContentAttributeTag extends ComponentLogicTag
     private boolean useStructureInheritance = true;
     private boolean useAttributeLanguageFallback = false; 
     private boolean parse				= false;
+    private boolean escapeVelocityCode	= true;
     private boolean fullBaseUrl			= false;
     
     public ContentAttributeTag()
@@ -91,6 +92,9 @@ public class ContentAttributeTag extends ComponentLogicTag
 	    	if(!parse)
             {
                 result = getController().getContentAttribute(contentVersionVO, attributeName, disableEditOnSight);
+        	    //result = result.replaceAll("#", "&#35;");
+                if(escapeVelocityCode)
+                	result = result.replaceAll("\\$(?!templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId))", "&#36;");
             }
 	        else
 	        {
@@ -102,6 +106,9 @@ public class ContentAttributeTag extends ComponentLogicTag
             if(!parse)
             {
                 result = getController().getContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
+        	    //result = result.replaceAll("#", "&#35;");
+                if(escapeVelocityCode)
+                	result = result.replaceAll("\\$(?!templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId))", "&#36;");
             }
 	        else
 	        {
@@ -113,6 +120,9 @@ public class ContentAttributeTag extends ComponentLogicTag
 	        if(!parse)
             {
                 result = getComponentLogic().getContentAttribute(propertyName, languageId, attributeName, disableEditOnSight, useInheritance, useRepositoryInheritance, useStructureInheritance);
+        	    //result = result.replaceAll("#", "&#35;");
+                if(escapeVelocityCode)
+                	result = result.replaceAll("\\$(?!templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId))", "&#36;");
             }
 	        else
             {
@@ -184,6 +194,7 @@ public class ContentAttributeTag extends ComponentLogicTag
         useStructureInheritance = true;
 	    useAttributeLanguageFallback = true;
 	    parse = false;
+	    escapeVelocityCode = true;
 	    fullBaseUrl	= false;
 	    languageId = null;
 
@@ -223,6 +234,11 @@ public class ContentAttributeTag extends ComponentLogicTag
     public void setParse(boolean parse)
     {
         this.parse = parse;
+    }
+
+    public void setEscapeVelocityCode(boolean escapeVelocityCode)
+    {
+        this.escapeVelocityCode = escapeVelocityCode;
     }
     
     public void setContentId(final String contentId) throws JspException

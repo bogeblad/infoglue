@@ -822,7 +822,7 @@ public class ContentVersionController extends BaseController
     {
 		Content content   = ContentController.getContentController().getContentWithId(contentId, db);
     	Language language = LanguageController.getController().getLanguageWithId(languageId, db);
-    	System.out.println("language:" + language.getId() + ":" + language.getLanguageId());
+    	//System.out.println("language:" + language.getId() + ":" + language.getLanguageId());
 		return create(content, language, contentVersionVO, oldContentVersionId, allowBrokenAssets, duplicateAssets, excludedAssetId, db);
     }     
     

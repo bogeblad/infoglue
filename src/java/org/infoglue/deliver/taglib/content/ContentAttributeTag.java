@@ -94,7 +94,7 @@ public class ContentAttributeTag extends ComponentLogicTag
                 result = getController().getContentAttribute(contentVersionVO, attributeName, disableEditOnSight);
         	    //result = result.replaceAll("#", "&#35;");
                 if(escapeVelocityCode)
-                	result = result.replaceAll("\\$(?!templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId))", "&#36;");
+                	result = result.replaceAll("\\$(?!(\\(|templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId)))", "&#36;");
             }
 	        else
 	        {
@@ -108,7 +108,7 @@ public class ContentAttributeTag extends ComponentLogicTag
                 result = getController().getContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
         	    //result = result.replaceAll("#", "&#35;");
                 if(escapeVelocityCode)
-                	result = result.replaceAll("\\$(?!templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId))", "&#36;");
+                	result = result.replaceAll("\\$(?!(\\(|templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId)))", "&#36;");
             }
 	        else
 	        {
@@ -122,7 +122,7 @@ public class ContentAttributeTag extends ComponentLogicTag
                 result = getComponentLogic().getContentAttribute(propertyName, languageId, attributeName, disableEditOnSight, useInheritance, useRepositoryInheritance, useStructureInheritance);
         	    //result = result.replaceAll("#", "&#35;");
                 if(escapeVelocityCode)
-                	result = result.replaceAll("\\$(?!templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId))", "&#36;");
+                	result = result.replaceAll("\\$(?!(\\(|templateLogic\\.(getPageUrl|getInlineAssetUrl|languageId)))", "&#36;");
             }
 	        else
             {

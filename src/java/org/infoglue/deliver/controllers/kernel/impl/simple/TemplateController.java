@@ -536,7 +536,19 @@ public interface TemplateController
      * This method is just a dummy method used to ensure that we can ensure to not get a decorated attribute
      * value if OnSiteEdit is on.
      */
-    public abstract String getParsedContentAttribute(
+    public abstract String getParsedContentAttribute(Integer contentId, Integer languageId, String attributeName, boolean clean);
+    
+    /**
+     * This method is just a dummy method used to ensure that we can ensure to not get a decorated attribute
+     * value if OnSiteEdit is on.
+     */
+   public abstract String getParsedContentAttribute(Integer contentId, Integer languageId, String attributeName, boolean clean, boolean escapeVelocityCode);
+
+    /**
+     * This method is just a dummy method used to ensure that we can ensure to not get a decorated attribute
+     * value if OnSiteEdit is on.
+     */
+    public abstract String getEscapedParsedContentAttribute(
             Integer contentId, Integer languageId, String attributeName, boolean clean);
 
     /**

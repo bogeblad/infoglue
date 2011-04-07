@@ -528,13 +528,23 @@ public class ComponentLogic
 
 	public String getParsedContentAttribute(String propertyName, Integer languageId, String attributeName, boolean disableEditOnSight, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
 	{
+		return getParsedContentAttribute(propertyName, languageId, attributeName, disableEditOnSight, useInheritance, useRepositoryInheritance, useStructureInheritance, false);
+	}
+
+	public String getParsedContentAttribute(String propertyName, Integer languageId, String attributeName, boolean disableEditOnSight, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance, boolean escapeVelocityCode)
+	{
 		String attributeValue = "";
 
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer contentId = getContentId(property);
 		if(contentId != null)
-			attributeValue = templateController.getParsedContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
-			
+		{
+			if(!escapeVelocityCode)
+				attributeValue = templateController.getParsedContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
+			else
+				attributeValue = templateController.getEscapedParsedContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
+		}
+		
 		return attributeValue;
 	}
 

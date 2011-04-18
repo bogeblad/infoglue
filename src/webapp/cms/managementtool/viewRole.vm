@@ -69,7 +69,11 @@
 	#set($readonly = "")
 #end
 #set($hasAccessToManageUsers = $this.hasAccessTo("Role.ManageUsers", "$roleName"))
-
+#set($isAnonymousRole = false)
+#if($!roleName == "anonymous")
+	#set($hasAccessToManageUsers = false)
+	#set($isAnonymousRole = true)
+#end
 <div class="fullymarginalized">
 	<form method="post" name="editForm" action="UpdateRole.action">
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
@@ -117,7 +121,11 @@
 										#end
 									#end
 								#else
+									#if($isAnonymousRole)
+									<option value="" title="This role automatically get's assigned to all users">This role automatically get's assigned to all users</option>
+									#else
 									<option value="" title="You are not allowed to assign users">You are not allowed to assign users</option>
+									#end
 								#end
 							#else
 								<option value="" title="No need to show users">No need to show users</option>
@@ -132,9 +140,16 @@
 				    </td>
 				    <td>
 				      	<SELECT $readonly id="userName" name="userName" multiple size="10" #if($hasAccessToManageUsers)onDblClick="opt.transferLeft()"#end style="font-size: 10px; width:300px;">
-				        	#foreach ($assignedInfoGluePrincipal in $assignedInfoGluePrincipals)
-								<option value="$assignedInfoGluePrincipal.name" title="$assignedInfoGluePrincipal.name">$assignedInfoGluePrincipal.name</option>
-							#end
+				        	#if($isAnonymousRole)
+								<option value="anonymous" title="All users">All users</option>
+					        	#foreach ($assignedInfoGluePrincipal in $assignedInfoGluePrincipals)
+									<option value="$assignedInfoGluePrincipal.name" title="$assignedInfoGluePrincipal.name" style="visibility: hidden;">$assignedInfoGluePrincipal.name</option>
+								#end
+				        	#else
+					        	#foreach ($assignedInfoGluePrincipal in $assignedInfoGluePrincipals)
+									<option value="$assignedInfoGluePrincipal.name" title="$assignedInfoGluePrincipal.name">$assignedInfoGluePrincipal.name</option>
+								#end
+				        	#end
 					    </select>
 				    </td>
 				</tr>

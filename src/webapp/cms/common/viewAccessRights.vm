@@ -329,7 +329,7 @@
 					
 					<tr>
 						<td>
-							$role.displayName
+							$role.displayName #if($role.displayName == "anonymous") (All users, logged in or not have this role)#end
 							<input type="hidden" name="${roleIndex}_roleName" value="$role.name"/>
 						</td>
 						<td>&nbsp;</td>

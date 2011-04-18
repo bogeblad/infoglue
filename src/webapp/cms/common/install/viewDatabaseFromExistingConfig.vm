@@ -1,0 +1,84 @@
+#beginLightCommonToolV3("tool.common.install.database.title" "" "" false true $!disableCloseButton)
+
+<script type="text/javascript">
+	function next()
+	{
+		document.editForm.submit();
+	}
+	
+	$(document).ready(function(){
+		
+		if("$!createDatabase" != "true")
+		{
+			$("#dbaAccount").hide();
+		}
+		
+		$("#createDatabase").change(function () {
+    		//alert("Val: " + $("#createDatabase").attr("checked"));
+    		if($("#createDatabase").attr("checked") == true)
+          		$("#dbaAccount").show();
+          	else
+          		$("#dbaAccount").hide();
+			$("#examples").show();
+        });
+                  
+	});
+	
+</script>
+
+<style type="text/css">
+	label{
+		margin-top:10px;
+	}
+</style>
+
+#lightMenuToolbar("" $buttons $rightButtons)
+
+<div style="clear: both;"></div>
+
+<h1>$ui.getString("tool.common.install.title")</h1>
+
+#installProgressDiv(1)
+
+<h3>
+	$ui.getString("tool.common.install.databaseFromExistingParameters.title")
+</h3>
+<p>
+	$ui.getString("tool.common.install.databaseFromExistingParameters.text", $currentJDBCUrl)
+</p>
+#if($!errorMessage != "")
+<h4><span style="color:red">$!errorMessage</span></h4>
+#end
+
+<form method="POST" name="editForm" action="Install.action">
+	<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+	<input type="hidden" name="operation" value="updateDatabaseFromExistingConfig"/>
+	
+	<p>
+	    <label for="createDatabase">$ui.getString("tool.common.install.database.createDatabase") (or tables if empty database exists)</label>
+		<input type="checkbox" id="createDatabase" name="createDatabase" value="true" #if($!createDatabase == "true")checked="checked"#end/>
+		
+		<span id="examples">
+		    <label for="addExampleRepositories">$ui.getString("tool.common.install.database.addExampleRepositories")</label>
+			<input type="checkbox" name="addExampleRepositories" value="true" #if($!addExampleRepositories == "true")checked="checked" #end/>
+		</span>
+		
+		#if($this.getJDBCEngine() == "mysql" || $this.getJDBCEngine() == "mssqlserver")
+		<span id="dbaAccount">
+		    <label for="dbUser">$ui.getString("tool.common.install.database.dbUser")</label>
+			<input type="text" name="dbUser" value="$!dbUser"/>
+		
+		    <label for="dbPassword">$ui.getString("tool.common.install.database.dbPassword")</label>
+			<input type="password" name="dbPassword" value=""/>
+		</span>
+		#end
+	</p>
+	<div style="height: 200px; overflow: auto; margin-left: 16px; margin-bottom: 40px; border: 1px solid #ccc;">
+		<pre>$!script</pre>
+	</div>
+	
+</form>			
+
+#lightFooterToolbar($footerButtons)
+
+#endCommonToolV3()

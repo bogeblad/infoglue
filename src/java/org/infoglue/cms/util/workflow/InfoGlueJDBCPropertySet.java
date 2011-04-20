@@ -50,6 +50,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
@@ -761,9 +762,17 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         typeMap.put(key, new Integer(type));
     }
 
+    private static long lastErrorCheck = System.currentTimeMillis();
+    private static boolean wasDatabaseFaulty = false;
+    	
     protected Connection getConnection() throws SQLException 
     {
         Connection conn = null;
+        if((wasDatabaseFaulty || !CmsPropertyHandler.getIsValidSetup()) && (System.currentTimeMillis() - lastErrorCheck < 10000))
+        	return conn;
+
+        wasDatabaseFaulty = false;
+        
         boolean reloadingConfiguration = false;
 		
         if(reloadConfiguration)
@@ -812,7 +821,16 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 		catch (Exception ex) 
 		{
         	//if(CmsPropertyHandler.getIsConfigurationFinished())
-        		logger.error("Error connecting to [" + this.url + "]: " + ex.getMessage(), ex);
+        	//logger.error("Error connecting to [" + this.url + "]: " + ex.getMessage(), ex);
+        	logger.error("Error connecting to [" + this.url + "]: " + ex.getMessage());
+        	lastErrorCheck = System.currentTimeMillis();
+        	
+        	int reason = InstallationController.getController().getBrokenDatabaseReason();
+        	if(reason == InstallationController.DATABASE_PARAMETERS_MISSING || reason == InstallationController.DATABASE_SERVER_DOWN || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE)
+        	{
+        		wasDatabaseFaulty = true;
+        	}
+        	//ex.printStackTrace();
 		}
 		
         return conn;

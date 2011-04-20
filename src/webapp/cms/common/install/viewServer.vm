@@ -41,7 +41,16 @@
 			<option value="tomcat7">Tomcat 7.x</option>
 			<option value="JBoss">JBoss</option>
 		</select>
-
+		
+		#if($applicationName == "deliver")
+	    <label for="operatingMode">$ui.getString("tool.common.install.server.operatingMode")</label>
+		<select name="operatingMode">
+			<option value="0">Working</option>
+			<option value="2">Preview</option>
+			<option value="3">Live</option>
+		</select>
+		#end
+		
 	    <label for="hostName">$ui.getString("tool.common.install.server.hostName")</label>
 		<input type="text" name="hostName" value="$!hostName"/>
 	

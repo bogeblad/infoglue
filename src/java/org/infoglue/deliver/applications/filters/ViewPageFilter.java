@@ -191,7 +191,7 @@ public class ViewPageFilter implements Filter
 	                repositoryVOList = getRepositoryId(httpRequest, db);
 	                if(logger.isInfoEnabled())
 	                	logger.info("repositoryVOList:" + repositoryVOList.size());
-
+            
 	            	languageId = getLanguageId(httpRequest, httpSession, repositoryVOList, requestURI, db);
 	            
 	                Integer siteNodeId = null;

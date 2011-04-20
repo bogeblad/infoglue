@@ -72,6 +72,11 @@
             <rtexprvalue>false</rtexprvalue>
         </attribute>
         <attribute>
+            <name>escapeVelocityCode</name>
+            <required>false</required>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
+        <attribute>
             <name>fullBaseUrl</name>
             <required>false</required>
             <rtexprvalue>false</rtexprvalue>

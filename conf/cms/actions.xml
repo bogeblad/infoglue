@@ -3,8 +3,13 @@
 
 	<!-- Installer / database upgrader -->
 	<action name="org.infoglue.cms.applications.common.actions.InstallAction" alias="Install">
+		<!--  
+		<view name="input">/cms/common/install/viewInstallOption.vm</view>
+		<view name="inputInitiateInstall">/cms/common/install/viewIntroduction.vm</view>
+		-->
 		<view name="input">/cms/common/install/viewIntroduction.vm</view>
 		<view name="inputDatabase">/cms/common/install/viewDatabase.vm</view>
+		<view name="inputDatabaseExisting">/cms/common/install/viewDatabaseFromExistingConfig.vm</view>
 		<view name="inputDatabaseUpgrade">/cms/common/install/viewDatabaseUpgrade.vm</view>
 		<view name="inputServer">/cms/common/install/viewServer.vm</view>
 		<view name="inputInitialData">/cms/common/install/viewInitialData.vm</view>

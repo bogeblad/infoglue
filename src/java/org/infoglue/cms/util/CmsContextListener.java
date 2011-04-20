@@ -68,6 +68,13 @@ public final class CmsContextListener implements ServletContextListener
 			
 			CmsPropertyHandler.setContextRootPath(contextRootPath); 
 			
+			boolean isValid = InstallationController.getController().validateSetup();
+			if(isValid)
+			{
+				CmsPropertyHandler.setIsValidSetup(true);
+				ContentTypeDefinitionController.getController().controlAndUpdateSystemContentTypes();
+			}
+
 			String logPath = CmsPropertyHandler.getLogPath();
 			
 			Enumeration enumeration = Logger.getLogger("org.infoglue.cms").getAllAppenders();
@@ -101,14 +108,7 @@ public final class CmsContextListener implements ServletContextListener
 				if(cacheController.getExpireCacheAutomatically())
 					cacheController.start();
 			}
-			
-			boolean isValid = InstallationController.getController().validateSetup();
-			if(isValid)
-			{
-				CmsPropertyHandler.setIsValidSetup(true);
-				ContentTypeDefinitionController.getController().controlAndUpdateSystemContentTypes();
-			}
-				
+							
 			System.out.println("Start introspection");
 			ExtensionLoader el = new ExtensionLoader();
 			el.startExtensions();

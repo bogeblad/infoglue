@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Errors occurred</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+	<meta http-equiv="Cache-Control" content="no-cache" />
+	<meta http-equiv="Pragma" content="no-cache" />
+
+	<style>
+		
+		body {
+			color            : #123456;
+			background-color : #FFFFFF;
+			font-family      : verdana, arial, sans-serif;
+			font-size        : 8pt;
+		}
+		
+		.loginbox {
+			background-color : #FFFFFF;
+			border-style	 : solid;
+			border-width	 : 1px;
+			border-color	 : #cecbce;
+		}
+
+		.borderedCell {
+			background-color : #FFFFFF;
+			border-style	 : solid;
+			border-width	 : 1px;
+			border-color	 : #cecbce;
+		}
+		
+		td {
+			font-family      : verdana, arial, sans-serif;
+			font-size        : 8pt;
+			color		 	 : #333333;
+		}
+		
+		.input {
+			font-family      : verdana, arial, sans-serif;
+			font-size        : 8pt;
+			border-style	 : solid;
+			border-width	 : 1px;	
+			border-color     : #cecbce;
+		}
+		
+		div.fullymarginalized {
+			margin-top		 : 20%;
+			margin-bottom	 : 20%;
+			width 			 : 100%;	
+		}
+
+		td.headline {
+			font-size        : 10pt;
+			font-weight		 : bold;
+		}
+
+	</style> 
+	
+	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jquery/jquery-1.4.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+
+	<script type="text/javascript">
+	<!--
+
+		function toggleStacktrace()
+		{
+			$("#stacktrace").show("slow");
+		}
+
+		function closeDialog()
+		{
+			if(parent && parent.closeInlineDiv) 
+				parent.closeInlineDiv(); 
+			else if(parent && parent.closeDialog) 
+				parent.closeDialog(); 
+			else if (window.opener)
+				window.close();
+			else
+				history.back();
+		}
+
+		function openReportDialog(dialogId)
+		{
+			$("#" + dialogId).dialog('open');
+		}
+
+		$(function() {
+
+			$("#reportBugDialog").dialog({
+				bgiframe: true,
+				autoOpen: false,
+				height: 500,
+				width: 600,
+				modal: true,
+				buttons: {
+					'Submit bug': function() {
+						$("#bugForm").submit();
+						$(this).dialog('close');
+					},
+					Cancel: function() {
+						$(this).dialog('close');
+					}
+				},
+				close: function() {
+				}
+			});
+		});	
+		-->
+	</script>
+	
+	<style type="text/css">
+		body { font-size: 62.5%; }
+		label, input { display:block; }
+		input.text { margin-bottom:12px; width:95%; padding: .4em; }
+		textarea { margin-bottom:12px; width:95%; height: 120px; padding: .4em; }
+		fieldset { padding:0; border:0; margin-top:10px; }
+		h1 { font-size: 1.2em; margin: .6em 0; }
+		div#users-contain {  width: 350px; margin: 20px 0; }
+		div#users-contain table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+		div#users-contain table td, div#users-contain table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+		.ui-button { outline: 0; margin:0; padding: .4em 1em .5em; text-decoration:none;  !important; cursor:pointer; position: relative; text-align: center; }
+		.ui-dialog .ui-state-highlight, .ui-dialog .ui-state-error { padding: .3em;  }
+		
+		.bug { display: block; float: left; line-height: 24px; width: 100%; background: url(images/v3/bug.png) no-repeat 0px 2px; text-indent: 24px; }
+		.stack { display: block; float: left; line-height: 24px; width: 100%; background: url(images/v3/stack.png) no-repeat 0px 2px; text-indent: 24px; }
+		.close { display: block; float: left; line-height: 24px; width: 100%; background:url(images/v3/closeWindowIcon.gif) no-repeat 3px 4px; text-indent: 24px; margin-top: 20px; }
+		
+	</style>
+	
+
+</head>
+
+<body>
+
+<div id="reportBugDialog" title="Report bug">
+	<form id="bugForm" method="post" action="http://www.infoglue.org/bugs/bugreport" target="_blank">
+		<input type="hidden" name="currentUrl" id="currentUrl" value="$currentURL"/>
+		<input type="hidden" name="referer" id="referer" value="$request.getHeader("Referer")"/>
+		<input type="hidden" name="principal" id="principal" value="#if($infoGluePrincipal)$!infoGluePrincipal#end"/>
+		<input type="hidden" name="userAgent" id="userAgent" value="$request.getHeader("User-Agent")" />
+		<input type="hidden" name="stacktrace" id="stacktrace" value="$error.getCauseStackTrace()"/>
+		<input type="hidden" name="infoglueVersion" id="$infoGlueVersion - $infoGlueVersionReleaseDate" />
+		<input type="hidden" name="database" id="$databaseEngine" />
+		<fieldset>
+			<p>We in the Infoglue community are very interested in getting good bug reports. Please use the form below. The information collected is held to a minimum. No information will be shared with other organisations.</p>
+			<label for="name">Name (Optional)</label>
+			<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all" />
+			<label for="email">Email (Optional)</label>
+			<input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all" />
+			<label for="text">Bug description (Optional but please write a meaningful description)</label>
+			<textarea name="text" id="text" class="text ui-widget-content ui-corner-all"></textarea>
+		</fieldset>
+	</form>
+</div>
+
+<div id="stacktrace" style="position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; background-color: white; display: none; border: 1px solid #ccc; overflow: auto; padding: 6px;">
+	<h1>Stacktrace <a href="#" onclick="$('#stacktrace').hide('slow');">Close</a></h1>
+	<p>$error.getStackTrace()</p>
+    #if($error.hasCause())
+    <h2>Nested message</h2>
+    <p>$error.getCauseMessage()</p>
+    <h3>Nested stack trace</h3>
+    <p>$error.getCauseStackTrace()</p>
+    #end
+</div>
+
+<div class="fullymarginalized">
+
+<table class="loginbox" align="center" border="1" cellspacing="5" cellpadding="0">
+<tr>
+	<td valign="top" class="borderedCell"><img src="images/login.jpg" width="130" height="237"/></td>
+	<td valign="top" class="borderedCell">
+		<table align="center" border="0" cellspacing="0" cellpadding="0" width="200">
+		<tr>
+			<td colspan="2" style="background-image: url(images/errorHeaderBackground.gif); background-repeat: repeat-x;" align="center"><img src="images/error.jpg"></td>
+		</tr>	
+		<tr>
+			<td colspan="2"><img src="images/trans.gif" width="1" height="20"/></td>
+		</tr>	
+		<tr>
+			<td><img src="images/trans.gif" width="20" height="1"/></td>
+			<td>Database missing or unavailable</td>
+		</tr>
+		<tr>
+			<td colspan="2">&nbsp;</td>
+		</tr>
+		<tr>
+			<td><img src="images/trans.gif" width="20" height="1" /></td>
+			<td>
+				<p>
+					Infoglue could not connect to the assigned database. If the system is being installed click on the link below to set up the database.<br/>
+					<a href="#" onclick="openReportDialog('reportBugDialog');" class="bug">Report bug</a> 
+					<a href="#" onclick="toggleStacktrace();" class="stack">View stacktrace</a>
+					<a href="javascript:closeDialog();" class="close">Back / Close</a>
+				</p>
+				
+			</td>
+		</tr>
+		</table>
+	</td>
+</tr>	
+</table>
+
+</div>
+ 
+</body>
+</html>

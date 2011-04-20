@@ -88,10 +88,22 @@ public class InstallAction extends InfoGlueAbstractAction
 		return INPUT;
     }
 
+	public String doInputInitiateInstall() throws Exception
+    {
+		
+		return "inputInitiateInstall";
+    }
+
 	public String doInputDatabase() throws Exception
     {
 		
 		return "inputDatabase";
+    } 
+	
+	public String doInputDatabaseExisting() throws Exception
+    {
+		
+		return "inputDatabaseExisting";
     }
 
 	public String doInputDatabaseUpgrade() throws Exception
@@ -110,6 +122,19 @@ public class InstallAction extends InfoGlueAbstractAction
 	public String doExecute() throws Exception
     {
 		System.out.println("operation:" + operation);
+		if(operation.equalsIgnoreCase("updateDatabaseFromExistingConfig"))
+		{
+			try
+			{
+				InstallationController.getController().updateDatabaseFromExisting(createDatabase, addExampleRepositories, dbUser, dbPassword, getHttpSession());
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+				this.errorMessage = e.getMessage();
+				return doInputDatabaseExisting();
+			}
+		}
 		if(operation.equalsIgnoreCase("updateDatabase"))
 		{
 			try
@@ -150,10 +175,24 @@ public class InstallAction extends InfoGlueAbstractAction
 		}	
 		logger.debug("After operations...");
 		
+		boolean dbConfigExists = false;
 		boolean dbConfigOK = false;
 		boolean dbUpgradeOK = false;
 		boolean serverConfigOK = false;
-		
+
+		try
+		{
+			int reason = InstallationController.getController().getBrokenDatabaseReason();
+			System.out.println("reason:" + reason);
+			if(reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE_TABLES)
+				dbConfigExists = true;
+		}
+		catch (Exception e) 
+		{
+			logger.error("Error checking db configuration:" + e.getMessage());
+			//e.printStackTrace();
+		}
+
 		try
 		{
 			InstallationController.getController().validateDatabaseConnection();
@@ -161,7 +200,8 @@ public class InstallAction extends InfoGlueAbstractAction
 		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			logger.error("Error validating database connection:" + e.getMessage());
+			//e.printStackTrace();
 		}
 
 		try
@@ -175,9 +215,14 @@ public class InstallAction extends InfoGlueAbstractAction
 				this.sqlScript = InstallationController.getController().getUpgradeScripts(this.dbVersion, getHttpSession());
 			}
 		}
+		catch (ClassNotFoundException e) 
+		{
+			dbConfigOK = false;
+		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			logger.error("Error getting current database version:" + e.getMessage());
+			//e.printStackTrace();
 		}
 
 		try
@@ -189,10 +234,14 @@ public class InstallAction extends InfoGlueAbstractAction
 			e.printStackTrace();
 		}
 
+		logger.debug("dbConfigExisting:" + dbConfigExists);
 		logger.debug("dbConfigOK:" + dbConfigOK);
 		logger.debug("dbUpgradeOK:" + dbUpgradeOK);
 		logger.debug("serverConfigOK:" + serverConfigOK);
 
+		
+		if(dbConfigExists)
+			return doInputDatabaseExisting();
 		if(!dbConfigOK)
 			return doInputDatabase();
 		if(!dbUpgradeOK)
@@ -411,5 +460,35 @@ public class InstallAction extends InfoGlueAbstractAction
 
 	public void setSystemEmailSender(String systemEmailSender) {
 		this.systemEmailSender = systemEmailSender;
+	}
+	
+	public void setOperatingMode(String operatingMode)
+	{
+		this.operatingMode = operatingMode;
+	}
+
+	public String getOperatingMode()
+	{
+		return this.operatingMode;
+	}
+	
+	public String getApplicationName()
+	{
+		return CmsPropertyHandler.getApplicationName();
+	}
+	
+	public String getCurrentJDBCUrl() throws Exception
+	{
+		return InstallationController.getController().getJDBCParamFromCastorXML("//param[@name='url']");
+	}
+
+	public String getJDBCEngine() throws Exception
+	{
+		return InstallationController.getController().getJDBCEngine();
+	}
+
+	public String getScript() throws Exception
+	{
+		return InstallationController.getController().getScript();
 	}
 }

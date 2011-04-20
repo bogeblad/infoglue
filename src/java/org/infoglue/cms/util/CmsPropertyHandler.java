@@ -1508,7 +1508,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersionReleaseDate()
 	{
-	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2011-03-16");
+	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2011-04-20");
 	}
 
 	public static String getLogDatabaseMessages()

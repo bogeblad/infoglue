@@ -49,8 +49,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
+import org.infoglue.cms.controllers.kernel.impl.simple.SystemUserController;
 import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
+import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.DesEncryptionHelper;
@@ -260,8 +262,6 @@ public class InfoGlueAuthenticationFilter implements Filter
 			if(userName != null && password != null)
 			{
 				String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
-				//String administratorPassword = CmsPropertyHandler.getAdministratorPassword();
-				//isAdministrator = (userName.equalsIgnoreCase(administratorUserName) && password.equalsIgnoreCase(administratorPassword)) ? true : false;
 				
 				boolean matchesRootPassword = CmsPropertyHandler.getMatchesAdministratorPassword(password);
 				isAdministrator = (userName.equalsIgnoreCase(administratorUserName) && matchesRootPassword) ? true : false;
@@ -701,11 +701,11 @@ public class InfoGlueAuthenticationFilter implements Filter
 	    	InfoGlueAuthenticationFilter.casLogoutUrl = casLogoutUrl;
 
 		    String extraPropertiesString = CmsPropertyHandler.getServerNodeDataProperty("deliver", "extraSecurityParameters", true, null);
-		    System.out.println("extraPropertiesString 1:" + extraPropertiesString);
+		    logger.info("extraPropertiesString 1:" + extraPropertiesString);
 		    if(extraPropertiesString == null || extraPropertiesString.equals(""))
 		    {
 		    	extraPropertiesString = CmsPropertyHandler.getServerNodeDataProperty(null, "extraSecurityParameters", true, null);
-			    System.out.println("extraPropertiesString 2:" + extraPropertiesString);
+		    	logger.info("extraPropertiesString 2:" + extraPropertiesString);
 		    }
 		    
 		    if(extraPropertiesString != null)
@@ -741,7 +741,9 @@ public class InfoGlueAuthenticationFilter implements Filter
 					}
 				}
 		    }
-		    System.out.println("\n\nRELOADED THE AUTH FILTER PROPS...:" + extraProperties);
+		    
+		    logger.info("\n\nRELOADED THE AUTH FILTER PROPS...:" + extraProperties);
+		    
 		    extraProperties.list(System.out);
 		    
 		    logger.info("authenticatorClass:" + authenticatorClass);

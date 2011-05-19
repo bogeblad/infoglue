@@ -452,7 +452,7 @@ public class FileHelper
         while(entries.hasMoreElements()) 
       	{
         	ZipEntry entry = (ZipEntry)entries.nextElement();
-        	System.out.println("entry:" + entry.getName());
+        	logger.info("entry:" + entry.getName());
         	
         	if(entry.isDirectory() && (!skipHiddenFiles || entry.getName().startsWith(".") || entry.getName().startsWith("__"))) 
 	        {
@@ -543,7 +543,7 @@ public class FileHelper
       	while(entries.hasMoreElements()) 
       	{
         	ZipEntry entry = (ZipEntry)entries.nextElement();
-        	System.out.println("entry:" + entry.getName());
+        	logger.info("entry:" + entry.getName());
         	
 	        if(entry.isDirectory()) 
 	        {

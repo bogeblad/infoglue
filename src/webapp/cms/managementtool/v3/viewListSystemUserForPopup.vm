@@ -9,7 +9,7 @@
 	<!-- 		
 		$(document).ready(function(){
 			
-			#set($extraParameter = '"bProcessing": true, "bServerSide": true, "sAjaxSource": "ViewListSystemUser!popupProcessAndFilter.action"')
+			#set($extraParameter = '"bProcessing": true, "bServerSide": true, "fnServerData": function ( sSource, aoData, fnCallback ) { jQuery.post( sSource, aoData, fnCallback, "json" ); }, "sAjaxSource": "ViewListSystemUser!popupProcessAndFilter.action"')
 			#initDataTableImpl("dataTable" $extraParameter)
 	
 			$("#dataTable_processing").prepend("<img src='css/embla/images/loading.gif' width='16'/>").css("color", "blue");

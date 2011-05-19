@@ -2839,8 +2839,20 @@ $ui.getString("entity.${fieldNameKey}.label")
 #end
 
 #macro(editReadOnlyField $fieldNameKey $fieldName $fieldValue $length $readonly)
-  $ui.getString("entity.${fieldNameKey}.label")<br/>
-  <input type="text" class="text" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length" $readonly/>
+	#set($errorMessageText = "")
+	#if($errors.hasErrors($fieldNameKey))
+		#foreach($errorMessage in $errors.getErrors($fieldNameKey))
+			#if($velocityCount > 1)
+				#set($errorMessageText = "$errorMessageText, $errorMessage")
+			#else
+				#set($errorMessageText = "$errorMessage")
+			#end
+		#end
+		#set($errorMessageText = "<font color='red'>$errorMessageText</font>")
+	#end
+	
+  	$ui.getString("entity.${fieldNameKey}.label")<br/>
+  	<input type="text" class="text" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length" $readonly/> $errorMessageText
 #end
 
 #macro(editReadOnlyPasswordField $fieldNameKey $fieldName $fieldValue $length $readonly)

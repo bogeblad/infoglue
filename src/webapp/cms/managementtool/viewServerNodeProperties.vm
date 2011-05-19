@@ -66,8 +66,8 @@
 	{
 		margin: 0px;
 		padding-top: 4px;
-		padding-bottom: 2px;
-		border-bottom: 1px solid #999;
+		padding-bottom: 4px;
+		border-bottom: 1px solid #eee;
 		overflow: auto;
 	}
 	
@@ -105,7 +105,7 @@
 	<input type="hidden" name="serverNodeId" value="$!serverNodeId">
 	<input type="hidden" name="key" id="key" value="">
 	<input type="hidden" name="activeDivId" id="deleteActiveDivId" value="$!activeDivId">
-</form
+</form>
 
 <div id="actualCurrentValue" style="border: 1px solid black; background-color: white; color: black; padding: 4px; display: none; position: absolute; left: 50px; margin-top: 30%; margin-bottom: 30%; float:left;">
 	<p id="actualCurrentValueParagraph">
@@ -161,14 +161,14 @@
 			#set($cmsPH = $cmsPropertyHandler)
 		
 			<div class="inlineTabDiv" id="commonSettings">
-				#editPropertyFieldCSS("ServerNode.property.session.timeout" "session.timeout" "$this.getPropertyValue('session.timeout')" "51" "$!serverNodeId" "$!cmsPH.sessionTimeout")
+				#editPropertyFieldCSS("ServerNode.property.session.timeout" "session.timeout" "$this.getPropertyValue('session.timeout')" "51" "$!serverNodeId" $!cmsPH.sessionTimeout)
 	
 				#set($requestArgumentDelimiter = $this.getPropertyValue('requestArgumentDelimiter'))
 				#set($requestArgumentDelimiter = $requestArgumentDelimiter.replaceAll("&amp;", "&amp;amp;"))
-				#editPropertyFieldCSS("ServerNode.property.requestArgumentDelimiter" "requestArgumentDelimiter" "$requestArgumentDelimiter" "51" "$!serverNodeId" "$!cmsPH.requestArgumentDelimiter")
-				#editPropertyFieldCSS("ServerNode.property.errorUrl" "errorUrl" "$this.getPropertyValue('errorUrl')" "51" "$!serverNodeId" "$!cmsPH.errorUrl")	
-				#yesNoDropDownWithInheritCSS("ServerNode.property.useShortTableNames" "useShortTableNames" "$this.getPropertyValue('useShortTableNames')" "$!cmsPH.useShortTableNames")
-				#editPropertyFieldCSS("ServerNode.property.numberOfVersionsToKeepDuringClean" "numberOfVersionsToKeepDuringClean" "$this.getPropertyValue('numberOfVersionsToKeepDuringClean')" "51" "$!serverNodeId" "$!cmsPH.numberOfVersionsToKeepDuringClean")
+				#editPropertyFieldCSS("ServerNode.property.requestArgumentDelimiter" "requestArgumentDelimiter" "$requestArgumentDelimiter" "51" "$!serverNodeId" $!cmsPH.requestArgumentDelimiter)
+				#editPropertyFieldCSS("ServerNode.property.errorUrl" "errorUrl" "$this.getPropertyValue('errorUrl')" "51" "$!serverNodeId" $!cmsPH.errorUrl)	
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useShortTableNames" "useShortTableNames" "$this.getPropertyValue('useShortTableNames')" $!cmsPH.useShortTableNames)
+				#editPropertyFieldCSS("ServerNode.property.numberOfVersionsToKeepDuringClean" "numberOfVersionsToKeepDuringClean" "$this.getPropertyValue('numberOfVersionsToKeepDuringClean')" "51" "$!serverNodeId" $!cmsPH.numberOfVersionsToKeepDuringClean)
 				
 				#set($option1 = ["-1", "Choose difference"])
 				#set($option2 = ["28800000", "8 hours"])
@@ -178,17 +178,17 @@
 				#set($option6 = ["2678400000", "1 month"])
 				#set($minimumTimeBetweenVersionsDuringCleanOptions = [$option1, $option2, $option3, $option4, $option5, $option6]) 
 				
-				#selectFieldCSS("ServerNode.property.minimumTimeBetweenVersionsDuringClean" "minimumTimeBetweenVersionsDuringClean" $this.getPropertyValue('minimumTimeBetweenVersionsDuringClean') $minimumTimeBetweenVersionsDuringCleanOptions "$!cmsPH.minimumTimeBetweenVersionsDuringCleanOptions")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.duplicateAssetsBetweenVersions" "duplicateAssetsBetweenVersions" "$this.getPropertyValue('duplicateAssetsBetweenVersions')" "$!cmsPH.duplicateAssetsBetweenVersions")
-				#editPropertyTextAreaCSS("ServerNode.property.assetUploadTransformationsSettings" "assetUploadTransformationsSettings" "$this.getDataPropertyValue('assetUploadTransformationsSettings')" "40" "6" "righttextarea" "$!serverNodeId" "$!cmsPH.assetUploadTransformationsSettings")
+				#selectFieldCSS("ServerNode.property.minimumTimeBetweenVersionsDuringClean" "minimumTimeBetweenVersionsDuringClean" $this.getPropertyValue('minimumTimeBetweenVersionsDuringClean') $minimumTimeBetweenVersionsDuringCleanOptions $!cmsPH.minimumTimeBetweenVersionsDuringCleanOptions)
+				#yesNoDropDownWithInheritCSS("ServerNode.property.duplicateAssetsBetweenVersions" "duplicateAssetsBetweenVersions" "$this.getPropertyValue('duplicateAssetsBetweenVersions')" $!cmsPH.duplicateAssetsBetweenVersions)
+				#editPropertyTextAreaCSS("ServerNode.property.assetUploadTransformationsSettings" "assetUploadTransformationsSettings" "$this.getDataPropertyValue('assetUploadTransformationsSettings')" "40" "6" "righttextarea" "$!serverNodeId" $!cmsPH.assetUploadTransformationsSettings)
 			</div>
 		
 			<div class="inlineTabDiv" id="niceURISettings">
-				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURIInWorking" "enableNiceURIInWorking" "$this.getPropertyValue('enableNiceURIInWorking')" "$!cmsPH.enableNiceURIInWorking")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURI" "enableNiceURI" "$this.getPropertyValue('enableNiceURI')" "$!cmsPH.enableNiceURI")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURIForLanguage" "enableNiceURIForLanguage" "$this.getPropertyValue('enableNiceURIForLanguage')" "$!cmsPH.enableNiceURIForLanguage")
-				#editPropertyFieldCSS("ServerNode.property.niceURIEncoding" "niceURIEncoding" "$this.getPropertyValue('niceURIEncoding')" "51" "$!serverNodeId" "$!cmsPH.niceURIEncoding")
-				#editPropertyFieldCSS("ServerNode.property.niceURIAttributeName" "niceURIAttributeName" "$this.getPropertyValue('niceURIAttributeName')" "51" "$!serverNodeId" "$!cmsPH.niceURIAttributeName")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURIInWorking" "enableNiceURIInWorking" "$this.getPropertyValue('enableNiceURIInWorking')" $!cmsPH.enableNiceURIInWorking)
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURI" "enableNiceURI" "$this.getPropertyValue('enableNiceURI')" $!cmsPH.enableNiceURI)
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableNiceURIForLanguage" "enableNiceURIForLanguage" "$this.getPropertyValue('enableNiceURIForLanguage')" $!cmsPH.enableNiceURIForLanguage)
+				#editPropertyFieldCSS("ServerNode.property.niceURIEncoding" "niceURIEncoding" "$this.getPropertyValue('niceURIEncoding')" "51" "$!serverNodeId" $!cmsPH.niceURIEncoding)
+				#editPropertyFieldCSS("ServerNode.property.niceURIAttributeName" "niceURIAttributeName" "$this.getPropertyValue('niceURIAttributeName')" "51" "$!serverNodeId" $!cmsPH.niceURIAttributeName)
 				$!cmsPH.getServerNodeDataProperty(null, 'niceURICharacterReplacingMapping', true, null)
 				#editPropertyTextAreaCSS("ServerNode.property.niceURICharacterReplacingMapping" "niceURICharacterReplacingMapping" "$this.getDataPropertyValue('niceURICharacterReplacingMapping')" "40" "6" "righttextarea" "$!serverNodeId" "$!cmsPH.getServerNodeDataProperty(null, 'niceURICharacterReplacingMapping', true, null)")
 				#editPropertyFieldCSS("ServerNode.property.niceURIDefaultReplacementCharacter" "niceURIDefaultReplacementCharacter" "$this.getPropertyValue('niceURIDefaultReplacementCharacter')" "51" "$!serverNodeId" "$!cmsPH.niceURIDefaultReplacementCharacter")
@@ -306,21 +306,21 @@
 			</div>
 		
 			<div class="inlineTabDiv" id="deliverSecuritySettings">
-				#editPropertyFieldCSS("ServerNode.property.loginUrl" "deliver_loginUrl" "$this.getPropertyValue('deliver', 'loginUrl')" "51" "$!serverNodeId" "$!cmsPH.loginUrl")
-				#editPropertyFieldCSS("ServerNode.property.logoutUrl" "deliver_logoutUrl" "$this.getPropertyValue('deliver', 'logoutUrl')" "51" "$!serverNodeId" "$!cmsPH.casLogoutUrl")
-				#editPropertyFieldCSS("ServerNode.property.invalidLoginUrl" "deliver_invalidLoginUrl" "$this.getPropertyValue('deliver', 'invalidLoginUrl')" "51" "$!serverNodeId" "$!cmsPH.invalidLoginUrl")
-				#editPropertyFieldCSS("ServerNode.property.successLoginBaseUrl" "deliver_successLoginBaseUrl" "$this.getPropertyValue('deliver', 'successLoginBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.successLoginBaseUrl")
-				#editPropertyFieldCSS("ServerNode.property.authenticatorClass" "deliver_authenticatorClass" "$this.getPropertyValue('deliver', 'authenticatorClass')" "51" "$!serverNodeId" "$!cmsPH.authenticatorClass")
-				#editPropertyFieldCSS("ServerNode.property.authorizerClass" "deliver_authorizerClass" "$this.getPropertyValue('deliver', 'authorizerClass')" "51" "$!serverNodeId" "$!cmsPH.authorizerClass")
-				#editPropertyFieldCSS("ServerNode.property.serverName" "deliver_serverName" "$this.getPropertyValue('deliver', 'serverName')" "51" "$!serverNodeId" "$!cmsPH.serverName")
-				#editPropertyFieldCSS("ServerNode.property.authConstraint" "deliver_authConstraint" "$this.getPropertyValue('deliver', 'authConstraint')" "51" "$!serverNodeId" "$!cmsPH.authConstraint")
+				#editPropertyFieldCSS("ServerNode.property.loginUrl" "deliver_loginUrl" "$this.getPropertyValue('deliver', 'loginUrl')" "51" "$!serverNodeId" "$!cmsPH.deliverLoginUrl")
+				#editPropertyFieldCSS("ServerNode.property.logoutUrl" "deliver_logoutUrl" "$this.getPropertyValue('deliver', 'logoutUrl')" "51" "$!serverNodeId" "$!cmsPH.deliverLogoutUrl")
+				#editPropertyFieldCSS("ServerNode.property.invalidLoginUrl" "deliver_invalidLoginUrl" "$this.getPropertyValue('deliver', 'invalidLoginUrl')" "51" "$!serverNodeId" "$!cmsPH.deliverInvalidLoginUrl")
+				#editPropertyFieldCSS("ServerNode.property.successLoginBaseUrl" "deliver_successLoginBaseUrl" "$this.getPropertyValue('deliver', 'successLoginBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.deliverSuccessLoginBaseUrl")
+				#editPropertyFieldCSS("ServerNode.property.authenticatorClass" "deliver_authenticatorClass" "$this.getPropertyValue('deliver', 'authenticatorClass')" "51" "$!serverNodeId" "$!cmsPH.deliverAuthenticatorClass")
+				#editPropertyFieldCSS("ServerNode.property.authorizerClass" "deliver_authorizerClass" "$this.getPropertyValue('deliver', 'authorizerClass')" "51" "$!serverNodeId" "$!cmsPH.deliverAuthorizerClass")
+				#editPropertyFieldCSS("ServerNode.property.serverName" "deliver_serverName" "$this.getPropertyValue('deliver', 'serverName')" "51" "$!serverNodeId" "$!cmsPH.deliverServerName")
+				#editPropertyFieldCSS("ServerNode.property.authConstraint" "deliver_authConstraint" "$this.getPropertyValue('deliver', 'authConstraint')" "51" "$!serverNodeId" "$!cmsPH.deliverAuthConstraint")
 				#editPropertyFieldCSS("ServerNode.property.security.anonymous.username" "deliver_security.anonymous.username" "$this.getPropertyValue('deliver', 'security.anonymous.username')" "51" "$!serverNodeId" "$!cmsPH.securityAnonymousUsername")
 				#editPropertyFieldCSS("ServerNode.property.security.anonymous.password" "deliver_security.anonymous.password" "$this.getPropertyValue('deliver', 'security.anonymous.password')" "51" "$!serverNodeId" "$!cmsPH.securityAnonymousPassword")
-				#editPropertyTextAreaCSS("ServerNode.property.extraSecurityParameters" "deliver_extraSecurityParameters" "$this.getDataPropertyValue('deliver', 'extraSecurityParameters')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.extraSecurityParameters")
-				#editPropertyFieldCSS("ServerNode.property.casValidateUrl" "deliver_casValidateUrl" "$this.getPropertyValue('deliver', 'casValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.casValidateUrl")
-				#editPropertyFieldCSS("ServerNode.property.casProxyValidateUrl" "deliver_casProxyValidateUrl" "$this.getPropertyValue('deliver', 'casProxyValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.casProxyValidateUrl")
-				#editPropertyFieldCSS("ServerNode.property.casServiceUrl" "deliver_casServiceUrl" "$this.getPropertyValue('deliver', 'casServiceUrl')" "51" "$!serverNodeId" "$!cmsPH.casServiceUrl")
-				#editPropertyFieldCSS("ServerNode.property.casLogoutUrl" "deliver_casLogoutUrl" "$this.getPropertyValue('deliver', 'casLogoutUrl')" "51" "$!serverNodeId" "$!cmsPH.casLogoutUrl")
+				#editPropertyTextAreaCSS("ServerNode.property.extraSecurityParameters" "deliver_extraSecurityParameters" "$this.getDataPropertyValue('deliver', 'extraSecurityParameters')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.deliverExtraSecurityParameters")
+				#editPropertyFieldCSS("ServerNode.property.casValidateUrl" "deliver_casValidateUrl" "$this.getPropertyValue('deliver', 'casValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.deliverCasValidateUrl")
+				#editPropertyFieldCSS("ServerNode.property.casProxyValidateUrl" "deliver_casProxyValidateUrl" "$this.getPropertyValue('deliver', 'casProxyValidateUrl')" "51" "$!serverNodeId" "$!cmsPH.deliverCasProxyValidateUrl")
+				#editPropertyFieldCSS("ServerNode.property.casServiceUrl" "deliver_casServiceUrl" "$this.getPropertyValue('deliver', 'casServiceUrl')" "51" "$!serverNodeId" "$!cmsPH.deliverCasServiceUrl")
+				#editPropertyFieldCSS("ServerNode.property.casLogoutUrl" "deliver_casLogoutUrl" "$this.getPropertyValue('deliver', 'casLogoutUrl')" "51" "$!serverNodeId" "$!cmsPH.deliverCasLogoutUrl")
 			</div>
 		
 			<div class="inlineTabDiv" id="cmsGUI">
@@ -397,6 +397,8 @@
 				#editPropertyFieldCSS("ServerNode.property.unprotectedProtocolPort" "unprotectedProtocolPort" "$this.getPropertyValue('unprotectedProtocolPort')" "51" "$!serverNodeId" "$!cmsPH.unprotectedProtocolPort")
 				#editPropertyFieldCSS("ServerNode.property.protectedProtocolPort" "protectedProtocolPort" "$this.getPropertyValue('protectedProtocolPort')" "51" "$!serverNodeId" "$!cmsPH.protectedProtocolPort")
 				#editPropertyFieldCSS("ServerNode.property.accessBasedProtocolRedirectHTTPCode" "accessBasedProtocolRedirectHTTPCode" "$this.getPropertyValue('accessBasedProtocolRedirectHTTPCode')" "51" "$!serverNodeId" "$!cmsPH.accessBasedProtocolRedirectHTTPCode")
+
+				#editPropertyFieldCSS("ServerNode.property.allowedDirectLoginNames" "allowedDirectLoginNames" "$this.getPropertyValue('allowedDirectLoginNames')" "51" "$!serverNodeId" "$!cmsPH.allowedDirectLoginNames")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowInternalCallsBasedOnIP" "allowInternalCallsBasedOnIP" "$this.getPropertyValue('allowInternalCallsBasedOnIP')" "$!cmsPH.allowInternalCallsBasedOnIP")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.forceIdentityCheck" "forceIdentityCheck" "$this.getPropertyValue('forceIdentityCheck')" "$!cmsPH.forceIdentityCheck")
@@ -417,8 +419,8 @@
 				#editPropertyTextAreaCSS("ServerNode.property.internalDeliveryUrls" "internalDeliveryUrls" "$this.getDataPropertyValue('internalDeliveryUrls')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.internalDeliveryUrls")
 				#editPropertyTextAreaCSS("ServerNode.property.publicDeliveryUrls" "publicDeliveryUrls" "$this.getDataPropertyValue('publicDeliveryUrls')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.publicDeliveryUrls")
 				#editPropertyTextAreaCSS("ServerNode.property.deploymentServers" "deploymentServers" "$this.getDataPropertyValue('deploymentServers')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.deploymentServers")
-				#editPropertyTextAreaCSS("ServerNode.property.vcServers" "vcServers" "$this.getDataPropertyValue('vcServers')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.vcServers")
-				#editPropertyTextAreaCSS("ServerNode.property.toolLanguages" "toolLanguages" "$this.getDataPropertyValue('toolLanguages')" "50" "3" "normaltextarea" "$!serverNodeId" "$!cmsPH.toolLanguages")
+				#editPropertyTextAreaCSS("ServerNode.property.vcServers" "vcServers" "$this.getDataPropertyValue('vcServers')" "50" "5" "normaltextarea" "$!serverNodeId" $!cmsPH.vcServers)
+				#editPropertyTextAreaCSS("ServerNode.property.toolLanguages" "toolLanguages" "$this.getDataPropertyValue('toolLanguages')" "50" "3" "normaltextarea" "$!serverNodeId" $!cmsPH.toolLanguages)
 	
 				#editPropertyFieldCSS("ServerNode.property.edition.pageSize" "edition.pageSize" "$this.getPropertyValue('edition.pageSize')" "51" "$!serverNodeId" "$!cmsPH.editionPageSize")
 				#editPropertyFieldCSS("ServerNode.property.content.tree.sort" "content.tree.sort" "$this.getPropertyValue('content.tree.sort')" "51" "$!serverNodeId" "$!cmsPH.contentTreeSort")

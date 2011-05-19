@@ -168,7 +168,7 @@ public class StringValidator extends AbstractValidator {
    *
    */
   private void validatePattern(String value) {
-    if(this.pattern != null && !RegexpHelper.match(this.pattern, value)) {
+	if(this.pattern != null && !RegexpHelper.match(this.pattern, value)) {
       addConstraintException(this.patternErrorCode);
     }
   }

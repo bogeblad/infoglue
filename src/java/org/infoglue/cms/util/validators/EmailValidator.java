@@ -30,7 +30,8 @@ public class EmailValidator extends StringValidator
 
   // perl5 patterns
   private static final String SEPARATOR = "\\.";
-  private static final String WORD      = "[a-zA-Z][a-zA-Z0-9_-]*";
+  private static final String WORD      = "[a-zA-Z0-9][a-zA-Z0-9_-]*";
+  //private static final String WORD      = "[a-zA-Z][a-zA-Z0-9_-]*";
   private static final String WORDS     = WORD + "(" + SEPARATOR + WORD + ")*";
   private static final String IP_PART   = "[0-9]{1,3}";
   private static final String IP        = IP_PART + "(" + SEPARATOR + IP_PART + "){3}";

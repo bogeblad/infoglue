@@ -118,7 +118,7 @@ public class CmsPropertyHandler
 		{
 			defaultScheme = request.getScheme();
 			defaultPort = request.getLocalPort();
-			System.out.println("Registered defaultScheme:" + defaultScheme + " and defaultPort:" + defaultPort);
+			logger.info("Registered defaultScheme:" + defaultScheme + " and defaultPort:" + defaultPort);
 		}
 	}
 	
@@ -350,7 +350,25 @@ public class CmsPropertyHandler
 		return value;
 	}	
 
+	/**
+	 * This method returns a propertyValue corresponding to the key supplied.
+	 */
 
+	public static String getProperty(String key, String defaultValue)
+	{
+		String value;
+		if(cachedProperties == null)
+			initializeProperties();
+		
+		value = cachedProperties.getProperty(key);
+		if (value != null)
+			value = value.trim();
+		else
+			value = defaultValue;
+				
+		return value;
+	}	
+	
 	/**
 	 * This method sets a property during runtime.
 	 */
@@ -687,6 +705,11 @@ public class CmsPropertyHandler
 	    return getProperty("maxClients");
 	}
 
+	public static String getAllowedDirectLoginNames()
+	{
+	    return getServerNodeProperty("allowedDirectLoginNames", true, "eventPublisher");
+	}
+	
 	public static String getAdministratorUserName()
 	{
 	    return getProperty("administratorUserName");
@@ -744,39 +767,39 @@ public class CmsPropertyHandler
 
 	public static String getDbRelease()
 	{
-	    return getProperty("dbRelease");
+	    return getProperty("dbRelease", "");
 	}
 
 	public static String getDbUser()
 	{
-	    return getProperty("dbUser");
+	    return getProperty("dbUser", "");
 	}
 
 	public static String getDbPassword()
 	{
-	    return getProperty("dbPassword");
+	    return getProperty("dbPassword", "");
 	}
 
 	public static String getMasterServer()
 	{
-	    return getProperty("masterServer");
+	    return getProperty("masterServer", "");
 	}
 	public static String getSlaveServer()
 	{
-	    return getProperty("slaveServer");
+	    return getProperty("slaveServer", "");
 	}
 
 	public static String getBuildName()
 	{
-	    return getProperty("buildName");
+	    return getProperty("buildName", "");
 	}
 	public static String getAdminToolsPath()
 	{
-	    return getProperty("adminToolsPath");
+	    return getProperty("adminToolsPath", "");
 	}
 	public static String getDbScriptPath()
 	{
-	    return getProperty("dbScriptPath");
+	    return getProperty("dbScriptPath", "");
 	}
 
 	public static String getDigitalAssetUploadPath()
@@ -1230,17 +1253,17 @@ public class CmsPropertyHandler
 
 	public static String getSiteNodesToRecacheOnPublishing()
 	{
-	    return getServerNodeProperty("siteNodesToRecacheOnPublishing", true);
+	    return getServerNodeProperty("siteNodesToRecacheOnPublishing", true, "");
 	}
 
 	public static String getRecachePublishingMethod()
 	{
-	    return getServerNodeProperty("recachePublishingMethod", true);
+	    return getServerNodeProperty("recachePublishingMethod", true, "");
 	}
 
 	public static String getRecacheUrl()
 	{
-	    return getServerNodeProperty("recacheUrl", true);
+	    return getServerNodeProperty("recacheUrl", true, "");
 	}
 
 	public static String getUseUpdateSecurity()
@@ -1250,7 +1273,7 @@ public class CmsPropertyHandler
 	
 	public static String getAllowedAdminIP()
 	{
-	    return getServerNodeProperty("allowedAdminIP", true);
+	    return getServerNodeProperty("allowedAdminIP", true, "");
 	}
 
 	public static boolean getAllowXForwardedIPCheck()
@@ -1263,12 +1286,12 @@ public class CmsPropertyHandler
 	
 	public static String getPageKey()
 	{
-	    return getServerNodeProperty("pageKey", true);
+	    return getServerNodeProperty("pageKey", true, "");
 	}
 
 	public static String getComponentKey()
 	{
-	    return getServerNodeProperty("componentKey", true);
+	    return getServerNodeProperty("componentKey", true, "");
 	}
 
 	public static String getCmsFullBaseUrl()
@@ -1290,27 +1313,27 @@ public class CmsPropertyHandler
 
 	public static String getCmsBaseUrl()
 	{
-	    return getServerNodeProperty("cmsBaseUrl", true);
+	    return getServerNodeProperty("cmsBaseUrl", true, "");
 	}
 
 	public static String getComponentEditorUrl()
 	{
-	    return getServerNodeProperty("componentEditorUrl", true);
+	    return getServerNodeProperty("componentEditorUrl", true, "");
 	}
 
 	public static String getComponentRendererUrl()
 	{
-	    return getServerNodeProperty("componentRendererUrl", true);
+	    return getServerNodeProperty("componentRendererUrl", true, "");
 	}
 
 	public static String getComponentRendererAction()
 	{
-	    return getServerNodeProperty("componentRendererAction", true);
+	    return getServerNodeProperty("componentRendererAction", true, "ViewPage!renderDecoratedPage.action");
 	}
 
 	public static String getEditOnSiteUrl()
 	{
-	    return getServerNodeProperty("editOnSiteUrl", true);
+	    return getServerNodeProperty("editOnSiteUrl", true, "");
 	}
 
 	public static String getUseFreeMarker()
@@ -1320,22 +1343,22 @@ public class CmsPropertyHandler
 
 	public static String getWebServerAddress()
 	{
-	    return getServerNodeProperty("webServerAddress", true);
+	    return getServerNodeProperty("webServerAddress", true, "");
 	}
 
 	public static String getApplicationBaseAction()
 	{
-	    return getServerNodeProperty("applicationBaseAction", true);
+	    return getServerNodeProperty("applicationBaseAction", true, "");
 	}
 
 	public static String getDigitalAssetBaseUrl()
 	{
-	    return getServerNodeProperty("digitalAssetBaseUrl", true);
+	    return getServerNodeProperty("digitalAssetBaseUrl", true, "");
 	}
 
 	public static String getImagesBaseUrl()
 	{
-	    return getServerNodeProperty("imagesBaseUrl", true);
+	    return getServerNodeProperty("imagesBaseUrl", true, "");
 	}
 
 	public static String getDigitalAssetPath()
@@ -2272,6 +2295,126 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "301");
 	}
 
+	public static String getLoginUrl()
+	{
+		return getServerNodeProperty("loginUrl", true, "");
+	}
+
+	public static String getLogoutUrl()
+	{
+		return getServerNodeProperty("logoutUrl", true, "");
+	}
+
+	public static String getInvalidLoginUrl()
+	{
+		return getServerNodeProperty("invalidLoginUrl", true, "");
+	}
+
+	public static String getSuccessLoginBaseUrl()
+	{
+		return getServerNodeProperty("successLoginBaseUrl", true, "");
+	}
+
+	public static String getAuthenticatorClass()
+	{
+		return getServerNodeProperty("authenticatorClass", true, "");
+	}
+
+	public static String getAuthorizerClass()
+	{
+		return getServerNodeProperty("authorizerClass", true, "");
+	}
+
+	public static String getAuthConstraint()
+	{
+		return getServerNodeProperty("authConstraint", true, "");
+	}
+
+	public static String getExtraSecurityParameters()
+	{
+		return "";
+	}
+
+	public static String getCasValidateUrl()
+	{
+		return getServerNodeProperty("casValidateUrl", true, "");
+	}
+
+	public static String getCasProxyValidateUrl()
+	{
+		return getServerNodeProperty("casProxyValidateUrl", true, "");
+	}
+
+	public static String getCasServiceUrl()
+	{
+		return getServerNodeProperty("casServiceUrl", true, "");
+	}
+
+	public static String getCasLogoutUrl()
+	{
+		return getServerNodeProperty("casLogoutUrl", true, "");
+	}
+
+	public static String getDeliverLoginUrl()
+	{
+		return getServerNodeProperty("deliver", "loginUrl", true, "");
+	}
+
+	public static String getDeliverLogoutUrl()
+	{
+		return getServerNodeProperty("deliver", "logoutUrl", true, "");
+	}
+
+	public static String getDeliverInvalidLoginUrl()
+	{
+		return getServerNodeProperty("deliver", "invalidLoginUrl", true, "");
+	}
+
+	public static String getDeliverSuccessLoginBaseUrl()
+	{
+		return getServerNodeProperty("deliver", "successLoginBaseUrl", true, "");
+	}
+
+	public static String getDeliverAuthenticatorClass()
+	{
+		return getServerNodeProperty("deliver", "authenticatorClass", true, "");
+	}
+
+	public static String getDeliverAuthorizerClass()
+	{
+		return getServerNodeProperty("deliver", "authorizerClass", true, "");
+	}
+
+	public static String getDeliverAuthConstraint()
+	{
+		return getServerNodeProperty("deliver", "authConstraint", true, "");
+	}
+
+	public static String getDeliverExtraSecurityParameters()
+	{
+		return "";
+	}
+
+	public static String getDeliverCasValidateUrl()
+	{
+		return getServerNodeProperty("deliver", "casValidateUrl", true, "");
+	}
+
+	public static String getDeliverCasProxyValidateUrl()
+	{
+		return getServerNodeProperty("deliver", "casProxyValidateUrl", true, "");
+	}
+
+	public static String getDeliverCasServiceUrl()
+	{
+		return getServerNodeProperty("deliver", "casServiceUrl", true, "");
+	}
+
+	public static String getDeliverCasLogoutUrl()
+	{
+		return getServerNodeProperty("deliver", "casLogoutUrl", true, "");
+	}
+	
 	public static boolean getDisableDecoratedFinalRendering()
 	{
 		String disableDecoratedFinalRendering = getServerNodeProperty("disableDecoratedFinalRendering", true, "false");

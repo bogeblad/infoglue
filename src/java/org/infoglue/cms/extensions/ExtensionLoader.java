@@ -9,19 +9,22 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.invokers.DecoratedComponentBasedHTMLPageInvoker;
 
 import webwork.config.XMLActionConfigurationExtendor;
 
 public class ExtensionLoader 
 {
+	private final static Logger logger = Logger.getLogger(ExtensionLoader.class.getName());
 
 	public void startExtensions() 
 	{
 		try 
 		{
-			System.out.println("Starting extension in:" + CmsPropertyHandler.getContextRootPath());
+			logger.info("Starting extension in:" + CmsPropertyHandler.getContextRootPath());
 			String extensionBasePath = CmsPropertyHandler.getContextRootPath() + "WEB-INF" + File.separator + "libextensions";
 			File extensionBaseFile = new File(extensionBasePath);
 			extensionBaseFile.mkdirs();
@@ -31,7 +34,7 @@ public class ExtensionLoader
 				if(extensionFile.getName().endsWith(".jar"))
 				{
 					//ClassLoaderUtil.addFile(extensionFile.getPath());
-					System.out.println("extensionFile:" + extensionFile.getPath());	
+					logger.info("extensionFile:" + extensionFile.getPath());	
 				
 					String extensionDirName = extensionFile.getName().replaceAll(".jar", "");
 
@@ -40,16 +43,16 @@ public class ExtensionLoader
 					extensionDir.mkdirs();
 
 					FileHelper.unjarFile(extensionFile, extensionDir.getPath(), new String[]{".class"});
-					System.out.println("Unpacking resource into cms directory extensions/" + extensionDirName);
+					logger.info("Unpacking resource into cms directory extensions/" + extensionDirName);
 					
 					Set<String> actionClassNames = new HashSet<String>();
 					File customActionsXmlFile = new File(extensionDir.getPath() + File.separator + "actions.xml");
 					if(customActionsXmlFile.exists() && customActionsXmlFile.length() > 0)
 					{
 						String customActionsXML = FileHelper.getFileAsStringOpt(customActionsXmlFile);
-						System.out.println("customActionsXML:" + customActionsXML);
+						logger.info("customActionsXML:" + customActionsXML);
 						customActionsXML = customActionsXML.replaceAll("\\$extensionPath", "/extensions" + File.separator + extensionDirName);
-						System.out.println("customActionsXML:" + customActionsXML);
+						logger.info("customActionsXML:" + customActionsXML);
 						//String customAction = "<action name=\"org.infoglue.cms.applications.managementtool.actions.ViewMySettingsAction\" alias=\"ViewEcommerce\"><view name=\"success\">viewEcommerce.vm</view><view name=\"error\">/cms/managementtool/error.vm</view></action>";
 						new XMLActionConfigurationExtendor().getMappingsFromString(customActionsXML, actionClassNames);
 					}
@@ -72,13 +75,13 @@ public class ExtensionLoader
 						{
 							String className = jarEntry.getName().replaceAll("/", "\\.").replaceAll(".class", "");
 						
-							System.out.println("Found " + className);
+							logger.info("Found " + className);
 							Class c = classLoader.loadClass(className);
 							boolean isOk = InfoglueExtension.class.isAssignableFrom(c);
-							System.out.println("isOk:" + isOk + " for " + className);
+							logger.info("isOk:" + isOk + " for " + className);
 							if(isOk)
 							{
-								System.out.println("Adding class:" + className);
+								logger.info("Adding class:" + className);
 								InfoglueExtension extension = (InfoglueExtension)c.newInstance();
 								extension.init();
 							}
@@ -87,14 +90,14 @@ public class ExtensionLoader
 					
 					for(String actionClassName : actionClassNames)
 					{
-						System.out.println("Found actionClassName:" + actionClassName);
+						logger.info("Found actionClassName:" + actionClassName);
 						try
 						{
 							Class c = classLoader.loadClass(actionClassName);
-							System.out.println("C:" + c.newInstance());
+							logger.info("C:" + c.newInstance());
 
 							Class c2 = Class.forName(actionClassName, true, classLoader);
-							System.out.println("C2:" + c2.newInstance());
+							logger.info("C2:" + c2.newInstance());
 						}
 						catch (Exception e) 
 						{

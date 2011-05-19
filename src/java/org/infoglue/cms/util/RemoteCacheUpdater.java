@@ -147,7 +147,7 @@ public class RemoteCacheUpdater implements NotificationListener
 			}
 			catch(Exception e)
 			{
-				logger.warn("Error updating cache at " + address + ":" + e.getMessage(), e);
+				logger.warn("Error updating cache at " + address + ":" + e.getMessage());
 			}
 		}
 		*/
@@ -186,7 +186,7 @@ public class RemoteCacheUpdater implements NotificationListener
 					}
 					catch(Exception e)
 					{
-						logger.error("Error updating cache at " + address + ":" + e.getMessage(), e);
+						logger.error("Error updating cache at " + address + ":" + e.getMessage());
 					}
 				}
 			}
@@ -214,7 +214,7 @@ public class RemoteCacheUpdater implements NotificationListener
 					}
 					catch(Exception e)
 					{
-						logger.error("Error updating cache at " + address + ":" + e.getMessage(), e);
+						logger.error("Error updating cache at " + address + ":" + e.getMessage());
 					}
 				}
 			}

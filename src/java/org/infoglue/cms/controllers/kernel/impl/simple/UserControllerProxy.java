@@ -35,6 +35,7 @@ import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.AuthorizationModule;
+import org.infoglue.cms.security.AuthorizationSynchronizer;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -75,7 +76,7 @@ public class UserControllerProxy extends BaseController
 	/**
 	 * This method instantiates the AuthorizationModule.
 	 */
-	
+	public static boolean initializedImportClass = false;
 	private AuthorizationModule getAuthorizationModule() throws SystemException
 	{
 		//if(authorizationModule == null)
@@ -86,6 +87,24 @@ public class UserControllerProxy extends BaseController
 				authorizationModule = (AuthorizationModule)Class.forName(InfoGlueAuthenticationFilter.authorizerClass).newInstance();
 				logger.info("authorizationModule:" + authorizationModule);
 				authorizationModule.setExtraProperties(InfoGlueAuthenticationFilter.extraProperties);
+				
+				if(!initializedImportClass && InfoGlueAuthenticationFilter.extraProperties.containsKey("importClass"))
+				{
+					logger.info("Found import class:" + InfoGlueAuthenticationFilter.extraProperties.get("importClass"));
+					try
+					{
+						AuthorizationSynchronizer importClass = (AuthorizationSynchronizer)Class.forName(InfoGlueAuthenticationFilter.extraProperties.get("importClass").toString()).newInstance();
+						importClass.setExtraProperties(InfoGlueAuthenticationFilter.extraProperties);
+						initializedImportClass = true;
+					}
+					catch (Exception e) 
+					{
+						logger.error("Problem loading synchronizer:" + e.getMessage(), e);
+					}
+				}
+				else 
+					logger.info("Allready initialized import class");
+
 				authorizationModule.setTransactionObject(this.transactionObject);
 				logger.info("InfoGlueAuthenticationFilter.extraProperties:" + InfoGlueAuthenticationFilter.extraProperties);
 	    	}

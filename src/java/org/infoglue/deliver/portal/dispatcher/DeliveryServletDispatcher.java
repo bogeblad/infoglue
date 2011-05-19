@@ -98,7 +98,7 @@ public class DeliveryServletDispatcher extends ServletDispatcher
 				}
 				
 				classLoader = new URLClassLoader(urlsArray, this.getClass().getClassLoader());
-				t.printElapsedTime("Creating classloader took");
+				//t.printElapsedTime("Creating classloader took");
 			}
 
 			Thread.currentThread().setContextClassLoader(classLoader);

@@ -349,6 +349,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "protectedProtocolPort");
 	    populate(ps, "accessBasedProtocolRedirectHTTPCode");
 
+	    populate(ps, "allowedDirectLoginNames");
+
 	    try
 	    {
 	    	UserControllerProxy.getController().updateAnonymousUserPassword();

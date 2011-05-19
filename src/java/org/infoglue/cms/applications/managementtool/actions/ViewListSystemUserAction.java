@@ -87,7 +87,9 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 		{
 			this.infogluePrincipals = UserControllerProxy.getController().getFilteredUsers(this.filterFirstName, this.filterLastName, this.filterUserName, this.filterEmail, filterRoleNames);
 		}
-		this.infogluePrincipals = this.infogluePrincipals.subList(0, 100);
+		
+		if(this.infogluePrincipals.size() > 100)
+			this.infogluePrincipals = this.infogluePrincipals.subList(0, 100);
 
 	    return "success";
 	}

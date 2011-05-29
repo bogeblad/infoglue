@@ -715,6 +715,27 @@
 	        <rtexprvalue>true</rtexprvalue>
 		</attribute>	    
 	</tag>
+	<tag>
+	    <name>rssFeedEntryContent</name>
+	    <tagclass>org.infoglue.deliver.taglib.common.RSSFeedEntryContentTag</tagclass>
+	    <bodycontent>JSP</bodycontent>
+	    <info></info>
+	    <attribute>
+		    <name>mode</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>
+	    <attribute>
+		    <name>type</name>
+	    	<required>false</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>	    
+	    <attribute>
+		    <name>value</name>
+	    	<required>true</required>
+	        <rtexprvalue>true</rtexprvalue>
+		</attribute>	    
+	</tag>
     <tag>
         <name>textRender</name>
         <tagclass>org.infoglue.deliver.taglib.common.TextRenderTag</tagclass>

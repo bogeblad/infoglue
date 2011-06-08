@@ -390,7 +390,7 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
 			    			
 			    			if(siteNodeVersion == null)
 			    			{
-			    				System.out.println("Error:" + siteNode.getName() + "(" + siteNode.getId() + ") had no siteNodeVersions");
+			    				logger.error("Error:" + siteNode.getName() + "(" + siteNode.getId() + ") had no siteNodeVersions");
 			    			}
 			    			else
 			    			{
@@ -416,7 +416,6 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
 			    			
 				    			if(!hasMetaInfo)
 				    			{
-				        		    //System.out.println("Creating a new meta info for " + siteNode.getName());
 				        		    ContentVO contentVO = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, siteNode.getRepository().getId(), this.getInfoGluePrincipal(), null).getValueObject();
 				        		    metaInfoContentId = contentVO.getId(); 
 				    			}

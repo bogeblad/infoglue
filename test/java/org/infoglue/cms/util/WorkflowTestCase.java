@@ -30,7 +30,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
+import org.infoglue.cms.controllers.SiteNodeVersionControllerTest;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
 import org.infoglue.cms.entities.mydesktop.WorkflowActionVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowStepVO;
@@ -49,6 +51,8 @@ import com.opensymphony.module.propertyset.PropertySet;
  */
 public abstract class WorkflowTestCase extends InfoGlueTestCase
 {
+    public final static Logger logger = Logger.getLogger(WorkflowTestCase.class.getName());
+
 	/**
 	 * The ID of the global action "Finish Workflow".  Since this ID is the same for both Create News and Create User,
 	 * we can get away with hard-coding it for now.
@@ -247,7 +251,7 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 		for (Iterator i = workflows.iterator(); i.hasNext();)
 		{
 			WorkflowVO workflow = (WorkflowVO)i.next();
-			System.out.println(workflow.getId() + " " + workflow.getName());
+			logger.info(workflow.getId() + " " + workflow.getName());
 		}
 	}
 
@@ -260,7 +264,7 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 		for (Iterator i = steps.iterator(); i.hasNext();)
 		{
 			WorkflowStepVO step = (WorkflowStepVO)i.next();
-			System.out.println(step.getStepId() + " " + step.getName());
+			logger.info(step.getStepId() + " " + step.getName());
 		}
 	}
 
@@ -270,7 +274,7 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 	 */
 	protected static void printAvailableActions(WorkflowVO workflow)
 	{
-		System.out.println("\n*** DEBUG: available actions for workflow " + workflow.getId() + ' ' + workflow.getName() + ':');
+		logger.info("\n*** DEBUG: available actions for workflow " + workflow.getId() + ' ' + workflow.getName() + ':');
 		printActions(workflow.getAvailableActions());
 	}
 
@@ -281,6 +285,6 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 	protected static void printActions(List actions)
 	{
 		for (Iterator i = actions.iterator(); i.hasNext();)
-			System.out.println(((WorkflowActionVO)i.next()).getName());
+			logger.info(((WorkflowActionVO)i.next()).getName());
 	}
 }

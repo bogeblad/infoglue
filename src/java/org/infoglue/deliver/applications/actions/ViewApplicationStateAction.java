@@ -917,21 +917,21 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	    	if(originalSummary != null && originalStats != null)
 	    	{
 		    	int startLocation = originalSummary.indexOf("Approximate size");
-		    	//System.out.println("startLocation:" + startLocation);
+		    	//logger.info("startLocation:" + startLocation);
 		    	String size = originalSummary.substring(startLocation + 17, originalSummary.indexOf("KB") + 2);
-		    	//System.out.println("size:" + size);
+		    	//logger.info("size:" + size);
 		    	data.put("estimatedSize", "" + size);
 		
 		    	int startHitLocation = originalStats.indexOf("Hit count");
 		    	String hits = originalStats.substring(startHitLocation + 12, originalStats.indexOf(",", startHitLocation));
 		    	
-		    	//System.out.println("originalStats:" + originalStats);
+		    	//logger.info("originalStats:" + originalStats);
 		    	int startMissLocation = originalStats.indexOf("miss count");
-		    	//System.out.println("startMissLocation:" + startMissLocation);
+		    	//logger.info("startMissLocation:" + startMissLocation);
 		    	String miss = originalStats.substring(startMissLocation + 13);
 		    	
-		    	//System.out.println("hits:" + hits);
-		    	//System.out.println("miss:" + miss);
+		    	//logger.info("hits:" + hits);
+		    	//logger.info("miss:" + miss);
 		    	
 		    	try
 		    	{

@@ -135,7 +135,7 @@ public class ViewPageFilter implements Filter
         Timer t2 = new Timer();
         try
         {
-        	//System.out.println("requestURI:" + requestURI);
+        	//logger.info("requestURI:" + requestURI);
 			if(logger.isInfoEnabled())
 	        	logger.info("requestURI before decoding:" + requestURI);
             
@@ -148,7 +148,7 @@ public class ViewPageFilter implements Filter
 			String testRequestURI = new String(requestURI.getBytes(fromEncoding), toEncoding);
 			if(testRequestURI.indexOf((char)65533) == -1)
 				requestURI = testRequestURI;
-			//System.out.println("requestURI:" + requestURI);
+			//logger.info("requestURI:" + requestURI);
         }
         catch (Exception e) 
         {

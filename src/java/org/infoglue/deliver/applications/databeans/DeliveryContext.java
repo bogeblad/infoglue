@@ -345,15 +345,10 @@ public class DeliveryContext implements UsageListener
     {
         this.usedContentVersions.add(usedContentVersion);
         
-        //if(this.getUsageListeners().size() > 0)
-        //	System.out.println("Found usage listeners:" + this.getUsageListeners().size());
-        
         Iterator iterator = this.getUsageListeners().iterator();
         while(iterator.hasNext())
         {
             UsageListener usageListener = (UsageListener)iterator.next();
-            //if(usageListener.equals(this))
-            //	System.out.println("Was itself... should we not skip?");
             usageListener.addUsedContentVersion(usedContentVersion);
         }
     }
@@ -633,11 +628,11 @@ public class DeliveryContext implements UsageListener
 	{
 		if(this.operatingMode == null)
 		{
-			//System.out.println("No local operating mode. Using global:" + CmsPropertyHandler.getOperatingMode());
+			//logger.info("No local operating mode. Using global:" + CmsPropertyHandler.getOperatingMode());
 			this.operatingMode = CmsPropertyHandler.getOperatingMode();
 		}
 		
-		//System.out.println("Returning " + this.operatingMode);
+		//logger.info("Returning " + this.operatingMode);
 		return this.operatingMode;
 	}
 

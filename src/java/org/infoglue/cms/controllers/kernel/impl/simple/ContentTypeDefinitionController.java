@@ -698,7 +698,7 @@ public class ContentTypeDefinitionController extends BaseController
 	public List<AssetKeyDefinition> getDefinedAssetKeys(ContentTypeDefinitionVO contentTypeDefinitionVO, Boolean includeInherited)
 	{
 		List<AssetKeyDefinition> definedAssetKeys = new ArrayList<AssetKeyDefinition>();
-		System.out.println("contentTypeDefinitionVO:" + contentTypeDefinitionVO);
+		logger.info("contentTypeDefinitionVO:" + contentTypeDefinitionVO);
 		if(contentTypeDefinitionVO == null)
 			return definedAssetKeys;
 		
@@ -712,17 +712,17 @@ public class ContentTypeDefinitionController extends BaseController
 		
 		definedAssetKeys.addAll(enumValues);
 
-		//System.out.println("definedAssetKeys found in " + contentTypeDefinitionVO.getName() + ":" + definedAssetKeys.size());
+		//logger.info("definedAssetKeys found in " + contentTypeDefinitionVO.getName() + ":" + definedAssetKeys.size());
 		if(includeInherited && contentTypeDefinitionVO.getParentId() != null && contentTypeDefinitionVO.getParentId() > -1)
 		{
-			//System.out.println("Looking deeper below : " + contentTypeDefinitionVO.getName());
+			//logger.info("Looking deeper below : " + contentTypeDefinitionVO.getName());
 			try
 			{
 				ContentTypeDefinitionVO parentContentTypeDefinitionVO = getContentTypeDefinitionVOWithId(contentTypeDefinitionVO.getParentId());
 				if(parentContentTypeDefinitionVO != null)
 				{
 					List<AssetKeyDefinition> definedParentAssetKeys = getEnumValues(getEnumerationNodeList(parentContentTypeDefinitionVO.getSchemaValue(), ASSET_KEYS));
-					//System.out.println("asset keys found in parent " + parentContentTypeDefinitionVO.getName() + ":" + definedParentAssetKeys.size());
+					//logger.info("asset keys found in parent " + parentContentTypeDefinitionVO.getName() + ":" + definedParentAssetKeys.size());
 					for(AssetKeyDefinition assetKeyDefinition : definedParentAssetKeys)
 						assetKeyDefinition.setInherited(true);
 					
@@ -757,17 +757,17 @@ public class ContentTypeDefinitionController extends BaseController
 		List<CategoryAttribute> definedCategoryKeys = new ArrayList<CategoryAttribute>();
 		definedCategoryKeys.addAll(getCategoryInfo(getEnumerationNodeList(contentTypeDefinitionVO.getSchemaValue(), CATEGORY_KEYS)));
 
-		//System.out.println("definedCategoryKeys found in " + contentTypeDefinitionVO.getName() + ":" + definedCategoryKeys.size());
+		//logger.info("definedCategoryKeys found in " + contentTypeDefinitionVO.getName() + ":" + definedCategoryKeys.size());
 		if(includeInherited && contentTypeDefinitionVO.getParentId() != null && contentTypeDefinitionVO.getParentId() > -1)
 		{
-			//System.out.println("Looking deeper below : " + contentTypeDefinitionVO.getName());
+			//logger.info("Looking deeper below : " + contentTypeDefinitionVO.getName());
 			try
 			{
 				ContentTypeDefinitionVO parentContentTypeDefinitionVO = getContentTypeDefinitionVOWithId(contentTypeDefinitionVO.getParentId());
 				if(parentContentTypeDefinitionVO != null)
 				{
 					List<CategoryAttribute> definedParentCategoryKeys = getCategoryInfo(getEnumerationNodeList(parentContentTypeDefinitionVO.getSchemaValue(), CATEGORY_KEYS));
-					//System.out.println("asset keys found in parent " + parentContentTypeDefinitionVO.getName() + ":" + definedParentCategoryKeys.size());
+					//logger.info("asset keys found in parent " + parentContentTypeDefinitionVO.getName() + ":" + definedParentCategoryKeys.size());
 					for(CategoryAttribute categoryAttribute : definedParentCategoryKeys)
 						categoryAttribute.setInherited(true);
 					
@@ -970,17 +970,17 @@ public class ContentTypeDefinitionController extends BaseController
 		for(ContentTypeAttribute attribute : attributes)
 			attribute.setInherited(false);
 		
-		//System.out.println("attributes found in " + contentTypeDefinitionVO.getName() + ":" + attributes.size());
+		//logger.info("attributes found in " + contentTypeDefinitionVO.getName() + ":" + attributes.size());
 		if(includeInherited && contentTypeDefinitionVO.getParentId() != null && contentTypeDefinitionVO.getParentId() > -1)
 		{
-			//System.out.println("Looking deeper below : " + contentTypeDefinitionVO.getName());
+			//logger.info("Looking deeper below : " + contentTypeDefinitionVO.getName());
 			try
 			{
 				ContentTypeDefinitionVO parentContentTypeDefinitionVO = getContentTypeDefinitionVOWithId(contentTypeDefinitionVO.getParentId());
 				if(parentContentTypeDefinitionVO != null)
 				{
 					List<ContentTypeAttribute> parentAttributes = getContentTypeAttributes(parentContentTypeDefinitionVO, includeInherited);
-					//System.out.println("attributes found in parent " + parentContentTypeDefinitionVO.getName() + ":" + parentAttributes.size());
+					//logger.info("attributes found in parent " + parentContentTypeDefinitionVO.getName() + ":" + parentAttributes.size());
 					for(ContentTypeAttribute attribute : parentAttributes)
 						attribute.setInherited(true);
 					
@@ -1025,7 +1025,7 @@ public class ContentTypeDefinitionController extends BaseController
 				tabbedAttributes.put(currentTab, currentAttributes);
 			}
 		}
-		//System.out.println("tabbedAttributes: " + tabbedAttributes.size());		
+		//logger.info("tabbedAttributes: " + tabbedAttributes.size());		
 		return tabbedAttributes;
 	}
 	
@@ -1038,7 +1038,7 @@ public class ContentTypeDefinitionController extends BaseController
 		//List attributes = new ArrayList();
 
 	    String key = "schemaValue_" + schemaValue.hashCode();
-	    //System.out.println("key:" + key);
+	    //logger.info("key:" + key);
 		Object attributesCandidate = CacheController.getCachedObject("contentTypeDefinitionCache", key);
 		List attributes = new ArrayList();
 			
@@ -2342,13 +2342,13 @@ public class ContentTypeDefinitionController extends BaseController
 	
 	public void controlAndUpdateSystemContentTypes()
 	{
-		System.out.println("Verifying and updating system content types");
+		logger.info("Verifying and updating system content types");
 		try
 		{
 			boolean isModified = false;
 			
 			ContentTypeDefinitionVO htmlTemplateContentType = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate");
-			System.out.println("Verifying and updating HTMLTemplate");
+			logger.info("Verifying and updating HTMLTemplate");
 
 			InputSource xmlSource = new InputSource(new StringReader(htmlTemplateContentType.getSchemaValue()));
 			DOMParser parser = new DOMParser();
@@ -2357,21 +2357,21 @@ public class ContentTypeDefinitionController extends BaseController
 			
 			if(htmlTemplateContentType.getSchemaValue().indexOf("PreTemplate") == -1)
 			{
-				System.out.println("Adding attribute PreTemplate");
+				logger.info("Adding attribute PreTemplate");
 				String nodeTemplateAsString = "<xs:schema attributeFormDefault=\"unqualified\" elementFormDefault=\"qualified\" version=\"2.5.2\" xmlns:xi=\"http://www.w3.org/2001/XInclude\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><xs:element name=\"PreTemplate\" type=\"textarea\"><xs:annotation><xs:appinfo><params><param id=\"title\" inputTypeId=\"0\"><values><value id=\"undefined23\" label=\"Pre processing template\"></value></values></param><param id=\"description\" inputTypeId=\"0\"><values><value id=\"undefined67\" label=\"This template gets invoked before the render phase\"></value></values></param><param id=\"initialData\" inputTypeId=\"0\"><values><value id=\"undefined67\" label=\"undefined83\"></value></values></param><param id=\"class\" inputTypeId=\"0\"><values><value id=\"undefined97\" label=\"normaltextarea\"></value></values></param><param id=\"width\" inputTypeId=\"0\"><values><value id=\"width\" label=\"700\"></value></values></param><param id=\"height\" inputTypeId=\"0\"><values><value id=\"height\" label=\"150\"></value></values></param><param id=\"enableWYSIWYG\" inputTypeId=\"0\"><values><value id=\"enableWYSIWYG\" label=\"false\"></value></values></param><param id=\"WYSIWYGToolbar\" inputTypeId=\"0\"><values><value id=\"WYSIWYGToolbar\" label=\"Default\"></value></values></param><param id=\"WYSIWYGExtraConfig\" inputTypeId=\"0\"><values><value id=\"WYSIWYGExtraConfig\" label=\"\"></value></values></param><param id=\"enableFormEditor\" inputTypeId=\"0\"><values><value id=\"enableFormEditor\" label=\"false\"></value></values></param><param id=\"enableContentRelationEditor\" inputTypeId=\"0\"><values><value id=\"enableContentRelationEditor\" label=\"false\"></value></values></param><param id=\"enableStructureRelationEditor\" inputTypeId=\"0\"><values><value id=\"enableStructureRelationEditor\" label=\"false\"></value></values></param><param id=\"enableComponentPropertiesEditor\" inputTypeId=\"0\"><values><value id=\"enableComponentPropertiesEditor\" label=\"false\"></value></values></param><param id=\"activateExtendedEditorOnLoad\" inputTypeId=\"0\"><values><value id=\"activateExtendedEditorOnLoad\" label=\"false\"></value></values></param></params></xs:appinfo></xs:annotation></xs:element><xs:element name=\"Description\" type=\"textfield\"><xs:annotation><xs:appinfo><params><param id=\"title\" inputTypeId=\"0\"><values><value id=\"undefined72\" label=\"Description\"></value></values></param><param id=\"description\" inputTypeId=\"0\"><values><value id=\"undefined55\" label=\"\"></value></values></param><param id=\"initialData\" inputTypeId=\"0\"><values><value id=\"undefined63\" label=\"\"></value></values></param><param id=\"class\" inputTypeId=\"0\"><values><value id=\"undefined97\" label=\"longtextfield\"></value></values></param></params></xs:appinfo></xs:annotation></xs:element></xs:schema>";
 				isModified = addElement(document, "PreTemplate", nodeTemplateAsString, "Template");
 			}
 			
 			if(htmlTemplateContentType.getSchemaValue().indexOf("ComponentLabels") == -1)
 			{
-				System.out.println("Adding attribute PreTemplate");
+				logger.info("Adding attribute PreTemplate");
 				String nodeTemplateAsString = "<xs:schema attributeFormDefault=\"unqualified\" elementFormDefault=\"qualified\" version=\"2.5.2\" xmlns:xi=\"http://www.w3.org/2001/XInclude\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><xs:element name=\"ComponentLabels\" type=\"textarea\"><xs:annotation><xs:appinfo><params><param id=\"title\" inputTypeId=\"0\"><values><value id=\"undefined23\" label=\"ComponentLabels\"></value></values></param><param id=\"description\" inputTypeId=\"0\"><values><value id=\"undefined67\" label=\"Here you can put labels (localized) you wish to use in your Template-code\"></value></values></param><param id=\"initialData\" inputTypeId=\"0\"><values><value id=\"undefined67\" label=\"undefined83\"></value></values></param><param id=\"class\" inputTypeId=\"0\"><values><value id=\"undefined97\" label=\"normaltextarea\"></value></values></param><param id=\"width\" inputTypeId=\"0\"><values><value id=\"width\" label=\"700\"></value></values></param><param id=\"height\" inputTypeId=\"0\"><values><value id=\"height\" label=\"150\"></value></values></param><param id=\"enableWYSIWYG\" inputTypeId=\"0\"><values><value id=\"enableWYSIWYG\" label=\"false\"></value></values></param><param id=\"WYSIWYGToolbar\" inputTypeId=\"0\"><values><value id=\"WYSIWYGToolbar\" label=\"Default\"></value></values></param><param id=\"WYSIWYGExtraConfig\" inputTypeId=\"0\"><values><value id=\"WYSIWYGExtraConfig\" label=\"\"></value></values></param><param id=\"enableFormEditor\" inputTypeId=\"0\"><values><value id=\"enableFormEditor\" label=\"false\"></value></values></param><param id=\"enableContentRelationEditor\" inputTypeId=\"0\"><values><value id=\"enableContentRelationEditor\" label=\"false\"></value></values></param><param id=\"enableStructureRelationEditor\" inputTypeId=\"0\"><values><value id=\"enableStructureRelationEditor\" label=\"false\"></value></values></param><param id=\"enableComponentPropertiesEditor\" inputTypeId=\"0\"><values><value id=\"enableComponentPropertiesEditor\" label=\"false\"></value></values></param><param id=\"activateExtendedEditorOnLoad\" inputTypeId=\"0\"><values><value id=\"activateExtendedEditorOnLoad\" label=\"false\"></value></values></param></params></xs:appinfo></xs:annotation></xs:element><xs:element name=\"Description\" type=\"textfield\"><xs:annotation><xs:appinfo><params><param id=\"title\" inputTypeId=\"0\"><values><value id=\"undefined72\" label=\"Description\"></value></values></param><param id=\"description\" inputTypeId=\"0\"><values><value id=\"undefined55\" label=\"\"></value></values></param><param id=\"initialData\" inputTypeId=\"0\"><values><value id=\"undefined63\" label=\"\"></value></values></param><param id=\"class\" inputTypeId=\"0\"><values><value id=\"undefined97\" label=\"longtextfield\"></value></values></param></params></xs:appinfo></xs:annotation></xs:element></xs:schema>";
 				isModified = addElement(document, "ComponentLabels", nodeTemplateAsString, "Template");
 			}
 
 			if(htmlTemplateContentType.getSchemaValue().indexOf("ModelClassName") == -1)
 			{
-				System.out.println("Adding attribute ModelClassName");
+				logger.info("Adding attribute ModelClassName");
 				String nodeTemplateAsString = "<xs:schema attributeFormDefault=\"unqualified\" elementFormDefault=\"qualified\" version=\"2.5.2\" xmlns:xi=\"http://www.w3.org/2001/XInclude\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><xs:element name=\"ModelClassName\" type=\"textfield\"><xs:annotation><xs:appinfo><params><param id=\"title\" inputTypeId=\"0\"><values><value id=\"undefined64\" label=\"ModelClassName\"></value></values></param><param id=\"description\" inputTypeId=\"0\"><values><value id=\"undefined64\" label=\"State a classname if you wish to attach a class to the component\"></value></values></param><param id=\"initialData\" inputTypeId=\"0\"><values><value id=\"undefined69\" label=\"\"></value></values></param><param id=\"class\" inputTypeId=\"0\"><values><value id=\"undefined34\" label=\"longtextfield\"></value></values></param><param id=\"widget\" inputTypeId=\"0\"><values><value id=\"undefined95\" label=\"default\"></value></values></param></params></xs:appinfo></xs:annotation></xs:element></xs:schema>";
 				isModified = addElement(document, "ModelClassName", nodeTemplateAsString, "Template");
 			}
@@ -2395,7 +2395,7 @@ public class ContentTypeDefinitionController extends BaseController
 			boolean isModified = false;
 			
 			ContentTypeDefinitionVO metaInfoContentType = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
-			System.out.println("Verifying and updating Meta info");
+			logger.info("Verifying and updating Meta info");
 
 			InputSource xmlSource = new InputSource(new StringReader(metaInfoContentType.getSchemaValue()));
 			DOMParser parser = new DOMParser();
@@ -2404,7 +2404,7 @@ public class ContentTypeDefinitionController extends BaseController
 			
 			if(metaInfoContentType.getSchemaValue().indexOf("NiceURIName") == -1)
 			{
-				System.out.println("Adding attribute NiceURIName");
+				logger.info("Adding attribute NiceURIName");
 				String nodeTemplateAsString = "<xs:schema attributeFormDefault=\"unqualified\" elementFormDefault=\"qualified\" version=\"2.5.2\" xmlns:xi=\"http://www.w3.org/2001/XInclude\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"><xs:element name=\"NiceURIName\" type=\"textfield\"><xs:annotation><xs:appinfo><params><param id=\"title\" inputTypeId=\"0\"><values><value id=\"undefined64\" label=\"NiceURIName\"></value></values></param><param id=\"description\" inputTypeId=\"0\"><values><value id=\"undefined64\" label=\"The friendly url-path for the page\"></value></values></param><param id=\"initialData\" inputTypeId=\"0\"><values><value id=\"undefined69\" label=\"\"></value></values></param><param id=\"class\" inputTypeId=\"0\"><values><value id=\"undefined34\" label=\"longtextfield\"></value></values></param><param id=\"widget\" inputTypeId=\"0\"><values><value id=\"undefined95\" label=\"default\"></value></values></param></params></xs:appinfo></xs:annotation></xs:element></xs:schema>";
 				isModified = addElement(document, "NiceURIName", nodeTemplateAsString, "ComponentStructure");
 			}
@@ -2428,11 +2428,11 @@ public class ContentTypeDefinitionController extends BaseController
 	private boolean addElement(Document document, String attributeName, String nodeTemplateAsString, String siblingName) throws Exception
 	{
 		Document nodeTemplateDocument = createDocumentFromDefinition(nodeTemplateAsString);
-		System.out.println("modelClassNameNodeDocument:" + nodeTemplateDocument);
+		logger.info("modelClassNameNodeDocument:" + nodeTemplateDocument);
 		
 		String componentLabelsXPath = "//xs:element[@name='" + siblingName + "']";
 		NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), componentLabelsXPath);
-		System.out.println("anl:" + anl);
+		logger.info("anl:" + anl);
 		if(anl.getLength() > 0)
 		{
 			Element childElement = (Element)anl.item(0);

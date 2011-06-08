@@ -78,7 +78,6 @@ public class PrincipalAssetUrlTag extends ComponentLogicTag
 	            	assetVO = getController().getPrincipalAsset(getController().getPrincipal(), assetKey, languageId);
 	            }
 				
-				//System.out.println("assetVO:" + assetVO);
 				if(assetVO != null)
 					produceResult(getController().getAssetUrlForAssetWithId(assetVO.getId()));
 			}

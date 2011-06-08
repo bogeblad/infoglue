@@ -76,10 +76,8 @@ public class ForwardTag extends TemplateControllerTag
 		    {
 		    	String key = (String)requestParametersIterator.next();
 		    	String value = (String)requestParameters.get(key);
-		    	///System.out.println("key:"+ key + " - " + value);
 			    filterRequest.getParameterMap().put(key, new String[]{value});		    	
 		    }
-		    //System.out.println("originalRequest in forward:" + originalRequest.getClass().getName() + " on " + url);
 		    
 		    RequestDispatcher dispatcher = this.getController().getDeliveryContext().getHttpServletRequest().getRequestDispatcher(url);
 			dispatcher.forward(filterRequest, this.getController().getDeliveryContext().getHttpServletResponse());

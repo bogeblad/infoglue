@@ -174,7 +174,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
     {
     	doSave();
 
-    	System.out.println("returnAddress:" + returnAddress);
+    	logger.info("returnAddress:" + returnAddress);
     	if(this.returnAddress != null && !this.returnAddress.equals(""))
         {
 	        String arguments 	= "userSessionKey=" + userSessionKey + "&isAutomaticRedirect=false";

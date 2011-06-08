@@ -629,7 +629,6 @@ public class SiteNodeVersionController extends BaseController
     		siteNodeVersionVO.setDisableEditOnSight(siteNodeVersion.getDisableEditOnSight());
     		siteNodeVersionVO.setDisableForceIdentityCheck(siteNodeVersion.getDisableForceIdentityCheck());
     		siteNodeVersionVO.setForceProtocolChange(siteNodeVersion.getForceProtocolChange());
-    		System.out.println("OLD getForceProtocolChange:" + siteNodeVersion.getForceProtocolChange());
     		siteNodeVersionVO.setDisableLanguages(siteNodeVersion.getDisableLanguages());
     		siteNodeVersionVO.setDisablePageCache(siteNodeVersion.getDisablePageCache());
     		siteNodeVersionVO.setIsActive(siteNodeVersion.getIsActive());

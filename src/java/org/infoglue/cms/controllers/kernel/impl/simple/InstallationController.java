@@ -119,9 +119,9 @@ public class InstallationController extends BaseController
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("--------------------------------------------------");
-			System.out.println("Error:" + e.getMessage());
-			System.out.println("--------------------------------------------------");
+			logger.info("--------------------------------------------------");
+			logger.info("Error:" + e.getMessage());
+			logger.info("--------------------------------------------------");
 			//e.printStackTrace();
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
@@ -448,9 +448,9 @@ public class InstallationController extends BaseController
 	public boolean validateApplicationFile() throws Exception
 	{
 		String cmsFilePath = CastorDatabaseService.class.getResource("/" + CmsPropertyHandler.getApplicationName() + ".properties").getPath();
-		//System.out.println("cmsFilePath:" + cmsFilePath);
+		//logger.info("cmsFilePath:" + cmsFilePath);
 		String contents = FileHelper.getFileAsString(new File(cmsFilePath));
-		//System.out.println("contents:" + contents.substring(0, 200));
+		//logger.info("contents:" + contents.substring(0, 200));
 		
 	    if(contents.indexOf("configured=true") > -1 || contents.indexOf("databaseEngine=@database.driver.engine@") == -1)
 	    	return true;
@@ -831,7 +831,7 @@ public class InstallationController extends BaseController
 		if(dbProvider.equals("mssqlserver"))
 			dbPort = jdbcURL.substring(jdbcURL.indexOf(":", 12), jdbcURL.indexOf("/", 13));
 
-		System.out.println("dbPort:" + dbPort);
+		logger.info("dbPort:" + dbPort);
 		return dbPort;
 		*/
 	}
@@ -1637,8 +1637,8 @@ public class InstallationController extends BaseController
 		{
 			String valuesPart = sql.substring(sql.indexOf("VALUES") + 6).trim();
 			sql = sql.substring(0, sql.indexOf("VALUES") + 6);
-			//System.out.println("sql:" + sql);
-			//System.out.println("valuesPart:" + valuesPart);
+			//logger.info("sql:" + sql);
+			//logger.info("valuesPart:" + valuesPart);
 			
 			String tableName 		= null;
 			int blobColumn			= 0;
@@ -1775,7 +1775,7 @@ public class InstallationController extends BaseController
             cs.close();
         	//conn.close();
             
-            //System.out.println("After procedure:" + rs);
+            //logger.info("After procedure:" + rs);
         }
         catch(SQLException ex) 
         {
@@ -1843,9 +1843,9 @@ public class InstallationController extends BaseController
 	{
 		List columns = new ArrayList();
 		
-		//System.out.println("columnDefinition:" + columnDefinition);
+		//logger.info("columnDefinition:" + columnDefinition);
 		columnDefinition = columnDefinition.substring(1, columnDefinition.length() - 1);
-		//System.out.println("columnDefinition:" + columnDefinition);
+		//logger.info("columnDefinition:" + columnDefinition);
 		
 		StringTokenizer st = new StringTokenizer(columnDefinition, ",");
 		while (st.hasMoreTokens()) 
@@ -1882,9 +1882,9 @@ public class InstallationController extends BaseController
 	{
 		List valueList = new ArrayList();
 		
-		//System.out.println("values:" + values);
+		//logger.info("values:" + values);
 		values = values.substring(1, values.length() - 2);
-		//System.out.println("values:" + values);
+		//logger.info("values:" + values);
 		
 		int offset = 0;
 		int index = values.indexOf("[,]", offset);
@@ -1961,16 +1961,16 @@ public class InstallationController extends BaseController
 				else
 				{
 					String applicationName = CmsPropertyHandler.getApplicationName();
-					System.out.println("applicationName:" + applicationName);
-					System.out.println("serverConfigOK:" + serverConfigOK);
+					logger.info("applicationName:" + applicationName);
+					logger.info("serverConfigOK:" + serverConfigOK);
 					if(applicationName.equals("cms") && serverConfigOK)
 					{
-						System.out.println("url:" + url);
-						System.out.println("e.getMessage():" + e.getMessage());
-						System.out.println("e.getCause().getMessage():" + (e.getCause() != null ? e.getCause().getMessage() : ""));
+						logger.info("url:" + url);
+						logger.info("e.getMessage():" + e.getMessage());
+						logger.info("e.getCause().getMessage():" + (e.getCause() != null ? e.getCause().getMessage() : ""));
 						
 						int reason = getBrokenDatabaseReason();
-						System.out.println("Reason:" + reason);
+						logger.info("Reason:" + reason);
 						if(e.getMessage().indexOf("Unknown database") > -1 || e.getMessage().indexOf("Could not create connection to database server") > -1)
 							isValid = false;
 						else if(e.getCause() != null && e.getCause().getMessage().indexOf("Unknown database") > -1 || e.getCause().getMessage().indexOf("Could not create connection to database server") > -1)

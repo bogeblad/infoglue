@@ -3,6 +3,8 @@ package org.infoglue.common.util.cvsclient;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.ExtendedSearchController;
 import org.netbeans.lib.cvsclient.command.history.HistoryCommand;
 import org.netbeans.lib.cvsclient.event.BinaryMessageEvent;
 import org.netbeans.lib.cvsclient.event.FileAddedEvent;
@@ -16,6 +18,8 @@ import org.netbeans.lib.cvsclient.event.TerminationEvent;
 
 public class HistoryCommandWithCVSListener extends HistoryCommand
 {
+    private final static Logger logger = Logger.getLogger(HistoryCommandWithCVSListener.class.getName());
+
 	private List<MessageEvent> messageEvents = new ArrayList<MessageEvent>();
 	
 	public List<MessageEvent> getMessageEvents() 
@@ -46,32 +50,32 @@ public class HistoryCommandWithCVSListener extends HistoryCommand
 	
 	public void fileToRemove(FileToRemoveEvent arg0) 
 	{
-		//System.out.println("arg0:" + arg0);	
+		logger.info("arg0:" + arg0);	
 	}
 
 	
 	public void fileUpdated(FileUpdatedEvent arg0) 
 	{
-		//System.out.println("arg0:" + arg0);	
+		logger.info("arg0:" + arg0);	
 	}
 
 	
 	public void messageSent(MessageEvent messageEvent) 
 	{
-		//System.out.println("messageEvent:" + messageEvent + "\n" + messageEvent.getMessage());
+		logger.info("messageEvent:" + messageEvent + "\n" + messageEvent.getMessage());
 		this.messageEvents.add(messageEvent);
 	}
 
 	
 	public void messageSent(BinaryMessageEvent arg0) 
 	{
-		//System.out.println("arg0:" + arg0 + "\n" + arg0.getMessage());
+		logger.info("arg0:" + arg0 + "\n" + arg0.getMessage());
 	}
 
 	
 	public void moduleExpanded(ModuleExpansionEvent arg0) 
 	{
-		//System.out.println("arg0:" + arg0);
+		logger.info("arg0:" + arg0);
 	}
 
 }

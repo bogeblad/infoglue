@@ -522,13 +522,10 @@ public class DigitalAssetController extends BaseController
 				for(int i=0; i<cachedFiles.length; i++)
 				{
 					File cachedFile = cachedFiles[i];
-					//System.out.println("cachedFile:" + cachedFile.getName() + ":" + digitalAssetId);
 					if(cachedFile.getName().startsWith("" + digitalAssetId))
 					{
-						//System.out.println("Deleting:" + cachedFile.getName());
 						//File file = files[i];
 						boolean deleted = cachedFile.delete();
-						//System.out.println("Deleted:" + deleted);
 					}
 				}
 			}

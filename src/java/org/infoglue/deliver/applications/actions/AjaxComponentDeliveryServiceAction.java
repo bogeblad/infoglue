@@ -72,8 +72,6 @@ public class AjaxComponentDeliveryServiceAction extends InfoGlueAbstractAction
     	String originalUrl				= this.getRequest().getParameter("originalUrl");
     	String fullHtml 				= this.getRequest().getParameter("fullHtml");
 
-    	//System.out.println("componentIdString..." + componentIdString);
-    	//System.out.println("componentContentIdString..." + componentContentIdString);
     	if(componentContentIdString == null || componentContentIdString.equals("") || componentContentIdString.equals("null"))
     		componentContentIdString = "-1";
     		
@@ -140,7 +138,6 @@ public class AjaxComponentDeliveryServiceAction extends InfoGlueAbstractAction
                 logger.info("Returning:" + propertiesDiv.toString());
     		
 		    String template = FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "preview/ajax/componentPropertiesTemplate.vm"), "iso-8859-1");
-		    //System.out.println("replacing in " + template + "\n with " + propertiesDiv.toString());
 		    String firstPart = template.substring(0,template.indexOf("$propertiesDiv"));
 		    String secondPart = template.substring(template.indexOf("$propertiesDiv") + 14);
 		    template = firstPart + "" + propertiesDiv.toString() + secondPart;

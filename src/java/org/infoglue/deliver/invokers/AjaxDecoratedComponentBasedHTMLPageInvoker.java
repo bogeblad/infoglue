@@ -228,7 +228,10 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 	 private String showInitialBindingDialog(Integer siteNodeId, Integer languageId, Integer contentId)
 	 {
 		 String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
-		 String url = "javascript:window.open('" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?eee=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', 'BaseTemplate', 'width=600,height=700,left=50,top=50,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes');";
+		 //String url = "javascript:window.open('" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?eee=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', 'BaseTemplate', 'width=600,height=700,left=50,top=50,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes');";
+		 
+		 String url = "" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?eee=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
+		 url = "javascript:openInlineDiv('" + url + "', 600, 800, true, true, 'BaseTemplate');";
 		 
 		 String pageTemplateHTML = " or choose a page template below.<br><br>";
 		 
@@ -646,10 +649,6 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 					addComponentLinkHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML");
 				}
 				
-				//System.out.println("id:" + id);
-				//System.out.println("addComponentTextIndex:" + addComponentTextIndex);
-				//System.out.println("addComponentLinkHTML:" + addComponentLinkHTML);
-				
 				int allowedNumberOfComponentsInt = -1;
 				int allowedNumberOfComponentsIndex = slot.indexOf("allowedNumberOfComponents");
 				if(allowedNumberOfComponentsIndex > -1)
@@ -718,7 +717,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 					hasAccessToAddComponent = true;
 				
 			    boolean hasMaxComponents = false;
-			    //System.out.println("Checking for max components on: " + id);
+			    //logger.info("Checking for max components on: " + id);
 				if(component.getSlotList() != null)
 				{
 					Iterator slotListIterator = component.getSlotList().iterator();
@@ -727,8 +726,8 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 						Slot parentSlot = (Slot)slotListIterator.next();
 						if(parentSlot.getId().equalsIgnoreCase(id))
 						{
-							//System.out.println("parentSlot.getAllowedNumberOfComponents(): " + parentSlot.getAllowedNumberOfComponents());
-							//System.out.println("parentSlot.getComponents().size(): " + parentSlot.getComponents().size());
+							//logger.info("parentSlot.getAllowedNumberOfComponents(): " + parentSlot.getAllowedNumberOfComponents());
+							//logger.info("parentSlot.getComponents().size(): " + parentSlot.getComponents().size());
 							if(parentSlot.getAllowedNumberOfComponents() != -1 && parentSlot.getComponents().size() >= parentSlot.getAllowedNumberOfComponents())
 								hasMaxComponents = true;
 						}
@@ -740,13 +739,13 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 					if(slotBean.getAddComponentText() != null)
 					{
 						clickToAddHTML = slotBean.getAddComponentText();
-						//System.out.println("Fick:" + clickToAddHTML);
+						//logger.info("Fick:" + clickToAddHTML);
 					}
 					else
 					{
 						Locale locale = templateController.getLocaleAvailableInTool(principal);
 						clickToAddHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML");
-						//System.out.println("Fack:" + clickToAddHTML + locale);
+						//logger.info("Fack:" + clickToAddHTML + locale);
 					}
 				}
 				else
@@ -754,9 +753,9 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 					addComponentLinkHTML = "";
 					clickToAddHTML = "";
 				}
-				//System.out.println("addComponentLinkHTML:" + addComponentLinkHTML);
-				//System.out.println("clickToAddHTML:" + clickToAddHTML);
-				//System.out.println("hasMaxComponents:" + hasMaxComponents);
+				//logger.info("addComponentLinkHTML:" + addComponentLinkHTML);
+				//logger.info("clickToAddHTML:" + clickToAddHTML);
+				//logger.info("hasMaxComponents:" + hasMaxComponents);
 				
 				//logger.info("subComponents for " + id + ":" + subComponents);
 				if(subComponents != null && subComponents.size() > 0)
@@ -866,12 +865,12 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 					    }
 
 						String linkUrl = componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&parentComponentId=" + component.getId() + "&slotId=" + id + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&" + allowedComponentGroupNamesAsEncodedString : "");
-						//System.out.println("clickToAddHTML 1:" + component.getContainerSlot().getAddComponentLinkHTML().replaceAll("\\$linkUrl", linkUrl));
+						//logger.info("clickToAddHTML 1:" + component.getContainerSlot().getAddComponentLinkHTML().replaceAll("\\$linkUrl", linkUrl));
 						subComponentString += "" + component.getContainerSlot().getAddComponentLinkHTML().replaceAll("\\$linkUrl", linkUrl);
 					}
 					else if(!component.getIsInherited() && !hasMaxComponents && !disableSlotDecoration)
 					{
-						//System.out.println("clickToAddHTML 2:" + clickToAddHTML);
+						//logger.info("clickToAddHTML 2:" + clickToAddHTML);
 						subComponentString += "" + clickToAddHTML;
 					}
 				}
@@ -895,12 +894,12 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 					    }
 
 						String linkUrl = componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?BBB=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&parentComponentId=" + component.getId() + "&slotId=" + id + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&" + allowedComponentGroupNamesAsEncodedString : "");
-						//System.out.println("clickToAddHTML 3:" + component.getContainerSlot().getAddComponentLinkHTML().replaceAll("\\$linkUrl", linkUrl));
+						//logger.info("clickToAddHTML 3:" + component.getContainerSlot().getAddComponentLinkHTML().replaceAll("\\$linkUrl", linkUrl));
 						subComponentString += "" + component.getContainerSlot().getAddComponentLinkHTML().replaceAll("\\$linkUrl", linkUrl);
 					}
 					else if(!component.getIsInherited() && !hasMaxComponents && !disableSlotDecoration)
 					{
-						//System.out.println("clickToAddHTML 4:" + clickToAddHTML);
+						//logger.info("clickToAddHTML 4:" + clickToAddHTML);
 						subComponentString += "" + clickToAddHTML;
 					}
 				}

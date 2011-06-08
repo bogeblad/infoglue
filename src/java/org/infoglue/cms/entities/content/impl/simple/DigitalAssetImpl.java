@@ -28,12 +28,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 
 public class DigitalAssetImpl implements DigitalAsset
 {
+    private final static Logger logger = Logger.getLogger(DigitalAssetImpl.class.getName());
+
     private DigitalAssetVO valueObject = new DigitalAssetVO();
 	private byte[] assetBytes = null;
 	private java.util.Collection contentVersions;
@@ -234,8 +238,7 @@ public class DigitalAssetImpl implements DigitalAsset
 			}
 			catch(Exception e)
 			{
-				System.out.println("The asset with id:" + this.getId() + " had no assetBlob or an error occurred when we tried to get it:" + e.getMessage());
-				Thread.dumpStack();
+				logger.error("The asset with id:" + this.getId() + " had no assetBlob or an error occurred when we tried to get it:" + e.getMessage(), e);
 			}
 		}
 				

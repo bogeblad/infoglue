@@ -243,7 +243,7 @@ public class TimeSeriesDiagram implements XMLDataDiagram
 	}
 */
 	/**
-	 * This method writes a document to System.out.
+	 * This method writes a document to sysout.
 	 */
 
 	public void writeDebug(Document document) throws Exception 

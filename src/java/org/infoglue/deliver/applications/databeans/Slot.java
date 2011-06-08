@@ -119,9 +119,6 @@ public class Slot
 	    
     	try
     	{
-    		//System.out.println("allowedComponentsArray:" + allowedComponentsArray);
-    		//System.out.println("disallowedComponentsArray:" + disallowedComponentsArray);
-    		//System.out.println("allowedComponentGroupsArray:" + allowedComponentGroupsArray);
     		if(allowedComponentsArray != null)
 		    	for(int i=0; i<allowedComponentsArray.length; i++)
 		    		sb.append("okName" + vf.replaceNonAscii(vf.escapeForAdvancedJavascripts(allowedComponentsArray[i]), '_') + " ");
@@ -135,7 +132,7 @@ public class Slot
 	    	if(sb.toString().trim().equals(""))
 	    		sb = new StringBuilder("okAny");
 	    	
-	    	//System.out.println("limitationClasses:" + sb.toString());
+	    	//logger.info("limitationClasses:" + sb.toString());
 	    	return sb.toString();
     	}
     	catch (Exception e) 

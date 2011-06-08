@@ -121,7 +121,7 @@ public class InstallAction extends InfoGlueAbstractAction
 
 	public String doExecute() throws Exception
     {
-		System.out.println("operation:" + operation);
+		logger.info("operation:" + operation);
 		if(operation.equalsIgnoreCase("updateDatabaseFromExistingConfig"))
 		{
 			try
@@ -183,7 +183,7 @@ public class InstallAction extends InfoGlueAbstractAction
 		try
 		{
 			int reason = InstallationController.getController().getBrokenDatabaseReason();
-			System.out.println("reason:" + reason);
+			logger.info("reason:" + reason);
 			if(reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE || reason == InstallationController.DATABASE_SERVER_MISSING_DATABASE_TABLES)
 				dbConfigExists = true;
 		}

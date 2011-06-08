@@ -198,8 +198,8 @@ public class CmsPropertyHandler
 		    try
 		    {
 		    	propertySet = PropertySetManager.getInstance("jdbc", args);
-		    	//System.out.println("propertySet:" + propertySet);
-		    	//System.out.println("propertySet.allowedAdminIP:" + propertySet.getString("allowedAdminIP"));
+		    	//logger.info("propertySet:" + propertySet);
+		    	//logger.info("propertySet.allowedAdminIP:" + propertySet.getString("allowedAdminIP"));
 		    	if(logger.isInfoEnabled())
 		    		logger.info("propertySet: " + propertySet);
 		    }
@@ -222,11 +222,11 @@ public class CmsPropertyHandler
 		    	}
 		    	catch(Exception e)
 		    	{
-		    		System.out.println("Error initializing serverNodeName:" + e.getMessage());
+		    		logger.error("Error initializing serverNodeName:" + e.getMessage());
 		    	}
 		    }
 		    
-		    System.out.println("serverNodeName:" + serverNodeName);
+		    logger.info("serverNodeName:" + serverNodeName);
 		    
 		    initializeLocalServerNodeId();
 		    
@@ -440,7 +440,6 @@ public class CmsPropertyHandler
 		if(logger.isInfoEnabled())
 			logger.info("Getting jdbc-property:" + cacheKey);
 		
-		//System.out.println("propertySet:" + propertySet);
 		if(propertySet != null)
 		{
 			if(localSettingsServerNodeId != null)
@@ -1212,11 +1211,10 @@ public class CmsPropertyHandler
 			{
 				logger.warn("Error parsing useSynchronizationOnCaches:" + e.getMessage());
 			}
-			System.out.println("Slow query for newUseSynchronizationOnCaches:" + newUseSynchronizationOnCaches);
+			
+			logger.info("Slow query for newUseSynchronizationOnCaches:" + newUseSynchronizationOnCaches);
 			useSynchronizationOnCaches = newUseSynchronizationOnCaches;
 		}
-
-		//System.out.println("useSynchronizationOnCaches:" + useSynchronizationOnCaches);
 
 		return useSynchronizationOnCaches;
 	}
@@ -1300,12 +1298,10 @@ public class CmsPropertyHandler
 		if(cmsFullBaseUrl == null || cmsFullBaseUrl.equals(""))
 		{
 			cmsFullBaseUrl = "" + defaultScheme + "://127.0.0.1:" + defaultPort + "" + getCmsBaseUrl();
-			//System.out.println("Rewriting cmsFullBaseUrl - now:" + cmsFullBaseUrl); 
 		}
 		else if(cmsFullBaseUrl != null && !cmsFullBaseUrl.startsWith("http"))
 		{
 			cmsFullBaseUrl = "" + defaultScheme + "://127.0.0.1:" + defaultPort + "" + getCmsBaseUrl();
-			//System.out.println("Rewriting cmsFullBaseUrl - now:" + cmsFullBaseUrl);
 		}
 		
 		return cmsFullBaseUrl;

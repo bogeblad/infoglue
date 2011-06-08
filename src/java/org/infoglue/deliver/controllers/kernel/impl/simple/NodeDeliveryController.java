@@ -394,7 +394,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
 		if(siteNodeVO != null)
 		{
-			//System.out.println("There was an cached siteNodeVO:" + siteNodeVO);
+			//logger.info("There was an cached siteNodeVO:" + siteNodeVO);
 		}
 		else
 		{
@@ -1035,7 +1035,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 				SiteNodeVersionVO siteNodeVersionVO = this.getLatestActiveSiteNodeVersionVOForPageCache(db, siteNodeId);
 				if(siteNodeVersionVO != null && siteNodeVersionVO.getForceProtocolChange() != null)
 				{	
-					//System.out.println("siteNodeVersionVO:" + siteNodeVersionVO.getId() + ":" + siteNodeVersionVO.getForceProtocolChange());
+					//logger.info("siteNodeVersionVO:" + siteNodeVersionVO.getId() + ":" + siteNodeVersionVO.getForceProtocolChange());
 					if(logger.isInfoEnabled())
 						logger.info("siteNodeVersionVO:" + siteNodeVersionVO.getId() + ":" + siteNodeVersionVO.getForceProtocolChange());
 					
@@ -1716,7 +1716,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         
         if(parentSiteNodeId == null || parentSiteNodeId.intValue() == -1)
         {
-        	//System.out.println("Checking for root node at " + repositoryId);
+        	//logger.info("Checking for root node at " + repositoryId);
             SiteNodeVO rootSiteNodeVO = this.getRootSiteNode(db, repositoryId);
             if(rootSiteNodeVO != null)
             	siteNodes.add(rootSiteNodeVO);
@@ -2055,17 +2055,17 @@ public class NodeDeliveryController extends BaseDeliveryController
 	    	}
 	    
             String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
-        	//System.out.println("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
-            //System.out.println("numberOfPaths:" + numberOfPaths);
+        	//logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
+            //logger.info("numberOfPaths:" + numberOfPaths);
         	if(enableNiceURIForLanguage.equalsIgnoreCase("true") && path.length > 0)
         	{
-            	//System.out.println("path[numberOfPaths]:" + path[numberOfPaths]);
-        		//System.out.println("path[0]:" + path[0]);
+            	//logger.info("path[numberOfPaths]:" + path[numberOfPaths]);
+        		//logger.info("path[0]:" + path[0]);
         		LanguageVO language = LanguageDeliveryController.getLanguageDeliveryController().getLanguageWithCode(db, path[0].toLowerCase());
-        		//System.out.println("language:" + language);
+        		//logger.info("language:" + language);
             	if(language != null)
             	{
-            		//System.out.println("YES - we should consider the first node as a language:" + language);
+            		//logger.info("YES - we should consider the first node as a language:" + language);
                     session.setAttribute(FilterConstants.LANGUAGE_ID, language.getId());
                     deliveryContext.setLanguageId(language.getId());
                     languageId = language.getId();
@@ -2076,12 +2076,6 @@ public class NodeDeliveryController extends BaseDeliveryController
             		path = tempNewPath;
             	}
         	}
-        	/*
-        	System.out.println("*************************");
-        	for(int i = 0; i < path.length; i++) 
-        		System.out.println("path[" + i + "]=" + path[i]);
-        	System.out.println("*************************");
-        	*/
 	        for (int i = numberOfPaths;i < path.length; i++) 
 	        {
 	            if (i < 0) 
@@ -2286,8 +2280,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 		   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 	    	}
 
-	    	//System.out.println("SQL:" + SQL);
-	    	//System.out.println("siteNodeId:" + siteNodeId);
+	    	//logger.info("SQL:" + SQL);
+	    	//logger.info("siteNodeId:" + siteNodeId);
 	    	OQLQuery oql = db.getOQLQuery(SQL.toString());
 			oql.bind(siteNodeId);
 			oql.bind(false);

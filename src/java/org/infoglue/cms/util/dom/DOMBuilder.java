@@ -224,7 +224,7 @@ public class DOMBuilder
 	}
 	
 	/**
-	 * This method writes a document to System.out.
+	 * This method writes a document to Sysout.
 	 */
 
 	public void writeDebug(Document document) throws Exception 

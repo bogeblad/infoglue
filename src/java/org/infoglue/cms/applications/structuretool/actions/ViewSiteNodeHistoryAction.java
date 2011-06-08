@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
@@ -44,6 +45,8 @@ import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 
 public class ViewSiteNodeHistoryAction extends InfoGlueAbstractAction 
 {
+    private final static Logger logger = Logger.getLogger(ViewSiteNodeHistoryAction.class.getName());
+
 	private static final long serialVersionUID = 1L;
 	
 	private Integer siteNodeId;
@@ -71,7 +74,7 @@ public class ViewSiteNodeHistoryAction extends InfoGlueAbstractAction
 		{
 			ContentVersionVO metaInfoContentVersionVOCandidate = metaInfoContentVersionVOListIterator.next();
 			Date metaInfoContentVersionModifiedDateTime = metaInfoContentVersionVOCandidate.getModifiedDateTime();
-			System.out.println("metaInfoContentVersionModifiedDateTime: " + metaInfoContentVersionModifiedDateTime.getTime());
+			logger.info("metaInfoContentVersionModifiedDateTime: " + metaInfoContentVersionModifiedDateTime.getTime());
 			if(metaInfoContentVersionVO == null)
 			{
 				metaInfoContentVersionVO = metaInfoContentVersionVOCandidate;
@@ -80,7 +83,7 @@ public class ViewSiteNodeHistoryAction extends InfoGlueAbstractAction
 			else
 			{
 				long diff = Math.abs(metaInfoContentVersionModifiedDateTime.getTime() - modifiedDateTime.getTime());
-				System.out.println("diff:" + diff + " : " + previousDiff);
+				logger.info("diff:" + diff + " : " + previousDiff);
 				if(previousDiff < diff)
 					metaInfoContentVersionVO = metaInfoContentVersionVOCandidate;					
 			}

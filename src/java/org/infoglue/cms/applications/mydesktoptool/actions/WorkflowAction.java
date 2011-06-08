@@ -118,7 +118,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 			e.printStackTrace();
 		}
 
-		System.out.println("existingWorkflow:" + existingWorkflow.getName());
+		logger.info("existingWorkflow:" + existingWorkflow.getName());
 		if(existingWorkflow != null)
 			workflow = controller.initializeWorkflow(getInfoGluePrincipal(), existingWorkflow.getName(), actionId, WorkflowController.createWorkflowParameters(ActionContext.getRequest()));
 		else
@@ -131,9 +131,6 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	public String doInvoke() throws SystemException
 	{
-		System.out.println("workflowId:" + getWorkflowId());
-		System.out.println("actionId:" + actionId);
-		
 		logger.info("****************************************");
 		logger.info("workflowId:" + getWorkflowId());
 		logger.info("actionId:" + actionId);

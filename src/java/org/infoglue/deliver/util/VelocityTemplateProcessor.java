@@ -120,7 +120,7 @@ public class VelocityTemplateProcessor
 		    }
 		    else if(!forceVelocity && templateAsString.indexOf("<?php") > -1)
 		    {
-		    	System.out.println("Dispatching php:" + templateAsString.trim());
+		    	logger.info("Dispatching php:" + templateAsString.trim());
 		    	dispatchPHP(params, pw, templateAsString, component);
 		    }
 		    else
@@ -220,7 +220,7 @@ public class VelocityTemplateProcessor
 	    if(templateController != null)
 	    {
 	    	final DeliveryContext deliveryContext = templateController.getDeliveryContext();
-			//System.out.println("renderJSP: ClassLoader in context for thread:" + Thread.currentThread().getId() + ":" + Thread.currentThread().getContextClassLoader().getClass().getName());
+			//logger.info("renderJSP: ClassLoader in context for thread:" + Thread.currentThread().getId() + ":" + Thread.currentThread().getContextClassLoader().getClass().getName());
 
 		    templateController.getHttpServletRequest().setAttribute("org.infoglue.cms.deliver.templateLogic", templateController);
 		    templateController.getHttpServletRequest().setAttribute("org.infoglue.cms.deliver.portalLogic", portletController);
@@ -385,7 +385,7 @@ public class VelocityTemplateProcessor
 	            
 	            Object returnObject = value.toJavaObject();
 	
-	            //System.out.println("output:" + output);
+	            //logger.info("output:" + output);
 			    pw.println(output);
 		    }
 		    catch (Throwable e) 
@@ -431,7 +431,7 @@ public class VelocityTemplateProcessor
 	            
 	            Object returnObject = value.toJavaObject();
 	
-	            //System.out.println("output:" + output);
+	            //logger.info("output:" + output);
 			    pw.println(output);
 		    }
 		    catch (Throwable e) 

@@ -181,14 +181,14 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
 		boolean allowedSessionId = false;
 		List activeSessionBeanList = CmsSessionContextListener.getSessionInfoBeanList();
 		Iterator activeSessionsIterator = activeSessionBeanList.iterator();
-		//System.out.println("activeSessionBeanList:" + activeSessionBeanList.size());
+		//logger.info("activeSessionBeanList:" + activeSessionBeanList.size());
 		while(activeSessionsIterator.hasNext())
 		{
 			SessionInfoBean sessionBean = (SessionInfoBean)activeSessionsIterator.next();
-			//System.out.println("sessionBean:" + sessionBean.getId() + "=" + sessionBean.getPrincipal().getName());
+			//logger.info("sessionBean:" + sessionBean.getId() + "=" + sessionBean.getPrincipal().getName());
 			if(sessionBean.getId().equals(requestSessionId))
 			{
-				//System.out.println("Found a matching sessionId");
+				//logger.info("Found a matching sessionId");
 				allowedSessionId = true;
 		    	
 				break;

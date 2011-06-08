@@ -287,7 +287,7 @@ public class FormEntryController extends BaseController
 				dnsName = siteNode.getRepository().getDnsName();
 			
 			assetUrl = URLComposer.getURLComposer().composeDigitalAssetUrl(dnsName, null, fileName, deliveryContext); 
-			//System.out.println("assetUrl:" + assetUrl);
+			//logger.info("assetUrl:" + assetUrl);
 			
 			commitTransaction(db);
 		} 

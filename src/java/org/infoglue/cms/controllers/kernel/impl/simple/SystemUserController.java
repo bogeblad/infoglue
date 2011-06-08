@@ -513,7 +513,7 @@ public class SystemUserController extends BaseController
 			}
 			catch (Exception e) 
 			{
-				System.out.println("Error generating password:" + e.getMessage());
+				logger.error("Error generating password:" + e.getMessage());
 			}
 		}
     	
@@ -542,7 +542,7 @@ public class SystemUserController extends BaseController
 			}
 			catch (Exception e) 
 			{
-				System.out.println("Error generating password:" + e.getMessage());
+				logger.error("Error generating password:" + e.getMessage());
 			}
 		}
 
@@ -644,12 +644,14 @@ public class SystemUserController extends BaseController
         }
         catch(ConstraintException ce)
         {
+        	ce.printStackTrace();
             logger.warn("An error occurred so we should not completes the transaction:" + ce, ce);
             rollbackTransaction(db);
             throw ce;
         }
         catch(Exception e)
         {
+        	e.printStackTrace();
             logger.error("An error occurred so we should not completes the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
@@ -822,7 +824,7 @@ public class SystemUserController extends BaseController
 			}
 			catch (Exception e) 
 			{
-				System.out.println("Error generating password:" + e.getMessage());
+				logger.error("Error generating password:" + e.getMessage());
 			}
 		}
 
@@ -891,7 +893,7 @@ public class SystemUserController extends BaseController
 			}
 			catch (Exception e) 
 			{
-				System.out.println("Error generating password:" + e.getMessage());
+				logger.error("Error generating password:" + e.getMessage());
 			}
 		}
 
@@ -946,7 +948,7 @@ public class SystemUserController extends BaseController
 			}
 			catch (Exception e) 
 			{
-				System.out.println("Error generating password:" + e.getMessage());
+				logger.error("Error generating password:" + e.getMessage());
 			}
 		}
 

@@ -180,7 +180,6 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 	 */
 	public void addDigitalAsset(RemoteAttachment remoteAttachment) throws JspException
 	{
-		System.out.println("Adding:" + remoteAttachment.getSize());
 	    digitalAssets.add(remoteAttachment);
 	}
 

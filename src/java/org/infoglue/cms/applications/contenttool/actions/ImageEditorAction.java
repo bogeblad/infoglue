@@ -97,7 +97,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     {
     	if(clearHistory)
     	{
-    		System.out.println("Cleaning up all session images");
+    		logger.info("Cleaning up all session images");
     		getHttpSession().removeAttribute("imageEditorOldWorkingFiles");
     	}
     	
@@ -134,9 +134,9 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
 
     	workingFileName = getFirstOldWorkingFile();
-        System.out.println("workingFileName:" + workingFileName);
+        logger.info("workingFileName:" + workingFileName);
     	this.modifiedFileUrl = getImageEditorBaseUrl() + workingFileName;
-        System.out.println("this.modifiedFileUrl:" + this.modifiedFileUrl);
+        logger.info("this.modifiedFileUrl:" + this.modifiedFileUrl);
     	//logger.info("modifiedFileUrl:" + modifiedFileUrl);
     
         return "success";
@@ -260,13 +260,13 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 
     	File file = new File(getImageEditorPath() + File.separator + workingFileName);
     	//logger.info("saving file:" + file.getAbsolutePath());
-    	//System.out.println("file:" + file.exists() + "\n" + file.getAbsolutePath());
+    	//logger.info("file:" + file.exists() + "\n" + file.getAbsolutePath());
 
     	if(file.exists())
     	{
         	String contentType = digitalAssetVO.getAssetContentType();
 	    	this.digitalAssetVO.setAssetFileSize(new Integer(new Long(file.length()).intValue()));
-	    	//System.out.println("Setting file size to:" + new Integer(new Long(file.length()).intValue()));
+	    	//logger.info("Setting file size to:" + new Integer(new Long(file.length()).intValue()));
 	    	this.digitalAssetVO.setAssetContentType("image/png");
 			InputStream is = new FileInputStream(file);
 			
@@ -554,11 +554,11 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     		getHttpSession().setAttribute("imageEditorOldWorkingFiles", imageEditorOldWorkingFiles);
     	}
     	
-    	System.out.println("Adding " + oldWorkingFile.getName());
+    	logger.info("Adding " + oldWorkingFile.getName());
     	imageEditorOldWorkingFiles.add(0, oldWorkingFile.getName());
     	
     	List imageEditorOldWorkingFiles2 = (List)getHttpSession().getAttribute("imageEditorOldWorkingFiles");
-    	System.out.println("imageEditorOldWorkingFiles2: " + imageEditorOldWorkingFiles2.size());
+    	logger.info("imageEditorOldWorkingFiles2: " + imageEditorOldWorkingFiles2.size());
 
     }
 
@@ -571,13 +571,13 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     	List imageEditorOldWorkingFiles = (List)getHttpSession().getAttribute("imageEditorOldWorkingFiles");
     	if(imageEditorOldWorkingFiles != null)
     	{
-    		System.out.println("imageEditorOldWorkingFiles: " + imageEditorOldWorkingFiles.size());
+    		logger.info("imageEditorOldWorkingFiles: " + imageEditorOldWorkingFiles.size());
         	oldWorkingFileName = (String)imageEditorOldWorkingFiles.get(0);
-    		System.out.println("oldWorkingFileName:" + oldWorkingFileName);
+    		logger.info("oldWorkingFileName:" + oldWorkingFileName);
     		imageEditorOldWorkingFiles.remove(0);
     	}
     	else
-    		System.out.println("imageEditorOldWorkingFiles was null");
+    		logger.info("imageEditorOldWorkingFiles was null");
         
     	return oldWorkingFileName;
     }

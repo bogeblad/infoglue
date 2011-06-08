@@ -16,6 +16,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.deliver.util.HttpHelper;
 
 /**
@@ -28,6 +30,8 @@ import org.infoglue.deliver.util.HttpHelper;
  */
 public class PageFetcher
 {
+    private final static Logger logger = Logger.getLogger(PageFetcher.class.getName());
+
 	public static void main(String[] args) throws Exception
     {				  
 		/*
@@ -45,12 +49,12 @@ public class PageFetcher
 	
 	public String fetchPage(String url, String httpMethod, String proxyHost, Integer proxyPort, Map<String,String> cookies, Map<String,String> inputRequestHeaders, Map<String,String> requestParameters, Map<String,String> returnCookies, Map<String,String> returnHeaders, Map<String,String> statusData, List<String> blockedParameters) throws Exception
 	{
-		System.out.println("Fetching page on:" + url);
+		logger.info("Fetching page on:" + url);
 		
         HttpState initialState = new HttpState();
 		for(Entry<String,String> cookie : cookies.entrySet())
 		{
-			System.out.println("Cookie: " + cookie.getKey() + "=" + cookie.getValue());
+			logger.info("Cookie: " + cookie.getKey() + "=" + cookie.getValue());
 	        Cookie mycookie = new Cookie(".telia.se", cookie.getKey(), cookie.getValue(), "/", null, false);
 	        initialState.addCookie(mycookie);
 		}
@@ -77,12 +81,12 @@ public class PageFetcher
             client.getState().setCredentials(AuthScope.ANY, creds);
         }
 
-        System.out.println("URL TO CALL with "  + httpMethod + ":" + url);
+        logger.info("URL TO CALL with "  + httpMethod + ":" + url);
         HttpMethod method = null;
         url = URLDecoder.decode(url, "utf-8");
-        System.out.println("URL TO CALL with "  + httpMethod + ":" + url);
+        logger.info("URL TO CALL with "  + httpMethod + ":" + url);
         url = new URI(url).getEscapedURI();
-        System.out.println("URL TO CALL with "  + httpMethod + ":" + url);
+        logger.info("URL TO CALL with "  + httpMethod + ":" + url);
         if(httpMethod.equalsIgnoreCase("post"))
         	method = new PostMethod(url);
         else
@@ -90,24 +94,24 @@ public class PageFetcher
         
         for(Entry<String,String> requestParameter : requestParameters.entrySet())
 		{
-        	System.out.println("BlockedParameters:" + blockedParameters);
+        	logger.info("BlockedParameters:" + blockedParameters);
 			if(!blockedParameters.contains(requestParameter.getKey()))
 			{
 				if(method instanceof PostMethod)
 				{
-					System.out.println("Parameter in post: " + requestParameter.getKey() + "=" + requestParameter.getValue());
+					logger.info("Parameter in post: " + requestParameter.getKey() + "=" + requestParameter.getValue());
 					((PostMethod)method).addParameter(requestParameter.getKey(), requestParameter.getValue());
 				}
 			}
 			else
-				System.out.println("Skipping:" + requestParameter.getKey());
+				logger.info("Skipping:" + requestParameter.getKey());
 		}
         
         /*
         TODO - we must have somewhere to do this controllable
 		for(Entry<String,String> inputRequestHeader : inputRequestHeaders.entrySet())
 		{
-			System.out.println("Header: " + inputRequestHeader.getKey() + "=" + inputRequestHeader.getValue());
+			logger.info("Header: " + inputRequestHeader.getKey() + "=" + inputRequestHeader.getValue());
 			method.addRequestHeader(inputRequestHeader.getKey(), inputRequestHeader.getValue());
 		}
 		*/
@@ -119,50 +123,50 @@ public class PageFetcher
         responseBody = method.getResponseBodyAsString();
         
         //write out the request headers
-        System.out.println("*** Request ***");
-        System.out.println("Request Path: " + method.getPath());
-        System.out.println("Request Query: " + method.getQueryString());
+        logger.info("*** Request ***");
+        logger.info("Request Path: " + method.getPath());
+        logger.info("Request Query: " + method.getQueryString());
         Header[] requestHeaders = method.getRequestHeaders();
         for (int i=0; i<requestHeaders.length; i++){
-            System.out.print(requestHeaders[i]);
+        	logger.info(requestHeaders[i]);
         }
 
         //write out the response headers
-        System.out.println("*** Response ***");
-        System.out.println("Status Line: " + method.getStatusLine());
+        logger.info("*** Response ***");
+        logger.info("Status Line: " + method.getStatusLine());
         Header[] responseHeaders = method.getResponseHeaders();
         for (int i=0; i<responseHeaders.length; i++)
         {
         	returnHeaders.put(responseHeaders[i].getName(), responseHeaders[i].getValue());
-            System.out.print(responseHeaders[i]);
+        	logger.info(responseHeaders[i]);
         }
         
         Cookie[] returnCookiesArray = client.getState().getCookies();
         // Display the cookies
-        System.out.println("Present cookies: ");
+        logger.info("Present cookies: ");
         for (int i = 0; i < returnCookiesArray.length; i++) 
         {
-            System.out.println(" - " + returnCookiesArray[i].toExternalForm());
+            logger.info(" - " + returnCookiesArray[i].toExternalForm());
             returnCookies.put(returnCookiesArray[i].getName(), returnCookiesArray[i].getValue());
         }
         
         //write out the response body
-        //System.out.println("*** Response Body ***");
-        //System.out.println(responseBody);
+        //logger.info("*** Response Body ***");
+        //logger.info(responseBody);
 
-        System.out.println("****************************");
-        System.out.println("* Looking for redirect.... *");
-        System.out.println("****************************");
+        logger.info("****************************");
+        logger.info("* Looking for redirect.... *");
+        logger.info("****************************");
 
         String redirectLocation;
         Header locationHeader = method.getResponseHeader("location");
         if (locationHeader != null) 
         {
             redirectLocation = locationHeader.getValue();
-            System.out.println("redirectLocation:" + redirectLocation);
+            logger.info("redirectLocation:" + redirectLocation);
             
             String fullUrl = addParameters(redirectLocation, requestParameters);
-            System.out.println("fullUrl:" + fullUrl);
+            logger.info("fullUrl:" + fullUrl);
             
             //if(httpMethod.equalsIgnoreCase("post"))
             //	method = new PostMethod(fullUrl);
@@ -179,48 +183,48 @@ public class PageFetcher
     			{
     				if(method instanceof PostMethod)
     				{
-    					System.out.println("Parameter: " + requestParameter.getKey() + "=" + requestParameter.getValue());
+    					logger.info("Parameter: " + requestParameter.getKey() + "=" + requestParameter.getValue());
     					((PostMethod)method).addParameter(requestParameter.getKey(), requestParameter.getValue());
     				}
     			}
     			else
-    				System.out.println("Skipping:" + requestParameter.getKey());
+    				logger.info("Skipping:" + requestParameter.getKey());
     		}
             
             client.executeMethod(method);
             responseBody = method.getResponseBodyAsString();
             
             //write out the request headers
-            System.out.println("*** Request ***");
-            System.out.println("Request Path: " + method.getPath());
-            System.out.println("Request Query: " + method.getQueryString());
+            logger.info("*** Request ***");
+            logger.info("Request Path: " + method.getPath());
+            logger.info("Request Query: " + method.getQueryString());
             requestHeaders = method.getRequestHeaders();
             for (int i=0; i<requestHeaders.length; i++){
-                System.out.print(requestHeaders[i]);
+            	logger.info(requestHeaders[i]);
             }
 
             //write out the response headers
-            System.out.println("*** Response ***");
-            System.out.println("Status Line: " + method.getStatusLine());
+            logger.info("*** Response ***");
+            logger.info("Status Line: " + method.getStatusLine());
             responseHeaders = method.getResponseHeaders();
             for (int i=0; i<responseHeaders.length; i++)
             {
             	returnHeaders.put(responseHeaders[i].getName(), responseHeaders[i].getValue());
-                System.out.print(responseHeaders[i]);
+            	logger.info(responseHeaders[i]);
             }
             
             returnCookiesArray = client.getState().getCookies();
             // Display the cookies
-            System.out.println("Present cookies: ");
+            logger.info("Present cookies: ");
             for (int i = 0; i < returnCookiesArray.length; i++) 
             {
-                System.out.println(" - " + returnCookiesArray[i].toExternalForm());
+                logger.info(" - " + returnCookiesArray[i].toExternalForm());
                 returnCookies.put(returnCookiesArray[i].getName(), returnCookiesArray[i].getValue());
             }
 
             //write out the response body
-            System.out.println("*** Response Body ***");
-            System.out.println(responseBody);
+            logger.info("*** Response Body ***");
+            logger.info(responseBody);
         }
         
         //clean up the connection resources

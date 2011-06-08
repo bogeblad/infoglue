@@ -64,7 +64,7 @@ public class PortalServletRequest extends HttpServletRequestWrapper
 
         if(paramMap.containsKey("proxyUrl") && req.getParameter("command") != null && !req.getParameter("command").equals(""))
         {
-	        System.out.println("\n\nCommand:" + req.getParameter("command") + " on " + req.getRequestURI());
+	        //logger.info("\n\nCommand:" + req.getParameter("command") + " on " + req.getRequestURI());
 	        paramMap.put("igproxy_command", new String[] {req.getParameter("command")});     
 	        paramMap.remove("command");
         }

@@ -165,7 +165,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
     		SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(getSiteNodeId());
 
     		this.parentSiteNodeId = siteNodeVO.getParentSiteNodeId();
-            System.out.println("parentSiteNodeId:" + parentSiteNodeId);
+    		logger.info("parentSiteNodeId:" + parentSiteNodeId);
             
     		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId);
 
@@ -213,7 +213,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
     		SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(getSiteNodeId());
 
     		this.parentSiteNodeId = siteNodeVO.getParentSiteNodeId();
-            System.out.println("parentSiteNodeId:" + parentSiteNodeId);
+    		logger.info("parentSiteNodeId:" + parentSiteNodeId);
             
     		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMoveSiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId);
         }

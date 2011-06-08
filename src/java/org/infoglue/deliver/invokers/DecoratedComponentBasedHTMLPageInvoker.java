@@ -228,7 +228,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	 private String showInitialBindingDialog(Integer siteNodeId, Integer languageId, Integer contentId)
 	 {
 		 String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
-		 String url = "javascript:window.open('" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', 'BaseTemplate', 'width=600,height=700,left=50,top=50,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes');";
+		 //String url = "javascript:window.open('" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', 'BaseTemplate', 'width=600,height=700,left=50,top=50,toolbar=no,status=no,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes');";
+		 String url = "" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&specifyBaseTemplate=true&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
+		 url = "javascript:openInlineDiv('" + url + "', 600, 800, true, true, 'BaseTemplate');";
 		 
 		 String pageTemplateHTML = " or choose a page template below.<br><br>";
 		 
@@ -283,7 +285,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		 
 		 this.getTemplateController().getDeliveryContext().setContentType("text/html");
 		 this.getTemplateController().getDeliveryContext().setDisablePageCache(true);
-		 return "<html><body style=\"font-family:verdana, sans-serif; font-size:10px;\">The page has no base component assigned yet. Click <a href=\"" + url + "\">here</a> to assign one" + (foundPageTemplate ? pageTemplateHTML : "") + "</body></html>";
+		 return "<html><head><script type='text/javascript' src='script/jquery/jquery-1.4.4.min.js'></script><script type='text/javascript' src='script/v3/infoglue.js'></script><script type='text/javascript' src='script/jqueryplugins/thickbox/thickbox-compressed.js'></script><link rel='stylesheet' type='text/css' href='script/jqueryplugins/thickbox/thickbox-ig.css' /><script type='text/javascript' src='script/v3/admin.js'></script></head><body style=\"font-family:verdana, sans-serif; font-size:10px;\">The page has no base component assigned yet. Click <a href=\"" + url + "\">here</a> to assign one" + (foundPageTemplate ? pageTemplateHTML : "") + "</body></html>";
 	 }
 
 

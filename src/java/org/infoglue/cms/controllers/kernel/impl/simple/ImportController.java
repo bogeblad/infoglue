@@ -150,8 +150,6 @@ public class ImportController extends BaseController
 		{
 			Content readContentCandidate = (Content)readContentsIteratorDebug.next();
 			repositoryContentMap.put("" + readContentCandidate.getRepositoryId(), readContentCandidate);
-			//readContentCandidate.getR
-			//System.out.println("readContentCandidate debug...:" + readContentCandidate.getName() + ":" + readContentCandidate.getId() + ":" + readContentCandidate.getRepositoryId());
 		}
 
 		Iterator readSiteNodesIterator = readSiteNodes.iterator();
@@ -169,7 +167,7 @@ public class ImportController extends BaseController
 			Content readContent = null;
 
 			readContent = (Content)repositoryContentMap.get("" + repositoryRead.getId());
-			//System.out.println("readContent:" + readContent.getName() + ":" + readContent.getId());
+			//logger.info("readContent:" + readContent.getName() + ":" + readContent.getId());
 			
 			readContent.setRepository((RepositoryImpl)repositoryRead);
 
@@ -352,7 +350,7 @@ public class ImportController extends BaseController
 		{
 			Content readContentCandidate = (Content)readContentsIteratorDebug.next();
 			repositoryContentMap.put("" + readContentCandidate.getRepositoryId(), readContentCandidate);
-			//System.out.println("readContentCandidate debug...:" + readContentCandidate.getName() + ":" + readContentCandidate.getId() + ":" + readContentCandidate.getRepositoryId());
+			//logger.info("readContentCandidate debug...:" + readContentCandidate.getName() + ":" + readContentCandidate.getId() + ":" + readContentCandidate.getRepositoryId());
 		}
 
 		Iterator readSiteNodesIterator = readSiteNodes.iterator();
@@ -370,7 +368,7 @@ public class ImportController extends BaseController
 			Content readContent = null;
 
 			readContent = (Content)repositoryContentMap.get("" + repositoryRead.getId());
-			//System.out.println("readContent:" + readContent.getName() + ":" + readContent.getId());
+			//logger.info("readContent:" + readContent.getName() + ":" + readContent.getId());
 			
 			readContent.setRepository((RepositoryImpl)repositoryRead);
 
@@ -823,7 +821,7 @@ public class ImportController extends BaseController
 	
 	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db, String onlyLatestVersions, boolean isCopyAction, Map<String,String> replaceMap) throws Exception
 	{
-    	//System.out.println("createContents:" + content.getName() + ":" + content.getId());
+    	//logger.info("createContents:" + content.getName() + ":" + content.getId());
 
 		ContentTypeDefinition contentTypeDefinition = null;
 		

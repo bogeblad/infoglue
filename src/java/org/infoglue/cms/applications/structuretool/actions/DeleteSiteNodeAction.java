@@ -121,7 +121,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
         {
     		SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(this.siteNodeVO.getSiteNodeId());
     		String siteNodeName = siteNodeVO.getName();
-    		System.out.println("siteNodeName:" + siteNodeName + " for " + this.siteNodeVO.getSiteNodeId());
+    		logger.info("siteNodeName:" + siteNodeName + " for " + this.siteNodeVO.getSiteNodeId());
     		parentSiteNodeId = new Integer(siteNodeVO.getId());
     		
     		result = doExecute();
@@ -130,10 +130,10 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
     		String deleteSiteNodeInlineOperationViewDeletedPageParentLinkText = getLocalizedString(getLocale(), "tool.structuretool.deleteSiteNodeInlineOperationViewDeletedPageParentLinkText");
     		String deleteSiteNodeInlineOperationViewCreatedPageParentTitleText = getLocalizedString(getLocale(), "tool.structuretool.deleteSiteNodeInlineOperationViewDeletedPageParentTitleText");
     	
-    		System.out.println("userSessionKey:" + userSessionKey);
+    		logger.info("userSessionKey:" + userSessionKey);
     	    setActionMessage(userSessionKey, deleteSiteNodeInlineOperationDoneHeader);
     										  																	
-    	    System.out.println("originalAddress:" + originalAddress);
+    	    logger.info("originalAddress:" + originalAddress);
     	    addActionLink(userSessionKey, new LinkBean("parentPageUrl", deleteSiteNodeInlineOperationViewDeletedPageParentLinkText, deleteSiteNodeInlineOperationViewCreatedPageParentTitleText, deleteSiteNodeInlineOperationViewCreatedPageParentTitleText, this.originalAddress, false, "", "", "structure"));
             setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
             setActionExtraData(userSessionKey, "repositoryId", "" + this.siteNodeVO.getRepositoryId());
@@ -167,7 +167,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
             throw new SystemException(e.getMessage());
         }
     	        
-        System.out.println("result:" + result);
+        logger.info("result:" + result);
         if(!result.startsWith("success"))
         	return result;
         

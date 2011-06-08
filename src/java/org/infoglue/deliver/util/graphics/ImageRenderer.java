@@ -112,8 +112,7 @@ public class ImageRenderer //extends JFrame
 	    //logger.info("Available Fonts:");
 	    for(int i=0; i<fontNames.length; i++)
 	    {
-	    	//logger.info("  " + fontNames[i]);
-	    	System.out.println("  " + fontNames[i]);
+	    	logger.info("  " + fontNames[i]);
 	    }
 	}
 

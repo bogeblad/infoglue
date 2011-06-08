@@ -167,7 +167,7 @@ public abstract class PageInvoker
 
 	public void deliverPage() throws NoBaseTemplateFoundException, Exception
 	{
-		//System.out.println("deliverPage: ClassLoader in context for thread:" + Thread.currentThread().getId() + ":" + Thread.currentThread().getContextClassLoader().getClass().getName());
+		//logger.info("deliverPage: ClassLoader in context for thread:" + Thread.currentThread().getId() + ":" + Thread.currentThread().getContextClassLoader().getClass().getName());
 
 		if(logger.isInfoEnabled())
 		{
@@ -269,12 +269,12 @@ public abstract class PageInvoker
 				Object extraData = this.getDeliveryContext().getExtraData();
 				
 				String compressPageCache = CmsPropertyHandler.getCompressPageCache();
-				//System.out.println("compressPageCache:" + compressPageCache);
+				//logger.info("compressPageCache:" + compressPageCache);
 			    if(compressPageCache != null && compressPageCache.equalsIgnoreCase("true"))
 				{
 					long startCompression = System.currentTimeMillis();
 					byte[] compressedData = compressionHelper.compress(this.pageString);		
-				    //System.out.println("Compressing page for pageCache took " + (System.currentTimeMillis() - startCompression) + " with a compressionFactor of " + (this.pageString.length() / compressedData.length));
+				    //logger.info("Compressing page for pageCache took " + (System.currentTimeMillis() - startCompression) + " with a compressionFactor of " + (this.pageString.length() / compressedData.length));
 					if(this.getTemplateController().getOperatingMode().intValue() == 3 && !CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
 					{
 						//CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, compressedData, allUsedEntitiesCopy, false);
@@ -377,9 +377,9 @@ public abstract class PageInvoker
 	    	getResponse().setDateHeader ("Expires", 0);
 		}
 			
-		//System.out.println("pageString before:" + pageString);
+		//logger.info("pageString before:" + pageString);
 		//pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
-		//System.out.println("pageString after:" + pageString);
+		//logger.info("pageString after:" + pageString);
 		
 		try
 		{
@@ -508,7 +508,7 @@ public abstract class PageInvoker
 		Integer maxNumberOfVersionsForDerivedLastModifiedInLive = CmsPropertyHandler.getMaxNumberOfVersionsForDerivedLastModifiedInLive();
 		
 		Date lastModifiedDateTime = null;
-		//System.out.println("UsedContentVersions:" + this.deliveryContext.getUsedContentVersions().size());
+		//logger.info("UsedContentVersions:" + this.deliveryContext.getUsedContentVersions().size());
 		Timer t = new Timer();
 		if(this.deliveryContext.getUsedContentVersions().size() > 0)
 		{
@@ -580,7 +580,7 @@ public abstract class PageInvoker
 					while(htmlHeadItemsIterator.hasNext())
 					{
 						String value = (String)htmlHeadItemsIterator.next();
-						//System.out.println("headItem:" + value);
+						//logger.info("headItem:" + value);
 						headerItems = headerItems + value + "\n";
 					}
 					sb.insert(indexOfHeadEndTag, headerItems);
@@ -605,7 +605,7 @@ public abstract class PageInvoker
 					while(htmlBodyItemsIterator.hasNext())
 					{
 						String value = (String)htmlBodyItemsIterator.next();
-						//System.out.println("headItem:" + value);
+						//logger.info("headItem:" + value);
 						bodyItems = bodyItems + value + "\n";
 					}
 					sb.insert(indexOfBodyEndTag, bodyItems);
@@ -741,7 +741,7 @@ public abstract class PageInvoker
 													urlStartIndex = content.indexOf("url(", urlStartIndex + extensionPath.length());
 												}
 											}	
-											//System.out.println("transformed content:" + content.substring(0, 500));
+											//logger.info("transformed content:" + content.substring(0, 500));
 
 											scriptBundle = scriptBundle + "\n\n" + content;
 										}

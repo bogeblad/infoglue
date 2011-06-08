@@ -225,7 +225,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	
 	   			List pageComponents = getPageComponentsWithDOM4j(getDatabase(), componentXML, document.getRootElement(), "base", this.getTemplateController(), null, unsortedPageComponents);
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getPageComponentsWithDOM4j", t.getElapsedTime());
-				System.out.println("pageComponents:" + pageComponents.size());
+				logger.info("pageComponents:" + pageComponents.size());
 	   			*/
 	   			//XPP3
 		        XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
@@ -235,7 +235,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				List pageComponents = getPageComponentsWithXPP3(getDatabase(), componentXML, doc.getDocumentElement(), "base", this.getTemplateController(), null, unsortedPageComponents);
 				//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getPageComponentsWithXPP3", t.getElapsedTime());
 				
-				//System.out.println("pageComponents:" + pageComponents.size());
+				//logger.info("pageComponents:" + pageComponents.size());
 				preProcessComponents(nodeDeliveryController, repositoryId, unsortedPageComponents, pageComponents);
 				
 				if(pageComponents.size() > 0)
@@ -521,7 +521,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	/*
 	protected Map getComponentsWithDOM4j(Database db, Element element, TemplateController templateController, InfoGlueComponent parentComponent) throws Exception
 	{
-		System.out.println("getComponentsWithDOM4j");
+		logger.info("getComponentsWithDOM4j");
 
 		InfoGlueComponent component = null;
 
@@ -784,7 +784,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	
 	protected Map getComponentsWithXPP3(Database db, XmlElement element, TemplateController templateController, InfoGlueComponent parentComponent) throws Exception
 	{
-		//System.out.println("Getting components");
+		//logger.info("Getting components");
 
 		InfoGlueComponent component = null;
 
@@ -1082,7 +1082,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	/*
 	protected Map getComponentWithDOM4j(Database db, Element element, String componentName, TemplateController templateController, InfoGlueComponent parentComponent) throws Exception
 	{
-		System.out.println("getComponentWithDOM4j");
+		logger.info("getComponentWithDOM4j");
 
 		Timer t = new Timer();
 		
@@ -1669,7 +1669,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		StringBuilder decoratedComponent = new StringBuilder();
 		
 		templateController.setComponentLogic(new ComponentLogic(templateController, component));
-		//System.out.println("BBBBBBBBBBBBB");
+		//logger.info("BBBBBBBBBBBBB");
 		//templateController.getDeliveryContext().getUsageListeners().add(templateController.getComponentLogic().getComponentDeliveryContext());
 
 		try
@@ -1898,7 +1898,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		}
 		while(inheritedComponents.size() == 0 && parentSiteNodeVO != null && inherit && !restrictAll)
 		{
-			//System.out.println("INHERITING COMPONENTS");
+			//logger.info("INHERITING COMPONENTS");
 			String componentXML = this.getPageComponentsString(db, templateController, parentSiteNodeVO.getId(), templateController.getLanguageId(), component.getContentId());
 			//logger.info("componentXML:" + componentXML);
 			//logger.info("id:" + id);
@@ -1982,7 +1982,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
    /*
 	protected InfoGlueComponent getComponentWithDOM4j(Database db, TemplateController templateController, InfoGlueComponent component, Integer siteNodeId, String id) throws Exception
 	{
-		System.out.println("getComponentWithDOM4j");
+		logger.info("getComponentWithDOM4j");
 		
 		NodeDeliveryController nodeDeliveryController = NodeDeliveryController.getNodeDeliveryController(templateController.getSiteNodeId(), templateController.getLanguageId(), templateController.getContentId());
 
@@ -2076,7 +2076,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
    /*
 	protected List getComponentsWithDOM4j(Database db, TemplateController templateController, InfoGlueComponent component, Integer siteNodeId, String id) throws Exception
 	{
-		System.out.println("getComponentsWithDOM4j");
+		logger.info("getComponentsWithDOM4j");
 
 		List subComponents = new ArrayList();
 
@@ -2244,7 +2244,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		{
 			Timer t = new Timer();
 			
-			//System.out.println("key:" + key);
+			//logger.info("key:" + key);
 			String componentXPath = "component[@name='" + slotName + "']";
 			//logger.info("componentXPath:" + componentXPath);
 			
@@ -2509,7 +2509,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 
 							Element componentsElement = (Element)componentElement.selectSingleNode("components");
 							//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("DOM4J componentsElement:" + componentsElement, t.getElapsedTime());
-							//System.out.println("componentsElement:" + componentsElement);
+							//logger.info("componentsElement:" + componentsElement);
 
 							//groups = new String[]{"content_" + contentVO.getId()};
 							
@@ -2600,7 +2600,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		{
 			Timer t = new Timer();
 			
-			//System.out.println("key:" + key);
+			//logger.info("key:" + key);
 			String componentXPath = "component[@name='" + slotName + "']";
 			//logger.info("componentXPath:" + componentXPath);
 			
@@ -2613,7 +2613,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 
 	        List anl = xpathObject.selectNodes( element );
 			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("XPP3 selectNodes size:" + anl.size(), t.getElapsedTime());
-			//System.out.println("anl:" + anl.size());
+			//logger.info("anl:" + anl.size());
 			
 			//logger.info("componentElements:" + componentElements.size());
 			Iterator componentIterator = anl.iterator();
@@ -2678,7 +2678,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 
 			        List propertiesNodeList = xpathObject3.selectNodes( componentElement );
 					//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("XPP3 propertiesNodeList:" + propertiesNodeList.size(), t.getElapsedTime());
-					//System.out.println("XPP3 componentElement:" + componentElement);
+					//logger.info("XPP3 componentElement:" + componentElement);
 
 					if(propertiesNodeList.size() > 0)
 					{
@@ -2897,7 +2897,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 
 					        XmlElement componentsElement = (XmlElement)xpathObject2.selectSingleNode( componentElement );
 							//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("XPP3 componentsElement:" + componentsElement, t.getElapsedTime());
-							//System.out.println("componentsElement:" + componentsElement);
+							//logger.info("componentsElement:" + componentsElement);
 
 							//groups = new String[]{"content_" + contentVO.getId()};
 							

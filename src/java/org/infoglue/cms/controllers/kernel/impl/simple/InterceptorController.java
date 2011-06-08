@@ -139,7 +139,6 @@ public class InterceptorController extends BaseController
 	
 	public List<InterceptorVO> getInterceptorVOList(Integer interceptionPointId, Database db) throws SystemException, Bug, Exception
 	{
-		System.out.println("interceptionPointId:" + interceptionPointId);
 		OQLQuery oql = db.getOQLQuery("SELECT i FROM org.infoglue.cms.entities.management.impl.simple.InterceptorImpl i WHERE i.interceptionPoints.interceptionPointId = $1 ORDER BY i.interceptorId");
 		oql.bind(interceptionPointId);
 		

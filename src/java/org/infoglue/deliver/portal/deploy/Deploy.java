@@ -381,8 +381,7 @@ public class Deploy {
 
                     if (portletSecurityRoleRef.getRoleLink() == null
                             && webAppSecurityRoles.get(portletSecurityRoleRef.getRoleName()) == null) {
-                        System.out
-                                .println("Note: The web application has no security role defined which matches the role name \""
+                        logger.info("Note: The web application has no security role defined which matches the role name \""
                                         + portletSecurityRoleRef.getRoleName()
                                         + "\" of the security-role-ref element defined for the wrapper-servlet with the name '"
                                         + portlet.getName() + "'.");
@@ -391,8 +390,7 @@ public class Deploy {
                     SecurityRoleRef servletSecurityRoleRef = servletSecurityRoleRefs
                             .get(portletSecurityRoleRef.getRoleName());
                     if (null != servletSecurityRoleRef) {
-                        System.out
-                                .println("Note: Replaced already existing element of type <security-role-ref> with value \""
+                        logger.info("Note: Replaced already existing element of type <security-role-ref> with value \""
                                         + portletSecurityRoleRef.getRoleName()
                                         + "\" for subelement of type <role-name> for the wrapper-servlet with the name '"
                                         + portlet.getName() + "'.");

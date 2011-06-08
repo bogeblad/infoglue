@@ -153,7 +153,7 @@ public class ComponentController extends BaseController
 			    ContentVO contentVO = (ContentVO)componentsIterator.next();
 			    
 			    LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId(), db); //.getMasterLanguage(db, contentVO.getRepositoryId());
-				//System.out.println("masterLanguage:" + masterLanguage);
+				//logger.info("masterLanguage:" + masterLanguage);
 			    if(masterLanguage != null)
 			    {
 					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), masterLanguage.getId(), db);
@@ -255,19 +255,19 @@ public class ComponentController extends BaseController
 			}
 			else if((allowedComponentNames == null || allowedComponentNames.length == 0) && (allowedComponentGroups == null || allowedComponentGroups.length == 0))
 			{
-				//System.out.println("Was ok as no restrictions was defined");
+				//logger.info("Was ok as no restrictions was defined");
 			}
 			else if(isPartOfAllowedComponentNames)
 			{
-				//System.out.println("Was ok as it was part of allowedComponentNames");
+				//logger.info("Was ok as it was part of allowedComponentNames");
 			}
 			else if(isPartOfAllowedComponentGroupNames)
 			{
-				//System.out.println("Was ok as it was part of allowedComponentGroupNames");
+				//logger.info("Was ok as it was part of allowedComponentGroupNames");
 	    	}
 			else
 			{
-				//System.out.println("Removing from results:" + contentVO.getName());
+				//logger.info("Removing from results:" + contentVO.getName());
 				resultsIterator.remove();				
 			}
 		}
@@ -334,7 +334,7 @@ public class ComponentController extends BaseController
 				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId(), db);
 				if(masterLanguageVO != null)
 				{
-					//System.out.println("masterLanguageVO for " + contentVO.getRepositoryId() + " is " + masterLanguageVO);
+					//logger.info("masterLanguageVO for " + contentVO.getRepositoryId() + " is " + masterLanguageVO);
 		        	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getContentId(), masterLanguageVO.getId());
 		        	String groupName = null;
 		        	if(contentVersionVO != null)
@@ -361,24 +361,24 @@ public class ComponentController extends BaseController
 
 			if(disallowedComponentNames != null && disallowedComponentNames.length > 0 && isPartOfDisallowedComponentNames)
 			{
-				//System.out.println("Was not ok as it was part of disallowedComponentNames");
+				//logger.info("Was not ok as it was part of disallowedComponentNames");
 				resultsIterator.remove();
 			}
 			else if((allowedComponentNames == null || allowedComponentNames.length == 0) && (allowedComponentGroups == null || allowedComponentGroups.length == 0))
 			{
-				//System.out.println("Was ok as no restrictions was defined");
+				//logger.info("Was ok as no restrictions was defined");
 			}
 			else if(isPartOfAllowedComponentNames)
 			{
-				//System.out.println("Was ok as it was part of allowedComponentNames");
+				//logger.info("Was ok as it was part of allowedComponentNames");
 			}
 			else if(isPartOfAllowedComponentGroupNames)
 			{
-				//System.out.println("Was ok as it was part of allowedComponentGroupNames");
+				//logger.info("Was ok as it was part of allowedComponentGroupNames");
 			}
 			else
 			{
-				//System.out.println("Removing from results:" + contentVO.getName());
+				//logger.info("Removing from results:" + contentVO.getName());
 				resultsIterator.remove();				
 			}
 	    }

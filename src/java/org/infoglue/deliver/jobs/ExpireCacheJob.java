@@ -57,7 +57,7 @@ public class ExpireCacheJob implements Job
 
     public synchronized void execute(JobExecutionContext context) throws JobExecutionException
     {
-    	//System.out.println("context:" + CmsPropertyHandler.getContextRootPath());
+    	//logger.info("context:" + CmsPropertyHandler.getContextRootPath());
     	long diffLastRun = ((System.currentTimeMillis() - lastRun) / 1000);
     	if(diffLastRun < 300)
     		return;
@@ -349,7 +349,7 @@ public class ExpireCacheJob implements Job
 						                	logger.info("cacheFile:" + cacheFile.getName());
 						                	long lastModified = cacheFile.lastModified();
 					                		long differensInHours = (System.currentTimeMillis() - lastModified) / (60 * 60 * 1000);
-					                		//System.out.println("differensInHours:" + differensInHours);
+					                		//logger.info("differensInHours:" + differensInHours);
 					                		if(differensInHours > targetDiff)
 					                		{
 					                			logger.info("Deleting cached file as it was to old:" + differensInHours);

@@ -285,14 +285,6 @@ public class FileHelper
 		
 		if(logger.isInfoEnabled())
 			logger.info("charEncoding:" + charEncoding);
-		/*
-		System.out.println("charEncoding: " + charEncoding);
-		System.out.println("COOL: " + "324324234 Mattias åäö ÅÄÖ");
-		System.out.println("NONE: " + new String(b).substring(0, 200));
-		System.out.println("ISO: " + new String(b, "ISO-8859-1").substring(0, 200));
-		System.out.println("UTF8: " + new String(b, "UTF-8").substring(0, 200));
-		return new String(b, charEncoding);
-		*/
 		
 		Timer t = null;
 		if(logger.isInfoEnabled())
@@ -470,8 +462,6 @@ public class FileHelper
 		        		skip = true;
 		        }
 	        }
-	        //System.out.println("entry.getName():" + entry.getName() + ":" + skipHiddenFiles + ":" + entry.isDirectory());
-
 	        if(skipHiddenFiles && (entry.getName().startsWith(".") || entry.getName().startsWith("__")))
 	        	skip = true;
 	        
@@ -479,14 +469,10 @@ public class FileHelper
 	        {	
 	        	File targetFile = new File(targetFolder + File.separator + entry.getName());
 	        	
-        		//System.out.println("targetFile:" + targetFile.getPath());
         		String parent = targetFile.getParent();
-        		//System.out.println("parent:" + parent);
-        		
                 if (parent != null && parent.length() > 0) 
                 {
                 	File dir = new File(parent);
-                	//System.out.println("dir:" + dir.getPath());
                 	if (dir != null) {
                 		dir.mkdirs();
                 	}

@@ -139,7 +139,7 @@ public class ContentStateController extends BaseController
 				if(oldWorkingContentVersion.getId() > oldContentVersion.getId())
 				{
 					oldContentVersion = oldWorkingContentVersion;
-					System.out.println("oldContentVersion set to latest working version - special fix for cases where user uploads asset in wysiwyg on published copy and then also saves text with new image:" + oldContentVersion.getId());
+					logger.info("oldContentVersion set to latest working version - special fix for cases where user uploads asset in wysiwyg on published copy and then also saves text with new image:" + oldContentVersion.getId());
 				}
 				
 				logger.info("About to create a new working version");

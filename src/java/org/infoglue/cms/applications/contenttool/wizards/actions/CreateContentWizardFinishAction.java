@@ -27,7 +27,9 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.applications.contenttool.actions.ViewContentVersionAction;
 import org.infoglue.cms.applications.databeans.AssetKeyDefinition;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
@@ -48,6 +50,8 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class CreateContentWizardFinishAction extends CreateContentWizardAbstractAction
 {
+    private final static Logger logger = Logger.getLogger(CreateContentWizardFinishAction.class.getName());
+
 	private ConstraintExceptionBuffer ceb 		= null;
 	private String returnAddress 				= "CreateContentWizardFinish!V3.action";
 	private Integer contentId					= null;
@@ -229,7 +233,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 			returnAddress = returnAddress.replaceAll("#entityId", createContentWizardInfoBean.getContentVO().getId().toString());
 			returnAddress = returnAddress.replaceAll("#path", createContentWizardInfoBean.getContentVO().getName());
 			createContentWizardInfoBean.setReturnAddress(returnAddress);
-			System.out.println("returnAddress:" + returnAddress);
+			logger.info("returnAddress:" + returnAddress);
 
 			if(versionDone == null || versionDone.equals("false"))
 			{

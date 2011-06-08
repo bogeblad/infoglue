@@ -195,12 +195,12 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 
 			this.getHttpSession().removeAttribute("CreateContentWizardInfoBean");
 		
-			System.out.println("this.getSiteNodeId():" + this.getSiteNodeId());
+			logger.info("this.getSiteNodeId():" + this.getSiteNodeId());
 			if(this.getSiteNodeId() != null && this.contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
 			{
 				SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(this.getSiteNodeId());
 				SiteNodeVersion newSiteNodeVersion = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "New version", false, null, this.getInfoGluePrincipal(), null, new ArrayList());
-				System.out.println("Created new site node version:" + newSiteNodeVersion);
+				logger.info("Created new site node version:" + newSiteNodeVersion);
 			}
 		}
 		catch(ConstraintException ce)
@@ -228,10 +228,10 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 			xStream.omitField(contentVersionVO.getClass(),"versionValue");
 			
 			/*
-			System.out.println("contentVersionId:" + this.contentVersionId);
-			System.out.println("contentId:" + this.contentId);
-			System.out.println("languageId:" + this.languageId);
-			System.out.println("this.contentVersionVO:" + this.contentVersionVO);
+			logger.info("contentVersionId:" + this.contentVersionId);
+			logger.info("contentId:" + this.contentId);
+			logger.info("languageId:" + this.languageId);
+			logger.info("this.contentVersionVO:" + this.contentVersionVO);
 			*/
 			ceb.throwIfNotEmpty();
 			
@@ -254,7 +254,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 			    xmlResult = xStream.toXML(ce);
 			}
 
-			//System.out.println("xmlResult:" + xmlResult);
+			//logger.info("xmlResult:" + xmlResult);
 			/*
 			 * Output
 			 */
@@ -265,7 +265,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 		{
 			e.printStackTrace();
 		}
-		System.out.println("Done standalone XML...");
+		logger.info("Done standalone XML...");
 		
 		return NONE;
 	}
@@ -471,7 +471,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
     	{
     		logger.error("Faulty XML from Eclipse plugin.. not accepting", e);
     		logger.warn(versionValue);
-    		System.out.println("VersionValue:" + versionValue);
+    		logger.info("VersionValue:" + versionValue);
     		throw new Exception("Faulty XML from Eclipse plugin.. not accepting");
 		}
 

@@ -71,7 +71,6 @@ public class ToolbarController implements ToolbarProvider
 	{
 		Timer t = new Timer();
 		
-		//System.out.println("toolbarKey:" + toolbarKey);
 		logger.info("toolbarKey:" + toolbarKey);
 		
 		try
@@ -922,8 +921,6 @@ public class ToolbarController implements ToolbarProvider
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
-		//System.out.println("Query:" + request.getQueryString());
-		
 		String contentIdString = request.getParameter("contentId");
 		if(contentIdString == null || contentIdString.equals(""))
 			contentIdString = (String)request.getAttribute("contentId");
@@ -1191,9 +1188,7 @@ public class ToolbarController implements ToolbarProvider
 
 	private List<ToolbarButton> getContentVersionFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
 	{
-		//System.out.println("request:" + request.getQueryString());
 		String saveAndExitURL = (String)request.getAttribute("saveAndExitURL");
-		//System.out.println("saveAndExitURL:" + saveAndExitURL);
 		
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -1229,9 +1224,7 @@ public class ToolbarController implements ToolbarProvider
 		if(contentVersionIdString == null || contentVersionIdString.equals(""))
 			contentVersionIdString = (String)request.getAttribute("contentVersionId");
 		
-		//System.out.println("request:" + request.getQueryString());
 		String saveAndExitURL = (String)request.getAttribute("saveAndExitURL");
-		//System.out.println("saveAndExitURL:" + saveAndExitURL);
 		
 		buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
 

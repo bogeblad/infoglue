@@ -74,7 +74,6 @@ public class ViewManagementToolMenuAction extends InfoGlueAbstractAction
 
     public String doV3() throws Exception
     {
-    	System.out.println("AAAAAAAAAA");
     	if(this.repositoryId != null && this.repositoryId.intValue() > 0)
     	{
 	    	this.repositoryVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryId);

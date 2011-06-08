@@ -146,13 +146,11 @@ public class RedirectController extends BaseController
 
 			if(logger.isInfoEnabled())
 	        	logger.info("requestURI after redecoding:" + requestURI);
-			//System.out.println("requestURI:" + requestURI);
-                        
+			            
             Iterator redirectsIterator = cachedRedirects.iterator();
             while(redirectsIterator.hasNext())
             {
                 RedirectVO redirect = (RedirectVO)redirectsIterator.next(); 
-                //System.out.println("url:" + redirect.getUrl());
                 if(logger.isInfoEnabled())
                 	logger.info("url:" + redirect.getUrl());
                 boolean matches = false;

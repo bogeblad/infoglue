@@ -180,7 +180,7 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 			if(!usersFirstNameChars.contains(infogluePrincipal.getName().charAt(0)))
 				usersFirstNameChars.add(infogluePrincipal.getName().charAt(0));
 			//else
-			//	System.out.println("Exists:" + infogluePrincipal.getName().charAt(0));
+			//	logger.info("Exists:" + infogluePrincipal.getName().charAt(0));
 		}
 		
 		Collections.sort(usersFirstNameChars);

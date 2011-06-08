@@ -24,7 +24,9 @@ package org.infoglue.cms.applications.workflowtool.function;
 
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.management.impl.simple.FormEntryAssetImpl;
 
 import com.opensymphony.workflow.WorkflowException;
 
@@ -33,6 +35,8 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class PropertysetPopulator extends InfoglueFunction 
 {
+    private final static Logger logger = Logger.getLogger(PropertysetPopulator.class.getName());
+
 	/**
 	 * 
 	 */
@@ -97,7 +101,7 @@ public class PropertysetPopulator extends InfoglueFunction
 		}
 		catch (Exception e) 
 		{
-			System.out.println("Error getting languageVO:" + e.getMessage());
+			logger.error("Error getting languageVO:" + e.getMessage());
 			//languageVO = (LanguageVO) getParameter(LanguageProvider.LANGUAGE_PARAMETER);
 		}
 	}

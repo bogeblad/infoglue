@@ -27,6 +27,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.managementtool.actions.ConfirmAction;
+
 import com.thebuzzmedia.imgscalr.Scalr;
 import com.thebuzzmedia.imgscalr.Scalr.Mode;
 
@@ -38,6 +41,8 @@ import com.thebuzzmedia.imgscalr.Scalr.Mode;
 
 public class Imaging 
 {
+	private final static Logger logger = Logger.getLogger(Imaging.class.getName());
+
 	public static void main(String[] args) 
 	{
         try 
@@ -75,7 +80,7 @@ public class Imaging
 			mode = Mode.FIT_TO_HEIGHT;
 		}
 		
-		System.out.println("image:" + image.getType() + ":" + BufferedImage.TYPE_CUSTOM);
+		logger.info("image:" + image.getType() + ":" + BufferedImage.TYPE_CUSTOM);
 		if(image.getType() == BufferedImage.TYPE_CUSTOM)
 		{
 			BufferedImage image_to_save2=new BufferedImage(image.getWidth(),image.getHeight(), BufferedImage.TYPE_INT_RGB);

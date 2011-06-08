@@ -121,7 +121,6 @@ public class LabelController extends BaseController implements StringManager
 					if(name.startsWith("PresentationStrings_"))
 					{
 						String localeName = name.substring("PresentationStrings_".length(), name.indexOf("."));
-						//System.out.println("localeName:" + localeName);
 						try
 						{
 							Locale locale = new Locale(localeName);
@@ -154,7 +153,7 @@ public class LabelController extends BaseController implements StringManager
 
 		String valueCacheKey = "" + locale + "_" + key;
 		String cachedLabel = cachedLabels.get(valueCacheKey);
-		//System.out.println("valueCacheKey:" + valueCacheKey + " gave " + cachedLabel);
+		//logger.info("valueCacheKey:" + valueCacheKey + " gave " + cachedLabel);
 		if(cachedLabel != null)
 		{
 			//t.printElapsedTime("Getting getLocalizedString...");
@@ -163,7 +162,7 @@ public class LabelController extends BaseController implements StringManager
 		
 		String cacheKey = "" + locale;
 		Object cachedBundle = cachedBundles.get(cacheKey);
-		//System.out.println("cacheKey:" + cacheKey + " gave " + cachedBundle);
+		//logger.info("cacheKey:" + cacheKey + " gave " + cachedBundle);
 		
 		ResourceBundle resourceBundle = null;
 
@@ -171,15 +170,15 @@ public class LabelController extends BaseController implements StringManager
 
 		if(!(cachedBundle instanceof NullObject))
 		{
-			//System.out.println("Not a NullObject.." + cachedBundle);
+			//logger.info("Not a NullObject.." + cachedBundle);
 			if(cachedBundle != null)
 			{
-				//System.out.println("Not null:" + cachedBundle.getClass().getName());
+				//logger.info("Not null:" + cachedBundle.getClass().getName());
 				resourceBundle = (ResourceBundle)cachedBundle;
 			}
 			else
 			{
-				//System.out.println("A null:" + cachedBundle);
+				//logger.info("A null:" + cachedBundle);
 				try
 				{
 					//t.printElapsedTime("1.1");
@@ -238,15 +237,15 @@ public class LabelController extends BaseController implements StringManager
 
 		if(!(cachedBundle instanceof NullObject))
 		{
-			//System.out.println("Not a NullObject.." + cachedBundle);
+			//logger.info("Not a NullObject.." + cachedBundle);
 			if(cachedBundle != null)
 			{
-				//System.out.println("Not null:" + cachedBundle.getClass().getName());
+				//logger.info("Not null:" + cachedBundle.getClass().getName());
 				resourceBundle = (ResourceBundle)cachedBundle;
 			}
 			else
 			{
-				//System.out.println("A null:" + cachedBundle);
+				//logger.info("A null:" + cachedBundle);
 				try
 				{
 					//t.printElapsedTime("1.1");
@@ -269,7 +268,7 @@ public class LabelController extends BaseController implements StringManager
 			}
 		}			
 		//t.printElapsedTime("2");
-		//System.out.println("\n\n:args:" + args[0]);
+		//logger.info("\n\n:args:" + args[0]);
 		if(resourceBundle != null)
 		{
 			value = MessageFormat.format(resourceBundle.getString(key), args);
@@ -296,7 +295,7 @@ public class LabelController extends BaseController implements StringManager
     	}
     	catch (Throwable t) 
     	{
-    		System.out.println("There was no string:" + key + " in locale:" + locale);
+    		logger.info("There was no string:" + key + " in locale:" + locale);
     		stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", Locale.ENGLISH);
     		return stringManager.getString(key); 
 		}
@@ -315,7 +314,7 @@ public class LabelController extends BaseController implements StringManager
     	}
     	catch (Throwable t) 
     	{
-    		System.out.println("There was no string:" + key + " in locale:" + locale);
+    		logger.info("There was no string:" + key + " in locale:" + locale);
     		stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", Locale.ENGLISH);
     		return stringManager.getString(key, arg1); 
 		}
@@ -334,7 +333,7 @@ public class LabelController extends BaseController implements StringManager
     	}
     	catch (Throwable t) 
     	{
-    		System.out.println("There was no string:" + key + " in locale:" + locale);
+    		logger.info("There was no string:" + key + " in locale:" + locale);
     		stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", Locale.ENGLISH);
     		return stringManager.getString(key, arg1, arg2); 
 		}
@@ -353,7 +352,7 @@ public class LabelController extends BaseController implements StringManager
     	}
     	catch (Throwable t) 
     	{
-    		System.out.println("There was no string:" + key + " in locale:" + locale);
+    		logger.info("There was no string:" + key + " in locale:" + locale);
     		stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", Locale.ENGLISH);
     		return stringManager.getString(key, arg1, arg2);
 		}
@@ -473,19 +472,19 @@ public class LabelController extends BaseController implements StringManager
 
 			List assets = getDigitalAssetByName(file.getName(), db);
 			
-			//System.out.println("assets:" + assets);
+			//logger.info("assets:" + assets);
 			
 			Iterator assetsIterator = assets.iterator();
 			if(assetsIterator.hasNext())
 			{
 				File translationsDir = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "translations");
 				
-				//System.out.println("translationsDir:" + translationsDir);
+				//logger.info("translationsDir:" + translationsDir);
 				
 				DigitalAsset da = (DigitalAsset)assetsIterator.next();
 				String themeName = da.getAssetFileName();
 
-				//System.out.println("themeName:" + themeName);
+				//logger.info("themeName:" + themeName);
 
 				File presentationStringFile = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "translations" + File.separator + da.getAssetFileName());
 				logger.info("Caching " + presentationStringFile + " at " + translationsDir);
@@ -500,7 +499,7 @@ public class LabelController extends BaseController implements StringManager
 	            
 	            resourceBundle = getResourceBundle(locale);
 
-	            //System.out.println("Checking resourceBundle: " + resourceBundle);
+	            //logger.info("Checking resourceBundle: " + resourceBundle);
 			}
 		}
         catch(Exception e)

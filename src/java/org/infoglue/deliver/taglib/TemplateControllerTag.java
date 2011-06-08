@@ -84,9 +84,9 @@ public abstract class TemplateControllerTag extends AbstractTag
 	protected Class<?> loadExtensionClass(String className) throws ClassNotFoundException
 	{
     	ClassLoader cl = (ClassLoader)this.pageContext.getRequest().getAttribute("org.infoglue.cms.deliver.classLoader");
-    	System.out.println("cl:" + cl.getClass().getName());
+    	//logger.info("cl:" + cl.getClass().getName());
     	Class<?> extensionClass = cl.loadClass(className);
-    	System.out.println("extensionClass:" + extensionClass);
+    	//logger.info("extensionClass:" + extensionClass);
 			
 		return extensionClass;
 	}

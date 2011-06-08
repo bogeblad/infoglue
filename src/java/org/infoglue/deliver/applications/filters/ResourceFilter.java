@@ -68,7 +68,6 @@ public class ResourceFilter implements Filter
             String ae = req.getHeader("accept-encoding");
             if (ae != null && ae.indexOf("gzip") != -1) 
             {
-            	//System.out.println("GZIP supported, compressing.");
             	GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(resp);
             	chain.doFilter(request, wrappedResponse);
             	wrappedResponse.finishResponse();
@@ -83,7 +82,6 @@ public class ResourceFilter implements Filter
             String ae = req.getHeader("accept-encoding");
             if (ae != null && ae.indexOf("gzip") != -1) 
             {
-            	//System.out.println("GZIP supported, compressing.");
             	GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(resp);
             	chain.doFilter(request, wrappedResponse);
             	wrappedResponse.finishResponse();

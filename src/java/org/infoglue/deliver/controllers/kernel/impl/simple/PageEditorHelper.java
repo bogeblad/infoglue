@@ -1096,14 +1096,14 @@ public class PageEditorHelper extends BaseDeliveryController
 			if(hasAccessToAccessRights)
 			{
 				/*
-				System.out.println("component.getContentId():" + component.getContentId());
-				System.out.println("Parent component.getContentId():" + (component.getParentComponent() != null ? component.getParentComponent().getContentId() : "null"));
-				System.out.println("Parent slot:" + component.getContainerSlot().getName());
-				System.out.println("component:" + component.getSlotName());
-				System.out.println("Slots:" + component.getSlotList());
-				System.out.println("Slots:" + component.getSlots());
-				System.out.println("slotId:" + slotId);
-				System.out.println("componentContentId:" + componentContentId);
+				logger.info("component.getContentId():" + component.getContentId());
+				logger.info("Parent component.getContentId():" + (component.getParentComponent() != null ? component.getParentComponent().getContentId() : "null"));
+				logger.info("Parent slot:" + component.getContainerSlot().getName());
+				logger.info("component:" + component.getSlotName());
+				logger.info("Slots:" + component.getSlotList());
+				logger.info("Slots:" + component.getSlots());
+				logger.info("slotId:" + slotId);
+				logger.info("componentContentId:" + componentContentId);
 				*/
 				Integer accessRightComponentContentId = componentContentId;
 				if(slotId.equals(component.getSlotName()) && component.getParentComponent() != null)
@@ -1524,7 +1524,7 @@ public class PageEditorHelper extends BaseDeliveryController
 
 	public static String parseAttributeForInlineEditing(String attributeValue, boolean checkPageReferences, String deliveryContext, Integer contentId, Integer languageId) throws Exception
 	{
-	    //System.out.println("attributeValue:" + attributeValue);
+	    //logger.info("attributeValue:" + attributeValue);
 
 	    Map<String,String> replacements = new HashMap<String,String>();
 		
@@ -1606,7 +1606,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	    	logger.info("attributeValue after " + attributeValue);
 	    }
 		
-	    //System.out.println("attributeValue transformed:" + attributeValue);
+	    //logger.info("attributeValue transformed:" + attributeValue);
 	    return attributeValue;
 	}
 

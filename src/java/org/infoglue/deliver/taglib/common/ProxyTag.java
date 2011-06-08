@@ -106,19 +106,19 @@ public class ProxyTag extends TemplateControllerTag
 			wi.setUserAgent("" + getController().getHttpServletRequest().getHeader("user-agent"));
 
 			Map<String,String> proxyCookies = (Map<String,String>)pageContext.getSession().getAttribute("proxyCookies");
-			System.out.println("proxyCookies:" + proxyCookies);
+			logger.info("proxyCookies:" + proxyCookies);
 			if(proxyCookies != null)
 			{
 				for(Map.Entry<String,String> proxyCookie : proxyCookies.entrySet())
 				{
-					System.out.println("Setting ProxyCookie: " + proxyCookie.getKey() + "=" + proxyCookie.getValue());
+					logger.info("Setting ProxyCookie: " + proxyCookie.getKey() + "=" + proxyCookie.getValue());
 					cookies.put(proxyCookie.getKey(), proxyCookie.getValue());
 				}
 			}
 
 			wi.setCookies(cookies);
 			
-			//System.out.println("Adding all params:" + getController().getHttpServletRequest().getParameterMap());
+			logger.info("Adding all params:" + getController().getHttpServletRequest().getParameterMap());
 			Enumeration paramsEnumeration = getController().getHttpServletRequest().getParameterNames();
 			while(paramsEnumeration.hasMoreElements())
 			{
@@ -135,12 +135,12 @@ public class ProxyTag extends TemplateControllerTag
 			}
 			wi.setRequestParameters(requestParameters);
 
-			//System.out.println("RequestHeaders:" + getController().getHttpServletRequest().getHeaderNames());
+			logger.info("RequestHeaders:" + getController().getHttpServletRequest().getHeaderNames());
 			Enumeration headersEnumeration = getController().getHttpServletRequest().getHeaderNames();
 			while(headersEnumeration.hasMoreElements())
 			{
 				String headerName = (String)headersEnumeration.nextElement();
-				//System.out.println("headerName:" + headerName + "=" + getController().getHttpServletRequest().getHeader(headerName));
+				logger.info("headerName:" + headerName + "=" + getController().getHttpServletRequest().getHeader(headerName));
 				requestProperties.put(headerName, getController().getHttpServletRequest().getHeader(headerName));
 			}
 			
@@ -148,7 +148,7 @@ public class ProxyTag extends TemplateControllerTag
 
 			wi.setCurrentBaseUrl(getController().getCurrentPageUrl());
 			wi.setUrlToIntegrate(url);
-			System.out.println("this.elementSelector:" + this.elementSelector);
+			logger.info("this.elementSelector:" + this.elementSelector);
 			wi.setElementSelector(this.elementSelector);
 			
 			wi.setProxyHost(proxyHost);
@@ -180,7 +180,7 @@ public class ProxyTag extends TemplateControllerTag
 			/*
 			for(Map.Entry<String, String> returnCookie : returnCookies.entrySet())
 			{
-				System.out.println("Cookie returned:" + returnCookie.getKey() + "=" + returnCookie.getValue());
+				logger.info("Cookie returned:" + returnCookie.getKey() + "=" + returnCookie.getValue());
 				this.getController().setCookie(returnCookie.getKey(), returnCookie.getValue(), null, null, -1);
 			}
 			*/

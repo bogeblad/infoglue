@@ -266,7 +266,7 @@ public class ServerNodeController extends BaseController
 	    {
 	    	ipRequest = request.getRemoteAddr();
 	        ipRemote = request.getHeader("X-Forwarded-For");
-	        //System.out.println("Request: "+ipRequest+", Remote: "+ipRemote+", Ip:"+ip);
+	        logger.info("Request: "+ipRequest+", Remote: "+ipRemote+", Ip:"+ip);
 	        if (ip.equals(ipRequest))
 	        {
 	        	isIPAllowed=true;
@@ -341,7 +341,6 @@ public class ServerNodeController extends BaseController
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 	    
 	    String allowedAdminIP = ps.getString("allowedAdminIP");
-	    System.out.println("allowedAdminIP 2: " + allowedAdminIP);
 	    return allowedAdminIP;
 	}
 

@@ -566,7 +566,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
 				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), this.masterLanguageVO.getId());
 				
-				System.out.println("Updating ComponentStructure on " + contentVersionVO.getContentVersionId());
+				logger.info("Updating ComponentStructure on " + contentVersionVO.getContentVersionId());
 				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
 			}
 		}
@@ -1137,7 +1137,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 						Element component = (Element)anl.item(0);
 						componentContentId = ((Element)component.getParentNode().getParentNode()).getAttribute("contentId");
 						
-						//System.out.println("componentContentId:" + componentContentId);
 						ContentVO componentContentVO = ContentController.getContentController().getContentVOWithId(new Integer(componentContentId));
 						LanguageVO componentMasterLanguageVO = LanguageController.getController().getMasterLanguage(componentContentVO.getRepositoryId());
 						ContentVersionVO cv = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(new Integer(componentContentId), componentMasterLanguageVO.getId());
@@ -1313,7 +1312,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 						Element component = (Element)anl.item(0);
 						componentContentId = ((Element)component.getParentNode().getParentNode()).getAttribute("contentId");
 						
-						//System.out.println("componentContentId:" + componentContentId);
 						ContentVO componentContentVO = ContentController.getContentController().getContentVOWithId(new Integer(componentContentId));
 						LanguageVO componentMasterLanguageVO = LanguageController.getController().getMasterLanguage(componentContentVO.getRepositoryId());
 						ContentVersionVO cv = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(new Integer(componentContentId), componentMasterLanguageVO.getId());
@@ -1333,13 +1331,11 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 						
 						if(allowLanguageVariations)
 						{
-							//System.out.println("Setting a propertyValue to path_" + locale.getLanguage() + ":" + path);
 							component.setAttribute("path_" + locale.getLanguage(), propertyValue);
 						    logger.info("Setting 'path_" + locale.getLanguage() + ":" + propertyValue);
 						}
 						else
 						{
-							//System.out.println("Setting a propertyValue to path:" + path);
 							component.setAttribute("path", propertyValue);
 						    logger.info("Setting 'path:" + propertyValue);
 						    component.removeAttribute("path_" + locale.getLanguage());
@@ -1987,7 +1983,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		}
 		else
 		{
-			//System.out.println("Setting......................... why");
 			element.setAttribute("path_" + locale.getLanguage(), path);
 		}
 		
@@ -2097,7 +2092,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	    {
 	        String direction = "asc";
 	        componentVOList = ComponentController.getController().getComponentVOList(sortProperty, direction, allowedComponentNames, disallowedComponentNames, allowedComponentGroupNames, this.getInfoGluePrincipal());
-	        //System.out.println("componentVOList:" + componentVOList);
 	    }
 	    catch(Exception e)
 	    {

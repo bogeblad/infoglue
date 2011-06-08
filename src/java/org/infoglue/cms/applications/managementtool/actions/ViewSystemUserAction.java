@@ -134,7 +134,7 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
-				System.out.println("Error looking up user [" + decodedUserName + "]:" + e.getMessage());
+				logger.error("Error looking up user [" + decodedUserName + "]:" + e.getMessage());
 			}
 			
 			if(userExists)

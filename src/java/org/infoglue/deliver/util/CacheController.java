@@ -424,12 +424,6 @@ public class CacheController extends Thread
 				useGroups = false;				
 			}
 			*/
-
-			//if(useGroups)
-			//	System.out.println("useGroups:" + useGroups + " for " + cacheName);
-			
-			//if(cacheName.startsWith("importTag"))
-			//	System.out.println("CacheKey:" + key.toString());
 				
 			//TODO
 			if(CmsPropertyHandler.getUseSynchronizationOnCaches())
@@ -486,16 +480,16 @@ public class CacheController extends Thread
 		}
 				
 		//if(cacheName.equals("pageCache"))
-		//	System.out.println("numberOfPageCacheFiles:" + numberOfPageCacheFiles.get());
+		//	logger.info("numberOfPageCacheFiles:" + numberOfPageCacheFiles.get());
 		if(cacheName.equals("pageCache") && numberOfPageCacheFiles.get() > 30000)
 		{
 			if(logger.isInfoEnabled())
-				System.out.println("Skipping file cache as to many files were allready there");
+				logger.info("Skipping file cache as to many files were allready there");
 			useFileCacheFallback = false;
 		}
 
 		//if(cacheName.equals("pageCache"))
-		//	System.out.println("useFileCacheFallback:" + useFileCacheFallback + " - useGroups:" + useGroups);
+		//	logger.info("useFileCacheFallback:" + useFileCacheFallback + " - useGroups:" + useGroups);
 	    
 		if(useFileCacheFallback && !useGroups)
 	    {
@@ -675,19 +669,19 @@ public class CacheController extends Thread
 		    } 
 		    catch (NeedsRefreshException nre) 
 		    {
-		    	//System.out.println("Nothing in cache - lets redo it...");
-		    	//System.out.println("Old content:" + nre.getCacheContent());
+		    	//logger.info("Nothing in cache - lets redo it...");
+		    	//logger.info("Old content:" + nre.getCacheContent());
 		    	boolean isUpdated = false;
 		    	try 
 		    	{
 					String result = (String)m.invoke(o, args);
-					//System.out.println("result:" + result);
+					//logger.info("result:" + result);
 					value = result;
 					if(result != null)
 					{
 				    	isUpdated = cacheNewResult(pageInvoker, cacheAdministrator, pageKey, result);
 					}
-					//System.out.println("result:" + result);
+					//logger.info("result:" + result);
 				} 
 		    	catch (Throwable t) 
 		    	{
@@ -714,11 +708,11 @@ public class CacheController extends Thread
 	    if(value == null && useFileCacheFallback)
     	{
 	    	Timer t = new Timer();
-	    	System.out.println("Falling back to filecache");
+	    	logger.info("Falling back to filecache");
     		value = getCachedContentFromFile(cacheName, key, fileCacheCharEncoding);
     		if(value != null && cacheFileResultInMemory)
     		{
-    	    	System.out.println("Got cached content from file as it did not exist in memory...:" + value.toString().length());
+    	    	logger.info("Got cached content from file as it did not exist in memory...:" + value.toString().length());
     			if(logger.isInfoEnabled())
         			logger.info("Got cached content from file as it did not exist in memory...:" + value.toString().length());
 				cacheObjectInAdvancedCache(cacheName, pageKey, value);
@@ -749,7 +743,7 @@ public class CacheController extends Thread
 			{
 				long startCompression = System.currentTimeMillis();
 				byte[] compressedData = compressionHelper.compress(value);		
-			    //System.out.println("Compressing page for pageCache took " + (System.currentTimeMillis() - startCompression) + " with a compressionFactor of " + (this.pageString.length() / compressedData.length));
+			    //logger.info("Compressing page for pageCache took " + (System.currentTimeMillis() - startCompression) + " with a compressionFactor of " + (this.pageString.length() / compressedData.length));
 				if(pageInvoker.getTemplateController().getOperatingMode().intValue() == 3 && !CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
 				{
 					cacheAdministrator.putInCache(pageKey, compressedData, allUsedEntitiesCopy);
@@ -759,10 +753,10 @@ public class CacheController extends Thread
 				}
 				else
 				{
-					//System.out.println("cacheAdministrator:" + cacheAdministrator);
-					//System.out.println("pageKey:" + pageKey);
-					//System.out.println("compressedData:" + compressedData);
-					//System.out.println("allUsedEntitiesCopy:" + allUsedEntitiesCopy);
+					//logger.info("cacheAdministrator:" + cacheAdministrator);
+					//logger.info("pageKey:" + pageKey);
+					//logger.info("compressedData:" + compressedData);
+					//logger.info("allUsedEntitiesCopy:" + allUsedEntitiesCopy);
 					cacheAdministrator.putInCache(pageKey, compressedData, allUsedEntitiesCopy);
 					isCached = true;
 					CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, true);
@@ -1037,14 +1031,14 @@ public class CacheController extends Thread
 	 */
 	public static void clearFileCacheForGroup(GeneralCacheAdministrator cacheInstance, String groupName) throws Exception
 	{
-		//System.out.println("Cache entry set:" + cacheInstance.getCache().cacheMap.entrySet());
+		//logger.info("Cache entry set:" + cacheInstance.getCache().cacheMap.entrySet());
 		
         Set groupEntries = cacheInstance.getCache().cacheMap.getGroup(groupName);
         /*
         if(groupEntries != null)
-        	System.out.println("groupEntries for " + groupName + ":" + groupEntries.size());
+        	logger.info("groupEntries for " + groupName + ":" + groupEntries.size());
         else
-        	System.out.println("no groupEntries for " + groupName);
+        	logger.info("no groupEntries for " + groupName);
         */
         
 		if (groupEntries != null) 
@@ -1054,7 +1048,7 @@ public class CacheController extends Thread
             {
             	String key = (String) groupEntriesIterator.next();
             	CacheEntry entry = (CacheEntry) cacheInstance.getCache().cacheMap.get(key);
-            	//System.out.println("Removing file with key:" + key);
+            	//logger.info("Removing file with key:" + key);
             	removeCachedContentInFile("pageCache", key);
             	numberOfPageCacheFiles.decrementAndGet();
             }
@@ -1559,7 +1553,6 @@ public class CacheController extends Thread
 								    	cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
 							    	}
 							    	logger.info("clearing " + e.getKey() + " with group " + "content_" + entityId);
-							    	//System.out.println("clearing " + e.getKey() + " with group " + "content_" + entityId);
 								}
 							    else if(selectiveCacheUpdate && entity.indexOf("Publication") > 0 && useSelectivePageCacheUpdate && (operatingMode != null && operatingMode.equalsIgnoreCase("3")) && CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
 							    {
@@ -1570,8 +1563,8 @@ public class CacheController extends Thread
 									while(publicationDetailVOListIterator.hasNext())
 									{
 										PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
-										System.out.println("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
-										System.out.println("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
+										logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
+										logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
 										if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(ContentVersion.class.getName()))
 										{
 											logger.error("We clear all caches having references to contentVersion: " + publicationDetailVO.getEntityId());
@@ -1581,7 +1574,7 @@ public class CacheController extends Thread
 									    	cacheInstance.flushGroup("contentVersion_" + publicationDetailVO.getEntityId().toString());
 									    	cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
 									    	logger.info("clearing " + e.getKey() + " with group " + "content_" + contentId);
-									    	System.out.println("clearing " + e.getKey() + " with group " + "content_" + contentId);
+									    	logger.info("clearing " + e.getKey() + " with group " + "content_" + contentId);
 										}
 										else if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(SiteNodeVersion.class.getName()))
 										{
@@ -1594,7 +1587,7 @@ public class CacheController extends Thread
 								}
 							    else
 							    {
-							    	//System.out.println("Flushing all:" + cacheName);
+							    	//logger.info("Flushing all:" + cacheName);
 							    	cacheInstance.flushAll();
 							    	eventListeners.remove(cacheName + "_cacheEntryEventListener");
 								    eventListeners.remove(cacheName + "_cacheMapAccessEventListener");
@@ -1618,7 +1611,7 @@ public class CacheController extends Thread
 			
     		if(!useSelectivePageCacheUpdate || entity.indexOf("AccessRight") > -1)
     		{
-    			System.out.println("Clearing all pageCaches");
+    			logger.info("Clearing all pageCaches");
     			CacheController.clearFileCaches("pageCache");
     		}
 
@@ -1673,7 +1666,7 @@ public class CacheController extends Thread
 	    while(RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() > 0)
 	    {
 	        //logger.warn("Number of requests: " + RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests() + " was more than 0 - lets wait a bit.");
-			//System.out.println("The clearCastorCaches method waited");
+			//logger.info("The clearCastorCaches method waited");
 	    	Thread.sleep(10);
 	    }
 	    
@@ -2018,13 +2011,13 @@ public class CacheController extends Thread
     	{
     		String key = (String)cacheKeyIterator.next();
     		Object cacheObject = caches.get(key);
-    		//System.out.println("cacheObject:" + cacheObject.getClass());
+    		//logger.info("cacheObject:" + cacheObject.getClass());
     		if(cacheObject instanceof GeneralCacheAdministrator)
     		{
     			GeneralCacheAdministrator generalCacheAdministrator = (GeneralCacheAdministrator)cacheObject;
-    			//System.out.println("cacheObject:" + generalCacheAdministrator.getCache().getCacheEventListenerList().getListenerCount());
+    			//logger.info("cacheObject:" + generalCacheAdministrator.getCache().getCacheEventListenerList().getListenerCount());
     			Object cacheEntryEventListener = CacheController.getEventListeners().get(key + "_cacheEntryEventListener");
-    			//System.out.println("EventListener:" + cacheEntryEventListener);
+    			//logger.info("EventListener:" + cacheEntryEventListener);
     			if(cacheEntryEventListener == null)
     			{
     				logger.warn("cacheEntryEventListener was null - lets clear it: " + key);
@@ -2041,7 +2034,7 @@ public class CacheController extends Thread
 	    {
 	       	if(RequestAnalyser.getRequestAnalyser().getBlockRequests())
 		    {
-			    //System.out.println("evictWaitingCache allready in progress - returning to avoid conflict");
+			    //logger.info("evictWaitingCache allready in progress - returning to avoid conflict");
 			    logger.info("evictWaitingCache allready in progress - returning to avoid conflict");
 		        return;
 		    }
@@ -2208,7 +2201,7 @@ public class CacheController extends Thread
  			{
  				String svc = svcs[i].substring(svcs[i].lastIndexOf('.') + 1);
  				String msg = "Initialization of " + svc + " service for hot deployment failed!"; 
- 				System.out.println(msg);
+ 				logger.error(msg);
  				break;
  			}
  	
@@ -2220,7 +2213,7 @@ public class CacheController extends Thread
  			{
  				String svc = svcs[i].substring(svcs[i].lastIndexOf('.') + 1);
  				String msg = "Post initialization of " + svc + " service for hot deployment failed!"; 
- 				System.out.println(msg);
+ 				logger.error(msg);
  				break;
  			}
 		}		
@@ -2435,18 +2428,18 @@ public class CacheController extends Thread
     	{
     		String firstPart = ("" + key.hashCode()).substring(0, 3);
             String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + "caches" + File.separator + cacheName + File.separator + firstPart + File.separator + key.hashCode();
-        	//System.out.println("Getting from file:" + filePath);
+        	//logger.info("Getting from file:" + filePath);
 
             File file = new File(filePath);
-        	//System.out.println("Existed:" + file.exists());
+        	//logger.info("Existed:" + file.exists());
             if(file.exists())
             {
-	        	//System.out.println("updateInterval:" + updateInterval);
+	        	//logger.info("updateInterval:" + updateInterval);
 	            if(updateInterval != null)
 	            {
 		            long updateDateTime = file.lastModified();
 		            long now = System.currentTimeMillis();
-		            //System.out.println("diff:" + (now - updateDateTime) / 1000);
+		            //logger.info("diff:" + (now - updateDateTime) / 1000);
 		            if((now - updateDateTime) / 1000 < updateInterval)
 		            {
 		            	if(cacheName.equals("pageCache") && compressPageCache != null && compressPageCache.equals("true"))
@@ -2457,7 +2450,7 @@ public class CacheController extends Thread
 		            	}
 		            	else
 		            	{
-			            	//System.out.println("getting file anyway:" + updateInterval);
+			            	//logger.info("getting file anyway:" + updateInterval);
 			            	contents = FileHelper.getFileAsStringOpt(file, charEncoding);
 		            	}
 
@@ -2466,14 +2459,14 @@ public class CacheController extends Thread
 		            }
 		            else
 		            {
-		            	//System.out.println("Old file - skipping:" + ((now - updateDateTime) / 1000));
+		            	//logger.info("Old file - skipping:" + ((now - updateDateTime) / 1000));
 		            	if(logger.isInfoEnabled())
 		        			logger.info("Old file - skipping:" + ((now - updateDateTime) / 1000));
 		            }
 		        }
 	            else
 	            {
-	            	//System.out.println("getting file:" + file);
+	            	//logger.info("getting file:" + file);
 	            	if(cacheName.equals("pageCache") && compressPageCache != null && compressPageCache.equals("true"))
 	            	{
 	            		byte[] cachedCompressedData = FileHelper.getFileBytes(file);
@@ -2482,7 +2475,7 @@ public class CacheController extends Thread
 	            	}
 	            	else
 	            	{
-		            	//System.out.println("getting file anyway:" + updateInterval);
+		            	//logger.info("getting file anyway:" + updateInterval);
 		            	contents = FileHelper.getFileAsStringOpt(file, charEncoding);
 	            	}
 	            	//contents = FileHelper.getFileAsString(file, charEncoding);
@@ -2639,7 +2632,6 @@ public class CacheController extends Thread
 			}
 			catch (Exception e) 
 			{
-				System.out.println("Error 2:" + e.getMessage());
 				logger.warn("Error trying to write bundled scripts:" + e.getMessage());
 			}
 		}
@@ -2650,14 +2642,14 @@ public class CacheController extends Thread
         String dir = CmsPropertyHandler.getDigitalAssetPath() + File.separator + "caches";
         File dirFile = new File(dir);
         Timer t = new Timer();
-        //System.out.println("dirFile:" + dirFile.exists());
+        //logger.info("dirFile:" + dirFile.exists());
         if(dirFile.exists())
         {
             File[] subCaches = dirFile.listFiles();
             for(int i=0; i<subCaches.length; i++)
             {
             	File subCacheDir = subCaches[i];
-            	//System.out.println("subCacheDir:" + subCacheDir.getName());
+            	//logger.info("subCacheDir:" + subCacheDir.getName());
             	if(subCacheDir.isDirectory())
             	{
                 	File[] subSubCacheFiles = subCacheDir.listFiles();
@@ -2670,14 +2662,14 @@ public class CacheController extends Thread
                         	for(int k=0; k<cacheFiles.length; k++)
                         	{
                         		File cacheFile = cacheFiles[k];
-                        		//System.out.println("cacheFile:" + cacheFile.getName());
+                        		//logger.info("cacheFile:" + cacheFile.getName());
                     			cacheFile.delete();
                         	}
 
                     		subCacheDir.delete();
                     	}			                
 
-                		//System.out.println("cacheFile:" + cacheFile.getName());
+                		//logger.info("cacheFile:" + cacheFile.getName());
                     	subSubCacheDir.delete();
                 	}
 
@@ -2694,14 +2686,14 @@ public class CacheController extends Thread
 		
         String dir = CmsPropertyHandler.getDigitalAssetPath() + File.separator + "caches";
         File dirFile = new File(dir);
-        //System.out.println("dirFile:" + dirFile.exists());
+        //logger.info("dirFile:" + dirFile.exists());
         if(dirFile.exists())
         {
             File[] subCaches = dirFile.listFiles();
             for(int i=0; i<subCaches.length; i++)
             {
             	File subCacheDir = subCaches[i];
-            	//System.out.println("subCacheDir:" + subCacheDir.getName());
+            	//logger.info("subCacheDir:" + subCacheDir.getName());
             	if(subCacheDir.isDirectory() && subCacheDir.getName().equals(cacheName))
             	{
                 	File[] subSubCacheFiles = subCacheDir.listFiles();
@@ -2714,14 +2706,14 @@ public class CacheController extends Thread
                         	for(int k=0; k<cacheFiles.length; k++)
                         	{
                         		File cacheFile = cacheFiles[k];
-                        		//System.out.println("cacheFile:" + cacheFile.getName());
+                        		//logger.info("cacheFile:" + cacheFile.getName());
                     			cacheFile.delete();
                         	}
 
                     		subCacheDir.delete();
                     	}			                
 
-                		//System.out.println("cacheFile:" + cacheFile.getName());
+                		//logger.info("cacheFile:" + cacheFile.getName());
                     	subSubCacheDir.delete();
                 	}
 

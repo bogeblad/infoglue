@@ -369,12 +369,12 @@ public class BasicURLComposer extends URLComposer
 		    	{
 					Principal anonymousPrincipal = getAnonymousPrincipal();
 					isAnonymousAccepted = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
-					//System.out.println("anonymousPrincipal has access:" + isAnonymousAccepted);
+					//logger.info("anonymousPrincipal has access:" + isAnonymousAccepted);
 		    	}
 		    	
 		    	if(protectedSiteNodeVersionId != null && !isAnonymousAccepted)
 				{
-		    		//System.out.println("anonymousPrincipal has no access - switching to secure line");
+		    		//logger.info("anonymousPrincipal has no access - switching to secure line");
 					if(originalFullURL.indexOf(unprotectedProtocolName + "://") > -1)
 					{	
 						useDNSNameInUrls = "true";
@@ -544,7 +544,7 @@ public class BasicURLComposer extends URLComposer
     		}
 
 		    String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
-        	//System.out.println("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
+        	//logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
         	if(enableNiceURIForLanguage.equalsIgnoreCase("true"))
         		context = context + "/" + LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId).getLanguageCode();
 

@@ -117,7 +117,7 @@ public class ViewThemesAction extends InfoGlueAbstractAction
     {
 		File file = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins" + File.separator + theme);
 
-		System.out.println("file:" + file + ":" + file.exists());
+		logger.info("file:" + file + ":" + file.exists());
 		
 		// Check existance of presentation string and remove old ones
 		List assets = ThemeController.getDigitalAssetByName(file.getName());

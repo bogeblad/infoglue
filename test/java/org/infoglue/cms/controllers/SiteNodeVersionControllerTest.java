@@ -24,7 +24,9 @@
  */
 package org.infoglue.cms.controllers;
 
+import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.applications.managementtool.InstallationValidatorAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
@@ -41,6 +43,7 @@ import org.infoglue.cms.util.InfoGlueTestCase;
 public class SiteNodeVersionControllerTest extends InfoGlueTestCase
 {
 
+    public final static Logger logger = Logger.getLogger(SiteNodeVersionControllerTest.class.getName());
 
 	public void testSiteNodeVersionModifiedDate(InfoGluePrincipal infoGluePrincipal) throws Exception
 	{
@@ -86,7 +89,7 @@ public class SiteNodeVersionControllerTest extends InfoGlueTestCase
 
 		SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersion(db, siteNode.getSiteNodeId(), false).getValueObject();
 		latestSiteNodeVersionVO.setContentType("text/html");
-		System.out.println("PageKey:" + latestSiteNodeVersionVO.getPageCacheKey());
+		logger.info("PageKey:" + latestSiteNodeVersionVO.getPageCacheKey());
 		latestSiteNodeVersionVO.setPageCacheKey("");
 		latestSiteNodeVersionVO.setPageCacheTimeout(null);
 		latestSiteNodeVersionVO.setDisableEditOnSight(new Integer(2));

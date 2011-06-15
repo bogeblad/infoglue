@@ -86,14 +86,13 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 		
     public String doInput() throws Exception 
     {
-    	System.out.println("Input state");
+    	logger.info("Input state");
     	
     	return INPUT;
     }
 	
     public String doMultiple() throws Exception
     {
-    	System.out.println("Uploading multiple....");
     	logger.info("Uploading file....");
     	this.principal = getInfoGluePrincipal();
     	
@@ -148,7 +147,6 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
     
     public String doExecute()
     {
-    	System.out.println("Uploading file....");
     	if(this.principal == null)
     		this.principal = getInfoGluePrincipal();
 
@@ -175,8 +173,8 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 						String contentType    = mpr.getContentType(name);
 						String fileSystemName = mpr.getFilesystemName(name);
 						
-						System.out.println("contentType:" + contentType);
-						System.out.println("fileSystemName:" + fileSystemName);
+						logger.info("contentType:" + contentType);
+						logger.info("fileSystemName:" + fileSystemName);
 						if(fileSystemName.endsWith(".zip"))
 						{
 							file = mpr.getFile(name);
@@ -304,10 +302,11 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	            this.uploadMaxSize = "(Max " + formatter.formatFileSize(fileUploadMaximumSize) + ")";
 	        	return "uploadFailed";
 			}
-			System.out.println("contentTypeDefinitionId:" + contentTypeDefinitionId);
+			
+			logger.info("contentTypeDefinitionId:" + contentTypeDefinitionId);
 	        if(contentTypeDefinitionId == null)
 	        {
-	        	System.out.println("Defaulting to Image");
+	        	logger.info("Defaulting to Image");
 	        	this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Image");
 	        	if(this.contentTypeDefinitionVO != null)
 	        		contentTypeDefinitionId = this.contentTypeDefinitionVO.getId();
@@ -401,10 +400,10 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	
 	    	LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(repositoryId);
 	
-	        System.out.println("parentContentId: " + this.parentContentId);
-	        System.out.println("repositoryId: " + this.repositoryId);
-	        System.out.println("contentTypeDefinition: " + this.contentTypeDefinitionId);
-	        System.out.println("masterLanguageVO: " + masterLanguageVO.getId());
+	    	logger.info("parentContentId: " + this.parentContentId);
+	    	logger.info("repositoryId: " + this.repositoryId);
+	        logger.info("contentTypeDefinition: " + this.contentTypeDefinitionId);
+	        logger.info("masterLanguageVO: " + masterLanguageVO.getId());
 	        		    	        
 	    	ContentVO contentVO = new ContentVO();
 	    	contentVO.setName(fileName);
@@ -508,7 +507,9 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 				Element transformationElement = (Element)transformationElementsIterator.next();
 			
 				String assetKeyPattern  = transformationElement.attributeValue("assetKeyPattern");
+				String includedContentTypeDefinitionNames = transformationElement.attributeValue("includedContentTypeDefinitionNames");
 				String inputFilePattern  = transformationElement.attributeValue("inputFilePattern");
+				logger.info("includedContentTypeDefinitionNames: " + includedContentTypeDefinitionNames);
 				logger.info("inputFilePattern: " + inputFilePattern);
 				
 				boolean assetKeyMatch = false;
@@ -516,8 +517,12 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 					assetKeyMatch = true;
 				else if(originalAssetVO.getAssetKey().matches(assetKeyPattern))
 					assetKeyMatch = true;
-										
-				if(assetKeyMatch && contentType.matches(inputFilePattern))
+						
+				boolean contentTypeDefinitionNameMatch = true;
+				if(contentTypeDefinitionVO.getName() != null && includedContentTypeDefinitionNames != null && includedContentTypeDefinitionNames.indexOf(contentTypeDefinitionVO.getName()) == -1)
+					contentTypeDefinitionNameMatch = false;
+
+				if(contentTypeDefinitionNameMatch && assetKeyMatch && contentType.matches(inputFilePattern))
 				{
 					logger.info("We got a match on contentType:" + contentType + " : " + inputFilePattern);
 
@@ -642,14 +647,14 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 		boolean allowedSessionId = false;
 		List activeSessionBeanList = CmsSessionContextListener.getSessionInfoBeanList();
 		Iterator activeSessionsIterator = activeSessionBeanList.iterator();
-		//System.out.println("activeSessionBeanList:" + activeSessionBeanList.size());
+		//logger.info("activeSessionBeanList:" + activeSessionBeanList.size());
 		while(activeSessionsIterator.hasNext())
 		{
 			SessionInfoBean sessionBean = (SessionInfoBean)activeSessionsIterator.next();
-			//System.out.println("sessionBean:" + sessionBean.getId() + "=" + sessionBean.getPrincipal().getName());
+			//logger.info("sessionBean:" + sessionBean.getId() + "=" + sessionBean.getPrincipal().getName());
 			if(sessionBean.getId().equals(requestSessionId))
 			{
-				//System.out.println("Found a matching sessionId");
+				//logger.info("Found a matching sessionId");
 				allowedSessionId = true;
 		    	
 				break;

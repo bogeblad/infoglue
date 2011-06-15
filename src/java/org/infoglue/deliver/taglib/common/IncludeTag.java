@@ -83,7 +83,7 @@ public class IncludeTag extends TemplateControllerTag
 			    componentModelClassName = this.getController().getContentAttributeUsingLanguageFallback(contentId, "ModelClassName", true);
 		    }
 		    
-			System.out.println("componentModelClassName:" + componentModelClassName);
+			logger.info("componentModelClassName:" + componentModelClassName);
 			if(componentModelClassName != null && !componentModelClassName.equals(""))
 			{
 				try

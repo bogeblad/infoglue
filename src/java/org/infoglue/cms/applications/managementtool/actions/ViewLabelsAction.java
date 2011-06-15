@@ -125,7 +125,7 @@ public class ViewLabelsAction extends InfoGlueAbstractAction
 			}
 		}
 
-		System.out.println("file:" + file + ":" + file.exists());
+		logger.info("file:" + file + ":" + file.exists());
 		if(file.exists())
 			file.delete();
 

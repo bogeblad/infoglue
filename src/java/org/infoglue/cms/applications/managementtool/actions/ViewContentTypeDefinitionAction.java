@@ -580,8 +580,8 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 				Element element = (Element)parameterValuesNodeList.item(0);
 				element.setAttribute("id", this.newAttributeParameterValueId);
 
-				System.out.println("currentContentTypeEditorViewLanguageCode:" + currentContentTypeEditorViewLanguageCode);
-				System.out.println("attributeParameterValueLabel:" + attributeParameterValueLabel);
+				logger.info("currentContentTypeEditorViewLanguageCode:" + currentContentTypeEditorViewLanguageCode);
+				logger.info("attributeParameterValueLabel:" + attributeParameterValueLabel);
 				if(this.currentContentTypeEditorViewLanguageCode != null && this.currentContentTypeEditorViewLanguageCode.length() > 0)
 					element.setAttribute("label_" + this.currentContentTypeEditorViewLanguageCode, this.attributeParameterValueLabel);
 				else

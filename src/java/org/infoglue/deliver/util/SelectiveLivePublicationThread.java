@@ -108,7 +108,6 @@ public class SelectiveLivePublicationThread extends PublicationThread
 	    Random r = new Random();
 	    int randint = (Math.abs(r.nextInt()) % 11) / 8 * 1000;
 	    publicationDelay = publicationDelay + randint;
-	    //System.out.println("publicationDelay:" + publicationDelay);
 	    
 	    logger.info("\n\n\nSleeping " + publicationDelay + "ms.\n\n\n");
 		try 
@@ -139,7 +138,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 		    	if(processedServerNodeProperties)
 		    	{
 		    		cacheEvictionBeansIterator.remove();
-		    		//System.out.println("Removed one ServerNodeProperties update as it will be processed anyway in this eviction cycle");
+		    		//logger.info("Removed one ServerNodeProperties update as it will be processed anyway in this eviction cycle");
 		    	}
 		    	else
 		    	{
@@ -256,10 +255,9 @@ public class SelectiveLivePublicationThread extends PublicationThread
 							CacheController.clearCache(typesExtraMedium, idsExtraMedium);
 
 							String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
-							System.out.println("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
+							logger.info("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
 							if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
 							{
-								System.out.println("We should delete all images with digitalAssetId " + objectId);
 								logger.info("We should delete all images with digitalAssetId " + objectId);
 								DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
 							}
@@ -284,9 +282,9 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						}
 						else if(Class.forName(className).getName().equals(PublicationImpl.class.getName()))
 						{
-							System.out.println("**************************************");
-							System.out.println("*    HERE THE MAGIC SHOULD HAPPEN    *");
-							System.out.println("**************************************");
+							logger.info("**************************************");
+							logger.info("*    HERE THE MAGIC SHOULD HAPPEN    *");
+							logger.info("**************************************");
 							List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(new Integer(objectId));
 							Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
 							while(publicationDetailVOListIterator.hasNext())
@@ -294,11 +292,8 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
 								logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
 								logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
-								System.out.println("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
-								System.out.println("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
 								if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(ContentVersion.class.getName()))
 								{
-									System.out.println("YES");
 									logger.info("We clear all caches having references to contentVersion: " + publicationDetailVO.getEntityId());
 									Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
 								    CacheController.clearCaches(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), null);
@@ -319,7 +314,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 									CacheController.clearCache(typesExtraMedium, idsExtraMedium);
 									
 									String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
-									System.out.println("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
+									logger.info("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
 									if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
 									{
 										List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(publicationDetailVO.getEntityId());
@@ -327,7 +322,6 @@ public class SelectiveLivePublicationThread extends PublicationThread
 							    		while(digitalAssetVOListIterator.hasNext())
 							    		{
 							    			DigitalAssetVO digitalAssetVO = digitalAssetVOListIterator.next();
-											System.out.println("We should delete all images with digitalAssetId " + objectId);
 											logger.info("We should delete all images with digitalAssetId " + objectId);
 											DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(digitalAssetVO.getId());
 							    		}
@@ -412,11 +406,11 @@ public class SelectiveLivePublicationThread extends PublicationThread
 					else
 					{
 						/*
-						System.out.println("Was notification message in selective live publication...");
-						System.out.println("className:" + className);
-						System.out.println("objectId:" + objectId);
-						System.out.println("objectName:" + objectName);
-						System.out.println("typeId:" + typeId);
+						logger.info("Was notification message in selective live publication...");
+						logger.info("className:" + className);
+						logger.info("objectId:" + objectId);
+						logger.info("objectName:" + objectName);
+						logger.info("typeId:" + typeId);
 						*/
 						if(className.equals("ServerNodeProperties"))
 						{

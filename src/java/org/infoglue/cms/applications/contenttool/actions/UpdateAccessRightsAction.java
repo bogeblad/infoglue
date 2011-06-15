@@ -92,18 +92,18 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			ceb.throwIfNotEmpty();
 		}
 		
-		//System.out.println("this.extraMultiParameters[i]:" + this.extraMultiParameter);
+		//logger.info("this.extraMultiParameters[i]:" + this.extraMultiParameter);
 		if(this.extraMultiParameter != null && this.extraMultiParameter.length > 0)
 		{
 			for(int i=0; i<this.extraMultiParameter.length; i++)
 			{
-				//System.out.println("this.extraMultiParameters[i]:" + this.extraMultiParameter[i]);
+				//logger.info("this.extraMultiParameters[i]:" + this.extraMultiParameter[i]);
 				AccessRightController.getController().update(this.extraMultiParameter[i], this.getRequest(), interceptionPointCategory);			
 			}
 		}
 		else
 		{
-			//System.out.println("this.parameters:" + this.parameters);
+			//logger.info("this.parameters:" + this.parameters);
 			AccessRightController.getController().update(this.parameters, this.getRequest(), interceptionPointCategory);			
 		}
 	

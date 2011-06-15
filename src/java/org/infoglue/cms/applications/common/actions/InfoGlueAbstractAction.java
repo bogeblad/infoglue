@@ -1287,7 +1287,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	
 	public void logMessage(String message)
 	{
-		System.out.println("" + message);
+		logger.warn("" + message);
 	}
 
 }

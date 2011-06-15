@@ -70,7 +70,7 @@ public class DeliveryServletDispatcher extends ServletDispatcher
 			if(classLoader == null)
 			{
 				Timer t = new Timer();
-				//System.out.println("Setting our own classloaders - smart for:" + CmsPropertyHandler.getContextRootPath());
+				//logger.info("Setting our own classloaders - smart for:" + CmsPropertyHandler.getContextRootPath());
 				String extensionBasePath = CmsPropertyHandler.getContextRootPath() + "WEB-INF" + File.separator + "libextensions";
 				File extensionBaseFile = new File(extensionBasePath);
 				extensionBaseFile.mkdirs();
@@ -82,7 +82,7 @@ public class DeliveryServletDispatcher extends ServletDispatcher
 					if(extensionFile.getName().endsWith(".jar"))
 					{
 						//ClassLoaderUtil.addFile(extensionFile.getPath());
-						//System.out.println("extensionFile:" + extensionFile.getPath());	
+						//logger.info("extensionFile:" + extensionFile.getPath());	
 					
 						URL url = extensionFile.toURL();
 						urls.add(url);
@@ -98,11 +98,11 @@ public class DeliveryServletDispatcher extends ServletDispatcher
 				}
 				
 				classLoader = new URLClassLoader(urlsArray, this.getClass().getClassLoader());
-				t.printElapsedTime("Creating classloader took");
+				//t.printElapsedTime("Creating classloader took");
 			}
 
 			Thread.currentThread().setContextClassLoader(classLoader);
-			//System.out.println("ClassLoader in context for thread:" + Thread.currentThread().getId() + ":" + Thread.currentThread().getContextClassLoader().getClass().getName());
+			//logger.info("ClassLoader in context for thread:" + Thread.currentThread().getId() + ":" + Thread.currentThread().getContextClassLoader().getClass().getName());
 		}
 		catch (Throwable t) 
 		{
@@ -117,7 +117,7 @@ public class DeliveryServletDispatcher extends ServletDispatcher
            if (servletPath == null)
         	   servletPath = aRequest.getServletPath();
 
-           //System.out.println("servletPath:" + servletPath);
+           //logger.info("servletPath:" + servletPath);
 
            super.service(aRequest, aResponse);
            return;
@@ -128,13 +128,13 @@ public class DeliveryServletDispatcher extends ServletDispatcher
        if (servletPath == null)
     	   servletPath = aRequest.getServletPath();
       
-       //System.out.println("servletPath:" + servletPath);
+       //logger.info("servletPath:" + servletPath);
       
        String actionName = getActionName(servletPath);
        GenericDispatcher gd = new GenericDispatcher(actionName, false);
        ActionContext context = gd.prepareContext();
        
-       //System.out.println("actionName:" + actionName);
+       //logger.info("actionName:" + actionName);
 
        InfoGluePrincipal principal = (InfoGluePrincipal)aRequest.getSession().getAttribute("infogluePrincipal");
        if(principal != null)

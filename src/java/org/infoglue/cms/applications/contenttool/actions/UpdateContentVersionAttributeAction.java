@@ -186,9 +186,9 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 			
 			/*
 			for(int i=0; i<attributeValue.length(); i++)
-				System.out.println("c:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
+				logger.info("c:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
 				
-			System.out.println("attributeValue real:" + attributeValue);
+			logger.info("attributeValue real:" + attributeValue);
 			*/
 			
 			if(attributeValue != null)
@@ -201,7 +201,7 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 				for(int i=0; i<attributeValue.length(); i++)
 				{
 					int c = (int)attributeValue.charAt(i);
-					//System.out.println("c2:" + c + "-" + Integer.toHexString(c));
+					//logger.info("c2:" + c + "-" + Integer.toHexString(c));
 					if(c > 255 && c < 65533)
 						hasUnicodeChars = true;
 				}
@@ -223,7 +223,7 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 					   attributeValue.indexOf("Ä") == -1 && 
 					   attributeValue.indexOf("Ö") == -1)
 					{
-						//System.out.println("Converting...");
+						//logger.info("Converting...");
 						attributeValue = new String(attributeValue.getBytes(fromEncoding), toEncoding);
 					}
 				}
@@ -243,9 +243,9 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 				
 				/*
 				for(int i=0; i<attributeValue.length(); i++)
-					System.out.println("c2:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
+					logger.info("c2:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
 
-				System.out.println("attributeValue after:" + attributeValue);
+				logger.info("attributeValue after:" + attributeValue);
 				*/
 				
 				logger.info("\n\nattributeValue original:" + attributeValue);
@@ -340,13 +340,13 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 			logger.info("attributeValue before parse:" + attributeValue);
 			
     		attributeValue = PageEditorHelper.parseAttributeForInlineEditing(attributeValue, false, getDeliverContext(), contentId, languageId);
-			//System.out.println("parseAttributeForInlineEditing done");
+			//logger.info("parseAttributeForInlineEditing done");
 			
 			logger.info("attributeValue:" +attributeValue);
 			/*
-			System.out.println("attributeValue:" +attributeValue);
+			logger.info("attributeValue:" +attributeValue);
 			for(int i=0; i<attributeValue.length(); i++)
-				System.out.println("c3:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
+				logger.info("c3:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
 			*/
 			
 			this.getResponse().setContentType("text/plain; charset=utf-8");

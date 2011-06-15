@@ -105,8 +105,6 @@ public class GenericCombinedAuthorizationModule implements AuthorizationModule, 
 			if(logger.isInfoEnabled())
 				logger.info("authorizationModule:" + authorizationModule);
 			
-			//localProperties.list(System.out);
-			
 			authorizationModule.setExtraProperties(localProperties);
 			authorizationModule.setTransactionObject(this.getTransactionObject());
     	}

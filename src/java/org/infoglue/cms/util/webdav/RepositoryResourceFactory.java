@@ -57,7 +57,6 @@ public class RepositoryResourceFactory implements ResourceFactory
 			while(repositoriesIterator.hasNext())
 			{
 				RepositoryVO repositoryVO = repositoriesIterator.next();
-				//System.out.println("repositoryVO:" + repositoryVO.getName());
 				list.add( new RepositoryResource(repositoryVO) );
 			}
 		} 

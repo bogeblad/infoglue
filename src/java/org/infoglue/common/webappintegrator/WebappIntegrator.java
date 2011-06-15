@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,6 +16,8 @@ import org.jsoup.select.Elements;
 
 public class WebappIntegrator 
 {
+    private final static Logger logger = Logger.getLogger(WebappIntegrator.class.getName());
+
 	//Proxy-part
 	private String proxyHost = null;
 	private Integer proxyPort = null;
@@ -72,8 +76,8 @@ public class WebappIntegrator
 		//Document doc = Jsoup.parse(responseBody);
 		
 		String title = doc.title();
-		System.out.println("title:" + title);
-		System.out.println("elementSelector:" + elementSelector);
+		logger.info("title:" + title);
+		logger.info("elementSelector:" + elementSelector);
 		Element sourceElement = doc.select(elementSelector).first();
 		if(sourceElement == null)
 			sourceElement = doc.select("#pageContent").first();
@@ -104,7 +108,7 @@ public class WebappIntegrator
 	        	String oldSrc = src.attr("abs:src");
 	        	if(!oldSrc.matches(srcExclusionRegexp) && oldSrc != null)
 	        	{
-	        		System.out.println("Changing to oldSrc:" + oldSrc);
+	        		logger.info("Changing to oldSrc:" + oldSrc);
 		        	src.attr("src", oldSrc);
 	        	}
 	        }
@@ -114,7 +118,7 @@ public class WebappIntegrator
 	        	String oldHref = link.attr("abs:href");
 	        	if(!oldHref.matches(linkExclusionRegexp) && oldHref != null)
 	        	{
-		        	System.out.println("Changing to oldHref:" + oldHref);
+		        	logger.info("Changing to oldHref:" + oldHref);
 		        	link.attr("href", oldHref);
 	        	}
 	        }
@@ -122,17 +126,17 @@ public class WebappIntegrator
 	        for (Element form : forms) 
 	        {
 	        	String oldAction = form.attr("abs:action");
-	        	System.out.println("oldAction:" + oldAction);
+	        	logger.info("oldAction:" + oldAction);
 	        	if(oldAction == null || oldAction.equals(""))
 	        	{
 	        		oldAction = this.urlToIntegrate;
-		        	System.out.println("oldAction:" + oldAction);
+		        	logger.info("oldAction:" + oldAction);
 		        	String newAction = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + oldAction;
 		        	form.attr("action", newAction);
 	        	}
 	        	else
 	        	{
-	        		System.out.println("oldAction:" + oldAction);
+	        		logger.info("oldAction:" + oldAction);
 		        	//String newAction = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + URLEncoder.encode(URLEncoder.encode(oldAction, "utf-8"),"utf-8");
 		        	String newAction = currentBaseUrl + (currentBaseUrl.indexOf("?") > -1 ? "&" : "?") + "proxyUrl=" + URLEncoder.encode(oldAction, "utf-8");
 		        	form.attr("action", newAction);

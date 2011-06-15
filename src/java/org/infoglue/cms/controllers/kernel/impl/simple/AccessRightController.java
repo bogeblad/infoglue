@@ -996,7 +996,7 @@ public class AccessRightController extends BaseController
 		    {
 				List accessRightsRoles = getAccessRightsRoles(interceptionPointCategory, parameters, db, true);
 				List accessRightsGroups = getAccessRightsGroups(interceptionPointCategory, parameters, db, true);
-				System.out.println("accessRightsRoles:" + accessRightsRoles.size());
+				logger.info("accessRightsRoles:" + accessRightsRoles.size());
 				if(accessRightsRoles == null || accessRightsRoles.size() == 0 && accessRightsGroups == null || accessRightsGroups.size() == 0)
 				{
 					if(interceptionPointCategory.equalsIgnoreCase("Content"))
@@ -1132,7 +1132,6 @@ public class AccessRightController extends BaseController
 					db.remove(accessRightUser);
 				}
 				*/
-				//System.out.println("Removing:" + accessRight.getId());
 				//db.remove(accessRight);
 			}
 			

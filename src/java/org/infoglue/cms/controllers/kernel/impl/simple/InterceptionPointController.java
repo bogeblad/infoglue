@@ -72,6 +72,7 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("PublishingTool.Read", new InterceptionPointVO("PublishingTool", "PublishingTool.Read", "Gives the user access to the publishing tool", false));
 	    systemInterceptionPoints.put("StructureTool.Read", new InterceptionPointVO("StructureTool", "StructureTool.Read", "Gives a user access to the structure tool", false));
 	    systemInterceptionPoints.put("FormsTool.Read", new InterceptionPointVO("FormsTool", "FormsTool.Read", "Gives a user access to the form tool", false));
+	    systemInterceptionPoints.put("CalendarTool.Read", new InterceptionPointVO("CalendarTool", "CalendarTool.Read", "Gives a user access to the calendar system", false));
 	    systemInterceptionPoints.put("SearchTool.Read", new InterceptionPointVO("SearchTool", "SearchTool.Read", "Gives a user access to the search tool", false));
 	    
 	    systemInterceptionPoints.put("Category.Read", new InterceptionPointVO("Category", "Category.Read", "This intercepts any read towards a category", true));
@@ -345,7 +346,6 @@ public class InterceptionPointController extends BaseController
 			oql.bind(interceptorPointName);
 			
 			QueryResults results = oql.execute();
-			System.out.println("Fetching entity in read/write mode:" + interceptorPointName);
 			this.logger.info("Fetching entity in read/write mode:" + interceptorPointName);
 			if(results.hasMore()) 
 			{

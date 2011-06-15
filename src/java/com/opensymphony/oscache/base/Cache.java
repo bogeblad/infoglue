@@ -269,7 +269,7 @@ public class Cache implements Serializable {
 
         	//Get access to the EntryUpdateState instance and increment the usage count during the potential sleep
         	EntryUpdateState updateState = getUpdateState(key);
-        	//System.out.println("Stale:" + updateState.state + EntryUpdateState.NOT_YET_UPDATING);
+        	//log.debug("Stale:" + updateState.state + EntryUpdateState.NOT_YET_UPDATING);
             try {
             	synchronized (updateState) {
             		if (updateState.isAwaitingUpdate() || updateState.isCancelled()) {
@@ -285,11 +285,11 @@ public class Cache implements Serializable {
             			// Another thread is already updating the cache. We block if this
             			// is a new entry, or blocking mode is enabled. Either putInCache()
             			// or cancelUpdate() can cause this thread to resume.
-						System.out.println("Yes - it's updating...");
+            			log.debug("Yes - it's updating...");
             			if (cacheEntry.isNew() || blocking) {
             				do {
             					try {
-            						System.out.println("updateState was in:" + cacheEntry.isNew() + ":" + blocking);
+            						log.debug("updateState was in:" + cacheEntry.isNew() + ":" + blocking);
             						updateState.wait();
             					} catch (InterruptedException e) {
             					}

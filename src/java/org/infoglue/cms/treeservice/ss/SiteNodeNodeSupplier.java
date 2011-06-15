@@ -271,7 +271,6 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					hasUserPageAccess = getHasUserPageAccess(this.infogluePrincipal, vo.getId());
 				
 				Object isHiddenObject = vo.getExtraProperties().get("isHidden");
-				//System.out.println("isHiddenObject: " + isHiddenObject);
 					
 				if(hasUserPageAccess)
 				{
@@ -283,7 +282,7 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					else
 						node.getParameters().put("isHidden", "" + isHiddenObject);
 
-					//System.out.println("latestSiteNodeVO.getIsHidden(): " + vo.getIsHidden() + " on " + vo.getId());
+					//logger.info("latestSiteNodeVO.getIsHidden(): " + vo.getIsHidden() + " on " + vo.getId());
 					if(vo.getIsHidden() != null)
 						node.getParameters().put("isHidden", "" + vo.getIsHidden());
 
@@ -311,17 +310,17 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 				}	
 				
 				//Checks if the current node has the correct sortOrder
-				//System.out.println("vo.getSortOrder():" + vo.getSortOrder() + "=" + expectedSortOrder);
+				//logger.info("vo.getSortOrder():" + vo.getSortOrder() + "=" + expectedSortOrder);
 				if(!vo.getSortOrder().equals(expectedSortOrder))
 				{
-					//System.out.println("Changing sortOrder from:" + vo.getSortOrder() + " to " + expectedSortOrder);
+					//logger.info("Changing sortOrder from:" + vo.getSortOrder() + " to " + expectedSortOrder);
 					SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, vo.getId());
 					if(latestSiteNodeVersion != null)
 					{
 						latestSiteNodeVersion.setSortOrder(expectedSortOrder);
 						if(isHiddenObject != null)
 						{
-							//System.out.println("Setting hidden:" + isHiddenObject + " on " + latestSiteNodeVersion.getId());
+							//logger.info("Setting hidden:" + isHiddenObject + " on " + latestSiteNodeVersion.getId());
 							latestSiteNodeVersion.setIsHidden(new Boolean("" + isHiddenObject));
 						}
 					}
@@ -331,7 +330,7 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, vo.getId());
 					if(latestSiteNodeVersion != null)
 					{
-						//System.out.println("Setting hidden:" + isHiddenObject + " on " + latestSiteNodeVersion.getId());
+						//logger.info("Setting hidden:" + isHiddenObject + " on " + latestSiteNodeVersion.getId());
 						latestSiteNodeVersion.setIsHidden(new Boolean("" + isHiddenObject));
 					}
 				}

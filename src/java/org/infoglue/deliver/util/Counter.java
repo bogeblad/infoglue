@@ -31,7 +31,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.util.sorters.AverageInvokingTimeComparator;
+import org.infoglue.deliver.invokers.ComponentBasedHTMLPageInvoker;
 
 /**
  * @author mattias
@@ -41,6 +43,8 @@ import org.infoglue.cms.util.sorters.AverageInvokingTimeComparator;
  */
 public class Counter
 {
+    private final static Logger logger = Logger.getLogger(Counter.class.getName());
+
     private static Integer count = new Integer(0);
     private static Integer activeCount = new Integer(0);
     private static Integer totalCount = new Integer(0);
@@ -204,7 +208,7 @@ public class Counter
     	}  
     	catch (Exception e) 
     	{
-    		System.out.println("Error in registerComponentStatistics: " + e.getMessage());
+    		logger.error("Error in registerComponentStatistics: " + e.getMessage());
 		}
     }
 
@@ -224,7 +228,7 @@ public class Counter
     	}    	
     	catch (Exception e) 
     	{
-    		System.out.println("Error in registerPageStatistics: " + e.getMessage());
+    		logger.error("Error in registerPageStatistics: " + e.getMessage());
 		}
     }
 
@@ -338,7 +342,7 @@ public class Counter
     	}
     	catch (Exception e) 
     	{
-    		System.out.println("Error in shortenPageStatistics:" + e.getMessage());
+    		logger.error("Error in shortenPageStatistics:" + e.getMessage());
 		}
    	}
 

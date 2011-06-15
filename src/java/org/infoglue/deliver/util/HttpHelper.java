@@ -389,9 +389,6 @@ public class HttpHelper implements IOFetcher
 	    String readData = strbuf.toString();   
 	    buffer.close();
 	    
-	    System.out.println("Mattias ŒŠš €…");
-		System.out.println("readData:" + readData);
-
 	    return readData;   
 	}
 

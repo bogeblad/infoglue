@@ -65,9 +65,9 @@ public class PublicationThread extends Thread
 		    logger.info("\n\n\nUpdating all caches as this was a publishing-update\n\n\n");
 		    CacheController.clearCastorCaches();
 
-			System.out.println("**************************************");
-			System.out.println("*    HERE THE MAGIC SHOULD HAPPEN    *");
-			System.out.println("**************************************");
+		    logger.info("**************************************");
+		    logger.info("*    HERE THE MAGIC SHOULD HAPPEN    *");
+		    logger.info("**************************************");
 			Calendar calendar = Calendar.getInstance();
 			calendar.add(Calendar.HOUR, -1);
 			List<PublicationVO> publicationVOList = PublicationController.getController().getPublicationsSinceDate(calendar.getTime());
@@ -83,16 +83,13 @@ public class PublicationThread extends Thread
 					PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
 					logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
 					logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
-					System.out.println("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
-					System.out.println("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
 					if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(ContentVersion.class.getName()))
 					{
-						System.out.println("YES......");
 						logger.info("We clear all caches having references to contentVersion: " + publicationDetailVO.getEntityId());
 						Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
 						
 						String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
-						System.out.println("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
+						logger.info("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
 						if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
 						{
 							List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(publicationDetailVO.getEntityId());
@@ -100,7 +97,6 @@ public class PublicationThread extends Thread
 				    		while(digitalAssetVOListIterator.hasNext())
 				    		{
 				    			DigitalAssetVO digitalAssetVO = digitalAssetVOListIterator.next();
-								System.out.println("We should delete all images with digitalAssetId " + digitalAssetVO.getId());
 								logger.info("We should delete all images with digitalAssetId " + digitalAssetVO.getId());
 								DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(digitalAssetVO.getId());
 				    		}

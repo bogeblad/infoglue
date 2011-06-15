@@ -99,8 +99,8 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 					InterceptionPointVO readInterceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.Read");
 					List changeAccessRightVOList = AccessRightController.getController().getAccessRightVOListOnly(changeInterceptionPointVO.getId(), "" + contentId);
 					List readAccessRightVOList = AccessRightController.getController().getAccessRightVOListOnly(readInterceptionPointVO.getId(), "" + contentId);
-					System.out.println("changeAccessRightVOList:" + changeAccessRightVOList.size());
-					System.out.println("readAccessRightVOList:" + readAccessRightVOList.size());
+					logger.info("changeAccessRightVOList:" + changeAccessRightVOList.size());
+					logger.info("readAccessRightVOList:" + readAccessRightVOList.size());
 					if(changeAccessRightVOList.size() > 0 && readAccessRightVOList.size() > 0)
 						ceb.add(new AccessConstraintException("Content.contentId", "1006"));
 				}
@@ -116,7 +116,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 			if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 			{
 				boolean isSiteNodeVersionProtected = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getIsSiteNodeVersionProtected(siteNodeVersionVO.getId());
-				System.out.println("isSiteNodeVersionProtected:" + isSiteNodeVersionProtected);
+				logger.info("isSiteNodeVersionProtected:" + isSiteNodeVersionProtected);
 				Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
 				if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.ChangeAccessRights", siteNodeVersionId.toString()))
 				{
@@ -124,8 +124,8 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 					InterceptionPointVO readInterceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("SiteNodeVersion.Read");
 					List changeAccessRightVOList = AccessRightController.getController().getAccessRightVOListOnly(changeInterceptionPointVO.getId(), "" + siteNodeVersionVO.getId());
 					List readAccessRightVOList = AccessRightController.getController().getAccessRightVOListOnly(readInterceptionPointVO.getId(), "" + siteNodeVersionVO.getId());
-					System.out.println("changeAccessRightVOList:" + changeAccessRightVOList.size());
-					System.out.println("readAccessRightVOList:" + readAccessRightVOList.size());
+					logger.info("changeAccessRightVOList:" + changeAccessRightVOList.size());
+					logger.info("readAccessRightVOList:" + readAccessRightVOList.size());
 					if(changeAccessRightVOList.size() > 0 && readAccessRightVOList.size() > 0)
 						ceb.add(new AccessConstraintException("SiteNodeVersion.siteNodeId", "1006"));
 				}

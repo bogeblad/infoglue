@@ -122,15 +122,15 @@ public class ContentDetailPageTag extends ComponentLogicTag
 					try
 					{
 						ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), getController().getDatabase());
-						System.out.println("contentTypeDefinitionVO:" + contentTypeDefinitionVO.getName());
+						logger.info("contentTypeDefinitionVO:" + contentTypeDefinitionVO.getName());
 						if(contentTypeDefinitionVO.getDetailPageResolverClass() != null && !contentTypeDefinitionVO.getDetailPageResolverClass().equals(""))
 						{
 							ContentDetailPageResolver cdpr = (ContentDetailPageResolver)loadExtensionClass(contentTypeDefinitionVO.getDetailPageResolverClass()).newInstance();;
-							System.out.println("cdpr:" + cdpr.getName());
+							logger.info("cdpr:" + cdpr.getName());
 							SiteNodeVO detailSiteNodeVO = cdpr.getDetailSiteNodeVO(getController().getPrincipal(), contentVO.getId(), contentTypeDefinitionVO.getDetailPageResolverData(), getController().getDatabase());
-							System.out.println("detailSiteNodeVO:" + detailSiteNodeVO.getId());
+							logger.info("detailSiteNodeVO:" + detailSiteNodeVO.getId());
 							webPage = getController().getPage(detailSiteNodeVO.getId(), getController().getLanguageId(), new Integer(-1), escapeHTML, hideUnauthorizedPages);
-							System.out.println("webPage:" + webPage.getSiteNodeId());
+							logger.info("webPage:" + webPage.getSiteNodeId());
 						}
 					}
 					catch (Exception e) 

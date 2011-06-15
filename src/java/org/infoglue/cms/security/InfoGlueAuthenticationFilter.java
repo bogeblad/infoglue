@@ -49,8 +49,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
+import org.infoglue.cms.controllers.kernel.impl.simple.SystemUserController;
 import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
+import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.DesEncryptionHelper;
@@ -174,33 +176,29 @@ public class InfoGlueAuthenticationFilter implements Filter
 	
 			String requestURI = URLDecoder.decode(getContextRelativeURI(httpServletRequest), "UTF-8");
 			if(URI == null)
-				System.out.println("URI was null - requestURI:" + requestURI);
+				logger.error("URI was null - requestURI:" + requestURI);
 			if(URL == null)
-				System.out.println("URL was null - requestURI:" + requestURI);
+				logger.error("URL was null - requestURI:" + requestURI);
 			if(requestURI == null)
-				System.out.println("requestURI was null");
+				logger.error("requestURI was null");
 			
 			if(loginUrl == null)
 			{
-				System.out.println("loginUrl was null - fix this.");
 				logger.error("loginUrl was null - fix this.");
 				loginUrl = "Login.action";
 			}
 			if(invalidLoginUrl == null)
 			{
-				System.out.println("invalidLoginUrl was null - fix this.");
 				logger.error("invalidLoginUrl was null - fix this.");
 				invalidLoginUrl = "Login!invalidLogin.action";
 			}
 			if(logoutUrl == null)
 			{
-				System.out.println("logoutUrl was null - fix this.");
 				logger.error("logoutUrl was null - fix this.");
 				logoutUrl = "ExtranetLogin!logout.action";
 			}
 			if(uriMatcher == null)
 			{
-				System.out.println("uriMatcher was null - fix this.");
 				logger.error("uriMatcher was null - fix this.");
 		        String filterURIs = filterConfig.getInitParameter(FILTER_URIS_PARAMETER);
 		        uriMatcher = URIMatcher.compilePatterns(splitString(filterURIs, ","), false);
@@ -212,16 +210,12 @@ public class InfoGlueAuthenticationFilter implements Filter
 				return;
 			}
 
-			//System.out.println("Yep - here:" + URI + ":" + requestURI);
 			if(URI != null && URL != null && (URI.indexOf(loginUrl) > -1 || URL.indexOf(loginUrl) > -1 || URI.indexOf(invalidLoginUrl) > -1 || URL.indexOf(invalidLoginUrl) > -1 || URI.indexOf(logoutUrl) > -1 || URI.indexOf("Login!logout.action") > -1 || URL.indexOf(logoutUrl) > -1 || URI.indexOf("UpdateCache") > -1 || URI.indexOf("protectedRedirect.jsp") > -1 || uriMatcher.matches(requestURI)))
 			{
-				//System.out.println("Yep - here also");
 				fc.doFilter(request, response); 
 				return;
 	   	 	}
 	
-			//System.out.println("Nope...");
-
 			// make sure we've got an HTTP request
 			if (!(request instanceof HttpServletRequest) || !(response instanceof HttpServletResponse))
 			  throw new ServletException("InfoGlue Filter protects only HTTP resources");
@@ -260,8 +254,6 @@ public class InfoGlueAuthenticationFilter implements Filter
 			if(userName != null && password != null)
 			{
 				String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
-				//String administratorPassword = CmsPropertyHandler.getAdministratorPassword();
-				//isAdministrator = (userName.equalsIgnoreCase(administratorUserName) && password.equalsIgnoreCase(administratorPassword)) ? true : false;
 				
 				boolean matchesRootPassword = CmsPropertyHandler.getMatchesAdministratorPassword(password);
 				isAdministrator = (userName.equalsIgnoreCase(administratorUserName) && matchesRootPassword) ? true : false;
@@ -360,16 +352,12 @@ public class InfoGlueAuthenticationFilter implements Filter
 					    String encryptedPasswordAsBase64 = Base64.encodeBase64URLSafeString(encryptedPassword.getBytes("utf-8"));
 
 						String deliverBaseUrl = CmsPropertyHandler.getComponentRendererUrl();
-				    	//System.out.println("deliverBaseUrl:" + deliverBaseUrl);
 						String[] parts = deliverBaseUrl.split("/");
 						
 						deliverBaseUrl = "/" + parts[parts.length -1];
-						//System.out.println("deliverBaseUrl:" + deliverBaseUrl);
 						//logger.info("used cmsBaseUrl:" + cmsBaseUrl);
 						
 					    ServletContext servletContext = filterConfig.getServletContext().getContext(deliverBaseUrl);
-						//System.out.println("servletContext:" + servletContext);
-					    
 					    if (servletContext == null)
 					    {
 					    	logger.error("Could not autologin to " + deliverBaseUrl + ". Set cross context = true in Tomcat config.");
@@ -610,12 +598,10 @@ public class InfoGlueAuthenticationFilter implements Filter
 				{
 		    		extraProperties = new Properties();
 					extraProperties.load(new ByteArrayInputStream(extraPropertiesString.getBytes("UTF-8")));
-					//extraProperties.list(System.out);
 				}	
 				catch(Exception e)
 				{
 				    logger.error("Error loading properties from string. Reason:" + e.getMessage());
-					e.printStackTrace();
 				}
 			}
 		    else
@@ -701,11 +687,11 @@ public class InfoGlueAuthenticationFilter implements Filter
 	    	InfoGlueAuthenticationFilter.casLogoutUrl = casLogoutUrl;
 
 		    String extraPropertiesString = CmsPropertyHandler.getServerNodeDataProperty("deliver", "extraSecurityParameters", true, null);
-		    System.out.println("extraPropertiesString 1:" + extraPropertiesString);
+		    logger.info("extraPropertiesString 1:" + extraPropertiesString);
 		    if(extraPropertiesString == null || extraPropertiesString.equals(""))
 		    {
 		    	extraPropertiesString = CmsPropertyHandler.getServerNodeDataProperty(null, "extraSecurityParameters", true, null);
-			    System.out.println("extraPropertiesString 2:" + extraPropertiesString);
+		    	logger.info("extraPropertiesString 2:" + extraPropertiesString);
 		    }
 		    
 		    if(extraPropertiesString != null)
@@ -715,7 +701,6 @@ public class InfoGlueAuthenticationFilter implements Filter
 				{
 		    		InfoGlueAuthenticationFilter.extraProperties = new Properties();
 		    		InfoGlueAuthenticationFilter.extraProperties.load(new ByteArrayInputStream(extraPropertiesString.getBytes("UTF-8")));
-					//extraProperties.list(System.out);
 				}	
 				catch(Exception e)
 				{
@@ -741,8 +726,11 @@ public class InfoGlueAuthenticationFilter implements Filter
 					}
 				}
 		    }
-		    System.out.println("\n\nRELOADED THE AUTH FILTER PROPS...:" + extraProperties);
-		    extraProperties.list(System.out);
+		    
+		    logger.info("\n\nRELOADED THE AUTH FILTER PROPS...:" + extraProperties);
+		    
+		    if(logger.isDebugEnabled())
+		    	extraProperties.list(System.out);
 		    
 		    logger.info("authenticatorClass:" + authenticatorClass);
 		    logger.info("authorizerClass:" + authorizerClass);

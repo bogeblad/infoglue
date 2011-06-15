@@ -192,7 +192,7 @@ public class WorkflowController extends BaseController
 				toEncoding = "utf-8";
 				
 			String encodedName = new String(workflowName.getBytes(fromEncoding), toEncoding);
-			System.out.println("" + workflowVO.getName() + "=" + workflowName + "/" + encodedName);
+			logger.info("" + workflowVO.getName() + "=" + workflowName + "/" + encodedName);
 			
 			if(workflowVO.getName().equals(workflowName) || workflowVO.getName().equals(encodedName))
 			{
@@ -208,7 +208,7 @@ public class WorkflowController extends BaseController
 		WorkflowVO workflow = null;
 		
 		List<WorkflowVO> workflows = getCurrentWorkflowVOList(principal);
-		System.out.println("workflows:" + workflows);
+		logger.info("workflows:" + workflows);
 		if(workflows != null)
 		{
 			Iterator<WorkflowVO> workflowsIterator = workflows.iterator();

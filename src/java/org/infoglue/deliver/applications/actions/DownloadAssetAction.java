@@ -168,9 +168,9 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 			        	if(this.principal == null)
 			        		this.principal = getAnonymousPrincipal();
 		    		}
-			        //System.out.println("principal:" + principal);
+			        //logger.info("principal:" + principal);
 		    		Integer digitalAssetId = cdc.getDigitalAssetId(db, contentId, languageId, assetKey, siteNodeId, true, deliveryContext, (InfoGluePrincipal)principal);
-		        	//System.out.println("digitalAssetId:" + digitalAssetId);
+		        	//logger.info("digitalAssetId:" + digitalAssetId);
 		        	if(digitalAssetId != null)
 		        	{
 		        		this.digitalAssetVO = DigitalAssetController.getSmallDigitalAssetVOWithId(digitalAssetId, db);

@@ -5935,7 +5935,6 @@ public class BasicTemplateController implements TemplateController
 			
 			if((!hideUnauthorizedPages || getHasUserPageAccess(siteNodeVO.getId())) && (showHidden || !siteNodeVO.getIsHidden()))
 			{
-				//System.out.println("Adding " + siteNodeVO.getName());
 				try
 				{
 					WebPage webPage = new WebPage();

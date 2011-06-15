@@ -882,7 +882,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		       			if(!this.assetTypeFilter.equals("*") && this.assetTypeFilter.indexOf(assetVO.getAssetContentType()) == -1)
 	       				{
 	       					digitalAssetsIterator.remove();
-	       					//System.out.println("Removed file from asset list:" + this.assetTypeFilter);
+	       					//logger.info("Removed file from asset list:" + this.assetTypeFilter);
 	       				}
 	       			}
 	       		}

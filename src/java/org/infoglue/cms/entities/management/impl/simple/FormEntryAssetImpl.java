@@ -29,6 +29,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.FormEntry;
 import org.infoglue.cms.entities.management.FormEntryAsset;
@@ -37,6 +39,8 @@ import org.infoglue.cms.entities.management.FormEntryAssetVO;
 
 public class FormEntryAssetImpl implements FormEntryAsset
 {
+    private final static Logger logger = Logger.getLogger(FormEntryAssetImpl.class.getName());
+
     private FormEntryAssetVO valueObject = new FormEntryAssetVO();
     private FormEntry formEntry;
 	private java.io.InputStream assetBlob;
@@ -187,7 +191,7 @@ public class FormEntryAssetImpl implements FormEntryAsset
 			}
 			catch(Exception e)
 			{
-				System.out.println("The asset with id:" + this.getId() + " had no assetBlob or an error occurred when we tried to get it:" + e.getMessage());
+				logger.error("The asset with id:" + this.getId() + " had no assetBlob or an error occurred when we tried to get it:" + e.getMessage());
 			}
 		}
 				

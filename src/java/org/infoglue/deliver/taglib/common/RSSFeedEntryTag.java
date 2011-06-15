@@ -55,7 +55,8 @@ public class RSSFeedEntryTag extends TemplateControllerTag
 	private String link 		= null;
 	private Date publishedDate	= null;
 	private String description	= null;
-	private List categories		= new ArrayList();
+	private List<SyndCategory> categories	= new ArrayList();
+	private List<SyndContent> contents		= new ArrayList<SyndContent>();
 	private String descriptionContentType = "text/html";
 	private boolean correctDoubleAmpEncoding	= true;
 	
@@ -103,6 +104,8 @@ public class RSSFeedEntryTag extends TemplateControllerTag
 	        entry.setDescription(syndContent);
 	        
 	        entry.setCategories(categories);
+
+	        entry.setContents(contents);
 
 		    addEntry(entry);
 	    }
@@ -164,5 +167,10 @@ public class RSSFeedEntryTag extends TemplateControllerTag
     public void addEntryCategory(SyndCategory category)
     {    	
     	this.categories.add(category);
+    }
+
+    public void addEntryContent(SyndContent content)
+    {    	
+    	this.contents.add(content);
     }
 }

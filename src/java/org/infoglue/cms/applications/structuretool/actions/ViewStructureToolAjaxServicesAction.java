@@ -80,13 +80,13 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 	    	{
 				this.siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
 				this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeVersionVO.getSiteNodeId());
-				System.out.println("ChildCount:" + this.siteNodeVO.getChildCount());
+				logger.info("ChildCount:" + this.siteNodeVO.getChildCount());
 				this.repositoryId = this.siteNodeVO.getRepositoryId();
 			}
 			else if(siteNodeId != null)
 			{
 				this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
-				System.out.println("ChildCount:" + this.siteNodeVO.getChildCount());
+				logger.info("ChildCount:" + this.siteNodeVO.getChildCount());
 				this.repositoryId = this.siteNodeVO.getRepositoryId();
 				this.siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeId);
 				if(this.siteNodeVersionVO != null)

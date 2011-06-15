@@ -215,11 +215,8 @@ public class WorkingPublicationThread extends Thread
 								String disableAssetDeletionInWorkThread = CmsPropertyHandler.getDisableAssetDeletionInWorkThread();
 								if(disableAssetDeletionInWorkThread != null && !disableAssetDeletionInWorkThread.equals("true"))
 								{
-									System.out.println("*********************************************************");
-									System.out.println("We should delete all images with digitalAssetId " + objectId);
 									logger.info("We should delete all images with digitalAssetId " + objectId);
 									DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
-									System.out.println("*********************************************************");
 								}
 								
 								List<ContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(new Integer(objectId));	
@@ -227,7 +224,7 @@ public class WorkingPublicationThread extends Thread
 					    		while(contentVersionVOListIterator.hasNext())
 					    		{
 					    			ContentVersionVO contentVersionVO = contentVersionVOListIterator.next();
-					    			System.out.println("Invoking clearCaches for ContentVersionImpl with id:" + contentVersionVO.getId());
+					    			logger.info("Invoking clearCaches for ContentVersionImpl with id:" + contentVersionVO.getId());
 						    		CacheController.clearCaches(ContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);					    			
 					    		}
 

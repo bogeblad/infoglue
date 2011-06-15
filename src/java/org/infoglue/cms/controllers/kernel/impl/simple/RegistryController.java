@@ -883,7 +883,7 @@ public class RegistryController extends BaseController
 		    		logger.info("contentVersion:" + contentVersion.getContentVersionId());
 		    		if(excludeInternalContentReferences && contentVersion.getValueObject().getContentId().equals(contentId))
 		    		{
-		    			System.out.println("Skipping internal reference " + contentId + " had on itself.");
+		    			logger.info("Skipping internal reference " + contentId + " had on itself.");
 		    			referenceBeanList.remove(existingReferenceBean);
 		    		}
 		    		else

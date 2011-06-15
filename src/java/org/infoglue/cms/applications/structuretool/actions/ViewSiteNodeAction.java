@@ -562,10 +562,8 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		        }
 		        else
 		        {
-		        	System.out.println("Showing cover....");
-		            this.initializeSiteNodeCover(getSiteNodeId(), db);
-		        	System.out.println("After init in cover....");
-		            
+		        	this.initializeSiteNodeCover(getSiteNodeId(), db);
+		        	
 		        	if(this.siteNodeVO.getSiteNodeTypeDefinitionId() == null)
 		        		result = "inputSiteNodeTypeDefinition";
 		        	else
@@ -581,8 +579,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    }
 		catch(ConstraintException ce)
 		{
-	    	System.out.println("ConstraintException:" + ce);
-			ce.printStackTrace();
 			logger.info("An error occurred so we should not complete the transaction:" + ce, ce);
 			rollbackTransaction(db);
 			throw ce;
@@ -595,7 +591,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		}
 		catch (Throwable e) 
 		{
-	    	System.out.println("Throwable:" + e);
+	    	logger.error("Throwable:" + e);
 		}
     	
 		return result;

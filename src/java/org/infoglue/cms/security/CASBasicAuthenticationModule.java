@@ -44,7 +44,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.SystemUserController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
+import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -85,8 +87,33 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 	{
 		String authenticatedUserName = null;
 
-		HttpSession session = ((HttpServletRequest)request).getSession();
-
+		try
+		{
+			String j_userName = request.getParameter("j_username");
+			String j_password = request.getParameter("j_password");
+			
+			logger.info("userName:" + j_userName + "=" + j_password);
+			String allowedDirectLoginNames = CmsPropertyHandler.getAllowedDirectLoginNames();
+			logger.info("allowedDirectLoginNames:" + allowedDirectLoginNames);
+			String[] allowedDirectLoginNamesArray = allowedDirectLoginNames.split(",");
+			for(String allowedUserName : allowedDirectLoginNamesArray)
+			{
+				logger.info("allowedUserName:" + allowedUserName);
+				if(allowedUserName.equalsIgnoreCase(j_userName))
+				{
+					logger.info("Was allowed - let's try to authenticate:" + allowedUserName);
+					SystemUserVO systemUserVO = SystemUserController.getController().getSystemUserVO(allowedUserName, j_password);
+					logger.info("Was it found:" + systemUserVO);
+					if(systemUserVO != null)
+						return systemUserVO.getUserName();
+				}
+			}
+		}
+		catch (Exception e) 
+		{
+			logger.error("Could not check if the user was allowed to log in with url parameters:" + e.getMessage(), e);
+		}
+		
 		String ticket = request.getParameter("ticket");
 		logger.info("ticket:" + ticket);
 		
@@ -190,6 +217,30 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			
 			if(j_userName.equals(anonymousUserName) && j_password.equals(anonymousPassword))
 				return j_userName;
+			
+			try
+			{
+				logger.info("userName:" + j_userName + "=" + j_password);
+				String allowedDirectLoginNames = CmsPropertyHandler.getAllowedDirectLoginNames();
+				logger.info("allowedDirectLoginNames:" + allowedDirectLoginNames);
+				String[] allowedDirectLoginNamesArray = allowedDirectLoginNames.split(",");
+				for(String allowedUserName : allowedDirectLoginNamesArray)
+				{
+					logger.info("allowedUserName:" + allowedUserName);
+					if(allowedUserName.equalsIgnoreCase(j_userName))
+					{
+						logger.info("Was allowed - let's try to authenticate:" + allowedUserName);
+						SystemUserVO systemUserVO = SystemUserController.getController().getSystemUserVO(allowedUserName, j_password);
+						logger.info("Was it found:" + systemUserVO);
+						if(systemUserVO != null)
+							return systemUserVO.getUserName();
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.error("Could not check if the user was allowed to log in with url parameters:" + e.getMessage(), e);
+			}
 		}
 		
 		String ticket = (String)request.get("ticket");
@@ -358,7 +409,7 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 
 		HostnameVerifier hv = new HostnameVerifier() {
 		    public boolean verify(String urlHostName, SSLSession session) {
-		        System.out.println("Warning: URL Host: "+urlHostName+" vs. "+session.getPeerHost());
+		        logger.warn("Warning: URL Host: "+urlHostName+" vs. "+session.getPeerHost());
 		        return true;
 		    }
 		};
@@ -741,6 +792,52 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 		String gateway 	= (String)request.getAttribute("gateway");
 		logger.info("ticket:" + ticket);
 		logger.info("gateway:" + gateway);
+		
+		String j_userName = (String)request.getParameter("j_username");
+		String j_password = (String)request.getParameter("j_password");
+		if(j_userName != null && j_password != null)
+		{
+			String userName = CmsPropertyHandler.getAdministratorUserName();
+			//String password = CmsPropertyHandler.getAdministratorPassword();
+			
+			boolean matchesRootPassword = CmsPropertyHandler.getMatchesAdministratorPassword(j_password);
+			if(j_userName.equals(userName) && matchesRootPassword)
+				return j_userName;
+			/*
+			if(j_userName.equals(userName) && j_password.equals(password))
+				return j_userName;
+			*/
+			
+			String anonymousUserName = CmsPropertyHandler.getAnonymousUser();
+			String anonymousPassword = CmsPropertyHandler.getAnonymousPassword();
+			
+			if(j_userName.equals(anonymousUserName) && j_password.equals(anonymousPassword))
+				return j_userName;
+			
+			try
+			{
+				logger.info("userName:" + j_userName + "=" + j_password);
+				String allowedDirectLoginNames = CmsPropertyHandler.getAllowedDirectLoginNames();
+				logger.info("allowedDirectLoginNames:" + allowedDirectLoginNames);
+				String[] allowedDirectLoginNamesArray = allowedDirectLoginNames.split(",");
+				for(String allowedUserName : allowedDirectLoginNamesArray)
+				{
+					logger.info("allowedUserName:" + allowedUserName);
+					if(allowedUserName.equalsIgnoreCase(j_userName))
+					{
+						logger.info("Was allowed - let's try to authenticate:" + allowedUserName);
+						SystemUserVO systemUserVO = SystemUserController.getController().getSystemUserVO(allowedUserName, j_password);
+						logger.info("Was it found:" + systemUserVO);
+						if(systemUserVO != null)
+							return systemUserVO.getUserName();
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.error("Could not check if the user was allowed to log in with url parameters:" + e.getMessage(), e);
+			}
+		}
 		
 		// no ticket?  abort request processing and redirect
 		if (ticket == null || ticket.equals("")) 

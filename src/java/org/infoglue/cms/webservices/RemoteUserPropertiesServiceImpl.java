@@ -173,7 +173,7 @@ public class RemoteUserPropertiesServiceImpl extends RemoteInfoGlueService
 	        List digitalAssets = assets;
 	        
 	        logger.info("digitalAssets:" + digitalAssets);
-	        //System.out.println("digitalAssets:" + digitalAssets.size());
+	        //logger.info("digitalAssets:" + digitalAssets.size());
 	        if(digitalAssets != null)
 	        {
     	        Iterator digitalAssetIterator = digitalAssets.iterator();
@@ -181,7 +181,7 @@ public class RemoteUserPropertiesServiceImpl extends RemoteInfoGlueService
     	        {
     	            RemoteAttachment remoteAttachment = (RemoteAttachment)digitalAssetIterator.next();
 	    	        logger.info("digitalAssets in ws:" + remoteAttachment);
-	    	        //System.out.println("remoteAttachment:" + remoteAttachment.getName() + ":" + remoteAttachment.getSize() + ":" + remoteAttachment.getFilePath());
+	    	        //logger.info("remoteAttachment:" + remoteAttachment.getName() + ":" + remoteAttachment.getSize() + ":" + remoteAttachment.getFilePath());
 	    	        
 	            	DigitalAssetVO newAsset = new DigitalAssetVO();
 					newAsset.setAssetContentType(remoteAttachment.getContentType());
@@ -196,10 +196,10 @@ public class RemoteUserPropertiesServiceImpl extends RemoteInfoGlueService
 					while(existingDigitalAssetVOListIterator.hasNext())
 					{
 						DigitalAssetVO assetVO = (DigitalAssetVO)existingDigitalAssetVOListIterator.next();
-						//System.out.println("assetVO:" + assetVO.getAssetKey());
+						//logger.info("assetVO:" + assetVO.getAssetKey());
 						if(assetVO.getAssetKey().equals(newAsset.getAssetKey()))
 						{
-							//System.out.println("Removing:" + assetVO.getAssetKey() + ":" + assetVO.getAssetFileName());
+							//logger.info("Removing:" + assetVO.getAssetKey() + ":" + assetVO.getAssetFileName());
 							DigitalAssetController.getController().delete(assetVO.getId(), UserProperties.class.getName(), newUserPropertiesId);
 						}
 					}

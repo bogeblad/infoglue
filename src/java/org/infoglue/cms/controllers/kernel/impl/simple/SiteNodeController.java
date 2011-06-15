@@ -122,7 +122,7 @@ public class SiteNodeController extends BaseController
 		SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
 		if(siteNodeVO != null)
 		{
-			//System.out.println("There was an cached siteNodeVO:" + siteNodeVO);
+			//logger.info("There was an cached siteNodeVO:" + siteNodeVO);
 		}
 		else
 		{
@@ -822,9 +822,9 @@ public class SiteNodeController extends BaseController
 	   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
     	}
 
-    	//System.out.println("SQL:" + SQL);
-    	//System.out.println("parentSiteNodeId:" + parentSiteNodeId);
-    	//System.out.println("showDeletedItems:" + showDeletedItems);
+    	//logger.info("SQL:" + SQL);
+    	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
+    	//logger.info("showDeletedItems:" + showDeletedItems);
     	OQLQuery oql = db.getOQLQuery(SQL.toString());
 		oql.bind(parentSiteNodeId);
 		oql.bind(showDeletedItems);
@@ -1067,14 +1067,14 @@ public class SiteNodeController extends BaseController
             siteNode.setParentSiteNode((SiteNodeImpl)newParentSiteNode);
             
             Integer metaInfoContentId = siteNode.getMetaInfoContentId();
-            //System.out.println("metaInfoContentId:" + metaInfoContentId);
+            //logger.info("metaInfoContentId:" + metaInfoContentId);
             if(!siteNode.getRepository().getId().equals(newParentSiteNode.getRepository().getId()) && metaInfoContentId != null)
             {
             	Content metaInfoContent = ContentController.getContentController().getContentWithId(metaInfoContentId, db);
             	Content newParentContent = ContentController.getContentController().getContentWithPath(newParentSiteNode.getRepository().getId(), "Meta info folder", true, principal, db);
             	if(metaInfoContent != null && newParentContent != null)
             	{
-            		//System.out.println("Moving:" + metaInfoContent.getName() + " to " + newParentContent.getName());
+            		//logger.info("Moving:" + metaInfoContent.getName() + " to " + newParentContent.getName());
             		newParentContent.getChildren().add(metaInfoContent);
             		Content previousParentContent = metaInfoContent.getParentContent();
             		metaInfoContent.setParentContent((ContentImpl)newParentContent);
@@ -1129,9 +1129,9 @@ public class SiteNodeController extends BaseController
             	throw new ConstraintException("SiteNode.parentSiteNodeId", "3403"); //TODO
             }
             
-            //System.out.println("siteNodeId:" + siteNodeId);
-            //System.out.println("beforeSiteNodeId:" + beforeSiteNodeId);
-            //System.out.println("direction:" + direction);
+            //logger.info("siteNodeId:" + siteNodeId);
+            //logger.info("beforeSiteNodeId:" + beforeSiteNodeId);
+            //logger.info("direction:" + direction);
             
             if(beforeSiteNodeId != null)
             {
@@ -1159,19 +1159,19 @@ public class SiteNodeController extends BaseController
 				{
 					SiteNodeVO childSiteNodeVO = childrenVOListIterator.next();
 					SiteNodeVersion latestChildSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, childSiteNodeVO.getId());
-					//System.out.println("latestChildSiteNodeVersion:" + latestChildSiteNodeVersion.getId());
+					//logger.info("latestChildSiteNodeVersion:" + latestChildSiteNodeVersion.getId());
 					Integer currentSortOrder = latestChildSiteNodeVersion.getSortOrder();
 					if(currentSortOrder.equals(oldSortOrder))
 					{
 						latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
 						latestChildSiteNodeVersion.setSortOrder(newSortOrder);
-						//System.out.println("Changed sort order on:" + latestChildSiteNodeVersion.getId() + " into " + newSortOrder);
+						//logger.info("Changed sort order on:" + latestChildSiteNodeVersion.getId() + " into " + newSortOrder);
 					}
 					else if(currentSortOrder.equals(newSortOrder))
 					{
 						latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
 						latestChildSiteNodeVersion.setSortOrder(oldSortOrder);
-						//System.out.println("Changed sort order on:" + latestChildSiteNodeVersion.getId() + " into " + oldSortOrder);
+						//logger.info("Changed sort order on:" + latestChildSiteNodeVersion.getId() + " into " + oldSortOrder);
 					}
 				}
             }
@@ -1204,10 +1204,10 @@ public class SiteNodeController extends BaseController
 
         try
         {
-        	//System.out.println("siteNodeId:" + siteNodeId);
+        	//logger.info("siteNodeId:" + siteNodeId);
             
             SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, siteNodeId);
-            //System.out.println("latestSiteNodeVersion:" + latestSiteNodeVersion);
+            //logger.info("latestSiteNodeVersion:" + latestSiteNodeVersion);
             if(latestSiteNodeVersion != null)
 			{
         		latestSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed hidden", infoGluePrincipal, db);

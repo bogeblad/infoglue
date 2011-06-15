@@ -119,9 +119,9 @@ public class InstallationController extends BaseController
 		} 
 		catch (Exception e) 
 		{
-			System.out.println("--------------------------------------------------");
-			System.out.println("Error:" + e.getMessage());
-			System.out.println("--------------------------------------------------");
+			logger.info("--------------------------------------------------");
+			logger.info("Error:" + e.getMessage());
+			logger.info("--------------------------------------------------");
 			//e.printStackTrace();
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
@@ -191,7 +191,7 @@ public class InstallationController extends BaseController
 			rs.next();
 			
 			String versionValue = rs.getString("value");
-			System.out.println("versionValue:" + versionValue);
+			logger.info("versionValue:" + versionValue);
 			if(versionValue.equals("3.0"))
 				return "3.0";
 	    }
@@ -243,7 +243,7 @@ public class InstallationController extends BaseController
 			for(int i=1; i<=rs.getMetaData().getColumnCount(); i++)
 			{
 				String columnName = rs.getMetaData().getColumnName(i);
-				System.out.println("columnName:" + columnName);
+				logger.info("columnName:" + columnName);
 				if(columnName.equalsIgnoreCase("forceProtocolChange"))
 					return "2.9.8.7";
 			}
@@ -448,9 +448,9 @@ public class InstallationController extends BaseController
 	public boolean validateApplicationFile() throws Exception
 	{
 		String cmsFilePath = CastorDatabaseService.class.getResource("/" + CmsPropertyHandler.getApplicationName() + ".properties").getPath();
-		//System.out.println("cmsFilePath:" + cmsFilePath);
+		//logger.info("cmsFilePath:" + cmsFilePath);
 		String contents = FileHelper.getFileAsString(new File(cmsFilePath));
-		//System.out.println("contents:" + contents.substring(0, 200));
+		//logger.info("contents:" + contents.substring(0, 200));
 		
 	    if(contents.indexOf("configured=true") > -1 || contents.indexOf("databaseEngine=@database.driver.engine@") == -1)
 	    	return true;
@@ -780,7 +780,7 @@ public class InstallationController extends BaseController
 	public void updateDatabaseFromExisting(String createDatabase, String addExampleRepositories, String dbUser, String dbPassword, HttpSession session) throws Exception 
 	{
 		int reason = getBrokenDatabaseReason();
-		System.out.println("reason:" + reason);
+		logger.info("reason:" + reason);
 		
 		String dbProvider = getJDBCEngine();
 		
@@ -801,10 +801,10 @@ public class InstallationController extends BaseController
 		String dbServer = getDBServer(jdbcURL, dbProvider);
 		String dbPort = getDBPort(jdbcURL, dbProvider);
 		String dbInstance = getDBInstance(jdbcURL, dbProvider);
-		System.out.println("dbName:" + dbName);
-		System.out.println("dbServer:" + dbServer);
-		System.out.println("dbPort:" + dbPort);
-		System.out.println("dbInstance:" + dbInstance);
+		logger.info("dbName:" + dbName);
+		logger.info("dbServer:" + dbServer);
+		logger.info("dbPort:" + dbPort);
+		logger.info("dbInstance:" + dbInstance);
 		//String databaseMappingFile = getDatabaseMappingFile(dbProvider);
 		
 		if(!createDatabase.equalsIgnoreCase("true"))
@@ -831,7 +831,7 @@ public class InstallationController extends BaseController
 		if(dbProvider.equals("mssqlserver"))
 			dbPort = jdbcURL.substring(jdbcURL.indexOf(":", 12), jdbcURL.indexOf("/", 13));
 
-		System.out.println("dbPort:" + dbPort);
+		logger.info("dbPort:" + dbPort);
 		return dbPort;
 		*/
 	}
@@ -845,7 +845,7 @@ public class InstallationController extends BaseController
 		if(dbProvider.equals("mssqlserver"))
 			dbPort = jdbcURL.substring(jdbcURL.indexOf(":", 12) + 1, jdbcURL.indexOf("/", 13));
 
-		System.out.println("dbPort:" + dbPort);
+		logger.info("dbPort:" + dbPort);
 		return dbPort;
 	}
 
@@ -858,7 +858,7 @@ public class InstallationController extends BaseController
 		if(dbProvider.equals("mssqlserver"))
 			dbServer = jdbcURL.substring(jdbcURL.indexOf("://") + 3, jdbcURL.indexOf(":", 12));
 
-		System.out.println("dbServer:" + dbServer);
+		logger.info("dbServer:" + dbServer);
 		return dbServer;
 	}
 
@@ -875,7 +875,7 @@ public class InstallationController extends BaseController
 		if(dbProvider.equals("mssqlserver"))
 			dbName = jdbcURL.substring(jdbcURL.lastIndexOf("/") + 1, endIndex);
 
-		System.out.println("dbName:" + dbName);
+		logger.info("dbName:" + dbName);
 		return dbName;
 	}
 
@@ -905,11 +905,11 @@ public class InstallationController extends BaseController
 				igUser.equals("") || 
 				igPassword.equals(""))
 			{
-				System.out.println("dbProvider:" + dbProvider);
-				System.out.println("dbServer:" + dbServer);
-				System.out.println("dbPort:" + dbPort);
-				System.out.println("igUser:" + igUser);
-				System.out.println("igPassword:" + igPassword);
+				logger.info("dbProvider:" + dbProvider);
+				logger.info("dbServer:" + dbServer);
+				logger.info("dbPort:" + dbPort);
+				logger.info("igUser:" + igUser);
+				logger.info("igPassword:" + igPassword);
 				throw new Exception("Mandatory field(s) missing");
 			}
 		}
@@ -1273,7 +1273,7 @@ public class InstallationController extends BaseController
 		}
 		catch (Exception e) 
 		{
-			System.out.println("Error creating users or database:" + e.getMessage() + ".");
+			logger.error("Error creating users or database:" + e.getMessage() + ".");
 			try{conn.close();}catch(Exception e2){}
 			throw e;
 		}
@@ -1292,7 +1292,7 @@ public class InstallationController extends BaseController
 		}
 		catch (Exception e) 
 		{
-			System.out.println("Dropping old objects threw error:" + e.getMessage() + ". Let's continue...");
+			logger.error("Dropping old objects threw error:" + e.getMessage() + ". Let's continue...");
 		}
 		
 		try
@@ -1305,7 +1305,7 @@ public class InstallationController extends BaseController
 		}
 		catch (Exception e) 
 		{
-			System.out.println("Error creating users or database:" + e.getMessage() + ".");
+			logger.error("Error creating users or database:" + e.getMessage() + ".");
 			try{conn.close();}catch(Exception e2){}
 			throw e;
 		}
@@ -1637,8 +1637,8 @@ public class InstallationController extends BaseController
 		{
 			String valuesPart = sql.substring(sql.indexOf("VALUES") + 6).trim();
 			sql = sql.substring(0, sql.indexOf("VALUES") + 6);
-			//System.out.println("sql:" + sql);
-			//System.out.println("valuesPart:" + valuesPart);
+			//logger.info("sql:" + sql);
+			//logger.info("valuesPart:" + valuesPart);
 			
 			String tableName 		= null;
 			int blobColumn			= 0;
@@ -1775,7 +1775,7 @@ public class InstallationController extends BaseController
             cs.close();
         	//conn.close();
             
-            //System.out.println("After procedure:" + rs);
+            //logger.info("After procedure:" + rs);
         }
         catch(SQLException ex) 
         {
@@ -1843,9 +1843,9 @@ public class InstallationController extends BaseController
 	{
 		List columns = new ArrayList();
 		
-		//System.out.println("columnDefinition:" + columnDefinition);
+		//logger.info("columnDefinition:" + columnDefinition);
 		columnDefinition = columnDefinition.substring(1, columnDefinition.length() - 1);
-		//System.out.println("columnDefinition:" + columnDefinition);
+		//logger.info("columnDefinition:" + columnDefinition);
 		
 		StringTokenizer st = new StringTokenizer(columnDefinition, ",");
 		while (st.hasMoreTokens()) 
@@ -1882,9 +1882,9 @@ public class InstallationController extends BaseController
 	{
 		List valueList = new ArrayList();
 		
-		//System.out.println("values:" + values);
+		//logger.info("values:" + values);
 		values = values.substring(1, values.length() - 2);
-		//System.out.println("values:" + values);
+		//logger.info("values:" + values);
 		
 		int offset = 0;
 		int index = values.indexOf("[,]", offset);
@@ -1944,11 +1944,11 @@ public class InstallationController extends BaseController
 			try 
 			{
 				int reason = getBrokenDatabaseReason();
-				System.out.println("Reason:" + reason);
+				logger.error("Reason:" + reason);
 				if(reason == DATABASE_PARAMETERS_MISSING)
 					isValid = false;
 				else if(reason == DATABASE_SERVER_DOWN)
-					System.out.println("Cannot classify this as an config issue");
+					logger.error("Cannot classify this as an config issue");
 				else if(reason == DATABASE_SERVER_MISSING_DATABASE || reason == DATABASE_SERVER_MISSING_DATABASE_TABLES)
 					isValid = false;
 
@@ -1961,16 +1961,16 @@ public class InstallationController extends BaseController
 				else
 				{
 					String applicationName = CmsPropertyHandler.getApplicationName();
-					System.out.println("applicationName:" + applicationName);
-					System.out.println("serverConfigOK:" + serverConfigOK);
+					logger.info("applicationName:" + applicationName);
+					logger.info("serverConfigOK:" + serverConfigOK);
 					if(applicationName.equals("cms") && serverConfigOK)
 					{
-						System.out.println("url:" + url);
-						System.out.println("e.getMessage():" + e.getMessage());
-						System.out.println("e.getCause().getMessage():" + (e.getCause() != null ? e.getCause().getMessage() : ""));
+						logger.info("url:" + url);
+						logger.info("e.getMessage():" + e.getMessage());
+						logger.info("e.getCause().getMessage():" + (e.getCause() != null ? e.getCause().getMessage() : ""));
 						
 						int reason = getBrokenDatabaseReason();
-						System.out.println("Reason:" + reason);
+						logger.info("Reason:" + reason);
 						if(e.getMessage().indexOf("Unknown database") > -1 || e.getMessage().indexOf("Could not create connection to database server") > -1)
 							isValid = false;
 						else if(e.getCause() != null && e.getCause().getMessage().indexOf("Unknown database") > -1 || e.getCause().getMessage().indexOf("Could not create connection to database server") > -1)
@@ -1986,7 +1986,7 @@ public class InstallationController extends BaseController
 			}
 		}
 
-		System.out.println("Was it valid based on database connection:" + isValid);
+		logger.info("Was it valid based on database connection:" + isValid);
 		if(isValid)
 		{
 			try
@@ -2001,7 +2001,7 @@ public class InstallationController extends BaseController
 			}
 		}
 
-		System.out.println("Was it valid based on database version:" + isValid);
+		logger.info("Was it valid based on database version:" + isValid);
 		if(isValid)
 		{
 			try
@@ -2015,7 +2015,9 @@ public class InstallationController extends BaseController
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Was it valid based on application properties:" + isValid);
+		
+		logger.info("Was it valid based on application properties:" + isValid);
+		
 		return isValid;
 	}
 
@@ -2054,30 +2056,28 @@ public class InstallationController extends BaseController
 		    }
 		    catch(Exception e)
 		    {
-		        logger.error("Error in table lookup:" + e.getMessage());
-		        System.out.println("Was missing database tables:" + e.getMessage());
+		        logger.error("Was missing database tables:" + e.getMessage());
 		        return DATABASE_SERVER_MISSING_DATABASE_TABLES;
 		    }
 	    }
 	    catch(Exception e)
 	    {
-	    	System.out.println("Error getting pure connection");
-	    	e.printStackTrace();
+	    	logger.error("Error getting pure connection:" + e.getMessage());
 	    	
 	    	if(e.getMessage().indexOf("Unknown database") > -1 || e.getCause() != null && e.getCause().getMessage().indexOf("Unknown database") > -1)
 	    	{
-	    		System.out.println("Was a missing database error based on errorMessage");
+	    		logger.error("Was a missing database error based on errorMessage");
 	    		return DATABASE_SERVER_MISSING_DATABASE;
 	    	}
 	    	else if(e instanceof ConnectException || e.getCause() != null && e.getCause() instanceof ConnectException || e.getCause().getCause() != null && e.getCause().getCause() instanceof ConnectException)
 	    	{
-	    		System.out.println("Was a connection error based on ConnectException");
+	    		logger.error("Was a connection error based on ConnectException");
 	    		return DATABASE_SERVER_DOWN;
 	    	}
 	    	/*
 	    	else if(e.getMessage().indexOf("Could not create connection to database server") > -1)
 	    	{
-	    		System.out.println("Was a connection error based on errorMessage");
+	    		logger.error("Was a connection error based on errorMessage");
 	    		return DATABASE_SERVER_DOWN;
 	    	}
 	    	*/

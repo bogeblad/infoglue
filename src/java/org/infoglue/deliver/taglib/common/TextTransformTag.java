@@ -136,7 +136,6 @@ public class TextTransformTag extends TemplateControllerTag
 		    {
 		    	if(lineBreakChar.toCharArray().length == 1 && ((int)lineBreakChar.toCharArray()[0] == 10))
 		    	{
-		    		//System.out.println("Was a LF-based system - let's first replace all CR+LF as that is very common with input data");
 			    	modifiedText = modifiedText.replaceAll("" + (char)13 + lineBreakChar, lineBreakReplacer);	    
 		    	}
 		    	modifiedText = modifiedText.replaceAll(lineBreakChar, lineBreakReplacer);	    

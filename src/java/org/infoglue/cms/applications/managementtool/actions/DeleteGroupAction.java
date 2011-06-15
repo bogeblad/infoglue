@@ -55,7 +55,6 @@ public class DeleteGroupAction extends InfoGlueAbstractAction
 
 	public void setGroupName(String groupName) throws Exception
 	{
-		System.out.println("groupName:" + groupName);
 		logger.info("groupName:" + groupName);
 		byte[] bytes = Base64.decodeBase64(groupName);
 		String decodedGroupName = new String(bytes, "utf-8");
@@ -68,7 +67,7 @@ public class DeleteGroupAction extends InfoGlueAbstractAction
 		{
 			logger.info("No match on base64-based groupName:" + groupName);
 		}
-		System.out.println("groupName2:" + groupName);
+		logger.info("groupName2:" + groupName);
 		
 	    this.groupName = groupName;
 	}

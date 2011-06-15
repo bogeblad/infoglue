@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 
 /**
@@ -36,6 +37,8 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 
 public class ConfirmAction extends InfoGlueAbstractAction
 {
+	private final static Logger logger = Logger.getLogger(ConfirmAction.class.getName());
+
 	private String yesDestination;
 	private String noDestination;
 	private String dest;
@@ -147,7 +150,7 @@ public class ConfirmAction extends InfoGlueAbstractAction
 		if(this.choice.length() > 0)
 		{
 			Reroute();
-			System.out.println("this.dest:" + this.dest);
+			logger.info("this.dest:" + this.dest);
 			return "reroute";
 		}						
 		

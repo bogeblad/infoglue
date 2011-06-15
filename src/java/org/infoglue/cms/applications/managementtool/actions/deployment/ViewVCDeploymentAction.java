@@ -114,7 +114,7 @@ public class ViewVCDeploymentAction extends InfoGlueAbstractAction
     	ContentTypeDefinitionVO ctdFolder = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Folder");
     	
     	String[] missingRemoteContentPathArray = this.getRequest().getParameterValues("missingRemoteContentPath");
-    	System.out.println("missingRemoteContentPathArray:" + missingRemoteContentPathArray);
+    	logger.info("missingRemoteContentPathArray:" + missingRemoteContentPathArray);
     	
     	//List deviatingComponents = new ArrayList();
     	if(missingRemoteContentPathArray != null)

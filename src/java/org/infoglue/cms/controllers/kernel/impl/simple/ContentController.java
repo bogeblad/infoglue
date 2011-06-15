@@ -1595,7 +1595,7 @@ public class ContentController extends BaseController
             Content content = getReadOnlyContentWithId(parentContentId, db);
             Collection children = content.getChildren();
         	childrenVOList = ContentController.toVOList(children);
-        	System.out.println("childrenVOList under:" + content.getName() + ":" + childrenVOList.size());
+        	logger.info("childrenVOList under:" + content.getName() + ":" + childrenVOList.size());
         	
             //If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
@@ -1628,7 +1628,7 @@ public class ContentController extends BaseController
         	String showDeletedItemsClause = " AND content.isDeleted = $2";
         	
         	String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY content.contentId";
-        	//System.out.println("SQL:" + SQL);
+        	//logger.info("SQL:" + SQL);
         	OQLQuery oql = db.getOQLQuery(SQL);
     		//OQLQuery oql = db.getOQLQuery( "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 ORDER BY content.contentId");
     		oql.bind(parentContentId);
@@ -1637,7 +1637,7 @@ public class ContentController extends BaseController
     		{
 	        	for(int i=0; i < allowedContentTypeIds.length; i++)
 	        	{
-	        		System.out.println("allowedContentTypeIds[i]:" + allowedContentTypeIds[i]);
+	        		logger.info("allowedContentTypeIds[i]:" + allowedContentTypeIds[i]);
 	        		oql.bind(allowedContentTypeIds[i]);
 	        	}
     		}

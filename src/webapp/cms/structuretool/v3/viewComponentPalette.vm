@@ -67,6 +67,9 @@
 			#foreach($componentContent in $components)
 				#set($assetUrl = $this.getDigitalAssetUrl($componentContent.id, $masterLanguageVO.id, 'paletteThumbnail'))
 				#if(!$assetUrl || $assetUrl == "")
+					#set($assetUrl = $this.getDigitalAssetUrl($componentContent.id, $masterLanguageVO.id, 'thumbnail'))
+				#end
+				#if(!$assetUrl || $assetUrl == "")
 					#set($assetUrl = "images/v3/commonComponentIcon.png")
 				#end
 				
@@ -84,7 +87,7 @@
 			#end
 		</ul>
 		#if($components.size() == 0)
-			No components tagged as "favourites". Consult the documentation on how to set it up.
+			<p>No components tagged as "favourites". Consult the documentation on how to set it up.</p>
 		#end
 	</div>
 </body>

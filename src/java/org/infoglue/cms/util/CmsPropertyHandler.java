@@ -781,21 +781,24 @@ public class CmsPropertyHandler
 
 	public static String getMasterServer()
 	{
-	    return getProperty("masterServer", "");
+		return getServerNodeProperty("masterServer", true, "");
 	}
+   
 	public static String getSlaveServer()
 	{
-	    return getProperty("slaveServer", "");
+		return getServerNodeProperty("slaveServer", true, "");
 	}
-
+	   
 	public static String getBuildName()
 	{
 	    return getProperty("buildName", "");
 	}
+	
 	public static String getAdminToolsPath()
 	{
 	    return getProperty("adminToolsPath", "");
 	}
+	
 	public static String getDbScriptPath()
 	{
 	    return getProperty("dbScriptPath", "");

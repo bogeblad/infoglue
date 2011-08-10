@@ -1,8 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?> 
- 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-  
-#beginLightCommonToolV3Impl("tool.managementtool.viewSystemTools.header" "" "" false true false "" false "")
+#define($headerMarkup)
+
+	<script type="text/javascript">
+	<!-- 		
+		function downloadFile()
+		{
+			window.open("ViewLogging!downloadFile.action?logFileName=" + $("#logFileName").val(), "Download", "");
+		}
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.managementtool.viewSystemTools.header" "" "" false true false $headerMarkup false "")
 
 <div class="fullymarginalized">
 
@@ -23,7 +31,9 @@
 			<option value="500" #checkSelected("$logLines" "500")>500</option>
 			<option value="1000" #checkSelected("$logLines" "1000")>1000</option>
 			<option value="10000" #checkSelected("$logLines" "10000")>10000</option>
-		</select><br/>
+		</select>
+		<a href="#" onclick="downloadFile(); return false;">$ui.getString("tool.common.download.label")</a>
+		<br/>
 		
 		<strong>$ui.getString("tool.managementtool.logFragment.label"):</strong><br/>
   	</form>

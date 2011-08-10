@@ -285,7 +285,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		else
 		{
 			contentVersionVO = this.getContentVersionVO(siteNodeId, contentId, languageId, db, useLanguageFallback, deliveryContext, infoGluePrincipal);
-        	if(contentVersionVO != null)
+			if(contentVersionVO != null)
 			{
 				CacheController.cacheObjectInAdvancedCache("contentVersionCache", contentVersionKey, contentVersionVO, new String[]{"contentVersion_" + contentVersionVO.getId(), "content_" + contentVersionVO.getContentId()}, true);
 			}
@@ -605,7 +605,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 			else if(smallestContentVersionVOCandidate != null)
 			{
 				contentVersionVO = (ContentVersionVO)getVOWithId(SmallContentVersionImpl.class, ((SmallestContentVersionVO)smallestContentVersionVOCandidate).getId(), db);
-	        	
 				CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersionVO, new String[]{"contentVersion_" + contentVersionVO.getId(), "content_" + contentVersionVO.getContentId()}, true);
 			}
 			else
@@ -993,8 +992,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 			else
 			{
 				ContentVersionVO contentVersionVO = getContentVersionVO(db, siteNodeId, contentId, languageId, useLanguageFallback, deliveryContext, infogluePrincipal);
-			   
-	        	if (contentVersionVO != null) 
+
+				if (contentVersionVO != null) 
 				{
 				    attribute = getAttributeValue(db, contentVersionVO, attributeName, escapeHTML);	
 					contentVersionId = contentVersionVO.getId();

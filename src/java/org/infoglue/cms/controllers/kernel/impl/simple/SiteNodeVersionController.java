@@ -1226,6 +1226,7 @@ public class SiteNodeVersionController extends BaseController
 	                try
 	                {
 		                Content relatedContent = ContentController.getContentController().getContentWithId(new Integer(registryVO.getEntityId()), db);
+		                logger.info("Checking related content:" + relatedContent.getName() + ":" + relatedContent.getId() + ":" + includeMetaInfo + ":" + relatedContent.getContentTypeDefinition().getName());
 		                if(includeMetaInfo || (!includeMetaInfo && (relatedContent.getContentTypeDefinition() == null || !relatedContent.getContentTypeDefinition().getName().equalsIgnoreCase("Meta info"))))
 		                {
 			                Integer repositoryId = relatedContent.getRepository().getId();
@@ -1242,12 +1243,15 @@ public class SiteNodeVersionController extends BaseController
 			                }
 			                
 		                	List relatedContentVersions = ContentVersionController.getContentVersionController().getLatestActiveContentVersionIfInState(relatedContent, stateId, db);
+		                	logger.info("relatedContentVersions:" + relatedContentVersions.size());
 	
 			                Iterator relatedContentVersionsIterator = relatedContentVersions.iterator();
 			                while(relatedContentVersionsIterator.hasNext())
 			                {
 			                    ContentVersion relatedContentVersion = (ContentVersion)relatedContentVersionsIterator.next();
-				                //if(relatedContentVersion != null && siteNode.getRepository().getId().intValue() == relatedContentVersion.getOwningContent().getRepository().getId().intValue())
+			                    logger.info("relatedContentVersion:" + relatedContentVersion.getId());
+
+			                    //if(relatedContentVersion != null && siteNode.getRepository().getId().intValue() == relatedContentVersion.getOwningContent().getRepository().getId().intValue())
 					            if(relatedContentVersion != null && allowedContent)
 				                {
 				                    contentVersionVOList.add(relatedContentVersion.getValueObject());

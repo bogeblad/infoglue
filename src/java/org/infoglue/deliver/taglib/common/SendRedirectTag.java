@@ -52,6 +52,7 @@ public class SendRedirectTag extends TemplateControllerTag
     {
 		try
 		{
+			this.getController().getDeliveryContext().setDisablePageCache(true);
 			this.getController().getDeliveryContext().getHttpServletResponse().sendRedirect(url);
 		}
 		catch (Exception e) 

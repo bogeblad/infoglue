@@ -26,6 +26,7 @@ package org.infoglue.deliver.controllers.kernel;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.impl.simple.BasicURLComposer;
 
@@ -65,6 +66,8 @@ public abstract class URLComposer
     public abstract String composeDigitalAssetUrl(String dnsName, String folderName, String filename, DeliveryContext deliveryContext);
 
     public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
+
+    public abstract String composePageUrlForRedirectRegistry(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext, Boolean useNiceURI, Boolean enableNiceURIForLanguage) throws SystemException, Exception;
 
     public abstract String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
 

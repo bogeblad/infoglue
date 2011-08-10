@@ -1,23 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?> 
- 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html>
-<head>
-	<title>Choose SiteNodes</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
-	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
-	<script type="text/javascript" src="script/vector.js"></script>
-	<script type="text/javascript" src="script/qualifyer.js"></script>
-	<script type="text/javascript" src="script/infogluecommons.js"></script>
-	
-	<script language="JavaScript"> 
-		window.resizeTo(370,640);
-	</script> 
-		
-	<script type="text/javascript" language="JavaScript">
-		
+#define( $headerMarkup )
+	<script type="text/javascript">
 	<!-- 
 		var exp;
 		
@@ -29,6 +11,21 @@
 	    {
 	    	exp=v;
 	    }
+	    
+	    function save()
+	    {
+		    finish();
+	    }
+	    
+		function htmlTreeItemClick(itemId, repoId)
+		{
+		    document.inputForm.newParentSiteNodeId.value = itemId;
+		}
+	
+		function loadMainArea(siteNodeId, repositoryId, path)
+		{
+		    document.inputForm.newParentSiteNodeId.value = siteNodeId;
+		}
 	    
 		/**
 		 * This method changes to another repository.
@@ -49,9 +46,7 @@
 		 
 		function finish()
 		{
-		   	document.inputForm.newParentSiteNodeId.value = document.inputForm.entityId.value;
-		    showDiv("savingLayer");
-			document.inputForm.submit();
+		    document.inputForm.submit();
 		}
 	
 		/**
@@ -63,85 +58,47 @@
 		   	document.inputForm.repositoryId.value = repositoryId;
 			
 			document.inputForm.action = 'MoveMultipleSiteNodes.action';
-			showDiv("savingLayer");
 			document.inputForm.submit();
 		}
 			
 	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.structuretool.moveMultipleSiteNode.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
-</head>
+	#lightMenuToolbar("" $buttons $rightButtons) 
 
-<body class="structuretooledit">
+	<div style="clear: both;"></div>
 
-<div id="savingLayer" class="infobackground">
-	<div class="infoheader">Saving changes</div>
-	<div class="infobody">Processing input - please wait!</div>
-</div>
-
-<table class="structuretooledit" cellpadding="0" cellspacing="0" border="0">
-<tr>
-	<td valign="top">
+	<h3>$ui.getString("tool.structuretool.moveSiteNode.headline")</h3>
 		
-		<table cellpadding="0" cellspacing="0" border="0">
-		<tr class="darkapricot">
-			<td class="smalllabel">Mark the destination folder and press "Save".</td>
-		</tr>
-		<tr>
-			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
-		</tr>		
-		<tr>
-			<td>
-		  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);">
-				    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
-				    #foreach ($repositoryVO in $repositories)
-				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
-				    #end
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
-		</tr>	
-		<tr>
-			<td class="menu">   
-				#if($tree == "applet") 
-					#showJavaTree("350" "450" "199" "209" "179" "SiteNode" $repositoryId "false")
-				#else
-					<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingView.action?repositoryId=${repositoryId}&showLeafs=false" width="350" height="450" align="baseline"></IFRAME>
-				#end
-			</td>
-		</tr>	
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td>
-				<a href="javascript:finish();"><img src="$ui.getString("images.contenttool.buttons.save")" border="0"></a>
-				<a href="javascript:window.close();"><img src="$ui.getString("images.contenttool.buttons.cancel")" width="50" height="25" border="0"></a>
-			</td>
-		</tr>		
-		<tr>
-			<td>
-				<form name="inputForm" action="MoveMultipleSiteNodes.action">
-					<input type="hidden" name="siteNodeId" value="$siteNodeId">
-					<input type="hidden" name="entityId" value="">
-					<input type="hidden" name="path" value="">
-					<input type="hidden" name="repositoryId" value="">
-					<input type="hidden" name="newParentSiteNodeId" value="">
-					<input type="hidden" name="qualifyerXML" value="$qualifyerXML">
-				</form>
-			</td>
-		</tr>		
-		</table>
-	</td>	
-</tr>
-</table>
+	<div style="margin: 16px;">	
+	
+  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);">
+		    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+		    #foreach ($repositoryVO in $repositories)
+		    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+		    #end
+		</select>
+		<p>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}" width="90%" height="500" ></iframe>
+		</p>
 
-</body>
-</html>
+		<form name="inputForm" action="MoveMultipleSiteNodes.action">
+			<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
+			<input type="hidden" name="repositoryId" value="$repositoryId"/>
+			<input type="hidden" name="siteNodeId" value="$siteNodeId"/>
+			<input type="hidden" name="entityId" value="">
+			<input type="hidden" name="path" value="">
+			<input type="text" name="newParentSiteNodeId" value=""/>
+			<input type="hidden" name="qualifyerXML" value="$qualifyerXML">
+			<input type="hidden" name="changeTypeId" value="3">
+			<input type="hidden" name="returnAddress" value="$returnAddress">
+			<input type="hidden" name="originalAddress" value="$originalAddress">
+		</form>
+		<br/><br/><br/><br/><br/><br/>
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()

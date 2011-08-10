@@ -46,10 +46,10 @@
 			document.getElementById("contentVersionAssetsFrame").src = url;
 		}
 		
-		function assetMarked(contentId, assetKey, assetUrl)
+		function assetMarked(contentId, assetKey, assetUrl, contentVersionId)
 		{
 			if(parent.assetMarked)
-				parent.assetMarked(contentId, assetKey, assetUrl);
+				parent.assetMarked(contentId, assetKey, assetUrl, contentVersionId);
 		}
 				
 		function onOk(contentId, assetKey, assetUrl)
@@ -147,6 +147,11 @@
 				contentId = "$!contentId";
 			languageId 		= getRequestParameter(txtUrl, "languageId");
 			assetKey 		= getRequestParameter(txtUrl, "assetKey");
+			
+			/*
+			if(parent.assetMarked)
+				parent.assetMarked(contentId, assetKey, ""); 
+			*/
 			
 			//alert("contentId:" + contentId);
 			document.getElementById("entityId").value = contentId;

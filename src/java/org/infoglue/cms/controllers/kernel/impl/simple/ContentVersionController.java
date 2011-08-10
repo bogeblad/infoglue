@@ -1672,17 +1672,17 @@ public class ContentVersionController extends BaseController
 					Node n = nl.item(i);
 					if(n.getNodeName().equalsIgnoreCase(attributeName))
 					{
-						logger.warn("Found node with name:" + attributeName);
+						logger.info("Found node with name:" + attributeName);
 						if(n.getFirstChild() != null && n.getFirstChild().getNodeValue() != null)
 						{
-							logger.warn("Yep");
+							logger.info("Yep");
 							n.getFirstChild().setNodeValue(attributeValue);
 							existed = true;
 							break;
 						}
 						else
 						{
-							logger.warn("Yep2");
+							logger.info("Yep2");
 							CDATASection cdata = document.createCDATASection(attributeValue);
 							n.appendChild(cdata);
 							existed = true;
@@ -1693,7 +1693,7 @@ public class ContentVersionController extends BaseController
 				
 				if(existed == false)
 				{
-					logger.warn("attributeName:" + attributeName);
+					logger.info("attributeName:" + attributeName);
 					org.w3c.dom.Element attributeElement = document.createElement(attributeName);
 					attributesNode.appendChild(attributeElement);
 					CDATASection cdata = document.createCDATASection(attributeValue);

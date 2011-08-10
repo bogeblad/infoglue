@@ -1725,7 +1725,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         {
             siteNodes = this.getChildSiteNodes(db, parentSiteNodeId);
         }
-        
+
         Iterator siteNodeIterator = siteNodes.iterator();
         while (siteNodeIterator.hasNext()) 
         {
@@ -2093,6 +2093,42 @@ public class NodeDeliveryController extends BaseDeliveryController
 
 	            if (siteNodeId != null)
 	                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId);
+	        }
+
+	        commitTransaction(db);
+	    }
+		catch(Exception e)
+		{
+			logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+		finally
+		{
+			rollbackTransaction(db);
+			closeDatabase(db);
+		}
+		
+        return siteNodeId;
+    }
+    
+    public static Integer getSiteNodeIdFromBaseSiteNodeIdAndPath(InfoGluePrincipal infogluePrincipal, String[] path, String attributeName, DeliveryContext deliveryContext, HttpSession session, Integer languageId, String siteNodeIdString, String remainingURI) throws SystemException, Exception
+    {
+    	Integer siteNodeId = null;
+    	Integer parentSiteNodeId = new Integer(siteNodeIdString);
+    	
+        Database db = CastorDatabaseService.getDatabase();
+		
+		beginTransaction(db);
+
+		try
+		{
+			SiteNodeVO sitenodeVO = getNodeDeliveryController(deliveryContext).getSiteNodeVO(db, new Integer(siteNodeIdString));
+	        for (int i = 0; i < path.length; i++) 
+	        {
+	        	siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, sitenodeVO.getRepositoryId(), path[i], attributeName, parentSiteNodeId, languageId, deliveryContext);
+    			if(siteNodeId != null)
+    				parentSiteNodeId = siteNodeId;
 	        }
 
 	        commitTransaction(db);

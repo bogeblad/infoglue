@@ -79,6 +79,7 @@ public class ForwardTag extends TemplateControllerTag
 			    filterRequest.getParameterMap().put(key, new String[]{value});		    	
 		    }
 		    
+		    this.getController().getDeliveryContext().setDisablePageCache(true);
 		    RequestDispatcher dispatcher = this.getController().getDeliveryContext().getHttpServletRequest().getRequestDispatcher(url);
 			dispatcher.forward(filterRequest, this.getController().getDeliveryContext().getHttpServletResponse());
 		}

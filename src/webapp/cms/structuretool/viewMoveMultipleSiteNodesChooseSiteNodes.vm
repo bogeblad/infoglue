@@ -1,20 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?> 
- 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html>
-<head>
-	<title>Choose SiteNodes</title>
-	<meta http-equiv="SiteNode-Type" siteNode="text/html; charset=utf-8">
+#define( $headerMarkup )
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
 	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
 	<script type="text/javascript" src="script/vector.js"></script>
 	<script type="text/javascript" src="script/qualifyer.js"></script>
 	<script type="text/javascript" src="script/infogluecommons.js"></script>
-	
-	<script language="JavaScript"> 
-		window.resizeTo(660,640);
-	</script> 
 		
 	<script type="text/javascript" language="JavaScript">
 		
@@ -30,6 +19,16 @@
 	    	exp=v;
 	    }
 	    
+	    function add()
+	    {
+	    	addQualifyer();
+	    }
+
+		function next()
+		{
+			submitQualifyer();
+		}
+
 		/**
 		 * This method changes to another repository.
 		 */
@@ -49,9 +48,16 @@
 			entityId = document.inputForm.entityId.value;
 			path     = document.inputForm.path.value;
 			
-		    var qualifyer = new Qualifyer("SiteNode", entityId, path);
-			qualifyersVector.addElement(qualifyer);
-			drawList();
+			if(entityId == '' || entityId == '${select}' || entityId == '-1')
+			{
+				alert("$ui.getString("tool.common.siteNode.mustChooseSiteNode")");
+			}
+			else
+			{
+			    var qualifyer = new Qualifyer("SiteNode", entityId, path);
+				qualifyersVector.addElement(qualifyer);
+				drawList();
+			}
 		}
 		
 		/**
@@ -61,7 +67,7 @@
 		function createXML()
 		{
 			qualifyerXML = "<?xml version='1.0' encoding='UTF-8'?>";
-			qualifyerXML += "<qualifyer entity='$currentEntity'>";
+			qualifyerXML += "<qualifyer entity='SiteNode'>";
 			
 			for (var i=0; i<qualifyersVector.getSize(); i++)
 			{
@@ -86,7 +92,6 @@
 		   	var xml = createXML();
 			
 			document.inputForm.qualifyerXML.value = xml;
-		    showDiv("savingLayer");
 			document.inputForm.submit();
 		}
 	
@@ -102,7 +107,6 @@
 			document.inputForm.repositoryId.value = repositoryId;
 			
 			document.inputForm.action = 'MoveMultipleSiteNodes!input.action';
-			showDiv("savingLayer");
 			document.inputForm.submit();
 		}
 	  
@@ -213,227 +217,92 @@
 	
 		var IE  = (document.all)? true: false;
 		var Mac = (navigator.cpuClass && navigator.cpuClass.match(/PPC/))? true: false;
-		
-		function checkDrag(event)
-		{
-    	    if(document.inputForm.draggedComponentId.value != "") 
-    	    {	
-    	    	addQualifyer();
-	    	    document.inputForm.draggedComponentId.value = "";     
-	    	    document.getElementById("buffer").style.visibility = "hidden";
-    	    } 
-   		}
-   		
-   		function clearDrag(event)
-		{
-    	    if(document.inputForm.draggedComponentId.value != "") 
-    	    {	
-    	    	document.inputForm.draggedComponentId.value = "";
-	    	    document.getElementById("buffer").style.visibility = "hidden";
-    	    } 
-   		}
-		
-	    //-----------------------------------------------------------------
-	    // onmousemove handler
-	    //-----------------------------------------------------------------
-	    function dragIt(e) 
-	    {
-			var e = e? e: window.event;
-		    
-		    drag = document.getElementById("buffer");
-	        // -- Move drag element by the same amount the cursor has moved.
-	        with (drag) 
-	        {
-	        	style.left = getX(e) + 1 + "px"; //- dx;
-	          	style.top  = getY(e) + 1 + "px"; //- dy;
-	        	//style.left = getX(e) - dx;
-	          	//style.top  = getY(e) - dy;
-	        }
+
+      	function treeItemDblClick(id, label)
+      	{
+      		//alert("Adding " + id + ":" + label);
+      		addQualifyer();
+      	}
 	
-	        return false;
-	    }
-	    
-	    function getRect(obj) {
-        var rect = new Object();
-        rect.top = rect.left = 0;
-        var parentObj = obj;
-        while (parentObj != null) {
-          rect.top  += parentObj.offsetTop;
-          rect.left += parentObj.offsetLeft;
-          parentObj = parentObj.offsetParent;
-        }
-        rect.bottom = rect.top  + obj.offsetHeight;
-        rect.right  = rect.left + obj.offsetWidth;
-
-		//if()
-        return rect;
-      }
-
-	  //-----------------------------------------------------------------
-      // browser-independent routines for determining event position
-      //-----------------------------------------------------------------
-      function getX(e) {
-      	var x = 0;
-        if (IE) {
-          x = e.clientX;
-          if (!Mac) {
-            x += parent.document.documentElement.scrollLeft;
-            x += parent.document.body.scrollLeft;
-		  }
-        } else {
-          x = e.pageX + parent.window.scrollX;
-        }
-        return x
-      }
-
-      function getY(e) {
-        var y = 0;
-        if (IE) {
-          y = e.clientY;
-          if (!Mac) {
-            y += document.documentElement.scrollTop;
-            y += document.body.scrollTop;
-		  }
-        } else {
-          y = e.pageY + window.scrollY;
-        }
-        return y;
-      }
+		$(document).ready(function() {
+			window.resizeTo(900,800);
+			init();
+		});
 	    
 	</script>
 	
-	<style>
-		#buffer { 
-			position:	absolute;
-			z-index:	1000003;
-			height:		1em;
-			width:		1em;
-			border: 	0px solid black;
-			color:		#ffffff;
-			visibility:	hidden;
-			top:		0px;
-			left:		0px;
-		}
-	</style>
+#end
+
+#beginLightCommonToolV3Impl("tool.structuretool.moveMultipleSiteNodes.header" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
-</head>
+	#lightMenuToolbar("" $buttons $rightButtons) 
+	
+	<div style="clear: both;"></div>
 
-<body class="structuretooledit" onload="javascript:init();" onMouseUp="clearDrag(event);">
-
-<div id="buffer" style="top: 0; left: 0"><img src="images/tree/xp/item.png"></div>
-
-<div id="savingLayer" class="infobackground">
-	<div class="infoheader">Saving changes</div>
-	<div class="infobody">Processing input - please wait!</div>
-</div>
-
-<table class="structuretooledit" cellpadding="0" cellspacing="0" border="0">
-<tr>
-	<td valign="top">
+	<h3>$ui.getString("tool.structuretool.moveMultipleSiteNodes.header")</h3>
 		
+	<div style="margin: 16px;">
 		<table cellpadding="0" cellspacing="0" border="0">
-		<tr class="darkapricot">
-			<td class="smalllabel">Add the siteNodes you want to move and click "Next".</td>
+		<tr>
+			<td class="smalllabel" colspan="2">$ui.getString("tool.structuretool.moveMultipleSiteNode.selectedSiteNodeInstructions")</td>
 		</tr>
 		<tr>
-			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
-		</tr>		
-		<tr>
-			<td>
-		  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="structuretool">
-				    <option value="">$ui.getString("tool.structuretool.chooseRepositoryLabel")</option>
-				    #foreach ($repositoryVO in $repositories)
-				    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
-				    #end
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
-		</tr>	
-		<tr>
-			<td class="menu" style="border: 1px solid #C7D1B3;">   
-				#if($tree == "applet") 
-					showJavaTree("350" "450" "199" "209" "179" "SiteNode" $repositoryId "false")
-				#else
-					<IFRAME frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingView.action?repositoryId=${repositoryId}" width="350" height="450" align="baseline"></IFRAME>
-				#end
-			</td>
-		</tr>	
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td>
-				<a href="javascript:addQualifyer();"><img src="$ui.getString("images.contenttool.buttons.addButton")" border="0"></a>
-				<a href="javascript:submitQualifyer();"><img src="$ui.getString("images.contenttool.buttons.next")" border="0"></a>
-				<a href="javascript:window.opener.location.reload();window.close();"><img src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" border="0"></a>
-			</td>
-		</tr>		
-		<tr>
-			<td>
-				<form name="inputForm" action="MoveMultipleSiteNodes.action">
-					<input type="hidden" name="draggedComponentId" value="">
-					<input type="hidden" name="siteNodeId" value="$siteNodeId">
-					<input type="hidden" name="entityId" value="">
-					<input type="hidden" name="path" value="">
-					<input type="hidden" name="repositoryId" value="$repositoryId">
-					<input type="hidden" name="newParentSiteNodeId" value="">
-					<input type="hidden" name="qualifyerXML" value="">
-				</form>
-			</td>
-		</tr>		
-		</table>
-	</td>	
-	
-	<td>&nbsp;</td>
-	
-	<td valign="top">
-		<table cellpadding="0" cellspacing="0" border="0">
-		<tr class="darkapricot">
-			<td class="smalllabel">The following siteNodes will be moved</td>
-		</tr>
-		<tr>
-			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
-		</tr>		
-		
-		<tr>
-			<td style="height: 27px;">
-				Drag items from the tree to the area below or mark an item and use the "Add"-button.
-			</td>
-		</tr>
-		<tr>
-			<td style="border: 1px solid #C7D1B3; border-bottom: 0px solid #C7D1B3;" onMouseUp="checkDrag(event);">
+			<td valign="top" width="50%">
 				
-				<TABLE id="qualifyers" border="1">
-			  	
-			  	</table>
-			</td>
-		</tr>
+				<table cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td style="padding-bottom: 5px; padding-top: 5px;">
+				  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);">
+						    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+						    #foreach ($repositoryVO in $repositories)
+						    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+						    #end
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="menu" style="border: 1px solid #C7D1B3;">    
+						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}" width="100%" height="500" align="baseline"></iframe>
+					</td>
+				</tr>	
+				</table>
+			</td>	
+			
+			<td valign="top" width="40%" style="padding-left: 10px;">
+				<table cellpadding="0" cellspacing="0" border="0" width="100%">
+				<tr>
+					<td style="height: 30px;">
+						$ui.getString("tool.structuretool.moveMultipleSiteNode.selectedPagesText")
+					</td>
+				</tr>
+				<tr>
+					<td style="border: 1px solid #C7D1B3; background-color: white;">				
+						<TABLE id="qualifyers" border="1" width="100%">
+					  	
+					  	</table>
+					</td>
+				</tr>
+						
+				</table>
 				
-		<tr>
-			<td style="border: 1px solid #C7D1B3; border-top: 0px solid #C7D1B3;" onMouseUp="checkDrag(event);">
-			<img pos="-1" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
-			&nbsp;
 			</td>
 		</tr>
 		</table>
 		
-	</td>
-</tr>
-</table>
+	</div>
 
-</body>
-</html>
+	<form name="inputForm" action="MoveMultipleSiteNodes.action">
+		<input type="hidden" name="draggedComponentId" value="">
+		<input type="hidden" name="siteNodeId" value="$siteNodeId">
+		<input type="hidden" name="entityId" value="">
+		<input type="hidden" name="path" value="">
+		<input type="hidden" name="repositoryId" value="$repositoryId">
+		<input type="hidden" name="newParentSiteNodeId" value="">
+		<input type="hidden" name="qualifyerXML" value="">
+		<input type="hidden" name="returnAddress" value="$returnAddress">
+		<input type="hidden" name="originalAddress" value="$originalAddress">
+	</form>
+	
+	#lightFooterToolbar($footerButtons)
+	
+#endLightCommonToolV3()

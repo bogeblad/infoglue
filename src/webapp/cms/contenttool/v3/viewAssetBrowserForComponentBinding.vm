@@ -1,4 +1,12 @@
-#beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogForComponentHeader" "" "" false false $!disableCloseButton)
+#define( $headerMarkup )
+
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.assetDialog.assetDialogForComponentHeader" "" "" false false $!disableCloseButton $headerMarkup false "smallGreyBackground")
+##beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogForComponentHeader" "" "" false false $!disableCloseButton)
 
 <script type="text/javascript">
 <!--
@@ -40,17 +48,50 @@
 	var selectedContentId;
 	var selectedAssetKey;
 	var selectedAssetUrl;
-	function assetMarked(contentId, assetKey, assetUrl)
+	var selectedContentVersionId;
+	function assetMarked(contentId, assetKey, assetUrl, contentVersionId)
 	{
-		//alert("Asset was marked:" + contentId + assetKey);
+		//alert("Asset was marked:" + contentId + ":" + assetKey + ":" + contentVersionId);
 		selectedContentId = contentId;
 		selectedAssetKey = assetKey;
 		selectedAssetUrl = assetUrl;
+		selectedContentVersionId = contentVersionId;
 	}
 	
 	function useSelectedAsset()
 	{
 		onOk(selectedContentId, selectedAssetKey);
+	}
+	
+	function refreshView(viewName)
+	{
+		//alert("viewName:" + viewName);
+		if(viewName == "contentVersionAssets")
+		{	
+			$("#repositoryBrowserFrame").get(0).contentWindow.location.reload(true);
+		}
+	}
+	
+	function uploadAsset()
+	{
+		//alert("selectedContentVersionId:" + selectedContentVersionId);
+		if(selectedContentVersionId)
+		{
+			var url = $("#repositoryBrowserFrame").get(0).contentWindow.location.href;
+			//alert("url:" + url);
+			var repositoryId = getRequestParameter(url, "repositoryId");
+			var languageId = getRequestParameter(url, "languageId");
+			var assetTypeFilter = getRequestParameter(url, "assetTypeFilter");
+			
+			var contentBasedUrl = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=" + repositoryId + "&contentId=" + selectedContentId + "&languageId=" + languageId + "&assetTypeFilter=" + assetTypeFilter;
+			//alert("contentBasedUrl:" + contentBasedUrl);
+			$("#repositoryBrowserFrame").get(0).contentWindow.location.href = contentBasedUrl;
+			openInlineDiv("ViewDigitalAsset.action?contentVersionId=" + selectedContentVersionId, 500, 550, true, true, "uploadAsset");
+		}
+		else
+		{
+			alert("$ui.getString('tool.contenttool.mustSelectContentText')");
+		}
 	}
 	
 	function onOk(contentId, assetKey)
@@ -79,13 +120,18 @@
 		#if($contentVO.id > -1)
 			document.getElementById("repositoryBrowserFrame").src = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=$contentVO.repositoryId&contentId=$contentId&languageId=$languageId&assetTypeFilter=$assetTypeFilter";
 		#else
-			document.getElementById("repositoryBrowserFrame").src = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=$repositoryId&languageId=$languageId&assetTypeFilter=$assetTypeFilter";
+			document.getElementById("repositoryBrowserFrame").src = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=$repositoryId&languageId=$languageId&assetTypeFilter=$assetTypeFilter";			
 		#end
+		//alert("contentVO: $contentVO.id $contentVersionId");
 	}
 	
 	$(document).ready(function(){
 		$("#tabsContainer").tabs( { 
 			show:function(e, ui) { 
+				if(ui.index > 0) 
+					$(".attachAsset").hide();
+				else
+					$(".attachAsset").show();
 				},
 			select:function(e, ui) { 
 				//alert("ui: " + ui.index);

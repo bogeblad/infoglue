@@ -1653,7 +1653,7 @@
 		<view name="error">/cms/managementtool/error.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteRedirectAction" alias="DeleteRedirect">
-		<view name="success">ViewListRedirect.action</view>
+		<view name="success">ViewListRedirect.action?tabId=${tabId}</view>
 		<view name="error">/cms/managementtool/error.vm</view>
 		<view name="input">/cms/contenttool/showConstraintException.vm</view>
 	</action>

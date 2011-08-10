@@ -210,7 +210,7 @@ public class RedirectController extends BaseController
 			
 			for(RedirectVO redirectVO : redirects)
 			{
-				if(redirectVO.getExpireDateTime().before(Calendar.getInstance().getTime()))
+				if(redirectVO.getExpireDateTime() != null && redirectVO.getExpireDateTime().before(Calendar.getInstance().getTime()))
 				{
 					delete(redirectVO);
 				}
@@ -280,7 +280,7 @@ public class RedirectController extends BaseController
                 	logger.info("url:" + redirect.getUrl());
                 
                 Date now = new Date();
-                if(redirect.getPublishDateTime().before(now) && redirect.getExpireDateTime().after(now))
+                if(redirect.getExpireDateTime() == null || redirect.getPublishDateTime().before(now) && redirect.getExpireDateTime().after(now))
                 {
                 	if(logger.isInfoEnabled())
                     	logger.info("Was a valid redirect:" + redirect.getUrl());
@@ -399,7 +399,7 @@ public class RedirectController extends BaseController
                 	logger.info("url:" + redirect.getUrl());
                 
                 Date now = new Date();
-                if(redirect.getPublishDateTime().before(now) && redirect.getExpireDateTime().after(now))
+                if(redirect.getExpireDateTime() == null || redirect.getPublishDateTime().before(now) && redirect.getExpireDateTime().after(now))
                 {
                 	if(logger.isInfoEnabled())
                     	logger.info("Was a valid redirect:" + redirect.getUrl());

@@ -36,6 +36,12 @@ ALTER TABLE cmSiteNode ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
 ALTER TABLE cmContent ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
 ALTER TABLE cmRepository ADD COLUMN isDeleted TINYINT NOT NULL DEFAULT 0;
 
+ALTER TABLE cmRedirect ADD COLUMN createdDateTime datetime;
+ALTER TABLE cmRedirect ADD COLUMN publishDateTime datetime;
+ALTER TABLE cmRedirect ADD COLUMN expireDateTime datetime;
+ALTER TABLE cmRedirect ADD COLUMN modifier TEXT;
+ALTER TABLE cmRedirect ADD COLUMN isUserManaged TINYINT NOT NULL DEFAULT '1';
+
 ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId integer DEFAULT '-1';
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) DEFAULT '';
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverData VARCHAR(1024) DEFAULT '';
@@ -53,6 +59,13 @@ create index propCategoryEntityIdIndex on cmPropertiesCategory(entityId);
 create index propCategoryCategoryIdIndex on cmPropertiesCategory(categoryId);
 create index categoryParentIdIndex on cmCategory(parentId);
 create index categoryNameIndex on cmCategory(name(100));
+
+CREATE INDEX assetKeyIndex ON cmDigitalAsset(assetKey(255));
+CREATE INDEX assetFileNameIndex ON cmDigitalAsset(assetFileName(255));
+CREATE INDEX assetFileSizeIndex ON cmDigitalAsset(assetFileSize);
+CREATE INDEX assetContentTypeIndex ON cmDigitalAsset(assetContentType);
+
+CREATE INDEX redirectUrlIndex ON cmRedirect(redirectUrl(255));
 
 ALTER TABLE cmAccessRight CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 ALTER TABLE cmAccessRightGroup CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;

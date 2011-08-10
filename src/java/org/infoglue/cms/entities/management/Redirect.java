@@ -47,4 +47,23 @@ public interface Redirect extends IBaseEntity
     
     public void setRedirectUrl(java.lang.String redirectUrl) throws ConstraintException;
         
+    public java.lang.String getModifier();
+    
+    public void setModifier(java.lang.String modifier) throws ConstraintException;
+
+    public java.util.Date getCreatedDateTime();
+    
+    public void setCreatedDateTime(java.util.Date createdDateTime);
+
+    public java.util.Date getPublishDateTime();
+    
+    public void setPublishDateTime(java.util.Date publishDateTime);
+    
+    public java.util.Date getExpireDateTime();
+    
+    public void setExpireDateTime(java.util.Date expireDateTime);
+
+    public Boolean getIsUserManaged();
+    
+    public void setIsUserManaged(Boolean isUserManaged);
 }

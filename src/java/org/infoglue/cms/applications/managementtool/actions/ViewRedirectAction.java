@@ -23,6 +23,9 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.util.Date;
+
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.RedirectVO;
@@ -38,7 +41,7 @@ public class ViewRedirectAction extends InfoGlueAbstractAction
 { 
 	private static final long serialVersionUID = 1L;
 
-    private RedirectVO redirectVO;
+    protected RedirectVO redirectVO;
 
 
     public ViewRedirectAction()
@@ -96,6 +99,36 @@ public class ViewRedirectAction extends InfoGlueAbstractAction
     public java.lang.String getRedirectUrl()
     {
         return this.redirectVO.getRedirectUrl();
+    }
+
+    public String getPublishDateTime()
+    {
+    	return new VisualFormatter().formatDate(this.redirectVO.getPublishDateTime(), "yyyy-MM-dd HH:mm");
+    }
+    
+    public void setPublishDateTime(String publishDateTime)
+    {
+    	this.redirectVO.setPublishDateTime(new VisualFormatter().parseDate(publishDateTime, "yyyy-MM-dd HH:mm"));
+    }
+    
+    public String getExpireDateTime()
+    {
+    	return new VisualFormatter().formatDate(this.redirectVO.getExpireDateTime(), "yyyy-MM-dd HH:mm");
+    }
+    
+    public void setExpireDateTime(String expireDateTime)
+    {
+    	this.redirectVO.setExpireDateTime(new VisualFormatter().parseDate(expireDateTime, "yyyy-MM-dd HH:mm"));
+    }
+
+    public java.lang.String getModifier()
+    {
+        return this.redirectVO.getModifier();
+    }
+
+    public String getCreatedDateTime()
+    {
+    	return new VisualFormatter().formatDate(this.redirectVO.getCreatedDateTime(), "yyyy-MM-dd HH:mm");
     }
 
 }

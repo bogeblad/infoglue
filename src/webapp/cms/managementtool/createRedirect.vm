@@ -10,6 +10,8 @@
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 		<p>#editField("Redirect.url" "url" $!url "51")</p>
 		<p>#editField("Redirect.redirectUrl" "redirectUrl" $!redirectUrl "51")</p>
+		<p>#editDateField("SiteNode.publishDateTime" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTime.time&formPath=document.editForm.publishDateTime" "$dateReadonly")</p>
+		<p>#editDateField("SiteNode.expireDateTime" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTime.time&formPath=document.editForm.expireDateTime" "$dateReadonly")</p>
 	</form>
 
 </div>

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.common.ImageButton;
 import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -95,7 +96,7 @@ public class ToolbarController implements ToolbarProvider
 			
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.siteNodeComponentsHeader"))
 				return getSiteNodeButtons(toolbarKey, principal, locale, request);
-							
+					
 			
 			/*
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.createSiteNodeHeader"))
@@ -461,6 +462,12 @@ public class ToolbarController implements ToolbarProvider
 		
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.moveSiteNode.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, null, getLocalizedString(locale, "tool.structuretool.toolbarV3.movePageLabel"), getLocalizedString(locale, "tool.structuretool.toolbarV3.movePageTitle"));
+			if(toolbarKey.equalsIgnoreCase("tool.structuretool.moveMultipleSiteNodes.header"))
+				return getCommonAddNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			if(toolbarKey.equalsIgnoreCase("tool.structuretool.moveMultipleSiteNode.header"))
+				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			if(toolbarKey.equalsIgnoreCase("tool.structuretool.moveMultipleSiteNode.finished"))
+				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
 			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.moveContent.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, null, getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentLabel"), getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentLabel"));
@@ -1342,6 +1349,30 @@ public class ToolbarController implements ToolbarProvider
 	private List<ToolbarButton> getContentVersionAssetsForComponentBindingFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
+
+		String contentIdString = request.getParameter("contentId");
+		if(contentIdString == null || contentIdString.equals(""))
+			contentIdString = (String)request.getAttribute("contentId");
+		
+		if(contentIdString != null && !contentIdString.equals("") && !contentIdString.equals("-1"))
+		{
+			Integer contentId = new Integer(contentIdString);
+			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
+			
+			String contentVersionIdString = request.getParameter("contentVersionId");
+			Integer contentVersionId = null;
+			if(contentVersionIdString == null)
+			{
+				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId());
+				if(contentVersionVO != null)
+					contentVersionId = contentVersionVO.getId();
+			}
+			else
+			{
+				contentVersionId = new Integer(contentVersionIdString);
+			}
+		}
 		
 		buttons.add(new ToolbarButton("useSelectedAsset", 
 				  getLocalizedString(locale, "tool.contenttool.assetDialog.chooseAttachment"), 
@@ -1359,7 +1390,21 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(new ToolbarButton("uploadAsset", 
 				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
 				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  "ViewDigitalAsset.action",
+				  "uploadAsset();", 
+				  "", 
+				  "", 
+				  "attachAsset", 
+				  true, 
+				  false, 
+				  "", 
+				  "", 
+				  ""));
+		
+		/*
+		buttons.add(new ToolbarButton("uploadAsset", 
+				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+				  "ViewDigitalAsset.action?contentVersionId=" + contentVersionId,
 				  "", 
 				  "", 
 				  "attachAsset", 
@@ -1370,6 +1415,7 @@ public class ToolbarController implements ToolbarProvider
 				  "inlineDiv",
 				  500,
 				  550));
+				  */
 
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 		
@@ -1604,13 +1650,25 @@ public class ToolbarController implements ToolbarProvider
 				  "",
 				  "create"));
 
-		buttons.add(new ToolbarButton("moveSiteNode",
+		ToolbarButton moveSiteNodeButton = new ToolbarButton("moveSiteNode",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.movePageLabel"), 
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.movePageTitle"),
 				  "MoveSiteNode!inputV3.action?repositoryId=" + siteNodeVO.getRepositoryId() + "&siteNodeId=" + siteNodeId + "&hideLeafs=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 				  "",
-				  "movePage"));
+				  "movePage");
 
+
+		ToolbarButton moveMultipleSiteNodeButton = new ToolbarButton("moveMultipleSiteNode",
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.moveMultiplePageLabel"), 
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.moveMultiplePageTitle"),
+				  "MoveMultipleSiteNodes!input.action?repositoryId=" + siteNodeVO.getRepositoryId() + "&siteNodeId=" + siteNodeId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "",
+				  "movePage");
+		
+		moveSiteNodeButton.getSubButtons().add(moveMultipleSiteNodeButton);
+
+		buttons.add(moveSiteNodeButton);
+				
 		//if(!hasPublishedVersion())
 		//{
 			buttons.add(new ToolbarButton("deleteSiteNode",

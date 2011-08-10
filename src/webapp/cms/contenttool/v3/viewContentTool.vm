@@ -96,6 +96,8 @@
 	   			resize(false);
    			}
 
+			$("#toolsColumn").resizable({ handles: 'e', stop: function(event, ui) { resize(false); } });
+
 			openUrlInWorkArea("ViewContentToolStartPage!V3.action");
 		});
 		

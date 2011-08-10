@@ -93,6 +93,7 @@
 	   			resize(false);
    			}
 			
+			$("#toolsColumn").resizable({ handles: 'e', stop: function(event, ui) { resize(false); } });
 			
 			$("#workIframe").load(function() {
 

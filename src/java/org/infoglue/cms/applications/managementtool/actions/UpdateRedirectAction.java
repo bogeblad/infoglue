@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.RedirectVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -56,11 +57,19 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
 	public String doExecute() throws Exception
     {
 		super.initialize(getRedirectId());
-
+		if(super.redirectVO != null)
+		{
+			this.redirectVO.setCreatedDateTime(super.redirectVO.getCreatedDateTime());
+			this.redirectVO.setIsUserManaged(super.redirectVO.getIsUserManaged());
+		}
+		
     	ceb.add(this.redirectVO.validate());
     	ceb.throwIfNotEmpty();		
     	
-		RedirectController.getController().update(this.redirectVO);
+    	this.redirectVO.setModifier(getInfoGluePrincipal().getName());
+    	this.redirectVO.setCreatedDateTime(new java.util.Date());
+
+    	RedirectController.getController().update(this.redirectVO);
 				
 		return "success";
 	}
@@ -68,9 +77,17 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
 	public String doLocal() throws Exception
     {
 		super.initialize(getRedirectId());
+		if(super.redirectVO != null)
+		{
+			this.redirectVO.setCreatedDateTime(super.redirectVO.getCreatedDateTime());
+			this.redirectVO.setIsUserManaged(super.redirectVO.getIsUserManaged());
+		}
 
 		ceb.throwIfNotEmpty();
     	
+		this.redirectVO.setModifier(getInfoGluePrincipal().getName());
+    	this.redirectVO.setCreatedDateTime(new java.util.Date());
+
 		RedirectController.getController().update(this.redirectVO);
 		
 		return "successLocal";
@@ -120,4 +137,23 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
        	this.redirectVO.setRedirectUrl(redirectUrl);
     }
     
+    public String getPublishDateTime()
+    {
+    	return new VisualFormatter().formatDate(this.redirectVO.getPublishDateTime(), "yyyy-MM-dd HH:mm");
+    }
+    
+    public void setPublishDateTime(String publishDateTime)
+    {
+    	this.redirectVO.setPublishDateTime(new VisualFormatter().parseDate(publishDateTime, "yyyy-MM-dd HH:mm"));
+    }
+    
+    public String getExpireDateTime()
+    {
+    	return new VisualFormatter().formatDate(this.redirectVO.getExpireDateTime(), "yyyy-MM-dd HH:mm");
+    }
+    
+    public void setExpireDateTime(String expireDateTime)
+    {
+    	this.redirectVO.setExpireDateTime(new VisualFormatter().parseDate(expireDateTime, "yyyy-MM-dd HH:mm"));
+    }
 }

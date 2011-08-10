@@ -6,18 +6,18 @@
 
 <div class="fullymarginalized">
 
-	<table class="managementtooledit" cellpadding="2" cellspacing="2" border="0">
 		<form name="editForm" method="POST" action="UpdateRedirect.action">
 			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 			<input type="hidden" name="redirectId" value="$!redirectId">
-			<tr>
-				<td>
-					<p>#editField("Redirect.url" "url" $!url "51")</p>
-					<p>#editField("Redirect.redirectUrl" "redirectUrl" $!redirectUrl "51")</p>
-				</td>
-			</tr>
+
+			<h3>$ui.getString("tool.managementtool.viewRedirect.header")</h3>
+			<p>#editField("Redirect.url" "url" $!url "100")</p>
+			<p>#editField("Redirect.redirectUrl" "redirectUrl" $!redirectUrl "100")</p>
+			<p>#editDateField("SiteNode.publishDateTime" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTime.time&formPath=document.editForm.publishDateTime" "$dateReadonly")</p>
+			<p>#editDateField("SiteNode.expireDateTime" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTime.time&formPath=document.editForm.expireDateTime" "$dateReadonly")</p>
+			<p>$ui.getString("tool.structuretool.versionModifiedDateTime"): $!createdDateTime</p>
+			<p>$ui.getString("tool.contenttool.versionModifier"): $!modifier</p>
 		</form>
-	</table>
 </div>
 
 <div onfocus="this.blur();" id="footertoolbar">

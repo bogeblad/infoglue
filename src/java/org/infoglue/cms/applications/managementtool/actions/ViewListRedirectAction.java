@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
+import org.infoglue.cms.entities.management.RedirectVO;
 
 
 /**
@@ -39,19 +40,36 @@ public class ViewListRedirectAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = 1L;
 
-	private List redirects;
+	private List<RedirectVO> userRedirects;
+	private List<RedirectVO> systemRedirects;
+	private String tabId = "userManaged";
 	
 
 	protected String doExecute() throws Exception 
 	{
-		this.redirects = RedirectController.getController().getRedirectVOList();
+		this.userRedirects = RedirectController.getController().getUserRedirectVOList();
+		this.systemRedirects = RedirectController.getController().getSystemRedirectVOList();
     	return "success";
 	}
 	
 
-	public List getRedirects()
+	public List getUserRedirects()
 	{
-		return this.redirects;		
+		return this.userRedirects;		
 	}
 	
+	public List getSystemRedirects()
+	{
+		return this.systemRedirects;		
+	}
+
+	public String getTabId() 
+	{
+		return tabId;
+	}
+	
+	public void setTabId(String tabId) 
+	{
+		this.tabId = tabId;
+	}
 }

@@ -38,6 +38,8 @@ import org.infoglue.cms.exception.SystemException;
 public class DeleteRedirectAction extends InfoGlueAbstractAction
 {
 	private RedirectVO redirectVO;
+	private Integer redirectId;
+	private String tabId;
 	
 	public DeleteRedirectAction()
 	{
@@ -65,4 +67,15 @@ public class DeleteRedirectAction extends InfoGlueAbstractAction
     {
         return this.redirectVO.getRedirectId();
     }
+        
+	public String getTabId() 
+	{
+		return tabId;
+	}
+
+	public void setTabId(String tabId) 
+	{
+		this.tabId = tabId;
+	}
+
 }

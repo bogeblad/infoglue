@@ -103,4 +103,55 @@ public class RedirectImpl implements Redirect
 	{
         this.valueObject.setRedirectUrl(redirectUrl);
     }
+
+    public java.lang.String getModifier()
+    {
+    	return this.valueObject.getModifier();
+    }
+    
+    public void setModifier(java.lang.String modifier) throws ConstraintException
+    {
+    	this.valueObject.setModifier(modifier);
+    }
+
+    public java.util.Date getCreatedDateTime()
+    {
+    	return this.valueObject.getCreatedDateTime();
+    }
+    
+    public void setCreatedDateTime(java.util.Date createdDateTime)
+    {
+    	this.valueObject.setCreatedDateTime(createdDateTime);
+    }
+    
+    public java.util.Date getPublishDateTime()
+    {
+    	return this.valueObject.getPublishDateTime();
+    }
+    
+    public void setPublishDateTime(java.util.Date publishDateTime)
+    {
+    	this.valueObject.setPublishDateTime(publishDateTime);
+    }
+    
+    public java.util.Date getExpireDateTime()
+    {
+    	return this.valueObject.getExpireDateTime();
+    }
+    
+    public void setExpireDateTime(java.util.Date expireDateTime)
+    {
+    	this.valueObject.setExpireDateTime(expireDateTime);
+    }
+
+    public Boolean getIsUserManaged()
+    {
+    	return this.valueObject.getIsUserManaged();
+    }
+    
+    public void setIsUserManaged(Boolean isUserManaged)
+    {
+    	this.valueObject.setIsUserManaged(isUserManaged);
+    }
+
 }        

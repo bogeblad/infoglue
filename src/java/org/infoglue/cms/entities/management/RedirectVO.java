@@ -23,10 +23,14 @@
 
 package org.infoglue.cms.entities.management;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.impl.simple.RedirectImpl;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.validators.ValidatorFactory;
 
@@ -35,7 +39,22 @@ public class RedirectVO implements BaseEntityVO
     private java.lang.Integer redirectId;
     private java.lang.String url;
     private java.lang.String redirectUrl;
+    
+    private java.lang.String modifier;
+    private java.util.Date createdDateTime = new Date();
+    private java.util.Date publishDateTime = new Date();
+    private java.util.Date expireDateTime = new Date();
+    private Boolean isUserManaged = true;
+    
     private Pattern urlCompiledPattern;
+    
+    public RedirectVO()
+  	{
+  		//Initilizing the expireDateTime... 
+    	Calendar cal = Calendar.getInstance();
+    	cal.add(Calendar.MONTH, 3);
+  		expireDateTime = cal.getTime();
+  	}
     
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntityVO#getId()
@@ -81,6 +100,59 @@ public class RedirectVO implements BaseEntityVO
         this.url = url;
     }
 
+    public java.lang.String getModifier()
+    {
+    	return this.modifier;
+    }
+    
+    public void setModifier(java.lang.String modifier) throws ConstraintException
+    {
+    	this.modifier = modifier;
+    }
+
+    public java.util.Date getCreatedDateTime()
+    {
+    	return this.createdDateTime;
+    }
+    
+    public void setCreatedDateTime(java.util.Date createdDateTime)
+    {
+    	if(createdDateTime != null)
+    		this.createdDateTime = createdDateTime;
+    }
+    
+    public java.util.Date getPublishDateTime()
+    {
+    	return this.publishDateTime;
+    }
+    
+    public void setPublishDateTime(java.util.Date publishDateTime)
+    {
+    	if(publishDateTime != null)
+    		this.publishDateTime = publishDateTime;
+    }
+    
+    public java.util.Date getExpireDateTime()
+    {
+    	return this.expireDateTime;
+    }
+    
+    public void setExpireDateTime(java.util.Date expireDateTime)
+    {
+    	if(expireDateTime != null)
+    		this.expireDateTime = expireDateTime;
+    }
+
+    public Boolean getIsUserManaged()
+    {
+    	return this.isUserManaged;
+    }
+    
+    public void setIsUserManaged(Boolean isUserManaged)
+    {
+    	this.isUserManaged = isUserManaged;
+    }
+    
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntityVO#validate()
 	 */

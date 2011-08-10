@@ -1634,6 +1634,21 @@
 	    <field name="redirectUrl" type="java.lang.String">
 	      <sql name="redirectUrl" type="varchar" dirty="ignore" />
 	    </field>
+	    <field name="modifier" type="java.lang.String">
+	      <sql name="modifier" type="varchar" dirty="check" />
+	    </field>
+	    <field name="createdDateTime" type="java.util.Date">
+	      <sql name="createdDateTime" type="timestamp" dirty="check" />
+	    </field>
+	    <field name="publishDateTime" type="java.util.Date">
+	      <sql name="publishDateTime" type="timestamp" dirty="check" />
+	    </field>
+	    <field name="expireDateTime" type="java.util.Date">
+	      <sql name="expireDateTime" type="timestamp" dirty="check" />
+	    </field>
+	    <field name="isUserManaged" type="java.lang.Boolean">
+	      <sql name="isUserManaged" type="integer" dirty="check" />
+	    </field>
   	</class>
 
 	<!--  Mapping for ServerNode  -->

@@ -35,6 +35,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -42,6 +43,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
+import org.infoglue.deliver.applications.filters.FilterConstants;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 
@@ -765,6 +767,56 @@ public class BasicURLComposer extends URLComposer
         return url;
     }
 
+    public String composePageUrlForRedirectRegistry(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext, Boolean useNiceURI, Boolean enableNiceURIForLanguage) throws SystemException, Exception
+    {
+    	if(siteNodeId == null || siteNodeId.intValue() == -1)
+    	{
+    		logger.warn("composePageUrl was called with siteNodeId:" + siteNodeId);
+    		return "";
+    	}
+    	
+    	if(contentId == null || contentId == 0)
+    		contentId = -1;
+    	
+    	StringBuffer sb = new StringBuffer();
+    	if(useNiceURI)
+    	{
+	        try 
+			{
+	        	String navigationPath = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getPageNavigationPath(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);
+	            if(navigationPath != null && navigationPath.startsWith("/") && sb.toString().endsWith("/"))
+	            	sb.append(navigationPath.substring(1));
+	            else
+	            	sb.append(navigationPath);
+
+            	if(enableNiceURIForLanguage)
+            		sb.insert(0, "/" + LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId).getLanguageCode());
+	        } 
+	        catch (Exception e) 
+			{
+	        	e.printStackTrace();
+	            logger.warn("Error generating url:" + e.getMessage());
+	        }
+        }
+        else
+        {           
+        	if(siteNodeId == null)
+    			siteNodeId = new Integer(-1);
+
+    		if(languageId == null)
+    			languageId = new Integer(-1);
+
+    		if(contentId == null)
+    			contentId = new Integer(-1);
+
+            String arguments = "siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId;
+
+            sb.append("ViewPage.action?" + arguments);
+        }
+        
+        return sb.toString();
+    }
+    
     public String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
         String pageUrl = composePageUrl(db, infoGluePrincipal, siteNodeId, languageId, contentId, deliveryContext);

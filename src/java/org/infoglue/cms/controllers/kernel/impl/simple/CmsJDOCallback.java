@@ -66,6 +66,7 @@ import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
+import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
 import org.infoglue.cms.entities.workflow.impl.simple.WorkflowDefinitionImpl;
 import org.infoglue.cms.exception.Bug;
@@ -236,12 +237,15 @@ public class CmsJDOCallback implements CallbackInterceptor
 			}
 			else if(object.getClass().getName().equals(SiteNodeImpl.class.getName()))
 			{
+				clearCache(SmallSiteNodeImpl.class);
 				CacheController.clearCache("childSiteNodesCache");
+				CacheController.clearCache("parentSiteNodeCache");
 			}
 			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()))
 			{
 				clearCache(SmallSiteNodeVersionImpl.class);
 				CacheController.clearCache("childSiteNodesCache");
+				CacheController.clearCache("parentSiteNodeCache");
 			}
 			else if(object.getClass().getName().equals(WorkflowDefinitionImpl.class.getName()))
 			{
@@ -397,6 +401,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()))
 			{
 				CacheController.clearCache("childSiteNodesCache");
+				CacheController.clearCache("parentSiteNodeCache");
 			}
 			else if(object.getClass().getName().equals(RepositoryLanguageImpl.class.getName()))
 			{
@@ -557,12 +562,16 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 			    RegistryController.getController().clearRegistryForReferencedEntity(SiteNode.class.getName(), getObjectIdentity(object).toString());
 				RegistryController.getController().clearRegistryForReferencingEntityCompletingName(SiteNode.class.getName(), getObjectIdentity(object).toString());
+				RedirectController.getController().deleteRelatedRedirects(Integer.parseInt(getObjectIdentity(object).toString()));
+				clearCache(SmallSiteNodeImpl.class);
 				CacheController.clearCache("childSiteNodesCache");
+				CacheController.clearCache("parentSiteNodeCache");
 			}
 			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()))
 			{
 				clearCache(SmallSiteNodeVersionImpl.class);
 				CacheController.clearCache("childSiteNodesCache");
+				CacheController.clearCache("parentSiteNodeCache");
 				RegistryController.getController().clearRegistryForReferencingEntityName(SiteNodeVersion.class.getName(), getObjectIdentity(object).toString());
 			}
 			else if(object.getClass().getName().equals(WorkflowDefinitionImpl.class.getName()))

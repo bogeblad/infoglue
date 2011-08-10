@@ -68,6 +68,11 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.XMLHelper;
+import org.infoglue.deliver.applications.databeans.DeliveryContext;
+import org.infoglue.deliver.applications.filters.FilterConstants;
+import org.infoglue.deliver.applications.filters.ViewPageFilter;
+import org.infoglue.deliver.controllers.kernel.URLComposer;
+import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.Timer;
 import org.w3c.dom.Document;
@@ -1072,7 +1077,7 @@ public class SiteNodeController extends BaseController
             {
             	Content metaInfoContent = ContentController.getContentController().getContentWithId(metaInfoContentId, db);
             	Content newParentContent = ContentController.getContentController().getContentWithPath(newParentSiteNode.getRepository().getId(), "Meta info folder", true, principal, db);
-            	if(metaInfoContent != null && newParentContent != null)
+                if(metaInfoContent != null && newParentContent != null)
             	{
             		//logger.info("Moving:" + metaInfoContent.getName() + " to " + newParentContent.getName());
             		newParentContent.getChildren().add(metaInfoContent);
@@ -1086,6 +1091,10 @@ public class SiteNodeController extends BaseController
             
             changeRepositoryRecursive(siteNode, newParentSiteNode.getRepository());
             //siteNode.setRepository(newParentSiteNode.getRepository());
+            
+            //Test registering system redirects for the old location
+            Map<String,String> pageUrls = RedirectController.getController().getNiceURIMapBeforeMove(db, siteNode.getRepository().getId(), siteNode.getId(), principal);
+            
 			newParentSiteNode.getChildSiteNodes().add(siteNode);
 			oldParentSiteNode.getChildSiteNodes().remove(siteNode);
 			
@@ -1093,6 +1102,9 @@ public class SiteNodeController extends BaseController
             ceb.throwIfNotEmpty();
             
             commitTransaction(db);
+            
+            //Test registering system redirects for the old location
+            RedirectController.getController().createSystemRedirect(pageUrls, siteNode.getRepository().getId(), siteNode.getId(), principal);
         }
         catch(ConstraintException ce)
         {

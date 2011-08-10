@@ -25,8 +25,10 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -56,8 +58,10 @@ import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.DateHelper;
+import org.infoglue.deliver.applications.filters.ViewPageFilter;
 
 public class SiteNodeStateController extends BaseController 
 {
@@ -303,6 +307,8 @@ public class SiteNodeStateController extends BaseController
     	
     	if(contentVO != null)
     	{				
+    		Map<String,String> pageUrls = new HashMap<String,String>();
+    		
 			Iterator languageIterator = languages.iterator();
 			while(languageIterator.hasNext())
 			{
@@ -325,6 +331,31 @@ public class SiteNodeStateController extends BaseController
 				{
 				    logger.info("State on current:" + contentVersion.getStateId());
 				    logger.info("changing state on contentVersion:" + contentVersion.getId());
+
+				    //Test registering system redirects for the old location
+				    if(ViewPageFilter.attributeName == null)
+			        {
+			            String attributeName = CmsPropertyHandler.getNiceURIAttributeName();
+			            if(attributeName == null || attributeName.equals("") || attributeName.indexOf("@") > -1)
+			                attributeName = "NavigationTitle";
+			            ViewPageFilter.attributeName = attributeName;
+			        }
+				    
+				    ContentVersion latestPublishedContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionReadOnly(contentVO.getId(), language.getId(), 3, db);
+				    if(latestPublishedContentVersion != null && stateId == SiteNodeVersionVO.PUBLISHED_STATE)
+				    {
+						String attributeLatestPublishedVersion 	= ContentVersionController.getContentVersionController().getAttributeValue(latestPublishedContentVersion.getValueObject(), ViewPageFilter.attributeName, false);
+						String attributeNewVersion 				= ContentVersionController.getContentVersionController().getAttributeValue(contentVersion.getValueObject(), ViewPageFilter.attributeName, false);
+			            if(!attributeLatestPublishedVersion.equalsIgnoreCase(attributeNewVersion))
+			            {
+			            	pageUrls.putAll(RedirectController.getController().getNiceURIMapBeforeMove(db, siteNodeVersion.getOwningSiteNode().getValueObject().getRepositoryId(), siteNodeVersion.getOwningSiteNode().getId(), infoGluePrincipal));
+			            }
+			            else
+			            {
+			            	logger.info("No worries - no rename operation.");		            	
+			            }
+				    }
+				    
 				    contentVersion = ContentStateController.changeState(contentVersion.getId(), stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, contentVO.getId(), db, events);
 				}
 				
@@ -335,6 +366,17 @@ public class SiteNodeStateController extends BaseController
 				    RegistryController.getController().updateContentVersion(contentVersion, siteNodeVersion, db);
 				}	
 			}
+			
+			//Test registering system redirects for the old location
+			if(pageUrls != null && pageUrls.size() > 0 && stateId == SiteNodeVersionVO.PUBLISHED_STATE)
+			{
+				RedirectController.getController().createSystemRedirect(pageUrls, siteNodeVersion.getOwningSiteNode().getValueObject().getRepositoryId(), siteNodeVersion.getOwningSiteNode().getId(), infoGluePrincipal, db);
+			}
+			else
+			{
+				logger.info("Skipping creating systemRedirect - no urls added.");
+			}
+			
 		}
     }
 

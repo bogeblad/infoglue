@@ -1,3 +1,31 @@
+#define( $headerMarkup )
+	<script type="text/javascript">
+	<!-- 
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.structuretool.moveMultipleSiteNode.finished" "" "" false true $!disableCloseButton $headerMarkup false "")
+	
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+
+	<h3>$ui.getString("tool.structuretool.moveMultipleSiteNode.finished")</h3>
+	<p>
+		The pages you choosed to move are now located in the new destination.
+	</p>
+	#if($errorsOccurred)
+	<p>
+		Some items could not be moved as there was constraints prohibiting this.
+	</p>
+	#end
+	
+	#lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()
+
+#*
 <?xml version="1.0" encoding="UTF-8"?> 
  
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -91,3 +119,4 @@
 
 </body>
 </html>
+*#

@@ -53,6 +53,27 @@
 	</job>
 	<job>
 		<job-detail>
+			<name>CleanOldSystemRedirects</name>
+			<group>infoglueCleanJobs</group>
+			<job-class>org.infoglue.cms.jobs.CleanOldSystemRedirectsJob</job-class>
+			<volatility>false</volatility>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job-detail>
+			        
+		<trigger>
+			<cron>
+				<name>infoglueCleanOldSystemRedirectsTrigger</name>
+				<group>infoglueCleanJobs</group>
+				<job-name>CleanOldSystemRedirects</job-name>
+				<job-group>infoglueJobs</job-group>
+				<cron-expression>0 0 1 * * ?</cron-expression>
+				<!--<cron-expression>0/30 * * ? * *</cron-expression>-->
+			</cron>
+		</trigger>
+	</job>
+	<job>
+		<job-detail>
 			<name>ProcessSubscriptions</name>
 			<group>infoglueJobs</group>
 			<job-class>org.infoglue.cms.jobs.SubscriptionsJob</job-class>

@@ -980,11 +980,22 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		
 		List languages = LanguageDeliveryController.getLanguageDeliveryController().getLanguagesForSiteNode(getDatabase(), siteNodeId, templateController.getPrincipal());
 		
+		Collection componentProperties = getComponentProperties(componentId, document);
+		boolean skipLanguageDrop = true;
+		Iterator componentPropertiesIterator = componentProperties.iterator();
+		while(componentPropertiesIterator.hasNext())
+		{
+			ComponentProperty componentProperty = (ComponentProperty)componentPropertiesIterator.next();
+			boolean allowLanguageVariations = componentProperty.getAllowLanguageVariations();
+			if(allowLanguageVariations)
+				skipLanguageDrop = false;
+		}
+		
 		sb.append("<div id=\"component" + componentId + "Properties\" class=\"componentProperties\" style=\"right:5px; top:5px; position: absolute; visibility:hidden; display: none;\">");
 		sb.append("	<div id=\"component" + componentId + "PropertiesHandle\" class=\"componentPropertiesHandle\"><div class=\"leftPaletteHandleCompProps\">Properties - " + componentName + " in slot " + slotName + "</div><div class=\"rightPaletteHandleCompProps close\" onclick=\"hideDiv('component" + componentId + "Properties');\">&nbsp;</div></div>");
 
 		sb.append("	<form id=\"component" + componentId + "PropertiesForm\" name=\"component" + componentId + "PropertiesForm\" action=\"" + componentEditorUrl + "ViewSiteNodePageComponents!updateComponentProperties.action\" method=\"post\">");
-		if(languages.size() == 1)
+		if(languages.size() == 1 || skipLanguageDrop)
 			sb.append("<input type=\"hidden\" name=\"languageId\" value=\"" + ((LanguageVO)languages.get(0)).getId() + "\"/>");
 		
 		sb.append("		<div id=\"component" + componentId + "PropertiesBody\" class=\"componentPropertiesBody\">");
@@ -995,7 +1006,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("			<td width=\"20%\"><img src='images/trans.gif' width='1' height='1' alt=\"trans\"/></td><td width=\"75%\"><img src='images/trans.gif' width='1' height='1' alt=\"trans\"/></td><td width=\"16\"><img src='images/trans.gif' width='16' height='1' alt=\"trans\"/></td><td width=\"16\"><img src='images/trans.gif' width='16' height='1' alt=\"trans\"/></td>");
 		sb.append("		</tr>");
 
-		if(languages.size() > 1)
+		if(languages.size() > 1 && !skipLanguageDrop)
 		{
 			sb.append("		<tr class=\"igtr\">");
 			sb.append("			<td class=\"igpropertylabel\" align=\"left\">" + getLocalizedString(locale, "deliver.editOnSight.changeLanguage") + "</td>");
@@ -1036,7 +1047,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			sb.append("		</tr>");
 		}
 		
-		Collection componentProperties = getComponentProperties(componentId, document);
+		//Collection componentProperties = getComponentProperties(componentId, document);
 		
 		String hideProtectedProperties = CmsPropertyHandler.getHideProtectedProperties();
 		int numberOfHiddenProperties = 0;
@@ -1044,7 +1055,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		int propertyIndex = 0;
 		int accessablePropertyIndex = 0;
 		boolean isAdvancedProperties = false;
-		Iterator componentPropertiesIterator = componentProperties.iterator();
+		//Iterator componentPropertiesIterator = componentProperties.iterator();
+		componentPropertiesIterator = componentProperties.iterator();
 		while(componentPropertiesIterator.hasNext())
 		{
 			ComponentProperty componentProperty = (ComponentProperty)componentPropertiesIterator.next();

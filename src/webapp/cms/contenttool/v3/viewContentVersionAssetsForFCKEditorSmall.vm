@@ -7,9 +7,13 @@
 		var assetKey = "";
 		var firstAssetKey;
 		var assetUrl;
+		var contentVersionId = "$!contentVersionId";
 			
 		function markAsset(object, digitalAssetId, aContentId, anAssetKey, actualAssetKey, anAssetUrl)
 		{
+			//alert("aContentId:" + aContentId);
+			//alert("digitalAssetId:" + digitalAssetId);
+		
 			if(selectedAssetElement)
 			{
 				selectedAssetElement.parentNode.style.border = "1px solid #d8d8d8";
@@ -24,9 +28,11 @@
 				assetKey = actualAssetKey;
 			assetUrl = anAssetUrl;
 			
+			//alert("contentId:" + contentId);
+			//alert("contentVersionId:" + contentVersionId);
 			if(parent.assetMarked)
-				parent.assetMarked(contentId, assetKey, assetUrl);
-				
+				parent.assetMarked(contentId, assetKey, assetUrl, contentVersionId);
+
 			selectedAssetElement = document.getElementById("digitalAsset" + digitalAssetId);
 			if(selectedAssetElement)
 			{
@@ -61,10 +67,12 @@
 	
 		function initSub(contentId) 
 		{
+			//alert("2");
 			if(document.referrer != null && document.referrer != '')
-				markAsset(this, '$!contentId', firstAssetKey, firstAssetKey, '');
+				markAsset(this, '$!digitalAssetId', '$!contentId', firstAssetKey, firstAssetKey, '');
 			else
-				markAsset(this, '$!contentId', lastAssetKey, lastAssetKey, '');
+				markAsset(this, '$!digitalAssetId', '$!contentId', lastAssetKey, lastAssetKey, '');
+			//alert("2");
 		};
 	
 		function deleteAsset(url, assetKey)

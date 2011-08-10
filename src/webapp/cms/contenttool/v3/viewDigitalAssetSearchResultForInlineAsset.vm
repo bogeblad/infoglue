@@ -23,7 +23,7 @@
 			if(actualAssetKey)
 				assetKey = actualAssetKey;
 			assetUrl = anAssetUrl;
-			
+						
 			if(parent.assetMarked)
 				parent.assetMarked(contentId, assetKey, assetUrl);
 				

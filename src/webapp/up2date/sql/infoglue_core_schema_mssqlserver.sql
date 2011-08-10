@@ -710,6 +710,11 @@ CREATE TABLE cmRedirect
 	id			[int] IDENTITY (1, 1) NOT NULL,
 	url			VARCHAR(1024) NOT NULL,
 	redirectUrl	VARCHAR(1024) NOT NULL,
+	createdDateTime datetime NOT NULL default '2001-01-01 01:01:01',
+	publishDateTime datetime NOT NULL default '2001-01-01 01:01:01',
+	expireDateTime datetime NOT NULL default '2050-01-01 01:01:01',
+	modifier VARCHAR(1024) NOT NULL default 'system',
+	isUserManaged INTEGER NOT NULL DEFAULT '1',
 	PRIMARY KEY (id)
 )  
 

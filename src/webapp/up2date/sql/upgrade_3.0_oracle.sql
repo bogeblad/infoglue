@@ -40,6 +40,12 @@ ALTER TABLE cmContentTypeDef ADD parentContentTypeDefinitionId number DEFAULT -1
 ALTER TABLE cmContentTypeDef ADD detailPageResolverClass varchar2(255) DEFAULT '';
 ALTER TABLE cmContentTypeDef ADD detailPageResolverData varchar2(1024) DEFAULT '';
 
+ALTER TABLE cmRedirect ADD createdDateTime date;
+ALTER TABLE cmRedirect ADD publishDateTime date;
+ALTER TABLE cmRedirect ADD expireDateTime date;
+ALTER TABLE cmRedirect ADD modifier varchar2(1024) DEFAULT 'system' NOT NULL;
+ALTER TABLE cmRedirect ADD isUserManaged number DEFAULT 1 NOT NULL;
+
 drop index propCategoryAttrNameIndex;
 drop index propCategoryEntityNameIndex;
 drop index propCategoryEntityNameIndex;
@@ -54,8 +60,12 @@ create index propCategoryCategoryIdIndex on cmPropertiesCategory(categoryId);
 create index categoryParentIdIndex on cmCategory(parentId);
 create index categoryNameIndex on cmCategory(name);
 
+create index assetKeyIndex on cmDigitalAsset(assetKey);
+create index assetFileNameIndex on cmDigitalAsset(assetFileName);
+create index assetFileSizeIndex on cmDigitalAsset(assetFileSize);
+create index assetContentTypeIndex on cmDigitalAsset(assetContentType);
 
-
+CREATE INDEX redirectUrlIndex ON cmRedirect(redirectUrl);
 
 
 

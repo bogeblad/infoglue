@@ -697,8 +697,13 @@ CREATE TABLE cmRedirect (
   id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   url TEXT NOT NULL,
   redirectUrl TEXT NOT NULL,
+  createdDateTime datetime,
+  publishDateTime datetime,
+  expireDateTime datetime,
+  modifier TEXT,
+  isUserManaged TINYINT NOT NULL DEFAULT '1',
   PRIMARY KEY(id)
-) TYPE = InnoDB;
+) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
 
@@ -721,7 +726,7 @@ CREATE TABLE  cmFormEntry (
   userAgent varchar(255) NOT NULL,
   registrationDateTime DATETIME,
 PRIMARY KEY  (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
 CREATE TABLE  cmFormEntryValue (
@@ -730,7 +735,7 @@ CREATE TABLE  cmFormEntryValue (
   value varchar(4096),
   formEntryId int(10) unsigned NOT NULL,
   PRIMARY KEY  (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
 CREATE TABLE cmFormEntryAsset (
@@ -742,7 +747,7 @@ CREATE TABLE cmFormEntryAsset (
   contentType VARCHAR(50) NOT NULL,
   assetBlob BLOB NOT NULL,
   PRIMARY KEY(id)
-) ENGINE = InnoDB DEFAULT CHARSET=utf8;
+) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
 CREATE TABLE cmSubscription (
@@ -756,7 +761,7 @@ CREATE TABLE cmSubscription (
   userEmail varchar(150) default NULL,
   lastNotifiedDateTime timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY(id)
-) TYPE = InnoDB DEFAULT CHARSET=utf8;
+) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
 
@@ -767,7 +772,7 @@ CREATE TABLE cmSubscriptionFilter (
   filterCondition varchar(255) NOT NULL,
   isAndCondition tinyint(4) NOT NULL default '1',
   PRIMARY KEY(id)
-) TYPE = InnoDB DEFAULT CHARSET=utf8;
+) CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB;
 
 
 

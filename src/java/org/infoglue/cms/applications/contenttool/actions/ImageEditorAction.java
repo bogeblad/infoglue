@@ -228,14 +228,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         }
         
     	javax.imageio.ImageIO.write(image, getImageFileType(digitalAssetVO.getAssetContentType()), outputFile);
-
-    	/*
-    	BufferedImage originalPNG = javax.imageio.ImageIO.read(outputFile);
-    	System.out.println("Writing:" + getImageFileType(digitalAssetVO.getAssetContentType()) + ":" + outputRealFile);
-    	javax.imageio.ImageIO.write(originalPNG, getImageFileType(digitalAssetVO.getAssetContentType()), outputRealFile);
-    	
-    	workingFileName = workingRealFileName;
-    	*/
     	
     	//logger.info("outputFile:" + outputFile.length());
 		this.modifiedFileUrl = getImageEditorBaseUrl() + workingFileName;

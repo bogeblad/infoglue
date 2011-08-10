@@ -35,9 +35,11 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.Bug;
@@ -196,10 +198,19 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 			this.getHttpSession().removeAttribute("CreateContentWizardInfoBean");
 		
 			logger.info("this.getSiteNodeId():" + this.getSiteNodeId());
+			if(this.getSiteNodeId() == null)
+			{
+				logger.info("this.contentId: " + this.contentId + ":" + this.getContentId() + ":" + this.contentVersionVO);
+				SiteNodeVO metaInfoSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(this.contentId);
+				this.setSiteNodeId(metaInfoSiteNodeVO.getId());
+			}
+			
 			if(this.getSiteNodeId() != null && this.contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
 			{
 				SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(this.getSiteNodeId());
+				logger.info("siteNodeVersionVO: " + siteNodeVersionVO.getId());
 				SiteNodeVersion newSiteNodeVersion = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "New version", false, null, this.getInfoGluePrincipal(), null, new ArrayList());
+				logger.info("newSiteNodeVersion: " + newSiteNodeVersion.getId());
 				logger.info("Created new site node version:" + newSiteNodeVersion);
 			}
 		}

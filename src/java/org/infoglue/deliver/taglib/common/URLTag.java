@@ -230,21 +230,29 @@ public class URLTag extends TemplateControllerTag
 	        }
 		    else
 		    {
-		        String currentPageUrl = this.getController().getCurrentPageUrl().toString();
+		        String currentPageUrl = this.getController().getCurrentPageUrl();
 		        
-		        int cidIndex = currentPageUrl.indexOf("cid");
-		        if(excludedQueryStringParameters != null && (excludedQueryStringParameters.indexOf("contentId") > -1 || excludedQueryStringParameters.indexOf("cid") > -1) && cidIndex > -1)
-		        {
-		        	int lastIndexOf = currentPageUrl.lastIndexOf("/", cidIndex);
-		        	int nextIndexOf = currentPageUrl.indexOf("/", cidIndex);
-
-		        	currentPageUrl = currentPageUrl.substring(0, lastIndexOf);
-		        	if(nextIndexOf > -1)
-		        		currentPageUrl = currentPageUrl + currentPageUrl.substring(nextIndexOf);
-		        }
+		        if(currentPageUrl != null)
+	            {
+			        int cidIndex = currentPageUrl.indexOf("cid");
+			        if(excludedQueryStringParameters != null && (excludedQueryStringParameters.indexOf("contentId") > -1 || excludedQueryStringParameters.indexOf("cid") > -1) && cidIndex > -1)
+			        {
+			        	int lastIndexOf = currentPageUrl.lastIndexOf("/", cidIndex);
+			        	int nextIndexOf = currentPageUrl.indexOf("/", cidIndex);
+	
+			        	currentPageUrl = currentPageUrl.substring(0, lastIndexOf);
+			        	if(nextIndexOf > -1)
+			        		currentPageUrl = currentPageUrl + currentPageUrl.substring(nextIndexOf);
+			        }
 		        	
-		        currentPageUrl = currentPageUrl.split("\\?")[0];
-	            newBaseUrl = (baseURL == null) ? currentPageUrl : baseURL;	        
+			        currentPageUrl = currentPageUrl.split("\\?")[0];
+			        newBaseUrl = (baseURL == null) ? currentPageUrl : baseURL;	
+	            }
+	            else
+	            {
+	            	logger.warn("How can this happen:" + this.getController().getOriginalFullURL());
+	            	newBaseUrl = (baseURL == null) ? getRequest().getRequestURL().toString() : baseURL;
+	            }
 		    }
 	    }
 	    catch(Exception e)

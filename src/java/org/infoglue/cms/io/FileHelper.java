@@ -444,10 +444,13 @@ public class FileHelper
         while(entries.hasMoreElements()) 
       	{
         	ZipEntry entry = (ZipEntry)entries.nextElement();
-        	logger.info("entry:" + entry.getName());
+        	logger.info("entry:" + entry.getName() + ":" + entry.isDirectory());
         	
-        	if(entry.isDirectory() && (!skipHiddenFiles || entry.getName().startsWith(".") || entry.getName().startsWith("__"))) 
+        	if(entry.isDirectory()) 
 	        {
+        		if((entry.getName().startsWith(".") || entry.getName().startsWith("__")) && skipHiddenFiles)
+        			continue;
+        		 
 	          	(new File(targetFolder + File.separator + entry.getName())).mkdirs();
 	          	continue;
 	        }

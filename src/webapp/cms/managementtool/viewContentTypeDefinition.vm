@@ -18,6 +18,11 @@
 		$(document).ready(function() {
 			setTimeout("resizeGreedyTextArea();", 300);
 		});
+		
+		function save()
+		{
+			$("form").get(0).submit();
+		}
 	</script>
 #end
 
@@ -33,7 +38,7 @@
 	<div style="clear: both;"></div>
 
 	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
-		<form name="editForm" method="POST" action="UpdateContentTypeDefinition.action">
+		<form name="editForm" method="POST" action="UpdateContentTypeDefinition!saveSimple.action">
 			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 			<input type="hidden" name="contentTypeDefinitionId" value="$!contentTypeDefinitionId">
 			<p>#editTextField("ContentTypeDefinition.name" "name" $!name "51" "normaltextfield" "")</p>

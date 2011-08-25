@@ -1137,6 +1137,7 @@
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateContentTypeDefinitionAction" alias="UpdateContentTypeDefinition">
 		<view name="input">/cms/managementtool/viewContentTypeDefinition.vm</view>
+		<view name="simple">ViewContentTypeDefinition!useSimple.action</view>
 		<view name="success">ViewContentTypeDefinition.action</view>
 		<view name="saveAndExit">ViewListContentTypeDefinition.action</view>
 		<view name="error">/cms/managementtool/error.vm</view>

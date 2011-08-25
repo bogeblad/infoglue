@@ -63,6 +63,13 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
 		return "success";
 	}
 
+	public String doSaveSimple() throws Exception
+    {
+		doExecute();
+						
+		return "simple";
+	}
+	
 	public String doSaveAndExit() throws Exception
     {
 		doExecute();

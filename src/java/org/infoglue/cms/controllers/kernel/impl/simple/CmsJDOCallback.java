@@ -501,6 +501,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			if(object.getClass().getName().equals(RepositoryImpl.class.getName()))
 			{
 				CacheController.clearCache("repositoryCache");
+				CacheController.clearCache("repositoryRootNodesCache");
 			}
 			else if(object.getClass().getName().equals(InterceptionPointImpl.class.getName()))
 			{
@@ -566,6 +567,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 				clearCache(SmallSiteNodeImpl.class);
 				CacheController.clearCache("childSiteNodesCache");
 				CacheController.clearCache("parentSiteNodeCache");
+				CacheController.clearCache("repositoryRootNodesCache");
 			}
 			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()))
 			{

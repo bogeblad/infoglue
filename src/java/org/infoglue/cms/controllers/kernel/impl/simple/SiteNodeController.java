@@ -264,24 +264,24 @@ public class SiteNodeController extends BaseController
 	 * This method deletes a siteNode and also erases all the children and all versions.
 	 */
 	    
-    public void delete(Integer siteNodeId, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
+    public void delete(Integer siteNodeId, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
     {
     	SiteNodeVO siteNodeVO = SiteNodeControllerProxy.getController().getSiteNodeVOWithId(siteNodeId);
     	
-    	delete(siteNodeVO, infogluePrincipal);
+    	delete(siteNodeVO, infogluePrincipal, forceDelete);
     }
     
 	/**
 	 * This method deletes a siteNode and also erases all the children and all versions.
 	 */
 	    
-    public void delete(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
+    public void delete(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);
 		try
         {	
-			delete(siteNodeVO, db, infogluePrincipal);	
+			delete(siteNodeVO, db, forceDelete, infogluePrincipal);	
 			
 	    	commitTransaction(db);
         }

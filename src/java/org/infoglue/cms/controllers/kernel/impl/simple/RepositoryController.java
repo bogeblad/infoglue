@@ -218,9 +218,9 @@ public class RepositoryController extends BaseController
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(RepositoryVO repositoryVO, String userName, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(RepositoryVO repositoryVO, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
     {
-    	delete(repositoryVO, userName, false, infoGluePrincipal);
+    	delete(repositoryVO, false, infoGluePrincipal);
     }
 
     
@@ -228,18 +228,18 @@ public class RepositoryController extends BaseController
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(Integer repositoryId, String userName, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(Integer repositoryId, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
     {
     	RepositoryVO repositoryVO = getRepositoryVOWithId(repositoryId);
     	
-    	delete(repositoryVO, userName, forceDelete, infoGluePrincipal);
+    	delete(repositoryVO, forceDelete, infoGluePrincipal);
     }
     
 	/**
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(RepositoryVO repositoryVO, String userName, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(RepositoryVO repositoryVO, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -254,7 +254,7 @@ public class RepositoryController extends BaseController
 			
 			RepositoryLanguageController.getController().deleteRepositoryLanguages(repository, db);
 			
-			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), userName, false);
+			ContentVO contentVO = ContentControllerProxy.getController().getRootContentVO(repositoryVO.getRepositoryId(), infoGluePrincipal.getName(), false);
 			if(contentVO != null)
 			{
 				if(forceDelete)
@@ -269,7 +269,7 @@ public class RepositoryController extends BaseController
 				if(forceDelete)
 					SiteNodeController.getController().delete(siteNodeVO, db, true, infoGluePrincipal);
 				else
-					SiteNodeController.getController().delete(siteNodeVO, db, infoGluePrincipal);
+					SiteNodeController.getController().delete(siteNodeVO, db, true, infoGluePrincipal);
 			}
 			
 			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);

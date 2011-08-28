@@ -434,7 +434,7 @@ public class ContentController extends BaseController
 	 * @throws Bug 
 	 */
 	    
-    public void delete(Integer contentId, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws Bug, Exception
+    public void delete(Integer contentId, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws Bug, Exception
     {
     	ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(infogluePrincipal, contentId);
     	

@@ -143,10 +143,16 @@
 				}
 			});
 
-
 			#set($rootSiteNode = $this.getRepositoryRootSiteNode($repositoryId))
-			openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=$rootSiteNode.id&repositoryId=$repositoryId");
-				
+			#if(!$rootSiteNode)
+				//alert("No sitenode created yet...");
+				jQuery.get("ViewSiteNode!V3.action?siteNodeId=&repositoryId=$repositoryId", function(data) {
+					//alert('Reloaded menu');
+					setTimeout("document.location.reload();", 500);
+					});
+			#else
+				openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=$rootSiteNode.id&repositoryId=$repositoryId");
+			#end
 		});
 	
 		function changeRepository(selectBox)

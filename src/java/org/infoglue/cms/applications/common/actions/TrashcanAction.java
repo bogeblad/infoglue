@@ -116,11 +116,11 @@ public class TrashcanAction extends InfoGlueAbstractAction
 		if(entity != null && !entity.equals("") && entityId != null && !entityId.equals(""))
 		{
 			if(entity.equalsIgnoreCase("Repository"))
-				RepositoryController.getController().delete(new Integer(entityId), getInfoGluePrincipal().getName(), true, getInfoGluePrincipal());
+				RepositoryController.getController().delete(new Integer(entityId), true, getInfoGluePrincipal());
 			else if(entity.equalsIgnoreCase("Content"))
-				ContentController.getContentController().delete(new Integer(entityId), getInfoGluePrincipal(), true);
+				ContentController.getContentController().delete(new Integer(entityId), true, getInfoGluePrincipal());
 			else if(entity.equalsIgnoreCase("SiteNode"))
-				SiteNodeController.getController().delete(new Integer(entityId), getInfoGluePrincipal());
+				SiteNodeController.getController().delete(new Integer(entityId), true, getInfoGluePrincipal());
 		}
 		
 		return doExecute();
@@ -168,7 +168,7 @@ public class TrashcanAction extends InfoGlueAbstractAction
 			RepositoryVO repositoryVO = repositoriesMarkedForDeletionIterator.next();
 			try
 			{
-				RepositoryController.getController().delete(repositoryVO, getInfoGluePrincipal().getName(), true, getInfoGluePrincipal());
+				RepositoryController.getController().delete(repositoryVO, true, getInfoGluePrincipal());
 			}
 			catch (Exception e) 
 			{

@@ -77,7 +77,7 @@ public class RepositoryTester extends TestCase
 
 	    try
 	    {
-	        RepositoryController.getController().delete(this.newRepositoryVO, "testcaseUser", new InfoGluePrincipal("test-user", "first", "last", "email", Collections.singletonList(new InfoGlueRole("cmsUser", "test description", null)), new ArrayList(), false, null));
+	        RepositoryController.getController().delete(this.newRepositoryVO, new InfoGluePrincipal("test-user", "first", "last", "email", Collections.singletonList(new InfoGlueRole("cmsUser", "test description", null)), new ArrayList(), false, null));
 		}
 	    catch(Exception e)
 	    {

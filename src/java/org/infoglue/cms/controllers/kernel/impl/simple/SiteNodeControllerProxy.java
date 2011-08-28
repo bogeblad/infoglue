@@ -174,7 +174,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
     	
 		intercept(hashMap, "SiteNodeVersion.DeleteSiteNode", infogluePrincipal);
 
-		delete(siteNodeVO, infogluePrincipal);
+		delete(siteNodeVO, infogluePrincipal, false);
 	}   
 
 	/**

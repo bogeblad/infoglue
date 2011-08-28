@@ -114,7 +114,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		this.repositoryVO.setRepositoryId(this.getRepositoryId());
 		try
 		{
-			RepositoryController.getController().delete(this.repositoryVO, this.getInfoGluePrincipal().getName(), this.getInfoGluePrincipal());
+			RepositoryController.getController().delete(this.repositoryVO, this.getInfoGluePrincipal());
 
 		    ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 
@@ -143,7 +143,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 	    this.repositoryVO.setRepositoryId(this.getRepositoryId());
 		try
 		{
-			RepositoryController.getController().delete(this.repositoryVO, this.getInfoGluePrincipal().getName(), true, this.getInfoGluePrincipal());
+			RepositoryController.getController().delete(this.repositoryVO, true, this.getInfoGluePrincipal());
 
 			ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 			

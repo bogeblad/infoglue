@@ -275,6 +275,8 @@
 		var repositoryId 		= "$repositoryId";
 		var languageId 			= "$languageId";
 		
+		var transferPlain = false;
+		
 		var count = 0;
 		var minute = 60000;
 		function doTimer()
@@ -372,6 +374,15 @@
 		  			} 
 		  		);
 			#end	
+			
+			//alert("$stateChanged");
+			#if($stateChanged)
+			try
+			{
+				parent.refreshContent($contentId, 1, $contentId);
+			}
+			catch(e) {alert("e:" + e);}
+			#end
 			
 			#if($translate)
 			  	$("#otherLanguageTabsContainer").tabs({ cache: false, show:function() { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
@@ -580,9 +591,9 @@
 						value = arr.join(",");
 			        }
 					else
-					{
+					{						
 						var hiddenField = document.getElementById(elementId + "Hidden");
-						if(hiddenField)
+						if(hiddenField && transferPlain == false)
 							fieldName = "document.editForm." + elementId + "Hidden";
 						else
 							fieldName = "document.editForm." + elementId;

@@ -860,7 +860,7 @@
 		 
 		function movePropertyOptionDown(index)
 		{
-			if(index > 0)
+			if(index < propertyVector.getSize()-1)
 			{
 				var property 				= propertyVector.getElementAt(itemIndex);
 				

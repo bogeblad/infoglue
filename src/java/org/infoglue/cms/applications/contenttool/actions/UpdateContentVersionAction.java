@@ -71,6 +71,9 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	private boolean concurrentModification = false;
 	private String saveAndExitURL = null;
 	
+	//Set to true if version was a state change
+	private Boolean stateChanged = false;
+
 	private ConstraintExceptionBuffer ceb;
 	
 	public UpdateContentVersionAction()
@@ -128,6 +131,9 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 			*/
 			concurrentModification = true;
 		}
+		
+		if(currentContentVersionVO == null || (this.contentVersionVO != null && currentContentVersionVO.getStateId().intValue() != this.contentVersionVO.getStateId().intValue()))
+			stateChanged = true;
 		
 		return "success";
 	}
@@ -537,6 +543,11 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	public void setSaveAndExitURL(String saveAndExitURL)
 	{
 		this.saveAndExitURL = saveAndExitURL;
+	}
+
+	public Boolean getStateChanged()
+	{
+		return this.stateChanged;
 	}
 
 }

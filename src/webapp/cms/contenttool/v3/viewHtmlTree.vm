@@ -72,6 +72,7 @@
 		
 		function refreshTreeNode(contentId, changeTypeId, addedContentId)
 		{
+			//alert("contentId:" + contentId + ":" + changeTypeId);
 			if (changeTypeId == 4)
 			{
 				if(contentId == tree.myId) 

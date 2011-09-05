@@ -1,0 +1,16 @@
+/* STATES */
+.webfx-tree-item a.workingTreeItem {
+	color: green;
+	font-style: italic;
+}
+.webfx-tree-item a.finalTreeItem {
+	color: blue;
+	font-style: italic;
+}
+.webfx-tree-item a.publishTreeItem {
+	color: red;
+	font-style: italic;
+}
+.webfx-tree-item a.publishedTreeItem {
+	font-style: none;
+}

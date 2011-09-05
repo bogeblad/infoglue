@@ -134,6 +134,17 @@
 							//alert("loadedSiteNodeId:" + loadedSiteNodeId + ":" + currentRepositoryId);
 							refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=' + loadedSiteNodeId, -1, -1, -1);
 							syncWithTree(loadedSiteNodeId, currentRepositoryId, "treeIframe");
+							
+							var stateChanged = getRequestParameter(url, "stateChanged");
+							//alert(loadedSiteNodeId + ":" + stateChanged);
+							if(stateChanged == "true")
+							{
+								try
+								{
+									refreshPage(loadedSiteNodeId, 1, loadedSiteNodeId);
+								}
+								catch(e) {alert("e:" + e);}
+							}
 						}
 					}
 				}

@@ -155,6 +155,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	//Used by create content wizard
 	private String saveAndExitURL = null;
 
+	//Set to true if version was a state change
+	private Boolean stateChanged = false;
 
 	public String getQualifyerPath(String entity, String entityId)
 	{	
@@ -2010,6 +2012,16 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public void setSaveAndExitURL(String saveAndExitURL)
 	{
 		this.saveAndExitURL = saveAndExitURL;
+	}
+	
+	public Boolean getStateChanged()
+	{
+		return this.stateChanged;
+	}
+
+	public void setStateChanged(Boolean stateChanged)
+	{
+		this.stateChanged = stateChanged;
 	}
 
 }

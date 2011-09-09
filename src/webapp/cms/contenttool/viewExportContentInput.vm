@@ -1,8 +1,8 @@
 #define( $headerMarkup )
 
-	<script language="JavaScript">
+	<script type="text/javascript">
 	<!--
-		function submitForm()
+		function save()
 		{
 			document.editForm.submit();
 		}
@@ -16,48 +16,8 @@
 		{
 			border: 1px solid #cccccc;
 			width: 300px;
-		}
-		legend
-		{
-			color: #000000;
-			background: #c6d3e7;
-			border: 1px solid #cccccc;
-			padding: 2px 6px
-		}
-		label
-		{
-			width: 200px;
-			float: left;
-			text-align: right;
-			margin-right: 0.5em;
-			display: block;
-		}
-		.narrowLabel
-		{
-			width: 100px;
-		}
-		select
-		{
-			background: white;
-			border: 1px solid #cccccc;
-			font-family: Verdana, Arial, San serif;
-			font-size: 8pt;
-			width: 80px;
-		}
-		.wideButton
-		{
-			background: #d6d3ce;
-			border: 1px solid #848284;
-			font-family: Verdana, Arial, San serif;
-			font-size: 10pt;
-			width: 100px;
-		}
-		p
-		{
-			line-heigh: 12px;
-			margin: 0px;
-			padding-bottom: 4px;
-		}
+			margin-left: 16px
+		}		
 	</style>
 
 #end
@@ -71,11 +31,9 @@
 
 	<div style="clear: both;"></div>
 	
-	<div style="margin-left: 16px;">
-	
-		<h1>$ui.getString("tool.contenttool.exportContent.header")</h1>
-	
-		<form name="editForm" method="POST" action="ExportContent.action">
+	<h3>$ui.getString("tool.contenttool.exportContent.header")</h3>
+
+	<form name="editForm" method="POST" action="ExportContent.action">
 		<input type="hidden" name="contentId" value="$!contentId">
 		<input type="hidden" name="repositoryId" value="$!repositoryId">
 		
@@ -99,11 +57,8 @@
 	 		</select>
 			</fieldset><br/>
 		</p>
-		<p>
-			<a href="javascript:submitForm();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
-			<a href="ViewContent.action?contentId=$!contentId&repositoryId=$!repositoryId"><img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25"></a>
-		</p>
-		</form>	
-	</div>
+	</form>	
+
+#lightFooterToolbar($footerButtons)
 	
 #endLightCommonToolV3()

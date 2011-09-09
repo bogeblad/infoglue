@@ -257,6 +257,18 @@ public class ToolbarController implements ToolbarProvider
 			if(toolbarKey.equalsIgnoreCase("tool.tasktool.availableTasks.header"))
 				return asButtons(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
 			
+			if(toolbarKey.equalsIgnoreCase("tool.contenttool.exportContent.header"))
+				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			
+			if(toolbarKey.equalsIgnoreCase("tool.contenttool.exportContent.headerFinished"))
+				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
+
+			if(toolbarKey.equalsIgnoreCase("tool.contenttool.importContent.header"))
+				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			
+			if(toolbarKey.equalsIgnoreCase("tool.contenttool.importContent.headerFinished"))
+				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
+			
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.createContentHeader") || toolbarKey.equalsIgnoreCase("tool.contenttool.createFolderHeader"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			

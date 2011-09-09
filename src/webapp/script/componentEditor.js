@@ -735,7 +735,9 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 	
 	try
 	{
+	    //alert("aaaa");
 	    var access = eval("hasAccessToAddComponent" + convertName(compId)); 
+	    //alert("hasAccessToAddComponent" + convertName(compId) + "=" + access);
 	    //alert("access:" + access);
 	    if(access) 
 	    {

@@ -917,6 +917,10 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				
 			    StringBuffer sb = new StringBuffer();
 			    sb.append("<script type=\"text/javascript\">");
+				sb.append("hasAccessToAddComponentClickableDiv" + component.getId() + id.replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
+				sb.append("hasAccessToChangeComponentClickableDiv" + component.getId() + id.replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");
+				sb.append("hasAccessToDeleteComponentClickableDiv" + component.getId() + id.replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";");
+
 				sb.append("hasAccessToAddComponent" + component.getId() + "_" + id.replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
 				sb.append("hasAccessToChangeComponent" + component.getId() + "_" + id.replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");
 				sb.append("hasAccessToAccessRights = " + hasAccessToAccessRights + ";");

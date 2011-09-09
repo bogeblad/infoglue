@@ -1,19 +1,10 @@
 #define( $headerMarkup )
 
 	<link rel="stylesheet" type="text/css" href="css/cms.css"/>
-	<style type="text/css">
-		p
-		{
-			line-heigh: 12px;
-			margin: 0px;
-			padding-bottom: 4px;
-		}
-		
-	</style>
 	
 	<script type="text/javascript">
 		
-		function submitForm()
+		function save()
 		{
 			document.editForm.submit();
 		}
@@ -41,42 +32,24 @@
 
 	<div style="clear: both;"></div>
 
-	<div style="margin-left: 16px;">
-
-		<form enctype="multipart/form-data" name="editForm" method="POST" action="ImportContent.action">
+	<h3>$ui.getString("tool.contenttool.importContent.header")</h3>
+	
+	<p>
+		$ui.getString("tool.contenttool.importContent.introduction")<br/><br/>
+	</p>
+	
+	<form enctype="multipart/form-data" name="editForm" method="POST" action="ImportContent.action">
 		<input type="hidden" name="parentContentId" value="$!parentContentId"/>
-		<table width="300" border="0">
-			<tr>
-				<td class="biglabel">
-					$ui.getString("tool.contenttool.importContent.header")
-				</td>
-			</tr>		
-			<tr>
-				<td>
-					$ui.getString("tool.contenttool.importContent.introduction")<br/><br/>
-				</td>
-			</tr>	
-			<tr>
-				<td>
-					$ui.getString("tool.contenttool.importContent.fileUploadFileLabel")<br/>
-					<input size=30 type="FILE" name="file1">
-				</td>
-			</tr>
-			<tr>
-				<td>
-					$ui.getString("tool.contenttool.importContent.onlyLatestVersionsLabel")<br/>
-					<input type="checkbox" name="onlyLatestVersions" value="true" checked="1">
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<a href="javascript:submitForm();"><img src="$ui.getString("images.contenttool.buttons.save")" width="50" height="25" border="0"></a>
-					<a href="javascript:close()"><img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25"></a>
-				</td>
-			</tr>
-		</table>
-		</form>	
+		<p>
+			$ui.getString("tool.contenttool.importContent.fileUploadFileLabel")<br/>
+			<input size=30 type="FILE" name="file1">
+		</p>
+		<p>
+			$ui.getString("tool.contenttool.importContent.onlyLatestVersionsLabel")<br/>
+			<input type="checkbox" name="onlyLatestVersions" value="true" checked="1">
+		</p>
+	</form>	
 
-	</div>
+#lightFooterToolbar($footerButtons)
 
 #endLightCommonToolV3()

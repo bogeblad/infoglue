@@ -20,8 +20,10 @@
 		}
 
 		$(document).ready(function() {
-			#set($extraParameter = '')
+
+			#set($extraParameter = '"aoColumns": [ null, { "sWidth": "50px" } ]')
 			#initDataTableImpl("workflows" $extraParameter)
+
 		});
 	-->
 	</script>
@@ -40,7 +42,7 @@
 	
 	<h3>$ui.getString("tool.mydesktoptool.availableWorkflows")</h3>
 
-	<p>$ui.getString("tool.mydesktoptool.ongoingWorkflows.intro")</p>	
+	<p>$ui.getString("tool.mydesktoptool.availableWorkflows.intro")</p>	
 			
 	<table cellpadding="0" cellspacing="0" border="1" class="display" id="workflows">
 		<thead>
@@ -72,9 +74,9 @@
 							<a title="$fullTitle" style="color:red">$visibleTitle</a>
 						#end
 					</td>
-					<td>
+					<td style="whitespace: nowrap;">
 						#if($availableWorkflowVO.status == 0)
-							<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="images/v3/start.png" border="0" alt="Start workflow"></a>
+							<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="images/v3/start.png" border="0" alt="Start workflow"></a>&nbsp;
 							<a href="#" onclick="parent.openInlineDiv('Workflow!showWorkflowDetails.action?workflowName=$formatter.encodeURI($availableWorkflowVO.name)', 600, 800, true, true, 'Workflow');"><img src="images/v3/info.png" border="0" alt="info"></a>
 						#end
 					</td>

@@ -27,7 +27,7 @@
 	
 	<h3>$ui.getString("tool.mydesktoptool.myPages")</h3>
 
-	<p>$ui.getString("tool.mydesktoptool.ongoingWorkflows.intro")</p>	
+	<p>$ui.getString("tool.mydesktoptool.myPages.intro")</p>
 			
 	<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
 		<thead>

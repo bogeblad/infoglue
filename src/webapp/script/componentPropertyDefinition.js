@@ -81,6 +81,7 @@ function ComponentPropertyDefinition(name, displayName, type, entity, multiple, 
 	this.setAutoCreateContentMethod	= setAutoCreateContentMethod;
 	this.setAutoCreateContentPath	= setAutoCreateContentPath;
 	this.setCustomMarkup			= setCustomMarkup;
+	this.setOptions					= setOptions;
 }
   
 function getName()
@@ -136,6 +137,11 @@ function getDescription()
 function getOptions()
 {
 	return this.options;
+}
+
+function setOptions(options)
+{
+	this.options = options;
 }
 
 function setName(name)

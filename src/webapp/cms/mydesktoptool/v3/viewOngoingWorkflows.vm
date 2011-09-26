@@ -20,8 +20,9 @@
 		}
 
 		$(document).ready(function() {
-			#set($extraParameter = '')
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
 			#initDataTableImpl("workflows" $extraParameter)
+			#initDeleteLink()
 		});
 	-->
 	</script>
@@ -46,6 +47,7 @@
 	<table cellpadding="0" cellspacing="0" border="1" class="display" id="workflows">
 		<thead>
 			<tr>
+				<th>$ui.getString("tool.common.action.label")</th>
 				<th>$ui.getString("tool.mydesktoptool.workflowNameLabel")</th>
 				<th>$ui.getString("tool.mydesktoptool.stepNameLabel")</th>
 				<th>$ui.getString("tool.mydesktoptool.actionNameLabel")</th>
@@ -99,6 +101,18 @@
 							#set($fullTitle = "$stepWorkflow.name")
 						#end
 						<tr>
+							<td>
+								#set($action = "")
+								#foreach ($workflowActionVO in $workflowVO.globalActions)
+									#set($iconUrl = $workflowActionVO.metaAttributes.get("icon"))
+									#set($viewGlobalAction = $workflowActionVO.getView())
+									#if($viewGlobalAction == "")
+										#set($viewGlobalAction = "Workflow!invoke.action")
+									#end
+									#set($viewGlobalAction = "$viewGlobalAction")
+									<a href="javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$viewGlobalAction');"><img src="$iconUrl" border="0" alt="$workflowActionVO.getName()"/></a>
+								#end
+							</td>
 							<td><a title="$fullTitle" href="#" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');">$visibleTitle</a></td>
 							<td><a href="javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$view');">$workflowActionVO.name</a></td>
 							<td>$workflowActionVO.stepName</td>

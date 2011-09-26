@@ -156,6 +156,15 @@
 				openPopup(url, "RelationEditor", "width=700,height=600,left=" + (document.body.clientWidth / 4) + ",top=50,toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=yes");
 			}
 		}
+
+		function openRelationEditorInline(url)
+		{
+			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.formIsDirtyWarning")'))
+			{
+				allowSave = false;
+				if(top.openInlineDiv) top.openInlineDiv(url, 600, 800, true, true, 'Properties editor'); else openRelationEditor(url);
+			}
+		}
 		
 	
 		//*******************************************

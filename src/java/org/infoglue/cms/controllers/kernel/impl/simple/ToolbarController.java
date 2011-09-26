@@ -306,6 +306,9 @@ public class ToolbarController implements ToolbarProvider
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.chooseContentsLabel"))
 				return getCommonFooterSaveOrCloseButton(toolbarKey, principal, locale, request, disableCloseButton);
 
+			if(toolbarKey.equalsIgnoreCase("tool.structuretool.componentPropertiesEditorLabel"))
+				return getCommonAddSaveCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.chooseRelatedContentsLabel"))
 				return getContentRelationFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
 			
@@ -2859,8 +2862,9 @@ public class ToolbarController implements ToolbarProvider
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
 		String url = "CategoryManagement!new.action";
-		//if(primaryKeyAsInteger != null)
-		//	url += "?model/parentId=" + primaryKeyAsInteger;
+		String categoryIdString = request.getParameter("categoryId");
+		if(categoryIdString != null && !categoryIdString.equals(""))
+			url += "?model/parentId=" + categoryIdString;
 
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.createCategory.header"), 
@@ -3892,6 +3896,25 @@ public class ToolbarController implements ToolbarProvider
 				
 		return buttons;		
 	}
+	
+	private List<ToolbarButton> getCommonAddSaveCancelButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
+	{
+		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
+
+		buttons.add(new ToolbarButton("",
+				  getLocalizedString(locale, "tool.common.addButton.label"), 
+				  getLocalizedString(locale, "tool.common.addButton.label"),
+				  "add();",
+				  "images/v3/addIcon.png",
+				  "left",
+				  "add",
+				  true));
+
+		buttons.addAll(getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+				
+		return buttons;		
+	}
+
 
 	private List<ToolbarButton> asButtons(ToolbarButton button)
 	{

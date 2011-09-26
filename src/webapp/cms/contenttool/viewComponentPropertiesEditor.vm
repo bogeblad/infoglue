@@ -1,59 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?> 
- 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html>
-<head>
-	<title>Component Properties Editor 2.0</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+#define( $headerMarkup )
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
 	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
 	<script type="text/javascript" src="script/vector.js"></script>
+	<script type="text/javascript" src="script/qualifyer.js"></script>
 	<script type="text/javascript" src="script/componentPropertyDefinition.js"></script>
 	<script type="text/javascript" src="script/componentPropertyOptionDefinition.js"></script>
 	<script type="text/javascript" src="script/infogluecommons.js"></script>
-	
-	<style>
-		fieldset
-		{
-			border: 1px solid #cccccc;
-			width: 420px;
-		}
-		legend
-		{
-			color: #000000;
-			background: #ebeafd;
-			border: 1px solid #cccccc;
-			padding: 2px 6px
-		}
-		label
-		{
-			width: 160px;
-			float: left;
-			text-align: right;
-			margin-right: 0.5em;
-			display: block;
-		}
-		input, select
-		{
-			background: #ebeafd;
-			border: 1px solid #cccccc;
-			font-family: Verdana, Arial, San serif;
-			font-size: 8pt;
-			width: 270px;
-		}
-		p
-		{
-			line-heigh: 12px;
-			margin: 0px;
-			padding-bottom: 4px;
-		}
-	</style>
-	<script language="JavaScript"> 
-		window.resizeTo(800,600);		
-	</script> 
 		
-	<script type="text/javascript" language="JavaScript">
+	<script type="text/javascript">
 	<!--	
 		var itemIndex;	
 			
@@ -184,8 +138,7 @@
 		{
 		   	propertiesXML = createXML();
 			document.inputForm.propertiesXML.value = propertiesXML;
-		    showDiv("savingLayer");
-			//alert("propertiesXML:" + propertiesXML);
+		    //alert("propertiesXML:" + propertiesXML);
 			document.inputForm.submit();
 		}
 	
@@ -203,11 +156,20 @@
 			parent.appendChild(link);
 		}
 	
-	  	/**
+		/**
 	  	 * This function creates a href-tag by manipulating the DOM.
 	  	 */
 	  	 
 		function addImageLink(parent, address, src)
+		{
+			addImageLinkImpl(parent, address, src, false);
+		}
+	
+	  	/**
+	  	 * This function creates a href-tag by manipulating the DOM.
+	  	 */
+	  	 
+		function addImageLinkImpl(parent, address, src, skipSeparator)
 		{
 			var link = document.createElement("a");
 			link.setAttribute("href", address);
@@ -217,12 +179,15 @@
 			link.appendChild(image);
 			parent.appendChild(link);
 
-			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
-			separator.setAttribute("border", "0");
-			separator.setAttribute("width", "5");
-			separator.setAttribute("height", "1");
-			parent.appendChild(separator);
+			if(!skipSeparator)
+			{
+				var separator = document.createElement("img");
+				separator.setAttribute("src", "images/trans.gif");
+				separator.setAttribute("border", "0");
+				separator.setAttribute("width", "5");
+				separator.setAttribute("height", "1");
+				parent.appendChild(separator);
+			}
 		}
 
 		function initOptions(componentPropertyDefinition)
@@ -521,10 +486,12 @@
 
 			mytable = document.createElement("TABLE");
 			mytable.setAttribute("id", "properties");
-			mytable.setAttribute("border", "0");
 			mytable.setAttribute("width", "100%");
-			mytable.setAttribute("cellpadding", "2");
+			mytable.setAttribute("border", "1");
+			mytable.setAttribute("cellpadding", "4");
 			mytable.setAttribute("cellspacing", "0");
+			mytable.setAttribute("style", "border: 1px solid #D0D0D0; border-collapse: collapse");
+			
 	        mytablebody = document.createElement("TBODY");
 	        for (var i=0; i<propertyVector.getSize(); i++)
 			{
@@ -536,7 +503,7 @@
 				actionTD.setAttribute("valign", "top");
 				addImageLink(actionTD, "javascript:movePropertyDown(" + i + ");", "images/downArrow.gif");
 				addImageLink(actionTD, "javascript:movePropertyUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deleteProperty(" + i + ");", "images/delete.gif");
+				addImageLink(actionTD, "javascript:deleteProperty(" + i + ");", "images/v3/cross.png");
 				myTR.appendChild(actionTD);
 				
 				addTD(myTR, componentPropertyDefinition.name)
@@ -549,8 +516,10 @@
 				addTD(myTR, componentPropertyDefinition.description)
 
 				var actionTD = document.createElement("TD");
-				addImageLink(actionTD, "javascript:showProperties(" + i + ");", "images/properties.gif");
-				addImageLink(actionTD, "javascript:showAccessRights('${contentId}_" + componentPropertyDefinition.name + "');", "images/accessRights.gif");
+				actionTD.setAttribute("align", "right");
+				actionTD.setAttribute("valign", "top");
+				addImageLink(actionTD, "javascript:showProperties(" + i + ");", "images/v3/metadataIcon.gif");
+				addImageLinkImpl(actionTD, "javascript:showAccessRights('${contentId}_" + componentPropertyDefinition.name + "');", "images/v3/file_locked.png", true);
 				myTR.appendChild(actionTD);
 
 				mytablebody.appendChild(myTR);
@@ -558,6 +527,9 @@
 			 
 	        mytable.appendChild(mytablebody);
 	        parent.appendChild(mytable);
+	        
+	   		$("#properties").prepend("<thead style='border-bottom: 1px solid black; background-color: #ECECEC; font-weight: bold;'><tr><td>&nbsp;</td><td>$ui.getString("tool.contenttool.componentProperties.nameLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.displayNameLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.typeLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.entityLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.multipleLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.assetBindingLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.contentTypesLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.descriptionLabel")</td><td align='right'><img src='images/v3/file_locked.png' onclick='showMultiAccessRights(propertiesString);'/></td></tr></thead>");
+	        
 		}
 
 
@@ -671,6 +643,7 @@
 				dataProviderParameters 	= property.getDataProviderParameters();
 				allowMultipleSelections = property.getAllowMultipleSelections();
 				customMarkup 			= property.getCustomMarkup();
+				options					= property.getOptions();
 				
 				property.setName(previousProperty.getName());
 				property.setDisplayName(previousProperty.getDisplayName());
@@ -694,6 +667,7 @@
 				property.setAutoCreateContentMethod(previousProperty.getAutoCreateContentMethod());
 				property.setAutoCreateContentPath(previousProperty.getAutoCreateContentPath());
 				property.setCustomMarkup(previousProperty.getCustomMarkup());
+				property.setOptions(previousProperty.getOptions());
 				
 				previousProperty.setName(name);
 				previousProperty.setDisplayName(displayName);
@@ -718,6 +692,7 @@
 				previousProperty.setAutoCreateContentMethod(property.getAutoCreateContentMethod());
 				previousProperty.setAutoCreateContentPath(property.getAutoCreateContentPath());
 				previousProperty.setCustomMarkup(property.getCustomMarkup());
+				previousProperty.setOptions(options);
 				
 				drawList();
 			}			
@@ -752,6 +727,7 @@
 				dataProviderParameters 	= property.getDataProviderParameters();
 				allowMultipleSelections = property.getAllowMultipleSelections();
 				customMarkup 			= property.getCustomMarkup();
+				options					= property.getOptions();
 				
 				property.setName(previousProperty.getName())
 				property.setDisplayName(previousProperty.getDisplayName())
@@ -775,6 +751,7 @@
 				property.setAutoCreateContentMethod(previousProperty.getAutoCreateContentMethod());
 				property.setAutoCreateContentPath(previousProperty.getAutoCreateContentPath());
 				property.setCustomMarkup(previousProperty.getCustomMarkup());
+				property.setOptions(previousProperty.getOptions());
 				
 				previousProperty.setName(name);
 				previousProperty.setDisplayName(displayName)
@@ -799,6 +776,7 @@
 				previousProperty.setAutoCreateContentMethod(property.getAutoCreateContentMethod());
 				previousProperty.setAutoCreateContentPath(property.getAutoCreateContentPath());
 				previousProperty.setCustomMarkup(property.getCustomMarkup());
+				previousProperty.setOptions(options);
 			
 				drawList();
 			}
@@ -1006,7 +984,6 @@
 					
 			#end
 	
-			//alert("propertyVector" + propertyVector.getSize());
 			drawList();		
 		}
 		
@@ -1014,12 +991,11 @@
 	
 		function refreshCaller()
 		{
-			if(window.opener && window.opener.parent && window.opener.parent.frames['main'])
-				window.opener.parent.frames['main'].location.reload();
-			else
-				window.opener.location.reload();	
-			
-			window.close();
+			//alert("parent.refreshView:" + parent.refreshWorkSurface);
+			if(parent.refreshWorkSurface)
+			{
+				parent.refreshWorkSurface("ContentTool");
+			}
 		}
 
 		var propertiesString = "";
@@ -1027,255 +1003,250 @@
 			propertiesString = propertiesString + "&extraMultiParameters=${contentId}_${propertyDefinition.name}";
 		#end
 
+		function save()
+		{
+			submitPropertiesXML();
+		}	
+		
+		function add()
+		{
+			addProperty();				
+			$("#footertoolbar .cancel").val("$ui.getString("tool.common.cancelButton.label")");
+		}
+		
+		$(window).load(function(){
+			#if($closeOnLoad == "true") 
+				refreshCaller(); 
+				$("#footertoolbar .cancel").val("$ui.getString("tool.common.closeWindowButton.label")");
+			#end
+			init(); 
+		});
+
 	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.structuretool.componentPropertiesEditorLabel" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
-</head>
+	#lightMenuToolbar("" $buttons $rightButtons) 
 
-<body class="contenttooledit" onload="#if($closeOnLoad == "true") refreshCaller(); #else init(); #end">
-
-<div id="savingLayer" class="infobackground">
-	<div class="infoheader">Saving changes</div>
-	<div class="infobody">Processing input - please wait!</div>
-</div>
-
-
-<div id="componentPropertyDefinition" class="smallPropDiv" style="border-style:solid; border-width:1px; background-color: white; LEFT:150px; position:absolute; TOP:50px; visibility:hidden; z-index:1">
-<div id="componentPropertyDefinitionHandle" class="smallPropDivHandle">Edit component property</div>
-<div id="componentPropertyDefinitionBody" class="smallPropDivBody">	
-
-<form name="componentPropertyDefinitionForm">
-<br/>
-<p><label for="componentPropertyDefinition_name">Name:</label><input type="textfield" name="componentPropertyDefinition_name" id="componentPropertyDefinition_name" value=""/></p>
-<p><label for="componentPropertyDefinition_displayName">Display name:</label><input type="textfield" name="componentPropertyDefinition_displayName" id="componentPropertyDefinition_displayName" value=""/></p>
-<p><label for="componentPropertyDefinition_description">Description:</label><input type="textfield" name="componentPropertyDefinition_description" id="componentPropertyDefinition_description" value=""/></p>
-<p><label for="componentPropertyDefinition_defaultValue">Default value:</label><input type="textfield" name="componentPropertyDefinition_defaultValue" id="componentPropertyDefinition_defaultValue" value=""/></p>
-<p><label for="componentPropertyDefinition_allowLanguageVariations">Allow language variations:</label>
-	<select size="1" name="componentPropertyDefinition_allowLanguageVariations" id="componentPropertyDefinition_allowLanguageVariations" class="sitedropbox">
-		<option value="">Choose below</option>
-		<option value="true">Yes</option>
-		<option value="false">No</option>
-	</select>
-</p>
-<p><label for="componentPropertyDefinition_type">Property type:</label>
-	<select size="1" name="componentPropertyDefinition_type" id="componentPropertyDefinition_type" class="sitedropbox" onchange="validateTypeChoice();">
-		<option value="binding">binding</option>
-		<option value="textfield">textfield</option>
-		<option value="textarea">textarea</option>
-		<option value="select">select</option>
-		<option value="checkbox">checkbox</option>
-		<option value="datefield">datefield</option>
-		<option value="customfield">customfield</option>
-	</select>
-</p>
-<div id="dataProviderParagraph" style="display: none;">
-	<p><label for="componentPropertyDefinition_dataProvider">Data provider class:</label><input type="textfield" name="componentPropertyDefinition_dataProvider" id="componentPropertyDefinition_dataProvider" value=""/></p>
-	<p><label for="componentPropertyDefinition_dataProviderParameters">Data provider parameters:</label><input type="textfield" name="componentPropertyDefinition_dataProviderParameters" id="componentPropertyDefinition_dataProviderParameters" value=""/></p>
-</div>
-
-<div id="allowMultipleSelections" style="display: none;">
-	<p><label for="componentPropertyDefinition_allowMultipleSelections">Allow multiple selections:</label><input type="textfield" name="componentPropertyDefinition_allowMultipleSelections" id="componentPropertyDefinition_allowMultipleSelections" value=""/></p>
-</div>
-
-<div id="customMarkupParagraph" style="display: none;">
-	<p>
-	<label for="customMarkup">Custom Markup:</label>
-	<textarea name="componentPropertyDefinition_customMarkup" id="componentPropertyDefinition_customMarkup" class="smalltextarea" style="width: 300px;"></textarea>
-	</p>
-</div>
-
-<div id="optionsParagraph" style="display: block;">
-	<fieldset>
-	<legend>Options</legend>
-	<table id="optionsParent" border="0">
-  	<tr>
-  		<td>
-  			<table id="options" border="0">
- 			<tr>
- 				<td>No options at the moment</td>
- 			</tr>
-  			</table>
-		</td>	
-	</tr>
-	</tr>
-  		<td><img src="images/trans.gif" height="5" width="1"/></td>	
-	</tr>
-	</tr>
-  		<td><a href="javascript:addOption();">Add new option</a></td>	
-	</tr>
-  	</table> 	
-  	</fieldset>
-</div>
-
-<div id="wysiwygParagraph" style="display: block;">
-	<p>
-	<label for="name">Enable WYSIWYG:</label>
-	<select size="1" name="componentPropertyDefinition_WYSIWYGEnabled" id="componentPropertyDefinition_WYSIWYGEnabled" class="sitedropbox">
-	    <option value="false">No</option>
-	    <option value="true">Yes</option>
-	</select>
-	</p>
-	<p>
-	<label for="name">Toolbar:</label>
-	<input type="textfield" name="componentPropertyDefinition_WYSIWYGToolbar" id="componentPropertyDefinition_WYSIWYGToolbar" value=""/>
-	</p>
-</div>
-<p id="entityParagraph" style="display: block;"><label for="name">Entity:</label>
-	<select size="1" name="componentPropertyDefinition_entity" id="componentPropertyDefinition_entity" class="sitedropbox" onchange="validateEntityChoice();">
-	    <option value="Content">Content</option>
-	    <option value="SiteNode">SiteNode</option>
-	</select>
-</p>
-<p id="multipleParagraph" style="display: block;"><label for="name">Multiple:</label>
-	<select size="1" name="componentPropertyDefinition_multiple" id="componentPropertyDefinition_multiple" class="sitedropbox">
-	    <option value="false">No</option>
-	    <option value="true">Yes</option>
-	</select>
-</p>
-<div id="assetParagraph" style="display: block;">
-	<p>
-		<label for="componentPropertyDefinition_assetBinding">AssetBinding:</label>
-		<select size="1" name="componentPropertyDefinition_assetBinding" id="componentPropertyDefinition_assetBinding" class="sitedropbox">
-		    <option value="false">No</option>
-		    <option value="true">Yes</option>
-		</select>
-	</p>
-	<p>
-		<label for="componentPropertyDefinition_AssetMask">AssetMask (suffix regexp):</label>
-		<input type="textfield" name="componentPropertyDefinition_AssetMask" id="componentPropertyDefinition_assetMask" value=""/>
-	</p>
-</div>
-<p id="isPuffContentForPageParagraph" style="display: block;">
-	<label for="componentPropertyDefinition_isPuffContentForPage">Puff for page:</label>
-	<select size="1" name="componentPropertyDefinition_isPuffContentForPage" id="componentPropertyDefinition_isPuffContentForPage" class="sitedropbox">
-	    <option value="false">No</option>
-	    <option value="true">Yes</option>
-	</select>
-</p>
-<p id="allowedContentTypeNamesParagraph" style="display: block;"><label for="name">Allowed content type(s):</label>
-	<select name="componentPropertyDefinition_allowedContentTypeNames" id="componentPropertyDefinition_allowedContentTypeNames" class="sitedropbox" multiple="true" size="5">
-	    <option value="">Select 0..n</option>
-	    #foreach($contentTypeDefinition in $contentTypeDefinitions)
-	    <option value="$contentTypeDefinition.name">$contentTypeDefinition.name</option>
-	    #end
- 	</select>
-</p>
-<div id="autoCreateContentParagraph" style="display: block;">
-	<p>
-	<label for="name">Auto create content:</label>
-	<select size="1" name="componentPropertyDefinition_autoCreateContent" id="componentPropertyDefinition_autoCreateContent" class="sitedropbox">
-	    <option value="false" selected="selected">No</option>
-	    <option value="true">Yes</option>
-	</select>
-	</p>
-	<p>
-	<label for="name">Auto create content method:</label>
-	<select size="1" name="componentPropertyDefinition_autoCreateContentMethod" id="componentPropertyDefinition_autoCreateContentMethod" class="sitedropbox">
-	    <option value="siteStructure">Mimic site structure</option>
-	    <option value="fixedPath">Fixed path</option>
-	</select>
-	</p>
-	<p>
-	<label for="name">Auto create content base path:</label>
-	<input type="textfield" name="componentPropertyDefinition_autoCreateContentPath" id="componentPropertyDefinition_autoCreateContentPath" value=""/>
-	</p>
-</div>
-<p style="margin-left: 165px;">
-	<br/>
-	<a href="javascript:updateProperties();"><img src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25" border="0"></a>
-	<a href="javascript:hideDiv('componentPropertyDefinition');"><img src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25" border="0"></a>
-</p>
-</form>
-</div>
-</div>
-
-
-<div id="componentPropertyOptionDefinition" class="smallPropDiv" style="border-style:solid; border-width:1px; background-color: white; LEFT:140px; position:absolute; TOP:250px; visibility:hidden; z-index:5">
-<div id="componentPropertyOptionDefinitionHandle" class="smallPropDivHandle">
-	Edit component property option
-</div>
-<div id="componentPropertyOptionDefinitionBody" class="smallPropDivBody">	
-
-<form name="componentPropertyOptionDefinitionForm">
-<p>
-	<b>Name:</b>
-	<input type="textfield" name="componentPropertyOptionDefinition_name" id="componentPropertyOptionDefinition_name" value=""/>
-</p>
-<p>
-	<b>Value:</b>
-	<input type="textfield" name="componentPropertyOptionDefinition_value" id="componentPropertyOptionDefinition_value" value=""/>
-</p>
-<p>
-	<a href="javascript:updatePropertyOption();"><img src="$ui.getString("images.managementtool.buttons.saveAndExit")" width="80" height="25" border="0"></a>
-	<a href="javascript:hideDiv('componentPropertyOptionDefinition');"><img src="$ui.getString("images.managementtool.buttons.cancel")" width="50" height="25" border="0"></a>
-</p>
-</form>
-</div>
-</div>
-
-
-
-<table class="contenttooledit" cellpadding="0" cellspacing="0" border="0" width="100%">
-<tr>
-	<td valign="top">
+	<div style="clear: both;"></div>
 		
-		<table cellpadding="0" cellspacing="0" border="0" width="100%">
-		<tr class="darkgreen">
-			<td class="smalllabel" colspan="3">Component Properties</td>
-			<td><img src="images/accessRights.gif" onclick="showMultiAccessRights(propertiesString);"/>&nbsp;</td>
-		</tr>
-		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
-		</tr>		
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
-		</tr>		
+	<h3>$ui.getString("tool.contenttool.componentProperties.title")</h3>
+	
+	<div style="margin: 5px;">
+	
+		<div id="componentPropertyDefinition" style="visibility:hidden; border: 1px solid black; background-color: white; position: fixed; left:20px; top:20px; z-index:0" class="propertiesDiv">
+
+			<div id="menutoolbar">
+				<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 10px; padding-top: 8px;"><span style="font-size: 14px;">Edit component property</span></div>
+				<div id="menutoolbarRight" style="float: right;">
+					<a class="igToolbarButton igToolbarHeaderButton" href="#" onclick="$('#componentPropertyDefinition').get(0).style.visibility = 'hidden';" id="exitButton" name="exitButton" title="Close dialog/window"><span class="igToolbarButtonOuterSpan igToolbarHeaderButton"><span class="close" title="Close dialog/window">Close</span></span></a>
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+			
+			<div class="propertiesDivBody" id="propertiesDivBody" style="height: 420px; overflow: auto;">
+				<form name="componentPropertyDefinitionForm">
+					<p><label for="componentPropertyDefinition_name">Name:</label><input type="textfield" name="componentPropertyDefinition_name" id="componentPropertyDefinition_name" value=""/></p>
+					<p><label for="componentPropertyDefinition_displayName">Display name:</label><input type="textfield" name="componentPropertyDefinition_displayName" id="componentPropertyDefinition_displayName" value=""/></p>
+					<p><label for="componentPropertyDefinition_description">Description:</label><input type="textfield" name="componentPropertyDefinition_description" id="componentPropertyDefinition_description" value=""/></p>
+					<p><label for="componentPropertyDefinition_defaultValue">Default value:</label><input type="textfield" name="componentPropertyDefinition_defaultValue" id="componentPropertyDefinition_defaultValue" value=""/></p>
+					<p><label for="componentPropertyDefinition_allowLanguageVariations">Allow language variations:</label>
+						<select size="1" name="componentPropertyDefinition_allowLanguageVariations" id="componentPropertyDefinition_allowLanguageVariations" class="sitedropbox">
+							<option value="">Choose below</option>
+							<option value="true">Yes</option>
+							<option value="false">No</option>
+						</select>
+					</p>
+					<p><label for="componentPropertyDefinition_type">Property type:</label>
+						<select size="1" name="componentPropertyDefinition_type" id="componentPropertyDefinition_type" class="sitedropbox" onchange="validateTypeChoice();">
+							<option value="binding">binding</option>
+							<option value="textfield">textfield</option>
+							<option value="textarea">textarea</option>
+							<option value="select">select</option>
+							<option value="checkbox">checkbox</option>
+							<option value="datefield">datefield</option>
+							<option value="customfield">customfield</option>
+						</select>
+					</p>
+					<div id="dataProviderParagraph" style="display: none;">
+						<p><label for="componentPropertyDefinition_dataProvider">Data provider class:</label><input type="textfield" name="componentPropertyDefinition_dataProvider" id="componentPropertyDefinition_dataProvider" value=""/></p>
+						<p><label for="componentPropertyDefinition_dataProviderParameters">Data provider parameters:</label><input type="textfield" name="componentPropertyDefinition_dataProviderParameters" id="componentPropertyDefinition_dataProviderParameters" value=""/></p>
+					</div>
+					
+					<div id="allowMultipleSelections" style="display: none;">
+						<p><label for="componentPropertyDefinition_allowMultipleSelections">Allow multiple selections:</label><input type="textfield" name="componentPropertyDefinition_allowMultipleSelections" id="componentPropertyDefinition_allowMultipleSelections" value=""/></p>
+					</div>
+					
+					<div id="customMarkupParagraph" style="display: none;">
+						<p>
+						<label for="customMarkup">Custom Markup:</label>
+						<textarea name="componentPropertyDefinition_customMarkup" id="componentPropertyDefinition_customMarkup" class="smalltextarea" style="width: 300px;"></textarea>
+						</p>
+					</div>
+					
+					<div id="optionsParagraph" style="display: block;">
+						<fieldset>
+						<legend>Options</legend>
+						<table id="optionsParent" border="0">
+					  	<tr>
+					  		<td>
+					  			<table id="options" border="0">
+					 			<tr>
+					 				<td>No options at the moment</td>
+					 			</tr>
+					  			</table>
+							</td>	
+						</tr>
+						</tr>
+					  		<td><img src="images/trans.gif" height="5" width="1"/></td>	
+						</tr>
+						</tr>
+					  		<td><a href="javascript:addOption();">Add new option</a></td>	
+						</tr>
+					  	</table> 	
+					  	</fieldset>
+					</div>
+					
+					<div id="wysiwygParagraph" style="display: block;">
+						<p>
+						<label for="name">Enable WYSIWYG:</label>
+						<select size="1" name="componentPropertyDefinition_WYSIWYGEnabled" id="componentPropertyDefinition_WYSIWYGEnabled" class="sitedropbox">
+						    <option value="false">No</option>
+						    <option value="true">Yes</option>
+						</select>
+						</p>
+						<p>
+						<label for="name">Toolbar:</label>
+						<input type="textfield" name="componentPropertyDefinition_WYSIWYGToolbar" id="componentPropertyDefinition_WYSIWYGToolbar" value=""/>
+						</p>
+					</div>
+					<p id="entityParagraph" style="display: block;"><label for="name">Entity:</label>
+						<select size="1" name="componentPropertyDefinition_entity" id="componentPropertyDefinition_entity" class="sitedropbox" onchange="validateEntityChoice();">
+						    <option value="Content">Content</option>
+						    <option value="SiteNode">SiteNode</option>
+						</select>
+					</p>
+					<p id="multipleParagraph" style="display: block;"><label for="name">Multiple:</label>
+						<select size="1" name="componentPropertyDefinition_multiple" id="componentPropertyDefinition_multiple" class="sitedropbox">
+						    <option value="false">No</option>
+						    <option value="true">Yes</option>
+						</select>
+					</p>
+					<div id="assetParagraph" style="display: block;">
+						<p>
+							<label for="componentPropertyDefinition_assetBinding">AssetBinding:</label>
+							<select size="1" name="componentPropertyDefinition_assetBinding" id="componentPropertyDefinition_assetBinding" class="sitedropbox">
+							    <option value="false">No</option>
+							    <option value="true">Yes</option>
+							</select>
+						</p>
+						<p>
+							<label for="componentPropertyDefinition_AssetMask">AssetMask (suffix regexp):</label>
+							<input type="textfield" name="componentPropertyDefinition_AssetMask" id="componentPropertyDefinition_assetMask" value=""/>
+						</p>
+					</div>
+					<p id="isPuffContentForPageParagraph" style="display: block;">
+						<label for="componentPropertyDefinition_isPuffContentForPage">Puff for page:</label>
+						<select size="1" name="componentPropertyDefinition_isPuffContentForPage" id="componentPropertyDefinition_isPuffContentForPage" class="sitedropbox">
+						    <option value="false">No</option>
+						    <option value="true">Yes</option>
+						</select>
+					</p>
+					<p id="allowedContentTypeNamesParagraph" style="display: block;"><label for="name">Allowed content type(s):</label>
+						<select name="componentPropertyDefinition_allowedContentTypeNames" id="componentPropertyDefinition_allowedContentTypeNames" class="sitedropbox" multiple="true" size="5">
+						    <option value="">Select 0..n</option>
+						    #foreach($contentTypeDefinition in $contentTypeDefinitions)
+						    <option value="$contentTypeDefinition.name">$contentTypeDefinition.name</option>
+						    #end
+					 	</select>
+					</p>
+					<div id="autoCreateContentParagraph" style="display: block;">
+						<p>
+						<label for="name">Auto create content:</label>
+						<select size="1" name="componentPropertyDefinition_autoCreateContent" id="componentPropertyDefinition_autoCreateContent" class="sitedropbox">
+						    <option value="false" selected="selected">No</option>
+						    <option value="true">Yes</option>
+						</select>
+						</p>
+						<p>
+						<label for="name">Auto create content method:</label>
+						<select size="1" name="componentPropertyDefinition_autoCreateContentMethod" id="componentPropertyDefinition_autoCreateContentMethod" class="sitedropbox">
+						    <option value="siteStructure">Mimic site structure</option>
+						    <option value="fixedPath">Fixed path</option>
+						</select>
+						</p>
+						<p>
+						<label for="name">Auto create content base path:</label>
+						<input type="textfield" name="componentPropertyDefinition_autoCreateContentPath" id="componentPropertyDefinition_autoCreateContentPath" value=""/>
+						</p>
+					</div>
+				</form>
+
+				</div>
+				
+				<div class="buttonPane" id="relativeFootertoolbar">
+					<div style="float: left; margin-left: 10px;">
+						<input type="button" onclick="updateProperties();" value="Save" class="save">
+						<input type="button" onclick="refreshCaller(); hideDiv('componentPropertyDefinition');" value="Cancel" class="cancel">
+					</div>
+				</div>
+			
+		</div>
 		
+		
+		<div id="componentPropertyOptionDefinition" style="height: 180px; visibility:hidden; border: 1px solid black; background-color: white; position: fixed; left:120px; top:100px; z-index:5" class="propertiesDiv">
+
+			<div id="menutoolbar">
+				<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 10px; padding-top: 8px;"><span style="font-size: 14px;">Edit component property option</span></div>
+				<div id="menutoolbarRight" style="float: right;">
+					<a class="igToolbarButton igToolbarHeaderButton" href="#" onclick="$('#componentPropertyDefinition').get(0).style.visibility = 'hidden';" id="exitButton" name="exitButton" title="Close dialog/window"><span class="igToolbarButtonOuterSpan igToolbarHeaderButton"><span class="close" title="Close dialog/window">Close</span></span></a>
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+			
+			<div id="componentPropertyOptionDefinitionBody" class="propertiesDivBody" style="height: 100px; overflow: auto;">	
+			
+				<form name="componentPropertyOptionDefinitionForm">
+				<p>
+					<b>Name:</b>
+					<input type="textfield" name="componentPropertyOptionDefinition_name" id="componentPropertyOptionDefinition_name" value=""/>
+				</p>
+				<p>
+					<b>Value:</b>
+					<input type="textfield" name="componentPropertyOptionDefinition_value" id="componentPropertyOptionDefinition_value" value=""/>
+				</p>
+				</form>
+			</div>
+			
+			<div class="buttonPane" id="relativeFootertoolbar">
+				<div style="float: left; margin-left: 10px;">
+					<input type="button" onclick="updatePropertyOption();" value="Save" class="save">
+					<input type="button" onclick="hideDiv('componentPropertyOptionDefinition');" value="Cancel" class="cancel">
+				</div>
+			</div>
+		</div>
+		
+		
+		<table cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<td>
-			  	<TABLE id="properties" border="1">
+			<td style="padding: 0px 10px 0px 10px">
+			  	<TABLE id="properties" border="1" style="border-collapse: collapse;">
 			  	
 			  	</table>
 			</td>
 		</tr>
-				
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
-		</tr>		
-		<tr>
-			<td>
-				<a href="javascript:addProperty();">Add new property</a>
-			</td>
-		</tr>
-		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="10"></td>
-		</tr>		
-		
-		<tr>
-			<td>
-				<a href="javascript:submitPropertiesXML();"><img src="$ui.getString("images.contenttool.buttons.save")" border="0"></a>
-				<a href="javascript:submitPropertiesXMLAndExit();"><img src="$ui.getString("images.contenttool.buttons.saveAndExit")" border="0"></a>
-				<a href="javascript:window.opener.location.reload();window.close();"><img src="$ui.getString("images.contenttool.buttons.cancel")" width="50" height="25" border="0"></a>
-			</td>
-		</tr>		
-		
 		</table>
 		
 		<form id="inputForm" name="inputForm" action="ViewComponentPropertiesEditor!update.action" method="POST">
 			<input type="hidden" name="contentVersionId" value="$contentVersionId">
 			<input type="hidden" name="attributeName" value="$attributeName">
 			<input type="hidden" name="propertiesXML" value="">
-			<input type="hidden" name="closeOnLoad" value="false">
+			<input type="hidden" name="closeOnLoad" value="true">
 		</form>
 
-	</td>
-</tr>
-</table>
-
-</body>
-</html>
+	</div>
+		
+	#lightFooterToolbar($footerButtons)
+	
+#endLightCommonToolV3()

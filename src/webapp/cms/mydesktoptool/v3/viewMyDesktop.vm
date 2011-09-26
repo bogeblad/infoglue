@@ -104,7 +104,7 @@
 			height: 20px;
 		}
 		.boxHeader:first-child {
-			min-width: 80%;
+			min-width: 75%;
 		}
 		
 		.box table {
@@ -299,7 +299,7 @@
 								#set($viewGlobalAction = "Workflow!invoke.action")
 							#end
 							#set($viewGlobalAction = "$viewGlobalAction")
-							#set($action = "$!action <a href=${fnutt}javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$viewGlobalAction');${fnutt}><img src=${fnutt}$iconUrl${fnutt} border=${fnutt}0${fnutt} alt=${fnutt}$workflowActionVO.getName()${fnutt}/></a>")
+							#set($action = "$!action&nbsp;<a href=${fnutt}javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$viewGlobalAction');${fnutt}><img src=${fnutt}$iconUrl${fnutt} border=${fnutt}0${fnutt} alt=${fnutt}$workflowActionVO.getName()${fnutt}/></a>")
 						#end
 		
 						#set($view = "$quote$workflowVO.getView()$quote")				
@@ -321,7 +321,7 @@
 							<td colspan="2">
 								<a title="$fullTitle" href="#" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');">$visibleTitle</a>
 							</td>
-							<td>							
+							<td style="whitespace: nowrap;">							
 								$!action
 								<a href="#" class="workflow" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');"><img src="images/v3/info.png" border="0" alt="info"></a>
 							</td>
@@ -342,8 +342,8 @@
 									#set($fullTitle = "$stepWorkflow.name")
 								#end
 								<tr>
-									<td width="20">&nbsp;</td>
-									<td width="80%"><a href="javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$view');">$workflowActionVO.name</a></td>
+									<td width="30">&nbsp;</td>
+									<td width="70%"><a href="javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$view');">$workflowActionVO.name</a></td>
 									<td><span>$workflowActionVO.stepName</span></td>
 								</tr>
 								#set($cnt = $cnt + 1)

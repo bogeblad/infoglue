@@ -3484,7 +3484,8 @@ $ui.getString("entity.${fieldNameKey}.label")
 					    	<td colspan="2" bgcolor="white" valign="top">
 								<p style="margin-top:5px; margin-left:5px;">
 								#if($contentVersionId > -1)
-								Component Properties (<a href="javascript:openRelationEditor('ViewComponentPropertiesEditor.action?contentVersionId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit properties</strong></a> / <a href="#" onclick="$('#ComponentProperties').show(); $('div[name^=ComponentPropertiesEditorType]').hide(); $('#ComponentProperties').change(function(){transferPlain = true;} ); return false;"><strong>Plain</strong></a>)
+								
+								Component Properties (<a href="javascript:openRelationEditorInline('ViewComponentPropertiesEditor.action?contentVersionId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit properties</strong></a> #*<a href="javascript:openRelationEditor('ViewComponentPropertiesEditor.action?contentVersionId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit properties</strong></a>*# / <a href="#" onclick="$('#ComponentProperties').show(); $('div[name^=ComponentPropertiesEditorType]').hide(); $('#ComponentProperties').change(function(){transferPlain = true;} ); return false;"><strong>Plain</strong></a>)
 								<hr noshade size="1">
 								#set($componentProperties = $this.getComponentPropertyDefinitions($this.getUnescapedAttributeValue($attribute.name)))
 								<table border="0" width="100%">

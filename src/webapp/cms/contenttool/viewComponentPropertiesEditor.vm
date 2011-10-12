@@ -1,6 +1,10 @@
 #define( $headerMarkup )
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
 	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+
 	<script type="text/javascript" src="script/vector.js"></script>
 	<script type="text/javascript" src="script/qualifyer.js"></script>
 	<script type="text/javascript" src="script/componentPropertyDefinition.js"></script>
@@ -465,12 +469,14 @@
 
 		function showAccessRights(extraParameters)
 		{
-			document.location.href = "ViewAccessRights.action?interceptionPointCategory=ComponentPropertyEditor&extraParameters=" + extraParameters + "&colorScheme=StructureTool&returnAddress=$formatter.encodeURI($this.currentURL, 'UTF-8')";
+			openInlineDiv("ViewAccessRights!V3.action?interceptionPointCategory=ComponentPropertyEditor&extraParameters=" + extraParameters + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Access rights");
+			//document.location.href = "ViewAccessRights.action?interceptionPointCategory=ComponentPropertyEditor&extraParameters=" + extraParameters + "&colorScheme=StructureTool&returnAddress=$formatter.encodeURI($this.currentURL, 'UTF-8')";
 		}
 
 		function showMultiAccessRights(extraParametersString)
 		{
-			document.location.href = "ViewAccessRights.action?interceptionPointCategory=ComponentPropertyEditor" + extraParametersString + "&colorScheme=StructureTool&returnAddress=$formatter.encodeURI($this.currentURL, 'UTF-8')";
+			openInlineDiv("ViewAccessRights!V3.action?interceptionPointCategory=ComponentPropertyEditor" + extraParametersString + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Access rights");
+			//document.location.href = "ViewAccessRights.action?interceptionPointCategory=ComponentPropertyEditor" + extraParametersString + "&colorScheme=StructureTool&returnAddress=$formatter.encodeURI($this.currentURL, 'UTF-8')";
 		}
 		
 		/**

@@ -23,9 +23,13 @@
 
 package org.infoglue.deliver.invokers;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,10 +47,13 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAsset;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.extensions.InfoglueExtension;
 import org.infoglue.cms.providers.ComponentModel;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
@@ -1522,7 +1529,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		
 		if(logger.isDebugEnabled())
 			logger.debug("renderComponent:" + renderComponent);
-	    
 	    if(!renderComponent)
 	    {
 			if(logger.isDebugEnabled())
@@ -1559,6 +1565,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				if(logger.isDebugEnabled())
 					logger.debug("componentString:" + componentString);
 			    
+				//String componentModelClassName
 				Map context = getDefaultContext();
 		    	context.put("templateLogic", templateController);
 		    	context.put("model", component.getModel());
@@ -1687,8 +1694,48 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				templateController.getDeliveryContext().getUsageListeners().add(templateController.getComponentLogic().getComponentDeliveryContext());
 				try
 				{
-					ComponentModel componentModel = (ComponentModel)Thread.currentThread().getContextClassLoader().loadClass(componentModelClassName).newInstance();
-					componentModel.prepare(componentString, templateController, component.getModel());
+					Timer t = new Timer();
+					DigitalAssetVO asset = templateController.getAsset(component.getContentId(), "jar");
+					
+					String path = templateController.getAssetFilePathForAssetWithId(asset.getId());
+					if(logger.isDebugEnabled())
+						logger.debug("path: " + path);
+					if(path != null && !path.equals(""))
+					{
+						try
+						{
+							File jarFile = new File(path);
+							if(logger.isDebugEnabled())
+								logger.debug("jarFile:" + jarFile.exists());
+							URL url = jarFile.toURL();
+							URLClassLoader child = new URLClassLoader(new URL[]{url}, this.getClass().getClassLoader());
+
+							Class c = child.loadClass(componentModelClassName);
+							boolean isOk = ComponentModel.class.isAssignableFrom(c);
+							if(logger.isDebugEnabled())
+								logger.debug("isOk:" + isOk + " for " + componentModelClassName);
+							if(isOk)
+							{
+								if(logger.isDebugEnabled())
+									logger.debug("Calling prepare on '" + componentModelClassName + "'");
+								ComponentModel componentModel = (ComponentModel)c.newInstance();
+								componentModel.prepare(componentString, templateController, component.getModel());
+							}
+						}
+						catch (Exception e) 
+						{
+							logger.error("Failed loading custom class from asset JAR. Trying normal class loader. Error:" + e.getMessage());
+							ComponentModel componentModel = (ComponentModel)Thread.currentThread().getContextClassLoader().loadClass(componentModelClassName).newInstance();
+							componentModel.prepare(componentString, templateController, component.getModel());
+						}
+					}
+					else
+					{
+						ComponentModel componentModel = (ComponentModel)Thread.currentThread().getContextClassLoader().loadClass(componentModelClassName).newInstance();
+						componentModel.prepare(componentString, templateController, component.getModel());
+					}
+					if(logger.isDebugEnabled())
+						t.printElapsedTime("Invoking custome class took");
 				}
 				catch (Exception e) 
 				{

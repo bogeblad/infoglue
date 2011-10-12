@@ -2642,6 +2642,9 @@ public class CacheController extends Thread
         String dir = CmsPropertyHandler.getDigitalAssetPath() + File.separator + "caches";
         File dirFile = new File(dir);
         Timer t = new Timer();
+        if(!logger.isInfoEnabled())
+        	t.setActive(false);
+        
         //logger.info("dirFile:" + dirFile.exists());
         if(dirFile.exists())
         {
@@ -2683,7 +2686,9 @@ public class CacheController extends Thread
 	public static void clearFileCaches(String cacheName)
 	{
 		Timer t = new Timer();
-		
+        if(!logger.isInfoEnabled())
+        	t.setActive(false);
+
         String dir = CmsPropertyHandler.getDigitalAssetPath() + File.separator + "caches";
         File dirFile = new File(dir);
         //logger.info("dirFile:" + dirFile.exists());

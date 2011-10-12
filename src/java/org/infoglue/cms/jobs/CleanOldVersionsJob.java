@@ -22,6 +22,8 @@
 */
 package org.infoglue.cms.jobs;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
@@ -42,7 +44,7 @@ public class CleanOldVersionsJob implements Job
 {
     private final static Logger logger = Logger.getLogger(CleanOldVersionsJob.class.getName());
 
-    private static boolean running = false;
+    private static AtomicBoolean running = new AtomicBoolean(false);
     
     public synchronized void execute(JobExecutionContext context) throws JobExecutionException
     {
@@ -51,55 +53,54 @@ public class CleanOldVersionsJob implements Job
     	logger.info("* Purpose is to keep the database size at a minimum 				 *");
     	logger.info("*********************************************************************");
 
-    	if(!running)
-    		running = true;
-    	else
+    	if(!running.compareAndSet(false, true))
     	{
-    		logger.info("CleanOldVersionsJob allready running... skipping.");
-    		return;
-    	}
     	
-    	try
-		{
-    		Boolean deleteVersions = (Boolean)context.get("deleteVersions");
-    		if(deleteVersions == null)
-    			deleteVersions = new Boolean(true);
-	    	logger.info("deleteVersions:" + deleteVersions);
-	    	String numberOfVersionsToKeepDuringClean = CmsPropertyHandler.getNumberOfVersionsToKeepDuringClean();
-	    	logger.info("numberOfVersionsToKeepDuringClean:" + numberOfVersionsToKeepDuringClean);
-			Integer numberOfVersionsToKeepDuringCleanInteger = new Integer(numberOfVersionsToKeepDuringClean);
-	    	String keepOnlyOldPublishedVersionsString = CmsPropertyHandler.getKeepOnlyOldPublishedVersionsDuringClean();
-	    	logger.info("keepOnlyOldPublishedVersionsString:" + keepOnlyOldPublishedVersionsString);
-	    	long minimumTimeBetweenVersionsDuringClean = CmsPropertyHandler.getMinimumTimeBetweenVersionsDuringClean();
-	    	logger.info("minimumTimeBetweenVersionsDuringClean:" + minimumTimeBetweenVersionsDuringClean);
-	    	boolean keepOnlyOldPublishedVersions = Boolean.parseBoolean(keepOnlyOldPublishedVersionsString);
-			
-	    	if(numberOfVersionsToKeepDuringCleanInteger.intValue() < 3 && numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
-				numberOfVersionsToKeepDuringCleanInteger = new Integer(3);
-	    	
-			if(numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
+	    	try
 			{
-				int cleanedContentVersions = ContentVersionController.getContentVersionController().cleanContentVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
-				int cleanedSiteNodeVersions = SiteNodeController.getController().cleanSiteNodeVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
-				logger.info("cleanedContentVersions:" + cleanedContentVersions);
-				logger.info("cleanedSiteNodeVersions:" + cleanedSiteNodeVersions);
-				context.setResult(new Integer[]{cleanedContentVersions, cleanedSiteNodeVersions});
-			
-				NotificationMessage notificationMessage = new NotificationMessage("CleanOldVersionsJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
-			    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-	        	ChangeNotificationController.notifyListeners();
+	    		Boolean deleteVersions = (Boolean)context.get("deleteVersions");
+	    		if(deleteVersions == null)
+	    			deleteVersions = new Boolean(true);
+		    	logger.info("deleteVersions:" + deleteVersions);
+		    	String numberOfVersionsToKeepDuringClean = CmsPropertyHandler.getNumberOfVersionsToKeepDuringClean();
+		    	logger.info("numberOfVersionsToKeepDuringClean:" + numberOfVersionsToKeepDuringClean);
+				Integer numberOfVersionsToKeepDuringCleanInteger = new Integer(numberOfVersionsToKeepDuringClean);
+		    	String keepOnlyOldPublishedVersionsString = CmsPropertyHandler.getKeepOnlyOldPublishedVersionsDuringClean();
+		    	logger.info("keepOnlyOldPublishedVersionsString:" + keepOnlyOldPublishedVersionsString);
+		    	long minimumTimeBetweenVersionsDuringClean = CmsPropertyHandler.getMinimumTimeBetweenVersionsDuringClean();
+		    	logger.info("minimumTimeBetweenVersionsDuringClean:" + minimumTimeBetweenVersionsDuringClean);
+		    	boolean keepOnlyOldPublishedVersions = Boolean.parseBoolean(keepOnlyOldPublishedVersionsString);
+				
+		    	if(numberOfVersionsToKeepDuringCleanInteger.intValue() < 3 && numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
+					numberOfVersionsToKeepDuringCleanInteger = new Integer(3);
+		    	
+				if(numberOfVersionsToKeepDuringCleanInteger.intValue() > -1)
+				{
+					int cleanedContentVersions = ContentVersionController.getContentVersionController().cleanContentVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
+					int cleanedSiteNodeVersions = SiteNodeController.getController().cleanSiteNodeVersions(numberOfVersionsToKeepDuringCleanInteger.intValue(), keepOnlyOldPublishedVersions, minimumTimeBetweenVersionsDuringClean, deleteVersions);
+					logger.info("cleanedContentVersions:" + cleanedContentVersions);
+					logger.info("cleanedSiteNodeVersions:" + cleanedSiteNodeVersions);
+					context.setResult(new Integer[]{cleanedContentVersions, cleanedSiteNodeVersions});
+				
+					NotificationMessage notificationMessage = new NotificationMessage("CleanOldVersionsJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
+				    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+		        	ChangeNotificationController.notifyListeners();
+				}
 			}
+			catch(Exception e)
+		    {
+		    	logger.error("Could not clean up old versions: " + e.getMessage());
+		    }
+			finally
+			{
+				running.set(false);
+			}
+			
+		   	logger.info("Cleanup-job finished");
 		}
-		catch(Exception e)
-	    {
-	    	logger.error("Could not clean up old versions: " + e.getMessage());
-	    }
-		finally
+		else
 		{
-			running = false;
+			logger.info("CleanOldVersionsJob allready running... skipping.");
 		}
-		
-	   	logger.info("Cleanup-job finished");
-    }
-    
+    }	    
 }

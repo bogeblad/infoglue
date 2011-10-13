@@ -72,6 +72,12 @@
 		
 		function save()
 		{
+			try
+			{
+				parent.parent.refreshContent($!contentId, 1, $!contentId);
+				
+			}
+			catch(e) {alert("e:" + e);}
 			document.editForm.submit();
 		}
 	-->

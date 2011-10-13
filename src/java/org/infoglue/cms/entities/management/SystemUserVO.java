@@ -132,7 +132,7 @@ public class SystemUserVO extends ValidatableEntityVO implements BaseEntityVO
  		ConstraintRule cr = new ConstraintRule(org.infoglue.cms.util.validators.Constants.STRING, "SystemUser.userName");
  		
  		// Set the constraints
- 		cr.setValidRange(new Range(2, 20) );
+ 		cr.setValidRange(new Range(2, 50) );
  		cr.unique=true;	// public variabel will be changed to setter later
  		cr.required=true; // public variabel will be changed to setter later
  		cr.setValue(userName);

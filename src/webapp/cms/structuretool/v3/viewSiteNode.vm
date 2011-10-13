@@ -109,6 +109,16 @@
   			} 
   		);
   		loadFrame(0);
+		
+		//alert($updated);
+		#if($updated)
+			try
+			{
+				parent.refreshPage($!siteNodeId, 1, $!siteNodeId);
+			}
+			catch(e) {alert("e:" + e);}
+		#end
+
   	});
 		
 -->

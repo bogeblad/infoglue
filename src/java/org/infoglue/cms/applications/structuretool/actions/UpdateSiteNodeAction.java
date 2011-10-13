@@ -67,7 +67,9 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 
     private String actionUrl;
     private String targetTitle;
-
+    private boolean updated = false;
+    private String userSessionKey = null;
+    
 	private ConstraintExceptionBuffer ceb;
 	
 	public UpdateSiteNodeAction()
@@ -85,6 +87,8 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
     {
 		//try
 		//{
+			this.updated = true;
+			
 			super.initialize(getSiteNodeId());
 			SiteNodeVO oldSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
 
@@ -178,9 +182,8 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
     {
 		doExecute();
 
-		String userSessionKey = "" + System.currentTimeMillis();
+		this.userSessionKey = "" + System.currentTimeMillis();
         setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + this.siteNodeVO.getSiteNodeId());
-
 		this.actionUrl = "ViewSiteNode.action?siteNodeId=" + this.siteNodeVO.getSiteNodeId(); // + "newSiteNodeId=" + this.siteNodeId;
 		this.targetTitle = "AAAAAAAAA";
 		
@@ -364,4 +367,13 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 		return targetTitle;
 	}
 
+	public boolean getUpdated()
+	{
+		return updated;
+	}
+
+	public String getUserSessionKey()
+	{
+		return userSessionKey;
+	}
 }

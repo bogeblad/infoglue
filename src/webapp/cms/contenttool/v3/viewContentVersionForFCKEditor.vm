@@ -426,14 +426,20 @@
 		 	
 		function save()
 		{
+			var selected = $("#tabsContainer").tabs( "option", "selected" );
+			//alert("selected:" + selected);
+			
 			if($("#contentCoverFrame").get(0).contentWindow.save)
 				$("#contentCoverFrame").get(0).contentWindow.save();
 			if($("#contentAccessRightsFrame").size() && $("#contentAccessRightsFrame").get(0).contentWindow.save)
 				$("#contentAccessRightsFrame").get(0).contentWindow.save();
 			if($("#contentVersionAccessRightsFrame").size() && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
 				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
-
-			validateAndSubmitContentForm();
+			
+			if(selected == 3)
+				setTimeout("validateAndSubmitContentForm();", 300);
+			else
+				validateAndSubmitContentForm();
 		}
 		
 		function saveAndExit(url)

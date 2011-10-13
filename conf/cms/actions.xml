@@ -1200,7 +1200,7 @@
 		<view name="successV3">ViewSiteNode!V3.action?stay=true</view>
 		<view name="saveAndExit">ViewListSiteNode.action</view>
 		<view name="saveAndExitV3">ViewSiteNode!V3.action</view>
-		<view name="saveAndExitV3Inline">ViewInlineOperationMessages.action?automaticClose=true&amp;actionUrl=${actionUrl}&amp;target=structure&amp;targetTitle=${targetTitle}</view>
+		<view name="saveAndExitV3Inline">ViewInlineOperationMessages.action?automaticClose=true&amp;actionUrl=${actionUrl}&amp;target=structure&amp;targetTitle=${targetTitle}&amp;userSessionKey=${userSessionKey}</view>
 		<view name="successChooseSiteNodeTypeDefinition">ViewSiteNode!V3.action?siteNodeId=${siteNodeId}</view>
 		<view name="error">/cms/structuretool/error.vm</view>
 		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>

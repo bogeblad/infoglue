@@ -228,7 +228,8 @@
 			#if($firstActionLink.target == 'structure' || $firstActionLink.target == 'content' || $firstActionLink.target == 'management')
 				#set($parentCall = true)
 			#end
-
+			
+			//alert("$firstActionLink.actionURL : $unrefreshedNodeId $this");
 			#if($firstActionLink.actionURL == "refreshParent")
 				refreshParent(null,null,null);
 			#else 
@@ -237,6 +238,15 @@
 				#else
 					//alert("IsJS: + $firstActionLink.isJavascript");
 					#if($firstActionLink.isJavascript)
+						//alert("$firstActionLink.actionURL == javascript:closeDialog(); $unrefreshedNodeId");
+						#if($firstActionLink.actionURL == "javascript:closeDialog();" && $unrefreshedNodeId)
+							try
+							{
+								//alert(parent.refreshPage);
+								parent.refreshPage($unrefreshedNodeId, 1, $unrefreshedNodeId);
+							}
+							catch(e) {alert("e:" + e);}
+						#end
 						$firstActionLink.actionURL
 					#else
 						parent.location.href = "$firstActionLink.actionURL";

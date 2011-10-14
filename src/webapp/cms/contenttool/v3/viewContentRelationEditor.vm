@@ -81,7 +81,7 @@
 				
 				entityName 	= qualifyer.getEntityName();
 				entityId   	= qualifyer.getEntityId();
-				qualifyerXML += "<" + entityName + ">" + entityId + "</" + entityName + ">";
+				qualifyerXML += "<id>" + entityId + "</id>";
 				paths[i] = qualifyer.getPath();
 			}
 		   	

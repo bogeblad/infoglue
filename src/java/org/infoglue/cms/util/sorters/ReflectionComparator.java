@@ -1,6 +1,8 @@
 package org.infoglue.cms.util.sorters;
 
+import java.text.Collator;
 import java.util.Comparator;
+import java.util.Locale;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
@@ -13,19 +15,28 @@ import org.apache.log4j.Logger;
 public class ReflectionComparator implements Comparator
 {
     private final static Logger logger = Logger.getLogger(ReflectionComparator.class.getName());
-
-	private String sortProperty;
-
+    
+    private String sortProperty;
+    private Collator collation = Collator.getInstance();
+    
 	public ReflectionComparator(String prop)
 	{
 		sortProperty = prop;
+	}
+
+	public ReflectionComparator(String prop, Locale locale)
+	{
+		sortProperty = prop;
+		if(locale != null)
+			this.collation = Collator.getInstance(locale);
 	}
 
 	public int compare(Object o1, Object o2)
 	{
 		Comparable valueOne = getProperty(o1, sortProperty);
 		Comparable valueTwo = getProperty(o2, sortProperty);
-		return valueOne.compareTo(valueTwo);
+		return collation.compare(valueOne, valueTwo);
+		//return valueOne.compareTo(valueTwo);
 	}
 
 	private Comparable getProperty(Object o, String property)

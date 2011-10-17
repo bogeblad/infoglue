@@ -524,6 +524,7 @@
 				var actionTD = document.createElement("TD");
 				actionTD.setAttribute("align", "right");
 				actionTD.setAttribute("valign", "top");
+				actionTD.setAttribute("style", "white-space: nowrap");
 				addImageLink(actionTD, "javascript:showProperties(" + i + ");", "images/v3/metadataIcon.gif");
 				addImageLinkImpl(actionTD, "javascript:showAccessRights('${contentId}_" + componentPropertyDefinition.name + "');", "images/v3/file_locked.png", true);
 				myTR.appendChild(actionTD);

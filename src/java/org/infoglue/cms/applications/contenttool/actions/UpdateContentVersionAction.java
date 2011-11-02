@@ -208,7 +208,8 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 			{
 				logger.info("this.contentId: " + this.contentId + ":" + this.getContentId() + ":" + this.contentVersionVO);
 				SiteNodeVO metaInfoSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(this.contentId);
-				this.setSiteNodeId(metaInfoSiteNodeVO.getId());
+				if(metaInfoSiteNodeVO != null)
+					this.setSiteNodeId(metaInfoSiteNodeVO.getId());
 			}
 			
 			if(this.getSiteNodeId() != null && this.contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))

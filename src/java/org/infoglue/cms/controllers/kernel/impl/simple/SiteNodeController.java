@@ -1600,7 +1600,8 @@ public class SiteNodeController extends BaseController
         try
         {
         	SiteNode siteNode = getSiteNodeWithMetaInfoContentId(db, contentId);
-        	siteNodeVO = siteNode.getValueObject();
+        	if(siteNode != null)
+        		siteNodeVO = siteNode.getValueObject();
         	
             commitTransaction(db);
         }

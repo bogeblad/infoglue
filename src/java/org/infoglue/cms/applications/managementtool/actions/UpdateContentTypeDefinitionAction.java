@@ -23,9 +23,15 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.jfree.util.Log;
 
 
 /**
@@ -104,6 +110,24 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
         
     public void setSchemaValue(String schemaValue)
     {
+    	VisualFormatter vf = new VisualFormatter();
+    	
+    	Pattern pattern = Pattern.compile("\".*?\"");
+        Matcher matcher = pattern.matcher(schemaValue);
+        while (matcher.find())
+        {
+        	String value = matcher.group();
+        	value = value.substring(1,value.length() - 1);
+        	
+            int indexOfTag = value.indexOf("<");
+            if(indexOfTag > -1)
+            {
+            	String newAttributeValue = vf.escapeHTML(value);
+            	Log.info("Replacing:" + value + " with " + newAttributeValue);
+            	schemaValue = StringUtils.replace(schemaValue, "\"" + value + "\"", "\"" + newAttributeValue + "\"");
+            }
+        }
+    	
       	this.contentTypeDefinitionVO.setSchemaValue(schemaValue);
     }
     

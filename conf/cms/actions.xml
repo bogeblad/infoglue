@@ -816,7 +816,7 @@
 	</action>
 	<action name="org.infoglue.cms.applications.contenttool.actions.ReplaceContentAction" alias="ReplaceContent">
 		<view name="success">SearchContent.action</view>
-		<view name="successV3">Search.action?repositoryId=${repositoryId}&amp;searchString=${searchString}</view>
+		<view name="successV3">Search.action</view>
 		<!--<view name="success">/cms/contenttool/viewContentVersionSearchResult.vm</view>-->
 		<view name="error">/cms/contenttool/error.vm</view>
 	</action>

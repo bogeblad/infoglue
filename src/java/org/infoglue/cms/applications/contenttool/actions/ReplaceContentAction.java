@@ -52,8 +52,11 @@ public class ReplaceContentAction extends SearchContentAction
 	    //logger.info("getSearchString():" + getSearchString());
 	    //logger.info("replaceString:" + this.replaceString);
 	    //logger.info("contentVersionId:" + contentVersionIds[0]);
+	    Boolean caseSensitive = false;
+	    if(getCaseSensitive() != null && getCaseSensitive() == 1)
+	    	caseSensitive = true;
 	    
-	    SearchController.replaceString(getSearchString(), this.replaceString, contentVersionIds, this.getInfoGluePrincipal());
+	    SearchController.replaceString(getSearchString(), this.replaceString, caseSensitive, contentVersionIds, this.getInfoGluePrincipal());
 	    
         return "success";
 	}
@@ -61,13 +64,21 @@ public class ReplaceContentAction extends SearchContentAction
 	public String doV3() throws Exception 
 	{
 	    String contentVersionIds[] = contentVersionId.split(",");
-	    
+	    /*
+	    System.out.println("contentVersionIds:" + contentVersionIds + ":" + contentVersionIds.length);
+	    System.out.println("getSearchString():" + getSearchString());
+	    System.out.println("replaceString:" + this.replaceString);
+	    System.out.println("contentVersionId:" + contentVersionIds[0]);
+	    */
 	    //logger.info("contentVersionIds:" + contentVersionIds + ":" + contentVersionIds.length);
 	    //logger.info("getSearchString():" + getSearchString());
 	    //logger.info("replaceString:" + this.replaceString);
 	    //logger.info("contentVersionId:" + contentVersionIds[0]);
-	    
-	    SearchController.replaceString(getSearchString(), this.replaceString, contentVersionIds, this.getInfoGluePrincipal());
+	    Boolean caseSensitive = false;
+	    if(getCaseSensitive() != null && getCaseSensitive() == 1)
+	    	caseSensitive = true;
+
+	    SearchController.replaceString(getSearchString(), this.replaceString, caseSensitive, contentVersionIds, this.getInfoGluePrincipal());
 	    
         return "successV3";
 	}

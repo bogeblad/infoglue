@@ -712,7 +712,7 @@ public class SearchController extends BaseController
    	}
 
    	
-   	public static int replaceString(String searchString, String replaceString, String[] contentVersionIds, InfoGluePrincipal infoGluePrincipal)throws SystemException, Bug
+   	public static int replaceString(String searchString, String replaceString, Boolean caseSensitive, String[] contentVersionIds, InfoGluePrincipal infoGluePrincipal)throws SystemException, Bug
    	{
 		int replacements = 0;
 		
@@ -735,8 +735,15 @@ public class SearchController extends BaseController
 			    }
 			    
 			    String value = contentVersion.getVersionValue();
-			    value = value.replaceAll(searchString, replaceString);
 			    
+			    System.out.println("searchString:" + searchString);
+			    
+			    if(!caseSensitive)			    
+			    	searchString = "(?i)" + searchString;
+			    System.out.println("searchString:" + searchString);
+			    
+			    value = value.replaceAll(searchString, replaceString);
+			    	
 			    contentVersion.setVersionValue(value);
 
 			    replacements++;

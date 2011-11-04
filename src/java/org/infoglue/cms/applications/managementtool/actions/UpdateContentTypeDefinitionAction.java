@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
@@ -41,7 +42,8 @@ import org.jfree.util.Log;
   */
 public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinitionAction //WebworkAbstractAction
 {
-	
+	private final static Logger logger = Logger.getLogger(UpdateContentTypeDefinitionAction.class.getName());
+
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
 	private ConstraintExceptionBuffer ceb;
 	
@@ -123,7 +125,8 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
             if(indexOfTag > -1)
             {
             	String newAttributeValue = vf.escapeHTML(value);
-            	Log.info("Replacing:" + value + " with " + newAttributeValue);
+            	if(logger.isInfoEnabled())
+            		logger.info("Replacing:" + value + " with " + newAttributeValue);
             	schemaValue = StringUtils.replace(schemaValue, "\"" + value + "\"", "\"" + newAttributeValue + "\"");
             }
         }

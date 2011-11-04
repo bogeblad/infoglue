@@ -82,6 +82,8 @@ public class SearchAction extends InfoGlueAbstractAction
 	private String[] allowedContentTypeIds = null;
 	private Boolean initSearch = false;
 	
+	private String[] repositoryIdToSearch = null;
+	
 	private int maxRows = 0;
 	
 	//This is for advanced search
@@ -152,7 +154,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		{
 		}
 
-		String[] repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
+		repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
 		if(onlyIDSearch)
 		{
 			try
@@ -227,7 +229,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		{
 		}
 
-		String[] repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
+		repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
 		if(repositoryIdToSearch != null)
 		{
 			Integer[] repositoryIdAsIntegerToSearch = new Integer[repositoryIdToSearch.length];
@@ -267,7 +269,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		{
 		}
 
-		String[] repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
+		repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
 		if(repositoryIdToSearch != null)
 		{
 			Integer[] repositoryIdAsIntegerToSearch = new Integer[repositoryIdToSearch.length];
@@ -299,7 +301,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		{
 		}
 		
-		String[] repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
+		repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
 		if(repositoryIdToSearch != null)
 		{
 			Integer[] repositoryIdAsIntegerToSearch = new Integer[repositoryIdToSearch.length];
@@ -334,7 +336,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		{
 		}
 		*/
-		String[] repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
+		repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
 		if(repositoryIdToSearch != null)
 		{
 			Integer[] repositoryIdAsIntegerToSearch = new Integer[repositoryIdToSearch.length];
@@ -651,4 +653,8 @@ public class SearchAction extends InfoGlueAbstractAction
 		return baseEntityVOList;
 	}
 
+	public String[] getRepositoryIdToSearch()
+	{
+		return this.repositoryIdToSearch;
+	}
 }

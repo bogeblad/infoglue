@@ -213,7 +213,7 @@
 			
 	<h3>$ui.getString("tool.common.searchDialog.searchFieldDefaultText")</h3>
 			
-	<form id="searchForm">
+	<form id="searchForm" action="Search.action">
 		<fieldset style="border: 1px solid #CCC; width: 500px;">
 			
 			<div id="searchLayer" style="display:block;">
@@ -292,6 +292,9 @@
 				<a href="javascript:showSearchDialog();">$ui.getString("tool.contenttool.backToSearch")</a>
 				<br/>
 				#editTextField3($ui.getString("tool.contenttool.replaceString.label") "tool.contenttool.replaceString.label" "replaceString" $replaceString "30" "normaltextfield")
+				<br/>
+				$ui.getString("tool.contenttool.caseSensitive.label")<br>
+				<input type="checkbox" name="caseSensitive" value="1" #checkChecked("1" "$caseSensitive")> $ui.getString("tool.common.yes") 
 			</p>
 			<p class="buttonPane">
 				<input type="button" value="$ui.getString("tool.contenttool.replace")" class="replace" onclick="submitReplaceForm();"/>
@@ -302,8 +305,13 @@
 			<input type="hidden" name="name" value="$!name">
 			<input type="hidden" name="languageId" value="$!languageId">
 			<input type="hidden" name="contentTypeDefinitionId" value="$!contentTypeDefinitionId">
-			<input type="hidden" name="caseSensitive" value="$!caseSensitive">
 			<input type="hidden" name="stateId" value="$!stateId">
+			<input type="hidden" name="advancedEnabled" value="$!advancedEnabled">
+			<input type="hidden" name="includeAssets" value="$!includeAssets">
+			<input type="hidden" name="onlyIDSearch" value="$!onlyIDSearch">
+			#foreach($!currentRepositoryId in $!repositoryIdToSearch)
+			<input type="hidden" name="repositoryIdToSearch" value="$!currentRepositoryId">
+			#end
 		</form>
 	</div>
 	

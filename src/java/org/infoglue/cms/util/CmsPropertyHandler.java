@@ -2413,7 +2413,12 @@ public class CmsPropertyHandler
 	{
 		return getServerNodeProperty("deliver", "casLogoutUrl", true, "");
 	}
-	
+
+	public static String getIpAddressesToFallbackToBasicAuth()
+	{
+		return getServerNodeProperty("ipAddressesToFallbackToBasicAuth", true, "");
+	}
+
 	public static boolean getDisableDecoratedFinalRendering()
 	{
 		String disableDecoratedFinalRendering = getServerNodeProperty("disableDecoratedFinalRendering", true, "false");

@@ -97,7 +97,6 @@ public class RemoteContentServiceTag extends TemplateControllerTag
 		   //ws.setReturnType(Boolean.class);
 		   
 		   ws.addArgument("contents", contents);
-		   
 		   ws.callService();
 		   setResultAttribute(ws.getResult());
 	   }   

@@ -2445,8 +2445,10 @@ public class CacheController extends Thread
 		            	if(cacheName.equals("pageCache") && compressPageCache != null && compressPageCache.equals("true"))
 		            	{
 		            		byte[] cachedCompressedData = FileHelper.getFileBytes(file);
-	 		            	if(cachedCompressedData != null)
-	 		            		contents = compressionHelper.decompress(cachedCompressedData);		
+	 		            	if(cachedCompressedData != null && cachedCompressedData.length > 0)
+		            		{
+		            			contents = compressionHelper.decompress(cachedCompressedData);		
+		            		}
 		            	}
 		            	else
 		            	{
@@ -2470,8 +2472,10 @@ public class CacheController extends Thread
 	            	if(cacheName.equals("pageCache") && compressPageCache != null && compressPageCache.equals("true"))
 	            	{
 	            		byte[] cachedCompressedData = FileHelper.getFileBytes(file);
- 		            	if(cachedCompressedData != null)
+ 		            	if(cachedCompressedData != null && cachedCompressedData.length > 0)
+	            		{
  		            		contents = compressionHelper.decompress(cachedCompressedData);		
+	            		}
 	            	}
 	            	else
 	            	{

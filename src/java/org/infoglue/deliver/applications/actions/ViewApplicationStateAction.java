@@ -718,7 +718,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 
     private String getRedirectUrl(HttpServletRequest request, HttpServletResponse response) throws ServletException, Exception 
   	{
-		String url = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL()).getLoginDialogUrl(request, response);
+		String url = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), request, false).getLoginDialogUrl(request, response);
 		return url;
   	}
     

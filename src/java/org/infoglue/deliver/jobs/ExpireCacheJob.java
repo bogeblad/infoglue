@@ -142,7 +142,8 @@ public class ExpireCacheJob implements Job
 	        }
 	        catch(Exception e)
 	        {
-	            logger.error("An error occurred when we tried to validate caches:" + e.getMessage(), e);
+	            logger.error("An error occurred when we tried to validate caches:" + e.getMessage());
+	            logger.warn("An error occurred when we tried to validate caches:" + e.getMessage(), e);
 	        }
 		    
 	        logger.debug("releasing block");
@@ -196,7 +197,8 @@ public class ExpireCacheJob implements Job
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            logger.error("An error occurred when we tried to update cache:" + e.getMessage());
+            logger.warn("An error occurred when we tried to update cache:" + e.getMessage(), e);
         }    	
 
         logger.info("---" + context.getJobDetail().getFullName() + " executing.[" + new Date() + "]");
@@ -253,7 +255,8 @@ public class ExpireCacheJob implements Job
                 }
                 catch(Exception e)
                 {
-                    logger.error("An error occurred when we tried to update cache:" + e.getMessage(), e);
+                    logger.error("An error occurred when we tried to update cache:" + e.getMessage());
+                    logger.warn("An error occurred when we tried to update cache:" + e.getMessage(), e);
                 }
     		    
     		    logger.info("releasing block");
@@ -307,7 +310,8 @@ public class ExpireCacheJob implements Job
                 }
                 catch(Exception e)
                 {
-                    logger.error("An error occurred when we tried to update cache:" + e.getMessage(), e);
+                    logger.error("An error occurred when we tried to update cache:" + e.getMessage());
+                    logger.warn("An error occurred when we tried to update cache:" + e.getMessage(), e);
                 }
 
                 logger.info("releasing block");
@@ -371,7 +375,8 @@ public class ExpireCacheJob implements Job
         }
         catch (Exception e)
         {
-            logger.error("An error occurred when we tried to update cache:" + e.getMessage(), e);
+            logger.error("An error occurred when we tried to update cache:" + e.getMessage());
+            logger.warn("An error occurred when we tried to update cache:" + e.getMessage(), e);
         }
     }
     

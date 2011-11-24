@@ -62,7 +62,7 @@ public class ContentResource implements PropFindableResource, FolderResource
 		    Map loginMap = new HashMap();
 	        loginMap.put("j_username", user);
 	        loginMap.put("j_password", pwd);
-			String authenticatedUserName = AuthenticationModule.getAuthenticationModule(null, null).authenticateUser(loginMap);
+			String authenticatedUserName = AuthenticationModule.getAuthenticationModule(null, null, null, true).authenticateUser(loginMap);
 			if(authenticatedUserName != null)
 				this.principal = UserControllerProxy.getController().getUser(authenticatedUserName);
 

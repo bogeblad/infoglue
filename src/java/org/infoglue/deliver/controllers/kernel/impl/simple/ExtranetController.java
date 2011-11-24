@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupPropertiesController;
@@ -135,13 +137,13 @@ public class ExtranetController extends BaseDeliveryController
 	 * infoglue extranet user. 
 	 */
 	
-	public Principal getAuthenticatedPrincipal(Map request) throws Exception
+	public Principal getAuthenticatedPrincipal(Map request, HttpServletRequest httpServletRequest) throws Exception
 	{		
 		Principal principal = null;
 		
 		try
 		{			
-			String authenticatedUserName = AuthenticationModule.getAuthenticationModule(null, null).authenticateUser(request);
+			String authenticatedUserName = AuthenticationModule.getAuthenticationModule(null, null, httpServletRequest, false).authenticateUser(request);
 			logger.info("authenticatedUserName:" + authenticatedUserName);
 			if(authenticatedUserName != null)
 			{

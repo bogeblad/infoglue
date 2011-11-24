@@ -167,8 +167,6 @@ public abstract class PageInvoker
 
 	public void deliverPage() throws NoBaseTemplateFoundException, Exception
 	{
-		//logger.info("deliverPage: ClassLoader in context for thread:" + Thread.currentThread().getId() + ":" + Thread.currentThread().getContextClassLoader().getClass().getName());
-
 		if(logger.isInfoEnabled())
 		{
 			logger.info("PageKey:" + this.getDeliveryContext().getPageKey());

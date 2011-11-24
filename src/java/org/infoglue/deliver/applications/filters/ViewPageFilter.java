@@ -308,7 +308,7 @@ public class ViewPageFilter implements Filter
 	        			extraInformation += "UserAgent: " + httpRequest.getHeader("User-Agent") + "\n";
 	        			extraInformation += "User IP: " + httpRequest.getRemoteAddr();
 	        			
-	        			logger.warn("Could not map URI " + requestURI + " against any page on this website." + "\n" + extraInformation);
+	        			logger.info("Could not map URI " + requestURI + " against any page on this website." + "\n" + extraInformation);
 	                    throw new ServletException("Could not map URI " + requestURI + " against any page on this website.");	                    	
 	                }
 	                else
@@ -541,7 +541,6 @@ public class ViewPageFilter implements Filter
         			}
         		}
         	}
-        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("AAAAAAA", t.getElapsedTime());
         }
 
         if (languageId != null)

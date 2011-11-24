@@ -129,7 +129,7 @@ public class LoginAction extends InfoGlueAbstractAction
 	    cookie_igpassword.setMaxAge(0);
 	    getResponse().addCookie(cookie_igpassword);
 		
-		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(null, null);
+		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(null, null, getRequest(), false);
 		boolean redirected = authenticationModule.logoutUser(getRequest(), getResponse());
 		
 		if(redirected)

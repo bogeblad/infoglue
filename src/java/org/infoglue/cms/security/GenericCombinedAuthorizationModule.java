@@ -75,8 +75,6 @@ public class GenericCombinedAuthorizationModule implements AuthorizationModule, 
 	private Database transactionObject 	= null;
 
 	private List authorizationModules = new ArrayList();
-	//private AuthorizationModule mainAuthorizationModule = null;
-	//private AuthorizationModule authorizationModule = null;
 
 	private AuthorizationModule getAuthorizationModule(String authorizationModuleClassName, int index) throws SystemException
 	{

@@ -47,6 +47,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InfoGluePrincipalControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptorController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
@@ -56,16 +58,21 @@ import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.AuthenticationModule;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.security.interceptors.InfoGlueInterceptor;
 import org.infoglue.cms.services.AdminToolbarService;
 import org.infoglue.cms.services.AdminToolsService;
+import org.infoglue.cms.services.InterceptionService;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
@@ -108,7 +115,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	
 	public String getLogoutURL() throws Exception
 	{
-		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(null, null);
+		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(null, null, getRequest(), false);
 	    return authenticationModule.getLogoutUrl();
 	}
 
@@ -532,7 +539,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 			    arguments.put("ticket", this.getHttpSession().getAttribute("ticket"));
 
-			    principal = ExtranetController.getController().getAuthenticatedPrincipal(arguments);
+			    principal = ExtranetController.getController().getAuthenticatedPrincipal(arguments, getRequest());
 				
 				if(principal != null)
 					CacheController.cacheObject("userCache", "anonymous", principal);
@@ -1289,6 +1296,49 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	{
 		logger.warn("" + message);
 	}
+    
+    /**
+     * This method is called by the controllers to let interceptors listen to events.
+     * 
+     * @param hashMap
+     * @param InterceptionPointName
+     * @param infogluePrincipal
+     * @throws ConstraintException
+     * @throws SystemException
+     * @throws Bug
+     * @throws Exception
+     */
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
+	{
+    	intercept(hashMap, InterceptionPointName, infogluePrincipal, true);
+	}
+	
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws ConstraintException, SystemException, Bug, Exception
+	{
+		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
+    	
+		if(interceptionPointVO == null)
+			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
 
+		List interceptors = InterceptorController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId());
+		Iterator interceptorsIterator = interceptors.iterator();
+		while(interceptorsIterator.hasNext())
+		{
+			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
+			logger.info("Adding interceptorVO:" + interceptorVO.getName());
+			try
+			{
+				InfoGlueInterceptor infoGlueInterceptor = InterceptionService.getService().getInterceptor(interceptorVO.getName());
+				if(infoGlueInterceptor == null)
+					infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				System.out.println("infoGlueInterceptor:" + infoGlueInterceptor);
+				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap, allowCreatorAccess);
+			}
+			catch(ClassNotFoundException e)
+			{
+				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
+			}
+		}
+	}
 }
 

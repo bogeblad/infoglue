@@ -154,6 +154,9 @@ public class InfoGlueAuthenticationFilter implements Filter
 	
 	private static Boolean configurationFinished = null;
 
+	/**
+	 * This filter is basically what secures Infoglue and enforces the authentication framework.
+	 */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc) throws ServletException, IOException 
     {	
     	HttpServletRequest httpServletRequest = (HttpServletRequest)request;
@@ -197,6 +200,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 				logger.error("logoutUrl was null - fix this.");
 				logoutUrl = "ExtranetLogin!logout.action";
 			}
+			
 			if(uriMatcher == null)
 			{
 				logger.error("uriMatcher was null - fix this.");
@@ -209,8 +213,25 @@ public class InfoGlueAuthenticationFilter implements Filter
 				httpServletResponse.sendRedirect("Install!input.action");
 				return;
 			}
-
-			if(URI != null && URL != null && (URI.indexOf(loginUrl) > -1 || URL.indexOf(loginUrl) > -1 || URI.indexOf(invalidLoginUrl) > -1 || URL.indexOf(invalidLoginUrl) > -1 || URI.indexOf(logoutUrl) > -1 || URI.indexOf("Login!logout.action") > -1 || URL.indexOf(logoutUrl) > -1 || URI.indexOf("UpdateCache") > -1 || URI.indexOf("protectedRedirect.jsp") > -1 || uriMatcher.matches(requestURI)))
+			
+			//Here are the url:s/paths that must be skipped by the security framework for it to work. Login screens etc must be reachable naturally.
+			if(URI != null && URL != null && 
+					(
+							URI.indexOf(loginUrl) > -1 || 
+							URL.indexOf(loginUrl) > -1 || 
+							URI.indexOf("Login.action") > -1 || 
+							URL.indexOf("Login.action") > -1 || 
+							URI.indexOf(invalidLoginUrl) > -1 || 
+							URL.indexOf(invalidLoginUrl) > -1 || 
+							URI.indexOf("Login!invalidLogin.action") > -1 || 
+							URL.indexOf("Login!invalidLogin.action") > -1 || 
+							URI.indexOf(logoutUrl) > -1 || 
+							URI.indexOf("Login!logout.action") > -1 || 
+							URL.indexOf(logoutUrl) > -1 || 
+							URI.indexOf("UpdateCache") > -1 || 
+							URI.indexOf("protectedRedirect.jsp") > -1 || 
+							uriMatcher.matches(requestURI)
+					))
 			{
 				fc.doFilter(request, response); 
 				return;
@@ -247,7 +268,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 			
 			// otherwise, we need to authenticate somehow
 			boolean isAdministrator = false;
-
+			
 			String userName = request.getParameter("j_username");
 			String password = request.getParameter("j_password");
 			
@@ -258,7 +279,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 				boolean matchesRootPassword = CmsPropertyHandler.getMatchesAdministratorPassword(password);
 				isAdministrator = (userName.equalsIgnoreCase(administratorUserName) && matchesRootPassword) ? true : false;
 			}
-			
+
 			//First we check if the user is logged in to the container context
 			if(!isAdministrator)
 			{
@@ -269,7 +290,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 			    	logger.info("Now trusting the container logged in identity...");
 			    }
 			}
-			
+
 			String authenticatedUserName = userName;
 			
 			if(!isAdministrator)
@@ -530,8 +551,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 			currentUrl = request.getRequestURL() + (request.getQueryString() == null ? "" : "?" + request.getQueryString());
 		}
 
-  		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(null, currentUrl);
-  		
+  		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(null, currentUrl, request, false);
 		authenticatedUserName = authenticationModule.authenticateUser(request, response, fc);
 		
 		return authenticatedUserName;
@@ -758,6 +778,8 @@ public class InfoGlueAuthenticationFilter implements Filter
 		    logger.error("An error occurred so we should not complete the transaction:" + e, e);
 			throw new SystemException("Setting the security parameters failed: " + e.getMessage(), e);
 		}
+		
+		UserControllerProxy.initializedImportClass = false;
 	}
 
     private String getContextRelativeURI(HttpServletRequest request) 

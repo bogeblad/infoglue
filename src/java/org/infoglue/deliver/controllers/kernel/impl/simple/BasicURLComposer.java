@@ -921,7 +921,7 @@ public class BasicURLComposer extends URLComposer
 			    arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 
-			    principal = ExtranetController.getController().getAuthenticatedPrincipal(arguments);
+			    principal = ExtranetController.getController().getAuthenticatedPrincipal(arguments, null);
 				
 				if(principal != null)
 					CacheController.cacheObject("userCache", "anonymous", principal);

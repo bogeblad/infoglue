@@ -65,18 +65,21 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
 			ContentTypeAttribute contentTypeAttribute = null;
 			
 			ContentVO contentVO = this.getContent(contentId);
-			ContentTypeDefinitionVO contentTypeDefinitionVO = getContentTypeDefinitionVO(contentId);
-			Collection attributes = this.getContentTypeDefinitionAttributes(contentTypeDefinitionVO.getSchemaValue());
-			Iterator attributesIterator = attributes.iterator();
-			while(attributesIterator.hasNext())
+			if(contentVO.getContentTypeDefinitionId() != null)
 			{
-				
-				ContentTypeAttribute contentTypeAttributeCandidate = (ContentTypeAttribute)attributesIterator.next();
-				if(contentTypeAttributeCandidate.getName().equals(attributeName))
+				ContentTypeDefinitionVO contentTypeDefinitionVO = getContentTypeDefinitionVO(contentId);
+				Collection attributes = this.getContentTypeDefinitionAttributes(contentTypeDefinitionVO.getSchemaValue());
+				Iterator attributesIterator = attributes.iterator();
+				while(attributesIterator.hasNext())
 				{
-					contentTypeAttribute = contentTypeAttributeCandidate;
-					break;
-				}
+					
+					ContentTypeAttribute contentTypeAttributeCandidate = (ContentTypeAttribute)attributesIterator.next();
+					if(contentTypeAttributeCandidate.getName().equals(attributeName))
+					{
+						contentTypeAttribute = contentTypeAttributeCandidate;
+						break;
+					}
+				}				
 			}
 			
 			String className = "";

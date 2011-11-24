@@ -323,7 +323,7 @@ public class ComponentProperty
             }
             else
             {
-                logger.error("Cant find the ContentTypeDefinition for: " + allowedContentTypeName );
+                logger.warn("Cant find the ContentTypeDefinition for: " + allowedContentTypeName );
             }
         }
         return sb.toString();

@@ -24,6 +24,8 @@
 package org.infoglue.cms.security;
 
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -33,9 +35,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.cms.util.IPMatcher;
+import org.infoglue.deliver.util.Timer;
+
 
 /**
- * This interface defines what a authenticationmodule has to fulfill.
+ * This abstract class defines what a authentication module has to implement.
+ * It also acts as a factory class for the authentication framework.
  * 
  * @author Mattias Bogeblad
  */
@@ -44,7 +51,21 @@ public abstract class AuthenticationModule
 {
     private final static Logger logger = Logger.getLogger(AuthenticationModule.class.getName());
 
-	public static AuthenticationModule getAuthenticationModule(Object transactionObject, String successLoginUrl) throws SystemException
+    /**
+     * This is the authentication framework factory method which looks at the system configuration and instantiates an implementation based on this.
+     * A deviation from the normal pattern exists and it is related to how SSO-implementations (in this case CAS initially) is handled. As CAS requires the 
+     * complete delegation of the request process (login form etc) to the CAS-service it is harder to login other systems or search spiders etc and a strong requirement 
+     * from customers has been to allow for certain IP-ranges to be directed to the basic authentication module instead (Infoglue's own) which is simpler to automate.   
+     * So for this to work the metod contains matching on IP and an optional parameter which forces fallback. 
+     * 
+     * @param transactionObject Optional database object if the authentication should be carried out within a transaction.
+     * @param successLoginUrl The url to return the user to when the login is successful. 
+     * @param request The user's HttpServletRequest.
+     * @param forceBasicModule In some cases - like when running WebDAV and CAS is not an option (or is it).
+     * @return The implementation of AuthenticationModule in question.
+     * @throws SystemException
+     */
+	public static AuthenticationModule getAuthenticationModule(Object transactionObject, String successLoginUrl, HttpServletRequest request, boolean forceBasicModule) throws SystemException
 	{
 		AuthenticationModule authenticationModule = null;
 		
@@ -63,40 +84,80 @@ public abstract class AuthenticationModule
 		    String casProxyValidateUrl 	= InfoGlueAuthenticationFilter.casProxyValidateUrl;
 		    String casLogoutUrl 		= InfoGlueAuthenticationFilter.casLogoutUrl;
 		    
-		    authenticationModule = (AuthenticationModule)Class.forName(authenticatorClass).newInstance();
-			authenticationModule.setAuthenticatorClass(authenticatorClass);
-			authenticationModule.setAuthorizerClass(authorizerClass);
-			authenticationModule.setInvalidLoginUrl(invalidLoginUrl);
-			authenticationModule.setLoginUrl(loginUrl);
-			authenticationModule.setLogoutUrl(logoutUrl);
-			authenticationModule.setServerName(serverName);
-			authenticationModule.setExtraProperties(extraProperties);
-			authenticationModule.setCasRenew(casRenew);
-			
-			if(successLoginUrl != null && successLoginUrl.length() > 0)
-			{
-				int index = successLoginUrl.indexOf("&ticket=");
-				if(index > -1)
+		    if(authenticatorClass.equals("org.infoglue.cms.security.CASBasicAuthenticationModule") && (forceBasicModule || fallBackToBasicBasedOnIP(request)))
+		    {
+		    	authenticationModule = (AuthenticationModule)Class.forName("org.infoglue.cms.security.InfoGlueBasicAuthenticationModule").newInstance();
+				authenticationModule.setAuthenticatorClass("org.infoglue.cms.security.InfoGlueBasicAuthenticationModule");
+				authenticationModule.setAuthorizerClass(authorizerClass);
+				authenticationModule.setInvalidLoginUrl("Login!invalidLogin.action");
+				authenticationModule.setLoginUrl("Login.action");
+				authenticationModule.setLogoutUrl("Login!logout.action");
+				authenticationModule.setServerName(serverName);
+				authenticationModule.setExtraProperties(extraProperties);
+				authenticationModule.setCasRenew(casRenew);
+				
+				if(successLoginUrl != null && successLoginUrl.length() > 0)
 				{
-					successLoginUrl = successLoginUrl.substring(0, index);
-				}
-				int index2 = successLoginUrl.indexOf("?ticket=");
-				if(index2 > -1)
-				{
-					successLoginUrl = successLoginUrl.substring(0, index2);
-				}
-				logger.info("successLoginUrl:" + successLoginUrl);
+					int index = successLoginUrl.indexOf("&ticket=");
+					if(index > -1)
+					{
+						successLoginUrl = successLoginUrl.substring(0, index);
+					}
+					int index2 = successLoginUrl.indexOf("?ticket=");
+					if(index2 > -1)
+					{
+						successLoginUrl = successLoginUrl.substring(0, index2);
+					}
+					logger.info("successLoginUrl:" + successLoginUrl);
 
-				authenticationModule.setCasServiceUrl(successLoginUrl);
-				authenticationModule.setSuccessLoginUrl(successLoginUrl);
-			}
-			else
-				authenticationModule.setCasServiceUrl(casServiceUrl);
-			
-			authenticationModule.setCasValidateUrl(casValidateUrl);
-			authenticationModule.setCasProxyValidateUrl(casProxyValidateUrl);
-			authenticationModule.setCasLogoutUrl(casLogoutUrl);
-			authenticationModule.setTransactionObject(transactionObject);			
+					authenticationModule.setCasServiceUrl(successLoginUrl);
+					authenticationModule.setSuccessLoginUrl(successLoginUrl);
+				}
+				else
+					authenticationModule.setCasServiceUrl(casServiceUrl);
+				
+				authenticationModule.setCasValidateUrl(casValidateUrl);
+				authenticationModule.setCasProxyValidateUrl(casProxyValidateUrl);
+				authenticationModule.setCasLogoutUrl(casLogoutUrl);
+				authenticationModule.setTransactionObject(transactionObject);
+		    }
+		    else
+		    {
+			    authenticationModule = (AuthenticationModule)Class.forName(authenticatorClass).newInstance();
+				authenticationModule.setAuthenticatorClass(authenticatorClass);
+				authenticationModule.setAuthorizerClass(authorizerClass);
+				authenticationModule.setInvalidLoginUrl(invalidLoginUrl);
+				authenticationModule.setLoginUrl(loginUrl);
+				authenticationModule.setLogoutUrl(logoutUrl);
+				authenticationModule.setServerName(serverName);
+				authenticationModule.setExtraProperties(extraProperties);
+				authenticationModule.setCasRenew(casRenew);
+				
+				if(successLoginUrl != null && successLoginUrl.length() > 0)
+				{
+					int index = successLoginUrl.indexOf("&ticket=");
+					if(index > -1)
+					{
+						successLoginUrl = successLoginUrl.substring(0, index);
+					}
+					int index2 = successLoginUrl.indexOf("?ticket=");
+					if(index2 > -1)
+					{
+						successLoginUrl = successLoginUrl.substring(0, index2);
+					}
+					logger.info("successLoginUrl:" + successLoginUrl);
+	
+					authenticationModule.setCasServiceUrl(successLoginUrl);
+					authenticationModule.setSuccessLoginUrl(successLoginUrl);
+				}
+				else
+					authenticationModule.setCasServiceUrl(casServiceUrl);
+				
+				authenticationModule.setCasValidateUrl(casValidateUrl);
+				authenticationModule.setCasProxyValidateUrl(casProxyValidateUrl);
+				authenticationModule.setCasLogoutUrl(casLogoutUrl);
+				authenticationModule.setTransactionObject(transactionObject);
+		    }
 		}
 		catch(Exception e)
 		{
@@ -107,6 +168,41 @@ public abstract class AuthenticationModule
 		return authenticationModule;
 	}
 	
+	/**
+	 * This method takes a request object and matches the clients IP (or X-Forwarded IP if allowed) against the system defined IP:s.
+	 */
+	private static boolean fallBackToBasicBasedOnIP(HttpServletRequest request) 
+	{
+		Timer t = new Timer();
+		if(request == null)
+			return false;
+			
+		String ipAddressesToFallbackToBasicAuth = CmsPropertyHandler.getIpAddressesToFallbackToBasicAuth();
+		logger.info("ipAddressesToFallbackToBasicAuth: " + ipAddressesToFallbackToBasicAuth);
+		if(ipAddressesToFallbackToBasicAuth == null || ipAddressesToFallbackToBasicAuth.equals("") || ipAddressesToFallbackToBasicAuth.indexOf("ipAddressesToFallbackToBasicAuth") > -1)
+			return false;
+		
+		String[] ipAddressesToFallbackToBasicAuthArray = ipAddressesToFallbackToBasicAuth.split(",");
+		List<String> list = Arrays.asList(ipAddressesToFallbackToBasicAuthArray);
+				
+		boolean allowXForwardedIPCheck = CmsPropertyHandler.getAllowXForwardedIPCheck();
+		
+		String ipRemote = request.getRemoteAddr();
+	    String ipRequest = null;
+	    
+	    if (allowXForwardedIPCheck) 
+	    {
+	    	ipRemote = request.getHeader("X-Forwarded-For");
+	    }
+	    
+	    logger.info("ipAddressesToFallbackToBasicAuth: " + ipAddressesToFallbackToBasicAuth + "\nRequest: "+ipRequest+", Remote: "+ipRemote);
+		
+		boolean isInList = IPMatcher.isIpInList(list, ipRemote, ipRequest);
+		if(logger.isInfoEnabled())
+			t.printElapsedTime("Auth took");
+		return isInList;
+	}
+
 	public abstract String authenticateUser(HttpServletRequest request, HttpServletResponse response, FilterChain fc) throws Exception;
 
 	public abstract String authenticateUser(Map request) throws Exception;

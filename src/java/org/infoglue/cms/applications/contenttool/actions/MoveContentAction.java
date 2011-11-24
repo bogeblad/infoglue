@@ -166,6 +166,9 @@ public class MoveContentAction extends InfoGlueAbstractAction
         	
     		ContentControllerProxy.getController().acMoveContent(this.getInfoGluePrincipal(), this.contentVO, this.newParentContentId);
 
+    		if(parentContentId == null && newParentContentId != null)
+    			parentContentId = newParentContentId;
+    		
             setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
             setActionExtraData(userSessionKey, "repositoryId", "" + this.repositoryId);
             setActionExtraData(userSessionKey, "contentId", "" + newParentContentId);

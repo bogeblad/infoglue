@@ -224,7 +224,10 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
         String moveContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationDoneHeader", contentVO.getName());
 		String moveContentInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationBackToCurrentContentLinkText");
 		String moveContentInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationBackToCurrentContentTitleText");
-
+		
+		if(parentContentId == null && newParentContentId != null)
+			parentContentId = newParentContentId;
+		
 	    setActionMessage(userSessionKey, moveContentInlineOperationDoneHeader);
 	    addActionLink(userSessionKey, new LinkBean("currentPageUrl", moveContentInlineOperationBackToCurrentPageLinkText, moveContentInlineOperationBackToCurrentPageTitleText, moveContentInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));
         setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);

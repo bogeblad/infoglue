@@ -55,7 +55,7 @@ public class AllRepositoryResource implements PropFindableResource, FolderResour
 	        Map loginMap = new HashMap();
 	        loginMap.put("j_username", user);
 	        loginMap.put("j_password", pwd);
-			String authenticatedUserName = AuthenticationModule.getAuthenticationModule(null, null).authenticateUser(loginMap);
+			String authenticatedUserName = AuthenticationModule.getAuthenticationModule(null, null, null, true).authenticateUser(loginMap);
 			if(logger.isInfoEnabled())
 				logger.info("authenticatedUserName:" + authenticatedUserName);
 

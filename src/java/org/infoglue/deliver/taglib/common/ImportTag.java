@@ -183,7 +183,8 @@ public class ImportTag extends TemplateControllerTag
         } 
 		catch (Exception e)
         {
-            logger.error("An error occurred when we tried during (" + timeout + " ms) to import the url:" + this.url + ":" + e.getMessage());
+            logger.error("An error occurred when we on page '" + getController().getCurrentPageUrl() + "' tried during (" + timeout + " ms) to import the url:" + this.url + ":" + e.getMessage());
+            logger.warn("An error occurred when we on page '" + getController().getCurrentPageUrl() + "' tried during (" + timeout + " ms) to import the url:" + this.url + ":" + e.getMessage(), e);
 		    produceResult("");
         }
 		

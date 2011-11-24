@@ -9,14 +9,20 @@ import java.util.regex.Pattern;
  * This class is used to match incoming IP-addresses against a list of allowed ones.
  * Handles wildcards for ipv4 but only exact matches for ipv6.
  */
-
 public class IPMatcher 
 {
-	
 	//Need to find a IP regexp that handles wildcards 
 	private static final Pattern IPV4_PATTERN = Pattern.compile("((?:\\d{1,3}\\.){3}\\d{1,3})(?:/(\\d{1,2}))?");
     private static final Pattern IPV6_PATTERN = Pattern.compile("((?:::)|(?:(?:(?:[0-9a-fA-F]{1,4}:)|:){1,7})[0-9a-fA-F]{1,4})(?:/(\\d{1,3}))?");
 
+    /**
+     * This method matches either of the two IP:s against a list of allowed IP-patterns.
+     * 
+     * @param allowedIP The list of allowed IP:s. Can be: "localhost", or a literal IP address in the form 999.999.999.999, or a literal IP address in the form *.*.*.* where any of the octets can be the wildcard character (*), or an IP range in the form 999.999.999.999-999.999.999.999
+     * @param commonIP The primary user IP (IPv4 or IPv6-format)
+     * @param alternateIP The primary user IP (IPv4 or IPv6-format)
+     * @return true or false if the IP:s matches
+     */
    	public static boolean isIpInList(List<String> allowedIP, String commonIP, String alternateIP) 
 	{
    		boolean status = false;
@@ -36,15 +42,13 @@ public class IPMatcher
 				status = true;
 			}
 		}
-		System.out.println("status:" + status);
+
 		return status;
 	}
 	
 	/**
 	 * Determines if 2 given IP addresses matches. The first, ip1, can include wildcards (*). </br>
-	 * 
 	 * ip1 can be: "localhost", or a literal IP address in the form 999.999.999.999, or a literal IP address in the form *.*.*.* where any of the octets can be the wildcard character (*), or an IP range in the form 999.999.999.999-999.999.999.999
-	 * 
 	 * 
 	 * @param ip1 the address to compare against
 	 * @param ip2 the address to compare
@@ -211,8 +215,7 @@ public class IPMatcher
 	/**
 	 * Method that pads (prefixes) a string representation of a byte with 0's.
 	 * 
-	 * @param binByte
-	 *            String of the byte (maybe less than 8 bits) to pad.
+	 * @param binByte String of the byte (maybe less than 8 bits) to pad.
 	 * @return String of the byte guaranteed to have 8 bits.
 	 */
 	private static String padBinByteStr(String binByte) 
@@ -234,7 +237,8 @@ public class IPMatcher
 	} // End padBinByteStr().
 	  
 	  
-	  public static void main(String[] args) {
+	public static void main(String[] args) 
+	{
 		List<String> ipList = new ArrayList<String>();
 		ipList.add("123.123.123.123");
 		ipList.add("124.124.124.*");
@@ -242,45 +246,45 @@ public class IPMatcher
 		ipList.add("124.124.124.*");
 		ipList.add("1080:0:0:0:8:800:200C:417A");
 		ipList.add("1080::8:800:200C:417B");
-		
-		//Should be true
+
+		// Should be true
 		boolean test1 = isIpInList(ipList, "123.123.123.123", null);
-		System.out.println("Test 1 (true):"+test1);
-		
-		//Should be false
+		System.out.println("Test 1 (true):" + test1);
+
+		// Should be false
 		boolean test2 = isIpInList(ipList, "123.123.123.124", null);
-		System.out.println("Test 2 (false):"+test2);
-		
-		//Should be true
+		System.out.println("Test 2 (false):" + test2);
+
+		// Should be true
 		boolean test3 = isIpInList(ipList, "123.123.123.124", "123.123.123.123");
-		System.out.println("Test 3 (true):"+test3);
-		
-		//Should be true
+		System.out.println("Test 3 (true):" + test3);
+
+		// Should be true
 		boolean test4 = isIpInList(ipList, "124.124.124.123", null);
-		System.out.println("Test 4 (true):"+test4);
+		System.out.println("Test 4 (true):" + test4);
 
-		//Should be true
+		// Should be true
 		boolean test5 = isIpInList(ipList, "124.124.125.123", null);
-		System.out.println("Test 5 (true):"+test5);
+		System.out.println("Test 5 (true):" + test5);
 
-		//Should be false
+		// Should be false
 		boolean test6 = isIpInList(ipList, "124.124.125.126", null);
-		System.out.println("Test 6 (false):"+test6);
+		System.out.println("Test 6 (false):" + test6);
 
-		//Should be true
+		// Should be true
 		boolean test7 = isIpInList(ipList, "1080:0:0:0:8:800:200C:417B", null);
-		System.out.println("Test 7 (true):"+test7);
+		System.out.println("Test 7 (true):" + test7);
 
-		//Should be true
+		// Should be true
 		boolean test8 = isIpInList(ipList, "1080:0:0:0:8:800:200C:417A", null);
-		System.out.println("Test 8 (true):"+test8);
-		//Should be false
+		System.out.println("Test 8 (true):" + test8);
+		// Should be false
 		boolean test9 = isIpInList(ipList, "1080:0:0:0:8:800:200C:417C", null);
-		System.out.println("Test 9 (false):"+test9);
-		
+		System.out.println("Test 9 (false):" + test9);
+
 		System.out.println(IPV6_PATTERN.matcher("123.123.123.123").matches());
 		System.out.println(IPV6_PATTERN.matcher("1080:0:0:0:8:800:200C:417A").matches());
 		System.out.println(IPV6_PATTERN.matcher("fe80::89c4:9411:9a7f:c513").matches());
-//		System.out.println(IPV4_PATTERN_v2.matcher("123.123.123.*").matches());
+		// System.out.println(IPV4_PATTERN_v2.matcher("123.123.123.*").matches());
 	}
 }

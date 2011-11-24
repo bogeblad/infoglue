@@ -48,7 +48,9 @@
 						#end
 					}
 					else if("$changeTypeId" == "4")
+					{
 						parent.openUrlInWorkArea("ViewContent!V3.action?contentId=$unrefreshedNodeId");
+					}
 				}
 				else if(top.getActiveToolName() == "StructureTool")
 				{

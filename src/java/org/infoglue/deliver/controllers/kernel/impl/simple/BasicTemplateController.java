@@ -610,7 +610,7 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.warn("An error occurred trying to get the current content:" + e.getMessage(), e);
+			logger.warn("An error occurred trying to get the current content:" + e.getMessage());
 		}
 
 		return content;
@@ -3120,7 +3120,6 @@ public class BasicTemplateController implements TemplateController
 		{
 			logger.info("contentId " + this.contentId + " with relationName " + attributeName);
 		    String qualifyerXML = this.getContentAttribute(contentId, attributeName, true);
-		    
 			relatedContentVOList = getRelatedContentsFromXML(qualifyerXML);
 		}
 		catch(Exception e)
@@ -5252,7 +5251,7 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.warn("An error occurred trying to get current page path:" + e.getMessage(), e);
+			logger.warn("An error occurred trying to get current page path:" + e.getMessage());
 		}
 				
 		return pagePath;
@@ -7192,7 +7191,7 @@ public class BasicTemplateController implements TemplateController
 			    arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 
-	            infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments);
+	            infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, null);
 	        }
 	        
 			WorkflowController workflowController = WorkflowController.getController();
@@ -7225,7 +7224,7 @@ public class BasicTemplateController implements TemplateController
 	            arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 			    
-			    infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments);
+			    infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, null);
 	        }
 	        
 			WorkflowController workflowController = WorkflowController.getController();
@@ -7256,7 +7255,7 @@ public class BasicTemplateController implements TemplateController
 	            arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 
-		        infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments);
+		        infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, null);
 	        }
 
 			WorkflowController workflowController = WorkflowController.getController();
@@ -7553,7 +7552,7 @@ public class BasicTemplateController implements TemplateController
 	
 	public String getLogoutURL() throws Exception
 	{
-		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(this.getDatabase(), null);
+		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(this.getDatabase(), null, this.getHttpServletRequest(), false);
 	    return authenticationModule.getLogoutUrl();
 	}
 

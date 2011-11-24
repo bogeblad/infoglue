@@ -67,58 +67,6 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 		return interceptors;
 	}
 	
-	/*
-	private void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
-	{
-		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
-  
-		if(interceptionPointVO == null)
-			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
-
-		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId());
-		Iterator interceptorsIterator = interceptors.iterator();
-		while(interceptorsIterator.hasNext())
-		{
-			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
-			logger.info("Adding interceptorVO:" + interceptorVO.getName());
-			try
-			{
-				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
-				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap);
-			}
-			catch(ClassNotFoundException e)
-			{
-				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
-			}
-		}		    
-	}
-	*/
-	/*
-	private void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException, Bug, Exception
-	{
-		InterceptionPoint interceptionPoint = InterceptionPointController.getController().getInterceptionPointWithName(InterceptionPointName, db);
-    	
-		if(interceptionPoint == null)
-			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
-
-		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPoint.getInterceptionPointId(), db);
-		Iterator interceptorsIterator = interceptors.iterator();
-		while(interceptorsIterator.hasNext())
-		{
-			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
-			logger.info("Adding interceptorVO:" + interceptorVO.getName());
-			try
-			{
-				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
-				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPoint.getValueObject(), hashMap, db);
-			}
-			catch(ClassNotFoundException e)
-			{
-				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
-			}
-		}
-	}
-	*/
 	
 	/**
 	 * This method returns a specific siteNodeVersion-object

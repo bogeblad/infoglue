@@ -216,7 +216,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -297,7 +298,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -354,7 +356,8 @@ public class ContentVersionController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
@@ -484,7 +487,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -686,7 +690,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -732,7 +737,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -790,7 +796,8 @@ public class ContentVersionController extends BaseController
 		}
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -877,7 +884,8 @@ public class ContentVersionController extends BaseController
 		}
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1027,7 +1035,8 @@ public class ContentVersionController extends BaseController
 		}
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1109,7 +1118,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1167,7 +1177,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1203,7 +1214,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1262,7 +1274,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1299,7 +1312,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1367,7 +1381,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1455,7 +1470,8 @@ public class ContentVersionController extends BaseController
         }
 	    catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1744,7 +1760,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1998,7 +2015,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -2127,7 +2145,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -2204,7 +2223,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -2263,7 +2283,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -2354,7 +2375,8 @@ public class ContentVersionController extends BaseController
         }
         catch (Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -2380,7 +2402,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -2456,7 +2479,8 @@ public class ContentVersionController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }

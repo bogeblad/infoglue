@@ -59,32 +59,6 @@ public class ContentControllerProxy extends ContentController
 		return new ContentControllerProxy();
 	}
 	
-	/*
-	private void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
-	{
-		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
-    	
-		if(interceptionPointVO == null)
-			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
-
-		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId());
-		Iterator interceptorsIterator = interceptors.iterator();
-		while(interceptorsIterator.hasNext())
-		{
-			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
-			logger.info("Adding interceptorVO:" + interceptorVO.getName());
-			try
-			{
-				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
-				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap);
-			}
-			catch(ClassNotFoundException e)
-			{
-				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
-			}
-		}
-	}
-	*/
 
 	/**
 	 * This method returns a specific content-object after checking that it is accessable by the given user

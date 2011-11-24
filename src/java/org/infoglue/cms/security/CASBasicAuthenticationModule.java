@@ -91,7 +91,7 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 		{
 			String j_userName = request.getParameter("j_username");
 			String j_password = request.getParameter("j_password");
-			
+	
 			logger.info("userName:" + j_userName + "=" + j_password);
 			String allowedDirectLoginNames = CmsPropertyHandler.getAllowedDirectLoginNames();
 			logger.info("allowedDirectLoginNames:" + allowedDirectLoginNames);

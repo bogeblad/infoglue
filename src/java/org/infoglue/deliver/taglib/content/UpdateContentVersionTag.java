@@ -93,7 +93,7 @@ public class UpdateContentVersionTag extends InfoGlueWebServiceTag implements Co
                 contentVersion.put("keepExistingCategories", this.keepExistingCategories);
             if(this.versionValue != null)
                 contentVersion.put("versionValue", this.versionValue);
-                
+               
             this.invokeOperation("contentVersion", contentVersion);
         }
         catch (Exception e)

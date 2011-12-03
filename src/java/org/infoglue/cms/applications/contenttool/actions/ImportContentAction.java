@@ -62,6 +62,7 @@ import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.FileUploadHelper;
+import org.infoglue.cms.util.sorters.ReflectionComparator;
 
 import webwork.action.ActionContext;
 
@@ -75,7 +76,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 {
     public final static Logger logger = Logger.getLogger(ImportContentAction.class.getName());
 
-	private String onlyLatestVersions = "true";
+	private String onlyLatestVersions = "false";
 	
 	private Integer parentContentId = null;
 	private Integer repositoryId = null;
@@ -403,7 +404,30 @@ public class ImportContentAction extends InfoGlueAbstractAction
 			contentVersions = selectedContentVersions;
 		}
 		
-		logger.info("new contentVersions:" + contentVersions.size());
+		if(logger.isInfoEnabled())
+		{
+			logger.info("new contentVersions:" + contentVersions.size());
+			Iterator contentVersionsIteratorDebug = contentVersions.iterator();
+			while(contentVersionsIteratorDebug.hasNext())
+			{
+				ContentVersion contentVersion = (ContentVersion)contentVersionsIteratorDebug.next();
+				logger.info("debug contentVersion:" + contentVersion.getId());
+			}
+		}
+		
+		Collections.sort((List)contentVersions, new ReflectionComparator("id"));
+
+		if(logger.isInfoEnabled())
+		{
+			logger.info("new contentVersions:" + contentVersions.size());
+			Iterator contentVersionsIteratorDebug = contentVersions.iterator();
+			while(contentVersionsIteratorDebug.hasNext())
+			{
+				ContentVersion contentVersion = (ContentVersion)contentVersionsIteratorDebug.next();
+				logger.info("debug contentVersion:" + contentVersion.getId());
+			}
+		}
+
 		//Collection contentVersions = content.getContentVersions();
 		Iterator contentVersionsIterator = contentVersions.iterator();
 		while(contentVersionsIterator.hasNext())
@@ -504,13 +528,13 @@ public class ImportContentAction extends InfoGlueAbstractAction
 	private void updateContentVersions(Content content, Map contentIdMap, Map siteNodeIdMap) throws Exception
 	{
 	    logger.info("content:" + content.getName());
-
+	    
 	    Collection contentVersions = content.getContentVersions();
 	        
 		if(onlyLatestVersions.equalsIgnoreCase("true"))
 		{
 			logger.info("org contentVersions:" + contentVersions.size());
-			List selectedContentVersions = new ArrayList();
+		    List selectedContentVersions = new ArrayList();
 			Iterator realContentVersionsIterator = contentVersions.iterator();
 			while(realContentVersionsIterator.hasNext())
 			{
@@ -548,6 +572,8 @@ public class ImportContentAction extends InfoGlueAbstractAction
         while(contentVersionIterator.hasNext())
         {
             ContentVersion contentVersion = (ContentVersion)contentVersionIterator.next();
+			logger.info("contentVersion:" + contentVersion.getId() + ":" + contentVersion.getContentVersionId());
+
             String contentVersionValue = contentVersion.getVersionValue();
 
             contentVersionValue = contentVersionValue.replaceAll("contentId=\"", "contentId=\"oldContentId_");

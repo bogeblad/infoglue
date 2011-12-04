@@ -460,7 +460,8 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
     {
     	try
     	{
-    		SAXReader reader = new SAXReader();
+    		SAXReader reader = new SAXReader(false);
+    		reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             Document document = reader.read(new java.io.ByteArrayInputStream(versionValue.getBytes("UTF-8")));
             if(document == null)
             	throw new Exception("Faulty dom... must be corrupt");

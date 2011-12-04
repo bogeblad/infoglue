@@ -144,7 +144,8 @@ public class TrashcanAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
-				logger.error("Could not delete page[" + siteNodeVO.getName() + "]:" + e.getMessage(), e);
+				logger.error("Could not delete page[" + siteNodeVO.getName() + "]:" + e.getMessage());
+				logger.warn("Could not delete page[" + siteNodeVO.getName() + "]:" + e.getMessage(), e);
 			}
 		}
 
@@ -158,7 +159,8 @@ public class TrashcanAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
-				logger.error("Could not delete content[" + contentVO.getName() + "]:" + e.getMessage(), e);
+				logger.error("Could not delete content[" + contentVO.getName() + "]:" + e.getMessage());
+				logger.warn("Could not delete content[" + contentVO.getName() + "]:" + e.getMessage(), e);
 			}
 		}
 
@@ -172,7 +174,8 @@ public class TrashcanAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
-				logger.error("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage(), e);
+				logger.error("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage());
+				logger.warn("Could not delete repository[" + repositoryVO.getName() + "]:" + e.getMessage(), e);
 			}
 		}
 		

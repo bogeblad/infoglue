@@ -219,30 +219,6 @@ public class TimeSeriesDiagram implements XMLDataDiagram
 	
 
 	/**
-	 * This method creates a new Document from an xml-string.
-	 */
-	/*
-	public Document getDocument(String xml) throws Exception
-	{
-		if(xml == null)
-			return null;
-					
-		Document document = null;
-		
-		try
-		{
-			SAXReader xmlReader = new SAXReader();
-			document = xmlReader.read(new StringReader(xml));
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
- 		
-		return document;
-	}
-*/
-	/**
 	 * This method writes a document to sysout.
 	 */
 

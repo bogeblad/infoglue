@@ -35,8 +35,10 @@ public class ReflectionComparator implements Comparator
 	{
 		Comparable valueOne = getProperty(o1, sortProperty);
 		Comparable valueTwo = getProperty(o2, sortProperty);
-		return collation.compare(valueOne, valueTwo);
-		//return valueOne.compareTo(valueTwo);
+		if(valueOne instanceof String && valueTwo instanceof String)
+			return collation.compare(valueOne, valueTwo);
+		else
+			return valueOne.compareTo(valueTwo);
 	}
 
 	private Comparable getProperty(Object o, String property)

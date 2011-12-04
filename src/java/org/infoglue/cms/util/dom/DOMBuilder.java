@@ -63,12 +63,21 @@ public class DOMBuilder
  	{
 		return DocumentHelper.createDocument();
  	}
- 	
+
 	/**
 	 * This method creates a new Document from an xml-string.
 	 */
 	
  	public Document getDocument(String xml) throws Exception
+ 	{
+		return getDocument(xml, false);
+ 	}
+
+	/**
+	 * This method creates a new Document from an xml-string.
+	 */
+	
+ 	public Document getDocument(String xml, boolean validateExternalDTD) throws Exception
  	{
 		if(xml == null)
 			return null;
@@ -76,19 +85,14 @@ public class DOMBuilder
  		try
  		{
 			InputSource xmlSource = new InputSource(new ByteArrayInputStream(xml.getBytes("UTF-8")));
- 			SAXReader xmlReader = new SAXReader();
+ 			SAXReader xmlReader = new SAXReader(validateExternalDTD);
+ 			if(!validateExternalDTD)
+ 				xmlReader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
  			return xmlReader.read(xmlSource);
- 			/*
-			InputSource xmlSource = new InputSource(new ByteArrayInputStream(xml.getBytes("UTF-8")));
-			DOMParser parser = new DOMParser();
-			parser.parse(xmlSource);
-			return buildDocment(parser.getDocument());
- 			*/
  		}
  		catch(Exception e)
  		{
- 			//e.printStackTrace();
-			throw new SystemException(e);
+ 			throw new SystemException(e);
  		}
  	}
  	

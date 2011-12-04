@@ -74,7 +74,7 @@ public final class CmsContextListener implements ServletContextListener
 				CmsPropertyHandler.setIsValidSetup(true);
 				ContentTypeDefinitionController.getController().controlAndUpdateSystemContentTypes();
 			}
-
+			
 			String logPath = CmsPropertyHandler.getLogPath();
 			
 			Enumeration enumeration = Logger.getLogger("org.infoglue.cms").getAllAppenders();

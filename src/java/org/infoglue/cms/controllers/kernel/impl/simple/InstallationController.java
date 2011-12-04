@@ -24,11 +24,8 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -38,13 +35,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,37 +49,20 @@ import oracle.sql.BLOB;
 import oracle.sql.CLOB;
 
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.exolab.castor.jdo.Database;
-import org.exolab.castor.jdo.OQLQuery;
-import org.exolab.castor.jdo.QueryResults;
 import org.exolab.castor.mapping.Mapping;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.InterceptionPoint;
-import org.infoglue.cms.entities.management.Interceptor;
-import org.infoglue.cms.entities.management.InterceptorVO;
-import org.infoglue.cms.entities.management.impl.simple.InterceptorImpl;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.infoglue.cms.util.FileUploadHelper;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.cms.util.workflow.InfoGlueJDBCPropertySet;
 import org.infoglue.deliver.util.CacheController;
-import org.jfree.util.Log;
-
-import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.module.propertyset.PropertySetManager;
-
-import webwork.action.ActionContext;
 
 /**
  * This class is a helper class for all installation-related actions
@@ -768,7 +746,7 @@ public class InstallationController extends BaseController
 		if(logger.isInfoEnabled())
 			logger.info("contents:" + contents);
 		DOMBuilder domBuilder = new DOMBuilder();
-		Document doc = domBuilder.getDocument(contents);
+		Document doc = domBuilder.getDocument(contents, false);
 		
 		Element element = (Element)doc.selectSingleNode(xpath);
 		if(element != null)

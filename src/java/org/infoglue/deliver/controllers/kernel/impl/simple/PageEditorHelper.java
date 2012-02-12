@@ -1865,7 +1865,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	    	while(slotsIterator.hasNext())
 	    	{
 	    		Slot slot = slotsIterator.next();
-	    		if(slot.getId().equals(slotName));
+	    		if(slot.getId().equals(slotName))
 	    		{
 	    	        String direction = "asc";
 	    	        List componentVOList = ComponentController.getController().getComponentVOList("name", direction, slot.getAllowedComponentsArray(), slot.getDisallowedComponentsArray(), slot.getAllowedComponentGroupsArray(), db, principal);

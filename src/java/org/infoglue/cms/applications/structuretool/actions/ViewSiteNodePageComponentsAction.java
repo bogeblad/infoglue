@@ -1925,7 +1925,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			
 			propertyElement.removeAttribute("path");
 			propertyElement.removeAttribute("path_" + locale.getLanguage());
-			if(propertyElement.getAttributes().getLength() == 0);
+			if(propertyElement.getAttributes().getLength() == 0)
 			{
 				propertyNode.getParentNode().removeChild(propertyNode);
 			}
@@ -1941,7 +1941,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			
 			propertyElement.removeAttribute("path");
 			propertyElement.removeAttribute("path_" + locale.getLanguage());
-			if(propertyElement.getAttributes().getLength() == 0);
+			if(propertyElement.getAttributes().getLength() == 0)
 			{
 				propertyNode.getParentNode().removeChild(propertyNode);
 			}

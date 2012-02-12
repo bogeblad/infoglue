@@ -73,7 +73,7 @@ public class ClearCacheTag extends TemplateControllerTag
 
 	public void setEntityId(String entityId) throws JspException
 	{
-	    this.entityId = evaluateString("clearCache", "entityId", entityId);;
+	    this.entityId = evaluateString("clearCache", "entityId", entityId);
 	}
 
 	

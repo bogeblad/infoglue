@@ -42,7 +42,7 @@ public class PublicationVO extends ValidatableEntityVO implements BaseEntityVO
     private Integer publicationId;
     private Integer repositoryId;
     private String name;
-    private String description = "No description";;
+    private String description = "No description";
     private Date publicationDateTime;
     private String publisher = null;
 	private List publicationDetails = new ArrayList();

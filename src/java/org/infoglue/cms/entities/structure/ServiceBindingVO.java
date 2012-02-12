@@ -29,7 +29,7 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 public class ServiceBindingVO implements BaseEntityVO
 {
 
-	private java.lang.Integer serviceBindingId			= null;;	
+	private java.lang.Integer serviceBindingId			= null;	
     private java.lang.String name 						= "Undefined";
     private java.lang.String path 						= "Undefined";
     private java.lang.Integer bindingTypeId				= new Integer(0);

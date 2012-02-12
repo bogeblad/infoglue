@@ -110,7 +110,7 @@ public class FormatterTag extends TemplateControllerTag
 
 	public void setType(String type) throws JspException
 	{
-		this.type = evaluateString("formatterTag", "type", type);;
+		this.type = evaluateString("formatterTag", "type", type);
 	}
 
 }

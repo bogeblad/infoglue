@@ -125,7 +125,7 @@ public class ContentDetailPageTag extends ComponentLogicTag
 						logger.info("contentTypeDefinitionVO:" + contentTypeDefinitionVO.getName());
 						if(contentTypeDefinitionVO.getDetailPageResolverClass() != null && !contentTypeDefinitionVO.getDetailPageResolverClass().equals(""))
 						{
-							ContentDetailPageResolver cdpr = (ContentDetailPageResolver)loadExtensionClass(contentTypeDefinitionVO.getDetailPageResolverClass()).newInstance();;
+							ContentDetailPageResolver cdpr = (ContentDetailPageResolver)loadExtensionClass(contentTypeDefinitionVO.getDetailPageResolverClass()).newInstance();
 							logger.info("cdpr:" + cdpr.getName());
 							SiteNodeVO detailSiteNodeVO = cdpr.getDetailSiteNodeVO(getController().getPrincipal(), contentVO.getId(), contentTypeDefinitionVO.getDetailPageResolverData(), getController().getDatabase());
 							logger.info("detailSiteNodeVO:" + detailSiteNodeVO.getId());

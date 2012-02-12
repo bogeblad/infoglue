@@ -88,7 +88,7 @@ public class IncludeTag extends TemplateControllerTag
 			{
 				try
 				{
-					ComponentModel componentModel = (ComponentModel)loadExtensionClass(componentModelClassName).newInstance();;
+					ComponentModel componentModel = (ComponentModel)loadExtensionClass(componentModelClassName).newInstance();
 					componentModel.prepare(template, this.getController(), this.getController().getComponentLogic().getInfoGlueComponent().getModel());
 				}
 				catch (Exception e) 

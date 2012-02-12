@@ -80,7 +80,7 @@ public class ContentVersionTag extends TemplateControllerTag
 	
     public void setContentVersionId(String contentVersionId) throws JspException
     {
-        this.contentVersionId = evaluateInteger("contentVersion", "contentVersionId", contentVersionId);;
+        this.contentVersionId = evaluateInteger("contentVersion", "contentVersionId", contentVersionId);
     }
 
     public void setContent(String contentExp) throws JspException
@@ -97,7 +97,7 @@ public class ContentVersionTag extends TemplateControllerTag
     
     public void setLanguageId(String languageId) throws JspException
     {
-        this.languageId = evaluateInteger("contentVersion", "languageId", languageId);;
+        this.languageId = evaluateInteger("contentVersion", "languageId", languageId);
     }
     
     public void setUseLanguageFallback(boolean useLanguageFallback)

@@ -113,7 +113,7 @@ public class PageAsDigitalAssetUrlTag extends ComponentLogicTag
 
     public void setFileSuffix(String fileSuffix) throws JspException
     {
-        this.fileSuffix = evaluateString("pageAsDigitalAssetUrl", "fileSuffix", fileSuffix);;
+        this.fileSuffix = evaluateString("pageAsDigitalAssetUrl", "fileSuffix", fileSuffix);
     }
 
     public void setExtraParameters(String extraParameters)

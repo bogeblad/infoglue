@@ -91,7 +91,7 @@ public class ContentVersionsTag extends TemplateControllerTag
 
     public void setLanguageId(String languageId) throws JspException
     {
-        this.languageId = evaluateInteger("contentVersions", "languageId", languageId);;
+        this.languageId = evaluateInteger("contentVersions", "languageId", languageId);
     }
     
     public void setIncludeAllLanguages(boolean includeAllLanguages)

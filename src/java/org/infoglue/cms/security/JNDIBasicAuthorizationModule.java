@@ -899,8 +899,8 @@ public class JNDIBasicAuthorizationModule implements AuthorizationModule, Serial
 		List groups = new ArrayList();
 		List allGroups = getGroups(ctx);
 	    
-		String groupBase 			= this.extraProperties.getProperty("groupBase").toLowerCase().trim();;
-		String userBase				= this.extraProperties.getProperty("userBase").toLowerCase().trim();;
+		String groupBase 			= this.extraProperties.getProperty("groupBase").toLowerCase().trim();
+		String userBase				= this.extraProperties.getProperty("userBase").toLowerCase().trim();
 		String userSearch			= this.extraProperties.getProperty("userSearch");
 		String memberOfAttribute	= this.extraProperties.getProperty("memberOfAttributeFilter");
 		String groupsAttributeFilter = this.extraProperties.getProperty("groupsAttributesFilter");

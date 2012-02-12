@@ -106,7 +106,7 @@ public class RSSFeedTag extends TemplateControllerTag
 
     public void setFeedType(String feedType) throws JspException
     {
-        this.feedType = evaluateString("RssFeed", "feedType", feedType);;
+        this.feedType = evaluateString("RssFeed", "feedType", feedType);
     }
     
     public void setDescription(String description) throws JspException

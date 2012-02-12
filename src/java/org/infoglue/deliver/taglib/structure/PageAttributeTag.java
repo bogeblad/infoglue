@@ -179,8 +179,8 @@ public class PageAttributeTag extends ComponentLogicTag
 
 	    siteNodeId = null;
 	    languageId = null;
-	    attributeName = null;;
-	    mapKeyName = null;;
+	    attributeName = null;
+	    mapKeyName = null;
 	    disableEditOnSight = false;
 	    useRepositoryInheritance = true;
 	    useStructureInheritance = true;

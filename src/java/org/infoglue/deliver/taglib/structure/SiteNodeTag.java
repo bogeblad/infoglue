@@ -67,7 +67,7 @@ public class SiteNodeTag extends ComponentLogicTag
 	
     public void setSiteNodeId(String siteNodeId) throws JspException
     {
-        this.siteNodeId = evaluateInteger("siteNode", "siteNodeId", siteNodeId);;
+        this.siteNodeId = evaluateInteger("siteNode", "siteNodeId", siteNodeId);
     }
 
     public void setPropertyName(String propertyName) throws JspException

@@ -87,7 +87,7 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
     
 	public void setShowDecorated(boolean showDecorated) throws JspException
 	{
-		this.showDecoratedString = evaluateString("AssignPropertyBindingTag", "showDecoratedString", showDecoratedString);;
+		this.showDecoratedString = evaluateString("AssignPropertyBindingTag", "showDecoratedString", showDecoratedString);
 	}
 
     public void setExtraParameters(final String extraParameters) throws JspException

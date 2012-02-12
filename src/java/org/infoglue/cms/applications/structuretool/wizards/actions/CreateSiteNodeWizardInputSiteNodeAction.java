@@ -54,7 +54,7 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	private static final long serialVersionUID = 1L;
 
 	private String returnAddress;
-	private SiteNodeVO siteNodeVO 				= new SiteNodeVO();;
+	private SiteNodeVO siteNodeVO 				= new SiteNodeVO();
 	private Integer siteNodeTypeDefinitionId 	= null;
 	
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();

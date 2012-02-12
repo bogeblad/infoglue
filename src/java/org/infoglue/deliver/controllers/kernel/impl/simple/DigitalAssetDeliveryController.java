@@ -79,7 +79,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
         	return (name.startsWith(filter) || (name.startsWith("thumbnail") && name.indexOf(filter) > -1));
         	//return name.startsWith(filter);
     	}
-	};
+	}
 
 
 	/**

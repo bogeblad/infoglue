@@ -134,7 +134,7 @@ public class DocumentConverterHelper
 			File pdfFile 			= new File(newFilePath + ".pdf");
 			File odtFile 			= new File(newFilePath + ".odt");
 			File htmlFile 			= new File(newFilePath + ".html");
-			File contentXmlFile 	= new File(digitalAssetPath + File.separator + "content.xml");;
+			File contentXmlFile 	= new File(digitalAssetPath + File.separator + "content.xml");
 			
 			//----------------------------------------------
 			// Check if the doc has already been converted.

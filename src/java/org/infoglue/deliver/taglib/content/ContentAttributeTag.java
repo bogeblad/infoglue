@@ -188,8 +188,8 @@ public class ContentAttributeTag extends ComponentLogicTag
         contentVersionVO = null;
 	    contentId = null;
 		propertyName = null;
-	    attributeName = null;;
-	    mapKeyName = null;;
+	    attributeName = null;
+	    mapKeyName = null;
 	    disableEditOnSight = false;
 	    useInheritance = true;
     	useRepositoryInheritance = true;

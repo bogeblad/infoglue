@@ -200,7 +200,7 @@ public class ContentCleanerController  extends BaseController
                 final Integer contentVersionId = contentVersion.getContentVersionId();
                 logger.info("Listing digital assets for content version:" + contentVersionId);
                 // Retrive all digital assets for this content version
-                final List<DigitalAssetVO> items = digitalAssetController.getDigitalAssetVOList(contentVersionId);
+                final List<DigitalAssetVO> items = DigitalAssetController.getDigitalAssetVOList(contentVersionId);
                 logger.info(items.size() + " digital assets for content version " + contentVersionId + " found.");
                 for (final DigitalAssetVO digitalAsset : items) 
                 {
@@ -209,7 +209,7 @@ public class ContentCleanerController  extends BaseController
                     logger.info("\tDead Digital Asset: " + digitalAsset.getAssetFileName());
                     // Delete all digital assets and their references that belongs to this content version
                     contentVersionController.deleteDigitalAssetRelation(contentVersionId, digitalAssetId, principal);
-                    digitalAssetController.delete(digitalAssetId);
+                    DigitalAssetController.delete(digitalAssetId);
                     deletedDigitalAssetsCnt += 1;                   
                 }
                 // Delete the content version as well

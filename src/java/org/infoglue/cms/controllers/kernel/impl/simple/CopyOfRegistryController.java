@@ -143,7 +143,7 @@ public class CopyOfRegistryController extends BaseController
     
     public void delete(Integer registryId) throws ConstraintException, SystemException
     {
-    	this.deleteEntity(RegistryImpl.class, registryId);
+    	BaseController.deleteEntity(RegistryImpl.class, registryId);
     }   
     
 	/**

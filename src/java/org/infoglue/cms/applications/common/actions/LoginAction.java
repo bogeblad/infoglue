@@ -75,8 +75,7 @@ public class LoginAction extends InfoGlueAbstractAction
 		
 		if(this.getRequest().getRemoteUser() != null)
 			return "redirect";
-		else
-			return "success";
+		return "success";
 	}	
 
 	public String doInvalidLogin() throws Exception 
@@ -85,10 +84,7 @@ public class LoginAction extends InfoGlueAbstractAction
 		{
 			return "redirect";
 		}
-		else
-		{
-			return "invalidLogin";
-		}
+		return "invalidLogin";
 	}	
 
 	public String doLogonUser() throws Exception 
@@ -100,11 +96,8 @@ public class LoginAction extends InfoGlueAbstractAction
 		{
 			return "userAccepted";
 		}
-		else
-		{
-			errorMessage = "The logon information given was incorrect, please verify and try again.";
-			return "invalidLogin";
-		}
+		errorMessage = "The logon information given was incorrect, please verify and try again.";
+		return "invalidLogin";
 	}	
 	
 	/**
@@ -135,8 +128,7 @@ public class LoginAction extends InfoGlueAbstractAction
 		
 		if(redirected)
 			return NONE;
-		else
-			return "logout";
+		return "logout";
 	}
 
 

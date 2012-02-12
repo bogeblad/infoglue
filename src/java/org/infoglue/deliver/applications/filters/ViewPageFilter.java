@@ -310,8 +310,7 @@ public class ViewPageFilter implements Filter
 	        			logger.info("Could not map URI " + requestURI + " against any page on this website." + "\n" + extraInformation);
 	                    throw new ServletException("Could not map URI " + requestURI + " against any page on this website.");	                    	
 	                }
-	                else
-	                    logger.info("Mapped URI " + requestURI + " --> " + siteNodeId + " in " + (end - start) + "ms");
+                    logger.info("Mapped URI " + requestURI + " --> " + siteNodeId + " in " + (end - start) + "ms");
 	                
 	                Integer contentId = getContentId(httpRequest);
 	                
@@ -330,10 +329,7 @@ public class ViewPageFilter implements Filter
                     	httpResponse.setHeader("Connection", "close");
 	                    return;
                     }
-                    else
-                    {
-	                	throw new ServletException(e);
-	            	} 
+                	throw new ServletException(e);
 	            } 
 	            catch (Exception e) 
 	            {
@@ -350,10 +346,7 @@ public class ViewPageFilter implements Filter
                     	httpResponse.setHeader("Connection", "close");
 	                    return;
                     }
-                    else
-                    {
-	                	throw new ServletException(e);
-	            	}
+                	throw new ServletException(e);
 	            }
 	            finally
 	            {
@@ -648,10 +641,9 @@ public class ViewPageFilter implements Filter
             String t = st.nextToken();
             if (t.startsWith("_")) {
                 break;
-            } else {
-                // Not related to portal - add
-                list.add(t.trim());
             }
+            // Not related to portal - add
+            list.add(t.trim());
         }
         return (String[]) list.toArray(new String[list.size()]);
     }

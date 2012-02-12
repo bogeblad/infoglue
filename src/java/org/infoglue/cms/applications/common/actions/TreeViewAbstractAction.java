@@ -26,8 +26,7 @@ public abstract class TreeViewAbstractAction extends InfoGlueAbstractAction
     	INodeSupplier ns = getNodeSupplier();
     	if(ns != null)
     		return new MakeTree(ns).makeNodeList(expString);
-    	else
-    		return null;
+		return null;
     } 
 
     public String doExecute() throws Exception

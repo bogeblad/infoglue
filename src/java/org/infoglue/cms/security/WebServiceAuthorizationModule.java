@@ -128,14 +128,11 @@ public class WebServiceAuthorizationModule implements AuthorizationModule, Seria
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				logger.warn("Returning cached user:" + userName + ":" + infogluePrincipal);
-				if(logger.isDebugEnabled())
-					logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			logger.warn("Returning cached user:" + userName + ":" + infogluePrincipal);
+			if(logger.isDebugEnabled())
+				logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();

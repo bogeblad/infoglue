@@ -137,13 +137,10 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	        this.getResponse().getWriter().println(assetThumbnailUrl + ":" + this.digitalAssetKey);
 	        return NONE;
 		}
-		else
-		{
-			this.getResponse().setContentType("text/plain");
-            this.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            this.getResponse().getWriter().println("Error uploading to " + this.digitalAssetKey);
-            return NONE;
-		}
+		this.getResponse().setContentType("text/plain");
+        this.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        this.getResponse().getWriter().println("Error uploading to " + this.digitalAssetKey);
+        return NONE;
 	}
     
     public String doExecute()

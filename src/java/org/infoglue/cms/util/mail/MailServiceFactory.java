@@ -116,9 +116,6 @@ public class MailServiceFactory
 			
 			return Session.getInstance(properties, authenticator);
 		} 
-		else 
-		{
-			return Session.getInstance(properties);
-	  	}
+		return Session.getInstance(properties);
 	}
 }

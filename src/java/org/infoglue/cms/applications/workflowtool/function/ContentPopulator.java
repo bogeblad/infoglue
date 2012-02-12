@@ -149,8 +149,7 @@ public class ContentPopulator extends InfoglueFunction
 		}
 		if(languageVO == null)
 			return propertySetContains(name) ? getPropertySetDataString(name) : "";
-		else
-			return propertySetContains(languageVO.getLanguageCode() + "_" + name) ? getPropertySetDataString(languageVO.getLanguageCode() + "_" + name) : "";
+		return propertySetContains(languageVO.getLanguageCode() + "_" + name) ? getPropertySetDataString(languageVO.getLanguageCode() + "_" + name) : "";
 	}
 	/**
 	 * 

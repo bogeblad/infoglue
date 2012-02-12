@@ -1696,14 +1696,11 @@ public class ContentVersionController extends BaseController
 							existed = true;
 							break;
 						}
-						else
-						{
-							logger.info("Yep2");
-							CDATASection cdata = document.createCDATASection(attributeValue);
-							n.appendChild(cdata);
-							existed = true;
-							break;
-						}
+						logger.info("Yep2");
+						CDATASection cdata = document.createCDATASection(attributeValue);
+						n.appendChild(cdata);
+						existed = true;
+						break;
 					}
 				}
 				

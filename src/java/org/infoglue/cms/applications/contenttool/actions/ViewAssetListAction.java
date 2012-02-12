@@ -208,8 +208,7 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
     {
         if(this.contentVO != null && this.contentVO.getRepositoryId() != null)
             return this.contentVO.getRepositoryId();
-        else
-            return this.repositoryId;
+        return this.repositoryId;
     }
 
 	public List getAvailableLanguages()

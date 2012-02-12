@@ -338,10 +338,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "successV3";
-        }
+    	return "successV3";
     }
 
 

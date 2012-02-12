@@ -197,8 +197,7 @@ public class BasicScriptController implements ScriptController
 	{
 		if(object == null)
 			return true;
-		else
-			return false;
+		return false;
 	}	
 	
 	/**

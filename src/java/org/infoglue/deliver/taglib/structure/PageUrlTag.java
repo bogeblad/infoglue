@@ -72,8 +72,7 @@ public class PageUrlTag extends ComponentLogicTag
 	    
 	    if(this.propertyName != null)
 	        return getComponentLogic().getPageUrl(propertyName, contentId, languageId, useInheritance, useRepositoryInheritance, useStructureInheritance);
-	    else
-	        return getController().getPageUrl(siteNodeId, languageId, contentId);
+        return getController().getPageUrl(siteNodeId, languageId, contentId);
 	}
 
 	public void setSiteNodeId(final String siteNodeId) throws JspException

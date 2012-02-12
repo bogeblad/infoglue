@@ -108,8 +108,7 @@ public class HttpUniqueRequestQueueBean
     	HttpUniqueRequestQueueBean other = (HttpUniqueRequestQueueBean)o;
     	if(other.getUrlAddress().equals(urlAddress) && other.getSerializedParameters().equals(serializedParameters) && other.getEncoding().equals(encoding))
     		return true;
-    	else
-    		return false;
+		return false;
     }
     
     public int hashCode()

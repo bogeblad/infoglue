@@ -118,10 +118,7 @@ class RoleOwner implements Owner
 		{
 			return PREFIX + role.getName();
 		}
-		else 
-		{
-			return PREFIX + role.getName() + PREFIX + group.getName();
-		}
+		return PREFIX + role.getName() + PREFIX + group.getName();
 	}
 }
 

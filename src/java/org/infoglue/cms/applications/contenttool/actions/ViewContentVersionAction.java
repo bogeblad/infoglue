@@ -359,8 +359,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     	String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
     	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
     	    return "success";
-    	else
-    	    return "successForFCKEditor";
+	    return "successForFCKEditor";
     }
 
     public String doV3() throws Exception
@@ -377,8 +376,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     	String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
     	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
     	    return "standalone";
-    	else
-    	    return "standaloneForFCKEditor";
+	    return "standaloneForFCKEditor";
 	}
 
 	public String doBackground() throws Exception
@@ -746,8 +744,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     {
         if(this.contentVersionVO != null)
             return this.contentVersionVO.getContentVersionId();
-        else 
-            return null;
+        return null;
     }
     
     public void setContentVersionId(java.lang.Integer contentVersionId)
@@ -826,8 +823,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     {
         if(this.contentVO != null && this.contentVO.getRepositoryId() != null)
             return this.contentVO.getRepositoryId();
-        else
-            return this.repositoryId;
+        return this.repositoryId;
     }
 
 	public List getAvailableLanguages()
@@ -1453,8 +1449,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		    String protectCategories = CmsPropertyHandler.getProtectCategories();
 		    if(protectCategories != null && protectCategories.equalsIgnoreCase("true"))
 		        return categoryController.getAuthorizedActiveChildren(categoryId, this.getInfoGluePrincipal());
-			else
-			    return categoryController.findAllActiveChildren(categoryId);
+		    return categoryController.findAllActiveChildren(categoryId);
 		}
 		catch(Exception e)
 		{

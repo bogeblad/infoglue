@@ -171,18 +171,14 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 	            
 	            return NONE;
 	        }
-	        else
-	        {
-	            logger.error("No valid error url was defined:" + errorUrl + ". You should fix this.");
-	        	return SUCCESS;
-	        }
+            logger.error("No valid error url was defined:" + errorUrl + ". You should fix this.");
+        	return SUCCESS;
 	    }
     	catch(Throwable t)
     	{
     		logger.error("Error executing ErrorPage action:" + t.getMessage());
     		if(logger.isDebugEnabled())
         		logger.debug("Error executing ErrorPage action:" + t.getMessage(), t);
-    			
     		return SUCCESS;
     	}
     }
@@ -225,8 +221,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
             
             return NONE;
         }
-        else
-            return SUCCESS;
+        return SUCCESS;
     }
 
     public int getResponseCode()

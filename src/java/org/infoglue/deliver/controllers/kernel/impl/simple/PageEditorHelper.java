@@ -2472,12 +2472,9 @@ public class PageEditorHelper extends BaseDeliveryController
 					component = subComponent;
 					break outer;
 				}
-				else
-				{
-					component = getComponentWithId(subComponent, componentId);
-					if(component != null)
-						break;
-				}
+				component = getComponentWithId(subComponent, componentId);
+				if(component != null)
+					break;
 			}
 		}
 		

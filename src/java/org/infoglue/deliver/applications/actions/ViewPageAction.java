@@ -763,25 +763,22 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				{
 				    throw new SystemException("There was no page invoker class assigned to this page type.");
 				}
-				else
-				{
-				    try
-				    {
-				        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
-				        pageInvoker = pageInvoker.getDecoratedPageInvoker(templateController);
-				        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);
-				        pageInvoker.deliverPage();
-				    }
-				    catch(ClassNotFoundException e)
-				    {
-				        throw new SystemException("An error was thrown when trying to use the page invoker class assigned to this page type:" + e.getMessage(), e);
-				    }
-				    finally
-				    {
-				    	deliveryContext.clear();
-				    	deliveryContext = null;
-				    }
-				}
+			    try
+			    {
+			        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
+			        pageInvoker = pageInvoker.getDecoratedPageInvoker(templateController);
+			        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);
+			        pageInvoker.deliverPage();
+			    }
+			    catch(ClassNotFoundException e)
+			    {
+			        throw new SystemException("An error was thrown when trying to use the page invoker class assigned to this page type:" + e.getMessage(), e);
+			    }
+			    finally
+			    {
+			    	deliveryContext.clear();
+			    	deliveryContext = null;
+			    }
 			}
 			
 			//StatisticsService.getStatisticsService().registerRequest(getRequest(), getResponse(), pagePath, elapsedTime);

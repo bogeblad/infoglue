@@ -214,12 +214,9 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
@@ -452,12 +449,9 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
@@ -545,12 +539,9 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			{
 				return null;
 			}
-			else
-			{
-				infoglueRole = (InfoGlueRole)infoglueRoleObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infoglueRole;
-			}
+			infoglueRole = (InfoGlueRole)infoglueRoleObject;
+			//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infoglueRole;
 		}
 		
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueRole starting ---------\n\n\n");
@@ -670,11 +661,8 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			{
 				return null;
 			}
-			else
-			{
-				infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
-				return infoglueGroup;
-			}
+			infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
+			return infoglueGroup;
 		}
 
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueGroup starting ---------\n\n\n");

@@ -242,8 +242,7 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 			{
 			    if(this.isBranch.booleanValue())
 					return getBranchSiteNodeButtons();
-				else
-					return getSiteNodeButtons();
+				return getSiteNodeButtons();
 			}	
 			else if(this.toolbarKey.equalsIgnoreCase("tool.structuretool.siteNodeVersionHeader"))
 			{
@@ -440,20 +439,6 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 		    boolean isMetaInfoInWorkingState = false;
 			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(this.repositoryId);
 			Integer languageId = masterLanguageVO.getLanguageId();
-			
-			/*
-			if(serviceBindingId != null)
-			{
-				List boundContents = ContentController.getBoundContents(serviceBindingId); 			
-				if(boundContents.size() > 0)
-				{
-					ContentVO contentVO = (ContentVO)boundContents.get(0);
-					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), languageId);
-					if(contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
-						isMetaInfoInWorkingState = true;
-				}
-			}
-			*/
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
 			if(siteNodeVO.getMetaInfoContentId() != null && siteNodeVO.getMetaInfoContentId().intValue() != -1)
 			{
@@ -465,9 +450,7 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 			logger.info("isMetaInfoInWorkingState:" + isMetaInfoInWorkingState);
 			if(isMetaInfoInWorkingState)
 			    return new ImageButton(CmsPropertyHandler.getComponentRendererUrl() + "ViewPage!renderDecoratedPage.action?siteNodeId=" + this.siteNodeId + "&languageId=" + masterLanguageVO.getId() + "&contentId=-1" + "&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName()), getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.siteNodeComponents"), "Site Node Components");
-			    //return new ImageButton("ViewSiteNodePageComponents.action?siteNodeId=" + this.siteNodeId, getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.siteNodeComponents"), "Site Node Components");
-			else
-				return new ImageButton(true, "javascript:alert('Cannot edit this page. You must first set the meta info to working. Do this by entering node properties and changing the state to working.');", getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.siteNodeComponents"), "Site Node Components");
+			return new ImageButton(true, "javascript:alert('Cannot edit this page. You must first set the meta info to working. Do this by entering node properties and changing the state to working.');", getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.siteNodeComponents"), "Site Node Components");
 		}
 		catch(Exception e)
 		{
@@ -482,21 +465,6 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 		    boolean isMetaInfoInWorkingState = false;
 			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(this.repositoryId);
 			Integer languageId = masterLanguageVO.getLanguageId();
-
-			/*
-			if(serviceBindingId != null)
-			{
-				List boundContents = ContentController.getBoundContents(serviceBindingId); 			
-				if(boundContents.size() > 0)
-				{
-					ContentVO contentVO = (ContentVO)boundContents.get(0);
-					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), languageId);
-					if(contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
-						isMetaInfoInWorkingState = true;
-				}
-			}	
-			*/
-			
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
 			if(siteNodeVO.getMetaInfoContentId() != null && siteNodeVO.getMetaInfoContentId().intValue() != -1)
 			{
@@ -508,9 +476,7 @@ public class ViewStructureToolAjaxServicesAction extends InfoGlueAbstractAction
 			logger.info("isMetaInfoInWorkingState:" + isMetaInfoInWorkingState);
 			if(isMetaInfoInWorkingState)
 			    return new ImageButton(CmsPropertyHandler.getComponentRendererUrl() + "ViewPage!renderDecoratedPage.action?siteNodeId=" + this.siteNodeId + "&languageId=" + masterLanguageVO.getId() + "&contentId=-1&showSimple=true" + "&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName()), getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.siteNodeStructure"), "Site Node Structure");
-			    //return new ImageButton("ViewSiteNodePageComponents.action?siteNodeId=" + this.siteNodeId, getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.siteNodeComponents"), "Site Node Components");
-			else
-				return new ImageButton(true, "javascript:alert('Cannot edit this page. You must first set the meta info to working. Do this by entering node properties and changing the state to working.');", getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.siteNodeStructure"), "Site Node Structure");
+			return new ImageButton(true, "javascript:alert('Cannot edit this page. You must first set the meta info to working. Do this by entering node properties and changing the state to working.');", getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.siteNodeStructure"), "Site Node Structure");
 		}
 		catch(Exception e)
 		{

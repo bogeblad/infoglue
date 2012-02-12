@@ -328,12 +328,9 @@ public class RedirectController extends BaseController
                 		}
                 		return redirectUrlString;
                 	}
-                    else
-                    {
-                        remainingURI = redirect.getRedirectUrl() + remainingURI;
-                        logger.info("remainingURI:" + remainingURI + ":" + remainingURI.indexOf("?"));
-                        return remainingURI + (request.getQueryString() != null && request.getQueryString().length() > 0 ? (remainingURI.indexOf("?") > -1 ? "&" : "?") + request.getQueryString() : "");
-                    }
+                    remainingURI = redirect.getRedirectUrl() + remainingURI;
+                    logger.info("remainingURI:" + remainingURI + ":" + remainingURI.indexOf("?"));
+                    return remainingURI + (request.getQueryString() != null && request.getQueryString().length() > 0 ? (remainingURI.indexOf("?") > -1 ? "&" : "?") + request.getQueryString() : "");
                 }
             }
         }

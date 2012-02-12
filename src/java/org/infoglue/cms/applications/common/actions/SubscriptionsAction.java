@@ -184,10 +184,7 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return SUCCESS;
-        }
+    	return SUCCESS;
     }
 
     

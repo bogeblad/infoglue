@@ -733,10 +733,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 				return getUploadMaxSize();
 			}
 		} 
-		else
-		{
-			return getUploadMaxSize();
-		}
+		return getUploadMaxSize();
 	}
 
 	public static InfoGluePrincipal getSessionInfoGluePrincipal()
@@ -1099,8 +1096,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		{	
 			return Boolean.parseBoolean(disableCloseButton);
 		}
-		else
-			return false;
+		return false;
 	}
 
 	//TODO - make other base action for asset aware actions

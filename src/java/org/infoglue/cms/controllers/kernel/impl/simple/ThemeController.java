@@ -221,10 +221,7 @@ public class ThemeController extends BaseController
 	        }
 			return theme;
 		}
-		else
-		{
-			return "embla";
-		}
+		return "embla";
 	}
 
 	private static int copyStream(InputStream is, OutputStream os) throws IOException 

@@ -510,13 +510,10 @@ public class ContentTypeDefinitionController extends BaseController
     	{
     		return create(contentTypeDefinitionVO.getParentId(), contentTypeDefinitionVO);
     	}
-    	else
-    	{
-	        ContentTypeDefinition contentTypeDefinition = new ContentTypeDefinitionImpl();
-	        contentTypeDefinition.setValueObject(contentTypeDefinitionVO);
-	        contentTypeDefinition = (ContentTypeDefinition) createEntity(contentTypeDefinition);
-	        return contentTypeDefinition.getValueObject();
-    	}
+        ContentTypeDefinition contentTypeDefinition = new ContentTypeDefinitionImpl();
+        contentTypeDefinition.setValueObject(contentTypeDefinitionVO);
+        contentTypeDefinition = (ContentTypeDefinition) createEntity(contentTypeDefinition);
+        return contentTypeDefinition.getValueObject();
     }
     
 	

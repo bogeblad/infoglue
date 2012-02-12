@@ -169,11 +169,8 @@ abstract class AbstractCategoryCondition implements ICategoryCondition {
 		{
 			return MessageFormat.format(ONE_CATEGORY_CLAUSE, new Object[] { getUniqueID(), categoryVariable, nameVariable });
 		}
-		else
-		{
-			String categoryClause = ExtendedSearchController.useFull() ? CATEGORY_CLAUSE_GENERAL : CATEGORY_CLAUSE_GENERAL_SHORT;
-			return MessageFormat.format(categoryClause, new Object[] { categoryVariable, nameVariable });
-		}
+		String categoryClause = ExtendedSearchController.useFull() ? CATEGORY_CLAUSE_GENERAL : CATEGORY_CLAUSE_GENERAL_SHORT;
+		return MessageFormat.format(categoryClause, new Object[] { categoryVariable, nameVariable });
 	}
 
 	/**
@@ -189,11 +186,8 @@ abstract class AbstractCategoryCondition implements ICategoryCondition {
 		{
 			throw new NotSupportedException("Not in searches are not supported in the old category search - use the new one (application settings).");
 		}
-		else
-		{
-			String categoryClause = ExtendedSearchController.useFull() ? CATEGORY_NOT_SET_CLAUSE_GENERAL : CATEGORY_NOT_SET_CLAUSE_GENERAL_SHORT;
-			return MessageFormat.format(categoryClause, new Object[] { nameVariable });
-		}
+		String categoryClause = ExtendedSearchController.useFull() ? CATEGORY_NOT_SET_CLAUSE_GENERAL : CATEGORY_NOT_SET_CLAUSE_GENERAL_SHORT;
+		return MessageFormat.format(categoryClause, new Object[] { nameVariable });
 	}
 
 	/**
@@ -242,32 +236,23 @@ class CategoryAndCondition extends AbstractCategoryCondition
 			final String categoryClause = getOneCategoryClause(attributeName, categoryVO, bindings);
 			return MessageFormat.format(getCATEGORY_CLAUSE(), new Object[] { getUniqueID(), categoryClause });
 		}
-		else
+		if(notSetArgument)
 		{
-			if(notSetArgument)
-			{
-				final String nameVariable = getBindingVariable(bindings);
-				bindings.add(attributeName);
-			
-				return MessageFormat.format(getCATEGORY_NOT_SET_CLAUSE(), new Object[] { nameVariable });				
-			}
-			else if(isSetArgument)
-			{
-				final String nameVariable = getBindingVariable(bindings);
-				bindings.add(attributeName);
-			
-				return MessageFormat.format(getCATEGORY_IS_SET_CLAUSE(), new Object[] { nameVariable });								
-			}
-			else
-			{
-				final String categoryVariable = getBindingVariable(bindings);
-				bindings.add(categoryVO.getId());
-				final String nameVariable = getBindingVariable(bindings);
-				bindings.add(attributeName);
-			
-				return MessageFormat.format(getCATEGORY_CLAUSE(), new Object[] { categoryVariable, nameVariable });
-			}
+			final String nameVariable = getBindingVariable(bindings);
+			bindings.add(attributeName);
+			return MessageFormat.format(getCATEGORY_NOT_SET_CLAUSE(), new Object[] { nameVariable });				
 		}
+		if(isSetArgument)
+		{
+			final String nameVariable = getBindingVariable(bindings);
+			bindings.add(attributeName);
+			return MessageFormat.format(getCATEGORY_IS_SET_CLAUSE(), new Object[] { nameVariable });								
+		}
+		final String categoryVariable = getBindingVariable(bindings);
+		bindings.add(categoryVO.getId());
+		final String nameVariable = getBindingVariable(bindings);
+		bindings.add(attributeName);
+		return MessageFormat.format(getCATEGORY_CLAUSE(), new Object[] { categoryVariable, nameVariable });
 	}
 	
     public static String getCATEGORY_CLAUSE()
@@ -275,8 +260,7 @@ class CategoryAndCondition extends AbstractCategoryCondition
 		String useImprovedContentCategorySearch = CmsPropertyHandler.getUseImprovedContentCategorySearch();
 		if(useImprovedContentCategorySearch != null && useImprovedContentCategorySearch.equalsIgnoreCase("false"))
         	return (ExtendedSearchController.useFull()) ? CATEGORY_CLAUSE : CATEGORY_CLAUSE_SHORT;
-        else
-			return ExtendedSearchController.useFull() ? CATEGORY_CLAUSE_GENERAL : CATEGORY_CLAUSE_GENERAL_SHORT;
+		return ExtendedSearchController.useFull() ? CATEGORY_CLAUSE_GENERAL : CATEGORY_CLAUSE_GENERAL_SHORT;
     }
 
     public static String getCATEGORY_NOT_SET_CLAUSE() throws RuntimeException
@@ -284,8 +268,7 @@ class CategoryAndCondition extends AbstractCategoryCondition
 		String useImprovedContentCategorySearch = CmsPropertyHandler.getUseImprovedContentCategorySearch();
 		if(useImprovedContentCategorySearch != null && useImprovedContentCategorySearch.equalsIgnoreCase("false"))
 			throw new RuntimeException("Not in searches are not supported in the old category search - use the new one (application settings).");
-        else
-			return ExtendedSearchController.useFull() ? CATEGORY_NOT_SET_CLAUSE_GENERAL : CATEGORY_NOT_SET_CLAUSE_GENERAL_SHORT;
+		return ExtendedSearchController.useFull() ? CATEGORY_NOT_SET_CLAUSE_GENERAL : CATEGORY_NOT_SET_CLAUSE_GENERAL_SHORT;
     }
 
     public static String getCATEGORY_IS_SET_CLAUSE() throws RuntimeException
@@ -293,8 +276,7 @@ class CategoryAndCondition extends AbstractCategoryCondition
 		String useImprovedContentCategorySearch = CmsPropertyHandler.getUseImprovedContentCategorySearch();
 		if(useImprovedContentCategorySearch != null && useImprovedContentCategorySearch.equalsIgnoreCase("false"))
 			throw new RuntimeException("In searches are not supported in the old category search - use the new one (application settings).");
-        else
-			return ExtendedSearchController.useFull() ? CATEGORY_IS_SET_CLAUSE_GENERAL : CATEGORY_IS_SET_CLAUSE_GENERAL_SHORT;
+		return ExtendedSearchController.useFull() ? CATEGORY_IS_SET_CLAUSE_GENERAL : CATEGORY_IS_SET_CLAUSE_GENERAL_SHORT;
     }
 
 }
@@ -348,11 +330,8 @@ class CategoryOrCondition extends AbstractCategoryCondition {
 		{
 			return MessageFormat.format(CategoryAndCondition.getCATEGORY_CLAUSE(), new Object[] { getUniqueID(), LEFT + categoryClauses.toString() + RIGHT });
 		}
-		else
-		{	
-			String apa2 = LEFT + categoryClauses.toString() + RIGHT;
-			return apa2;
-		}
+		String apa2 = LEFT + categoryClauses.toString() + RIGHT;
+		return apa2;
 	}
 }
 

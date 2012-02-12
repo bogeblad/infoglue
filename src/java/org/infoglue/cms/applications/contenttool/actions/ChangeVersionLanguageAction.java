@@ -79,10 +79,7 @@ public class ChangeVersionLanguageAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
 	    }
-	    else
-	    {
-	    	return SUCCESS;
-	    }
+    	return SUCCESS;
     }
 
 	public Integer getRepositoryId()

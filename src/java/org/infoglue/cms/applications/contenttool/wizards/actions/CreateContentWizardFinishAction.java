@@ -140,10 +140,8 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 				String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
 		    	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
 		    	    return "inputContentVersions";
-		    	else
-		    	    return "inputContentVersionsForFCKEditor";
+	    	    return "inputContentVersionsForFCKEditor";
 			}
-			//ceb.throwIfNotEmpty();
 	    						
 			String returnAddress = createContentWizardInfoBean.getReturnAddress();
 			returnAddress = returnAddress.replaceAll("#entityId", createContentWizardInfoBean.getContentVO().getId().toString());

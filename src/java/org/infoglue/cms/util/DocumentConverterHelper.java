@@ -300,10 +300,7 @@ public class DocumentConverterHelper
 			generateHtml(tocElements.toArray(), htmlMenuSb, aHtmlFileUrl, aTitle, aMenuMaxLength, keepMenuExpanded);		
 			return htmlMenuSb.toString();
 		}
-		else
-		{
-			throw new Exception ("The list of TOC elements was null.");
-		}
+		throw new Exception ("The list of TOC elements was null.");
 	}
 
 	private static StringBuffer generateHtml(Object[] aTocElements, StringBuffer aReturnSb, String aHtmlFileUrl, String aTitle, int aMenuMaxLength, String keepMenuExpanded) throws Exception 

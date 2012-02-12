@@ -943,8 +943,7 @@ public class SiteNodeVersionController extends BaseController
 
 		if(siteNodeVersion != null)
 			return siteNodeVersion.getValueObject();
-		else 
-			return null;
+		return null;
     }
 
 

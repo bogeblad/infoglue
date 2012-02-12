@@ -248,8 +248,7 @@ public class ServerNodeController extends BaseController
 	    String allowedAdminIP = ps.getString("allowedAdminIP");
 	    if(allowedAdminIP != null)
 	        return Arrays.asList(allowedAdminIP.split(","));
-	    else
-	        return new ArrayList();
+        return new ArrayList();
 	}
 	
 	public boolean getIsIPAllowed(HttpServletRequest request, String ip)

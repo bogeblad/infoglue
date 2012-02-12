@@ -237,10 +237,7 @@ public class ContentTypeAttributeLabelTag extends TemplateControllerTag
 		{
 			return attr.getContentTypeAttribute(CTD_TITLE_KEY).getContentTypeAttributeParameterValue().getLocalizedValue(CTD_LABEL_KEY, currentLocale);
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	/**

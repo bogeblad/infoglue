@@ -56,11 +56,9 @@ public class SiteNodeComparator implements Comparator
 		{
 			if(sortOrder.equalsIgnoreCase("desc"))
 			    return valueTwo.compareTo(valueOne);
-			else
-			    return valueOne.compareTo(valueTwo);
+		    return valueOne.compareTo(valueTwo);
 		}
-		else
-			return 0;
+		return 0;
 	}
 
 	private Comparable getProperty(Object o, String property)
@@ -70,8 +68,7 @@ public class SiteNodeComparator implements Comparator
 			Object propertyObject = PropertyUtils.getProperty(o, sortProperty);
 			if(propertyObject instanceof String)
 				return (Comparable)propertyObject.toString().toLowerCase();
-			else
-				return (Comparable)propertyObject;
+			return (Comparable)propertyObject;
 		}
 		catch (Exception e)
 		{

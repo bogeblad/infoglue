@@ -252,8 +252,7 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 						isInserted = true;
 						break;
 					}
-					else
-						position++;
+					position++;
 				}
 				
 				if(element.getAttribute("name").equalsIgnoreCase(this.attributeName))

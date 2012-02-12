@@ -670,8 +670,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
     {
     	if(this.repositoryId != null)
 	        return this.repositoryId;
-    	else
-    		return this.siteNodeVO.getRepositoryId();
+		return this.siteNodeVO.getRepositoryId();
     }
         
     public void setRepositoryId(java.lang.Integer repositoryId)
@@ -1063,8 +1062,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		String useAccessBasedProtocolRedirects = CmsPropertyHandler.getUseAccessBasedProtocolRedirects();
 		if(useAccessBasedProtocolRedirects.equalsIgnoreCase("true"))
 			return true;
-		else
-			return false;
+		return false;
 	}
 	
 	public SiteNodeVersionVO getSiteNodeVersionVO()

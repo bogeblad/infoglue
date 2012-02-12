@@ -187,9 +187,8 @@ public class Cache implements Serializable {
 
             // CACHE-241: check flushDateTime with current time also
             return (flushTime <= System.currentTimeMillis()) && (flushTime >= lastUpdate);
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**

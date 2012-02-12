@@ -164,16 +164,14 @@ public class HttpUtilities
 	{
 		if(includeRequest)
 			return getUrlContent(urlAddress, requestToHashtable(request));
-		else
-			return getUrlContent(urlAddress);
+		return getUrlContent(urlAddress);
 	}
 
 	public static String getUrlContent(String urlAddress, HttpServletRequest request, boolean includeRequest, String encoding) throws Exception
 	{
 		if(includeRequest)
 			return getUrlContent(urlAddress, requestToHashtable(request), encoding);
-		else
-			return getUrlContent(urlAddress, encoding);
+		return getUrlContent(urlAddress, encoding);
 	}
 
 	public static String getUrlContent(String urlAddress, Hashtable inHash) throws Exception

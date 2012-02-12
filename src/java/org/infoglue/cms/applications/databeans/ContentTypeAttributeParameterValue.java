@@ -79,8 +79,7 @@ public class ContentTypeAttributeParameterValue
 		String localizedKey = key + "_" + locale.getLanguage();
 		if(this.attributes.containsKey(localizedKey))
 			return (String)this.attributes.get(localizedKey);
-		else
-			return (String)this.attributes.get(key);
+		return (String)this.attributes.get(key);
 	}
 	
 	public String getLocalizedValue(String key, String langugeCode)
@@ -88,8 +87,7 @@ public class ContentTypeAttributeParameterValue
 		String localizedKey = key + "_" + langugeCode;
 		if(this.attributes.containsKey(localizedKey))
 			return (String)this.attributes.get(localizedKey);
-		else
-			return (String)this.attributes.get(key);
+		return (String)this.attributes.get(key);
 	}
 
 	public int getLocalizedValueAsInt(String key, Locale locale)
@@ -99,8 +97,7 @@ public class ContentTypeAttributeParameterValue
 			String localizedKey = key + "_" + locale.getLanguage();
 			if(this.attributes.containsKey(localizedKey))
 				return Integer.parseInt((String)this.attributes.get(localizedKey));
-			else
-				return Integer.parseInt((String)this.attributes.get(key));
+			return Integer.parseInt((String)this.attributes.get(key));
 		}
 		catch(Exception e)
 		{
@@ -115,8 +112,7 @@ public class ContentTypeAttributeParameterValue
 			String localizedKey = key + "_" + langugeCode;
 			if(this.attributes.containsKey(localizedKey))
 				return Integer.parseInt((String)this.attributes.get(localizedKey));
-			else
-				return Integer.parseInt((String)this.attributes.get(key));
+			return Integer.parseInt((String)this.attributes.get(key));
 		}
 		catch(Exception e)
 		{

@@ -451,17 +451,9 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 							n.getFirstChild().setNodeValue(attributeValue);
 							break;
 						}
-						else
-						{
-							CDATASection cdata = document.createCDATASection(attributeValue);
-							n.appendChild(cdata);
-							break;
-						}
-						/*
-						Node valueNode = n.getFirstChild();
-						n.getFirstChild().setNodeValue(attributeValue);
+						CDATASection cdata = document.createCDATASection(attributeValue);
+						n.appendChild(cdata);
 						break;
-						*/
 					}
 				}
 				contentVersionVO.setVersionValue(XMLHelper.serializeDom(document, new StringBuffer()).toString());		        	

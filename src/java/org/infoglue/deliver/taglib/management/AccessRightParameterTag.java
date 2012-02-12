@@ -99,8 +99,7 @@ public class AccessRightParameterTag extends AbstractTag //implements ContentVer
 			{
 				throw new JspTagException("AccessRightParameterTag must have a ContentParameterTag ancestor.");
 			}
-			else
-				((RemoteAccessRightsServiceTag) parent).addAccessRight(accessRight);
+			((RemoteAccessRightsServiceTag) parent).addAccessRight(accessRight);
 		}
 		else
 			((ContentParameterTag) parent).addAccessRight(accessRight);

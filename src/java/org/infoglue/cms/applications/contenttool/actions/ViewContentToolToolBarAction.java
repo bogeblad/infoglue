@@ -193,14 +193,13 @@ public class ViewContentToolToolBarAction extends InfoGlueAbstractAction
 		{
 			if(this.isBranch.booleanValue())
 				return getBranchContentButtons();
-			else
-				return getContentButtons();
+			return getContentButtons();
 		}	
-		else if(this.toolbarKey.equalsIgnoreCase("content version"))
+		if(this.toolbarKey.equalsIgnoreCase("content version"))
 		{
 			return this.getContentVersionButtons();
 		}
-		else if(this.toolbarKey.equalsIgnoreCase("ContentVersionHistory"))
+		if(this.toolbarKey.equalsIgnoreCase("ContentVersionHistory"))
 		{
 			return this.getContentVersionHistoryButtons();
 		}

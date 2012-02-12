@@ -89,8 +89,7 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
 	        ActionContext.getResponse().sendRedirect(returnAddress);
 	        return Action.NONE;
 	    }
-	    else
-	        return Action.SUCCESS;
+        return Action.SUCCESS;
 	}
 
 	public String doV3() throws Exception 
@@ -116,8 +115,7 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
 	        ActionContext.getResponse().sendRedirect(returnAddress);
 	        return Action.NONE;
 	    }
-	    else
-	        return Action.SUCCESS + "V3";	    
+        return Action.SUCCESS + "V3";	    
 	}
 
     public String getNewPassword()

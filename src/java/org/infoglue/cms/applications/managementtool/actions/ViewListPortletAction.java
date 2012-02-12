@@ -91,8 +91,7 @@ public class ViewListPortletAction extends InfoGlueAbstractAction
 			portletRegistry = FileHelper.getStreamAsString(is);
 	    	return "successSimple";
 		}
-		else
-			return ERROR;
+		return ERROR;
 	}
 
 	

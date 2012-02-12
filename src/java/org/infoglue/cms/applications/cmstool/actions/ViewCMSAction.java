@@ -41,8 +41,7 @@ public class ViewCMSAction extends InfoGlueAbstractAction
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(this.getUserName());
 		if(preferredGUI.equalsIgnoreCase("default"))
 			return "successDefault";
-		else
-			return "success";
+		return "success";
     }
 
 }

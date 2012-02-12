@@ -83,8 +83,7 @@ public class ContentTag extends ComponentLogicTag
 	    {
 	        if(this.siteNodeId != null)
 	            return this.getComponentLogic().getBoundContent(siteNodeId, propertyName, useInheritance);
-	        else
-	            return this.getComponentLogic().getBoundContent(propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+            return this.getComponentLogic().getBoundContent(propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 	    }
 	    else if(path != null)
 	    {

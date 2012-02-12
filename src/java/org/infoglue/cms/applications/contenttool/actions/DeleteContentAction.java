@@ -90,22 +90,16 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 		{
 		    return "showRelations";
 		}
-	    else
-	    {
-	    	try
-			{
-				this.parentContentId = ContentController.getParentContent(this.contentVO.getContentId()).getContentId();
-			}
-			catch(Exception e)
-			{
-				logger.info("The content must have been a root-content because we could not find a parent.");
-			}
-
-	    	//ContentControllerProxy.getController().acDelete(this.getInfoGluePrincipal(), this.contentVO);	    
-    		ContentControllerProxy.getController().acMarkForDelete(this.getInfoGluePrincipal(), this.contentVO);	    
-
-	    	return "success";
-	    }
+    	try
+		{
+			this.parentContentId = ContentController.getParentContent(this.contentVO.getContentId()).getContentId();
+		}
+		catch(Exception e)
+		{
+			logger.info("The content must have been a root-content because we could not find a parent.");
+		}
+		ContentControllerProxy.getController().acMarkForDelete(this.getInfoGluePrincipal(), this.contentVO);	    
+    	return "success";
 	}	
 	
 	public String doV3() throws Exception 
@@ -165,10 +159,7 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "successV3";
-        }
+    	return "successV3";
     }
 
 	public String doStandalone() throws Exception 
@@ -178,22 +169,19 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 		{
 		    return "showRelations";
 		}
-	    else
-	    {
-	    	try
-			{
-				this.parentContentId = ContentController.getParentContent(this.contentVO.getContentId()).getContentId();
-			}
-			catch(Exception e)
-			{
-			    logger.info("The content must have been a root-content because we could not find a parent.");
-			}
+    	try
+		{
+			this.parentContentId = ContentController.getParentContent(this.contentVO.getContentId()).getContentId();
+		}
+		catch(Exception e)
+		{
+		    logger.info("The content must have been a root-content because we could not find a parent.");
+		}
 
-	    	//ContentControllerProxy.getController().acDelete(this.getInfoGluePrincipal(), this.contentVO);	    
-	    	ContentControllerProxy.getController().acMarkForDelete(this.getInfoGluePrincipal(), this.contentVO);	    
-			
-	    	return "successStandalone";
-	    }
+    	//ContentControllerProxy.getController().acDelete(this.getInfoGluePrincipal(), this.contentVO);	    
+    	ContentControllerProxy.getController().acMarkForDelete(this.getInfoGluePrincipal(), this.contentVO);	    
+		
+    	return "successStandalone";
 	}	
 
 	public String doDeleteReference() throws Exception 
@@ -293,8 +281,7 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 	{
 		if(this.returnAddress != null && !this.returnAddress.equals(""))
 			return this.returnAddress;
-		else
-			return "ViewContent.action?contentId=" + this.contentVO.getId() + "&repositoryId=" + this.contentVO.getRepositoryId();
+		return "ViewContent.action?contentId=" + this.contentVO.getId() + "&repositoryId=" + this.contentVO.getRepositoryId();
 	}
 
     public List getReferenceBeanList()

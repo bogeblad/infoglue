@@ -238,8 +238,7 @@ public abstract class InfoglueWorkflowBase
 		Object o = getParameter(key, required);
 		if(o instanceof String[])
 			return ((String[])o)[0];
-		else
-			return (o == null ? null : o.toString());
+		return (o == null ? null : o.toString());
 	}
 
 	/**

@@ -42,8 +42,7 @@ public class ViewCMSToolAction extends InfoGlueAbstractAction
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(this.getUserName());
 		if(preferredGUI.equalsIgnoreCase("default"))
 			return "successDefault";
-		else
-			return "success";
+		return "success";
     }
 	
 	public String doLoginStandalone() throws Exception 

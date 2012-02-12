@@ -120,8 +120,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			getResponse().sendRedirect(url);
 			return Action.NONE;
 		}
-		else
-			return "success";
+		return "success";
 	}
 	
 	public String doAddGroups() throws Exception
@@ -163,8 +162,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			getResponse().sendRedirect(url);
 			return Action.NONE;
 		}
-		else
-			return "success";
+		return "success";
 	}
 
 	public String doAddUser() throws Exception
@@ -217,8 +215,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			getResponse().sendRedirect(url);
 			return Action.NONE;
 		}
-		else
-			return "success";
+		return "success";
 	}
 
 	public String doAddUserV3() throws Exception
@@ -276,8 +273,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			getResponse().sendRedirect(url);
 			return Action.NONE;
 		}
-		else
-			return "success";
+		return "success";
 	}
 
 	public String doDeleteUserV3() throws Exception
@@ -291,8 +287,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			getResponse().sendRedirect(url);
 			return Action.NONE;
 		}
-		else
-			return "success";
+		return "success";
     }
 	
 	public String doSaveAndExit() throws Exception
@@ -314,8 +309,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		String result = doExecute();
 		if(result.equals("none"))
 			return result;
-		else
-			return "saveAndExitV3";
+		return "saveAndExitV3";
 	}
 
 	public String getReturnAddress()

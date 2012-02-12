@@ -149,10 +149,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
 			*/
 			return decoratedAttributeValue.toString();
 	    }
-	    else
-	    {
-	        return "";
-	    }
+        return "";
 	} 
 	
 	/**
@@ -343,9 +340,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
 	{
 		if(attributeName.equalsIgnoreCase(this.getTemplateAttributeName()))
 			return super.getContentAttribute(contentId, attributeName);
-			//return decorateTemplate(super.getContentAttribute(contentId, attributeName));		
-		else
-			return decorateTag(contentId, this.getLanguageId(), attributeName, super.getContentAttribute(contentId, attributeName));
+		return decorateTag(contentId, this.getLanguageId(), attributeName, super.getContentAttribute(contentId, attributeName));
 	}
 
 

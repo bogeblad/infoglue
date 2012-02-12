@@ -92,15 +92,11 @@ public class PageComparator implements Comparator
 	        
 	        return valueTwo.compareTo(valueOne);
 	    }
-	    else
-		{
-		    if((valueOne != null && !valueOne.toString().equalsIgnoreCase("")) && (valueTwo == null || valueTwo.toString().equalsIgnoreCase("")))
-	            return -1;
-		    if((valueTwo != null && !valueTwo.toString().equalsIgnoreCase("")) && (valueOne == null || valueOne.toString().equalsIgnoreCase("")))
-	            return 1;
-	        
-		    return valueOne.compareTo(valueTwo);
-		}
+	    if((valueOne != null && !valueOne.toString().equalsIgnoreCase("")) && (valueTwo == null || valueTwo.toString().equalsIgnoreCase("")))
+            return -1;
+	    if((valueTwo != null && !valueTwo.toString().equalsIgnoreCase("")) && (valueOne == null || valueOne.toString().equalsIgnoreCase("")))
+            return 1;
+	    return valueOne.compareTo(valueTwo);
 	}
 
 	private Comparable getProperty(Object o, String property)
@@ -124,10 +120,7 @@ public class PageComparator implements Comparator
 			    
 			    return (Comparable)propertyObject.toString().toLowerCase();
 			}
-			else
-			{
-				return (Comparable)propertyObject;
-			}
+			return (Comparable)propertyObject;
 		}
 		catch (Exception e)
 		{

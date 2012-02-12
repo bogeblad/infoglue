@@ -76,10 +76,7 @@ public class ContentVersionsTag extends TemplateControllerTag
 
 		    return getController().getContentVersions(contentId, languageId);
 		}
-		else
-		{
-		    return getController().getContentVersions(contentId, null);			
-		}
+	    return getController().getContentVersions(contentId, null);			
 	}
 	
     public void setContent(String content) throws JspException

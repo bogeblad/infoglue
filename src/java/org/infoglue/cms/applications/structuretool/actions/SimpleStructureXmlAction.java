@@ -26,8 +26,7 @@ public class SimpleStructureXmlAction extends SimpleXmlServiceAction {
 	public INodeSupplier getNodeSupplier() throws SystemException {
 	    if(this.repositoryId != null && this.repositoryId.intValue() > -1) 
 	        return new SiteNodeNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal());
-	    else 
-	        return null;
+        return null;
 	}
 	/* (non-Javadoc)
 	 * @see org.infoglue.cms.applications.common.actions.SimpleXmlServiceAction#getRootEntityVO(java.lang.Integer, org.infoglue.cms.security.InfoGluePrincipal)

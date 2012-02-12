@@ -4507,8 +4507,7 @@ public class BasicTemplateController implements TemplateController
 	    String parentRepository = RepositoryDeliveryController.getRepositoryDeliveryController().getPropertyValue(repositoryId, "parentRepository");
 	    if(parentRepository != null && !parentRepository.equalsIgnoreCase(""))
 	        return new Integer(parentRepository);
-	    else
-	        return null;
+        return null;
 	}
 
 	/**
@@ -6364,8 +6363,7 @@ public class BasicTemplateController implements TemplateController
 		
 		if(boundPages.size() > position)
 			return (WebPage)boundPages.get(position);
-		else	
-			return null;
+		return null;
 	}
 
 
@@ -7628,12 +7626,9 @@ public class BasicTemplateController implements TemplateController
 	{
 	    if(showInPublishedMode == false && this.getOperatingMode().intValue() == 3)
 	        return "";
-	    else
-	    {
-	    	String editOnSiteUrl = CmsPropertyHandler.getEditOnSiteUrl();
-			String decoratedAttributeValue = "<a href=\"#\" onclick=\"openInlineDivImpl('" + editOnSiteUrl + "?contentId=" + contentId + "&amp;languageId=" + languageId + "&amp;attributeName=" + attributeName + "&amp;forceWorkingChange=true#" + attributeName + "Anchor" + "', 900, 850, true, true); return false;\">" + html + "</a>";
-			return decoratedAttributeValue;
-	    }
+    	String editOnSiteUrl = CmsPropertyHandler.getEditOnSiteUrl();
+		String decoratedAttributeValue = "<a href=\"#\" onclick=\"openInlineDivImpl('" + editOnSiteUrl + "?contentId=" + contentId + "&amp;languageId=" + languageId + "&amp;attributeName=" + attributeName + "&amp;forceWorkingChange=true#" + attributeName + "Anchor" + "', 900, 850, true, true); return false;\">" + html + "</a>";
+		return decoratedAttributeValue;
 	} 
 
 	public String getExportedContentsUrl(List contentIdList, String fileNamePrefix, boolean includeContentTypes, boolean includeCategories) throws Exception

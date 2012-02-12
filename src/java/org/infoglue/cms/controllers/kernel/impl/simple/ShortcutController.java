@@ -125,8 +125,7 @@ public class ShortcutController extends BaseController
 		byte[] valueBytes = propertySet.getData(key);
 	    if(valueBytes != null)
 	    	return new String(valueBytes, "utf-8");
-	    else
-	    	return null;
+    	return null;
 	}
 
 	/**

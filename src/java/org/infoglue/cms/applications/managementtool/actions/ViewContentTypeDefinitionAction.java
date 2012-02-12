@@ -286,8 +286,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 						isInserted = true;
 						break;
 					}
-					else
-						position++;
+					position++;
 				}
 
 				if(element.getAttribute("name").equalsIgnoreCase(this.attributeName))

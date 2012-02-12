@@ -1475,8 +1475,7 @@ public class SiteNodeController extends BaseController
 	    
 	    if(initialLanguageId != null && !initialLanguageId.equals("") && !initialLanguageId.equals("-1"))
 	        return LanguageController.getController().getLanguageVOWithId(new Integer(initialLanguageId));
-	    else
-	        return LanguageController.getController().getMasterLanguage(repositoryId);
+        return LanguageController.getController().getMasterLanguage(repositoryId);
 	}
 
 	/**

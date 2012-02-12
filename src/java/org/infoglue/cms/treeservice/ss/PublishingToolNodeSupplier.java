@@ -70,8 +70,7 @@ public class PublishingToolNodeSupplier extends BaseNodeSupplier
 	{
 		if (showLeafs)
 			return false;
-		else
-			return true;
+		return true;
 	}
 	
 	/**

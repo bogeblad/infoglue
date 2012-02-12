@@ -61,8 +61,7 @@ public class AssetKeyDefinition
     {
     	if(imageHeight == null)
     		return "*";
-    	else
-    		return imageHeight;
+		return imageHeight;
     }
     public void setImageHeight(String imageHeight)
     {
@@ -72,8 +71,7 @@ public class AssetKeyDefinition
     {
     	if(imageWidth == null)
     		return "*";
-    	else
-    		return imageWidth;
+		return imageWidth;
     }
     public void setImageWidth(String imageWidth)
     {

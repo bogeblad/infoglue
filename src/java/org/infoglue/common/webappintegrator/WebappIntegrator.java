@@ -144,10 +144,7 @@ public class WebappIntegrator
 	
 	        return sourceElement.html();
 		}
-		else
-		{
-			return doc.body().html();
-		}
+		return doc.body().html();
 	}
 	
 	public void setMethod(String method) 

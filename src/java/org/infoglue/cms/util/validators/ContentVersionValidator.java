@@ -39,8 +39,7 @@ public class ContentVersionValidator
 			ValidatorResults results = validator.validate();
 			if(results.isEmpty())
 				return new ConstraintExceptionBuffer();
-			else
-				return populateConstraintExceptionBuffer(results);
+			return populateConstraintExceptionBuffer(results);
 		} catch(Exception e) {
 			return new ConstraintExceptionBuffer();
 		}

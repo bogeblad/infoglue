@@ -87,8 +87,7 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 
 		if(ExtranetController.getController().getAuthenticatedPrincipal(arguments,this.getRequest())!=null)
 			return "granted";
-		else
-			return "denied";
+		return "denied";
 	}
 	
 	public String doAuthenticateUser() throws Exception 
@@ -134,12 +133,9 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 			{
 				return "invalidLogin";
 			}
-			else
-			{
-				String fullRedirect = invalidLoginUrl + (invalidLoginUrl.indexOf("?") > -1 ? "&" : "?") + "returnAddress=" + URLEncoder.encode(returnAddress, "UTF-8");
-				logger.info("fullRedirect:" + fullRedirect);
-				this.getResponse().sendRedirect(fullRedirect);
-			}
+			String fullRedirect = invalidLoginUrl + (invalidLoginUrl.indexOf("?") > -1 ? "&" : "?") + "returnAddress=" + URLEncoder.encode(returnAddress, "UTF-8");
+			logger.info("fullRedirect:" + fullRedirect);
+			this.getResponse().sendRedirect(fullRedirect);
 		}
 		
 		return NONE;
@@ -171,11 +167,8 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 		{
 			return NONE;
 		}
-		else
-		{
-			this.getResponse().sendRedirect(this.returnAddress);
-			return NONE;
-		}
+		this.getResponse().sendRedirect(this.returnAddress);
+		return NONE;
 	}
 
 	public String urlEncode(String string, String encoding)

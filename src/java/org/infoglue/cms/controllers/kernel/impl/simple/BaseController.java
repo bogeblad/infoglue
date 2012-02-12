@@ -1184,8 +1184,7 @@ public abstract class BaseController
         {
         	if(tae.getCause() instanceof LockNotGrantedException)
                 throw new SystemException("The resource you tried to modify have just been updated by another user. Please try again later. System message: " + tae.getCause().getMessage());
-        	else
-               	throw new SystemException("An error occurred when we tried to commit an transaction. Reason:" + tae.getMessage(), tae);
+           	throw new SystemException("An error occurred when we tried to commit an transaction. Reason:" + tae.getMessage(), tae);
         }
         catch(LockNotGrantedException lnge)
         {

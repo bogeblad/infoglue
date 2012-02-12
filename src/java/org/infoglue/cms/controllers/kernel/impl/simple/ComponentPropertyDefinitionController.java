@@ -75,10 +75,7 @@ public class ComponentPropertyDefinitionController extends BaseController
 			
 			return parseComponentPropertyDefinitions(propertyXML);
 		}
-		else
-		{
-			return new ArrayList();
-		}
+		return new ArrayList();
 	}
 	
 	public List parseComponentPropertyDefinitions(String xml)

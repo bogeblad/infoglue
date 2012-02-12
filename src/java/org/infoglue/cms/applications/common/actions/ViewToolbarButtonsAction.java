@@ -138,13 +138,10 @@ public class ViewToolbarButtonsAction extends InfoGlueAbstractAction
 			{
 				return buttonCandidate;
 			}
-			else
+			for(ToolbarButton subButtonCandidate : buttonCandidate.getSubButtons())
 			{
-				for(ToolbarButton subButtonCandidate : buttonCandidate.getSubButtons())
-				{
-					if(subButtonCandidate.getId().equals(id))
-						return subButtonCandidate;
-				}					
+				if(subButtonCandidate.getId().equals(id))
+					return subButtonCandidate;
 			}
 		}
 		

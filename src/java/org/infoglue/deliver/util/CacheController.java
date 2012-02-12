@@ -241,33 +241,23 @@ public class CacheController extends Thread
 	{
 		if(cacheName == null || key == null)
 			return null;
-		
-		//synchronized(caches)
-		//{
-			Map cacheInstance = (Map)caches.get(cacheName);
-			if(cacheInstance != null)
-		    {
-				//TODO
-				if(CmsPropertyHandler.getUseSynchronizationOnCaches())
-				{
-					synchronized(cacheInstance)
-					{
-						if(CmsPropertyHandler.getUseHashCodeInCaches())
-							return cacheInstance.get("" + key.hashCode());
-						else
-							return cacheInstance.get(key);
-					}
-				}
-				else
+		Map cacheInstance = (Map)caches.get(cacheName);
+		if(cacheInstance != null)
+	    {
+			//TODO
+			if(CmsPropertyHandler.getUseSynchronizationOnCaches())
+			{
+				synchronized(cacheInstance)
 				{
 					if(CmsPropertyHandler.getUseHashCodeInCaches())
 						return cacheInstance.get("" + key.hashCode());
-					else
-						return cacheInstance.get(key);
+					return cacheInstance.get(key);
 				}
-		    }
-		//}
-		
+			}
+			if(CmsPropertyHandler.getUseHashCodeInCaches())
+				return cacheInstance.get("" + key.hashCode());
+			return cacheInstance.get(key);
+	    }
         return null;
     }
 

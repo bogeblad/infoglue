@@ -136,11 +136,8 @@ public class ViewContentAction extends InfoGlueAbstractAction
 		        this.languageId = getInitialLanguageVO().getId();
 	            return "viewVersion";
 	        }
-	        else
-	        {
-	            this.initialize(getContentId());
-	            return "success";
-	        }
+            this.initialize(getContentId());
+            return "success";
         }
         catch(ConstraintException ce)
         {
@@ -182,11 +179,8 @@ public class ViewContentAction extends InfoGlueAbstractAction
 		        this.languageId = getInitialLanguageVO().getId();
 	            return "viewVersionV3";
 	        }
-	        else
-	        {
-	            this.initialize(getContentId());
-	            return "successV3";
-	        }
+            this.initialize(getContentId());
+            return "successV3";
         }
         catch(ConstraintException ce)
         {
@@ -446,8 +440,7 @@ public class ViewContentAction extends InfoGlueAbstractAction
 	    
 	    if(initialLanguageId != null && !initialLanguageId.equals("") && !initialLanguageId.equals("-1"))
 	        return LanguageController.getController().getLanguageVOWithId(new Integer(initialLanguageId));
-	    else
-	        return LanguageController.getController().getMasterLanguage(repositoryId);
+        return LanguageController.getController().getMasterLanguage(repositoryId);
 	}
 
     public Integer getLanguageId()

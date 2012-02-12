@@ -99,8 +99,7 @@ public class HardcodedPageComparator implements Comparator
 
 		if(after(valueOne, valueTwo, valueOneName, valueTwoName))
 		    return 1;
-		else
-		    return -1;
+	    return -1;
 	}
 
 	private boolean after(Comparable valueOne, Comparable valueTwo, Comparable valueOneName, Comparable valueTwoName)
@@ -112,43 +111,34 @@ public class HardcodedPageComparator implements Comparator
 	    {
 	        if(index1 > index2)
 	            return true;
-	        else
-	            return false;
+            return false;
+	    }
+        if(index1 == -1 && index2 != -1)
+            return true;
+        if(index2 == -1 && index1 != -1)
+            return false;
+        int result;
+	    if(sortOrder.equalsIgnoreCase("desc"))
+	    {  
+	        if((valueOne != null && !valueOne.toString().equalsIgnoreCase("")) && (valueTwo == null || valueTwo.toString().equalsIgnoreCase("")))
+	            result = -1;
+		    if((valueTwo != null && !valueTwo.toString().equalsIgnoreCase("")) && (valueOne == null || valueOne.toString().equalsIgnoreCase("")))
+		        result = 1;
+	        
+		    result = valueTwo.compareTo(valueOne);
 	    }
 	    else
-	    {
-	        if(index1 == -1 && index2 != -1)
-	            return true;
-	        else if(index2 == -1 && index1 != -1)
-	            return false;
-	        else
-	        {
-	            int result;
-	    	    if(sortOrder.equalsIgnoreCase("desc"))
-	    	    {  
-	    	        if((valueOne != null && !valueOne.toString().equalsIgnoreCase("")) && (valueTwo == null || valueTwo.toString().equalsIgnoreCase("")))
-	    	            result = -1;
-	    		    if((valueTwo != null && !valueTwo.toString().equalsIgnoreCase("")) && (valueOne == null || valueOne.toString().equalsIgnoreCase("")))
-	    		        result = 1;
-	    	        
-	    		    result = valueTwo.compareTo(valueOne);
-	    	    }
-	    	    else
-	    		{
-	    		    if((valueOne != null && !valueOne.toString().equalsIgnoreCase("")) && (valueTwo == null || valueTwo.toString().equalsIgnoreCase("")))
-	    		        result = -1;
-	    		    if((valueTwo != null && !valueTwo.toString().equalsIgnoreCase("")) && (valueOne == null || valueOne.toString().equalsIgnoreCase("")))
-	    		        result = 1;
-	    	        
-	    		    result = valueOne.compareTo(valueTwo);
-	    		}
-	    	    
-	    	    if(result > 0)
-	    	        return true;
-	    	    else
-	    	        return false;	    	    
-	        }
-	    }
+		{
+		    if((valueOne != null && !valueOne.toString().equalsIgnoreCase("")) && (valueTwo == null || valueTwo.toString().equalsIgnoreCase("")))
+		        result = -1;
+		    if((valueTwo != null && !valueTwo.toString().equalsIgnoreCase("")) && (valueOne == null || valueOne.toString().equalsIgnoreCase("")))
+		        result = 1;
+	        
+		    result = valueOne.compareTo(valueTwo);
+		}
+	    if(result > 0)
+	        return true;
+        return false;
 	}
 	
 	private Comparable getProperty(Object o, String property)
@@ -158,8 +148,7 @@ public class HardcodedPageComparator implements Comparator
 			Object propertyObject = PropertyUtils.getProperty(o, sortProperty);
 			if(propertyObject instanceof String)
 				return (Comparable)propertyObject.toString().toLowerCase();
-			else
-				return (Comparable)propertyObject;
+			return (Comparable)propertyObject;
 		}
 		catch (Exception e)
 		{

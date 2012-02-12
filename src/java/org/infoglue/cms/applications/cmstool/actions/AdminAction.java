@@ -41,8 +41,7 @@ public class AdminAction extends InfoGlueAbstractAction
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";
-		else
-			return "success";
+		return "success";
     }
 
 	public String doEmbla() throws Exception
@@ -50,8 +49,7 @@ public class AdminAction extends InfoGlueAbstractAction
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";
-		else
-			return "successEmbla";
+		return "successEmbla";
     }
 	
 	public String doResetGUI() throws Exception

@@ -89,10 +89,7 @@ public class PortalService
             log.debug("null actionwindow - no actionrequest returning false");
             return false;
         } 
-        else 
-        {
-            log.debug("actionwindow found [" + portletWindowId + "]");
-        }
+        log.debug("actionwindow found [" + portletWindowId + "]");
 
         // Locate portlet-window instance
         PortletWindowRegistryService windowService = (PortletWindowRegistryService) ServiceManager.getService(PortletWindowRegistryService.class);

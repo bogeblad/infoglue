@@ -171,10 +171,9 @@ public class PathParser
             String token = st.nextToken();
             if (token.startsWith("_")) {
                 break;
-            } else {
-                buf.append("/");
-                buf.append(token);
             }
+            buf.append("/");
+            buf.append(token);
         }
         return buf.toString();
     }
@@ -226,11 +225,10 @@ public class PathParser
                     entry = tok.nextToken().replaceAll("%2F", "/");
                 }
                 return entry;
-            } else {
-                // Single-value
-                buffer.add(entry.replaceAll("%2F", "/"));
-                return (tok.hasMoreElements() ? tok.nextToken() : null);
             }
+            // Single-value
+            buffer.add(entry.replaceAll("%2F", "/"));
+            return (tok.hasMoreElements() ? tok.nextToken() : null);
         }
         return null;
     }

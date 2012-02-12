@@ -116,8 +116,7 @@ public class ComponentProperty
 	{
     	if(displayName == null || displayName.equals(""))
     		return name;
-    	else
-    		return displayName;
+		return displayName;
 	}
 
 	public List getSiteNodeBindings()
@@ -159,11 +158,8 @@ public class ComponentProperty
 		{
 			if(bindings.size() > 1)
 				return "Multiple...";
-			else
-			{
-				ComponentBinding componentBinding = bindings.get(0);
-				sb.append(componentBinding.getAssetKey());
-			}			
+			ComponentBinding componentBinding = bindings.get(0);
+			sb.append(componentBinding.getAssetKey());
 		}
 		
 		return sb.toString();
@@ -188,8 +184,7 @@ public class ComponentProperty
     {
     	if(description == null)
     		return "";
-    	else
-    		return description;
+		return description;
     }
     
     public void setDescription(String description)
@@ -389,8 +384,7 @@ public class ComponentProperty
 	{
 		if(defaultValue != null && !defaultValue.equals(""))
 			return defaultValue;
-		else
-			return "Undefined";
+		return "Undefined";
 	}
 
 	public void setDefaultValue(String defaultValue)
@@ -402,8 +396,7 @@ public class ComponentProperty
 	{
 		if(allowLanguageVariations != null)
 			return allowLanguageVariations;
-		else
-			return true;
+		return true;
 	}
 
 	public void setAllowLanguageVariations(Boolean allowLanguageVariations)

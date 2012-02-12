@@ -337,8 +337,7 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 			logger.info("cmsFullBaseUrl:" + cmsFullBaseUrl);
 			if(cmsFullBaseUrl != null && !cmsFullBaseUrl.equals(""))
 				return URLEncoder.encode(cmsFullBaseUrl + "/ViewMyDesktopToolStartPage!invoke.action", "UTF-8");
-			else
-				return URLEncoder.encode(getURLBase() + "/ViewMyDesktopToolStartPage!invoke.action", "UTF-8");
+			return URLEncoder.encode(getURLBase() + "/ViewMyDesktopToolStartPage!invoke.action", "UTF-8");
 		}
 		catch (UnsupportedEncodingException e)
 		{

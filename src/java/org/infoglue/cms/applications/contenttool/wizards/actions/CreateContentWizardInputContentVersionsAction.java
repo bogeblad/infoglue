@@ -99,8 +99,7 @@ public class CreateContentWizardInputContentVersionsAction extends CreateContent
     	String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
     	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
     	    return "inputContentVersions";
-    	else
-    	    return "inputContentVersionsForFCKEditor";
+	    return "inputContentVersionsForFCKEditor";
 	}
 
 	/**

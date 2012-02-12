@@ -139,10 +139,7 @@ public class PortletAssetController extends DigitalAssetController
             logger.debug("Registry located as id=" + da.getId());
             return da;
         } 
-        else 
-        {
-        	logger.info("Portlet Registry not found");
-        }
+    	logger.info("Portlet Registry not found");
         
         return null;
     }
@@ -156,10 +153,7 @@ public class PortletAssetController extends DigitalAssetController
             logger.debug("Registry located as id=" + da.getId());
             return da;
         } 
-        else 
-        {
-        	logger.info("Portlet Registry not found");
-        }
+    	logger.info("Portlet Registry not found");
         
         return null;
     }

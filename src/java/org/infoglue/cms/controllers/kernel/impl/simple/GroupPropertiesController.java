@@ -587,13 +587,10 @@ public class GroupPropertiesController extends BaseController
 							existed = true;
 							break;
 						}
-						else
-						{
-							CDATASection cdata = document.createCDATASection(attributeValue);
-							n.appendChild(cdata);
-							existed = true;
-							break;
-						}
+						CDATASection cdata = document.createCDATASection(attributeValue);
+						n.appendChild(cdata);
+						existed = true;
+						break;
 					}
 				}
 				

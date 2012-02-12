@@ -161,10 +161,7 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "success";
-        }
+    	return "success";
     }
 
 

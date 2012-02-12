@@ -72,8 +72,7 @@ public class ContentCategoryImpl implements ContentCategory
 	{
     	if(category == null && valueObject != null)
 			return valueObject.getCategoryId();
-		else
-			return category.getId();
+		return category.getId();
 	}
 
     public void setCategoryId(Integer categoryId)

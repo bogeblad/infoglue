@@ -117,18 +117,11 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 			inputMoreAssets = "false";
 			return "input";
 		}
-		else
+		if(inputMoreAssets != null && inputMoreAssets.equalsIgnoreCase("true"))
 		{
-			if(inputMoreAssets != null && inputMoreAssets.equalsIgnoreCase("true"))
-			{
-				return "input";				
-			}
-			else
-			{
-	    		return "success";
-			}
+			return "input";				
 		}
-
+		return "success";
     }
 
 	public String doExecute() throws Exception

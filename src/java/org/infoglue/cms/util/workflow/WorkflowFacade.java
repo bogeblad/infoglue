@@ -424,8 +424,7 @@ public class WorkflowFacade
 				{
 					if(getEntryState() == WorkflowEntry.UNKNOWN)
 						throw new WorkflowException("The workflow with id " + workflowId + " is in an unknown state - the database could be down or the workflow corrupt");
-					else
-						throw new InvalidActionException("Workflow " + workflowId + " is no longer active");
+					throw new InvalidActionException("Workflow " + workflowId + " is no longer active");
 				}
 				if(currentWorkflows.contains(id))
 				{
@@ -856,8 +855,7 @@ public class WorkflowFacade
 	{
 		if(workflowDescriptor != null)
 			return createActionVOs(workflowDescriptor.getInitialActions());
-		else
-			return null;
+		return null;
 	}
 
 	/**
@@ -868,8 +866,7 @@ public class WorkflowFacade
 	{
 		if(workflowDescriptor != null)
 			return createActionVOs(workflowDescriptor.getGlobalActions());
-		else
-			return null;
+		return null;
 	}
 
 	/**

@@ -135,23 +135,7 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return SUCCESS;
-        }
-        /*
-		if(this.returnAddress != null && !this.returnAddress.equals(""))
-		{
-			this.returnAddress = this.getResponse().encodeURL(returnAddress);
-			this.getResponse().sendRedirect(returnAddress);
-	
-			return NONE;
-		}
-		else
-		{
-	       	return "success";
-		}
-		*/
+    	return SUCCESS;
     }
         
     public java.lang.Integer getSiteNodeId()

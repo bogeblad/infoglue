@@ -152,22 +152,18 @@ public class ContentFactory
 		{
 			return createContent(parentContent, contentVO, contentVersionVO, categories);
 		}
-		else
+		try
 		{
-			try
-			{
-				ceb.throwIfNotEmpty();
-			}
-			catch (ConstraintException e) 
-			{
-				logger.error("Problem creating content:" + e.getMessage());
-			}
-			catch (Exception e) 
-			{
-				logger.error("Problem creating content:" + e.getMessage(), e);
-			}
+			ceb.throwIfNotEmpty();
 		}
-
+		catch (ConstraintException e) 
+		{
+			logger.error("Problem creating content:" + e.getMessage());
+		}
+		catch (Exception e) 
+		{
+			logger.error("Problem creating content:" + e.getMessage(), e);
+		}
 		return null;
 	}
 
@@ -189,21 +185,7 @@ public class ContentFactory
 		{
 			return updateContent(contentVO, contentVersionVO, categories);
 		}
-		else
-		{
-			logger.error("Error: Not valid content or version - cancelling update.");
-			/*
-			try
-			{
-				ceb.throwIfNotEmpty();
-			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			*/
-		}
-		
+		logger.error("Error: Not valid content or version - cancelling update.");
 		return null;
 	}
 

@@ -204,8 +204,7 @@ public class UserControllerProxy extends BaseController
 		{
 	    	if(infoGluePrincipalCandidate instanceof NullObject)
 				return null;
-			else
-				return (InfoGluePrincipal)infoGluePrincipalCandidate;
+			return (InfoGluePrincipal)infoGluePrincipalCandidate;
 		}
     	
     	InfoGluePrincipal infoGluePrincipal = getAuthorizationModule().getAuthorizedInfoGluePrincipal(userName);

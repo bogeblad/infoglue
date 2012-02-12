@@ -283,8 +283,7 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 	    
 	    if(initialLanguageId != null && !initialLanguageId.equals("") && !initialLanguageId.equals("-1"))
 	        return LanguageController.getController().getLanguageVOWithId(new Integer(initialLanguageId), db);
-	    else
-	        return LanguageController.getController().getMasterLanguage(repositoryId, db);
+        return LanguageController.getController().getMasterLanguage(repositoryId, db);
 	}
 
 	public List getRepositories()

@@ -1004,13 +1004,9 @@ public class DigitalAssetController extends BaseController
 		{
 			return new FileInputStream(assetFile);
 		}
-		else
-		{
-			if(returnNullIfBroken)
-				return null;
-			else
-				return new ByteArrayInputStream("archived".getBytes());
-		}
+		if(returnNullIfBroken)
+			return null;
+		return new ByteArrayInputStream("archived".getBytes());
 	}
 
 	/**
@@ -2055,10 +2051,7 @@ public class DigitalAssetController extends BaseController
 	
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		//}
 	}
 

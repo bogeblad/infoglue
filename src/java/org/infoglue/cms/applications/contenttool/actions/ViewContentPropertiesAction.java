@@ -183,10 +183,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "saveAndExitV3";
-        }
+    	return "saveAndExitV3";
     }
     
     public java.lang.Integer getContentId()

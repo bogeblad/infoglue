@@ -100,17 +100,12 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
     	{
     		if(repositoryDecoratedPageInvoker != null && repositoryDecoratedPageInvoker.equalsIgnoreCase("ajax"))
 	    		return new AjaxDecoratedComponentBasedHTMLPageInvoker();
-	    	else
-	    		return new DecoratedComponentBasedHTMLPageInvoker();
+    		return new DecoratedComponentBasedHTMLPageInvoker();
     	}
-    	else
-    	{
-	    	String decoratedPageInvoker = CmsPropertyHandler.getDecoratedPageInvoker();
-	    	if(decoratedPageInvoker != null && decoratedPageInvoker.equalsIgnoreCase("ajax"))
-	    		return new AjaxDecoratedComponentBasedHTMLPageInvoker();
-	    	else
-	    		return new DecoratedComponentBasedHTMLPageInvoker();
-    	}
+    	String decoratedPageInvoker = CmsPropertyHandler.getDecoratedPageInvoker();
+    	if(decoratedPageInvoker != null && decoratedPageInvoker.equalsIgnoreCase("ajax"))
+    		return new AjaxDecoratedComponentBasedHTMLPageInvoker();
+		return new DecoratedComponentBasedHTMLPageInvoker();
     }
 
     protected String appendPagePartTemplates(String componentXML, Integer siteNodeId) throws Exception

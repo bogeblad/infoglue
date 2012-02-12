@@ -339,19 +339,12 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
 		String administratorEmail 	 = CmsPropertyHandler.getAdministratorEmail();
-		//String administratorUserName = CmsPropertyHandler.getProperty("administratorUserName");
-		//String administratorEmail 	 = CmsPropertyHandler.getProperty("administratorEmail");
-		
 		final boolean isAdministrator = userName.equalsIgnoreCase(administratorUserName) ? true : false;
 		if(isAdministrator)
 		{
@@ -643,19 +636,12 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
 		String administratorEmail 	 = CmsPropertyHandler.getAdministratorEmail();
-		//String administratorUserName = CmsPropertyHandler.getProperty("administratorUserName");
-		//String administratorEmail 	 = CmsPropertyHandler.getProperty("administratorEmail");
-		
 		final boolean isAdministrator = userName.equalsIgnoreCase(administratorUserName) ? true : false;
 		if(isAdministrator)
 		{
@@ -738,11 +724,8 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 			{
 				return null;
 			}
-			else
-			{
-				infoglueRole = (InfoGlueRole)infoglueRoleObject;
-				return infoglueRole;
-			}
+			infoglueRole = (InfoGlueRole)infoglueRoleObject;
+			return infoglueRole;
 		}
 
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueRole starting ---------\n\n\n");
@@ -875,11 +858,8 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 			{
 				return null;
 			}
-			else
-			{
-				infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
-				return infoglueGroup;
-			}
+			infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
+			return infoglueGroup;
 		}
 
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueGroup starting ---------\n\n\n");

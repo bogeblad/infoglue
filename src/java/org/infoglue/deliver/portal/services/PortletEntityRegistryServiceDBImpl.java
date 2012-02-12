@@ -223,9 +223,8 @@ public class PortletEntityRegistryServiceDBImpl extends PortletEntityRegistrySer
             DigitalAsset da = (DigitalAsset) das.get(0);
             LOG.debug("Registry located as id=" + da.getId());
             return da;
-        } else {
-            LOG.info("Portlet Registry not found");
         }
+        LOG.info("Portlet Registry not found");
         return null;
     }
 

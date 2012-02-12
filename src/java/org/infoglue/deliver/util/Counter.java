@@ -75,8 +75,7 @@ public class Counter
     {
     	if(totalElapsedTime != null && totalCount.intValue() != 0)
     		return totalElapsedTime.longValue() / totalCount.intValue();
-    	else
-    		return 0;
+		return 0;
     }
 
     static long getMaxElapsedTime()
@@ -261,8 +260,7 @@ public class Counter
         	Integer oldTotalNumberOfInvokations = (Integer)pageStatistics.get("totalNumberOfInvokations");
         	if(totalElapsedTime != null && totalElapsedTime != 0 && oldTotalNumberOfInvokations != null && oldTotalNumberOfInvokations != 0)
         		return totalElapsedTime.longValue() / oldTotalNumberOfInvokations.intValue();		
-        	else
-        		return -1;
+    		return -1;
 		}
     }
 

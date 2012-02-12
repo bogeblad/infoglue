@@ -495,8 +495,7 @@ class SqlBuilder
 			bindings.add(criterias.getMaximumNumberOfItems());
 			return result;
 		}
-		else 
-			return "";
+		return "";
 	}
 	 
 	/**
@@ -544,8 +543,7 @@ class SqlBuilder
 			}
 			return "(" + joinCollection(expressions, SPACE + OR + SPACE) + ")";
 		}
-		else
-			return "";
+		return "";
 	}
 
 	/**

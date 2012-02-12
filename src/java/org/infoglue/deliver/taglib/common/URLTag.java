@@ -341,8 +341,7 @@ public class URLTag extends TemplateControllerTag
 			}
 			if(getBaseURL().indexOf("?") > -1)
 			    return getBaseURL() + (sb.toString().length() > 0 ? "&" + sb.toString() : "");
-			else
-			    return getBaseURL() + (sb.toString().length() > 0 ? "?" + sb.toString() : "");
+		    return getBaseURL() + (sb.toString().length() > 0 ? "?" + sb.toString() : "");
 		}
 		return getBaseURL();
 	}

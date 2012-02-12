@@ -89,16 +89,14 @@ public class HttpHelper implements IOFetcher
 	{
 		if(includeRequest)
 			return postToUrl(urlAddress, requestToHashtable(request), "UTF-8");
-		else
-			return postToUrl(urlAddress, new Hashtable(), "UTF-8");
+		return postToUrl(urlAddress, new Hashtable(), "UTF-8");
 	}
 
 	public String postToUrl(String urlAddress, HttpServletRequest request, boolean includeRequest, String encoding) throws Exception
 	{
 		if(includeRequest)
 			return postToUrl(urlAddress, requestToHashtable(request), encoding);
-		else
-			return postToUrl(urlAddress, new Hashtable(), encoding);
+		return postToUrl(urlAddress, new Hashtable(), encoding);
 	}
 
     /**
@@ -201,16 +199,14 @@ public class HttpHelper implements IOFetcher
 	{
 		if(includeRequest)
 			return getUrlContent(urlAddress, requestToHashtable(request));
-		else
-			return getUrlContent(urlAddress);
+		return getUrlContent(urlAddress);
 	}
 
 	public String getUrlContent(String urlAddress, HttpServletRequest request, boolean includeRequest, String encoding) throws Exception
 	{
 		if(includeRequest)
 			return getUrlContent(urlAddress, requestToHashtable(request), encoding);
-		else
-			return getUrlContent(urlAddress, encoding);
+		return getUrlContent(urlAddress, encoding);
 	}
 
 	public String getUrlContent(String urlAddress, Hashtable inHash) throws Exception

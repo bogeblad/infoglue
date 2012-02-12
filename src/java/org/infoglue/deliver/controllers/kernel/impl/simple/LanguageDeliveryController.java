@@ -600,8 +600,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 		{
 			if(languageVOCandidate instanceof NullObject)
 				return null;
-			else
-				return (LanguageVO)languageVOCandidate;
+			return (LanguageVO)languageVOCandidate;
 		}
 		
 	    int index = Integer.MAX_VALUE;
@@ -724,8 +723,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 		{
 			if(languageVOCandidate instanceof NullObject)
 				return null;
-			else
-				return (LanguageVO)languageVOCandidate;
+			return (LanguageVO)languageVOCandidate;
 		}
 		
 		NodeDeliveryController ndc = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, new Integer(-1));

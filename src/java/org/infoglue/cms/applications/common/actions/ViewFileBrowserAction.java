@@ -126,8 +126,7 @@ public class ViewFileBrowserAction extends InfoGlueAbstractAction
 			
 			        return NONE;
 				}
-				else
-					logger.error("File not found...:" + path);
+				logger.error("File not found...:" + path);
 			}
 		}
 		catch (Exception e) 

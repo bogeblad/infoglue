@@ -137,14 +137,9 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		{
 			if(!(newTargetResource instanceof ContentVersionResource))
 				throw new Exception("Could not move to an entity not based on a content version");
-			else
-			{
-				ContentVersionResource newTargetContentVersionResource = (ContentVersionResource)newTargetResource;
-				if(!newTargetContentVersionResource.getUniqueId().equals(this.cv.getId().toString()))
-					throw new Exception("We do not support moving assets between content versions yet...");
-			}
-				
-				
+			ContentVersionResource newTargetContentVersionResource = (ContentVersionResource)newTargetResource;
+			if(!newTargetContentVersionResource.getUniqueId().equals(this.cv.getId().toString()))
+				throw new Exception("We do not support moving assets between content versions yet...");
 			digitalAsset.setAssetFileName(newName);
 			if(newName.lastIndexOf(".") > -1)
 				digitalAsset.setAssetKey(newName.substring(0,newName.lastIndexOf(".")));

@@ -283,8 +283,7 @@ public class ComponentController extends BaseController
 			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
 			if(ctdVO != null && ctdVO.getName().equalsIgnoreCase("PagePartTemplate"))
 				return true;
-			else 
-				return false;			
+			return false;			
 		}
 		catch (Exception e) 
 		{

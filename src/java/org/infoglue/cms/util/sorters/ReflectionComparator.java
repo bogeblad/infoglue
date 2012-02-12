@@ -37,8 +37,7 @@ public class ReflectionComparator implements Comparator
 		Comparable valueTwo = getProperty(o2, sortProperty);
 		if(valueOne instanceof String && valueTwo instanceof String)
 			return collation.compare(valueOne, valueTwo);
-		else
-			return valueOne.compareTo(valueTwo);
+		return valueOne.compareTo(valueTwo);
 	}
 
 	private Comparable getProperty(Object o, String property)
@@ -48,8 +47,7 @@ public class ReflectionComparator implements Comparator
 			Object propertyObject = PropertyUtils.getProperty(o, sortProperty);
 			if(propertyObject instanceof String)
 				return (Comparable)propertyObject.toString().toLowerCase();
-			else
-				return (Comparable)propertyObject;
+			return (Comparable)propertyObject;
 		}
 		catch (Exception e)
 		{

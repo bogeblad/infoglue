@@ -155,16 +155,14 @@ public class ToolbarButton
 	{
 		if(inlineDivPrefferredWidth == null)
 			return 900;
-		else
-			return inlineDivPrefferredWidth;
+		return inlineDivPrefferredWidth;
 	}
 
 	public Integer getInlineDivPrefferredHeight() 
 	{
 		if(inlineDivPrefferredHeight == null)
 			return 700;
-		else
-			return inlineDivPrefferredHeight;
+		return inlineDivPrefferredHeight;
 	}
 
 

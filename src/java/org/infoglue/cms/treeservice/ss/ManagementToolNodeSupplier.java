@@ -65,8 +65,7 @@ public class ManagementToolNodeSupplier extends BaseNodeSupplier
 	{
 		if (showLeafs)
 			return false;
-		else
-			return true;
+		return true;
 	}
 
 	

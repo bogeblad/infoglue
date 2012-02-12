@@ -887,29 +887,26 @@ public class ContentDeliveryController extends BaseDeliveryController
 			//logger.info("Cached");
 			return hasUserContentAccess.booleanValue();
 		}
-		else
+		hasUserContentAccess = true;
+		//logger.info("----- not Cached");
+		try 
 		{
-			hasUserContentAccess = true;
-			//logger.info("----- not Cached");
-			try 
-			{
-			    if(contentId != null)
-			    {
-					Integer protectedContentId = ContentDeliveryController.getContentDeliveryController().getProtectedContentId(db, contentId);
-					logger.info("IsProtected:" + protectedContentId);
-					if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "Content.Read", protectedContentId.toString()))
-					{
-					    hasUserContentAccess = false;
-					}
-			    }
-			} 
-			catch(Exception e)
-			{
-				logger.warn("An error occurred trying to get determine if user was allowed read access to:" + contentId + ":" + e.getMessage());
-			}
-
-			CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(hasUserContentAccess));
+		    if(contentId != null)
+		    {
+				Integer protectedContentId = ContentDeliveryController.getContentDeliveryController().getProtectedContentId(db, contentId);
+				logger.info("IsProtected:" + protectedContentId);
+				if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "Content.Read", protectedContentId.toString()))
+				{
+				    hasUserContentAccess = false;
+				}
+		    }
+		} 
+		catch(Exception e)
+		{
+			logger.warn("An error occurred trying to get determine if user was allowed read access to:" + contentId + ":" + e.getMessage());
 		}
+
+		CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(hasUserContentAccess));
 		
 		return hasUserContentAccess;
 	}

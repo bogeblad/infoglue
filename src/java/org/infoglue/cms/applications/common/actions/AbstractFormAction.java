@@ -38,7 +38,7 @@ import webwork.action.CommandDriven;
  *
  * @author <a href="mailto:meat_for_the_butcher@yahoo.com">Patrik Nyborg</a>
  */
-public abstract class AbstractFormAction extends AbstractAction implements CommandDriven 
+public abstract class AbstractFormAction extends AbstractAction 
 {
     private final static Logger logger = Logger.getLogger(AbstractFormAction.class.getName());
 

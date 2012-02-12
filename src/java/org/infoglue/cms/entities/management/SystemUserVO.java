@@ -37,7 +37,7 @@ import org.infoglue.cms.util.validators.Range;
 import org.infoglue.cms.util.validators.StringValidator;
 
 
-public class SystemUserVO extends ValidatableEntityVO implements BaseEntityVO
+public class SystemUserVO extends ValidatableEntityVO
 {
 
 	private long timeStamp = 0;

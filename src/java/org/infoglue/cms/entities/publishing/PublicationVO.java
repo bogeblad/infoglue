@@ -37,7 +37,7 @@ import org.infoglue.cms.util.validators.Range;
  * This class represents a published edition. The individual entries in the edition
  * are contained in the publicationDetails List.
  */
-public class PublicationVO extends ValidatableEntityVO implements BaseEntityVO
+public class PublicationVO extends ValidatableEntityVO
 {
     private Integer publicationId;
     private Integer repositoryId;

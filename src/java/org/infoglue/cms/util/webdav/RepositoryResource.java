@@ -32,7 +32,7 @@ import com.bradmcevoy.http.exceptions.BadRequestException;
 import com.bradmcevoy.http.exceptions.ConflictException;
 import com.bradmcevoy.http.exceptions.NotAuthorizedException;
 
-public class RepositoryResource implements PropFindableResource, FolderResource
+public class RepositoryResource implements FolderResource
 {
 	private final static Logger logger = Logger.getLogger(RepositoryResource.class.getName());
 

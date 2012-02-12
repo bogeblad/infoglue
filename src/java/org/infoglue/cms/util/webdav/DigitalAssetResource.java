@@ -25,7 +25,7 @@ import com.bradmcevoy.http.exceptions.BadRequestException;
 import com.bradmcevoy.http.exceptions.ConflictException;
 import com.bradmcevoy.http.exceptions.NotAuthorizedException;
 
-public class DigitalAssetResource implements PropFindableResource, FileResource
+public class DigitalAssetResource implements FileResource
 {
 	private final static Logger logger = Logger.getLogger(DigitalAssetResource.class.getName());
 

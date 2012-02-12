@@ -35,7 +35,7 @@ import com.bradmcevoy.http.exceptions.BadRequestException;
 import com.bradmcevoy.http.exceptions.ConflictException;
 import com.bradmcevoy.http.exceptions.NotAuthorizedException;
 
-public class ContentResource implements PropFindableResource, FolderResource
+public class ContentResource implements FolderResource
 {
 	private final static Logger logger = Logger.getLogger(ContentResource.class.getName());
 

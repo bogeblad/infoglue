@@ -423,22 +423,10 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    				isMetaInfoInWorkingState = true;
 	    			}
 	    				    			
-	    			//if(isMetaInfoInWorkingState)
-	    			if(true)
-	    		    {
-	    			    String url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + getSiteNodeId() + "&languageId=" + masterLanguageVO.getId() + "&contentId=-1&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName());
-	    			    url = this.getResponse().encodeURL(url);
-	    				this.getResponse().sendRedirect(url);
-	    				result = NONE;
-	    			}
-	    			else
-	    				result = "success";
-		            
-	    			//if(this.repositoryId == null)
-		            //    this.repositoryId = contentVO.getRepositoryId();
-		            
-		            //this.languageId = getMasterLanguageVO().getId();
-		            //return "viewVersion";
+    			    String url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + getSiteNodeId() + "&languageId=" + masterLanguageVO.getId() + "&contentId=-1&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName());
+    			    url = this.getResponse().encodeURL(url);
+    				this.getResponse().sendRedirect(url);
+    				result = NONE;
 		        }
 		        else
 		        {
@@ -543,22 +531,10 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    				isMetaInfoInWorkingState = true;
 	    			}
 	    				    			
-	    			//if(isMetaInfoInWorkingState)
-	    			if(true)
-	    		    {
-	    			    String url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + getSiteNodeId() + "&languageId=" + masterLanguageVO.getId() + "&contentId=-1&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName());
-	    			    url = this.getResponse().encodeURL(url);
-	    				this.getResponse().sendRedirect(url);
-	    				result = NONE;
-	    			}
-	    			else
-	    				result = "successV3";
-		            
-	    			//if(this.repositoryId == null)
-		            //    this.repositoryId = contentVO.getRepositoryId();
-		            
-		            //this.languageId = getMasterLanguageVO().getId();
-		            //return "viewVersion";
+    			    String url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + getSiteNodeId() + "&languageId=" + masterLanguageVO.getId() + "&contentId=-1&cmsUserName=" + formatter.encodeURI(this.getInfoGluePrincipal().getName());
+    			    url = this.getResponse().encodeURL(url);
+    				this.getResponse().sendRedirect(url);
+    				result = NONE;
 		        }
 		        else
 		        {

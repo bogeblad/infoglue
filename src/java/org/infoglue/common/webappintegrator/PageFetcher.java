@@ -74,11 +74,6 @@ public class PageFetcher
 	        HostConfiguration config = client.getHostConfiguration();
 	        config.setProxy(proxyHost, (proxyPort == null ? 80 : proxyPort));
         }
-        
-        if (creds != null) 
-        {
-            client.getState().setCredentials(AuthScope.ANY, creds);
-        }
 
         logger.info("URL TO CALL with "  + httpMethod + ":" + url);
         HttpMethod method = null;

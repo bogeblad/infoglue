@@ -958,15 +958,10 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				}
 				else if(siblings.size() == this.newPosition)
 				{
-					if(previousNode != component)
-					{
-						logger.info("parentNode:" + ((Element)parentNode).getAttribute("id") + ":" + ((Element)parentNode).getAttribute("name"));	
-						parentNode.removeChild(component);
-					    parentNode.appendChild(component);
-					    hasChanged = true;
-					}
-					else
-						logger.info("Cannot move to same place...");
+					logger.info("parentNode:" + ((Element)parentNode).getAttribute("id") + ":" + ((Element)parentNode).getAttribute("name"));	
+					parentNode.removeChild(component);
+				    parentNode.appendChild(component);
+				    hasChanged = true;
 				}
 				
 			}

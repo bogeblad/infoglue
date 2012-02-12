@@ -268,7 +268,6 @@ public class MyConnection extends AbstractConnection {
                                                   localizedMsg);
             }
 
-            if (response == null) response = ""; // NOI18N
             String locMessage = getLocalMessage("AuthenticationException.AuthenticationFailed", //NOI18N
                                                 new Object[]{ response });
             throw new AuthenticationException("AuthenticationFailed", //NOI18N
@@ -472,9 +471,6 @@ public class MyConnection extends AbstractConnection {
 
     private String getLocalMessage(String key, Object[] arguments) {
         String locMessage = "An error occured: " + key;
-        if (locMessage == null) {
-            return null;
-        }
         locMessage = MessageFormat.format(locMessage, arguments);
         return locMessage;
     }

@@ -93,10 +93,6 @@ public class ContentPublisher extends ContentFunction
 						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(getContentVO().getId(), languageVO.getId(), getDatabase());
 						if(contentVersionVO != null && contentVersionVO.getStateId().intValue() == ContentVersionVO.WORKING_STATE.intValue())
 						{
-							if(languageVO == null && propertySetContains(LanguageProvider.LANGUAGE_PROPERTYSET_KEY))
-							{
-								removeFromPropertySet(LanguageProvider.LANGUAGE_PROPERTYSET_KEY);
-							}
 							if(languageVO != null) 
 							{
 								setParameter(LanguageProvider.LANGUAGE_PARAMETER, languageVO);

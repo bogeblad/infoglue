@@ -2975,16 +2975,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			if(groups == null)
 				groups = new String[]{"selectiveCacheUpdateNonApplicable"};
 			
-			if(components != null)
-			{
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, components, groups, false);				
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, childComponents, groups, false);				
-			}
-			else
-			{
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, new NullObject(), groups, false);
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, new NullObject(), groups, false);
-			}
+			CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, components, groups, false);				
+			CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, childComponents, groups, false);				
 		}		
 		
 		//logger.info("sortedPageComponents:" + sortedPageComponents.size());

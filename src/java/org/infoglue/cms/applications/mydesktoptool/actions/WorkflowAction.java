@@ -118,12 +118,12 @@ public class WorkflowAction extends InfoGlueAbstractAction
 			e.printStackTrace();
 		}
 
-		logger.info("existingWorkflow:" + existingWorkflow.getName());
-		if(existingWorkflow != null)
+		if(existingWorkflow != null){
+			logger.info("existingWorkflow:" + existingWorkflow.getName());
 			workflow = controller.initializeWorkflow(getInfoGluePrincipal(), existingWorkflow.getName(), actionId, WorkflowController.createWorkflowParameters(ActionContext.getRequest()));
-		else
+		} else {
 			logger.error("No workflow with name:" + workflowName);
-		
+		}
 		this.workflowId = workflow.getWorkflowId();
 		
 		return redirectToView();

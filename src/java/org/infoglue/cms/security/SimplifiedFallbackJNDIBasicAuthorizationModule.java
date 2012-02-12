@@ -686,8 +686,6 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 			
 			Attributes attributes = ctx.getAttributes(roleName);
 			logger.info("attributes:" + attributes.toString());
-			if(attributes == null)
-				logger.info("Could not find " + roleName);
 				
 			String name = null;
 			Attribute nameAttribute = attributes.get(roleNameAttribute);
@@ -957,8 +955,6 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 			
 			Attributes attributes = ctx.getAttributes(userName);
 			logger.info("attributes:" + attributes.toString());
-			if(attributes == null)
-				throw new SystemException("No user attributes found for user:" + userName);
 				
 			Attribute userNameAttribute 		= attributes.get(userNameAttributeFilter);
 			Attribute userDisplayNameAttribute 	= attributes.get(userDisplayNameFilter);

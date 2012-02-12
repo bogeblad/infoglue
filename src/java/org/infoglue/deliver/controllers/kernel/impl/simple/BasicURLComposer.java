@@ -637,15 +637,8 @@ public class BasicURLComposer extends URLComposer
         {           
             if(!useDNSNameInUrls.equalsIgnoreCase("false"))
             {
-	    		if(siteNodeId == null)
-	    			siteNodeId = new Integer(-1);
-	
 	    		if(languageId == null)
 	    			languageId = new Integer(-1);
-	
-	    		if(contentId == null)
-	    			contentId = new Integer(-1);
-	
 	            String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
 
 	            SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, db, true);
@@ -715,16 +708,8 @@ public class BasicURLComposer extends URLComposer
     	        }
                 
                 String servletContext = CmsPropertyHandler.getServletContext();
-    	        
-                if(siteNodeId == null)
-	    			siteNodeId = new Integer(-1);
-	
 	    		if(languageId == null)
 	    			languageId = new Integer(-1);
-	
-	    		if(contentId == null)
-	    			contentId = new Integer(-1);
-	
 	            String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
 	            
 				if(deliveryContext.getHttpServletRequest().getRequestURI().indexOf("!renderDecoratedPage") > -1)
@@ -798,14 +783,8 @@ public class BasicURLComposer extends URLComposer
         }
         else
         {           
-        	if(siteNodeId == null)
-    			siteNodeId = new Integer(-1);
-
     		if(languageId == null)
     			languageId = new Integer(-1);
-
-    		if(contentId == null)
-    			contentId = new Integer(-1);
 
             String arguments = "siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId;
 

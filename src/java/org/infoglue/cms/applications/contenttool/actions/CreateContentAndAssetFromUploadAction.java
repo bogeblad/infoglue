@@ -165,50 +165,43 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 			
 	    	try 
 	    	{
-	    		if(mpr != null)
-	    		{ 
-		    		Enumeration names = mpr.getFileNames();
-		         	while (names.hasMoreElements()) 
-		         	{
-		            	String name 		  = (String)names.nextElement();
-						String contentType    = mpr.getContentType(name);
-						String fileSystemName = mpr.getFilesystemName(name);
+	    		Enumeration names = mpr.getFileNames();
+	         	while (names.hasMoreElements()) 
+	         	{
+	            	String name 		  = (String)names.nextElement();
+					String contentType    = mpr.getContentType(name);
+					String fileSystemName = mpr.getFilesystemName(name);
+					
+					logger.info("contentType:" + contentType);
+					logger.info("fileSystemName:" + fileSystemName);
+					if(fileSystemName.endsWith(".zip"))
+					{
+						file = mpr.getFile(name);
 						
-						logger.info("contentType:" + contentType);
-						logger.info("fileSystemName:" + fileSystemName);
-						if(fileSystemName.endsWith(".zip"))
+						String folder = CmsPropertyHandler.getDigitalAssetUploadPath() + File.separator + "zip" + System.currentTimeMillis();
+						List<File> unzippedFiles = FileHelper.unzipFile(file, folder);
+						for(File unzippedFile : unzippedFiles)
 						{
-							file = mpr.getFile(name);
-							
-							String folder = CmsPropertyHandler.getDigitalAssetUploadPath() + File.separator + "zip" + System.currentTimeMillis();
-							List<File> unzippedFiles = FileHelper.unzipFile(file, folder);
-							for(File unzippedFile : unzippedFiles)
-							{
-								handleFile(null, name, null, unzippedFile.getName(), unzippedFile);
-							}
+							handleFile(null, name, null, unzippedFile.getName(), unzippedFile);
 						}
-						else
-						{
-							String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
-							if(fromEncoding == null)
-								fromEncoding = "iso-8859-1";
-							
-							String toEncoding = CmsPropertyHandler.getUploadToEncoding();
-							if(toEncoding == null)
-								toEncoding = "utf-8";
-							
-			            	digitalAssetKey = new String(digitalAssetKey.getBytes(fromEncoding), toEncoding);
-			            	
-			            	file = mpr.getFile(name);
-			        		
-			            	return handleFile(digitalAssetKey, name, contentType, fileSystemName, file);
-						}
-		         	}
-	    		}
-	    		else
-	    		{
-	    		    logger.error("File upload failed for some reason.");
-	    		}
+					}
+					else
+					{
+						String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
+						if(fromEncoding == null)
+							fromEncoding = "iso-8859-1";
+						
+						String toEncoding = CmsPropertyHandler.getUploadToEncoding();
+						if(toEncoding == null)
+							toEncoding = "utf-8";
+						
+		            	digitalAssetKey = new String(digitalAssetKey.getBytes(fromEncoding), toEncoding);
+		            	
+		            	file = mpr.getFile(name);
+		        		
+		            	return handleFile(digitalAssetKey, name, contentType, fileSystemName, file);
+					}
+	         	}
 	      	} 
 	      	catch (Throwable e) 
 	      	{

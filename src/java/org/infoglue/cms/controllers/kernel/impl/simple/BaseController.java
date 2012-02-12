@@ -618,7 +618,7 @@ public abstract class BaseController
 				Iterator iterator = baseEntities.iterator();
 				while (iterator.hasNext()) 
 		        {
-					o = (Object)iterator.next();
+					o = iterator.next();
 					// Om metoden getValueObject saknas, kastas ett undantag.            	
 	                resultVOList.add(o.getClass().getDeclaredMethod("getValueObject", new Class[0]).invoke(o, new Object[0]));
 		        }
@@ -652,7 +652,7 @@ public abstract class BaseController
 				Iterator iterator = baseEntities.iterator();
 				while (iterator.hasNext()) 
 		        {
-					o = (Object)iterator.next();
+					o = iterator.next();
 					// Om metoden getValueObject saknas, kastas ett undantag.            	
 	                resultVOList.add(o.getClass().getDeclaredMethod("getValueObject", new Class[0]).invoke(o, new Object[0]));
 		        }

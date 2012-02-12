@@ -67,7 +67,7 @@ public class SiteNodeComparator implements Comparator
 		{
 			Object propertyObject = PropertyUtils.getProperty(o, sortProperty);
 			if(propertyObject instanceof String)
-				return (Comparable)propertyObject.toString().toLowerCase();
+				return propertyObject.toString().toLowerCase();
 			return (Comparable)propertyObject;
 		}
 		catch (Exception e)

@@ -142,7 +142,7 @@ public class FormEntryImpl implements FormEntry
 
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	public void setVO(BaseEntityVO valueObject) 

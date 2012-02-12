@@ -408,13 +408,13 @@ public class AvailableServiceBindingController extends BaseController
     
     public AvailableServiceBindingVO update(AvailableServiceBindingVO availableServiceBindingVO, String[] values) throws ConstraintException, SystemException
     {
-    	return (AvailableServiceBindingVO) updateEntity(AvailableServiceBindingImpl.class, (BaseEntityVO)availableServiceBindingVO, "setServiceDefinitions", ServiceDefinitionImpl.class, values );
+    	return (AvailableServiceBindingVO) updateEntity(AvailableServiceBindingImpl.class, availableServiceBindingVO, "setServiceDefinitions", ServiceDefinitionImpl.class, values );
     }        	
 
     public AvailableServiceBinding update(Integer availableServiceBindingId, String[] values, Database db) throws ConstraintException, SystemException
     {
         AvailableServiceBinding availableServiceBinding = getAvailableServiceBindingWithId(availableServiceBindingId, db);
-    	return (AvailableServiceBinding) updateEntity(AvailableServiceBindingImpl.class, (BaseEntityVO)availableServiceBinding.getVO(), "setServiceDefinitions", ServiceDefinitionImpl.class, values );
+    	return (AvailableServiceBinding) updateEntity(AvailableServiceBindingImpl.class, availableServiceBinding.getVO(), "setServiceDefinitions", ServiceDefinitionImpl.class, values );
     }        	
 
 	/**

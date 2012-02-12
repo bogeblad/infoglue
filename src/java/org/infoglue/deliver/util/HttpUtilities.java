@@ -417,7 +417,7 @@ public class HttpUtilities
 			for (Enumeration e = request.getParameterNames(); e.hasMoreElements() ;) 
 		    {		        
 		        String name  = (String)e.nextElement();
-		        String value = (String)request.getParameter(name);
+		        String value = request.getParameter(name);
 	            parameters.put(name, value);
 		    }        
 		}

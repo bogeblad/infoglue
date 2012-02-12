@@ -321,7 +321,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	
 	private boolean isCommand() 
   	{
-    	return this.commandName != null && commandName.trim().length() > 0 && (this instanceof CommandDriven);
+    	return this.commandName != null && commandName.trim().length() > 0;
   	}
 
   	/**

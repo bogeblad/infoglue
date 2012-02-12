@@ -161,7 +161,7 @@ public class InfoGlueSettingsController extends BaseController implements Castor
 
 	public InfoGlueProperty getProperty(Integer id, Database database) throws Exception
     {
-		InfoGlueProperty property = (InfoGlueProperty)database.load(InfoGlueProperty.class, id);
+		InfoGlueProperty property = database.load(InfoGlueProperty.class, id);
 		
 		return property;
     }

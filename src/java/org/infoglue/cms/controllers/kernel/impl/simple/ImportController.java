@@ -761,17 +761,17 @@ public class ImportController extends BaseController
 				    logger.info("Notifying:" + siteNodeTypeDefinition.getName() + " about the new availableServiceBinding " + availableServiceBinding.getName());
 				    if(siteNodeTypeDefinition != null)
 				    {
-					    siteNodeTypeDefinition.getAvailableServiceBindings().add((AvailableServiceBindingImpl)availableServiceBinding);
-					    serviceDefinition.getAvailableServiceBindings().add((AvailableServiceBindingImpl)availableServiceBinding);
-					    availableServiceBinding.getSiteNodeTypeDefinitions().add((SiteNodeTypeDefinitionImpl)siteNodeTypeDefinition);
-					    availableServiceBinding.getServiceDefinitions().add((ServiceDefinitionImpl)serviceDefinition);
+					    siteNodeTypeDefinition.getAvailableServiceBindings().add(availableServiceBinding);
+					    serviceDefinition.getAvailableServiceBindings().add(availableServiceBinding);
+					    availableServiceBinding.getSiteNodeTypeDefinitions().add(siteNodeTypeDefinition);
+					    availableServiceBinding.getServiceDefinitions().add(serviceDefinition);
 				    }
 				}
 				else
 				{
 					if(siteNodeTypeDefinition != null && !siteNodeTypeDefinition.getAvailableServiceBindings().contains(availableServiceBinding))
 					{
-						siteNodeTypeDefinition.getAvailableServiceBindings().add((AvailableServiceBindingImpl)availableServiceBinding);
+						siteNodeTypeDefinition.getAvailableServiceBindings().add(availableServiceBinding);
 						availableServiceBinding.getSiteNodeTypeDefinitions().add(siteNodeTypeDefinition);
 					}
 				}

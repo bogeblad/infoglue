@@ -64,7 +64,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory
     		sslcontext.init( null, // No KeyManager required
             new TrustManager[] { new DummyTrustManager()},
             new java.security.SecureRandom());
-    		factory = ( SSLSocketFactory) sslcontext.getSocketFactory();
+    		factory = sslcontext.getSocketFactory();
 
     	} 
     	catch( Exception ex) 

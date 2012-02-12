@@ -1549,7 +1549,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 						while(headersEnumeration.hasMoreElements())
 						{
 							String headerName  = (String)headersEnumeration.nextElement();
-							String headerValue = (String)context.getHttpServletRequest().getHeader(headerName);
+							String headerValue = context.getHttpServletRequest().getHeader(headerName);
 							logger.info(headerName + "=" + headerValue);
 							headers.put(headerName, headerValue);
 						}

@@ -42,7 +42,7 @@ public class SiteNodeVersionImpl implements SiteNodeVersion
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

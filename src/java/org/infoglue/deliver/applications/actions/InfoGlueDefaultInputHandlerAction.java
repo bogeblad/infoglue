@@ -131,7 +131,7 @@ public class InfoGlueDefaultInputHandlerAction extends InfoGlueAbstractAction
 	    for (Enumeration e = req.getParameterNames(); e.hasMoreElements() ;) 
 	    {		        
 			String name  = (String)e.nextElement();
-	        String value = (String)req.getParameter(name);
+	        String value = req.getParameter(name);
 	        parameters.put(name, value);
 	    }
         

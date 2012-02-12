@@ -208,12 +208,12 @@ public class GroupController extends BaseController
 
     public GroupVO update(GroupVO groupVO) throws ConstraintException, SystemException
     {
-    	return (GroupVO) updateEntity(GroupImpl.class, (BaseEntityVO) groupVO);
+    	return (GroupVO) updateEntity(GroupImpl.class, groupVO);
     }        
 
     public GroupVO update(GroupVO groupVO, Database db) throws ConstraintException, SystemException
     {
-    	return (GroupVO) updateEntity(GroupImpl.class, (BaseEntityVO) groupVO, db);
+    	return (GroupVO) updateEntity(GroupImpl.class, groupVO, db);
     }        
 
 

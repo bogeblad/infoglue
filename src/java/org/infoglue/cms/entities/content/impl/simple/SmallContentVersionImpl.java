@@ -36,7 +36,7 @@ public class SmallContentVersionImpl extends ContentVersionImpl
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

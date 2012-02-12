@@ -204,7 +204,7 @@ public class PathParser
                         name = name.substring(prefix.length());
                     }
                     log.debug("Adding " + name + "=" + buffer);
-                    map.put(name, (String[]) buffer.toArray(new String[buffer.size()]));
+                    map.put(name, buffer.toArray(new String[buffer.size()]));
                 }
                 name = nextName;
             } else {

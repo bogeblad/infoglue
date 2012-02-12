@@ -136,8 +136,8 @@ public class RolePropertiesController extends BaseController
 		ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
 
 		RoleProperties roleProperties = new RolePropertiesImpl();
-		roleProperties.setLanguage((LanguageImpl)language);
-		roleProperties.setContentTypeDefinition((ContentTypeDefinition)contentTypeDefinition);
+		roleProperties.setLanguage(language);
+		roleProperties.setContentTypeDefinition(contentTypeDefinition);
 	
 		roleProperties.setValueObject(rolePropertiesVO);
 		db.create(roleProperties); 
@@ -159,7 +159,7 @@ public class RolePropertiesController extends BaseController
 			realRolePropertiesVO = create(languageId, contentTypeDefinitionId, rolePropertiesVO);
 		}
 
-		return (RolePropertiesVO) updateEntity(RolePropertiesImpl.class, (BaseEntityVO) realRolePropertiesVO);
+		return (RolePropertiesVO) updateEntity(RolePropertiesImpl.class, realRolePropertiesVO);
 	}        
 
 	public RolePropertiesVO update(RolePropertiesVO rolePropertiesVO, String[] extranetUsers) throws ConstraintException, SystemException

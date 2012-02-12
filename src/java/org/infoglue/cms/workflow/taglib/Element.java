@@ -130,7 +130,7 @@ class Element
 	{
 		if(condition && value != null)
 		{
-			Object o = (Object)attributes.get(name);
+			Object o = attributes.get(name);
 			if(o != null && o instanceof String)
 				value = o + " " + value;
 			

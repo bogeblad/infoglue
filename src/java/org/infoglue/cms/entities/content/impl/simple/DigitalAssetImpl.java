@@ -51,7 +51,7 @@ public class DigitalAssetImpl implements DigitalAsset
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

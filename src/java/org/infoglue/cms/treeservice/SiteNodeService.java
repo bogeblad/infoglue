@@ -104,7 +104,7 @@ public class SiteNodeService extends JServiceBuilder
 	    
 		try
         {  
-         	List arguments = (List)envelope.getNodes();
+         	List arguments = envelope.getNodes();
         	Integer repositoryId = ((Node)arguments.get(0)).getId();
 			logger.info("repositoryId:" + repositoryId);
             ViewSiteNodeTreeUCC viewSiteNodeTreeUCC = ViewSiteNodeTreeUCCFactory.newViewSiteNodeTreeUCC();
@@ -136,7 +136,7 @@ public class SiteNodeService extends JServiceBuilder
 	    
 		try
         {  
-        	List arguments = (List)envelope.getNodes();
+        	List arguments = envelope.getNodes();
         	Integer siteNodeId = ((Node)arguments.get(0)).getId();
 			logger.info("siteNodeId:" + siteNodeId);
             ViewSiteNodeTreeUCC viewSiteNodeTreeUCC = ViewSiteNodeTreeUCCFactory.newViewSiteNodeTreeUCC();
@@ -169,7 +169,7 @@ public class SiteNodeService extends JServiceBuilder
 	    
 		try
         {  
-            List arguments = (List)envelope.getNodes();
+            List arguments = envelope.getNodes();
         	Integer siteNodeId = ((Node)arguments.get(0)).getId();
 			logger.info("siteNodeId:" + siteNodeId);
             

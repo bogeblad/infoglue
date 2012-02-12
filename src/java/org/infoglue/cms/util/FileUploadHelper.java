@@ -115,9 +115,9 @@ public class FileUploadHelper
 	        
 	        DiskFileItemFactory factory = new DiskFileItemFactory(1000, tempDir);
 	        ServletFileUpload upload = new ServletFileUpload(factory);
-	        if(ServletFileUpload.isMultipartContent((HttpServletRequest)req))
+	        if(ServletFileUpload.isMultipartContent(req))
 	        {
-	            List fileItems = upload.parseRequest((HttpServletRequest)req);
+	            List fileItems = upload.parseRequest(req);
 	            logger.info("******************************");
 	            logger.info("fileItems:" + fileItems.size());
 	            logger.info("******************************");

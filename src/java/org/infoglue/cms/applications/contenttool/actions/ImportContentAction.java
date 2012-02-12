@@ -159,7 +159,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 			{
 				Content readContent = (Content)readContentsIterator.next();
 				
-				readContent.setRepository((RepositoryImpl)parentContent.getRepository());
+				readContent.setRepository(parentContent.getRepository());
 				readContent.setParentContent((ContentImpl)parentContent);
 				
 				createContents(readContent, contentIdMap, contentTypeIdMap, allContents, Collections.unmodifiableCollection(contentTypeDefinitions), categoryIdMap, version, db);

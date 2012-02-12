@@ -41,7 +41,7 @@ public class FOPCmsLogger implements Logger
 	}
 
 	public void debug(String arg0, Throwable arg1) {
-		logger.info(arg0, (Exception) arg1);
+		logger.info(arg0, arg1);
 	}
 
 	public boolean isDebugEnabled() {
@@ -54,7 +54,7 @@ public class FOPCmsLogger implements Logger
 	}
 
 	public void info(String arg0, Throwable arg1) {
-		logger.info(arg0, (Exception) arg1);
+		logger.info(arg0, arg1);
 	}
 
 	public boolean isInfoEnabled() {
@@ -67,7 +67,7 @@ public class FOPCmsLogger implements Logger
 	}
 
 	public void warn(String arg0, Throwable arg1) {
-		logger.warn(arg0, (Exception) arg1);
+		logger.warn(arg0, arg1);
 		
 	}
 
@@ -82,7 +82,7 @@ public class FOPCmsLogger implements Logger
 	}
 
 	public void error(String arg0, Throwable arg1) {
-		logger.error(arg0, (Exception) arg1);
+		logger.error(arg0, arg1);
 		
 	}
 
@@ -97,7 +97,7 @@ public class FOPCmsLogger implements Logger
 	}
 
 	public void fatalError(String arg0, Throwable arg1) {
-		logger.error(arg0, (Exception) arg1);
+		logger.error(arg0, arg1);
 	}
 
 	public boolean isFatalErrorEnabled() {

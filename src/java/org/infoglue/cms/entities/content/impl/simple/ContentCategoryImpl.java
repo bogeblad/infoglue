@@ -50,7 +50,7 @@ public class ContentCategoryImpl implements ContentCategory
 	}
 
 
-	public BaseEntityVO getVO()			{ return (BaseEntityVO) getValueObject(); }
+	public BaseEntityVO getVO()			{ return getValueObject(); }
 	public void setVO(BaseEntityVO vo)	{ setValueObject((ContentCategoryVO) vo); }
 
 	public Integer getId()			{ return getContentCategoryId(); }

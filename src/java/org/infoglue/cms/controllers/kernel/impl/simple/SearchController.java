@@ -891,13 +891,13 @@ public class SearchController extends BaseController
 			}
 			
 			String[] fields = new String[fieldNames.size()];
-			fields = (String[])fieldNames.toArray(fields);
+			fields = fieldNames.toArray(fields);
 			
 			String[] queries = new String[fieldNames.size()];
-			queries = (String[])queryStrings.toArray(queries);
+			queries = queryStrings.toArray(queries);
 			
 			BooleanClause.Occur[] flags = new BooleanClause.Occur[fieldNames.size()];
-			flags = (BooleanClause.Occur[])booleanList.toArray(flags);
+			flags = booleanList.toArray(flags);
 			
 		    IndexReader reader = IndexReader.open(index);
 	

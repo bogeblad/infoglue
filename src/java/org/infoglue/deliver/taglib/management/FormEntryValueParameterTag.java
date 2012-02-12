@@ -87,7 +87,7 @@ public class FormEntryValueParameterTag extends AbstractTag
 			throw new JspTagException("FormEntryValueParameterTag must have a FormEntryParameterTag ancestor.");
 		}
 
-		((FormEntryParameterTag) parent).addFormEntryValue(name, value);
+		parent.addFormEntryValue(name, value);
 	}
 	
 	/**

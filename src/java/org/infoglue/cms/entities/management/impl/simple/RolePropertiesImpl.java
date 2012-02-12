@@ -65,7 +65,7 @@ public class RolePropertiesImpl implements RoleProperties
 
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	public void setVO(BaseEntityVO valueObject) 

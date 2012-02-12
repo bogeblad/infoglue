@@ -182,7 +182,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 				
 				for(int i=0; i<replacements.length(); i++)
 				{
-					int c = (int)replacements.charAt(i);
+					int c = replacements.charAt(i);
 					if(c > 255 && c < 65533)
 						hasUnicodeChars = true;
 				}

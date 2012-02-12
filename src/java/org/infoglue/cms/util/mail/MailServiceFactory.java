@@ -103,8 +103,8 @@ public class MailServiceFactory
 	  	
 	  	if (needsAuthentication) 
 	  	{
-			final String uName = (String)(String)properties.get("mail.smtp.user");
-			final String uPass = (String)(String)properties.get("mail.smtp.password");
+			final String uName = (String)properties.get("mail.smtp.user");
+			final String uPass = (String)properties.get("mail.smtp.password");
 			
 			javax.mail.Authenticator authenticator = new javax.mail.Authenticator() 
 			{

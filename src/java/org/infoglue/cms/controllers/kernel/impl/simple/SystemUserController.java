@@ -623,7 +623,7 @@ public class SystemUserController extends BaseController
 
     public SystemUserVO update(SystemUserVO systemUserVO) throws ConstraintException, SystemException
     {
-    	return (SystemUserVO) updateEntity(SystemUserImpl.class, (BaseEntityVO) systemUserVO);
+    	return (SystemUserVO) updateEntity(SystemUserImpl.class, systemUserVO);
     }        
 
 

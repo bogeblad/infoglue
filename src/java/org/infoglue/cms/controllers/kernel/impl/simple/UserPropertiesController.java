@@ -127,8 +127,8 @@ public class UserPropertiesController extends BaseController
 		ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
 
 		UserProperties userProperties = new UserPropertiesImpl();
-		userProperties.setLanguage((LanguageImpl)language);
-		userProperties.setContentTypeDefinition((ContentTypeDefinition)contentTypeDefinition);
+		userProperties.setLanguage(language);
+		userProperties.setContentTypeDefinition(contentTypeDefinition);
 	
 		userProperties.setValueObject(userPropertiesVO);
 
@@ -161,7 +161,7 @@ public class UserPropertiesController extends BaseController
 			}
 		}
 
-		return (UserPropertiesVO) updateEntity(UserPropertiesImpl.class, (BaseEntityVO) realUserPropertiesVO);
+		return (UserPropertiesVO) updateEntity(UserPropertiesImpl.class, realUserPropertiesVO);
 	}        
 
 	public UserPropertiesVO update(UserPropertiesVO userPropertiesVO, String[] users) throws ConstraintException, SystemException

@@ -92,14 +92,14 @@ public class IPMatcher
 			// the remote address so we can examine them individually.
 			StringTokenizer nt = new StringTokenizer(ip1, ".");
 			StringTokenizer rt = new StringTokenizer(ip2, ".");
-			String ip1Octet1 = (String) nt.nextToken();
-			String ip1Octet2 = (String) nt.nextToken();
-			String ip1Octet3 = (String) nt.nextToken();
-			String ip1Octet4 = (String) nt.nextToken();
-			String ip2Octet1 = (String) rt.nextToken();
-			String ip2Octet2 = (String) rt.nextToken();
-			String ip2Octet3 = (String) rt.nextToken();
-			String ip2Octet4 = (String) rt.nextToken();
+			String ip1Octet1 = nt.nextToken();
+			String ip1Octet2 = nt.nextToken();
+			String ip1Octet3 = nt.nextToken();
+			String ip1Octet4 = nt.nextToken();
+			String ip2Octet1 = rt.nextToken();
+			String ip2Octet2 = rt.nextToken();
+			String ip2Octet3 = rt.nextToken();
+			String ip2Octet4 = rt.nextToken();
 			
 			// Now, for each octet, see if we have either an exact match or a
 			// wildcard match, and if so set the appropriate octet flag.
@@ -184,10 +184,10 @@ public class IPMatcher
 	{
 
 		StringTokenizer st = new StringTokenizer(ip, ".");
-		int o1 = Integer.parseInt((String) st.nextToken());
-		int o2 = Integer.parseInt((String) st.nextToken());
-		int o3 = Integer.parseInt((String) st.nextToken());
-		int o4 = Integer.parseInt((String) st.nextToken());
+		int o1 = Integer.parseInt(st.nextToken());
+		int o2 = Integer.parseInt(st.nextToken());
+		int o3 = Integer.parseInt(st.nextToken());
+		int o4 = Integer.parseInt(st.nextToken());
 		String o1S = Integer.toBinaryString(o1).trim();
 		String o2S = Integer.toBinaryString(o2).trim();
 		String o3S = Integer.toBinaryString(o3).trim();

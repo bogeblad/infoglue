@@ -157,7 +157,7 @@ public class InfoGluePrincipalControllerProxy extends BaseController
 	{
 		String key = "" + infoGluePrincipal.getName() + "_" + propertyName + "_" + languageId + "_" + siteNodeId + "_" + useLanguageFallback + "_" + escapeSpecialCharacters + "_" + findLargestValue + "_" + findPrioValue;
 		logger.info("key:" + key);
-		Object object = (String)CacheController.getCachedObject("principalPropertyValueCache", key);
+		Object object = CacheController.getCachedObject("principalPropertyValueCache", key);
 
 	    if(object instanceof NullObject)
 		{
@@ -453,7 +453,7 @@ public class InfoGluePrincipalControllerProxy extends BaseController
 			Iterator<DigitalAssetVO> assetListIterator = assetList.iterator();
 			while(assetListIterator.hasNext())
 			{
-				DigitalAssetVO currentAsset = (DigitalAssetVO)assetListIterator.next();
+				DigitalAssetVO currentAsset = assetListIterator.next();
 				logger.info("" + currentAsset.getAssetKey() + "=" + assetKey);
 				if(currentAsset.getAssetKey().equals(assetKey))
 				{

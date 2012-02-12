@@ -91,7 +91,7 @@ public class ServerNodeController extends BaseController
     
     public ServerNodeVO update(ServerNodeVO vo) throws ConstraintException, SystemException
     {
-    	return (ServerNodeVO) updateEntity(ServerNodeImpl.class, (BaseEntityVO) vo);
+    	return (ServerNodeVO) updateEntity(ServerNodeImpl.class, vo);
     }        
         
 	// Singe object

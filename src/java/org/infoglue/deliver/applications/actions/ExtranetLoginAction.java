@@ -83,7 +83,7 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 	// To check access 
 	public String doCheckUser() throws Exception
 	{
-	    Map arguments = HttpUtilities.requestToHashtable((HttpServletRequest)this.getRequest());
+	    Map arguments = HttpUtilities.requestToHashtable(this.getRequest());
 
 		if(ExtranetController.getController().getAuthenticatedPrincipal(arguments,this.getRequest())!=null)
 			return "granted";

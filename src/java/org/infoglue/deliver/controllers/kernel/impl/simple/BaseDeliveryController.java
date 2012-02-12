@@ -246,7 +246,7 @@ public abstract class BaseDeliveryController
 		Iterator iterator = entities.iterator();
 		while (iterator.hasNext())
 		{
-			Object o = (Object)iterator.next();
+			Object o = iterator.next();
 
 			try
 			{

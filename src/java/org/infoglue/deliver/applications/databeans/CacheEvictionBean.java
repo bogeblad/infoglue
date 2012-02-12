@@ -82,7 +82,7 @@ public class CacheEvictionBean
 	{
 		switch (transactionType.intValue())
 		{
-			case (int) (TRANS_CREATE):
+			case (TRANS_CREATE):
 				return TRANS_CREATE_TEXT;
 			case (TRANS_DELETE):
 				return TRANS_DELETE_TEXT;

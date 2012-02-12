@@ -694,7 +694,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 					NodeList nl = element.getElementsByTagName("var");
 					for(int nlIndex=0; nlIndex < nl.getLength(); nlIndex++)
 					{
-					    Node node = (Node)nl.item(nlIndex);
+					    Node node = nl.item(nlIndex);
 					    element.removeChild(node);
 					}
 					

@@ -138,8 +138,8 @@ public class GroupPropertiesController extends BaseController
 		ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
 
 		GroupProperties groupProperties = new GroupPropertiesImpl();
-		groupProperties.setLanguage((LanguageImpl)language);
-		groupProperties.setContentTypeDefinition((ContentTypeDefinition)contentTypeDefinition);
+		groupProperties.setLanguage(language);
+		groupProperties.setContentTypeDefinition(contentTypeDefinition);
 	
 		groupProperties.setValueObject(groupPropertiesVO);
 		db.create(groupProperties); 
@@ -161,7 +161,7 @@ public class GroupPropertiesController extends BaseController
 			realGroupPropertiesVO = create(languageId, contentTypeDefinitionId, groupPropertiesVO);
 		}
 
-		return (GroupPropertiesVO) updateEntity(GroupPropertiesImpl.class, (BaseEntityVO) realGroupPropertiesVO);
+		return (GroupPropertiesVO) updateEntity(GroupPropertiesImpl.class, realGroupPropertiesVO);
 	}        
 
 	public GroupPropertiesVO update(GroupPropertiesVO groupPropertiesVO, String[] extranetUsers) throws ConstraintException, SystemException

@@ -65,7 +65,7 @@ public class UserPropertiesImpl implements UserProperties
 
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	public void setVO(BaseEntityVO valueObject) 

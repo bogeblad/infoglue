@@ -897,13 +897,13 @@ public class ToolbarController implements ToolbarProvider
 			if(request.getAttribute("contentId") != null)
 				contentId = new Integer((String)request.getAttribute("contentId"));
 			else
-				contentId = new Integer((String)request.getParameter("contentId"));
+				contentId = new Integer(request.getParameter("contentId"));
 
 			Integer languageId = null;
 			if(request.getAttribute("languageId") != null)
 				languageId = new Integer((String)request.getAttribute("languageId"));
 			else
-				languageId = new Integer((String)request.getParameter("languageId"));
+				languageId = new Integer(request.getParameter("languageId"));
 
 			contentVO = ContentController.getContentController().getContentVOWithId(contentId);
 			currentLanguageVO = LanguageController.getController().getLanguageVOWithId(languageId);
@@ -2838,7 +2838,7 @@ public class ToolbarController implements ToolbarProvider
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
 		Integer languageId = new Integer(request.getParameter("languageId"));
-		LanguageVO languageVO = (LanguageVO)LanguageController.getController().getLanguageVOWithId(languageId);
+		LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(languageId);
 
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.deleteLanguage.header"), 
@@ -2938,7 +2938,7 @@ public class ToolbarController implements ToolbarProvider
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
 		Integer contentTypeDefinitionId = new Integer(request.getParameter("contentTypeDefinitionId"));
-		ContentTypeDefinitionVO contentTypeDefinitionVO = (ContentTypeDefinitionVO)ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentTypeDefinitionId);
+		ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentTypeDefinitionId);
 		
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.deleteContentTypeDefinition.header"), 

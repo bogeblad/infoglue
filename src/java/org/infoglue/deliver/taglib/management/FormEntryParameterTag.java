@@ -94,7 +94,7 @@ public class FormEntryParameterTag extends AbstractTag implements ContentVersion
 			throw new JspTagException("FormEntryParameterTag must have a RemoteFormServiceTag ancestor.");
 		}
 
-		((RemoteFormServiceTag) parent).addFormEntryMap(formEntryMap);
+		parent.addFormEntryMap(formEntryMap);
 	}
 
 	/**

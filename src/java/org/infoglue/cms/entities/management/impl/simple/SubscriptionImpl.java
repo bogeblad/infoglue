@@ -70,7 +70,7 @@ public class SubscriptionImpl implements Subscription
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntity#setVO(BaseEntityVO)

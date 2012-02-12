@@ -564,7 +564,7 @@ public class ContentTypeDefinitionController extends BaseController
             
         	contentTypeDefinition = new ContentTypeDefinitionImpl();
         	contentTypeDefinition.setValueObject(contentTypeDefinitionVO);
-        	contentTypeDefinition.setParent((ContentTypeDefinitionImpl)parent);
+        	contentTypeDefinition.setParent(parent);
                 
 			db.create(contentTypeDefinition);
 				
@@ -614,7 +614,7 @@ public class ContentTypeDefinitionController extends BaseController
             if(parentContentTypeDefinitionId != null && parentContentTypeDefinitionId != -1)
             {
                 ContentTypeDefinition parentContentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(parentContentTypeDefinitionId, db);
-                contentTypeDefinition.setParent((ContentTypeDefinitionImpl)parentContentTypeDefinition);
+                contentTypeDefinition.setParent(parentContentTypeDefinition);
                 parentContentTypeDefinition.getChildren().add(contentTypeDefinition);
             }
             else
@@ -1391,7 +1391,7 @@ public class ContentTypeDefinitionController extends BaseController
 							arguments.put(varName, varValue);
 						}	    
 					    
-					    String attribute = ((Element)validatorNode).getAttribute("depends");
+					    String attribute = validatorNode.getAttribute("depends");
 					    String[] depends = attribute.split(",");
 					    for(int dependsIndex=0; dependsIndex < depends.length; dependsIndex++)
 					    {
@@ -1442,7 +1442,7 @@ public class ContentTypeDefinitionController extends BaseController
 								NamedNodeMap nodeMap = value.getAttributes();
 								for(int nmi =0; nmi < nodeMap.getLength(); nmi++)
 								{
-									Node attribute = (Node)nodeMap.item(nmi);
+									Node attribute = nodeMap.item(nmi);
 									String valueAttributeName = attribute.getNodeName();
 									String valueAttributeValue = attribute.getNodeValue();
 									contentTypeAttributeParameterValue.addAttribute(valueAttributeName, valueAttributeValue);

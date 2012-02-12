@@ -173,7 +173,7 @@ public class MathHelper
 	
 	public int round(float floatNumber)
 	{
-		return (int)Math.round(floatNumber);
+		return Math.round(floatNumber);
 	}
 
 

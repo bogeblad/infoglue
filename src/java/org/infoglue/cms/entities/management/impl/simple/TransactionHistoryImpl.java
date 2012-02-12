@@ -59,7 +59,7 @@ public class TransactionHistoryImpl implements TransactionHistory
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntity#setVO(BaseEntityVO)

@@ -66,7 +66,7 @@ public class PublicationImpl implements Publication
 	 */
 	public BaseEntityVO getVO()
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

@@ -72,7 +72,7 @@ public class CategoryImpl implements Category
 	public CategoryVO getValueObject()			{ return valueObject; }
 	public void setValueObject(CategoryVO vo)	{ valueObject = vo; }
 
-	public BaseEntityVO getVO()			{ return (BaseEntityVO) getValueObject(); }
+	public BaseEntityVO getVO()			{ return getValueObject(); }
 	public void setVO(BaseEntityVO vo)	{ setValueObject((CategoryVO) vo); }
 
 	public String toString()

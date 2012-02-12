@@ -92,7 +92,7 @@ public class PortletAttributeTag extends AbstractTag
 		}
 		
 		if(portletParent != null)
-			((PortletTag) portletParent).addAttribute(name, value, scope);
+			portletParent.addAttribute(name, value, scope);
 	}
 	
 	/**

@@ -213,7 +213,7 @@ public class SiteNodeVersionController extends BaseController
 			siteNodeVersion.setVersionModifier(infoGluePrincipal.getName());
 			siteNodeVersion.setVersionNumber(new Integer(1));
         	
-			db.create((SiteNodeVersion)siteNodeVersion);
+			db.create(siteNodeVersion);
 			
 			List siteNodeVersions = new ArrayList();
 			siteNodeVersions.add(siteNodeVersion);
@@ -836,7 +836,7 @@ public class SiteNodeVersionController extends BaseController
 
 		while (results.hasMore()) 
         {
-			serviceBindings.add((ServiceBinding)results.next());
+			serviceBindings.add(results.next());
         }
             
 		results.close();
@@ -1255,7 +1255,7 @@ public class SiteNodeVersionController extends BaseController
 				                {
 				                    contentVersionVOList.add(relatedContentVersion.getValueObject());
 				                    logger.info("relatedContentVersion:" + relatedContentVersion.getOwningContent().getName());
-				                    ContentVersionController.getContentVersionController().getContentAndAffectedItemsRecursive((Content)relatedContentVersion.getOwningContent(), ContentVersionVO.WORKING_STATE, checkedSiteNodes, checkedContents, db, siteNodeVersionVOList, contentVersionVOList, true, false, 3, 0);
+				                    ContentVersionController.getContentVersionController().getContentAndAffectedItemsRecursive(relatedContentVersion.getOwningContent(), ContentVersionVO.WORKING_STATE, checkedSiteNodes, checkedContents, db, siteNodeVersionVOList, contentVersionVOList, true, false, 3, 0);
 				                }
 			                }
 		                }
@@ -1400,7 +1400,7 @@ public class SiteNodeVersionController extends BaseController
 	{
     	registryController.updateSiteNodeVersion(siteNodeVersionVO);
 
-		return (SiteNodeVersionVO) updateEntity(SiteNodeVersionImpl.class, (BaseEntityVO)siteNodeVersionVO);
+		return (SiteNodeVersionVO) updateEntity(SiteNodeVersionImpl.class, siteNodeVersionVO);
 	}  
 	
 	/**
@@ -1414,7 +1414,7 @@ public class SiteNodeVersionController extends BaseController
 
     	siteNodeVersion.setValueObject(siteNodeVersionVO);
     	return siteNodeVersionVO;
-		//return (SiteNodeVersionVO) updateEntity(SiteNodeVersionImpl.class, (BaseEntityVO)siteNodeVersionVO, db);
+		//return (SiteNodeVersionVO) updateEntity(SiteNodeVersionImpl.class, siteNodeVersionVO, db);
 	}    
 	
 	

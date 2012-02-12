@@ -83,7 +83,7 @@ public class ContentVersionAttributeParameterTag extends AbstractTag
 		{
 			throw new JspTagException("ContentVersionAttributeParameterTag must have a ContentVersionParameterTag ancestor.");
 		}
-		((ContentVersionParameterInterface) parent).addContentVersionAttribute(name, value);
+		parent.addContentVersionAttribute(name, value);
 	}
 	
 	/**

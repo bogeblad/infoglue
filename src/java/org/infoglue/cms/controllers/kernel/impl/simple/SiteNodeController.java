@@ -152,11 +152,11 @@ public class SiteNodeController extends BaseController
         try
         {
         	if(readOnly)
-	            siteNode = (SiteNode)db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId, Database.ReadOnly);
+	            siteNode = db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId, Database.ReadOnly);
     		else
     		{
                 logger.info("Loading " + siteNodeId + " in read/write mode.");
-	            siteNode = (SiteNode)db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId);
+	            siteNode = db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId);
     		}
     	}
         catch(Exception e)
@@ -668,7 +668,7 @@ public class SiteNodeController extends BaseController
 			siteNode.setCreator(infoGluePrincipal.getName());
 
 			//siteNode = (SiteNode) createEntity(siteNode, db);
-			db.create((SiteNode)siteNode);
+			db.create(siteNode);
 		
 			//No siteNode is an island (humhum) so we also have to create an siteNodeVersion for it.
 			SiteNodeVersion siteNodeVersion = SiteNodeVersionController.createInitialSiteNodeVersion(db, siteNode, infoGluePrincipal);

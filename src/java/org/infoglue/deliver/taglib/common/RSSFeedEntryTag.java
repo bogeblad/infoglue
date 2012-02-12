@@ -130,7 +130,7 @@ public class RSSFeedEntryTag extends TemplateControllerTag
 			throw new JspTagException("RSSFeedEntryTag must have a RSSFeedTag ancestor.");
 		}
 
-		((RSSFeedTag) parent).addFeedEntry(entry);
+		parent.addFeedEntry(entry);
 	}
 
 	

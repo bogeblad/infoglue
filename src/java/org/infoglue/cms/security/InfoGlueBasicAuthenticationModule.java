@@ -76,7 +76,7 @@ public class InfoGlueBasicAuthenticationModule extends AuthenticationModule
 	{
 		String authenticatedUserName = null;
 
-		HttpSession session = ((HttpServletRequest)request).getSession();
+		HttpSession session = request.getSession();
 
 		//otherwise, we need to authenticate somehow
 		String userName = request.getParameter("j_username");

@@ -198,7 +198,7 @@ public class RoleController extends BaseController
 
     public RoleVO update(RoleVO roleVO) throws ConstraintException, SystemException
     {
-    	return (RoleVO) updateEntity(RoleImpl.class, (BaseEntityVO) roleVO);
+    	return (RoleVO) updateEntity(RoleImpl.class, roleVO);
     }        
 
 

@@ -42,7 +42,7 @@ public class ContentTypeDefinitionImpl implements ContentTypeDefinition
 	 * @see org.infoglue.cms.entities.kernel.BaseEntity#getVO()
 	 */
 	public BaseEntityVO getVO() {
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

@@ -244,7 +244,7 @@ public class InterceptorController extends BaseController
 	
 	public InterceptorVO update(InterceptorVO interceptorVO) throws ConstraintException, SystemException
 	{
-		return (InterceptorVO) updateEntity(InterceptorImpl.class, (BaseEntityVO)interceptorVO);
+		return (InterceptorVO) updateEntity(InterceptorImpl.class, interceptorVO);
 	}        
 
 	public void update(InterceptorVO interceptorVO, String[] values) throws ConstraintException, SystemException

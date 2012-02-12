@@ -296,7 +296,7 @@ public class RepositoryController extends BaseController
     
     public RepositoryVO update(RepositoryVO vo) throws ConstraintException, SystemException
     {
-    	return (RepositoryVO) updateEntity(RepositoryImpl.class, (BaseEntityVO) vo);
+    	return (RepositoryVO) updateEntity(RepositoryImpl.class, vo);
     }        
     
     public RepositoryVO update(RepositoryVO repositoryVO, String[] languageValues) throws ConstraintException, SystemException

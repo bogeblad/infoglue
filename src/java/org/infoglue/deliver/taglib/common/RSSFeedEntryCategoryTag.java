@@ -91,7 +91,7 @@ public class RSSFeedEntryCategoryTag extends TemplateControllerTag
 		{
 			throw new JspTagException("RSSFeedEntryCategoryTag must have a RSSFeedEntryTag ancestor.");
 		}
-		((RSSFeedEntryTag)parent).addEntryCategory(category);
+		parent.addEntryCategory(category);
 	}
 
 	

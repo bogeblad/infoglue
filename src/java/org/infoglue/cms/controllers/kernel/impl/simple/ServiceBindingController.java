@@ -203,7 +203,7 @@ public class ServiceBindingController extends BaseController
 			logger.info("createEntity: " + serviceBinding.getSiteNodeVersion().getSiteNodeVersionId());
 	                    
 			serviceBinding.setBindingQualifyers(QualifyerController.createQualifyers(qualifyerXML, serviceBinding));
-			db.create((ServiceBinding)serviceBinding);
+			db.create(serviceBinding);
 			
 			siteNodeVersion.getServiceBindings().add(serviceBinding);
 			

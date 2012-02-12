@@ -114,7 +114,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 			    	{
 			    		ContentTypeDefinitionVO remoteContentTypeDefinitionVO = (ContentTypeDefinitionVO)remoteContentTypeDefinitionVOListIterator.next();
 			    		//logger.info("remoteContentTypeDefinitionVO:" + remoteContentTypeDefinitionVO.getName());
-			    		ContentTypeDefinitionVO localContentTypeDefinitionVO = (ContentTypeDefinitionVO)ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(remoteContentTypeDefinitionVO.getName());
+			    		ContentTypeDefinitionVO localContentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(remoteContentTypeDefinitionVO.getName());
 			    		DeploymentCompareBean bean = new DeploymentCompareBean();
 			    		bean.setRemoteVersion(remoteContentTypeDefinitionVO);
 			    		if(localContentTypeDefinitionVO != null)
@@ -191,7 +191,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 			    	{
 			    		WorkflowDefinitionVO remoteWorkflowDefinitionVO = (WorkflowDefinitionVO)remoteWorkflowDefinitionVOListIterator.next();
 			    		//logger.info("remoteWorkflowDefinitionVO:" + remoteWorkflowDefinitionVO.getName());
-			    		WorkflowDefinitionVO localWorkflowDefinitionVO = (WorkflowDefinitionVO)WorkflowDefinitionController.getController().getWorkflowDefinitionVOWithName(remoteWorkflowDefinitionVO.getName());
+			    		WorkflowDefinitionVO localWorkflowDefinitionVO = WorkflowDefinitionController.getController().getWorkflowDefinitionVOWithName(remoteWorkflowDefinitionVO.getName());
 			    		//logger.info("localWorkflowDefinitionVO:" + localWorkflowDefinitionVO);
 			    		DeploymentCompareBean bean = new DeploymentCompareBean();
 			    		bean.setRemoteVersion(remoteWorkflowDefinitionVO);

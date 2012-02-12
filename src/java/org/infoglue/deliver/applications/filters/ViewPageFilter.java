@@ -676,9 +676,9 @@ public class ViewPageFilter implements Filter
 	                requestParameters.put("contentId", new String[] { String.valueOf(-1)});
             }
             
-            String originalServletPath = ((HttpServletRequest)httpServletRequest).getServletPath();
-            String originalRequestURL = ((HttpServletRequest)httpServletRequest).getRequestURL().toString();
-            String originalQueryString = ((HttpServletRequest)httpServletRequest).getQueryString();
+            String originalServletPath = httpServletRequest.getServletPath();
+            String originalRequestURL = httpServletRequest.getRequestURL().toString();
+            String originalQueryString = httpServletRequest.getQueryString();
 
             requestParameters.put("originalServletPath", new String[] { originalServletPath });
     		requestParameters.put("originalRequestURL", new String[] { originalRequestURL });

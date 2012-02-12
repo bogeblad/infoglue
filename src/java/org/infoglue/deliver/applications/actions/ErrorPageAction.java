@@ -106,14 +106,14 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 	        if(responseCodeAttribute != null)
 	            responseCode = Integer.parseInt(responseCodeAttribute);
 	        
-	        String responseCodeParameter = (String)this.getRequest().getParameter("responseCode");
+	        String responseCodeParameter = this.getRequest().getParameter("responseCode");
 	        if(responseCodeParameter != null)
 	            responseCode = Integer.parseInt(responseCodeParameter);
 
 	        String requestURI = this.getRequest().getServerName() + this.getRequest().getRequestURI();
 	        
 	        String errorUrlAttribute = (String)this.getRequest().getAttribute("errorUrl");
-	        String errorUrlParameter = (String)this.getRequest().getParameter("errorUrl");
+	        String errorUrlParameter = this.getRequest().getParameter("errorUrl");
 	        
 	        Exception e = (Exception)this.getRequest().getAttribute("error");
 	        if(e != null)
@@ -193,7 +193,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
         if(responseCodeAttribute != null)
             responseCode = Integer.parseInt(responseCodeAttribute);
         
-        String responseCodeParameter = (String)this.getRequest().getParameter("responseCode");
+        String responseCodeParameter = this.getRequest().getParameter("responseCode");
         if(responseCodeParameter != null)
             responseCode = Integer.parseInt(responseCodeParameter);
 

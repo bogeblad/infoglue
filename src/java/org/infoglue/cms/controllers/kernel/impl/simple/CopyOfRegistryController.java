@@ -130,7 +130,7 @@ public class CopyOfRegistryController extends BaseController
     
     public RegistryVO update(RegistryVO valueObject, Database db) throws ConstraintException, SystemException
     {
-    	return (RegistryVO) updateEntity(RegistryImpl.class, (BaseEntityVO) valueObject, db);
+    	return (RegistryVO) updateEntity(RegistryImpl.class, valueObject, db);
     }    
     
     

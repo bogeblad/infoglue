@@ -67,7 +67,7 @@ public class SubscriptionFilterImpl implements SubscriptionFilter
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 	
 	/**

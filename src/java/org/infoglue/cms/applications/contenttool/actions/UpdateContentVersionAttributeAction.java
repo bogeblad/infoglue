@@ -202,7 +202,7 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 				
 				for(int i=0; i<attributeValue.length(); i++)
 				{
-					int c = (int)attributeValue.charAt(i);
+					int c = attributeValue.charAt(i);
 					//logger.info("c2:" + c + "-" + Integer.toHexString(c));
 					if(c > 255 && c < 65533)
 						hasUnicodeChars = true;

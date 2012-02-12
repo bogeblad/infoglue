@@ -36,7 +36,7 @@ public class ServiceBindingImpl implements ServiceBinding
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

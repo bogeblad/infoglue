@@ -108,7 +108,7 @@ public class ContentVersionController extends BaseController
 
     public Integer getContentIdForContentVersion(Integer contentVersionId) throws SystemException, Bug
     {
-    	Integer contentId = (Integer)contentMap.get(contentVersionId);
+    	Integer contentId = contentMap.get(contentVersionId);
     	if(contentId == null)
     	{
     		ContentVersionVO ContentVersionVO = getContentVersionVOWithId(contentVersionId);
@@ -122,7 +122,7 @@ public class ContentVersionController extends BaseController
 
     public Integer getContentIdForContentVersion(Integer contentVersionId, Database db) throws SystemException, Bug
     {
-    	Integer contentId = (Integer)contentMap.get(contentVersionId);
+    	Integer contentId = contentMap.get(contentVersionId);
     	if(contentId == null)
     	{
     		ContentVersionVO ContentVersionVO = getContentVersionVOWithId(contentVersionId, db);

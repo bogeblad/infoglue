@@ -299,7 +299,7 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 	{
 		String url = null;
 
-		HttpSession session = ((HttpServletRequest)request).getSession();
+		HttpSession session = request.getSession();
 
 		String ticket = request.getParameter("ticket");
 		logger.info("ticket:" + ticket);
@@ -793,8 +793,8 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 		logger.info("ticket:" + ticket);
 		logger.info("gateway:" + gateway);
 		
-		String j_userName = (String)request.getParameter("j_username");
-		String j_password = (String)request.getParameter("j_password");
+		String j_userName = request.getParameter("j_username");
+		String j_password = request.getParameter("j_password");
 		if(j_userName != null && j_password != null)
 		{
 			String userName = CmsPropertyHandler.getAdministratorUserName();

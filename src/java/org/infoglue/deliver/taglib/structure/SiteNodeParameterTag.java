@@ -96,7 +96,7 @@ public class SiteNodeParameterTag extends AbstractTag
 			throw new JspTagException("SiteNodeParameterTag must have a RemoteSiteNodeServiceTag ancestor.");
 		}
 
-		((RemoteSiteNodeServiceTag) parent).addSiteNodeMap(siteNodeMap);
+		parent.addSiteNodeMap(siteNodeMap);
 	}
 	
 	/**

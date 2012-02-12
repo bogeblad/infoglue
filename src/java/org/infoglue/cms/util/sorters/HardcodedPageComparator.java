@@ -64,13 +64,13 @@ public class HardcodedPageComparator implements Comparator
 		        try
 		        {
 		            if(valueOne != null && !valueOne.equals(""))
-		                valueOne = (Comparable)new Long(valueOne.toString());
+		                valueOne = new Long(valueOne.toString());
 		            else
 		            {
 		                if(sortOrder.equalsIgnoreCase("desc"))
-		                    valueOne = (Comparable)new Long(Long.MIN_VALUE);
+		                    valueOne = new Long(Long.MIN_VALUE);
 		                else
-		                    valueOne = (Comparable)new Long(Long.MAX_VALUE);
+		                    valueOne = new Long(Long.MAX_VALUE);
 		            }
 		        }
 		        catch(Exception e)
@@ -81,13 +81,13 @@ public class HardcodedPageComparator implements Comparator
 		        try
 		        {
 		            if(valueTwo != null && !valueTwo.equals(""))
-		                valueTwo = (Comparable)new Long(valueTwo.toString());
+		                valueTwo = new Long(valueTwo.toString());
 		            else
 		            {
 		                if(sortOrder.equalsIgnoreCase("desc"))
-		                    valueTwo = (Comparable)new Long(Long.MIN_VALUE);
+		                    valueTwo = new Long(Long.MIN_VALUE);
 		                else
-		                    valueTwo = (Comparable)new Long(Long.MAX_VALUE);
+		                    valueTwo = new Long(Long.MAX_VALUE);
 		            }
 		        }
 		        catch(Exception e)
@@ -147,7 +147,7 @@ public class HardcodedPageComparator implements Comparator
 		{
 			Object propertyObject = PropertyUtils.getProperty(o, sortProperty);
 			if(propertyObject instanceof String)
-				return (Comparable)propertyObject.toString().toLowerCase();
+				return propertyObject.toString().toLowerCase();
 			return (Comparable)propertyObject;
 		}
 		catch (Exception e)

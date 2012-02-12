@@ -42,7 +42,7 @@ public class MediumDigitalAssetImpl extends DigitalAssetImpl
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

@@ -73,7 +73,7 @@ public final class Errors {
    *
    */
   public final Collection getAllErrors() {
-	return (Collection) this.errors.values();
+	return this.errors.values();
   }
 
 

@@ -1228,7 +1228,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			while(parameterNames.hasNext())
 			{
 				String name = (String)parameterNames.next();
-				String value = (String)this.getRequest().getParameter(name);
+				String value = this.getRequest().getParameter(name);
 				logger.info(name + "=" + value);
 			}
 	

@@ -42,7 +42,6 @@ import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.UserContentTypeDefinition;
 import org.infoglue.cms.entities.management.UserProperties;
 import org.infoglue.cms.entities.management.UserPropertiesVO;
-import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
 import org.infoglue.cms.entities.management.impl.simple.UserContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl;
 import org.infoglue.cms.exception.Bug;

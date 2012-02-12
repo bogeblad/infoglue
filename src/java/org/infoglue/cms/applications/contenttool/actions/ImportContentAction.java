@@ -59,7 +59,6 @@ import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.InfoGlueExportImpl;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
-import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.FileUploadHelper;
 import org.infoglue.cms.util.sorters.ReflectionComparator;

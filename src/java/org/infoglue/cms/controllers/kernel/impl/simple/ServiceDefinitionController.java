@@ -230,7 +230,7 @@ public class ServiceDefinitionController extends BaseController
 			    results = oql.execute(Database.ReadOnly);
 			else
 			{
-			    this.logger.info("Fetching entity in read/write mode" + name);
+			    logger.info("Fetching entity in read/write mode" + name);
 				results = oql.execute();
 			}
 			

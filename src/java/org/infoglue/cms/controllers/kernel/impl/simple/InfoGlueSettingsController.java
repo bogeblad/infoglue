@@ -371,7 +371,7 @@ public class InfoGlueSettingsController extends BaseController implements Castor
     public static Object findOnValueStack(String expr) 
     {
 		ActionContext a = ActionContext.getContext();
-		Object value = a.getValueStack().findValue(expr);
+		Object value = ActionContext.getValueStack().findValue(expr);
 		return value;
 	}
 /*

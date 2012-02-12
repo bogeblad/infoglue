@@ -274,11 +274,11 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 
 	    String initialLanguageId = ps.getString("content_" + contentId + "_initialLanguageId");
-	    ContentVO parentContentVO = ContentController.getContentController().getParentContent(contentId, db); 
+	    ContentVO parentContentVO = ContentController.getParentContent(contentId, db); 
 	    while((initialLanguageId == null || initialLanguageId.equalsIgnoreCase("-1")) && parentContentVO != null)
 	    {
 	    	initialLanguageId = ps.getString("content_" + parentContentVO.getId() + "_initialLanguageId");
-		    parentContentVO = ContentController.getContentController().getParentContent(parentContentVO.getId(), db); 
+		    parentContentVO = ContentController.getParentContent(parentContentVO.getId(), db); 
 	    }
 	    
 	    if(initialLanguageId != null && !initialLanguageId.equals("") && !initialLanguageId.equals("-1"))

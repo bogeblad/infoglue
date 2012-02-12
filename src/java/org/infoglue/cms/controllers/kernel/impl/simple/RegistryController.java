@@ -1160,7 +1160,7 @@ public class RegistryController extends BaseController
                 try
                 {
 	                SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
-	                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId(), db);
+	                SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId(), db);
 		    		existingReferenceBean.setName(siteNodeVO.getName());
 		    		existingReferenceBean.setReferencingCompletingObject(siteNodeVO);
 
@@ -1321,7 +1321,7 @@ public class RegistryController extends BaseController
             {
                 try
                 {
-	                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
+	                SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
 		    		logger.info("siteNodeVO:" + siteNodeVO.getId());
 		    		result.add(siteNodeVO);
 		    	}
@@ -1501,64 +1501,6 @@ public class RegistryController extends BaseController
 		    rollbackTransaction(db);
 		}
 	}
-
-	/**
-	 * Clears all references to a entity
-	 */
-/*
-	public void clearRegistryForReferencedEntity(String entityName, String entityId) throws SystemException, Exception
-	{
-	    Database db = CastorDatabaseService.getDatabase();
-		
-		try 
-		{
-			beginTransaction(db);
-			
-			OQLQuery oql = db.getOQLQuery("DELETE FROM org.infoglue.cms.entities.management.impl.simple.RegistryImpl r WHERE r.entityName = $1 AND r.entityId = $2");
-			oql.bind(entityName);
-			oql.bind(entityId);
-			QueryResults results = oql.execute();		
-		    
-	        commitTransaction(db);
-		}
-		catch (Exception e)		
-		{
-		    logger.warn("An error occurred so we should not complete the transaction:" + e);
-		    rollbackTransaction(db);
-		}
-	}
-*/
-	
-	/**
-	 * Gets siteNodeVersions which uses the metainfo
-	 */
-	/*
-	public List getSiteNodeVersionsWhichUsesContentVersionAsMetaInfo(ContentVersion contentVersion, Database db) throws SystemException, Exception
-	{
-	    List siteNodeVersions = new ArrayList();
-	    
-	    OQLQuery oql = db.getOQLQuery("SELECT snv FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl snv WHERE snv.serviceBindings.availableServiceBinding.name = $1 AND snv.serviceBindings.bindingQualifyers.name = $2 AND snv.serviceBindings.bindingQualifyers.value = $3");
-	    oql.bind("Meta information");
-		oql.bind("contentId");
-		oql.bind(contentVersion.getOwningContent().getId());
-		
-		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
-
-		while (results.hasMore()) 
-        {
-		    SiteNodeVersion siteNodeVersion = (SiteNodeVersion)results.next();
-		    siteNodeVersions.add(siteNodeVersion);
-		    //logger.info("siteNodeVersion:" + siteNodeVersion.getId());
-        }
-    	
-		results.close();
-		oql.close();
-
-		return siteNodeVersions;		
-	}
-	*/
-
 	/**
 	 * Gets siteNodeVersions which uses the metainfo
 	 */
@@ -1570,16 +1512,8 @@ public class RegistryController extends BaseController
 	    oql.bind(contentVersion.getValueObject().getContentId());
 		oql.bind(new Boolean(true));
 		
-		/*
-	    OQLQuery oql = db.getOQLQuery("SELECT snv FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl snv WHERE snv.serviceBindings.availableServiceBinding.name = $1 AND snv.serviceBindings.bindingQualifyers.name = $2 AND snv.serviceBindings.bindingQualifyers.value = $3 AND snv.isActive = $4 ORDER BY snv.siteNodeVersionId desc");
-	    oql.bind("Meta information");
-		oql.bind("contentId");
-		oql.bind(contentVersion.getOwningContent().getId());
-		oql.bind(new Boolean(true));
-		*/
-		
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		logger.info("Fetching entity in read/write mode");
 
 		if (results.hasMore()) 
         {

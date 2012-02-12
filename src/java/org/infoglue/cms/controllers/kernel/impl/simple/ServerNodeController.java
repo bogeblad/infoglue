@@ -161,7 +161,7 @@ public class ServerNodeController extends BaseController
 			oql.bind(name);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode" + name);
+			logger.info("Fetching entity in read/write mode" + name);
 
 			if (results.hasMore()) 
 			{

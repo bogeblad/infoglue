@@ -104,7 +104,7 @@ public class InconsistenciesController extends BaseController
 					{
 						try
 						{
-							SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
+							SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
 							if(siteNodeVO == null)
 								addSiteNodeInconsistency(inconsistencies, registryVO, db);
 								//inconsistencies.add(registryVO);								
@@ -144,7 +144,7 @@ public class InconsistenciesController extends BaseController
 			
 			if(referencingEntityCompletingName.equals(SiteNode.class.getName()))
 			{
-				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(referencingEntityCompletingId, db);
+				SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(referencingEntityCompletingId, db);
 				if(siteNodeVO != null)
 				{
 					LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());
@@ -188,7 +188,7 @@ public class InconsistenciesController extends BaseController
 			
 			if(referencingEntityCompletingName.equals(SiteNode.class.getName()))
 			{
-				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+				SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
 				if(siteNodeVO != null)
 				{
 					LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());

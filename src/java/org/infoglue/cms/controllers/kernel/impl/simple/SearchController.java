@@ -536,14 +536,14 @@ public class SearchController extends BaseController
 
 			try
 			{
-				BaseEntityVO entityVO = DigitalAssetController.getController().getDigitalAssetVOWithId(entityId, db);
+				BaseEntityVO entityVO = DigitalAssetController.getDigitalAssetVOWithId(entityId, db);
 				matchingEntities.add(entityVO);
 			}
 			catch (Exception e) { logger.error("No entity found.."); }
 
 			try
 			{
-				BaseEntityVO entityVO = SiteNodeController.getController().getSiteNodeVOWithId(entityId, db);
+				BaseEntityVO entityVO = SiteNodeController.getSiteNodeVOWithId(entityId, db);
 				matchingEntities.add(entityVO);
 			}
 			catch (Exception e) { logger.error("No entity found.."); }

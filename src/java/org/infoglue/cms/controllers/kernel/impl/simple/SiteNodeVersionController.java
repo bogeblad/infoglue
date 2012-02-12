@@ -532,7 +532,7 @@ public class SiteNodeVersionController extends BaseController
 			    results = oql.execute(Database.ReadOnly);
 			else
 			{
-				this.logger.info("Fetching entity in read/write mode");
+				logger.info("Fetching entity in read/write mode");
 				results = oql.execute();
 			}
 			
@@ -1190,7 +1190,7 @@ public class SiteNodeVersionController extends BaseController
 	            {
 	                try
 	                {
-	                    SiteNodeVO relatedSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
+	                    SiteNodeVO relatedSiteNodeVO = SiteNodeController.getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
 	
 	                    //SiteNodeVersion relatedSiteNodeVersion = getLatestActiveSiteNodeVersionIfInState(relatedSiteNode, stateId, db);
 		                SiteNodeVersion relatedSiteNodeVersion = getLatestActiveSiteNodeVersion(db, new Integer(registryVO.getEntityId()));

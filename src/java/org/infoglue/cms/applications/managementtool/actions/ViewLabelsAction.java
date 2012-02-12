@@ -71,7 +71,7 @@ public class ViewLabelsAction extends InfoGlueAbstractAction
 
     public String doAdd() throws Exception
     {
-		File file = FileUploadHelper.getUploadedFile(ActionContext.getContext().getMultiPartRequest());
+		File file = FileUploadHelper.getUploadedFile(ActionContext.getMultiPartRequest());
 		if(file == null || !file.exists())
 			throw new SystemException("The file upload must have gone bad as no file reached this action.");
 

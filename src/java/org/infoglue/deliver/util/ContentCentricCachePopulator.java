@@ -185,7 +185,7 @@ public class ContentCentricCachePopulator
 	
 	private void recurseSiteNodeTree(Integer siteNodeId, Integer languageId, TemplateController templateController) throws Exception
 	{
-	    SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithId(siteNodeId, templateController.getDatabase(), true);
+	    SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, templateController.getDatabase(), true);
 	    SiteNodeVO siteNodeVO = templateController.getSiteNode(siteNodeId);
 	    Collection childSiteNodes = siteNode.getChildSiteNodes();
 	    

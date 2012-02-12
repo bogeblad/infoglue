@@ -1634,7 +1634,7 @@ public class CacheController extends Thread
         {
            	String currentThreadId = "" + threadArray[i].getId();
         	Thread t = threadArray[i];
-        	Map stacks = t.getAllStackTraces();
+        	Map stacks = Thread.getAllStackTraces();
 	        
         	Iterator stacksIterator = stacks.values().iterator();
         	while(stacksIterator.hasNext())

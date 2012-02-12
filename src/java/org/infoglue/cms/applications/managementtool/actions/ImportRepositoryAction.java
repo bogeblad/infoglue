@@ -122,7 +122,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 		try 
 		{
 			//now restore the value and list what we get
-			File file = FileUploadHelper.getUploadedFile(ActionContext.getContext().getMultiPartRequest());
+			File file = FileUploadHelper.getUploadedFile(ActionContext.getMultiPartRequest());
 			if(file == null || !file.exists())
 				throw new SystemException("The file upload must have gone bad as no file reached the import utility.");
 			

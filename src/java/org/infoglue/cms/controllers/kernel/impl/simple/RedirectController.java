@@ -511,7 +511,7 @@ public class RedirectController extends BaseController
     {
     	List<LanguageVO> languageVOList =  LanguageController.getController().getLanguageVOList(repositoryId, db);
         
-        SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(siteNodeId, db);
+        SiteNodeVersionVO snvVO = SiteNodeVersionController.getLatestPublishedSiteNodeVersionVO(siteNodeId, db);
         if(logger.isInfoEnabled())
         	logger.info("snvVO:" + snvVO);
         if(snvVO != null && pageUrls != null && pageUrls.size() > 0)

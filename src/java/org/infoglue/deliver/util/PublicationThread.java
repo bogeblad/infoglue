@@ -76,7 +76,7 @@ public class PublicationThread extends Thread
 			{
 				PublicationVO publicationVO = publicationVOListIterator.next();
 				
-				List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(publicationVO.getId());
+				List publicationDetailVOList = PublicationController.getPublicationDetailVOList(publicationVO.getId());
 				Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
 				while(publicationDetailVOListIterator.hasNext())
 				{

@@ -352,7 +352,7 @@ public class BasicURLComposer extends URLComposer
 
         try
 		{
-	        SiteNodeVO siteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
+	        SiteNodeVO siteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(siteNodeId, db);
 	
 	        String deriveProtocolWhenUsingProtocolRedirects = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNodeVO.getRepositoryId(), "deriveProtocolWhenUsingProtocolRedirects");
 			if(deriveProtocolWhenUsingProtocolRedirects == null || deriveProtocolWhenUsingProtocolRedirects.equals("") || !deriveProtocolWhenUsingProtocolRedirects.equals("true") || !deriveProtocolWhenUsingProtocolRedirects.equals("false"))
@@ -406,8 +406,8 @@ public class BasicURLComposer extends URLComposer
         {
             String context = CmsPropertyHandler.getServletContext();
             
-            SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
-            SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
+            SiteNodeVO siteNode = SiteNodeController.getSmallSiteNodeVOWithId(siteNodeId, db);
+            SiteNodeVO currentSiteNode = SiteNodeController.getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
     		if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))
     		{
     			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);

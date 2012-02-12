@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.common.actions;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 import org.infoglue.cms.controllers.usecases.common.LoginUCC;
 import org.infoglue.cms.controllers.usecases.common.LoginUCCFactory;
@@ -70,7 +71,7 @@ public class LoginAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception 
 	{
-		this.getResponse().setStatus(this.getResponse().SC_FORBIDDEN);
+		this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
 		
 		if(this.getRequest().getRemoteUser() != null)
 			return "redirect";

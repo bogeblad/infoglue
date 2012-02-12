@@ -382,7 +382,7 @@ public class SubscriptionsInterceptor extends BaseController implements InfoGlue
 				if(transactionQueueVO.getInterceptionPointVO().getName().equalsIgnoreCase("SiteNode.ExpireDateComingUp"))
 				{
 					logger.info("It's a expiredate coming up event... let's find add a fake subscription on the last modifier.");
-					SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(transactionQueueVO.getTransactionObjectId()), db);
+					SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(new Integer(transactionQueueVO.getTransactionObjectId()), db);
 					if(siteNodeVO != null)
 					{
 						SiteNodeVersionVO version = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, siteNodeVO.getId());

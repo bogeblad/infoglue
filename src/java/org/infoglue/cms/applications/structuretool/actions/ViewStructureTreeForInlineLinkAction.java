@@ -145,11 +145,11 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	    
 	    try
 	    {
-	        SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(oldSiteNodeId);
+	        SiteNodeVO parentSiteNodeVO = SiteNodeController.getParentSiteNode(oldSiteNodeId);
 		    while(parentSiteNodeVO != null)
 		    {
 		        expansion += parentSiteNodeVO.getId() + "/";
-		        parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(parentSiteNodeVO.getId());
+		        parentSiteNodeVO = SiteNodeController.getParentSiteNode(parentSiteNodeVO.getId());
 		    }
 	    }
 	    catch(Exception e)
@@ -169,11 +169,11 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	    
 	    try
 	    {
-	        ContentVO parentContentVO = ContentController.getContentController().getParentContent(oldContentId);
+	        ContentVO parentContentVO = ContentController.getParentContent(oldContentId);
 		    while(parentContentVO != null)
 		    {
 		        expansion += parentContentVO.getId() + "/";
-		        parentContentVO = ContentController.getContentController().getParentContent(parentContentVO.getId());
+		        parentContentVO = ContentController.getParentContent(parentContentVO.getId());
 		    }
 	    }
 	    catch(Exception e)

@@ -46,7 +46,7 @@ public class XMLActionConfigurationExtendor
 		{
 			DefaultConfiguration config = (DefaultConfiguration)Configuration.getConfiguration();
 			logger.debug("config:" + config.config);
-			logger.debug("config:" + config.configurationImpl);
+			logger.debug("config:" + Configuration.configurationImpl);
 			if(config.config instanceof DelegatingConfiguration)
 			{
 				DelegatingConfiguration delConfig = (DelegatingConfiguration)config.config;
@@ -54,7 +54,7 @@ public class XMLActionConfigurationExtendor
 				for(Configuration c : delConfig.configList)
 				{
 					logger.debug("Configuration:" + c);
-					logger.debug("Configuration.configurationImpl:" + c.configurationImpl);
+					logger.debug("Configuration.configurationImpl:" + Configuration.configurationImpl);
 					if(c instanceof XMLActionConfiguration)
 					{
 						XMLActionConfiguration xmlActionConfiguration = (XMLActionConfiguration)c;

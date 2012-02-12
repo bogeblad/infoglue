@@ -546,7 +546,7 @@ public class InfoGlueAuthenticationFilter implements Filter
   		String authenticatedUserName = null;
   		
   		String currentUrl = null;
-		if(this.casServiceUrl != null && this.casServiceUrl.equals("$currentUrl"))
+		if(casServiceUrl != null && casServiceUrl.equals("$currentUrl"))
 		{
 			currentUrl = request.getRequestURL() + (request.getQueryString() == null ? "" : "?" + request.getQueryString());
 		}

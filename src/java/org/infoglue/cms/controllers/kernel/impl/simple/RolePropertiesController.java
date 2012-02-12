@@ -450,7 +450,7 @@ public class RolePropertiesController extends BaseController
 		oql.bind(roleName);
 
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		logger.info("Fetching entity in read/write mode");
 
 		while (results.hasMore()) 
 		{

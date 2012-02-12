@@ -1490,7 +1490,7 @@ public class ContentController extends BaseController
 		oql.bind(repositoryId);
 			
 		QueryResults results = oql.execute();		
-		this.logger.info("Fetching entity in read/write mode" + repositoryId);
+		logger.info("Fetching entity in read/write mode" + repositoryId);
 
 		if (results.hasMore()) 
 		{
@@ -1847,7 +1847,7 @@ public class ContentController extends BaseController
 	{
 		List result = new ArrayList();
 		
-		ServiceBinding serviceBinding = ServiceBindingController.getController().getReadOnlyServiceBindingWithId(serviceBindingId, db);
+		ServiceBinding serviceBinding = ServiceBindingController.getReadOnlyServiceBindingWithId(serviceBindingId, db);
 		//ServiceBinding serviceBinding = ServiceBindingController.getServiceBindingWithId(serviceBindingId, db);
         
 		if(serviceBinding != null)

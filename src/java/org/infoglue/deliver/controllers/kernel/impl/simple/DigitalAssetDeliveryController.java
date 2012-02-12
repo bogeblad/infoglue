@@ -861,7 +861,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	{
 		try
 		{
-		    List digitalAssetVOList = DigitalAssetController.getController().getDigitalAssetVOList(contentVersionId);
+		    List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(contentVersionId);
 			Iterator assetIterator = digitalAssetVOList.iterator();
 			while(assetIterator.hasNext())
 			{

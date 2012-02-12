@@ -118,7 +118,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 				AssetKeyDefinition assetKeyDefinition = (AssetKeyDefinition)assetKeysIterator.next();
 				if(assetKeyDefinition.getIsMandatory().booleanValue())
 				{
-					DigitalAssetVO asset = DigitalAssetController.getController().getDigitalAssetVO(createContentWizardInfoBean.getContentVO().getId(), languageId, assetKeyDefinition.getAssetKey(), false);
+					DigitalAssetVO asset = DigitalAssetController.getDigitalAssetVO(createContentWizardInfoBean.getContentVO().getId(), languageId, assetKeyDefinition.getAssetKey(), false);
 					if(asset == null)
 					{
 						mandatoryAssetKey = assetKeyDefinition.getAssetKey();

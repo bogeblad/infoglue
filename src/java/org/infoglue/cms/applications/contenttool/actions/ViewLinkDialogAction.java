@@ -112,11 +112,11 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 	    
 	    try
 	    {
-	        SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(oldSiteNodeId);
+	        SiteNodeVO parentSiteNodeVO = SiteNodeController.getParentSiteNode(oldSiteNodeId);
 		    while(parentSiteNodeVO != null)
 		    {
 		        expansion += parentSiteNodeVO.getId() + "/";
-		        parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(parentSiteNodeVO.getId());
+		        parentSiteNodeVO = SiteNodeController.getParentSiteNode(parentSiteNodeVO.getId());
 		    }
 	    }
 	    catch(Exception e)

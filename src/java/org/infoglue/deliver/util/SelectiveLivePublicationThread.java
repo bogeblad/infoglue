@@ -285,7 +285,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 							logger.info("**************************************");
 							logger.info("*    HERE THE MAGIC SHOULD HAPPEN    *");
 							logger.info("**************************************");
-							List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(new Integer(objectId));
+							List publicationDetailVOList = PublicationController.getPublicationDetailVOList(new Integer(objectId));
 							Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
 							while(publicationDetailVOListIterator.hasNext())
 							{
@@ -547,7 +547,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 			}
 			else if(Class.forName(className).getName().equals(PublicationImpl.class.getName()))
 			{
-				List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(new Integer(objectId));
+				List publicationDetailVOList = PublicationController.getPublicationDetailVOList(new Integer(objectId));
 				Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
 				while(publicationDetailVOListIterator.hasNext())
 				{
@@ -614,7 +614,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						}
 						*/
 						
-						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+						SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId, db);
 						if(siteNodeVO.getMetaInfoContentId() != null)
 						{
 							getObjectWithId(ContentImpl.class, new Integer(siteNodeVO.getMetaInfoContentId()), db);

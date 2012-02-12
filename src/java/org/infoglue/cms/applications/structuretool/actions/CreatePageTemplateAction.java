@@ -190,7 +190,7 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
 		
     	try 
     	{
-    		MultiPartRequestWrapper mpr = ActionContext.getContext().getMultiPartRequest();
+    		MultiPartRequestWrapper mpr = ActionContext.getMultiPartRequest();
     		logger.info("mpr:" + mpr);
     		if(mpr != null)
     		{ 

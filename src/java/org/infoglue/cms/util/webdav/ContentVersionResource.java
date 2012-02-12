@@ -138,7 +138,7 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		
 		try 
 		{
-			List<DigitalAssetVO> assetVOList = DigitalAssetController.getController().getDigitalAssetVOList(this.contentVersion.getId());
+			List<DigitalAssetVO> assetVOList = DigitalAssetController.getDigitalAssetVOList(this.contentVersion.getId());
 			
 			if(logger.isInfoEnabled())
 				logger.info("assetVOList:" + assetVOList.size());
@@ -187,7 +187,7 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		{
 			DigitalAssetVO digitalAsset = null;
 			
-			List<DigitalAssetVO> assetVOList = DigitalAssetController.getController().getDigitalAssetVOList(this.contentVersion.getId());
+			List<DigitalAssetVO> assetVOList = DigitalAssetController.getDigitalAssetVOList(this.contentVersion.getId());
 			if(logger.isInfoEnabled())
 				logger.info("assetVOList:" + assetVOList.size());
 			for(DigitalAssetVO asset : assetVOList)

@@ -328,7 +328,7 @@ public class RepositoryLanguageController extends BaseController
 		oql.bind(repositoryId);
 			
        	QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		logger.info("Fetching entity in read/write mode");
 
 		while (results.hasMore()) 
         {

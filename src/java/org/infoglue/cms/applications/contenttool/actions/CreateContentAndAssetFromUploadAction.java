@@ -33,6 +33,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -139,7 +141,7 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 		else
 		{
 			this.getResponse().setContentType("text/plain");
-            this.getResponse().setStatus(this.getResponse().SC_INTERNAL_SERVER_ERROR);
+            this.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             this.getResponse().getWriter().println("Error uploading to " + this.digitalAssetKey);
             return NONE;
 		}

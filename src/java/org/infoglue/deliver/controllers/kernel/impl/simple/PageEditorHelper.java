@@ -1682,7 +1682,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	    
 	protected ContentVO getPageMetaInfoContentVO(Database db, Integer siteNodeId, Integer languageId, Integer contentId, InfoGluePrincipal principal) throws SystemException, Exception
 	{
-	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+	    SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId, db);
 	    ContentVO contentVO = null;
 	    if(siteNodeVO.getMetaInfoContentId() != null && siteNodeVO.getMetaInfoContentId().intValue() > -1)
 	        contentVO = ContentController.getContentController().getContentVOWithId(siteNodeVO.getMetaInfoContentId(), db);
@@ -1702,7 +1702,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	    
 	protected String getPageComponentsString(Database db, Integer siteNodeId, Integer languageId, Integer contentId, InfoGluePrincipal principal) throws SystemException, Exception
 	{
-	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+	    SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId, db);
 	    ContentVO contentVO = null;
 	    if(siteNodeVO.getMetaInfoContentId() != null && siteNodeVO.getMetaInfoContentId().intValue() > -1)
 	        contentVO = ContentController.getContentController().getContentVOWithId(siteNodeVO.getMetaInfoContentId(), db);

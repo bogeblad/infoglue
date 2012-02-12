@@ -1512,7 +1512,7 @@ public class CopyOfRegistryController extends BaseController
 		oql.bind(contentVersion.getOwningContent().getId());
 		
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		logger.info("Fetching entity in read/write mode");
 
 		while (results.hasMore()) 
         {
@@ -1542,7 +1542,7 @@ public class CopyOfRegistryController extends BaseController
 		oql.bind(new Boolean(true));
 		
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		logger.info("Fetching entity in read/write mode");
 
 		if (results.hasMore()) 
         {

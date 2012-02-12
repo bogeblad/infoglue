@@ -1333,7 +1333,7 @@ public class ContentVersionController extends BaseController
     	oql.bind(true);
     	
     	QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		logger.info("Fetching entity in read/write mode");
 
 		if (results.hasMore()) 
         {
@@ -1435,7 +1435,7 @@ public class ContentVersionController extends BaseController
         {      
         	ContentVersion contentVersion = null;
         	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, db);
-        	DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getDigitalAssetVOWithId(digitalAssetId, db);
+        	DigitalAssetVO digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(digitalAssetId, db);
         	if(!contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 			{
 		    	List events = new ArrayList();
@@ -2445,20 +2445,20 @@ public class ContentVersionController extends BaseController
         {      
         	ContentVersion contentVersion = null;
         	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, db);
-        	DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getDigitalAssetVOWithId(digitalAssetId, db);
+        	DigitalAssetVO digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(digitalAssetId, db);
     	    if(!contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 			{
 				List events = new ArrayList();
 				contentVersion = ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, principal, contentVersionVO.getContentId(), db, events);
 				newContentVersionIdList.add(contentVersion.getId());
-				digitalAssetVO = DigitalAssetController.getController().getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
+				digitalAssetVO = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
 			}
     	    
     	    boolean duplicateAssetsBetweenVersions = CmsPropertyHandler.getDuplicateAssetsBetweenVersions();
         	logger.info("duplicateAssetsBetweenVersions:" + duplicateAssetsBetweenVersions);
     	    if(!duplicateAssetsBetweenVersions)
     	    {
-    	    	DigitalAsset oldDigitalAsset = DigitalAssetController.getController().getDigitalAssetWithId(digitalAssetId, db);
+    	    	DigitalAsset oldDigitalAsset = DigitalAssetController.getDigitalAssetWithId(digitalAssetId, db);
     	    	logger.info("oldDigitalAsset:" + oldDigitalAsset.getContentVersions().size());
         	    if(oldDigitalAsset.getContentVersions().size() > 1)
     	    	{
@@ -2498,12 +2498,12 @@ public class ContentVersionController extends BaseController
     {
     	ContentVersion contentVersion = null;
     	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, db);
-    	DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getDigitalAssetVOWithId(digitalAssetId, db);
+    	DigitalAssetVO digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(digitalAssetId, db);
 	    if(!contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 		{
 	    	List events = new ArrayList();
 			contentVersion = ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, principal, contentVersionVO.getContentId(), db, events);
-			digitalAssetVO = DigitalAssetController.getController().getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
+			digitalAssetVO = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
 		}
     	    
     	return digitalAssetVO;

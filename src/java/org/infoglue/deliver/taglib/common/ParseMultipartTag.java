@@ -87,7 +87,7 @@ public class ParseMultipartTag extends TemplateControllerTag
 			//Set overall request size constraint
 			upload.setSizeMax(this.maxSize.intValue());
 	
-			if(upload.isMultipartContent(this.getController().getHttpServletRequest()))
+			if(ServletFileUpload.isMultipartContent(this.getController().getHttpServletRequest()))
 			{
 				//Parse the request
 				List items = upload.parseRequest(this.getController().getHttpServletRequest());

@@ -1001,7 +1001,7 @@ public class SiteNodeController extends BaseController
 		oql.bind(repositoryId);
 		
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode" + repositoryId);
+		logger.info("Fetching entity in read/write mode" + repositoryId);
 
 		if (results.hasMore()) 
 		{

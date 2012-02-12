@@ -352,7 +352,7 @@ public class EventController extends BaseController
 							siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId(), db);
 							//siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithIdAsReadOnly(event.getEntityId(), db);
 							if(siteNodeVersion.getSiteNodeId() != null)
-								siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
+								siteNode = SiteNodeController.getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
 	            		}
 	            		catch(SystemException e)
 	            		{

@@ -433,7 +433,7 @@ public class ComponentController extends BaseController
 				if(path.indexOf("/") == 0)
 					path = path.substring(1);
 				
-				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+				SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId, db);
 				ContentVO parentContentVO = ContentController.getContentController().getRootContent(db, siteNodeVO.getRepositoryId(), principal.getName(), true).getValueObject();
 				if(method.equals("siteStructure"))
 				{

@@ -354,7 +354,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
     
 	public SiteNodeVersionVO getLatestSiteNodeVersion(SiteNodeVO siteNode) throws Exception
 	{
-		return SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(siteNode.getId());
+		return SiteNodeVersionController.getLatestPublishedSiteNodeVersionVO(siteNode.getId());
 	}
 	
 	/**

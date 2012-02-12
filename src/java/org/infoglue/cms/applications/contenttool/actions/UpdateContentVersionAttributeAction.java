@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
@@ -270,13 +272,13 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 		catch (ConstraintException ce) 
 		{
 			logger.warn("Error saving attribute - not allowed by validation: " + ce.getMessage());
-			this.getResponse().setStatus(this.getResponse().SC_NOT_ACCEPTABLE);
+			this.getResponse().setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
 			return ERROR;
 		}
 		catch (Throwable t) 
 		{
 			logger.error("Error saving attribute: " + t.getMessage(), t);
-			this.getResponse().setStatus(this.getResponse().SC_INTERNAL_SERVER_ERROR);
+			this.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return ERROR;
 		}
 		finally

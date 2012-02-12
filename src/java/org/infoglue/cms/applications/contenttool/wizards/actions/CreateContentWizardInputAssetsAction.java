@@ -98,7 +98,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 			if(assetKeyDefinition.getIsMandatory().booleanValue())
 			{
 				hasMandatoryAssets = true;
-				DigitalAssetVO asset = DigitalAssetController.getController().getDigitalAssetVO(createContentWizardInfoBean.getContentVO().getId(), languageId, assetKeyDefinition.getAssetKey(), false);
+				DigitalAssetVO asset = DigitalAssetController.getDigitalAssetVO(createContentWizardInfoBean.getContentVO().getId(), languageId, assetKeyDefinition.getAssetKey(), false);
 				if(asset == null)
 				{
 					mandatoryAssetKey = assetKeyDefinition.getAssetKey();
@@ -139,7 +139,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 		
 		try 
 		{
-			MultiPartRequestWrapper mpr = ActionContext.getContext().getMultiPartRequest();
+			MultiPartRequestWrapper mpr = ActionContext.getMultiPartRequest();
 			if(mpr != null)
 			{ 
 				String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();

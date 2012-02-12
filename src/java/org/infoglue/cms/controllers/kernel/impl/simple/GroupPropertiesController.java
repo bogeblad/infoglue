@@ -483,7 +483,7 @@ public class GroupPropertiesController extends BaseController
 		oql.bind(groupName);
 
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching groupContentTypeDefinitionList in read/write mode");
+		logger.info("Fetching groupContentTypeDefinitionList in read/write mode");
 
 		while (results.hasMore()) 
 		{
@@ -1062,7 +1062,7 @@ public class GroupPropertiesController extends BaseController
 				Element child = (Element)i.next();
 				String id = child.getStringValue();
 				
-				SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithId(new Integer(id), db, true);
+				SiteNode siteNode = SiteNodeController.getSiteNodeWithId(new Integer(id), db, true);
 				siteNodes.add(siteNode);     	
 			}		        	
 		}

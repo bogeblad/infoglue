@@ -1,7 +1,5 @@
 package org.infoglue.cms.entities.kernel;
 
-import java.io.Serializable;
-
 import org.infoglue.cms.util.DomainUtils;
 
 /**

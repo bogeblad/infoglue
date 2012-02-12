@@ -26,7 +26,6 @@ package org.infoglue.cms.entities.management;
 
 import java.util.Iterator;
 
-import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.kernel.ValidatableEntityVO;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;

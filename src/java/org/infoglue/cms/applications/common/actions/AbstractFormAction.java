@@ -30,8 +30,6 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
 
-import webwork.action.CommandDriven;
-
 
 /**
  *

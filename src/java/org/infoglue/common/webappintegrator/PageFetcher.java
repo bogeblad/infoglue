@@ -17,7 +17,6 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.deliver.util.HttpHelper;
 
 /**

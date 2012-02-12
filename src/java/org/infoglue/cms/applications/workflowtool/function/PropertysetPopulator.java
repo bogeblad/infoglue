@@ -26,7 +26,6 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.entities.management.impl.simple.FormEntryAssetImpl;
 
 import com.opensymphony.workflow.WorkflowException;
 

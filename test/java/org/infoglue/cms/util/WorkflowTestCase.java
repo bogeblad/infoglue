@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
-import org.infoglue.cms.controllers.SiteNodeVersionControllerTest;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
 import org.infoglue.cms.entities.mydesktop.WorkflowActionVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowStepVO;

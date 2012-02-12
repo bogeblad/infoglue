@@ -42,7 +42,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
-import org.infoglue.deliver.util.Timer;
 
 
 /**

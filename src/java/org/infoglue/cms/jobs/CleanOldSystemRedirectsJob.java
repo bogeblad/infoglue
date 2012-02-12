@@ -23,12 +23,7 @@
 package org.infoglue.cms.jobs;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.util.ChangeNotificationController;
-import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.cms.util.NotificationMessage;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

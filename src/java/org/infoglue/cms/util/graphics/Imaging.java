@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.managementtool.actions.ConfirmAction;
 
 import com.thebuzzmedia.imgscalr.Scalr;
 import com.thebuzzmedia.imgscalr.Scalr.Mode;

@@ -49,7 +49,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;

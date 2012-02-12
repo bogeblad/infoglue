@@ -35,7 +35,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
-import org.infoglue.deliver.util.Timer;
 
 
 /**

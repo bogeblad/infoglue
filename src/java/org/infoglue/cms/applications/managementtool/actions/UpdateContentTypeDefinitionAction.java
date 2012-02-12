@@ -32,7 +32,6 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.jfree.util.Log;
 
 
 /**

@@ -23,15 +23,15 @@
 
 package org.infoglue.deliver.applications.filters;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.log4j.Logger;
-
-import java.util.Set;
-import java.util.HashSet;
 
 public class GZIPResponseWrapper extends HttpServletResponseWrapper 
 {

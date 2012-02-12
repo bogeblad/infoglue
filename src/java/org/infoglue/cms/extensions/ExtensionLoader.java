@@ -12,7 +12,6 @@ import java.util.jar.JarInputStream;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.invokers.DecoratedComponentBasedHTMLPageInvoker;
 
 import webwork.config.XMLActionConfigurationExtendor;
 

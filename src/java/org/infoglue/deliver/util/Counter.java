@@ -33,7 +33,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.util.sorters.AverageInvokingTimeComparator;
-import org.infoglue.deliver.invokers.ComponentBasedHTMLPageInvoker;
 
 /**
  * @author mattias

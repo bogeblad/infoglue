@@ -81,7 +81,6 @@ import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.ThreadMonitor;
-import org.infoglue.deliver.util.Timer;
 
 import webwork.action.ActionContext;
 

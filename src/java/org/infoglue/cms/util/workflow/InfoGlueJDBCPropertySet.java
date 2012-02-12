@@ -48,7 +48,6 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.io.FileHelper;

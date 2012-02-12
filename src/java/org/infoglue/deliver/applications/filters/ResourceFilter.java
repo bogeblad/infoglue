@@ -24,10 +24,6 @@
 package org.infoglue.deliver.applications.filters;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -39,8 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.util.CacheController;
 
 /**
  * This filter adds expires headers on resources.

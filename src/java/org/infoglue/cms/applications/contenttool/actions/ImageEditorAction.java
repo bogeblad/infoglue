@@ -48,8 +48,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.graphics.Imaging;
 
-import webwork.action.Action;
-
 /**
  * @author Mattias Bogeblad
  * @version 1.0

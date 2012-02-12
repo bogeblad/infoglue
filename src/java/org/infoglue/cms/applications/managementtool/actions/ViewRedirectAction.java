@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.util.Date;
-
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;

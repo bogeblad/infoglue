@@ -42,8 +42,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-import javax.naming.ldap.Control;
-import javax.naming.ldap.InitialLdapContext;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.GroupVO;

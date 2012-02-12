@@ -30,7 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.FormEntry;
 import org.infoglue.cms.entities.management.FormEntryAsset;

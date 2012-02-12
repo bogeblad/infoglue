@@ -477,7 +477,7 @@ public abstract class PageInvoker
 		}
 	}
 
-	public String invokeAndDecoratePage(String pageCacheName, String pageCacheExtraName) throws SystemException, Exception, Bug 
+	public String invokeAndDecoratePage(String pageCacheName, String pageCacheExtraName) throws SystemException, Exception 
 	{
 		if(this.pageString == null)
 		{

@@ -45,7 +45,7 @@ public class ViewCMSToolAction extends InfoGlueAbstractAction
 		return "success";
     }
 	
-	public String doLoginStandalone() throws Exception 
+	public String doLoginStandalone()  
 	{
 		return "loginComplete";
 	}	

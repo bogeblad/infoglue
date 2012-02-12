@@ -272,7 +272,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 	 * This method is for letting users update cache manually. 
 	 */
          
-	public String doInput() throws Exception
+	public String doInput() 
 	{
 		return "input";
 	}

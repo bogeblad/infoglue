@@ -95,12 +95,12 @@ public class ServerNodeController extends BaseController
     }        
         
 	// Singe object
-    public ServerNode getServerNodeWithId(Integer id, Database db) throws SystemException, Bug
+    public ServerNode getServerNodeWithId(Integer id, Database db) throws SystemException
     {
 		return (ServerNode) getObjectWithId(ServerNodeImpl.class, id, db);
     }
 
-    public ServerNodeVO getServerNodeVOWithId(Integer serverNodeId) throws ConstraintException, SystemException, Bug
+    public ServerNodeVO getServerNodeVOWithId(Integer serverNodeId) throws ConstraintException, SystemException
     {
 		return  (ServerNodeVO) getVOWithId(ServerNodeImpl.class, serverNodeId);        
     }
@@ -115,7 +115,7 @@ public class ServerNodeController extends BaseController
 	 * @throws Bug
 	 */
 	
-	public ServerNodeVO getServerNodeVOWithName(String name) throws SystemException, Bug
+	public ServerNodeVO getServerNodeVOWithName(String name) throws SystemException
 	{
 		ServerNodeVO serverNodeVO = null;
 		
@@ -151,7 +151,7 @@ public class ServerNodeController extends BaseController
 	 * @throws Bug
 	 */
 
-	public ServerNode getServerNodeWithName(String name, Database db) throws SystemException, Bug
+	public ServerNode getServerNodeWithName(String name, Database db) throws SystemException
 	{
 		ServerNode serverNode = null;
 		
@@ -184,7 +184,7 @@ public class ServerNodeController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
     
-    public List getServerNodeVOList() throws SystemException, Bug
+    public List getServerNodeVOList() throws SystemException
     {   
 		/*
         String key = "serverNodeVOList";

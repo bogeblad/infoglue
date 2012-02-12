@@ -72,7 +72,7 @@ public class InfoGlueSettingsController extends BaseController implements Castor
 		this.settingsController = CastorSettingsController.getController(this);
 	}
 
-	public InfoGlueProperty getPropertyWithId(Integer id, Database db) throws SystemException, Bug
+	public InfoGlueProperty getPropertyWithId(Integer id, Database db) throws SystemException
     {
     	return (InfoGlueProperty) getObjectWithId(InfoGlueProperty.class, id, db);
     } 

@@ -143,7 +143,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
     	return "success";
     }
     
-	public boolean getHasAccessRight(Integer interceptionPointId, String extraParameters, String roleName) throws SystemException, Bug
+	public boolean getHasAccessRight(Integer interceptionPointId, String extraParameters, String roleName) throws SystemException
 	{
 	    try
 	    {
@@ -158,13 +158,13 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	    }
 	}
 	
-	public Integer getAccessRightId(Integer interceptionPointId, String extraParameters) throws SystemException, Bug
+	public Integer getAccessRightId(Integer interceptionPointId, String extraParameters) throws SystemException
 	{
 		List accessRights = AccessRightController.getController().getAccessRightVOListOnly(interceptionPointId, extraParameters);
 		return accessRights.size() > 0 ? ((AccessRightVO)accessRights.get(0)).getAccessRightId() : null;
 	}
 
-	public Integer[] getAccessRightIds(Integer interceptionPointId, String extraParameters) throws SystemException, Bug
+	public Integer[] getAccessRightIds(Integer interceptionPointId, String extraParameters) throws SystemException
 	{
 		List accessRights = AccessRightController.getController().getAccessRightVOListOnly(interceptionPointId, extraParameters);
 		Integer[] accessRightIds = new Integer[accessRights.size()];
@@ -178,7 +178,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 		return accessRightIds;
 	}
 
-	public Collection getAccessRightGroups(Integer accessRightId) throws SystemException, Bug
+	public Collection getAccessRightGroups(Integer accessRightId) throws SystemException
 	{
 	    Collection accessRightGroups = AccessRightController.getController().getAccessRightGroupVOList(accessRightId);
 		return accessRightGroups;

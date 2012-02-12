@@ -68,7 +68,7 @@ public abstract class Populator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	protected void doPopulate(final String name, final String value) throws WorkflowException 
+	protected void doPopulate(final String name, final String value) 
 	{
 		setPropertySetDataString(name, value);
 	}

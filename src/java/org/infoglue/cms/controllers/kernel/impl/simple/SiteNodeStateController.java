@@ -80,7 +80,7 @@ public class SiteNodeStateController extends BaseController
 	 * This method handles versioning and state-control of siteNodes.
 	 * Se inline documentation for further explainations.
 	 */
-    public SiteNodeVersion changeState(Integer oldSiteNodeVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, List resultingEvents) throws ConstraintException, SystemException
+    public SiteNodeVersion changeState(Integer oldSiteNodeVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, List resultingEvents) throws SystemException
     {
     	return changeState(oldSiteNodeVersionId, stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, siteNodeId, resultingEvents);
     }
@@ -90,7 +90,7 @@ public class SiteNodeStateController extends BaseController
 	 * Se inline documentation for further explainations.
 	 */
 	
-    public SiteNodeVersion changeState(Integer oldSiteNodeVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, List resultingEvents) throws ConstraintException, SystemException
+    public SiteNodeVersion changeState(Integer oldSiteNodeVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, List resultingEvents) throws SystemException
     {
         SiteNodeVersion newSiteNodeVersion = null; 
         
@@ -124,7 +124,7 @@ public class SiteNodeStateController extends BaseController
 	 * Se inline documentation for further explainations.
 	 */
 
-    public SiteNodeVersion changeState(Integer oldSiteNodeVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Database db, List resultingEvents) throws ConstraintException, SystemException
+    public SiteNodeVersion changeState(Integer oldSiteNodeVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Database db, List resultingEvents) throws SystemException
     {
     	return changeState(oldSiteNodeVersionId, stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, siteNodeId, db, resultingEvents);
     }
@@ -134,7 +134,7 @@ public class SiteNodeStateController extends BaseController
 	 * Se inline documentation for further explainations.
 	 */
 	
-    public SiteNodeVersion changeState(Integer oldSiteNodeVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Database db, List resultingEvents) throws ConstraintException, SystemException
+    public SiteNodeVersion changeState(Integer oldSiteNodeVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Database db, List resultingEvents) throws SystemException
     {
 		SiteNodeVersion newSiteNodeVersion = null;
 		
@@ -490,7 +490,7 @@ public class SiteNodeStateController extends BaseController
 	/**
 	 * This method copies all qualifyers a serviceBinding has to the new serviceBinding.
 	 */
-	private static void copyQualifyers(ServiceBinding originalServiceBinding, ServiceBinding newServiceBinding, Database db) throws ConstraintException, SystemException, Exception
+	private static void copyQualifyers(ServiceBinding originalServiceBinding, ServiceBinding newServiceBinding, Database db)
 	{
 		Collection qualifyers = originalServiceBinding.getBindingQualifyers();	
 		Collection newBindingQualifyers = new ArrayList();
@@ -504,7 +504,6 @@ public class SiteNodeStateController extends BaseController
 			newQualifyer.setValueObject(qualifyerVO);
 			newQualifyer.setServiceBinding((ServiceBindingImpl)newServiceBinding);
 			newBindingQualifyers.add(newQualifyer);
-			//QualifyerController.create(newQualifyerVO, newServiceBinding.getServiceBindingId(), db);
 		}
 		newServiceBinding.setBindingQualifyers(newBindingQualifyers);
 					

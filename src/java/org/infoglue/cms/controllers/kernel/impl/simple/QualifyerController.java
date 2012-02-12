@@ -54,7 +54,7 @@ public class QualifyerController extends BaseController
 {
     private final static Logger logger = Logger.getLogger(QualifyerController.class.getName());
 
-	public static Qualifyer getQualifyerWithId(Integer qualifyerId, Database db) throws SystemException, Bug
+	public static Qualifyer getQualifyerWithId(Integer qualifyerId, Database db) throws SystemException
 	{
 		return (Qualifyer) getObjectWithId(QualifyerImpl.class, qualifyerId, db);
 	}
@@ -145,7 +145,7 @@ public class QualifyerController extends BaseController
 	/**
 	 * This method returns a sorted list of qualifyers.
 	 */
-	public static List getBindingQualifyers(Integer serviceBindingId) throws SystemException, Bug, Exception
+	public static List getBindingQualifyers(Integer serviceBindingId) throws SystemException, Exception
 	{
 		List qualifyers = new ArrayList();
 		

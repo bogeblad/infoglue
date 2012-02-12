@@ -83,7 +83,7 @@ public class SimpleCategoryProvider extends CategoryProvider
 	/**
 	 * 
 	 */
-	private void populate() throws WorkflowException 
+	private void populate() 
 	{
 		List result = new ArrayList();
 		for(Iterator i = rootCategory.getChildren().iterator(); i.hasNext();) 
@@ -103,7 +103,7 @@ public class SimpleCategoryProvider extends CategoryProvider
 	/**
 	 * 
 	 */
-	private void cleanPropertySet() throws WorkflowException
+	private void cleanPropertySet()
 	{
 		removeFromPropertySet(getBaseKey(), true);
 	}

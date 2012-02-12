@@ -660,7 +660,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 		
 	}
 	
-	protected Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException, Bug
+	protected Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException
 	{
 		Object object = null;
 		try

@@ -51,12 +51,12 @@ public class ServiceDefinitionController extends BaseController
 		return new ServiceDefinitionController();
 	}
 
-    public ServiceDefinitionVO getServiceDefinitionVOWithId(Integer serviceDefinitionId) throws SystemException, Bug
+    public ServiceDefinitionVO getServiceDefinitionVOWithId(Integer serviceDefinitionId) throws SystemException
     {
 		return (ServiceDefinitionVO) getVOWithId(ServiceDefinitionImpl.class, serviceDefinitionId);
     }
 
-    public ServiceDefinitionVO getServiceDefinitionVOWithId(Integer serviceDefinitionId, Database db) throws SystemException, Bug
+    public ServiceDefinitionVO getServiceDefinitionVOWithId(Integer serviceDefinitionId, Database db) throws SystemException
     {
 		return (ServiceDefinitionVO) getVOWithId(ServiceDefinitionImpl.class, serviceDefinitionId, db);
     }
@@ -108,12 +108,12 @@ public class ServiceDefinitionController extends BaseController
     	deleteEntity(ServiceDefinitionImpl.class, vo.getServiceDefinitionId());
     }        
 
-    public ServiceDefinition getServiceDefinitionWithId(Integer serviceDefinitionId, Database db) throws SystemException, Bug
+    public ServiceDefinition getServiceDefinitionWithId(Integer serviceDefinitionId, Database db) throws SystemException
     {
 		return (ServiceDefinition) getObjectWithId(ServiceDefinitionImpl.class, serviceDefinitionId, db);
     }
 
-    public List getServiceDefinitionVOList() throws SystemException, Bug
+    public List getServiceDefinitionVOList() throws SystemException
     {
         return getAllVOObjects(ServiceDefinitionImpl.class, "serviceDefinitionId");
     }
@@ -122,7 +122,7 @@ public class ServiceDefinitionController extends BaseController
 	 * This method deletes the ServiceDefinition sent in from the system.
 	 */
 	
-	public void deleteServiceDefinition(Integer serviceDefinitionId, Database db) throws SystemException, Bug
+	public void deleteServiceDefinition(Integer serviceDefinitionId, Database db) throws SystemException
 	{
 		try
 		{
@@ -179,7 +179,7 @@ public class ServiceDefinitionController extends BaseController
 	 * @throws Bug
 	 */
     
-	public ServiceDefinitionVO getServiceDefinitionVOWithName(String name) throws SystemException, Bug
+	public ServiceDefinitionVO getServiceDefinitionVOWithName(String name) throws SystemException
 	{
 		ServiceDefinitionVO serviceDefinitionVO = null;
 		
@@ -216,7 +216,7 @@ public class ServiceDefinitionController extends BaseController
 	 * @throws Bug
 	 */
 
-	public ServiceDefinition getServiceDefinitionWithName(String name, Database db, boolean readOnly) throws SystemException, Bug
+	public ServiceDefinition getServiceDefinitionWithName(String name, Database db, boolean readOnly) throws SystemException
 	{
 		ServiceDefinition serviceDefinition = null;
 		

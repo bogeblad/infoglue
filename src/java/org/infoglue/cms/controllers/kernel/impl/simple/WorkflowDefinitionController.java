@@ -53,12 +53,12 @@ public class WorkflowDefinitionController extends BaseController
 		return new WorkflowDefinitionController();
 	}
 
-    public WorkflowDefinitionVO getWorkflowDefinitionVOWithId(Integer workflowDefinitionId) throws SystemException, Bug
+    public WorkflowDefinitionVO getWorkflowDefinitionVOWithId(Integer workflowDefinitionId) throws SystemException
     {
 		return (WorkflowDefinitionVO) getVOWithId(WorkflowDefinitionImpl.class, workflowDefinitionId);
     }
 
-    public WorkflowDefinition getWorkflowDefinitionWithId(Integer workflowDefinitionId, Database db) throws SystemException, Bug
+    public WorkflowDefinition getWorkflowDefinitionWithId(Integer workflowDefinitionId, Database db) throws SystemException
     {
 		return (WorkflowDefinition) getObjectWithId(WorkflowDefinitionImpl.class, workflowDefinitionId, db);
     }
@@ -72,7 +72,7 @@ public class WorkflowDefinitionController extends BaseController
 	 * @throws Bug
 	 */
 
-	public WorkflowDefinitionVO getWorkflowDefinitionVOWithName(String name) throws SystemException, Bug
+	public WorkflowDefinitionVO getWorkflowDefinitionVOWithName(String name) throws SystemException
 	{
 		WorkflowDefinitionVO workflowDefinitionVO = null;
 
@@ -107,7 +107,7 @@ public class WorkflowDefinitionController extends BaseController
 	 * @throws Bug
 	 */
 
-	public WorkflowDefinition getWorkflowDefinitionWithName(String name, Database db) throws SystemException, Bug
+	public WorkflowDefinition getWorkflowDefinitionWithName(String name, Database db) throws SystemException
 	{
 		WorkflowDefinition workflowDefinition = null;
 
@@ -133,7 +133,7 @@ public class WorkflowDefinitionController extends BaseController
 		return workflowDefinition;
 	}
 
-    public List getWorkflowDefinitionVOList() throws SystemException, Bug
+    public List getWorkflowDefinitionVOList() throws SystemException
     {
 		
         String key = "workflowDefinitionVOList";

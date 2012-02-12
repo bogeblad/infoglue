@@ -176,7 +176,7 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 		return "success";
 	}
 	
-	public Integer getTopRepositoryId() throws ConstraintException, SystemException, Bug
+	public Integer getTopRepositoryId() throws ConstraintException, SystemException
 	{
 		List repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 		

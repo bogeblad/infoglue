@@ -57,12 +57,12 @@ public class SiteNodeTypeDefinitionController extends BaseController
 		return new SiteNodeTypeDefinitionController();
 	}
 	
-    public SiteNodeTypeDefinitionVO getSiteNodeTypeDefinitionVOWithId(Integer siteNodeTypeDefinitionId) throws SystemException, Bug
+    public SiteNodeTypeDefinitionVO getSiteNodeTypeDefinitionVOWithId(Integer siteNodeTypeDefinitionId) throws SystemException
     {
 		return (SiteNodeTypeDefinitionVO) getVOWithId(SiteNodeTypeDefinitionImpl.class, siteNodeTypeDefinitionId);
     }
 
-    public SiteNodeTypeDefinitionVO getSiteNodeTypeDefinitionVOWithId(Integer siteNodeTypeDefinitionId, Database db) throws SystemException, Bug
+    public SiteNodeTypeDefinitionVO getSiteNodeTypeDefinitionVOWithId(Integer siteNodeTypeDefinitionId, Database db) throws SystemException
     {
 		return (SiteNodeTypeDefinitionVO) getVOWithId(SiteNodeTypeDefinitionImpl.class, siteNodeTypeDefinitionId, db);
     }
@@ -80,32 +80,32 @@ public class SiteNodeTypeDefinitionController extends BaseController
     	deleteEntity(SiteNodeTypeDefinitionImpl.class, vo.getSiteNodeTypeDefinitionId());
     }        
 
-    public SiteNodeTypeDefinition getSiteNodeTypeDefinitionWithId(Integer siteNodeTypeDefinitionId, Database db) throws SystemException, Bug
+    public SiteNodeTypeDefinition getSiteNodeTypeDefinitionWithId(Integer siteNodeTypeDefinitionId, Database db) throws SystemException
     {
 		return (SiteNodeTypeDefinition) getObjectWithId(SiteNodeTypeDefinitionImpl.class, siteNodeTypeDefinitionId, db);
     }
 
-    public SiteNodeTypeDefinition getSiteNodeTypeDefinitionWithIdAsReadOnly(Integer siteNodeTypeDefinitionId, Database db) throws SystemException, Bug
+    public SiteNodeTypeDefinition getSiteNodeTypeDefinitionWithIdAsReadOnly(Integer siteNodeTypeDefinitionId, Database db) throws SystemException
     {
 		return (SiteNodeTypeDefinition) getObjectWithIdAsReadOnly(SiteNodeTypeDefinitionImpl.class, siteNodeTypeDefinitionId, db);
     }
 
-    public List getSiteNodeTypeDefinitionVOList() throws SystemException, Bug
+    public List getSiteNodeTypeDefinitionVOList() throws SystemException
     {
         return getAllVOObjects(SiteNodeTypeDefinitionImpl.class, "siteNodeTypeDefinitionId");
     }
 
-    public List getSiteNodeTypeDefinitionVOList(Database db) throws SystemException, Bug
+    public List getSiteNodeTypeDefinitionVOList(Database db) throws SystemException
     {
         return getAllVOObjects(SiteNodeTypeDefinitionImpl.class, "siteNodeTypeDefinitionId", db);
     }
 
-    public List getSiteNodeTypeDefinitionList(Database db) throws SystemException, Bug
+    public List getSiteNodeTypeDefinitionList(Database db) throws SystemException
     {
         return getAllObjects(SiteNodeTypeDefinitionImpl.class, "siteNodeTypeDefinitionId", db);
     }
 
-    public List getSortedSiteNodeTypeDefinitionVOList() throws SystemException, Bug
+    public List getSortedSiteNodeTypeDefinitionVOList() throws SystemException
     {
     	List siteNodeTypeDefinitionVOList = getSiteNodeTypeDefinitionVOList();
     	
@@ -123,7 +123,7 @@ public class SiteNodeTypeDefinitionController extends BaseController
 	 * @throws Bug
 	 */
 
-	public SiteNodeTypeDefinition getSiteNodeTypeDefinitionWithName(String name, Database db, boolean readOnly) throws SystemException, Bug
+	public SiteNodeTypeDefinition getSiteNodeTypeDefinitionWithName(String name, Database db, boolean readOnly) throws SystemException
 	{
 		SiteNodeTypeDefinition siteNodeTypeDefinition = null;
 		
@@ -161,7 +161,7 @@ public class SiteNodeTypeDefinitionController extends BaseController
 	 * This method deletes the SiteNodeTypeDefinition sent in from the system.
 	 */
 	
-	public void deleteSiteNodeTypeDefinition(Integer siteNodeTypeDefinitionId, Database db) throws SystemException, Bug
+	public void deleteSiteNodeTypeDefinition(Integer siteNodeTypeDefinitionId, Database db) throws SystemException
 	{
 		try
 		{

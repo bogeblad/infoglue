@@ -71,18 +71,18 @@ public class SystemUserController extends BaseController
 	}
 	
 	/*
-    public static SystemUser getSystemUserWithId(Integer systemUserId, Database db) throws SystemException, Bug
+    public static SystemUser getSystemUserWithId(Integer systemUserId, Database db) throws SystemException
     {
 		return (SystemUser) getObjectWithId(SystemUserImpl.class, systemUserId, db);
     }
     
-    public SystemUserVO getSystemUserVOWithId(Integer systemUserId) throws SystemException, Bug
+    public SystemUserVO getSystemUserVOWithId(Integer systemUserId) throws SystemException
     {
 		return (SystemUserVO) getVOWithId(SystemUserImpl.class, systemUserId);
     }
 	*/
 
-	public SystemUserVO getSystemUserVOWithName(String name)  throws SystemException, Bug
+	public SystemUserVO getSystemUserVOWithName(String name)  throws SystemException
 	{
 		SystemUserVO systemUserVO = null;
 		Database db = CastorDatabaseService.getDatabase();
@@ -110,7 +110,7 @@ public class SystemUserController extends BaseController
 	 * 	Get the SystemUser with the userName
 	 */
 	 
-	public SystemUserVO getReadOnlySystemUserVOWithName(String userName, Database db)  throws SystemException, Bug
+	public SystemUserVO getReadOnlySystemUserVOWithName(String userName, Database db)  throws SystemException
 	{
 		SystemUserVO systemUserVO = null;
 		
@@ -143,7 +143,7 @@ public class SystemUserController extends BaseController
 	 * 	Get the SystemUser with the userName
 	 */
 	 
-	public SystemUser getReadOnlySystemUserWithName(String userName, Database db)  throws SystemException, Bug
+	public SystemUser getReadOnlySystemUserWithName(String userName, Database db)  throws SystemException
 	{
 		SystemUser systemUser = null;
         OQLQuery	oql;
@@ -174,7 +174,7 @@ public class SystemUserController extends BaseController
 	 * 	Get if the SystemUser with the userName exists
 	 */
 	 
-	public boolean systemUserExists(String userName, Database db) throws SystemException, Bug
+	public boolean systemUserExists(String userName, Database db) throws SystemException
 	{
 		boolean systemUserExists = false;
 		
@@ -206,7 +206,7 @@ public class SystemUserController extends BaseController
 	 * 	Get the SystemUser with the userName
 	 */
 	 
-	public SystemUser getSystemUserWithName(String userName, Database db)  throws SystemException, Bug
+	public SystemUser getSystemUserWithName(String userName, Database db)  throws SystemException
 	{
 		SystemUser systemUser = null;
         OQLQuery oql;
@@ -237,7 +237,7 @@ public class SystemUserController extends BaseController
 
 
 
-	public SystemUserVO getSystemUserVO(String userName, String password)  throws SystemException, Bug
+	public SystemUserVO getSystemUserVO(String userName, String password)  throws SystemException
 	{
 		SystemUserVO systemUserVO = null;
 
@@ -307,22 +307,22 @@ public class SystemUserController extends BaseController
 		return systemUser;		
 	}	
 	
-    public List getSystemUserVOList() throws SystemException, Bug
+    public List getSystemUserVOList() throws SystemException
     {
         return getAllVOObjects(SmallSystemUserImpl.class, "userName");
     }
 
-    public List getSystemUserVOList(Database db) throws SystemException, Bug
+    public List getSystemUserVOList(Database db) throws SystemException
     {
         return getAllVOObjects(SmallSystemUserImpl.class, "userName", db);
     }
 
-    public List getSystemUserList(Database db) throws SystemException, Bug
+    public List getSystemUserList(Database db) throws SystemException
     {
         return getAllObjects(SystemUserImpl.class, "userName", db);
     }
     
-	public List getFilteredSystemUserVOList(String searchString) throws SystemException, Bug
+	public List getFilteredSystemUserVOList(String searchString) throws SystemException
 	{
 		List filteredList = new ArrayList();
 		
@@ -346,7 +346,7 @@ public class SystemUserController extends BaseController
 		return toVOList(filteredList);
 	}
 
-	public List<SystemUserVO> getSystemUserVOListWithPassword(String password, Database db) throws SystemException, Bug, Exception
+	public List<SystemUserVO> getSystemUserVOListWithPassword(String password, Database db) throws SystemException, Exception
 	{
 		List<SystemUserVO> filteredVOList = new ArrayList<SystemUserVO>();
 		
@@ -367,7 +367,7 @@ public class SystemUserController extends BaseController
 		return filteredVOList;
 	}
 
-	public List getFilteredSystemUserList(String searchString, Database db) throws SystemException, Bug, Exception
+	public List getFilteredSystemUserList(String searchString, Database db) throws SystemException, Exception
 	{
 		List filteredList = new ArrayList();
 		
@@ -405,7 +405,7 @@ public class SystemUserController extends BaseController
 		return filteredList;
 	}
 
-	public List getFilteredSystemUserVOList(String firstName, String lastName, String userName, String email, String[] roleNames) throws SystemException, Bug
+	public List getFilteredSystemUserVOList(String firstName, String lastName, String userName, String email, String[] roleNames) throws SystemException
 	{
 		List filteredList = new ArrayList();
 		
@@ -429,7 +429,7 @@ public class SystemUserController extends BaseController
 		return toVOList(filteredList);
 	}
 
-	public List getFilteredSystemUserList(String firstName, String lastName, String userName, String email, String[] roleNames, Database db) throws SystemException, Bug, Exception
+	public List getFilteredSystemUserList(String firstName, String lastName, String userName, String email, String[] roleNames, Database db) throws SystemException, Exception
 	{
 		List filteredList = new ArrayList();
 		

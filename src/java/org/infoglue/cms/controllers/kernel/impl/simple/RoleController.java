@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Role;
@@ -63,57 +64,57 @@ public class RoleController extends BaseController
 		return new RoleController();
 	}
 	
-    public Role getRoleWithId(Integer roleId, Database db) throws SystemException, Bug
+    public Role getRoleWithId(Integer roleId, Database db) throws SystemException
     {
 		return (Role) getObjectWithId(RoleImpl.class, roleId, db);
     }
 
-	public Role getRoleWithName(String roleName, Database db) throws SystemException, Bug
+	public Role getRoleWithName(String roleName, Database db) throws SystemException
 	{
 		return (Role)getObjectWithId(RoleImpl.class, roleName, db);
 	}
     
     /*
-    public static List getRoleVOList(Database db) throws SystemException, Bug
+    public static List getRoleVOList(Database db) throws SystemException
     {
         return getAllVOObjects(RoleImpl.class, db);
     }
 	*/
 	
-    public RoleVO getRoleVOWithId(Integer roleId) throws SystemException, Bug
+    public RoleVO getRoleVOWithId(Integer roleId) throws SystemException
     {
 		return (RoleVO) getVOWithId(SmallRoleImpl.class, roleId);
     }
 
-	public RoleVO getRoleVOWithId(String roleName) throws SystemException, Bug
+	public RoleVO getRoleVOWithId(String roleName) throws SystemException
 	{
 		return (RoleVO) getVOWithId(SmallRoleImpl.class, roleName);
 	}
 
-	public RoleVO getRoleVOWithId(String roleName, Database db) throws SystemException, Bug
+	public RoleVO getRoleVOWithId(String roleName, Database db) throws SystemException
 	{
 		return (RoleVO) getVOWithId(SmallRoleImpl.class, roleName, db);
 	}
 
     // Simple, without db
 	/*
-    public static Role getRoleWithId(Integer roleId) throws SystemException, Bug
+    public static Role getRoleWithId(Integer roleId) throws SystemException
     {
 		return (Role) getObjectWithId(RoleImpl.class, roleId);
     }
     */
     
-    public List getRoleVOList() throws SystemException, Bug
+    public List getRoleVOList() throws SystemException
     {
         return getAllVOObjects(SmallRoleImpl.class, "roleName");
     }
 
-    public List getRoleVOList(Database db) throws SystemException, Bug
+    public List getRoleVOList(Database db) throws SystemException
     {
         return getAllVOObjects(SmallRoleImpl.class, "roleName", db);
     }
 
-    public RoleVO create(RoleVO roleVO) throws ConstraintException, SystemException
+    public RoleVO create(RoleVO roleVO) throws SystemException
     {
         Role role = new RoleImpl();
         role.setValueObject(roleVO);
@@ -121,7 +122,7 @@ public class RoleController extends BaseController
         return role.getValueObject();
     }     
 
-    public Role create(RoleVO roleVO, Database db) throws ConstraintException, SystemException, Exception
+    public Role create(RoleVO roleVO, Database db) throws PersistenceException 
     {
         Role role = new RoleImpl();
         role.setValueObject(roleVO);
@@ -129,7 +130,7 @@ public class RoleController extends BaseController
         return role;
     }     
 
-    public void delete(RoleVO roleVO) throws ConstraintException, SystemException
+    public void delete(RoleVO roleVO) throws SystemException
     {
     	deleteEntity(RoleImpl.class, roleVO.getRoleName());
     }        
@@ -139,7 +140,7 @@ public class RoleController extends BaseController
     	deleteEntity(RoleImpl.class, roleVO.getRoleName(), db);
     }        
 
-	public void delete(String roleName) throws ConstraintException, SystemException
+	public void delete(String roleName) throws SystemException
 	{
 		deleteEntity(RoleImpl.class, roleName);
 	}        
@@ -150,7 +151,7 @@ public class RoleController extends BaseController
 	}        
 
 	// Get list of users accosiated with this role
-	public List getRoleSystemUserVOList(String userName, Database db)  throws SystemException, Bug
+	public List getRoleSystemUserVOList(String userName, Database db)  throws SystemException
 	{
 		Collection systemUsers = null;
 		List systemUsersVO = new ArrayList();
@@ -176,7 +177,7 @@ public class RoleController extends BaseController
 		return systemUsersVO;		
 	}
 
-	public List getRoleSystemUserVOList(String roleName)  throws SystemException, Bug
+	public List getRoleSystemUserVOList(String roleName)  throws SystemException
 	{
 		List systemUsersVO = null;
 		Database db = CastorDatabaseService.getDatabase();
@@ -196,7 +197,7 @@ public class RoleController extends BaseController
 		return systemUsersVO;
 	}
 
-    public RoleVO update(RoleVO roleVO) throws ConstraintException, SystemException
+    public RoleVO update(RoleVO roleVO) throws SystemException
     {
     	return (RoleVO) updateEntity(RoleImpl.class, roleVO);
     }        
@@ -237,7 +238,7 @@ public class RoleController extends BaseController
         return role.getValueObject();
     }        
 
-    public Role update(RoleVO roleVO, String[] systemUsers, Database db) throws ConstraintException, SystemException
+    public Role update(RoleVO roleVO, String[] systemUsers, Database db) throws SystemException
     {
         Role role = getRoleWithName(roleVO.getRoleName(), db);
 		role.getSystemUsers().clear();
@@ -267,7 +268,7 @@ public class RoleController extends BaseController
 	 * @throws Bug
 	 */
 	
-	public List<RoleVO> getRoleVOList(String userName) throws SystemException, Bug
+	public List<RoleVO> getRoleVOList(String userName) throws SystemException
 	{
 		List<RoleVO> roleVOList = null;
 		
@@ -299,7 +300,7 @@ public class RoleController extends BaseController
 	 * @throws Bug
 	 */
 	
-	public Collection getRoleList(String userName, Database db)  throws SystemException, Bug
+	public Collection getRoleList(String userName, Database db)  throws SystemException
 	{
 	    Collection roleList = null;
 		
@@ -313,7 +314,7 @@ public class RoleController extends BaseController
 	 * 	Get the the roles for a 
 	 */
 	 
-	public List<RoleVO> getRoleVOList(String userName, Database db)  throws SystemException, Bug
+	public List<RoleVO> getRoleVOList(String userName, Database db)  throws SystemException
 	{
 		List<RoleVO> roleVOList = new ArrayList<RoleVO>();
 		
@@ -373,7 +374,7 @@ public class RoleController extends BaseController
         }
     }        
 
-    public void addUser(String roleName, String userName, Database db) throws ConstraintException, SystemException
+    public void addUser(String roleName, String userName, Database db) throws SystemException
     {
 		Role role = getRoleWithName(roleName, db);
 		
@@ -390,7 +391,7 @@ public class RoleController extends BaseController
 	 * 	Get if the Role with the roleName exists
 	 */
    
-    public boolean roleExists(String roleName) throws SystemException, Bug
+    public boolean roleExists(String roleName) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
 
@@ -444,7 +445,7 @@ public class RoleController extends BaseController
         }
     }        
 
-    public void removeUser(String roleName, String userName, Database db) throws ConstraintException, SystemException
+    public void removeUser(String roleName, String userName, Database db) throws SystemException
     {
 		Role role = getRoleWithName(roleName, db);
 		
@@ -471,7 +472,7 @@ public class RoleController extends BaseController
 	 * 	Get if the Role with the roleName exists
 	 */
 	 
-	public boolean roleExists(String roleName, Database db) throws SystemException, Bug
+	public boolean roleExists(String roleName, Database db) throws SystemException
 	{
 		boolean roleExists = false;
 		

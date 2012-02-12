@@ -77,12 +77,12 @@ public abstract class ErrorPopulator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	protected final void clean(final String errorPrefix) throws WorkflowException
+	protected final void clean(final String errorPrefix)
 	{
 		removeFromPropertySet(errorPrefix, true);
 	}
 
-	protected void populate(final ConstraintExceptionBuffer ceb, String languageCode) throws WorkflowException 
+	protected void populate(final ConstraintExceptionBuffer ceb, String languageCode) 
 	{
 		for(ConstraintException e = ceb.toConstraintException(); e != null; e = e.getChainedException())
 		{
@@ -93,7 +93,7 @@ public abstract class ErrorPopulator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private void populateError(final ConstraintException e, String languageCode) throws WorkflowException
+	private void populateError(final ConstraintException e, String languageCode) 
 	{
 		setPropertySetString(getErrorKey(e, languageCode), getStringManager().getString(e.getErrorCode()));
 	}

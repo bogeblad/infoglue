@@ -60,7 +60,7 @@ public class ContentVersionControllerProxy extends ContentVersionController
 	 * This method returns a specific content-object after checking that it is accessable by the given user
 	 */
 	
-    public ContentVersionVO getACContentVersionVOWithId(InfoGluePrincipal infogluePrincipal, Integer contentVersionId) throws ConstraintException, SystemException, Bug, Exception
+    public ContentVersionVO getACContentVersionVOWithId(InfoGluePrincipal infogluePrincipal, Integer contentVersionId) throws ConstraintException, SystemException, Exception
     {
     	Map hashMap = new HashMap();
     	hashMap.put("contentVersionId", contentVersionId);
@@ -74,7 +74,7 @@ public class ContentVersionControllerProxy extends ContentVersionController
 	 * This method returns a specific content-object after checking that it is accessable by the given user
 	 */
 
-	public ContentVersionVO getACLatestActiveContentVersionVO(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer languageId) throws ConstraintException, SystemException, Bug, Exception
+	public ContentVersionVO getACLatestActiveContentVersionVO(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer languageId) throws ConstraintException, SystemException, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentId);
@@ -97,7 +97,7 @@ public class ContentVersionControllerProxy extends ContentVersionController
 	 * This method creates a contentVersion after first checking that the user has rights to edit it.
 	 */
 
-	public ContentVersionVO acCreate(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer languageId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException, Bug, Exception
+	public ContentVersionVO acCreate(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer languageId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentId);
@@ -111,7 +111,7 @@ public class ContentVersionControllerProxy extends ContentVersionController
 	 * This method updates a content after first checking that the user has rights to edit it.
 	 */
 
-	public ContentVersionVO acUpdate(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer languageId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException, Bug, Exception
+	public ContentVersionVO acUpdate(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer languageId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException, Exception
 	{
 		logger.info("contentId:" + contentId);
 		logger.info("languageId:" + languageId);
@@ -141,7 +141,7 @@ public class ContentVersionControllerProxy extends ContentVersionController
 	 * This method deletes a content after first checking that the user has rights to edit it.
 	 */
 
-	public void acDelete(InfoGluePrincipal infogluePrincipal, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException, Bug, Exception
+	public void acDelete(InfoGluePrincipal infogluePrincipal, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentVersionId", contentVersionVO.getId());

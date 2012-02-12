@@ -73,7 +73,7 @@ public abstract class DatePopulator extends Populator
 	/**
 	 * 
 	 */
-	protected void populate(final String name, final Date value) throws WorkflowException 
+	protected void populate(final String name, final Date value) 
 	{
 		doPopulate(name, new VisualFormatter().formatDate(value, DATETIME_PATTERN));
 	}

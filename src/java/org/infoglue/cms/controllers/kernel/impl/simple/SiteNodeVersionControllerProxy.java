@@ -60,7 +60,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	}
 	
 	
-	private List getInterceptors(Integer interceptorPointId) throws SystemException, Bug
+	private List getInterceptors(Integer interceptorPointId) throws SystemException
 	{
 		interceptors = InterceptorController.getController().getInterceptorsVOList(interceptorPointId);
 		
@@ -72,7 +72,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	 * This method returns a specific siteNodeVersion-object
 	 */
 	
-    public SiteNodeVersionVO getACLatestActiveSiteNodeVersionVO(InfoGluePrincipal infogluePrincipal, Integer siteNodeId, Database db) throws ConstraintException, SystemException, Bug, Exception
+    public SiteNodeVersionVO getACLatestActiveSiteNodeVersionVO(InfoGluePrincipal infogluePrincipal, Integer siteNodeId, Database db) throws ConstraintException, SystemException, Exception
     {
 		SiteNodeVersionVO siteNodeVersionVO = getLatestActiveSiteNodeVersionVO(db, siteNodeId);
 		
@@ -92,7 +92,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	 * This method returns a specific siteNodeVersion-object
 	 */
 	
-    public SiteNodeVersionVO getACLatestActiveSiteNodeVersionVO(InfoGluePrincipal infogluePrincipal, Integer siteNodeId) throws ConstraintException, SystemException, Bug, Exception
+    public SiteNodeVersionVO getACLatestActiveSiteNodeVersionVO(InfoGluePrincipal infogluePrincipal, Integer siteNodeId) throws ConstraintException, SystemException, Exception
     {
 		SiteNodeVersionVO siteNodeVersionVO = getLatestActiveSiteNodeVersionVO(siteNodeId);
 		
@@ -109,7 +109,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	 * This method creates a content after first checking that the user has rights to edit it.
 	 */
 /*
-	public ContentVO acCreate(InfoGluePrincipal infogluePrincipal, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws ConstraintException, SystemException, Bug, Exception
+	public ContentVO acCreate(InfoGluePrincipal infogluePrincipal, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws ConstraintException, SystemException, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", parentContentId);
@@ -124,7 +124,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	 * This method updates a content after first checking that the user has rights to edit it.
 	 */
 
-	public SiteNodeVersionVO acUpdate(InfoGluePrincipal infogluePrincipal, SiteNodeVersionVO siteNodeVersionVO) throws ConstraintException, SystemException, Bug, Exception
+	public SiteNodeVersionVO acUpdate(InfoGluePrincipal infogluePrincipal, SiteNodeVersionVO siteNodeVersionVO) throws ConstraintException, SystemException, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeVersionId", siteNodeVersionVO.getId());
@@ -138,7 +138,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	 * This method updates a content after first checking that the user has rights to edit it.
 	 */
 
-	public SiteNodeVersionVO acUpdate(InfoGluePrincipal infogluePrincipal, SiteNodeVersionVO siteNodeVersionVO, Database db) throws ConstraintException, SystemException, Bug, Exception
+	public SiteNodeVersionVO acUpdate(InfoGluePrincipal infogluePrincipal, SiteNodeVersionVO siteNodeVersionVO, Database db) throws ConstraintException, SystemException, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeVersionId", siteNodeVersionVO.getId());
@@ -152,7 +152,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	 * This method deletes a content after first checking that the user has rights to edit it.
 	 */
 	/*
-	public void acDelete(InfoGluePrincipal infogluePrincipal, ContentVO contentVO) throws ConstraintException, SystemException, Bug, Exception
+	public void acDelete(InfoGluePrincipal infogluePrincipal, ContentVO contentVO) throws ConstraintException, SystemException, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentVO.getId());
@@ -167,7 +167,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	 * This method moves a content after first checking that the user has rights to edit it.
 	 */
 	/*
-	public void acMoveContent(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, Integer newParentContentId) throws ConstraintException, SystemException, Bug, Exception
+	public void acMoveContent(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, Integer newParentContentId) throws ConstraintException, SystemException, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentVO.getId());

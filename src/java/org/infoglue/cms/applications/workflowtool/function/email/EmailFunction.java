@@ -423,7 +423,7 @@ public class EmailFunction extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private InternetAddress[] createAddresses(final String s) throws WorkflowException
+	private InternetAddress[] createAddresses(final String s)
 	{
 		final List addresses = new ArrayList();
 		for(final StringTokenizer st = new StringTokenizer(s, ADDRESS_DELIMITER); st.hasMoreTokens(); )

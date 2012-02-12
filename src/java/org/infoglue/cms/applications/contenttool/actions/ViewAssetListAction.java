@@ -138,7 +138,7 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
     }
     
     
-    public String getContentPath(Integer contentId) throws ConstraintException, SystemException, Bug, Exception
+    public String getContentPath(Integer contentId) throws ConstraintException, SystemException, Exception
     {
         ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
         StringBuffer ret = new StringBuffer();

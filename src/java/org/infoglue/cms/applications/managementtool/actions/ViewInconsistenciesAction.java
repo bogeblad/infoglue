@@ -73,12 +73,12 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 		return inconsistencies;
 	}
     
-    public SiteNodeVO getSiteNodeVO(String siteNodeId) throws NumberFormatException, SystemException, Bug
+    public SiteNodeVO getSiteNodeVO(String siteNodeId) throws NumberFormatException, SystemException
     {
     	return SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
     }
 
-    public ContentVO getContentVO(String contentId) throws NumberFormatException, SystemException, Bug
+    public ContentVO getContentVO(String contentId) throws NumberFormatException, SystemException
     {
     	return ContentController.getContentController().getContentVOWithId(new Integer(contentId));
     }

@@ -334,7 +334,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 		return "background";
 	}
 	
-	public String doXml() throws IOException, SystemException, Bug, DocumentException
+	public String doXml() throws IOException, SystemException, DocumentException
 	{
 		String xmlResult = null;
 		getResponse().setContentType("text/xml; charset=UTF-8");

@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
@@ -66,29 +67,29 @@ public class ServiceBindingController extends BaseController
         return new ServiceBindingController();
     }
     
-    public static ServiceBindingVO getServiceBindingVOWithId(Integer serviceBindingId) throws SystemException, Bug
+    public static ServiceBindingVO getServiceBindingVOWithId(Integer serviceBindingId) throws SystemException
     {
 		return (ServiceBindingVO) getVOWithId(ServiceBindingImpl.class, serviceBindingId);
     }
 
 	/*
-    public static ServiceBinding getServiceBindingWithId(Integer serviceBindingId) throws SystemException, Bug
+    public static ServiceBinding getServiceBindingWithId(Integer serviceBindingId) throws SystemException
     {
 		return (ServiceBinding) getObjectWithId(ServiceBindingImpl.class, serviceBindingId);
     }
 	*/
 	
-    public static ServiceBinding getServiceBindingWithId(Integer serviceBindingId, Database db) throws SystemException, Bug
+    public static ServiceBinding getServiceBindingWithId(Integer serviceBindingId, Database db) throws SystemException
     {
 		return (ServiceBinding) getObjectWithId(ServiceBindingImpl.class, serviceBindingId, db);
     }
 
-    public static ServiceBinding getReadOnlyServiceBindingWithId(Integer serviceBindingId, Database db) throws SystemException, Bug
+    public static ServiceBinding getReadOnlyServiceBindingWithId(Integer serviceBindingId, Database db) throws SystemException
     {
 		return (ServiceBinding) getObjectWithIdAsReadOnly(ServiceBindingImpl.class, serviceBindingId, db);
     }
 
-    public List getServiceBindingVOList() throws SystemException, Bug
+    public List getServiceBindingVOList() throws SystemException
     {
         return getAllVOObjects(ServiceBindingImpl.class, "serviceBindingId");
     }
@@ -97,7 +98,7 @@ public class ServiceBindingController extends BaseController
 	 * This method deletes all service bindings pointing to a content.
 	 */
 
-	public List getServiceBindingList(Integer availableServiceBindingId, Database db) throws ConstraintException, SystemException, Exception
+	public List getServiceBindingList(Integer availableServiceBindingId, Database db) throws PersistenceException 
 	{		
 		List serviceBindings = new ArrayList();
 		
@@ -121,7 +122,7 @@ public class ServiceBindingController extends BaseController
 	}       
 
     
-    public static ServiceBindingVO create(ServiceBindingVO serviceBindingVO, String qualifyerXML, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId) throws ConstraintException, SystemException
+    public static ServiceBindingVO create(ServiceBindingVO serviceBindingVO, String qualifyerXML, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId) throws SystemException
     {
     	logger.info("Creating a serviceBinding with the following...");
 
@@ -175,7 +176,7 @@ public class ServiceBindingController extends BaseController
 	 * This is a method that lets you create a new service binding within a transaction.
 	 */
 	
-	public ServiceBindingVO create(Database db, ServiceBindingVO serviceBindingVO, String qualifyerXML, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId) throws ConstraintException, SystemException
+	public ServiceBindingVO create(Database db, ServiceBindingVO serviceBindingVO, String qualifyerXML, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId) throws SystemException
 	{
 		logger.info("Creating a serviceBinding with the following...");
 
@@ -251,7 +252,7 @@ public class ServiceBindingController extends BaseController
 
 
 
-    public static ServiceBindingVO update(ServiceBindingVO serviceBindingVO, String qualifyerXML) throws ConstraintException, SystemException
+    public static ServiceBindingVO update(ServiceBindingVO serviceBindingVO, String qualifyerXML) throws SystemException
     {
     	logger.info("Updating a serviceBinding with the following...");
 
@@ -340,9 +341,10 @@ public class ServiceBindingController extends BaseController
 	
 	/**
 	 * This method deletes all service bindings pointing to a content.
+	 * @throws PersistenceException 
 	 */
 
-	public static void deleteServiceBindingsReferencingSiteNode(SiteNode siteNode, Database db) throws ConstraintException, SystemException, Exception
+	public static void deleteServiceBindingsReferencingSiteNode(SiteNode siteNode, Database db) throws PersistenceException 
 	{		
 		OQLQuery oql = db.getOQLQuery( "SELECT sb FROM org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl sb WHERE sb.bindingQualifyers.name = $1 AND sb.bindingQualifyers.value = $2 ORDER BY sb.serviceBindingId");
 		oql.bind("siteNodeId");
@@ -384,9 +386,10 @@ public class ServiceBindingController extends BaseController
 
 	/**
 	 * This method deletes all service bindings pointing to a site node version.
+	 * @throws PersistenceException 
 	 */
 
-	public static void deleteServiceBindingsReferencingSiteNodeVersion(SiteNodeVersion siteNodeVersion, Database db) throws ConstraintException, SystemException, Exception
+	public static void deleteServiceBindingsReferencingSiteNodeVersion(SiteNodeVersion siteNodeVersion, Database db) throws PersistenceException 
 	{		
 		OQLQuery oql = db.getOQLQuery( "SELECT sb FROM org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl sb WHERE sb.siteNodeVersion = $1 ORDER BY sb.serviceBindingId");
 		oql.bind(siteNodeVersion);
@@ -417,7 +420,7 @@ public class ServiceBindingController extends BaseController
 	 * This method deletes a service binding an all associated qualifyers.
 	 */
 	
-    public static void delete(ServiceBindingVO serviceBindingVO) throws ConstraintException, SystemException
+    public static void delete(ServiceBindingVO serviceBindingVO) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
     	beginTransaction(db);

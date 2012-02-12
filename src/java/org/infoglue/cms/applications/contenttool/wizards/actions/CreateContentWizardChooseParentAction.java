@@ -64,7 +64,7 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 		return "success";
 	}
 	
-	public Integer getTopRepositoryId() throws ConstraintException, SystemException, Bug
+	public Integer getTopRepositoryId() throws ConstraintException, SystemException
 	{		
 		Integer topRepositoryId = null;
 

@@ -141,7 +141,7 @@ public class GroupsProvider extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private void populateGroupFromPrincipal() throws WorkflowException
+	private void populateGroupFromPrincipal() 
 	{
 		logger.debug("Populating from principal.");
 		for(final Iterator i = getPrincipal().getGroups().iterator(); i.hasNext(); )

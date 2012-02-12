@@ -100,7 +100,7 @@ public class ContentPopulator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	protected void populateContentValues() throws WorkflowException 
+	protected void populateContentValues() 
 	{
 		final ContentValues result = new ContentValues();
 		
@@ -114,7 +114,7 @@ public class ContentPopulator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	protected void populateContentVersionValues() throws WorkflowException 
+	protected void populateContentVersionValues() 
 	{
 		final ContentVersionValues result = new ContentVersionValues();
 		final List contentTypeAttributes = getContentTypeAttributes();
@@ -129,7 +129,7 @@ public class ContentPopulator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private String populate(final String name) throws WorkflowException 
+	private String populate(final String name) 
 	{
 		if(parameterExists(name)) 
 		{

@@ -443,7 +443,7 @@ public class WorkflowController extends BaseController
 	 * @return a WorkflowVO representing the current state of the workflow identified by workflowId
 	 * @throws WorkflowException if a workflow error occurs
 	 */
-	public WorkflowVO invokeAction(InfoGluePrincipal principal, long workflowId, int actionId, Map inputs) throws WorkflowException
+	public WorkflowVO invokeAction(InfoGluePrincipal principal, long workflowId, int actionId, Map inputs)
 	{
 		WorkflowVO workflowVO = null;
 
@@ -889,7 +889,7 @@ public class WorkflowController extends BaseController
 	 * @param workflowVO the workflow.
 	 * @return true if the workflow has terminated; false otherwise.
 	 */
-	public boolean hasTerminated(InfoGluePrincipal userPrincipal, long workflowId) throws WorkflowException
+	public boolean hasTerminated(InfoGluePrincipal userPrincipal, long workflowId)
 	{
 		boolean isFinished = false;
 		

@@ -1937,14 +1937,14 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 		return users;
 	}
 	
-	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException, Bug
+	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException
 	{
 		List users = new ArrayList();
 		//TODO		
 		return users;
 	}
 	
-	public List getFilteredUsers(String searchString) throws SystemException, Bug, Exception
+	public List getFilteredUsers(String searchString) throws SystemException, Exception
 	{
 		//TODO
 		return getUsers();

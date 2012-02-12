@@ -79,10 +79,9 @@ public class ComponentController extends BaseController
 	 * @param sortAttribute
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getComponentVOList(String sortAttribute, String direction, String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroupNames, InfoGluePrincipal principal) throws SystemException, Bug, Exception
+	public List getComponentVOList(String sortAttribute, String direction, String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroupNames, InfoGluePrincipal principal) throws SystemException, Exception
 	{
 		List componentVOList = null;
 		
@@ -109,10 +108,9 @@ public class ComponentController extends BaseController
 	 * @param sortAttribute
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getComponentVOList(String sortAttribute, String direction, String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroupNames, Database db, InfoGluePrincipal principal) throws SystemException, Bug, Exception
+	public List getComponentVOList(String sortAttribute, String direction, String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroupNames, Database db, InfoGluePrincipal principal) throws SystemException, Exception
 	{
 		if(principal == null)
 			return null;
@@ -385,7 +383,7 @@ public class ComponentController extends BaseController
 		return results;	
 	}
 
-	public void checkAndAutoCreateContents(Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException, Bug, ConstraintException
+	public void checkAndAutoCreateContents(Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -406,7 +404,7 @@ public class ComponentController extends BaseController
         }
 	}
 	
-	public void checkAndAutoCreateContents(Database db, Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException, Bug, ConstraintException
+	public void checkAndAutoCreateContents(Database db, Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException, ConstraintException
 	{
 		List componentPropertyDefinitions = ComponentPropertyDefinitionController.getController().getComponentPropertyDefinitions(db, componentContentId, masterLanguageId);
 		Iterator componentPropertyDefinitionsIterator = componentPropertyDefinitions.iterator();

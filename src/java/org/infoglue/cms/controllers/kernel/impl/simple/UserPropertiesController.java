@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.DigitalAsset;
@@ -73,17 +74,17 @@ public class UserPropertiesController extends BaseController
 	}
 	
 	
-    public UserProperties getUserPropertiesWithId(Integer userPropertiesId, Database db) throws SystemException, Bug
+    public UserProperties getUserPropertiesWithId(Integer userPropertiesId, Database db) throws SystemException
     {
 		return (UserProperties) getObjectWithId(UserPropertiesImpl.class, userPropertiesId, db);
     }
     
-    public UserPropertiesVO getUserPropertiesVOWithId(Integer userPropertiesId) throws SystemException, Bug
+    public UserPropertiesVO getUserPropertiesVOWithId(Integer userPropertiesId) throws SystemException
     {
 		return (UserPropertiesVO) getVOWithId(UserPropertiesImpl.class, userPropertiesId);
     }
   
-    public List getUserPropertiesVOList() throws SystemException, Bug
+    public List getUserPropertiesVOList() throws SystemException
     {
         return getAllVOObjects(UserPropertiesImpl.class, "userPropertiesId");
     }
@@ -92,7 +93,7 @@ public class UserPropertiesController extends BaseController
 	 * This method created a new UserPropertiesVO in the database.
 	 */
 
-	public UserPropertiesVO create(Integer languageId, Integer contentTypeDefinitionId, UserPropertiesVO userPropertiesVO) throws ConstraintException, SystemException
+	public UserPropertiesVO create(Integer languageId, Integer contentTypeDefinitionId, UserPropertiesVO userPropertiesVO) throws SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -120,7 +121,7 @@ public class UserPropertiesController extends BaseController
 	 * so it recognises the change. 
 	 */
 
-	public UserProperties create(Integer languageId, Integer contentTypeDefinitionId, UserPropertiesVO userPropertiesVO, Database db) throws ConstraintException, SystemException, Exception
+	public UserProperties create(Integer languageId, Integer contentTypeDefinitionId, UserPropertiesVO userPropertiesVO, Database db) throws SystemException, Exception
     {
 		Language language = LanguageController.getController().getLanguageWithId(languageId, db);
 		ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
@@ -201,7 +202,7 @@ public class UserPropertiesController extends BaseController
 	
 
 
-    public void delete(UserPropertiesVO userPropertiesVO) throws ConstraintException, SystemException
+    public void delete(UserPropertiesVO userPropertiesVO) throws SystemException
     {
     	deleteEntity(UserPropertiesImpl.class, userPropertiesVO.getUserPropertiesId());
     }        
@@ -209,7 +210,7 @@ public class UserPropertiesController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public void deleteDigitalAssetRelation(Integer userPropertiesId, DigitalAsset digitalAsset, Database db) throws SystemException, Bug
+	public void deleteDigitalAssetRelation(Integer userPropertiesId, DigitalAsset digitalAsset, Database db) throws SystemException
     {
 	    UserProperties userProperties = getUserPropertiesWithId(userPropertiesId, db);
 	    
@@ -222,7 +223,7 @@ public class UserPropertiesController extends BaseController
 	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
 	 */
 
-	public List getUserPropertiesVOList(Database db, String userName, Integer languageId) throws ConstraintException, SystemException, Exception
+	public List getUserPropertiesVOList(Database db, String userName, Integer languageId) throws SystemException, PersistenceException
 	{
 		List userPropertiesVOList = new ArrayList();
 
@@ -277,7 +278,7 @@ public class UserPropertiesController extends BaseController
 	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
 	 */
 
-	public List getUserPropertiesList(String userName, Integer languageId, Database db, boolean readOnly) throws ConstraintException, SystemException, Exception
+	public List getUserPropertiesList(String userName, Integer languageId, Database db, boolean readOnly) throws PersistenceException 
 	{
 		List userPropertiesList = new ArrayList();
 
@@ -356,7 +357,7 @@ public class UserPropertiesController extends BaseController
 	 * This method fetches all user content types available for this user within a transaction. 
 	 */
 	
-	public List getUserContentTypeDefinitionList(String userName, Database db) throws ConstraintException, SystemException, Exception
+	public List getUserContentTypeDefinitionList(String userName, Database db) throws PersistenceException 
 	{
 		List userContentTypeDefinitionList = new ArrayList();
 		
@@ -434,7 +435,7 @@ public class UserPropertiesController extends BaseController
 	 * single value and saves it back to the db.
 	 */
 	 
-	public void updateAttributeValue(Integer userPropertiesId, String attributeName, String attributeValue) throws SystemException, Bug
+	public void updateAttributeValue(Integer userPropertiesId, String attributeName, String attributeValue) throws SystemException
 	{
 		UserPropertiesVO userPropertiesVO = getUserPropertiesVOWithId(userPropertiesId);
 		
@@ -500,7 +501,7 @@ public class UserPropertiesController extends BaseController
 	 * This method fetches a value from the xml that is the userProperties Value. 
 	 */
 	 
-	public String getAttributeValue(Integer userPropertiesId, String attributeName, boolean escapeHTML) throws SystemException, Bug
+	public String getAttributeValue(Integer userPropertiesId, String attributeName, boolean escapeHTML) throws SystemException
 	{
 		String value = "";
 		
@@ -551,7 +552,7 @@ public class UserPropertiesController extends BaseController
 	 * This method should return a list of those digital assets the contentVersion has.
 	 */
 	   	
-	public List getDigitalAssetVOList(Integer userPropertiesId) throws SystemException, Bug
+	public List getDigitalAssetVOList(Integer userPropertiesId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();

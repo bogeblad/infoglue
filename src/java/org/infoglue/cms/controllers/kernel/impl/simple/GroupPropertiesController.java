@@ -36,6 +36,7 @@ import org.apache.xerces.parsers.DOMParser;
 import org.dom4j.Element;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
@@ -83,17 +84,17 @@ public class GroupPropertiesController extends BaseController
 	}
 	
 	
-    public GroupProperties getGroupPropertiesWithId(Integer groupPropertiesId, Database db) throws SystemException, Bug
+    public GroupProperties getGroupPropertiesWithId(Integer groupPropertiesId, Database db) throws SystemException
     {
 		return (GroupProperties) getObjectWithId(GroupPropertiesImpl.class, groupPropertiesId, db);
     }
     
-    public GroupPropertiesVO getGroupPropertiesVOWithId(Integer groupPropertiesId) throws SystemException, Bug
+    public GroupPropertiesVO getGroupPropertiesVOWithId(Integer groupPropertiesId) throws SystemException
     {
 		return (GroupPropertiesVO) getVOWithId(GroupPropertiesImpl.class, groupPropertiesId);
     }
   
-    public List getGroupPropertiesVOList() throws SystemException, Bug
+    public List getGroupPropertiesVOList() throws SystemException
     {
         return getAllVOObjects(GroupPropertiesImpl.class, "groupPropertiesId");
     }
@@ -103,7 +104,7 @@ public class GroupPropertiesController extends BaseController
 	 * This method created a new GroupPropertiesVO in the database.
 	 */
 
-	public GroupPropertiesVO create(Integer languageId, Integer contentTypeDefinitionId, GroupPropertiesVO groupPropertiesVO) throws ConstraintException, SystemException
+	public GroupPropertiesVO create(Integer languageId, Integer contentTypeDefinitionId, GroupPropertiesVO groupPropertiesVO) throws SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -131,7 +132,7 @@ public class GroupPropertiesController extends BaseController
 	 * so it recognises the change. 
 	 */
 
-	public GroupProperties create(Integer languageId, Integer contentTypeDefinitionId, GroupPropertiesVO groupPropertiesVO, Database db) throws ConstraintException, SystemException, Exception
+	public GroupProperties create(Integer languageId, Integer contentTypeDefinitionId, GroupPropertiesVO groupPropertiesVO, Database db) throws SystemException, Exception
     {
 		Language language = LanguageController.getController().getLanguageWithId(languageId, db);
 		ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
@@ -150,7 +151,7 @@ public class GroupPropertiesController extends BaseController
 	 * This method updates an extranet group properties.
 	 */
 
-	public GroupPropertiesVO update(Integer languageId, Integer contentTypeDefinitionId, GroupPropertiesVO groupPropertiesVO) throws ConstraintException, SystemException
+	public GroupPropertiesVO update(Integer languageId, Integer contentTypeDefinitionId, GroupPropertiesVO groupPropertiesVO) throws SystemException
 	{
 		GroupPropertiesVO realGroupPropertiesVO = groupPropertiesVO;
     	
@@ -205,7 +206,7 @@ public class GroupPropertiesController extends BaseController
 	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
 	 */
 
-	public List getGroupPropertiesVOList(String groupName, Integer languageId) throws ConstraintException, SystemException
+	public List getGroupPropertiesVOList(String groupName, Integer languageId) throws SystemException
 	{
 	    List groupPropertiesVOList = new ArrayList();
 	    
@@ -234,9 +235,10 @@ public class GroupPropertiesController extends BaseController
 	/**
 	 * This method gets a list of groupProperties for a group
 	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
+	 * @throws SystemException 
 	 */
 
-	public List getGroupPropertiesVOList(String groupName, Integer languageId, Database db) throws ConstraintException, Exception
+	public List getGroupPropertiesVOList(String groupName, Integer languageId, Database db) throws PersistenceException, SystemException 
 	{
 	    List groupPropertiesVOList = new ArrayList();
 	    
@@ -266,7 +268,7 @@ public class GroupPropertiesController extends BaseController
 	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
 	 */
 
-	public List getGroupPropertiesList(String groupName, Integer languageId, Database db, boolean readOnly) throws ConstraintException, SystemException, Exception
+	public List getGroupPropertiesList(String groupName, Integer languageId, Database db, boolean readOnly) throws PersistenceException
 	{
 		List groupPropertiesList = new ArrayList();
 
@@ -307,7 +309,7 @@ public class GroupPropertiesController extends BaseController
 		return groupPropertiesList;
 	}
 
-	public Set<InfoGlueGroup> getGroupsByMatchingProperty(String propertyName, String value, Integer languageId, boolean useLanguageFallback, Database db) throws ConstraintException, SystemException, Exception
+	public Set<InfoGlueGroup> getGroupsByMatchingProperty(String propertyName, String value, Integer languageId, boolean useLanguageFallback, Database db)
 	{
 		Set<InfoGlueGroup> groups = new HashSet<InfoGlueGroup>();
 		
@@ -348,7 +350,7 @@ public class GroupPropertiesController extends BaseController
 	 * This method gets a list of groupProperties where the group property matches a search made
 	 */
 
-	public List<GroupPropertiesVO> getGroupPropertiesVOList(String propertyName, String propertyValue, Database db) throws ConstraintException, SystemException, Exception
+	public List<GroupPropertiesVO> getGroupPropertiesVOList(String propertyName, String propertyValue, Database db) throws PersistenceException 
 	{
 		List<GroupPropertiesVO> groupPropertiesVOList = new ArrayList<GroupPropertiesVO>();
 
@@ -375,7 +377,7 @@ public class GroupPropertiesController extends BaseController
 		return groupPropertiesVOList;
 	}
 
-    public void delete(GroupPropertiesVO groupPropertiesVO) throws ConstraintException, SystemException
+    public void delete(GroupPropertiesVO groupPropertiesVO) throws SystemException
     {
     	deleteEntity(GroupPropertiesImpl.class, groupPropertiesVO.getGroupPropertiesId());
     }        
@@ -385,7 +387,7 @@ public class GroupPropertiesController extends BaseController
 	 * This method should return a list of those digital assets the contentVersion has.
 	 */
 	   	
-	public List getDigitalAssetVOList(Integer groupPropertiesId) throws SystemException, Bug
+	public List getDigitalAssetVOList(Integer groupPropertiesId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -419,7 +421,7 @@ public class GroupPropertiesController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public void deleteDigitalAssetRelation(Integer groupPropertiesId, DigitalAsset digitalAsset, Database db) throws SystemException, Bug
+	public void deleteDigitalAssetRelation(Integer groupPropertiesId, DigitalAsset digitalAsset, Database db) throws SystemException
     {
 	    GroupProperties groupProperties = getGroupPropertiesWithId(groupPropertiesId, db);
 	    groupProperties.getDigitalAssets().remove(digitalAsset);
@@ -474,7 +476,7 @@ public class GroupPropertiesController extends BaseController
 	 * This method fetches all group content types available for this group within a transaction. 
 	 */
 	
-	public List getGroupContentTypeDefinitionList(String groupName, Database db) throws ConstraintException, SystemException, Exception
+	public List getGroupContentTypeDefinitionList(String groupName, Database db) throws PersistenceException 
 	{
 		List groupContentTypeDefinitionList = new ArrayList();
 
@@ -553,7 +555,7 @@ public class GroupPropertiesController extends BaseController
 	 * single value and saves it back to the db.
 	 */
 	 
-	public void updateAttributeValue(Integer groupPropertiesId, String attributeName, String attributeValue) throws SystemException, Bug
+	public void updateAttributeValue(Integer groupPropertiesId, String attributeName, String attributeValue) throws SystemException
 	{
 		GroupPropertiesVO groupPropertiesVO = getGroupPropertiesVOWithId(groupPropertiesId);
 		
@@ -680,7 +682,7 @@ public class GroupPropertiesController extends BaseController
 	 * This method fetches a value from the xml that is the groupProperties Value. 
 	 */
 	 
-	public String getAttributeValue(Integer groupPropertiesId, String attributeName, boolean escapeHTML) throws SystemException, Bug
+	public String getAttributeValue(Integer groupPropertiesId, String attributeName, boolean escapeHTML) throws SystemException
 	{
 		String value = "";
 		
@@ -699,7 +701,7 @@ public class GroupPropertiesController extends BaseController
 	 * This method fetches a value from the xml that is the groupProperties Value. 
 	 */
 	 
-	public String getAttributeValue(String xml, String attributeName, boolean escapeHTML) throws SystemException, Bug
+	public String getAttributeValue(String xml, String attributeName, boolean escapeHTML) 
 	{
 		String value = "";
 		

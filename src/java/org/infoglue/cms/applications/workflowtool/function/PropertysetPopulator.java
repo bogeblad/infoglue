@@ -72,7 +72,7 @@ public class PropertysetPopulator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private void populate() throws WorkflowException 
+	private void populate() 
 	{
 		for(final Iterator i = getParameters().keySet().iterator(); i.hasNext(); ) 
 		{
@@ -108,7 +108,7 @@ public class PropertysetPopulator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private void cleanPropertySet() throws WorkflowException
+	private void cleanPropertySet()
 	{
 		removeFromPropertySet(prefix, true);
 	}

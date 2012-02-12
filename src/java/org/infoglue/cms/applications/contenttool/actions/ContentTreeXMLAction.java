@@ -176,14 +176,14 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
 		return contentVersionVO;
 	}
 
-    public Element getContentVersionElement(Integer contentVersionId) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionElement(Integer contentVersionId) throws SystemException, UnsupportedEncodingException
     {
 		ContentVersionController contentVersionController = ContentVersionController.getContentVersionController();
         ContentVersionVO vo = contentVersionController.getContentVersionVOWithId(contentVersionId);
         return getContentVersionElement(vo);
     }
     
-    public Element getContentVersionElement(ContentVersionVO vo) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionElement(ContentVersionVO vo) throws SystemException, UnsupportedEncodingException
     {
         Element element = DocumentHelper.createElement("contentVersion");
         Element head = DocumentHelper.createElement("head");

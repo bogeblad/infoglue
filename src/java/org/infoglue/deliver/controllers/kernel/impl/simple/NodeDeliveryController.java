@@ -2361,7 +2361,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns a sorted list of qualifyers.
 	 */
 	
-	private List getBindingQualifyers(Integer serviceBindingId, Database db) throws SystemException, Bug, Exception
+	private List getBindingQualifyers(Integer serviceBindingId, Database db) throws SystemException, Exception
 	{
 		List qualifyers = new ArrayList();
 		

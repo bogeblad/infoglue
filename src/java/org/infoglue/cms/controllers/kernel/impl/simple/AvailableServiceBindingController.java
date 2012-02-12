@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AvailableServiceBinding;
@@ -62,13 +63,13 @@ public class AvailableServiceBindingController extends BaseController
 		return new AvailableServiceBindingController();
 	}
 	
-    public AvailableServiceBindingVO getAvailableServiceBindingVOWithId(Integer availableServiceBindingId) throws SystemException, Bug
+    public AvailableServiceBindingVO getAvailableServiceBindingVOWithId(Integer availableServiceBindingId) throws SystemException
     {
 		return (AvailableServiceBindingVO)getVOWithId(SmallAvailableServiceBindingImpl.class, availableServiceBindingId);
     }
 
 	
-    public AvailableServiceBindingVO create(AvailableServiceBindingVO vo) throws ConstraintException, SystemException
+    public AvailableServiceBindingVO create(AvailableServiceBindingVO vo) throws SystemException
     {
         AvailableServiceBinding ent = new AvailableServiceBindingImpl();
         ent.setValueObject(vo);
@@ -127,18 +128,18 @@ public class AvailableServiceBindingController extends BaseController
     }   
 
     
-    public AvailableServiceBinding getAvailableServiceBindingWithId(Integer availableServiceBindingId, Database db) throws SystemException, Bug
+    public AvailableServiceBinding getAvailableServiceBindingWithId(Integer availableServiceBindingId, Database db) throws SystemException
     {
 		return (AvailableServiceBinding) getObjectWithId(AvailableServiceBindingImpl.class, availableServiceBindingId, db);
     }
 
 
-    public AvailableServiceBinding getReadOnlyAvailableServiceBindingWithId(Integer availableServiceBindingId, Database db) throws SystemException, Bug
+    public AvailableServiceBinding getReadOnlyAvailableServiceBindingWithId(Integer availableServiceBindingId, Database db) throws SystemException
     {
 		return (AvailableServiceBinding) getObjectWithIdAsReadOnly(AvailableServiceBindingImpl.class, availableServiceBindingId, db);
     }
 
-    public List getAvailableServiceBindingVOList() throws SystemException, Bug
+    public List getAvailableServiceBindingVOList() throws SystemException
     {
         return getAllVOObjects(SmallAvailableServiceBindingImpl.class, "availableServiceBindingId");
     }
@@ -148,10 +149,9 @@ public class AvailableServiceBindingController extends BaseController
      * This method fetches an available service binding with the given name.
      * 
      * @throws SystemException
-     * @throws Bug
      */
     
-	public AvailableServiceBindingVO getAvailableServiceBindingVOWithName(String name) throws SystemException, Bug
+	public AvailableServiceBindingVO getAvailableServiceBindingVOWithName(String name) throws SystemException
 	{
 	    String key = "" + name;
 		logger.info("key:" + key);
@@ -190,12 +190,9 @@ public class AvailableServiceBindingController extends BaseController
 
     /**
      * This method fetches an available service binding with the given name.
-     * 
-     * @throws SystemException
-     * @throws Bug
      */
     
-	public AvailableServiceBindingVO getAvailableServiceBindingVOWithName(String name, Database db) throws SystemException, Bug, Exception
+	public AvailableServiceBindingVO getAvailableServiceBindingVOWithName(String name, Database db) throws PersistenceException
 	{
 	    String key = "" + name;
 		logger.info("key:" + key);
@@ -239,11 +236,9 @@ public class AvailableServiceBindingController extends BaseController
 	 * @param name
 	 * @param database
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public AvailableServiceBinding getAvailableServiceBindingWithName(String name, Database db, boolean readOnly) throws SystemException, Bug
+	public AvailableServiceBinding getAvailableServiceBindingWithName(String name, Database db, boolean readOnly) throws SystemException
 	{
 		AvailableServiceBinding availableServiceBinding = null;
 		
@@ -287,20 +282,16 @@ public class AvailableServiceBindingController extends BaseController
 	 * @param name
 	 * @param database
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public SmallAvailableServiceBindingImpl getSmallAvailableServiceBindingWithName(String name, Database db, boolean readOnly) throws SystemException, Bug
+	public SmallAvailableServiceBindingImpl getSmallAvailableServiceBindingWithName(String name, Database db, boolean readOnly) throws SystemException
 	{
 		SmallAvailableServiceBindingImpl availableServiceBinding = null;
 		
 		try
 		{
-			//OQLQuery oql = db.getOQLQuery("SELECT asb FROM org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl as asb WHERE asb.name = $1 order by asb.name LIMIT $2");
 			OQLQuery oql = db.getOQLQuery("SELECT asb FROM org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl as asb WHERE asb.name = $1 order by asb.name");
 			oql.bind(name);
-			//oql.bind(1);
 						
 			QueryResults results = null;
 			
@@ -461,7 +452,7 @@ public class AvailableServiceBindingController extends BaseController
 	 * availableServiceBinding sent in.
 	 */
 	
-	public List getServiceDefinitionVOList(Database db, Integer availableServiceBindingId) throws ConstraintException, SystemException
+	public List getServiceDefinitionVOList(Database db, Integer availableServiceBindingId) throws SystemException
 	{
         List serviceDefinitionVOList = null;
 

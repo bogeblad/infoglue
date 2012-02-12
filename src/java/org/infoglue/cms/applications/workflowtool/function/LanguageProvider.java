@@ -125,7 +125,7 @@ public class LanguageProvider extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private void populate(final LanguageVO languageVO) throws WorkflowException
+	private void populate(final LanguageVO languageVO)
 	{
 		if(languageVO == null && propertySetContains(LANGUAGE_PROPERTYSET_KEY))
 		{

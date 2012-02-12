@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Group;
@@ -64,52 +65,52 @@ public class GroupController extends BaseController
 		return new GroupController();
 	}
 	
-    public Group getGroupWithId(Integer groupId, Database db) throws SystemException, Bug
+    public Group getGroupWithId(Integer groupId, Database db) throws SystemException
     {
 		return (Group) getObjectWithId(GroupImpl.class, groupId, db);
     }
 
-	public Group getGroupWithName(String groupName, Database db) throws SystemException, Bug
+	public Group getGroupWithName(String groupName, Database db) throws SystemException
 	{
 		return (Group)getObjectWithId(GroupImpl.class, groupName, db);
 	}
     
     /*
-    public static List getGroupVOList(Database db) throws SystemException, Bug
+    public static List getGroupVOList(Database db) throws SystemException
     {
         return getAllVOObjects(GroupImpl.class, db);
     }
 	*/
 	
-    public GroupVO getGroupVOWithId(Integer groupId) throws SystemException, Bug
+    public GroupVO getGroupVOWithId(Integer groupId) throws SystemException
     {
 		return (GroupVO) getVOWithId(SmallGroupImpl.class, groupId);
     }
 
-	public GroupVO getGroupVOWithId(String groupName) throws SystemException, Bug
+	public GroupVO getGroupVOWithId(String groupName) throws SystemException
 	{
 		return (GroupVO) getVOWithId(SmallGroupImpl.class, groupName);
 	}
 
-	public GroupVO getGroupVOWithId(String groupName, Database db) throws SystemException, Bug
+	public GroupVO getGroupVOWithId(String groupName, Database db) throws SystemException
 	{
 		return (GroupVO) getVOWithId(SmallGroupImpl.class, groupName, db);
 	}
 
     // Simple, without db
 	/*
-    public static Group getGroupWithId(Integer groupId) throws SystemException, Bug
+    public static Group getGroupWithId(Integer groupId) throws SystemException
     {
 		return (Group) getObjectWithId(GroupImpl.class, groupId);
     }
     */
     
-    public List getGroupVOList() throws SystemException, Bug
+    public List getGroupVOList() throws SystemException
     {
         return getAllVOObjects(SmallGroupImpl.class, "groupName");
     }
 
-    public List getGroupVOList(Database db) throws SystemException, Bug
+    public List getGroupVOList(Database db) throws SystemException
     {
 		String cacheKey = "allGroupVO";
 		logger.info("cacheKey in getGroupVOList:" + cacheKey);
@@ -128,7 +129,7 @@ public class GroupController extends BaseController
 		return groupVOList;
 	}
 
-    public GroupVO create(GroupVO groupVO) throws ConstraintException, SystemException
+    public GroupVO create(GroupVO groupVO) throws SystemException
     {
         Group group = new GroupImpl();
         group.setValueObject(groupVO);
@@ -136,7 +137,7 @@ public class GroupController extends BaseController
         return group.getValueObject();
     }     
 
-    public Group create(GroupVO groupVO, Database db) throws ConstraintException, SystemException, Exception
+    public Group create(GroupVO groupVO, Database db) throws PersistenceException 
     {
         Group group = new GroupImpl();
         group.setValueObject(groupVO);
@@ -144,12 +145,12 @@ public class GroupController extends BaseController
         return group;
     }     
 
-    public void delete(GroupVO groupVO) throws ConstraintException, SystemException
+    public void delete(GroupVO groupVO) throws SystemException
     {
     	deleteEntity(GroupImpl.class, groupVO.getGroupName());
     }        
 
-	public void delete(String groupName) throws ConstraintException, SystemException
+	public void delete(String groupName) throws SystemException
 	{
 		deleteEntity(GroupImpl.class, groupName);
 	}        
@@ -160,7 +161,7 @@ public class GroupController extends BaseController
 	}        
 
 	// Get list of users accosiated with this group
-	public List getGroupSystemUserVOList(String userName, Database db)  throws SystemException, Bug
+	public List getGroupSystemUserVOList(String userName, Database db)  throws SystemException
 	{
 		Collection systemUsers = null;
 		List systemUsersVO = new ArrayList();
@@ -186,7 +187,7 @@ public class GroupController extends BaseController
 		return systemUsersVO;		
 	}
 
-	public List getGroupSystemUserVOList(String groupName)  throws SystemException, Bug
+	public List getGroupSystemUserVOList(String groupName)  throws SystemException
 	{
 		List systemUsersVO = null;
 		Database db = CastorDatabaseService.getDatabase();
@@ -206,12 +207,12 @@ public class GroupController extends BaseController
 		return systemUsersVO;
 	}
 
-    public GroupVO update(GroupVO groupVO) throws ConstraintException, SystemException
+    public GroupVO update(GroupVO groupVO) throws SystemException
     {
     	return (GroupVO) updateEntity(GroupImpl.class, groupVO);
     }        
 
-    public GroupVO update(GroupVO groupVO, Database db) throws ConstraintException, SystemException
+    public GroupVO update(GroupVO groupVO, Database db) throws SystemException
     {
     	return (GroupVO) updateEntity(GroupImpl.class, groupVO, db);
     }        
@@ -253,7 +254,7 @@ public class GroupController extends BaseController
         return group.getValueObject();
     }        
 
-    public Group update(GroupVO groupVO, String[] systemUsers, Database db) throws ConstraintException, SystemException
+    public Group update(GroupVO groupVO, String[] systemUsers, Database db) throws SystemException
     {
 		Group group = getGroupWithName(groupVO.getGroupName(), db);
 		group.getSystemUsers().clear();
@@ -282,7 +283,7 @@ public class GroupController extends BaseController
 	 * @throws Bug
 	 */
 	
-	public List<GroupVO> getGroupVOList(String userName)  throws SystemException, Bug
+	public List<GroupVO> getGroupVOList(String userName)  throws SystemException
 	{
 		List<GroupVO> groupVOList = null;
 		
@@ -314,7 +315,7 @@ public class GroupController extends BaseController
 	 * @throws Bug
 	 */
 	
-	public Collection getGroupList(String userName, Database db)  throws SystemException, Bug
+	public Collection getGroupList(String userName, Database db)  throws SystemException
 	{
 		Collection groupList = null;
 		
@@ -328,7 +329,7 @@ public class GroupController extends BaseController
 	 * 	Get the the groups for a user (very light)
 	 */
 	 
-	public List<GroupVO> getGroupVOList(String userName, Database db)  throws SystemException, Bug
+	public List<GroupVO> getGroupVOList(String userName, Database db)  throws SystemException
 	{
 		List<GroupVO> groupVOList = new ArrayList<GroupVO>();
 		
@@ -389,7 +390,7 @@ public class GroupController extends BaseController
         }
     }        
 
-    public void addUser(String groupName, String userName, Database db) throws ConstraintException, SystemException
+    public void addUser(String groupName, String userName, Database db) throws SystemException
     {
 		Group group = getGroupWithName(groupName, db);
 		
@@ -432,7 +433,7 @@ public class GroupController extends BaseController
         }
     }        
 
-    public void removeUser(String groupName, String userName, Database db) throws ConstraintException, SystemException
+    public void removeUser(String groupName, String userName, Database db) throws SystemException
     {
 		Group group = getGroupWithName(groupName, db);
 		
@@ -459,7 +460,7 @@ public class GroupController extends BaseController
 	 * 	Get if the Group with the groupName exists
 	 */
 
-    public boolean groupExists(String groupName) throws SystemException, Bug
+    public boolean groupExists(String groupName) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
 
@@ -487,7 +488,7 @@ public class GroupController extends BaseController
 	 * 	Get if the Group with the groupName exists
 	 */
 	 
-	public boolean groupExists(String groupName, Database db) throws SystemException, Bug
+	public boolean groupExists(String groupName, Database db) throws SystemException
 	{
 		boolean groupExists = false;
 		

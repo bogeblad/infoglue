@@ -106,29 +106,29 @@ public class ContentTypeDefinitionController extends BaseController
 		return new ContentTypeDefinitionController();
 	}
 
-    public ContentTypeDefinitionVO getContentTypeDefinitionVOWithId(Integer contentTypeDefinitionId) throws SystemException, Bug
+    public ContentTypeDefinitionVO getContentTypeDefinitionVOWithId(Integer contentTypeDefinitionId) throws SystemException
     {
 		return (ContentTypeDefinitionVO) getVOWithId(ContentTypeDefinitionImpl.class, contentTypeDefinitionId);
     }
 
-    public ContentTypeDefinitionVO getContentTypeDefinitionVOWithId(Integer contentTypeDefinitionId, Database db) throws SystemException, Bug
+    public ContentTypeDefinitionVO getContentTypeDefinitionVOWithId(Integer contentTypeDefinitionId, Database db) throws SystemException
     {
 		return (ContentTypeDefinitionVO) getVOWithId(ContentTypeDefinitionImpl.class, contentTypeDefinitionId, db);
     }
 
 	/*
-    public static ContentTypeDefinition getContentTypeDefinitionWithId(Integer contentTypeDefinitionId) throws SystemException, Bug
+    public static ContentTypeDefinition getContentTypeDefinitionWithId(Integer contentTypeDefinitionId) throws SystemException
     {
 		return (ContentTypeDefinition) getObjectWithId(ContentTypeDefinitionImpl.class, contentTypeDefinitionId);
     }
 	*/
 
-    public ContentTypeDefinition getContentTypeDefinitionWithId(Integer contentTypeDefinitionId, Database db) throws SystemException, Bug
+    public ContentTypeDefinition getContentTypeDefinitionWithId(Integer contentTypeDefinitionId, Database db) throws SystemException
     {
 		return (ContentTypeDefinition) getObjectWithId(ContentTypeDefinitionImpl.class, contentTypeDefinitionId, db);
     }
 
-    public List getContentTypeDefinitionVOList() throws SystemException, Bug
+    public List getContentTypeDefinitionVOList() throws SystemException
     {
 		String key = "contentTypeDefinitionVOList";
 		logger.info("key:" + key);
@@ -146,7 +146,7 @@ public class ContentTypeDefinitionController extends BaseController
 		return contentTypeDefinitionVOList;
     }
 
-    public List<ContentTypeDefinitionVO> getContentTypeDefinitionVOListWithParentId(Integer parentId) throws SystemException, Bug
+    public List<ContentTypeDefinitionVO> getContentTypeDefinitionVOListWithParentId(Integer parentId) throws SystemException
     {
 		String key = "contentTypeDefinitionVOList_" + parentId;
 		logger.info("key:" + key);
@@ -178,7 +178,7 @@ public class ContentTypeDefinitionController extends BaseController
 		return contentTypeDefinitionVOList;
     }
 
-    public List<ContentTypeDefinitionVO> getContentTypeDefinitionVOList(Database db, Integer parentId) throws SystemException, Bug
+    public List<ContentTypeDefinitionVO> getContentTypeDefinitionVOList(Database db, Integer parentId) throws SystemException
     {
     	List<ContentTypeDefinitionVO> contentTypeDefinitions = new ArrayList<ContentTypeDefinitionVO>();
 
@@ -214,12 +214,12 @@ public class ContentTypeDefinitionController extends BaseController
 		return contentTypeDefinitions;
     }
 
-	public List getContentTypeDefinitionVOList(Database db) throws SystemException, Bug
+	public List getContentTypeDefinitionVOList(Database db) throws SystemException
 	{
 		return getAllVOObjects(ContentTypeDefinitionImpl.class, "contentTypeDefinitionId", db);
 	}
 
-	public List getContentTypeDefinitionList(Database db) throws SystemException, Bug
+	public List getContentTypeDefinitionList(Database db) throws SystemException
 	{
 		return getAllObjects(ContentTypeDefinitionImpl.class, "contentTypeDefinitionId", db);
 	}
@@ -229,7 +229,7 @@ public class ContentTypeDefinitionController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
 	
-	public List getAuthorizedContentTypeDefinitionVOList(InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Bug
+	public List getAuthorizedContentTypeDefinitionVOList(InfoGluePrincipal infoGluePrincipal) throws SystemException
 	{    	
 		List accessableContentTypeDefinitionVOList = new ArrayList();
     	
@@ -250,7 +250,7 @@ public class ContentTypeDefinitionController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
 	
-	public List getSortedAuthorizedContentTypeDefinitionVOList(InfoGluePrincipal infoGluePrincipal, Database db) throws ConstraintException, SystemException, Bug
+	public List getSortedAuthorizedContentTypeDefinitionVOList(InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException
 	{
 		List authorizedContentTypeDefinitionVOList = getAuthorizedContentTypeDefinitionVOList(infoGluePrincipal, db);
 		
@@ -264,7 +264,7 @@ public class ContentTypeDefinitionController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
 	
-	public List getAuthorizedContentTypeDefinitionVOList(InfoGluePrincipal infoGluePrincipal, Database db) throws ConstraintException, SystemException, Bug
+	public List getAuthorizedContentTypeDefinitionVOList(InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException
 	{    	
 		List accessableContentTypeDefinitionVOList = new ArrayList();
     	
@@ -337,11 +337,9 @@ public class ContentTypeDefinitionController extends BaseController
 	 *
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public ContentTypeDefinitionVO getContentTypeDefinitionVOWithName(String name) throws SystemException, Bug
+	public ContentTypeDefinitionVO getContentTypeDefinitionVOWithName(String name) throws SystemException
 	{
 		ContentTypeDefinitionVO contentTypeDefinitionVO = null;
 
@@ -373,11 +371,9 @@ public class ContentTypeDefinitionController extends BaseController
 	 * @param name
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public ContentTypeDefinition getContentTypeDefinitionWithName(String name, Database db) throws SystemException, Bug
+	public ContentTypeDefinition getContentTypeDefinitionWithName(String name, Database db) throws SystemException
 	{
 		ContentTypeDefinition contentTypeDefinition = null;
 
@@ -412,11 +408,9 @@ public class ContentTypeDefinitionController extends BaseController
 	 * @param name
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public ContentTypeDefinitionVO getContentTypeDefinitionVOWithName(String name, Database db) throws SystemException, Bug
+	public ContentTypeDefinitionVO getContentTypeDefinitionVOWithName(String name, Database db) throws SystemException
 	{
 		String key = "" + name;
 		logger.info("key:" + key);
@@ -456,7 +450,7 @@ public class ContentTypeDefinitionController extends BaseController
 	}
 
 	
-	public List<ContentTypeDefinitionVO> getContentTypeDefinitionVOList(Integer type) throws SystemException, Bug
+	public List<ContentTypeDefinitionVO> getContentTypeDefinitionVOList(Integer type) throws SystemException
 	{
 		List<ContentTypeDefinitionVO> contentTypeDefinitionVOList = null;
 		Database db = CastorDatabaseService.getDatabase();
@@ -478,7 +472,7 @@ public class ContentTypeDefinitionController extends BaseController
 		return contentTypeDefinitionVOList;
 	}
 
-	public List<ContentTypeDefinitionVO> getContentTypeDefinitionVOList(Integer type, Database db)  throws SystemException, Bug
+	public List<ContentTypeDefinitionVO> getContentTypeDefinitionVOList(Integer type, Database db)  throws SystemException
 	{
 		ArrayList<ContentTypeDefinitionVO> contentTypeDefinitionVOList = new ArrayList<ContentTypeDefinitionVO>();
 		try
@@ -549,7 +543,7 @@ public class ContentTypeDefinitionController extends BaseController
         return contentTypeDefinition.getValueObject();
     }
 
-    public ContentTypeDefinition create(Database db, Integer parentContentTypeDefinitionId, ContentTypeDefinitionVO contentTypeDefinitionVO) throws ConstraintException, SystemException, Exception
+    public ContentTypeDefinition create(Database db, Integer parentContentTypeDefinitionId, ContentTypeDefinitionVO contentTypeDefinitionVO) throws SystemException
     {
     	ContentTypeDefinition contentTypeDefinition = null;
 		
@@ -582,17 +576,17 @@ public class ContentTypeDefinitionController extends BaseController
         return contentTypeDefinition;
     }
 
-    public void delete(ContentTypeDefinitionVO contentTypeDefinitionVO) throws ConstraintException, SystemException
+    public void delete(ContentTypeDefinitionVO contentTypeDefinitionVO) throws SystemException
     {
     	deleteEntity(ContentTypeDefinitionImpl.class, contentTypeDefinitionVO.getContentTypeDefinitionId());
     }
     
-    public ContentTypeDefinitionVO update(ContentTypeDefinitionVO contentTypeDefinitionVO) throws ConstraintException, SystemException
+    public ContentTypeDefinitionVO update(ContentTypeDefinitionVO contentTypeDefinitionVO) throws SystemException
     {
     	return update(contentTypeDefinitionVO.getParentId(), contentTypeDefinitionVO);
     }
 
-    public ContentTypeDefinitionVO update(Integer parentContentTypeDefinitionId, ContentTypeDefinitionVO contentTypeDefinitionVO) throws ConstraintException, SystemException
+    public ContentTypeDefinitionVO update(Integer parentContentTypeDefinitionId, ContentTypeDefinitionVO contentTypeDefinitionVO) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
 

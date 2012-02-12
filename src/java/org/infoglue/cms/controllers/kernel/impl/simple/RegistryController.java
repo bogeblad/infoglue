@@ -85,12 +85,12 @@ public class RegistryController extends BaseController
 	{
 	}
 	
-    public List getRegistryVOList() throws SystemException, Bug
+    public List getRegistryVOList() throws SystemException
     {
         return getAllVOObjects(RegistryImpl.class, "registryId");
     }
 
-    public List getRegistryVOList(Database db) throws SystemException, Bug
+    public List getRegistryVOList(Database db) throws SystemException
     {
         return getAllVOObjects(RegistryImpl.class, "registryId", db);
     }

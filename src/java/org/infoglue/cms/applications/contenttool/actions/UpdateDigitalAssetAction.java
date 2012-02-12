@@ -287,7 +287,7 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
         return "success";
     }
 
-	private void initialize() throws SystemException, Bug, ConstraintException
+	private void initialize() throws SystemException, ConstraintException
 	{
 		try
 		{

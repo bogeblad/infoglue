@@ -116,7 +116,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 		return text;
 	}
 	
-	protected String makeAction(BaseNode node) throws UnsupportedEncodingException
+	protected String makeAction(BaseNode node)
 	{
 		String action = "javascript:onTreeItemClick(this,";
 		//action+="'" + node.getId() + "','" + repositoryId + "','" + URLEncoder.encode(node.getTitle(),ENCODING) + "');";

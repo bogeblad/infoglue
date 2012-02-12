@@ -58,13 +58,13 @@ public class RepositoryLanguageController extends BaseController
 		return new RepositoryLanguageController();
 	}
 
-    public RepositoryLanguage getRepositoryLanguageWithId(Integer id, Database db) throws SystemException, Bug
+    public RepositoryLanguage getRepositoryLanguageWithId(Integer id, Database db) throws SystemException
     {
 		return (RepositoryLanguage) getObjectWithId(RepositoryLanguageImpl.class, id, db);
     }
 
 
-    public RepositoryLanguage getRepositoryLanguageWithId(Integer repositoryLanguageId) throws ConstraintException, SystemException, Bug
+    public RepositoryLanguage getRepositoryLanguageWithId(Integer repositoryLanguageId) throws ConstraintException, SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -99,13 +99,13 @@ public class RepositoryLanguageController extends BaseController
     }
     
 
-	public List getRepositoryLanguageVOList() throws SystemException, Bug
+	public List getRepositoryLanguageVOList() throws SystemException
 	{
 		return getAllVOObjects(RepositoryLanguageImpl.class, "repositoryLanguageImplId");
 	}
 
 
-    public List getRepositoryLanguageVOListWithLanguageId(Integer languageId) throws SystemException, Bug
+    public List getRepositoryLanguageVOListWithLanguageId(Integer languageId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -144,7 +144,7 @@ public class RepositoryLanguageController extends BaseController
     }
 
 
-    public List getRepositoryLanguageVOListWithRepositoryId(Integer repositoryId) throws SystemException, Bug
+    public List getRepositoryLanguageVOListWithRepositoryId(Integer repositoryId) throws SystemException
     {
         List repositoryLanguageList = new ArrayList();
         
@@ -188,7 +188,7 @@ public class RepositoryLanguageController extends BaseController
     }
 
 	
-    public List getRepositoryLanguageVOListWithRepositoryId(Integer repositoryId, Database db) throws SystemException, Bug, Exception
+    public List getRepositoryLanguageVOListWithRepositoryId(Integer repositoryId, Database db) throws SystemException, Exception
     {
      	ArrayList repositoryLanguageList = new ArrayList();
         
@@ -209,7 +209,7 @@ public class RepositoryLanguageController extends BaseController
         return repositoryLanguageList;
     }
 
-    public List<LanguageVO> getLanguageVOListForRepositoryId(Integer repositoryId) throws SystemException, Bug, Exception
+    public List<LanguageVO> getLanguageVOListForRepositoryId(Integer repositoryId) throws SystemException, Exception
     {
         List<LanguageVO> languageVOList = new ArrayList<LanguageVO>();
         
@@ -252,7 +252,7 @@ public class RepositoryLanguageController extends BaseController
         return languageVOList;
     }
 
-    public List<LanguageVO> getLanguageVOListForRepositoryId(Integer repositoryId, Database db) throws SystemException, Bug, Exception
+    public List<LanguageVO> getLanguageVOListForRepositoryId(Integer repositoryId, Database db) throws SystemException, Exception
     {
      	List<LanguageVO> languageVOList = new ArrayList<LanguageVO>();
         
@@ -320,7 +320,7 @@ public class RepositoryLanguageController extends BaseController
 		return repositoryLanguageVOList;
 	}
 	
-    public List getRepositoryLanguageListWithRepositoryId(Integer repositoryId, Database db) throws SystemException, Bug, Exception
+    public List getRepositoryLanguageListWithRepositoryId(Integer repositoryId, Database db) throws SystemException, Exception
     {
 		ArrayList repositoryLanguageList = new ArrayList();
         
@@ -352,7 +352,7 @@ public class RepositoryLanguageController extends BaseController
     }    
 	
 	/*
-    public RepositoryLanguage deleteAllRepositoryLanguageWithRepositoryId(Integer repositoryId) throws SystemException, Bug
+    public RepositoryLanguage deleteAllRepositoryLanguageWithRepositoryId(Integer repositoryId) throws SystemException
     {
     	try
     	{
@@ -374,7 +374,7 @@ public class RepositoryLanguageController extends BaseController
     */
 
     
-	public void deleteRepositoryLanguages(Repository repository, Database db) throws SystemException, Bug
+	public void deleteRepositoryLanguages(Repository repository, Database db) throws SystemException
 	{
 		try
 		{
@@ -397,7 +397,7 @@ public class RepositoryLanguageController extends BaseController
 	}
 	
     /*
-	public RepositoryLanguage deleteAllRepositoryLanguageWithRepositoryId(Integer repositoryId, Database db) throws SystemException, Bug
+	public RepositoryLanguage deleteAllRepositoryLanguageWithRepositoryId(Integer repositoryId, Database db) throws SystemException
 	{
 		try
 		{
@@ -422,7 +422,7 @@ public class RepositoryLanguageController extends BaseController
 	 * This method deletes all repositoryLanguages with a certain languageId.
 	 */
 	
-    public RepositoryLanguage deleteAllRepositoryLanguageWithLanguageId(Integer languageId) throws SystemException, Bug
+    public RepositoryLanguage deleteAllRepositoryLanguageWithLanguageId(Integer languageId) throws SystemException
     {
     	try
     	{
@@ -446,7 +446,7 @@ public class RepositoryLanguageController extends BaseController
 	 * This method deletes all repositoryLanguages with a certain languageId.
 	 */
 	
-	public RepositoryLanguage deleteAllRepositoryLanguageWithLanguage(Language language, Database db) throws SystemException, Bug
+	public RepositoryLanguage deleteAllRepositoryLanguageWithLanguage(Language language, Database db) throws SystemException
 	{
 		try
 		{

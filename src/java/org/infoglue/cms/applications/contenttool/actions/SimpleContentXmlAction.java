@@ -122,14 +122,14 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
 		return contentVersionVO;
 	}
 
-    public Element getContentElement(Integer contentId) throws Bug, Exception
+    public Element getContentElement(Integer contentId) throws Exception
     {
 		ContentController contentController = ContentController.getContentController();
         ContentVO vo = contentController.getContentVOWithId(contentId);
         return getContentElement(vo);
     }
     
-    public Element getContentElement(ContentVO vo) throws Bug, Exception
+    public Element getContentElement(ContentVO vo) throws Exception
     {
         Element elm = DocumentHelper.createElement("content");
         
@@ -163,7 +163,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return elm;
     }
 
-    public Element getPlainContentElement(ContentVO vo) throws Bug, Exception
+    public Element getPlainContentElement(ContentVO vo)
     {
         Element elm = DocumentHelper.createElement("content");
         
@@ -178,7 +178,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return elm;
     }
 
-    public Element getContentVersionElement(Integer contentVersionId) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionElement(Integer contentVersionId) throws SystemException, UnsupportedEncodingException
     {
 		ContentVersionController contentVersionController = ContentVersionController.getContentVersionController();
         ContentVersionVO vo = contentVersionController.getContentVersionVOWithId(contentVersionId);
@@ -196,7 +196,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return getContentVersionElement(vo);
     }
     
-    public Element getContentVersionHeadElement(Integer contentVersionId) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionHeadElement(Integer contentVersionId) throws SystemException
     {
 		ContentVersionController contentVersionController = ContentVersionController.getContentVersionController();
         ContentVersionVO vo = contentVersionController.getContentVersionVOWithId(contentVersionId);
@@ -215,7 +215,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return getContentVersionHeadElement(vo);
     }
     
-    public Element getContentVersionElement(ContentVersionVO vo) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionElement(ContentVersionVO vo) throws UnsupportedEncodingException
     {
         Element element = DocumentHelper.createElement("contentVersion");
         element.add(getContentVersionHeadElement(vo));
@@ -223,7 +223,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return element;
     }
 
-    public Element getContentVersionHeadElement(ContentVersionVO vo) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionHeadElement(ContentVersionVO vo)
     {
         Element head = DocumentHelper.createElement("head");
         head.addAttribute("id", "" + vo.getContentVersionId());
@@ -237,7 +237,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         
         return head;
     }
-    public Element getContentVersionValueElement(ContentVersionVO vo) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionValueElement(ContentVersionVO vo) throws UnsupportedEncodingException
     {
         Element value = DocumentHelper.createElement("value");
         if(enableCompression )

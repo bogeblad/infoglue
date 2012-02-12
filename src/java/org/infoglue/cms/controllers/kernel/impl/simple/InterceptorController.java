@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.InterceptionPoint;
@@ -62,22 +63,22 @@ public class InterceptorController extends BaseController
 		return new InterceptorController();
 	}
 	
-	public Interceptor getInterceptorWithId(Integer interceptorId, Database db) throws SystemException, Bug
+	public Interceptor getInterceptorWithId(Integer interceptorId, Database db) throws SystemException
 	{
 		return (Interceptor) getObjectWithId(InterceptorImpl.class, interceptorId, db);
 	}
     
-	public InterceptorVO getInterceptorVOWithId(Integer interceptorId) throws SystemException, Bug
+	public InterceptorVO getInterceptorVOWithId(Integer interceptorId) throws SystemException
 	{
 		return (InterceptorVO) getVOWithId(InterceptorImpl.class, interceptorId);
 	}
   
-	public List getInterceptorVOList() throws SystemException, Bug
+	public List getInterceptorVOList() throws SystemException
 	{
 		return getAllVOObjects(InterceptorImpl.class, "interceptorId");
 	}
 
-	public List getInterceptorsVOList(Integer interceptionPointId) throws SystemException, Bug
+	public List getInterceptorsVOList(Integer interceptionPointId) throws SystemException
 	{
 		List interceptorVOList = null;
 		
@@ -112,7 +113,7 @@ public class InterceptorController extends BaseController
 	 * @throws Bug
 	 */
 	
-	public List getInterceptorsVOList(Integer interceptionPointId, Database db)  throws SystemException, Bug, Exception
+	public List getInterceptorsVOList(Integer interceptionPointId, Database db)  throws SystemException, Exception
 	{
 		String key = "" + interceptionPointId;
 		logger.info("key:" + key);
@@ -137,7 +138,7 @@ public class InterceptorController extends BaseController
 	}
 
 	
-	public List<InterceptorVO> getInterceptorVOList(Integer interceptionPointId, Database db) throws SystemException, Bug, Exception
+	public List<InterceptorVO> getInterceptorVOList(Integer interceptionPointId, Database db) throws PersistenceException 
 	{
 		OQLQuery oql = db.getOQLQuery("SELECT i FROM org.infoglue.cms.entities.management.impl.simple.InterceptorImpl i WHERE i.interceptionPoints.interceptionPointId = $1 ORDER BY i.interceptorId");
 		oql.bind(interceptionPointId);
@@ -156,7 +157,7 @@ public class InterceptorController extends BaseController
 		return result;
 	}
 	
-	public List getInterceptionPointVOList(Integer interceptorId) throws SystemException, Bug
+	public List getInterceptionPointVOList(Integer interceptorId) throws SystemException
 	{
 		List interceptionPointVOList = null;
 		
@@ -180,7 +181,7 @@ public class InterceptorController extends BaseController
 		return interceptionPointVOList;	
 	}
 	
-	public List getInterceptionPointVOList(Integer interceptorId, Database db)  throws SystemException, Bug
+	public List getInterceptionPointVOList(Integer interceptorId, Database db)  throws SystemException
 	{
 		Interceptor interceptor = this.getInterceptorWithId(interceptorId, db);
 		
@@ -198,7 +199,7 @@ public class InterceptorController extends BaseController
 	 * @throws SystemException
 	 */
 	
-	public InterceptorVO create(InterceptorVO interceptorVO) throws ConstraintException, SystemException
+	public InterceptorVO create(InterceptorVO interceptorVO) throws SystemException
 	{
 		InterceptorVO newinterceptorVO = null;
 		
@@ -227,11 +228,9 @@ public class InterceptorController extends BaseController
 	 * 
 	 * @param interceptorVO
 	 * @return
-	 * @throws ConstraintException
-	 * @throws SystemException
 	 */
 	
-	public InterceptorVO create(InterceptorVO interceptorVO, Database db) throws SystemException, Exception
+	public InterceptorVO create(InterceptorVO interceptorVO, Database db) throws PersistenceException 
 	{
 		Interceptor interceptor = new InterceptorImpl();
 		interceptor.setValueObject(interceptorVO);
@@ -242,12 +241,12 @@ public class InterceptorController extends BaseController
 	}     
 
 	
-	public InterceptorVO update(InterceptorVO interceptorVO) throws ConstraintException, SystemException
+	public InterceptorVO update(InterceptorVO interceptorVO) throws SystemException
 	{
 		return (InterceptorVO) updateEntity(InterceptorImpl.class, interceptorVO);
 	}        
 
-	public void update(InterceptorVO interceptorVO, String[] values) throws ConstraintException, SystemException
+	public void update(InterceptorVO interceptorVO, String[] values) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 
@@ -295,7 +294,7 @@ public class InterceptorController extends BaseController
 		}
 	}			
 	
-	public void delete(InterceptorVO interceptorVO) throws ConstraintException, SystemException
+	public void delete(InterceptorVO interceptorVO) throws SystemException
 	{
 		deleteEntity(InterceptorImpl.class, interceptorVO.getInterceptorId());
 	}        

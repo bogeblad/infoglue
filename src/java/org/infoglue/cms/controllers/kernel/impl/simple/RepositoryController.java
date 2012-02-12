@@ -352,17 +352,17 @@ public class RepositoryController extends BaseController
     }        
     
 	// Singe object
-    public Repository getRepositoryWithId(Integer id, Database db) throws SystemException, Bug
+    public Repository getRepositoryWithId(Integer id, Database db) throws SystemException
     {
 		return (Repository) getObjectWithId(RepositoryImpl.class, id, db);
     }
 
-    public RepositoryVO getRepositoryVOWithId(Integer repositoryId) throws ConstraintException, SystemException, Bug
+    public RepositoryVO getRepositoryVOWithId(Integer repositoryId) throws ConstraintException, SystemException
     {
 		return  (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId);        
     }
 	
-    public RepositoryVO getRepositoryVOWithId(Integer repositoryId, Database db) throws ConstraintException, SystemException, Bug
+    public RepositoryVO getRepositoryVOWithId(Integer repositoryId, Database db) throws ConstraintException, SystemException
     {
 		return  (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db);        
     }
@@ -376,7 +376,7 @@ public class RepositoryController extends BaseController
 	 * @throws Bug
 	 */
 	
-	public RepositoryVO getRepositoryVOWithName(String name) throws SystemException, Bug
+	public RepositoryVO getRepositoryVOWithName(String name) throws SystemException
 	{
 		RepositoryVO repositoryVO = null;
 		
@@ -410,7 +410,7 @@ public class RepositoryController extends BaseController
 	 * @throws Bug
 	 */
 
-	public RepositoryVO getRepositoryVOWithName(String name, Database db) throws SystemException, Bug
+	public RepositoryVO getRepositoryVOWithName(String name, Database db) throws SystemException
 	{
 		RepositoryVO repositoryVO = null;
 		
@@ -449,7 +449,7 @@ public class RepositoryController extends BaseController
 	 * @throws Bug
 	 */
 
-	public Repository getRepositoryWithName(String name, Database db) throws SystemException, Bug
+	public Repository getRepositoryWithName(String name, Database db) throws SystemException
 	{
 		Repository repository = null;
 		
@@ -482,7 +482,7 @@ public class RepositoryController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
     
-    public List getRepositoryVOList() throws ConstraintException, SystemException, Bug
+    public List getRepositoryVOList() throws ConstraintException, SystemException
     {   
 		String key = "repositoryVOList";
 		logger.info("key:" + key);
@@ -506,7 +506,7 @@ public class RepositoryController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
 	
-	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog) throws ConstraintException, SystemException, Bug
+	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog) throws ConstraintException, SystemException
 	{    	
 		List accessableRepositories = new ArrayList();
     	
@@ -531,7 +531,7 @@ public class RepositoryController extends BaseController
 	 * Returns a repository list marked for deletion.
 	 */
 	
-	public List<RepositoryVO> getRepositoryVOListNotMarkedForDeletion() throws SystemException, Bug
+	public List<RepositoryVO> getRepositoryVOListNotMarkedForDeletion() throws SystemException
 	{
 		String key = "repositoryVOListActive";
 		logger.info("key:" + key);
@@ -580,7 +580,7 @@ public class RepositoryController extends BaseController
 	 * Returns a repository list marked for deletion.
 	 */
 	
-	public List<RepositoryVO> getRepositoryVOListMarkedForDeletion() throws SystemException, Bug
+	public List<RepositoryVO> getRepositoryVOListMarkedForDeletion() throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -618,7 +618,7 @@ public class RepositoryController extends BaseController
 	 * Return the first of all repositories.
 	 */
 	
-	public RepositoryVO getFirstRepositoryVO()  throws SystemException, Bug
+	public RepositoryVO getFirstRepositoryVO()  throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		RepositoryVO repositoryVO = null;
@@ -654,7 +654,7 @@ public class RepositoryController extends BaseController
 	/**
 	 * This method deletes the Repository sent in from the system.
 	 */	
-	public void delete(Integer repositoryId, Database db) throws SystemException, Bug
+	public void delete(Integer repositoryId, Database db) throws SystemException
 	{
 		try
 		{

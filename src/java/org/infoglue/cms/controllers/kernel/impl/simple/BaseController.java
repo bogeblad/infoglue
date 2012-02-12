@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,6 +40,7 @@ import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.exolab.castor.jdo.TransactionAbortedException;
+import org.exolab.castor.jdo.TransactionNotInProgressException;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.kernel.IBaseEntity;
 import org.infoglue.cms.entities.kernel.ValidatableEntityVO;
@@ -86,15 +88,6 @@ public abstract class BaseController
     private final static Logger logger = Logger.getLogger(BaseController.class.getName());
 
     /**
-     * Gets a logger for the action class.
-     */
-/*
-	protected Logger logger 
-	{
-	    return Logger.getLogger(this.getClass().getName());
-	}
-*/
-    /**
      * This method is called by the controllers to let interceptors listen to events.
      * 
      * @param hashMap
@@ -105,12 +98,12 @@ public abstract class BaseController
      * @throws Bug
      * @throws Exception
      */
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
 	{
     	intercept(hashMap, InterceptionPointName, infogluePrincipal, true);
 	}
 	
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws ConstraintException, SystemException, Bug, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws ConstraintException, SystemException, Exception
 	{
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
     	
@@ -150,7 +143,7 @@ public abstract class BaseController
      * @throws Exception
      */
 
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException, Bug, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException, Exception
 	{
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName, db);
     	
@@ -178,7 +171,7 @@ public abstract class BaseController
 
 	}
 
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess, Database db) throws ConstraintException, SystemException, Bug, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess, Database db) throws ConstraintException, SystemException, Exception
 	{
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName, db);
     	
@@ -207,7 +200,7 @@ public abstract class BaseController
 	}
 
 	
-	private static Integer getEntityId(Object entity) throws Bug
+	private static Integer getEntityId(Object entity)
 	{
 		Integer entityId = new Integer(-1);
 		
@@ -221,15 +214,6 @@ public abstract class BaseController
 			throw new Bug("Unable to retrieve object id");
 		}
 		
-		/*
-		try {
-			entityId = (Integer) entity.getClass().getDeclaredMethod("getId", new Class[0]).invoke(entity, new Object[0]);
-		} catch (IllegalAccessException e) {
-		} catch (InvocationTargetException e) {
-		} catch (NoSuchMethodException e) {
-		}
-
-		*/		
 		return entityId;
 	}
 
@@ -239,7 +223,7 @@ public abstract class BaseController
 
 	// Create entity
 	// The validation belongs here
-    protected static Object createEntity(Object entity) throws SystemException, Bug
+    protected static Object createEntity(Object entity) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);
@@ -248,15 +232,12 @@ public abstract class BaseController
         {
             db.create(entity);
             commitTransaction(db);
-            //CmsSystem.log(entity,"Created object", CmsSystem.DBG_NORMAL);
-			//CmsSystem.transactionLogEntry(entity.getClass().getName(), CmsSystem.TRANS_CREATE, getEntityId(entity), entity.toString());
             
         }
         catch(Exception e)
         {
             logger.error("An error occurred so we should not complete the transaction:" + e);
             logger.warn("An error occurred so we should not complete the transaction:" + e, e);
-            //CmsSystem.log(entity,"Failed to create object", CmsSystem.DBG_LOW);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -265,34 +246,14 @@ public abstract class BaseController
 
 
 	// Create entity inside an existing transaction
-    protected static Object createEntity(Object entity, Database db) throws SystemException, Bug, Exception
+    protected static Object createEntity(Object entity, Database db) throws PersistenceException 
     {
         db.create(entity);
         return entity;
     }     
-/*
-    protected static Object createEntity(Object entity, Database db) throws SystemException, Bug
-    {
-        try
-        {
-            db.create(entity);
-            commitTransaction(db);
-            //CmsSystem.log(entity,"Created object", CmsSystem.DBG_NORMAL);
-			//CmsSystem.transactionLogEntry(entity.getClass().getName(), CmsSystem.TRANS_CREATE, getEntityId(entity), entity.toString());   
-        }
-        catch(Exception e)
-        {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
-            //CmsSystem.log(entity,"Failed to create object", CmsSystem.DBG_LOW);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
-        return entity;
-    }     
-*/
 
 	// Delete entity
-    public static void deleteEntity(Class entClass, Integer id) throws Bug, SystemException
+    public static void deleteEntity(Class entClass, Integer id) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         Object entity = null;
@@ -306,8 +267,6 @@ public abstract class BaseController
             // Delete the entity
             db.remove(entity);
             commitTransaction(db);
-            //CmsSystem.log(entity,"Deleted object", CmsSystem.DBG_NORMAL);           
-			//CmsSystem.transactionLogEntry(entClass.getName(), CmsSystem.TRANS_DELETE, id, entity.toString());            
         }
         catch(Exception e)
         {
@@ -320,7 +279,7 @@ public abstract class BaseController
 
 
 	// Delete entity
-	public static void deleteEntity(Class entClass, String id) throws Bug, SystemException
+	public static void deleteEntity(Class entClass, String id) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		Object entity = null;
@@ -334,8 +293,6 @@ public abstract class BaseController
 			// Delete the entity
 			db.remove(entity);
 			commitTransaction(db);
-			//CmsSystem.log(entity,"Deleted object", CmsSystem.DBG_NORMAL);           
-			//CmsSystem.transactionLogEntry(entClass.getName(), CmsSystem.TRANS_DELETE, id, entity.toString());            
 		}
 		catch(Exception e)
 		{
@@ -348,7 +305,7 @@ public abstract class BaseController
 
 
 	// Delete entity
-	public static void deleteEntity(Class entClass, String id, Database db) throws Bug, SystemException, Exception
+	public static void deleteEntity(Class entClass, String id, Database db) throws SystemException, PersistenceException
 	{
 		Object entity = getObjectWithId(entClass, id, db);
 		// Delete the entity
@@ -357,7 +314,7 @@ public abstract class BaseController
 
 	
 	// Delete entity
-    public static void deleteEntity(Class entClass, Integer id, Database db) throws Bug, SystemException
+    public static void deleteEntity(Class entClass, Integer id, Database db) throws SystemException
     {
         Object entity = null;
 
@@ -376,7 +333,7 @@ public abstract class BaseController
     }        
 
 
-    public static BaseEntityVO updateEntity(Class arg, BaseEntityVO vo) throws Bug, SystemException
+    public static BaseEntityVO updateEntity(Class arg, BaseEntityVO vo) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
 
@@ -403,7 +360,7 @@ public abstract class BaseController
     }        
 
     
-	public static BaseEntityVO updateEntity(Class arg, BaseEntityVO vo, Database db) throws Bug, SystemException
+	public static BaseEntityVO updateEntity(Class arg, BaseEntityVO vo, Database db) throws SystemException
 	{
 		IBaseEntity entity = null;
 
@@ -480,7 +437,7 @@ public abstract class BaseController
 	 * Update entity and a collection with other entities
 	 * Experimental, use with caution
 	 */
-    public static IBaseEntity updateEntity(Class entClass, BaseEntityVO vo, String collectionMethod, Class manyClass, String[] manyIds, Database db) throws ConstraintException, SystemException, Exception
+    public static IBaseEntity updateEntity(Class entClass, BaseEntityVO vo, String collectionMethod, Class manyClass, String[] manyIds, Database db) throws SystemException, IllegalArgumentException, SecurityException, IllegalAccessException, InvocationTargetException, NoSuchMethodException
     {
         IBaseEntity entity = null;
 
@@ -506,32 +463,10 @@ public abstract class BaseController
         return entity;
     }        
 
-
-	/*
-	protected static Object getObjectWithId(Class arg, Integer id) throws SystemException, Bug
-	{
-		Database db = CastorDatabaseService.getDatabase();		
-		Object ret = null;
-		try
-		{
-			beginTransaction(db);
-			ret = getObjectWithId(arg, id, db);
-			commitTransaction(db);
-		}
-		catch (Exception e)
-		{
-			rollbackTransaction(db);
-            throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
-		}
-		return ret;
-	}
-	*/
-
 	/**
 	 * This method fetches one object / entity within a transaction.
 	 **/
-	
-    protected static Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException, Bug
+    protected static Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException
     {
         Object object = null;
         try
@@ -556,8 +491,7 @@ public abstract class BaseController
 	/**
 	 * This method fetches one object / entity within a transaction.
 	 **/
-	
-    protected static Object getObjectWithIdAsReadOnly(Class arg, Integer id, Database db) throws SystemException, Bug
+    protected static Object getObjectWithIdAsReadOnly(Class arg, Integer id, Database db) throws SystemException
     {
         Object object = null;
         try
@@ -579,8 +513,7 @@ public abstract class BaseController
 	/**
 	 * This method fetches one object / entity within a transaction.
 	 **/
-	
-	protected static Object getObjectWithId(Class arg, String id, Database db) throws SystemException, Bug
+	protected static Object getObjectWithId(Class arg, String id, Database db) throws SystemException
 	{
 		Object object = null;
 		try
@@ -605,8 +538,7 @@ public abstract class BaseController
   	/**
 	 * This method converts a List of entities to a list of value-objects.
 	 */
-	
-	public static List toVOList(Collection baseEntities) throws SystemException, Bug
+	public static List toVOList(Collection baseEntities) throws SystemException
     {
 		List resultVOList = new ArrayList();
 		
@@ -639,8 +571,7 @@ public abstract class BaseController
   	/**
 	 * This method converts a List of entities to a list of value-objects.
 	 */
-	
-	public static List toModifiableVOList(Collection baseEntities) throws SystemException, Bug
+	public static List toModifiableVOList(Collection baseEntities) throws SystemException
     {
 		List resultVOList = new ArrayList();
 		
@@ -678,7 +609,7 @@ public abstract class BaseController
 	 * This method is used to fetch a ValueObject from the database.
 	 */
 
-	public static Object getVOWithId(Class arg, Integer id) throws SystemException, Bug
+	public static Object getVOWithId(Class arg, Integer id) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();		
 		Object ret = null;
@@ -688,7 +619,7 @@ public abstract class BaseController
 			ret = getVOWithId(arg, id, db);
 			commitTransaction(db);
 		}
-		catch (Exception e)
+		catch (SystemException e)
 		{
 			rollbackTransaction(db);
             throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
@@ -700,14 +631,14 @@ public abstract class BaseController
 	 * This method fetches one object in read only mode and returns it's value object.
 	 */
 	
-    public static BaseEntityVO getVOWithId(Class arg, Integer id, Database db) throws SystemException, Bug
+    public static BaseEntityVO getVOWithId(Class arg, Integer id, Database db) throws SystemException
     {
         IBaseEntity vo = null;
         try
         {
     		vo = (IBaseEntity)db.load(arg, id, Database.ReadOnly);
         }
-        catch(Exception e)
+        catch(PersistenceException e)
         {
             throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
         }
@@ -725,7 +656,7 @@ public abstract class BaseController
 	 * This method is used to fetch a ValueObject from the database.
 	 */
 
-	public static Object getVOWithId(Class arg, String id) throws SystemException, Bug
+	public static Object getVOWithId(Class arg, String id) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();		
 		Object ret = null;
@@ -735,7 +666,7 @@ public abstract class BaseController
 			ret = getVOWithId(arg, id, db);
 			commitTransaction(db);
 		}
-		catch (Exception e)
+		catch (SystemException e)
 		{
 			rollbackTransaction(db);
 			throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
@@ -747,14 +678,14 @@ public abstract class BaseController
 	 * This method fetches one object in read only mode and returns it's value object.
 	 */
 	
-	public static BaseEntityVO getVOWithId(Class arg, String id, Database db) throws SystemException, Bug
+	public static BaseEntityVO getVOWithId(Class arg, String id, Database db) throws SystemException
 	{
 		IBaseEntity vo = null;
 		try
 		{
 			vo = (IBaseEntity)db.load(arg, id, Database.ReadOnly);
 		}
-		catch(Exception e)
+		catch(PersistenceException e)
 		{
 			throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
 		}
@@ -766,36 +697,11 @@ public abstract class BaseController
         
 		return vo.getVO();
 	}
-
-
-	/**
-	 * This method fetches all object in read only mode and returns a list of value objects.
-	 */
-    /*
-    public static List getAllVOObjects(Class arg) throws SystemException, Bug
-    {
-		Database db = CastorDatabaseService.getDatabase();
-		List ret = null;
-        try
-        {
-			beginTransaction(db);
-			ret = getAllVOObjects(arg, db);
-			commitTransaction(db);
-        }
-        catch(Exception e)
-        {
-			rollbackTransaction(db);
-            throw new SystemException("An error occurred when we tried to fetch " + arg.getName() + " Reason:" + e.getMessage(), e);    
-        }    
-        return ret;
-    }
-    */
     
 	/**
 	 * This method fetches all object in read only mode and returns a list of value objects.
 	 */
-    
-	public static List getAllVOObjects(Class arg, String orderByAttribute, String direction) throws SystemException, Bug
+	public static List getAllVOObjects(Class arg, String orderByAttribute, String direction) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		List ret = null;
@@ -805,7 +711,7 @@ public abstract class BaseController
 			ret = getAllVOObjects(arg, orderByAttribute, direction, db);
 			commitTransaction(db);
 		}
-		catch(Exception e)
+		catch(SystemException e)
 		{
 			rollbackTransaction(db);
 			throw new SystemException("An error occurred when we tried to fetch " + arg.getName() + " Reason:" + e.getMessage(), e);    
@@ -818,8 +724,7 @@ public abstract class BaseController
 	/**
 	 * This method fetches all object in read only mode and returns a list of value objects.
 	 */
-
-	public static List getAllVOObjects(Class arg, String orderByField, String direction, Database db) throws SystemException, Bug
+	public static List getAllVOObjects(Class arg, String orderByField, String direction, Database db) throws SystemException
 	{
 		ArrayList resultList = new ArrayList();
 		OQLQuery	oql;
@@ -854,8 +759,7 @@ public abstract class BaseController
 	/**
 	 * This method fetches all object in read only mode and returns a list of value objects sorted on primary Key.
 	 */
-	 
-	public List getAllVOObjects(Class arg, String primaryKey) throws SystemException, Bug
+	public List getAllVOObjects(Class arg, String primaryKey) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		List ret = null;
@@ -877,8 +781,7 @@ public abstract class BaseController
 	/**
 	 * This method fetches all object in read only mode and returns a list of value objects.
 	 */
-
-	public List getAllVOObjects(Class arg, String primaryKey, Database db) throws SystemException, Bug
+	public List getAllVOObjects(Class arg, String primaryKey, Database db) throws SystemException
 	{
 		ArrayList resultList = new ArrayList();
 		OQLQuery	oql;
@@ -908,8 +811,7 @@ public abstract class BaseController
 	/**
 	 * This method fetches all object in read only mode and returns a list of objects.
 	 */
-
-	public List getAllObjects(Class arg, String primaryKey, Database db) throws SystemException, Bug
+	public List getAllObjects(Class arg, String primaryKey, Database db) throws SystemException
 	{
 		ArrayList resultList = new ArrayList();
 		OQLQuery	oql;
@@ -1161,7 +1063,7 @@ public abstract class BaseController
             //logger.info("Opening a new Transaction in cms...");
             db.begin();
         }
-        catch(Exception e)
+        catch(PersistenceException e)
         {
 			throw new SystemException("An error occurred when we tried to begin an transaction. Reason:" + e.getMessage(), e);    
         }
@@ -1200,30 +1102,26 @@ public abstract class BaseController
     /**
      * Rollbacks a transaction on the named database
      */
-     
-    protected static void rollbackTransaction(Database db) throws SystemException
+    protected static void rollbackTransaction(Database db)
     {
         try
         {
-            //logger.info("rollbackTransaction a transaction in cms...");
-            
             if (db != null && db.isActive())
         	{
                 db.rollback();
-				db.close();
         	}
         }
-        catch(Exception e)
+        catch(TransactionNotInProgressException e)
         {
             logger.warn("An error occurred when we tried to rollback an transaction. Reason:" + e.getMessage());
         }
+        closeDatabase(db);
     }
 
     /**
-     * Rollbacks a transaction on the named database
+     * Close database connection
      */
-     
-    protected static void closeDatabase(Database db) throws SystemException
+    protected static void closeDatabase(Database db)
     {
         try
         {
@@ -1232,37 +1130,33 @@ public abstract class BaseController
 				db.close();
         	}
         }
-        catch(Exception e)
+        catch(PersistenceException e)
         {
-            logger.warn("An error occurred when we tried to rollback an transaction. Reason:" + e.getMessage());
+            logger.warn("An error occurred when we tried to close database connection. Reason:" + e.getMessage());
         }
     }
 
 	public String getLocalizedString(Locale locale, String key) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
-
     	return stringManager.getString(key);
   	}
 
 	public String getLocalizedString(Locale locale, String key, Object arg1) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
-
     	return stringManager.getString(key, arg1);
   	}
 
 	public String getLocalizedString(Locale locale, String key, Object arg1, Object arg2) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
-
     	return stringManager.getString(key, arg1, arg2);
   	}
 
 	public String getLocalizedString(Locale locale, String key, Object arg1, Object arg2, Object arg3) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
-
     	return stringManager.getString(key, arg1, arg2, arg3);
   	}
 
@@ -1325,7 +1219,7 @@ public abstract class BaseController
 		return locale; 
 	}
 
-	public static TableCount getTableCount(String tableName) throws Exception
+	public static TableCount getTableCount(String tableName) throws SystemException 
 	{
 		TableCount tableCount = null;
 		

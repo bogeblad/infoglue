@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
@@ -74,24 +75,24 @@ public class RedirectController extends BaseController
 		return new RedirectController();
 	}
 
-    public RedirectVO getRedirectVOWithId(Integer redirectId) throws SystemException, Bug
+    public RedirectVO getRedirectVOWithId(Integer redirectId) throws SystemException
     {
 		return (RedirectVO) getVOWithId(RedirectImpl.class, redirectId);
     }
 
-    public Redirect getRedirectWithId(Integer redirectId, Database db) throws SystemException, Bug
+    public Redirect getRedirectWithId(Integer redirectId, Database db) throws SystemException
     {
 		return (Redirect) getObjectWithId(RedirectImpl.class, redirectId, db);
     }
 
-    public List<RedirectVO> getRedirectVOList() throws SystemException, Bug
+    public List<RedirectVO> getRedirectVOList() throws SystemException
     {
 		List<RedirectVO> redirectVOList = getAllVOObjects(RedirectImpl.class, "redirectId");
 
 		return redirectVOList;
     }
 
-    public List<RedirectVO> getUserRedirectVOList() throws SystemException, Bug
+    public List<RedirectVO> getUserRedirectVOList() throws SystemException
     {
 		List<RedirectVO> redirectVOList = new ArrayList<RedirectVO>();
 
@@ -126,7 +127,7 @@ public class RedirectController extends BaseController
 		return redirectVOList;
     }
 
-    public List<RedirectVO> getSystemRedirectVOList() throws SystemException, Bug
+    public List<RedirectVO> getSystemRedirectVOList() throws SystemException
     {
     	List<RedirectVO> redirectVOList = new ArrayList<RedirectVO>();
 
@@ -149,7 +150,7 @@ public class RedirectController extends BaseController
     }
 
     
-    public List<RedirectVO> getSystemRedirectVOList(Database db) throws SystemException, Bug, Exception
+    public List<RedirectVO> getSystemRedirectVOList(Database db) throws PersistenceException  
     {
     	List<RedirectVO> redirectVOList = new ArrayList<RedirectVO>();
 
@@ -171,14 +172,14 @@ public class RedirectController extends BaseController
 		return redirectVOList;
     }
 
-    public List getRedirectVOList(Database db) throws SystemException, Bug
+    public List getRedirectVOList(Database db) throws SystemException
     {
 		List redirectVOList = getAllVOObjects(RedirectImpl.class, "redirectId", db);
 
 		return redirectVOList;
     }
 
-    public RedirectVO create(RedirectVO redirectVO) throws ConstraintException, SystemException
+    public RedirectVO create(RedirectVO redirectVO) throws  SystemException
     {
         Redirect redirect = new RedirectImpl();
         redirect.setValueObject(redirectVO);
@@ -186,17 +187,17 @@ public class RedirectController extends BaseController
         return redirect.getValueObject();
     }
 
-    public void delete(RedirectVO redirectVO) throws ConstraintException, SystemException
+    public void delete(RedirectVO redirectVO) throws  SystemException
     {
     	deleteEntity(RedirectImpl.class, redirectVO.getRedirectId());
     }
 
-    public void delete(RedirectVO redirectVO, Database db) throws ConstraintException, SystemException
+    public void delete(RedirectVO redirectVO, Database db) throws  SystemException
     {
     	deleteEntity(RedirectImpl.class, redirectVO.getRedirectId(), db);
     }
 
-    public void deleteExpiredSystemRedirects() throws SystemException, Bug
+    public void deleteExpiredSystemRedirects() throws SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -223,7 +224,7 @@ public class RedirectController extends BaseController
     }
 
     
-    public RedirectVO update(RedirectVO redirectVO) throws ConstraintException, SystemException
+    public RedirectVO update(RedirectVO redirectVO) throws SystemException
     {
     	return (RedirectVO) updateEntity(RedirectImpl.class, redirectVO);
     }
@@ -444,7 +445,7 @@ public class RedirectController extends BaseController
         return null;
     }
     
-    public Map<String,String> getNiceURIMapBeforeMove(Database db, Integer repositoryId, Integer siteNodeId, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
+    public Map<String,String> getNiceURIMapBeforeMove(Database db, Integer repositoryId, Integer siteNodeId, InfoGluePrincipal principal) 
     {
     	Map<String,String> pageUrls = new HashMap<String,String>();
     	
@@ -486,7 +487,7 @@ public class RedirectController extends BaseController
     	return pageUrls;
     }
     
-    public void createSystemRedirect(Map<String,String> pageUrls, Integer repositoryId, Integer siteNodeId, InfoGluePrincipal principal) throws ConstraintException, SystemException
+    public void createSystemRedirect(Map<String,String> pageUrls, Integer repositoryId, Integer siteNodeId, InfoGluePrincipal principal) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 		

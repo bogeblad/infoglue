@@ -866,7 +866,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
         return this.getSession().getLocale();
     }
 
-    public List<LanguageVO> getLanguages() throws SystemException, Bug
+    public List<LanguageVO> getLanguages() throws SystemException
     {
     	return LanguageController.getController().getLanguageVOList();
     }
@@ -1304,12 +1304,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
      * @throws Bug
      * @throws Exception
      */
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
 	{
     	intercept(hashMap, InterceptionPointName, infogluePrincipal, true);
 	}
 	
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws ConstraintException, SystemException, Bug, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws ConstraintException, SystemException, Exception
 	{
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
     	

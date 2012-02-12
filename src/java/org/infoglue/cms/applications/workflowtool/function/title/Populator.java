@@ -55,7 +55,7 @@ public abstract class Populator extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private void populate(final String title) throws WorkflowException
+	private void populate(final String title)
 	{
 		if(title != null && title.trim().length() > 0)
 		{

@@ -73,7 +73,7 @@ public class UserErrorPopulator extends ErrorPopulator
 	/**
 	 * 
 	 */
-	protected void checkUniqueUserName() throws WorkflowException 
+	protected void checkUniqueUserName() 
 	{
 		try
 		{

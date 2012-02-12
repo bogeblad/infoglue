@@ -141,7 +141,7 @@ public class RolesProvider extends InfoglueFunction
 	/**
 	 * 
 	 */
-	private void populateRolesFromPrincipal() throws WorkflowException
+	private void populateRolesFromPrincipal() 
 	{
 		logger.debug("Populating from principal.");
 		for(final Iterator i = getPrincipal().getRoles().iterator(); i.hasNext(); )

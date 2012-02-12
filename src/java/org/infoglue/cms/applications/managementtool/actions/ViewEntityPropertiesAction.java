@@ -89,7 +89,7 @@ public abstract class ViewEntityPropertiesAction extends InfoGlueAbstractAction
 
     public abstract String getReturnAddress() throws Exception;
 
-    public void initialize() throws SystemException, Bug
+    public void initialize() throws SystemException
     {
 	    this.setAvailableLanguages(LanguageController.getController().getLanguageVOList());
 		

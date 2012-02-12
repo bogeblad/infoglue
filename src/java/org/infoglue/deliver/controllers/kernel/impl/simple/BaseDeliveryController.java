@@ -56,7 +56,7 @@ public abstract class BaseDeliveryController
 	 * This method fetches one object / entity within a transaction.
 	 **/
 	
-	protected Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException, Bug
+	protected Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException
 	{
 		Object object = null;
 		try
@@ -80,7 +80,7 @@ public abstract class BaseDeliveryController
 	 * This method fetches one object in read only mode and returns it's value object.
 	 */
 	
-	protected BaseEntityVO getVOWithId(Class arg, Integer id, Database db) throws SystemException, Bug
+	protected BaseEntityVO getVOWithId(Class arg, Integer id, Database db) throws SystemException
 	{
 		IBaseEntity vo = null;
 		try
@@ -105,7 +105,7 @@ public abstract class BaseDeliveryController
 	 * This method fetches all object in read only mode and returns a list of value objects.
 	 */
 
-	public List getAllVOObjects(Class arg, Database db) throws SystemException, Bug
+	public List getAllVOObjects(Class arg, Database db) throws SystemException
 	{
 		ArrayList resultList = new ArrayList();
 		
@@ -142,7 +142,7 @@ public abstract class BaseDeliveryController
 	 * This method fetches all object in read only mode and returns a list of value objects.
 	 */
 
-	public List getAllVOObjects(Class arg, String orderByField, String direction, Database db) throws SystemException, Bug
+	public List getAllVOObjects(Class arg, String orderByField, String direction, Database db) throws SystemException
 	{
 		ArrayList resultList = new ArrayList();
 		
@@ -236,7 +236,7 @@ public abstract class BaseDeliveryController
 	/**
 	 * This method converts a List of entities to a list of value-objects.
 	 */
-	protected static List toVOList(Collection entities) throws SystemException, Bug
+	protected static List toVOList(Collection entities) throws SystemException
 	{
 		List resultVOList = new ArrayList();
 

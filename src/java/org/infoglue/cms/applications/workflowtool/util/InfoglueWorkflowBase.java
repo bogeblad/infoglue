@@ -196,7 +196,7 @@ public abstract class InfoglueWorkflowBase
 	 * @param defaultValue the default value.
 	 * @return the specified argument if it exists; otherwise the default value.
 	 */
-	protected final String getArgument(final String name, final String defaultValue) throws WorkflowException 
+	protected final String getArgument(final String name, final String defaultValue) 
 	{
 		return arguments.containsKey(name) ? arguments.get(name).toString() : defaultValue;
 	}
@@ -248,7 +248,7 @@ public abstract class InfoglueWorkflowBase
 	 * @param defaultValue the default value.
 	 * @return the specified parameter if it exists; otherwise the default value.
 	 */
-	protected final Object getParameter(final String key, final Object defaultValue) throws WorkflowException 
+	protected final Object getParameter(final String key, final Object defaultValue) 
 	{
 		return parameters.containsKey(key) ? parameters.get(key) : defaultValue;
 	}

@@ -38,55 +38,25 @@ public class SlotsTag extends AbstractTag
 {
     private final static Logger logger = Logger.getLogger(SlotsTag.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3257849891731681845L;
 
-	/**
-	 * 
-	 */
 	private String visibleElementsId;
 	
-	/**
-	 * 
-	 */
 	private String visibleSlotsId;
 	
-	/**
-	 * 
-	 */
 	private String lastSlotId;
 	
-	/**
-	 * 
-	 */
 	private List elements;
 
-	/**
-	 * 
-	 */
 	private int currentSlot = 1;
 	
-	/**
-	 * 
-	 */
 	private int slotSize;
 	
-	/**
-	 * 
-	 */
 	private int slotCount;
 	
-	/**
-	 * 
-	 */
 	private int maxSlots;
 	
 	
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException
     {
 		calculateSlots();
@@ -101,9 +71,6 @@ public class SlotsTag extends AbstractTag
         return EVAL_PAGE;
     }
 	
-	/**
-	 * 
-	 */
 	private void calculateSlots() throws JspException
 	{
 		try 
@@ -131,9 +98,6 @@ public class SlotsTag extends AbstractTag
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void setResultAttribute(final String id, final Object value)
 	{
 		if(value == null)
@@ -142,65 +106,41 @@ public class SlotsTag extends AbstractTag
 			pageContext.setAttribute(id, value);
 	}
 
-	/**
-	 * 
-	 */
 	public void setVisibleElementsId(final String id) 
 	{
 		this.visibleElementsId = id;
 	}
 	
-	/**
-	 * 
-	 */
 	public void setVisibleSlotsId(final String id) 
 	{
 		this.visibleSlotsId = id;
 	}
 	
-	/**
-	 * 
-	 */
 	public void setLastSlotId(final String id) 
 	{
 		this.lastSlotId = id;
 	}
 	
-	/**
-	 *
-	 */
 	public void setElements(final String elements) throws JspException
 	{
 		this.elements = evaluateList("slots", "elements", elements);
 	}
 
-	/**
-	 *
-	 */
 	public void setCurrentSlot(final String currentSlot) throws JspException
 	{
 		this.currentSlot = Math.max(1, evaluateInteger("slots", "currentSlot", currentSlot).intValue());
 	}
 
-	/**
-	 *
-	 */
 	public void setMaxSlots(final String maxSlots) throws JspException
 	{
 		this.maxSlots = evaluateInteger("slots", "maxSlots", maxSlots).intValue();
 	}
 	
-	/**
-	 *
-	 */
 	public void setSlotSize(final String slotSize) throws JspException
 	{
 		this.slotSize = evaluateInteger("slots", "slotSize", slotSize).intValue();
 	}
 
-	/**
-	 *
-	 */
 	public void setSlotCount(final String slotCount) throws JspException
 	{
 		this.slotCount = evaluateInteger("slots", "slotCount", slotCount).intValue();

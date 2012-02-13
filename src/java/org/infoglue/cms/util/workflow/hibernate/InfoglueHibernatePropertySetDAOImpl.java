@@ -18,22 +18,13 @@ import com.opensymphony.module.propertyset.hibernate.PropertySetItem;
  * Quickfix
  */
 public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySetDAO {
-	/**
-	 * 
-	 */
     private SessionFactory sessionFactory;
 
-	/**
-	 * 
-	 */
     public InfoglueHibernatePropertySetDAOImpl(SessionFactory sessionFactory) {
     	
 		this.sessionFactory = sessionFactory;
     }
 
-	/**
-	 * 
-	 */
 	public void setImpl(PropertySetItem item, boolean isUpdate) {
         Session session = null;
 

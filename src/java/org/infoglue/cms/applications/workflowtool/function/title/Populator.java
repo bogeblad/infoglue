@@ -31,30 +31,18 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public abstract class Populator extends InfoglueFunction 
 {
-	/**
-	 * 
-	 */
 	private static final String TITLE_PROPERTYSET_KEY = WORKFLOW_PROPERTYSET_PREFIX + "title";
 	
-	/**
-	 * 
-	 */
 	public Populator() 
 	{ 
 		super(); 
 	}
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		populate(getTitle());
 	}
 	
-	/**
-	 * 
-	 */
 	private void populate(final String title)
 	{
 		if(title != null && title.trim().length() > 0)
@@ -63,8 +51,5 @@ public abstract class Populator extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	protected abstract String getTitle();
 }

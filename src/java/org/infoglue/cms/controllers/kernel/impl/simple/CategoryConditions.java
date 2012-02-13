@@ -19,19 +19,10 @@ import org.infoglue.cms.util.CmsPropertyHandler;
  * 
  */
 interface ICategoryCondition {
-	/**
-	 * 
-	 */
 	String getWhereClauseOQL(final List bindings);
 	
-	/**
-	 * 
-	 */
 	Collection getFromClauseTables();
 	
-	/**
-	 * 
-	 */
 	boolean hasCondition();
 }
 
@@ -39,29 +30,14 @@ interface ICategoryCondition {
  * 
  */
 interface ICategoryContainerCondition extends ICategoryCondition {
-	/**
-	 * 
-	 */
 	void add(ICategoryCondition condition);
 	
-	/**
-	 * 
-	 */
 	void addCategory(final String attributeName, final CategoryVO categoryVO);
 
-	/**
-	 * 
-	 */
 	void addCategory(final String attributeName, final CategoryVO categoryVO, final Boolean notSetArgument, final Boolean isSetArgument);
 	
-	/**
-	 * 
-	 */
 	ICategoryContainerCondition and();
 
-	/**
-	 * 
-	 */
 	ICategoryContainerCondition or();
 }
 
@@ -98,50 +74,29 @@ abstract class AbstractCategoryCondition implements ICategoryCondition {
 	protected static final String CATEGORY_IS_SET_CLAUSE_GENERAL   	= "(" + CONTENT_VERSION_ALIAS + ".contentVersionId IN (SELECT contentVersionId from " + CONTENT_CATEGORY_TABLE + " WHERE attributeName={0}))";
 	protected static final String CATEGORY_IS_SET_CLAUSE_GENERAL_SHORT = "(" + CONTENT_VERSION_ALIAS + ".contVerId IN (SELECT contVerId from " + CONTENT_CATEGORY_TABLE + " WHERE attributeName={0}))";
 
-	/**
-	 * 
-	 */
 	private static int counter;
 	
-	/**
-	 * 
-	 */
 	private Integer uniqueID;
 	
 	
 
 	
-	/**
-	 * 
-	 */
 	private synchronized Integer createUniqueId() {
 		return new Integer(counter++);
 	}
 	
-	/**
-	 * 
-	 */
 	AbstractCategoryCondition() {
 		this.uniqueID = createUniqueId(); 
 	}
 
-	/**
-	 * 
-	 */
 	protected String getUniqueID() {
 		return uniqueID == null ? "" : uniqueID.toString();
 	}
 	
-	/**
-	 * 
-	 */
 	protected String getBindingVariable(final Collection bindings) {
 		return "$" + (bindings.size() + 1);
 	}
 
-	/**
-	 * 
-	 */
 	public Collection getFromClauseTables() {
 		final Collection result = new ArrayList();
 		String useImprovedContentCategorySearch = CmsPropertyHandler.getUseImprovedContentCategorySearch();
@@ -154,9 +109,6 @@ abstract class AbstractCategoryCondition implements ICategoryCondition {
 		return result;
 	}
 
-	/**
-	 * 
-	 */
 	protected String getOneCategoryClause(final String attributeName, final CategoryVO categoryVO, final List bindings) 
 	{
 		final String categoryVariable = getBindingVariable(bindings);
@@ -173,9 +125,6 @@ abstract class AbstractCategoryCondition implements ICategoryCondition {
 		return MessageFormat.format(categoryClause, new Object[] { categoryVariable, nameVariable });
 	}
 
-	/**
-	 * 
-	 */
 	protected String getOneExcludingCategoryClause(final String attributeName, final List bindings) throws NotSupportedException
 	{
 		final String nameVariable = getBindingVariable(bindings);
@@ -190,9 +139,6 @@ abstract class AbstractCategoryCondition implements ICategoryCondition {
 		return MessageFormat.format(categoryClause, new Object[] { nameVariable });
 	}
 
-	/**
-	 * 
-	 */
 	public boolean hasCondition() { return true; }
 }
 
@@ -201,22 +147,13 @@ abstract class AbstractCategoryCondition implements ICategoryCondition {
  */
 class CategoryAndCondition extends AbstractCategoryCondition 
 {
-	/**
-	 * 
-	 */
 	private String attributeName;
 	
-	/**
-	 * 
-	 */
 	private CategoryVO categoryVO;
 	
 	private Boolean notSetArgument = false;
 	private Boolean isSetArgument = false;
 	
-	/**
-	 * 
-	 */
 	CategoryAndCondition(final String attributeName, final CategoryVO categoryVO, Boolean notSetArgument, Boolean isSetArgument) 
 	{
 		this.attributeName 	= attributeName;
@@ -225,9 +162,6 @@ class CategoryAndCondition extends AbstractCategoryCondition
 		this.isSetArgument 	= isSetArgument;
 	}
 	
-	/**
-	 * 
-	 */
 	public String getWhereClauseOQL(final List bindings) 
 	{
 		String useImprovedContentCategorySearch = CmsPropertyHandler.getUseImprovedContentCategorySearch();
@@ -285,35 +219,20 @@ class CategoryAndCondition extends AbstractCategoryCondition
  * 
  */
 class CategoryOrCondition extends AbstractCategoryCondition {
-	/**
-	 * 
-	 */
 	private List names = new ArrayList();
 
-	/**
-	 * 
-	 */
 	private List categories = new ArrayList();
 	
 	
-	/**
-	 * 
-	 */
 	CategoryOrCondition(final String attributeName, final CategoryVO categoryVO) {
 		addCategory(attributeName, categoryVO);
 	}
 	
-	/**
-	 * 
-	 */
 	void addCategory(final String attributeName, final CategoryVO categoryVO) {
 		names.add(attributeName);
 		categories.add(categoryVO);
 	}
 	
-	/**
-	 * 
-	 */
 	public String getWhereClauseOQL(final List bindings) {
 		final StringBuffer categoryClauses = new StringBuffer();
 		for(int i=0; i<names.size(); ++i) {
@@ -343,83 +262,47 @@ public class CategoryConditions implements ICategoryContainerCondition {
 	private static final String RIGHT  = ")";
 	private static final String SPACE  = " ";
 
-	/**
-	 * 
-	 */
 	private List children = new ArrayList();
 	
-	/**
-	 * 
-	 */
 	private String delimiter;
 	
 	
 	
-	/**
-	 * 
-	 */
 	protected CategoryConditions(final String delimiter) {
 		this.delimiter = delimiter;
 	}
 	
-	/**
-	 * 
-	 */
 	public void add(final ICategoryCondition condition) {
 		if(condition != null)
 			children.add(condition);
 	}
 
-	/**
-	 * 
-	 */
 	public void addCategory(final String attributeName, final CategoryVO categoryVO) {
 		children.add(new CategoryAndCondition(attributeName, categoryVO, false, false));
 	}
 
-	/**
-	 * 
-	 */
 	public void addCategory(final String attributeName, final CategoryVO categoryVO, final Boolean notSetArgument, final Boolean isSetArgument) {
 		children.add(new CategoryAndCondition(attributeName, categoryVO, notSetArgument, isSetArgument));
 	}
 	
-	/**
-	 * 
-	 */
 	public ICategoryContainerCondition and() {
 		final ICategoryContainerCondition container = createAndConditions();
 		add(container);
 		return container;
 	}
 
-	/**
-	 * 
-	 */
 	public ICategoryContainerCondition or() {
 		final ICategoryContainerCondition container = createOrConditions();
 		add(container);
 		return container;
 	}
 
-	/**
-	 * 
-	 */
 	public static CategoryConditions createAndConditions() { return new CategoryAndConditions(); }
 	
-	/**
-	 * 
-	 */
 	public static CategoryConditions createOrConditions() { return new CategoryOrConditions(); }
 	
-	/**
-	 * 
-	 */
 	public static CategoryConditions parse(final String s) { return new ConditionsParser().parse(s); }
 	
-	/**
-	 * 
-	 */
 	public String getWhereClauseOQL(final List bindings) {
 		final StringBuffer sb = new StringBuffer();
 		int counter = 0;
@@ -434,9 +317,6 @@ public class CategoryConditions implements ICategoryContainerCondition {
 		return (counter > 1) ? (LEFT + sb.toString() + RIGHT) : sb.toString();
 	}
 	
-	/**
-	 * 
-	 */
 	public Collection getFromClauseTables() {
 		final List result = new ArrayList();
 		for(Iterator i=children.iterator(); i.hasNext(); ) {
@@ -449,9 +329,6 @@ public class CategoryConditions implements ICategoryContainerCondition {
 		return result;
 	}
 
-	/**
-	 * 
-	 */
 	public boolean hasCondition() { 
 		for(Iterator i=children.iterator(); i.hasNext(); ) {
 			ICategoryCondition condition = (ICategoryCondition) i.next();
@@ -466,9 +343,6 @@ public class CategoryConditions implements ICategoryContainerCondition {
  * 
  */
 class CategoryAndConditions extends CategoryConditions {
-	/**
-	 * 
-	 */
 	CategoryAndConditions() {
 		super("AND");
 	}
@@ -478,21 +352,12 @@ class CategoryAndConditions extends CategoryConditions {
  * 
  */
 class CategoryOrConditions extends CategoryConditions {
-	/**
-	 * 
-	 */
 	private CategoryOrCondition compound;
 	
-	/**
-	 * 
-	 */
 	CategoryOrConditions() {
 		super("OR");
 	}
 
-	/**
-	 * 
-	 */
 	public void addCategory(final String attributeName, final CategoryVO categoryVO) {
 		if(compound == null) {
 			compound = new CategoryOrCondition(attributeName, categoryVO);
@@ -515,14 +380,8 @@ class ConditionsParser {
 	private static final String CATEGORY_DELIMITER  = "=";
 	
 	
-	/**
-	 * 
-	 */
 	ConditionsParser() {}
 	
-	/**
-	 * 
-	 */
 	public CategoryConditions parse(final String s) {
 		final String parseString = (s == null ? "" : s);
 		final StringTokenizer st = new StringTokenizer(AND_START + parseString + AND_END, AND_START + AND_END + OR_START + OR_END + CONDITION_DELIMITER, true);
@@ -533,9 +392,6 @@ class ConditionsParser {
 		return conditions;
 	}
 	
-	/**
-	 * 
-	 */
 	private void parse(CategoryConditions conditions, final List tokens) {
 		if(tokens.isEmpty() || isContainerEndToken(tokens))
 			return;
@@ -549,9 +405,6 @@ class ConditionsParser {
 		parse(conditions, tokens);
 	}
 	
-	/**
-	 * 
-	 */
 	private void parseContainer(CategoryConditions conditions, final List tokens) {
 		final CategoryConditions newConditions = createContainer(tokens);
 		
@@ -561,18 +414,12 @@ class ConditionsParser {
 		conditions.add(newConditions);
 	}
 	
-	/**
-	 * 
-	 */
 	private void parseConditionDelimiter(CategoryConditions conditions, final List tokens) {
 		if(!conditions.hasCondition())
 			throw new IllegalArgumentException("ConditionsParser.parseConditionDelimiter() - empty condition.");
 		tokens.remove(0);
 	}
 	
-	/**
-	 * 
-	 */
 	private void parseCategory(CategoryConditions conditions, final List tokens) {
 		final String token = (String) tokens.remove(0);
 		final List terms = tokensToList(new StringTokenizer(token, CATEGORY_DELIMITER, true));
@@ -602,9 +449,6 @@ class ConditionsParser {
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private CategoryConditions createContainer(final List tokens) {
 		if(tokens.size() < 2)
 			throw new IllegalArgumentException("ConditionsParser.createContainer() - no trailing container delimiter.");
@@ -619,9 +463,6 @@ class ConditionsParser {
 		throw new IllegalArgumentException("ConditionsParser.createContainer() - illegal state.");
 	}
 
-	/**
-	 * 
-	 */
 	private boolean isContainerStartToken(final List tokens) {
 		if(tokens.isEmpty())
 			return false;
@@ -629,9 +470,6 @@ class ConditionsParser {
 		return AND_START.equals(token) || OR_START.equals(token);
 	}
 
-	/**
-	 * 
-	 */
 	private boolean isContainerEndToken(final List tokens) {
 		if(tokens.isEmpty())
 			return false;
@@ -639,9 +477,6 @@ class ConditionsParser {
 		return AND_END.equals(token) || OR_END.equals(token);
 	}
 	
-	/**
-	 * 
-	 */
 	private boolean isConditionDelimiterToken(final List tokens) {
 		if(tokens.isEmpty())
 			return false;
@@ -649,9 +484,6 @@ class ConditionsParser {
 		return CONDITION_DELIMITER.equals(token);
 	}
 	
-	/**
-	 * 
-	 */
 	private void matchContainerTokens(final String startToken, final List tokens) {
 		if(tokens.isEmpty())
 			throw new IllegalArgumentException("ConditionsParser.matchContainerTokens() - no closing container token.");
@@ -662,9 +494,6 @@ class ConditionsParser {
 			throw new IllegalArgumentException("ConditionsParser.matchContainerTokens() - no matching closing container token.");
 	}
 	
-	/**
-	 * 
-	 */
 	private List tokensToList(final StringTokenizer st) {
 		final List result = new ArrayList();
 		while(st.hasMoreElements())

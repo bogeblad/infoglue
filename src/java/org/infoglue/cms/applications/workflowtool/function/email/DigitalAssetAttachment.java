@@ -24,9 +24,6 @@ package org.infoglue.cms.applications.workflowtool.function.email;
 
 public class DigitalAssetAttachment extends AbstractAttachment 
 {
-	/**
-	 * 
-	 */
 	public DigitalAssetAttachment(final String name, final String contentType, final byte[] bytes)
 	{
 		super(name, contentType, bytes);

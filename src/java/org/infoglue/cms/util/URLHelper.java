@@ -24,9 +24,6 @@ public class URLHelper {
 	
 	
 	
-	/**
-	 * 
-	 */
 	public String getURL() {
 		if(!parameters.isEmpty()) {
 			StringBuffer sb = new StringBuffer();
@@ -41,9 +38,6 @@ public class URLHelper {
 		return baseURL;
 	}
 	
-	/**
-	 * 
-	 */
 	public void addParameter(String name, String value) {
 		parameters.put(name, value);
 	}

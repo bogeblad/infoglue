@@ -33,24 +33,15 @@ import org.infoglue.deliver.util.webservices.DynamicWebserviceElement;
  */
 public final class RemoteAttachment extends AbstractAttachment implements DynamicWebserviceElement 
 {
-	/**
-	 * 
-	 */
 	public RemoteAttachment()
 	{
 	}
 	
-	/**
-	 * 
-	 */
 	public RemoteAttachment(final String name, final String fileName, final String filePath, final String contentType, final byte[] bytes)
 	{
 		super(name, fileName, filePath, contentType, bytes);
 	}
 	
-	/**
-	 * 
-	 */
 	public List serialize() 
 	{
 		final List list = new ArrayList();
@@ -62,9 +53,6 @@ public final class RemoteAttachment extends AbstractAttachment implements Dynami
 		return list;
 	}
 
-	/**
-	 * 
-	 */
 	public void deserialize(final List list) 
 	{
 		if(list.size() != 5)

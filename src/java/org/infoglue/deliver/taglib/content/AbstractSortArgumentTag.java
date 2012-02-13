@@ -32,32 +32,17 @@ import org.infoglue.deliver.taglib.AbstractTag;
  */
 abstract public class AbstractSortArgumentTag extends AbstractTag 
 {
-	/**
-	 * 
-	 */
 	private String name;
 	
-	/**
-	 * 
-	 */
 	private Boolean ascending;
 	
-	/**
-	 * 
-	 */
 	private Boolean caseSensitive = new Boolean(false);
 	
-	/**
-	 * 
-	 */
 	public AbstractSortArgumentTag() 
 	{
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	protected ContentSortTag getContentSortParent() throws JspTagException
 	{
 		final ContentSortTag parent = (ContentSortTag) findAncestorWithClass(this, ContentSortTag.class);
@@ -68,25 +53,16 @@ abstract public class AbstractSortArgumentTag extends AbstractTag
 		return parent;
 	}
 	
-	/**
-	 * 
-	 */
 	protected String getName() 
 	{
 		return name;
 	}
 	
-	/**
-	 * 
-	 */
 	protected boolean getAscending()
 	{
 		return ascending.booleanValue();
 	}
 
-	/**
-	 * 
-	 */
 	protected boolean getCaseSensitive()
 	{
 		return caseSensitive.booleanValue();
@@ -100,17 +76,11 @@ abstract public class AbstractSortArgumentTag extends AbstractTag
         this.name = evaluateString("AbstractSortArgumentTag", "name", name);
 	}
 	
-	/**
-	 * 
-	 */
 	public void setAscending(final String ascending) throws JspException
 	{
         this.ascending = (Boolean)evaluate("AbstractSortArgumentTag", "ascending", ascending, Boolean.class);
 	}
 
-	/**
-	 * 
-	 */
 	public void setCaseSensitive(final String caseSensitive) throws JspException
 	{
         this.caseSensitive = (Boolean)evaluate("AbstractSortArgumentTag", "caseSensitive", caseSensitive, Boolean.class);

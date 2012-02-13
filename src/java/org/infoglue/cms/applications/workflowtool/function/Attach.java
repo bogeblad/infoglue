@@ -43,14 +43,8 @@ public class Attach extends ContentFunction
 {
     private final static Logger logger = Logger.getLogger(Attach.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final String ATTACHMENTS_PARAMETER = "attachments";
 
-	/**
-	 * 
-	 */
 	private Collection attachments;
 	
 	/**
@@ -61,9 +55,6 @@ public class Attach extends ContentFunction
 		super();
 	}
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		if(getContentVersion() != null)
@@ -84,9 +75,6 @@ public class Attach extends ContentFunction
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private DigitalAssetVO createDigitalAssetVO(final Attachment attachment) 
 	{
 		final DigitalAssetVO digitalAssetVO = new DigitalAssetVO();
@@ -98,17 +86,11 @@ public class Attach extends ContentFunction
 		return digitalAssetVO;
 	}
 	
-	/**
-	 * 
-	 */
 	private InputStream getInputStream(final Attachment attachment)
 	{
 		return new ByteArrayInputStream(attachment.getBytes());
 	}
 	
-	/**
-	 * 
-	 */
 	private String getDigitalAssetsDirectory()
 	{
     	return CmsPropertyHandler.getDigitalAssetPath();

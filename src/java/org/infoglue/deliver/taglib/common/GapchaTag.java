@@ -40,9 +40,6 @@ public class GapchaTag extends TextRenderTag
 {
     private final static Logger logger = Logger.getLogger(GapchaTag.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private String allowedCharacters = "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 

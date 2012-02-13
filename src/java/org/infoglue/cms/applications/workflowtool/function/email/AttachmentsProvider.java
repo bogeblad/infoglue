@@ -35,17 +35,11 @@ import com.opensymphony.workflow.WorkflowException;
 
 public class AttachmentsProvider extends ContentFunction 
 {
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		setParameter(EmailFunction.ATTACHMENTS_PARAMETER, getAttachments());
 	}
 	
-	/**
-	 * 
-	 */
 	private Collection getAttachments() throws WorkflowException
 	{
 		final Collection digitalAssets = getDigitalAssets();
@@ -58,9 +52,6 @@ public class AttachmentsProvider extends ContentFunction
 		return attachments;
 	}
 	
-	/**
-	 * 
-	 */
 	private Collection getDigitalAssets() throws WorkflowException
 	{
 		if(getContentVersionVO() != null)

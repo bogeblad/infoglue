@@ -27,33 +27,18 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 	 */
 	private static final long serialVersionUID = -1904980538720103871L;
 	
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteUserPropertiesService";
 	
-	/**
-	 * 
-	 */
 	private String operationName;
 	
-	/**
-	 * 
-	 */
 	private InfoGluePrincipal principal;
 	
-	/**
-	 * 
-	 */
 	private Integer languageId;
 	private Integer contentTypeDefinitionId;
 	private boolean forcePublication = true;
 	private Map userPropertiesAttributesMap = new HashMap();
 	private List digitalAssets = new ArrayList();
 	
-	/**
-	 * 
-	 */
 	public RemoteUserPropertiesServiceTag() 
 	{
 		super();
@@ -70,9 +55,6 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 	    return EVAL_BODY_INCLUDE;
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

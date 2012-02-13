@@ -36,44 +36,20 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public abstract class ContentFunction extends InfoglueFunction 
 {
-	/**
-	 * 
-	 */
 	public static final String CONTENT_PARAMETER = "content";
 	
-	/**
-	 * 
-	 */
 	public static final String CONTENT_VERSION_PARAMETER = "contentVersion";
 	
-	/**
-	 * 
-	 */
 	private static final String CONTENT_PARAMETER_NAME_ARGUMENT = "contentParameterName";
 	
-	/**
-	 * 
-	 */
 	private static final String CONTENT_VERSION_PARAMETER_NAME_ARGUMENT = "contentVersionParameterName";
 	
-	/**
-	 *
-	 */
 	private Content content;
 	
-	/**
-	 *
-	 */
 	private ContentVO contentVO;
 
-	/**
-	 *
-	 */
 	private ContentVersion contentVersion;
 	
-	/**
-	 *
-	 */
 	private ContentVersionVO contentVersionVO;
 	
 	/**
@@ -84,25 +60,16 @@ public abstract class ContentFunction extends InfoglueFunction
 		super(); 
 	}
 	
-	/**
-	 * 
-	 */
 	protected ContentVO getContentVO() 
 	{ 
 		return contentVO; 
 	}
 	
-	/**
-	 * 
-	 */
 	protected ContentVersionVO getContentVersionVO() 
 	{ 
 		return contentVersionVO; 
 	}
 	
-	/**
-	 * 
-	 */
 	protected Content getContent() 
 	{
 		if(contentVO != null && content == null)
@@ -119,9 +86,6 @@ public abstract class ContentFunction extends InfoglueFunction
 		return content;
 	}
 	
-	/**
-	 * 
-	 */
 	protected ContentVersion getContentVersion() 
 	{
 		if(contentVersionVO != null && contentVersion == null)
@@ -138,9 +102,6 @@ public abstract class ContentFunction extends InfoglueFunction
 		return contentVersion;
 	}
 	
-	/**
-	 * 
-	 */
 	protected String getAttribute(final String name, final boolean escapeHTML) throws WorkflowException
 	{
 		if(contentVersionVO == null)

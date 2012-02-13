@@ -37,9 +37,6 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class ContentCleaner extends ContentFunction 
 {
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		try 

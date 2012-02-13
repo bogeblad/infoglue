@@ -139,9 +139,6 @@ public class UpdateController extends BaseController
 {
 	private final static Logger logger = Logger.getLogger(UpdateController.class.getName());
 
-	/**
-	 * 
-	 */
 	
 	// Initial handling of compatibility in the server response.
 	// Make this better later

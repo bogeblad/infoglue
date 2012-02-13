@@ -55,23 +55,14 @@ public class Range {
   // --- [Static] --------------------------------------------------------------
   // --- [Constructors] --------------------------------------------------------
 
-  /**
-   *
-   */
   Range() {
     this.hasUpperLimit = false;
   }
 
-  /**
-   *
-   */
   public Range(int upperLimit) {
     this(0, upperLimit);
   }
 
-  /**
-   *
-   */
   public Range(int lowerLimit, int upperLimit) {
     if(lowerLimit < 0 || lowerLimit > upperLimit) {
       throw new Bug("Illegal arguments : lowerLimit=" + lowerLimit + ", upperLimit=" + upperLimit + ".");
@@ -87,9 +78,6 @@ public class Range {
   // --- [X Overrides] ---------------------------------------------------------
   // --- [Package protected] ---------------------------------------------------
 
-  /**
-   *
-   */
   boolean isWithinLimits(int value) {
     return (value >= this.lowerLimit) && (!this.hasUpperLimit || value <= this.upperLimit);
   }  

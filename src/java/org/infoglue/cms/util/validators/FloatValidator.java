@@ -61,9 +61,6 @@ public class FloatValidator extends AbstractValidator
   // --- [Static] --------------------------------------------------------------
   // --- [Constructors] --------------------------------------------------------
 
-  /**
-   *
-   */
   FloatValidator(String fieldName, boolean isRequired, float lowerLimit, float upperLimit) {
     super(fieldName, isRequired);
 
@@ -78,9 +75,6 @@ public class FloatValidator extends AbstractValidator
 
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public void validate(Float value) throws ConstraintException {
     validateIsRequired(value);
     if(value == null) { // no validation needed + no need for further null checking
@@ -105,9 +99,6 @@ public class FloatValidator extends AbstractValidator
   // --- [Package protected] ---------------------------------------------------
   // --- [Private] -------------------------------------------------------------
 
-  /**
-   *
-   */
   private void validateValueSpace(float value) {
     if(value < this.lowerLimit || value > this.upperLimit) {
       addConstraintException(ILLEGAL_VALUE_ERROR_CODE);

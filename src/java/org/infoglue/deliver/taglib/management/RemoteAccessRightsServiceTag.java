@@ -32,29 +32,14 @@ public class RemoteAccessRightsServiceTag extends TemplateControllerTag
 	 */
 	private List accessRights = new ArrayList();	
 	
-	/**
-	 * 
-	 */
 	private String name;
 	
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteManagementService";
 	
-	/**
-	 * 
-	 */
 	private String operationName = "setAccessRights";
 	
-	/**
-	 * 
-	 */
 	private InfoGluePrincipal principal;
 	
-	/**
-	 * 
-	 */
 	public RemoteAccessRightsServiceTag() 
 	{
 		super();
@@ -71,9 +56,6 @@ public class RemoteAccessRightsServiceTag extends TemplateControllerTag
 	    return EVAL_BODY_INCLUDE;
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

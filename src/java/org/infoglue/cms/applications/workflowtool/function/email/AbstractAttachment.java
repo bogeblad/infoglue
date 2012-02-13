@@ -24,31 +24,16 @@ package org.infoglue.cms.applications.workflowtool.function.email;
 
 public abstract class AbstractAttachment implements Attachment
 {
-	/**
-	 * 
-	 */
 	private byte[] bytes;
 
-	/**
-	 * 
-	 */
 	private String name;
 
-	/**
-	 * 
-	 */
 	private String contentType;
 	
-	/**
-	 * 
-	 */
 	protected AbstractAttachment()
 	{
 	}
 	
-	/**
-	 * 
-	 */
 	protected AbstractAttachment(final String name, final String contentType, final byte[] bytes)
 	{
 		super();
@@ -57,65 +42,41 @@ public abstract class AbstractAttachment implements Attachment
 		this.bytes       = bytes;
 	}
 	
-	/**
-	 * 
-	 */
 	public byte[] getBytes() 
 	{
 		return bytes;
 	}
 
-	/**
-	 * 
-	 */
 	public void setBytes(final byte[] bytes) 
 	{
 		this.bytes = bytes;
 	}
 	
-	/**
-	 * 
-	 */
 	public String getName() 
 	{
 		return name;
 	}
 
-	/**
-	 * 
-	 */
 	public void setName(final String name) 
 	{
 		this.name = name;
 	}
 
-	/**
-	 * 
-	 */
 	public int getSize() 
 	{
 		return getBytes().length;
 	}
 
-	/**
-	 * 
-	 */
 	public String getContentType() 
 	{
 		return contentType;
 	}
 
-	/**
-	 * 
-	 */
 	public void setContentType(final String contentType) 
 	{
 		this.contentType = contentType;
 	}
 
-	/**
-	 * 
-	 */
 	public String toString()
 	{
 		return "<" + getSize() + "," + getName() + "," + getContentType() + ">";

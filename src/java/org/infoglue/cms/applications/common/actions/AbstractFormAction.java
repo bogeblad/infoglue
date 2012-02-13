@@ -52,9 +52,6 @@ public abstract class AbstractFormAction extends AbstractAction
   // --- [Constructors] --------------------------------------------------------
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public Errors getErrors() {
     return errors;
   }
@@ -64,9 +61,6 @@ public abstract class AbstractFormAction extends AbstractAction
   // --- [X Overrides] ---------------------------------------------------------
   // --- [webwork.action.Action implementation] --------------------------------
 
-  /**
-   *
-   */
   public String execute() {
       return super.execute();
   }
@@ -76,9 +70,6 @@ public abstract class AbstractFormAction extends AbstractAction
   // --- [Package protected] ---------------------------------------------------
   // --- [Private] -------------------------------------------------------------
 
-  /**
-   *
-   */
   private void setErrors(ConstraintException exception) {
     final Locale locale = getSession().getLocale();
 

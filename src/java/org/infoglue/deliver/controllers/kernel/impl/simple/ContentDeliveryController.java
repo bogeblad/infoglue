@@ -241,9 +241,6 @@ public class ContentDeliveryController extends BaseDeliveryController
         return contentVO;	
 	}
 
-	/**
-	 * 
-	 */
 	private ContentVO getChildWithName(Integer parentContentId, String name, Database db) throws Exception
 	{
 		ContentVO contentVO = null;

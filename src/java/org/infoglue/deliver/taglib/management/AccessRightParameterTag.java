@@ -174,25 +174,16 @@ public class AccessRightParameterTag extends AbstractTag //implements ContentVer
 	    accessRightUsers.add(userName);
 	}
 	
-	/**
-	 * 
-	 */
 	public void setParameters(final String parameters) throws JspException
 	{
 	    this.accessRight.put("parameters", evaluateString("AccessRightParameterTag", "parameters", parameters));
 	}
 
-	/**
-	 * 
-	 */
 	public void setInterceptionPointName(final String interceptionPointName) throws JspException
 	{
 	    this.accessRight.put("interceptionPointName", evaluateString("AccessRightParameterTag", "interceptionPointName", interceptionPointName));
 	}
 
-	/**
-	 * 
-	 */
 	public void setClearOldAccessRights(final String clearOldAccessRights) throws JspException
 	{
 	    this.accessRight.put("clearOldAccessRights", evaluateString("AccessRightParameterTag", "clearOldAccessRights", clearOldAccessRights));

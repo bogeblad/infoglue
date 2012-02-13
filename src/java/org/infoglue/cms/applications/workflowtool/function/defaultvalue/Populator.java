@@ -31,21 +31,12 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public abstract class Populator extends InfoglueFunction 
 {
-	/**
-	 * 
-	 */
 	private static final String NAME_ARGUMENT = "name";
 
-	/**
-	 * 
-	 */
 	private static final String VALUE_ARGUMENT = "value";
 
 	
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		final String name  = getArgument(NAME_ARGUMENT, null);
@@ -65,26 +56,14 @@ public abstract class Populator extends InfoglueFunction
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void doPopulate(final String name, final String value) 
 	{
 		setPropertySetDataString(name, value);
 	}
 
-	/**
-	 * 
-	 */
 	protected abstract void populate() throws WorkflowException;
 
-	/**
-	 * 
-	 */
 	protected abstract void populate(final String name) throws WorkflowException;
 	
-	/**
-	 * 
-	 */
 	protected abstract void populate(final String name, final String value) throws WorkflowException;
 }

@@ -41,24 +41,12 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class ContentPublisher extends ContentFunction 
 {
-	/**
-	 * 
-	 */
 	private static final String STATUS_OK = "status.publish.ok";
 	
-	/**
-	 * 
-	 */
 	private static final String STATUS_NOK = "status.publish.nok";
 
-	/**
-	 * 
-	 */
 	private static final String STATUS_MORE_VERSIONS = "status.publish.okwithmoreworkingversions";
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		setFunctionStatus(STATUS_NOK);
@@ -68,9 +56,6 @@ public class ContentPublisher extends ContentFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void publish() throws WorkflowException 
 	{
 		try 
@@ -117,9 +102,6 @@ public class ContentPublisher extends ContentFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private PublicationVO createPublicationVO() 
 	{
 	    final PublicationVO publicationVO = new PublicationVO();

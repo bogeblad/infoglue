@@ -44,9 +44,6 @@ public class ExtendedRedirect extends InfoGlueAbstractAction
   	
 	private String unparsedURL;
 
-	/**
-	 *
-	 */
 
 	public void setUrl(String unparsedURL) 
 	{
@@ -61,9 +58,6 @@ public class ExtendedRedirect extends InfoGlueAbstractAction
 	}
 
 
-	/**
-	 *
-	 */
 	
 	private void validateUnparsedURL() 
 	{
@@ -79,9 +73,6 @@ public class ExtendedRedirect extends InfoGlueAbstractAction
 		getResponse().sendRedirect(url);
 	}
 	
-	/**
-	 *
-	 */
 	
 	private String parse(String unparsedURL) 
 	{
@@ -96,18 +87,12 @@ public class ExtendedRedirect extends InfoGlueAbstractAction
 		return sb.toString();
 	}
 	
-	/**
-	 *
-	 */
 	
 	private String createParameterString(String name) 
 	{
 		return name + "=" + getValueFromCallingAction(name);
 	}
 	
-	/**
-	 * 
-	 */
 
 	private String getValueFromCallingAction(String fieldName) 
 	{

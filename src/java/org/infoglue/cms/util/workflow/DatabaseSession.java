@@ -158,9 +158,6 @@ public class DatabaseSession
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void doCommit() throws WorkflowException
 	{
 		if(db != null && db.isActive())
@@ -178,9 +175,6 @@ public class DatabaseSession
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void doRollback() throws WorkflowException
 	{
 		if(db != null && db.isActive())
@@ -198,9 +192,6 @@ public class DatabaseSession
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void doClose() throws WorkflowException
 	{
 		if(db != null && !db.isClosed())

@@ -28,9 +28,6 @@ import org.infoglue.deliver.taglib.component.ComponentLogicTag;
 
 public class PageUrlTag extends ComponentLogicTag
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4050485595074016051L;
 	
 	private String propertyName;

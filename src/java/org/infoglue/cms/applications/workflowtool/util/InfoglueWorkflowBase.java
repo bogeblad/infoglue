@@ -369,9 +369,6 @@ public abstract class InfoglueWorkflowBase
 		propertySet.removeKeys(key, isPrefix);
 	}
 
-	/**
-	 * 
-	 */
 	
 	protected final String translate(final String s) 
 	{

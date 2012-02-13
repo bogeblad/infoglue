@@ -33,28 +33,16 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class UserErrorPopulator extends ErrorPopulator 
 {
-	/**
-	 * 
-	 */
 	private static final String USER_ERROR_PROPERTYSET_PREFIX = ERROR_PROPERTYSET_PREFIX + "systemuser_";
 	
 	
-	/**
-	 * 
-	 */
 	private SystemUserVO systemUserVO;
 
-	/**
-	 * 
-	 */
 	public UserErrorPopulator()
 	{
 		super();
 	}
 
-	/**
-	 * 
-	 */
 	protected void clean() throws WorkflowException 
 	{
 		clean(USER_ERROR_PROPERTYSET_PREFIX);
@@ -70,9 +58,6 @@ public class UserErrorPopulator extends ErrorPopulator
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void checkUniqueUserName() 
 	{
 		try

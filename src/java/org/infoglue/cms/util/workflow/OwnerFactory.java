@@ -70,9 +70,6 @@ class PrincipalOwner implements Owner
  */
 class RoleOwner implements Owner
 {
-	/**
-	 * 
-	 */
 	private static final String PREFIX = "\\";
 	
 	/**

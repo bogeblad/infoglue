@@ -71,9 +71,6 @@ public class Slots
 	 */
 	private final List visibleSlots; // list of Integer
 	
-	/**
-	 * 
-	 */
 	public Slots(final List allElements, final int currentSlot, final int slotSize, final int slotCount) 
 	{
 		this.allElements     = (allElements == null) ? new ArrayList() : allElements;
@@ -86,9 +83,6 @@ public class Slots
 		this.visibleSlots    = calculateVisibleSlots();
 	}
 	
-	/**
-	 * 
-	 */
 	public Slots(final int currentSlot, final int slotSize, final int slotCount, final int maxSlots) 
 	{
 		this.allElements     = null;
@@ -101,33 +95,21 @@ public class Slots
 		this.visibleSlots    = calculateVisibleSlots();
 	}
 	
-	/**
-	 * 
-	 */
 	public List getVisibleElements() 
 	{
 		return Collections.unmodifiableList(visibleElements);
 	}
 	
-	/**
-	 * 
-	 */
 	public List getVisibleSlots() 
 	{
 		return Collections.unmodifiableList(visibleSlots);
 	}
 	
-	/**
-	 * 
-	 */
 	public Integer getLastSlot() 
 	{
 		return new Integer(maxSlots);
 	}
 
-	/**
-	 * 
-	 */
 	private void validateArguments() 
 	{
 		if(slotSize <= 0)
@@ -157,9 +139,6 @@ public class Slots
 		return allElements.subList(getFromElementIndex(), getToElementIndex());
 	}
 
-	/**
-	 * 
-	 */
 	private List calculateVisibleSlots() 
 	{
 		final List result = new ArrayList();
@@ -173,9 +152,6 @@ public class Slots
 		return result;
 	}
 
-	/**
-	 * 
-	 */
 	private int startSlot() 
 	{
 		if(slotCount >= maxSlots)
@@ -185,25 +161,16 @@ public class Slots
 		return Math.max(1, currentSlot - ((slotCount - 1) / 2)); 	
 	}
 	
-	/**
-	 * 
-	 */
 	private int getFromElementIndex()
 	{
 		return (currentSlot - 1) * slotSize; 
 	}
 	
-	/**
-	 * 
-	 */
 	private int getToElementIndex()
 	{
 		return Math.min(getFromElementIndex() + slotSize, allElements.size()); 
 	}
 	
-	/**
-	 * 
-	 */
 	private int calculateMaxSlots(final int numberOfElements) 
 	{
 		if(numberOfElements == 0 || slotSize == 0)

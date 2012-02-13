@@ -405,9 +405,6 @@ public class MailService
 	    */
 	}
 
-	/**
-	 *
-	 */
 	private Message createMessage(String from, String to, String bcc, String subject, String content) throws SystemException
 	{
 		try 
@@ -431,9 +428,6 @@ public class MailService
 	    }
 	}
 
-	/**
-	 *
-	 */
 	private Message createMessage(String from, String to, String bcc, String subject, String content, String contentType, String encoding) throws SystemException 
 	{
 		try 
@@ -462,9 +456,6 @@ public class MailService
 		}
 	}
 	
-	/**
-	 *
-	 */
 	private Address createInternetAddress(String address) 
 	{
 		try 
@@ -477,9 +468,6 @@ public class MailService
 	    }
 	}
 	
-	/**
-	 *
-	 */
 	private Address[] createInternetAddresses(String emailAddressString) throws SystemException
 	{
 	    String[] emailAddresses = emailAddressString.split(";");
@@ -501,9 +489,6 @@ public class MailService
 	    return addresses;
 	}
 
-	/**
-	 *
-	 */
 	private List createInternetAddressesList(String emailAddressString) throws SystemException
 	{
 	    String[] emailAddresses = emailAddressString.split(";");

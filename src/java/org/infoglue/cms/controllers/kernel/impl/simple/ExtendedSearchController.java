@@ -131,9 +131,6 @@ public class ExtendedSearchController extends BaseController
 		return search(criterias);
 	}
 	
-	/**
-	 * 
-	 */
 	public Set search(final ExtendedSearchCriterias criterias) throws SystemException
 	{
 		final Database db = beginTransaction();
@@ -150,9 +147,6 @@ public class ExtendedSearchController extends BaseController
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	public Set search(final ExtendedSearchCriterias criterias, final Database db) throws SystemException
 	{
 		if(criterias == null)
@@ -188,9 +182,6 @@ public class ExtendedSearchController extends BaseController
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private Set createResults(final QueryResults qr) throws PersistenceException 
 	{
 		final Set results = new HashSet();
@@ -255,9 +246,6 @@ public class ExtendedSearchController extends BaseController
  */
 class SqlBuilder 
 {
-	/**
-	 * 
-	 */
     private final static Logger logger = Logger.getLogger(SqlBuilder.class.getName());
 	
 	//
@@ -322,9 +310,6 @@ class SqlBuilder
 	private List bindings;
 	
 	
-	/**
-	 *
-	 */
 	public SqlBuilder(final ExtendedSearchCriterias criterias) 
 	{
 		super();
@@ -338,33 +323,21 @@ class SqlBuilder
 		logger.debug("===[/sql]=============================================================");
 	}
 
-	/**
-	 * 
-	 */
 	public String getSQL() 
 	{
 		return sql;
 	}
 	
-	/**
-	 * 
-	 */
 	public List getBindings() 
 	{
 		return bindings;
 	}
 	
-	/**
-	 * 
-	 */
 	private String generate() 
 	{
 		return "CALL SQL" + SPACE + (ExtendedSearchController.useFull() ? generateSelectClause() : generateSelectClauseShort()) + SPACE + generateFromClause() + SPACE + generateWhereClause() + SPACE + (ExtendedSearchController.useFull() ? generateOrderByClause() : generateOrderByClauseShort()) + generateLimitClause() + SPACE + "AS " + SmallContentImpl.class.getName();
 	}
 	
-	/**
-	 * 
-	 */
 	private String generateSelectClauseShort() 
 	{
 		return 	SELECT_KEYWORD + SPACE + 
@@ -382,9 +355,6 @@ class SqlBuilder
 		COMMA + CONTENT_ALIAS + ".ContId";
 	}
 
-	/**
-	 * 
-	 */
 	private String generateSelectClause() 
 	{
 		return 	SELECT_KEYWORD + SPACE + 
@@ -402,9 +372,6 @@ class SqlBuilder
 		COMMA + CONTENT_ALIAS + ".contentId";
 	}
 
-	/**
-	 * 
-	 */
 	private String generateFromClause() 
 	{
 		final List tables = new ArrayList();
@@ -415,9 +382,6 @@ class SqlBuilder
 		return FROM_KEYWORD + SPACE + joinCollection(tables, COMMA);
 	}
 
-	/**
-	 * 
-	 */
 	private String generateWhereClause() 
 	{
 		final List clauses = new ArrayList();
@@ -441,9 +405,6 @@ class SqlBuilder
 		return WHERE_KEYWORD + SPACE + joinCollection(clauses, SPACE + AND + SPACE);
 	}
 
-	/**
-	 * 
-	 */
 	private List getContentWhereClauses() 
 	{
 		final List clauses = new ArrayList();
@@ -476,17 +437,11 @@ class SqlBuilder
 		return clauses;
 	}
 
-	/**
-	 * 
-	 */
 	private String generateOrderByClauseShort() 
 	{
 		return "ORDER BY " + CONTENT_ALIAS + ".ContId";
 	}
 
-	/**
-	 * 
-	 */
 	private String generateLimitClause() 
 	{
 		if(criterias.getMaximumNumberOfItems() != null)
@@ -498,18 +453,12 @@ class SqlBuilder
 		return "";
 	}
 	 
-	/**
-	 * 
-	 */
 	private String generateOrderByClause() 
 	{
 		return "ORDER BY " + CONTENT_ALIAS + ".contentId";
 	}
 
 	
-	/**
-	 * 
-	 */
 	private String getContentTypeDefinitionWhereClauses() 
 	{
 		final List expressions = new ArrayList();
@@ -526,9 +475,6 @@ class SqlBuilder
 		return "(" + joinCollection(expressions, SPACE + OR + SPACE) + ")";
 	}
 
-	/**
-	 * 
-	 */
 	private String getContentRepositoryWhereClauses() 
 	{
 		final List expressions = new ArrayList();
@@ -546,9 +492,6 @@ class SqlBuilder
 		return "";
 	}
 
-	/**
-	 * 
-	 */
 	private List getCategoriesWhereClauses() 
 	{
 		final List clauses = new ArrayList();
@@ -560,9 +503,6 @@ class SqlBuilder
 		return clauses;
 	}
 
-	/**
-	 * 
-	 */
 	private List getDateWhereClauses()
 	{
 		final List clauses = new ArrayList();
@@ -589,9 +529,6 @@ class SqlBuilder
 		return clauses;
 	}
 
-	/**
-	 * 
-	 */
 	private List getExpireDateWhereClauses()
 	{
 		final List clauses = new ArrayList();
@@ -618,9 +555,6 @@ class SqlBuilder
 		return clauses;
 	}
 
-	/**
-	 * 
-	 */
 	private String getFreetextWhereClause() 
 	{
 		logger.debug(" CRITERA[freetext]");
@@ -640,9 +574,6 @@ class SqlBuilder
 		return "(" + joinCollection(expressions, SPACE + OR + SPACE) + ")";
 	}
 	
-	/**
-	 * 
-	 */
 	private List getVersionModifierWhereClause() 
 	{
 		final List clauses = new ArrayList();
@@ -656,9 +587,6 @@ class SqlBuilder
 		return clauses;
 	}
 		
-	/**
-	 * 
-	 */
 	private List getCategoryTables() 
 	{
 		final List tables = new ArrayList();
@@ -669,9 +597,6 @@ class SqlBuilder
 		return tables;
 	}
 	
-	/**
-	 * 
-	 */
 	private String joinCollection(final Collection collection, final String delimiter) 
 	{
 		final StringBuffer sb = new StringBuffer();
@@ -683,9 +608,6 @@ class SqlBuilder
 		return sb.toString();
 	}
 
-	/**
-	 * 
-	 */
 	private String getBindingVariable() 
 	{
 		return "$" + (bindings.size() + 1);

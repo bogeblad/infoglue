@@ -30,24 +30,12 @@ public class UpdateUserServiceTag extends TemplateControllerTag
 	 */
 	private static final long serialVersionUID = -1904980538720103871L;
 
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteUserService";
 	
-	/**
-	 * 
-	 */
 	private String operationName = "updateUser";
 	
-	/**
-	 * 
-	 */
 	private InfoGluePrincipal principal;
 	
-	/**
-	 * 
-	 */
 	private SystemUserVO systemUserVO = new SystemUserVO();
 	private boolean isPasswordChangeOperation = false;
 	private boolean isPasswordResetOperation = false;
@@ -56,9 +44,6 @@ public class UpdateUserServiceTag extends TemplateControllerTag
 	private String[] roleNames = new String[]{};
 	private String[] groupNames = new String[]{};
 	
-	/**
-	 * 
-	 */
 	public UpdateUserServiceTag() 
 	{
 		super();
@@ -75,9 +60,6 @@ public class UpdateUserServiceTag extends TemplateControllerTag
 	    return EVAL_BODY_INCLUDE;
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

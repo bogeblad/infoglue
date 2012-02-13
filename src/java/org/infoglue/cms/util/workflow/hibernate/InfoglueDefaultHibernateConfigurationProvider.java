@@ -14,9 +14,6 @@ public class InfoglueDefaultHibernateConfigurationProvider extends DefaultHibern
     private HibernatePropertySetDAO propertySetDAO;
     private SessionFactory sessionFactory;
 
-	/**
-	 * 
-	 */
     public HibernatePropertySetDAO getPropertySetDAO() 
     {
         if (propertySetDAO == null)
@@ -24,9 +21,6 @@ public class InfoglueDefaultHibernateConfigurationProvider extends DefaultHibern
         return propertySetDAO;
     }
 
-	/**
-	 * 
-	 */
     public void setSessionFactory(SessionFactory sessionFactory) 
     {
         this.sessionFactory = sessionFactory;

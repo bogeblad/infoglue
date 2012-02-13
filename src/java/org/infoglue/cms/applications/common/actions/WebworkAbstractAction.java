@@ -87,9 +87,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   		return this.error;
   	}
 
-    /**
-     *
-     */
   	public Errors getErrors() 
   	{
   		if(logger.isInfoEnabled())
@@ -106,9 +103,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
  		return linkBeans;
  	}
 
-    /**
-     *
-     */
 	public String doDefault() 
     { 
         return INPUT;
@@ -117,9 +111,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	public abstract void protectFromCSSAttacks(String actionName, String commandName) throws SystemException;
 
 
-  /**
-   *
-   */
     public String execute() 
     {
     	String result = "";
@@ -226,17 +217,11 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		return urlBase + (urlParameters != null ? "?" + urlParameters : "");
 	}
 
-    /**
-     *
-     */
     public void setCommand(String commandName) 
     {
       	this.commandName = commandName;
     }
 
-    /**
-     *
-     */
     public void setServletRequest(HttpServletRequest request) 
     {
       	this.request = request;
@@ -244,9 +229,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   
 
 
-    /**
-     *
-     */
     public void setServletResponse(HttpServletResponse response) 
     {
       	this.response = response;
@@ -263,9 +245,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   	}
 
 
-	/**
-	 *
-	 */
 	private void setErrors(ConstraintException exception)
 	{
 		final Locale locale = getSession().getLocale();
@@ -442,9 +421,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 
 	protected abstract String doExecute() throws Exception;
 
-	/**
-	 * 
-	 */
 
 	public final BrowserBean getBrowserBean()
 	{

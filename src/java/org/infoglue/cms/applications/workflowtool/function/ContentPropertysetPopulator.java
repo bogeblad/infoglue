@@ -39,24 +39,12 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class ContentPropertysetPopulator extends ContentFunction
 {
-	/**
-	 * 
-	 */
 	private final String PROPERTYSET_PREFIX_ARGUMENT = "propertysetPrefix";
 	
-	/**
-	 * 
-	 */
 	private final String ATTRIBUTE_PREFIX_ARGUMENT = "attributePrefix";
 	
-	/**
-	 * 
-	 */
 	private String propertysetPrefix;
 	
-	/**
-	 * 
-	 */
 	private String attributePrefix;
 	
 	/**
@@ -67,9 +55,6 @@ public class ContentPropertysetPopulator extends ContentFunction
 		super();
 	}
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		final Map attributeValues = getAttributeValues();

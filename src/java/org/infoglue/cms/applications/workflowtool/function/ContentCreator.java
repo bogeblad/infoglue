@@ -43,34 +43,16 @@ public class ContentCreator extends ContentFunction
 {
     private final static Logger logger = Logger.getLogger(ContentCreator.class.getName());
 
-	/**
-	 * 
-	 */
 	public static final String FOLDER_PARAMETER = "create_folder";
 	
-	/**
-	 * 
-	 */
 	private static final String STATUS_OK = "status.content.ok";
 	
-	/**
-	 * 
-	 */
 	private static final String STATUS_NOK = "status.content.nok";
 	
-	/**
-	 * 
-	 */
 	private LanguageVO languageVO;
 	
-	/**
-	 * 
-	 */
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
 	
-	/**
-	 * 
-	 */
 	private Map categories;
 	
 	/**
@@ -89,9 +71,6 @@ public class ContentCreator extends ContentFunction
 	private ContentVO parentContentVO;
 	
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		setFunctionStatus(STATUS_NOK);

@@ -35,36 +35,18 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class PreviewProvider extends InfoglueFunction
 {
-	/**
-	 * 
-	 */
 	public static final String SITENODE_PARAMETER = "previewSiteNode";
 	
-	/**
-	 * 
-	 */
 	public static final String PREVIEW_URL_PROPERTYSET_KEY = "previewURL";
 
-	/**
-	 * 
-	 */
 	private ContentVO content;
 
-	/**
-	 * 
-	 */
 	private LanguageVO language;
 
-	/**
-	 * 
-	 */
 	private SiteNodeVO previewSiteNode;
 
 	
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		final String baseURL   = CmsPropertyHandler.getPreviewDeliveryUrl();

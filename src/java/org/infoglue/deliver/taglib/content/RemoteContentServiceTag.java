@@ -32,29 +32,14 @@ public class RemoteContentServiceTag extends TemplateControllerTag
 	 */
 	private List contents = new ArrayList();	
 	
-	/**
-	 * 
-	 */
 	private String name;
 	
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteContentService";
 	
-	/**
-	 * 
-	 */
 	private String operationName;
 	
-	/**
-	 * 
-	 */
 	private InfoGluePrincipal principal;
 	
-	/**
-	 * 
-	 */
 	public RemoteContentServiceTag() 
 	{
 		super();
@@ -71,9 +56,6 @@ public class RemoteContentServiceTag extends TemplateControllerTag
 	    return EVAL_BODY_INCLUDE;
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

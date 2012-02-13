@@ -49,17 +49,11 @@ public class SortPagesTag extends TemplateControllerTag
 	private String type			= "PageComparator";
 	private String namesInOrderString = null;
 	
-	/**
-	 *
-	 */
     public SortPagesTag()
     {
         super();
     }
 	
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException
     {
 		if(input != null && input.size() > 0)
@@ -79,34 +73,22 @@ public class SortPagesTag extends TemplateControllerTag
         return EVAL_PAGE;
     }
 	
-	/**
-	 * 
-	 */
 	public void setInput(final String input) throws JspException
 	{
 		this.input = evaluateList("contentSort", "input", input);
 	}
 
-	/**
-	 * 
-	 */
 	public void setSortProperty(final String sortProperty) throws JspException
 	{
 		this.sortProperty = evaluateString("contentSort", "sortProperty", sortProperty);
 	}
 
 
-	/**
-	 * 
-	 */
 	public void setSortOrder(final String sortOrder) throws JspException
 	{
 		this.sortOrder = evaluateString("contentSort", "sortOrder", sortOrder);
 	}
 
-	/**
-	 * 
-	 */
 	public void setType(final String type) 
 	{
 	    this.type = type;

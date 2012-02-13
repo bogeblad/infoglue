@@ -36,102 +36,48 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class CategoryErrorPopulator extends ErrorPopulator 
 {
-	/**
-	 * 
-	 */
 	private static final String NAME_ARGUMENT = "name";
 	
-	/**
-	 * 
-	 */
 	private static final String CATEGORY_ERROR_PROPERTYSET_PREFIX = ERROR_PROPERTYSET_PREFIX + "category_";
 	
-	/**
-	 * 
-	 */
 	private static final String NON_DEFAULT_NAME_ARGUMENT = "nonDefaultName";
 	
-	/**
-	 * 
-	 */
 	private static final String MIN_ARGUMENT = "min";
 	
-	/**
-	 * 
-	 */
 	private static final String MAX_ARGUMENT = "max";
 	
-	/**
-	 * 
-	 */
 	private static final String EXACTLY_MESSAGE_KEY = "3601";
 
-	/**
-	 * 
-	 */
 	private static final String EXACTLY_ONE_MESSAGE_KEY = "3602";
 	
-	/**
-	 * 
-	 */
 	private static final String LESS_THAN_MESSAGE_KEY = "3603";
 	
-	/**
-	 * 
-	 */
 	private static final String GREATER_THAN_MESSAGE_KEY = "3604";
 
-	/**
-	 * 
-	 */
 	private static final String GREATER_THAN_ONE_MESSAGE_KEY = "3605";
 	
-	/**
-	 * 
-	 */
 	private static final String BETWEEN_MESSAGE_KEY = "3606";
 	
-	/**
-	 * 
-	 */
 	private static final String BETWEEN_ONE_AND_MANY_MESSAGE_KEY = "3607";
 	
-	/**
-	 * 
-	 */
 	private Map categories;
 	
-	/**
-	 * 
-	 */
 	private String attributeName;
 	
-	/**
-	 * 
-	 */
 	private RangeCheck range;
 	
 	
 	
-	/**
-	 * 
-	 */
 	public CategoryErrorPopulator() 
 	{
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	protected void clean() throws WorkflowException
 	{
 		clean(getErrorKey());
 	}
 	
-	/**
-	 * 
-	 */
 	protected void populate() throws WorkflowException
 	{
 		final int count = getCategoryCount();
@@ -142,9 +88,6 @@ public class CategoryErrorPopulator extends ErrorPopulator
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private String getErrorKey(final int result) throws WorkflowException
 	{
 		switch(result)
@@ -169,18 +112,12 @@ public class CategoryErrorPopulator extends ErrorPopulator
 		return null;
 	}
 	
-	/**
-	 * 
-	 */
 	private int getCategoryCount()
 	{
 		final Collection category = (Collection) categories.get(attributeName);
 		return (category == null) ? 0 : category.size();
 	}
 	
-	/**
-	 * 
-	 */
 	protected void initialize() throws WorkflowException 
 	{
 		super.initialize();
@@ -192,17 +129,11 @@ public class CategoryErrorPopulator extends ErrorPopulator
 		range = new RangeCheck(min, max);
 	}
 	
-	/**
-	 * 
-	 */
 	private String getErrorKey() throws WorkflowException
 	{ 
 		return CATEGORY_ERROR_PROPERTYSET_PREFIX + (argumentExists(NON_DEFAULT_NAME_ARGUMENT) ? getArgument(NON_DEFAULT_NAME_ARGUMENT) : attributeName);	
 	}
 	
-	/**
-	 * 
-	 */
 	private Integer getIntegerArgument(final String key) throws WorkflowException 
 	{
 		if(argumentExists(key))
@@ -219,9 +150,6 @@ public class CategoryErrorPopulator extends ErrorPopulator
 		return null;
 	}
 	
-	/**
-	 * 
-	 */
 	private void checkArguments(final Integer min, final Integer max) throws WorkflowException
 	{
 		if(min != null && min.intValue() < 0)

@@ -55,99 +55,42 @@ public class EmailFunction extends InfoglueFunction
 {
     private final static Logger logger = Logger.getLogger(EmailFunction.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final String ADDRESS_DELIMITER = ",";
 	
-	/**
-	 * 
-	 */
 	private static final String EMAIL_PARAMETER_PREFIX = "email_";
 	
-	/**
-	 * 
-	 */
 	public static final String ILLEGAL_ADDRESSES_PARAMETER = EMAIL_PARAMETER_PREFIX + "IllegalAddresses";
 	
-	/**
-	 * 
-	 */
 	public static final String ILLEGAL_ADDRESSES_PROPERTYSET_KEY = "email_IllegalAddresses";
 	
-	/**
-	 * 
-	 */
 	public static final String TO_PARAMETER = EMAIL_PARAMETER_PREFIX + "to";
 	
-	/**
-	 * 
-	 */
 	public static final String FROM_PARAMETER = EMAIL_PARAMETER_PREFIX + "from";
 	
-	/**
-	 * 
-	 */
 	public static final String ATTACHMENTS_PARAMETER = "attachments";
 	
-	/**
-	 * 
-	 */
 	private static final String TO_ARGUMENT = "to";
 
-	/**
-	 * 
-	 */
 	private static final String FROM_ARGUMENT = "from";
 
-	/**
-	 * 
-	 */
 	private static final String SUBJECT_ARGUMENT = "subject";
 
-	/**
-	 * 
-	 */
 	private static final String BODY_ARGUMENT = "body";
 
-	/**
-	 * 
-	 */
 	private static final String BODY_TYPE_ARGUMENT = "type";
 	
-	/**
-	 * 
-	 */
 	private static final String SILENT_MODE_ARGUMENT = "silent";
 	
-	/**
-	 * 
-	 */
 	private static final String STATUS_OK = "status.email.ok";
 	
-	/**
-	 * 
-	 */
 	private static final String STATUS_NOK = "status.email.nok";
 	
-	/**
-	 * 
-	 */
 	private MailService service;
 	
-	/**
-	 * 
-	 */
 	private MimeMessage message;
 	
-	/**
-	 * 
-	 */
 	private MimeMultipart multipart;
 
-	/**
-	 * 
-	 */
 	private Collection attachments = new ArrayList();
 	
 	/**
@@ -160,17 +103,11 @@ public class EmailFunction extends InfoglueFunction
 	 */
 	private boolean silentMode;
 	
-	/**
-	 * 
-	 */
 	public EmailFunction() 
 	{
 		super();
 	}
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		setFunctionStatus(silentMode ? STATUS_OK : STATUS_NOK);
@@ -189,9 +126,6 @@ public class EmailFunction extends InfoglueFunction
 		processIllegalAddresses();
 	}
 	
-	/**
-	 * 
-	 */
 	private void processIllegalAddresses()
 	{
 		if(illegalAddresses.isEmpty())
@@ -211,9 +145,6 @@ public class EmailFunction extends InfoglueFunction
 		setParameter(ILLEGAL_ADDRESSES_PARAMETER, new ArrayList());
 	}
 	
-	/**
-	 * 
-	 */
 	private void process() throws WorkflowException
 	{
 		if(illegalAddresses.isEmpty())
@@ -224,9 +155,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void createMessage() throws WorkflowException
 	{
 		if(attachments.isEmpty())
@@ -239,9 +167,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void createSimpleMessage() throws WorkflowException
 	{
 		logger.debug("Creating simple message.");
@@ -249,9 +174,6 @@ public class EmailFunction extends InfoglueFunction
 		initializeSimpleBody();
 	}
 
-	/**
-	 * 
-	 */
 	private void createMultipartMessage() throws WorkflowException
 	{
 		logger.debug("Creating message.");
@@ -261,9 +183,6 @@ public class EmailFunction extends InfoglueFunction
 		createAttachments();
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeMessage() throws WorkflowException
 	{
 		logger.debug("Initializing message.");
@@ -273,9 +192,6 @@ public class EmailFunction extends InfoglueFunction
 		initializeSubject();
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeSimpleBody() throws WorkflowException
 	{
 		logger.debug("Initializing simple body.");
@@ -289,9 +205,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeMultipart() throws WorkflowException
 	{
 		logger.debug("Initializing multipart.");
@@ -306,9 +219,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeTo() throws WorkflowException
 	{
 		logger.debug("Initializing to.");
@@ -331,9 +241,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeFrom() throws WorkflowException
 	{
 		logger.debug("Initializing from.");
@@ -356,9 +263,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeSubject() throws WorkflowException
 	{
 		logger.debug("Initializing subject.");
@@ -372,9 +276,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void createMainBodyPart() throws WorkflowException
 	{
 		logger.debug("Initializing main body part.");
@@ -390,9 +291,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void createAttachments() throws WorkflowException
 	{
 		logger.debug("Found " + attachments.size() + " attachments.");
@@ -402,9 +300,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void createAttachment(final Attachment attachment) throws WorkflowException
 	{
 		try
@@ -420,9 +315,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private InternetAddress[] createAddresses(final String s)
 	{
 		final List addresses = new ArrayList();
@@ -437,9 +329,6 @@ public class EmailFunction extends InfoglueFunction
 		return addressesToArray(addresses);
 	}
 	
-	/**
-	 * 
-	 */
 	private InternetAddress[] addressesToArray(final List list)
 	{
 		final InternetAddress[] addresses = new InternetAddress[list.size()];
@@ -450,9 +339,6 @@ public class EmailFunction extends InfoglueFunction
 		return addresses;
 	}
 	
-	/**
-	 * 
-	 */
 	private InternetAddress createAddress(final String email)
 	{
 		try 
@@ -466,9 +352,6 @@ public class EmailFunction extends InfoglueFunction
 		return null;
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeMailService() throws WorkflowException
 	{
 		logger.debug("Initializing mail service.");
@@ -482,9 +365,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void sendMessage() throws WorkflowException
 	{
 		logger.debug("Sending message.");
@@ -521,9 +401,6 @@ public class EmailFunction extends InfoglueFunction
 		return false;
 	} 
    
-	/**
-	 * 
-	 */
 	private void handleSendException(final SystemException e) throws WorkflowException
 	{
 		if(e.getCause() instanceof SendFailedException)
@@ -536,9 +413,6 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void populateIllegalAddresses(final SendFailedException e)
 	{
 		final Address[] invalidAddresses = (e.getInvalidAddresses() == null) ? new Address[0] : e.getInvalidAddresses();
@@ -548,25 +422,16 @@ public class EmailFunction extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private DataHandler getDataHandler(final String content, final String type)
 	{
     	return new DataHandler(new StringDataSource(content, getContentType(type), UTF8_ENCODING));
 	}
 
-	/**
-	 * 
-	 */
 	private DataHandler getDataHandler(final byte[] content, final String type)
 	{
     	return new DataHandler(new ByteDataSource(content, type));
 	}
 	
-	/**
-	 * 
-	 */
 	private String getContentType(final String type)
 	{
 		return type + ";charset=" + UTF8_ENCODING;		

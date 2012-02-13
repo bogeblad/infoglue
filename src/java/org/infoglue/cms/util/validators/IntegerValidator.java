@@ -58,9 +58,6 @@ public class IntegerValidator extends AbstractValidator
   // --- [Static] --------------------------------------------------------------
   // --- [Constructors] --------------------------------------------------------
 
-  /**
-   *
-   */
   IntegerValidator(String fieldName, boolean isRequired, int lowerLimit, int upperLimit) {
     super(fieldName, isRequired);
     this.valueSpace = new Range(lowerLimit, upperLimit);
@@ -70,9 +67,6 @@ public class IntegerValidator extends AbstractValidator
 
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public void validate(Integer value) throws ConstraintException {
     validateIsRequired(value);
     if(value == null) { // no validation needed + no need for further null checking
@@ -97,9 +91,6 @@ public class IntegerValidator extends AbstractValidator
   // --- [Package protected] ---------------------------------------------------
   // --- [Private] -------------------------------------------------------------
 
-  /**
-   *
-   */
   private void validateValueSpace(Integer value) {
     if(!this.valueSpace.isWithinLimits(value.intValue())) {
       addConstraintException(ILLEGAL_VALUE_ERROR_CODE);

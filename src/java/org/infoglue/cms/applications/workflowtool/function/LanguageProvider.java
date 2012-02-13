@@ -34,36 +34,18 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class LanguageProvider extends InfoglueFunction 
 {
-	/**
-	 * 
-	 */
 	public static final String LANGUAGE_PARAMETER   = "language";
 
-	/**
-	 * 
-	 */
 	public static final String LANGUAGE_PROPERTYSET_KEY  = "languageId";
 
-	/**
-	 * 
-	 */
 	public static final String LANGUAGE_CODE_ARGUMENT = "code";
 
-	/**
-	 * 
-	 */
 	public static final String ARGUMENT_SCOPE_ARGUMENT = "scope";
 
-	/**
-	 * 
-	 */
 	public static final String LANGUAGE_ID_IDENTIFIER = "languageId";
 
 	
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		//try
@@ -122,9 +104,6 @@ public class LanguageProvider extends InfoglueFunction
 		//}
 	}
 	
-	/**
-	 * 
-	 */
 	private void populate(final LanguageVO languageVO)
 	{
 		if(languageVO == null && propertySetContains(LANGUAGE_PROPERTYSET_KEY))
@@ -138,9 +117,6 @@ public class LanguageProvider extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	public LanguageVO getAnyLanguage() throws WorkflowException 
 	{
 		LanguageVO languageVO = null;
@@ -160,9 +136,6 @@ public class LanguageProvider extends InfoglueFunction
 		return languageVO;
 	}
 
-	/**
-	 * 
-	 */
 	public LanguageVO getLanguageWithID(final String languageId) throws WorkflowException 
 	{
 		LanguageVO languageVO = null;
@@ -177,9 +150,6 @@ public class LanguageProvider extends InfoglueFunction
 		return languageVO;
 	}
 
-	/**
-	 * 
-	 */
 	public LanguageVO getLanguageWithCode(final String code) throws WorkflowException 
 	{
 		LanguageVO languageVO = null;

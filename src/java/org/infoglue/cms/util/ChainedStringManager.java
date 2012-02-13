@@ -55,9 +55,6 @@ class ChainedStringManager implements StringManager {
   // --- [Public] --------------------------------------------------------------
   // --- [org.infoglue.cms.util.StringManager implementation] -----------------
 
-  /**
-   *
-   */
   public final String getString(String key) {
     for(Iterator iterator = this.managers.iterator(); iterator.hasNext(); ) {
       SimpleStringManager manager = (SimpleStringManager) iterator.next();
@@ -68,30 +65,18 @@ class ChainedStringManager implements StringManager {
     throw new ConfigurationError(sm.getString("chain.getString.not_found_error", key));
   }
 
-  /**
-   *
-   */
   public final String getString(String key, Object args[]) {
     return MessageFormat.format(getString(key), args);
   }
 
-  /**
-   *
-   */
   public final String getString(String key, Object arg) {
     return getString(key, new Object[]{ arg });
   }
 
-  /**
-   *
-   */
   public final String getString(String key, Object arg1, Object arg2) {
     return getString(key, new Object[]{ arg1, arg2 });
   }
 
-  /**
-   *
-   */
   public final String getString(String key, Object arg1, Object arg2, Object arg3) {
     return getString(key, new Object[]{ arg1, arg2, arg3 });
   }
@@ -101,9 +86,6 @@ class ChainedStringManager implements StringManager {
   // --- [X Overrides] ---------------------------------------------------------
   // --- [Package protected] ---------------------------------------------------
 
-  /**
-   *
-   */
   final void add(StringManager manager) {
     if(manager == null) {
       throw new Bug(sm.getString("chain.add.null_parameter_error"));

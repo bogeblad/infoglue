@@ -32,14 +32,8 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public abstract class CategoryProvider extends InfoglueFunction 
 {
-	/**
-	 * 
-	 */
 	public static final String CATEGORIES_PARAMETER = "categories";
 
-	/**
-	 * 
-	 */
 	private Map categories;
 
 	
@@ -64,9 +58,6 @@ public abstract class CategoryProvider extends InfoglueFunction
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected Map getCategories() 
 	{ 
 		return categories; 

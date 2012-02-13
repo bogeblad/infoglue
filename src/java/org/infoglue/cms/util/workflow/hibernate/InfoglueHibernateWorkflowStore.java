@@ -24,19 +24,10 @@ public class InfoglueHibernateWorkflowStore extends HibernateWorkflowStore
 {
 	private final static Logger logger = Logger.getLogger(InfoglueHibernateWorkflowStore.class.getName());
 
-	/**
-	 * 
-	 */
 	private SessionFactory sessionFactory;
 	
-	/**
-	 * 
-	 */
     public InfoglueHibernateWorkflowStore() {}
 
-	/**
-	 * 
-	 */
     public InfoglueHibernateWorkflowStore(SessionFactory sessionFactory) throws StoreException {
 		super(sessionFactory);
 		this.sessionFactory = sessionFactory;
@@ -44,18 +35,12 @@ public class InfoglueHibernateWorkflowStore extends HibernateWorkflowStore
 
     
 
-	/**
-	 * 
-	 */
     public void init(Map props) throws StoreException 
     {
     	sessionFactory = (SessionFactory) props.get("sessionFactory");
 		super.init(props);
     }
 
-	/**
-	 * 
-	 */
     public PropertySet getPropertySet(long entryId) {
         
     	String key = "psCache_" + entryId;

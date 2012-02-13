@@ -43,25 +43,16 @@ public class ValidatorFactory {
   // --- [Static] --------------------------------------------------------------
   // --- [Constructors] --------------------------------------------------------
 
-  /**
-   *
-   */
   private ValidatorFactory() {}
 
 
 
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public static final StringValidator createStringValidator(String fieldName, boolean isRequired, int upperLengthLimit) {
     return new StringValidator(fieldName, isRequired, upperLengthLimit);
   }
 
-  /**
-   *
-   */
   public static final StringValidator createStringValidator(String fieldName, boolean isRequired, int lowerLengthLimit, int upperLengthLimit) {
     return new StringValidator(fieldName, isRequired, lowerLengthLimit, upperLengthLimit);
   }
@@ -75,23 +66,14 @@ public class ValidatorFactory {
   }
 
 
-  /**
-   *
-   */
   public static final EmailValidator createEmailValidator(String fieldName, boolean isRequired, int upperLengthLimit) {
     return new EmailValidator(fieldName, isRequired, upperLengthLimit);
   }
 
-  /**
-   *
-   */
   public static final IntegerValidator createNonNegativeIntegerValidator(String fieldName, boolean isRequired) {
     return new IntegerValidator(fieldName, isRequired, 0, Integer.MAX_VALUE);
   }
 
-  /**
-   *
-   */
   public static final FloatValidator createNonNegativeFloatValidator(String fieldName, boolean isRequired) {
     return new FloatValidator(fieldName, isRequired, new Float(0.0).floatValue(), Float.MAX_VALUE);
   }

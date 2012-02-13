@@ -72,18 +72,12 @@ public class ImprovedInfoglueHibernateWorkflowStore extends AbstractHibernateWor
         }
     }
 
-	/**
-	 * 
-	 */
     public ImprovedInfoglueHibernateWorkflowStore(SessionFactory sessionFactory) 
     {
 		super();
 		this.setSessionFactory(sessionFactory);
     }
 
-	/**
-	 * 
-	 */
     public PropertySet getPropertySet(long entryId) 
     {
     	

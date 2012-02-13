@@ -21,14 +21,8 @@ public class ContentVersionValidator
 {
     private final static Logger logger = Logger.getLogger(ContentVersionValidator.class.getName());
 
-	/**
-	 * 
-	 */
 	public ContentVersionValidator() {}
 
-	/**
-	 * 
-	 */
 	public ConstraintExceptionBuffer validate(ContentTypeDefinitionVO contentType, ContentVersionVO contentVersionVO) {
 		try {
 			ContentVersionBean bean = new ContentVersionBean(contentType, contentVersionVO);
@@ -45,9 +39,6 @@ public class ContentVersionValidator
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private static ConstraintExceptionBuffer populateConstraintExceptionBuffer(ValidatorResults results) {
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 		Set s = results.getPropertyNames();
@@ -63,9 +54,6 @@ public class ContentVersionValidator
 		return ceb;
 	}
 
-	/**
-	 * 
-	 */
     private ValidatorResources loadResources(ContentTypeDefinitionVO contentType) {
 		try {
 			InputStream is = readValidatorXML(contentType);

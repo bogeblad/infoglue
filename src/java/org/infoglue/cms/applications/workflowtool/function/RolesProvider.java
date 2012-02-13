@@ -38,77 +38,35 @@ public class RolesProvider extends InfoglueFunction
 {
     private final static Logger logger = Logger.getLogger(RolesProvider.class.getName());
 
-	/**
-	 * 
-	 */
 	public static final String ROLES_PARAMETER = "roles";
 	
-	/**
-	 * 
-	 */
 	private static final String ROLES_PROPERTYSET_PREFIX = "roles_";
 	
-	/**
-	 * 
-	 */
 	private static final String MODE_ARGUMENT = "mode";
 	
-	/**
-	 * 
-	 */
 	private static final int REQUEST_MODE = 0;
 	
-	/**
-	 * 
-	 */
 	private static final String REQUEST_MODE_NAME = "request";
 	
-	/**
-	 * 
-	 */
 	private static final int ARGUMENT_MODE = 1;
 	
-	/**
-	 * 
-	 */
 	private static final String ARGUMENT_MODE_NAME = "argument";
 	
-	/**
-	 * 
-	 */
 	private static final int PRINCIPAL_MODE = 2;
 	
-	/**
-	 * 
-	 */
 	private static final String PRINCIPAL_MODE_NAME = "principal";
 	
-	/**
-	 * 
-	 */
 	private static final String ROLES_ARGUMENT = "roles";
 
-	/**
-	 * 
-	 */
 	private int mode;
 	
-	/**
-	 * 
-	 */
 	private List roles = new ArrayList();
 	
-	/**
-	 * 
-	 */
 	public RolesProvider()
 	{
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		switch(mode)
@@ -126,9 +84,6 @@ public class RolesProvider extends InfoglueFunction
 		setParameter(ROLES_PARAMETER, roles);
 	}
 	
-	/**
-	 * 
-	 */
 	private void populateRolesFromAttribute() throws WorkflowException
 	{
 		logger.debug("Populating from attribute.");
@@ -138,9 +93,6 @@ public class RolesProvider extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void populateRolesFromPrincipal() 
 	{
 		logger.debug("Populating from principal.");
@@ -150,9 +102,6 @@ public class RolesProvider extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void populateRolesFromRequest() throws WorkflowException
 	{
 		logger.debug("Populating from request.");
@@ -166,9 +115,6 @@ public class RolesProvider extends InfoglueFunction
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void populateRole(final String roleName) throws WorkflowException
 	{
 		try
@@ -193,9 +139,6 @@ public class RolesProvider extends InfoglueFunction
 		this.mode = getMode(getArgument(MODE_ARGUMENT, REQUEST_MODE_NAME));
 	}
 	
-	/**
-	 * 
-	 */
 	private int getMode(final String modeName)
 	{
 		final Map modes = new HashMap();

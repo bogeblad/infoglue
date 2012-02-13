@@ -174,9 +174,6 @@ public class URLTag extends TemplateControllerTag
 		return parameterNames;
 	}
 	
-	/**
-	 * 
-	 */
 	protected final void addParameter(final String name, final String value)
 	{
         getParameters().add(name + "=" + value);

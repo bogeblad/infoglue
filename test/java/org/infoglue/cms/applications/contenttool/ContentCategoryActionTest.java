@@ -93,7 +93,7 @@ public class ContentCategoryActionTest extends WebWorkTestCase
 		extraContentCategories.add(found); // for cleanup
 	}
 
-	public void testDelete() throws Exception
+	public void testDelete() 
 	{
 		testAction.setContentCategoryId(testContentCategory.getContentCategoryId());
 

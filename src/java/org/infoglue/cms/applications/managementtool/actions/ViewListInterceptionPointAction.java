@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * 	Action class for usecase ViewListFunctionUCC 
@@ -41,7 +42,7 @@ public class ViewListInterceptionPointAction extends InfoGlueAbstractAction
 	private List interceptionPointVOList;
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.interceptionPointVOList = InterceptionPointController.getController().getSortedInterceptionPointVOList();
 		

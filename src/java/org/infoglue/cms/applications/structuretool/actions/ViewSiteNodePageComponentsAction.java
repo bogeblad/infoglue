@@ -24,6 +24,8 @@
 package org.infoglue.cms.applications.structuretool.actions;
 
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -69,6 +73,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -161,7 +166,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method initializes the tree
 	 */
 	
-	private void initializeTreeView(String currentAction) throws Exception
+	private void initializeTreeView(String currentAction) throws SystemException
 	{
 		this.currentAction = currentAction;
 		
@@ -379,7 +384,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		return this.currentAction;
 	}
 
-	public String getContentAttribute(Integer contentId, String attributeName) throws Exception
+	public String getContentAttribute(Integer contentId, String attributeName) throws SystemException
 	{
 	    String attribute = "Undefined";
 	    
@@ -594,7 +599,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method adds a component to the page. 
 	 */
     
-	public String doAddOrReplaceComponent() throws Exception
+	public String doAddOrReplaceComponent()
 	{
 		logger.info("************************************************************");
 		logger.info("* ADDING OR REPLACING COMPONENT                            *");
@@ -896,6 +901,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 
 	/**
 	 * This method moves the component up a step if possible within the same slot. 
+	 * @throws TransformerException 
 	 */
     
 	public String doMoveComponent() throws Exception
@@ -1046,7 +1052,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method updates the given properties with new values. 
 	 */
     
-	public String doUpdateComponentProperty() throws Exception
+	public String doUpdateComponentProperty()
 	{
 		if(logger.isInfoEnabled())
 		{
@@ -1205,7 +1211,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method updates the given properties with new values. 
 	 */
     
-	public String doUpdateComponentProperties() throws Exception
+	public String doUpdateComponentProperties()
 	{
 		if(logger.isInfoEnabled())
 		{
@@ -1372,18 +1378,9 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method shows the user a list of Components(HTML Templates). 
 	 */
     
-	public String doDeleteComponent() throws Exception
+	public String doDeleteComponent() throws Exception 
 	{
 		initialize();
-		//logger.info("************************************************************");
-		//logger.info("* DELETING COMPONENT                                         *");
-		//logger.info("************************************************************");
-		//logger.info("siteNodeId:" + this.siteNodeId);
-		//logger.info("languageId:" + this.languageId);
-		//logger.info("contentId:" + this.contentId);
-		//logger.info("componentId:" + this.componentId);
-		//logger.info("slotId:" + this.slotId);
-		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
 				
 		logger.info("doDeleteComponent:" + this.getRequest().getQueryString());
 		
@@ -1417,20 +1414,9 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	/**
 	 * This method shows the user a list of Components(HTML Templates). 
 	 */
-    
 	public String doChangeComponent() throws Exception
 	{
 		initialize();
-		//logger.info("************************************************************");
-		//logger.info("* DELETING COMPONENT                                         *");
-		//logger.info("************************************************************");
-		//logger.info("siteNodeId:" + this.siteNodeId);
-		//logger.info("languageId:" + this.languageId);
-		//logger.info("contentId:" + this.contentId);
-		//logger.info("componentId:" + this.componentId);
-		//logger.info("slotId:" + this.slotId);
-		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-				
 		logger.info("doChangeComponent:" + this.getRequest().getQueryString());
 		
 		logger.info("masterLanguageId:" + this.masterLanguageVO.getId());
@@ -1537,17 +1523,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	public String doAddComponentPropertyBinding() throws Exception
 	{
 		initialize();
-		//logger.info("************************************************************");
-		//logger.info("* doAddComponentPropertyBinding                            *");
-		//logger.info("************************************************************");
-		//logger.info("siteNodeId:" + this.siteNodeId);
-		//logger.info("languageId:" + this.languageId);
-		//logger.info("contentId:" + this.contentId);
-		//logger.info("componentId:" + this.componentId);
-		//logger.info("slotId:" + this.slotId);
-		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-		//logger.info("assetKey:" + assetKey);
-		
 		Integer siteNodeId = new Integer(this.getRequest().getParameter("siteNodeId"));
 		Integer languageId = this.masterLanguageVO.getId();
 		if(this.getRequest().getParameter("languageId") != null && !this.getRequest().getParameter("languageId").equals(""))
@@ -1685,16 +1660,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	public String doAddComponentPropertyBindingWithQualifyer() throws Exception
 	{
 		initialize();
-		//logger.info("************************************************************");
-		//logger.info("* doAddComponentPropertyBindingWithQualifyer               *");
-		//logger.info("************************************************************");
-		//logger.info("siteNodeId:" + this.siteNodeId);
-		//logger.info("languageId:" + this.languageId);
-		//logger.info("contentId:" + this.contentId);
-		//logger.info("componentId:" + this.componentId);
-		//logger.info("slotId:" + this.slotId);
-		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-		
 		Integer siteNodeId 	= new Integer(this.getRequest().getParameter("siteNodeId"));
 		Integer languageId 	= new Integer(this.getRequest().getParameter("languageId"));
 		Integer contentId 	= new Integer(this.getRequest().getParameter("contentId"));
@@ -1703,13 +1668,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 
 		String qualifyerXML = this.getRequest().getParameter("qualifyerXML");
 		String propertyName = this.getRequest().getParameter("propertyName");
-		
-		//logger.info("siteNodeId:" + siteNodeId);
-		//logger.info("languageId:" + languageId);
-		//logger.info("contentId:" + contentId);
-		//logger.info("qualifyerXML:" + qualifyerXML);
-		//logger.info("propertyName:" + propertyName);
-			
 		NodeDeliveryController nodeDeliveryController			    = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
 		
 		String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());			
@@ -1768,34 +1726,14 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	public String doDeleteComponentBinding() throws Exception
 	{
 		initialize();
-		//logger.info("************************************************************");
-		//logger.info("* doDeleteComponentBinding               *");
-		//logger.info("************************************************************");
-		//logger.info("siteNodeId:" + this.siteNodeId);
-		//logger.info("languageId:" + this.languageId);
-		//logger.info("contentId:" + this.contentId);
-		//logger.info("componentId:" + this.componentId);
-		//logger.info("slotId:" + this.slotId);
-		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-
 		Integer siteNodeId 	= new Integer(this.getRequest().getParameter("siteNodeId"));
 		Integer languageId 	= new Integer(this.getRequest().getParameter("languageId"));
 		Integer contentId  	= new Integer(this.getRequest().getParameter("contentId"));
 		Integer bindingId  	= new Integer(this.getRequest().getParameter("bindingId"));
-		
-		//logger.info("siteNodeId:" + siteNodeId);
-		//logger.info("languageId:" + languageId);
-		//logger.info("contentId:" + contentId);
-			
-		//String templateString = getPageTemplateString(templateController, siteNodeId, languageId, contentId); 
 		String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());			
-		//logger.info("componentXML:" + componentXML);
-
 		Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
 		String componentXPath = "//component[@id=" + this.componentId + "]/bindings/binding[@id=" + bindingId + "]";
-		//logger.info("componentXPath:" + componentXPath);
 		NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), componentXPath);
-		//logger.info("anl:" + anl.getLength());
 		if(anl.getLength() > 0)
 		{
 			Element component = (Element)anl.item(0);
@@ -1807,12 +1745,8 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 
 			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
 		}
-			
 		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
-		//this.getResponse().sendRedirect(url);		
-		
 		this.url = this.getResponse().encodeURL(url);
-		//this.getResponse().sendRedirect(url);
 	    return NONE; 
 	}
 		    
@@ -1821,7 +1755,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method shows the user a list of Components(HTML Templates). 
 	 */
     
-	public List getComponentBindings() throws Exception
+	public List getComponentBindings()
 	{
 		List bindings = new ArrayList();
 			
@@ -1906,11 +1840,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		
 		Locale locale = LanguageController.getController().getLocaleWithId(languageId);
 
-		//logger.info("siteNodeId:" + siteNodeId);
-		//logger.info("languageId:" + languageId);
-		//logger.info("contentId:" + contentId);
-		//logger.info("propertyName:" + propertyName);
-			
 		String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());			
 		//logger.info("componentXML:" + componentXML);
 
@@ -2054,7 +1983,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This is to support form steering information later.
 	 */
 	
-	private void addBindingElement(Element parent, String qualifyerXML) throws Exception
+	private void addBindingElement(Element parent, String qualifyerXML) throws UnsupportedEncodingException, IOException, SAXException
 	{
 		Document document = XMLHelper.readDocumentFromByteArray(qualifyerXML.getBytes("utf-8"));
 		NodeList nl = document.getChildNodes().item(0).getChildNodes();
@@ -2081,7 +2010,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method returns the contents that are of contentTypeDefinition "HTMLTemplate" sorted on the property given.
 	 */
 	
-	public List getSortedComponents(String sortProperty) throws Exception
+	public List getSortedComponents(String sortProperty)
 	{
 	    List componentVOList = null;
 	    
@@ -2102,12 +2031,10 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method fetches the template-string.
 	 */
     
-	private String getPageComponentsString(Integer siteNodeId, Integer languageId) throws SystemException, Exception
+	private String getPageComponentsString(Integer siteNodeId, Integer languageId) throws SystemException
 	{
 		String template = null;
     	
-		try
-		{
 			ContentVO contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, languageId, true, "Meta information", DeliveryContext.getDeliveryContext());
 
 			if(contentVO == null)
@@ -2125,12 +2052,6 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			
 			if(template == null)
 				throw new SystemException("There was no template bound to this page which makes it impossible to render.");	
-		}
-		catch(Exception e)
-		{
-			logger.error(e.getMessage(), e);
-			throw e;
-		}
 
 		return template;
 	}
@@ -2139,7 +2060,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method fetches an url to the asset for the component.
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, String key) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, String key)
 	{
 		String imageHref = null;
 		try
@@ -2175,7 +2096,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer contentId, String key) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer contentId, String key)
 	{
 		String imageHref = null;
 		try
@@ -2211,7 +2132,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer contentId) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer contentId)
 	{
 		String imageHref = null;
 		try
@@ -2389,7 +2310,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
         this.allowedContentTypeIds = allowedContentTypeIds;
     }
 
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
+    public String getAllowedContentTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer();
         
@@ -2444,7 +2365,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
         this.disallowedComponentNames = disallowedComponentNames;
     }
 
-    public String getAllowedComponentNamesAsUrlEncodedString() throws Exception
+    public String getAllowedComponentNamesAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer("");
         
@@ -2462,7 +2383,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
         return sb.toString();
     }
 
-    public String getDisallowedComponentNamesAsUrlEncodedString() throws Exception
+    public String getDisallowedComponentNamesAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer("");
         
@@ -2490,7 +2411,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
         this.allowedComponentGroupNames = allowedComponentGroupNames;
     }
 
-    public String getAllowedComponentGroupNamesAsUrlEncodedString() throws Exception
+    public String getAllowedComponentGroupNamesAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer("");
         

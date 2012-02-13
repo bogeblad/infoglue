@@ -39,8 +39,6 @@ import org.infoglue.cms.entities.management.SubscriptionFilterVO;
 import org.infoglue.cms.entities.management.SubscriptionVO;
 import org.infoglue.cms.entities.management.impl.simple.SubscriptionFilterImpl;
 import org.infoglue.cms.entities.management.impl.simple.SubscriptionImpl;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 
 public class SubscriptionController extends BaseController
@@ -112,7 +110,7 @@ public class SubscriptionController extends BaseController
 		return newSubscriptionVO;
     }
 
-    public Subscription create(SubscriptionVO subscriptionVO,List<SubscriptionFilterVO> subscriptionFilterVOList, Database db) throws ConstraintException, SystemException, Exception
+    public Subscription create(SubscriptionVO subscriptionVO,List<SubscriptionFilterVO> subscriptionFilterVOList, Database db) throws PersistenceException
     {
     	Subscription subscription = new SubscriptionImpl();
 		subscription.setValueObject(subscriptionVO);

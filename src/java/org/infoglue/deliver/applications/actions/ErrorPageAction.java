@@ -27,11 +27,11 @@ package org.infoglue.deliver.applications.actions;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.SystemException;
@@ -52,7 +52,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 
     private int responseCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     
-  	private String getErrorUrl(Integer repositoryId) throws Exception 
+  	private String getErrorUrl(Integer repositoryId)  
   	{
   		String errorUrl = CmsPropertyHandler.getErrorUrl();
   		
@@ -74,7 +74,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
   	}
 	
     
-    private List getRepositoryId(HttpServletRequest request) throws ServletException, SystemException, Exception 
+    private List getRepositoryId(HttpServletRequest request) throws SystemException, PersistenceException 
     {
         String serverName = request.getServerName();
         String portNumber = new Integer(request.getServerPort()).toString();

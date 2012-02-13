@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 import webwork.action.Action;
@@ -187,7 +189,7 @@ public class SearchContentAction extends InfoGlueAbstractAction
 	}
 
 
-	public String doBindingResult() throws Exception 
+	public String doBindingResult() throws SystemException 
 	{
 		Integer[] allowedContentTypeId = new Integer[0];
 		if(allowedContentTypeIds != null && allowedContentTypeIds.length != 0)
@@ -227,7 +229,7 @@ public class SearchContentAction extends InfoGlueAbstractAction
 		return "successBindingResult";
 	}
 
-	public String doInlineAssetResult() throws Exception 
+	public String doInlineAssetResult() throws SystemException 
 	{
 		Integer[] allowedContentTypeId = new Integer[0];
 		if(allowedContentTypeIds != null && allowedContentTypeIds.length != 0)
@@ -267,7 +269,7 @@ public class SearchContentAction extends InfoGlueAbstractAction
 		return "successInlineAssetResult";
 	}
 
-	public String doInlineAssetSearchV3() throws Exception 
+	public String doInlineAssetSearchV3() throws SystemException 
 	{
 		int maxRows = 100;
 		try
@@ -299,20 +301,9 @@ public class SearchContentAction extends InfoGlueAbstractAction
 		return "successInlineAssetSearchV3";
 	}
 
-	public String doLatestInlineAssetsV3() throws Exception 
+	public String doLatestInlineAssetsV3() throws SystemException 
 	{
 		int maxRows = 20;
-		/*
-		try
-		{
-			maxRows = Integer.parseInt(CmsPropertyHandler.getMaxRows());
-			if(maxRows > 50)
-				maxRows = 30;
-		}
-		catch(Exception e)
-		{
-		}
-		*/
 		String[] repositoryIdToSearch = this.getRequest().getParameterValues("repositoryIdToSearch");
 		if(repositoryIdToSearch != null)
 		{
@@ -337,7 +328,6 @@ public class SearchContentAction extends InfoGlueAbstractAction
 	/**
 	 * This method returns the advanced search interface to the user.
 	 */
-
 	public String doInput() throws Exception 
 	{
 		if(CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
@@ -358,8 +348,7 @@ public class SearchContentAction extends InfoGlueAbstractAction
 	/**
 	 * This method returns the binding search interface to the user.
 	 */
-
-	public String doInputBinding() throws Exception 
+	public String doInputBinding() throws SystemException 
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
@@ -369,8 +358,7 @@ public class SearchContentAction extends InfoGlueAbstractAction
 	/**
 	 * This method returns the binding search interface to the user.
 	 */
-
-	public String doInputInlineAsset() throws Exception 
+	public String doInputInlineAsset() throws SystemException 
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
@@ -379,9 +367,9 @@ public class SearchContentAction extends InfoGlueAbstractAction
 
 	/**
 	 * This method returns the binding search interface to the user.
+	 * @throws SystemException 
 	 */
-
-	public String doInputInlineAssetV3() throws Exception 
+	public String doInputInlineAssetV3() throws SystemException 
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
@@ -557,7 +545,7 @@ public class SearchContentAction extends InfoGlueAbstractAction
         this.allowedContentTypeIds = allowedContentTypeIds;
     }
     
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
+    public String getAllowedContentTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer();
         

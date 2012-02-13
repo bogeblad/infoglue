@@ -48,7 +48,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.PrincipalNotFoundException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -1568,7 +1567,7 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 		return users;
 	}
 	
-	public List getRoleUsers(String roleName, DirContext ctx) throws Exception
+	public List getRoleUsers(String roleName, DirContext ctx)
 	{
 		List users = new ArrayList();
 		
@@ -1848,7 +1847,7 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
     /** 
      * Gets a list of users which is memebers of the given group
      */
-    public List getGroupUsers(String groupName, DirContext ctx) throws Exception
+    public List getGroupUsers(String groupName, DirContext ctx)
     {
 	    logger.info("--------getGroupUsers(String groupName) start---------------");
 		List users = new ArrayList();

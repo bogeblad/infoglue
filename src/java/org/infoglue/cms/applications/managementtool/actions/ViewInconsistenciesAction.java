@@ -31,7 +31,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.InconsistenciesController
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 
 /**
@@ -47,7 +46,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 	private List inconsistencies = null;
 	private Integer registryId = null;
 	
-    public String doInput() throws Exception
+    public String doInput()
     {
     	return "input";
     }
@@ -59,7 +58,7 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
     	return "success";
     }
 
-    public String doRemoveReference() throws Exception
+    public String doRemoveReference() throws SystemException, Exception
     {
     	InconsistenciesController.getController().removeReferences(registryId, this.getInfoGluePrincipal());
     	

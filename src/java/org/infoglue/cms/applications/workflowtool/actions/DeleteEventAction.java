@@ -23,9 +23,14 @@
 
 package org.infoglue.cms.applications.workflowtool.actions;
 
+import java.io.IOException;
+
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
 import org.infoglue.cms.entities.workflow.EventVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -62,7 +67,7 @@ public class DeleteEventAction extends InfoGlueAbstractAction
 		this.url = url;
 	}
       
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException, IOException
     {
     	ceb.throwIfNotEmpty();
     	

@@ -93,17 +93,13 @@ public abstract class BaseController
      * @param hashMap
      * @param InterceptionPointName
      * @param infogluePrincipal
-     * @throws ConstraintException
-     * @throws SystemException
-     * @throws Bug
-     * @throws Exception
      */
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws Exception
 	{
     	intercept(hashMap, InterceptionPointName, infogluePrincipal, true);
 	}
 	
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws ConstraintException, SystemException, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws Exception
 	{
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
     	
@@ -137,13 +133,9 @@ public abstract class BaseController
      * @param hashMap
      * @param InterceptionPointName
      * @param infogluePrincipal
-     * @throws ConstraintException
-     * @throws SystemException
-     * @throws Bug
-     * @throws Exception
      */
 
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, Database db) throws Exception
 	{
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName, db);
     	
@@ -171,7 +163,7 @@ public abstract class BaseController
 
 	}
 
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess, Database db) throws ConstraintException, SystemException, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess, Database db) throws Exception
 	{
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName, db);
     	

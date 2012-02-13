@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.exception.SystemException;
 
 
 /**
@@ -41,7 +42,7 @@ public class ViewPublishingToolHeaderAction extends InfoGlueAbstractAction
      
 	private List repositories;
     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
     	this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
     	

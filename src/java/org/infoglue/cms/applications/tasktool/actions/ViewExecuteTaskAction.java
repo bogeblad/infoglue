@@ -40,6 +40,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.deliver.util.VelocityTemplateProcessor;
 
 public class ViewExecuteTaskAction extends InfoGlueAbstractAction
@@ -61,7 +62,7 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
      * of tasks to the user so he/she can select one to run. 
      */
     
-	public String doExecute() throws Exception
+	public String doExecute()
 	{
 		return "success";
 	}
@@ -111,8 +112,6 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 	/**
 	 * This method serves as the invoker of a task/script. It uses the velocity-engine to run logic.
 	 * It allways run the script within it's own transaction as of now.
-	 * 
-	 * @throws Exception
 	 */
 
 	public String doExecuteTask() throws Exception
@@ -162,7 +161,7 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 	 * This method prepares the script-object which should be supplied to the scripting engine.
 	 */
 	
-	private ScriptController getScriptController() throws Exception
+	private ScriptController getScriptController() throws SystemException
 	{
 		ScriptController scriptController = new BasicScriptController(this.getInfoGluePrincipal());
 		
@@ -174,7 +173,7 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 	 * Improve later - cache for example the engine.
 	 */
 	/*
-	public void renderTemplate(Map params, PrintWriter pw, String templateAsString) throws Exception 
+	public void renderTemplate(Map params, PrintWriter pw, String templateAsString) 
 	{
 		Velocity.init();
 
@@ -194,7 +193,7 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 	/**
 	 * This method returns the contents that are of contentTypeDefinition "HTMLTemplate"
 	 */
-	public List getTasks() throws Exception
+	public List getTasks() throws SystemException
 	{
 		HashMap arguments = new HashMap();
 		arguments.put("method", "selectListOnContentTypeName");
@@ -211,7 +210,7 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 	/**
 	 * This method returns the contents that are of contentTypeDefinition "HTMLTemplate"
 	 */
-	public List getCustomTasks() throws Exception
+	public List getCustomTasks() throws SystemException
 	{
 		HashMap arguments = new HashMap();
 		arguments.put("method", "selectListOnContentTypeName");

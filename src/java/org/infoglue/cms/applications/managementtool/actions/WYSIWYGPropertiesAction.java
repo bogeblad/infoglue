@@ -57,12 +57,12 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 	private String WYSIWYGProperties = "";
 	private String StylesXML = "";
 	
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	return "success";
     }
 
-    public String doViewStylesXML() throws Exception
+    public String doViewStylesXML()
     {
     	return "successStylesXML";
     }
@@ -71,7 +71,7 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 	 * This method gets the WYSIWYG Properties
 	 */
 	
-	public String getWYSIWYGProperties() throws Exception
+	public String getWYSIWYGProperties()
 	{
 	    try
 	    {

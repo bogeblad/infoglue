@@ -133,7 +133,7 @@ public class InconsistenciesController extends BaseController
 		return inconsistencies;
 	}
 	
-	private void addContentInconsistency(List inconsistencies, RegistryVO registryVO, Database db) throws Exception
+	private void addContentInconsistency(List inconsistencies, RegistryVO registryVO, Database db)
 	{
 		try
 		{
@@ -177,7 +177,7 @@ public class InconsistenciesController extends BaseController
 		}
 	}
 
-	private void addSiteNodeInconsistency(List inconsistencies, RegistryVO registryVO, Database db) throws Exception
+	private void addSiteNodeInconsistency(List inconsistencies, RegistryVO registryVO, Database db)
 	{
 		try
 		{

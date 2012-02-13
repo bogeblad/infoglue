@@ -39,6 +39,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.entities.content.Content;
@@ -59,7 +60,6 @@ import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.services.BaseService;
@@ -107,7 +107,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * Private constructor to enforce factory-use
 	 */
 	
-	private NodeDeliveryController(Integer siteNodeId, Integer languageId, Integer contentId) throws SystemException, Exception
+	private NodeDeliveryController(Integer siteNodeId, Integer languageId, Integer contentId) 
 	{
 		this.siteNodeId = siteNodeId;
 		this.languageId = languageId;
@@ -119,7 +119,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * Factory method
 	 */
 	
-	public static NodeDeliveryController getNodeDeliveryController(Integer siteNodeId, Integer languageId, Integer contentId) throws SystemException, Exception
+	public static NodeDeliveryController getNodeDeliveryController(Integer siteNodeId, Integer languageId, Integer contentId) 
 	{
 		return new NodeDeliveryController(siteNodeId, languageId, contentId);
 	}
@@ -128,7 +128,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * Factory method
 	 */
 	
-	public static NodeDeliveryController getNodeDeliveryController(DeliveryContext deliveryContext) throws SystemException, Exception
+	public static NodeDeliveryController getNodeDeliveryController(DeliveryContext deliveryContext) 
 	{
 		return new NodeDeliveryController(deliveryContext.getSiteNodeId(), deliveryContext.getLanguageId(), deliveryContext.getContentId());
 	}
@@ -205,7 +205,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method checks if there is a serviceBinding with the name on this or any parent node.
 	 */
 	
-	public ServiceDefinitionVO getInheritedServiceDefinition(List qualifyerList, Integer siteNodeId, AvailableServiceBindingVO availableServiceBindingVO, Database db, boolean inheritParentBindings) throws SystemException, Exception
+	public ServiceDefinitionVO getInheritedServiceDefinition(List qualifyerList, Integer siteNodeId, AvailableServiceBindingVO availableServiceBindingVO, Database db, boolean inheritParentBindings) throws SystemException, PersistenceException
 	{
 		ServiceDefinitionVO serviceDefinitionVO = null;
 		
@@ -238,7 +238,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		return serviceDefinitionVO;
 	}
 	
-	private ServiceDefinitionVO getServiceDefinitionVO(List qualifyerList, SiteNode siteNode, AvailableServiceBindingVO availableServiceBindingVO, Database db) throws Exception
+	private ServiceDefinitionVO getServiceDefinitionVO(List qualifyerList, SiteNode siteNode, AvailableServiceBindingVO availableServiceBindingVO, Database db) throws PersistenceException 
 	{
 	    ServiceDefinitionVO serviceDefinitionVO = null;
 	    //ServiceBinding serviceBinding = null;
@@ -410,7 +410,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns the latest sitenodeVersion there is for the given siteNode.
 	 */
 	
-	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVO(Database db, Integer siteNodeId) throws SystemException, Exception
+	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVO(Database db, Integer siteNodeId) throws PersistenceException 
 	{
 		String key = "" + siteNodeId;
 		logger.info("key:" + key);
@@ -423,11 +423,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 		else
 		{
 			siteNodeVersionVO = getLatestActiveSiteNodeVersionVO(siteNodeId, db);
-			/*
-			SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersion(siteNodeId, db);
-			if(siteNodeVersion != null)
-				siteNodeVersionVO = siteNodeVersion.getValueObject();
-			*/
 			
 			if(siteNodeVersionVO != null)
 			{
@@ -445,7 +440,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns the latest sitenodeVersion there is for the given siteNode and stores it in a cache special to the deliver page cache.
 	 */
 	
-	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVOForPageCache(Database db, Integer siteNodeId) throws SystemException, Exception
+	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVOForPageCache(Database db, Integer siteNodeId) throws PersistenceException  
 	{
 		String key = "" + siteNodeId;
 		logger.info("key:" + key);
@@ -554,9 +549,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 	
 	/**
 	 * This method returns the latest sitenodeVersion there is for the given siteNode.
+	 * @throws PersistenceException 
 	 */
 	
-	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVO(Integer siteNodeId, Database db) throws SystemException, Exception
+	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVO(Integer siteNodeId, Database db) throws PersistenceException 
 	{
 	    String versionKey = "" + siteNodeId + "_" + getOperatingMode() + "_siteNodeVersionVO";		
 	    
@@ -1201,7 +1197,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method return a single content bound. 
 	 */
 	
-	public ContentVO getBoundContent(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean useLanguageFallback, String availableServiceBindingName, DeliveryContext deliveryContext) throws SystemException, Exception
+	public ContentVO getBoundContent(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean useLanguageFallback, String availableServiceBindingName, DeliveryContext deliveryContext) throws Exception
 	{
 		List contents = getBoundContents(db, infoGluePrincipal, siteNodeId, languageId, useLanguageFallback, availableServiceBindingName, USE_INHERITANCE, true, deliveryContext);
 		return (contents != null && contents.size() > 0) ? (ContentVO)contents.get(0) : null;
@@ -1211,7 +1207,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method return a single content bound. 
 	 */
 	
-	public ContentVO getBoundContent(InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean useLanguageFallback, String availableServiceBindingName, DeliveryContext deliveryContext) throws SystemException, Exception
+	public ContentVO getBoundContent(InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean useLanguageFallback, String availableServiceBindingName, DeliveryContext deliveryContext) throws SystemException 
 	{
 	    List contents = null;
 	    
@@ -1237,7 +1233,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	}
 
 
-	public List getBoundContents(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean useLanguageFallback, String availableServiceBindingName, boolean inheritParentBindings, boolean includeFolders, DeliveryContext deliveryContext) throws SystemException, Exception
+	public List getBoundContents(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean useLanguageFallback, String availableServiceBindingName, boolean inheritParentBindings, boolean includeFolders, DeliveryContext deliveryContext) throws Exception
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
 			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
@@ -2167,8 +2163,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns the root siteNodeVO for the specified repository.
 	 * If the repositoryName is null we fetch the name of the master repository.
 	 */
-	
-	public static SiteNodeVO getRootSiteNode(Database db, String repositoryName) throws SystemException, Exception
+	public static SiteNodeVO getRootSiteNode(Database db, String repositoryName) throws PersistenceException 
 	{
 		if(repositoryName == null)
 		{
@@ -2204,7 +2199,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * If the repositoryName is null we fetch the name of the master repository.
 	 */
 	
-	public SiteNodeVO getRootSiteNode(Database db, Integer repositoryId) throws SystemException, Exception
+	public SiteNodeVO getRootSiteNode(Database db, Integer repositoryId) throws PersistenceException 
 	{
 	    SiteNodeVO siteNodeVO = null;
 
@@ -2361,7 +2356,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns a sorted list of qualifyers.
 	 */
 	
-	private List getBindingQualifyers(Integer serviceBindingId, Database db) throws SystemException, Exception
+	private List getBindingQualifyers(Integer serviceBindingId, Database db) throws PersistenceException 
 	{
 		List qualifyers = new ArrayList();
 		

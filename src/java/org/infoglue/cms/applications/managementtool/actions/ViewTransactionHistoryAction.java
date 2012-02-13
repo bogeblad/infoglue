@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
 import org.infoglue.cms.entities.management.TransactionHistoryVO;
+import org.infoglue.cms.exception.SystemException;
 
 public class ViewTransactionHistoryAction extends InfoGlueAbstractAction
 {
@@ -43,7 +44,7 @@ public class ViewTransactionHistoryAction extends InfoGlueAbstractAction
         this.transactionHistoryVO = transactionHistoryVO;
     }
     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
         Integer transactionHistoryId = getTransactionHistoryId();
         if(transactionHistoryId == null)

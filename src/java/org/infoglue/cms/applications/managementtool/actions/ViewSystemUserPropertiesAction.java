@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -38,6 +39,8 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.UserPropertiesVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.dom.DOMBuilder;
 
@@ -257,7 +260,7 @@ public class ViewSystemUserPropertiesAction extends ViewEntityPropertiesAction
 		return this.userName;
 	}
 
-	public void setUserName(String userName) throws Exception
+	public void setUserName(String userName) throws ConstraintException, SystemException, Exception
 	{
 		logger.info("userName:" + userName);
 		if(!UserControllerProxy.getController().userExists(userName))
@@ -296,12 +299,12 @@ public class ViewSystemUserPropertiesAction extends ViewEntityPropertiesAction
         this.userName = ownerEntityId;
     }
     
-    public String getReturnAddress() throws Exception
+    public String getReturnAddress() throws UnsupportedEncodingException
     {
         return this.getCurrentAction() + "?userName=" + formatter.encodeBase64(this.userName) + "&amp;languageId=" + this.getLanguageId();
     }
 
-    public String getCancelAddress() throws Exception
+    public String getCancelAddress() throws UnsupportedEncodingException
     {
         return this.getCancelAction() + "?userName=" + formatter.encodeBase64(this.userName);
     }

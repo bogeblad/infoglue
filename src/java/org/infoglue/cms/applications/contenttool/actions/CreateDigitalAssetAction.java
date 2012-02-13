@@ -134,7 +134,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		return ContentTypeDefinitionController.getController().getDefinedAssetKeys(this.contentTypeDefinitionVO, true);
 	}
 	
-    public String doMultiple() throws Exception //throws Exception
+    public String doMultiple() throws Exception
     {
     	logger.info("Uploading file....");
     	this.principal = getInfoGluePrincipal();
@@ -185,7 +185,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
         return NONE;
 	}
     
-    public String doExecute() throws IOException //throws Exception
+    public String doExecute() throws IOException
     {
     	logger.info("Uploading file....");
     	if(this.principal == null)
@@ -662,7 +662,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl() throws Exception
+	public String getDigitalAssetUrl()
 	{
 		String imageHref = null;
 		try

@@ -23,14 +23,13 @@
 
 package org.infoglue.cms.applications.contenttool.wizards.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
 import org.infoglue.cms.applications.contenttool.actions.ViewContentTreeActionInterface;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 
 /**
@@ -57,14 +56,14 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 	
 	private List repositories;
 
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		return "success";
 	}
 	
-	public Integer getTopRepositoryId() throws ConstraintException, SystemException
+	public Integer getTopRepositoryId() 
 	{		
 		Integer topRepositoryId = null;
 
@@ -156,7 +155,7 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 		returnAddress = string;
 	}
 
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
+    public String getAllowedContentTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer();
         
@@ -226,7 +225,7 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 		return getCreateContentWizardInfoBean().getReturnAddress();
 	}
 
-	public String getEncodedRefreshAddress() throws Exception
+	public String getEncodedRefreshAddress() throws UnsupportedEncodingException
 	{
 		return URLEncoder.encode(getRefreshAddress(), "UTF-8");
 	}

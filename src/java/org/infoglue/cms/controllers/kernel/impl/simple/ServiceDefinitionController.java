@@ -33,7 +33,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ServiceDefinition;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.management.impl.simple.ServiceDefinitionImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -61,7 +60,7 @@ public class ServiceDefinitionController extends BaseController
 		return (ServiceDefinitionVO) getVOWithId(ServiceDefinitionImpl.class, serviceDefinitionId, db);
     }
 	
-    public ServiceDefinitionVO create(ServiceDefinitionVO vo) throws ConstraintException, SystemException
+    public ServiceDefinitionVO create(ServiceDefinitionVO vo) throws SystemException
     {
         ServiceDefinition ent = new ServiceDefinitionImpl();
         ent.setValueObject(vo);
@@ -176,7 +175,6 @@ public class ServiceDefinitionController extends BaseController
 	 * This method fetches an ServiceDefinition with the given name.
 	 * 
 	 * @throws SystemException
-	 * @throws Bug
 	 */
     
 	public ServiceDefinitionVO getServiceDefinitionVOWithName(String name) throws SystemException
@@ -213,7 +211,6 @@ public class ServiceDefinitionController extends BaseController
 	 * @param database
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 
 	public ServiceDefinition getServiceDefinitionWithName(String name, Database db, boolean readOnly) throws SystemException

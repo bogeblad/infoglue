@@ -60,7 +60,7 @@ public class ViewContentToolMenuAction extends InfoGlueAbstractAction
     	return this.repositoryId;
     }
     
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	getResponse().setHeader("Cache-Control","no-cache"); 
     	getResponse().setHeader("Pragma","no-cache");
@@ -69,7 +69,7 @@ public class ViewContentToolMenuAction extends InfoGlueAbstractAction
     	return "success";
     }
 
-    public String doV3() throws Exception
+    public String doV3()
     {
     	getResponse().setHeader("Cache-Control","no-cache"); 
     	getResponse().setHeader("Pragma","no-cache");

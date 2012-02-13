@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.exception.SystemException;
 
 
 /**
@@ -42,7 +43,7 @@ public class ViewListLanguageAction extends InfoGlueAbstractAction
 	private List languageVOList;
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.languageVOList = LanguageController.getController().getLanguageVOList();
 

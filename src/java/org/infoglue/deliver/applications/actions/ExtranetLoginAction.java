@@ -28,7 +28,6 @@ import java.security.Principal;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,23 +64,23 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 		return "success";
 	}	
 
-	public String doLoginForm() throws Exception 
+	public String doLoginForm()  
 	{
 		return "loginForm";
 	}	
 
-	public String doNoAccess() throws Exception 
+	public String doNoAccess()  
 	{
 		return "noAccess";
 	}
 	
-	public String doInvalidLogin() throws Exception 
+	public String doInvalidLogin()  
 	{
 		return "invalidLogin";
 	}
 	
 	// To check access 
-	public String doCheckUser() throws Exception
+	public String doCheckUser() throws Exception 
 	{
 	    Map arguments = HttpUtilities.requestToHashtable(this.getRequest());
 
@@ -371,7 +370,7 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 	    }
 	}
 	
-  	private String getInvalidLoginUrl() throws ServletException, Exception 
+  	private String getInvalidLoginUrl() throws Exception 
   	{
 		String url = AuthenticationModule.getAuthenticationModule(null, null, getRequest(), false).getInvalidLoginUrl();
 		

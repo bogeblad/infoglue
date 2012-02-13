@@ -36,7 +36,7 @@ public class AdminAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = -2904286525405758091L;
 	
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))

@@ -29,6 +29,9 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
@@ -80,21 +83,8 @@ public class CreateContentTypeDefinitionAction extends InfoGlueAbstractAction
     {
         this.contentTypeDefinitionVO.setName(name);
     }
-      
-/*
-    public String getSchemaValue()
-    {
-    	return this.contentTypeDefinitionVO.getSchemaValue();
-    }
-        
-    public void setSchemaValue(String schemaValue)
-    {
-       	this.contentTypeDefinitionVO.setSchemaValue(schemaValue);
-    }
-*/
 
-
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		ceb.add( this.contentTypeDefinitionVO.validate());
     	ceb.throwIfNotEmpty();				
@@ -103,7 +93,7 @@ public class CreateContentTypeDefinitionAction extends InfoGlueAbstractAction
         return "success";
     }
         
-    public String doInput() throws Exception
+    public String doInput()
     {
     	return "input";
     }    
@@ -133,7 +123,7 @@ public class CreateContentTypeDefinitionAction extends InfoGlueAbstractAction
 		this.contentTypeDefinitionVO.setParentId(parentContentTypeDefinitionId);
 	}
 
-	public List<ContentTypeDefinitionVO> getContentTypeDefinitions() throws Exception
+	public List<ContentTypeDefinitionVO> getContentTypeDefinitions() throws SystemException
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.CONTENT);
 	}

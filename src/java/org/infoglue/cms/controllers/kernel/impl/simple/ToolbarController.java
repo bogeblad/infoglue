@@ -27,6 +27,7 @@ import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.providers.ToolbarProvider;
 import org.infoglue.cms.security.InfoGlueGroup;
@@ -499,7 +500,7 @@ public class ToolbarController implements ToolbarProvider
 		return new ArrayList<ToolbarButton>();				
 	}
 
-	private List<ToolbarButton> getAssetDialogForMultipleBindingsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getAssetDialogForMultipleBindingsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -523,7 +524,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 	
-	private List<ToolbarButton> getGroupDetailFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getGroupDetailFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -534,7 +535,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getCreateGroupFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getCreateGroupFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -545,7 +546,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getRoleDetailFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getRoleDetailFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -556,7 +557,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getCreateRoleFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getCreateRoleFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -590,7 +591,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getCreateSystemUserFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getCreateSystemUserFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -601,7 +602,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 	
-	private List<ToolbarButton> getEntityPropertiesFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getEntityPropertiesFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -636,7 +637,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 	
 	
-	private List<ToolbarButton> getAdminToolStandardButtons() throws Exception
+	private List<ToolbarButton> getAdminToolStandardButtons()
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -644,7 +645,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 	
 	
-	private List<ToolbarButton> getContentButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -859,7 +860,7 @@ public class ToolbarController implements ToolbarProvider
 		return sb.toString();
 	}
 
-	private List<ToolbarButton> getContentVersionStandaloneButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentVersionStandaloneButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException, ConstraintException
 	{
 		Timer t = new Timer();
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
@@ -938,7 +939,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getContentVersionButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentVersionButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -1185,29 +1186,11 @@ public class ToolbarController implements ToolbarProvider
 		syncTreeButton.getSubButtons().add(exportContentButton);
 
 		buttons.add(syncTreeButton);
-		/*
-		buttons.add(new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeLabel"), 
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeTitle"),
-				  "javascript:syncWithTree('" + contentPath + "', " + contentVO.getRepositoryId() + ", 'contentTreeIframe');",
-				  "",
-				  "syncTree"));
-
-		if(contentVersionId != null)
-		{
-			buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeLanguageLabel"), 
-					  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeLanguageTitle"),
-					  "ChangeVersionLanguage!inputV3.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId() + "&contentVersionId=" + contentVersionId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-					  "",
-					  "changeLanguage"));	
-		}
-		*/
 		return buttons;
 	}
 	
 
-	private List<ToolbarButton> getContentVersionFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentVersionFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		String saveAndExitURL = (String)request.getAttribute("saveAndExitURL");
 		
@@ -1216,15 +1199,6 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
 
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
-		
-		/*
-		buttons.add(new ToolbarButton("",
-									  getLocalizedString(locale, "tool.contenttool.publish.label"), 
-									  getLocalizedString(locale, "tool.contenttool.publish.label"),
-									  "javascript:validateAndSubmitContentFormThenSubmitToPublish();",
-				  					  "images/v3/publishIcon.gif"));
-		*/
-		
 		buttons.add(new ToolbarButton("cancel",
 				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"), 
 				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"),
@@ -1237,7 +1211,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getContentVersionStandaloneFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentVersionStandaloneFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1296,7 +1270,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 	
-	private List<ToolbarButton> getContentVersionAssetsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentVersionAssetsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1360,7 +1334,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getContentVersionAssetsForComponentBindingFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentVersionAssetsForComponentBindingFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1436,7 +1410,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getUploadDigitalAssetsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getUploadDigitalAssetsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1448,7 +1422,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getUploadDigitalAssetsFailedFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getUploadDigitalAssetsFailedFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1458,7 +1432,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getImageEditorFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getImageEditorFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1543,7 +1517,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 	
-	private List<ToolbarButton> getLinkDialogFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getLinkDialogFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1624,7 +1598,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 	
 	
-	private List<ToolbarButton> getContentVersionWizardFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentVersionWizardFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1811,7 +1785,7 @@ public class ToolbarController implements ToolbarProvider
 		*/
 	}
 	
-	private List<ToolbarButton> getCreateSiteNodeButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getCreateSiteNodeButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1825,7 +1799,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 	
-	private List<ToolbarButton> getSiteNodeFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getSiteNodeFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -1836,7 +1810,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getSiteNodeHistoryFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getSiteNodeHistoryFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1845,7 +1819,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getContentHistoryFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentHistoryFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1854,7 +1828,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getContentRelationFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentRelationFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1873,7 +1847,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;		
 	}
 
-	private ToolbarButton getCompareButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private ToolbarButton getCompareButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		return new ToolbarButton("compare",
 									  getLocalizedString(locale, "tool.common.compare.label"), 
@@ -1885,7 +1859,7 @@ public class ToolbarController implements ToolbarProvider
 									  true);
 	}
 
-	private List<ToolbarButton> getCreateSiteNodeFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getCreateSiteNodeFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1895,17 +1869,13 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getCreatePageTemplateFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getCreatePageTemplateFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
-		
-		//Fix this dialog later
-		//buttons.addAll(getCommonNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
-
 		return buttons;
 	}
 
-	private List<ToolbarButton> getMySettingsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getMySettingsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1915,7 +1885,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getTrashcanFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getTrashcanFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -1933,7 +1903,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getInstallUpgradeDatabaseFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getInstallUpgradeDatabaseFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2032,7 +2002,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getPublishPageFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getPublishPageFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2086,7 +2056,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 	
-	private List<ToolbarButton> getUnpublishPageFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getUnpublishPageFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2140,7 +2110,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getPublishContentsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getPublishContentsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2194,7 +2164,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getUnPublishContentsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getUnPublishContentsFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2265,7 +2235,7 @@ public class ToolbarController implements ToolbarProvider
 
 	
 	
-	private List<ToolbarButton> getSystemUsersButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getSystemUsersButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		if(UserControllerProxy.getController().getSupportCreate())
@@ -2282,11 +2252,6 @@ public class ToolbarController implements ToolbarProvider
 											  "workIframe"));
 			}
 		}
-		
-		/*		
-		buttons.add(new ToolbarButton(true, "javascript:toggleSearchForm();", getLocalizedString(locale, "images.managementtool.buttons.searchButton"), "Search Form"));
-		*/
-		
 		return buttons;
 	}
 
@@ -2339,7 +2304,6 @@ public class ToolbarController implements ToolbarProvider
 						  "accessRights",
 						  "workIframe"));
 
-				//buttons.add(new ToolbarButton("UpdateSystemUserPassword!input.action?userName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding), URIEncoding), getLocalizedString(locale, "images.managementtool.buttons.updateSystemUserPassword"), "Update user password"));
 			}
 		}
 		
@@ -2354,7 +2318,6 @@ public class ToolbarController implements ToolbarProvider
 					  "properties",
 					  "workIframe"));
 
-			//buttons.add(new ToolbarButton("ViewUserProperties.action?userName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding), URIEncoding), getLocalizedString(locale, "images.managementtool.buttons.viewSystemUserProperties"), "View User Properties"));
 		}
 		
 		if(principal.getIsAdministrator())
@@ -2371,7 +2334,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;				
 	}
 	
-	private List<ToolbarButton> getRolesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getRolesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		if(RoleControllerProxy.getController().getSupportCreate())
@@ -2415,84 +2378,54 @@ public class ToolbarController implements ToolbarProvider
 		InfoGlueRole role = RoleControllerProxy.getController().getRole(roleName);
 		if(role.getAutorizationModule().getSupportDelete())
 		{
-			//boolean hasAccessToDeleteRole = hasAccessTo(principal, "Role.Delete", "" + roleName);
-			//if(hasAccessToDeleteRole)
-			//{
-				buttons.add(new ToolbarButton("",
-						getLocalizedString(locale, "tool.managementtool.deleteRole.header"), 
-						getLocalizedString(locale, "tool.managementtool.deleteRole.header"),
-						"DeleteRole.action?roleName=" + formatter.encodeBase64(roleName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-						"images/v3/createBackgroundPenPaper.gif",
-						"left",
-						"delete",
-						false,
-						true,
-						getLocalizedString(locale, "tool.managementtool.deleteRole.header"),
-						getLocalizedString(locale, "tool.managementtool.deleteRole.text", new String[]{roleName}),
-				  		"workIframe"));
-			//}
+			buttons.add(new ToolbarButton("",
+					getLocalizedString(locale, "tool.managementtool.deleteRole.header"), 
+					getLocalizedString(locale, "tool.managementtool.deleteRole.header"),
+					"DeleteRole.action?roleName=" + formatter.encodeBase64(roleName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
+					"images/v3/createBackgroundPenPaper.gif",
+					"left",
+					"delete",
+					false,
+					true,
+					getLocalizedString(locale, "tool.managementtool.deleteRole.header"),
+					getLocalizedString(locale, "tool.managementtool.deleteRole.text", new String[]{roleName}),
+			  		"workIframe"));
 		}
 		
 		List contentTypeDefinitionVOList = RolePropertiesController.getController().getContentTypeDefinitionVOList(roleName);
 		if(contentTypeDefinitionVOList.size() > 0)
 		{
-			//boolean hasAccessToEditProperties = hasAccessTo(principal, "Role.EditProperties", true);
-			//if(hasAccessToEditProperties)
-			//{
-				buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.managementtool.viewRoleProperties.header"), 
-					  getLocalizedString(locale, "tool.managementtool.viewRoleProperties.header"),
-					  "ViewRoleProperties.action?roleName=" + formatter.encodeBase64(roleName),
-					  "images/v3/advancedSettingsIcon.gif",
-					  "properties",
-					  "workIframe"));
-				//}
-		}
-
-		/*
-		boolean hasAccessToManageAllAccessRights = hasAccessTo(principal, "Role.ManageAllAccessRights", true);
-		boolean hasAccessToManageAccessRights = hasAccessTo(principal, "Role.ManageAccessRights", "" + roleName);
-		if(hasAccessToManageAllAccessRights || hasAccessToManageAccessRights)
-		{
 			buttons.add(new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.accessRights.header"), 
-				  getLocalizedString(locale, "tool.contenttool.accessRights.header"),
-				  "ViewAccessRights.action?interceptionPointCategory=Role&extraParameters=" + URLEncoder.encode(primaryKey, URIEncoding) + "&returnAddress=ViewRole!v3.action?roleName=" + URLEncoder.encode(primaryKey, URIEncoding) + "&colorScheme=ManagementTool",
-				  "images/v3/accessRightsIcon.gif",
-				  "accessRights"));
+				  getLocalizedString(locale, "tool.managementtool.viewRoleProperties.header"), 
+				  getLocalizedString(locale, "tool.managementtool.viewRoleProperties.header"),
+				  "ViewRoleProperties.action?roleName=" + formatter.encodeBase64(roleName),
+				  "images/v3/advancedSettingsIcon.gif",
+				  "properties",
+				  "workIframe"));
 		}
-		*/
-		/*
-		if(principal.getIsAdministrator())
-			buttons.add(new ToolbarButton("AuthorizationSwitchManagement!inputRole.action?roleName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding)), getLocalizedString(locale, "images.managementtool.buttons.transferRoleAccessRights"), "Transfer Roles Access Rights"));
-		*/
 
 		return buttons;				
 	}
 
 	
-	private List<ToolbarButton> getGroupsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getGroupsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		if(GroupControllerProxy.getController().getSupportCreate())
 		{
-			//boolean hasAccessToCreateGroup = hasAccessTo(principal, "Group.Create", true);
-			//if(hasAccessToCreateGroup)
-			//{
-				buttons.add(new ToolbarButton("",
-											  getLocalizedString(locale, "tool.managementtool.createGroup.header"), 
-											  getLocalizedString(locale, "tool.managementtool.createGroup.header"),
-											  "CreateGroup!input.action",
-											  "images/v3/createBackgroundPenPaper.gif",
-											  "create",
-											  "workIframe"));
-			//}
+			buttons.add(new ToolbarButton("",
+										  getLocalizedString(locale, "tool.managementtool.createGroup.header"), 
+										  getLocalizedString(locale, "tool.managementtool.createGroup.header"),
+										  "CreateGroup!input.action",
+										  "images/v3/createBackgroundPenPaper.gif",
+										  "create",
+										  "workIframe"));
 		}
 		
 		return buttons;
 	}
 
-	private List<ToolbarButton> getGroupDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getGroupDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -2515,62 +2448,36 @@ public class ToolbarController implements ToolbarProvider
 		InfoGlueGroup group = GroupControllerProxy.getController().getGroup(groupName);
 		if(group.getAutorizationModule().getSupportDelete())
 		{
-			//boolean hasAccessToDeleteGroup = hasAccessTo(principal, "Group.Delete", "" + primaryKey);
-			//if(hasAccessToDeleteGroup)
-			//{
-				buttons.add(new ToolbarButton("",
-						getLocalizedString(locale, "tool.managementtool.deleteGroup.header"), 
-						getLocalizedString(locale, "tool.managementtool.deleteGroup.header"),
-						"DeleteGroup.action?groupName=" + formatter.encodeBase64(groupName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-						"images/v3/createBackgroundPenPaper.gif",
-						"left",
-						"delete",
-						false,
-						true,
-						getLocalizedString(locale, "tool.managementtool.deleteGroup.header"),
-						getLocalizedString(locale, "tool.managementtool.deleteGroup.text", new String[]{groupName}),
-				  		"workIframe"));
-				//}
+			buttons.add(new ToolbarButton("",
+					getLocalizedString(locale, "tool.managementtool.deleteGroup.header"), 
+					getLocalizedString(locale, "tool.managementtool.deleteGroup.header"),
+					"DeleteGroup.action?groupName=" + formatter.encodeBase64(groupName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
+					"images/v3/createBackgroundPenPaper.gif",
+					"left",
+					"delete",
+					false,
+					true,
+					getLocalizedString(locale, "tool.managementtool.deleteGroup.header"),
+					getLocalizedString(locale, "tool.managementtool.deleteGroup.text", new String[]{groupName}),
+			  		"workIframe"));
 		}
 		
 		List contentTypeDefinitionVOList = GroupPropertiesController.getController().getContentTypeDefinitionVOList(groupName);
 		if(contentTypeDefinitionVOList.size() > 0)
 		{
-			//boolean hasAccessToEditProperties = hasAccessTo(principal, "Group.EditProperties", true);
-			//if(hasAccessToEditProperties)
-			//{
-				buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.managementtool.viewGroupProperties.header"), 
-					  getLocalizedString(locale, "tool.managementtool.viewGroupProperties.header"),
-					  "ViewGroupProperties.action?groupName=" + formatter.encodeBase64(groupName),
-					  "images/v3/advancedSettingsIcon.gif",
-					  "properties",
-					  "workIframe"));
-				//}
-		}
-
-		/*
-		boolean hasAccessToManageAllAccessRights = hasAccessTo(principal, "Group.ManageAllAccessRights", true);
-		boolean hasAccessToManageAccessRights = hasAccessTo(principal, "Group.ManageAccessRights", "" + groupName);
-		if(hasAccessToManageAllAccessRights || hasAccessToManageAccessRights)
-		{
 			buttons.add(new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.accessRights.header"), 
-				  getLocalizedString(locale, "tool.contenttool.accessRights.header"),
-				  "ViewAccessRights.action?interceptionPointCategory=Group&extraParameters=" + URLEncoder.encode(primaryKey, URIEncoding) + "&returnAddress=ViewGroup!v3.action?groupName=" + URLEncoder.encode(primaryKey, URIEncoding) + "&colorScheme=ManagementTool",
-				  "images/v3/accessRightsIcon.gif",
-				  "accessRights"));
+				  getLocalizedString(locale, "tool.managementtool.viewGroupProperties.header"), 
+				  getLocalizedString(locale, "tool.managementtool.viewGroupProperties.header"),
+				  "ViewGroupProperties.action?groupName=" + formatter.encodeBase64(groupName),
+				  "images/v3/advancedSettingsIcon.gif",
+				  "properties",
+				  "workIframe"));
 		}
-		*/
-		/*
-		if(principal.getIsAdministrator())
-			buttons.add(new ToolbarButton("AuthorizationSwitchManagement!inputGroup.action?groupName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding)), getLocalizedString(locale, "images.managementtool.buttons.transferGroupAccessRights"), "Transfer Groups Access Rights"));
-		*/
 
 		return buttons;				
 	}
 
-	private List<ToolbarButton> getGroupPropertiesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getGroupPropertiesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2597,7 +2504,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getRolePropertiesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getRolePropertiesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2624,7 +2531,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getUserPropertiesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getUserPropertiesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2651,47 +2558,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	/*
-	private List<ToolbarButton> getGroupsButtons() throws Exception
-	{
-		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
-		if(UserControllerProxy.getController().getSupportCreate())
-			buttons.add(new ToolbarButton("CreateGroup!input.action", getLocalizedString(locale, "images.managementtool.buttons.newGroup"), "New Group"));	
-		//if(UserControllerProxy.getController().getSupportDelete())
-		//	buttons.add(new ToolbarButton(true, "javascript:submitListFormWithPrimaryKey('group', 'groupName');", getLocalizedString(locale, "images.managementtool.buttons.deleteGroup"), "tool.managementtool.deleteGroups.header"));
-		
-		return buttons;
-	}
-	
-	private List<ToolbarButton> getGroupDetailsButtons() throws Exception
-	{
-		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
-		
-		String yesDestination 	= URLEncoder.encode("DeleteGroup.action?groupName=" + URLEncoder.encode(primaryKey, URIEncoding), URIEncoding);
-		String noDestination  	= URLEncoder.encode("ViewListGroup.action?title=Groups", URIEncoding);
-		String message 		 	= URLEncoder.encode("Do you really want to delete the group " + URLEncoder.encode(primaryKey, URIEncoding), URIEncoding);
-		
-		InfoGlueGroup group = GroupControllerProxy.getController().getGroup(primaryKey);
-		if(group.getAutorizationModule().getSupportDelete())
-			buttons.add(new ToolbarButton("Confirm.action?header=tool.managementtool.deleteGroup.header&yesDestination=" + yesDestination + "&noDestination=" + noDestination + "&message=tool.managementtool.deleteGroup.text&extraParameters=" + URLEncoder.encode(primaryKey, URIEncoding), getLocalizedString(locale, "images.managementtool.buttons.deleteGroup"), "tool.managementtool.deleteGroup.header"));
-		
-		List<ToolbarButton> contentTypeDefinitionVOList<ToolbarButton> = GroupPropertiesController.getController().getContentTypeDefinitionVOList(primaryKey);
-		if(contentTypeDefinitionVOList.size() > 0)
-			buttons.add(new ToolbarButton("ViewGroupProperties.action?groupName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding)), getLocalizedString(locale, "images.managementtool.buttons.viewGroupProperties"), "View Group Properties"));
-		
-		if(principal.getIsAdministrator())
-			buttons.add(new ToolbarButton("AuthorizationSwitchManagement!inputGroup.action?groupName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding)), getLocalizedString(locale, "images.managementtool.buttons.transferGroupAccessRights"), "Transfer Groups Access Rights"));
-				
-		boolean hasAccessToManageAllAccessRights = hasAccessTo(principal, "Group.ManageAllAccessRights", true);
-		boolean hasAccessToManageAccessRights = hasAccessTo(principal, "Group.ManageAccessRights", "" + primaryKey);
-		if(hasAccessToManageAllAccessRights || hasAccessToManageAccessRights)
-			buttons.add(new ToolbarButton("ViewAccessRights.action?interceptionPointCategory=Group&extraParameters=" + URLEncoder.encode(primaryKey, URIEncoding) + "&returnAddress=ViewGroup.action?groupName=" + URLEncoder.encode(primaryKey, URIEncoding) + "&colorScheme=ManagementTool", getLocalizedString(locale, "images.managementtool.buttons.accessRights"), "Group Access Rights"));
-
-		return buttons;				
-	}
-	*/
-	
-	private List<ToolbarButton> getRepositoriesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getRepositoriesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2702,21 +2569,6 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteRepositories.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteRepositories.header"),
-				"submitListForm('repository');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"Delete repository?",
-				"Really want to delete rep...",
-				"workIframe"));
-		*/
-		
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.importRepository.header"), 
 				  getLocalizedString(locale, "tool.managementtool.importRepository.header"),
@@ -2730,7 +2582,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 	
-	private List<ToolbarButton> getRepositoryDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getRepositoryDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -2804,7 +2656,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getLanguagesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getLanguagesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2815,25 +2667,10 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteLanguages.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteLanguages.header"),
-				"submitListForm('language');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"Delete repository?",
-				"Really want to delete rep...",
-				"workIframe"));
-		*/
-		
 		return buttons;
 	}
 
-	private List<ToolbarButton> getLanguageDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getLanguageDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -2856,7 +2693,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getCategoryButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getCategoryButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2872,20 +2709,6 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteCategories.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteCategories.header"),
-				"submitListForm('category');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
 	    final String protectCategories = CmsPropertyHandler.getProtectCategories();
 	    if(protectCategories != null && protectCategories.equalsIgnoreCase("true") && request.getParameter("categoryId") != null && !request.getParameter("categoryId").equals(""))
 	    {
@@ -2904,7 +2727,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 	
-	private List<ToolbarButton> getContentTypeDefinitionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentTypeDefinitionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2915,25 +2738,10 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteContentTypeDefinitions.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteContentTypeDefinitions.header"),
-				"submitListForm('contentTypeDefinition');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
-
 		return buttons;
 	}
 
-	private List<ToolbarButton> getContentTypeDefinitionDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getContentTypeDefinitionDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -2975,7 +2783,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getWorkflowDefinitionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getWorkflowDefinitionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -2986,24 +2794,10 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteWorkflowDefinitions.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteWorkflowDefinitions.header"),
-				"submitListForm('workflowDefinition');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
 		return buttons;
 	}
 
-	private List<ToolbarButton> getWorkflowDefinitionDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getWorkflowDefinitionDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -3039,7 +2833,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getPortletsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getPortletsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3054,7 +2848,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getRedirectsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getRedirectsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3065,24 +2859,10 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteRedirects.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteRedirects.header"),
-				"submitListForm('redirect');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
 		return buttons;
 	}
 
-	private List<ToolbarButton> getRedirectDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getRedirectDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -3106,7 +2886,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 
-	private List<ToolbarButton> getInterceptionPointsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getInterceptionPointsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3117,27 +2897,11 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteInterceptionPoints.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteInterceptionPoints.header"),
-				"submitListForm('interceptionPoint');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
-		
 		return buttons;
 	}
 
 
-	private List<ToolbarButton> getInterceptionPointButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getInterceptionPointButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws NumberFormatException, SystemException 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -3167,7 +2931,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 	
-	private List<ToolbarButton> getInterceptorsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getInterceptorsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3178,25 +2942,10 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteInterceptors.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteInterceptors.header"),
-				"submitListForm('interceptor');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
-		
 		return buttons;
 	}
 
-	private List<ToolbarButton> getInterceptorButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getInterceptorButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws NumberFormatException, SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -3219,7 +2968,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 	
-	private List<ToolbarButton> getServiceDefinitionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getServiceDefinitionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3230,24 +2979,10 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteServiceDefinitions.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteServiceDefinitions.header"),
-				"submitListForm('serviceDefinition');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
 		return buttons;
 	}
 
-	private List<ToolbarButton> getServiceDefinitionDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getServiceDefinitionDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws NumberFormatException, SystemException
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -3270,7 +3005,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 
-	private List<ToolbarButton> getAvailableServiceBindingsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getAvailableServiceBindingsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3281,24 +3016,10 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteAvailableServiceBindings.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteAvailableServiceBindings.header"),
-				"submitListForm('availableServiceBinding');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
 		return buttons;
 	}
 
-	private List<ToolbarButton> getAvailableServiceBindingDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getAvailableServiceBindingDetailsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws NumberFormatException, SystemException 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
@@ -3320,7 +3041,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 	
-	private List<ToolbarButton> getSiteNodeTypeDefinitionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getSiteNodeTypeDefinitionsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3331,20 +3052,6 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteSiteNodeTypeDefinitions.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteSiteNodeTypeDefinitions.header"),
-				"submitListForm('siteNodeTypeDefinition');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
 		return buttons;
 	}
 
@@ -3371,7 +3078,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 	
-	private List<ToolbarButton> getServerNodesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getServerNodesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3382,20 +3089,6 @@ public class ToolbarController implements ToolbarProvider
 				  "images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
-		/*
-		buttons.add(new ToolbarButton("",
-				getLocalizedString(locale, "tool.managementtool.deleteServerNodes.header"),
-				getLocalizedString(locale, "tool.managementtool.deleteServerNodes.header"),
-				"submitListForm('serverNode');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
-				"left",
-				"delete",
-				true, 
-				false, 
-				"",
-				"",
-				"workIframe"));
-		*/
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.editServerNodeProperties.header"), 
 				  getLocalizedString(locale, "tool.managementtool.editServerNodeProperties.header"),
@@ -3407,36 +3100,14 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getApplicationSettingsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getApplicationSettingsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
 		return buttons;
 	}
 
-	/*
-
-	private List<ToolbarButton> getServerNodesButtons() throws Exception
-	{
-		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
-		buttons.add(new ToolbarButton("CreateServerNode!input.action", getLocalizedString(locale, "images.managementtool.buttons.newServerNode"), "tool.managementtool.createServerNode.header"));	
-		buttons.add(new ToolbarButton(true, "javascript:submitListForm('serverNode');", getLocalizedString(locale, "images.managementtool.buttons.deleteServerNode"), "tool.managementtool.deleteServerNodes.header"));
-		buttons.add(new ToolbarButton("ViewServerNodeProperties.action?serverNodeId=-1", getLocalizedString(locale, "images.global.buttons.editProperties"), "Edit Properties", new Integer(22), new Integer(80)));
-		
-		return buttons;
-	}
-	
-	private List<ToolbarButton> getServerNodeDetailsButtons() throws Exception
-	{
-		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
-		buttons.add(new ToolbarButton("Confirm.action?header=tool.managementtool.deleteServerNode.header&yesDestination=" + URLEncoder.encode("DeleteServerNode.action?serverNodeId=" + primaryKey, "UTF-8") + "&noDestination=" + URLEncoder.encode("ViewListServerNode.action?title=ServerNodes", "UTF-8") + "&message=tool.managementtool.deleteServerNode.text&extraParameters=" + this.extraParameters, getLocalizedString(locale, "images.managementtool.buttons.deleteServerNode"), "tool.managementtool.deleteServerNode.header"));
-		buttons.add(new ToolbarButton("ViewServerNodeProperties.action?serverNodeId=" + primaryKey, getLocalizedString(locale, "images.global.buttons.editProperties"), "Edit Properties", new Integer(22), new Integer(80)));
-		
-		return buttons;				
-	}
-	*/
-
-	private List<ToolbarButton> getMessageCenterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getMessageCenterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3450,7 +3121,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getThemesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getThemesButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3465,7 +3136,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getLabelsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getLabelsButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3481,7 +3152,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 	
-	private List<ToolbarButton> getQuickDeployFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getQuickDeployFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3506,7 +3177,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getVCDeployFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getVCDeployFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 
@@ -3642,7 +3313,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;				
 	}
 
-	private List<ToolbarButton> getMySettingsButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getMySettingsButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		buttons.add(new ToolbarButton("mySettingsButton",
@@ -3658,7 +3329,7 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 	
-	private List<ToolbarButton> getHelpButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getHelpButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton)
 	{
 		String helpPageBaseUrl = "http://www.infoglue.org";
 		
@@ -3692,7 +3363,7 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;
 	}
 
-	private List<ToolbarButton> getWindowCloseButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
+	private List<ToolbarButton> getWindowCloseButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) 
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 

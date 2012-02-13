@@ -31,25 +31,15 @@ import java.util.Map;
  * This authentication module authenticates an user against the ordinary infoglue database.
  */
 
-public class InfoGlueExtranetAuthenticationModule //implements AuthenticationModule
+public class InfoGlueExtranetAuthenticationModule
 {
 
 	/**
 	 * This method authenticates against the infoglue extranet user database.
 	 */
-	
-	public boolean aauthenticate(String userName, String password, Map parameters) throws Exception
+	public boolean aauthenticate(String userName, String password, Map parameters) 
 	{
 		boolean isAuthenticated = false;
-		
-		//AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.ChangeAccessRights", protectedContentId.toString())
-		
-		//if(ExtranetUserController.getController().getExtranetUserVO(userName, password) != null)
-		//	isAuthenticated = true;
-		
 		return isAuthenticated;
 	}
-
-
-
 }

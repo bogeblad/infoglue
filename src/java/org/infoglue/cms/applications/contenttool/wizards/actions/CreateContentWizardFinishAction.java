@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.wizards.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
@@ -66,7 +67,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 	}
 	
 	
-	public String doExecute() throws Exception
+	public String doExecute()
 	{
 		try
 		{
@@ -159,7 +160,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 		return NONE;
 	}
 
-	public String doCancel() throws Exception
+	public String doCancel()
 	{
 		try
 		{
@@ -184,7 +185,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 	}
 
 	
-	public String doV3() throws Exception
+	public String doV3()
 	{
 		try
 		{
@@ -253,7 +254,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 		return NONE;
 	}
 
-	public String doCancelV3() throws Exception
+	public String doCancelV3()
 	{
 		try
 		{
@@ -387,7 +388,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 		return getCreateContentWizardInfoBean().getReturnAddress();
 	}
 
-	public String getEncodedRefreshAddress() throws Exception
+	public String getEncodedRefreshAddress() throws UnsupportedEncodingException
 	{
 		return URLEncoder.encode(getCreateContentWizardInfoBean().getReturnAddress(), "utf-8");
 	}

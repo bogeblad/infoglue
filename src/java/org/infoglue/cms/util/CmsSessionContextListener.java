@@ -82,7 +82,7 @@ public class CmsSessionContextListener implements HttpSessionListener
 		return activeSessions;
 	}
 
-	static public List getSessionInfoBeanList() throws Exception
+	static public List getSessionInfoBeanList() throws InterruptedException, SystemException 
 	{
 		List stiList = new ArrayList();
 

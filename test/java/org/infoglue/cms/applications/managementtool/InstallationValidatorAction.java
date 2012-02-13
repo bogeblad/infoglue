@@ -648,7 +648,7 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
      * This method validates the authorization plugin connection
      * @throws Exception
      */
-    private void validateAuthorization() throws Exception
+    private void validateAuthorization() 
     {
         String name = "Authorization module";
         String description = "Testing if the authorization module can get the data it needs.";
@@ -657,15 +657,6 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
         {
         	InfoGluePrincipal user = UserControllerProxy.getController().getUser("mattias");
             addValidationItem(name, "Testing if the authorization module can get user: ", true, "Found " + user.getName());
-            /*
-        	List users = UserControllerProxy.getController().getAllUsers();
-            List roles = RoleControllerProxy.getController().getAllRoles();
-            List groups = GroupControllerProxy.getController().getAllGroups();
-            
-            addValidationItem(name, "Testing if the authorization module can get users: ", true, "Found " + users.size() + " users.");
-            addValidationItem(name, "Testing if the authorization module can get roles: ", true, "Found " + roles.size() + " roles.");
-            addValidationItem(name, "Testing if the authorization module can get groups: ", true, "Found " + groups.size() + " groups.");
-        	*/
         }
         catch(Exception e)
         {

@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,6 +46,8 @@ import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.entities.management.RolePropertiesVO;
 import org.infoglue.cms.entities.management.UserProperties;
 import org.infoglue.cms.entities.management.UserPropertiesVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsSessionContextListener;
 
 
@@ -84,7 +87,7 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
         this.contentVersionVO = contentVersionVO;
     }
     
-    public String doExecute() throws Exception
+    public String doExecute() throws IOException, SystemException, ConstraintException
     {
         if(this.contentVersionId != null)
         {
@@ -113,14 +116,14 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
         return "success";
     }
 
-    public String doMultiple() throws Exception
+    public String doMultiple() throws IOException, SystemException, ConstraintException, Exception
     {
     	doExecute();
     	
         return "successMultiple";
     }
 
-    public String doUpdate() throws Exception
+    public String doUpdate() throws SystemException, ConstraintException
     {
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
 

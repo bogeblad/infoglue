@@ -43,7 +43,7 @@ public class ChangeSiteNodeSortOrderAction extends InfoGlueAbstractAction
 		return "success";
     }
 
-    public String doToggleHidden() throws Exception
+    public String doToggleHidden()
     {		
     	try
     	{

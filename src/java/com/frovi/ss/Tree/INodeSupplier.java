@@ -15,21 +15,21 @@ public interface INodeSupplier
 	/**
 	 * return true if this node (nodeId) has childnodes
 	 */
-	public boolean hasChildren(Integer nodeId) throws SystemException, Exception;
+	public boolean hasChildren(Integer nodeId) throws SystemException;
 	
-	/** 
+	/**
 	 * return true if you will answer the question above
 	 */
 	public boolean hasChildren();
 		
-	/** 	
+	/**
 	 * ContainerNodes (folderNodes)
 	 * Create a list of nodes that is children to the node with
 	 *	the supplied id "parentNode".
 	 *	Set the attributes on each node, and if possible
 	 *	also determine if each node itself has children.
 	 */
-	public Collection getChildContainerNodes(Integer parentNode) throws SystemException, Exception;
+	public Collection getChildContainerNodes(Integer parentNode) throws SystemException;
 	
 	/** 	
 	 * LeafNodes (documentNodes)

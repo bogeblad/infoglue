@@ -25,6 +25,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.entities.management.ServerNodeVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -53,7 +56,7 @@ public class UpdateServerNodeAction extends ViewServerNodeAction //WebworkAbstra
 	}
 
        	
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		super.initialize(getServerNodeId());
 
@@ -65,14 +68,14 @@ public class UpdateServerNodeAction extends ViewServerNodeAction //WebworkAbstra
 		return "success";
 	}
 
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws AccessConstraintException, ConstraintException, SystemException
     {
 		doExecute();
 						
 		return "saveAndExit";
 	}
 
-	public void setServerNodeId(Integer serverNodeId) throws Exception
+	public void setServerNodeId(Integer serverNodeId)
 	{
 		this.serverNodeVO.setServerNodeId(serverNodeId);	
 	}

@@ -62,7 +62,7 @@ public class NewsWorkflowTestCase extends WorkflowTestCase
 	 * Invokes the "Create News" workflow action
 	 * @throws java.lang.Exception if an error occurs
 	 */
-	protected void invokeCreateNews() throws Exception
+	protected void invokeCreateNews() 
 	{
 		invokeAction(new FakeHttpServletRequest(getCreateNewsParams()), 4);
 	}
@@ -71,7 +71,7 @@ public class NewsWorkflowTestCase extends WorkflowTestCase
 	 * Invokes the "Preview News and Approve" workflow action
 	 * @throws Exception if an error occurs
 	 */
-	protected void invokePreviewNewsAndApprove() throws Exception
+	protected void invokePreviewNewsAndApprove() 
 	{
 		invokeAction(new FakeHttpServletRequest(), 5);
 	}

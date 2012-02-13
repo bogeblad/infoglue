@@ -35,12 +35,12 @@ public class ViewMyDesktopToolAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = 1L;
 
-    public String doExecute() throws Exception
+    public String doExecute()
     {
         return "success";
     }
 
-    public String doV3() throws Exception
+    public String doV3()
     {
         return "successV3";
     }

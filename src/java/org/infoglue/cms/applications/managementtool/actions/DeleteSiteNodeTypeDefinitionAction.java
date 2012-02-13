@@ -47,7 +47,7 @@ public class DeleteSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
 		this.siteNodeTypeDefinitionVO = siteNodeTypeDefinitionVO;
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.siteNodeTypeDefinitionVO.setSiteNodeTypeDefinitionId(this.getSiteNodeTypeDefinitionId());
 		SiteNodeTypeDefinitionController.getController().delete(this.siteNodeTypeDefinitionVO);
@@ -55,7 +55,7 @@ public class DeleteSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
 		return "success";
 	}
 	
-	public void setSiteNodeTypeDefinitionId(Integer siteNodeTypeDefinitionId) throws SystemException
+	public void setSiteNodeTypeDefinitionId(Integer siteNodeTypeDefinitionId)
 	{
 		this.siteNodeTypeDefinitionVO.setSiteNodeTypeDefinitionId(siteNodeTypeDefinitionId);	
 	}

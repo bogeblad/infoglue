@@ -110,7 +110,7 @@ public class AccessRightParameterTag extends AbstractTag //implements ContentVer
 	 * 
 	 * @throws JspException if the ancestor tag isn't a url tag.
 	 */
-	public void addAccessRightAttribute(String name, String value) throws JspException
+	public void addAccessRightAttribute(String name, String value) 
 	{
 	    Map accessRightAttributes = (Map)this.accessRight.get("accessRightAttributes");
 	    if(accessRightAttributes == null)

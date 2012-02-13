@@ -109,7 +109,7 @@ public class DOMBuilder
 	 * This method creates a new Document from a file.
 	 */
 	
-	public Document getDocument(File file) throws Exception
+	public Document getDocument(File file) 
 	{
 		if(file == null)
 			return null;

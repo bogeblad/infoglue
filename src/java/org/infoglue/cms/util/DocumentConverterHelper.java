@@ -303,7 +303,7 @@ public class DocumentConverterHelper
 		throw new Exception ("The list of TOC elements was null.");
 	}
 
-	private static StringBuffer generateHtml(Object[] aTocElements, StringBuffer aReturnSb, String aHtmlFileUrl, String aTitle, int aMenuMaxLength, String keepMenuExpanded) throws Exception 
+	private static StringBuffer generateHtml(Object[] aTocElements, StringBuffer aReturnSb, String aHtmlFileUrl, String aTitle, int aMenuMaxLength, String keepMenuExpanded)  
 	{				
 		Element child 					= null;
 		Element grandChild				= null;

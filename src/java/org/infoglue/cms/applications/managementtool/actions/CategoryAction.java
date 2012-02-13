@@ -34,7 +34,7 @@ public class CategoryAction extends ModelAction
 	public Integer getCategoryId()			{ return getCategory().getCategoryId(); }
 	public void setCategoryId(Integer i)	{ getCategory().setCategoryId(i); }
 
-	public List getReferences() throws Exception
+	public List getReferences() throws SystemException
 	{
 		return contentCategoryController.findByCategory(getCategoryId());
 	}
@@ -45,7 +45,7 @@ public class CategoryAction extends ModelAction
 		return SUCCESS;
 	}
 
-	public String doNew() throws SystemException
+	public String doNew()
 	{
 		return SUCCESS;
 	}
@@ -56,7 +56,7 @@ public class CategoryAction extends ModelAction
 		return SUCCESS;
 	}
 
-	public String doDisplayTreeForMove() throws SystemException
+	public String doDisplayTreeForMove()
 	{
 		return SUCCESS;
 	}
@@ -74,7 +74,7 @@ public class CategoryAction extends ModelAction
 		return (getCategory().isRoot())? MAIN : SUCCESS;
 	}
 
-	public String doDelete() throws Exception
+	public String doDelete() throws ConstraintException, SystemException
 	{
 		List references = new ArrayList();
 		try
@@ -97,7 +97,7 @@ public class CategoryAction extends ModelAction
 	}
 
 	// Needed as part of WebworklAbstractAction
-	public String doExecute() throws Exception
+	public String doExecute()
 	{ 
 		return SUCCESS; 
 	}

@@ -40,7 +40,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import webwork.action.ActionContext;
 
 import com.opensymphony.workflow.InvalidActionException;
-import com.opensymphony.workflow.WorkflowException;
 
 /**
  * This class implements the action class for the startpage in the mydesktop tool.
@@ -78,7 +77,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 		return "success";
 	}
 
-	public String doShowWorkflowDetails() throws SystemException
+	public String doShowWorkflowDetails() 
 	{
 		try
 		{
@@ -92,7 +91,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 		return "successWorkflowDetails";
 	}
 
-	public String doShowRunningWorkflowDetails() throws SystemException
+	public String doShowRunningWorkflowDetails() 
 	{
 		try
 		{
@@ -346,7 +345,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	
 	
-	public String doGetActiveWorkflowProperties() throws Exception
+	public String doGetActiveWorkflowProperties()
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -396,7 +395,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 		return NONE;
 	}
 
-	public String doGetAvailableWorkflowProperties() throws Exception
+	public String doGetAvailableWorkflowProperties()
 	{
 		StringBuffer sb = new StringBuffer();
 		

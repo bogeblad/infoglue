@@ -29,6 +29,7 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ComponentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the palette view.
@@ -49,7 +50,7 @@ public class ViewComponentPaletteAction extends InfoGlueAbstractAction
 	 * This method returns the contents that are of contentTypeDefinition "HTMLTemplate" sorted on the property given.
 	 */
 	
-	public List getSortedComponents(String sortProperty) throws Exception
+	public List getSortedComponents(String sortProperty)
 	{
 	    List componentVOList = null;
 	    
@@ -68,29 +69,10 @@ public class ViewComponentPaletteAction extends InfoGlueAbstractAction
 	}
 	
 	
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
     	Integer currentRepositoryId = getRepositoryId();
 		this.masterLanguageVO = LanguageController.getController().getMasterLanguage(currentRepositoryId);		
-    	/*
-    	Integer currentRepositoryId = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId).getRepositoryId();
-		this.masterLanguageVO = LanguageController.getController().getMasterLanguage(currentRepositoryId);		
-		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
-		
-		if(filterRepositoryId == null)
-		{
-			Map args = new HashMap();
-		    args.put("globalKey", "infoglue");
-		    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
-
-		    String defaultTemplateRepository = ps.getString("repository_" + currentRepositoryId + "_defaultTemplateRepository");
-		    if(defaultTemplateRepository != null && !defaultTemplateRepository.equals(""))
-		        filterRepositoryId = new Integer(defaultTemplateRepository);
-		    else
-		        filterRepositoryId = currentRepositoryId;
-		}
-		*/
-    	
 		this.components = getSortedComponents("name");
 		
         return "success";

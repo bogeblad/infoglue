@@ -139,12 +139,12 @@ public class IncludeTag extends TemplateControllerTag
         this.contentName = evaluateString("includeTag", "contentName", contentName);
     }
 
-    public void setUseAttributeLanguageFallback(boolean useAttributeLanguageFallback) throws JspException
+    public void setUseAttributeLanguageFallback(boolean useAttributeLanguageFallback) 
     {
         this.useAttributeLanguageFallback = useAttributeLanguageFallback;
     }
 
-    public void setUseSubContext(boolean useSubContext) throws JspException
+    public void setUseSubContext(boolean useSubContext) 
     {
         this.useSubContext = useSubContext;
     }

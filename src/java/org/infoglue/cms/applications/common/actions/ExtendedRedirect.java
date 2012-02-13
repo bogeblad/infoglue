@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.common.actions;
 
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 import org.infoglue.cms.exception.ConfigurationError;
@@ -51,12 +52,8 @@ public class ExtendedRedirect extends InfoGlueAbstractAction
 	{
 		this.unparsedURL = unparsedURL;
 	}
-
-	/**
-	 *
-	 */
 	
-	public String doExecute() throws Exception 
+	public String doExecute() throws IOException 
 	{
 		validateUnparsedURL();
 		redirect();
@@ -76,12 +73,7 @@ public class ExtendedRedirect extends InfoGlueAbstractAction
 		}
 	}
 	
-	
-	/**
-	 *
-	 */
-	
-	private void redirect() throws Exception 
+	private void redirect() throws IOException 
 	{
 	    final String url = getResponse().encodeRedirectURL(parse(this.unparsedURL));
 		getResponse().sendRedirect(url);

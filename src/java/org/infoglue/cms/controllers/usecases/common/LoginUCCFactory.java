@@ -24,11 +24,10 @@
 package org.infoglue.cms.controllers.usecases.common;
 
 import org.infoglue.cms.controllers.usecases.common.impl.simple.LoginUCCImpl;
-import org.infoglue.cms.exception.SystemException;
 
 public class LoginUCCFactory
 {
-    public static LoginUCC newLoginUCC() throws SystemException
+    public static LoginUCC newLoginUCC() 
     {
         LoginUCC loginUCC = new LoginUCCImpl();
         return loginUCC;

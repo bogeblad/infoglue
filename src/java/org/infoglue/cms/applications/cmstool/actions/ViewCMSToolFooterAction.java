@@ -35,7 +35,7 @@ public class ViewCMSToolFooterAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = 3673372385470882657L;
 
-	public String doExecute() throws Exception
+	public String doExecute()
     {
         return "success";
     }

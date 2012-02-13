@@ -283,9 +283,8 @@ public class ContentTypeAttributeLabelTag extends TemplateControllerTag
 	 * @param attributeName
 	 * @param schema
 	 * @return
-	 * @throws SystemException
 	 */
-	private static ContentTypeAttribute getContentTypeDefinitionAttribute(ContentTypeDefinitionVO ctd, String attributeName) throws SystemException
+	private static ContentTypeAttribute getContentTypeDefinitionAttribute(ContentTypeDefinitionVO ctd, String attributeName) 
 	{
 		List<ContentTypeAttribute> attrs = ContentTypeDefinitionController.getController().getContentTypeAttributes(ctd, true);
 		for (ContentTypeAttribute attr : attrs)

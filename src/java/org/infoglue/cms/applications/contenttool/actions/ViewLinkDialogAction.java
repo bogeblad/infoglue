@@ -30,6 +30,7 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This action shows the Content-tree when binding stuff.
@@ -56,7 +57,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 	private List repositories;
 	
 	
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
@@ -70,7 +71,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 		return "success";					
     }
       
-    public String doViewLinkDialogForFCKEditor() throws Exception
+    public String doViewLinkDialogForFCKEditor() throws SystemException
     {
         this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
@@ -84,7 +85,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 		return "viewLinkDialogForFCKEditor";					        
     }
 
-    public String doViewLinkDialogForFCKEditorV3() throws Exception
+    public String doViewLinkDialogForFCKEditorV3() throws SystemException
     {
         this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 

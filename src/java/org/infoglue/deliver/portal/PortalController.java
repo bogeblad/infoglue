@@ -66,7 +66,7 @@ public class PortalController
      * @return the content the portlet produces
      * @throws PortalException
      */
-    public String renderFragment(String portletID, String windowID) throws NameNotFoundException, PortalException 
+    public String renderFragment(String portletID, String windowID) throws PortalException 
     {
         PortletWindowIG window = getPortletWindow(portletID, windowID);
         
@@ -89,7 +89,7 @@ public class PortalController
      *             thrown in case of an exception while initializing the
      *             portlet.
      */
-    public PortletWindowIG getPortletWindow(String portletID, String windowID) throws NameNotFoundException, PortalException 
+    public PortletWindowIG getPortletWindow(String portletID, String windowID) throws PortalException 
     {
         try 
         {

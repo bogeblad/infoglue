@@ -26,7 +26,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingController;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
+import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class CreateAvailableServiceBindingAction extends InfoGlueAbstractAction
@@ -111,15 +113,7 @@ public class CreateAvailableServiceBindingAction extends InfoGlueAbstractAction
         
     public void setVisualizationAction(String visualizationAction)
     {
-    	try
-    	{
-        	this.availableServiceBindingVO.setVisualizationAction(visualizationAction);
-    	}
-    	catch(ConstraintException ce)
-    	{
-    		this.visualizationAction = visualizationAction;
-    		this.ceb.add(new ConstraintExceptionBuffer(ce));
-    	}
+    	this.availableServiceBindingVO.setVisualizationAction(visualizationAction);
     }
 
 
@@ -133,15 +127,7 @@ public class CreateAvailableServiceBindingAction extends InfoGlueAbstractAction
         
     public void setIsMandatory(Boolean isMandatory)
     {
-    	try
-    	{
-        	this.availableServiceBindingVO.setIsMandatory(isMandatory);
-    	}
-    	catch(ConstraintException ce)
-    	{
-    		this.isMandatory = isMandatory;
-    		this.ceb.add(new ConstraintExceptionBuffer(ce));
-    	}
+    	this.availableServiceBindingVO.setIsMandatory(isMandatory);
     }
 
 
@@ -155,15 +141,7 @@ public class CreateAvailableServiceBindingAction extends InfoGlueAbstractAction
         
     public void setIsUserEditable(Boolean isUserEditable)
     {
-    	try
-    	{
-        	this.availableServiceBindingVO.setIsUserEditable(isUserEditable);
-    	}
-    	catch(ConstraintException ce)
-    	{
-    		this.isUserEditable = isUserEditable;
-    		this.ceb.add(new ConstraintExceptionBuffer(ce));
-    	}
+    	this.availableServiceBindingVO.setIsUserEditable(isUserEditable);
     }
 
     public Boolean getIsInheritable()
@@ -176,19 +154,11 @@ public class CreateAvailableServiceBindingAction extends InfoGlueAbstractAction
         
     public void setIsInheritable(Boolean isInheritable)
     {
-    	try
-    	{
-        	this.availableServiceBindingVO.setIsInheritable(isInheritable);
-    	}
-    	catch(ConstraintException ce)
-    	{
-    		this.isUserEditable = isInheritable;
-    		this.ceb.add(new ConstraintExceptionBuffer(ce));
-    	}
+    	this.availableServiceBindingVO.setIsInheritable(isInheritable);
     }
 
 
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		ceb.add(this.availableServiceBindingVO.validate());
     	ceb.throwIfNotEmpty();				
@@ -197,7 +167,7 @@ public class CreateAvailableServiceBindingAction extends InfoGlueAbstractAction
         return "success";
     }
         
-    public String doInput() throws Exception
+    public String doInput()
     {
     	return "input";
     }    

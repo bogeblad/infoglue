@@ -47,7 +47,7 @@ import com.frovi.ss.Tree.BaseNodeSupplier;
  */
 public class ContentNodeVersionSupplier extends BaseNodeSupplier
 {
-	public ContentNodeVersionSupplier(Integer repositoryId, String userName) throws SystemException
+	public ContentNodeVersionSupplier(Integer repositoryId, String userName) 
 	{
 		ContentVO vo =null;
 		try

@@ -24,11 +24,10 @@
 package org.infoglue.cms.controllers.usecases.structuretool;
 
 import org.infoglue.cms.controllers.usecases.structuretool.impl.simple.UpdateSiteNodeVersionUCCImpl;
-import org.infoglue.cms.exception.SystemException;
 
 public class UpdateSiteNodeVersionUCCFactory
 {
-    public static UpdateSiteNodeVersionUCC newUpdateSiteNodeVersionUCC() throws SystemException
+    public static UpdateSiteNodeVersionUCC newUpdateSiteNodeVersionUCC() 
     {
         UpdateSiteNodeVersionUCC updateSiteNodeVersionUCC = new UpdateSiteNodeVersionUCCImpl();
         return updateSiteNodeVersionUCC;

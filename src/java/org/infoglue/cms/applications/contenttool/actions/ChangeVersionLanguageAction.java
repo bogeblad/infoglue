@@ -28,6 +28,8 @@ import java.util.List;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 
 public class ChangeVersionLanguageAction extends InfoGlueAbstractAction
@@ -46,14 +48,14 @@ public class ChangeVersionLanguageAction extends InfoGlueAbstractAction
 		    
 	private List languageVOList = null;
 
-	public String doInput() throws Exception
+	public String doInput() throws ConstraintException, SystemException
 	{      		
 		this.languageVOList = LanguageController.getController().getLanguageVOList(repositoryId);
 		
 		return INPUT;
 	}
 
-	public String doInputV3() throws Exception
+	public String doInputV3() throws ConstraintException, SystemException
 	{      		
 		this.languageVOList = LanguageController.getController().getLanguageVOList(repositoryId);
 		

@@ -32,6 +32,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -83,7 +84,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 		return "ViewStructureTreeForInlineLink.action";
 	}
 	
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
@@ -97,14 +98,14 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 		return "success";					
     }
 
-    public String doUseFCKEditor() throws Exception
+    public String doUseFCKEditor() throws SystemException
     {
         doExecute();
         
 		return "successFCKEditor";					
     }
 
-    public String doUseFCKEditorV3() throws Exception
+    public String doUseFCKEditorV3() throws SystemException
     {
         doExecute();
         

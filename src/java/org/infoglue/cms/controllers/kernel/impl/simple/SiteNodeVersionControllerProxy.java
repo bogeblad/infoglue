@@ -34,7 +34,6 @@ import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -92,7 +91,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	 * This method returns a specific siteNodeVersion-object
 	 */
 	
-    public SiteNodeVersionVO getACLatestActiveSiteNodeVersionVO(InfoGluePrincipal infogluePrincipal, Integer siteNodeId) throws ConstraintException, SystemException, Exception
+    public SiteNodeVersionVO getACLatestActiveSiteNodeVersionVO(InfoGluePrincipal infogluePrincipal, Integer siteNodeId) throws Exception 
     {
 		SiteNodeVersionVO siteNodeVersionVO = getLatestActiveSiteNodeVersionVO(siteNodeId);
 		
@@ -103,22 +102,6 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
     	
 		return getLatestActiveSiteNodeVersionVO(siteNodeId);
     } 
-
-    
-	/**
-	 * This method creates a content after first checking that the user has rights to edit it.
-	 */
-/*
-	public ContentVO acCreate(InfoGluePrincipal infogluePrincipal, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws ConstraintException, SystemException, Exception
-	{
-		Map hashMap = new HashMap();
-		hashMap.put("contentId", parentContentId);
-    	
-		intercept(hashMap, "Content.Create", infogluePrincipal);
-
-		return ContentController.getContentController().create(parentContentId, contentTypeDefinitionId, repositoryId, contentVO);
-	}   
-*/
     
 	/**
 	 * This method updates a content after first checking that the user has rights to edit it.

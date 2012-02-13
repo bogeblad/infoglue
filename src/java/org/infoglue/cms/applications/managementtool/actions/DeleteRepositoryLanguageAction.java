@@ -49,7 +49,7 @@ public class DeleteRepositoryLanguageAction extends InfoGlueAbstractAction
 		this.repositoryLanguageVO = repositoryLanguageVO;
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.repositoryLanguageVO.setRepositoryLanguageId(this.getRepositoryLanguageId());
 		RepositoryLanguageController.getController().delete(this.repositoryLanguageVO);
@@ -57,7 +57,7 @@ public class DeleteRepositoryLanguageAction extends InfoGlueAbstractAction
 		return "success";
 	}
 	
-	public void setRepositoryLanguageId(Integer repositoryLanguageId) throws SystemException
+	public void setRepositoryLanguageId(Integer repositoryLanguageId)
 	{
 		this.repositoryLanguageVO.setRepositoryLanguageId(repositoryLanguageId);	
 	}
@@ -67,7 +67,7 @@ public class DeleteRepositoryLanguageAction extends InfoGlueAbstractAction
         return this.repositoryLanguageVO.getRepositoryLanguageId();
     }
         
-	public void setRepositoryId(Integer repositoryId) throws SystemException
+	public void setRepositoryId(Integer repositoryId)
 	{
 		this.repositoryId = repositoryId;	
 	}

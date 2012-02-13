@@ -23,9 +23,14 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.IOException;
+
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupPropertiesController;
 import org.infoglue.cms.entities.management.GroupPropertiesVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -51,7 +56,7 @@ public class UpdateGroupPropertiesAction extends InfoGlueAbstractAction
 		this.ceb = new ConstraintExceptionBuffer();	
 	}
 		
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, SystemException, IOException
 	{
 		ceb.throwIfNotEmpty();
 		GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
@@ -61,21 +66,21 @@ public class UpdateGroupPropertiesAction extends InfoGlueAbstractAction
 	    return NONE;	
 	}
 
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws SystemException
 	{
 	    GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
 						 
 		return "saveAndExit";
 	}
 
-	public String doSaveAndExitStandalone() throws Exception
+	public String doSaveAndExitStandalone() throws SystemException
 	{
 	    GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
 						 
 		return "saveAndExitStandalone";
 	}
 
-	public String doV3() throws Exception
+	public String doV3() throws SystemException, IOException, AccessConstraintException, ConstraintException
 	{
 		ceb.throwIfNotEmpty();
 		GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
@@ -85,7 +90,7 @@ public class UpdateGroupPropertiesAction extends InfoGlueAbstractAction
 	    return NONE;	
 	}
 
-	public String doSaveAndExitV3() throws Exception
+	public String doSaveAndExitV3() throws SystemException
 	{
 	    GroupPropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.groupPropertiesVO);
 						 

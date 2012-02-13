@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingController;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 
 /**
@@ -50,14 +51,14 @@ public class DeleteAvailableServiceBindingAction extends InfoGlueAbstractAction
 		this.availableServiceBindingVO = availableServiceBindingVO;
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws ConstraintException, SystemException 
 	{
 		AvailableServiceBindingController.getController().delete(this.availableServiceBindingVO);
 		
 		return "success";
 	}
 	
-	public void setAvailableServiceBindingId(Integer availableServiceBindingId) throws SystemException
+	public void setAvailableServiceBindingId(Integer availableServiceBindingId)
 	{
 		this.availableServiceBindingVO.setAvailableServiceBindingId(availableServiceBindingId);	
 	}

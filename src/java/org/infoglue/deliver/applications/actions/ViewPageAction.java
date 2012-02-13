@@ -924,7 +924,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	 * normal site-delivery version.
 	 */
 	
-	public TemplateController getTemplateController(DatabaseWrapper dbWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal, boolean allowEditOnSightAtAll) throws SystemException, Exception
+	public TemplateController getTemplateController(DatabaseWrapper dbWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal, boolean allowEditOnSightAtAll) 
 	{
 		TemplateController templateController = new BasicTemplateController(dbWrapper, infoGluePrincipal);
 		templateController.setStandardRequestParameters(siteNodeId, languageId, contentId);	
@@ -1826,7 +1826,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		return url;
   	}
 
-  	private String getErrorUrl() throws Exception 
+  	private String getErrorUrl()   
   	{
   		String errorUrl = CmsPropertyHandler.getErrorUrl();
   		

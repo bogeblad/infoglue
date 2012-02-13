@@ -24,7 +24,6 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +62,6 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -376,8 +374,7 @@ public class SearchController extends BaseController
    	 * @param userName
    	 * @return
    	 * @throws SystemException
-   	 * @throws Bug
-   	 */
+      	 */
    	
    	public static Set getContentVersions(Integer contentTypeDefinitionId, String userName, Date publishStartDate, Date publishEndDate, Date unpublishStartDate, Date unpublishEndDate) throws SystemException
    	{
@@ -763,7 +760,7 @@ public class SearchController extends BaseController
    	/**
    	 * This method searches with lucene
    	 */
-   	private List<ContentVersionVO> getContentVersionVOListFromLucene(Integer[] repositoryIdAsIntegerToSearch, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionIds, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean includeAssets) throws SystemException
+   	private List<ContentVersionVO> getContentVersionVOListFromLucene(Integer[] repositoryIdAsIntegerToSearch, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionIds, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean includeAssets)
    	{
    		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
    		
@@ -1141,7 +1138,7 @@ public class SearchController extends BaseController
 	    }
 	}
 
-	public static org.apache.lucene.document.Document getDocument(String text) throws IOException, InterruptedException
+	public static org.apache.lucene.document.Document getDocument(String text)
 	{
 		org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();
 

@@ -42,7 +42,7 @@ import org.infoglue.cms.entities.management.AccessRightVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.AccessConstraintException;
-import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 
@@ -73,13 +73,13 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	private List groupList = null;
 	private Collection accessRightsUserRows = null;
 
-    public String doV3() throws Exception
+    public String doV3() throws ConstraintException, Exception
     {
     	doExecute();
     	return "successV3";
     }
     
-    public String doExecute() throws Exception
+    public String doExecute() throws ConstraintException, Exception
     {
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		

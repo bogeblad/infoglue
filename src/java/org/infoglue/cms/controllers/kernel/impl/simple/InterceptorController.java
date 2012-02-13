@@ -38,7 +38,6 @@ import org.infoglue.cms.entities.management.InterceptionPoint;
 import org.infoglue.cms.entities.management.Interceptor;
 import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.management.impl.simple.InterceptorImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -109,11 +108,9 @@ public class InterceptorController extends BaseController
 	 * @param interceptionPointId
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getInterceptorsVOList(Integer interceptionPointId, Database db)  throws SystemException, Exception
+	public List getInterceptorsVOList(Integer interceptionPointId, Database db)  throws SystemException
 	{
 		String key = "" + interceptionPointId;
 		logger.info("key:" + key);
@@ -123,8 +120,6 @@ public class InterceptorController extends BaseController
 			logger.info("There was an cached InterceptorVOList:" + cachedInterceptorVOList.size());
 			return cachedInterceptorVOList;
 		}
-		
-		//List<InterceptorVO> interceptorsVOList = getInterceptorVOList(interceptionPointId, db);
 		
 		InterceptionPoint interceptionPoint = InterceptionPointController.getController().getReadOnlyInterceptionPointWithId(interceptionPointId, db);
 		

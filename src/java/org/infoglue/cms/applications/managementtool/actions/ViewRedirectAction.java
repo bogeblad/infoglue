@@ -27,6 +27,9 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.RedirectVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the action class for viewRedirect.
@@ -52,7 +55,7 @@ public class ViewRedirectAction extends InfoGlueAbstractAction
         this.redirectVO = redirectVO;
     }
     
-    protected void initialize(Integer redirectId) throws Exception
+    protected void initialize(Integer redirectId) throws SystemException
     {
         redirectVO = RedirectController.getController().getRedirectVOWithId(redirectId);
     } 
@@ -61,7 +64,7 @@ public class ViewRedirectAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-object for this use-case
      */
     
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         this.initialize(getRedirectId());
 
@@ -72,7 +75,7 @@ public class ViewRedirectAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-object for this use-case
      */
     
-    public String doLocalView() throws Exception
+    public String doLocalView() throws SystemException
     {
         this.initialize(getRedirectId());
 
@@ -84,7 +87,7 @@ public class ViewRedirectAction extends InfoGlueAbstractAction
         return this.redirectVO.getRedirectId();
     }
         
-    public void setRedirectId(java.lang.Integer redirectId) throws Exception
+    public void setRedirectId(java.lang.Integer redirectId)
     {
         this.redirectVO.setRedirectId(redirectId);
     }

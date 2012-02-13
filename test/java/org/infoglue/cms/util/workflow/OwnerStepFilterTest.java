@@ -23,7 +23,7 @@ public class OwnerStepFilterTest extends InfoGlueTestCase
 		// Don't initialize InfoGlue; we don't need it for this
 	}
 
-	public void testIsAllowedAdministrator() throws Exception
+	public void testIsAllowedAdministrator() 
 	{
 		OwnerStepFilter filter = new OwnerStepFilter(getAdminPrincipal());
 		assertTrue("admin should be allowed if admin owns it", filter.isAllowed(adminStep));
@@ -31,7 +31,7 @@ public class OwnerStepFilterTest extends InfoGlueTestCase
 		assertTrue("admin should be allowed if nobody owns it", filter.isAllowed(unownedStep));
 	}
 
-	public void testIsAllowedUser() throws Exception
+	public void testIsAllowedUser() 
 	{
 		OwnerStepFilter filter = new OwnerStepFilter(getCmsUserPrincipal());
 		assertFalse("user should not be allowed if admin owns it", filter.isAllowed(adminStep));

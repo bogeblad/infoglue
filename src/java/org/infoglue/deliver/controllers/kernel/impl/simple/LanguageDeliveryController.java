@@ -32,6 +32,7 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
@@ -112,11 +113,9 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 * 
 	 * @param repositoryId
 	 * @return
-	 * @throws SystemException
-	 * @throws Exception
 	 */
 
-	public List getAvailableLanguagesForRepository(Database db, Integer repositoryId) throws SystemException, Exception
+	public List getAvailableLanguagesForRepository(Database db, Integer repositoryId) throws PersistenceException 
     {
 		String key = "" + repositoryId + "_allLanguages";
 		logger.info("key:" + key);
@@ -243,7 +242,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
 	 */
 	
-	public LanguageVO getMasterLanguage(Database db, String repositoryName) throws SystemException, Exception
+	public LanguageVO getMasterLanguage(Database db, String repositoryName) throws PersistenceException 
 	{ 
         Language language = null;
 
@@ -269,7 +268,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
 	 */
 	
-	public LanguageVO getMasterLanguageForRepository(Database db, Integer repositoryId) throws SystemException, Exception
+	public LanguageVO getMasterLanguageForRepository(Database db, Integer repositoryId) throws PersistenceException 
 	{ 
 		String languageKey = "" + repositoryId;
 		if(logger.isInfoEnabled())
@@ -306,8 +305,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 * This method returns the master language. 
 	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
 	 */
-	
-	public LanguageVO getMasterLanguageForRepository(Integer repositoryId, Database db) throws SystemException, Exception
+	public LanguageVO getMasterLanguageForRepository(Integer repositoryId, Database db) throws PersistenceException 
 	{ 
 		LanguageVO languageVO = null;
 
@@ -344,7 +342,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 * This method returns the master language. 
 	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
 	 */
-	public LanguageVO getMasterLanguageForSiteNode(Database db, Integer siteNodeId) throws SystemException, Exception
+	public LanguageVO getMasterLanguageForSiteNode(Database db, Integer siteNodeId) throws SystemException, PersistenceException 
 	{ 
 		SiteNodeVO smallestSiteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(siteNodeId, db);
 		return getMasterLanguageForRepository(smallestSiteNodeVO.getRepositoryId(), db);
@@ -353,49 +351,11 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	/**
 	 * This method returns the master language. 
 	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
-	 */
-	/*
-	public LanguageVO getMasterLanguageForSiteNode(Database db, Integer siteNodeId) throws SystemException, Exception
-	{ 
-	    String languageKey = "siteNodeId_" + siteNodeId;
-		logger.info("languageKey in getMasterLanguageForSiteNode:" + languageKey);
-		LanguageVO languageVO = (LanguageVO)CacheController.getCachedObject("masterLanguageCache", languageKey);
-		if(languageVO != null)
-		{
-		    logger.info("There was an cached master language:" + languageVO.getName());
-		}
-		else
-		{
-			SiteNode siteNode = (SiteNode)getObjectWithId(SiteNodeImpl.class, siteNodeId, db);
-			Integer repositoryId = siteNode.getRepository().getRepositoryId();
-         	
-			OQLQuery oql = db.getOQLQuery( "SELECT l FROM org.infoglue.cms.entities.management.impl.simple.LanguageImpl l WHERE l.repositoryLanguages.repository.repositoryId = $1 ORDER BY l.repositoryLanguages.sortOrder, l.languageId");
-			oql.bind(repositoryId);
-			
-        	QueryResults results = oql.execute(Database.ReadOnly);
-			
-			if (results.hasMore()) 
-            {
-				Language language = (Language)results.next();
-				languageVO = language.getValueObject();
-            }
-			
-			results.close();
-			oql.close();
-			
-			CacheController.cacheObject("masterLanguageCache", languageKey, languageVO);
-		}
-		
-        return languageVO;	
-	}
-	*/
-	
-	/**
-	 * This method returns the master language. 
-	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
+	 * @throws PersistenceException 
+	 * @throws SystemException 
 	 */
 	
-	public LanguageVO getMasterLanguageForSiteNodeWithValityCheck(Database db, NodeDeliveryController ndc, Integer siteNodeId) throws SystemException, Exception
+	public LanguageVO getMasterLanguageForSiteNodeWithValityCheck(Database db, NodeDeliveryController ndc, Integer siteNodeId) throws PersistenceException, SystemException 
 	{ 
 	    String languageKey = "validLanguage_siteNodeId_" + siteNodeId;
 		logger.info("languageKey in getMasterLanguageForSiteNode:" + languageKey);
@@ -512,7 +472,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 * This method returns language with the languageCode sent in. 
 	 */
 	
-	public LanguageVO getLanguageWithCode(Database db, String languageCode) throws SystemException, Exception
+	public LanguageVO getLanguageWithCode(Database db, String languageCode) throws PersistenceException 
 	{ 
 		String key = "" + languageCode;
 		logger.info("key:" + key);
@@ -550,7 +510,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 * This method returns language with the languageCode sent in if it is allowed/supported in the current repository. 
 	 */
 	
-	public LanguageVO getLanguageIfRepositorySupportsIt(Database db, String languageCodes, Integer siteNodeId) throws SystemException, Exception
+	public LanguageVO getLanguageIfRepositorySupportsIt(Database db, String languageCodes, Integer siteNodeId) throws SystemException 
 	{
 		if (languageCodes == null) return null;
 		int index = Integer.MAX_VALUE;
@@ -587,8 +547,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	/**
 	 * This method returns language with the languageCode sent in if it is allowed/supported in the current repository. 
 	 */
-	
-	public LanguageVO getLanguageIfSiteNodeSupportsIt(Database db, String languageCodes, Integer siteNodeId, InfoGluePrincipal principal) throws SystemException, Exception
+	public LanguageVO getLanguageIfSiteNodeSupportsIt(Database db, String languageCodes, Integer siteNodeId, InfoGluePrincipal principal) throws Exception
 	{
 	    if (languageCodes == null) 
 	    	return null;
@@ -892,7 +851,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	}
 
 	
-	public boolean getIsValidLanguage(Database db, NodeDeliveryController ndc, /*Integer siteNodeId, */SiteNode siteNode, Integer languageId) throws Exception
+	public boolean getIsValidLanguage(Database db, NodeDeliveryController ndc, SiteNode siteNode, Integer languageId) throws SystemException 
 	{
 	    boolean isValidLanguage = true;
 	    									

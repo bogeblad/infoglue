@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.common.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,8 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 import webwork.action.Action;
@@ -143,7 +146,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		return this.contentVersionVOList;		
 	}
 	
-	public String doExecute() throws Exception 
+	public String doExecute() throws SystemException, ConstraintException 
 	{
 	    int maxRows = 100;
 		try
@@ -210,7 +213,7 @@ public class SearchAction extends InfoGlueAbstractAction
 	}
 
 
-	public String doBindingResult() throws Exception 
+	public String doBindingResult() throws SystemException 
 	{
 		Integer[] allowedContentTypeId = new Integer[0];
 		if(allowedContentTypeIds != null && allowedContentTypeIds.length != 0)
@@ -250,7 +253,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		return "successBindingResult";
 	}
 
-	public String doInlineAssetResult() throws Exception 
+	public String doInlineAssetResult() throws SystemException 
 	{
 		Integer[] allowedContentTypeId = new Integer[0];
 		if(allowedContentTypeIds != null && allowedContentTypeIds.length != 0)
@@ -290,7 +293,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		return "successInlineAssetResult";
 	}
 
-	public String doInlineAssetSearchV3() throws Exception 
+	public String doInlineAssetSearchV3() throws SystemException 
 	{
 		int maxRows = 100;
 		try
@@ -322,7 +325,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		return "successInlineAssetSearchV3";
 	}
 
-	public String doLatestInlineAssetsV3() throws Exception 
+	public String doLatestInlineAssetsV3() throws SystemException 
 	{
 		int maxRows = 20;
 		/*
@@ -360,8 +363,7 @@ public class SearchAction extends InfoGlueAbstractAction
 	/**
 	 * This method returns the advanced search interface to the user.
 	 */
-
-	public String doInput() throws Exception 
+	public String doInput() throws Exception  
 	{
 		if(CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
 		{
@@ -382,7 +384,7 @@ public class SearchAction extends InfoGlueAbstractAction
 	 * This method returns the binding search interface to the user.
 	 */
 
-	public String doInputBinding() throws Exception 
+	public String doInputBinding() throws SystemException 
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
@@ -393,7 +395,7 @@ public class SearchAction extends InfoGlueAbstractAction
 	 * This method returns the binding search interface to the user.
 	 */
 
-	public String doInputInlineAsset() throws Exception 
+	public String doInputInlineAsset() throws SystemException 
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
@@ -404,7 +406,7 @@ public class SearchAction extends InfoGlueAbstractAction
 	 * This method returns the binding search interface to the user.
 	 */
 
-	public String doInputInlineAssetV3() throws Exception 
+	public String doInputInlineAssetV3() throws SystemException 
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	    
@@ -580,7 +582,7 @@ public class SearchAction extends InfoGlueAbstractAction
         this.allowedContentTypeIds = allowedContentTypeIds;
     }
     
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
+    public String getAllowedContentTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer();
         

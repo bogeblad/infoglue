@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServiceDefinitionController;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 
 /**
@@ -47,14 +48,14 @@ public class DeleteServiceDefinitionAction extends InfoGlueAbstractAction
 		this.serviceDefinitionVO = serviceDefinitionVO;
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws ConstraintException, SystemException 
 	{
 		ServiceDefinitionController.getController().delete(this.serviceDefinitionVO);
 		
 		return "success";
 	}
 
-	public void setServiceDefinitionId(Integer serviceDefinitionId) throws SystemException
+	public void setServiceDefinitionId(Integer serviceDefinitionId)
 	{
 		this.serviceDefinitionVO.setServiceDefinitionId(serviceDefinitionId);	
 	}

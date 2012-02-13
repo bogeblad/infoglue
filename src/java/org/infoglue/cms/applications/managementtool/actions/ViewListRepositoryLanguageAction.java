@@ -31,6 +31,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * 	Action class for usecase ViewListLanguageUCC 
@@ -47,7 +49,7 @@ public class ViewListRepositoryLanguageAction extends InfoGlueAbstractAction
 	private List allRemainingLanguageVOList;
 	private Integer repositoryId;
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws ConstraintException, SystemException 
 	{
 		this.repositoryVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryId);
 		this.repositoryLanguageVOList = RepositoryLanguageController.getController().getRepositoryLanguageVOListWithRepositoryId(repositoryId);
@@ -76,7 +78,7 @@ public class ViewListRepositoryLanguageAction extends InfoGlueAbstractAction
 		this.repositoryId = repositoryId;		
 	}
 
-	public LanguageVO getLanguage(Integer repositoryLanguageId) throws Exception
+	public LanguageVO getLanguage(Integer repositoryLanguageId) throws SystemException
 	{
 		return LanguageController.getController().getLanguageVOWithRepositoryLanguageId(repositoryLanguageId);
 	}

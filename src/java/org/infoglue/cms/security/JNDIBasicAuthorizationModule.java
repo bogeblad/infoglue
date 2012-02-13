@@ -47,7 +47,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.util.CacheController;
@@ -328,7 +327,7 @@ public class JNDIBasicAuthorizationModule implements AuthorizationModule, Serial
 	 * Gets an authorized InfoGlueRole.
 	 */
 	
-	public InfoGlueRole getAuthorizedInfoGlueRole(String roleName, DirContext ctx) throws Exception
+	public InfoGlueRole getAuthorizedInfoGlueRole(String roleName, DirContext ctx)
 	{
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueRole starting ---------\n\n\n");
 		
@@ -432,7 +431,7 @@ public class JNDIBasicAuthorizationModule implements AuthorizationModule, Serial
 	 * Gets an authorized InfoGlueGroup.
 	 */
 	
-	public InfoGlueGroup getAuthorizedInfoGlueGroup(String groupName, DirContext ctx) throws Exception
+	public InfoGlueGroup getAuthorizedInfoGlueGroup(String groupName, DirContext ctx)
 	{
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueGroup starting ---------\n\n\n");
 		
@@ -1380,7 +1379,7 @@ public class JNDIBasicAuthorizationModule implements AuthorizationModule, Serial
 		return users;
 	}
 	
-	public List getRoleUsers(String roleName, DirContext ctx) throws Exception
+	public List getRoleUsers(String roleName, DirContext ctx)
 	{
 		List users = new ArrayList();
 		
@@ -1651,7 +1650,7 @@ public class JNDIBasicAuthorizationModule implements AuthorizationModule, Serial
     /** 
      * Gets a list of users which is memebers of the given group
      */
-    public List getGroupUsers(String groupName, DirContext ctx) throws Exception
+    public List getGroupUsers(String groupName, DirContext ctx)
     {
 	    logger.info("--------getGroupUsers(String groupName) start---------------");
 		List users = new ArrayList();

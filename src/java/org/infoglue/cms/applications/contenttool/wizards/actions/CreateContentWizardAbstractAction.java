@@ -67,7 +67,7 @@ public abstract class CreateContentWizardAbstractAction extends InfoGlueAbstract
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try
@@ -89,7 +89,7 @@ public abstract class CreateContentWizardAbstractAction extends InfoGlueAbstract
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try

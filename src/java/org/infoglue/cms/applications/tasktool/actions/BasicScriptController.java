@@ -64,7 +64,7 @@ public class BasicScriptController implements ScriptController
 	 * All scripts are run within it's own transaction for now.
 	 */
 
-	public BasicScriptController(InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+	public BasicScriptController(InfoGluePrincipal infoGluePrincipal) throws SystemException 
 	{
 		this.db = CastorDatabaseService.getDatabase();
 		this.infoGluePrincipal = infoGluePrincipal;
@@ -313,7 +313,7 @@ public class BasicScriptController implements ScriptController
 	 * Rollbacks a transaction on the named database
 	 */
      
-	public void rollbackTransaction() throws SystemException
+	public void rollbackTransaction() 
 	{
 		try
 		{

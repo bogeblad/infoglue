@@ -138,14 +138,8 @@ public abstract class PageInvoker
 		this.templateController.setDeliveryContext(this.deliveryContext);
 	}
 	
-    public Database getDatabase() throws SystemException
+    public Database getDatabase()
     {
-        /*
-        if(this.db == null || this.db.isClosed() || !this.db.isActive())
-        {
-            beginTransaction();
-        }
-        */
         return dbWrapper.getDatabase();
     }
 

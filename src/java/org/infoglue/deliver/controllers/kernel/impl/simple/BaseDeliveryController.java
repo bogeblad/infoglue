@@ -290,7 +290,6 @@ public abstract class BaseDeliveryController
 	public static void closeTransaction(Database db) throws SystemException
 	{
 	    logger.info("closeTransaction a transaction and closing it...");
-	    //rollbackTransaction(db);
 	    commitTransaction(db);
 	}
        
@@ -303,15 +302,13 @@ public abstract class BaseDeliveryController
 		try
 		{
 		    logger.info("Committing a transaction and closing it...");
-		    
 		    db.commit();
-			db.close();
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 			throw new SystemException("An error occurred when we tried to commit an transaction. Reason:" + e.getMessage(), e);    
 		}
+		closeDatabase(db);
 	}
  
  
@@ -319,23 +316,21 @@ public abstract class BaseDeliveryController
 	 * Rollbacks a transaction on the named database
 	 */
      
-	public static void rollbackTransaction(Database db) throws SystemException
+	public static void rollbackTransaction(Database db) throws SystemException 
 	{
 	    logger.info("Rollback a transaction...");
-
 		try
 		{
 			if (db.isActive())
 			{
 				db.rollback();
-			    db.close();
 			}
 		}
 		catch(Exception e)
 		{
 			logger.info("An error occurred when we tried to rollback an transaction. Reason:" + e.getMessage());
-			//throw new SystemException("An error occurred when we tried to rollback an transaction. Reason:" + e.getMessage(), e);    
 		}
+		closeDatabase(db);
 	}
 
 	/**
@@ -347,12 +342,10 @@ public abstract class BaseDeliveryController
 		try
 		{
 		    logger.info("Closing database...");
-
 			db.close();
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 			throw new SystemException("An error occurred when we tried to close a database. Reason:" + e.getMessage(), e);    
 		}
 	}

@@ -32,8 +32,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.workflow.WorkflowDefinition;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
 import org.infoglue.cms.entities.workflow.impl.simple.WorkflowDefinitionImpl;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.deliver.util.CacheController;
 
@@ -69,7 +67,6 @@ public class WorkflowDefinitionController extends BaseController
 	 * @param name
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 
 	public WorkflowDefinitionVO getWorkflowDefinitionVOWithName(String name) throws SystemException
@@ -104,7 +101,6 @@ public class WorkflowDefinitionController extends BaseController
 	 * @param db
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 
 	public WorkflowDefinition getWorkflowDefinitionWithName(String name, Database db) throws SystemException
@@ -151,7 +147,7 @@ public class WorkflowDefinitionController extends BaseController
     }
     
 
-    public WorkflowDefinitionVO create(WorkflowDefinitionVO workflowDefinitionVO) throws ConstraintException, SystemException
+    public WorkflowDefinitionVO create(WorkflowDefinitionVO workflowDefinitionVO) throws SystemException
     {
         WorkflowDefinition workflowDefinition = new WorkflowDefinitionImpl();
         workflowDefinition.setValueObject(workflowDefinitionVO);
@@ -159,12 +155,12 @@ public class WorkflowDefinitionController extends BaseController
         return workflowDefinition.getValueObject();
     }
 
-    public void delete(WorkflowDefinitionVO workflowDefinitionVO) throws ConstraintException, SystemException
+    public void delete(WorkflowDefinitionVO workflowDefinitionVO) throws SystemException
     {
     	deleteEntity(WorkflowDefinitionImpl.class, workflowDefinitionVO.getWorkflowDefinitionId());
     }
 
-    public WorkflowDefinitionVO update(WorkflowDefinitionVO workflowDefinitionVO) throws ConstraintException, SystemException
+    public WorkflowDefinitionVO update(WorkflowDefinitionVO workflowDefinitionVO) throws SystemException
     {
     	return (WorkflowDefinitionVO) updateEntity(WorkflowDefinitionImpl.class, workflowDefinitionVO);
     }

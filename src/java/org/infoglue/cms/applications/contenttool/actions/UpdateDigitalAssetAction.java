@@ -50,9 +50,8 @@ import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.entities.management.RolePropertiesVO;
 import org.infoglue.cms.entities.management.UserProperties;
 import org.infoglue.cms.entities.management.UserPropertiesVO;
-import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
@@ -106,7 +105,7 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
 		this.digitalAssetKey = digitalAssetKey;
 	}
 		   
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException
     {
     	initialize();
 
@@ -287,7 +286,7 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
         return "success";
     }
 
-	private void initialize() throws SystemException, ConstraintException
+	private void initialize()
 	{
 		try
 		{
@@ -328,7 +327,7 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl() throws Exception
+	public String getDigitalAssetUrl()
 	{
 		String imageHref = null;
 		try

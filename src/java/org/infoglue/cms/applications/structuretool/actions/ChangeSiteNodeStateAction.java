@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeStateController;
+import org.infoglue.cms.exception.SystemException;
 
 
 public class ChangeSiteNodeStateAction extends InfoGlueAbstractAction
@@ -46,9 +47,10 @@ public class ChangeSiteNodeStateAction extends InfoGlueAbstractAction
 	 * This method gets called when calling this action. 
 	 * If the stateId is 2 which equals that the user tries to prepublish the page. If so we
 	 * ask the user for a comment as this is to be regarded as a new version. 
+	 * @throws SystemException 
 	 */
 	   
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {      
     	//If the comment is not null we carry out the stateChange
     	if(getStateId().intValue() == 2 && getVersionComment() == null)

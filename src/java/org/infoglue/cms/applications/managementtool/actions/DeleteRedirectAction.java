@@ -27,7 +27,6 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.RedirectVO;
 import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
 
 /**
  * This action removes a redirect from the system.
@@ -58,7 +57,7 @@ public class DeleteRedirectAction extends InfoGlueAbstractAction
 		return "success";
 	}
 	
-	public void setRedirectId(Integer redirectId) throws SystemException
+	public void setRedirectId(Integer redirectId)
 	{
 		this.redirectVO.setRedirectId(redirectId);	
 	}

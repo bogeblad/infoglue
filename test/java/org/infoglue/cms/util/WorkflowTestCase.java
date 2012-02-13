@@ -36,6 +36,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
 import org.infoglue.cms.entities.mydesktop.WorkflowActionVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowStepVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 
 import com.opensymphony.module.propertyset.PropertySet;
@@ -120,10 +121,8 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 
 	/**
 	 * Starts the workflow by creating a new workflow instance and assigning it to workflow
-	 * @throws Exception
-	 * @see #setWorkflow
 	 */
-	protected void startWorkflow(int initialAction) throws Exception
+	protected void startWorkflow(int initialAction) throws SystemException 
 	{
 		setWorkflow(controller.initializeWorkflow(getUserPrincipal(), getWorkflowName(), initialAction, new HashMap()));
 	}
@@ -135,7 +134,7 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 	 * script testsrc/etc/clean-workflows.sql to clean up.
 	 * @throws Exception if an error occurs
 	 */
-	protected void finishWorkflow() throws Exception
+	protected void finishWorkflow()
 	{
 		invokeAction(new FakeHttpServletRequest(), FINISH_WORKFLOW);
 		assertWorkflowFinished();
@@ -147,7 +146,7 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 	 * @param actionId the ID of the desired workflow action
 	 * @throws Exception if an error occurs
 	 */
-	protected void invokeAction(HttpServletRequest request, int actionId) throws Exception
+	protected void invokeAction(HttpServletRequest request, int actionId) 
 	{
 		workflow = controller.invokeAction(getUserPrincipal(), getWorkflowId(), actionId, WorkflowController.createWorkflowParameters(request));
 	}
@@ -192,7 +191,7 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 	 * of current workflows.
 	 * @throws Exception if an error occurs.
 	 */
-	protected void assertWorkflowFinished() throws Exception
+	protected void assertWorkflowFinished()
 	{
 		assertNull("Workflow should not be in current workflows list", findCurrentWorkflow());
 	}
@@ -202,7 +201,7 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 	 * @return the WorkflowVO whose ID matches workflowId, or null if no match is found
 	 * @throws Exception if an error occurs
 	 */
-	protected WorkflowVO findCurrentWorkflow() throws Exception
+	protected WorkflowVO findCurrentWorkflow()
 	{
 		return findWorkflow(controller.getCurrentWorkflowVOList(getUserPrincipal()));
 	}

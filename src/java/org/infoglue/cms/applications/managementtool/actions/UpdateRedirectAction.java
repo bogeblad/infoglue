@@ -26,6 +26,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.RedirectVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -54,7 +57,7 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
 	}
 
        	
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		super.initialize(getRedirectId());
 		if(super.redirectVO != null)
@@ -74,7 +77,7 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
 		return "success";
 	}
 
-	public String doLocal() throws Exception
+	public String doLocal() throws AccessConstraintException, ConstraintException, SystemException
     {
 		super.initialize(getRedirectId());
 		if(super.redirectVO != null)
@@ -93,21 +96,21 @@ public class UpdateRedirectAction extends ViewRedirectAction //WebworkAbstractAc
 		return "successLocal";
 	}
 
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws AccessConstraintException, ConstraintException, SystemException
     {
 		doExecute();
 						
 		return "saveAndExit";
 	}
 
-	public String doSaveAndExitLocal() throws Exception
+	public String doSaveAndExitLocal() throws AccessConstraintException, ConstraintException, SystemException
     {
 		doLocal();
 						
 		return "saveAndExitLocal";
 	}
 
-	public void setRedirectId(Integer redirectId) throws Exception
+	public void setRedirectId(Integer redirectId)
 	{
 		this.redirectVO.setRedirectId(redirectId);	
 	}

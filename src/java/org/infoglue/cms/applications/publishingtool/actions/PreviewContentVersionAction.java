@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.publishingtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * @author ss
@@ -42,9 +43,10 @@ public class PreviewContentVersionAction  extends InfoGlueAbstractAction
 	private ContentVersionVO contentVersionVO;
 
 	/**
+	 * @throws SystemException 
 	 * @see org.infoglue.cms.applications.common.actions.WebworkAbstractAction#doExecute()
 	 */
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId);
 		return "success";

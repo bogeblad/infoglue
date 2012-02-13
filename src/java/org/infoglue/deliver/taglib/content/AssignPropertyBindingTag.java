@@ -95,7 +95,7 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
         this.extraParameters = evaluateString("AssignPropertyBindingTag", "extraParameters", extraParameters);
     }
     
-    public void setHideComponentPropertiesOnLoad(final boolean hideComponentPropertiesOnLoad) throws JspException
+    public void setHideComponentPropertiesOnLoad(final boolean hideComponentPropertiesOnLoad) 
     {
         this.hideComponentPropertiesOnLoad = hideComponentPropertiesOnLoad;
     }

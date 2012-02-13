@@ -40,6 +40,7 @@ import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
 import org.infoglue.deliver.controllers.kernel.impl.simple.BasicTemplateController;
@@ -125,7 +126,7 @@ public class TextToImageEditorAction extends InfoGlueAbstractAction
         return "" + t + ", ";
     }
     
-    protected void initialize(Integer siteNodeId) throws Exception
+    protected void initialize(Integer siteNodeId) throws ConstraintException, SystemException
     {
 		this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
         this.siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(siteNodeId);
@@ -138,7 +139,7 @@ public class TextToImageEditorAction extends InfoGlueAbstractAction
 		}
     } 
     
-    protected String doExecute() throws Exception
+    protected String doExecute() throws SystemException
     {
         DatabaseWrapper dbWrapper = new DatabaseWrapper(CastorDatabaseService.getDatabase());
     	//Database db = CastorDatabaseService.getDatabase();
@@ -212,7 +213,7 @@ public class TextToImageEditorAction extends InfoGlueAbstractAction
         return "success";
     }
 
-    public BasicTemplateController getTemplateController(DatabaseWrapper databaseWrapper, Integer siteNodeId, Integer languageId, Integer contentId) throws SystemException, Exception
+    public BasicTemplateController getTemplateController(DatabaseWrapper databaseWrapper, Integer siteNodeId, Integer languageId, Integer contentId)
 	{
         BasicTemplateController templateController = new BasicTemplateController(databaseWrapper, this.getInfoGluePrincipal());
 		templateController.setStandardRequestParameters(siteNodeId, languageId, contentId);	

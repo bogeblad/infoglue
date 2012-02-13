@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 
 /**
@@ -47,7 +48,7 @@ public class ViewListContentTypeDefinitionAction extends InfoGlueAbstractAction
 	private List<ContentTypeDefinitionVO> contentTypeDefinitions;
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		//this.contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
 		this.contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOListWithParentId(null);
@@ -62,7 +63,7 @@ public class ViewListContentTypeDefinitionAction extends InfoGlueAbstractAction
 		return this.contentTypeDefinitions;		
 	}
 	
-	public List<ContentTypeDefinitionVO> getContentTypeDefinitions(Integer parentId) throws Exception
+	public List<ContentTypeDefinitionVO> getContentTypeDefinitions(Integer parentId) throws SystemException
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeDefinitionVOListWithParentId(parentId);
 	}

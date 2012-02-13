@@ -40,14 +40,14 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	private String treeMode = "classic";
 	private BaseNode rootNode = null; 
 	
-	public String doBindingView() throws Exception
+	public String doBindingView() throws SystemException
 	{
 		super.doExecute();
         
 		return "bindingView";
 	}
 
-	public String doBindingViewV3() throws Exception
+	public String doBindingViewV3() throws SystemException
 	{
 		super.doExecute();
         
@@ -57,7 +57,7 @@ public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 	/**
 	 * @see org.infoglue.cms.applications.common.actions.TreeViewAbstractAction#getNodeSupplier()
 	 */
-	protected INodeSupplier getNodeSupplier() throws Exception, SystemException
+	protected INodeSupplier getNodeSupplier() throws SystemException
 	{
 		if(getRepositoryId() == null  || getRepositoryId().intValue() < 1)
 			this.repositoryId = super.getRepositoryId();

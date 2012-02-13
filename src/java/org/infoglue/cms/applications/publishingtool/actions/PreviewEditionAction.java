@@ -38,7 +38,7 @@ public class PreviewEditionAction extends ViewPublicationsAction
 	private List contentVersionsToPublish  = new ArrayList();
 	private List siteNodeVersionsToPublish = new ArrayList();
 	
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	try
     	{

@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,6 +38,9 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.dom.DOMBuilder;
 
@@ -139,7 +143,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
 		return this.changeTypeId;
 	}
      
-    public String doInput() throws Exception
+    public String doInput() throws SystemException
     {    	
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
@@ -157,7 +161,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
         return "input";
     }
 
-    public String doInputV3() throws Exception
+    public String doInputV3() throws SystemException
     {    	
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
@@ -174,7 +178,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
         return "inputV3";
     }
 
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         if(this.newParentContentId == null)
         {
@@ -217,7 +221,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
         return "success";
     }
 
-    public String doV3() throws Exception
+    public String doV3() throws SystemException, AccessConstraintException, ConstraintException, IOException
     {
         userSessionKey = "" + System.currentTimeMillis();
 

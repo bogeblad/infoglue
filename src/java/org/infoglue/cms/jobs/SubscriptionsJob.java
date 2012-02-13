@@ -42,7 +42,6 @@ import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.interceptors.SubscriptionsInterceptor;

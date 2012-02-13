@@ -50,7 +50,7 @@ public class DeploymentController
 {
     private final static Logger logger = Logger.getLogger(DeploymentController.class.getName());
 
-	public static List<String> getAvailableTags(VersionControlServerBean serverBean) throws Exception
+	public static List<String> getAvailableTags(VersionControlServerBean serverBean) throws ConstraintException 
 	{
 		List<String> availableTags = new ArrayList<String>();
 		availableTags.add("HEAD");
@@ -72,7 +72,7 @@ public class DeploymentController
 		return availableTags;
 	}
 
-	public static List<DeploymentCompareBean> getDeploymentComparisonBeans(VersionControlServerBean versionControlServerBean, String tagName, InfoGluePrincipal principal) throws Exception
+	public static List<DeploymentCompareBean> getDeploymentComparisonBeans(VersionControlServerBean versionControlServerBean, String tagName, InfoGluePrincipal principal) throws SystemException 
 	{
 		List<DeploymentCompareBean> deploymentCompareBeans = new ArrayList<DeploymentCompareBean>();
 		

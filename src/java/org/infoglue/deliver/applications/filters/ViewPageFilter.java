@@ -586,7 +586,7 @@ public class ViewPageFilter implements Filter
         return languageId;
     }
 
-    private Integer getContentId(HttpServletRequest request) throws ServletException, Exception 
+    private Integer getContentId(HttpServletRequest request) 
     {
         Integer contentId = null;
         

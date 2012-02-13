@@ -52,22 +52,22 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
     
     private boolean showInline = false;
 
-	public String doInput() throws Exception
+	public String doInput()
     {
     	return Action.INPUT;
     }
 
-    public String doInputV3() throws Exception
+    public String doInputV3()
     {
     	return Action.INPUT + "V3";
     }
 
-    public String doInputStandalone() throws Exception
+    public String doInputStandalone()
     {
     	return "inputStandalone";
     }
 
-    public String doInputStandaloneV3() throws Exception
+    public String doInputStandaloneV3()
     {
     	showInline = true;
     	

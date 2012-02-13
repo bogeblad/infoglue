@@ -30,6 +30,8 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServiceDefinitionController;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 public class ViewAvailableServiceBindingAction extends InfoGlueAbstractAction
 {
@@ -51,7 +53,7 @@ public class ViewAvailableServiceBindingAction extends InfoGlueAbstractAction
         this.availableServiceBindingVO = availableServiceBindingVO;
     }
     
-    protected void initialize(Integer availableServiceBindingId) throws Exception
+    protected void initialize(Integer availableServiceBindingId) throws SystemException, ConstraintException
     {
 	    //ViewAvailableServiceBindingUCC viewAvailableServiceBindingUCC = ViewAvailableServiceBindingUCCFactory.newViewAvailableServiceBindingUCC();
         //availableServiceBindingVO = viewAvailableServiceBindingUCC.viewAvailableServiceBinding(availableServiceBindingId);
@@ -63,7 +65,7 @@ public class ViewAvailableServiceBindingAction extends InfoGlueAbstractAction
         serviceDefinitionVOList = ServiceDefinitionController.getController().getServiceDefinitionVOList();
     } 
     
-    public String doExecute() throws Exception
+    public String doExecute() throws ConstraintException, SystemException
     {
         logger.info("Executing doExecute on ViewAvailableServiceBindingAction..");
 		initialize(getAvailableServiceBindingId());

@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.common;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,11 +85,7 @@ public class ValueConverter
         return publishDate;
      }
 
-    /**
-     * 
-     */
-    
-    public static final Date toDate(String dateString, String pattern) throws Exception 
+    public static final Date toDate(String dateString, String pattern) throws ParseException 
     {
         if(dateString == null || dateString.length() == 0)
             return null;

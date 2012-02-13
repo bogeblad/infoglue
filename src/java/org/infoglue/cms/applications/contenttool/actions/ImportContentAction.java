@@ -36,6 +36,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
@@ -86,7 +87,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 	 * @throws Exception
 	 */	
 
-	public String doInput() throws Exception
+	public String doInput()
 	{
 		return "input";
 	}
@@ -304,10 +305,9 @@ public class ImportContentAction extends InfoGlueAbstractAction
 	 * 
 	 * @param siteNode
 	 * @param db
-	 * @throws Exception
 	 */
 	
-	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db) throws Exception
+	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db) throws SystemException, PersistenceException
 	{
 		ContentTypeDefinition contentTypeDefinition = null;
 		

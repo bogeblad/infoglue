@@ -32,6 +32,7 @@ import org.infoglue.cms.controllers.usecases.structuretool.UpdateSiteNodeUCC;
 import org.infoglue.cms.controllers.usecases.structuretool.UpdateSiteNodeUCCFactory;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.NotificationMessage;
@@ -85,74 +86,65 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 	
 	public String doExecute() throws Exception
     {
-		//try
-		//{
-			this.updated = true;
-			
-			super.initialize(getSiteNodeId());
-			SiteNodeVO oldSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
+		this.updated = true;
+		
+		super.initialize(getSiteNodeId());
+		SiteNodeVO oldSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
 
-			this.siteNodeVO.setCreatorName(this.getInfoGluePrincipal().getName());
-			this.siteNodeVO.setMetaInfoContentId(oldSiteNodeVO.getMetaInfoContentId());
-			ceb = this.siteNodeVO.validate();
-	    	
-			ceb.throwIfNotEmpty();
+		this.siteNodeVO.setCreatorName(this.getInfoGluePrincipal().getName());
+		this.siteNodeVO.setMetaInfoContentId(oldSiteNodeVO.getMetaInfoContentId());
+		ceb = this.siteNodeVO.validate();
+    	
+		ceb.throwIfNotEmpty();
 
-			SiteNodeVersionVO siteNodeVersionVO = new SiteNodeVersionVO();
-			siteNodeVersionVO.setContentType(this.getContentType());
-			siteNodeVersionVO.setPageCacheKey(this.getPageCacheKey());
-			siteNodeVersionVO.setPageCacheTimeout(this.getPageCacheTimeout());
-			siteNodeVersionVO.setDisableEditOnSight(this.getDisableEditOnSight());
-			siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
-			siteNodeVersionVO.setDisablePageCache(this.getDisablePageCache());
-			siteNodeVersionVO.setDisableForceIdentityCheck(this.disableForceIdentityCheck);
-			siteNodeVersionVO.setForceProtocolChange(this.forceProtocolChange);
-			siteNodeVersionVO.setIsProtected(this.getIsProtected());
-			siteNodeVersionVO.setIsHidden(this.getIsHidden());
-			siteNodeVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
-			
-			UpdateSiteNodeUCC updateSiteNodeUCC = UpdateSiteNodeUCCFactory.newUpdateSiteNodeUCC();
-			updateSiteNodeUCC.updateSiteNode(this.getInfoGluePrincipal(), this.siteNodeVO, this.siteNodeTypeDefinitionId, siteNodeVersionVO);		
+		SiteNodeVersionVO siteNodeVersionVO = new SiteNodeVersionVO();
+		siteNodeVersionVO.setContentType(this.getContentType());
+		siteNodeVersionVO.setPageCacheKey(this.getPageCacheKey());
+		siteNodeVersionVO.setPageCacheTimeout(this.getPageCacheTimeout());
+		siteNodeVersionVO.setDisableEditOnSight(this.getDisableEditOnSight());
+		siteNodeVersionVO.setDisableLanguages(this.disableLanguages);
+		siteNodeVersionVO.setDisablePageCache(this.getDisablePageCache());
+		siteNodeVersionVO.setDisableForceIdentityCheck(this.disableForceIdentityCheck);
+		siteNodeVersionVO.setForceProtocolChange(this.forceProtocolChange);
+		siteNodeVersionVO.setIsProtected(this.getIsProtected());
+		siteNodeVersionVO.setIsHidden(this.getIsHidden());
+		siteNodeVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
+		
+		UpdateSiteNodeUCC updateSiteNodeUCC = UpdateSiteNodeUCCFactory.newUpdateSiteNodeUCC();
+		updateSiteNodeUCC.updateSiteNode(this.getInfoGluePrincipal(), this.siteNodeVO, this.siteNodeTypeDefinitionId, siteNodeVersionVO);		
 
-	    	Map args = new HashMap();
-		    args.put("globalKey", "infoglue");
-		    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+    	Map args = new HashMap();
+	    args.put("globalKey", "infoglue");
+	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 
-	    	String[] values = getRequest().getParameterValues("disabledLanguageId");
-	    	String valueString = "";
-	    	if(values != null)
+    	String[] values = getRequest().getParameterValues("disabledLanguageId");
+    	String valueString = "";
+    	if(values != null)
+    	{
+    		for(int i=0; i<values.length; i++)
 	    	{
-	    		for(int i=0; i<values.length; i++)
-		    	{
-		    	    if(i > 0)
-		    	        valueString = valueString + ",";
-		    	    valueString = valueString + values[i];  
-		    	}
+	    	    if(i > 0)
+	    	        valueString = valueString + ",";
+	    	    valueString = valueString + values[i];  
 	    	}
-	    	ps.setString("siteNode_" + getSiteNodeId() + "_disabledLanguages", valueString);
+    	}
+    	ps.setString("siteNode_" + getSiteNodeId() + "_disabledLanguages", valueString);
 
-	    	values = getRequest().getParameterValues("enabledLanguageId");
-	    	valueString = "";
-	    	if(values != null)
+    	values = getRequest().getParameterValues("enabledLanguageId");
+    	valueString = "";
+    	if(values != null)
+    	{
+    		for(int i=0; i<values.length; i++)
 	    	{
-	    		for(int i=0; i<values.length; i++)
-		    	{
-		    	    if(i > 0)
-		    	        valueString = valueString + ",";
-		    	    valueString = valueString + values[i];  
-		    	}
+	    	    if(i > 0)
+	    	        valueString = valueString + ",";
+	    	    valueString = valueString + values[i];  
 	    	}
-	    	ps.setString("siteNode_" + getSiteNodeId() + "_enabledLanguages", valueString);
+    	}
+    	ps.setString("siteNode_" + getSiteNodeId() + "_enabledLanguages", valueString);
 
-			NotificationMessage notificationMessage = new NotificationMessage("UpdateSiteNodeAction", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
-			ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-			//RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
-
-	    	//}
-		//catch(Exception e)
-		//{
-		//	e.printStackTrace();
-		//}
+		NotificationMessage notificationMessage = new NotificationMessage("UpdateSiteNodeAction", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
+		ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 			
 		return "success";
 	}
@@ -190,7 +182,7 @@ public class UpdateSiteNodeAction extends ViewSiteNodeAction //WebworkAbstractAc
 		return "saveAndExitV3Inline";
 	}
 
-    public String doUpdateSiteNodeTypeDefinition() throws Exception
+    public String doUpdateSiteNodeTypeDefinition() throws SystemException
     {
     	SiteNodeController.getController().updateSiteNodeTypeDefinition(getSiteNodeId(), this.siteNodeTypeDefinitionId);
     	

@@ -10,7 +10,7 @@ import org.infoglue.cms.entities.ValidationTestCase;
 public class CategoryTest extends ValidationTestCase
 {
 
-	public void testValidation() throws Exception
+	public void testValidation() 
 	{
 		checkSuccess(create(generateString(10)));
 		checkSuccess(create(generateString(10), generateString(0)));

@@ -29,7 +29,6 @@ import java.util.Properties;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 
 /**
@@ -128,7 +127,6 @@ public interface AuthorizationModule
 	 * @param roleIds
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws Exception;

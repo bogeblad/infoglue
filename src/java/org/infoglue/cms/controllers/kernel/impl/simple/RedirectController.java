@@ -47,7 +47,6 @@ import org.infoglue.cms.entities.management.Redirect;
 import org.infoglue.cms.entities.management.RedirectVO;
 import org.infoglue.cms.entities.management.impl.simple.RedirectImpl;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;

@@ -38,13 +38,13 @@ public class DeleteWorkflowDefinitionAction extends InfoGlueAbstractAction
 {
 	private WorkflowDefinitionVO workflowDefinitionVO = new WorkflowDefinitionVO();
 		
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		WorkflowDefinitionController.getController().delete(this.workflowDefinitionVO);
 		return "success";
 	}
 	
-	public void setWorkflowDefinitionId(Integer workflowDefinitionId) throws SystemException
+	public void setWorkflowDefinitionId(Integer workflowDefinitionId)
 	{
 		this.workflowDefinitionVO.setWorkflowDefinitionId(workflowDefinitionId);	
 	}

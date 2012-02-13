@@ -38,6 +38,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 
@@ -63,7 +64,7 @@ public class ViewListContentVersionAction extends InfoGlueAbstractAction
     private String originalAddress;
    	private String userSessionKey;
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws AccessConstraintException, SystemException 
 	{
 		if(this.contentId != null)
 		{
@@ -98,7 +99,7 @@ public class ViewListContentVersionAction extends InfoGlueAbstractAction
 	    return "success";
 	}
 
-	public String doV3() throws Exception 
+	public String doV3() throws AccessConstraintException, SystemException 
 	{
 		doExecute();
 		

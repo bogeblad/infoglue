@@ -95,14 +95,14 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 	 * @throws Exception
 	 */	
 
-	public String doInput() throws Exception
+	public String doInput()
 	{
 		standardReplacement = "stateYourOldSiteName=stateYourNewSiteName";
 
 		return "input";
 	}
 
-	public String doInputCopy() throws Exception
+	public String doInputCopy() throws SystemException
 	{
 		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
 		

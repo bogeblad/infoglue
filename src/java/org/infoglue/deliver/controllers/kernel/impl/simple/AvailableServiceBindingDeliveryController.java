@@ -26,10 +26,10 @@ package org.infoglue.deliver.controllers.kernel.impl.simple;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.deliver.util.CacheController;
 
 
@@ -59,7 +59,7 @@ public class AvailableServiceBindingDeliveryController extends BaseDeliveryContr
 	 * This method returns the available service binding with a specific name. 
 	 */
 	
-	public AvailableServiceBindingVO getAvailableServiceBindingVO(String availableServiceBindingName, Database db) throws SystemException, Exception
+	public AvailableServiceBindingVO getAvailableServiceBindingVO(String availableServiceBindingName, Database db) throws PersistenceException 
 	{ 
 	    String key = "" + availableServiceBindingName;
 		logger.info("key:" + key);
@@ -104,7 +104,7 @@ public class AvailableServiceBindingDeliveryController extends BaseDeliveryContr
 	 * This method returns the available service binding with a specific name. 
 	 */
 	
-	public AvailableServiceBinding getAvailableServiceBinding(String availableServiceBindingName, Database db) throws SystemException, Exception
+	public AvailableServiceBinding getAvailableServiceBinding(String availableServiceBindingName, Database db) throws PersistenceException 
 	{ 
 	    AvailableServiceBinding availableServiceBinding = null;
 	    

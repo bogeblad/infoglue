@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,9 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionCont
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.SystemException;
 
+import com.opensymphony.module.propertyset.PropertyException;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
 
@@ -64,7 +67,7 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
     {
     }
         
-    protected void initialize(Integer repositoryId) throws Exception
+    protected void initialize(Integer repositoryId) throws UnsupportedEncodingException, SystemException
     {
         this.repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
         this.contentTypeDefinitionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.CONTENT);
@@ -93,9 +96,11 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
 
     /**
      * The main method that fetches the Value-objects for this use-case
+     * @throws UnsupportedEncodingException 
+     * @throws SystemException 
      */
     
-    public String doExecute() throws Exception
+    public String doExecute() throws UnsupportedEncodingException, SystemException
     {
         this.initialize(getRepositoryId());
 
@@ -104,9 +109,10 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
     
     /**
      * The main method that fetches the Value-objects for this use-case
+     * @throws SystemException 
      */
     
-    public String doSave() throws Exception
+    public String doSave() throws PropertyException, UnsupportedEncodingException, SystemException
     {
     	Map args = new HashMap();
 	    args.put("globalKey", "infoglue");
@@ -131,7 +137,7 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
      * The main method that fetches the Value-objects for this use-case
      */
     
-    public String doSaveAndExit() throws Exception
+    public String doSaveAndExit() throws PropertyException, UnsupportedEncodingException, SystemException
     {
     	doSave();
     	
@@ -143,7 +149,7 @@ public class ViewRepositoryPropertiesAction extends InfoGluePropertiesAbstractAc
         return this.repositoryVO.getRepositoryId();
     }
         
-    public void setRepositoryId(java.lang.Integer repositoryId) throws Exception
+    public void setRepositoryId(java.lang.Integer repositoryId)
     {
         this.repositoryVO.setRepositoryId(repositoryId);
     }

@@ -60,7 +60,7 @@ public class ContentTypeDefinitionControllerTest extends InfoGlueTestCase
 		assertRemoved();
 	}
 
-	public void testGetDefinedAssetKeys() throws Exception
+	public void testGetDefinedAssetKeys() 
 	{
 		List keys = testController.getDefinedAssetKeys(testDefinition, true);
 		assertEquals("Wrong number of keys were found", 3, keys.size());
@@ -70,7 +70,7 @@ public class ContentTypeDefinitionControllerTest extends InfoGlueTestCase
 		assertFalse("xxxxxx key found", keys.contains("xxxxxx"));
 	}
 
-	public void testGetDefinedCategoryKeys() throws Exception
+	public void testGetDefinedCategoryKeys() 
 	{
 		List keys = testController.getDefinedCategoryKeys(testDefinition, true);
 		assertEquals("Wrong number of keys were found", 3, keys.size());

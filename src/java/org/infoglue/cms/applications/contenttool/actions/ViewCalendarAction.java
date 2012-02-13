@@ -37,7 +37,7 @@ public class ViewCalendarAction extends InfoGlueAbstractAction
 	private String formPath;
 	private String date;
 	
-	public String doExecute() throws Exception
+	public String doExecute()
     {		
 		return "success";
 	}

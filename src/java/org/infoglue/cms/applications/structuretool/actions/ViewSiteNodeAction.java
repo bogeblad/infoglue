@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingController;
@@ -112,7 +113,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
         this.siteNodeVersionVO = siteNodeVersionVO;
     }
 
-	protected void initialize(Integer siteNodeId) throws Exception
+	protected void initialize(Integer siteNodeId) throws Exception 
 	{
 		this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
 		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(this.siteNodeVO.getRepositoryId());
@@ -212,7 +213,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		}
 	} 
 
-	protected void initializeSiteNodeCover(Integer siteNodeId) throws Exception
+	protected void initializeSiteNodeCover(Integer siteNodeId) throws ConstraintException, SystemException
 	{
 		try
 		{
@@ -273,7 +274,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    }
 	} 
 
-	protected void initializeSiteNodeCover(Integer siteNodeId, Database db) throws Exception
+	protected void initializeSiteNodeCover(Integer siteNodeId, Database db) throws PersistenceException
 	{
 		try
 		{
@@ -333,21 +334,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	        }
 	    }
 	} 
-
-/*    
-    protected void initialize(Integer siteNodeId) throws Exception
-    {
-    	this.siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId);
-        this.siteNodeVersionVO = SiteNodeVersionController.getLatestSiteNodeVersionVO(siteNodeId);
-		
-        if(siteNodeVO.getSiteNodeTypeDefinitionId() != null)
-        {
-	        this.siteNodeTypeDefinitionVO = SiteNodeTypeDefinitionController.getSiteNodeTypeDefinitionVOWithId(siteNodeVO.getSiteNodeTypeDefinitionId());
-			this.availableServiceBindings = SiteNodeTypeDefinitionController.getAvailableServiceBindingVOList(siteNodeVO.getSiteNodeTypeDefinitionId());
-			this.serviceBindings = SiteNodeVersionController.getServiceBindningVOList(siteNodeVersionVO.getSiteNodeVersionId());
-		}
-    } 
-*/
 
     public String doExecute() throws Exception
     {
@@ -581,40 +567,25 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		
 		beginTransaction(db);
 
-		try
-		{
-			if(getSiteNodeId() != null)
-			{	
-	        	this.initialize(getSiteNodeId(), db);
+		if(getSiteNodeId() != null)
+		{	
+        	this.initialize(getSiteNodeId(), db);
 
-	            this.initializeSiteNodeCover(getSiteNodeId(), db);
-	            
-            	result = "successRefreshAndRedirect";
-			}
-			else
-			{
-				result = "blank";
-			}
-	        
-	        commitTransaction(db);
-	    }
-		catch(ConstraintException ce)
-		{
-			logger.info("An error occurred so we should not complete the transaction:" + ce, ce);
-			rollbackTransaction(db);
-			throw ce;
+            this.initializeSiteNodeCover(getSiteNodeId(), db);
+            
+        	result = "successRefreshAndRedirect";
 		}
-		catch(Exception e)
+		else
 		{
-			logger.error("An error occurred so we should not complete the transaction:" + e, e);
-			rollbackTransaction(db);
-			throw new SystemException(e.getMessage());
+			result = "blank";
 		}
+        
+        commitTransaction(db);
 
 		return result;
     }
 
-    public String doChangeState() throws Exception
+    public String doChangeState() throws SystemException
     {
     	logger.info("Gonna change state with comment:" + this.siteNodeVersionVO.getVersionComment());
 
@@ -639,12 +610,12 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		return "success";
     }
         
-    public String doCommentVersion() throws Exception
+    public String doCommentVersion()
     { 
         return "commentVersion";
     }
 
-    public String doChooseSiteNodeTypeDefinition() throws Exception
+    public String doChooseSiteNodeTypeDefinition() throws SystemException
     { 
 		this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId());
 		
@@ -950,21 +921,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	public String getStateDescription(Integer siteNodeId, Integer languageId)
 	{
 		String stateDescription = "Not created";
-		/*
-		try
-		{
-			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getLatestSiteNodeVersionVO(siteNodeId, languageId);
-			Integer stateId = siteNodeVersionVO.getStateId();
-			if(stateId.intValue() == 0)
-				stateDescription = "Working";
-			else if(stateId.intValue() == 2)
-				stateDescription = "Publish";
-		}
-		catch(Exception e)
-		{
-			//e.printStackTrace();
-		}
-		*/
 		return stateDescription;
 	}
 	
@@ -973,7 +929,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	 * This method fetches a description of the qualifyer.
 	 */
 	
-	public String getQualifyerDescription(Integer serviceBindingId) throws Exception
+	public String getQualifyerDescription(Integer serviceBindingId) throws ConstraintException, SystemException
 	{
 		String qualifyerDescription = "";
 		
@@ -991,7 +947,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		return qualifyerDescription;
 	}
 	
-	public List getListPreparedQualifyers(Integer serviceBindingId) throws Exception
+	public List getListPreparedQualifyers(Integer serviceBindingId) throws ConstraintException, SystemException
 	{
 		List qualifyers = ServiceBindingController.getQualifyerVOList(serviceBindingId);
 		Iterator i = qualifyers.iterator();
@@ -1016,7 +972,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	 * This method fetches the list of SiteNodeTypeDefinitions
 	 */
 	
-	public List getSiteNodeTypeDefinitions() throws Exception
+	public List getSiteNodeTypeDefinitions() throws SystemException
 	{
 		return SiteNodeTypeDefinitionController.getController().getSortedSiteNodeTypeDefinitionVOList();
 	}      

@@ -55,7 +55,7 @@ public abstract class ModelAction extends InfoGlueAbstractAction
 	/**
 	 * Default implementation for WebworkAbstractAction, subclasses shold feel free to override
 	 */
-	protected String doExecute() throws Exception
+	protected String doExecute()
 	{
 		return SUCCESS;
 	}

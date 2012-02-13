@@ -47,7 +47,7 @@ public class MailServiceFactory
    	 * Returns a MailService object.
      */
   	
-  	public static synchronized MailService getService() throws Exception 
+  	public static synchronized MailService getService() 
   	{
 	    if(session == null) 
 	    {
@@ -75,7 +75,7 @@ public class MailServiceFactory
 	 * specified SMTP server.
 	 * @return SMTP session
 	 */
-	private static Session initializeSession() throws Exception 
+	private static Session initializeSession() 
 	{
 		Properties properties = CmsPropertyHandler.getProperties();
 		if(CmsPropertyHandler.getMailSmtpHost() != null)

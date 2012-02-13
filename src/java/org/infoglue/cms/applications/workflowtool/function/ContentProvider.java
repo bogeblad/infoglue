@@ -116,10 +116,8 @@ public class ContentProvider extends InfoglueFunction
 		return ContentFunction.CONTENT_VERSION_PARAMETER;
 	}
 	
-	/**
-	 * 
-	 */
-	protected void initializeContentVO() throws WorkflowException
+	// WorkflowException needs to be thrown as it is needed for subclass =/
+	protected void initializeContentVO() throws WorkflowException 
 	{
 		if(!propertySetContains(CONTENT_ID_PROPERTYSET_KEY))
 		{

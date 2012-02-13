@@ -308,7 +308,7 @@ public class MailService
 	 * @param content the body of the email.
 	 * @throws SystemException if the email couldn't be sent due to some mail server exception.
 	 */
-	public void sendPlain(String from, String to, String cc, String bcc, String bounceAddress, String replyTo, String subject, String content, String encoding) throws SystemException 
+	public void sendPlain(String from, String to, String cc, String bcc, String bounceAddress, String replyTo, String subject, String content, String encoding) 
 	{
 		try 
 		{

@@ -43,7 +43,7 @@ public class ViewListContentAction extends InfoGlueAbstractAction
 	private List contentVOList;
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() 
 	{
 	
 	    logger.info("Executing doExecute on ViewListContentAction..");

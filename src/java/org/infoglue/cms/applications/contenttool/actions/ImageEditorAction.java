@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,9 @@ import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.graphics.Imaging;
@@ -88,11 +92,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
         	
-	/**
-	 * 
-	 */
-	
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException, IOException
     {
     	if(clearHistory)
     	{
@@ -122,11 +122,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         return "success";
     }    
     
-	/**
-	 * 
-	 */
-	
-    public String doUndo() throws Exception
+    public String doUndo() throws SystemException, ConstraintException
     {
     	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
     	this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
@@ -177,7 +173,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         return "successResize";
     }    
 
-    public String doRotate() throws Exception
+    public String doRotate() throws AccessConstraintException, ConstraintException, SystemException, IOException
     {
     	ceb.throwIfNotEmpty();
 
@@ -191,11 +187,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + getImageFileSuffix(digitalAssetVO.getAssetContentType());
     	File outputFile = new File(getImageEditorPath() + File.separator + workingFileName);
     	outputFile.mkdirs();
-    	/*
-    	String workingRealFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + getImageFileSuffix(digitalAssetVO.getAssetContentType());
-    	File outputRealFile = new File(getImageEditorPath() + File.separator + workingRealFileName);
-    	outputRealFile.mkdirs();
-		*/
     	logger.info("direction: " + direction);
     	logger.info("degrees: " + degrees);
     	if(direction.equalsIgnoreCase("ccw"))
@@ -234,7 +225,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         return "successRotate";
     }    
     
-    public String doCrop() throws Exception
+    public String doCrop() throws AccessConstraintException, ConstraintException, SystemException, IOException
     {
     	ceb.throwIfNotEmpty();
 
@@ -250,8 +241,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     	// create a cropped image from the original image
     	BufferedImage image = original.getSubimage(xpos1, ypos1, xpos2 - xpos1, ypos2 - ypos1);
 
-    	//BufferedImage image = imaging.crop(original, xpos1, ypos1, xpos2 - xpos1, ypos2 - ypos1);
-
     	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + getImageFileSuffix(digitalAssetVO.getAssetContentType());    	
     	File outputFile = new File(getImageEditorPath() + File.separator + workingFileName);
     	javax.imageio.ImageIO.write(image, getImageFileType(digitalAssetVO.getAssetContentType()), outputFile);
@@ -263,7 +252,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         return "successCrop";
     }    
 
-    public String doSave() throws Exception
+    public String doSave() throws SystemException, AccessConstraintException, ConstraintException, IOException
     {
     	ceb.throwIfNotEmpty();
 
@@ -272,8 +261,6 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
 
     	File file = new File(getImageEditorPath() + File.separator + workingFileName);
-    	//logger.info("saving file:" + file.getAbsolutePath());
-    	//logger.info("file:" + file.exists() + "\n" + file.getAbsolutePath());
 
     	if(file.exists())
     	{
@@ -407,7 +394,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
         return "successSaveAndExit";
     }    
     
-    public String doSaveAs() throws Exception
+    public String doSaveAs() throws AccessConstraintException, ConstraintException, SystemException, IOException
     {
     	ceb.throwIfNotEmpty();
 
@@ -558,7 +545,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     /**
      * This saves old files in session so you can do undo up to 10 times.
      */
-    private void addOldWorkingFile(File oldWorkingFile) throws Exception
+    private void addOldWorkingFile(File oldWorkingFile)
     {
     	List imageEditorOldWorkingFiles = (List)getHttpSession().getAttribute("imageEditorOldWorkingFiles");
     	if(imageEditorOldWorkingFiles == null)
@@ -578,7 +565,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
     /**
      * This saves old files in session so you can do undo up to 10 times.
      */
-    private String getFirstOldWorkingFile() throws Exception
+    private String getFirstOldWorkingFile()
     {
     	String oldWorkingFileName = null;
     	List imageEditorOldWorkingFiles = (List)getHttpSession().getAttribute("imageEditorOldWorkingFiles");
@@ -599,7 +586,7 @@ public class ImageEditorAction extends InfoGlueAbstractAction
      * This method preserves space by only allowing 5 historic images and also cleaning up after a save totally.
      * All files older than 1 day are also removed.
      */
-    private void cleanOldWorkingFiles(boolean cleanAll) throws Exception
+    private void cleanOldWorkingFiles(boolean cleanAll)
     {
     	getHttpSession().removeAttribute("imageEditorOldWorkingFiles");
     	

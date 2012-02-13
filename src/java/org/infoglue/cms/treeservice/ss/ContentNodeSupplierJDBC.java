@@ -25,6 +25,7 @@ package org.infoglue.cms.treeservice.ss;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +52,7 @@ public class ContentNodeSupplierJDBC extends BaseNodeSupplier
 	private java.sql.Connection conn;
 	
 	
-	public ContentNodeSupplierJDBC(Integer repositoryId, String userName) throws Exception, SystemException
+	public ContentNodeSupplierJDBC(Integer repositoryId, String userName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException 
 	{
 		Class.forName("com.mysql.jdbc.Driver").newInstance();	
 		conn = DriverManager.getConnection("jdbc:mysql://localhost/frovi_cms_dev?user=frovi_cms&password=pass123");

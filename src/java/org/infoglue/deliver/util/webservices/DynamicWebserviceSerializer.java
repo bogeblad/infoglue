@@ -134,7 +134,7 @@ public class DynamicWebserviceSerializer
 		return collection;
 	}
 	
-	private Object deserializeDynamicWebserviceElement(final List c, final DynamicWebserviceElement element, final int count) throws Throwable
+	private Object deserializeDynamicWebserviceElement(final List c, final DynamicWebserviceElement element, final int count)
 	{
 		final List arguments = new ArrayList();
 		for(int i=0; i<count; ++i)

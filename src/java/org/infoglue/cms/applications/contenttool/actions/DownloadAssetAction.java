@@ -40,7 +40,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 	private Integer languageId;
 	private String assetKey;
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() 
 	{
 		String assetUrl = "";
 		

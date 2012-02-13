@@ -113,7 +113,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	 * @author Mattias Bogeblad
 	 */
 	
-	public String getLogoutURL() throws Exception
+	public String getLogoutURL() throws SystemException
 	{
 		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(null, null, getRequest(), false);
 	    return authenticationModule.getLogoutUrl();
@@ -248,7 +248,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	}
 	
 	
-	public void protectFromCSSAttacks(String actionName, String commandName) throws Exception
+	public void protectFromCSSAttacks(String actionName, String commandName) throws SystemException
 	{
 		//logger.debug("Checking if we should protect actionName:" + actionName + " : " + commandName);
 		if(commandName != null && (commandName.startsWith("input") || commandName.startsWith("new") || commandName.startsWith("list") || commandName.startsWith("edit")))
@@ -274,7 +274,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		}
 	}
 	
-	public void validateSecurityCode() throws Exception
+	public void validateSecurityCode() throws SystemException
 	{
 		String sessionSecurityCode = getSecurityCode();
 		String securityCode = this.getRequest().getParameter("igSecurityCode");
@@ -286,7 +286,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 			logger.debug("Your security code validated");
 	}
 	
-	public List getAuthorizedRepositoryVOList() throws Exception
+	public List getAuthorizedRepositoryVOList() throws SystemException
 	{
 		return RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	}
@@ -646,7 +646,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	 * This method fetches the list of ContentTypeDefinitions
 	 */
 	
-	public List<ContentTypeDefinitionVO> getContentTypeDefinitions() throws Exception
+	public List<ContentTypeDefinitionVO> getContentTypeDefinitions() throws SystemException
 	{	
 	    List<ContentTypeDefinitionVO> contentTypeVOList = null;
 	    
@@ -1105,7 +1105,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try
@@ -1127,7 +1127,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId, int canvasWidth, int canvasHeight, String canvasColorHexCode, String alignment, String valignment, int width, int height, int quality) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId, int canvasWidth, int canvasHeight, String canvasColorHexCode, String alignment, String valignment, int width, int height, int quality)
 	{
 		String imageHref = null;
 		try
@@ -1150,7 +1150,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, int canvasWidth, int canvasHeight, String canvasColorHexCode, String alignment, String valignment, int width, int height, int quality) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, int canvasWidth, int canvasHeight, String canvasColorHexCode, String alignment, String valignment, int width, int height, int quality)
 	{
 		String imageHref = null;
 		try
@@ -1175,7 +1175,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, Integer languageId) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, Integer languageId)
 	{
 		String imageHref = null;
 		try
@@ -1196,7 +1196,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey)
 	{
 		String imageHref = null;
 		try
@@ -1218,7 +1218,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId)
 	{
 		String imageHref = null;
 		try
@@ -1256,12 +1256,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return sb.toString();
 	}
 
-	public SiteNodeVersionVO getSiteNodeVersionVO(Integer siteNodeVersionId) throws Exception
+	public SiteNodeVersionVO getSiteNodeVersionVO(Integer siteNodeVersionId) throws SystemException
 	{
 		return SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getSiteNodeVersionVOWithId(siteNodeVersionId);
 	}
 
-	public String getSiteNodePath(Integer siteNodeId) throws Exception
+	public String getSiteNodePath(Integer siteNodeId) throws SystemException
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -1278,12 +1278,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return sb.toString();
 	}
 
-	public SiteNodeVO getRepositoryRootSiteNode(Integer repositoryId) throws Exception
+	public SiteNodeVO getRepositoryRootSiteNode(Integer repositoryId) throws SystemException
 	{
 		return SiteNodeController.getController().getRootSiteNodeVO(repositoryId);
 	}
 
-	public String getRepositoryName() throws Exception
+	public String getRepositoryName() throws SystemException
 	{
 		return RepositoryController.getController().getRepositoryVOWithId(getRepositoryId()).getName();
 	}

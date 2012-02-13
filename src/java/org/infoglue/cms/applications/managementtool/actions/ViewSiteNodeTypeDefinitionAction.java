@@ -29,6 +29,9 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 public class ViewSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
 {
@@ -49,14 +52,14 @@ public class ViewSiteNodeTypeDefinitionAction extends InfoGlueAbstractAction
     }
     
     
-    protected void initialize(Integer siteNodeTypeDefinitionId) throws Exception
+    protected void initialize(Integer siteNodeTypeDefinitionId) throws SystemException, ConstraintException
     {
         siteNodeTypeDefinitionVO = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionVOWithId(siteNodeTypeDefinitionId);
         assignedAvailableServiceBindingVOList = AvailableServiceBindingController.getController().getAssignedAvailableServiceBindings(siteNodeTypeDefinitionId);
         allAvailableServiceBindingVOList = AvailableServiceBindingController.getController().getAvailableServiceBindingVOList();
     } 
 
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         this.initialize(getSiteNodeTypeDefinitionId());
         return "success";

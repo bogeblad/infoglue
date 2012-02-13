@@ -106,7 +106,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 	
 	protected abstract BaseEntityVO getRootEntityVO(Integer repositoryId, InfoGluePrincipal principal) throws ConstraintException, SystemException;
 	
-	public List getContentTypeDefinitions() throws Exception
+	public List getContentTypeDefinitions() throws SystemException
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
 	}      
@@ -164,12 +164,12 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
     /*
      * Returns all Languages for a given repository (repositoryId)
      */
-    public String doLanguage() throws Exception
+    public String doLanguage()
 	{
         return null;
 	}
     
-    public String doApplicationSettings() throws Exception
+    public String doApplicationSettings() throws IOException
     {
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("applicationSettings");
@@ -197,10 +197,10 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
         return false;
     }
 
-    /*
+    /**
      * Returns all contentTypeDefinitions
      */
-    public String doContentTypeDefinitions() throws Exception
+    public String doContentTypeDefinitions() throws SystemException, IOException
 	{
     	List contentTypeDefinitions = getContentTypeDefinitions();
         Document doc = DocumentHelper.createDocument();
@@ -305,7 +305,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
         return "" + date;
     }
 
-    /*
+    /**
      * Main action, returns the content tree
      */
     public String doExecute() throws Exception
@@ -549,7 +549,7 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
         this.allowedContentTypeIds = allowedContentTypeIds;
     }
     
-	public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
+	public String getAllowedContentTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
 	    if(allowedContentTypeIds == null)
 	        return "";

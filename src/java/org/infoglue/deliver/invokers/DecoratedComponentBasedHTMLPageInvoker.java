@@ -542,7 +542,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	}
 
    
-	private String decorateComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId/*, Integer metainfoContentId*/, int maxDepth, int currentDepth) throws Exception
+	private String decorateComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, int maxDepth, int currentDepth) 
 	{
 		if(currentDepth > maxDepth)
 		{
@@ -551,10 +551,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		}
 		
 		String decoratedComponent = "";
-		
-		//logger.info("decorateComponent.contentId:" + contentId);
-
-		//logger.info("decorateComponent:" + component.getName());
 		
 		String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
 
@@ -2473,15 +2469,13 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		return getComponentProperties(componentId, componentPropertiesDocument, templateController);
 	}
 	
-	/*
+	/**
 	 * This method returns a bean representing a list of ComponentProperties that the component has.
 	 */
 	 
-	private List getComponentProperties(Integer componentId, Document document) throws Exception
+	private List getComponentProperties(Integer componentId, Document document) 
 	{
 		//TODO - h�r kan vi s�kert cache:a.
-		
-		//logger.info("componentPropertiesXML:" + componentPropertiesXML);
 		List componentProperties = new ArrayList();
 		Timer timer = new Timer();
 		timer.setActive(false);
@@ -2493,10 +2487,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				timer.printElapsedTime("Read document");
 
 				String propertyXPath = "//property";
-				//logger.info("propertyXPath:" + propertyXPath);
 				List anl = document.selectNodes(propertyXPath);
 				timer.printElapsedTime("Set property xpath");
-				//logger.info("*********************************************************anl:" + anl.getLength());
 				Iterator anlIterator = anl.iterator();
 				while(anlIterator.hasNext())
 				{
@@ -2761,11 +2753,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 
 	}
 
-	private List getComponentProperties(Integer componentId, Document document, TemplateController templateController) throws Exception
+	private List getComponentProperties(Integer componentId, Document document, TemplateController templateController)
 	{
 		//TODO - h�r kan vi s�kert cache:a.
-		
-		//logger.info("componentPropertiesXML:" + componentPropertiesXML);
 		List componentProperties = new ArrayList();
 		Timer timer = new Timer();
 		timer.setActive(false);
@@ -2774,10 +2764,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		{
 			if(document != null)
 			{
-			//if(componentPropertiesXML != null && componentPropertiesXML.length() > 0)
-			//{
-				//org.w3c.dom.Document document = XMLHelper.readDocumentFromByteArray(componentPropertiesXML.getBytes("UTF-8"));
-
 				timer.printElapsedTime("Read document");
 
 				String propertyXPath = "//property";
@@ -2936,7 +2922,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	 * This method returns a bean representing a list of ComponentProperties that the component has.
 	 */
 	 
-	private List getComponentTasks(Integer componentId, Document document) throws Exception
+	private List getComponentTasks(Integer componentId, Document document)
 	{
 		List componentTasks = new ArrayList();
 		Timer timer = new Timer();

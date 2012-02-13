@@ -41,7 +41,7 @@ public class ViewMyDesktopToolMenuAction extends TreeViewAbstractAction
 	/**
 	 * @see org.infoglue.cms.applications.common.actions.TreeViewAbstractAction#getNodeSupplier()
 	 */
-	protected INodeSupplier getNodeSupplier() throws Exception
+	protected INodeSupplier getNodeSupplier()
 	{
 		return new MyDesktopToolNodeSupplier(getInfoGluePrincipal(), getLocale());
 	}

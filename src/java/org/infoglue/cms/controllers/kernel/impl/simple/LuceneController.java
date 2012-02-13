@@ -254,7 +254,7 @@ public class LuceneController extends BaseController implements NotificationList
 		return returnDocuments;
 	}
 
-	public Document getDocumentFromContent(ContentVO contentVO) throws Exception, InterruptedException
+	public Document getDocumentFromContent(ContentVO contentVO)
 	{
 		// make a new, empty document
 		Document doc = new Document();
@@ -284,7 +284,7 @@ public class LuceneController extends BaseController implements NotificationList
 		return doc;
 	}
 
-	public Document getDocumentFromContentVersion(ContentVersionVO contentVersionVO) throws Exception, InterruptedException
+	public Document getDocumentFromContentVersion(ContentVersionVO contentVersionVO) throws SystemException
 	{
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId());
 		
@@ -321,7 +321,7 @@ public class LuceneController extends BaseController implements NotificationList
 	}
 	
 
-	public Document getDocumentFromDigitalAsset(DigitalAssetVO digitalAssetVO, ContentVersionVO contentVersionVO) throws Exception, InterruptedException
+	public Document getDocumentFromDigitalAsset(DigitalAssetVO digitalAssetVO, ContentVersionVO contentVersionVO) throws SystemException
 	{
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId());
 

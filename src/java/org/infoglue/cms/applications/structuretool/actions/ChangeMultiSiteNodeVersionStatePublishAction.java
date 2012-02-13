@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +39,8 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
@@ -68,9 +71,12 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 	 * This method gets called when calling this action. 
 	 * If the stateId is 2 which equals that the user tries to prepublish the page. If so we
 	 * ask the user for a comment as this is to be regarded as a new version. 
+	 * @throws IOException 
+	 * @throws SystemException 
+	 * @throws ConstraintException 
 	 */
 	   
-    public String doExecute() throws Exception
+    public String doExecute() throws IOException, SystemException, ConstraintException
     {      
 		setSiteNodeVersionId( getRequest().getParameterValues("selSiteNodeVersions") );
 		Iterator it = siteNodeVersionId.iterator();

@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,8 +31,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.databeans.ComponentPropertyDefinition;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -40,7 +44,6 @@ import org.infoglue.cms.entities.management.ContentTypeAttribute;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -383,7 +386,7 @@ public class ComponentController extends BaseController
 		return results;	
 	}
 
-	public void checkAndAutoCreateContents(Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException
+	public void checkAndAutoCreateContents(Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws SystemException 
 	{
 		Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -404,7 +407,7 @@ public class ComponentController extends BaseController
         }
 	}
 	
-	public void checkAndAutoCreateContents(Database db, Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException, ConstraintException
+	public void checkAndAutoCreateContents(Database db, Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws SystemException, ConstraintException, PersistenceException, TransformerException, IOException
 	{
 		List componentPropertyDefinitions = ComponentPropertyDefinitionController.getController().getComponentPropertyDefinitions(db, componentContentId, masterLanguageId);
 		Iterator componentPropertyDefinitionsIterator = componentPropertyDefinitions.iterator();
@@ -522,19 +525,8 @@ public class ComponentController extends BaseController
 											Integer componentId,
 											String path,
 											String assetKey,
-											InfoGluePrincipal principal) throws Exception
+											InfoGluePrincipal principal) throws TransformerException 
 	{
-		//logger.info("************************************************************");
-		//logger.info("* doAddComponentPropertyBinding                            *");
-		//logger.info("************************************************************");
-		//logger.info("siteNodeId:" + this.siteNodeId);
-		//logger.info("languageId:" + this.languageId);
-		//logger.info("contentId:" + this.contentId);
-		//logger.info("componentId:" + this.componentId);
-		//logger.info("slotId:" + this.slotId);
-		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-		//logger.info("assetKey:" + assetKey);
-				
 		String componentPropertyXPath = "//component[@id=" + componentId + "]/properties/property[@name='" + propertyName + "']";
 		NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), componentPropertyXPath);
 		if(anl.getLength() == 0)

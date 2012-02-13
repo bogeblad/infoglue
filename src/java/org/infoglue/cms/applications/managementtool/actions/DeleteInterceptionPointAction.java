@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.exception.SystemException;
 
 
 /**
@@ -40,7 +41,7 @@ public class DeleteInterceptionPointAction extends InfoGlueAbstractAction
 	
 	private InterceptionPointVO interceptionPointVO = new InterceptionPointVO();
 		
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		InterceptionPointController.getController().delete(interceptionPointVO);
 		return "success";

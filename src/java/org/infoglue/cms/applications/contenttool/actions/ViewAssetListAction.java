@@ -103,13 +103,13 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
         }
     }
     
-    protected void initialize(Integer contentId, Integer languageId) throws Exception
+    protected void initialize(Integer contentId, Integer languageId) throws ConstraintException, SystemException, Exception
     {
         this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
         createContentIdList(this.contentVO);
     } 
 
-    public String doExecute() throws Exception
+    public String doExecute() throws ConstraintException, SystemException, Exception
     {
         if(getContentId() != null && getContentId().intValue() != -1)
             this.initialize(getContentId(), this.languageId);
@@ -117,7 +117,7 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
    	    return "success";
     }
     
-    public String doBrowser() throws Exception
+    public String doBrowser() throws SystemException
     {
         this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
         
@@ -138,7 +138,7 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
     }
     
     
-    public String getContentPath(Integer contentId) throws ConstraintException, SystemException, Exception
+    public String getContentPath(Integer contentId) throws Exception
     {
         ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
         StringBuffer ret = new StringBuffer();
@@ -272,7 +272,7 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try
@@ -294,7 +294,7 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try
@@ -316,7 +316,7 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, Integer languageId) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, Integer languageId)
 	{
 		String imageHref = null;
 		try
@@ -338,7 +338,7 @@ public class ViewAssetListAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId)
 	{
 		String imageHref = null;
 		try

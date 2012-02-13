@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.common;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -532,7 +533,7 @@ public class VisualFormatter
 	 * This method converts all non-standard characters to html-equivalents.
 	 */
 	
-	public final String encode(String s) throws Exception
+	public final String encode(String s) throws UnsupportedEncodingException
 	{
 		if(s == null)
 			return null;
@@ -547,7 +548,7 @@ public class VisualFormatter
 		return encodedString;
 	}
 
-	public final String encodeBase64(String s) throws Exception
+	public final String encodeBase64(String s) throws UnsupportedEncodingException
 	{
 		if(s == null)
 			return null;
@@ -558,8 +559,7 @@ public class VisualFormatter
 	/**
 	 * This method converts all non-standard characters to html-equivalents.
 	 */
-	
-	public final String encodeURI(String s) throws Exception
+	public final String encodeURI(String s) throws UnsupportedEncodingException
 	{
 		if(s == null)
 			return null;
@@ -577,7 +577,7 @@ public class VisualFormatter
 	}
 
 	
-	public final String encodeURI(String s, String encoding) throws Exception
+	public final String encodeURI(String s, String encoding) throws UnsupportedEncodingException
 	{
 		if(s == null)
 			return null;

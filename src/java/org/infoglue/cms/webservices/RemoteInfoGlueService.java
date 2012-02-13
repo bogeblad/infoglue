@@ -150,7 +150,7 @@ public class RemoteInfoGlueService
      * Rollbacks a transaction on the named database
      */
      
-    protected static void rollbackTransaction(Database db) throws SystemException
+    protected static void rollbackTransaction(Database db)
     {
         try
         {
@@ -172,7 +172,7 @@ public class RemoteInfoGlueService
      * Rollbacks a transaction on the named database
      */
      
-    protected static void closeDatabase(Database db) throws SystemException
+    protected static void closeDatabase(Database db)
     {
         try
         {

@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,7 +108,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 		return "success";
 	}
 	
-	public String doV3() throws Exception 
+	public String doV3() throws SystemException, ConstraintException, IOException 
 	{
 		String result = NONE;
 		
@@ -180,7 +181,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
     }
 
 	
-	public String doDeleteReference() throws Exception 
+	public String doDeleteReference() throws SystemException, ConstraintException, IOException 
 	{
 	    for(int i=0; i<registryId.length; i++)
 	    {
@@ -210,12 +211,12 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 	}	
 
 	
-	public String doFixPage() throws Exception 
+	public String doFixPage() 
 	{
 	    return "fixPage";
 	}
 
-	public String doFixPageHeader() throws Exception 
+	public String doFixPageHeader() 
 	{
 	    return "fixPageHeader";
 	}

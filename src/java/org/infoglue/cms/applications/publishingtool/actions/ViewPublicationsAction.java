@@ -32,6 +32,8 @@ import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.publishing.EditionBrowser;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ChangeNotificationController;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -83,14 +85,14 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 		}
 	}
 	
-    public String doV3() throws Exception
+    public String doV3() throws SystemException, AccessConstraintException, ConstraintException
     {
     	doExecute();
     	
         return "successV3";
     }
 
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException, AccessConstraintException, ConstraintException
 	{
 		if(filter == null)
 		{
@@ -112,19 +114,19 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 		return SUCCESS;
 	}
 	
-	public String doShowPublicationDetails() throws Exception
+	public String doShowPublicationDetails() throws SystemException
 	{
 		this.publicationDetailVOList = PublicationController.getPublicationDetailVOList(publicationId);
 		
 		return "showPublicationDetails";
 	}
 
-    public String doSystem() throws Exception
+    public String doSystem()
     {
         return "successSystem";
     }
 
-    public String doPushSystemNotificationMessages() throws Exception
+    public String doPushSystemNotificationMessages()
     {
         NotificationMessage notificationMessage = null;
         List messages = RemoteCacheUpdater.getSystemNotificationMessages();

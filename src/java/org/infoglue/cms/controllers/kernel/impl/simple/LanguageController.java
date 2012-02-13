@@ -41,7 +41,6 @@ import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -65,22 +64,12 @@ public class LanguageController extends BaseController
 	{
 		return new LanguageController();
 	}
-
-	/**
-	 * This method returns a specific LanguageVO object
-	 */
-	/*
-	public LanguageVO getLanguageVOWithId(Integer languageId) throws SystemException
-	{
-		return (LanguageVO)getVOWithId(LanguageImpl.class, languageId);
-	} 
-	*/
 	
 	/**
 	 * This method return a LanguageVO
 	 */
 	
-	public LanguageVO getLanguageVOWithId(Integer languageId) throws SystemException, Exception
+	public LanguageVO getLanguageVOWithId(Integer languageId) throws SystemException
 	{
 		String key = "" + languageId;
 		logger.info("key:" + key);
@@ -162,8 +151,6 @@ public class LanguageController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public LanguageVO getLanguageVOWithName(String name) throws SystemException
@@ -198,8 +185,6 @@ public class LanguageController extends BaseController
 	 * @param name
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
 	public Language getLanguageWithName(String name, Database db) throws SystemException
@@ -235,8 +220,6 @@ public class LanguageController extends BaseController
 	 * 
 	 * @param code
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public LanguageVO getLanguageVOWithCode(String code, Database db) throws SystemException
@@ -255,8 +238,6 @@ public class LanguageController extends BaseController
 	 * 
 	 * @param code
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public LanguageVO getLanguageVOWithCode(String code) throws SystemException
@@ -300,8 +281,6 @@ public class LanguageController extends BaseController
 	 * @param code
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
 	public Language getLanguageWithCode(String code, Database db) throws SystemException
@@ -585,7 +564,7 @@ public class LanguageController extends BaseController
 	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
 	 */
 	
-	public LanguageVO getMasterLanguage(Integer repositoryId) throws SystemException, Exception
+	public LanguageVO getMasterLanguage(Integer repositoryId) throws SystemException
 	{ 
 		LanguageVO languageVO = null;
 

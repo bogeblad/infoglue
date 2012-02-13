@@ -70,7 +70,7 @@ public class ViewToolbarButtonsAction extends InfoGlueAbstractAction
 		return useEmblaToolbar;
 	}
 
-	public String doExecute() throws Exception 
+	public String doExecute() 
 	{
 		try
 		{
@@ -84,7 +84,7 @@ public class ViewToolbarButtonsAction extends InfoGlueAbstractAction
 		return SUCCESS;
 	}
 
-	public String doEmbla() throws Exception 
+	public String doEmbla() 
 	{
 		try
 		{

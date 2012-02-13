@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.structuretool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
@@ -57,12 +58,12 @@ public class ViewStructureToolMenuAction extends InfoGlueAbstractAction
     	return this.repositoryId;
     }
     
-    public String doExecute() throws Exception
+    public String doExecute()
     {
         return "success";
     }
 
-    public String doV3() throws Exception
+    public String doV3()
     {
         return "successV3";
     }
@@ -90,7 +91,7 @@ public class ViewStructureToolMenuAction extends InfoGlueAbstractAction
 	    return CmsPropertyHandler.getShowComponentsFirst();
 	}
 	
-	public LanguageVO getMasterLanguageVO() throws Exception
+	public LanguageVO getMasterLanguageVO() throws SystemException
 	{
 	    return LanguageController.getController().getMasterLanguage(repositoryId);
 	}

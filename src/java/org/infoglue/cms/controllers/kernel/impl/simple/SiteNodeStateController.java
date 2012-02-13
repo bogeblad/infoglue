@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
@@ -467,8 +468,7 @@ public class SiteNodeStateController extends BaseController
 	/**
 	 * This method copies all serviceBindings a siteNodeVersion has to the new siteNodeVersion.
 	 */
-
-    private static void copyServiceBindings(SiteNodeVersion originalSiteNodeVersion, SiteNodeVersion newSiteNodeVersion, Database db) throws ConstraintException, SystemException, Exception
+    private static void copyServiceBindings(SiteNodeVersion originalSiteNodeVersion, SiteNodeVersion newSiteNodeVersion, Database db) throws SystemException, PersistenceException
 	{
 		Collection serviceBindings = originalSiteNodeVersion.getServiceBindings();	
 		Iterator iterator = serviceBindings.iterator();

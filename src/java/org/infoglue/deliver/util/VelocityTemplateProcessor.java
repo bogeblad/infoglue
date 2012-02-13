@@ -319,7 +319,7 @@ public class VelocityTemplateProcessor
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	public void dispatchPHP(final Map params, final PrintWriter pw, final String templateAsString, final InfoGlueComponent component) throws ServletException, IOException, Exception
+	public void dispatchPHP(final Map params, final PrintWriter pw, final String templateAsString, final InfoGlueComponent component) throws IOException
 	{
 	    final String dir = CmsPropertyHandler.getContextRootPath() + "jsp";
 	    final String fileName;

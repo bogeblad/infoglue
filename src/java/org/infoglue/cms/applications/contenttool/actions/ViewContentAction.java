@@ -357,9 +357,10 @@ public class ViewContentAction extends InfoGlueAbstractAction
 	
 	/**
 	 * This method fetches the list of ContentTypeDefinitions
+	 * @throws SystemException 
 	 */
 	
-	public List getContentTypeDefinitions() throws Exception
+	public List getContentTypeDefinitions() throws SystemException
 	{
 	    List contentTypeVOList = null;
 	    
@@ -412,12 +413,12 @@ public class ViewContentAction extends InfoGlueAbstractAction
 	    return CmsPropertyHandler.getShowContentVersionFirst();
 	}
 	
-	public LanguageVO getMasterLanguageVO() throws Exception
+	public LanguageVO getMasterLanguageVO() throws SystemException
 	{
 	    return LanguageController.getController().getMasterLanguage(repositoryId);
 	}
 
-	public LanguageVO getInitialLanguageVO() throws Exception
+	public LanguageVO getInitialLanguageVO() throws SystemException
 	{
 		String initialLanguageId = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("content_" + this.getContentId() + "_initialLanguageId", "applicationProperties", null, false, false, false, false, null);
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.getContentId());
@@ -427,16 +428,6 @@ public class ViewContentAction extends InfoGlueAbstractAction
 		    initialLanguageId = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("content_" + contentVO.getParentContentId() + "_initialLanguageId", "applicationProperties", null, false, false, false, false, null);
 		    contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
 	    }
-	    
-		/*
-		ContentController.getContentController().getParentContent(this.getContentId()); 
-	    while((initialLanguageId == null || initialLanguageId.equalsIgnoreCase("-1")) && parentContentVO != null)
-	    {
-	    	//initialLanguageId = ps.getString("content_" + parentContentVO.getId() + "_initialLanguageId");
-		    initialLanguageId = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("content_" + parentContentVO.getId() + "_initialLanguageId", "applicationProperties", null, false, false, false, false, null);
-	        parentContentVO = ContentController.getContentController().getParentContent(parentContentVO.getId()); 
-	    }
-	    */
 	    
 	    if(initialLanguageId != null && !initialLanguageId.equals("") && !initialLanguageId.equals("-1"))
 	        return LanguageController.getController().getLanguageVOWithId(new Integer(initialLanguageId));

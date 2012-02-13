@@ -39,7 +39,6 @@ import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -155,7 +154,7 @@ public class GroupController extends BaseController
 		deleteEntity(GroupImpl.class, groupName);
 	}        
 
-	public void delete(String groupName, Database db) throws ConstraintException, SystemException, Exception
+	public void delete(String groupName, Database db) throws SystemException, PersistenceException
 	{
 		deleteEntity(GroupImpl.class, groupName, db);
 	}        
@@ -279,8 +278,6 @@ public class GroupController extends BaseController
 	 * This method gets a list of Groups for a particular systemUser.
 	 * @param systemUserId
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public List<GroupVO> getGroupVOList(String userName)  throws SystemException
@@ -311,8 +308,6 @@ public class GroupController extends BaseController
 	 * This method gets a list of Groups for a particular systemUser.
 	 * @param systemUserId
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public Collection getGroupList(String userName, Database db)  throws SystemException

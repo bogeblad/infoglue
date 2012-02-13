@@ -42,6 +42,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultAttribute;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.GenericOptionDefinition;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
@@ -112,7 +113,7 @@ public class PageEditorHelper extends BaseDeliveryController
 											 String showSimple, 
 											 String originalFullURL,
 											 String showLegend,
-											 String targetDiv) throws Exception
+											 String targetDiv) throws Exception 
 	{	
 	    if(request.getParameter("skipPropertiesDiv") != null && request.getParameter("skipPropertiesDiv").equalsIgnoreCase("true"))
 	        return "";
@@ -748,52 +749,6 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(hasAccessToProperty)
 					    propertyIndex++;
 				}
-				/*
-				else if(componentProperty.getType().equalsIgnoreCase(ComponentProperty.RADIOBUTTONFIELD))
-				{
-					if(isAdvancedProperties)
-						sb.append("	<div class=\"propertyRow advancedProperty" + componentId + "\" style='display:none;'>");
-					else
-						sb.append("	<div class=\"propertyRow\">");
-					
-					//sb.append("	<div class=\"propertyRow\">");
-					sb.append("		<label for=\"" + componentProperty.getName() + "\" onMouseOver=\"showDiv('helpLayer" + componentProperty.getComponentId() + "_" + componentProperty.getName() + "');\" onMouseOut=\"javascript:hideDiv('helpLayer" + componentProperty.getComponentId() + "_" + componentProperty.getName() + "');\">" + componentProperty.getDisplayName() + "</label>");
-					
-					if(hasAccessToProperty)
-					{
-						sb.append("	<input type=\"hidden\" name=\"" + propertyIndex + "_propertyName\" value=\"" + componentProperty.getName() + "\">");
-						
-						Iterator optionsIterator = componentProperty.getOptions().iterator();
-						while(optionsIterator.hasNext())
-						{
-						    ComponentPropertyOption option = (ComponentPropertyOption)optionsIterator.next();
-						    boolean isSame = false;
-						    if(componentProperty != null && componentProperty.getValue() != null && option != null && option.getValue() != null)
-						    {
-						    	String[] values = componentProperty.getValue().split(",");
-						    	for(int i=0; i<values.length; i++)
-						    	{
-						    		isSame = values[i].equals(option.getValue());
-						    		if(isSame)
-						    			break;
-						    	}
-						    }
-	
-						    sb.append("<input type=\"checkbox\" style=\"width:30px;\" name=\"" + componentProperty.getName() + "\" value=\"" + option.getValue() + "\"" + (isSame ? " checked=\"1\"" : "") + " onclicked=\"setDirty();\"/> " + option.getName() + " ");
-						}
-					}
-					else
-						sb.append("	" + componentProperty.getName() + "");
-		
-					if(hasAccessToProperty)
-						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\"/></a>");
-					
-					sb.append("	</div>");
-					
-					if(hasAccessToProperty)
-					    propertyIndex++;
-				}
-				*/
 			
 				sb.append("	<div style=\"clear:both;\"></div>");
 			}
@@ -849,7 +804,6 @@ public class PageEditorHelper extends BaseDeliveryController
 	 * @param slotClicked
 	 * @param treeItem
 	 * @return
-	 * @throws Exception
 	 */
 	public String getComponentTasksDiv(Database db, 
 			 InfoGluePrincipal principal, 
@@ -868,7 +822,7 @@ public class PageEditorHelper extends BaseDeliveryController
 			 String showLegend,
 			 String targetDiv,
 			 String slotClicked,
-			 boolean treeItem) throws Exception
+			 boolean treeItem) throws Exception 
 		{	
 		
 		StringBuilder sb = new StringBuilder();
@@ -1018,21 +972,10 @@ public class PageEditorHelper extends BaseDeliveryController
 		    
 		    if(parentComponent != null)
 		    {
-		    	//logger.info("slot:" + slot.getId());
-		    	//logger.info("parentComponent:" + parentComponent.getId());
-		    	//logger.info("allowedComponentNamesAsEncodedString:" + allowedComponentNamesAsEncodedString);
-		    	//logger.info("disallowedComponentNamesAsEncodedString:" + disallowedComponentNamesAsEncodedString);
-		    	//logger.info("allowedComponentGroupNamesAsEncodedString:" + allowedComponentGroupNamesAsEncodedString);
-		    
 			    addComponentUrl = "" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&parentComponentId=" + parentComponent.getId() + "&slotId=" + slotId + "&showSimple=" + showSimple + ((allowedComponentNamesAsEncodedString != null) ? "&" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&" + allowedComponentGroupNamesAsEncodedString : "");
 			    deleteComponentUrl = "" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&componentId=" + component.getId() + "&slotId=" + slotId + "&showSimple=" + showSimple;
 			    changeComponentUrl = "" + componentEditorUrl + "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&componentId=" + component.getId() + "&slotId=" + slotId + "&showSimple=" + showSimple + ((allowedComponentNamesAsEncodedString != null) ? "&" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&" + allowedComponentGroupNamesAsEncodedString : "");
 			    savePartTemplateUrl = "savePartComponentStructure('" + componentEditorUrl + "CreatePageTemplate!input.action?contentId=" + metaInfoContentVO.getId() + "', '" + component.getId() + "');";
-
-			    //logger.info("addComponentUrl:" + addComponentUrl);
-			    //logger.info("deleteComponentUrl:" + deleteComponentUrl);
-			    //logger.info("changeComponentUrl:" + changeComponentUrl);
-			    //logger.info("savePartTemplateUrl:" + savePartTemplateUrl);
 		    }
 		    else
 		    {
@@ -1095,16 +1038,6 @@ public class PageEditorHelper extends BaseDeliveryController
 
 			if(hasAccessToAccessRights)
 			{
-				/*
-				logger.info("component.getContentId():" + component.getContentId());
-				logger.info("Parent component.getContentId():" + (component.getParentComponent() != null ? component.getParentComponent().getContentId() : "null"));
-				logger.info("Parent slot:" + component.getContainerSlot().getName());
-				logger.info("component:" + component.getSlotName());
-				logger.info("Slots:" + component.getSlotList());
-				logger.info("Slots:" + component.getSlots());
-				logger.info("slotId:" + slotId);
-				logger.info("componentContentId:" + componentContentId);
-				*/
 				Integer accessRightComponentContentId = componentContentId;
 				if(slotId.equals(component.getSlotName()) && component.getParentComponent() != null)
 					accessRightComponentContentId = component.getParentComponent().getContentId();
@@ -1134,12 +1067,9 @@ public class PageEditorHelper extends BaseDeliveryController
 	}
 	
 
-	public String getComponentStructureDiv(Database db, InfoGluePrincipal principal, HttpServletRequest request, Locale locale, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, String showSimple, String originalFullURL, String showLegend, String targetDiv) throws Exception
+	public String getComponentStructureDiv(Database db, InfoGluePrincipal principal, HttpServletRequest request, Locale locale, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, String showSimple, String originalFullURL, String showLegend, String targetDiv) throws Exception 
 	{
 		StringBuilder sb = new StringBuilder();
-		
-		//String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
-		//String componentRendererUrl = CmsPropertyHandler.getComponentRendererUrl();
 		String contextPath = request.getContextPath();
 		
 		ContentVO metaInfoContentVO = getPageMetaInfoContentVO(db, siteNodeId, languageId, contentId, principal);
@@ -1282,7 +1212,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	 * This method returns the contents that are of contentTypeDefinition "HTMLTemplate"
 	 */
 	
-	public List getComponentContents(Database db) throws Exception
+	public List getComponentContents(Database db) throws SystemException, PersistenceException 
 	{
 		HashMap arguments = new HashMap();
 		arguments.put("method", "selectListOnContentTypeName");
@@ -1301,7 +1231,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	 * This method returns a bean representing a list of ComponentProperties that the component has.
 	 */
 	 
-	private List getComponentProperties(Integer componentId, Document document, Integer siteNodeId, Integer languageId, Integer contentId, Locale locale, Database db, InfoGluePrincipal principal) throws Exception
+	private List getComponentProperties(Integer componentId, Document document, Integer siteNodeId, Integer languageId, Integer contentId, Locale locale, Database db, InfoGluePrincipal principal)
 	{
 		//TODO - h�r kan vi s�kert cache:a.
 		
@@ -1479,7 +1409,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	 * properties for the page.
 	 */
 	
-	private String getComponentPropertyValue(Integer componentId, String name, Integer siteNodeId, Integer languageId, Integer contentId, Locale locale, Database db, InfoGluePrincipal principal, ComponentProperty componentProperty) throws Exception
+	private String getComponentPropertyValue(Integer componentId, String name, Integer siteNodeId, Integer languageId, Integer contentId, Locale locale, Database db, InfoGluePrincipal principal, ComponentProperty componentProperty) throws SystemException, Exception 
 	{
 		String value = componentProperty.getDefaultValue();
 		
@@ -1522,7 +1452,7 @@ public class PageEditorHelper extends BaseDeliveryController
 		return value;
 	}
 
-	public static String parseAttributeForInlineEditing(String attributeValue, boolean checkPageReferences, String deliveryContext, Integer contentId, Integer languageId) throws Exception
+	public static String parseAttributeForInlineEditing(String attributeValue, boolean checkPageReferences, String deliveryContext, Integer contentId, Integer languageId) 
 	{
 	    //logger.info("attributeValue:" + attributeValue);
 
@@ -2051,7 +1981,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	 * This method fetches an url to the asset for the component.
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, String key, Database db) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, String key, Database db) 
 	{
 		String imageHref = null;
 		try
@@ -2088,7 +2018,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	 * @author mattias
 	 */
 
-	protected List getPageComponents(Database db, String componentXML, Element element, String slotName, Slot containerSlot, InfoGlueComponent parentComponent, Integer siteNodeId, Integer languageId, InfoGluePrincipal principal) throws Exception
+	protected List getPageComponents(Database db, String componentXML, Element element, String slotName, Slot containerSlot, InfoGlueComponent parentComponent, Integer siteNodeId, Integer languageId, InfoGluePrincipal principal) 
 	{
 		//List components = new ArrayList();
 		
@@ -2415,7 +2345,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	/**
 	 * This method gets the restrictions for this component
 	 */
-	private void getComponentRestrictions(Element child, InfoGlueComponent component, Locale locale) throws Exception
+	private void getComponentRestrictions(Element child, InfoGlueComponent component, Locale locale) 
 	{
 	    //logger.info("Getting restrictions for " + component.getId() + ":" + child.getName());
 		List restrictionsNodeList = child.selectNodes("restrictions");
@@ -2485,7 +2415,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	 * This method returns a bean representing a list of ComponentProperties that the component has.
 	 */
 	 
-	private List getComponentTasks(Integer componentId, Document document) throws Exception
+	private List getComponentTasks(Integer componentId, Document document) 
 	{
 		List componentTasks = new ArrayList();
 		Timer timer = new Timer();
@@ -2539,7 +2469,7 @@ public class PageEditorHelper extends BaseDeliveryController
 		return componentTasks;
 	}
 
-	protected Document getComponentTasksDOM4JDocument(Integer masterLanguageId, Integer metaInfoContentId, Database db) throws SystemException, Exception
+	protected Document getComponentTasksDOM4JDocument(Integer masterLanguageId, Integer metaInfoContentId, Database db) throws Exception
 	{ 	    
 		String cacheName 	= "componentEditorCache";
 		String cacheKey		= "componentTasksDocument_" + masterLanguageId + "_" + metaInfoContentId;
@@ -2572,7 +2502,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	 * This method fetches the tasks for a certain component.
 	 */
    
-	private String getComponentTasksString(Integer masterLanguageId, Integer metaInfoContentId, Database db) throws SystemException, Exception
+	private String getComponentTasksString(Integer masterLanguageId, Integer metaInfoContentId, Database db) throws Exception
 	{
 		String cacheName 	= "componentEditorCache";
 		String cacheKey		= "componentTasksString_" + masterLanguageId + "_" + metaInfoContentId;
@@ -2665,11 +2595,10 @@ public class PageEditorHelper extends BaseDeliveryController
 		return newAttribute;
 	}	
 
-	/*
+	/**
 	 * This method returns a bean representing a list of ComponentProperties that the component has.
 	 */
-	 
-	public void addSystemProperties(List componentProperties, Integer componentId, Integer siteNodeId, Integer languageId, Integer contentId, Locale locale, Database db, InfoGluePrincipal principal) throws Exception
+	public void addSystemProperties(List componentProperties, Integer componentId, Integer siteNodeId, Integer languageId, Integer contentId, Locale locale, Database db, InfoGluePrincipal principal) throws Exception 
 	{
 		ComponentProperty cacheResultProperty = new ComponentProperty();
 		cacheResultProperty.setComponentId(componentId);

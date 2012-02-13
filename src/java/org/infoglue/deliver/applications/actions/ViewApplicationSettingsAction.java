@@ -153,7 +153,7 @@ public class ViewApplicationSettingsAction extends ViewPageAction //WebworkAbstr
 	 * @deprecated
 	 */
 	
-	public String doGetTemplateLogicMethods() throws Exception
+	public String doGetTemplateLogicMethods() 
 	{
 		try 
 		{

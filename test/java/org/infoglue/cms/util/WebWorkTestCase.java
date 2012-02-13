@@ -47,7 +47,7 @@ public abstract class WebWorkTestCase extends InfoGlueTestCase
 		assertSuccess(action.execute());
 	}
 
-	public static void assertSuccess(WebworkAbstractAction action, String command) throws Exception
+	public static void assertSuccess(WebworkAbstractAction action, String command) 
 	{
 		action.setCommand(command);
 		assertSuccess(action.execute());
@@ -63,7 +63,7 @@ public abstract class WebWorkTestCase extends InfoGlueTestCase
 		assertError(action.execute());
 	}
 
-	public static void assertError(WebworkAbstractAction action, String command) throws Exception
+	public static void assertError(WebworkAbstractAction action, String command) 
 	{
 		action.setCommand(command);
 		assertError(action.execute());
@@ -79,7 +79,7 @@ public abstract class WebWorkTestCase extends InfoGlueTestCase
 		assertInput(action.execute());
 	}
 
-	public static void assertInput(WebworkAbstractAction action, String command) throws Exception
+	public static void assertInput(WebworkAbstractAction action, String command) 
 	{
 		action.setCommand(command);
 		assertInput(action.execute());
@@ -95,7 +95,7 @@ public abstract class WebWorkTestCase extends InfoGlueTestCase
 		assertNone(action.execute());
 	}
 
-	public static void assertNone(WebworkAbstractAction action, String command) throws Exception
+	public static void assertNone(WebworkAbstractAction action, String command) 
 	{
 		action.setCommand(command);
 		assertNone(action.execute());

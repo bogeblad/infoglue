@@ -100,9 +100,6 @@ public class PathContentProvider extends ContentProvider
 		return contentVersionParameterName;
 	}
 	
-	/**
-	 * 
-	 */
 	protected void initializeContentVO() throws WorkflowException
 	{
 		try

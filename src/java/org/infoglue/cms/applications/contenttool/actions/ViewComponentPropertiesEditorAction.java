@@ -30,6 +30,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ComponentPropertyDefiniti
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.exception.SystemException;
 
 
 /**
@@ -49,7 +50,7 @@ public class ViewComponentPropertiesEditorAction extends InfoGlueAbstractAction
 
 	private String closeOnLoad = "false";
     
-    private void initialize() throws Exception
+    private void initialize() throws SystemException
     {
         this.contentId = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId).getContentId();
         String componentPropertiesXML = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionId, attributeName, false);
@@ -57,14 +58,14 @@ public class ViewComponentPropertiesEditorAction extends InfoGlueAbstractAction
         this.contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.CONTENT);
     }
     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
         initialize();
         
         return SUCCESS;
     }
 
-    public String doUpdate() throws Exception
+    public String doUpdate() throws SystemException
     {
         ContentVersionController.getContentVersionController().updateAttributeValue(this.contentVersionId, this.attributeName, this.propertiesXML, this.getInfoGluePrincipal());
         

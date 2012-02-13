@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -33,6 +35,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -74,6 +78,7 @@ import org.infoglue.deliver.util.Timer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -1346,12 +1351,9 @@ public class SiteNodeController extends BaseController
 	 * @param db
 	 * @param path
 	 * @param newSiteNode
-	 * @throws SystemException
-	 * @throws Exception
-	 * @throws ConstraintException
 	 */
 	
-    public Content createSiteNodeMetaInfoContent(Database db, SiteNode newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId) throws SystemException, Exception, ConstraintException
+    public Content createSiteNodeMetaInfoContent(Database db, SiteNode newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId) throws SystemException, ConstraintException, PersistenceException, UnsupportedEncodingException, IOException, SAXException, TransformerException
     {
         Content content = null;
         
@@ -1458,7 +1460,7 @@ public class SiteNodeController extends BaseController
         return content;
     }
 
-	public LanguageVO getInitialLanguageVO(Database db, Integer contentId, Integer repositoryId) throws Exception
+	public LanguageVO getInitialLanguageVO(Database db, Integer contentId, Integer repositoryId) throws NumberFormatException, SystemException 
 	{
 		Map args = new HashMap();
 	    args.put("globalKey", "infoglue");
@@ -1684,7 +1686,7 @@ public class SiteNodeController extends BaseController
 		return protectedSiteNodeVersionId;
 	}
 
-	public String getSiteNodePath(Integer siteNodeId, Database db) throws Exception
+	public String getSiteNodePath(Integer siteNodeId, Database db) throws SystemException 
 	{
 		StringBuffer sb = new StringBuffer();
 		

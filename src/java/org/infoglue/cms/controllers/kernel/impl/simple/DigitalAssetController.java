@@ -66,8 +66,6 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.entities.management.TableCount;
 import org.infoglue.cms.entities.management.UserProperties;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -988,7 +986,7 @@ public class DigitalAssetController extends BaseController
 	 * from that location. To avoid trouble with in memory blobs.
 	 */
 	
-	public InputStream getAssetInputStream(DigitalAsset digitalAsset, boolean returnNullIfBroken) throws Exception
+	public InputStream getAssetInputStream(DigitalAsset digitalAsset, boolean returnNullIfBroken) throws IOException 
 	{
 		String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 		if(logger.isInfoEnabled())
@@ -1980,7 +1978,7 @@ public class DigitalAssetController extends BaseController
 	
 	
 
-	public static boolean dumpDigitalAsset(DigitalAsset digitalAsset, String fileName, String filePath) throws Exception
+	public static boolean dumpDigitalAsset(DigitalAsset digitalAsset, String fileName, String filePath) throws IOException 
 	{
 		if(digitalAsset.getAssetFileSize().intValue() == -1)
 		{

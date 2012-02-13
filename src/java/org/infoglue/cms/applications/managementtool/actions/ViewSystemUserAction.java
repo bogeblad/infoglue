@@ -89,22 +89,22 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
         return "successV3";
     }
 
-	public List getAssignedRoles() throws Exception
+	public List getAssignedRoles()
 	{
 		return this.assignedRoleVOList;
 	}        
 
-	public List getAllRoles() throws Exception
+	public List getAllRoles()
 	{
 		return this.roles;
 	}        
 
-	public List getAssignedGroups() throws Exception
+	public List getAssignedGroups()
 	{
 		return this.assignedGroupVOList;
 	}        
 
-	public List getAllGroups() throws Exception
+	public List getAllGroups()
 	{
 		return this.groups;
 	}        

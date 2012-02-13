@@ -948,7 +948,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         this.globalKey = oldGlobalKey;
     }
     
-    public static void initReloadConfiguration() throws Exception
+    public static void initReloadConfiguration()
     {
     	reloadConfiguration = true;
     }

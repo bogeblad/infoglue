@@ -23,6 +23,7 @@
 package org.infoglue.cms.applications.managementtool.actions;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.PortletAssetController;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 
 /**
@@ -50,7 +52,7 @@ public class ViewListPortletAction extends InfoGlueAbstractAction
 	private Hashtable portlets = new Hashtable();
 	private String portletRegistry;
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() 
 	{
 	    PortletApplicationEntityList pael = PortletEntityRegistry.getPortletApplicationEntityList();
 	    
@@ -69,7 +71,7 @@ public class ViewListPortletAction extends InfoGlueAbstractAction
     	return "success";
 	}
 	
-	public String doSimple() throws Exception 
+	public String doSimple() throws IOException, SystemException 
 	{
 		DigitalAsset digitalAsset = PortletAssetController.getPortletAssetController().getPortletRegistryAsset();
 		if(digitalAsset == null)

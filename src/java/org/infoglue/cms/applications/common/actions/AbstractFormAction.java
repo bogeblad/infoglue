@@ -67,13 +67,8 @@ public abstract class AbstractFormAction extends AbstractAction
   /**
    *
    */
-  public String execute() throws Exception {
-    try {
+  public String execute() {
       return super.execute();
-    } catch(ConstraintException e) {
-      setErrors(e);
-      return INPUT;
-    }
   }
 
 

@@ -5858,7 +5858,7 @@ public class BasicTemplateController implements TemplateController
 	 * @return
 	 * @throws Exception
 	 */
-	private WebPage getPage(SiteNodeVO siteNodeVO, boolean escapeHTML, boolean hideUnauthorizedPages) throws Exception
+	private WebPage getPage(SiteNodeVO siteNodeVO, boolean escapeHTML, boolean hideUnauthorizedPages) 
 	{
 		return getPage(siteNodeVO, escapeHTML, hideUnauthorizedPages, false);
 	}
@@ -5872,7 +5872,7 @@ public class BasicTemplateController implements TemplateController
 	 * @return
 	 * @throws Exception
 	 */
-	private WebPage getPage(SiteNodeVO siteNodeVO, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden) throws Exception
+	private WebPage getPage(SiteNodeVO siteNodeVO, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden) 
 	{
 		WebPage page = null;
 
@@ -5906,7 +5906,7 @@ public class BasicTemplateController implements TemplateController
 	 * @return
 	 * @throws Exception
 	 */
-	private List getPages(List childNodeVOList, boolean escapeHTML, boolean hideUnauthorizedPages) throws Exception
+	private List getPages(List childNodeVOList, boolean escapeHTML, boolean hideUnauthorizedPages) 
 	{
 		return getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, true);
 	}
@@ -5920,7 +5920,7 @@ public class BasicTemplateController implements TemplateController
 	 * @return
 	 * @throws Exception
 	 */
-	private List getPages(List childNodeVOList, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden) throws Exception
+	private List getPages(List childNodeVOList, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden) 
 	{
 		List childPages = new ArrayList();
 

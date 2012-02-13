@@ -29,6 +29,7 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  *
@@ -45,7 +46,7 @@ public class ViewContentVersionHistoryAction extends InfoGlueAbstractAction
 	private List contentVersionVOList;
 	private Boolean inline					= false;
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 	    ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.contentId);
 	    contentVersionVOList = ContentVersionController.getContentVersionController().getContentVersionVOWithParent(contentId);
@@ -53,7 +54,7 @@ public class ViewContentVersionHistoryAction extends InfoGlueAbstractAction
 	    return "success";
 	}
 
-	public String doV3() throws Exception 
+	public String doV3() throws SystemException 
 	{
 		doExecute();
 

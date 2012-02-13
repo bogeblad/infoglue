@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,9 +52,7 @@ public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 	/**
 	 * Initializes all properties needed for the usecase.
 	 * @param extranetGroupId
-	 * @throws Exception
 	 */
-
 	protected void initialize(String groupName) throws Exception
 	{
 	    super.initialize();
@@ -108,7 +107,7 @@ public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 
 	public String doV3() throws Exception
 	{
-		this.initialize(getGroupName());   
+		this.initialize(getGroupName());
 		
         this.setCurrentAction("ViewGroupProperties!v3.action");
         this.setUpdateAction("UpdateGroupProperties!v3");
@@ -240,12 +239,12 @@ public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
         this.groupName = ownerEntityId;
     }
      
-    public String getReturnAddress() throws Exception
+    public String getReturnAddress() throws UnsupportedEncodingException
     {
     	return this.getCurrentAction() + "?groupName=" + formatter.encodeBase64(this.groupName) + "&amp;languageId=" + this.getLanguageId();
     }
 
-    public String getCancelAddress() throws Exception
+    public String getCancelAddress() throws UnsupportedEncodingException
     {
     	return this.getCancelAction() + "?groupName=" + formatter.encodeBase64(this.groupName);
     }

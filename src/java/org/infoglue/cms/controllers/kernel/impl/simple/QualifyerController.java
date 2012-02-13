@@ -32,14 +32,13 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.structure.Qualifyer;
 import org.infoglue.cms.entities.structure.QualifyerVO;
 import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.impl.simple.QualifyerImpl;
 import org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -59,47 +58,12 @@ public class QualifyerController extends BaseController
 		return (Qualifyer) getObjectWithId(QualifyerImpl.class, qualifyerId, db);
 	}
 
-
-   	/**
-   	 * This method creates a new qualifyer for a serviceBinding. It is basically this qualifyer that
-   	 * specifies which stuff to fetch from the serviceDefinition.
-   	 */
-	/*
-   	public static QualifyerVO create(String qualifyerXML, Integer serviceBindingId) throws ConstraintException, SystemException
-   	{
-		Database db = CastorDatabaseService.getDatabase();
-        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-
-		Qualifyer qualifyer = null;
-		
-        beginTransaction(db);
-		
- 		ServiceBinding serviceBinding = ServiceBindingController.getServiceBindingWithId(serviceBindingId, db);
-   		
-   		List qualifyerVOList = parseQualifyerList(qualifyerXML);
-   		
-   		Iterator i = qualifyerVOList.iterator();
-   		while(i.hasNext())
-   		{
-   			QualifyerVO qualifyerVO = (QualifyerVO)i.next();
-	   		qualifyer = new QualifyerImpl();
-	        qualifyer.setValueObject(qualifyerVO);
-	 		qualifyer.setServiceBinding((ServiceBindingImpl)serviceBinding);
-	        
-	 		qualifyer = (Qualifyer) createEntity(qualifyer, db);			
-   		}
-   		        
-        return qualifyer.getValueObject();
-   	}
-*/
-
-
    	/**
    	 * This method creates a new qualifyer for a serviceBinding. It is basically this qualifyer that
    	 * specifies which stuff to fetch from the serviceDefinition.
    	 */
 
-   	public static Collection createQualifyers(String qualifyerXML, ServiceBinding serviceBinding) throws ConstraintException, SystemException
+   	public static Collection createQualifyers(String qualifyerXML, ServiceBinding serviceBinding)
    	{
 		Collection qualifyers = new ArrayList();
 		
@@ -114,7 +78,6 @@ public class QualifyerController extends BaseController
 	 		qualifyer.setServiceBinding((ServiceBindingImpl)serviceBinding);
 	        qualifyers.add(qualifyer);
 	        logger.info("ADDED:" + qualifyerVO.getValue());
-	 		//qualifyer = (Qualifyer) createEntity(qualifyer, db);			
    		}
    		        
         return qualifyers;
@@ -125,8 +88,7 @@ public class QualifyerController extends BaseController
    	 * This method creates a new qualifyer for a serviceBinding. It is basically this qualifyer that
    	 * specifies which stuff to fetch from the serviceDefinition.
    	 */
-
-   	public static QualifyerVO screate(QualifyerVO qualifyerVO, Integer serviceBindingId, Database db) throws ConstraintException, SystemException, Exception
+   	public static QualifyerVO screate(QualifyerVO qualifyerVO, Integer serviceBindingId, Database db) throws SystemException, PersistenceException
    	{
 		Qualifyer qualifyer = null;
 		
@@ -145,7 +107,7 @@ public class QualifyerController extends BaseController
 	/**
 	 * This method returns a sorted list of qualifyers.
 	 */
-	public static List getBindingQualifyers(Integer serviceBindingId) throws SystemException, Exception
+	public static List getBindingQualifyers(Integer serviceBindingId) throws SystemException
 	{
 		List qualifyers = new ArrayList();
 		

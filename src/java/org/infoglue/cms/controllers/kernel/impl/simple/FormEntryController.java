@@ -51,7 +51,6 @@ import org.infoglue.cms.entities.management.impl.simple.FormEntryAssetImpl;
 import org.infoglue.cms.entities.management.impl.simple.FormEntryImpl;
 import org.infoglue.cms.entities.management.impl.simple.FormEntryValueImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -113,8 +112,6 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public List getFormEntryValueVOList(Integer formContentId, String fieldName) throws SystemException
@@ -158,8 +155,6 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public List getFormEntryVOList(Integer formContentId) throws SystemException
@@ -192,8 +187,6 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public List getFormEntryValueVOList(Integer formEntryId) throws SystemException
@@ -226,8 +219,6 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public List getFormEntryAssetVOList(Integer formEntryId) throws SystemException
@@ -260,8 +251,6 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public String getFormEntryAssetUrl(Integer formEntryAssetId, DeliveryContext deliveryContext) throws SystemException
@@ -307,10 +296,8 @@ public class FormEntryController extends BaseController
 		Timer timer = new Timer();
 		File tmpOutputFile = new File(filePath + File.separator + Thread.currentThread().getId() + "_tmp_" + fileName);
 		File outputFile = new File(filePath + File.separator + fileName);
-		//logger.warn("outputFile:" + filePath + File.separator + fileName + ":" + outputFile.length());
 		if(outputFile.exists())
 		{
-			//logger.warn("The file allready exists so we don't need to dump it again..");
 			return outputFile;
 		}
 
@@ -375,8 +362,6 @@ public class FormEntryController extends BaseController
 	 * @param name
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
 	public List getFormEntryList(Integer formContentId, Database db) throws SystemException
@@ -460,7 +445,6 @@ public class FormEntryController extends BaseController
  			while(formEntryValuesIterator.hasNext())
  			{
  				FormEntryValue value = (FormEntryValue)formEntryValuesIterator.next();
- 				//value.getFormEntry().getFormEntryValues().remove(value);
  				formEntryValuesIterator.remove();
  				db.remove(value);
  			}
@@ -470,7 +454,6 @@ public class FormEntryController extends BaseController
  			while(formEntryAssetsIterator.hasNext())
  			{
  				FormEntryAsset asset = (FormEntryAsset)formEntryAssetsIterator.next();
- 				//asset.getFormEntry().getFormEntryAssets().remove(asset);
  				formEntryAssetsIterator.remove();
  				db.remove(asset);
  			}
@@ -492,51 +475,6 @@ public class FormEntryController extends BaseController
     {
     	return (FormEntryVO) updateEntity(FormEntryImpl.class, formEntryVO);
     }
-    
-	/**
-	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
-	 */
-    /*
-    public void delete(FormEntryVO formEntryVO, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
-    {
-		Database db = CastorDatabaseService.getDatabase();
-		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-
-		beginTransaction(db);
-
-		try
-		{
-			FormEntry formEntry = getFormEntryWithId(formEntryVO.getId(), db);
-			
-			Collection entryValues = formEntry.getFormEntryValues();
-			Iterator entryValuesIterator = entryValues.iterator();
-			while(entryValuesIterator.hasNext())
-			{
-				deleteEntity(
-				entryValuesIterator.remove();
-			}
-			
-			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
-	
-			//If any of the validations or setMethods reported an error, we throw them up now before create.
-			ceb.throwIfNotEmpty();
-    
-			commitTransaction(db);
-		}
-		catch(ConstraintException ce)
-		{
-			logger.warn("An error occurred so we should not completes the transaction:" + ce, ce);
-			rollbackTransaction(db);
-			throw ce;
-		}
-		catch(Exception e)
-		{
-			logger.error("An error occurred so we should not completes the transaction:" + e, e);
-			rollbackTransaction(db);
-			throw new SystemException(e.getMessage());
-		}
-    } 
-	*/
     
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller

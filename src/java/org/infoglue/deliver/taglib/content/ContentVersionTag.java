@@ -83,7 +83,7 @@ public class ContentVersionTag extends TemplateControllerTag
         this.contentVersionId = evaluateInteger("contentVersion", "contentVersionId", contentVersionId);
     }
 
-    public void setContent(String contentExp) throws JspException
+    public void setContent(String contentExp) 
     {
     	try
     	{

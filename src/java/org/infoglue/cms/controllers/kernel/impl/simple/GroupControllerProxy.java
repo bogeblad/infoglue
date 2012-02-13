@@ -32,7 +32,6 @@ import java.util.List;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.GroupVO;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.AuthorizationModule;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
@@ -93,7 +92,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method return whether the module in question supports updates to the values.
 	 */
 	
-	public boolean getSupportUpdate() throws ConstraintException, SystemException, Exception
+	public boolean getSupportUpdate()
 	{
 		return getAuthorizationModule().getSupportUpdate();
 	}
@@ -102,7 +101,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method return whether the module in question supports deletes of users.
 	 */
 	
-	public boolean getSupportDelete() throws ConstraintException, SystemException, Exception
+	public boolean getSupportDelete()
 	{
 		return getAuthorizationModule().getSupportDelete();
 	}
@@ -111,7 +110,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method return whether the module in question supports creation of new users.
 	 */
 	
-	public boolean getSupportCreate() throws ConstraintException, SystemException, Exception
+	public boolean getSupportCreate()
 	{
 		return getAuthorizationModule().getSupportCreate();
 	}
@@ -120,7 +119,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method returns a specific content-object
 	 */
 	
-    public List getAllGroups() throws ConstraintException, SystemException, Exception
+    public List getAllGroups() throws Exception
     {
     	List groups = new ArrayList();
     	
@@ -135,7 +134,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method returns a certain group
 	 */
 	
-	public InfoGlueGroup getGroup(String groupName) throws ConstraintException, SystemException, Exception
+	public InfoGlueGroup getGroup(String groupName) throws Exception
 	{
 		InfoGlueGroup infoGlueGroup = null;
     	
@@ -147,8 +146,7 @@ public class GroupControllerProxy extends BaseController
 	/**
 	 * This method returns if a role exists
 	 */
-	
-    public boolean groupExists(String groupName) throws ConstraintException, SystemException, Exception
+    public boolean groupExists(String groupName) throws Exception
     {
 		return getAuthorizationModule().groupExists(groupName);
     }
@@ -157,7 +155,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method returns a list of InfoGlue Principals which are part of this group
 	 */
 	
-	public List getInfoGluePrincipals(String groupName) throws ConstraintException, SystemException, Exception
+	public List getInfoGluePrincipals(String groupName) throws Exception
 	{
 		List infoGluePrincipals = new ArrayList();
     	
@@ -172,7 +170,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method creates a new group
 	 */
 	
-	public InfoGlueGroup createGroup(GroupVO groupVO) throws ConstraintException, SystemException, Exception
+	public InfoGlueGroup createGroup(GroupVO groupVO) throws Exception
 	{
 		InfoGlueGroup infoGlueGroup = null;
     	
@@ -185,7 +183,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method updates an existing group
 	 */
 	
-	public void updateGroup(GroupVO groupVO, String[] userNames) throws ConstraintException, SystemException, Exception
+	public void updateGroup(GroupVO groupVO, String[] userNames) throws Exception
 	{
 		getAuthorizationModule().updateInfoGlueGroup(groupVO, userNames);
 	}
@@ -194,7 +192,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method updates an existing group
 	 */
 	
-	public void addUser(String groupName, String userName) throws ConstraintException, SystemException, Exception
+	public void addUser(String groupName, String userName) throws Exception
 	{
 		getAuthorizationModule().addUserToGroup(groupName, userName);
 	}
@@ -203,7 +201,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method removes a user from group
 	 */
 	
-	public void removeUser(String groupName, String userName) throws ConstraintException, SystemException, Exception
+	public void removeUser(String groupName, String userName) throws Exception
 	{
 		getAuthorizationModule().removeUserFromGroup(groupName, userName);
 	}
@@ -212,7 +210,7 @@ public class GroupControllerProxy extends BaseController
 	 * This method deletes an existing user
 	 */
 	
-	public void deleteGroup(String groupName) throws ConstraintException, SystemException, Exception
+	public void deleteGroup(String groupName) throws Exception
 	{
 		getAuthorizationModule().deleteInfoGlueGroup(groupName);
 		AccessRightController.getController().delete(groupName);
@@ -223,7 +221,7 @@ public class GroupControllerProxy extends BaseController
 		return null;
 	}
  
-	public List getAvailableGroups(InfoGluePrincipal infoGluePrincipal, String interceptionPointName) throws ConstraintException, SystemException, Exception 
+	public List getAvailableGroups(InfoGluePrincipal infoGluePrincipal, String interceptionPointName) throws Exception 
 	{
 		List availableGroups = new ArrayList();
 		List allGroups = getAuthorizationModule().getGroups();

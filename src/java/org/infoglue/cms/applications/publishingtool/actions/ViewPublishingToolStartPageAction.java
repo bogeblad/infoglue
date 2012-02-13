@@ -45,21 +45,21 @@ public class ViewPublishingToolStartPageAction extends InfoGlueAbstractAction
 
     private List repositories;
 
-    public String doV3() throws Exception
+    public String doV3() throws SystemException
     {
     	doExecute();
     	
         return "successV3";
     }
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
     	this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
     	
         return "success";
     }
     
-    public String doPushSystemNotificationMessages() throws Exception
+    public String doPushSystemNotificationMessages() throws SystemException
     {
         NotificationMessage notificationMessage = null;
         List messages = RemoteCacheUpdater.getSystemNotificationMessages();

@@ -37,7 +37,6 @@ import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -67,7 +66,7 @@ public class SiteNodeTypeDefinitionController extends BaseController
 		return (SiteNodeTypeDefinitionVO) getVOWithId(SiteNodeTypeDefinitionImpl.class, siteNodeTypeDefinitionId, db);
     }
 
-    public SiteNodeTypeDefinitionVO create(SiteNodeTypeDefinitionVO vo) throws ConstraintException, SystemException
+    public SiteNodeTypeDefinitionVO create(SiteNodeTypeDefinitionVO vo) throws SystemException
     {
         SiteNodeTypeDefinition ent = new SiteNodeTypeDefinitionImpl();
         ent.setValueObject(vo);
@@ -75,7 +74,7 @@ public class SiteNodeTypeDefinitionController extends BaseController
         return ent.getValueObject();
     }     
 
-    public void delete(SiteNodeTypeDefinitionVO vo) throws ConstraintException, SystemException
+    public void delete(SiteNodeTypeDefinitionVO vo) throws SystemException
     {
     	deleteEntity(SiteNodeTypeDefinitionImpl.class, vo.getSiteNodeTypeDefinitionId());
     }        
@@ -120,7 +119,6 @@ public class SiteNodeTypeDefinitionController extends BaseController
 	 * @param db
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 
 	public SiteNodeTypeDefinition getSiteNodeTypeDefinitionWithName(String name, Database db, boolean readOnly) throws SystemException
@@ -323,22 +321,9 @@ public class SiteNodeTypeDefinitionController extends BaseController
 	 * siteNodeTypeDefinition sent in
 	 */
 	
-	public List getAvailableServiceBindingVOList(Integer siteNodeTypeDefinitionId, Database db) throws ConstraintException, SystemException
+	public List getAvailableServiceBindingVOList(Integer siteNodeTypeDefinitionId, Database db) throws SystemException
 	{
         List availableServiceBindingVOList = null;
-    	/*
-    	OQLQuery oql = db.getOQLQuery( "SELECT asb FROM org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl asb WHERE asb.siteNodeTypeDefinition.siteNodeTypeDefinitionId = $1");
-    	oql.bind(siteNodeTypeDefinitionId);
-    	
-    	QueryResults results = oql.execute(Database.ReadOnly);
-		
-		while (results.hasMore()) 
-        {
-        	AvailableServiceBinding availableServiceBinding = (AvailableServiceBinding)results.next();
-			availableServiceBindingVOList.add(availableServiceBinding.getValueObject());
-        }
-        */
-
     	SiteNodeTypeDefinition siteNodeTypeDefinition = getSiteNodeTypeDefinitionWithIdAsReadOnly(siteNodeTypeDefinitionId, db);
         Collection availableServiceBindingList = siteNodeTypeDefinition.getAvailableServiceBindings();
     	availableServiceBindingVOList = toVOList(availableServiceBindingList);

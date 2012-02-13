@@ -30,6 +30,7 @@ import javax.servlet.http.Cookie;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 
@@ -51,7 +52,7 @@ public class ViewContentToolHeaderAction extends InfoGlueAbstractAction
      
 	private List repositories;
     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
     	if (this.showVersions == null || this.showVersions.equals("")) 
 			this.showVersions = (String)getRequest().getSession().getAttribute("htmlTreeShowVersions");

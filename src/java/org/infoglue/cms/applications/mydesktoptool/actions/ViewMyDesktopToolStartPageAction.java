@@ -47,7 +47,6 @@ import org.infoglue.cms.util.workflow.StepFilter;
 import webwork.action.ActionContext;
 
 import com.opensymphony.workflow.InvalidActionException;
-import com.opensymphony.workflow.WorkflowException;
 
 /**
  * This class implements the action class for the startpage in the mydesktop tool.
@@ -160,9 +159,8 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	/**
 	 * Populates the lists of workflow and workflow action VOs.
 	 * @return Action.SUCCESS
-	 * @throws SystemException if a workflow error occurs
 	 */
-	public String doTaskList() throws SystemException
+	public String doTaskList()
 	{
 		populateActiveWorkflowVOList();
 		return "successTaskList";
@@ -260,9 +258,8 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 
 	/**
 	 * Populates availableWorkflowVOList, workflowVOList, and workflowActionVOList.
-	 * @throws SystemException if a workflow error occurs
 	 */
-	private void populateLists() throws SystemException
+	private void populateLists()
 	{
 		availableWorkflowVOList = controller.getAvailableWorkflowVOList(getInfoGluePrincipal());
 		final String showAllWorkflows = CmsPropertyHandler.getShowAllWorkflows();
@@ -380,7 +377,7 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 		}
 	}
 	
-	private void populateActiveWorkflowVOList() throws SystemException
+	private void populateActiveWorkflowVOList()
 	{
 		final String showAllWorkflows = CmsPropertyHandler.getShowAllWorkflows();
 		if(showAllWorkflows == null || showAllWorkflows.equalsIgnoreCase("true"))
@@ -397,7 +394,7 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	 * Here are some ajax-methods
 	 */
 	
-	public String doGetActiveWorkflowProperties() throws Exception
+	public String doGetActiveWorkflowProperties() throws IOException
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -451,7 +448,7 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	 * Gets a description div of a workflow
 	 */
 	
-	public String doGetAvailableWorkflowProperties() throws Exception
+	public String doGetAvailableWorkflowProperties() throws IOException
 	{
 		StringBuffer sb = new StringBuffer();
 		

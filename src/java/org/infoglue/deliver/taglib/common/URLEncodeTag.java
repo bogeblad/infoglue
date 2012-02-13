@@ -62,7 +62,7 @@ public class URLEncodeTag extends TemplateControllerTag {
         this.value = evaluateString("URLEncode", "value", value);
     }
 
-    public void setEncoding(String encoding) throws JspException
+    public void setEncoding(String encoding) 
     {
         this.encoding = encoding;
     }

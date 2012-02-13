@@ -93,22 +93,14 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	    return "success";
 	}
 
-	public String doV3() throws Exception 
+	public String doV3() 
 	{
-		//this.infogluePrincipals = UserControllerProxy.getController().getAllUsers();
-		//this.infogluePrincipals = this.infogluePrincipals.subList(0, 100);
-		
 	    return "successV3";
 	}
-
-	/**
-	 * 
-	 */
 
 	public String doPopupProcessAndFilter() throws Exception 
 	{
 		doProcessAndFilter();
-		
 		return "successPopupFiltered"; 
 	}
 	
@@ -160,12 +152,8 @@ public class ViewListSystemUserAction extends InfoGlueAbstractAction
 	    return "successPopup";
 	}
 
-	public String doUserListForPopupV3() throws Exception 
+	public String doUserListForPopupV3() 
 	{
-		/*
-		this.infogluePrincipals = UserControllerProxy.getController().getAllUsers();
-		Collections.sort(this.infogluePrincipals, new ReflectionComparator("firstName"));
-		*/
 	    return "successPopupV3";
 	}
 

@@ -60,7 +60,6 @@ import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.structure.Qualifyer;
 import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -310,7 +309,7 @@ public class ContentController extends BaseController
 	 * As castor is lousy at this in my opinion we also add the new entity to the surrounding entities.
 	 */
 	    
-    public /*synchronized*/ Content create(Database db, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws SystemException, Exception
+    public Content create(Database db, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws SystemException
     {
 	    Content content = null;
 		
@@ -332,32 +331,23 @@ public class ContentController extends BaseController
 
             Repository repository = RepositoryController.getController().getRepositoryWithId(repositoryId, db);
 
-			/*
-        	synchronized (controller)
+            content = new ContentImpl();
+            content.setValueObject(contentVO);
+            content.setParentContent((ContentImpl)parentContent);
+            content.setRepository((RepositoryImpl)repository);
+            content.setContentTypeDefinition((ContentTypeDefinitionImpl)contentTypeDefinition);
+            
+			db.create(content);
+			
+			//Now we add the content to the knowledge of the related entities.
+			if(parentContent != null)
 			{
-        		//db.lock(parentContent);
-			*/
-	            content = new ContentImpl();
-	            content.setValueObject(contentVO);
-	            content.setParentContent((ContentImpl)parentContent);
-	            content.setRepository((RepositoryImpl)repository);
-	            content.setContentTypeDefinition((ContentTypeDefinitionImpl)contentTypeDefinition);
-	            
-				db.create(content);
-				
-				//Now we add the content to the knowledge of the related entities.
-				if(parentContent != null)
-				{
-					parentContent.getChildren().add(content);
-					parentContent.setIsBranch(new Boolean(true));
-				}
-        	//}
-
-			//repository.getContents().add(content);			
+				parentContent.getChildren().add(content);
+				parentContent.setIsBranch(new Boolean(true));
+			}
         }
         catch(Exception e)
         {
-        	//logger.error("An error occurred so we should not complete the transaction:" + e, e);
             throw new SystemException(e.getMessage());    
         }
         
@@ -1132,7 +1122,7 @@ public class ContentController extends BaseController
 	 * of things that should match. The input is a Hashmap with a method and a List of HashMaps.
 	 */
 	
-    public List getContentVOList(HashMap argumentHashMap, Database db) throws SystemException, Exception
+    public List getContentVOList(HashMap argumentHashMap, Database db) throws SystemException, PersistenceException
     {
     	List contents = null;
     	
@@ -1360,7 +1350,7 @@ public class ContentController extends BaseController
 	 * If there is no such content we create one as all repositories need one to work.
 	 */
 	        
-	public Content getRootContent(Database db, Integer repositoryId, String userName, boolean createIfNonExisting) throws ConstraintException, SystemException, Exception
+	public Content getRootContent(Database db, Integer repositoryId, String userName, boolean createIfNonExisting) throws SystemException, PersistenceException
 	{
 		Content content = null;
 
@@ -1729,7 +1719,7 @@ public class ContentController extends BaseController
 	 * This method returns the bound contents based on a servicebinding.
 	 */
 	
-	public static List getBoundContents(Database db, Integer serviceBindingId) throws SystemException, Exception
+	public static List getBoundContents(Database db, Integer serviceBindingId) throws Exception
 	{
 		List result = new ArrayList();
 		
@@ -1943,7 +1933,7 @@ public class ContentController extends BaseController
 	 * @param forceFolders if true then non-existing folders will be created; otherwise an exception will be thrown
 	 * @param db the database to use
 	 */
-	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator) throws SystemException, Exception 
+	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator) throws SystemException 
 	{
 		ContentVO contentVO = null;
 		
@@ -1990,7 +1980,7 @@ public class ContentController extends BaseController
 	 * @param forceFolders if true then non-existing folders will be created; otherwise an exception will be thrown
 	 * @param db the database to use
 	 */
-	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
+	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, PersistenceException
 	{
 		ContentVO content = getRootContent(repositoryId, db).getValueObject();
 		final String paths[] = path.split("/");
@@ -2023,7 +2013,7 @@ public class ContentController extends BaseController
 	}
 	
 
-	public Content getContentWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
+	public Content getContentWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, PersistenceException 
 	{
 		Content content = getRootContent(repositoryId, db);
 		final String paths[] = path.split("/");
@@ -2053,10 +2043,7 @@ public class ContentController extends BaseController
 		return content;
 	}
 
-	/**
-	 * 
-	 */
-	private ContentVO getChildVOWithName(Integer parentContentId, String name, Database db) throws Exception
+	private ContentVO getChildVOWithName(Integer parentContentId, String name, Database db) throws PersistenceException 
 	{
 		ContentVO contentVO = null;
 		
@@ -2078,10 +2065,7 @@ public class ContentController extends BaseController
 		return contentVO;
 	}
 
-	/**
-	 * 
-	 */
-	private Content getChildWithName(Integer parentContentId, String name, Database db) throws Exception
+	private Content getChildWithName(Integer parentContentId, String name, Database db) throws PersistenceException 
 	{
 		Content content = null;
 		
@@ -2101,22 +2085,6 @@ public class ContentController extends BaseController
 		
 		return content;
 	}
-
-	/**
-	 * 
-	 */
-	/*
-	private Content getChildWithName(Content content, String name, Database db)
-	{
-		for(Iterator i=content.getChildren().iterator(); i.hasNext(); )
-		{
-			final Content childContent = (Content) i.next();
-			if(childContent.getName().equals(name))
-				return childContent;
-		}
-		return null;
-	}
-	*/
 
 	
 	/**
@@ -2145,7 +2113,7 @@ public class ContentController extends BaseController
 		return resultList;
 	}
 
-	public String getContentAttribute(Integer contentId, Integer languageId, String attributeName) throws Exception
+	public String getContentAttribute(Integer contentId, Integer languageId, String attributeName) throws SystemException 
 	{
 	    String attribute = "Undefined";
 	    
@@ -2158,7 +2126,7 @@ public class ContentController extends BaseController
 		return attribute;
 	}	
 
-	public String getContentAttribute(Database db, Integer contentId, Integer languageId, String attributeName) throws Exception
+	public String getContentAttribute(Database db, Integer contentId, Integer languageId, String attributeName) throws SystemException, PersistenceException 
 	{
 	    String attribute = "Undefined";
 	    
@@ -2171,7 +2139,7 @@ public class ContentController extends BaseController
 		return attribute;
 	}	
 
-	public String getContentAttribute(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallBack) throws Exception
+	public String getContentAttribute(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallBack) throws SystemException, PersistenceException 
 	{
 	    String attribute = "Undefined";
 	    
@@ -2190,7 +2158,7 @@ public class ContentController extends BaseController
 		return attribute;
 	}	
 
-	public String getContentAttribute(Database db, Integer contentId, Integer languageId, Integer stateId, String attributeName, boolean useLanguageFallBack) throws Exception
+	public String getContentAttribute(Database db, Integer contentId, Integer languageId, Integer stateId, String attributeName, boolean useLanguageFallBack) throws SystemException, PersistenceException 
 	{
 	    String attribute = "Undefined";
 	    
@@ -2228,7 +2196,7 @@ public class ContentController extends BaseController
 	 * @return String the path to, and including, this content "library/library/..."
 	 * 
 	 */
-	public String getContentPath(Integer contentId) throws ConstraintException, SystemException, Exception
+	public String getContentPath(Integer contentId) throws SystemException
     {
 		return getContentPath(contentId, false, false);
     }
@@ -2242,7 +2210,7 @@ public class ContentController extends BaseController
 	 * @return String the path to, and including, this content "library/library/..."
 	 * 
 	 */
-	public String getContentPath(Integer contentId, boolean includeRootContent, boolean includeRepositoryName) throws ConstraintException, SystemException, Exception
+	public String getContentPath(Integer contentId, boolean includeRootContent, boolean includeRepositoryName) throws SystemException
 	{
 		StringBuffer sb = new StringBuffer();
 
@@ -2314,7 +2282,7 @@ public class ContentController extends BaseController
         return contentVOList;
 	}
 
-	public List<ContentVO> getUpcomingExpiringContents(int numberOfDays, InfoGluePrincipal principal, String[] excludedContentTypes) throws Exception
+	public List<ContentVO> getUpcomingExpiringContents(int numberOfDays, InfoGluePrincipal principal, String[] excludedContentTypes) throws SystemException 
 	{
 		List<ContentVO> contentVOList = new ArrayList<ContentVO>();
 
@@ -2394,14 +2362,14 @@ public class ContentController extends BaseController
 		return hasPublishedVersion;
 	}
 	
-	public List<ContentVO> getRelatedContents(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallback) throws Exception
+	public List<ContentVO> getRelatedContents(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallback) throws PersistenceException, SystemException  
 	{
 		String qualifyerXML = getContentAttribute(db, contentId, languageId, attributeName, useLanguageFallback);
 
 		return getRelatedContentsFromXML(qualifyerXML);
 	}
 
-	public List<SiteNodeVO> getRelatedSiteNodes(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallback) throws Exception
+	public List<SiteNodeVO> getRelatedSiteNodes(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallback) throws PersistenceException, SystemException 
 	{
 		String qualifyerXML = getContentAttribute(db, contentId, languageId, attributeName, useLanguageFallback);
 

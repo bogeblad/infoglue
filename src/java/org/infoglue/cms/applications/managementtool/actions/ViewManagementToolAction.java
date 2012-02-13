@@ -47,7 +47,7 @@ public class ViewManagementToolAction extends ViewCMSAbstractToolAction
     	return this.repositoryId;
     }
  
-    public String doExecute() throws Exception
+    public String doExecute()
     {
         return "success";
     }

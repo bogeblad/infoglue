@@ -41,7 +41,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ServerNode;
 import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.cms.entities.management.impl.simple.ServerNodeImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
@@ -81,7 +80,7 @@ public class ServerNodeController extends BaseController
 	 * @throws ConstraintException
 	 * @throws SystemException
 	 */
-    public ServerNodeVO create(ServerNodeVO vo) throws ConstraintException, SystemException
+    public ServerNodeVO create(ServerNodeVO vo) throws SystemException
     {
         ServerNode ent = new ServerNodeImpl();
         ent.setValueObject(vo);
@@ -89,7 +88,7 @@ public class ServerNodeController extends BaseController
         return ent.getValueObject();
     }     
     
-    public ServerNodeVO update(ServerNodeVO vo) throws ConstraintException, SystemException
+    public ServerNodeVO update(ServerNodeVO vo) throws SystemException
     {
     	return (ServerNodeVO) updateEntity(ServerNodeImpl.class, vo);
     }        
@@ -100,7 +99,7 @@ public class ServerNodeController extends BaseController
 		return (ServerNode) getObjectWithId(ServerNodeImpl.class, id, db);
     }
 
-    public ServerNodeVO getServerNodeVOWithId(Integer serverNodeId) throws ConstraintException, SystemException
+    public ServerNodeVO getServerNodeVOWithId(Integer serverNodeId) throws SystemException
     {
 		return  (ServerNodeVO) getVOWithId(ServerNodeImpl.class, serverNodeId);        
     }
@@ -112,7 +111,6 @@ public class ServerNodeController extends BaseController
 	 * @param name
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public ServerNodeVO getServerNodeVOWithName(String name) throws SystemException
@@ -148,7 +146,6 @@ public class ServerNodeController extends BaseController
 	 * @param db
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 
 	public ServerNode getServerNodeWithName(String name, Database db) throws SystemException
@@ -205,7 +202,7 @@ public class ServerNodeController extends BaseController
     }
 	
 
-    public void delete(ServerNodeVO serverNodeVO, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(ServerNodeVO serverNodeVO, InfoGluePrincipal infoGluePrincipal) throws SystemException
     {
     	Integer serverNodeId = serverNodeVO.getId();
     	

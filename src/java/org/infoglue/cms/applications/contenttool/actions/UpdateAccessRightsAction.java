@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
+
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
@@ -31,6 +33,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
@@ -60,7 +63,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, SystemException, IOException
     {   
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -123,7 +126,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		return "success";
 	}
 	
-	public String doAddGroups() throws Exception
+	public String doAddGroups() throws SystemException, AccessConstraintException, IOException
     {   
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -165,7 +168,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		return "success";
 	}
 
-	public String doAddUser() throws Exception
+	public String doAddUser() throws SystemException, AccessConstraintException, IOException
     {   
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -218,12 +221,12 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		return "success";
 	}
 
-	public String doAddUserV3() throws Exception
+	public String doAddUserV3() throws AccessConstraintException, SystemException, IOException
     {   
 		return doAddUser();
     }
 	
-	public String doDeleteUser() throws Exception
+	public String doDeleteUser() throws SystemException, AccessConstraintException, IOException
     {   
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -276,7 +279,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		return "success";
 	}
 
-	public String doDeleteUserV3() throws Exception
+	public String doDeleteUserV3() throws IOException, AccessConstraintException, SystemException
     {   
 		doDeleteUser();
 		
@@ -290,21 +293,21 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		return "success";
     }
 	
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws AccessConstraintException, SystemException, IOException
     {
 		doExecute();
 						
 		return "saveAndExit";
 	}
 
-	public String doV3() throws Exception
+	public String doV3() throws AccessConstraintException, SystemException, IOException
     {
 		doExecute();
 						
 		return "successV3";
 	}
 
-	public String doSaveAndExitV3() throws Exception
+	public String doSaveAndExitV3() throws AccessConstraintException, SystemException, IOException
     {
 		String result = doExecute();
 		if(result.equals("none"))

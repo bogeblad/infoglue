@@ -952,7 +952,7 @@ public class WorkflowFacade
 	 * @param step the desired step
 	 * @return a new WorkflowStepVO representing step.
 	 */
-	private WorkflowStepVO createStepVO(final WorkflowVO workflowVO, final Step step) throws Exception
+	private WorkflowStepVO createStepVO(final WorkflowVO workflowVO, final Step step)
 	{
 		logger.info("step:" + step + ':' + step.getId());
 		logger.info("Owner:" + step.getOwner());

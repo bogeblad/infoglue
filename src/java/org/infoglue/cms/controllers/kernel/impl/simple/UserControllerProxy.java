@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.AuthorizationModule;
 import org.infoglue.cms.security.AuthorizationSynchronizer;
@@ -122,7 +121,7 @@ public class UserControllerProxy extends BaseController
 	 * This method return whether the module in question supports updates to the values.
 	 */
 	
-	public boolean getSupportUpdate() throws ConstraintException, SystemException, Exception
+	public boolean getSupportUpdate() throws SystemException
 	{
 		return getAuthorizationModule().getSupportUpdate();
 	}
@@ -131,7 +130,7 @@ public class UserControllerProxy extends BaseController
 	 * This method return whether the module in question supports deletes of users.
 	 */
 	
-	public boolean getSupportDelete() throws ConstraintException, SystemException, Exception
+	public boolean getSupportDelete() throws SystemException 
 	{
 		return getAuthorizationModule().getSupportDelete();
 	}
@@ -140,7 +139,7 @@ public class UserControllerProxy extends BaseController
 	 * This method return whether the module in question supports creation of new users.
 	 */
 	
-	public boolean getSupportCreate() throws ConstraintException, SystemException, Exception
+	public boolean getSupportCreate() throws SystemException 
 	{
 		return getAuthorizationModule().getSupportCreate();
 	}
@@ -149,7 +148,7 @@ public class UserControllerProxy extends BaseController
 	 * This method returns a complete list of available users
 	 */
 	
-    public List getAllUsers() throws ConstraintException, SystemException, Exception
+    public List getAllUsers() throws Exception
     {
     	List cachedUsers = (List)CacheController.getCachedObjectFromAdvancedCache("principalCache", "allPrincipals");
 		if(cachedUsers != null && cachedUsers.size() > 0)
@@ -195,11 +194,9 @@ public class UserControllerProxy extends BaseController
 	 * This method returns a certain user
 	 */
 	
-    public InfoGluePrincipal getUser(String userName) throws ConstraintException, SystemException, Exception
+    public InfoGluePrincipal getUser(String userName) throws Exception
     {
     	Object infoGluePrincipalCandidate = CacheController.getCachedObjectFromAdvancedCache("principalCache", userName);
-    	//Object infoGluePrincipalCandidate = CacheController.getCachedObjectFromAdvancedCache("principalCache", userName, 300);
-    	//InfoGluePrincipal infoGluePrincipal = (InfoGluePrincipal)CacheController.getCachedObjectFromAdvancedCache("principalCache", userName, 300);
     	if(infoGluePrincipalCandidate != null)
 		{
 	    	if(infoGluePrincipalCandidate instanceof NullObject)
@@ -221,7 +218,7 @@ public class UserControllerProxy extends BaseController
 	 * This method returns if a user exists
 	 */
 	
-    public boolean userExists(String userName) throws ConstraintException, SystemException, Exception
+    public boolean userExists(String userName) throws Exception
     {
     	Boolean userExists = (Boolean)CacheController.getCachedObjectFromAdvancedCache("principalCache", "exists_" + userName);
 		if(userExists != null)
@@ -238,7 +235,7 @@ public class UserControllerProxy extends BaseController
 	 * This method creates a new user
 	 */
 	
-	public InfoGluePrincipal createUser(SystemUserVO systemUserVO) throws ConstraintException, SystemException, Exception
+	public InfoGluePrincipal createUser(SystemUserVO systemUserVO) throws Exception
 	{
 		getAuthorizationModule().createInfoGluePrincipal(systemUserVO);
     	
@@ -249,7 +246,7 @@ public class UserControllerProxy extends BaseController
 	 * This method updates an existing user
 	 */
 	
-	public void updateUser(SystemUserVO systemUserVO, String[] roleNames, String[] groupNames) throws ConstraintException, SystemException, Exception
+	public void updateUser(SystemUserVO systemUserVO, String[] roleNames, String[] groupNames) throws Exception
 	{
 		getAuthorizationModule().updateInfoGluePrincipal(systemUserVO, roleNames, groupNames);
 	}
@@ -258,7 +255,7 @@ public class UserControllerProxy extends BaseController
 	 * This method updates an existing user
 	 */
 	
-	public void updateUser(SystemUserVO systemUserVO, String oldPassword, String[] roleNames, String[] groupNames) throws ConstraintException, SystemException, Exception
+	public void updateUser(SystemUserVO systemUserVO, String oldPassword, String[] roleNames, String[] groupNames) throws Exception
 	{
 		getAuthorizationModule().updateInfoGluePrincipal(systemUserVO, oldPassword, roleNames, groupNames);
 	}
@@ -267,7 +264,7 @@ public class UserControllerProxy extends BaseController
 	 * This method makes a new password and sends it to the user
 	 */
 	
-	public void updateUserPassword(String userName) throws ConstraintException, SystemException, Exception
+	public void updateUserPassword(String userName) throws Exception
 	{
 	    if(userName.equals(CmsPropertyHandler.getAnonymousUser()))
 	        throw new SystemException("You must not change password on this user as it's needed by the system.");
@@ -279,7 +276,7 @@ public class UserControllerProxy extends BaseController
 	 * This method makes a new password and sends it to the user
 	 */
 	
-	public void updateAnonymousUserPassword() throws ConstraintException, SystemException, Exception
+	public void updateAnonymousUserPassword() throws Exception
 	{
 		getAuthorizationModule().updateInfoGlueAnonymousPrincipalPassword();
 	}
@@ -288,7 +285,7 @@ public class UserControllerProxy extends BaseController
 	 * This method makes a new password and sends it to the user
 	 */
 	
-	public void updateUserPassword(String userName, String oldPassword, String newPassword) throws ConstraintException, SystemException, Exception
+	public void updateUserPassword(String userName, String oldPassword, String newPassword) throws Exception
 	{
 		getAuthorizationModule().updateInfoGluePrincipalPassword(userName, oldPassword, newPassword);
 	}
@@ -297,7 +294,7 @@ public class UserControllerProxy extends BaseController
 	 * This method deletes an existing user
 	 */
 	
-	public void deleteUser(String userName) throws ConstraintException, SystemException, Exception
+	public void deleteUser(String userName) throws Exception
 	{
 		getAuthorizationModule().deleteInfoGluePrincipal(userName);
 	}

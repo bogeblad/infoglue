@@ -35,6 +35,7 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.entities.management.Repository;
@@ -75,7 +76,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	 * This method returns the master repository.
 	 */
 	
-	public RepositoryVO getMasterRepository(Database db) throws SystemException, Exception
+	public RepositoryVO getMasterRepository(Database db) throws PersistenceException 
 	{
 		RepositoryVO repositoryVO = (RepositoryVO)CacheController.getCachedObject("masterRepository", "masterRepository");
 		if(repositoryVO != null)
@@ -100,7 +101,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         return repositoryVO;	
 	}
 
-	public List getRepositoryVOListFromServerName(String serverName, String portNumber, String repositoryName) throws SystemException, Exception
+	public List getRepositoryVOListFromServerName(String serverName, String portNumber, String repositoryName) throws SystemException, PersistenceException 
     {
 	    List repositories = new ArrayList();
 	    
@@ -133,7 +134,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    return repositories;
     }
 	
-	public List getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws SystemException, Exception
+	public List getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws PersistenceException 
     {
 	    List repositories = new ArrayList();
 	    
@@ -248,49 +249,6 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         
         return repositories;
     }
-
-/*
-	public List getRepositoriesFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws SystemException, Exception
-    {
-	    List repositories = new ArrayList();
-	    
-        OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r WHERE is_defined(r.dnsName)");
-        QueryResults results = oql.execute(Database.ReadOnly);
-        while (results.hasMore()) 
-        {
-            Repository repository = (Repository) results.next();
-            logger.info("repository:" + repository.getDnsName());
-            String[] dnsNames = splitStrings(repository.getDnsName());
-            logger.info("dnsNames:" + dnsNames);
-            for (int i=0;i<dnsNames.length;i++) 
-            {
-            	logger.info("dnsNames[i]:" + dnsNames[i]);
-                String dnsName = dnsNames[i];
-            	int protocolIndex = dnsName.indexOf("://");
-                if(protocolIndex > -1)
-                    dnsName = dnsName.substring(protocolIndex + 3);
-                
-                logger.info("Matching only server name - removed protocol if there:" + dnsName);
-                
-            	if((dnsName.indexOf(":") == -1 && dnsName.indexOf(serverName) == 0) || dnsName.indexOf(serverName + ":" + portNumber) == 0)
-                {
-            	    if(repositoryName != null && repositoryName.length() > 0)
-            	    {
-            	        logger.info("Has to check repositoryName also:" + repositoryName);
-                        if(repository.getValueObject().getName().equalsIgnoreCase(repositoryName))
-            	            repositories.add(repository.getValueObject());
-            	    }
-            	    else
-            	    {
-            	        repositories.add(repository.getValueObject());
-            	    }
-            	}
-            }
-        }
-        
-        return repositories;
-    }
-*/
 	
     private String[] splitStrings(String str)
     {
@@ -309,7 +267,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	 * This method returns all the repositories.
 	 */
 	
-	public List getRepositoryVOList(Database db) throws SystemException, Exception
+	public List getRepositoryVOList(Database db) throws PersistenceException 
 	{
 		List repositoryVOList = new ArrayList();
 		

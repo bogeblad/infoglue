@@ -36,7 +36,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.TransactionHistory;
 import org.infoglue.cms.entities.management.TransactionHistoryVO;
 import org.infoglue.cms.entities.management.impl.simple.TransactionHistoryImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;

@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +64,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
     {
     }
         
-    protected void initialize(Integer serverNodeId) throws Exception
+    protected void initialize(Integer serverNodeId) throws SystemException
     {
         if(serverNodeId != null && serverNodeId.intValue() > -1)
             this.serverNodeVO = ServerNodeController.getController().getServerNodeVOWithId(serverNodeId);
@@ -79,9 +80,10 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
     /**
      * The main method that fetches the Value-objects for this use-case
+     * @throws SystemException 
      */
     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
 		this.serverNodeVOList = ServerNodeController.getController().getServerNodeVOList();
         this.initialize(getServerNodeId());
@@ -112,6 +114,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
     /**
      * The main method that fetches the Value-objects for this use-case
+     * @throws Exception 
      */
     
     public String doSave() throws Exception
@@ -380,9 +383,10 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
     /**
      * The main method that fetches the Value-objects for this use-case
+     * @throws SystemException 
      */
     
-    public String doDeleteProperty() throws Exception
+    public String doDeleteProperty() throws SystemException
     {
 		validateSecurityCode();
 
@@ -411,6 +415,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
     /**
      * The main method that fetches the Value-objects for this use-case
+     * @throws Exception 
      */
     
     public String doSaveAndExit() throws Exception
@@ -425,7 +430,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
         return this.serverNodeVO.getServerNodeId();
     }
         
-    public void setServerNodeId(java.lang.Integer serverNodeId) throws Exception
+    public void setServerNodeId(java.lang.Integer serverNodeId)
     {
         this.serverNodeVO.setServerNodeId(serverNodeId);
     }
@@ -454,14 +459,14 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 		return (value != null ? value : "");
 	}
 	
-	public String getDataPropertyValue(String key) throws Exception
+	public String getDataPropertyValue(String key) throws UnsupportedEncodingException
 	{
 		byte[] valueBytes = propertySet.getData("serverNode_" + this.getServerNodeId() + "_" + key);
 	    
 		return (valueBytes != null ? new String(valueBytes, "utf-8") : "");
 	}
 
-	public String getDataPropertyValue(String prefix, String key) throws Exception
+	public String getDataPropertyValue(String prefix, String key) throws UnsupportedEncodingException
 	{
 		byte[] valueBytes = propertySet.getData("serverNode_" + this.getServerNodeId() + "_" + prefix + "_" + key);
 	    

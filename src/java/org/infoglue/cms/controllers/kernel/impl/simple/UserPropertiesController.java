@@ -45,7 +45,6 @@ import org.infoglue.cms.entities.management.UserProperties;
 import org.infoglue.cms.entities.management.UserPropertiesVO;
 import org.infoglue.cms.entities.management.impl.simple.UserContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -140,8 +139,7 @@ public class UserPropertiesController extends BaseController
 	/**
 	 * This method updates an extranet role properties.
 	 */
-
-	public UserPropertiesVO update(Integer languageId, Integer contentTypeDefinitionId, UserPropertiesVO userPropertiesVO) throws ConstraintException, SystemException, Exception
+	public UserPropertiesVO update(Integer languageId, Integer contentTypeDefinitionId, UserPropertiesVO userPropertiesVO) throws Exception
 	{
 		UserPropertiesVO realUserPropertiesVO = userPropertiesVO;
     	

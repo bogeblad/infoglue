@@ -107,12 +107,12 @@ public class SortPagesTag extends TemplateControllerTag
 	/**
 	 * 
 	 */
-	public void setType(final String type) throws JspException
+	public void setType(final String type) 
 	{
 	    this.type = type;
 	}
 
-	public void setNamesInOrderString(final String namesInOrderString) throws JspException
+	public void setNamesInOrderString(final String namesInOrderString) 
 	{
 	    this.namesInOrderString = namesInOrderString;
 	}

@@ -99,10 +99,8 @@ public class FormEntryParameterTag extends AbstractTag implements ContentVersion
 
 	/**
 	 * Adds the parameter to the ancestor tag.
-	 * 
-	 * @throws JspException if the ancestor tag isn't a url tag.
 	 */
-	protected void addFormEntryValue(String name, String value) throws JspException
+	protected void addFormEntryValue(String name, String value) 
 	{
 		Map formEntryValueMap = (Map)formEntryMap.get("formEntryValues");
 		if(formEntryValueMap == null)

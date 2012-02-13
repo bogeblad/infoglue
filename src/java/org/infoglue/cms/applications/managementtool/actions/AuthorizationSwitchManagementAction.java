@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
@@ -101,7 +102,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
         return INPUT + "Group";
     }
 
-    public String doUpdateUser() throws Exception
+    public String doUpdateUser() throws SystemException, PersistenceException
     {    	
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsUser(userName, newUserName);
@@ -111,7 +112,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     	return "successUser";
     }
 
-    public String doUpdateRole() throws Exception
+    public String doUpdateRole() throws SystemException, PersistenceException
     {    	
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsRole(roleName, newRoleName);
@@ -121,7 +122,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     	return "successRole";
     }
 
-    public String doUpdateGroup() throws Exception
+    public String doUpdateGroup() throws SystemException, PersistenceException
     {    	
     	if(this.getInfoGluePrincipal().getIsAdministrator())
     		updateAccessRightsGroup(groupName, newGroupName);
@@ -131,19 +132,13 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     	return "successGroup";
     }
 
-    public String doExecute() throws Exception
+    public String doExecute()
     {   
-    	/*
-    	this.invalidUsers = getInvalidAccessRightsUser();
-    	this.invalidRoles = getInvalidAccessRightsRole();
-    	this.invalidGroups = getInvalidAccessRightsGroup();
-    	*/
-    	
         return SUCCESS;
     }
 
 
-    private List getAccessRightsUser() throws Exception
+    private List getAccessRightsUser() throws SystemException, PersistenceException
     {
     	List accessRightUserList = new ArrayList();
 
@@ -179,7 +174,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
         return accessRightUserList;
     }
 
-    private List getAccessRightsRole() throws Exception
+    private List getAccessRightsRole() throws SystemException, PersistenceException
     {
     	List accessRightRoleList = new ArrayList();
 
@@ -228,7 +223,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
         return accessRightRoleList;
     }
 
-    private List getAccessRightsGroup() throws Exception
+    private List getAccessRightsGroup() throws PersistenceException, SystemException
     {
     	List accessRightGroupList = new ArrayList();
 
@@ -265,7 +260,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
     }
 
     
-    private List getInvalidAccessRightsUser() throws Exception
+    private List getInvalidAccessRightsUser() throws PersistenceException, SystemException
     {
     	Set invalidUsers = new HashSet();
 
@@ -329,7 +324,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
         return invalidUsersList;
     }
 
-    private List getInvalidAccessRightsRole() throws Exception
+    private List getInvalidAccessRightsRole() throws PersistenceException, SystemException
     {
     	Set invalidRoles = new HashSet();
 
@@ -396,7 +391,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
         return invalidRolesList;
     }
 
-    private List getInvalidAccessRightsGroup() throws Exception
+    private List getInvalidAccessRightsGroup() throws PersistenceException, SystemException
     {
     	Set invalidGroups = new HashSet();
 
@@ -463,7 +458,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
         return invalidGroupsList;
     }
     
-    private void updateAccessRightsUser(String userName, String newUserName) throws Exception
+    private void updateAccessRightsUser(String userName, String newUserName) throws PersistenceException, SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         
@@ -520,7 +515,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
         }        
     }
 
-    private void updateAccessRightsRole(String roleName, String newRoleName) throws Exception
+    private void updateAccessRightsRole(String roleName, String newRoleName) throws PersistenceException, SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         
@@ -581,7 +576,7 @@ public class AuthorizationSwitchManagementAction extends InfoGlueAbstractAction
         }        
     }
 
-    private void updateAccessRightsGroup(String groupName, String newGroupName) throws Exception
+    private void updateAccessRightsGroup(String groupName, String newGroupName) throws PersistenceException, SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         

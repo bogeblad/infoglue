@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.contenttool.actions;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -51,6 +52,7 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -85,14 +87,14 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	
 	private VisualFormatter formatter = new VisualFormatter();
 		
-    public String doInput() throws Exception 
+    public String doInput() 
     {
     	logger.info("Input state");
     	
     	return INPUT;
     }
 	
-    public String doMultiple() throws Exception
+    public String doMultiple() throws IOException, InterruptedException, SystemException
     {
     	logger.info("Uploading file....");
     	this.principal = getInfoGluePrincipal();
@@ -559,7 +561,7 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 		return keepOriginal;
 	}
 
-	private void scaleAndSaveImage(DigitalAssetVO originalAssetVO, File file, int width, int height, String outputFormat, String assetSuffix, Integer contentVersionId) throws Exception
+	private void scaleAndSaveImage(DigitalAssetVO originalAssetVO, File file, int width, int height, String outputFormat, String assetSuffix, Integer contentVersionId) throws IOException, SystemException
 	{
     	String workingFileName = "" + originalAssetVO.getDigitalAssetId() + "_" + assetSuffix + "." + outputFormat.toLowerCase();
     	long timeStamp = System.currentTimeMillis();
@@ -603,7 +605,7 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl() throws Exception
+	public String getDigitalAssetUrl()
 	{
 		String imageHref = null;
 		try
@@ -633,7 +635,7 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 		return imageHref;
     }
     
-    public boolean getAllowedSessionId(String requestSessionId) throws Exception
+    public boolean getAllowedSessionId(String requestSessionId) throws InterruptedException, SystemException
     {
 		boolean allowedSessionId = false;
 		List activeSessionBeanList = CmsSessionContextListener.getSessionInfoBeanList();

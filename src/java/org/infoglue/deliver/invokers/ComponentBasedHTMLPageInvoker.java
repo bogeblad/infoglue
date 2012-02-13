@@ -1435,7 +1435,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method renders the base component and all it's children.
 	 */
 
-	private String renderComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, int maxDepth, int currentDepth) throws Exception
+	private String renderComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, int maxDepth, int currentDepth)
 	{
 		if(currentDepth > maxDepth)
 		{
@@ -1654,7 +1654,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method renders the base component and all it's children.
 	 */
 
-	private String preProcessComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, List sortedPageComponents) throws Exception
+	private String preProcessComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, List sortedPageComponents)
 	{
 		if(logger.isDebugEnabled())
 		{
@@ -1668,8 +1668,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		StringBuilder decoratedComponent = new StringBuilder();
 		
 		templateController.setComponentLogic(new ComponentLogic(templateController, component));
-		//logger.info("BBBBBBBBBBBBB");
-		//templateController.getDeliveryContext().getUsageListeners().add(templateController.getComponentLogic().getComponentDeliveryContext());
 
 		try
 		{
@@ -1853,7 +1851,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method fetches the component template as a string.
 	 */
    
-	protected String getComponentPreProcessingTemplateString(TemplateController templateController, Integer contentId, InfoGlueComponent component) throws SystemException, Exception
+	protected String getComponentPreProcessingTemplateString(TemplateController templateController, Integer contentId, InfoGlueComponent component) 
 	{
 		String template = null;
 
@@ -1873,7 +1871,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method fetches the component template as a string.
 	 */
    
-	protected String getComponentModelClassName(TemplateController templateController, Integer contentId, InfoGlueComponent component) throws SystemException, Exception
+	protected String getComponentModelClassName(TemplateController templateController, Integer contentId, InfoGlueComponent component) 
 	{
 		String modelClassName = null;
 
@@ -1895,9 +1893,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
    
 	protected List getInheritedComponents(Database db, TemplateController templateController, InfoGlueComponent component, Integer siteNodeId, String id, boolean inherit) throws Exception
 	{
-		//logger.info("slotId:" + id);
-		//logger.info("component:" + component);
-		//logger.info("getInheritedComponents with " + component.getName() + ":" + component.getSlotName() + ":" + component.getId());
 		List inheritedComponents = new ArrayList();
 		
 		NodeDeliveryController nodeDeliveryController = NodeDeliveryController.getNodeDeliveryController(templateController.getSiteNodeId(), templateController.getLanguageId(), templateController.getContentId());

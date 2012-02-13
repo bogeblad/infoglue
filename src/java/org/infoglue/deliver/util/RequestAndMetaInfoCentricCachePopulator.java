@@ -263,7 +263,7 @@ public class RequestAndMetaInfoCentricCachePopulator
 	 * normal site-delivery version.
 	 */
 	
-	public TemplateController getTemplateController(DatabaseWrapper dbWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal, boolean allowEditOnSightAtAll, BrowserBean browserBean, NodeDeliveryController nodeDeliveryController, IntegrationDeliveryController integrationDeliveryController) throws SystemException, Exception
+	public TemplateController getTemplateController(DatabaseWrapper dbWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal, boolean allowEditOnSightAtAll, BrowserBean browserBean, NodeDeliveryController nodeDeliveryController, IntegrationDeliveryController integrationDeliveryController) 
 	{
 		TemplateController templateController = new BasicTemplateController(dbWrapper, infoGluePrincipal);
 		templateController.setStandardRequestParameters(siteNodeId, languageId, contentId);	

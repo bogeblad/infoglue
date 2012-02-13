@@ -33,6 +33,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.SystemException;
 
 import webwork.action.Action;
 
@@ -46,7 +47,7 @@ public class ViewSiteNodeReferencesAction extends InfoGlueAbstractAction
 	private List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 	private List<ReferenceBean> referencingBeanList = new ArrayList<ReferenceBean>();
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
 		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNodeId, 100);
 		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getLatestActiveSiteNodeVersionVO(siteNodeId);

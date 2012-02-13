@@ -165,10 +165,8 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 
 	/**
 	 * Adds the content version attribute to the contentVersion Value.
-	 * 
-	 * @throws JspException if the ancestor tag isn't a url tag.
 	 */
-	public void addUserPropertiesAttribute(String name, String value) throws JspException
+	public void addUserPropertiesAttribute(String name, String value) 
 	{
 		this.userPropertiesAttributesMap.put(name, value);
 	}

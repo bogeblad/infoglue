@@ -30,6 +30,9 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the action class for viewRepository.
@@ -56,7 +59,7 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
         this.repositoryVO = repositoryVO;
     }
     
-    protected void initialize(Integer repositoryId) throws Exception
+    protected void initialize(Integer repositoryId) throws SystemException
     {
         repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
         
@@ -67,7 +70,7 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-object for this use-case
      */
     
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         this.initialize(getRepositoryId());
 
@@ -78,7 +81,7 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-object for this use-case
      */
     
-    public String doLocalView() throws Exception
+    public String doLocalView() throws SystemException
     {
         this.initialize(getRepositoryId());
 
@@ -90,7 +93,7 @@ public class ViewRepositoryAction extends InfoGlueAbstractAction
         return this.repositoryVO.getRepositoryId();
     }
         
-    public void setRepositoryId(java.lang.Integer repositoryId) throws Exception
+    public void setRepositoryId(java.lang.Integer repositoryId)
     {
         this.repositoryVO.setRepositoryId(repositoryId);
     }

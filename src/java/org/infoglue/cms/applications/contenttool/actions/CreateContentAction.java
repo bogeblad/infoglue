@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.HashMap;
@@ -181,7 +182,7 @@ public class CreateContentAction extends InfoGlueAbstractAction
 	 * This method fetches the list of ContentTypeDefinitions
 	 */
 	
-	public List getContentTypeDefinitions() throws Exception
+	public List getContentTypeDefinitions() throws SystemException
 	{	
 	    List contentTypeVOList = null;
 	    
@@ -233,7 +234,7 @@ public class CreateContentAction extends InfoGlueAbstractAction
     	return "success";
     }
     
-    public String doXML() throws Exception
+    public String doXML()
     {
     	try
     	{
@@ -269,7 +270,7 @@ public class CreateContentAction extends InfoGlueAbstractAction
 		return "treeView";
 	}
 
-    public String doInput() throws Exception
+    public String doInput() throws SystemException, AccessConstraintException
     {
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -300,7 +301,7 @@ public class CreateContentAction extends InfoGlueAbstractAction
 		return "input";
     }
 
-    public String doInputV3() throws Exception
+    public String doInputV3() throws SystemException, AccessConstraintException
     {
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -344,7 +345,7 @@ public class CreateContentAction extends InfoGlueAbstractAction
 		return "inputV3";
     }
     
-    public String doExecuteV3() throws Exception
+    public String doExecuteV3() throws SystemException, ConstraintException, IOException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();

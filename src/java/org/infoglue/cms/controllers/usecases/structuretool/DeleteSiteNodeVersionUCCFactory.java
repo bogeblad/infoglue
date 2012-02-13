@@ -24,11 +24,10 @@
 package org.infoglue.cms.controllers.usecases.structuretool;
 
 import org.infoglue.cms.controllers.usecases.structuretool.impl.simple.DeleteSiteNodeVersionUCCImpl;
-import org.infoglue.cms.exception.SystemException;
 
 public class DeleteSiteNodeVersionUCCFactory
 {
-    public static DeleteSiteNodeVersionUCC newDeleteSiteNodeVersionUCC() throws SystemException
+    public static DeleteSiteNodeVersionUCC newDeleteSiteNodeVersionUCC() 
     {
         DeleteSiteNodeVersionUCC deleteSiteNodeVersionUCC = new DeleteSiteNodeVersionUCCImpl();
         return deleteSiteNodeVersionUCC;

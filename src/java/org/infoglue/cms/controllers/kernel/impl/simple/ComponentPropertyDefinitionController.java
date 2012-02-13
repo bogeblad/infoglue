@@ -29,12 +29,14 @@ import java.util.List;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.databeans.ComponentPropertyDefinition;
 import org.infoglue.cms.applications.databeans.ComponentPropertyOptionDefinition;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -59,7 +61,7 @@ public class ComponentPropertyDefinitionController extends BaseController
 		return new ComponentPropertyDefinitionController();
 	}
 	
-	public List getComponentPropertyDefinitions(Database db, Integer contentId, Integer languageId) throws Exception
+	public List getComponentPropertyDefinitions(Database db, Integer contentId, Integer languageId) throws SystemException, PersistenceException 
 	{
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
 		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, db);

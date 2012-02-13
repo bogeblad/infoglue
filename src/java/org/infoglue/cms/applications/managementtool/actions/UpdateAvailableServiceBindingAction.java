@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingController;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
 import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -59,7 +60,7 @@ public class UpdateAvailableServiceBindingAction extends ViewAvailableServiceBin
 		this.ceb = new ConstraintExceptionBuffer();	
 	}
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws ConstraintException, SystemException
     {
 		super.initialize(getAvailableServiceBindingId());
 
@@ -74,7 +75,7 @@ public class UpdateAvailableServiceBindingAction extends ViewAvailableServiceBin
 		return "success";
 	}
 
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws ConstraintException, SystemException
     {
 		doExecute();
 						
@@ -143,15 +144,7 @@ public class UpdateAvailableServiceBindingAction extends ViewAvailableServiceBin
         
     public void setVisualizationAction(String visualizationAction)
     {
-    	try
-    	{
-        	this.availableServiceBindingVO.setVisualizationAction(visualizationAction);
-    	}
-    	catch(ConstraintException ce)
-    	{
-    		this.visualizationAction = visualizationAction;
-    		this.ceb.add(new ConstraintExceptionBuffer(ce));
-    	}
+    	this.availableServiceBindingVO.setVisualizationAction(visualizationAction);
     }
     
     public Boolean getIsMandatory()
@@ -164,15 +157,7 @@ public class UpdateAvailableServiceBindingAction extends ViewAvailableServiceBin
         
     public void setIsMandatory(Boolean isMandatory)
     {
-    	try
-    	{
-        	this.availableServiceBindingVO.setIsMandatory(isMandatory);
-    	}
-    	catch(ConstraintException ce)
-    	{
-    		this.isMandatory = isMandatory;
-    		this.ceb.add(new ConstraintExceptionBuffer(ce));
-    	}
+    	this.availableServiceBindingVO.setIsMandatory(isMandatory);
     }
 
 
@@ -186,15 +171,7 @@ public class UpdateAvailableServiceBindingAction extends ViewAvailableServiceBin
         
     public void setIsUserEditable(Boolean isUserEditable)
     {
-    	try
-    	{
-        	this.availableServiceBindingVO.setIsUserEditable(isUserEditable);
-    	}
-    	catch(ConstraintException ce)
-    	{
-    		this.isUserEditable = isUserEditable;
-    		this.ceb.add(new ConstraintExceptionBuffer(ce));
-    	}
+    	this.availableServiceBindingVO.setIsUserEditable(isUserEditable);
     }
     
     public Boolean getIsInheritable()
@@ -207,15 +184,7 @@ public class UpdateAvailableServiceBindingAction extends ViewAvailableServiceBin
         
     public void setIsInheritable(Boolean isInheritable)
     {
-    	try
-    	{
-        	this.availableServiceBindingVO.setIsInheritable(isInheritable);
-    	}
-    	catch(ConstraintException ce)
-    	{
-    		this.isUserEditable = isInheritable;
-    		this.ceb.add(new ConstraintExceptionBuffer(ce));
-    	}
+    	this.availableServiceBindingVO.setIsInheritable(isInheritable);
     }
 
 }

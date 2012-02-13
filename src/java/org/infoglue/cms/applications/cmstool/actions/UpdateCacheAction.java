@@ -24,6 +24,8 @@
 
 package org.infoglue.cms.applications.cmstool.actions;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
@@ -89,7 +91,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
      * This method will just reply to a testcall. 
      */
          
-    public String doTest() throws Exception
+    public String doTest() throws IOException
     {
         this.getResponse().getWriter().println("test ok - cache action available");
         return NONE;
@@ -100,7 +102,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
      * and now we just have to render the appropriate output. 
      */
          
-    public String doExecute() throws Exception
+    public String doExecute()
     {
 		try
 		{  

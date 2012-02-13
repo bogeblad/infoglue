@@ -41,6 +41,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.management.CategoryAttribute;
 import org.infoglue.cms.entities.management.ContentTypeAttribute;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.providers.ContentDetailPageResolver;
@@ -113,7 +114,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
         this.contentTypeDefinitionVO = contentTypeDefinitionVO;
     }
 
-    protected void initialize(Integer contentTypeDefinitionId) throws Exception
+    protected void initialize(Integer contentTypeDefinitionId) throws SystemException
     {
         this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentTypeDefinitionId);
     	//logger.info("Initializing:" + this.contentTypeDefinitionVO.getSchemaValue());
@@ -126,9 +127,11 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
     /**
      * The main method that fetches the Value-object for this use-case
+     * @throws ConstraintException 
+     * @throws AccessConstraintException 
      */
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, AccessConstraintException, ConstraintException
     {
         this.initialize(getContentTypeDefinitionId());
         return USE_EDITOR;
@@ -138,7 +141,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	 * The method that initializes all for the editor mode
 	 */
 
-	public String doUseEditor() throws Exception
+	public String doUseEditor() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 		return USE_EDITOR;
@@ -148,13 +151,13 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	 * The method that initializes all for the simple mode
 	 */
 
-	public String doUseSimple() throws Exception
+	public String doUseSimple() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 		return SUCCESS;
 	}
 
-	public String doInsertAttribute() throws Exception
+	public String doInsertAttribute() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 		String newSchemaValue = ContentTypeDefinitionController.getController().insertContentTypeAttribute(this.contentTypeDefinitionVO.getSchemaValue(), this.inputTypeId, this.activatedName);
@@ -181,7 +184,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	}
 
 
-	public String doDeleteAttribute() throws Exception
+	public String doDeleteAttribute() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -220,7 +223,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	 * This method moves an content type attribute up one step.
 	 */
 
-	public String doMoveAttributeUp() throws Exception
+	public String doMoveAttributeUp() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -259,7 +262,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	 * This method moves an content type attribute down one step.
 	 */
 
-	public String doMoveAttributeDown() throws Exception
+	public String doMoveAttributeDown() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -316,7 +319,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	 * This method moves an content type assetKey up one step.
 	 */
 
-	public String doMoveAssetKeyUp() throws Exception
+	public String doMoveAssetKeyUp() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -355,7 +358,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	 * This method moves an content type asset key down one step.
 	 */
 
-	public String doMoveAssetKeyDown() throws Exception
+	public String doMoveAssetKeyDown() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -389,7 +392,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	}
 
 
-	public String doDeleteAttributeParameterValue() throws Exception
+	public String doDeleteAttributeParameterValue() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -416,7 +419,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		return USE_EDITOR;
 	}
 
-	public String doInsertAttributeParameterValue() throws Exception
+	public String doInsertAttributeParameterValue() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -448,9 +451,10 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 	/**
 	 * We validate that ' ', '.', ''', '"' is not used in the attribute name as that will break the javascripts later.
+	 * @throws SystemException 
 	 */
 
-	public String doUpdateAttribute() throws Exception
+	public String doUpdateAttribute() throws AccessConstraintException, ConstraintException, SystemException
 	{
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 		if(this.newAttributeName.indexOf(" ") > -1 || this.newAttributeName.indexOf(".") > -1 || this.newAttributeName.indexOf("'") > -1  || this.newAttributeName.indexOf("\"") > -1)
@@ -564,7 +568,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	}
 
 
-	public String doUpdateAttributeParameterValue() throws Exception
+	public String doUpdateAttributeParameterValue() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -599,7 +603,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	}
 
 
-	public String doInsertAttributeValidator() throws Exception
+	public String doInsertAttributeValidator() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -670,7 +674,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		return USE_EDITOR;
 	}
 
-	public String doUpdateAttributeValidatorArguments() throws Exception
+	public String doUpdateAttributeValidatorArguments() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -723,7 +727,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		return USE_EDITOR;
 	}
 
-	public String doDeleteAttributeValidator() throws Exception
+	public String doDeleteAttributeValidator() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -774,7 +778,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	/**
 	 * Gets the list of defined categoryKeys, also populate the category name for the UI.
 	 */
-	public List getDefinedCategoryKeys() throws Exception
+	public List getDefinedCategoryKeys()
 	{
 		List categoryKeys = ContentTypeDefinitionController.getController().getDefinedCategoryKeys(contentTypeDefinitionVO, true);
 		for (Iterator iter = categoryKeys.iterator(); iter.hasNext();)
@@ -805,7 +809,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		}
 	}
 
-	public String doInsertAssetKey() throws Exception
+	public String doInsertAssetKey() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -824,7 +828,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		return USE_EDITOR;
 	}
 
-	public String doInsertCategoryKey() throws Exception
+	public String doInsertCategoryKey() throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -857,7 +861,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 
 
 
-	public String doUpdateAssetKey() throws Exception
+	public String doUpdateAssetKey() throws SystemException
 	{
 		initialize(getContentTypeDefinitionId());
 		try
@@ -875,7 +879,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		return USE_EDITOR;
 	}
 
-	public String doUpdateCategoryKey() throws Exception
+	public String doUpdateCategoryKey() throws SystemException
 	{
 		initialize(getContentTypeDefinitionId());
 
@@ -907,17 +911,17 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		return USE_EDITOR;
 	}
 
-	public String doDeleteAssetKey() throws Exception
+	public String doDeleteAssetKey() throws SystemException
 	{
 		return deleteKey(ContentTypeDefinitionController.ASSET_KEYS, getAssetKey());
 	}
 
-	public String doDeleteCategoryKey() throws Exception
+	public String doDeleteCategoryKey() throws SystemException
 	{
 		return deleteKey(ContentTypeDefinitionController.CATEGORY_KEYS, getCategoryKey());
 	}
 
-	private String deleteKey(String keyType, String key) throws Exception
+	private String deleteKey(String keyType, String key) throws SystemException
 	{
 		this.initialize(getContentTypeDefinitionId());
 
@@ -978,7 +982,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	/**
 	 * Consolidate the update of a ContentTypeDefinition Document to the persistence mechanism
 	 */
-	private void saveUpdatedDefinition(Document document) throws ConstraintException, SystemException
+	private void saveUpdatedDefinition(Document document) throws SystemException
 	{
 		StringBuffer sb = new StringBuffer();
 		XMLHelper.serializeDom(document.getDocumentElement(), sb);
@@ -1136,7 +1140,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
         return this.contentTypeDefinitionVO.getContentTypeDefinitionId();
     }
 
-    public void setContentTypeDefinitionId(Integer contentTypeDefinitionId) throws Exception
+    public void setContentTypeDefinitionId(Integer contentTypeDefinitionId)
     {
         this.contentTypeDefinitionVO.setContentTypeDefinitionId(contentTypeDefinitionId);
     }
@@ -1402,7 +1406,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 		this.tabToActivate = tabToActivate;
 	}
 	
-	public List<ContentTypeDefinitionVO> getContentTypeDefinitions() throws Exception
+	public List<ContentTypeDefinitionVO> getContentTypeDefinitions() throws SystemException
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.CONTENT);
 	}

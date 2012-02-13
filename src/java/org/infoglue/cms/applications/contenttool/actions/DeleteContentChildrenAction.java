@@ -150,12 +150,12 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	    return doExecute();
 	}	
 	
-	public String doFixPage() throws Exception 
+	public String doFixPage() 
 	{
 	    return "fixPage";
 	}
 
-	public String doFixPageHeader() throws Exception 
+	public String doFixPageHeader() 
 	{
 	    return "fixPageHeader";
 	}

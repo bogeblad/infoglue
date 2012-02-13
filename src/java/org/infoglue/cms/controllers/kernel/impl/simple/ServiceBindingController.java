@@ -44,7 +44,6 @@ import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -221,7 +220,7 @@ public class ServiceBindingController extends BaseController
 	}      
 
 
-    protected static ServiceBinding create(ServiceBindingVO serviceBindingVO, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId, Database db) throws ConstraintException, SystemException, Exception
+    protected static ServiceBinding create(ServiceBindingVO serviceBindingVO, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId, Database db) throws SystemException, PersistenceException 
     {
     	logger.info("Creating a serviceBinding with the following...");
 
@@ -292,9 +291,10 @@ public class ServiceBindingController extends BaseController
 
 	/**
 	 * This method deletes all service bindings pointing to a content.
+	 * @throws PersistenceException 
 	 */
 
-	public static void deleteServiceBindingsReferencingContent(Content content, Database db) throws ConstraintException, SystemException, Exception
+	public static void deleteServiceBindingsReferencingContent(Content content, Database db) throws SystemException, PersistenceException
 	{		
 		OQLQuery oql = db.getOQLQuery( "SELECT sb FROM org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl sb WHERE sb.bindingQualifyers.name = $1 AND sb.bindingQualifyers.value = $2 ORDER BY sb.serviceBindingId");
 		oql.bind("contentId");
@@ -449,9 +449,10 @@ public class ServiceBindingController extends BaseController
     
 	/**
 	 * This method deletes a service binding an all associated qualifyers.
+	 * @throws PersistenceException 
 	 */
 	
-	public static void delete(ServiceBindingVO serviceBindingVO, Database db) throws ConstraintException, SystemException, Exception
+	public static void delete(ServiceBindingVO serviceBindingVO, Database db) throws  SystemException, PersistenceException
 	{
 		ServiceBinding serviceBinding = ServiceBindingController.getServiceBindingWithId(serviceBindingVO.getServiceBindingId(), db);
 		

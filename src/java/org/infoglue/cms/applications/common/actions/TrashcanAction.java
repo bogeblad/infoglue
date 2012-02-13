@@ -36,6 +36,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 import webwork.action.Action;
 
@@ -62,7 +64,7 @@ public class TrashcanAction extends InfoGlueAbstractAction
 	private Boolean updateParent = false;	
 	private Integer updateEntityId = -1;
 	
-	protected String doExecute() throws Exception
+	protected String doExecute() throws SystemException
     {
 		this.repositoriesMarkedForDeletion = RepositoryController.getController().getRepositoryVOListMarkedForDeletion();
 		this.contentsMarkedForDeletion = ContentController.getContentController().getContentVOListMarkedForDeletion(repositoryFilter);
@@ -71,7 +73,7 @@ public class TrashcanAction extends InfoGlueAbstractAction
 		return Action.SUCCESS;
     }
 
-	public String doRestore() throws Exception
+	public String doRestore() throws ConstraintException, SystemException
     {
 		if(entity != null && !entity.equals("") && entityId != null && !entityId.equals(""))
 		{
@@ -126,7 +128,7 @@ public class TrashcanAction extends InfoGlueAbstractAction
 		return doExecute();
     }
 
-	public String doEmpty() throws Exception
+	public String doEmpty() throws SystemException
     {
 		validateSecurityCode();
 

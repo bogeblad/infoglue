@@ -93,7 +93,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method return whether the module in question supports updates to the values.
 	 */
 	
-	public boolean getSupportUpdate() throws ConstraintException, SystemException, Exception
+	public boolean getSupportUpdate() 
 	{
 		return getAuthorizationModule().getSupportUpdate();
 	}
@@ -102,7 +102,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method return whether the module in question supports deletes of users.
 	 */
 	
-	public boolean getSupportDelete() throws ConstraintException, SystemException, Exception
+	public boolean getSupportDelete() 
 	{
 		return getAuthorizationModule().getSupportDelete();
 	}
@@ -111,7 +111,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method return whether the module in question supports creation of new users.
 	 */
 	
-	public boolean getSupportCreate() throws ConstraintException, SystemException, Exception
+	public boolean getSupportCreate() 
 	{
 		return getAuthorizationModule().getSupportCreate();
 	}
@@ -119,8 +119,7 @@ public class RoleControllerProxy extends BaseController
 	/**
 	 * This method returns a specific content-object
 	 */
-	
-    public List getAllRoles() throws ConstraintException, SystemException, Exception
+    public List getAllRoles() throws Exception
     {
     	List roles = new ArrayList();
     	
@@ -135,7 +134,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method returns a certain role
 	 */
 	
-	public InfoGlueRole getRole(String roleName) throws ConstraintException, SystemException, Exception
+	public InfoGlueRole getRole(String roleName) throws Exception
 	{
 		InfoGlueRole infoGlueRole = null;
     	
@@ -148,7 +147,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method returns if a role exists
 	 */
 	
-    public boolean roleExists(String roleName) throws ConstraintException, SystemException, Exception
+    public boolean roleExists(String roleName) throws Exception 
     {
 		return getAuthorizationModule().roleExists(roleName);
     }
@@ -157,7 +156,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method returns a list of InfoGlue Principals which are part of this role
 	 */
 	
-	public List getInfoGluePrincipals(String roleName) throws ConstraintException, SystemException, Exception
+	public List getInfoGluePrincipals(String roleName) throws Exception 
 	{
 		List infoGluePrincipals = new ArrayList();
     	
@@ -173,7 +172,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method creates a new role
 	 */
 	
-	public InfoGlueRole createRole(RoleVO roleVO) throws ConstraintException, SystemException, Exception
+	public InfoGlueRole createRole(RoleVO roleVO) throws Exception 
 	{
 		InfoGlueRole infoGlueRole = null;
     	
@@ -204,7 +203,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method removes a user from group
 	 */
 	
-	public void removeUser(String roleName, String userName) throws ConstraintException, SystemException, Exception
+	public void removeUser(String roleName, String userName) throws Exception
 	{
 		getAuthorizationModule().removeUserFromRole(roleName, userName);
 	}
@@ -213,7 +212,7 @@ public class RoleControllerProxy extends BaseController
 	 * This method deletes an existing user
 	 */
 	
-	public void deleteRole(String roleName) throws ConstraintException, SystemException, Exception
+	public void deleteRole(String roleName) throws Exception
 	{
 		getAuthorizationModule().deleteInfoGlueRole(roleName);
 		AccessRightController.getController().delete(roleName);
@@ -224,7 +223,7 @@ public class RoleControllerProxy extends BaseController
 		return null;
 	}
 
-	public List getAvailableRoles(InfoGluePrincipal infoGluePrincipal, String interceptionPointName) throws ConstraintException, SystemException, Exception 
+	public List getAvailableRoles(InfoGluePrincipal infoGluePrincipal, String interceptionPointName) throws Exception 
 	{
 		List availableRoles = new ArrayList();
 		List allRoles = getAuthorizationModule().getRoles();

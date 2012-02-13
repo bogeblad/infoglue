@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
@@ -38,6 +39,7 @@ import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
+import org.infoglue.cms.exception.SystemException;
 
 
 /**
@@ -61,16 +63,17 @@ public class RebuildRegistryAction extends InfoGlueAbstractAction
 	 * @throws Exception
 	 */	
 
-	public String doInput() throws Exception
+	public String doInput()
 	{
 		return "input";
 	}
 	
 	/**
 	 * This handles the actual exporting.
+	 * @throws SystemException 
 	 */
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws PersistenceException, SystemException 
 	{
 	    RegistryController registryController = RegistryController.getController();
 		
@@ -125,7 +128,7 @@ public class RebuildRegistryAction extends InfoGlueAbstractAction
 		}
 		finally
 		{
-			db.close();    
+			db.close();
 		}
 		
 		return "success";

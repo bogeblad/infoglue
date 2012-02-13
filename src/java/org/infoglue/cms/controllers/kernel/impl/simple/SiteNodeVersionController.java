@@ -33,6 +33,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -49,7 +50,6 @@ import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -102,7 +102,7 @@ public class SiteNodeVersionController extends BaseController
         return getAllVOObjects(SmallSiteNodeVersionImpl.class, "siteNodeVersionId");
     }
 
-    public static void delete(SiteNodeVersionVO siteNodeVersionVO) throws ConstraintException, SystemException
+    public static void delete(SiteNodeVersionVO siteNodeVersionVO) throws SystemException
     {
     	deleteEntity(SiteNodeVersionImpl.class, siteNodeVersionVO.getSiteNodeVersionId());
     }        
@@ -133,7 +133,7 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersionVOList;		
 	}
 
-	public List<SiteNodeVersionVO> getSiteNodeVersionVOList(Database db, Integer siteNodeId) throws SystemException, Exception
+	public List<SiteNodeVersionVO> getSiteNodeVersionVOList(Database db, Integer siteNodeId) throws PersistenceException
     {
 		List<SiteNodeVersionVO> siteNodeVersionVOList = new ArrayList<SiteNodeVersionVO>();
 		
@@ -161,7 +161,7 @@ public class SiteNodeVersionController extends BaseController
      * @throws ConstraintException
      * @throws SystemException
      */
-    public void delete(SiteNodeVersion siteNodeVersion, Database db) throws ConstraintException, SystemException
+    public void delete(SiteNodeVersion siteNodeVersion, Database db) throws SystemException
     {
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
@@ -356,7 +356,7 @@ public class SiteNodeVersionController extends BaseController
 		return contentVersionVO;
     }
 
-	public ContentVersion getAndRepairLatestContentVersion(Database db, Integer contentId, Integer languageId) throws SystemException, Exception
+	public ContentVersion getAndRepairLatestContentVersion(Database db, Integer contentId, Integer languageId) throws PersistenceException
     {
     	ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestContentVersion(contentId, languageId, db);
     	if(contentVersion != null)
@@ -399,7 +399,7 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersionVO;
     }
 
-	public SiteNodeVersion getLatestActiveSiteNodeVersion(Database db, Integer siteNodeId) throws SystemException, Exception
+	public SiteNodeVersion getLatestActiveSiteNodeVersion(Database db, Integer siteNodeId) throws PersistenceException
     {
 	    SiteNodeVersion siteNodeVersion = null;
 	    
@@ -420,7 +420,7 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersion;
     }
 
-	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVO(Database db, Integer siteNodeId) throws SystemException, Exception
+	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVO(Database db, Integer siteNodeId) throws PersistenceException
     {
 	    SiteNodeVersionVO siteNodeVersionVO = null;
 	    
@@ -490,7 +490,7 @@ public class SiteNodeVersionController extends BaseController
     }
     
 	
-	public SiteNodeVersionVO getLatestSiteNodeVersionVO(Database db, Integer siteNodeId) throws SystemException, Exception
+	public SiteNodeVersionVO getLatestSiteNodeVersionVO(Database db, Integer siteNodeId) throws PersistenceException
     {
     	SiteNodeVersionVO siteNodeVersionVO = null;
 
@@ -554,7 +554,7 @@ public class SiteNodeVersionController extends BaseController
 	}
 
     
-    public SiteNodeVersionVO updateStateId(Integer siteNodeVersionId, Integer stateId, String versionComment, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId) throws ConstraintException, SystemException
+    public SiteNodeVersionVO updateStateId(Integer siteNodeVersionId, Integer stateId, String versionComment, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId) throws SystemException
     {
     	SiteNodeVersionVO siteNodeVersionVO = getSiteNodeVersionVOWithId(siteNodeVersionId);
     	SiteNodeVersionVO returnVO = null;
@@ -649,7 +649,7 @@ public class SiteNodeVersionController extends BaseController
     	return siteNodeVersion;
     }        
 
-	public static void deleteVersionsForSiteNodeWithId(Integer siteNodeId) throws ConstraintException, SystemException
+	public static void deleteVersionsForSiteNodeWithId(Integer siteNodeId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -693,8 +693,7 @@ public class SiteNodeVersionController extends BaseController
 	/** 
 	 * This methods deletes all versions for the siteNode sent in
 	 */
-
-	public static void deleteVersionsForSiteNode(SiteNode siteNode, Database db, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Exception
+	public static void deleteVersionsForSiteNode(SiteNode siteNode, Database db, InfoGluePrincipal infoGluePrincipal) throws PersistenceException
     {
        	Collection siteNodeVersions = Collections.synchronizedCollection(siteNode.getSiteNodeVersions());
        	Iterator siteNodeVersionIterator = siteNodeVersions.iterator();
@@ -802,7 +801,7 @@ public class SiteNodeVersionController extends BaseController
 	 * siteNodeTypeDefinition sent in
 	 */
 	
-	public static List getServiceBindningVOList(Integer siteNodeVersionId, Database db) throws ConstraintException, SystemException, Exception
+	public static List getServiceBindningVOList(Integer siteNodeVersionId, Database db) throws SystemException, PersistenceException
 	{
         List serviceBindningVOList = null;
         
@@ -818,7 +817,7 @@ public class SiteNodeVersionController extends BaseController
 	 * siteNodeTypeDefinition sent in
 	 */
 	
-	public static Collection getServiceBindningList(Integer siteNodeVersionId, Database db, boolean readOnly) throws ConstraintException, SystemException, Exception
+	public static Collection getServiceBindningList(Integer siteNodeVersionId, Database db, boolean readOnly) throws PersistenceException
 	{
     	Collection serviceBindings = new ArrayList();
     		
@@ -874,7 +873,7 @@ public class SiteNodeVersionController extends BaseController
     }
 
 	
-	public static SiteNodeVersion getLatestPublishedSiteNodeVersion(Integer siteNodeId, Database db) throws SystemException, Exception
+	public static SiteNodeVersion getLatestPublishedSiteNodeVersion(Integer siteNodeId, Database db) throws PersistenceException
     {
         SiteNodeVersion siteNodeVersion = null;
         
@@ -898,7 +897,7 @@ public class SiteNodeVersionController extends BaseController
     }
 	
 	
-	public static SiteNodeVersionVO getLatestPublishedSiteNodeVersionVO(Integer siteNodeId) throws SystemException, Exception
+	public static SiteNodeVersionVO getLatestPublishedSiteNodeVersionVO(Integer siteNodeId) throws SystemException
     {
         SiteNodeVersionVO siteNodeVersion = null;
         
@@ -922,7 +921,7 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersion;
     }
 
-	public static SiteNodeVersionVO getLatestPublishedSiteNodeVersionVO(Integer siteNodeId, Database db) throws SystemException, Exception
+	public static SiteNodeVersionVO getLatestPublishedSiteNodeVersionVO(Integer siteNodeId, Database db) throws PersistenceException
     {
         SiteNodeVersion siteNodeVersion = null;
         
@@ -994,8 +993,7 @@ public class SiteNodeVersionController extends BaseController
 	/**
 	 * This method returns the version previous to the one sent in.
 	 */
-	
-	public SiteNodeVersionVO getPreviousActiveSiteNodeVersionVO(Integer siteNodeId, Integer siteNodeVersionId, Database db) throws SystemException, Exception
+	public SiteNodeVersionVO getPreviousActiveSiteNodeVersionVO(Integer siteNodeId, Integer siteNodeVersionId, Database db) throws PersistenceException
     {
     	SiteNodeVersionVO siteNodeVersionVO = null;
 
@@ -1022,8 +1020,7 @@ public class SiteNodeVersionController extends BaseController
 	/**
 	 * This method returns the version previous to the one sent in.
 	 */
-	
-	public SiteNodeVersion getPreviousActiveSiteNodeVersion(Integer siteNodeId, Integer siteNodeVersionId, Database db) throws SystemException, Exception
+	public SiteNodeVersion getPreviousActiveSiteNodeVersion(Integer siteNodeId, Integer siteNodeVersionId, Database db) throws PersistenceException
     {
     	SiteNodeVersion siteNodeVersion = null;
 
@@ -1080,7 +1077,7 @@ public class SiteNodeVersionController extends BaseController
 	 * under the specified parent siteNode including the given siteNode.
 	 */ 
 	
-	public List getPublishedSiteNodeVersionVOWithParentRecursive(Integer siteNodeId) throws ConstraintException, SystemException
+	public List getPublishedSiteNodeVersionVOWithParentRecursive(Integer siteNodeId) throws SystemException
 	{
 	    List publishedSiteNodeVersionVOList = new ArrayList();
 	    
@@ -1107,7 +1104,7 @@ public class SiteNodeVersionController extends BaseController
         return publishedSiteNodeVersionVOList;
 	}
 	
-	private List getPublishedSiteNodeVersionWithParentRecursive(SiteNode siteNode, List resultList, Database db) throws ConstraintException, SystemException, Exception
+	private List getPublishedSiteNodeVersionWithParentRecursive(SiteNode siteNode, List resultList, Database db) throws ConstraintException, SystemException, PersistenceException
 	{
 	    SiteNodeVersion siteNodeVersion = getLatestPublishedSiteNodeVersion(siteNode.getId(), db);
 		if(siteNodeVersion != null)
@@ -1129,7 +1126,7 @@ public class SiteNodeVersionController extends BaseController
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set siteNodeVersionVOList, Set contenteVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal) throws ConstraintException, SystemException
+    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set siteNodeVersionVOList, Set contenteVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal) throws SystemException
 	{
     	getSiteNodeAndAffectedItemsRecursive(siteNodeId, stateId, siteNodeVersionVOList, contenteVersionVOList, includeMetaInfo, true, principal);
 	}
@@ -1138,7 +1135,7 @@ public class SiteNodeVersionController extends BaseController
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set siteNodeVersionVOList, Set contenteVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal) throws ConstraintException, SystemException
+    public void getSiteNodeAndAffectedItemsRecursive(Integer siteNodeId, Integer stateId, Set siteNodeVersionVOList, Set contenteVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal) throws SystemException
 	{
         Database db = CastorDatabaseService.getDatabase();
 
@@ -1288,7 +1285,7 @@ public class SiteNodeVersionController extends BaseController
 	 * This method returns the latest sitenodeVersion there is for the given siteNode.
 	 */
 	
-	public SiteNodeVersion getLatestActiveSiteNodeVersionIfInState(SiteNode siteNode, Integer stateId, Database db) throws SystemException, Exception
+	public SiteNodeVersion getLatestActiveSiteNodeVersionIfInState(SiteNode siteNode, Integer stateId, Database db)
 	{
 		SiteNodeVersion siteNodeVersion = null;
 		
@@ -1330,7 +1327,7 @@ public class SiteNodeVersionController extends BaseController
      * @throws SystemException
      * @throws Exception
      */
-    public List getMetaInfoContentVersionVOList(Integer siteNodeVersionId, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Exception
+    public List getMetaInfoContentVersionVOList(Integer siteNodeVersionId, InfoGluePrincipal infoGluePrincipal) throws SystemException
     {
         List contentVersionVOList = new ArrayList();
         
@@ -1342,8 +1339,6 @@ public class SiteNodeVersionController extends BaseController
         {
         	SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId, db);
         	SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
-        	
-        	//SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(siteNodeVersionId, db);
             List contentVersions = getMetaInfoContentVersions(db, siteNodeVO, infoGluePrincipal);
             contentVersionVOList = toVOList(contentVersions);
             
@@ -1362,11 +1357,8 @@ public class SiteNodeVersionController extends BaseController
     /**
      * This method gets the meta info for the siteNodeVersion.
      * @param db
-     * @throws ConstraintException
-     * @throws SystemException
-     * @throws Exception
      */
-    private List getMetaInfoContentVersions(Database db, SiteNodeVO siteNodeVO, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Exception
+    private List getMetaInfoContentVersions(Database db, SiteNodeVO siteNodeVO, InfoGluePrincipal infoGluePrincipal) throws SystemException, PersistenceException
     {
         List contentVersions = new ArrayList();
         
@@ -1396,7 +1388,7 @@ public class SiteNodeVersionController extends BaseController
 	 * Updates the SiteNodeVersion.
 	 */
 	
-	public SiteNodeVersionVO update(SiteNodeVersionVO siteNodeVersionVO) throws ConstraintException, SystemException
+	public SiteNodeVersionVO update(SiteNodeVersionVO siteNodeVersionVO) throws SystemException
 	{
     	registryController.updateSiteNodeVersion(siteNodeVersionVO);
 
@@ -1407,14 +1399,13 @@ public class SiteNodeVersionController extends BaseController
 	 * Updates the SiteNodeVersion within a transaction.
 	 */
 	
-	public SiteNodeVersionVO update(SiteNodeVersionVO siteNodeVersionVO, Database db) throws ConstraintException, SystemException, Exception
+	public SiteNodeVersionVO update(SiteNodeVersionVO siteNodeVersionVO, Database db) throws SystemException, PersistenceException
 	{
 	    SiteNodeVersion siteNodeVersion = getSiteNodeVersionWithId(siteNodeVersionVO.getId(), db);
     	registryController.updateSiteNodeVersion(siteNodeVersion, db);
 
     	siteNodeVersion.setValueObject(siteNodeVersionVO);
     	return siteNodeVersionVO;
-		//return (SiteNodeVersionVO) updateEntity(SiteNodeVersionImpl.class, siteNodeVersionVO, db);
 	}    
 	
 	
@@ -1482,7 +1473,7 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersionVOList;
     }	
 	
-	public List getPublishedActiveSiteNodeVersionVOList(Integer siteNodeId, Database db) throws SystemException, Exception
+	public List getPublishedActiveSiteNodeVersionVOList(Integer siteNodeId, Database db) throws PersistenceException
     {
         List siteNodeVersionList = new ArrayList();
         
@@ -1505,7 +1496,7 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersionList;
     }
 
-	public List getPublishedActiveFullSiteNodeVersionVOList(Integer siteNodeId, Database db) throws SystemException, Exception
+	public List getPublishedActiveFullSiteNodeVersionVOList(Integer siteNodeId, Database db) throws PersistenceException
     {
         List siteNodeVersionList = new ArrayList();
         

@@ -33,11 +33,13 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.exception.SystemException;
 
 public class SimpleContentXmlServiceAction extends InfoGlueAbstractAction 
 {	
@@ -53,7 +55,7 @@ public class SimpleContentXmlServiceAction extends InfoGlueAbstractAction
 	public SimpleContentXmlServiceAction() {
 	}
 
-	public String getDigitalAssetInfo() throws Exception {
+	public String getDigitalAssetInfo() throws SystemException {
 		String ret = "";
 		DigitalAssetVO digitalAssetVO = null;
 
@@ -77,7 +79,7 @@ public class SimpleContentXmlServiceAction extends InfoGlueAbstractAction
 		return ret;
 	}
 
-	public String doExecute() throws Exception {
+	public String doExecute() throws IOException {
 		String resp;
 		try {
 			resp = getDigitalAssetInfo();

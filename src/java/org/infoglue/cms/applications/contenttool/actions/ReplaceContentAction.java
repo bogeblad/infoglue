@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.contenttool.actions;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.SearchController;
+import org.infoglue.cms.exception.SystemException;
 
 
 
@@ -44,7 +45,7 @@ public class ReplaceContentAction extends SearchContentAction
 	private String replaceString	= null;
 	private String contentVersionId = null;
 		
-	public String doExecute() throws Exception 
+	public String doExecute() throws SystemException 
 	{
 	    String contentVersionIds[] = contentVersionId.split(",");
 	    
@@ -61,19 +62,9 @@ public class ReplaceContentAction extends SearchContentAction
         return "success";
 	}
 
-	public String doV3() throws Exception 
+	public String doV3() throws SystemException 
 	{
 	    String contentVersionIds[] = contentVersionId.split(",");
-	    /*
-	    System.out.println("contentVersionIds:" + contentVersionIds + ":" + contentVersionIds.length);
-	    System.out.println("getSearchString():" + getSearchString());
-	    System.out.println("replaceString:" + this.replaceString);
-	    System.out.println("contentVersionId:" + contentVersionIds[0]);
-	    */
-	    //logger.info("contentVersionIds:" + contentVersionIds + ":" + contentVersionIds.length);
-	    //logger.info("getSearchString():" + getSearchString());
-	    //logger.info("replaceString:" + this.replaceString);
-	    //logger.info("contentVersionId:" + contentVersionIds[0]);
 	    Boolean caseSensitive = false;
 	    if(getCaseSensitive() != null && getCaseSensitive() == 1)
 	    	caseSensitive = true;

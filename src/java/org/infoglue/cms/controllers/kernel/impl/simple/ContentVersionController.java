@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -68,7 +69,6 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -470,7 +470,7 @@ public class ContentVersionController extends BaseController
      * This method returns the latest active content version.
      */
     
-   	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId) throws SystemException
+   	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId) throws SystemException 
     {
     	Database db = CastorDatabaseService.getDatabase();
     	ContentVersionVO contentVersionVO = null;
@@ -498,7 +498,7 @@ public class ContentVersionController extends BaseController
 	 * This method returns the latest active content version.
 	 */
     
-	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Integer stateId, Database db) throws SystemException, Exception
+	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Integer stateId, Database db) throws SystemException
 	{
     	ContentVersionVO contentVersionVO = null;
 
@@ -794,7 +794,7 @@ public class ContentVersionController extends BaseController
 	 * so it recognises the change. 
 	 */
     
-    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, Database db) throws ConstraintException, SystemException, Exception
+    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, Database db) throws ConstraintException, SystemException, PersistenceException, IOException
     {
     	return create(contentId, languageId, contentVersionVO, oldContentVersionId, true, true, db);
     }
@@ -804,12 +804,12 @@ public class ContentVersionController extends BaseController
 	 * This method created a new contentVersion in the database. It also updates the owning content
 	 * so it recognises the change. 
 	 */
-    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Database db) throws ConstraintException, SystemException, Exception
+    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Database db) throws ConstraintException, SystemException, PersistenceException, IOException
     {
     	return create(contentId, languageId, contentVersionVO, oldContentVersionId, allowBrokenAssets, duplicateAssets, null, db);
     }
     
-    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, Exception
+    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, PersistenceException, IOException
     {
 		Content content   = ContentController.getContentController().getContentWithId(contentId, db);
     	Language language = LanguageController.getController().getLanguageWithId(languageId, db);
@@ -821,20 +821,13 @@ public class ContentVersionController extends BaseController
 	 * This method created a new contentVersion in the database. It also updates the owning content
 	 * so it recognises the change. 
 	 */
-    
-    /*
-    public ContentVersion create(Content content, Language language, ContentVersionVO contentVersionVO, Integer oldContentVersionId, Database db) throws ConstraintException, SystemException, Exception
-    {
-    	return create(content, language, contentVersionVO, oldContentVersionId, true, db);
-    }
-    */
     public ContentVersion create(Content content, Language language, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Database db) throws ConstraintException, SystemException, Exception
     {
     	return create(content, language, contentVersionVO, oldContentVersionId, allowBrokenAssets, duplicateAssets, null, db);
       
     }
     
-    public ContentVersion create(Content content, Language language, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, Exception
+    public ContentVersion create(Content content, Language language, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, PersistenceException, IOException
     {
     	ContentVersion contentVersion = new ContentVersionImpl();
 		contentVersion.setValueObject(contentVersionVO);
@@ -848,7 +841,6 @@ public class ContentVersionController extends BaseController
 
         if(oldContentVersionId != null && oldContentVersionId.intValue() != -1)
 		    copyDigitalAssets(getContentVersionWithId(oldContentVersionId, db), contentVersion, allowBrokenAssets, duplicateAssets, excludedAssetId, db);
-		    //contentVersion.setDigitalAssets(getContentVersionWithId(oldContentVersionId, db).getDigitalAssets());
 
         return contentVersion;
     }     
@@ -1170,7 +1162,7 @@ public class ContentVersionController extends BaseController
     	return updatedContentVersionVO; //(ContentVersionVO) updateEntity(ContentVersionImpl.class, realContentVersionVO);
     }        
 
-	public List getPublishedActiveContentVersionVOList(Integer contentId) throws SystemException, Exception
+	public List getPublishedActiveContentVersionVOList(Integer contentId) throws SystemException
     {
         List contentVersionVOList = new ArrayList();
         
@@ -1480,13 +1472,7 @@ public class ContentVersionController extends BaseController
 	 * This method assigns the same digital assets the old content-version has.
 	 * It's ofcourse important that noone deletes the digital asset itself for then it's lost to everyone.
 	 */
-	/*
-	public void copyDigitalAssets(ContentVersion originalContentVersion, ContentVersion newContentVersion, Database db) throws ConstraintException, SystemException, Exception
-	{
-		copyDigitalAssets(originalContentVersion, newContentVersion, true, db);
-	}
-	*/
-	public void copyDigitalAssets(ContentVersion originalContentVersion, ContentVersion newContentVersion, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, Exception
+	public void copyDigitalAssets(ContentVersion originalContentVersion, ContentVersion newContentVersion, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, IOException
 	{
 	    Collection digitalAssets = originalContentVersion.getDigitalAssets();	
 
@@ -1550,7 +1536,7 @@ public class ContentVersionController extends BaseController
 	    }
 	}	
 
-	public DigitalAssetVO copyDigitalAssetAndRemoveOldReference(ContentVersion contentVersion, DigitalAsset digitalAsset, boolean allowBrokenAssets, Database db) throws ConstraintException, SystemException, Exception
+	public DigitalAssetVO copyDigitalAssetAndRemoveOldReference(ContentVersion contentVersion, DigitalAsset digitalAsset, boolean allowBrokenAssets, Database db) throws ConstraintException, IOException
 	{
 	    logger.info("Copying digitalAsset " + digitalAsset.getAssetKey());
 	    DigitalAssetVO digitalAssetVO = digitalAsset.getValueObject();
@@ -1749,7 +1735,7 @@ public class ContentVersionController extends BaseController
         }
 	}
 	
-	private void getContentAndAffectedItemsRecursive(Content content, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, List siteNodeVersionVOList, List contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo) throws ConstraintException, SystemException, Exception
+	private void getContentAndAffectedItemsRecursive(Content content, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, List siteNodeVersionVOList, List contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo) throws PersistenceException
 	{
 	    //checkedSiteNodes.add(content.getId());
 	    checkedContents.add(content.getId());

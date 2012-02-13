@@ -191,7 +191,7 @@ public class ExtendedSearchController extends BaseController
 	/**
 	 * 
 	 */
-	private Set createResults(final QueryResults qr) throws PersistenceException, SystemException 
+	private Set createResults(final QueryResults qr) throws PersistenceException 
 	{
 		final Set results = new HashSet();
 		while(qr.hasMore())

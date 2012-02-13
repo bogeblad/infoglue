@@ -44,7 +44,7 @@ public class GifEncoder
     int e[];
     TreeSet d;
 
-    private void a(int ai[], int j, DataOutputStream dataoutputstream) throws Exception
+    private void a(int ai[], int j, DataOutputStream dataoutputstream)
     {
         try
         {
@@ -250,7 +250,7 @@ public class GifEncoder
         catch(Exception e) { }
     }
 
-    public void encode(BufferedImage bufferedimage, DataOutputStream dataoutputstream, Hashtable hashtable) throws Exception
+    public void encode(BufferedImage bufferedimage, DataOutputStream dataoutputstream, Hashtable hashtable)
     {
         try
         {

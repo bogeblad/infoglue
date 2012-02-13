@@ -22,6 +22,7 @@
 */
 package org.infoglue.cms.applications.workflowtool.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
@@ -126,9 +128,8 @@ public class ContentFactory
 	 * @param categories
 	 * @param db
 	 * @return
-	 * @throws ConstraintException
 	 */
-	public ContentVO create(final ContentVO parentContent, final Map categories, final Database db) throws ConstraintException, SystemException, Exception 
+	public ContentVO create(final ContentVO parentContent, final Map categories, final Database db) throws PersistenceException, SystemException, ConstraintException, IOException  
 	{
 		if(logger.isDebugEnabled())
 		{
@@ -174,7 +175,7 @@ public class ContentFactory
 	 * @return
 	 * @throws ConstraintException
 	 */
-	public ContentVO update(final ContentVO contentVO, final Map categories, final Database db) throws ConstraintException 
+	public ContentVO update(final ContentVO contentVO, final Map categories, final Database db)  
 	{
 		this.db = db;
 		populateContentVO(contentVO);
@@ -221,38 +222,25 @@ public class ContentFactory
 	 * @param categories
 	 * @return
 	 */
-	private ContentVO createContent(final ContentVO parentContent, final ContentVO contentVO, final ContentVersionVO contentVersionVO, final Map categories) throws Exception
+	private ContentVO createContent(final ContentVO parentContent, final ContentVO contentVO, final ContentVersionVO contentVersionVO, final Map categories) throws SystemException, PersistenceException, ConstraintException, IOException 
 	{
-	    try 
-	    {
-	    	if(logger.isDebugEnabled())
-	    	{
-				logger.info("************createContent**********");
-				logger.info("parentContent:" + parentContent);
-				logger.info("contentVO:" + contentVO);
-				logger.info("contentVersionVO:" + contentVersionVO);
-				logger.info("categories:" + categories);
-	    	}
-	    	
-			final Content content = ContentControllerProxy.getContentController().create(db, parentContent.getId(), contentTypeDefinitionVO.getId(), parentContent.getRepositoryId(), contentVO);
-			final ContentVersion newContentVersion = ContentVersionController.getContentVersionController().create(content.getId(), language.getId(), contentVersionVO, null, db);
-			createCategories(newContentVersion, categories);
-			
-			if(logger.isDebugEnabled())
-				logger.info("Returning:" + content + ":" + content.getValueObject());
-			
-			return content.getValueObject();
-	    } 
-	    catch(Exception e) 
-	    {
-			//logger.error(e);
-	    	throw e;
-		}
-	    
-		//if(logger.isDebugEnabled())
-	    //    logger.info("Returning null....");
+    	if(logger.isDebugEnabled())
+    	{
+			logger.info("************createContent**********");
+			logger.info("parentContent:" + parentContent);
+			logger.info("contentVO:" + contentVO);
+			logger.info("contentVersionVO:" + contentVersionVO);
+			logger.info("categories:" + categories);
+    	}
+    	
+		final Content content = ContentControllerProxy.getContentController().create(db, parentContent.getId(), contentTypeDefinitionVO.getId(), parentContent.getRepositoryId(), contentVO);
+		final ContentVersion newContentVersion = ContentVersionController.getContentVersionController().create(content.getId(), language.getId(), contentVersionVO, null, db);
+		createCategories(newContentVersion, categories);
 		
-	    //return null;
+		if(logger.isDebugEnabled())
+			logger.info("Returning:" + content + ":" + content.getValueObject());
+		
+		return content.getValueObject();
 	}
 
 	/**
@@ -295,9 +283,8 @@ public class ContentFactory
 	 * Deletes all content categories associated with the specified content version.
 	 * 
 	 * @param contentVersion the content version.
-	 * @throws Exception if an exception occurs while deleting the content categories.
 	 */
-	private void deleteCategories(final ContentVersion contentVersion) throws Exception 
+	private void deleteCategories(final ContentVersion contentVersion) throws SystemException 
 	{
 		ContentCategoryController.getController().deleteByContentVersion(contentVersion.getId(), db);
 	}
@@ -306,9 +293,8 @@ public class ContentFactory
 	 * 
 	 * @param contentVersion
 	 * @param categorieVOs
-	 * @throws Exception
 	 */
-	private void createCategories(final ContentVersion contentVersion, final Map categorieVOs) throws Exception 
+	private void createCategories(final ContentVersion contentVersion, final Map categorieVOs) throws SystemException, PersistenceException  
 	{
 		if(categorieVOs != null)
 		{
@@ -326,9 +312,8 @@ public class ContentFactory
 	 * @param contentVersion
 	 * @param attributeName
 	 * @param categoryVOs
-	 * @throws Exception
 	 */
-	private void createCategory(final ContentVersion contentVersion, final String attributeName, final List categoryVOs) throws Exception 
+	private void createCategory(final ContentVersion contentVersion, final String attributeName, final List categoryVOs) throws SystemException, PersistenceException 
 	{
 		final List categories = categoryVOListToCategoryList(categoryVOs);
 		ContentCategoryController.getController().create(categories, contentVersion, attributeName, db);
@@ -339,9 +324,8 @@ public class ContentFactory
 	 * @param db the database to use in the operation.
 	 * @param categoryVOList
 	 * @return
-	 * @throws Exception
 	 */
-	private List categoryVOListToCategoryList(final List categoryVOList) throws Exception 
+	private List categoryVOListToCategoryList(final List categoryVOList) throws SystemException 
 	{
 		final List result = new ArrayList();
 		for(Iterator i=categoryVOList.iterator(); i.hasNext(); ) 

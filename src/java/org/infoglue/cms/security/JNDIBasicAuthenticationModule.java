@@ -310,7 +310,7 @@ public class JNDIBasicAuthenticationModule extends AuthenticationModule
      * This method authenticates against the infoglue extranet user database.
      */
     
-    private boolean authenticate(String userName, String password, Map parameters) throws Exception
+    private boolean authenticate(String userName, String password, Map parameters)
     {
         boolean isAuthenticated = false;
         

@@ -49,13 +49,13 @@ public class DeleteContentTypeDefinitionAction extends InfoGlueAbstractAction
 		this.contentTypeDefinitionVO = contentTypeDefinitionVO;
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		ContentTypeDefinitionController.getController().delete(this.contentTypeDefinitionVO);
 		return "success";
 	}
 	
-	public void setContentTypeDefinitionId(Integer contentTypeDefinitionId) throws SystemException
+	public void setContentTypeDefinitionId(Integer contentTypeDefinitionId)
 	{
 		this.contentTypeDefinitionVO.setContentTypeDefinitionId(contentTypeDefinitionId);	
 	}

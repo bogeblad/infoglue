@@ -159,7 +159,7 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
     }
 
 
-    public void setEmail(java.lang.String email) throws Exception
+    public void setEmail(java.lang.String email)
     {
     	this.systemUserVO.setEmail(email);
     }

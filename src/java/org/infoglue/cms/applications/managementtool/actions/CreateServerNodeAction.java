@@ -26,6 +26,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.entities.management.ServerNodeVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class CreateServerNodeAction extends InfoGlueAbstractAction
@@ -82,7 +85,7 @@ public class CreateServerNodeAction extends InfoGlueAbstractAction
     }
 
 
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		ceb.add(this.serverNodeVO.validate());
     	ceb.throwIfNotEmpty();				
@@ -92,7 +95,7 @@ public class CreateServerNodeAction extends InfoGlueAbstractAction
         return "success";
     }
         
-    public String doInput() throws Exception
+    public String doInput()
     {
     	return "input";
     }    

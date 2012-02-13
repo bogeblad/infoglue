@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionCont
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -64,7 +67,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
 	private String returnAddress = null;
 	private String originalAddress = null;
 
-    protected void initialize(Integer contentId) throws Exception
+    protected void initialize(Integer contentId) throws ConstraintException, SystemException
     {
         this.contentVO = ContentController.getContentController().getContentVOWithId(contentId);
         this.contentTypeDefinitionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.CONTENT);
@@ -89,7 +92,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
      * The main method that fetches the Value-objects for this use-case
      */
     
-    public String doExecute() throws Exception
+    public String doExecute() throws ConstraintException, SystemException
     {
         this.initialize(getContentId());
 
@@ -100,7 +103,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
      * The main method that fetches the Value-objects for this use-case
      */
     
-    public String doV3() throws Exception
+    public String doV3() throws ConstraintException, SystemException
     {
 		String userSessionKey = "" + System.currentTimeMillis();
 
@@ -117,7 +120,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
      * The main method that fetches the Value-objects for this use-case
      */
     
-    public String doSave() throws Exception
+    public String doSave()
     {
         String allowedContentTypeNames = null;
         String[] allowedContentTypeNameArray = getRequest().getParameterValues("allowedContentTypeName");
@@ -149,7 +152,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
      * The main method that fetches the Value-objects for this use-case
      */
     
-    public String doSaveV3() throws Exception
+    public String doSaveV3()
     {
     	doSave();
     	
@@ -160,7 +163,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
      * The main method that fetches the Value-objects for this use-case
      */
     
-    public String doSaveAndExit() throws Exception
+    public String doSaveAndExit()
     {
     	doSave();
     	
@@ -170,7 +173,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
     /**
      * The main method that fetches the Value-objects for this use-case
      */
-    public String doSaveAndExitV3() throws Exception
+    public String doSaveAndExitV3() throws IOException
     {
     	doSave();
 
@@ -191,7 +194,7 @@ public class ViewContentPropertiesAction extends InfoGluePropertiesAbstractActio
         return this.contentVO.getContentId();
     }
         
-    public void setContentId(java.lang.Integer contentId) throws Exception
+    public void setContentId(java.lang.Integer contentId)
     {
         this.contentVO.setContentId(contentId);
     }

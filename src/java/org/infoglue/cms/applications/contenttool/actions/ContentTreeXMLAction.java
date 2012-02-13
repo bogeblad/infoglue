@@ -60,7 +60,7 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.TransactionHistoryVO;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
-import org.infoglue.cms.exception.Bug;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.treeservice.ss.ContentNodeSupplier;
 
@@ -90,7 +90,7 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
 		return new ContentNodeSupplier(getRepositoryId(), this.getInfoGluePrincipal());
 	}
 	
-	public List getContentTypeDefinitions() throws Exception
+	public List getContentTypeDefinitions() throws SystemException
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
 	}      
@@ -126,7 +126,7 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
 		return stringWriter.toString();
 	}
 	
-	public String doDigitalAssets() throws Exception
+	public String doDigitalAssets()
 	{
 		/*String ret = "";
 		DigitalAssetVO digitalAssetVO = null;
@@ -156,7 +156,7 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
     /*
      * Returns all Languages for a given repository (repositoryId)
      */
-    public String doLanguage() throws Exception
+    public String doLanguage()
 	{
         return null;
 	}
@@ -208,7 +208,7 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
     /*
      * Returns document for a single contentVersion (parent)
      */
-    public String doContentVersion() throws Exception
+    public String doContentVersion() throws SystemException, IOException
 	{
         Document doc = DocumentHelper.createDocument();
         doc.add(getContentVersionElement(parent));
@@ -218,7 +218,7 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
     /*
      * Returns all contentVersions for a given content (parent)
      */
-    public String doContentVersions() throws Exception
+    public String doContentVersions() throws ConstraintException, SystemException, IOException
 	{
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("contentVersions");
@@ -238,7 +238,7 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
     /*
      * Returns all contentTypeDefinitions
      */
-    public String doContentTypeDefinitions() throws Exception
+    public String doContentTypeDefinitions() throws SystemException, IOException
 	{
     	List contentTypeDefinitions = getContentTypeDefinitions();
         Document doc = DocumentHelper.createDocument();
@@ -279,7 +279,7 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
     /*
      * Main action, returns the content tree
      */
-    public String doExecute() throws Exception
+    public String doExecute() throws ConstraintException, SystemException, IOException
     {
         if (useTemplate) return "success";
         
@@ -495,7 +495,7 @@ public class ContentTreeXMLAction extends InfoGlueAbstractAction
         this.allowedContentTypeIds = allowedContentTypeIds;
     }
     
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
+    public String getAllowedContentTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer();
         

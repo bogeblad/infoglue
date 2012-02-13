@@ -51,7 +51,7 @@ public class ViewFileBrowserAction extends InfoGlueAbstractAction
 	private File file = null;
 	private File[] drives = null;
 	
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		drives = File.listRoots();
 		
@@ -60,7 +60,7 @@ public class ViewFileBrowserAction extends InfoGlueAbstractAction
 		return Action.SUCCESS;
     }
 
-	public String doViewFile() throws Exception
+	public String doViewFile()
     {
 		try
 		{

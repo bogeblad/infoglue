@@ -71,7 +71,7 @@ public class ContentCleanerController  extends BaseController
      * the resulting query from the database. 
      * @throws Exception
      */
-    public void cleanSweep(final int hitSize2Retain, InfoGluePrincipal principal) throws Exception
+    public void cleanSweep(final int hitSize2Retain, InfoGluePrincipal principal)
     {
         try {
             final Database db = CastorDatabaseService.getDatabase();

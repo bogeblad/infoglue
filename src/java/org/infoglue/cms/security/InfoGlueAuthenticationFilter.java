@@ -483,7 +483,7 @@ public class InfoGlueAuthenticationFilter implements Filter
     
   	public void destroy() { }
 
-  	private void checkSuccessRedirect(ServletRequest request, ServletResponse response, String URL) throws ServletException, IOException, UnsupportedEncodingException
+  	private void checkSuccessRedirect(ServletRequest request, ServletResponse response, String URL) throws IOException, UnsupportedEncodingException
   	{
 	    String requestURI = ((HttpServletRequest)request).getRequestURI();
 		

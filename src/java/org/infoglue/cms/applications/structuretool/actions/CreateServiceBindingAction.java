@@ -29,6 +29,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ServiceBindingController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
+import org.infoglue.cms.exception.SystemException;
 
 
 /**
@@ -143,9 +144,10 @@ public class CreateServiceBindingAction extends InfoGlueAbstractAction
      
     /**
      * This method creates the new serviceBinding.
+     * @throws SystemException 
      */
      
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
     	logger.info("-------------------------->" + this.serviceBindingVO.getServiceBindingId());
     	if(this.serviceBindingVO.getServiceBindingId() == null)

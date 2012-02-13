@@ -35,6 +35,7 @@ import org.infoglue.cms.jobs.CleanOldVersionsJob;
 import org.infoglue.cms.util.FileUploadHelper;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.quartz.SimpleTrigger;
 import org.quartz.jobs.NoOpJob;
 import org.quartz.spi.TriggerFiredBundle;
@@ -66,31 +67,31 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
 	private Integer numberOfCleanedSiteNodeVersions = null;
 	private Integer numberOfCleanedContentVersions = null;
 	
-	public String doInput() throws Exception
+	public String doInput()
     {
     	return "input";
     }
 
-	public String doInputArchiveOldAssets() throws Exception
+	public String doInputArchiveOldAssets() throws SystemException
     {
 		optimizationBeanList = ContentVersionController.getContentVersionController().getHeavyContentVersions(numberOfVersionsToKeep, assetFileSizeLimit, assetNumberLimit);
         		
         return "inputArchiveOldAssets";
     }
 
-	public String doInputRestoreAssetArchive() throws Exception
+	public String doInputRestoreAssetArchive()
     {        		
         return "inputRestoreAssetArchive";
     }
 	
-	public String doArchiveOldAssets() throws Exception
+	public String doArchiveOldAssets() throws SystemException
     {
 		archiveUrl = DigitalAssetController.getController().archiveDigitalAssets(digitalAssetId, archiveFileSize, nullAssets);
 		
         return "successArchive";
     }
 
-	public String doRestoreAssetArchive() throws Exception
+	public String doRestoreAssetArchive() throws SystemException
     {
 		File file = FileUploadHelper.getUploadedFile(ActionContext.getMultiPartRequest());
 		if(file == null || !file.exists())
@@ -101,7 +102,7 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
         return "successRestoreArchive";
     }
 
-	public String doCleanOldVersions() throws Exception
+	public String doCleanOldVersions() throws JobExecutionException
     {
 		JobDetail jobDetail = new JobDetail();
 
@@ -119,7 +120,7 @@ public class ViewArchiveToolAction extends InfoGlueAbstractAction
         return "input";
     }
 
-    public String doExecute() throws Exception
+    public String doExecute()
     {
         return "success";
     }

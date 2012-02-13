@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionCont
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.treeservice.ss.ContentNodeSupplier;
 import org.infoglue.cms.treeservice.ss.ContentNodeVersionSupplier;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -62,14 +64,14 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	 */
 	
 	
-	public String doBindingView() throws Exception
+	public String doBindingView() throws SystemException
 	{
 		super.doExecute();
         
 		return "bindingView";
 	}
 
-	public String doBindingViewV3() throws Exception
+	public String doBindingViewV3() throws SystemException
 	{
 		super.doExecute();
         
@@ -79,7 +81,7 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 	/**
 	 * @see org.infoglue.cms.applications.common.actions.TreeViewAbstractAction#getNodeSupplier()
 	 */
-	protected INodeSupplier getNodeSupplier() throws Exception, org.infoglue.cms.exception.SystemException
+	protected INodeSupplier getNodeSupplier() throws SystemException
 	{
 		if(getRepositoryId() == null  || getRepositoryId().intValue() < 1)
 			return null;
@@ -126,12 +128,12 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
 		return sup;
 	}
 
-	public List getAvailableLanguages() throws Exception
+	public List getAvailableLanguages() throws SystemException
 	{
 		return RepositoryLanguageController.getController().getRepositoryLanguageVOListWithRepositoryId(this.repositoryId);
 	}
 
-	public List getContentTypeDefinitions() throws Exception
+	public List getContentTypeDefinitions() throws SystemException
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
 	}      
@@ -254,7 +256,7 @@ public class ViewContentToolMenuHtmlAction extends TreeViewAbstractAction
         this.allowedContentTypeIds = allowedContentTypeIds;
     }
     
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
+    public String getAllowedContentTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer();
         

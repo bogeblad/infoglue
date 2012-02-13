@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
@@ -44,7 +46,7 @@ public class ViewPasswordToolAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-object for this use-case
      */
     
-    public String doInput() throws Exception
+    public String doInput()
     {
         return "input";
     }
@@ -53,7 +55,7 @@ public class ViewPasswordToolAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-object for this use-case
      */
     
-    public String doExecute() throws Exception
+    public String doExecute() throws UnsupportedEncodingException
     {
 		byte[] encryptedPassRaw = DigestUtils.sha(this.password);
 		String encryptedPass = new String(new Base64().encode(encryptedPassRaw), "ASCII");

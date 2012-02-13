@@ -41,6 +41,7 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 import webwork.action.ActionContext;
@@ -66,7 +67,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
     {
     }
         	
-    public String doInput() throws Exception
+    public String doInput() throws SystemException
     {
 		CreateContentWizardInfoBean createContentWizardInfoBean = this.getCreateContentWizardInfoBean();
         this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(createContentWizardInfoBean.getContentTypeDefinitionId());
@@ -124,7 +125,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 		return "success";
     }
 
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
 	{
 		InputStream is = null;
 		File renamedFile = null;
@@ -215,7 +216,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 		return doInput();
 	}
     
-	public String doFinish() throws Exception
+	public String doFinish()
 	{
 		return "success";
 	}

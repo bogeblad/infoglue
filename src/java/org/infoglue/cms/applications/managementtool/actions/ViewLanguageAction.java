@@ -26,6 +26,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 public class ViewLanguageAction extends InfoGlueAbstractAction
 {
@@ -43,12 +46,12 @@ public class ViewLanguageAction extends InfoGlueAbstractAction
         this.languageVO = languageVO;
     }
     
-    protected void initialize(Integer languageId) throws Exception
+    protected void initialize(Integer languageId) throws SystemException
     {
         languageVO = LanguageController.getController().getLanguageVOWithId(languageId);
     } 
 
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         this.initialize(getLanguageId());
 

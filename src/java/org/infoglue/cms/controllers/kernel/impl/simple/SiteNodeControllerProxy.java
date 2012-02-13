@@ -31,7 +31,6 @@ import java.util.Map;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -129,7 +128,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 	 * This method deletes a sitenode after first checking that the user has rights to delete it.
 	 */
 	
-	public void acMarkForDelete(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO) throws ConstraintException, SystemException, Exception
+	public void acMarkForDelete(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeId", siteNodeVO.getId());
@@ -144,7 +143,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 	 * This method moves a content after first checking that the user has rights to edit it.
 	 */
 
-	public void acMoveSiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId) throws ConstraintException, SystemException, Exception
+	public void acMoveSiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeId", siteNodeVO.getId());

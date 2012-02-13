@@ -42,7 +42,6 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -231,7 +230,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 		return "standalone";
 	}
 
-	public String doStandaloneXML() throws Exception
+	public String doStandaloneXML()
 	{
 		try
 		{
@@ -291,46 +290,24 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	public String doSaveAndExit() throws Exception
     {
 		doExecute();
-						 
 		return "saveAndExit";
 	}
 
 	public String doSaveAndExitStandalone() throws Exception
 	{
-		try
-		{
-			doExecute();
-		}
-		catch(ConstraintException ce)
-		{
-		    super.contentVersionVO = this.contentVersionVO;
-		    ce.setResult("inputStandalone");
-		    throw ce;
-		}
-						 
+		doExecute();
 		return "saveAndExitStandalone";
 	}
 
 	public String doSaveAndExitInline() throws Exception
 	{
-		try
-		{
-			doExecute();
-		}
-		catch(ConstraintException ce)
-		{
-		    super.contentVersionVO = this.contentVersionVO;
-		    ce.setResult("inputStandalone");
-		    throw ce;
-		}
-						 
+		doExecute();
 		return "saveAndExitInline";
 	}
 
 	public String doBackground() throws Exception
 	{
 		doExecute();
-						 
 		return "background";
 	}
 	

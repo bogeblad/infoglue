@@ -71,43 +71,43 @@ public class InstallAction extends InfoGlueAbstractAction
 	private String smtpPassword = "";
 	private String systemEmailSender = "";
 	
-	public String doInput() throws Exception
+	public String doInput()
     {
 		return INPUT;
     }
 
-	public String doInputInitiateInstall() throws Exception
+	public String doInputInitiateInstall()
     {
 		
 		return "inputInitiateInstall";
     }
 
-	public String doInputDatabase() throws Exception
+	public String doInputDatabase()
     {
 		
 		return "inputDatabase";
     } 
 	
-	public String doInputDatabaseExisting() throws Exception
+	public String doInputDatabaseExisting()
     {
 		
 		return "inputDatabaseExisting";
     }
 
-	public String doInputDatabaseUpgrade() throws Exception
+	public String doInputDatabaseUpgrade()
     {
 		
 		return "inputDatabaseUpgrade";
     }
 
-	public String doInputServer() throws Exception
+	public String doInputServer()
     {
 		
 		return "inputServer";
     }
 
 
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		logger.info("operation:" + operation);
 		if(operation.equalsIgnoreCase("updateDatabaseFromExistingConfig"))

@@ -74,7 +74,7 @@ public class ViewContentTreeAction extends InfoGlueAbstractAction implements Vie
 		return this.hideLeafs;
 	}    
     
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	// Get / Set tree preferance
     	if (tree != null)

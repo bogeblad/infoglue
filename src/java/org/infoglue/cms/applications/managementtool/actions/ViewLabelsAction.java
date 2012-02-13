@@ -25,6 +25,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,19 +58,19 @@ public class ViewLabelsAction extends InfoGlueAbstractAction
 	private List<Locale> translations = new ArrayList<Locale>();
 	private String translation = null;
 	
-	public String doExecute() throws Exception
+	public String doExecute()
     {
     	this.translations = LabelController.getController(getLocale()).getAvailableTranslations();
     	
     	return "success";
     }
 
-    public String doInput() throws Exception
+    public String doInput()
     {
     	return "input";
     }
 
-    public String doAdd() throws Exception
+    public String doAdd() throws SystemException, IOException
     {
 		File file = FileUploadHelper.getUploadedFile(ActionContext.getMultiPartRequest());
 		if(file == null || !file.exists())
@@ -109,7 +110,7 @@ public class ViewLabelsAction extends InfoGlueAbstractAction
     	return doExecute();
     }
 
-    public String doDelete() throws Exception
+    public String doDelete() throws SystemException
     {
 		File file = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "translations" + File.separator + translation);
 		

@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServiceDefinitionController;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * 	Action class for usecase ViewListServiceDefinitionUCC 
@@ -41,7 +42,7 @@ public class ViewListServiceDefinitionAction extends InfoGlueAbstractAction
 	private List serviceDefinitionVOList;
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.serviceDefinitionVOList = ServiceDefinitionController.getController().getServiceDefinitionVOList();
 	    return "success";

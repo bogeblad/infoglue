@@ -35,6 +35,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  *
@@ -55,7 +56,7 @@ public class ViewSiteNodeHistoryAction extends InfoGlueAbstractAction
 	
 	private List<SiteNodeVersionVO> siteNodeVersionVOList;
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 	    this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
 	    this.siteNodeVersionVOList = SiteNodeVersionController.getController().getSiteNodeVersionVOList(this.siteNodeId);
@@ -63,7 +64,7 @@ public class ViewSiteNodeHistoryAction extends InfoGlueAbstractAction
 	    return "success";
 	}
 
-	public ContentVersionVO getMatchingContentVersion(Date modifiedDateTime) throws Exception
+	public ContentVersionVO getMatchingContentVersion(Date modifiedDateTime) throws SystemException
 	{
 		ContentVersionVO metaInfoContentVersionVO = null;
 		long previousDiff = -1;

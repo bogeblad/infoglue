@@ -26,6 +26,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.entities.management.ServerNodeVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the action class for viewServerNode.
@@ -50,7 +53,7 @@ public class ViewServerNodeAction extends InfoGlueAbstractAction
         this.serverNodeVO = serverNodeVO;
     }
     
-    protected void initialize(Integer serverNodeId) throws Exception
+    protected void initialize(Integer serverNodeId) throws SystemException
     {
         serverNodeVO = ServerNodeController.getController().getServerNodeVOWithId(serverNodeId);
     } 
@@ -59,7 +62,7 @@ public class ViewServerNodeAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-object for this use-case
      */
     
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
     	if(getServerNodeId() == null || getServerNodeId().intValue() == -1)
     		return "redirectToList";
@@ -74,7 +77,7 @@ public class ViewServerNodeAction extends InfoGlueAbstractAction
         return this.serverNodeVO.getServerNodeId();
     }
         
-    public void setServerNodeId(java.lang.Integer serverNodeId) throws Exception
+    public void setServerNodeId(java.lang.Integer serverNodeId)
     {
         this.serverNodeVO.setServerNodeId(serverNodeId);
     }

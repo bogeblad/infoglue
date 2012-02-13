@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.publishingtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * @author ss
@@ -43,9 +44,10 @@ public class PreviewSiteNodeVersionAction  extends InfoGlueAbstractAction
 	private SiteNodeVersionVO siteNodeVersionVO;
 
 	/**
+	 * @throws SystemException 
 	 * @see org.infoglue.cms.applications.common.actions.WebworkAbstractAction#doExecute()
 	 */
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
 		return "success";

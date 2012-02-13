@@ -90,39 +90,21 @@ public class CmsJDOCallback implements CallbackInterceptor
     
     public void using(Object object, Database db)
     {
-    	//logger.error("Using " + object);
-        // ( (Persistent) object ).jdoPersistent( db );
     }
 
 
-    public Class loaded(Object object, short accessMode) throws Exception
+    public Class loaded(Object object, short accessMode)
     {
-		//logger.error("Loaded " + object.getClass().getName() + " accessMode:" + accessMode);
-		//if(accessMode == AccessMode.Shared.getId())
-    	//	Thread.dumpStack();
-		
-		// return ( (Persistent) object ).jdoLoad(accessMode);
         return null;
     }
 
 	public Class loaded(Object arg0, AccessMode arg1) throws Exception 
 	{
-		//logger.error("Loaded " + arg0.getClass().getName() + " accessMode:" + arg1);
-		//if(arg1.getId() == AccessMode.Shared.getId())
-		//	Thread.dumpStack();
-		
 		return null;
 	}
 
     public void storing(Object object, boolean modified) throws Exception
     {
-		//logger.error("storing...:" + object + ":" + modified);
-        // ( (Persistent) object ).jdoStore( modified );
-		//if(object.getClass().getName().indexOf("Small") > -1 || object.getClass().getName().indexOf("RepositoryLanguage") > -1 || object.getClass().getName().indexOf("ContentImpl") > -1 || object.getClass().getName().indexOf("SiteNodeImpl") > -1 || object.getClass().getName().indexOf("AccessRight") > -1 || object.getClass().getName().indexOf("StructureTool.Read") > -1)
-		//if(object.getClass().getName().indexOf("ContentImpl") > -1)
-		//	Thread.dumpStack();
-
-   		//logger.info("Should we store -------------->" + object + ":" + modified);
     	if (TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1 && modified)

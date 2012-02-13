@@ -39,7 +39,6 @@ import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -135,7 +134,7 @@ public class RoleController extends BaseController
     	deleteEntity(RoleImpl.class, roleVO.getRoleName());
     }        
 
-    public void delete(RoleVO roleVO, Database db) throws ConstraintException, SystemException, Exception
+    public void delete(RoleVO roleVO, Database db) throws SystemException, PersistenceException
     {
     	deleteEntity(RoleImpl.class, roleVO.getRoleName(), db);
     }        
@@ -145,7 +144,7 @@ public class RoleController extends BaseController
 		deleteEntity(RoleImpl.class, roleName);
 	}        
 
-	public void delete(String roleName, Database db) throws ConstraintException, SystemException, Exception
+	public void delete(String roleName, Database db) throws SystemException, PersistenceException
 	{
 		deleteEntity(RoleImpl.class, roleName, db);
 	}        
@@ -265,7 +264,6 @@ public class RoleController extends BaseController
 	 * @param systemUserId
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public List<RoleVO> getRoleVOList(String userName) throws SystemException
@@ -297,7 +295,6 @@ public class RoleController extends BaseController
 	 * @param systemUserId
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
 	public Collection getRoleList(String userName, Database db)  throws SystemException

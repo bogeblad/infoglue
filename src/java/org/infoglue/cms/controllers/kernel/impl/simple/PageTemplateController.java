@@ -32,6 +32,7 @@ import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 
 public class PageTemplateController extends BaseController 
@@ -50,7 +51,7 @@ public class PageTemplateController extends BaseController
 	 * This method returns the contents that are of contentTypeDefinition "PageTemplate"
 	 */
 	
-	public List getPageTemplates(InfoGluePrincipal infoGluePrincipal, Integer languageId) throws Exception
+	public List getPageTemplates(InfoGluePrincipal infoGluePrincipal, Integer languageId) throws SystemException 
 	{
 	    List pageTemplates = getPageTemplates(infoGluePrincipal);
 	    Iterator i = pageTemplates.iterator();
@@ -71,7 +72,7 @@ public class PageTemplateController extends BaseController
 	 * This method returns the contents that are of contentTypeDefinition "PageTemplate"
 	 */
 	
-	public List getPageTemplates(InfoGluePrincipal infoGluePrincipal) throws Exception
+	public List getPageTemplates(InfoGluePrincipal infoGluePrincipal) throws SystemException 
 	{
 		HashMap arguments = new HashMap();
 		arguments.put("method", "selectListOnContentTypeName");
@@ -83,7 +84,6 @@ public class PageTemplateController extends BaseController
 		arguments.put("arguments", argumentList);
 		
 		return ContentControllerProxy.getController().getACContentVOList(infoGluePrincipal, arguments);
-		//return ContentController.getContentController().getContentVOList(arguments);
 	}
 
 	

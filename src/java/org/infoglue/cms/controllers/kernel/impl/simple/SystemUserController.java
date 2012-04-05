@@ -507,7 +507,7 @@ public class SystemUserController extends BaseController
 			try
 			{
 				byte[] encryptedPassRaw = DigestUtils.sha(password);
-				String encryptedPass = new String(new Base64().encode(encryptedPassRaw), "ASCII");
+				String encryptedPass = new String(Base64.encodeBase64(encryptedPassRaw), "ASCII");
 				password = encryptedPass;
 				systemUserVO.setPassword(password);
 			}
@@ -536,7 +536,7 @@ public class SystemUserController extends BaseController
 			try
 			{
 				byte[] encryptedPassRaw = DigestUtils.sha(password);
-				String encryptedPass = new String(new Base64().encode(encryptedPassRaw), "ASCII");
+				String encryptedPass = new String(Base64.encodeBase64(encryptedPassRaw), "ASCII");
 				password = encryptedPass;
 				systemUserVO.setPassword(password);
 			}
@@ -738,12 +738,12 @@ public class SystemUserController extends BaseController
 			try
 			{
 				byte[] encryptedPassRaw = DigestUtils.sha(password);
-				String encryptedPass = new String(new Base64().encode(encryptedPassRaw), "ASCII");
+				String encryptedPass = new String(Base64.encodeBase64(encryptedPassRaw), "ASCII");
 				password = encryptedPass;
 				systemUserVO.setPassword(password);
 			
 				byte[] encryptedOldPasswordRaw = DigestUtils.sha(oldPassword);
-				String encryptedOldPassword = new String(new Base64().encode(encryptedOldPasswordRaw), "ASCII");
+				String encryptedOldPassword = new String(Base64.encodeBase64(encryptedOldPasswordRaw), "ASCII");
 				oldPassword = encryptedOldPassword;
 			}
 			catch (Exception e) 
@@ -819,7 +819,7 @@ public class SystemUserController extends BaseController
 			try
 			{
 				byte[] encryptedPassRaw = DigestUtils.sha(password);
-				String encryptedPass = new String(new Base64().encode(encryptedPassRaw), "ASCII");
+				String encryptedPass = new String(Base64.encodeBase64(encryptedPassRaw), "ASCII");
 				password = encryptedPass;
 			}
 			catch (Exception e) 
@@ -888,7 +888,7 @@ public class SystemUserController extends BaseController
 			try
 			{
 				byte[] encryptedPassRaw = DigestUtils.sha(password);
-				String encryptedPass = new String(new Base64().encode(encryptedPassRaw), "ASCII");
+				String encryptedPass = new String(Base64.encodeBase64(encryptedPassRaw), "ASCII");
 				password = encryptedPass;
 			}
 			catch (Exception e) 
@@ -939,11 +939,11 @@ public class SystemUserController extends BaseController
 			try
 			{
 				byte[] encryptedPassRaw = DigestUtils.sha(newPassword);
-				String encryptedPass = new String(new Base64().encode(encryptedPassRaw), "ASCII");
+				String encryptedPass = new String(Base64.encodeBase64(encryptedPassRaw), "ASCII");
 				newPassword = encryptedPass;
 
 				byte[] encryptedOldPasswordRaw = DigestUtils.sha(oldPassword);
-				String encryptedOldPass = new String(new Base64().encode(encryptedOldPasswordRaw), "ASCII");
+				String encryptedOldPass = new String(Base64.encodeBase64(encryptedOldPasswordRaw), "ASCII");
 				oldPassword = encryptedOldPass;
 			}
 			catch (Exception e) 

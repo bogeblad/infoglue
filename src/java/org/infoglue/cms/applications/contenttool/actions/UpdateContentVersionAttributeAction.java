@@ -187,9 +187,9 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 			/*
 			for(int i=0; i<attributeValue.length(); i++)
 				logger.info("c:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
-				
-			logger.info("attributeValue real:" + attributeValue);
 			*/
+			
+			logger.info("attributeValue real:" + attributeValue);
 			
 			if(attributeValue != null)
 			{
@@ -197,7 +197,7 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 				boolean hasUnicodeChars = false;
 				if(attributeValue.indexOf((char)65533) > -1)
 					isUTF8 = true;
-				
+								
 				for(int i=0; i<attributeValue.length(); i++)
 				{
 					int c = (int)attributeValue.charAt(i);
@@ -205,6 +205,9 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 					if(c > 255 && c < 65533)
 						hasUnicodeChars = true;
 				}
+				
+				//logger.info("isUTF8:" + isUTF8);
+				//logger.info("hasUnicodeChars:" + hasUnicodeChars);
 
 				if(!isUTF8 && !hasUnicodeChars)
 				{
@@ -216,17 +219,19 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 					if(toEncoding == null)
 						toEncoding = "utf-8";
 					
-					if(attributeValue.indexOf("Ã¥") == -1 && 
-					   attributeValue.indexOf("Ã¤") == -1 && 
-					   attributeValue.indexOf("Ã¶") == -1 && 
-					   attributeValue.indexOf("Ã…") == -1 && 
-					   attributeValue.indexOf("Ã„") == -1 && 
-					   attributeValue.indexOf("Ã–") == -1)
+					if(attributeValue.indexOf("å") == -1 && 
+					   attributeValue.indexOf("ä") == -1 && 
+					   attributeValue.indexOf("ö") == -1 && 
+					   attributeValue.indexOf("Å") == -1 && 
+					   attributeValue.indexOf("Ä") == -1 && 
+					   attributeValue.indexOf("Ö") == -1)
 					{
 						//logger.info("Converting...");
 						attributeValue = new String(attributeValue.getBytes(fromEncoding), toEncoding);
 					}
 				}
+				logger.info("attributeValue real:" + attributeValue);
+				logger.info("attributeValue refs:" + "InfoGlue CMS och Portalplattform ŒŠš €…");
 				/*
 				String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
 				if(fromEncoding == null)

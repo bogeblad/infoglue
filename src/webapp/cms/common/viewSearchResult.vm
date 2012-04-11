@@ -213,7 +213,7 @@
 			
 	<h3>$ui.getString("tool.common.searchDialog.searchFieldDefaultText")</h3>
 			
-	<form id="searchForm" action="Search.action">
+	<form id="searchForm" action="Search.action" method="post">
 		<fieldset style="border: 1px solid #CCC; width: 500px;">
 			
 			<div id="searchLayer" style="display:block;">

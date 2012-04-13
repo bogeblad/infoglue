@@ -1184,11 +1184,10 @@ function editInline(selectedRepositoryId, selectedContentId, selectedLanguageId,
 					//alert("attributeName:" + attributeName);
 	
 					var parameterString = "repositoryId=" + selectedRepositoryId + "&contentId=" + selectedContentId + "&languageId=" + selectedLanguageId;
-					
 					var element = $(this).get(0);
-		
-					var thisTotalWidth = $(this).width();
+					var thisTotalWidth = $(this).width();					
 					var totalWidth = $(this).parent().width();
+										
 					var maxWidth = 100;
 					var totalHeight = 100;
 					$("#attribute" + selectedContentId + attributeName + " > *").each(function(i){
@@ -1197,10 +1196,11 @@ function editInline(selectedRepositoryId, selectedContentId, selectedLanguageId,
 							maxWidth = $(this).outerWidth();
 					});
 					totalHeight = totalHeight * 1.3;
-					
+										
 					//alert("thisTotalWidth on :" + $(this).get(0).id + "=" + thisTotalWidth);
 					//alert("totalWidth on :" + $(this).parent().get(0).id + "=" + totalWidth);
 					//alert("maxWidth:" + maxWidth);
+					
 					totalWidth = maxWidth;
 					
 					var windowHeight = $(window).height();
@@ -1215,7 +1215,7 @@ function editInline(selectedRepositoryId, selectedContentId, selectedLanguageId,
 					var span = $(this).get(0);
 						
 					var data = "contentId=" + selectedContentId + "&languageId=" + selectedLanguageId + "&attributeName=" + attributeName + "&deliverContext=" + currentContext;
-		
+							
 					var plainAttribute = span.innerHTML;
 					$.ajax({
 					   	type: "GET",
@@ -1268,7 +1268,7 @@ function editInline(selectedRepositoryId, selectedContentId, selectedLanguageId,
 								var textareaHeight = $this.parent().height();
 								if(textareaHeight < 50)
 									textareaHeight = 50;
-										
+																		
 						 		$this.html("<textarea id='input" + $this.get(0).id + "' ondblclick='if (event && event.stopPropagation) {event.stopPropagation();}else if (window.event) {window.event.cancelBubble = true;}return false;'>" + plainAttribute + "</textarea>");
 						 		$("#input" + $this.get(0).id + "").css("display", "block");
 						 		$("#input" + $this.get(0).id + "").css("font-family", fontFamily);
@@ -1276,7 +1276,7 @@ function editInline(selectedRepositoryId, selectedContentId, selectedLanguageId,
 								$("#input" + $this.get(0).id + "").css("font-weight", fontWeight);
 								$("#input" + $this.get(0).id + "").css("color", color);
 								$("#input" + $this.get(0).id + "").css("border", "1px solid #ccc");
-								$("#input" + $this.get(0).id + "").css("width", totalWidth);
+								$("#input" + $this.get(0).id + "").css("width", "100%");
 								$("#input" + $this.get(0).id + "").css("height", textareaHeight);
 						 	}
 					   },
@@ -1320,7 +1320,7 @@ function editInline(selectedRepositoryId, selectedContentId, selectedLanguageId,
 							fontSize = "12px";
 					}
 					
-					elementObject.html("<span id='spanInput" + $this.get(0).id + "'><input class='edit' style='width: 80%' ondblclick='if (event && event.stopPropagation) {event.stopPropagation();}else if (window.event) {window.event.cancelBubble = true;}return false;' id='input" + $this.get(0).id + "' type='text' value='" + escapeAmpsAndQuotes(text) + "' /> </span>");
+					elementObject.html("<span id='spanInput" + $this.get(0).id + "'><input class='edit' style='width: 100%' ondblclick='if (event && event.stopPropagation) {event.stopPropagation();}else if (window.event) {window.event.cancelBubble = true;}return false;' id='input" + $this.get(0).id + "' type='text' value='" + escapeAmpsAndQuotes(text) + "' /> </span>");
 					$(".edit").css("font-family", fontFamily);
 					$(".edit").css("font-size", fontSize);
 					$(".edit").css("color", color);

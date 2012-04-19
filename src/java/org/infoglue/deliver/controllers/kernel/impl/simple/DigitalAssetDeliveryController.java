@@ -43,6 +43,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -64,6 +65,8 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
     private final static Logger logger = Logger.getLogger(DigitalAssetDeliveryController.class.getName());
     
     private final static DigitalAssetDeliveryController digitalAssetController =  new DigitalAssetDeliveryController();
+
+	private static VisualFormatter formatter = new VisualFormatter();
 
 	class FilenameFilterImpl implements FilenameFilter 
 	{
@@ -105,25 +108,20 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 
 	public static String getAssetFileName(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
 	{
-		String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+		String fileName = digitalAssetVO.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 		
-		//logger.info("fileName:" + fileName);
-		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
 			{
-				//Timer t = new Timer();
 				DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
-				//logger.info("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + asset.getContentVersions());
 				if(asset.getContentVersions() != null && asset.getContentVersions().size() > 0)
 				{
 					ContentVersion cv = (ContentVersion)asset.getContentVersions().iterator().next();
 					contentId = cv.getValueObject().getContentId();
 					languageId = cv.getValueObject().getLanguageId();
 				}
-				//t.printElapsedTime("Finding content and language for an asset took");
 			}
 			
 			String assetFileName = digitalAssetVO.getAssetFileName();
@@ -132,8 +130,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			if(endingStartIndex > -1)
 				suffix = assetFileName.substring(endingStartIndex);
 				
-			fileName = "" + contentId + "_" + languageId + digitalAssetVO.getAssetKey() + suffix;
-			//logger.info("New key is:" + fileName);
+			fileName = "" + contentId + "_" + languageId + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + suffix;
 		}
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFileName", t.getElapsedTime());
 		
@@ -146,7 +143,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 
 	public static String getAssetFileName(DigitalAsset digitalAsset, Integer contentId, Integer languageId) throws Exception
 	{
-		String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
+		String fileName = digitalAsset.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 		
 		//logger.info("fileName:" + fileName);
 		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
@@ -172,7 +169,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			if(endingStartIndex > -1)
 				suffix = assetFileName.substring(endingStartIndex);
 				
-			fileName = "" + contentId + "_" + languageId + digitalAsset.getAssetKey() + suffix;
+			fileName = "" + contentId + "_" + languageId + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + suffix;
 			//logger.info("New key is:" + fileName);
 		}
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFileName2", t.getElapsedTime());

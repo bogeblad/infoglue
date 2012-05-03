@@ -727,7 +727,7 @@ public class CmsPropertyHandler
 			if(CmsPropertyHandler.getUsePasswordEncryption())
 			{
 				byte[] encryptedPassRaw = DigestUtils.sha(password);
-				String encryptedPass = new String(new Base64().encode(encryptedPassRaw), "ASCII");
+				String encryptedPass = new String(Base64.encodeBase64(encryptedPassRaw), "ASCII");
 				password = encryptedPass;
 			}
 			

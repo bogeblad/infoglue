@@ -425,7 +425,7 @@ public class InstallationController extends BaseController
 
 	public boolean validateApplicationFile() throws Exception
 	{
-		String cmsFilePath = CastorDatabaseService.class.getResource("/" + CmsPropertyHandler.getApplicationName() + ".properties").getPath();
+		String cmsFilePath = CastorDatabaseService.class.getResource("/" + CmsPropertyHandler.getApplicationName() + ".properties").toURI().getPath();
 		//logger.info("cmsFilePath:" + cmsFilePath);
 		String contents = FileHelper.getFileAsString(new File(cmsFilePath));
 		//logger.info("contents:" + contents.substring(0, 200));
@@ -482,7 +482,7 @@ public class InstallationController extends BaseController
 		//String jdbcEngine = getJDBCEngine();
 		
 		//cms.properties
-		String cmsFilePath = CastorDatabaseService.class.getResource("/cms.properties").getPath();
+		String cmsFilePath = CastorDatabaseService.class.getResource("/cms.properties").toURI().getPath();
 		if(logger.isInfoEnabled())
 			logger.info("cmsFilePath:" + cmsFilePath);
 		String contents = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/cms.properties"));
@@ -535,8 +535,11 @@ public class InstallationController extends BaseController
 		}
 
 		String applicationServerRoot = CmsPropertyHandler.getContextRootPath();
-		applicationServerRoot = applicationServerRoot.substring(0, applicationServerRoot.lastIndexOf("/"));
-		applicationServerRoot = applicationServerRoot.substring(0, applicationServerRoot.lastIndexOf("/") + 1);
+		if(!applicationServerRoot.endsWith("\\")) 
+		{
+			applicationServerRoot = applicationServerRoot.substring(0, applicationServerRoot.lastIndexOf("/"));
+			applicationServerRoot = applicationServerRoot.substring(0, applicationServerRoot.lastIndexOf("/") + 1);
+		}
 
 		contents = contents.replaceAll("@useShortTableNames@", ((dbProvider.equalsIgnoreCase("oracle") || dbProvider.equalsIgnoreCase("db2")) ? "true" : "false"));
 		contents = contents.replaceAll("@database.driver.engine@", dbProvider);
@@ -597,7 +600,7 @@ public class InstallationController extends BaseController
 		//END cms.properties
 
 		//deliver.properties
-		String deliverFilePath = CastorDatabaseService.class.getResource("/deliver.properties").getPath();
+		String deliverFilePath = CastorDatabaseService.class.getResource("/deliver.properties").toURI().getPath();
 		if(logger.isInfoEnabled())
 			logger.info("deliverFilePath:" + deliverFilePath);
 		String contentsDeliver = FileHelper.getStreamAsString(CastorDatabaseService.class.getResourceAsStream("/deliver.properties"));

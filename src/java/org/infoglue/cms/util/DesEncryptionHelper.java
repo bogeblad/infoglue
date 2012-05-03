@@ -84,7 +84,7 @@ public class DesEncryptionHelper
             byte[] enc = ecipher.doFinal(utf8);
 
             // Encode bytes to base64 to get a string
-			return new String(new Base64().encode(enc), "ASCII");
+			return new String(Base64.encodeBase64(enc), "ASCII");
             //return new sun.misc.BASE64Encoder().encode(enc);
         } 
         catch (javax.crypto.BadPaddingException e) 

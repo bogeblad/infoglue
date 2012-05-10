@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
@@ -50,7 +49,7 @@ public class MyDesktopToolNodeSupplier extends BaseNodeSupplier
 	private InfoGluePrincipal infogluePrincipal = null;
 	private Locale locale = null;
 	
-	public MyDesktopToolNodeSupplier(InfoGluePrincipal infogluePrincipal, Locale locale) throws SystemException
+	public MyDesktopToolNodeSupplier(InfoGluePrincipal infogluePrincipal, Locale locale) 
 	{
 		this.infogluePrincipal = infogluePrincipal;
 		this.locale = locale;
@@ -65,8 +64,7 @@ public class MyDesktopToolNodeSupplier extends BaseNodeSupplier
 	{
 		if (showLeafs)
 			return false;
-		else
-			return true;
+		return true;
 	}
 
 	

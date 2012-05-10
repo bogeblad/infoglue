@@ -25,16 +25,15 @@ import org.infoglue.cms.security.InfoGlueRole;
 import com.bradmcevoy.http.Auth;
 import com.bradmcevoy.http.CollectionResource;
 import com.bradmcevoy.http.FolderResource;
-import com.bradmcevoy.http.PropFindableResource;
 import com.bradmcevoy.http.Range;
 import com.bradmcevoy.http.Request;
-import com.bradmcevoy.http.Resource;
 import com.bradmcevoy.http.Request.Method;
+import com.bradmcevoy.http.Resource;
 import com.bradmcevoy.http.exceptions.BadRequestException;
 import com.bradmcevoy.http.exceptions.ConflictException;
 import com.bradmcevoy.http.exceptions.NotAuthorizedException;
 
-public class ContentVersionResource implements PropFindableResource, FolderResource
+public class ContentVersionResource implements FolderResource
 {
 	private final static Logger logger = Logger.getLogger(ContentVersionResource.class.getName());
 
@@ -138,7 +137,7 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		
 		try 
 		{
-			List<DigitalAssetVO> assetVOList = DigitalAssetController.getController().getDigitalAssetVOList(this.contentVersion.getId());
+			List<DigitalAssetVO> assetVOList = DigitalAssetController.getDigitalAssetVOList(this.contentVersion.getId());
 			
 			if(logger.isInfoEnabled())
 				logger.info("assetVOList:" + assetVOList.size());
@@ -187,7 +186,7 @@ public class ContentVersionResource implements PropFindableResource, FolderResou
 		{
 			DigitalAssetVO digitalAsset = null;
 			
-			List<DigitalAssetVO> assetVOList = DigitalAssetController.getController().getDigitalAssetVOList(this.contentVersion.getId());
+			List<DigitalAssetVO> assetVOList = DigitalAssetController.getDigitalAssetVOList(this.contentVersion.getId());
 			if(logger.isInfoEnabled())
 				logger.info("assetVOList:" + assetVOList.size());
 			for(DigitalAssetVO asset : assetVOList)

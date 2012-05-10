@@ -82,7 +82,7 @@ public class AccessRightUserParameterTag extends AbstractTag
 			throw new JspTagException("AccessRightUserParameterTag must have a AccessRightParameterTag ancestor.");
 		}
 		
-		((AccessRightParameterTag) parent).addAccessRightUser(userName);
+		parent.addAccessRightUser(userName);
 	}
 	
 	/**

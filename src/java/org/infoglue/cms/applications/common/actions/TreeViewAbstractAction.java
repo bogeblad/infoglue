@@ -2,6 +2,8 @@ package org.infoglue.cms.applications.common.actions;
 
 import java.util.Collection;
 
+import org.infoglue.cms.exception.SystemException;
+
 import com.frovi.ss.Tree.INodeSupplier;
 import com.frovi.ss.Tree.MakeTree;
 
@@ -18,19 +20,18 @@ public abstract class TreeViewAbstractAction extends InfoGlueAbstractAction
 	private String akey = "";
     	        
     // Implement this method
-	protected abstract INodeSupplier getNodeSupplier() throws Exception;
+	protected abstract INodeSupplier getNodeSupplier() throws SystemException;
 
 
-    protected Collection initialize(String expString) throws Exception
+    protected Collection initialize(String expString) throws SystemException
     {
     	INodeSupplier ns = getNodeSupplier();
     	if(ns != null)
     		return new MakeTree(ns).makeNodeList(expString);
-    	else
-    		return null;
+		return null;
     } 
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
     	// Fix key
 		setExp(getExp().replaceAll(getRkey(), "") + getAkey());
@@ -47,7 +48,7 @@ public abstract class TreeViewAbstractAction extends InfoGlueAbstractAction
         return "success";
     }
     
-    public String doV3() throws Exception
+    public String doV3() throws SystemException
     {
     	doExecute();
     	
@@ -64,7 +65,7 @@ public abstract class TreeViewAbstractAction extends InfoGlueAbstractAction
 		this.nodes = nodes;
 	}
 		
-	public Collection getNodes() throws Exception
+	public Collection getNodes()
 	{
 		return this.nodes;
 	}        

@@ -60,7 +60,7 @@ public class SmallRoleImpl extends RoleImpl
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntity#setVO(BaseEntityVO)

@@ -30,6 +30,7 @@ import java.util.List;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.entities.management.Chat;
 import org.infoglue.cms.entities.management.Message;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsSessionContextListener;
 
 /**
@@ -55,7 +56,7 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
 	public static Integer CHAT_MESSAGE_TYPE = new Integer(10);
 	
 	
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
@@ -63,7 +64,7 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
     	return "success";
     }
 
-    public String doStandaloneChat() throws Exception
+    public String doStandaloneChat()
     {
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
@@ -71,7 +72,7 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
     	return "successStandaloneChat";
     }
 
-    public String doGetMessages() throws Exception
+    public String doGetMessages()
     {
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
@@ -84,7 +85,7 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
     	return "successGetMessages";
     }
 
-    public String doGetSystemMessages() throws Exception
+    public String doGetSystemMessages()
     {
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
@@ -101,7 +102,7 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
     	return "successGetSystemMessages";
     }
 
-    public String doGetSystemMessagesV3() throws Exception
+    public String doGetSystemMessagesV3()
     {
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
@@ -120,7 +121,7 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
     	return "successGetSystemMessagesV3";
     }
 
-    public String doSendMessage() throws Exception
+    public String doSendMessage()
     {
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
@@ -133,12 +134,12 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
         return "successMessageSent";
     }
 
-    public static void addSystemMessage(String userName, Integer messageType, String command) throws Exception
+    public static void addSystemMessage(String userName, Integer messageType, String command)
     {
     	systemMessagesChat.addMessage(userName, messageType, command);
     }
     
-    public List getSessionInfoBeanList() throws Exception
+    public List getSessionInfoBeanList() throws InterruptedException, SystemException
     {
     	return CmsSessionContextListener.getSessionInfoBeanList();
     }

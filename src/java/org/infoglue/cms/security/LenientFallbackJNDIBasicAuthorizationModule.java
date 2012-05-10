@@ -49,7 +49,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.PrincipalNotFoundException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -339,19 +338,12 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
 		String administratorEmail 	 = CmsPropertyHandler.getAdministratorEmail();
-		//String administratorUserName = CmsPropertyHandler.getProperty("administratorUserName");
-		//String administratorEmail 	 = CmsPropertyHandler.getProperty("administratorEmail");
-		
 		final boolean isAdministrator = userName.equalsIgnoreCase(administratorUserName) ? true : false;
 		if(isAdministrator)
 		{
@@ -539,7 +531,7 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 	}
 	*/
 
-	private String getFullUserName(String userName, DirContext ctx) throws Exception
+	private String getFullUserName(String userName, DirContext ctx) 
 	{
 		String distinguishedUserName = null;
 		
@@ -569,7 +561,7 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 		return distinguishedUserName;
 	}
 
-	private String getFullRoleName(String roleName, DirContext ctx) throws Exception
+	private String getFullRoleName(String roleName, DirContext ctx)
 	{
 		String distinguishedRoleName = null;
 		
@@ -599,7 +591,7 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 		return distinguishedRoleName;
 	}
 
-	private String getFullGroupName(String groupName, DirContext ctx) throws Exception
+	private String getFullGroupName(String groupName, DirContext ctx)
 	{
 		String distinguishedGroupName = null;
 		
@@ -643,19 +635,12 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
 		String administratorEmail 	 = CmsPropertyHandler.getAdministratorEmail();
-		//String administratorUserName = CmsPropertyHandler.getProperty("administratorUserName");
-		//String administratorEmail 	 = CmsPropertyHandler.getProperty("administratorEmail");
-		
 		final boolean isAdministrator = userName.equalsIgnoreCase(administratorUserName) ? true : false;
 		if(isAdministrator)
 		{
@@ -738,11 +723,8 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 			{
 				return null;
 			}
-			else
-			{
-				infoglueRole = (InfoGlueRole)infoglueRoleObject;
-				return infoglueRole;
-			}
+			infoglueRole = (InfoGlueRole)infoglueRoleObject;
+			return infoglueRole;
 		}
 
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueRole starting ---------\n\n\n");
@@ -875,11 +857,8 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 			{
 				return null;
 			}
-			else
-			{
-				infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
-				return infoglueGroup;
-			}
+			infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
+			return infoglueGroup;
 		}
 
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueGroup starting ---------\n\n\n");
@@ -1957,14 +1936,14 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 		return users;
 	}
 	
-	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException, Bug
+	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException
 	{
 		List users = new ArrayList();
 		//TODO		
 		return users;
 	}
 	
-	public List getFilteredUsers(String searchString) throws SystemException, Bug, Exception
+	public List getFilteredUsers(String searchString) throws SystemException, Exception
 	{
 		//TODO
 		return getUsers();
@@ -1998,7 +1977,7 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
 		return users;
 	}
 	
-	public List getRoleUsers(String roleName, DirContext ctx, boolean skipCaches) throws Exception
+	public List getRoleUsers(String roleName, DirContext ctx, boolean skipCaches)
 	{
 		List users = new ArrayList();
 		
@@ -2313,7 +2292,7 @@ public class LenientFallbackJNDIBasicAuthorizationModule extends Thread implemen
     /** 
      * Gets a list of users which is memebers of the given group
      */
-    public List getGroupUsers(String groupName, DirContext ctx, boolean skipCaches) throws Exception
+    public List getGroupUsers(String groupName, DirContext ctx, boolean skipCaches)
     {
 	    logger.info("--------getGroupUsers(String groupName) start---------------");
 		List users = new ArrayList();

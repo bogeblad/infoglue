@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.common.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -86,9 +87,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   		return this.error;
   	}
 
-    /**
-     *
-     */
   	public Errors getErrors() 
   	{
   		if(logger.isInfoEnabled())
@@ -105,21 +103,15 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
  		return linkBeans;
  	}
 
-    /**
-     *
-     */
-	public String doDefault() throws Exception 
+	public String doDefault() 
     { 
         return INPUT;
     }
 
-	public abstract void protectFromCSSAttacks(String actionName, String commandName) throws Exception;
+	public abstract void protectFromCSSAttacks(String actionName, String commandName) throws SystemException;
 
 
-  /**
-   *
-   */
-    public String execute() throws Exception 
+    public String execute() 
     {
     	String result = "";
     	
@@ -204,7 +196,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	 * Could be used in case of reload for example or for logging reasons.
 	 */
 	
-	public String getCurrentUrl() throws Exception
+	public String getCurrentUrl() throws UnsupportedEncodingException
 	{
 		String urlBase = getRequest().getRequestURL().toString();
 		String urlParameters = getRequest().getQueryString();
@@ -217,7 +209,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	 * Could be used in case of reload for example or for logging reasons.
 	 */
 	
-	public String getUnencodedCurrentUrl() throws Exception
+	public String getUnencodedCurrentUrl()
 	{
 		String urlBase = getRequest().getRequestURL().toString();
 		String urlParameters = getRequest().getQueryString();
@@ -225,17 +217,11 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		return urlBase + (urlParameters != null ? "?" + urlParameters : "");
 	}
 
-    /**
-     *
-     */
     public void setCommand(String commandName) 
     {
       	this.commandName = commandName;
     }
 
-    /**
-     *
-     */
     public void setServletRequest(HttpServletRequest request) 
     {
       	this.request = request;
@@ -243,9 +229,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   
 
 
-    /**
-     *
-     */
     public void setServletResponse(HttpServletResponse response) 
     {
       	this.response = response;
@@ -262,9 +245,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   	}
 
 
-	/**
-	 *
-	 */
 	private void setErrors(ConstraintException exception)
 	{
 		final Locale locale = getSession().getLocale();
@@ -321,14 +301,14 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	
 	private boolean isCommand() 
   	{
-    	return this.commandName != null && commandName.trim().length() > 0 && (this instanceof CommandDriven);
+    	return this.commandName != null && commandName.trim().length() > 0;
   	}
 
   	/**
    	 *
    	 */
   	
-  	private String invokeCommand() throws Exception 
+  	private String invokeCommand() 
   	{
     	final StringBuffer methodName = new StringBuffer("do" + this.commandName);
     	methodName.setCharAt(2, Character.toUpperCase(methodName.charAt(2)));
@@ -441,9 +421,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 
 	protected abstract String doExecute() throws Exception;
 
-	/**
-	 * 
-	 */
 
 	public final BrowserBean getBrowserBean()
 	{

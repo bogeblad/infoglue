@@ -38,23 +38,11 @@ public interface StringManager {
    */
   public String getString(String key);
 
-  /**
-   *
-   */
   public String getString(String key, Object args[]);
 
-  /**
-   *
-   */
   public String getString(String key, Object arg);
 
-  /**
-   *
-   */
   public String getString(String key, Object arg1, Object arg2);
 
-  /**
-   *
-   */
   public String getString(String key, Object arg1, Object arg2, Object arg3);
 }

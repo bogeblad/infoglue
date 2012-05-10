@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
@@ -76,7 +78,7 @@ public class ViewContentToolToolBarAction extends InfoGlueAbstractAction
 	
 	private ContentVO contentVO = null;
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
     {
 		if(this.contentId != null)
 		{
@@ -193,14 +195,13 @@ public class ViewContentToolToolBarAction extends InfoGlueAbstractAction
 		{
 			if(this.isBranch.booleanValue())
 				return getBranchContentButtons();
-			else
-				return getContentButtons();
+			return getContentButtons();
 		}	
-		else if(this.toolbarKey.equalsIgnoreCase("content version"))
+		if(this.toolbarKey.equalsIgnoreCase("content version"))
 		{
 			return this.getContentVersionButtons();
 		}
-		else if(this.toolbarKey.equalsIgnoreCase("ContentVersionHistory"))
+		if(this.toolbarKey.equalsIgnoreCase("ContentVersionHistory"))
 		{
 			return this.getContentVersionHistoryButtons();
 		}
@@ -689,20 +690,20 @@ public class ViewContentToolToolBarAction extends InfoGlueAbstractAction
 		return new ImageButton(true, "javascript:openPopup('ViewExecuteTask.action?contentId=" + this.contentId + "', 'ExecuteTask', 'width=400,height=600,resizable=yes,scrollbars=yes');", getLocalizedString(getSession().getLocale(), "images.global.buttons.executeTask"), "tool.common.executeTask.header");	
 	}
 	
-	private ImageButton getAccessRightsButton() throws Exception
+	private ImageButton getAccessRightsButton() throws UnsupportedEncodingException
 	{
 		String returnAddress = URLEncoder.encode(URLEncoder.encode("ViewContent.action?contentId=" + this.contentId + "&repositoryId=" + this.repositoryId + "&stay=true", "UTF-8"), "UTF-8");
 		//return new ImageButton("ViewAccessRights.action?name=Content&value=" + this.contentId + "&returnAddress=" + returnAddress, getLocalizedString(getSession().getLocale(), "images.contenttool.buttons.contentAccessRights"), "Content Access Rights");
 		return new ImageButton("ViewAccessRights.action?interceptionPointCategory=Content&extraParameters=" + this.contentId +"&colorScheme=ContentTool&returnAddress=" + returnAddress, getLocalizedString(getSession().getLocale(), "images.contenttool.buttons.contentAccessRights"), "tool.contenttool.contentAccessRights.header");
 	}
 
-	private ImageButton getContentVersionAccessRightsButton() throws Exception
+	private ImageButton getContentVersionAccessRightsButton() throws UnsupportedEncodingException
 	{
 		String returnAddress = URLEncoder.encode(URLEncoder.encode("ViewContentVersion.action?contentVersionId=" + this.contentVersionId + "&contentId=" + contentId + "&languageId=" + languageId, "UTF-8"), "UTF-8");
 		return new ImageButton("ViewAccessRights.action?interceptionPointCategory=ContentVersion&extraParameters=" + this.contentVersionId +"&colorScheme=ContentTool&returnAddress=" + returnAddress, getLocalizedString(getSession().getLocale(), "images.contenttool.buttons.contentAccessRights"), "tool.contenttool.contentVersionAccessRights.header");
 	}
 
-	private ImageButton getComponentAccessRightsButton() throws Exception
+	private ImageButton getComponentAccessRightsButton() throws UnsupportedEncodingException
 	{
 		String returnAddress = URLEncoder.encode(URLEncoder.encode("ViewContent.action?contentId=" + this.contentId + "&repositoryId=" + this.repositoryId + "&stay=true", "UTF-8"), "UTF-8");
 		return new ImageButton("ViewAccessRights.action?interceptionPointCategory=Component&extraParameters=" + this.contentId +"&colorScheme=ContentTool&returnAddress=" + returnAddress, getLocalizedString(getSession().getLocale(), "images.contenttool.buttons.componentAccessRights"), "tool.contenttool.componentAccessRights.header");

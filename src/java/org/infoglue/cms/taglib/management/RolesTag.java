@@ -47,18 +47,12 @@ public class RolesTag extends AbstractTag {
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException 
 	{
 		setResultAttribute(getRoles());
 		return super.doEndTag();
 	}
 	
-	/**
-	 * 
-	 */
 	private Collection getRoles() throws JspException
 	{
 		try 

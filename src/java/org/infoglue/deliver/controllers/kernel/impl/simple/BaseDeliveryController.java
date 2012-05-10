@@ -56,7 +56,7 @@ public abstract class BaseDeliveryController
 	 * This method fetches one object / entity within a transaction.
 	 **/
 	
-	protected Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException, Bug
+	protected Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException
 	{
 		Object object = null;
 		try
@@ -80,7 +80,7 @@ public abstract class BaseDeliveryController
 	 * This method fetches one object in read only mode and returns it's value object.
 	 */
 	
-	protected BaseEntityVO getVOWithId(Class arg, Integer id, Database db) throws SystemException, Bug
+	protected BaseEntityVO getVOWithId(Class arg, Integer id, Database db) throws SystemException
 	{
 		IBaseEntity vo = null;
 		try
@@ -105,7 +105,7 @@ public abstract class BaseDeliveryController
 	 * This method fetches all object in read only mode and returns a list of value objects.
 	 */
 
-	public List getAllVOObjects(Class arg, Database db) throws SystemException, Bug
+	public List getAllVOObjects(Class arg, Database db) throws SystemException
 	{
 		ArrayList resultList = new ArrayList();
 		
@@ -142,7 +142,7 @@ public abstract class BaseDeliveryController
 	 * This method fetches all object in read only mode and returns a list of value objects.
 	 */
 
-	public List getAllVOObjects(Class arg, String orderByField, String direction, Database db) throws SystemException, Bug
+	public List getAllVOObjects(Class arg, String orderByField, String direction, Database db) throws SystemException
 	{
 		ArrayList resultList = new ArrayList();
 		
@@ -236,7 +236,7 @@ public abstract class BaseDeliveryController
 	/**
 	 * This method converts a List of entities to a list of value-objects.
 	 */
-	protected static List toVOList(Collection entities) throws SystemException, Bug
+	protected static List toVOList(Collection entities) throws SystemException
 	{
 		List resultVOList = new ArrayList();
 
@@ -246,7 +246,7 @@ public abstract class BaseDeliveryController
 		Iterator iterator = entities.iterator();
 		while (iterator.hasNext())
 		{
-			Object o = (Object)iterator.next();
+			Object o = iterator.next();
 
 			try
 			{
@@ -290,7 +290,6 @@ public abstract class BaseDeliveryController
 	public static void closeTransaction(Database db) throws SystemException
 	{
 	    logger.info("closeTransaction a transaction and closing it...");
-	    //rollbackTransaction(db);
 	    commitTransaction(db);
 	}
        
@@ -303,15 +302,13 @@ public abstract class BaseDeliveryController
 		try
 		{
 		    logger.info("Committing a transaction and closing it...");
-		    
 		    db.commit();
-			db.close();
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 			throw new SystemException("An error occurred when we tried to commit an transaction. Reason:" + e.getMessage(), e);    
 		}
+		closeDatabase(db);
 	}
  
  
@@ -319,23 +316,21 @@ public abstract class BaseDeliveryController
 	 * Rollbacks a transaction on the named database
 	 */
      
-	public static void rollbackTransaction(Database db) throws SystemException
+	public static void rollbackTransaction(Database db) throws SystemException 
 	{
 	    logger.info("Rollback a transaction...");
-
 		try
 		{
 			if (db.isActive())
 			{
 				db.rollback();
-			    db.close();
 			}
 		}
 		catch(Exception e)
 		{
 			logger.info("An error occurred when we tried to rollback an transaction. Reason:" + e.getMessage());
-			//throw new SystemException("An error occurred when we tried to rollback an transaction. Reason:" + e.getMessage(), e);    
 		}
+		closeDatabase(db);
 	}
 
 	/**
@@ -347,12 +342,10 @@ public abstract class BaseDeliveryController
 		try
 		{
 		    logger.info("Closing database...");
-
 			db.close();
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
 			throw new SystemException("An error occurred when we tried to close a database. Reason:" + e.getMessage(), e);    
 		}
 	}

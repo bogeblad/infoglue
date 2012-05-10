@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,26 +92,23 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 		{
 		    return "showRelations";
 		}
-	    else
-	    {
-			try
-			{
-				this.parentSiteNodeVO = SiteNodeController.getParentSiteNode(this.siteNodeVO.getSiteNodeId());
-				this.parentSiteNodeId = this.parentSiteNodeVO.getSiteNodeId();
-			}
-			catch(Exception e)
-			{
-				logger.info("The siteNode must have been a root-siteNode because we could not find a parent.");
-			}
+		try
+		{
+			this.parentSiteNodeVO = SiteNodeController.getParentSiteNode(this.siteNodeVO.getSiteNodeId());
+			this.parentSiteNodeId = this.parentSiteNodeVO.getSiteNodeId();
+		}
+		catch(Exception e)
+		{
+			logger.info("The siteNode must have been a root-siteNode because we could not find a parent.");
+		}
 
-			//SiteNodeControllerProxy.getSiteNodeControllerProxy().acDelete(this.getInfoGluePrincipal(), this.siteNodeVO);
-			SiteNodeControllerProxy.getSiteNodeControllerProxy().acMarkForDelete(this.getInfoGluePrincipal(), this.siteNodeVO);
-	    	
-			return "success";
-	    }
+		//SiteNodeControllerProxy.getSiteNodeControllerProxy().acDelete(this.getInfoGluePrincipal(), this.siteNodeVO);
+		SiteNodeControllerProxy.getSiteNodeControllerProxy().acMarkForDelete(this.getInfoGluePrincipal(), this.siteNodeVO);
+    	
+		return "success";
 	}
 	
-	public String doV3() throws Exception 
+	public String doV3() throws SystemException, ConstraintException, IOException 
 	{
 		String result = NONE;
 		
@@ -179,14 +177,11 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "successV3";
-        }
+    	return "successV3";
     }
 
 	
-	public String doDeleteReference() throws Exception 
+	public String doDeleteReference() throws SystemException, ConstraintException, IOException 
 	{
 	    for(int i=0; i<registryId.length; i++)
 	    {
@@ -216,12 +211,12 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 	}	
 
 	
-	public String doFixPage() throws Exception 
+	public String doFixPage() 
 	{
 	    return "fixPage";
 	}
 
-	public String doFixPageHeader() throws Exception 
+	public String doFixPageHeader() 
 	{
 	    return "fixPageHeader";
 	}
@@ -275,8 +270,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 	{
 		if(this.returnAddress != null && !this.returnAddress.equals(""))
 			return this.returnAddress;
-		else
-			return "ViewSiteNode.action?siteNodeId=" + this.siteNodeVO.getId() + "&repositoryId=" + this.siteNodeVO.getRepositoryId();
+		return "ViewSiteNode.action?siteNodeId=" + this.siteNodeVO.getId() + "&repositoryId=" + this.siteNodeVO.getRepositoryId();
 	}
 
 	public void setOriginalAddress(String originalAddress)

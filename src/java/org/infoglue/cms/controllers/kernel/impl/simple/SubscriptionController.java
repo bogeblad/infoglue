@@ -26,10 +26,12 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Subscription;
@@ -37,8 +39,6 @@ import org.infoglue.cms.entities.management.SubscriptionFilterVO;
 import org.infoglue.cms.entities.management.SubscriptionVO;
 import org.infoglue.cms.entities.management.impl.simple.SubscriptionFilterImpl;
 import org.infoglue.cms.entities.management.impl.simple.SubscriptionImpl;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 
 public class SubscriptionController extends BaseController
@@ -54,31 +54,31 @@ public class SubscriptionController extends BaseController
 		return new SubscriptionController();
 	}
 	
-    public SubscriptionVO getSubscriptionVOWithId(Integer subscriptionId) throws SystemException, Bug
+    public SubscriptionVO getSubscriptionVOWithId(Integer subscriptionId) throws SystemException
     {
 		return (SubscriptionVO) getVOWithId(SubscriptionImpl.class, subscriptionId);
     }
 
-    public Subscription getSubscriptionWithId(Integer subscriptionId, Database db) throws SystemException, Bug
+    public Subscription getSubscriptionWithId(Integer subscriptionId, Database db) throws SystemException
     {
 		return (Subscription) getObjectWithId(SubscriptionImpl.class, subscriptionId, db);
     }
 
-    public List getSubscriptionVOList() throws SystemException, Bug
+    public List getSubscriptionVOList() throws SystemException
     {
 		List subscriptionVOList = getAllVOObjects(SubscriptionImpl.class, "subscriptionId");
 
 		return subscriptionVOList;
     }
 
-    public List getSubscriptionVOList(Database db) throws SystemException, Bug
+    public List getSubscriptionVOList(Database db) throws SystemException
     {
 		List subscriptionVOList = getAllVOObjects(SubscriptionImpl.class, "subscriptionId", db);
 
 		return subscriptionVOList;
     }
 
-    public SubscriptionVO create(SubscriptionVO subscriptionVO) throws ConstraintException, SystemException
+    public SubscriptionVO create(SubscriptionVO subscriptionVO) throws SystemException
     {
         Subscription subscription = new SubscriptionImpl();
         subscription.setValueObject(subscriptionVO);
@@ -86,7 +86,7 @@ public class SubscriptionController extends BaseController
         return subscription.getValueObject();
     }
 
-    public SubscriptionVO create(SubscriptionVO subscriptionVO,List<SubscriptionFilterVO> subscriptionFilterVOList) throws ConstraintException, SystemException
+    public SubscriptionVO create(SubscriptionVO subscriptionVO,List<SubscriptionFilterVO> subscriptionFilterVOList) throws SystemException
     {
     	SubscriptionVO newSubscriptionVO = null;
     	
@@ -110,7 +110,7 @@ public class SubscriptionController extends BaseController
 		return newSubscriptionVO;
     }
 
-    public Subscription create(SubscriptionVO subscriptionVO,List<SubscriptionFilterVO> subscriptionFilterVOList, Database db) throws ConstraintException, SystemException, Exception
+    public Subscription create(SubscriptionVO subscriptionVO,List<SubscriptionFilterVO> subscriptionFilterVOList, Database db) throws PersistenceException
     {
     	Subscription subscription = new SubscriptionImpl();
 		subscription.setValueObject(subscriptionVO);
@@ -129,7 +129,7 @@ public class SubscriptionController extends BaseController
 		return subscription;
     }
 
-    public SubscriptionVO update(SubscriptionVO subscriptionVO, List<SubscriptionFilterVO> subscriptionFilterVOList) throws ConstraintException, SystemException
+    public SubscriptionVO update(SubscriptionVO subscriptionVO, List<SubscriptionFilterVO> subscriptionFilterVOList) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 		
@@ -167,7 +167,7 @@ public class SubscriptionController extends BaseController
 		return subscriptionVO;
     }
 
-    public void addFilter(Integer subscriptionId, SubscriptionFilterVO subscriptionFilterVO) throws ConstraintException, SystemException
+    public void addFilter(Integer subscriptionId, SubscriptionFilterVO subscriptionFilterVO) throws SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -189,17 +189,17 @@ public class SubscriptionController extends BaseController
 		}
     }
 
-    public void delete(SubscriptionVO subscriptionVO) throws ConstraintException, SystemException
+    public void delete(SubscriptionVO subscriptionVO) throws SystemException
     {
     	deleteEntity(SubscriptionImpl.class, subscriptionVO.getSubscriptionId());
     }
 
-    public void delete(Integer subscriptionId) throws ConstraintException, SystemException
+    public void delete(Integer subscriptionId) throws SystemException
     {
     	deleteEntity(SubscriptionImpl.class, subscriptionId);
     }
 
-    public SubscriptionVO update(SubscriptionVO subscriptionVO) throws ConstraintException, SystemException
+    public SubscriptionVO update(SubscriptionVO subscriptionVO) throws SystemException
     {
     	return (SubscriptionVO) updateEntity(SubscriptionImpl.class, subscriptionVO);
     }
@@ -252,7 +252,7 @@ public class SubscriptionController extends BaseController
 	 * Gets matching subscriptions
 	 */
 	
-	public List<Subscription> getSubscriptionList(Integer interceptionPointId, String name, Boolean isGlobal, String entityName, String entityId, String userName, String userEmail, Database db, boolean readOnly) throws SystemException, Exception
+	public List<Subscription> getSubscriptionList(Integer interceptionPointId, String name, Boolean isGlobal, String entityName, String entityId, String userName, String userEmail, Database db, boolean readOnly) throws PersistenceException, NoSuchElementException  
 	{
 	    List<Subscription> subscriptionList = new ArrayList<Subscription>();
 	    

@@ -32,29 +32,14 @@ public class RemoteSiteNodeServiceTag extends TemplateControllerTag
 	 */
 	private List siteNodes = new ArrayList();	
 	
-	/**
-	 * 
-	 */
 	private String name;
 	
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteSiteNodeService";
 	
-	/**
-	 * 
-	 */
 	private String operationName;
 	
-	/**
-	 * 
-	 */
 	private InfoGluePrincipal principal;
 	
-	/**
-	 * 
-	 */
 	public RemoteSiteNodeServiceTag() 
 	{
 		super();
@@ -71,9 +56,6 @@ public class RemoteSiteNodeServiceTag extends TemplateControllerTag
 	    return EVAL_BODY_INCLUDE;
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

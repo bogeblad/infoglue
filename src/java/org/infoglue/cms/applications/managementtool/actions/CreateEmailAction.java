@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.mail.MailServiceFactory;
@@ -61,7 +63,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
 	private String originalUrl;
    	private String userSessionKey;
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
     	if(recipients != null && recipients.length() > 0 && subject != null && subject.length() > 0 && message != null && message.length() > 0)
     	{
@@ -86,7 +88,6 @@ public class CreateEmailAction extends InfoGlueAbstractAction
 		    }
 			
 		    MailServiceFactory.getService().sendEmail(contentType, from, from, recipients, null, null, null, subject, message, "utf-8");
-			//MailServiceFactory.getService().sendEmail(from, from, recipients, subject, message, "utf-8");
     	}
     	else
     	{
@@ -175,7 +176,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     	return "inputCreateEmail";
     }
     
-    public String doExecuteV3() throws Exception
+    public String doExecuteV3() throws IOException, SystemException
     {
     	VisualFormatter ui = new VisualFormatter();
     	extraText 	= getRequest().getParameter("extraText");
@@ -187,40 +188,37 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     		errorMessage 	= getLocalizedString(getLocale(), "tool.managementtool.createEmailComposeEmail.validationError");
     		return "inputCreateEmailV3";
     	}
-    	else
-    	{
-    		String notificationPrefix = getLocalizedString(getLocale(), "tool.managementtool.createEmailComposeEmail.notificationPrefix");
-    		subject = notificationPrefix + " - " + subject; 
-			if(from == null  || from.length() == 0)
-			{
-    			String systemEmailSender = CmsPropertyHandler.getSystemEmailSender();
-    			if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
-    				systemEmailSender = "InfoGlueCMS@" + CmsPropertyHandler.getMailSmtpHost();
+		String notificationPrefix = getLocalizedString(getLocale(), "tool.managementtool.createEmailComposeEmail.notificationPrefix");
+		subject = notificationPrefix + " - " + subject; 
+		if(from == null  || from.length() == 0)
+		{
+			String systemEmailSender = CmsPropertyHandler.getSystemEmailSender();
+			if(systemEmailSender == null || systemEmailSender.equalsIgnoreCase(""))
+				systemEmailSender = "InfoGlueCMS@" + CmsPropertyHandler.getMailSmtpHost();
 
-    			from = systemEmailSender;
-			}
+			from = systemEmailSender;
+		}
 
-	        String contentType = CmsPropertyHandler.getMailContentType();
-	        if(contentType == null || contentType.length() == 0)
-	            contentType = "text/html";
+        String contentType = CmsPropertyHandler.getMailContentType();
+        if(contentType == null || contentType.length() == 0)
+            contentType = "text/html";
 
-	        if(extraText != null && !extraText.equals(""))
-	        {
-	        	message += "<br/>";
-	        	message += extraText + "<br/>";		    		
-	        }
+        if(extraText != null && !extraText.equals(""))
+        {
+        	message += "<br/>";
+        	message += extraText + "<br/>";		    		
+        }
 
-		    if(contentType.equalsIgnoreCase("text/html"))
-		    {
-		    	message = ui.escapeHTMLforXMLService(message);
-				message = "<div>" + message.replaceAll("\n", "<br/>\n") + "</div>";
-		    }
-	        
-		    if(extraTextProperty != null && !extraTextProperty.equals(""))
-		    	message += getLocalizedString(getLocale(), extraTextProperty, originalUrl);
+	    if(contentType.equalsIgnoreCase("text/html"))
+	    {
+	    	message = ui.escapeHTMLforXMLService(message);
+			message = "<div>" + message.replaceAll("\n", "<br/>\n") + "</div>";
+	    }
+        
+	    if(extraTextProperty != null && !extraTextProperty.equals(""))
+	    	message += getLocalizedString(getLocale(), extraTextProperty, originalUrl);
 
-		    MailServiceFactory.getService().sendEmail(contentType, from, from, recipients, null, null, null, subject, message, "utf-8");
-    	}
+	    MailServiceFactory.getService().sendEmail(contentType, from, from, recipients, null, null, null, subject, message, "utf-8");
     	
         if(this.returnAddress != null && !this.returnAddress.equals(""))
         {
@@ -230,10 +228,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "successV3";
-        }
+    	return "successV3";
     }
     
     public String doInputChooseRecipientsV3() throws Exception

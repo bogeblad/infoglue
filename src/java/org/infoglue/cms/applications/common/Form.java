@@ -48,9 +48,6 @@ public class Form {
   // --- [Package protected] ---------------------------------------------------
   // --- [Private] -------------------------------------------------------------
 
-  /**
-   *
-   */
   private void validateField(boolean isIllegalValue, String fieldName, ConstraintExceptionBuffer ceb) {
     if(isIllegalValue) {
       ceb.add(new ConstraintException(fieldName, ERROR_CODE));
@@ -59,23 +56,14 @@ public class Form {
 
   // --- [Protected] -----------------------------------------------------------
 
-  /**
-   *
-   */
   protected void validateDateField(String value, String fieldName, ConstraintExceptionBuffer ceb) {
     validateField(!ValueConverter.isDate(value), fieldName, ceb);
   }
 
-  /**
-   *
-   */
   protected void validateNonNegativeFloatField(String value, String fieldName, ConstraintExceptionBuffer ceb) {
     validateField(!ValueConverter.isNonNegativeFloat(value), fieldName, ceb);
   }
 
-  /**
-   *
-   */
   protected void validateNonNegativeIntegerField(String value, String fieldName, ConstraintExceptionBuffer ceb) {
     validateField(!ValueConverter.isNonNegativeInteger(value), fieldName, ceb);
   }

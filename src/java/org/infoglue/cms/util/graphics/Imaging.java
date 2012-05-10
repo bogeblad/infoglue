@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.managementtool.actions.ConfirmAction;
 
 import com.thebuzzmedia.imgscalr.Scalr;
 import com.thebuzzmedia.imgscalr.Scalr.Mode;
@@ -64,7 +63,7 @@ public class Imaging
         }
     }
 
-	public static void resize(File input, File output, int width, int height, String format, boolean constrainProportions) throws Exception
+	public static void resize(File input, File output, int width, int height, String format, boolean constrainProportions) throws IOException 
 	{
 		BufferedImage image = javax.imageio.ImageIO.read(input);
 		
@@ -92,7 +91,6 @@ public class Imaging
 		if(constrainProportions)
 		{			
 			scaledImage = Scalr.resize(image, mode, width, height);
-			//scaledImage = Scalr.resize(image, width, height);
 		}
 		else
 		{
@@ -102,7 +100,7 @@ public class Imaging
 		javax.imageio.ImageIO.write(scaledImage, format, output);
 	}
 
-	public static void crop(File input, File output, int x, int y, int width, int height, String format) throws Exception
+	public static void crop(File input, File output, int x, int y, int width, int height, String format) throws IOException 
 	{
 		BufferedImage image = javax.imageio.ImageIO.read(input);
 		

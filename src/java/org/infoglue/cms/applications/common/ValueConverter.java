@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.common;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,18 +43,12 @@ public class ValueConverter
   // --- [Static] --------------------------------------------------------------
   // --- [Constructors] --------------------------------------------------------
 
-  /**
-   *
-   */
   public ValueConverter() {}
 
 
 
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public static final boolean isDate(String value) {
     return toDate(value) != null;
   }
@@ -67,9 +62,6 @@ public class ValueConverter
   }
 
 
-    /**
-     *
-     */
      public static final Date getDate(String dateString, String fieldName) throws ConstraintException
      {
         Date publishDate = null;
@@ -84,11 +76,7 @@ public class ValueConverter
         return publishDate;
      }
 
-    /**
-     * 
-     */
-    
-    public static final Date toDate(String dateString, String pattern) throws Exception 
+    public static final Date toDate(String dateString, String pattern) throws ParseException 
     {
         if(dateString == null || dateString.length() == 0)
             return null;
@@ -97,9 +85,6 @@ public class ValueConverter
         return formatter.parse(dateString);
     }
 
-  /**
-   *
-   */
   public static final boolean isBoolean(String value) {
     return toBoolean(value) != null;
   }
@@ -111,16 +96,10 @@ public class ValueConverter
     return Boolean.valueOf(value);
   }
 
-  /**
-   *
-   */
   public static final boolean isNonNegativeInteger(String value) {
     return toNonNegativeInteger(value) != null;
   }
 
-  /**
-   *
-   */
   public static final Integer toNonNegativeInteger(String value) {
     try {
       final int intValue = Integer.parseInt(value);
@@ -130,16 +109,10 @@ public class ValueConverter
     }
   }
 
-  /**
-   *
-   */
   public static final boolean isNonNegativeFloat(String value) {
     return toNonNegativeFloat(value) != null;
   }
 
-  /**
-   *
-   */
   public static final Float toNonNegativeFloat(String value) {
     try {
       final float floatValue = Float.parseFloat(value);

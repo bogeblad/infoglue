@@ -36,54 +36,30 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class SimpleCategoryProvider extends CategoryProvider 
 {
-	/**
-	 * 
-	 */
 	private static final String CATEGORY_PROPERTYSET_PREFIX = "category_";
 
-	/**
-	 * 
-	 */
 	private static final String NAME_ARGUMENT = "attributeName";
 
-	/**
-	 * 
-	 */
 	private static final String	ROOT_ARGUMENT = "rootCategory";
 
-	/**
-	 * 
-	 */
 	private CategoryVO rootCategory;
 
-	/**
-	 * 
-	 */
 	private String attributeName;
 		
 	
 	
-	/**
-	 * 
-	 */
 	public SimpleCategoryProvider() 
 	{ 
 		super();	
 	}
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		cleanPropertySet();
 		populate();	
 	}
 	
-	/**
-	 * 
-	 */
-	private void populate() throws WorkflowException 
+	private void populate() 
 	{
 		List result = new ArrayList();
 		for(Iterator i = rootCategory.getChildren().iterator(); i.hasNext();) 
@@ -100,10 +76,7 @@ public class SimpleCategoryProvider extends CategoryProvider
 		getCategories().put(attributeName, result);
 	}
 	
-	/**
-	 * 
-	 */
-	private void cleanPropertySet() throws WorkflowException
+	private void cleanPropertySet()
 	{
 		removeFromPropertySet(getBaseKey(), true);
 	}
@@ -121,9 +94,6 @@ public class SimpleCategoryProvider extends CategoryProvider
 		rootCategory  = getRootCategory(getArgument(ROOT_ARGUMENT));
 	}
 	
-	/**
-	 * 
-	 */
 	private CategoryVO getRootCategory(final String path) throws WorkflowException 
 	{
 		try 
@@ -138,17 +108,11 @@ public class SimpleCategoryProvider extends CategoryProvider
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private String getBaseKey() 
 	{ 
 		return CATEGORY_PROPERTYSET_PREFIX + attributeName + "_";	
 	}
 	
-	/**
-	 * 
-	 */
 	private String getCategoryKey(final CategoryVO categoryVO) 
 	{ 
 		return getBaseKey() + categoryVO.getName(); 

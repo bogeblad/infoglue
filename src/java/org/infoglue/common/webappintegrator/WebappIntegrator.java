@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -145,10 +144,7 @@ public class WebappIntegrator
 	
 	        return sourceElement.html();
 		}
-		else
-		{
-			return doc.body().html();
-		}
+		return doc.body().html();
 	}
 	
 	public void setMethod(String method) 

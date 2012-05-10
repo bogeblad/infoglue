@@ -144,7 +144,7 @@ public class PublicationDetailImpl implements PublicationDetail
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

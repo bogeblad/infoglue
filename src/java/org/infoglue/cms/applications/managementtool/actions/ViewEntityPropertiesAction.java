@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -46,7 +47,6 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.QualifyerVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
@@ -85,11 +85,11 @@ public abstract class ViewEntityPropertiesAction extends InfoGlueAbstractAction
 	
 	public abstract String getXML();
 	
-    public abstract String getCancelAddress() throws Exception;
+    public abstract String getCancelAddress() throws UnsupportedEncodingException;
 
-    public abstract String getReturnAddress() throws Exception;
+    public abstract String getReturnAddress() throws UnsupportedEncodingException;
 
-    public void initialize() throws SystemException, Bug
+    public void initialize() throws SystemException
     {
 	    this.setAvailableLanguages(LanguageController.getController().getLanguageVOList());
 		
@@ -167,7 +167,7 @@ public abstract class ViewEntityPropertiesAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try
@@ -189,7 +189,7 @@ public abstract class ViewEntityPropertiesAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try
@@ -345,8 +345,7 @@ public abstract class ViewEntityPropertiesAction extends InfoGlueAbstractAction
 		    String protectCategories = CmsPropertyHandler.getProtectCategories();
 		    if(protectCategories != null && protectCategories.equalsIgnoreCase("true"))
 		        return getCategoryController().getAuthorizedActiveChildren(categoryId, this.getInfoGluePrincipal());
-			else
-			    return getCategoryController().findAllActiveChildren(categoryId);
+		    return getCategoryController().findAllActiveChildren(categoryId);
 		}
 		catch(Exception e)
 		{

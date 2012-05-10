@@ -28,7 +28,6 @@ import java.security.Principal;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,30 +64,29 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 		return "success";
 	}	
 
-	public String doLoginForm() throws Exception 
+	public String doLoginForm()  
 	{
 		return "loginForm";
 	}	
 
-	public String doNoAccess() throws Exception 
+	public String doNoAccess()  
 	{
 		return "noAccess";
 	}
 	
-	public String doInvalidLogin() throws Exception 
+	public String doInvalidLogin()  
 	{
 		return "invalidLogin";
 	}
 	
 	// To check access 
-	public String doCheckUser() throws Exception
+	public String doCheckUser() throws Exception 
 	{
-	    Map arguments = HttpUtilities.requestToHashtable((HttpServletRequest)this.getRequest());
+	    Map arguments = HttpUtilities.requestToHashtable(this.getRequest());
 
 		if(ExtranetController.getController().getAuthenticatedPrincipal(arguments,this.getRequest())!=null)
 			return "granted";
-		else
-			return "denied";
+		return "denied";
 	}
 	
 	public String doAuthenticateUser() throws Exception 
@@ -134,12 +132,9 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 			{
 				return "invalidLogin";
 			}
-			else
-			{
-				String fullRedirect = invalidLoginUrl + (invalidLoginUrl.indexOf("?") > -1 ? "&" : "?") + "returnAddress=" + URLEncoder.encode(returnAddress, "UTF-8");
-				logger.info("fullRedirect:" + fullRedirect);
-				this.getResponse().sendRedirect(fullRedirect);
-			}
+			String fullRedirect = invalidLoginUrl + (invalidLoginUrl.indexOf("?") > -1 ? "&" : "?") + "returnAddress=" + URLEncoder.encode(returnAddress, "UTF-8");
+			logger.info("fullRedirect:" + fullRedirect);
+			this.getResponse().sendRedirect(fullRedirect);
 		}
 		
 		return NONE;
@@ -171,11 +166,8 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 		{
 			return NONE;
 		}
-		else
-		{
-			this.getResponse().sendRedirect(this.returnAddress);
-			return NONE;
-		}
+		this.getResponse().sendRedirect(this.returnAddress);
+		return NONE;
 	}
 
 	public String urlEncode(String string, String encoding)
@@ -378,7 +370,7 @@ public final class ExtranetLoginAction extends InfoGlueAbstractAction
 	    }
 	}
 	
-  	private String getInvalidLoginUrl() throws ServletException, Exception 
+  	private String getInvalidLoginUrl() throws Exception 
   	{
 		String url = AuthenticationModule.getAuthenticationModule(null, null, getRequest(), false).getInvalidLoginUrl();
 		

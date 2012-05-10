@@ -33,6 +33,7 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,7 +76,7 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 	{
 	}
         
-	protected void initialize() throws Exception
+	protected void initialize() throws SystemException
 	{
 		this.formDefinition = ContentVersionController.getContentVersionController().getAttributeValue(getContentVersionId(), getContentVersionAttributeName(), false);
 		logger.info("this.formDefinition:" + this.formDefinition);
@@ -116,15 +117,16 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 
 	/**
 	 * The main method that just initializes the editor with the correct contentVersion and attribute.
+	 * @throws SystemException 
 	 */
     
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
 	{
 		this.initialize();
 		return "success";
 	}
             
-	public String doInsertAttribute() throws Exception
+	public String doInsertAttribute() throws SystemException
 	{
 		this.initialize();
 		String newFormDefinition = ContentTypeDefinitionController.getController().insertContentTypeAttribute(this.formDefinition, this.inputTypeId, new ArrayList());
@@ -136,7 +138,7 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 	}
 	
 	
-	public String doDeleteAttribute() throws Exception
+	public String doDeleteAttribute() throws SystemException
 	{
 		this.initialize();
 		
@@ -173,9 +175,10 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 
 	/**
 	 * This method moves an content type attribute up one step.
+	 * @throws SystemException 
 	 */
 	
-	public String doMoveAttributeUp() throws Exception
+	public String doMoveAttributeUp() throws SystemException
 	{
 		this.initialize();
 		
@@ -219,9 +222,10 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 
 	/**
 	 * This method moves an content type attribute down one step.
+	 * @throws SystemException 
 	 */
 	
-	public String doMoveAttributeDown() throws Exception
+	public String doMoveAttributeDown() throws SystemException
 	{
 		this.initialize();
 		
@@ -252,8 +256,7 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 						isInserted = true;
 						break;
 					}
-					else
-						position++;
+					position++;
 				}
 				
 				if(element.getAttribute("name").equalsIgnoreCase(this.attributeName))
@@ -283,7 +286,7 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 	}
 
 
-	public String doUpdateAttribute() throws Exception
+	public String doUpdateAttribute() throws SystemException
 	{
 		this.initialize();
 		
@@ -360,7 +363,7 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 	}
 
 
-	public String doInsertAttributeParameterValue() throws Exception
+	public String doInsertAttributeParameterValue() throws SystemException
 	{
 		this.initialize();
 		
@@ -399,7 +402,7 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 	}
 
 
-	public String doDeleteAttributeParameterValue() throws Exception
+	public String doDeleteAttributeParameterValue() throws SystemException
 	{
 		this.initialize();
 		
@@ -436,7 +439,7 @@ public class ViewFormEditorAction extends InfoGlueAbstractAction //extends ViewC
 
 
 
-	public String doUpdateAttributeParameterValue() throws Exception
+	public String doUpdateAttributeParameterValue() throws SystemException
 	{
 		this.initialize();
 		

@@ -26,6 +26,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptorController;
 import org.infoglue.cms.entities.management.InterceptorVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -45,7 +48,7 @@ public class UpdateInterceptorAction extends ViewInterceptorAction
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 	
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		super.initialize(getInterceptorId());
 		
@@ -60,7 +63,7 @@ public class UpdateInterceptorAction extends ViewInterceptorAction
 		return "success";
 	}
 	
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws AccessConstraintException, ConstraintException, SystemException
     {
 		doExecute();
 						

@@ -176,7 +176,7 @@ public class WebServiceHelper
 	 * This is the method that lets you call the endpoint and get a map of values back.
 	 */
 
-	public String getString(String method, String argument) throws SystemException
+	public String getString(String method, String argument)
 	{
 		String response = "";
 		
@@ -212,7 +212,7 @@ public class WebServiceHelper
 	 * This is the method that lets you call the endpoint and get a map of values back.
 	 */
 
-	public Map getMap(String method, Map argument) throws SystemException
+	public Map getMap(String method, Map argument)
 	{
 		Map response = new HashMap();
 		

@@ -25,7 +25,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 
@@ -55,7 +57,7 @@ public class UpdateSiteNodeTypeDefinitionAction extends ViewSiteNodeTypeDefiniti
 		this.ceb = new ConstraintExceptionBuffer();	
 	}
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		super.initialize(getSiteNodeTypeDefinitionId());
 
@@ -69,7 +71,7 @@ public class UpdateSiteNodeTypeDefinitionAction extends ViewSiteNodeTypeDefiniti
 		return "success";
 	}
 
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws AccessConstraintException, ConstraintException, SystemException
     {
 		doExecute();
 						

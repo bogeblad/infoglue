@@ -24,8 +24,6 @@
 package org.infoglue.cms.entities.management;
 
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class RepositoryLanguageVO  implements BaseEntityVO
@@ -51,7 +49,7 @@ public class RepositoryLanguageVO  implements BaseEntityVO
         return this.repositoryLanguageId;
     }
                 
-    public void setRepositoryLanguageId(java.lang.Integer repositoryLanguageId) throws SystemException
+    public void setRepositoryLanguageId(java.lang.Integer repositoryLanguageId) 
     {
         this.repositoryLanguageId = repositoryLanguageId;
     }
@@ -61,7 +59,7 @@ public class RepositoryLanguageVO  implements BaseEntityVO
         return this.isPublished;
     }
                 
-    public void setIsPublished(java.lang.Boolean isPublished) throws ConstraintException
+    public void setIsPublished(java.lang.Boolean isPublished) 
     {
         this.isPublished = isPublished;
     }

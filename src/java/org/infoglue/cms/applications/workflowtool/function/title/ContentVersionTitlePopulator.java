@@ -29,14 +29,8 @@ import com.opensymphony.workflow.WorkflowException;
 
 public class ContentVersionTitlePopulator extends Populator 
 {
-	/**
-	 * 
-	 */
     private static final String ATTRIBUTE_ARGUMENT = "attributeName";
 	
-	/**
-	 * 
-	 */
 	private String title;
 	
 	
@@ -49,9 +43,6 @@ public class ContentVersionTitlePopulator extends Populator
 		super(); 
 	}
 	
-	/**
-	 * 
-	 */
 	protected String getTitle() 
 	{ 
 		return title; 

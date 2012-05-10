@@ -36,6 +36,7 @@ import org.apache.xerces.parsers.DOMParser;
 import org.dom4j.Element;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
@@ -47,11 +48,9 @@ import org.infoglue.cms.entities.management.PropertiesCategoryVO;
 import org.infoglue.cms.entities.management.RoleContentTypeDefinition;
 import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.entities.management.RolePropertiesVO;
-import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.RolePropertiesImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueRole;
@@ -82,17 +81,17 @@ public class RolePropertiesController extends BaseController
 	}
 	
 	
-    public RoleProperties getRolePropertiesWithId(Integer rolePropertiesId, Database db) throws SystemException, Bug
+    public RoleProperties getRolePropertiesWithId(Integer rolePropertiesId, Database db) throws SystemException
     {
 		return (RoleProperties) getObjectWithId(RolePropertiesImpl.class, rolePropertiesId, db);
     }
     
-    public RolePropertiesVO getRolePropertiesVOWithId(Integer rolePropertiesId) throws SystemException, Bug
+    public RolePropertiesVO getRolePropertiesVOWithId(Integer rolePropertiesId) throws SystemException
     {
 		return (RolePropertiesVO) getVOWithId(RolePropertiesImpl.class, rolePropertiesId);
     }
   
-    public List getRolePropertiesVOList() throws SystemException, Bug
+    public List getRolePropertiesVOList() throws SystemException
     {
         return getAllVOObjects(RolePropertiesImpl.class, "rolePropertiesId");
     }
@@ -102,7 +101,7 @@ public class RolePropertiesController extends BaseController
 	 * This method created a new RolePropertiesVO in the database.
 	 */
 
-	public RolePropertiesVO create(Integer languageId, Integer contentTypeDefinitionId, RolePropertiesVO rolePropertiesVO) throws ConstraintException, SystemException
+	public RolePropertiesVO create(Integer languageId, Integer contentTypeDefinitionId, RolePropertiesVO rolePropertiesVO) throws SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -130,14 +129,14 @@ public class RolePropertiesController extends BaseController
 	 * so it recognises the change. 
 	 */
 
-	public RoleProperties create(Integer languageId, Integer contentTypeDefinitionId, RolePropertiesVO rolePropertiesVO, Database db) throws ConstraintException, SystemException, Exception
+	public RoleProperties create(Integer languageId, Integer contentTypeDefinitionId, RolePropertiesVO rolePropertiesVO, Database db) throws SystemException, Exception
     {
 		Language language = LanguageController.getController().getLanguageWithId(languageId, db);
 		ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
 
 		RoleProperties roleProperties = new RolePropertiesImpl();
-		roleProperties.setLanguage((LanguageImpl)language);
-		roleProperties.setContentTypeDefinition((ContentTypeDefinition)contentTypeDefinition);
+		roleProperties.setLanguage(language);
+		roleProperties.setContentTypeDefinition(contentTypeDefinition);
 	
 		roleProperties.setValueObject(rolePropertiesVO);
 		db.create(roleProperties); 
@@ -149,7 +148,7 @@ public class RolePropertiesController extends BaseController
 	 * This method updates an extranet role properties.
 	 */
 
-	public RolePropertiesVO update(Integer languageId, Integer contentTypeDefinitionId, RolePropertiesVO rolePropertiesVO) throws ConstraintException, SystemException
+	public RolePropertiesVO update(Integer languageId, Integer contentTypeDefinitionId, RolePropertiesVO rolePropertiesVO) throws SystemException
 	{
 		RolePropertiesVO realRolePropertiesVO = rolePropertiesVO;
     	
@@ -159,7 +158,7 @@ public class RolePropertiesController extends BaseController
 			realRolePropertiesVO = create(languageId, contentTypeDefinitionId, rolePropertiesVO);
 		}
 
-		return (RolePropertiesVO) updateEntity(RolePropertiesImpl.class, (BaseEntityVO) realRolePropertiesVO);
+		return (RolePropertiesVO) updateEntity(RolePropertiesImpl.class, realRolePropertiesVO);
 	}        
 
 	public RolePropertiesVO update(RolePropertiesVO rolePropertiesVO, String[] extranetUsers) throws ConstraintException, SystemException
@@ -243,7 +242,7 @@ public class RolePropertiesController extends BaseController
 	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
 	 */
 
-	public List getRolePropertiesList(String roleName, Integer languageId, Database db, boolean readOnly) throws ConstraintException, SystemException, Exception
+	public List getRolePropertiesList(String roleName, Integer languageId, Database db, boolean readOnly) throws PersistenceException 
 	{
 		List rolePropertiesList = new ArrayList();
 
@@ -274,7 +273,7 @@ public class RolePropertiesController extends BaseController
 		return rolePropertiesList;
 	}
 	
-	public Set<InfoGlueRole> getRolesByMatchingProperty(String propertyName, String value, Integer languageId, boolean useLanguageFallback, Database db) throws ConstraintException, SystemException, Exception
+	public Set<InfoGlueRole> getRolesByMatchingProperty(String propertyName, String value, Integer languageId, boolean useLanguageFallback, Database db)
 	{
 		Set<InfoGlueRole> roles = new HashSet<InfoGlueRole>();
 		
@@ -315,7 +314,7 @@ public class RolePropertiesController extends BaseController
 	 * This method gets a list of groupProperties where the group property matches a search made
 	 */
 
-	public List<RolePropertiesVO> getRolePropertiesVOList(String propertyName, String propertyValue, Database db) throws ConstraintException, SystemException, Exception
+	public List<RolePropertiesVO> getRolePropertiesVOList(String propertyName, String propertyValue, Database db) throws PersistenceException 
 	{
 		List<RolePropertiesVO> rolePropertiesVOList = new ArrayList<RolePropertiesVO>();
 
@@ -342,7 +341,7 @@ public class RolePropertiesController extends BaseController
 		return rolePropertiesVOList;
 	}
 
-    public void delete(RolePropertiesVO rolePropertiesVO) throws ConstraintException, SystemException
+    public void delete(RolePropertiesVO rolePropertiesVO) throws SystemException
     {
     	deleteEntity(RolePropertiesImpl.class, rolePropertiesVO.getRolePropertiesId());
     }        
@@ -352,7 +351,7 @@ public class RolePropertiesController extends BaseController
 	 * This method should return a list of those digital assets the contentVersion has.
 	 */
 	   	
-	public List getDigitalAssetVOList(Integer rolePropertiesId) throws SystemException, Bug
+	public List getDigitalAssetVOList(Integer rolePropertiesId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -387,7 +386,7 @@ public class RolePropertiesController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public void deleteDigitalAssetRelation(Integer rolePropertiesId, DigitalAsset digitalAsset, Database db) throws SystemException, Bug
+	public void deleteDigitalAssetRelation(Integer rolePropertiesId, DigitalAsset digitalAsset, Database db) throws SystemException
     {
 	    RoleProperties roleProperties = getRolePropertiesWithId(rolePropertiesId, db);
 	    roleProperties.getDigitalAssets().remove(digitalAsset);
@@ -442,7 +441,7 @@ public class RolePropertiesController extends BaseController
 	 * This method fetches all role content types available for this role within a transaction. 
 	 */
 	
-	public List getRoleContentTypeDefinitionList(String roleName, Database db) throws ConstraintException, SystemException, Exception
+	public List getRoleContentTypeDefinitionList(String roleName, Database db) throws PersistenceException 
 	{
 		List roleContentTypeDefinitionList = new ArrayList();
 
@@ -450,7 +449,7 @@ public class RolePropertiesController extends BaseController
 		oql.bind(roleName);
 
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		logger.info("Fetching entity in read/write mode");
 
 		while (results.hasMore()) 
 		{
@@ -521,7 +520,7 @@ public class RolePropertiesController extends BaseController
 	 * single value and saves it back to the db.
 	 */
 	 
-	public void updateAttributeValue(Integer rolePropertiesId, String attributeName, String attributeValue) throws SystemException, Bug
+	public void updateAttributeValue(Integer rolePropertiesId, String attributeName, String attributeValue) throws SystemException
 	{
 		RolePropertiesVO rolePropertiesVO = getRolePropertiesVOWithId(rolePropertiesId);
 		
@@ -554,13 +553,10 @@ public class RolePropertiesController extends BaseController
 							existed = true;
 							break;
 						}
-						else
-						{
-							CDATASection cdata = document.createCDATASection(attributeValue);
-							n.appendChild(cdata);
-							existed = true;
-							break;
-						}
+						CDATASection cdata = document.createCDATASection(attributeValue);
+						n.appendChild(cdata);
+						existed = true;
+						break;
 					}
 				}
 				
@@ -616,9 +612,10 @@ public class RolePropertiesController extends BaseController
 
 	/**
 	 * Returns the value of a Role Property
+	 * @throws PersistenceException 
 	 */
 
-	public String getAttributeValue(String roleName, Integer languageId, String attributeName, Database db) throws SystemException, Exception
+	public String getAttributeValue(String roleName, Integer languageId, String attributeName, Database db) throws PersistenceException 
 	{
 		String value = "";
 		
@@ -641,7 +638,7 @@ public class RolePropertiesController extends BaseController
 	 * This method fetches a value from the xml that is the roleProperties Value. 
 	 */
 	 
-	public String getAttributeValue(Integer rolePropertiesId, String attributeName, boolean escapeHTML) throws SystemException, Bug
+	public String getAttributeValue(Integer rolePropertiesId, String attributeName, boolean escapeHTML) throws SystemException
 	{
 		String value = "";
 		
@@ -659,7 +656,7 @@ public class RolePropertiesController extends BaseController
 	 * This method fetches a value from the xml that is the roleProperties Value. 
 	 */
 	 
-	public String getAttributeValue(String xml, String attributeName, boolean escapeHTML) throws SystemException, Bug
+	public String getAttributeValue(String xml, String attributeName, boolean escapeHTML) 
 	{
 		String value = "";
 		

@@ -36,7 +36,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.TransactionHistory;
 import org.infoglue.cms.entities.management.TransactionHistoryVO;
 import org.infoglue.cms.entities.management.impl.simple.TransactionHistoryImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -55,18 +54,18 @@ public class TransactionHistoryController extends BaseController
 		return new TransactionHistoryController();
 	}
 	
-	public TransactionHistoryVO getTransactionHistoryVOWithId(Integer transactionHistoryId) throws SystemException, Bug
+	public TransactionHistoryVO getTransactionHistoryVOWithId(Integer transactionHistoryId) throws SystemException
 	{
 		return (TransactionHistoryVO) getVOWithId(TransactionHistoryImpl.class, transactionHistoryId);
 	}
 
-    public TransactionHistory getTransactionHistoryWithId(Integer transactionHistoryId, Database db) throws SystemException, Bug
+    public TransactionHistory getTransactionHistoryWithId(Integer transactionHistoryId, Database db) throws SystemException
     {
 		return (TransactionHistory) getObjectWithId(TransactionHistoryImpl.class, transactionHistoryId, db);
     }
 
 
-	public List getTransactionHistoryVOList() throws SystemException, Bug
+	public List getTransactionHistoryVOList() throws SystemException
 	{
 		return getAllVOObjects(TransactionHistoryImpl.class, "transactionHistoryId");
 	}
@@ -76,7 +75,7 @@ public class TransactionHistoryController extends BaseController
 	 * This method deletes the TransactionHistory sent in from the system.
 	 */
 	
-	public void deleteTransactionHistory(Integer transactionHistoryId, Database db) throws SystemException, Bug
+	public void deleteTransactionHistory(Integer transactionHistoryId, Database db) throws SystemException
 	{
 		try
 		{

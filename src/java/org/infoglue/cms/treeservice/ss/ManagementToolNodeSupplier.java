@@ -29,7 +29,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 
 import com.frovi.ss.Tree.BaseNodeSupplier;
@@ -48,7 +47,7 @@ public class ManagementToolNodeSupplier extends BaseNodeSupplier
 	private boolean showLeafs = true;
 	private InfoGluePrincipal infogluePrincipal = null;
 
-	public ManagementToolNodeSupplier(Integer repositoryId, InfoGluePrincipal infogluePrincipal) throws SystemException
+	public ManagementToolNodeSupplier(Integer repositoryId, InfoGluePrincipal infogluePrincipal) 
 	{
 		this.infogluePrincipal = infogluePrincipal;
 		
@@ -65,8 +64,7 @@ public class ManagementToolNodeSupplier extends BaseNodeSupplier
 	{
 		if (showLeafs)
 			return false;
-		else
-			return true;
+		return true;
 	}
 
 	

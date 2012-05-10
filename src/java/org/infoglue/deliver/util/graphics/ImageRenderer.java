@@ -191,7 +191,7 @@ public class ImageRenderer //extends JFrame
 		int paragraphStart = paragraph.getBeginIndex();
 		int paragraphEnd = paragraph.getEndIndex();
 		        
- 		float drawPosY = (float)textStartPosY;
+ 		float drawPosY = textStartPosY;
 
     	StringTokenizer st = new StringTokenizer(text);
     	Vector v = new Vector();

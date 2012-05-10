@@ -34,34 +34,19 @@ public class ExpireDatePopulator extends DatePopulator
 {
     private final static Logger logger = Logger.getLogger(ExpireDatePopulator.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final String YEARS_AHEAD_ARGUMENT = "yearsAhead";
 	
-	/**
-	 * 
-	 */
 	private static final int DEFAULT_YEARS_AHEAD = 50;
 	
-	/**
-	 * 
-	 */
 	private int yearsAhead = DEFAULT_YEARS_AHEAD;
 	
 	
 	
-	/**
-	 * 
-	 */
 	public ExpireDatePopulator() 
 	{ 
 		super();	
 	}
 	
-	/**
-	 * 
-	 */
 	protected void populate() throws WorkflowException 
 	{
 		final Calendar calendar = Calendar.getInstance();
@@ -69,17 +54,11 @@ public class ExpireDatePopulator extends DatePopulator
 		super.populate(ContentPopulator.CONTENT_PROPERTYSET_PREFIX + ContentValues.EXPIRE_DATE_TIME, calendar.getTime());
 	}
 	
-	/**
-	 * 
-	 */
 	protected void populate(final String name) throws WorkflowException 
 	{
 		populate();
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate(final String name, final String value) throws WorkflowException 
 	{
 		populate();
@@ -97,9 +76,6 @@ public class ExpireDatePopulator extends DatePopulator
 		initializeYearsAhead();
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeYearsAhead()
 	{
 		if(argumentExists(YEARS_AHEAD_ARGUMENT))

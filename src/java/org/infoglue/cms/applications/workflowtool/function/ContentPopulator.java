@@ -42,54 +42,27 @@ public class ContentPopulator extends InfoglueFunction
 {
     private final static Logger logger = Logger.getLogger(ContentPopulator.class.getName());
 
-	/**
-	 * 
-	 */
 	public static final String CONTENT_PROPERTYSET_PREFIX = "content_";
 
-	/**
-	 * 
-	 */
 	public static final String CONTENT_VERSION_PROPERTYSET_PREFIX = "contentversion_";
 	
-	/**
-	 * 
-	 */
 	public static final String CONTENT_VERSION_PROPERTYSET_LANGUAGE_PREFIX = "languageId_";
 
-	/**
-	 * 
-	 */
 	public static final String CONTENT_VALUES_PARAMETER = "contentValues";
 
-	/**
-	 * 
-	 */
 	public static final String CONTENT_VERSION_VALUES_PARAMETER = "contentVersionValues";
 	
-	/**
-	 * 
-	 */
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
 
-	/**
-	 * 
-	 */
 	private LanguageVO languageVO;
 	
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		populateContentValues();
 		populateContentVersionValues();
 	}
 
-	/**
-	 * 
-	 */
 	protected void initialize() throws WorkflowException 
 	{
 		super.initialize();
@@ -97,10 +70,7 @@ public class ContentPopulator extends InfoglueFunction
 		languageVO = (LanguageVO) getParameter(LanguageProvider.LANGUAGE_PARAMETER);
 	}
 	
-	/**
-	 * 
-	 */
-	protected void populateContentValues() throws WorkflowException 
+	protected void populateContentValues() 
 	{
 		final ContentValues result = new ContentValues();
 		
@@ -111,10 +81,7 @@ public class ContentPopulator extends InfoglueFunction
 		setParameter(CONTENT_VALUES_PARAMETER, result);
 	}
 	
-	/**
-	 * 
-	 */
-	protected void populateContentVersionValues() throws WorkflowException 
+	protected void populateContentVersionValues() 
 	{
 		final ContentVersionValues result = new ContentVersionValues();
 		final List contentTypeAttributes = getContentTypeAttributes();
@@ -126,10 +93,7 @@ public class ContentPopulator extends InfoglueFunction
 		setParameter(CONTENT_VERSION_VALUES_PARAMETER, result);
 	}
 	
-	/**
-	 * 
-	 */
-	private String populate(final String name) throws WorkflowException 
+	private String populate(final String name) 
 	{
 		if(parameterExists(name)) 
 		{
@@ -149,12 +113,8 @@ public class ContentPopulator extends InfoglueFunction
 		}
 		if(languageVO == null)
 			return propertySetContains(name) ? getPropertySetDataString(name) : "";
-		else
-			return propertySetContains(languageVO.getLanguageCode() + "_" + name) ? getPropertySetDataString(languageVO.getLanguageCode() + "_" + name) : "";
+		return propertySetContains(languageVO.getLanguageCode() + "_" + name) ? getPropertySetDataString(languageVO.getLanguageCode() + "_" + name) : "";
 	}
-	/**
-	 * 
-	 */
 	private List getContentTypeAttributes() 
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeAttributes(contentTypeDefinitionVO, true);

@@ -85,35 +85,32 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 			{
 			    return "showRelations";
 			}
-		    else
-		    {
-		    	try
-				{
-					this.parentContentId = ContentController.getParentContent(childContentVO.getContentId()).getContentId();
-				}
-				catch(Exception e)
-				{
-					logger.info("The content must have been a root-content because we could not find a parent.");
-				}
-	
-		    	ContentControllerProxy.getController().acDelete(this.getInfoGluePrincipal(), childContentVO);	 
-		    			    	
-	    		String deleteContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.deleteContentInlineOperationDoneHeader", contentVO.getName());
-	    		String deleteContentInlineOperationViewDeletedContentParentLinkText = getLocalizedString(getLocale(), "tool.contenttool.deleteContentInlineOperationViewDeletedContentParentLinkText");
-	    		String deleteContentInlineOperationViewDeletedContentParentTitleText = getLocalizedString(getLocale(), "tool.contenttool.deleteContentInlineOperationViewDeletedContentParentTitleText");
-	    	
-	    	    setActionMessage(userSessionKey, deleteContentInlineOperationDoneHeader);
-	    										  																	
-	    	    logger.debug("originalAddress:" + originalAddress);
-	    	    addActionLink(userSessionKey, new LinkBean("parentContentUrl", deleteContentInlineOperationViewDeletedContentParentLinkText, deleteContentInlineOperationViewDeletedContentParentTitleText, deleteContentInlineOperationViewDeletedContentParentTitleText, this.originalAddress, false, "", "", "content"));
-	            setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
-	            setActionExtraData(userSessionKey, "repositoryId", "" + this.contentVO.getRepositoryId());
-	            setActionExtraData(userSessionKey, "contentId", "" + this.contentVO.getId());
-	            setActionExtraData(userSessionKey, "unrefreshedContentId", "" + contentVO.getId());
-	            setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + contentVO.getId());
-	            setActionExtraData(userSessionKey, "changeTypeId", "" + this.changeTypeId);
-	            setActionExtraData(userSessionKey, "disableCloseLink", "true");
-		    }
+	    	try
+			{
+				this.parentContentId = ContentController.getParentContent(childContentVO.getContentId()).getContentId();
+			}
+			catch(Exception e)
+			{
+				logger.info("The content must have been a root-content because we could not find a parent.");
+			}
+
+	    	ContentControllerProxy.getController().acDelete(this.getInfoGluePrincipal(), childContentVO);	 
+	    			    	
+    		String deleteContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.deleteContentInlineOperationDoneHeader", contentVO.getName());
+    		String deleteContentInlineOperationViewDeletedContentParentLinkText = getLocalizedString(getLocale(), "tool.contenttool.deleteContentInlineOperationViewDeletedContentParentLinkText");
+    		String deleteContentInlineOperationViewDeletedContentParentTitleText = getLocalizedString(getLocale(), "tool.contenttool.deleteContentInlineOperationViewDeletedContentParentTitleText");
+    	
+    	    setActionMessage(userSessionKey, deleteContentInlineOperationDoneHeader);
+    										  																	
+    	    logger.debug("originalAddress:" + originalAddress);
+    	    addActionLink(userSessionKey, new LinkBean("parentContentUrl", deleteContentInlineOperationViewDeletedContentParentLinkText, deleteContentInlineOperationViewDeletedContentParentTitleText, deleteContentInlineOperationViewDeletedContentParentTitleText, this.originalAddress, false, "", "", "content"));
+            setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
+            setActionExtraData(userSessionKey, "repositoryId", "" + this.contentVO.getRepositoryId());
+            setActionExtraData(userSessionKey, "contentId", "" + this.contentVO.getId());
+            setActionExtraData(userSessionKey, "unrefreshedContentId", "" + contentVO.getId());
+            setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + contentVO.getId());
+            setActionExtraData(userSessionKey, "changeTypeId", "" + this.changeTypeId);
+            setActionExtraData(userSessionKey, "disableCloseLink", "true");
 		}
 
         if(this.returnAddress != null && !this.returnAddress.equals(""))
@@ -124,10 +121,7 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "success";
-        }
+    	return "success";
 	}	
 	
 	public String doDeleteReference() throws Exception 
@@ -156,12 +150,12 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	    return doExecute();
 	}	
 	
-	public String doFixPage() throws Exception 
+	public String doFixPage() 
 	{
 	    return "fixPage";
 	}
 
-	public String doFixPageHeader() throws Exception 
+	public String doFixPageHeader() 
 	{
 	    return "fixPageHeader";
 	}
@@ -250,8 +244,7 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	{
 		if(this.returnAddress != null && !this.returnAddress.equals(""))
 			return this.returnAddress;
-		else
-			return "ViewContent.action?contentId=" + this.contentVO.getId() + "&repositoryId=" + this.contentVO.getRepositoryId();
+		return "ViewContent.action?contentId=" + this.contentVO.getId() + "&repositoryId=" + this.contentVO.getRepositoryId();
 	}
 
 }

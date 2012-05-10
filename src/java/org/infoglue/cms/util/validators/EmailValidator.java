@@ -63,9 +63,6 @@ public class EmailValidator extends StringValidator
     initializePattern(ADDRESS, INVALID_EMAIL_ADDRESS_ERROR_CODE);
   }
 
-  /**
-   *
-   */
   public EmailValidator(String fieldName, boolean isRequired, int upperLengthLimit) {
     super(fieldName, isRequired, upperLengthLimit);
     initializePattern(ADDRESS, INVALID_EMAIL_ADDRESS_ERROR_CODE);

@@ -99,7 +99,7 @@ public class ContentVersionParameterTag extends AbstractTag implements ContentVe
 		{
 			throw new JspTagException("ContentVersionParameterTag must have a ContentParameterTag ancestor.");
 		}
-		((ContentParameterTag) parent).addContentVersion(contentVersion);
+		parent.addContentVersion(contentVersion);
 	}
 
 	/**
@@ -153,49 +153,31 @@ public class ContentVersionParameterTag extends AbstractTag implements ContentVe
 	    contentCategories.add(contentCategory);
 	}
 	
-	/**
-	 * 
-	 */
 	public void setLanguageId(final String languageId) throws JspException
 	{
 	    this.contentVersion.put("languageId", evaluateInteger("remoteContentService", "languageId", languageId));
 	}
 
-	/**
-	 * 
-	 */
 	public void setStateId(final String stateId) throws JspException
 	{
 	    this.contentVersion.put("stateId", evaluateInteger("remoteContentService", "stateId", stateId));
 	}
 
-	/**
-	 * 
-	 */
 	public void setAllowHTMLContent(final String allowHTMLContent) throws JspException
 	{
 	    this.contentVersion.put("allowHTMLContent", evaluate("remoteContentService", "allowHTMLContent", allowHTMLContent, Boolean.class));
 	}
 
-	/**
-	 * 
-	 */
 	public void setAllowExternalLinks(final String allowExternalLinks) throws JspException
 	{
 	    this.contentVersion.put("allowExternalLinks", evaluate("remoteContentService", "allowExternalLinks", allowExternalLinks, Boolean.class));
 	}
 
-	/**
-	 * 
-	 */
 	public void setAllowDollarSigns(final String allowDollarSigns) throws JspException
 	{
 	    this.contentVersion.put("allowDollarSigns", evaluate("remoteContentService", "allowDollarSigns", allowDollarSigns, Boolean.class));
 	}
 
-	/**
-	 * 
-	 */
 	public void setAllowAnchorSigns(final String allowAnchorSigns) throws JspException
 	{
 	    this.contentVersion.put("allowAnchorSigns", evaluate("remoteContentService", "allowAnchorSigns", allowAnchorSigns, Boolean.class));

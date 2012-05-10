@@ -24,14 +24,16 @@
 package org.infoglue.cms.applications.contenttool.actions;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -50,6 +52,7 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -84,14 +87,14 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	
 	private VisualFormatter formatter = new VisualFormatter();
 		
-    public String doInput() throws Exception 
+    public String doInput() 
     {
     	logger.info("Input state");
     	
     	return INPUT;
     }
 	
-    public String doMultiple() throws Exception
+    public String doMultiple() throws IOException, InterruptedException, SystemException
     {
     	logger.info("Uploading file....");
     	this.principal = getInfoGluePrincipal();
@@ -136,13 +139,10 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	        this.getResponse().getWriter().println(assetThumbnailUrl + ":" + this.digitalAssetKey);
 	        return NONE;
 		}
-		else
-		{
-			this.getResponse().setContentType("text/plain");
-            this.getResponse().setStatus(this.getResponse().SC_INTERNAL_SERVER_ERROR);
-            this.getResponse().getWriter().println("Error uploading to " + this.digitalAssetKey);
-            return NONE;
-		}
+		this.getResponse().setContentType("text/plain");
+        this.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        this.getResponse().getWriter().println("Error uploading to " + this.digitalAssetKey);
+        return NONE;
 	}
     
     public String doExecute()
@@ -164,50 +164,43 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 			
 	    	try 
 	    	{
-	    		if(mpr != null)
-	    		{ 
-		    		Enumeration names = mpr.getFileNames();
-		         	while (names.hasMoreElements()) 
-		         	{
-		            	String name 		  = (String)names.nextElement();
-						String contentType    = mpr.getContentType(name);
-						String fileSystemName = mpr.getFilesystemName(name);
+	    		Enumeration names = mpr.getFileNames();
+	         	while (names.hasMoreElements()) 
+	         	{
+	            	String name 		  = (String)names.nextElement();
+					String contentType    = mpr.getContentType(name);
+					String fileSystemName = mpr.getFilesystemName(name);
+					
+					logger.info("contentType:" + contentType);
+					logger.info("fileSystemName:" + fileSystemName);
+					if(fileSystemName.endsWith(".zip"))
+					{
+						file = mpr.getFile(name);
 						
-						logger.info("contentType:" + contentType);
-						logger.info("fileSystemName:" + fileSystemName);
-						if(fileSystemName.endsWith(".zip"))
+						String folder = CmsPropertyHandler.getDigitalAssetUploadPath() + File.separator + "zip" + System.currentTimeMillis();
+						List<File> unzippedFiles = FileHelper.unzipFile(file, folder);
+						for(File unzippedFile : unzippedFiles)
 						{
-							file = mpr.getFile(name);
-							
-							String folder = CmsPropertyHandler.getDigitalAssetUploadPath() + File.separator + "zip" + System.currentTimeMillis();
-							List<File> unzippedFiles = FileHelper.unzipFile(file, folder);
-							for(File unzippedFile : unzippedFiles)
-							{
-								handleFile(null, name, null, unzippedFile.getName(), unzippedFile);
-							}
+							handleFile(null, name, null, unzippedFile.getName(), unzippedFile);
 						}
-						else
-						{
-							String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
-							if(fromEncoding == null)
-								fromEncoding = "iso-8859-1";
-							
-							String toEncoding = CmsPropertyHandler.getUploadToEncoding();
-							if(toEncoding == null)
-								toEncoding = "utf-8";
-							
-			            	digitalAssetKey = new String(digitalAssetKey.getBytes(fromEncoding), toEncoding);
-			            	
-			            	file = mpr.getFile(name);
-			        		
-			            	return handleFile(digitalAssetKey, name, contentType, fileSystemName, file);
-						}
-		         	}
-	    		}
-	    		else
-	    		{
-	    		    logger.error("File upload failed for some reason.");
-	    		}
+					}
+					else
+					{
+						String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
+						if(fromEncoding == null)
+							fromEncoding = "iso-8859-1";
+						
+						String toEncoding = CmsPropertyHandler.getUploadToEncoding();
+						if(toEncoding == null)
+							toEncoding = "utf-8";
+						
+		            	digitalAssetKey = new String(digitalAssetKey.getBytes(fromEncoding), toEncoding);
+		            	
+		            	file = mpr.getFile(name);
+		        		
+		            	return handleFile(digitalAssetKey, name, contentType, fileSystemName, file);
+					}
+	         	}
 	      	} 
 	      	catch (Throwable e) 
 	      	{
@@ -568,7 +561,7 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 		return keepOriginal;
 	}
 
-	private void scaleAndSaveImage(DigitalAssetVO originalAssetVO, File file, int width, int height, String outputFormat, String assetSuffix, Integer contentVersionId) throws Exception
+	private void scaleAndSaveImage(DigitalAssetVO originalAssetVO, File file, int width, int height, String outputFormat, String assetSuffix, Integer contentVersionId) throws IOException, SystemException
 	{
     	String workingFileName = "" + originalAssetVO.getDigitalAssetId() + "_" + assetSuffix + "." + outputFormat.toLowerCase();
     	long timeStamp = System.currentTimeMillis();
@@ -612,7 +605,7 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl() throws Exception
+	public String getDigitalAssetUrl()
 	{
 		String imageHref = null;
 		try
@@ -642,7 +635,7 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
 		return imageHref;
     }
     
-    public boolean getAllowedSessionId(String requestSessionId) throws Exception
+    public boolean getAllowedSessionId(String requestSessionId) throws InterruptedException, SystemException
     {
 		boolean allowedSessionId = false;
 		List activeSessionBeanList = CmsSessionContextListener.getSessionInfoBeanList();

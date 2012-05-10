@@ -173,7 +173,7 @@ public class XMLHelper
             }    
             else
             {
-            	if(isLegalCharacter((int)c))
+            	if(isLegalCharacter(c))
                 	newValue.append(c);
 		    }
         }

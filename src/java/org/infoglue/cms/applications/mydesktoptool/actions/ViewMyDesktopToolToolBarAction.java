@@ -59,7 +59,7 @@ public class ViewMyDesktopToolToolBarAction extends InfoGlueAbstractAction
 	
 	private static HashMap buttonsMap = new HashMap();
 		
-	public String doExecute() throws Exception
+	public String doExecute()
     {
         return "success";
     }

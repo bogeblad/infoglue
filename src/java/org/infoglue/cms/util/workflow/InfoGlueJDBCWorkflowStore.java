@@ -666,21 +666,20 @@ public class InfoGlueJDBCWorkflowStore extends JDBCWorkflowStore
         if (query.getLeft() == null) {
             // leaf node
             return queryComparison(query);
-        } else {
-            int operator = query.getOperator();
-            WorkflowQuery left = query.getLeft();
-            WorkflowQuery right = query.getRight();
+        }
+        int operator = query.getOperator();
+        WorkflowQuery left = query.getLeft();
+        WorkflowQuery right = query.getRight();
 
-            switch (operator) {
-            case WorkflowQuery.AND:
-                return "(" + queryWhere(left) + " AND " + queryWhere(right) + ")";
+        switch (operator) {
+        case WorkflowQuery.AND:
+            return "(" + queryWhere(left) + " AND " + queryWhere(right) + ")";
 
-            case WorkflowQuery.OR:
-                return "(" + queryWhere(left) + " OR " + queryWhere(right) + ")";
+        case WorkflowQuery.OR:
+            return "(" + queryWhere(left) + " OR " + queryWhere(right) + ")";
 
-            case WorkflowQuery.XOR:
-                return "(" + queryWhere(left) + " XOR " + queryWhere(right) + ")";
-            }
+        case WorkflowQuery.XOR:
+            return "(" + queryWhere(left) + " XOR " + queryWhere(right) + ")";
         }
 
         return ""; // not sure if we should throw an exception or how this should be handled

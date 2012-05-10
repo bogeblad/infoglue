@@ -30,32 +30,20 @@ public class StringPopulator extends Populator
 {
     private final static Logger logger = Logger.getLogger(StringPopulator.class.getName());
 
-	/**
-	 * 
-	 */
 	public StringPopulator() 
 	{ 
 		super(); 
 	}
 	
-	/**
-	 * 
-	 */
 	protected void populate() throws WorkflowException 
 	{
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate(final String name) throws WorkflowException 
 	{
 		populate(name, "");
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate(final String name, final String value) throws WorkflowException 
 	{
 		final String translatedValue = translate(value);

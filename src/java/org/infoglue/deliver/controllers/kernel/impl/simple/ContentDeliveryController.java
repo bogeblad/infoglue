@@ -39,6 +39,7 @@ import org.apache.log4j.Category;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
@@ -84,7 +85,6 @@ import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 
@@ -157,7 +157,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * This method return a contentVO
 	 */
 	
-	public ContentVO getContentVO(Database db, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception
+	public ContentVO getContentVO(Database db, Integer contentId, DeliveryContext deliveryContext) throws SystemException
 	{
 		if(contentId == null || contentId.intValue() < 1)
 			return null;
@@ -205,7 +205,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * If the repositoryName is null we fetch the name of the master repository.
 	 */
 	
-	public ContentVO getRootContentVO(Integer repositoryId, Database db) throws SystemException, Exception
+	public ContentVO getRootContentVO(Integer repositoryId, Database db) throws PersistenceException 
 	{
 		ContentVO contentVO = null;
 
@@ -241,9 +241,6 @@ public class ContentDeliveryController extends BaseDeliveryController
         return contentVO;	
 	}
 
-	/**
-	 * 
-	 */
 	private ContentVO getChildWithName(Integer parentContentId, String name, Database db) throws Exception
 	{
 		ContentVO contentVO = null;
@@ -270,7 +267,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * also has the correct state for this delivery-instance.
 	 */
 	
-	public ContentVersionVO getContentVersionVO(Database db, Integer siteNodeId, Integer contentId, Integer languageId, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+	public ContentVersionVO getContentVersionVO(Database db, Integer siteNodeId, Integer contentId, Integer languageId, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws Exception
 	{
 		ContentVersionVO contentVersionVO = null;
 		SiteNodeVO siteNodeVO = (SiteNodeVO)getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
@@ -430,7 +427,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * also has the correct state for this delivery-instance.
 	 */
 	
-	private ContentVersionVO getContentVersionVO(Integer siteNodeId, Integer contentId, Integer languageId, Database db, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+	private ContentVersionVO getContentVersionVO(Integer siteNodeId, Integer contentId, Integer languageId, Database db, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws Exception
 	{
 		if(contentId == null || contentId.intValue() < 1)
 			return null;
@@ -888,29 +885,26 @@ public class ContentDeliveryController extends BaseDeliveryController
 			//logger.info("Cached");
 			return hasUserContentAccess.booleanValue();
 		}
-		else
+		hasUserContentAccess = true;
+		//logger.info("----- not Cached");
+		try 
 		{
-			hasUserContentAccess = true;
-			//logger.info("----- not Cached");
-			try 
-			{
-			    if(contentId != null)
-			    {
-					Integer protectedContentId = ContentDeliveryController.getContentDeliveryController().getProtectedContentId(db, contentId);
-					logger.info("IsProtected:" + protectedContentId);
-					if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "Content.Read", protectedContentId.toString()))
-					{
-					    hasUserContentAccess = false;
-					}
-			    }
-			} 
-			catch(Exception e)
-			{
-				logger.warn("An error occurred trying to get determine if user was allowed read access to:" + contentId + ":" + e.getMessage());
-			}
-
-			CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(hasUserContentAccess));
+		    if(contentId != null)
+		    {
+				Integer protectedContentId = ContentDeliveryController.getContentDeliveryController().getProtectedContentId(db, contentId);
+				logger.info("IsProtected:" + protectedContentId);
+				if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, "Content.Read", protectedContentId.toString()))
+				{
+				    hasUserContentAccess = false;
+				}
+		    }
+		} 
+		catch(Exception e)
+		{
+			logger.warn("An error occurred trying to get determine if user was allowed read access to:" + contentId + ":" + e.getMessage());
 		}
+
+		CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(hasUserContentAccess));
 		
 		return hasUserContentAccess;
 	}
@@ -1039,7 +1033,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * It selects the correct contentVersion depending on the language and then gets the attribute in the xml associated.
 	 */
 
-	public String getContentAttribute(Database db, ContentVersionVO contentVersionVO, String attributeName, boolean escapeHTML) throws SystemException, Exception
+	public String getContentAttribute(Database db, ContentVersionVO contentVersionVO, String attributeName, boolean escapeHTML) 
 	{
 		String attribute = getAttributeValue(db, contentVersionVO, attributeName, escapeHTML);		
 		
@@ -1791,7 +1785,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(contentId == null || contentId.intValue() < 1)
 			return "";
 
-	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+	    SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId, db);
 
 	    String assetCacheKey = "" + languageId + "_" + contentId + "_" + siteNodeVO.getRepositoryId() + "_" + assetKey + "_" + useLanguageFallback + "_" + deliveryContext.getUseFullUrl() + "_" + deliveryContext.getUseDownloadAction();
 	    

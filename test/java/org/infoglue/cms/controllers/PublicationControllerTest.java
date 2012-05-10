@@ -118,7 +118,7 @@ public class PublicationControllerTest extends InfoGlueTestCase
 	}
 
 	// Make sure it was removed from the DB
-	private void assertRemoved(Integer id) throws Exception
+	private void assertRemoved(Integer id) 
 	{
 		try
 		{

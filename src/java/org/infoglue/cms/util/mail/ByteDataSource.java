@@ -35,9 +35,6 @@ import javax.activation.DataSource;
  */
 public class ByteDataSource implements DataSource 
 {
-	/**
-	 * 
-	 */
     private byte[] data;
     
     /**

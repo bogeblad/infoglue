@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.kernel.ValidatableEntityVO;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl;
 import org.infoglue.cms.util.validators.ConstraintRule;
@@ -37,12 +36,12 @@ import org.infoglue.cms.util.validators.Range;
  * This class represents a published edition. The individual entries in the edition
  * are contained in the publicationDetails List.
  */
-public class PublicationVO extends ValidatableEntityVO implements BaseEntityVO
+public class PublicationVO extends ValidatableEntityVO
 {
     private Integer publicationId;
     private Integer repositoryId;
     private String name;
-    private String description = "No description";;
+    private String description = "No description";
     private Date publicationDateTime;
     private String publisher = null;
 	private List publicationDetails = new ArrayList();

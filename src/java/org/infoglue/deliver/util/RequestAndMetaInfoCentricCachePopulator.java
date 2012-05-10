@@ -175,7 +175,7 @@ public class RequestAndMetaInfoCentricCachePopulator
 	
 	private void recurseSiteNodeTree(Integer siteNodeId, Integer languageId, TemplateController templateController, Principal principal/*, DatabaseWrapper dbWrapper*/, int maxLevel, int currentLevel) throws Exception
 	{		
-	    SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithId(siteNodeId, templateController.getDatabase(), true);
+	    SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, templateController.getDatabase(), true);
 	    SiteNodeVO siteNodeVO = templateController.getSiteNode(siteNodeId);
 
         templateController.getContentAttribute(siteNodeVO.getMetaInfoContentId(), languageId, "Title", true); 
@@ -191,26 +191,6 @@ public class RequestAndMetaInfoCentricCachePopulator
         
         Collection childSiteNodes = siteNode.getChildSiteNodes();
 	    
-        /*
-        List childSiteNodeIds = new ArrayList();
-        Iterator childSiteNodesIterator = childSiteNodes.iterator();
-	    while(childSiteNodesIterator.hasNext())
-        {
-	        SiteNode childSiteNode = (SiteNode)childSiteNodesIterator.next();
-	        childSiteNodeIds.add(childSiteNode.getSiteNodeId());
-        }
-
-        templateController.commitDatabase();
-
-	    Iterator childSiteNodeIdsIterator = childSiteNodeIds.iterator();
-	    while(childSiteNodeIdsIterator.hasNext())
-        {
-	        Integer childSiteNodeId = (Integer)childSiteNodeIdsIterator.next();
-	        recurseSiteNodeTree(childSiteNodeId, languageId, templateController, principal);
-        }
-
-        */
-
         Iterator childSiteNodesIterator = childSiteNodes.iterator();
 	    while(childSiteNodesIterator.hasNext())
         {
@@ -283,7 +263,7 @@ public class RequestAndMetaInfoCentricCachePopulator
 	 * normal site-delivery version.
 	 */
 	
-	public TemplateController getTemplateController(DatabaseWrapper dbWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal, boolean allowEditOnSightAtAll, BrowserBean browserBean, NodeDeliveryController nodeDeliveryController, IntegrationDeliveryController integrationDeliveryController) throws SystemException, Exception
+	public TemplateController getTemplateController(DatabaseWrapper dbWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal, boolean allowEditOnSightAtAll, BrowserBean browserBean, NodeDeliveryController nodeDeliveryController, IntegrationDeliveryController integrationDeliveryController) 
 	{
 		TemplateController templateController = new BasicTemplateController(dbWrapper, infoGluePrincipal);
 		templateController.setStandardRequestParameters(siteNodeId, languageId, contentId);	

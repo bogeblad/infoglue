@@ -32,6 +32,9 @@ import org.infoglue.cms.controllers.usecases.structuretool.ViewSiteNodeUCCFactor
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 public class ViewSiteNodeVersionAction extends InfoGlueAbstractAction
 {
@@ -61,41 +64,36 @@ public class ViewSiteNodeVersionAction extends InfoGlueAbstractAction
         this.siteNodeVersionVO = siteNodeVersionVO;
     }
     
-    protected void initialize(Integer siteNodeId, Integer languageId) throws Exception
+    protected void initialize(Integer siteNodeId, Integer languageId) throws ConstraintException, SystemException
     {
 		ViewSiteNodeUCC viewSiteNodeUCC = ViewSiteNodeUCCFactory.newViewSiteNodeUCC();
         this.siteNodeVO = viewSiteNodeUCC.viewSiteNode(siteNodeId);
-        //this.siteNodeTypeDefinitionVO = viewSiteNodeUCC.getSiteNodeTypeDefinition(siteNodeId);
-        //this.siteNodeVersionVO = viewSiteNodeUCC.getLatestSiteNodeVersion(siteNodeId, languageId);
-     	
      	logger.info("siteNodeVersionVO:" + siteNodeVersionVO);
         logger.info("siteNodeVO:" + siteNodeVO);
-        //this.availableLanguages = viewSiteNodeUCC.getRepositoryLanguages(siteNodeId);
     } 
 
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         this.initialize(getSiteNodeId(), this.languageId);
         
         return "success";
     }
 
-    public String doPreview() throws Exception
+    public String doPreview() throws ConstraintException, SystemException
     {
         this.initialize(getSiteNodeId(), this.languageId);
         
         return "preview";
     }
 
-    public String doChangeState() throws Exception
+    public String doChangeState() throws ConstraintException, SystemException
     {
     	logger.info("Gonna change state with comment:" + this.siteNodeVersionVO.getVersionComment());
-    	//SiteNodeVersionController.updateStateId(this.siteNodeVersionVO.getSiteNodeVersionId(), getStateId(), this.siteNodeVersionVO.getVersionComment(), getRequest().getRemoteUser(), this.getSiteNodeId(), this.getLanguageId());
     	this.initialize(getSiteNodeId(), this.languageId);
         return "success";
     }
     
-    public String doCommentVersion() throws Exception
+    public String doCommentVersion()
     {
     	logger.info("Gonna show the comment-view");
         return "commentVersion";

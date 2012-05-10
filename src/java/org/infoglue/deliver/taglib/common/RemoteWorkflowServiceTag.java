@@ -23,62 +23,29 @@ public class RemoteWorkflowServiceTag extends AbstractTag
 	 */
 	private static final long serialVersionUID = -1904980538720103871L;
 
-	/**
-	 * 
-	 */
 	private static final String WORKFLOW_NAME_PARAMETER = "workflowName";
 	
-	/**
-	 * 
-	 */
 	private static final String LANGUAGE_ID_PARAMETER = "languageId";
 
-	/**
-	 * 
-	 */
 	private static final String INPUTS_PARAMETER = "inputs";
 	
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteWorkflowService";
 	
-	/**
-	 * 
-	 */
 	private String operationName;
 	
-	/**
-	 * 
-	 */
 	private String principalName;
 	
-	/**
-	 * 
-	 */
 	private String workflowName;
 	
-	/**
-	 * 
-	 */
 	private Integer languageId;
 	
-	/**
-	 * 
-	 */
 	private Map inputs = new HashMap();
 	
-	/**
-	 * 
-	 */
 	public RemoteWorkflowServiceTag() 
 	{
 		super();
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

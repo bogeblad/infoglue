@@ -126,8 +126,7 @@ public class ComponentPropertyDefinition
     {
     	if(displayName == null || displayName.equals(""))
     		return name;
-    	else
-    		return displayName;
+		return displayName;
     }
 
     public String getType()

@@ -37,7 +37,7 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 
 public class RegisterUserInfoAction extends InfoGlueAbstractAction
 {   
-   	public String doExecute() throws Exception
+   	public String doExecute()
    	{
        	return "success";
    	}

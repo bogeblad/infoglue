@@ -45,6 +45,8 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 
 /**
@@ -79,7 +81,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 
 
 	
-	public String doInput() throws Exception 
+	public String doInput() throws ConstraintException, SystemException 
 	{
 		if(this.contentId != null)
 		{
@@ -100,7 +102,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	    return "input";
 	}
 
-	public String doInputV3() throws Exception 
+	public String doInputV3() throws ConstraintException, SystemException 
 	{
 		doInput();
 
@@ -120,7 +122,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	    return "inputV3";
 	}
 
-	public String doInputChooseContents() throws Exception 
+	public String doInputChooseContents() throws ConstraintException, SystemException 
 	{
 		if(this.contentId != null)
 		{
@@ -141,7 +143,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	    return "inputChooseContents";
 	}
 
-	public String doInputChooseContentsV3() throws Exception 
+	public String doInputChooseContentsV3() 
 	{
 		try
 		{
@@ -174,9 +176,11 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 * This method gets called when calling this action. 
 	 * If the stateId is 2 which equals that the user tries to prepublish the page. If so we
 	 * ask the user for a comment as this is to be regarded as a new version. 
+	 * @throws SystemException 
+	 * @throws ConstraintException 
 	 */
 	   
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, ConstraintException
     {   
 		setContentVersionId( getRequest().getParameterValues("sel") );
 		Iterator it = getContentVersionId().iterator();
@@ -224,7 +228,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 * ask the user for a comment as this is to be regarded as a new version. 
 	 */
 	   
-    public String doV3() throws Exception
+    public String doV3()
     {
     	try
     	{
@@ -247,10 +251,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 		        this.getResponse().sendRedirect(messageUrl);
 		        return NONE;
 		    }
-		    else
-		    {
-		    	return SUCCESS;
-		    }
+	    	return SUCCESS;
     	}
     	catch (Exception e) 
     	{
@@ -263,8 +264,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	/**
 	 * This method will try to unpublish all liver versions of this content. 
 	 */
-	   
-    public String doUnpublishAll() throws Exception
+    public String doUnpublishAll() throws NumberFormatException, SystemException, ConstraintException
     {   
 		String[] contentIds = getRequest().getParameterValues("sel");
 		
@@ -320,7 +320,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 	 * This method will try to unpublish all liver versions of this content. 
 	 */
 	   
-    public String doUnpublishAllV3() throws Exception
+    public String doUnpublishAllV3()
     {   
     	try
     	{
@@ -343,10 +343,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 		        this.getResponse().sendRedirect(messageUrl);
 		        return NONE;
 		    }
-		    else
-		    {
-		    	return SUCCESS;
-		    }
+	    	return SUCCESS;
     	}
     	catch (Exception e) 
     	{

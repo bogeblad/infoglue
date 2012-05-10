@@ -94,7 +94,7 @@ public class MailSender implements InfoGlueInputHandler
 	 * normal site-delivery version.
 	 */
 	
-	public TemplateController getTemplateController(DatabaseWrapper databaseWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infogluePrincipal) throws Exception
+	public TemplateController getTemplateController(DatabaseWrapper databaseWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infogluePrincipal) 
 	{
     	NodeDeliveryController nodeDeliveryController				= NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
 		IntegrationDeliveryController integrationDeliveryController	= IntegrationDeliveryController.getIntegrationDeliveryController(siteNodeId, languageId, contentId);

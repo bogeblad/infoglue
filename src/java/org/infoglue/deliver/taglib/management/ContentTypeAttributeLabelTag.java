@@ -237,10 +237,7 @@ public class ContentTypeAttributeLabelTag extends TemplateControllerTag
 		{
 			return attr.getContentTypeAttribute(CTD_TITLE_KEY).getContentTypeAttributeParameterValue().getLocalizedValue(CTD_LABEL_KEY, currentLocale);
 		}
-		else
-		{
-			return null;
-		}
+		return null;
 	}
 
 	/**
@@ -286,9 +283,8 @@ public class ContentTypeAttributeLabelTag extends TemplateControllerTag
 	 * @param attributeName
 	 * @param schema
 	 * @return
-	 * @throws SystemException
 	 */
-	private static ContentTypeAttribute getContentTypeDefinitionAttribute(ContentTypeDefinitionVO ctd, String attributeName) throws SystemException
+	private static ContentTypeAttribute getContentTypeDefinitionAttribute(ContentTypeDefinitionVO ctd, String attributeName) 
 	{
 		List<ContentTypeAttribute> attrs = ContentTypeDefinitionController.getController().getContentTypeAttributes(ctd, true);
 		for (ContentTypeAttribute attr : attrs)

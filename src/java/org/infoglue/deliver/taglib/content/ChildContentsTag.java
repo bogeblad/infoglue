@@ -121,7 +121,7 @@ public class ChildContentsTag extends ComponentLogicTag
     
     public void setSortOrder(String sortOrder) throws JspException
     {
-        this.sortOrder = evaluateString("childContents", "sortOrder", sortOrder);;
+        this.sortOrder = evaluateString("childContents", "sortOrder", sortOrder);
     }
     
     public void setUseInheritance(boolean useInheritance)
@@ -141,7 +141,7 @@ public class ChildContentsTag extends ComponentLogicTag
 
     public void setMatchingName(String matchingName) throws JspException
     {
-        this.matchingName = evaluateString("childContents", "matchingName", matchingName);;
+        this.matchingName = evaluateString("childContents", "matchingName", matchingName);
     }
     
     public void setReturnOnlyFirst(boolean returnOnlyFirst)

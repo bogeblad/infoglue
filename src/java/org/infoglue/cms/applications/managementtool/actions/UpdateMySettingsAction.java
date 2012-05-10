@@ -55,7 +55,7 @@ public class UpdateMySettingsAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-objects for this use-case
      */
     
-    public String doExecute() throws Exception
+    public String doExecute()
     {
         Map args = new HashMap();
 	    args.put("globalKey", "infoglue");

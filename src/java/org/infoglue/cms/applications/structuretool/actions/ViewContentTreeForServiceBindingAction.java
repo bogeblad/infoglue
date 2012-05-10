@@ -30,6 +30,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingCo
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -156,7 +158,7 @@ public class ViewContentTreeForServiceBindingAction extends InfoGlueAbstractActi
 		return "ViewContentTreeForServiceBinding.action";
 	}
 	
-    public String doExecute() throws Exception
+    public String doExecute() throws ConstraintException, SystemException
     {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 		

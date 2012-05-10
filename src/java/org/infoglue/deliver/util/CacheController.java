@@ -26,7 +26,6 @@ package org.infoglue.deliver.util;
 //import org.exolab.castor.jdo.CacheManager;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +49,7 @@ import org.apache.pluto.portalImpl.services.ServiceManager;
 import org.apache.pluto.portalImpl.services.portletentityregistry.PortletEntityRegistry;
 import org.exolab.castor.jdo.CacheManager;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
@@ -242,33 +242,23 @@ public class CacheController extends Thread
 	{
 		if(cacheName == null || key == null)
 			return null;
-		
-		//synchronized(caches)
-		//{
-			Map cacheInstance = (Map)caches.get(cacheName);
-			if(cacheInstance != null)
-		    {
-				//TODO
-				if(CmsPropertyHandler.getUseSynchronizationOnCaches())
-				{
-					synchronized(cacheInstance)
-					{
-						if(CmsPropertyHandler.getUseHashCodeInCaches())
-							return cacheInstance.get("" + key.hashCode());
-						else
-							return cacheInstance.get(key);
-					}
-				}
-				else
+		Map cacheInstance = (Map)caches.get(cacheName);
+		if(cacheInstance != null)
+	    {
+			//TODO
+			if(CmsPropertyHandler.getUseSynchronizationOnCaches())
+			{
+				synchronized(cacheInstance)
 				{
 					if(CmsPropertyHandler.getUseHashCodeInCaches())
 						return cacheInstance.get("" + key.hashCode());
-					else
-						return cacheInstance.get(key);
+					return cacheInstance.get(key);
 				}
-		    }
-		//}
-		
+			}
+			if(CmsPropertyHandler.getUseHashCodeInCaches())
+				return cacheInstance.get("" + key.hashCode());
+			return cacheInstance.get(key);
+	    }
         return null;
     }
 
@@ -1029,7 +1019,7 @@ public class CacheController extends Thread
 	 * @param cacheName
 	 * @param groups
 	 */
-	public static void clearFileCacheForGroup(GeneralCacheAdministrator cacheInstance, String groupName) throws Exception
+	public static void clearFileCacheForGroup(GeneralCacheAdministrator cacheInstance, String groupName) 
 	{
 		//logger.info("Cache entry set:" + cacheInstance.getCache().cacheMap.entrySet());
 		
@@ -1055,12 +1045,12 @@ public class CacheController extends Thread
         }
 	}
 
-	public static void clearCaches(String entity, String entityId, String[] cachesToSkip) throws Exception
+	public static void clearCaches(String entity, String entityId, String[] cachesToSkip)  throws InterruptedException 
 	{	
 		clearCaches(entity, entityId, cachesToSkip, false);
 	}
 	
-	public static void clearCaches(String entity, String entityId, String[] cachesToSkip, boolean forceClear) throws Exception
+	public static void clearCaches(String entity, String entityId, String[] cachesToSkip, boolean forceClear) throws InterruptedException 
 	{	
 		Timer t = new Timer();
 		
@@ -1634,7 +1624,7 @@ public class CacheController extends Thread
         {
            	String currentThreadId = "" + threadArray[i].getId();
         	Thread t = threadArray[i];
-        	Map stacks = t.getAllStackTraces();
+        	Map stacks = Thread.getAllStackTraces();
 	        
         	Iterator stacksIterator = stacks.values().iterator();
         	while(stacksIterator.hasNext())
@@ -1658,7 +1648,7 @@ public class CacheController extends Thread
         }  
 	}
 
-	public static synchronized void clearCastorCaches() throws Exception
+	public static synchronized void clearCastorCaches() throws InterruptedException, SystemException, PersistenceException 
 	{
 	    logger.info("Emptying the Castor Caches");
 	    
@@ -1876,7 +1866,7 @@ public class CacheController extends Thread
 	    }
 	}
 
-	private static synchronized void clearCache(Database db, Class c) throws Exception
+	private static synchronized void clearCache(Database db, Class c) 
 	{
 		Class[] types = {c};
 		CacheManager manager = db.getCacheManager();
@@ -2004,7 +1994,7 @@ public class CacheController extends Thread
         return generalCache;
     }
         
-    public static void validateCaches() throws Exception
+    public static void validateCaches() 
     {
     	Iterator cacheKeyIterator = caches.keySet().iterator();
     	while(cacheKeyIterator.hasNext())
@@ -2027,7 +2017,7 @@ public class CacheController extends Thread
     	}
     }
     
-    public static void evictWaitingCache() throws Exception
+    public static void evictWaitingCache() 
     {	    
        	String operatingMode = CmsPropertyHandler.getOperatingMode();
 	    synchronized(RequestAnalyser.getRequestAnalyser()) 

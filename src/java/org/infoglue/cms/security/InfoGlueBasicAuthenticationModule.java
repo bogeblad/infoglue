@@ -76,7 +76,7 @@ public class InfoGlueBasicAuthenticationModule extends AuthenticationModule
 	{
 		String authenticatedUserName = null;
 
-		HttpSession session = ((HttpServletRequest)request).getSession();
+		HttpSession session = request.getSession();
 
 		//otherwise, we need to authenticate somehow
 		String userName = request.getParameter("j_username");
@@ -294,19 +294,15 @@ public class InfoGlueBasicAuthenticationModule extends AuthenticationModule
 			
 			return true;
 		}
-		else
+		if(CmsPropertyHandler.getApplicationName().equals("cms"))
 		{
-			if(CmsPropertyHandler.getApplicationName().equals("cms"))
-			{
-				String redirectAddress = "" + this.logoutUrl + "?returnAddress=" + URLEncoder.encode(request.getContextPath() + "/ViewCMSTool.action", "utf-8");
-				logger.info("redirectAddress in InfoGlueBasicAuth module:" + redirectAddress);
-				response.sendRedirect(redirectAddress);
-				
-				return true;
-			}
-			else
-				return false;
+			String redirectAddress = "" + this.logoutUrl + "?returnAddress=" + URLEncoder.encode(request.getContextPath() + "/ViewCMSTool.action", "utf-8");
+			logger.info("redirectAddress in InfoGlueBasicAuth module:" + redirectAddress);
+			response.sendRedirect(redirectAddress);
+			
+			return true;
 		}
+		return false;
 	}
 
 

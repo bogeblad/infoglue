@@ -23,20 +23,8 @@
 
 package org.infoglue.cms.applications.common.actions;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
-import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
-import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
-import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 import webwork.action.Action;
@@ -83,43 +71,43 @@ public class InstallAction extends InfoGlueAbstractAction
 	private String smtpPassword = "";
 	private String systemEmailSender = "";
 	
-	public String doInput() throws Exception
+	public String doInput()
     {
 		return INPUT;
     }
 
-	public String doInputInitiateInstall() throws Exception
+	public String doInputInitiateInstall()
     {
 		
 		return "inputInitiateInstall";
     }
 
-	public String doInputDatabase() throws Exception
+	public String doInputDatabase()
     {
 		
 		return "inputDatabase";
     } 
 	
-	public String doInputDatabaseExisting() throws Exception
+	public String doInputDatabaseExisting()
     {
 		
 		return "inputDatabaseExisting";
     }
 
-	public String doInputDatabaseUpgrade() throws Exception
+	public String doInputDatabaseUpgrade()
     {
 		
 		return "inputDatabaseUpgrade";
     }
 
-	public String doInputServer() throws Exception
+	public String doInputServer()
     {
 		
 		return "inputServer";
     }
 
 
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		logger.info("operation:" + operation);
 		if(operation.equalsIgnoreCase("updateDatabaseFromExistingConfig"))

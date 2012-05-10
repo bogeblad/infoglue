@@ -71,9 +71,8 @@ public class ContentComparator implements Comparator
 		{
 			Object propertyObject = PropertyUtils.getProperty(o, sortProperty);
 			if(propertyObject instanceof String)
-				return (Comparable)propertyObject.toString().toLowerCase();
-			else
-				return (Comparable)propertyObject;
+				return propertyObject.toString().toLowerCase();
+			return (Comparable)propertyObject;
 		}
 		catch (Exception e)
 		{

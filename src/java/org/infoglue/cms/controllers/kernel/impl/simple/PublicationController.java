@@ -59,7 +59,6 @@ import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.Event;
 import org.infoglue.cms.entities.workflow.EventVO;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGlueGroup;
@@ -120,7 +119,7 @@ public class PublicationController extends BaseController
 	 * This method returns a list of those events that are publication events and
 	 * concerns this repository and the submitter is in a group that the publisher also is in.
 	 */
-	public static List getPublicationEvents(Integer repositoryId, InfoGluePrincipal principal, String filter) throws SystemException, Exception
+	public static List getPublicationEvents(Integer repositoryId, InfoGluePrincipal principal, String filter) throws SystemException
 	{
 		return EventController.getPublicationEventVOListForRepository(repositoryId, principal, filter);
 	}
@@ -839,7 +838,7 @@ public class PublicationController extends BaseController
 	/**
 	 * Unpublished a entity by just setting it to isActive = false.
 	 */
-	private static void unpublishEntity(PublicationDetail publicationDetail, InfoGluePrincipal infoGluePrincipal, Database db) throws ConstraintException, SystemException
+	private static void unpublishEntity(PublicationDetail publicationDetail, InfoGluePrincipal infoGluePrincipal, Database db) 
 	{
 		Integer repositoryId = null;
 
@@ -875,7 +874,7 @@ public class PublicationController extends BaseController
 	/**
 	 * Republished an entity by just setting it to isActive = true.
 	 */
-	private static void republishEntity(PublicationDetail publicationDetail, InfoGluePrincipal infoGluePrincipal, Database db) throws ConstraintException, SystemException
+	private static void republishEntity(PublicationDetail publicationDetail, InfoGluePrincipal infoGluePrincipal, Database db) 
 	{
 		Integer repositoryId = null;
 

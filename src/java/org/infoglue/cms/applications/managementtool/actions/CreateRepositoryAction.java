@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
@@ -30,6 +31,9 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class CreateRepositoryAction extends InfoGlueAbstractAction
@@ -100,7 +104,7 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 		return returnAddress;
 	}
 
-	public List getAvailableLanguages() throws Exception
+	public List getAvailableLanguages() throws SystemException
 	{
 		return LanguageController.getController().getLanguageVOList();
 	}
@@ -110,7 +114,7 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 		this.userSessionKey = userSessionKey;
 	}
 
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		ceb.add(this.repositoryVO.validate());
     	ceb.throwIfNotEmpty();				
@@ -128,12 +132,12 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
         return "success";
     }
 
-    public String doInput() throws Exception
+    public String doInput()
     {
     	return "input";
     }    
 
-    public String doV3() throws Exception
+    public String doV3() throws AccessConstraintException, ConstraintException, SystemException, IOException
     {
 		ceb.add(this.repositoryVO.validate());
     	ceb.throwIfNotEmpty();				
@@ -147,12 +151,6 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
     	}
 
 	    ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
-
-		//String createSiteNodeInlineOperationViewCreatedPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationViewCreatedPageLinkText");
-		//String createSiteNodeInlineOperationViewCreatedPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationViewCreatedPageTitleText");
-
-		//addActionLink(userSessionKey, new LinkBean("newPageUrl", createSiteNodeInlineOperationViewCreatedPageLinkText, createSiteNodeInlineOperationViewCreatedPageTitleText, createSiteNodeInlineOperationViewCreatedPageTitleText, getDecoratedPageUrl(newSiteNodeVO.getId()), false, "", "structure"));
-    	        
         if(this.returnAddress != null && !this.returnAddress.equals(""))
         {
 	        String arguments 	= "userSessionKey=" + userSessionKey + "&isAutomaticRedirect=false";
@@ -161,24 +159,13 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "success";
-        }
+    	return "success";
     }
 
 
-    public String doInputV3() throws Exception
+    public String doInputV3()
     {    	
         userSessionKey = "" + System.currentTimeMillis();
-
-		//String createSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationDoneHeader", parentSiteNodeVO.getName());
-        //String createSiteNodeInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageLinkText");
-        //String createSiteNodeInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationBackToCurrentPageTitleText");
-
-        //setActionMessage(userSessionKey, createSiteNodeInlineOperationDoneHeader);
-        //addActionLink(userSessionKey, new LinkBean("currentPageUrl", createSiteNodeInlineOperationBackToCurrentPageLinkText, createSiteNodeInlineOperationBackToCurrentPageTitleText, createSiteNodeInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));
-
 		return "inputV3";
     }
 }

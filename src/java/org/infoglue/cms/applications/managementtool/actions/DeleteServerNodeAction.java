@@ -27,7 +27,6 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
 
 /**
  * This action removes a serverNode from the system.
@@ -56,7 +55,7 @@ public class DeleteServerNodeAction extends InfoGlueAbstractAction
 		return "success";
 	}
 	
-	public void setServerNodeId(Integer serverNodeId) throws SystemException
+	public void setServerNodeId(Integer serverNodeId)
 	{
 		this.serverNodeVO.setServerNodeId(serverNodeId);	
 	}

@@ -82,7 +82,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
         	return (name.startsWith(filter) || (name.startsWith("thumbnail") && name.indexOf(filter) > -1));
         	//return name.startsWith(filter);
     	}
-	};
+	}
 
 
 	/**
@@ -141,7 +141,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	 * This is the new main logic for getting the filename of an asset. 
 	 */
 
-	public static String getAssetFileName(DigitalAsset digitalAsset, Integer contentId, Integer languageId) throws Exception
+	public static String getAssetFileName(DigitalAsset digitalAsset, Integer contentId, Integer languageId) 
 	{
 		String fileName = digitalAsset.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAsset.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 		
@@ -216,30 +216,24 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	 * This is the new main logic for getting the filename of an asset. 
 	 */
 
-	public static String getAssetFolderName(DigitalAsset digitalAsset, Integer contentId, Integer languageId) throws Exception
+	public static String getAssetFolderName(DigitalAsset digitalAsset, Integer contentId, Integer languageId) 
 	{
 		String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 		
-		//logger.info("folderName:" + folderName);
-		//logger.info("AssetFileNameForm:" + CmsPropertyHandler.getAssetFileNameForm());
 		Timer t = new Timer();
 		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 		{
 			if(contentId == null || languageId == null)
 			{
-				//Timer t = new Timer();
-				//logger.info("As no contentId was sent - we check for the first version we find that uses it. Should not matter which:" + digitalAsset.getContentVersions());
 				if(digitalAsset.getContentVersions() != null && digitalAsset.getContentVersions().size() > 0)
 				{
 					ContentVersion cv = (ContentVersion)digitalAsset.getContentVersions().iterator().next();
 					contentId = cv.getValueObject().getContentId();
 					languageId = cv.getValueObject().getLanguageId();
 				}
-				//t.printElapsedTime("Finding content and language for an asset took");
 			}
 
 			folderName = "" + (contentId / 1000);
-			//logger.info("New folderName is:" + folderName);
 		}
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getAssetFolderName2", t.getElapsedTime());
 
@@ -300,7 +294,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	 * If the asset is cached on disk it returns that path imediately it's ok - otherwise it dumps it fresh.
 	 */
 
-	public String getAssetUrl(DigitalAsset digitalAsset, Repository repository, DeliveryContext deliveryContext) throws SystemException, Exception
+	public String getAssetUrl(DigitalAsset digitalAsset, Repository repository, DeliveryContext deliveryContext) 
 	{
 		String assetUrl = "";
 		
@@ -396,7 +390,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	 * If the asset is cached on disk it returns that path imediately it's ok - otherwise it dumps it fresh.
 	 */
 
-	public String getAssetThumbnailUrl(DigitalAsset digitalAsset, Repository repository, int width, int height, DeliveryContext deliveryContext) throws SystemException, Exception
+	public String getAssetThumbnailUrl(DigitalAsset digitalAsset, Repository repository, int width, int height, DeliveryContext deliveryContext) 
 	{
 		String assetUrl = "";
 		
@@ -854,11 +848,11 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	 * This method removes all images in the digitalAsset directory which belongs to a certain content version.
 	 */
 
-	public void deleteContentVersionAssets(Integer contentVersionId) throws SystemException, Exception
+	public void deleteContentVersionAssets(Integer contentVersionId) 
 	{
 		try
 		{
-		    List digitalAssetVOList = DigitalAssetController.getController().getDigitalAssetVOList(contentVersionId);
+		    List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(contentVersionId);
 			Iterator assetIterator = digitalAssetVOList.iterator();
 			while(assetIterator.hasNext())
 			{
@@ -877,7 +871,7 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 	/**
 	 * This method removes all images in the digitalAsset directory which belongs to a certain digital asset.
 	 */
-	public void deleteDigitalAssets(Integer digitalAssetId) throws SystemException, Exception
+	public void deleteDigitalAssets(Integer digitalAssetId) 
 	{ 
 		//TODO - how to remove
 		try

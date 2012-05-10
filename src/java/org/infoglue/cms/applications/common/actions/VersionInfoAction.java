@@ -38,7 +38,7 @@ public class VersionInfoAction extends InfoGlueAbstractAction
 
 	private static final long serialVersionUID = 1L;
 		
-	protected String doExecute() throws Exception
+	protected String doExecute()
     {
 		return Action.SUCCESS;
     }

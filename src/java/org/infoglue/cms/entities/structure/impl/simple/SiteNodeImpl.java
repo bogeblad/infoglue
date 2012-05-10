@@ -46,7 +46,7 @@ public class SiteNodeImpl implements SiteNode
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

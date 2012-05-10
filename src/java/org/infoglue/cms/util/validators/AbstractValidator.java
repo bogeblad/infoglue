@@ -72,9 +72,6 @@ public abstract class AbstractValidator
   }
 
 
-  /**
-   *
-   */
   protected AbstractValidator(String fieldName, boolean isRequired) 
   {
     this.fieldName  = fieldName;
@@ -92,18 +89,12 @@ public abstract class AbstractValidator
   }
 
 
-  /**
-   *
-   */
   private final ConstraintException createConstraintException(String errorCode) 
   {
     return new ConstraintException(this.fieldName, errorCode);
   }
 
   
-  /**
-   *
-   */
   protected void validateIsRequired(Object value) throws ConstraintException 
   {
     if(this.isRequired && value == null) 
@@ -127,17 +118,11 @@ public abstract class AbstractValidator
   	}
   }
 
-  /**
-   *
-   */
   protected final void addConstraintException(String errorCode) 
   {
     this.ceb.add(createConstraintException(errorCode));
   }
 
-  /**
-   *
-   */
   protected final void failIfAnyExceptionsFound() throws ConstraintException 
   {
     this.ceb.throwIfNotEmpty();

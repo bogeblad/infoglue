@@ -69,7 +69,7 @@ public class ViewQuickDeploymentSynchronizeContentsAction extends InfoGlueAbstra
 	private List localRepositories = null;
 	private List remoteRepositories = null;
 
-	public String doInput() throws Exception
+	public String doInput()
     {
     	try
     	{
@@ -155,7 +155,7 @@ public class ViewQuickDeploymentSynchronizeContentsAction extends InfoGlueAbstra
 		return Action.INPUT;
     }
 
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		logger.info("Inne i execute...");
 		

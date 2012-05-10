@@ -130,7 +130,7 @@ public class RSSFeedEntryTag extends TemplateControllerTag
 			throw new JspTagException("RSSFeedEntryTag must have a RSSFeedTag ancestor.");
 		}
 
-		((RSSFeedTag) parent).addFeedEntry(entry);
+		parent.addFeedEntry(entry);
 	}
 
 	
@@ -144,7 +144,7 @@ public class RSSFeedEntryTag extends TemplateControllerTag
         this.link = evaluateString("RssFeedEntry", "link", link);
     }
     
-    public void setCorrectDoubleAmpEncoding(boolean correctDoubleAmpEncoding) throws JspException
+    public void setCorrectDoubleAmpEncoding(boolean correctDoubleAmpEncoding) 
     {
         this.correctDoubleAmpEncoding = correctDoubleAmpEncoding;
     }

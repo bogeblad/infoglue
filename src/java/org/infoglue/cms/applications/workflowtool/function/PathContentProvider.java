@@ -36,14 +36,8 @@ public class PathContentProvider extends ContentProvider
 {
     private final static Logger logger = Logger.getLogger(PathContentProvider.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final String CONTENT_PARAMETER_NAME_ARGUMENT = "contentParameterName";
 	
-	/**
-	 * 
-	 */
 	private static final String CONTENT_VERSION_PARAMETER_NAME_ARGUMENT = "contentVersionParameterName";
 	
 	/**
@@ -66,14 +60,8 @@ public class PathContentProvider extends ContentProvider
 	 */
 	private String path;
 	
-	/**
-	 * 
-	 */
 	private String contentParameterName;
 	
-	/**
-	 * 
-	 */
 	private String contentVersionParameterName;
 	
 	/**
@@ -84,25 +72,16 @@ public class PathContentProvider extends ContentProvider
 		super();
 	}
 
-	/**
-	 * 
-	 */
 	protected String getContentParameterName()
 	{
 		return contentParameterName;
 	}
 	
-	/**
-	 * 
-	 */
 	protected String getContentVersionParameterName()
 	{
 		return contentVersionParameterName;
 	}
 	
-	/**
-	 * 
-	 */
 	protected void initializeContentVO() throws WorkflowException
 	{
 		try

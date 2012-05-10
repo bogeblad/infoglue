@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.treeservice.ss.ManagementToolNodeSupplier;
 
 import com.frovi.ss.Tree.INodeSupplier;
@@ -51,7 +52,7 @@ public class ViewManagementToolMenuHtmlAction extends TreeViewAbstractAction
 	/**
 	 * @see org.infoglue.cms.applications.common.actions.TreeViewAbstractAction#getNodeSupplier()
 	 */
-	protected INodeSupplier getNodeSupplier() throws Exception
+	protected INodeSupplier getNodeSupplier() throws SystemException
 	{
     	if(this.repositoryId != null && this.repositoryId.intValue() > 0)
     	{

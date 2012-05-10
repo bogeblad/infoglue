@@ -82,7 +82,7 @@ public class ViewRoleAction extends InfoGlueAbstractAction
         return roleName;
     }
 
-	public void setRoleName(String roleName) throws Exception
+	public void setRoleName(String roleName) throws Exception 
 	{	
 		if(roleName != null)
 		{
@@ -122,12 +122,12 @@ public class ViewRoleAction extends InfoGlueAbstractAction
         return this.infoGlueRole.getDescription();
     }
         
-  	public List getAllInfoGluePrincipals() throws Exception
+  	public List getAllInfoGluePrincipals()
 	{
 		return this.infoGluePrincipals;
 	}	
 	
-	public List getAssignedInfoGluePrincipals() throws Exception
+	public List getAssignedInfoGluePrincipals()
 	{
 		return this.assignedInfoGluePrincipals;
 	}

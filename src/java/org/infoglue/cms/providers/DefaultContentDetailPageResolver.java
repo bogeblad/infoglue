@@ -55,7 +55,7 @@ public class DefaultContentDetailPageResolver implements ContentDetailPageResolv
 			try
 			{
 				Integer detailSiteNodeId = new Integer(resolverData);
-				detailSiteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(detailSiteNodeId, db);
+				detailSiteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(detailSiteNodeId, db);
 			}
 			catch (Exception e) 
 			{

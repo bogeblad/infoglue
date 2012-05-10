@@ -93,7 +93,7 @@ public class AssignedCategoriesTag extends ComponentLogicTag
 
 	    contentId = null;
 		propertyName = null;
-		categoryKey = null;;
+		categoryKey = null;
 	    useInheritance = true;
 	    useAttributeLanguageFallback = true;
 	    languageId = null;

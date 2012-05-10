@@ -55,6 +55,7 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -85,7 +86,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 	private static ContentTypeDefinitionController contentTypeDefinitionController = ContentTypeDefinitionController.getController();
 	private static CategoryController categoryController = CategoryController.getController();
 
-    public String doInput() throws Exception
+    public String doInput()
     {
     	try
     	{
@@ -114,7 +115,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 			    	{
 			    		ContentTypeDefinitionVO remoteContentTypeDefinitionVO = (ContentTypeDefinitionVO)remoteContentTypeDefinitionVOListIterator.next();
 			    		//logger.info("remoteContentTypeDefinitionVO:" + remoteContentTypeDefinitionVO.getName());
-			    		ContentTypeDefinitionVO localContentTypeDefinitionVO = (ContentTypeDefinitionVO)ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(remoteContentTypeDefinitionVO.getName());
+			    		ContentTypeDefinitionVO localContentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(remoteContentTypeDefinitionVO.getName());
 			    		DeploymentCompareBean bean = new DeploymentCompareBean();
 			    		bean.setRemoteVersion(remoteContentTypeDefinitionVO);
 			    		if(localContentTypeDefinitionVO != null)
@@ -191,7 +192,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 			    	{
 			    		WorkflowDefinitionVO remoteWorkflowDefinitionVO = (WorkflowDefinitionVO)remoteWorkflowDefinitionVOListIterator.next();
 			    		//logger.info("remoteWorkflowDefinitionVO:" + remoteWorkflowDefinitionVO.getName());
-			    		WorkflowDefinitionVO localWorkflowDefinitionVO = (WorkflowDefinitionVO)WorkflowDefinitionController.getController().getWorkflowDefinitionVOWithName(remoteWorkflowDefinitionVO.getName());
+			    		WorkflowDefinitionVO localWorkflowDefinitionVO = WorkflowDefinitionController.getController().getWorkflowDefinitionVOWithName(remoteWorkflowDefinitionVO.getName());
 			    		//logger.info("localWorkflowDefinitionVO:" + localWorkflowDefinitionVO);
 			    		DeploymentCompareBean bean = new DeploymentCompareBean();
 			    		bean.setRemoteVersion(remoteWorkflowDefinitionVO);
@@ -375,10 +376,9 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
     /**
      * 
      * @return
-     * @throws Exception
      */
     
-	public String doUpdateContentTypes() throws Exception
+	public String doUpdateContentTypes() throws JspException, ConstraintException, SystemException
     {
 		Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	DeploymentServerBean deploymentServerBean = deploymentServers.get(deploymentServerName);
@@ -593,7 +593,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
     	return doInput();
     }
 
-    public String doUpdateCategories() throws Exception
+    public String doUpdateCategories() throws JspException, SystemException
     {
     	//logger.info("*****************************");
     	//logger.info("*    UPDATING CATEGORIES    *");
@@ -641,7 +641,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 	    return doInput();
     }
 
-    public String doUpdateWorkflows() throws Exception
+    public String doUpdateWorkflows() throws JspException, SystemException
     {
     	Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	DeploymentServerBean deploymentServerBean = deploymentServers.get(deploymentServerName);
@@ -696,7 +696,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
     	return doInput();
     }
 
-    public String doUpdateComponents() throws Exception
+    public String doUpdateComponents() throws JspException, SystemException, ConstraintException
     {
     	Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	DeploymentServerBean deploymentServerBean = deploymentServers.get(deploymentServerName);
@@ -934,7 +934,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
     	return doInput();
     }
 
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	Map<String, DeploymentServerBean> deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	String deploymentServerUrl = deploymentServers.get(deploymentServerName).getUrl();
@@ -1008,7 +1008,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 		return deviatingAttributes;
 	}
 
-	public List getDeviatingAssetKeys(String remoteSchemaValue, String localSchemaValue) throws Exception
+	public List getDeviatingAssetKeys(String remoteSchemaValue, String localSchemaValue)
 	{
 		List deviatingAssetKeys = new ArrayList();
 		
@@ -1039,7 +1039,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 		return deviatingAssetKeys;
 	}
 
-	public List getDeviatingCategories(String remoteSchemaValue, String localSchemaValue) throws Exception
+	public List getDeviatingCategories(String remoteSchemaValue, String localSchemaValue)
 	{
 		List deviatingCategories = new ArrayList();
 		
@@ -1073,7 +1073,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 	 * Gets the list of defined categoryKeys, also populate the category name for the UI.
 	 */
 	
-	public List getDefinedCategoryKeys(String schemaValue) throws Exception
+	public List getDefinedCategoryKeys(String schemaValue)
 	{
 		List categoryKeys = ContentTypeDefinitionController.getController().getDefinedCategoryKeys(schemaValue);
 		for (Iterator iter = categoryKeys.iterator(); iter.hasNext();)

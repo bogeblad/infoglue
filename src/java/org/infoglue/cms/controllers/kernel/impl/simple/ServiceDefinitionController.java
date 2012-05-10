@@ -33,7 +33,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ServiceDefinition;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.management.impl.simple.ServiceDefinitionImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -51,17 +50,17 @@ public class ServiceDefinitionController extends BaseController
 		return new ServiceDefinitionController();
 	}
 
-    public ServiceDefinitionVO getServiceDefinitionVOWithId(Integer serviceDefinitionId) throws SystemException, Bug
+    public ServiceDefinitionVO getServiceDefinitionVOWithId(Integer serviceDefinitionId) throws SystemException
     {
 		return (ServiceDefinitionVO) getVOWithId(ServiceDefinitionImpl.class, serviceDefinitionId);
     }
 
-    public ServiceDefinitionVO getServiceDefinitionVOWithId(Integer serviceDefinitionId, Database db) throws SystemException, Bug
+    public ServiceDefinitionVO getServiceDefinitionVOWithId(Integer serviceDefinitionId, Database db) throws SystemException
     {
 		return (ServiceDefinitionVO) getVOWithId(ServiceDefinitionImpl.class, serviceDefinitionId, db);
     }
 	
-    public ServiceDefinitionVO create(ServiceDefinitionVO vo) throws ConstraintException, SystemException
+    public ServiceDefinitionVO create(ServiceDefinitionVO vo) throws SystemException
     {
         ServiceDefinition ent = new ServiceDefinitionImpl();
         ent.setValueObject(vo);
@@ -108,12 +107,12 @@ public class ServiceDefinitionController extends BaseController
     	deleteEntity(ServiceDefinitionImpl.class, vo.getServiceDefinitionId());
     }        
 
-    public ServiceDefinition getServiceDefinitionWithId(Integer serviceDefinitionId, Database db) throws SystemException, Bug
+    public ServiceDefinition getServiceDefinitionWithId(Integer serviceDefinitionId, Database db) throws SystemException
     {
 		return (ServiceDefinition) getObjectWithId(ServiceDefinitionImpl.class, serviceDefinitionId, db);
     }
 
-    public List getServiceDefinitionVOList() throws SystemException, Bug
+    public List getServiceDefinitionVOList() throws SystemException
     {
         return getAllVOObjects(ServiceDefinitionImpl.class, "serviceDefinitionId");
     }
@@ -122,7 +121,7 @@ public class ServiceDefinitionController extends BaseController
 	 * This method deletes the ServiceDefinition sent in from the system.
 	 */
 	
-	public void deleteServiceDefinition(Integer serviceDefinitionId, Database db) throws SystemException, Bug
+	public void deleteServiceDefinition(Integer serviceDefinitionId, Database db) throws SystemException
 	{
 		try
 		{
@@ -176,10 +175,9 @@ public class ServiceDefinitionController extends BaseController
 	 * This method fetches an ServiceDefinition with the given name.
 	 * 
 	 * @throws SystemException
-	 * @throws Bug
 	 */
     
-	public ServiceDefinitionVO getServiceDefinitionVOWithName(String name) throws SystemException, Bug
+	public ServiceDefinitionVO getServiceDefinitionVOWithName(String name) throws SystemException
 	{
 		ServiceDefinitionVO serviceDefinitionVO = null;
 		
@@ -213,10 +211,9 @@ public class ServiceDefinitionController extends BaseController
 	 * @param database
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public ServiceDefinition getServiceDefinitionWithName(String name, Database db, boolean readOnly) throws SystemException, Bug
+	public ServiceDefinition getServiceDefinitionWithName(String name, Database db, boolean readOnly) throws SystemException
 	{
 		ServiceDefinition serviceDefinition = null;
 		
@@ -230,7 +227,7 @@ public class ServiceDefinitionController extends BaseController
 			    results = oql.execute(Database.ReadOnly);
 			else
 			{
-			    this.logger.info("Fetching entity in read/write mode" + name);
+			    logger.info("Fetching entity in read/write mode" + name);
 				results = oql.execute();
 			}
 			

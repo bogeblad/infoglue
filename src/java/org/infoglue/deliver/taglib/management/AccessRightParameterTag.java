@@ -99,8 +99,7 @@ public class AccessRightParameterTag extends AbstractTag //implements ContentVer
 			{
 				throw new JspTagException("AccessRightParameterTag must have a ContentParameterTag ancestor.");
 			}
-			else
-				((RemoteAccessRightsServiceTag) parent).addAccessRight(accessRight);
+			((RemoteAccessRightsServiceTag) parent).addAccessRight(accessRight);
 		}
 		else
 			((ContentParameterTag) parent).addAccessRight(accessRight);
@@ -111,7 +110,7 @@ public class AccessRightParameterTag extends AbstractTag //implements ContentVer
 	 * 
 	 * @throws JspException if the ancestor tag isn't a url tag.
 	 */
-	public void addAccessRightAttribute(String name, String value) throws JspException
+	public void addAccessRightAttribute(String name, String value) 
 	{
 	    Map accessRightAttributes = (Map)this.accessRight.get("accessRightAttributes");
 	    if(accessRightAttributes == null)
@@ -175,25 +174,16 @@ public class AccessRightParameterTag extends AbstractTag //implements ContentVer
 	    accessRightUsers.add(userName);
 	}
 	
-	/**
-	 * 
-	 */
 	public void setParameters(final String parameters) throws JspException
 	{
 	    this.accessRight.put("parameters", evaluateString("AccessRightParameterTag", "parameters", parameters));
 	}
 
-	/**
-	 * 
-	 */
 	public void setInterceptionPointName(final String interceptionPointName) throws JspException
 	{
 	    this.accessRight.put("interceptionPointName", evaluateString("AccessRightParameterTag", "interceptionPointName", interceptionPointName));
 	}
 
-	/**
-	 * 
-	 */
 	public void setClearOldAccessRights(final String clearOldAccessRights) throws JspException
 	{
 	    this.accessRight.put("clearOldAccessRights", evaluateString("AccessRightParameterTag", "clearOldAccessRights", clearOldAccessRights));

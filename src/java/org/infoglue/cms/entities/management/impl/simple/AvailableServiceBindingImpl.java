@@ -68,7 +68,7 @@ public class AvailableServiceBindingImpl implements AvailableServiceBinding
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntity#setVO(BaseEntityVO)

@@ -55,7 +55,7 @@ public class CreateSiteNodeWizardFinishAction extends CreateSiteNodeWizardAbstra
 	}
 	
 	
-	public String doExecute() throws Exception
+	public String doExecute()
 	{
 		try
 		{
@@ -113,7 +113,7 @@ public class CreateSiteNodeWizardFinishAction extends CreateSiteNodeWizardAbstra
 		return NONE;
 	}
 
-	public String doCancel() throws Exception
+	public String doCancel()
 	{
 		try
 		{

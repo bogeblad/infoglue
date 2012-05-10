@@ -33,6 +33,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
@@ -110,7 +111,7 @@ public class PortletAssetController extends DigitalAssetController
         return contents;
     }
 
-    public static List getDigitalAssetByName(String name, Database db) throws SystemException, Exception
+    public static List getDigitalAssetByName(String name, Database db) throws PersistenceException 
     {
         List contents = new ArrayList();
 
@@ -130,7 +131,7 @@ public class PortletAssetController extends DigitalAssetController
 		return contents;
     }
 
-	public DigitalAsset getPortletRegistryAsset() throws Exception 
+	public DigitalAsset getPortletRegistryAsset() throws SystemException  
 	{
         List das = PortletAssetController.getDigitalAssetByName(PortletEntityRegistryServiceDBImpl.PORTLET_REGISTRY_CONTENT_NAME);
         if (das != null && das.size() > 0) 
@@ -139,15 +140,12 @@ public class PortletAssetController extends DigitalAssetController
             logger.debug("Registry located as id=" + da.getId());
             return da;
         } 
-        else 
-        {
-        	logger.info("Portlet Registry not found");
-        }
+    	logger.info("Portlet Registry not found");
         
         return null;
     }
 
-	public DigitalAsset getPortletRegistryAsset(Database db) throws Exception 
+	public DigitalAsset getPortletRegistryAsset(Database db) throws PersistenceException  
 	{
         List das = PortletAssetController.getDigitalAssetByName(PortletEntityRegistryServiceDBImpl.PORTLET_REGISTRY_CONTENT_NAME, db);
         if (das != null && das.size() > 0) 
@@ -156,10 +154,7 @@ public class PortletAssetController extends DigitalAssetController
             logger.debug("Registry located as id=" + da.getId());
             return da;
         } 
-        else 
-        {
-        	logger.info("Portlet Registry not found");
-        }
+    	logger.info("Portlet Registry not found");
         
         return null;
     }

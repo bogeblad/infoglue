@@ -49,10 +49,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.Session;
-import org.infoglue.cms.controllers.kernel.impl.simple.SystemUserController;
 import org.infoglue.cms.controllers.kernel.impl.simple.TransactionHistoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
-import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.DesEncryptionHelper;
@@ -485,7 +483,7 @@ public class InfoGlueAuthenticationFilter implements Filter
     
   	public void destroy() { }
 
-  	private void checkSuccessRedirect(ServletRequest request, ServletResponse response, String URL) throws ServletException, IOException, UnsupportedEncodingException
+  	private void checkSuccessRedirect(ServletRequest request, ServletResponse response, String URL) throws IOException, UnsupportedEncodingException
   	{
 	    String requestURI = ((HttpServletRequest)request).getRequestURI();
 		
@@ -546,7 +544,7 @@ public class InfoGlueAuthenticationFilter implements Filter
   		String authenticatedUserName = null;
   		
   		String currentUrl = null;
-		if(this.casServiceUrl != null && this.casServiceUrl.equals("$currentUrl"))
+		if(casServiceUrl != null && casServiceUrl.equals("$currentUrl"))
 		{
 			currentUrl = request.getRequestURL() + (request.getQueryString() == null ? "" : "?" + request.getQueryString());
 		}
@@ -809,11 +807,8 @@ public class InfoGlueAuthenticationFilter implements Filter
             {
                 break;
             } 
-            else 
-            {
-                // Not related to portal - add
-                list.add(t.trim());
-            }
+            // Not related to portal - add
+            list.add(t.trim());
         }
         return (String[]) list.toArray(new String[list.size()]);
     }

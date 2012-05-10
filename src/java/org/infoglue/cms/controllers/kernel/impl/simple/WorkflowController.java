@@ -26,6 +26,7 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -173,7 +174,7 @@ public class WorkflowController extends BaseController
 		return workflowVO;
 	}
 
-	public WorkflowVO getWorkflow(String workflowName, InfoGluePrincipal principal) throws SystemException, Exception
+	public WorkflowVO getWorkflow(String workflowName, InfoGluePrincipal principal) throws UnsupportedEncodingException
 	{
 		WorkflowVO workflow = null;
 		
@@ -203,7 +204,7 @@ public class WorkflowController extends BaseController
 		return workflow;
 	}
 	
-	public WorkflowVO getCurrentWorkflow(Long workflowId, InfoGluePrincipal principal) throws SystemException
+	public WorkflowVO getCurrentWorkflow(Long workflowId, InfoGluePrincipal principal)
 	{
 		WorkflowVO workflow = null;
 		
@@ -230,7 +231,7 @@ public class WorkflowController extends BaseController
 	 * @param userPrincipal a user principal
 	 * @return a list WorkflowVOs representing available workflows
 	 */
-	public List<WorkflowVO> getAvailableWorkflowVOList(InfoGluePrincipal userPrincipal) throws SystemException
+	public List<WorkflowVO> getAvailableWorkflowVOList(InfoGluePrincipal userPrincipal)
 	{
 		final List<WorkflowVO> accessibleWorkflows = new ArrayList<WorkflowVO>();
 
@@ -326,7 +327,7 @@ public class WorkflowController extends BaseController
 	 * @return a list of WorkflowVOs representing all active workflows
 	 * @throws SystemException if an error occurs while finding the current workflows
 	 */
-	public List<WorkflowVO> getCurrentWorkflowVOList(InfoGluePrincipal userPrincipal) throws SystemException
+	public List<WorkflowVO> getCurrentWorkflowVOList(InfoGluePrincipal userPrincipal)
 	{
 		List<WorkflowVO> list = new ArrayList<WorkflowVO>();
 		
@@ -383,7 +384,7 @@ public class WorkflowController extends BaseController
 	 * @return a list of WorkflowVOs owned by the principal.
 	 * @throws SystemException if an error occurs while finding the workflows
 	 */
-	public List getMyCurrentWorkflowVOList(InfoGluePrincipal userPrincipal) throws SystemException
+	public List getMyCurrentWorkflowVOList(InfoGluePrincipal userPrincipal)
 	{
 		List list = new ArrayList();
 		
@@ -443,7 +444,7 @@ public class WorkflowController extends BaseController
 	 * @return a WorkflowVO representing the current state of the workflow identified by workflowId
 	 * @throws WorkflowException if a workflow error occurs
 	 */
-	public WorkflowVO invokeAction(InfoGluePrincipal principal, long workflowId, int actionId, Map inputs) throws WorkflowException
+	public WorkflowVO invokeAction(InfoGluePrincipal principal, long workflowId, int actionId, Map inputs)
 	{
 		WorkflowVO workflowVO = null;
 
@@ -889,7 +890,7 @@ public class WorkflowController extends BaseController
 	 * @param workflowVO the workflow.
 	 * @return true if the workflow has terminated; false otherwise.
 	 */
-	public boolean hasTerminated(InfoGluePrincipal userPrincipal, long workflowId) throws WorkflowException
+	public boolean hasTerminated(InfoGluePrincipal userPrincipal, long workflowId)
 	{
 		boolean isFinished = false;
 		

@@ -36,7 +36,7 @@ public class ViewMyDesktopToolHeaderAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = 1L;
 
-    public String doExecute() throws Exception
+    public String doExecute()
     {
         return "success";
     }

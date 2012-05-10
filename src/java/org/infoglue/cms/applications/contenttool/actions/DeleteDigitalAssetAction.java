@@ -23,8 +23,11 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
+
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This action removes a content from the system.
@@ -42,7 +45,7 @@ public class DeleteDigitalAssetAction extends InfoGlueAbstractAction
 	private String returnAddress;
 	
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws IOException, SystemException 
 	{
 	    DigitalAssetController.getController().delete(digitalAssetId, entity, entityId);
 		

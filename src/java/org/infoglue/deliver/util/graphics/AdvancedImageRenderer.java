@@ -70,7 +70,7 @@ public class AdvancedImageRenderer
 
     // An template image to get the right rendering attributes for the font renderer
     // don't change this in runtime. 
-    private static BufferedImage templateImage = null;
+    private static BufferedImage TEMPLATE_IMAGE = null;
 
     // the rendered image
     private BufferedImage renderedImage = null;
@@ -137,7 +137,7 @@ public class AdvancedImageRenderer
 	private float marbleAmount = 0.9f;
 
     
-    private static Map renderHints = null;
+    private static Map RENDER_HINTS = null;
 
     // cached map of the methods
     private static Map methodMap = null;
@@ -176,15 +176,15 @@ public class AdvancedImageRenderer
 	        }
 	        logger.debug( defaultConfigMap );
     	}
-        if ( renderHints == null )
+        if ( RENDER_HINTS == null )
         {
-        	renderHints = new HashMap();
-	        renderHints.put( RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY );
-	        renderHints.put( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY );
-	        renderHints.put( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
-	        renderHints.put( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON );
-	        renderHints.put( RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY );
-	        renderHints.put( RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE );
+        	RENDER_HINTS = new HashMap();
+	        RENDER_HINTS.put( RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY );
+	        RENDER_HINTS.put( RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY );
+	        RENDER_HINTS.put( RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON );
+	        RENDER_HINTS.put( RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON );
+	        RENDER_HINTS.put( RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY );
+	        RENDER_HINTS.put( RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE );
         }
     }
 
@@ -247,9 +247,9 @@ public class AdvancedImageRenderer
             }
         }
         // Set TemplateImage
-        if ( templateImage == null )
+        if ( TEMPLATE_IMAGE == null )
         {
-            templateImage = new BufferedImage( 8, 8, imageType );
+        	TEMPLATE_IMAGE = new BufferedImage( 8, 8, imageType );
         }
 
         font = new Font( fontName, fontStyle, fontSize );
@@ -264,8 +264,8 @@ public class AdvancedImageRenderer
         			+ ( padLeft + padRight ) + "), modify your settings.");
         }
 
-        Graphics2D g2d = templateImage.createGraphics();
-        g2d.setRenderingHints( renderHints );
+        Graphics2D g2d = TEMPLATE_IMAGE.createGraphics();
+        g2d.setRenderingHints( RENDER_HINTS );
 
         attributedString.addAttribute( TextAttribute.FONT, font );
         attributedString.addAttribute( TextAttribute.FOREGROUND, fgColor );
@@ -289,9 +289,9 @@ public class AdvancedImageRenderer
             renderHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
         }
 
-        renderedImage = new BufferedImage( renderWidth, (int)( renderHeight + 0.5 ), templateImage.getType() );
+        renderedImage = new BufferedImage( renderWidth, (int)( renderHeight + 0.5 ), TEMPLATE_IMAGE.getType() );
         Graphics2D img2d = renderedImage.createGraphics();
-        img2d.setRenderingHints( renderHints );
+        img2d.setRenderingHints( RENDER_HINTS );
 
         img2d.setColor( fgColor );
 
@@ -679,7 +679,7 @@ public class AdvancedImageRenderer
      */
     public void setRenderHints( Map renderHints )
     {
-        this.renderHints = renderHints;
+    	RENDER_HINTS = renderHints;
     }
 
     /**
@@ -695,7 +695,7 @@ public class AdvancedImageRenderer
      */
     public void setTemplateImage( BufferedImage templateImage )
     {
-        this.templateImage = templateImage;
+    	TEMPLATE_IMAGE = templateImage;
     }
 
     /**

@@ -42,7 +42,7 @@ public class WorkflowControllerTest extends NewsWorkflowTestCase
 		finishWorkflow();
 	}
 	
-	public void testGetAvailableWorkflowVOList() throws Exception
+	public void testGetAvailableWorkflowVOList()
 	{
 		List workflows = WorkflowController.getController().getAvailableWorkflowVOList(getUserPrincipal());
 		assertEquals("Wrong number of available workflows:", 2, workflows.size());
@@ -58,20 +58,20 @@ public class WorkflowControllerTest extends NewsWorkflowTestCase
 		assertTrue("There should be no global actions:", workflow.getGlobalActions().isEmpty());
 	}
 
-	public void testGetCurrentWorkflowVOList() throws Exception
+	public void testGetCurrentWorkflowVOList()
 	{
 		List workflows = WorkflowController.getController().getCurrentWorkflowVOList(getUserPrincipal());
 		assertFalse("There should be at least one active workflow", workflows.isEmpty());
 		assertNotNull("Current workflow should be in the list", findCurrentWorkflow());
 	}
 
-	public void testGetAllSteps() throws Exception
+	public void testGetAllSteps() 
 	{
 		assertEquals("Wrong number of steps:", 3,
 						 WorkflowController.getController().getAllSteps(getUserPrincipal(), getWorkflowId()).size());
 	}
 
-	public void testGetCurrentSteps() throws Exception
+	public void testGetCurrentSteps() 
 	{
 		List steps = WorkflowController.getController().getCurrentSteps(getUserPrincipal(), getWorkflowId());
 		assertEquals("Wrong number of steps:", 1, steps.size());
@@ -83,7 +83,7 @@ public class WorkflowControllerTest extends NewsWorkflowTestCase
 		assertEquals("Wrong name:", "Preview news and approve", ((WorkflowStepVO)steps.get(0)).getName());
 	}
 
-	public void testGetHistorySteps() throws Exception
+	public void testGetHistorySteps() 
 	{
 		assertEquals("Wrong number of steps:", 0,
 						 WorkflowController.getController().getHistorySteps(getUserPrincipal(), getWorkflowId()).size());

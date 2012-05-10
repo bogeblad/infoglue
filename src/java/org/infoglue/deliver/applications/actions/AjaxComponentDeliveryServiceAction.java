@@ -53,7 +53,7 @@ public class AjaxComponentDeliveryServiceAction extends InfoGlueAbstractAction
      * This method will return all properties for a component. 
      */
          
-    public String doGetComponentPropertyDiv() throws Exception
+    public String doGetComponentPropertyDiv() 
     {
     	try
     	{

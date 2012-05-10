@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.TransactionNotInProgressException;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -85,10 +87,9 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 	/**
 	 * This shows the dialog before export.
 	 * @return
-	 * @throws Exception
 	 */	
 
-	public String doInput() throws Exception
+	public String doInput() throws SystemException
 	{
 		repositories = RepositoryController.getController().getRepositoryVOListNotMarkedForDeletion();
 		
@@ -99,7 +100,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 	 * This handles the actual exporting.
 	 */
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws TransactionNotInProgressException, SystemException 
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -348,7 +349,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
         }
 	}
 
-	public static Hashtable<String,String> getRepositoryProperties(PropertySet ps, Integer repositoryId) throws Exception
+	public static Hashtable<String,String> getRepositoryProperties(PropertySet ps, Integer repositoryId) throws UnsupportedEncodingException
 	{
 		Hashtable<String,String> properties = new Hashtable<String,String>();
 			    

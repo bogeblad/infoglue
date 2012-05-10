@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
+import org.infoglue.cms.exception.SystemException;
 
 
 /**
@@ -43,7 +44,7 @@ public class ViewListServerNodeAction extends InfoGlueAbstractAction
 	private List allowedAdminIPList;
 	private String allowedAdminIP;
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.serverNodes = ServerNodeController.getController().getServerNodeVOList();
 		this.allowedAdminIPList = ServerNodeController.getController().getAllowedAdminIPList();
@@ -57,7 +58,7 @@ public class ViewListServerNodeAction extends InfoGlueAbstractAction
 		return this.serverNodes;		
 	}
 
-	public String doSave() throws Exception 
+	public String doSave() 
 	{
 		ServerNodeController.getController().setAllowedAdminIP(allowedAdminIP);
     	return "success";

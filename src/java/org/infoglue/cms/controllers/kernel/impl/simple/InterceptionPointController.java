@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AccessRight;
@@ -43,7 +44,6 @@ import org.infoglue.cms.entities.management.InterceptionPoint;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.Interceptor;
 import org.infoglue.cms.entities.management.impl.simple.InterceptionPointImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -189,22 +189,22 @@ public class InterceptionPointController extends BaseController
 		return new InterceptionPointController();
 	}
 	
-	public InterceptionPoint getInterceptionPointWithId(Integer interceptionPointId, Database db) throws SystemException, Bug
+	public InterceptionPoint getInterceptionPointWithId(Integer interceptionPointId, Database db) throws SystemException
 	{
 		return (InterceptionPoint) getObjectWithId(InterceptionPointImpl.class, interceptionPointId, db);
 	}
 
-	public InterceptionPoint getReadOnlyInterceptionPointWithId(Integer interceptionPointId, Database db) throws SystemException, Bug
+	public InterceptionPoint getReadOnlyInterceptionPointWithId(Integer interceptionPointId, Database db) throws SystemException
 	{
 		return (InterceptionPoint) getObjectWithIdAsReadOnly(InterceptionPointImpl.class, interceptionPointId, db);
 	}
 
-	public InterceptionPointVO getInterceptionPointVOWithId(Integer interceptionPointId) throws SystemException, Bug
+	public InterceptionPointVO getInterceptionPointVOWithId(Integer interceptionPointId) throws SystemException
 	{
 		return (InterceptionPointVO) getVOWithId(InterceptionPointImpl.class, interceptionPointId);
 	}
   
-	public List getInterceptionPointVOList() throws SystemException, Bug
+	public List getInterceptionPointVOList() throws SystemException
 	{
 		return getAllVOObjects(InterceptionPointImpl.class, "interceptionPointId");
 	}
@@ -213,9 +213,8 @@ public class InterceptionPointController extends BaseController
 	 * This method returns Interception points which do stuff in the system but which are not yet activated.
 	 * @return List of InterceptionPointVO:s
 	 * @throws SystemException
-	 * @throws Bug
 	 */
-	public List<InterceptionPointVO> getInactiveInterceptionPointVOList() throws SystemException, Bug
+	public List<InterceptionPointVO> getInactiveInterceptionPointVOList() throws SystemException
 	{
 		List<InterceptionPointVO> inactiveInterceptionPointVOList = new ArrayList();
 		
@@ -245,12 +244,12 @@ public class InterceptionPointController extends BaseController
 		return inactiveInterceptionPointVOList;
 	}
 
-	public List getSortedInterceptionPointVOList() throws SystemException, Bug
+	public List getSortedInterceptionPointVOList() throws SystemException
 	{
 		return getAllVOObjects(InterceptionPointImpl.class, "category", "asc");
 	}	
 
-	public InterceptionPointVO getInterceptionPointVOWithName(String interceptorPointName)  throws SystemException, Bug
+	public InterceptionPointVO getInterceptionPointVOWithName(String interceptorPointName)  throws SystemException
 	{
 		InterceptionPointVO interceptionPointVO = null;
 		
@@ -274,7 +273,7 @@ public class InterceptionPointController extends BaseController
 		return interceptionPointVO;		
 	}	
 
-	public InterceptionPointVO getInterceptionPointVOWithName(String interceptorPointName, Database db)  throws SystemException, Bug
+	public InterceptionPointVO getInterceptionPointVOWithName(String interceptorPointName, Database db)  throws SystemException
 	{
 	    String key = "" + interceptorPointName;
 		logger.info("key:" + key);
@@ -336,7 +335,7 @@ public class InterceptionPointController extends BaseController
 	}	
 
 
-	public InterceptionPoint getInterceptionPointWithName(String interceptorPointName, Database db)  throws SystemException, Bug
+	public InterceptionPoint getInterceptionPointWithName(String interceptorPointName, Database db)  throws SystemException
 	{
 		InterceptionPoint interceptorPoint = null;
 		
@@ -346,7 +345,7 @@ public class InterceptionPointController extends BaseController
 			oql.bind(interceptorPointName);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode:" + interceptorPointName);
+			logger.info("Fetching entity in read/write mode:" + interceptorPointName);
 			if(results.hasMore()) 
 			{
 				interceptorPoint = (InterceptionPoint)results.next();
@@ -364,7 +363,7 @@ public class InterceptionPointController extends BaseController
 	}
 	
 	
-	public List getInterceptionPointVOList(String category) throws SystemException, Bug
+	public List getInterceptionPointVOList(String category) throws SystemException
 	{
 		List interceptionPointVOList = null;
 		
@@ -389,7 +388,7 @@ public class InterceptionPointController extends BaseController
 	}
 	
 	
-	public List getInterceptionPointList(String category, Database db)  throws SystemException, Bug
+	public List getInterceptionPointList(String category, Database db)  throws SystemException
 	{
 		List interceptionPoints = new ArrayList();
 		
@@ -399,7 +398,7 @@ public class InterceptionPointController extends BaseController
 			oql.bind(category);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode:" + category);
+			logger.info("Fetching entity in read/write mode:" + category);
 
 			while(results.hasMore()) 
 			{
@@ -427,7 +426,7 @@ public class InterceptionPointController extends BaseController
 	 * @throws SystemException
 	 */
 	
-	public InterceptionPointVO create(InterceptionPointVO interceptionPointVO) throws ConstraintException, SystemException
+	public InterceptionPointVO create(InterceptionPointVO interceptionPointVO) throws SystemException
 	{
 		InterceptionPointVO newInterceptionPointVO = null;
 		
@@ -456,11 +455,9 @@ public class InterceptionPointController extends BaseController
 	 * 
 	 * @param interceptionPointVO
 	 * @return
-	 * @throws ConstraintException
-	 * @throws SystemException
 	 */
 	
-	public InterceptionPointVO create(InterceptionPointVO interceptionPointVO, Database db) throws SystemException, Exception
+	public InterceptionPointVO create(InterceptionPointVO interceptionPointVO, Database db) throws PersistenceException 
 	{
 		InterceptionPoint interceptionPoint = new InterceptionPointImpl();
 		interceptionPoint.setValueObject(interceptionPointVO);
@@ -471,13 +468,13 @@ public class InterceptionPointController extends BaseController
 	}     
 
 	
-	public InterceptionPointVO update(InterceptionPointVO interceptionPointVO) throws ConstraintException, SystemException
+	public InterceptionPointVO update(InterceptionPointVO interceptionPointVO) throws SystemException
 	{
 		return (InterceptionPointVO) updateEntity(InterceptionPointImpl.class, interceptionPointVO);
 	}        
 
 	
-	public void update(InterceptionPointVO interceptionPointVO, String[] values) throws ConstraintException, SystemException
+	public void update(InterceptionPointVO interceptionPointVO, String[] values) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 
@@ -527,7 +524,7 @@ public class InterceptionPointController extends BaseController
 	}			
 	
 	
-	public void delete(InterceptionPointVO interceptionPointVO) throws ConstraintException, SystemException
+	public void delete(InterceptionPointVO interceptionPointVO) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		

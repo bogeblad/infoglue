@@ -28,6 +28,7 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the action class for the framed page in the content tool.
@@ -53,7 +54,7 @@ public class ViewContentToolAjaxServicesAction extends InfoGlueAbstractAction
 	 * the meta-info-content-type has. Then we check if there is a meta-info allready bound.
 	 */
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
     {
 		if(contentId != null)
 		{

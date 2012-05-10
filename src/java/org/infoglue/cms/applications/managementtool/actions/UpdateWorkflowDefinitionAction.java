@@ -26,6 +26,9 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowDefinitionController;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -41,7 +44,7 @@ public class UpdateWorkflowDefinitionAction extends InfoGlueAbstractAction
 	private String name;
 	private String value;
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
     	ceb.add(this.workflowDefinitionVO.validate());
     	ceb.throwIfNotEmpty();		
@@ -51,7 +54,7 @@ public class UpdateWorkflowDefinitionAction extends InfoGlueAbstractAction
 		return "success";
 	}
 	
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws AccessConstraintException, ConstraintException, SystemException
     {
     	doExecute();
     	

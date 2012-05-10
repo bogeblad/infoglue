@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.managementtool.actions.deployment;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,8 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -60,14 +63,14 @@ public class ViewVCDeploymentAction extends InfoGlueAbstractAction
 	private List<DeploymentCompareBean> deviatingContents = new ArrayList<DeploymentCompareBean>();
 	private boolean repositoryCreated = false;
 	
-	public String doInput() throws Exception
+	public String doInput()
     {
     	this.vcServers = CmsPropertyHandler.getVCServers();
     	
     	return "input";
     }
 
-    public String doInputChooseTag() throws Exception
+    public String doInputChooseTag() throws ConstraintException
     {
     	this.vcServers = CmsPropertyHandler.getVCServers();
     	
@@ -86,7 +89,7 @@ public class ViewVCDeploymentAction extends InfoGlueAbstractAction
     	return "inputChooseTag";
     }
 
-    public String doInputVerifyCheckout() throws Exception
+    public String doInputVerifyCheckout() throws SystemException
     {
     	this.vcServers = CmsPropertyHandler.getVCServers();
     	
@@ -108,7 +111,7 @@ public class ViewVCDeploymentAction extends InfoGlueAbstractAction
     }
     
     
-    public String doExecute() throws Exception
+    public String doExecute() throws ConstraintException, SystemException, IOException
     {
     	ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate");
     	ContentTypeDefinitionVO ctdFolder = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Folder");

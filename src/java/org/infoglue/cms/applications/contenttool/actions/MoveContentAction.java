@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
@@ -131,7 +133,7 @@ public class MoveContentAction extends InfoGlueAbstractAction
 		this.userSessionKey = userSessionKey;
 	}
 
-    public String doInputV3() throws Exception
+    public String doInputV3() throws SystemException
     {		
         userSessionKey = "" + System.currentTimeMillis();
 
@@ -158,7 +160,7 @@ public class MoveContentAction extends InfoGlueAbstractAction
 		return "success";
     }
 
-    public String doV3() throws Exception
+    public String doV3() throws ConstraintException, SystemException, IOException
     {
         try
         {
@@ -197,13 +199,10 @@ public class MoveContentAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "successV3";
-        }
+    	return "successV3";
     }
 
-    public String doAjax() throws Exception
+    public String doAjax() throws IOException, SystemException
     {
         try
         {

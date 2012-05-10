@@ -78,16 +78,14 @@ public class ContentTypeAttributeParameter
 	{
 		if(this.contentTypeAttributeParameterValues.values() != null && this.contentTypeAttributeParameterValues.values().toArray().length > 0)
 			return (ContentTypeAttributeParameterValue)this.contentTypeAttributeParameterValues.values().toArray()[0];
-		else
-			return null; 
+		return null; 
 	}
 
 	public ContentTypeAttributeParameterValue getContentTypeAttributeParameterValue(String key)
 	{
 		if(this.contentTypeAttributeParameterValues.size() > 0)
 			return (ContentTypeAttributeParameterValue)this.contentTypeAttributeParameterValues.get(key);
-		else
-			return null; 
+		return null; 
 	}
 	
 	public LinkedHashMap getContentTypeAttributeParameterValues()

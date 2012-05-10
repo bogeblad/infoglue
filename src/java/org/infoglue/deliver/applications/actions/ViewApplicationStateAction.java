@@ -26,7 +26,6 @@ package org.infoglue.deliver.applications.actions;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.net.InetAddress;
-import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,7 +57,6 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.CmsSessionContextListener;
 import org.infoglue.cms.util.sorters.AverageInvokingTimeComparator;
-import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
 import org.infoglue.deliver.portal.ServletConfigContainer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
@@ -154,7 +151,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         return category;
     }
 
-	private String handleAccess(HttpServletRequest request) throws Exception
+	private String handleAccess(HttpServletRequest request) throws Exception 
 	{
 		String returnValue = null;
 		
@@ -390,7 +387,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /**
      * This action allows setting of the loglevel on any class.
      */
-    public String doSetLogLevel() throws Exception
+    public String doSetLogLevel() 
     {
     	Level newLevel = Level.ERROR;
     	if(this.logLevel.equalsIgnoreCase("debug"))
@@ -423,11 +420,8 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /**
      * This action allows setting of the loglevel on some basic classes.
      */
-    public String doSetLogInfo() throws Exception
+    public String doSetLogInfo() 
     {
-        //ViewPageFilter.logger.setLevel(Level.INFO);
-        //ViewPageAction.logger.setLevel(Level.INFO);
-        //RedirectFilter.logger.setLevel(Level.INFO);
         CastorDatabaseService.logger.setLevel(Level.INFO);
         CacheController.logger.setLevel(Level.INFO);
         getDeliverCategory().setLevel(Level.INFO);
@@ -439,11 +433,8 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /**
      * This action allows setting of the loglevel on some basic classes.
      */
-    public String doSetLogWarning() throws Exception
+    public String doSetLogWarning() 
     {
-        //ViewPageFilter.logger.setLevel(Level.WARN);
-        //ViewPageAction.logger.setLevel(Level.WARN);
-        //RedirectFilter.logger.setLevel(Level.WARN);
         CastorDatabaseService.logger.setLevel(Level.WARN);
         CacheController.logger.setLevel(Level.WARN);
         getDeliverCategory().setLevel(Level.WARN);
@@ -455,11 +446,8 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /**
      * This action allows setting of the loglevel on some basic classes.
      */
-    public String doSetLogError() throws Exception
+    public String doSetLogError() 
     {
-        //ViewPageFilter.logger.setLevel(Level.ERROR);
-        //ViewPageAction.logger.setLevel(Level.ERROR);
-        //RedirectFilter.logger.setLevel(Level.ERROR);
         CastorDatabaseService.logger.setLevel(Level.ERROR);
         CacheController.logger.setLevel(Level.ERROR);
         getDeliverCategory().setLevel(Level.ERROR);
@@ -471,7 +459,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /**
      * This action allows clearing of the caches manually.
      */
-    public String doClearCaches() throws Exception
+    public String doClearCaches() throws Exception 
     {
     	String returnValue = handleAccess(this.getRequest());
     	if(returnValue != null)
@@ -525,7 +513,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /**
      * This action allows recaching of some parts of the caches manually.
      */
-    public String doClearPortlets() throws Exception
+    public String doClearPortlets() 
     {
         try 
         {
@@ -716,7 +704,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         return "successCacheDetailsStatistics";
     }
 
-    private String getRedirectUrl(HttpServletRequest request, HttpServletResponse response) throws ServletException, Exception 
+    private String getRedirectUrl(HttpServletRequest request, HttpServletResponse response) throws Exception 
   	{
 		String url = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), request, false).getLoginDialogUrl(request, response);
 		return url;
@@ -884,7 +872,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         this.clearFileCache = clearFileCache;
     }
 
-    public int getActiveNumberOfSessions() throws Exception
+    public int getActiveNumberOfSessions() 
     {
     	return CmsSessionContextListener.getActiveSessions();
     }

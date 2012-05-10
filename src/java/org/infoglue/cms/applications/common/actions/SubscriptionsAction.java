@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.applications.common.actions;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +49,7 @@ import org.infoglue.cms.entities.management.SubscriptionFilterVO;
 import org.infoglue.cms.entities.management.SubscriptionVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.SystemException;
 
 
 /** 
@@ -184,10 +187,7 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return SUCCESS;
-        }
+    	return SUCCESS;
     }
 
     
@@ -239,7 +239,7 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
 		return "inputGlobalSubscriptions";
     }
     
-    public String doGlobalSubscriptions() throws Exception
+    public String doGlobalSubscriptions() throws SystemException, UnsupportedEncodingException
     {
     	SubscriptionVO subscriptionVO = new SubscriptionVO();
     	subscriptionVO.setIsGlobal(true);
@@ -281,7 +281,7 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
     	return "successGlobalSubscriptions";
     }
 
-    public String doUpdateGlobalSubscription() throws Exception
+    public String doUpdateGlobalSubscription() throws SystemException, UnsupportedEncodingException
     {
     	SubscriptionVO subscriptionVO = subscriptionsController.getSubscriptionVOWithId(subscriptionId);
 
@@ -325,14 +325,14 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
     	return "successGlobalSubscriptions";
     }
 
-    public String doDeleteGlobalSubscription() throws Exception
+    public String doDeleteGlobalSubscription() throws SystemException
     {
     	subscriptionsController.delete(subscriptionId);
     	
     	return "successGlobalSubscriptions";
     }
         
-    public String doGetSubscriptionForm() throws Exception
+    public String doGetSubscriptionForm() throws SystemException, IOException
     {
     	SubscriptionVO subscriptionVO = subscriptionsController.getSubscriptionVOWithId(subscriptionId);
     	

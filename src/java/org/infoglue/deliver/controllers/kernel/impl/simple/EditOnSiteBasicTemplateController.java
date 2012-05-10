@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.ContentTypeAttribute;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
@@ -129,30 +128,9 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
             		"});" +
             		"</script>");
             
-            /*
-            decoratedAttributeValue.append("<script type=\"text/javascript\"><!-- var element = $(\"#attribute" + contentId + attributeName + "\");");
-            decoratedAttributeValue.append("alert('element:' + element); /*element.dblclick(function () { ");
-            decoratedAttributeValue.append("	" + setContentItemParametersJavascript + " editInline(" + this.getSiteNode().getRepositoryId() + "); ");
-            decoratedAttributeValue.append("});--></script>");
-            */
-            
-            /*
-            decoratedAttributeValue.append("<span class=\" " + className + "\" id=\"attribute" + contentId + attributeName + "\" ondblclick=\"\" oncontextmenu=\"setContentItemParameters(" );
-            decoratedAttributeValue.append( contentId ).append( "," ).append( languageId );
-            decoratedAttributeValue.append( ",'").append( attributeName ).append( "'); setEditUrl('");
-            decoratedAttributeValue.append( editOnSiteUrl ).append( "?contentId=" ).append( contentId );
-            decoratedAttributeValue.append( requestDelim ).append( "languageId=").append( languageId );
-            decoratedAttributeValue.append( requestDelim ).append( "attributeName=" ).append( attributeName );
-            decoratedAttributeValue.append( requestDelim ).append( "forceWorkingChange=true" );
-            decoratedAttributeValue.append( "#" + attributeName + "Anchor');\">" );
-            decoratedAttributeValue.append( attributeValue + "</span>");
-			*/
 			return decoratedAttributeValue.toString();
 	    }
-	    else
-	    {
-	        return "";
-	    }
+        return "";
 	} 
 	
 	/**
@@ -162,64 +140,6 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
 	public String decoratePage(String page)
 	{
 		String decoratedTemplate = page;
-		/*
-		try
-		{
-		    String extraHeader 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "preview/editOnSiteHeader.vm"));
-		    String extraBody 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "preview/editOnSiteBody.vm"));
-		    
-			String servletContext = request.getContextPath();
-			extraHeader = extraHeader.replaceAll("\\{applicationContext\\}", servletContext);
-			//logger.info("extraHeader:" + extraHeader);
-			
-			StringBuffer modifiedTemplate = new StringBuffer(page);
-			
-			//Adding stuff in the header
-			int indexOfHeadEndTag = modifiedTemplate.indexOf("</head");
-			if(indexOfHeadEndTag == -1)
-				indexOfHeadEndTag = modifiedTemplate.indexOf("</HEAD");
-			
-			if(indexOfHeadEndTag > -1)
-			{
-			    modifiedTemplate = modifiedTemplate.replace(indexOfHeadEndTag, modifiedTemplate.indexOf(">", indexOfHeadEndTag) + 1, extraHeader);
-			}
-			else
-			{
-				int indexOfHTMLStartTag = modifiedTemplate.indexOf("<html");
-				if(indexOfHTMLStartTag == -1)
-					indexOfHTMLStartTag = modifiedTemplate.indexOf("<HTML");
-		
-				if(indexOfHTMLStartTag > -1)
-				{
-					modifiedTemplate = modifiedTemplate.insert(modifiedTemplate.indexOf(">", indexOfHTMLStartTag) + 1, "<head>" + extraHeader);
-				}
-				else
-				{
-					logger.info("The current template is not a valid document. It does not comply with the simplest standards such as having a correct header.");
-				}
-			}
-
-			//Adding stuff in the body	
-			int indexOfBodyStartTag = modifiedTemplate.indexOf("<body");
-			if(indexOfBodyStartTag == -1)
-				indexOfBodyStartTag = modifiedTemplate.indexOf("<BODY");
-				
-			if(indexOfBodyStartTag > -1)
-			{
-				modifiedTemplate = modifiedTemplate.insert(modifiedTemplate.indexOf(">", indexOfBodyStartTag) + 1, extraBody);
-			}
-			else
-			{
-				logger.info("The current template is not a valid document. It does not comply with the simplest standards such as having a correct body.");
-			}
-			
-			decoratedTemplate = modifiedTemplate.toString();
-		}
-		catch(Exception e)
-		{
-			logger.warn("An error occurred when deliver tried to decorate your template to enable onSiteEditing. Reason " + e.getMessage(), e);
-		}
-		*/
 		return decoratedTemplate;
 	}
 	
@@ -343,9 +263,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
 	{
 		if(attributeName.equalsIgnoreCase(this.getTemplateAttributeName()))
 			return super.getContentAttribute(contentId, attributeName);
-			//return decorateTemplate(super.getContentAttribute(contentId, attributeName));		
-		else
-			return decorateTag(contentId, this.getLanguageId(), attributeName, super.getContentAttribute(contentId, attributeName));
+		return decorateTag(contentId, this.getLanguageId(), attributeName, super.getContentAttribute(contentId, attributeName));
 	}
 
 
@@ -579,75 +497,16 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
 	
 	
 	/**
-	 * This method deliveres a String with the URL to the digital asset asked for.
-	 * As the siteNode can have multiple bindings as well as a content as a parameter this
-	 * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
-	 */
-/*	 
-	public String getAssetUrl(String contentBindningName) 
-	{
-		return decorateTag(this.getContentId(), this.getLanguageId(), "", super.getAssetUrl(contentBindningName));
-	}
-*/
-	/**
-	 * This method deliveres a String with the URL to the digital asset asked for.
-	 */
-	/*	 
-	 
-	public String getAssetUrl(Integer contentId) 
-	{
-		return decorateTag(this.getContentId(), this.getLanguageId(), "", super.getAssetUrl(contentId));
-	}
-*/
-
-	/**
-	 * This method deliveres a String with the URL to the digital asset asked for.
-	 */
-	/*	 
-	 
-	public String getAssetUrl(Integer contentId, String assetKey) 
-	{
-		return decorateTag(this.getContentId(), this.getLanguageId(), assetKey, super.getAssetUrl(contentId, assetKey));
-	}
-*/
-
-	/**
-	 * This method deliveres a String with the URL to the digital asset asked for.
-	 * As the siteNode can have multiple bindings as well as a content as a parameter this
-	 * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
-	 */
-	/*	 
-	 
-	public String getAssetUrl(String contentBindningName, int index) 
-	{
-		return decorateTag(this.getContentId(), this.getLanguageId(), "", super.getAssetUrl(contentBindningName, index));
-	}
-*/
-
-	/**
-	 * This method deliveres a String with the URL to the digital asset asked for.
-	 * As the siteNode can have multiple bindings as well as a content as a parameter this
-	 * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
-	 */
-	/*	 
-	 
-	public String getAssetUrl(String contentBindningName, String assetKey) 
-	{
-		return decorateTag(this.getContentId(), this.getLanguageId(), assetKey, super.getAssetUrl(contentBindningName, assetKey));
-	}
-*/	
-	
-	/**
 	 * This method should be much more sophisticated later and include a check to see if there is a 
 	 * digital asset uploaded which is more specialized and can be used to act as serverside logic to the template.
 	 */
 	
-	public TemplateController getTemplateController(Integer siteNodeId, Integer languageId, Integer contentId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+	public TemplateController getTemplateController(Integer siteNodeId, Integer languageId, Integer contentId, InfoGluePrincipal infoGluePrincipal) 
 	{
 		return getTemplateController(siteNodeId, languageId, contentId, this.request, infoGluePrincipal);
 	}	
 	
-	public TemplateController getTemplateController(Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+	public TemplateController getTemplateController(Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal) 
 	{
 		TemplateController templateController = null;
 		templateController = new EditOnSiteBasicTemplateController(this.databaseWrapper, infoGluePrincipal);

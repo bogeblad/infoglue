@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the action class for the menu in the management tool.
@@ -61,7 +62,7 @@ public class ViewManagementToolMenuAction extends InfoGlueAbstractAction
     	return this.name;	
     }
     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
     	if(this.repositoryId != null && this.repositoryId.intValue() > 0)
     	{
@@ -72,7 +73,7 @@ public class ViewManagementToolMenuAction extends InfoGlueAbstractAction
         return "success";
     }
 
-    public String doV3() throws Exception
+    public String doV3() throws SystemException
     {
     	if(this.repositoryId != null && this.repositoryId.intValue() > 0)
     	{

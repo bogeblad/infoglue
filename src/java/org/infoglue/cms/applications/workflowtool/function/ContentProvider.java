@@ -38,29 +38,14 @@ public class ContentProvider extends InfoglueFunction
 {
     private final static Logger logger = Logger.getLogger(ContentProvider.class.getName());
 
-	/**
-	 * 
-	 */
 	public static final String CONTENT_ID_PROPERTYSET_KEY = ContentPopulator.CONTENT_PROPERTYSET_PREFIX + "contentID";
 	
-	/**
-	 * 
-	 */
 	private LanguageVO languageVO;
 	
-	/**
-	 * 
-	 */
 	private ContentVO contentVO;
 	
-	/**
-	 * 
-	 */
 	private ContentVersionVO contentVersionVO;
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		initializeContentVO();
@@ -76,50 +61,33 @@ public class ContentProvider extends InfoglueFunction
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void setContentVO(final ContentVO contentVO)
 	{
 		this.contentVO = contentVO;
 	}
 	
-	/**
-	 * 
-	 */
 	protected void setContentVersionVO(final ContentVersionVO contentVersionVO)
 	{
 		this.contentVersionVO = contentVersionVO;
 	}
 	
-	/**
-	 * 
-	 */
 	protected final LanguageVO getLanguageVO()
 	{
 		return this.languageVO;
 	}
 
-	/**
-	 * 
-	 */
 	protected String getContentParameterName()
 	{
 		return ContentFunction.CONTENT_PARAMETER;
 	}
 	
-	/**
-	 * 
-	 */
 	protected String getContentVersionParameterName()
 	{
 		return ContentFunction.CONTENT_VERSION_PARAMETER;
 	}
 	
-	/**
-	 * 
-	 */
-	protected void initializeContentVO() throws WorkflowException
+	// WorkflowException needs to be thrown as it is needed for subclass =/
+	protected void initializeContentVO() throws WorkflowException 
 	{
 		if(!propertySetContains(CONTENT_ID_PROPERTYSET_KEY))
 		{
@@ -137,9 +105,6 @@ public class ContentProvider extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	protected void initializeContentVersionVO() throws WorkflowException
 	{
 		if(contentVO != null)

@@ -41,24 +41,12 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class ContentPublisher extends ContentFunction 
 {
-	/**
-	 * 
-	 */
 	private static final String STATUS_OK = "status.publish.ok";
 	
-	/**
-	 * 
-	 */
 	private static final String STATUS_NOK = "status.publish.nok";
 
-	/**
-	 * 
-	 */
 	private static final String STATUS_MORE_VERSIONS = "status.publish.okwithmoreworkingversions";
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		setFunctionStatus(STATUS_NOK);
@@ -68,9 +56,6 @@ public class ContentPublisher extends ContentFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void publish() throws WorkflowException 
 	{
 		try 
@@ -93,10 +78,6 @@ public class ContentPublisher extends ContentFunction
 						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(getContentVO().getId(), languageVO.getId(), getDatabase());
 						if(contentVersionVO != null && contentVersionVO.getStateId().intValue() == ContentVersionVO.WORKING_STATE.intValue())
 						{
-							if(languageVO == null && propertySetContains(LanguageProvider.LANGUAGE_PROPERTYSET_KEY))
-							{
-								removeFromPropertySet(LanguageProvider.LANGUAGE_PROPERTYSET_KEY);
-							}
 							if(languageVO != null) 
 							{
 								setParameter(LanguageProvider.LANGUAGE_PARAMETER, languageVO);
@@ -121,9 +102,6 @@ public class ContentPublisher extends ContentFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private PublicationVO createPublicationVO() 
 	{
 	    final PublicationVO publicationVO = new PublicationVO();

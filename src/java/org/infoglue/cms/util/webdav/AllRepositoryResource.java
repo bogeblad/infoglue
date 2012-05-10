@@ -19,16 +19,15 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import com.bradmcevoy.http.Auth;
 import com.bradmcevoy.http.CollectionResource;
 import com.bradmcevoy.http.FolderResource;
-import com.bradmcevoy.http.PropFindableResource;
 import com.bradmcevoy.http.Range;
 import com.bradmcevoy.http.Request;
-import com.bradmcevoy.http.Resource;
 import com.bradmcevoy.http.Request.Method;
+import com.bradmcevoy.http.Resource;
 import com.bradmcevoy.http.exceptions.BadRequestException;
 import com.bradmcevoy.http.exceptions.ConflictException;
 import com.bradmcevoy.http.exceptions.NotAuthorizedException;
 
-public class AllRepositoryResource implements PropFindableResource, FolderResource //, DigestResource
+public class AllRepositoryResource implements FolderResource
 {
 	private final static Logger logger = Logger.getLogger(AllRepositoryResource.class.getName());
 

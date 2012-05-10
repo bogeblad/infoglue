@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowDefinitionController;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the action class for viewContentTypeDefinition.
@@ -45,9 +46,10 @@ public class ViewWorkflowDefinitionAction extends InfoGlueAbstractAction
 	
     /**
      * The main method that fetches the Value-object for this use-case
+     * @throws SystemException 
      */
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
         this.workflowDefinitionVO = WorkflowDefinitionController.getController().getWorkflowDefinitionVOWithId(workflowDefinitionId);
 

@@ -82,7 +82,7 @@ public class AccessRightRoleParameterTag extends AbstractTag
 			throw new JspTagException("AccessRightRoleParameterTag must have a AccessRightParameterTag ancestor.");
 		}
 		
-		((AccessRightParameterTag) parent).addAccessRightRole(roleName);
+		parent.addAccessRightRole(roleName);
 	}
 	
 	/**

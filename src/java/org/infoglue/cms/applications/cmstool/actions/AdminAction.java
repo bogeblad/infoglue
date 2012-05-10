@@ -36,25 +36,23 @@ public class AdminAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = -2904286525405758091L;
 	
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";
-		else
-			return "success";
+		return "success";
     }
 
-	public String doEmbla() throws Exception
+	public String doEmbla() 
     {
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
 		if(preferredGUI.equalsIgnoreCase("classic"))
 			return "successClassic";
-		else
-			return "successEmbla";
+		return "successEmbla";
     }
 	
-	public String doResetGUI() throws Exception
+	public String doResetGUI() 
     {
 		this.getHttpSession().removeAttribute("repositoryId");
 		setLanguageCode(CmsPropertyHandler.getPreferredLanguageCode(getUserName()));

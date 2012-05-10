@@ -79,16 +79,10 @@ public class StringValidator extends AbstractValidator {
     this(fieldName, isRequired, new Range());
   }
 
-  /**
-   *
-   */
   public StringValidator(String fieldName, boolean isRequired, int upperLengthLimit) {
     this(fieldName, isRequired, 0, upperLengthLimit);
   }
 
-  /**
-   *
-   */
   public StringValidator(String fieldName, boolean isRequired, int lowerLengthLimit, int upperLengthLimit) {
     this(fieldName, isRequired, new Range(lowerLengthLimit, upperLengthLimit));
   }
@@ -111,9 +105,6 @@ public class StringValidator extends AbstractValidator {
 		this.range = new Range(lowerLengthLimit, upperLengthLimit);
 	}
 
-  /**
-   *
-   */
   public StringValidator(String fieldName, boolean isRequired, Range range) {
     super(fieldName, isRequired);
     this.range = range;
@@ -124,9 +115,6 @@ public class StringValidator extends AbstractValidator {
 
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public void validate(String value) throws ConstraintException {
     validateIsRequired(value);
     if(value == null) { // no validation needed + no need for further null checking
@@ -155,18 +143,12 @@ public class StringValidator extends AbstractValidator {
     }
   }  
 
-  /**
-   *
-   */
   private void validateLength(String value) {
     if(!this.range.isWithinLimits(value.length())) {
       addConstraintException(INVALID_LENGTH_ERROR_CODE);
     }
   }
 
-  /**
-   *
-   */
   private void validatePattern(String value) {
 	if(this.pattern != null && !RegexpHelper.match(this.pattern, value)) {
       addConstraintException(this.patternErrorCode);
@@ -178,9 +160,6 @@ public class StringValidator extends AbstractValidator {
   // --- [X implementation] ----------------------------------------------------
   // --- [AbstractValidator Overrides] -----------------------------------------
 
-  /**
-   *
-   */
   protected void validateIsRequired(Object value) throws ConstraintException {
     super.validateIsRequired(value);
     if(value != null) {
@@ -198,9 +177,6 @@ public class StringValidator extends AbstractValidator {
   // --- [Private] -------------------------------------------------------------
   // --- [Protected] -----------------------------------------------------------
 
-  /**
-   *
-   */
   protected void initializePattern(String pattern, String patternErrorCode) {
     this.pattern          = pattern;
     this.patternErrorCode = patternErrorCode;

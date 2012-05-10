@@ -34,6 +34,8 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -132,7 +134,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		return ContentTypeDefinitionController.getController().getDefinedAssetKeys(this.contentTypeDefinitionVO, true);
 	}
 	
-    public String doMultiple() throws Exception //throws Exception
+    public String doMultiple() throws Exception
     {
     	logger.info("Uploading file....");
     	this.principal = getInfoGluePrincipal();
@@ -177,16 +179,13 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 	        this.getResponse().getWriter().println(assetThumbnailUrl + ":" + this.digitalAssetKey);
 	        return NONE;
 		}
-		else
-		{
-			this.getResponse().setContentType("text/plain");
-            this.getResponse().setStatus(this.getResponse().SC_INTERNAL_SERVER_ERROR);
-            this.getResponse().getWriter().println("Error uploading to " + this.digitalAssetKey);
-            return NONE;
-		}
+		this.getResponse().setContentType("text/plain");
+        this.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        this.getResponse().getWriter().println("Error uploading to " + this.digitalAssetKey);
+        return NONE;
 	}
     
-    public String doExecute() throws IOException //throws Exception
+    public String doExecute() throws IOException
     {
     	logger.info("Uploading file....");
     	if(this.principal == null)
@@ -233,246 +232,239 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 			
 	    	try 
 	    	{
-	    		if(mpr != null)
-	    		{ 
-		    		Enumeration names = mpr.getFileNames();
-		         	while (names.hasMoreElements()) 
-		         	{
-		            	String name 		  = (String)names.nextElement();
-						String contentType    = mpr.getContentType(name);
-						String fileSystemName = mpr.getFilesystemName(name);
+	    		Enumeration names = mpr.getFileNames();
+	         	while (names.hasMoreElements()) 
+	         	{
+	            	String name 		  = (String)names.nextElement();
+					String contentType    = mpr.getContentType(name);
+					String fileSystemName = mpr.getFilesystemName(name);
 
-						String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
-						if(fromEncoding == null)
-							fromEncoding = "iso-8859-1";
-						
-						String toEncoding = CmsPropertyHandler.getUploadToEncoding();
-						if(toEncoding == null)
-							toEncoding = "utf-8";
-						
-		            	digitalAssetKey = new String(digitalAssetKey.getBytes(fromEncoding), toEncoding);
-		            			            	
-		            	logger.info("digitalAssetKey:" + digitalAssetKey);
-		            	logger.info("name:" + name);
-		            	logger.info("contentType:" + contentType);
-		            	logger.info("fileSystemName:" + fileSystemName);
-		            	if(digitalAssetKey == null || digitalAssetKey.equals(""))
-		            	{
-		            		if(fileSystemName.lastIndexOf(".") > -1)
-		            			digitalAssetKey = fileSystemName.substring(0, fileSystemName.lastIndexOf("."));
+					String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
+					if(fromEncoding == null)
+						fromEncoding = "iso-8859-1";
+					
+					String toEncoding = CmsPropertyHandler.getUploadToEncoding();
+					if(toEncoding == null)
+						toEncoding = "utf-8";
+					
+	            	digitalAssetKey = new String(digitalAssetKey.getBytes(fromEncoding), toEncoding);
+	            			            	
+	            	logger.info("digitalAssetKey:" + digitalAssetKey);
+	            	logger.info("name:" + name);
+	            	logger.info("contentType:" + contentType);
+	            	logger.info("fileSystemName:" + fileSystemName);
+	            	if(digitalAssetKey == null || digitalAssetKey.equals(""))
+	            	{
+	            		if(fileSystemName.lastIndexOf(".") > -1)
+	            			digitalAssetKey = fileSystemName.substring(0, fileSystemName.lastIndexOf("."));
+	            		
+	            		digitalAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetKey, CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+	            		//digitalAssetKey = formatter.replaceNonAscii(digitalAssetKey, '_');
+	            	}
+	            	logger.info("digitalAssetKey:" + digitalAssetKey);
+	            	
+	            	if(useFileNameAsContentTypeBase)
+	            	{
+	            		if(fileSystemName.lastIndexOf(".") > -1)
+	            		{
+	            			String extension = fileSystemName.substring(fileSystemName.lastIndexOf(".") + 1);
+	            			logger.info("extension:" + extension);	
+
+	            			if(extension.equalsIgnoreCase("gif"))
+		            			contentType = "image/gif";
+		            		else if(extension.equalsIgnoreCase("jpg"))
+		            			contentType = "image/jpg";
+		            		else if(extension.equalsIgnoreCase("png"))
+		            			contentType = "image/png";
 		            		
-		            		digitalAssetKey = formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetKey, CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-		            		//digitalAssetKey = formatter.replaceNonAscii(digitalAssetKey, '_');
-		            	}
-		            	logger.info("digitalAssetKey:" + digitalAssetKey);
-		            	
-		            	if(useFileNameAsContentTypeBase)
-		            	{
-		            		if(fileSystemName.lastIndexOf(".") > -1)
-		            		{
-		            			String extension = fileSystemName.substring(fileSystemName.lastIndexOf(".") + 1);
-		            			logger.info("extension:" + extension);	
+		            		else if(extension.equalsIgnoreCase("pdf"))
+		            			contentType = "application/pdf";
+		            		else if(extension.equalsIgnoreCase("doc"))
+		            			contentType = "application/msword";
+		            		else if(extension.equalsIgnoreCase("xls"))
+		            			contentType = "application/vnd.ms-excel";
+		            		else if(extension.equalsIgnoreCase("ppt"))
+		            			contentType = "application/vnd.ms-powerpoint";
+		            		else if(extension.equalsIgnoreCase("zip"))
+		            			contentType = "application/zip";
+		            		else if(extension.equalsIgnoreCase("xml"))
+		            			contentType = "text/xml";		            		
+	            		}
+	            	}
+	            	logger.info("contentType:" + contentType);
+	            	
+	            	file = mpr.getFile(name);
+					String fileName = fileSystemName;
 
-		            			if(extension.equalsIgnoreCase("gif"))
-			            			contentType = "image/gif";
-			            		else if(extension.equalsIgnoreCase("jpg"))
-			            			contentType = "image/jpg";
-			            		else if(extension.equalsIgnoreCase("png"))
-			            			contentType = "image/png";
-			            		
-			            		else if(extension.equalsIgnoreCase("pdf"))
-			            			contentType = "application/pdf";
-			            		else if(extension.equalsIgnoreCase("doc"))
-			            			contentType = "application/msword";
-			            		else if(extension.equalsIgnoreCase("xls"))
-			            			contentType = "application/vnd.ms-excel";
-			            		else if(extension.equalsIgnoreCase("ppt"))
-			            			contentType = "application/vnd.ms-powerpoint";
-			            		else if(extension.equalsIgnoreCase("zip"))
-			            			contentType = "application/zip";
-			            		else if(extension.equalsIgnoreCase("xml"))
-			            			contentType = "text/xml";		            		
-		            		}
-		            	}
-		            	logger.info("contentType:" + contentType);
-		            	
-		            	file = mpr.getFile(name);
-						String fileName = fileSystemName;
+	            	logger.info("fileSystemName:" + fileSystemName);
 
-		            	logger.info("fileSystemName:" + fileSystemName);
+	            	fileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(fileName, CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+            		//fileName = formatter.replaceNonAscii(fileName, '_');
+					
+					String tempFileName = "tmp_" + System.currentTimeMillis() + "_" + fileName;
+	            	//String filePath = file.getParentFile().getPath();
+	            	String filePath = CmsPropertyHandler.getDigitalAssetPath();
+	            	fileSystemName = filePath + File.separator + tempFileName;
+	            							
+	            	DigitalAssetVO newAsset = new DigitalAssetVO();
+					newAsset.setAssetContentType(contentType);
+					newAsset.setAssetKey(digitalAssetKey);
+					newAsset.setAssetFileName(fileName);
+					newAsset.setAssetFilePath(filePath);
+					newAsset.setAssetFileSize(new Integer(new Long(file.length()).intValue()));
+					//is = new FileInputStream(renamedFile);
+					if(CmsPropertyHandler.getEnableDiskAssets().equals("false"))
+						is = new FileInputStream(file);
 
-		            	fileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(fileName, CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-	            		//fileName = formatter.replaceNonAscii(fileName, '_');
-						
-						String tempFileName = "tmp_" + System.currentTimeMillis() + "_" + fileName;
-		            	//String filePath = file.getParentFile().getPath();
-		            	String filePath = CmsPropertyHandler.getDigitalAssetPath();
-		            	fileSystemName = filePath + File.separator + tempFileName;
-		            							
-		            	DigitalAssetVO newAsset = new DigitalAssetVO();
-						newAsset.setAssetContentType(contentType);
-						newAsset.setAssetKey(digitalAssetKey);
-						newAsset.setAssetFileName(fileName);
-						newAsset.setAssetFilePath(filePath);
-						newAsset.setAssetFileSize(new Integer(new Long(file.length()).intValue()));
-						//is = new FileInputStream(renamedFile);
-						if(CmsPropertyHandler.getEnableDiskAssets().equals("false"))
-							is = new FileInputStream(file);
-
-		            	List existingAssetVOList = DigitalAssetController.getDigitalAssetVOList(contentVersionId);
-		            	Iterator existingAssetVOListIterator = existingAssetVOList.iterator();
-		            	while(existingAssetVOListIterator.hasNext())
-		            	{
-		            		DigitalAssetVO existingDigitalAssetVO = (DigitalAssetVO)existingAssetVOListIterator.next();
-		            		if(existingDigitalAssetVO.getAssetKey().equalsIgnoreCase(digitalAssetKey))
-		            		{
-							    file.delete();
-							    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnAssetKeyExistingText";
-				                this.uploadMaxSize = "\"" + digitalAssetKey + "\"";
-				                this.getResponse().setContentType("text/html; charset=UTF-8");
-				    	        //this.getResponse().setStatus(responseCode);
-				                logger.info("this.getResponse():" + this.getResponse());
-				                this.getResponse().setHeader("sendIGError", "true");
-				    	        
-			                	return "uploadFailed";						        
-		            		}
-		            	}
-
-						String fileUploadMaximumSize = getPrincipalPropertyValue(this.principal, "fileUploadMaximumSize", false, true);
-						logger.info("fileUploadMaximumSize in create:" + fileUploadMaximumSize);
-						if(!fileUploadMaximumSize.equalsIgnoreCase("-1") && new Integer(fileUploadMaximumSize).intValue() < new Long(file.length()).intValue())
-						{
+	            	List existingAssetVOList = DigitalAssetController.getDigitalAssetVOList(contentVersionId);
+	            	Iterator existingAssetVOListIterator = existingAssetVOList.iterator();
+	            	while(existingAssetVOListIterator.hasNext())
+	            	{
+	            		DigitalAssetVO existingDigitalAssetVO = (DigitalAssetVO)existingAssetVOListIterator.next();
+	            		if(existingDigitalAssetVO.getAssetKey().equalsIgnoreCase(digitalAssetKey))
+	            		{
 						    file.delete();
-						    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
-			                this.uploadMaxSize = "(Max " + formatter.formatFileSize(fileUploadMaximumSize) + ")";
-		                	return "uploadFailed";
-						}
-						
-						if(this.contentTypeDefinitionId != null && digitalAssetKey != null)
-						{
-							this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(this.contentTypeDefinitionId);
-							AssetKeyDefinition assetKeyDefinition = ContentTypeDefinitionController.getController().getDefinedAssetKey(contentTypeDefinitionVO, true, digitalAssetKey);
-							
-							if(assetKeyDefinition != null)
-							{
-								if(assetKeyDefinition.getMaximumSize().intValue() < new Long(file.length()).intValue())
-								{   
-								    file.delete();
-								    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
-								    this.uploadMaxSize = "(Max " + formatter.formatFileSize(assetKeyDefinition.getMaximumSize()) + ")";
-				                	return "uploadFailed";
-								}
-								if(assetKeyDefinition.getAllowedContentTypes().startsWith("image"))
-								{
-								    if(!contentType.startsWith("image"))
-								    {
-									    file.delete();
-									    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnTypeNotImageText";
-					                	return "uploadFailed";						        
-								    }
-		
-								    Image image = javax.imageio.ImageIO.read(file);
-								    int width = image.getWidth(null);
-								    int height = image.getHeight(null);
-								    
-								    String allowedWidth = assetKeyDefinition.getImageWidth();
-								    String allowedHeight = assetKeyDefinition.getImageHeight();
-								    
-								    if(!allowedWidth.equals("*"))
-								    {
-								        Integer allowedWidthNumber = new Integer(allowedWidth.substring(1));
-								        if(allowedWidth.startsWith("<") && width >= allowedWidthNumber.intValue())
-								        {
-									        file.delete();
-										    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageToWideText";
-						                	return "uploadFailed";			
-								        }
-								        if(allowedWidth.startsWith(">") && width <= allowedWidthNumber.intValue())
-								        {
-									        file.delete();
-										    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageNotWideEnoughText";
-						                	return "uploadFailed";			
-								        }
-								        if(!allowedWidth.startsWith(">") && !allowedWidth.startsWith("<") && width != new Integer(allowedWidth).intValue())
-								        {
-								            file.delete();
-										    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageWrongWidthText";
-						                	return "uploadFailed";	
-								        }
-								    }
-								    
-								    if(!allowedHeight.equals("*"))
-								    {
-								        Integer allowedHeightNumber = new Integer(allowedHeight.substring(1));
-								        if(allowedHeight.startsWith("<") && height >= allowedHeightNumber.intValue())
-								        {
-									        file.delete();
-										    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageToHighText";
-						                	return "uploadFailed";			
-								        }
-								        if(allowedHeight.startsWith(">") && height <= allowedHeightNumber.intValue())
-								        {
-									        file.delete();
-										    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageNotHighEnoughText";
-						                	return "uploadFailed";			
-								        }
-								        if(!allowedHeight.startsWith(">") && !allowedHeight.startsWith("<") && height != new Integer(allowedHeight).intValue())
-								        {
-								            file.delete();
-										    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageWrongHeightText";
-						                	return "uploadFailed";	
-								        }
-								    }
-								}
-							}
-						}
-						
-						boolean keepOriginal = true;
-						if(this.contentVersionId != null)
-						{
-							AssetKeyDefinition assetKeyDefinition = ContentTypeDefinitionController.getController().getDefinedAssetKey(contentTypeDefinitionVO, true, digitalAssetKey);
-							
-							keepOriginal = handleTransformations(newAsset, file, contentType, assetKeyDefinition, contentTypeDefinitionVO);
-						    if(keepOriginal)
-						    {
-						    	List<Integer> newContentVersionIdList = new ArrayList<Integer>();
-						    	digitalAssetVO = DigitalAssetController.create(newAsset, is, this.contentVersionId, this.getInfoGluePrincipal(), newContentVersionIdList);
-						    	if(newContentVersionIdList.size() > 0)
-						    	{
-						    		Integer newContentVersionId = newContentVersionIdList.get(0);
-						    		if(this.contentVersionId != newContentVersionId)
-							    		refreshAll = true;
-						    		setContentVersionId(newContentVersionId);
-						    	}
-						    }
-						}
-						else
-						{
-							digitalAssetVO = DigitalAssetController.create(newAsset, is, this.entity, this.entityId);
-						}
+						    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnAssetKeyExistingText";
+			                this.uploadMaxSize = "\"" + digitalAssetKey + "\"";
+			                this.getResponse().setContentType("text/html; charset=UTF-8");
+			    	        //this.getResponse().setStatus(responseCode);
+			                logger.info("this.getResponse():" + this.getResponse());
+			                this.getResponse().setHeader("sendIGError", "true");
+			    	        
+		                	return "uploadFailed";						        
+	            		}
+	            	}
 
-						if(CmsPropertyHandler.getEnableDiskAssets().equals("true"))
+					String fileUploadMaximumSize = getPrincipalPropertyValue(this.principal, "fileUploadMaximumSize", false, true);
+					logger.info("fileUploadMaximumSize in create:" + fileUploadMaximumSize);
+					if(!fileUploadMaximumSize.equalsIgnoreCase("-1") && new Integer(fileUploadMaximumSize).intValue() < new Long(file.length()).intValue())
+					{
+					    file.delete();
+					    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
+		                this.uploadMaxSize = "(Max " + formatter.formatFileSize(fileUploadMaximumSize) + ")";
+	                	return "uploadFailed";
+					}
+					
+					if(this.contentTypeDefinitionId != null && digitalAssetKey != null)
+					{
+						this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(this.contentTypeDefinitionId);
+						AssetKeyDefinition assetKeyDefinition = ContentTypeDefinitionController.getController().getDefinedAssetKey(contentTypeDefinitionVO, true, digitalAssetKey);
+						
+						if(assetKeyDefinition != null)
 						{
-							if(keepOriginal)
+							if(assetKeyDefinition.getMaximumSize().intValue() < new Long(file.length()).intValue())
+							{   
+							    file.delete();
+							    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
+							    this.uploadMaxSize = "(Max " + formatter.formatFileSize(assetKeyDefinition.getMaximumSize()) + ")";
+			                	return "uploadFailed";
+							}
+							if(assetKeyDefinition.getAllowedContentTypes().startsWith("image"))
 							{
-								//String assetFileName = "" + digitalAssetVO.getAssetFilePath() + File.separator + digitalAssetVO.getId() + "_" + digitalAssetVO.getAssetFileName();
-								String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
-								String assetFileName = "" + digitalAssetVO.getAssetFilePath() + File.separator + folderName + File.separator + digitalAssetVO.getId() + "_" + digitalAssetVO.getAssetFileName();
-								//logger.info("newAsset:" + assetFileName);
-								File assetFile = new File(assetFileName);
-								//logger.info("Renaming:" + file.getAbsolutePath() + " to " + assetFile.getAbsolutePath());
-								file.renameTo(assetFile);
-								//logger.info("apaFile:" + assetFile.exists());
+							    if(!contentType.startsWith("image"))
+							    {
+								    file.delete();
+								    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnTypeNotImageText";
+				                	return "uploadFailed";						        
+							    }
+	
+							    Image image = javax.imageio.ImageIO.read(file);
+							    int width = image.getWidth(null);
+							    int height = image.getHeight(null);
+							    
+							    String allowedWidth = assetKeyDefinition.getImageWidth();
+							    String allowedHeight = assetKeyDefinition.getImageHeight();
+							    
+							    if(!allowedWidth.equals("*"))
+							    {
+							        Integer allowedWidthNumber = new Integer(allowedWidth.substring(1));
+							        if(allowedWidth.startsWith("<") && width >= allowedWidthNumber.intValue())
+							        {
+								        file.delete();
+									    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageToWideText";
+					                	return "uploadFailed";			
+							        }
+							        if(allowedWidth.startsWith(">") && width <= allowedWidthNumber.intValue())
+							        {
+								        file.delete();
+									    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageNotWideEnoughText";
+					                	return "uploadFailed";			
+							        }
+							        if(!allowedWidth.startsWith(">") && !allowedWidth.startsWith("<") && width != new Integer(allowedWidth).intValue())
+							        {
+							            file.delete();
+									    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageWrongWidthText";
+					                	return "uploadFailed";	
+							        }
+							    }
+							    
+							    if(!allowedHeight.equals("*"))
+							    {
+							        Integer allowedHeightNumber = new Integer(allowedHeight.substring(1));
+							        if(allowedHeight.startsWith("<") && height >= allowedHeightNumber.intValue())
+							        {
+								        file.delete();
+									    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageToHighText";
+					                	return "uploadFailed";			
+							        }
+							        if(allowedHeight.startsWith(">") && height <= allowedHeightNumber.intValue())
+							        {
+								        file.delete();
+									    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageNotHighEnoughText";
+					                	return "uploadFailed";			
+							        }
+							        if(!allowedHeight.startsWith(">") && !allowedHeight.startsWith("<") && height != new Integer(allowedHeight).intValue())
+							        {
+							            file.delete();
+									    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnImageWrongHeightText";
+					                	return "uploadFailed";	
+							        }
+							    }
 							}
 						}
+					}
+					
+					boolean keepOriginal = true;
+					if(this.contentVersionId != null)
+					{
+						AssetKeyDefinition assetKeyDefinition = ContentTypeDefinitionController.getController().getDefinedAssetKey(contentTypeDefinitionVO, true, digitalAssetKey);
 						
-						this.uploadedFilesCounter = new Integer(this.uploadedFilesCounter.intValue() + 1);
-		         	}
-	    		}
-	    		else
-	    		{
-	    		    logger.error("File upload failed for some reason.");
-	    		}
+						keepOriginal = handleTransformations(newAsset, file, contentType, assetKeyDefinition, contentTypeDefinitionVO);
+					    if(keepOriginal)
+					    {
+					    	List<Integer> newContentVersionIdList = new ArrayList<Integer>();
+					    	digitalAssetVO = DigitalAssetController.create(newAsset, is, this.contentVersionId, this.getInfoGluePrincipal(), newContentVersionIdList);
+					    	if(newContentVersionIdList.size() > 0)
+					    	{
+					    		Integer newContentVersionId = newContentVersionIdList.get(0);
+					    		if(this.contentVersionId != newContentVersionId)
+						    		refreshAll = true;
+					    		setContentVersionId(newContentVersionId);
+					    	}
+					    }
+					}
+					else
+					{
+						digitalAssetVO = DigitalAssetController.create(newAsset, is, this.entity, this.entityId);
+					}
+
+					if(CmsPropertyHandler.getEnableDiskAssets().equals("true"))
+					{
+						if(keepOriginal)
+						{
+							//String assetFileName = "" + digitalAssetVO.getAssetFilePath() + File.separator + digitalAssetVO.getId() + "_" + digitalAssetVO.getAssetFileName();
+							String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
+							String assetFileName = "" + digitalAssetVO.getAssetFilePath() + File.separator + folderName + File.separator + digitalAssetVO.getId() + "_" + digitalAssetVO.getAssetFileName();
+							//logger.info("newAsset:" + assetFileName);
+							File assetFile = new File(assetFileName);
+							//logger.info("Renaming:" + file.getAbsolutePath() + " to " + assetFile.getAbsolutePath());
+							file.renameTo(assetFile);
+							//logger.info("apaFile:" + assetFile.exists());
+						}
+					}
+					
+					this.uploadedFilesCounter = new Integer(this.uploadedFilesCounter.intValue() + 1);
+	         	}
 	      	} 
 	      	catch (Throwable e) 
 	      	{
@@ -670,7 +662,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl() throws Exception
+	public String getDigitalAssetUrl()
 	{
 		String imageHref = null;
 		try

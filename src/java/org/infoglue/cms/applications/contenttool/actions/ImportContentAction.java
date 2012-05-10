@@ -36,6 +36,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Unmarshaller;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
@@ -59,7 +60,6 @@ import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.InfoGlueExportImpl;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
-import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.FileUploadHelper;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
@@ -87,7 +87,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 	 * @throws Exception
 	 */	
 
-	public String doInput() throws Exception
+	public String doInput()
 	{
 		return "input";
 	}
@@ -106,7 +106,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 		try 
 		{
 			//now restore the value and list what we get
-			File file = FileUploadHelper.getUploadedFile(ActionContext.getContext().getMultiPartRequest());
+			File file = FileUploadHelper.getUploadedFile(ActionContext.getMultiPartRequest());
 			if(file == null || !file.exists())
 				throw new SystemException("The file upload must have gone bad as no file reached the import utility.");
 			
@@ -159,7 +159,7 @@ public class ImportContentAction extends InfoGlueAbstractAction
 			{
 				Content readContent = (Content)readContentsIterator.next();
 				
-				readContent.setRepository((RepositoryImpl)parentContent.getRepository());
+				readContent.setRepository(parentContent.getRepository());
 				readContent.setParentContent((ContentImpl)parentContent);
 				
 				createContents(readContent, contentIdMap, contentTypeIdMap, allContents, Collections.unmodifiableCollection(contentTypeDefinitions), categoryIdMap, version, db);
@@ -305,10 +305,9 @@ public class ImportContentAction extends InfoGlueAbstractAction
 	 * 
 	 * @param siteNode
 	 * @param db
-	 * @throws Exception
 	 */
 	
-	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db) throws Exception
+	private List createContents(Content content, Map idMap, Map contentTypeDefinitionIdMap, List allContents, Collection contentTypeDefinitions, Map categoryIdMap, int version, Database db) throws SystemException, PersistenceException
 	{
 		ContentTypeDefinition contentTypeDefinition = null;
 		

@@ -32,59 +32,38 @@ import org.infoglue.cms.util.sorters.ContentSort;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 public class ContentSortTag extends TemplateControllerTag {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3257003254859576632L;
 
 	private ContentSort sorter;
 	private Collection input = new ArrayList();
 	private String comparatorClass;
 
-	/**
-	 *
-	 */
     public ContentSortTag()
     {
         super();
     }
 
-	/**
-	 * 
-	 */
 	public int doStartTag() throws JspException 
 	{
 		sorter = new ContentSort(getController(), input);
 		return EVAL_BODY_INCLUDE;
 	}
 	
-	/**
-	 * 
-	 */
 	public void addContentProperty(final String name, final boolean ascending) 
 	{
 		sorter.addContentProperty(name, ascending);
 	}
 	
-	/**
-	 * 
-	 */
 	public void addContentVersionProperty(final String name, final boolean ascending) 
 	{
 		sorter.addContentVersionProperty(name, ascending);
 	}
 	
-	/**
-	 * 
-	 */
 	public void addContentVersionAttribute(final String name, final String className, final boolean ascending, final boolean caseSensitive) 
 	{
 		sorter.addContentVersionAttribute(name, className, ascending, caseSensitive);
 	}
 	
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException
     {
 		if(comparatorClass!=null && !comparatorClass.equals("")) 
@@ -104,9 +83,6 @@ public class ContentSortTag extends TemplateControllerTag {
         return EVAL_PAGE;
     }
 	
-	/**
-	 * 
-	 */
 	public void setInput(final String input) throws JspException
 	{
 		this.input = evaluateCollection("contentSort", "input", input);

@@ -66,7 +66,7 @@ public class CreateGroupAction extends InfoGlueAbstractAction
 		this.ceb = new ConstraintExceptionBuffer();
 	}
 		
-	public String doInput() throws Exception
+	public String doInput()
     {
     	return "input";
     }

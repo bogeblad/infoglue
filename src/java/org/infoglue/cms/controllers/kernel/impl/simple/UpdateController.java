@@ -139,9 +139,6 @@ public class UpdateController extends BaseController
 {
 	private final static Logger logger = Logger.getLogger(UpdateController.class.getName());
 
-	/**
-	 * 
-	 */
 	
 	// Initial handling of compatibility in the server response.
 	// Make this better later
@@ -152,7 +149,7 @@ public class UpdateController extends BaseController
 	private String url = "";
 	Mapping mapping;
 	
-	public UpdateController(String url, String path) throws FileNotFoundException, IOException, MappingException 
+	public UpdateController(String url, String path) throws FileNotFoundException, IOException 
 	{
 		// set variables
 		// Create and load the castor xml mapping
@@ -384,7 +381,7 @@ public class UpdateController extends BaseController
 		
 	}
 
-	public void unInstallPackage(String updatePackageId, PrintWriter out) throws MalformedURLException
+	public void unInstallPackage(String updatePackageId, PrintWriter out)
 	{
 		// Find the update with id updatePackageId
 		Vector updates = getInstalledUpdates();
@@ -460,7 +457,7 @@ public class UpdateController extends BaseController
         }
 	}
 	
-	public void unInstallPackage(UpdatePackage upd, final PrintWriter out) throws MalformedURLException
+	public void unInstallPackage(UpdatePackage upd, final PrintWriter out)
 	{
 		
 		/* TODO:

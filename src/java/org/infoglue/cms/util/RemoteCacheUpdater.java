@@ -159,7 +159,7 @@ public class RemoteCacheUpdater implements NotificationListener
 	 * As a content-tool can have several preview instances we iterate through the instances that have 
 	 * been indexed in the propertyfile starting with 0.
 	 */
-	public void updateRemoteCaches(Hashtable internalMessage, Hashtable publicMessage) throws Exception
+	public void updateRemoteCaches(Hashtable internalMessage, Hashtable publicMessage) 
 	{		
 		if((internalMessage == null && publicMessage == null) || (internalMessage.size() == 0 && publicMessage.size() == 0))
 			return;

@@ -24,7 +24,6 @@
 package org.infoglue.cms.applications.managementtool.actions;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.log4j.Logger;
@@ -50,21 +49,21 @@ public class UpdatePortletRegistryAction extends InfoGlueAbstractAction
 
 	private String portletRegistry;
 	
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		store();
 		
 		return "success";
 	}
 
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit()
     {
 		store();
 		
 		return "saveAndExit";
 	}
 
-    private void store() throws IOException 
+    private void store() 
     {
         logger.info("Storing PortletEntityRegistry...\n" + portletRegistry);
         

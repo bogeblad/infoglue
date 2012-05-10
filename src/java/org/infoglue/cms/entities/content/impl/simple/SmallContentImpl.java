@@ -35,7 +35,7 @@ public class SmallContentImpl extends ContentImpl
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

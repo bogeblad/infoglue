@@ -24,7 +24,6 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +62,6 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -127,17 +125,17 @@ public class SearchController extends BaseController
 		}
 	}
 
-   	public Set getContents(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
+   	public Set getContents(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException
    	{
    		return getContents(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, caseSensitive, stateId, false);
    	}
 
-   	public Set getContents(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAsset) throws SystemException, Bug
+   	public Set getContents(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAsset) throws SystemException
    	{
    		return getContents(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, caseSensitive, stateId, searchAsset);
    	}
 
-   	public Set getContents(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
+   	public Set getContents(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException
    	{
    		Set contents = new HashSet();
    		List contentVersions = getContentVersionVOList(repositoryId, searchString, maxRows, name, languageId, contentTypeDefinitionId, caseSensitive, stateId);
@@ -152,7 +150,7 @@ public class SearchController extends BaseController
    		return contents;
    	}
 
-   	public Set getContents(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
+   	public Set getContents(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException
    	{
    		Set contents = new HashSet();
    		List contentVersions = getContentVersionVOList(repositoryId, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, searchAssets);
@@ -167,35 +165,34 @@ public class SearchController extends BaseController
    		return contents;
    	}
 
-   	public List<ContentVersionVO> getContentVersionVOList(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
+   	public List<ContentVersionVO> getContentVersionVOList(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException
    	{
 		List<ContentVersionVO> matchingContents = getContentVersionVOList(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, caseSensitive, stateId);
 			
 		return matchingContents;		
    	}
 
-   	public List<ContentVersionVO> getContentVersionVOList(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
+   	public List<ContentVersionVO> getContentVersionVOList(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException
    	{
 		List<ContentVersionVO> matchingContents = getContentVersionVOList(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, searchAssets);
 			
 		return matchingContents;		
    	}
 
-   	public List<ContentVersionVO> getContentVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
+   	public List<ContentVersionVO> getContentVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException
    	{
    		return getContentVersionVOList(repositoryId, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, false);
    	}
 
-   	public List<ContentVersionVO> getContentVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionId, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
+   	public List<ContentVersionVO> getContentVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionId, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException
    	{
    		String internalSearchEngine = CmsPropertyHandler.getInternalSearchEngine();
    		if(internalSearchEngine.equalsIgnoreCase("sqlSearch"))
    			return getContentVersionVOListFromCastor(repositoryId, searchString, maxRows, userName, languageId, contentTypeDefinitionId, excludedContentTypeDefinitionIds, caseSensitive, stateId, searchAssets);
-   		else
-   			return getContentVersionVOListFromLucene(repositoryId, searchString, maxRows, userName, languageId, contentTypeDefinitionId, excludedContentTypeDefinitionIds, caseSensitive, stateId, searchAssets);
+		return getContentVersionVOListFromLucene(repositoryId, searchString, maxRows, userName, languageId, contentTypeDefinitionId, excludedContentTypeDefinitionIds, caseSensitive, stateId, searchAssets);
    	}
    	
-   	private List<ContentVersionVO> getContentVersionVOListFromCastor(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionId, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
+   	private List<ContentVersionVO> getContentVersionVOListFromCastor(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionId, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException
    	{
 		List<ContentVersionVO> matchingContents = new ArrayList<ContentVersionVO>();
 
@@ -377,10 +374,9 @@ public class SearchController extends BaseController
    	 * @param userName
    	 * @return
    	 * @throws SystemException
-   	 * @throws Bug
-   	 */
+      	 */
    	
-   	public static Set getContentVersions(Integer contentTypeDefinitionId, String userName, Date publishStartDate, Date publishEndDate, Date unpublishStartDate, Date unpublishEndDate) throws SystemException, Bug
+   	public static Set getContentVersions(Integer contentTypeDefinitionId, String userName, Date publishStartDate, Date publishEndDate, Date unpublishStartDate, Date unpublishEndDate) throws SystemException
    	{
 		Set matchingContentVersions = new HashSet();
 
@@ -510,7 +506,7 @@ public class SearchController extends BaseController
 		
    	}
    	
-   	public List<BaseEntityVO> getBaseEntityVOListFromCastor(Integer entityId) throws SystemException, Bug
+   	public List<BaseEntityVO> getBaseEntityVOListFromCastor(Integer entityId) throws SystemException
    	{
    		List<BaseEntityVO> matchingEntities = new ArrayList<BaseEntityVO>();
 
@@ -536,14 +532,14 @@ public class SearchController extends BaseController
 
 			try
 			{
-				BaseEntityVO entityVO = DigitalAssetController.getController().getDigitalAssetVOWithId(entityId, db);
+				BaseEntityVO entityVO = DigitalAssetController.getDigitalAssetVOWithId(entityId, db);
 				matchingEntities.add(entityVO);
 			}
 			catch (Exception e) { logger.error("No entity found.."); }
 
 			try
 			{
-				BaseEntityVO entityVO = SiteNodeController.getController().getSiteNodeVOWithId(entityId, db);
+				BaseEntityVO entityVO = SiteNodeController.getSiteNodeVOWithId(entityId, db);
 				matchingEntities.add(entityVO);
 			}
 			catch (Exception e) { logger.error("No entity found.."); }
@@ -567,7 +563,7 @@ public class SearchController extends BaseController
 		
    	}
    	
-   	public static List<DigitalAssetVO> getDigitalAssets(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
+   	public static List<DigitalAssetVO> getDigitalAssets(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException
    	{
    		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
 
@@ -634,7 +630,7 @@ public class SearchController extends BaseController
 		
    	}
 
-   	public static List<DigitalAssetVO> getLatestDigitalAssets(Integer[] repositoryId, String assetTypeFilter, int maxRows) throws SystemException, Bug
+   	public static List<DigitalAssetVO> getLatestDigitalAssets(Integer[] repositoryId, String assetTypeFilter, int maxRows) throws SystemException
    	{
    		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
 
@@ -712,7 +708,7 @@ public class SearchController extends BaseController
    	}
 
    	
-   	public static int replaceString(String searchString, String replaceString, Boolean caseSensitive, String[] contentVersionIds, InfoGluePrincipal infoGluePrincipal)throws SystemException, Bug
+   	public static int replaceString(String searchString, String replaceString, Boolean caseSensitive, String[] contentVersionIds, InfoGluePrincipal infoGluePrincipal)throws SystemException
    	{
 		int replacements = 0;
 		
@@ -764,7 +760,7 @@ public class SearchController extends BaseController
    	/**
    	 * This method searches with lucene
    	 */
-   	private List<ContentVersionVO> getContentVersionVOListFromLucene(Integer[] repositoryIdAsIntegerToSearch, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionIds, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean includeAssets) throws SystemException, Bug
+   	private List<ContentVersionVO> getContentVersionVOListFromLucene(Integer[] repositoryIdAsIntegerToSearch, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionIds, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean includeAssets)
    	{
    		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
    		
@@ -892,13 +888,13 @@ public class SearchController extends BaseController
 			}
 			
 			String[] fields = new String[fieldNames.size()];
-			fields = (String[])fieldNames.toArray(fields);
+			fields = fieldNames.toArray(fields);
 			
 			String[] queries = new String[fieldNames.size()];
-			queries = (String[])queryStrings.toArray(queries);
+			queries = queryStrings.toArray(queries);
 			
 			BooleanClause.Occur[] flags = new BooleanClause.Occur[fieldNames.size()];
-			flags = (BooleanClause.Occur[])booleanList.toArray(flags);
+			flags = booleanList.toArray(flags);
 			
 		    IndexReader reader = IndexReader.open(index);
 	
@@ -998,7 +994,7 @@ public class SearchController extends BaseController
 	    return contentVersionVOList;
 	}
 
-   	public List<SiteNodeVersionVO> getSiteNodeVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
+   	public List<SiteNodeVersionVO> getSiteNodeVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer caseSensitive, Integer stateId) throws SystemException
    	{
    		//String internalSearchEngine = CmsPropertyHandler.getInternalSearchEngine();
    		//if(internalSearchEngine.equalsIgnoreCase("sqlSearch"))
@@ -1007,7 +1003,7 @@ public class SearchController extends BaseController
    			//	return getSiteNodeVersionVOListFromLucene(repositoryId, searchString, maxRows, userName, caseSensitive, stateId);
    	}
 
-   	private List<SiteNodeVersionVO> getSiteNodeVersionVOListFromCastor(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
+   	private List<SiteNodeVersionVO> getSiteNodeVersionVOListFromCastor(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer caseSensitive, Integer stateId) throws SystemException
    	{
 		List<SiteNodeVersionVO> matching = new ArrayList<SiteNodeVersionVO>();
 
@@ -1142,7 +1138,7 @@ public class SearchController extends BaseController
 	    }
 	}
 
-	public static org.apache.lucene.document.Document getDocument(String text) throws IOException, InterruptedException
+	public static org.apache.lucene.document.Document getDocument(String text)
 	{
 		org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();
 

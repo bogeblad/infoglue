@@ -76,7 +76,7 @@ public class DenyPublicationRequestAction extends InfoGlueAbstractAction
 		return getRequest().getParameterValues("sel");
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException, Exception 
 	{
 		setEvents(getRequest().getParameterValues("sel"));
 		
@@ -84,7 +84,7 @@ public class DenyPublicationRequestAction extends InfoGlueAbstractAction
 		return "success";
 	}
 
-	public String doV3() throws Exception 
+	public String doV3() throws SystemException, Exception 
 	{
 		setEvents(getRequest().getParameterValues("sel"));
 		
@@ -92,12 +92,12 @@ public class DenyPublicationRequestAction extends InfoGlueAbstractAction
 		return "successV3";
 	}
 
-	public String doComment() throws Exception 
+	public String doComment() 
 	{		
 		return "comment";
 	}
 
-	public String doCommentV3() throws Exception 
+	public String doCommentV3() 
 	{		
 		return "commentV3";
 	}

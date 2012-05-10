@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,8 +31,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.databeans.ComponentPropertyDefinition;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -40,7 +44,6 @@ import org.infoglue.cms.entities.management.ContentTypeAttribute;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -79,10 +82,9 @@ public class ComponentController extends BaseController
 	 * @param sortAttribute
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getComponentVOList(String sortAttribute, String direction, String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroupNames, InfoGluePrincipal principal) throws SystemException, Bug, Exception
+	public List getComponentVOList(String sortAttribute, String direction, String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroupNames, InfoGluePrincipal principal) throws SystemException, Exception
 	{
 		List componentVOList = null;
 		
@@ -109,10 +111,9 @@ public class ComponentController extends BaseController
 	 * @param sortAttribute
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getComponentVOList(String sortAttribute, String direction, String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroupNames, Database db, InfoGluePrincipal principal) throws SystemException, Bug, Exception
+	public List getComponentVOList(String sortAttribute, String direction, String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroupNames, Database db, InfoGluePrincipal principal) throws SystemException, Exception
 	{
 		if(principal == null)
 			return null;
@@ -283,8 +284,7 @@ public class ComponentController extends BaseController
 			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
 			if(ctdVO != null && ctdVO.getName().equalsIgnoreCase("PagePartTemplate"))
 				return true;
-			else 
-				return false;			
+			return false;			
 		}
 		catch (Exception e) 
 		{
@@ -386,7 +386,7 @@ public class ComponentController extends BaseController
 		return results;	
 	}
 
-	public void checkAndAutoCreateContents(Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException, Bug, ConstraintException
+	public void checkAndAutoCreateContents(Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws SystemException 
 	{
 		Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -407,7 +407,7 @@ public class ComponentController extends BaseController
         }
 	}
 	
-	public void checkAndAutoCreateContents(Database db, Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException, Bug, ConstraintException
+	public void checkAndAutoCreateContents(Database db, Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws SystemException, ConstraintException, PersistenceException, TransformerException, IOException
 	{
 		List componentPropertyDefinitions = ComponentPropertyDefinitionController.getController().getComponentPropertyDefinitions(db, componentContentId, masterLanguageId);
 		Iterator componentPropertyDefinitionsIterator = componentPropertyDefinitions.iterator();
@@ -433,7 +433,7 @@ public class ComponentController extends BaseController
 				if(path.indexOf("/") == 0)
 					path = path.substring(1);
 				
-				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+				SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId, db);
 				ContentVO parentContentVO = ContentController.getContentController().getRootContent(db, siteNodeVO.getRepositoryId(), principal.getName(), true).getValueObject();
 				if(method.equals("siteStructure"))
 				{
@@ -525,19 +525,8 @@ public class ComponentController extends BaseController
 											Integer componentId,
 											String path,
 											String assetKey,
-											InfoGluePrincipal principal) throws Exception
+											InfoGluePrincipal principal) throws TransformerException 
 	{
-		//logger.info("************************************************************");
-		//logger.info("* doAddComponentPropertyBinding                            *");
-		//logger.info("************************************************************");
-		//logger.info("siteNodeId:" + this.siteNodeId);
-		//logger.info("languageId:" + this.languageId);
-		//logger.info("contentId:" + this.contentId);
-		//logger.info("componentId:" + this.componentId);
-		//logger.info("slotId:" + this.slotId);
-		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-		//logger.info("assetKey:" + assetKey);
-				
 		String componentPropertyXPath = "//component[@id=" + componentId + "]/properties/property[@name='" + propertyName + "']";
 		NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), componentPropertyXPath);
 		if(anl.getLength() == 0)

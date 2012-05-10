@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.wizards.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,9 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -59,7 +63,7 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 		this.ceb = new ConstraintExceptionBuffer();			
 	}	
 
-	private void initialiaze() throws Exception
+	private void initialiaze() throws NumberFormatException, SystemException
 	{
 		if(allowedContentTypeIds == null)
 		{
@@ -79,10 +83,9 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 	 * This method presents the user with the initial input screen for creating a content.
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
 	 
-	public String doInput() throws Exception
+	public String doInput() throws NumberFormatException, SystemException
 	{
 		initialiaze();
 		return "input";
@@ -92,10 +95,9 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 	 * This method validates the input and handles any deviations.
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
 	 
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, NumberFormatException, SystemException
 	{
 		this.contentVO.setCreatorName(this.getInfoGluePrincipal().getName());
 
@@ -113,7 +115,7 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 	 * This method fetches the list of ContentTypeDefinitions
 	 */
 	
-	public List getContentTypeDefinitions() throws Exception
+	public List getContentTypeDefinitions()
 	{
 		return this.contentTypeDefinitionVOList;
 	}      
@@ -188,7 +190,7 @@ public class CreateContentWizardInputContentAction extends InfoGlueAbstractActio
 		returnAddress = string;
 	}
 
-    public String getAllowedContentTypeIdsAsUrlEncodedString() throws Exception
+    public String getAllowedContentTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer();
         

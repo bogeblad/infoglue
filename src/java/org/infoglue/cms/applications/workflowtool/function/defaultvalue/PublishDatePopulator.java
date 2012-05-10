@@ -32,32 +32,20 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class PublishDatePopulator extends DatePopulator 
 {
-	/**
-	 * 
-	 */
 	public PublishDatePopulator() 
 	{ 
 		super(); 
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate() throws WorkflowException 
 	{
 		super.populate(ContentPopulator.CONTENT_PROPERTYSET_PREFIX + ContentValues.PUBLISH_DATE_TIME);
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate(final String name) throws WorkflowException {
 		super.populate(ContentPopulator.CONTENT_PROPERTYSET_PREFIX + ContentValues.PUBLISH_DATE_TIME);
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate(final String name, final String value) throws WorkflowException {
 		super.populate(ContentPopulator.CONTENT_PROPERTYSET_PREFIX + ContentValues.PUBLISH_DATE_TIME);
 	}

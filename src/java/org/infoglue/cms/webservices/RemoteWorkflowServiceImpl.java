@@ -12,8 +12,6 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.deliver.util.webservices.DynamicWebserviceSerializer;
 
-import com.opensymphony.workflow.WorkflowException;
-
 /**
  * This service is used for creating workflows from an external application.
  */
@@ -125,7 +123,7 @@ public class RemoteWorkflowServiceImpl extends RemoteInfoGlueService
 	 * @param workflowVO the workflow.
 	 * @return true if the workflow has terminated; false otherwise.
 	 */
-	private boolean hasTerminated(final WorkflowVO workflowVO) throws WorkflowException
+	private boolean hasTerminated(final WorkflowVO workflowVO)
 	{
 		return WorkflowController.getController().hasTerminated(principal, workflowVO.getIdAsPrimitive());
 	}
@@ -136,7 +134,7 @@ public class RemoteWorkflowServiceImpl extends RemoteInfoGlueService
 	 * @param callerInputs the inputs sent in from the caller of this service. 
 	 * @param languageId the locale to use when running the workflow.
 	 */
-	private void initializeInputs(final Map callerInputs, final Integer languageId) throws SystemException
+	private void initializeInputs(final Map callerInputs, final Integer languageId)
 	{
 		inputs = callerInputs;
 		inputs.put(InfoglueFunction.PRINCIPAL_PARAMETER, principal);

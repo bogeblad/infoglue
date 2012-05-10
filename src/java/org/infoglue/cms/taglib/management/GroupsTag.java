@@ -47,18 +47,12 @@ public class GroupsTag extends AbstractTag {
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException 
 	{
 		setResultAttribute(getGroups());
 		return super.doEndTag();
 	}
 	
-	/**
-	 * 
-	 */
 	private Collection getGroups() throws JspException
 	{
 		try 

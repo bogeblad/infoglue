@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -73,7 +74,7 @@ public class ExportContentAction extends InfoGlueAbstractAction
 	 * @throws Exception
 	 */	
 
-	public String doInput() throws Exception
+	public String doInput()
 	{
 		//repositories = RepositoryController.getController().getRepositoryVOList();
 		
@@ -84,7 +85,7 @@ public class ExportContentAction extends InfoGlueAbstractAction
 	 * This handles the actual exporting.
 	 */
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws PersistenceException, SystemException 
 	{
 		if(!AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "ContentTool.ImportExport", true))
 			throw new SystemException("You are not allowed to export contents.");

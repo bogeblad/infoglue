@@ -25,11 +25,15 @@ package org.infoglue.cms.applications.structuretool.actions;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+
+import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -50,7 +54,6 @@ import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
@@ -59,6 +62,7 @@ import org.infoglue.cms.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import webwork.action.Action;
 import webwork.action.ActionContext;
@@ -91,14 +95,14 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
 	private String returnAddress;
 
 	
-    public String doInput() throws Exception
+    public String doInput() throws SystemException
     {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
         return Action.INPUT;
     }
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, IOException, ConstraintException, SAXException, TransformerException 
     {
         logger.info("contentId:" + contentId);
         logger.info("parentContentId:" + parentContentId);
@@ -190,7 +194,7 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
 		
     	try 
     	{
-    		MultiPartRequestWrapper mpr = ActionContext.getContext().getMultiPartRequest();
+    		MultiPartRequestWrapper mpr = ActionContext.getMultiPartRequest();
     		logger.info("mpr:" + mpr);
     		if(mpr != null)
     		{ 
@@ -252,7 +256,7 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
         return Action.SUCCESS;
     }
     
-    public String doUpdate() throws Exception
+    public String doUpdate() throws UnsupportedEncodingException, IOException, SAXException, SystemException, TransformerException, ConstraintException
     {
         logger.info("pagePartContentId:" + pagePartContentId);
         logger.info("contentId:" + contentId);
@@ -321,7 +325,7 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
         return Action.SUCCESS;
     }
     
-	public Integer getTopRepositoryId() throws ConstraintException, SystemException, Bug
+	public Integer getTopRepositoryId() throws SystemException
 	{
 		List repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 		

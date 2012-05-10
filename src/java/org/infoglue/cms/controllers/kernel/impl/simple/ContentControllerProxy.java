@@ -34,7 +34,6 @@ import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInfoBean;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -64,7 +63,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method returns a specific content-object after checking that it is accessable by the given user
 	 */
 	
-    public ContentVO getACContentVOWithId(InfoGluePrincipal infogluePrincipal, Integer contentId, Database db) throws ConstraintException, SystemException, Bug, Exception
+    public ContentVO getACContentVOWithId(InfoGluePrincipal infogluePrincipal, Integer contentId, Database db) throws Exception
     {
     	Map hashMap = new HashMap();
     	hashMap.put("contentId", contentId);
@@ -78,7 +77,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method returns a specific content-object after checking that it is accessable by the given user
 	 */
 	
-    public ContentVO getACContentVOWithId(InfoGluePrincipal infogluePrincipal, Integer contentId) throws ConstraintException, SystemException, Bug, Exception
+    public ContentVO getACContentVOWithId(InfoGluePrincipal infogluePrincipal, Integer contentId) throws Exception
     {
     	Map hashMap = new HashMap();
     	hashMap.put("contentId", contentId);
@@ -92,7 +91,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method returns a list of content-objects after checking that it is accessable by the given user
 	 */
 		
-    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap, Database db) throws SystemException, Bug, Exception
+    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap, Database db) throws Exception
     {
     	return getACContentVOList(infoGluePrincipal, argumentHashMap, "Content.Read", db);
     }
@@ -101,7 +100,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method returns a list of content-objects after checking that it is accessable by the given user
 	 */
 		
-    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap, String interceptionPointName, Database db) throws SystemException, Bug, Exception
+    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap, String interceptionPointName, Database db) throws Exception
     {
     	List contents = null;
     	
@@ -169,7 +168,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method returns a list of content-objects after checking that it is accessable by the given user
 	 */
 		
-    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap) throws SystemException, Bug
+    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap) throws SystemException
     {
     	List contents = null;
     	
@@ -229,13 +228,8 @@ public class ContentControllerProxy extends ContentController
 	 * This method finishes up what the create content wizard has resulted after first checking that the user has rights to complete the action.
 	 */
 
-	public ContentVO acCreate(InfoGluePrincipal infogluePrincipal, CreateContentWizardInfoBean createContentWizardInfoBean) throws ConstraintException, SystemException, Bug, Exception
+	public ContentVO acCreate(InfoGluePrincipal infogluePrincipal, CreateContentWizardInfoBean createContentWizardInfoBean) throws ConstraintException, SystemException
 	{
-		//Map hashMap = new HashMap();
-		//hashMap.put("contentId", parentContentId);
-    	
-		//intercept(hashMap, "Content.Create", infogluePrincipal);
-
 		return ContentController.getContentController().create(createContentWizardInfoBean);
 	}   
 
@@ -243,7 +237,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method creates a content after first checking that the user has rights to edit it.
 	 */
 
-	public ContentVO acCreate(InfoGluePrincipal infogluePrincipal, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws ConstraintException, SystemException, Bug, Exception
+	public ContentVO acCreate(InfoGluePrincipal infogluePrincipal, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", parentContentId);
@@ -257,7 +251,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method updates a content after first checking that the user has rights to edit it.
 	 */
 
-	public ContentVO acUpdate(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, Integer contentTypeDefinitionId) throws ConstraintException, SystemException, Bug, Exception
+	public ContentVO acUpdate(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, Integer contentTypeDefinitionId) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentVO.getId());
@@ -271,7 +265,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method deletes a content after first checking that the user has rights to edit it.
 	 */
 
-	public void acDelete(InfoGluePrincipal infogluePrincipal, ContentVO contentVO) throws ConstraintException, SystemException, Bug, Exception
+	public void acDelete(InfoGluePrincipal infogluePrincipal, ContentVO contentVO) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentVO.getId());
@@ -285,7 +279,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method deletes a content after first checking that the user has rights to edit it.
 	 */
 
-	public void acMarkForDelete(InfoGluePrincipal infogluePrincipal, ContentVO contentVO) throws ConstraintException, SystemException, Bug, Exception
+	public void acMarkForDelete(InfoGluePrincipal infogluePrincipal, ContentVO contentVO) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentVO.getId());
@@ -300,7 +294,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method moves a content after first checking that the user has rights to edit it.
 	 */
 
-	public void acMoveContent(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, Integer newParentContentId) throws ConstraintException, SystemException, Bug, Exception
+	public void acMoveContent(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, Integer newParentContentId) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentVO.getId());
@@ -319,7 +313,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method moves a content after first checking that the user has rights to within a transaction.
 	 */
 
-	public void acMoveContent(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, Integer newParentContentId, Database db) throws ConstraintException, SystemException, Bug, Exception
+	public void acMoveContent(InfoGluePrincipal infogluePrincipal, ContentVO contentVO, Integer newParentContentId, Database db) throws Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentVO.getId());
@@ -437,18 +431,4 @@ public class ContentControllerProxy extends ContentController
 			
 		return isContentProtected;
 	}
-	
-	/*
-    public static Content getContentWithId(Integer contentId, Database db) throws SystemException, Bug
-    {
-		return (Content) getObjectWithId(ContentImpl.class, contentId, db);
-    }
-    */
-/*
-    public static List getContentVOList() throws SystemException, Bug
-    {
-        return getAllVOObjects(ContentImpl.class);
-    }
-*/
- 
 }

@@ -39,6 +39,7 @@ import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.entities.management.UserProperties;
 import org.infoglue.cms.entities.structure.QualifyerVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.dom.DOMBuilder;
 
@@ -203,7 +204,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 * It also reads the relationXML from the content-version.
 	 */ 
 	
-	protected void initialize() throws Exception
+	protected void initialize() throws SystemException
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
@@ -238,14 +239,14 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 * This is the default method which just initializes the view.
 	 */     
 
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
 	{
 		initialize();
 
 		return "success";
 	}
     
-	public String doChangeRepository() throws Exception
+	public String doChangeRepository() throws SystemException
 	{
 		initialize();
 
@@ -256,14 +257,14 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 * This is the default method which just initializes the view.
 	 */     
 
-	public String doV3() throws Exception
+	public String doV3() throws SystemException
 	{
 		initialize();
 
 		return "successV3";
 	}
     
-	public String doChangeRepositoryV3() throws Exception
+	public String doChangeRepositoryV3() throws SystemException
 	{
 		initialize();
 
@@ -274,7 +275,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 * Updates the qualifyer in the normal content version stucture.
 	 */
 
-	public String doUpdateQualifyer() throws Exception
+	public String doUpdateQualifyer() throws SystemException
 	{
 		updateAttributeValue();
 		
@@ -287,7 +288,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 * Updates the qualifyer in the normal content version stucture.
 	 */
 
-	public String doUpdateQualifyerV3() throws Exception
+	public String doUpdateQualifyerV3() throws SystemException
 	{
 		updateAttributeValue();
 		
@@ -299,7 +300,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	/**
 	 * Updates the qualifyer in the EntityProperties stucture.
 	 */
-	public String doUpdateQualifyerInEntityProperties() throws Exception
+	public String doUpdateQualifyerInEntityProperties() throws SystemException
 	{	    
 	    if(this.entityName.equalsIgnoreCase(UserProperties.class.getName()))
 	        UserPropertiesController.getController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML);		
@@ -316,7 +317,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	/**
 	 * Updates the qualifyer in the EntityProperties stucture.
 	 */
-	public String doUpdateQualifyerInEntityPropertiesV3() throws Exception
+	public String doUpdateQualifyerInEntityPropertiesV3() throws SystemException
 	{	    
 	    if(this.entityName.equalsIgnoreCase(UserProperties.class.getName()))
 	        UserPropertiesController.getController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML);		
@@ -392,7 +393,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	 * This method is the common update method which assumes that the update is in a contentVersion.
 	 */
 	
-	public void updateAttributeValue() throws Exception
+	public void updateAttributeValue() throws SystemException
 	{
 		ContentVersionController.getContentVersionController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML, this.getInfoGluePrincipal());		
 	}

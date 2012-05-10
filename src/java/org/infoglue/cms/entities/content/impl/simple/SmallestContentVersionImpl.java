@@ -37,7 +37,7 @@ public class SmallestContentVersionImpl implements SmallestContentVersion
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

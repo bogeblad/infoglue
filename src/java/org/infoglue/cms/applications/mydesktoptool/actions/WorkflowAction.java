@@ -40,7 +40,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import webwork.action.ActionContext;
 
 import com.opensymphony.workflow.InvalidActionException;
-import com.opensymphony.workflow.WorkflowException;
 
 /**
  * This class implements the action class for the startpage in the mydesktop tool.
@@ -78,7 +77,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 		return "success";
 	}
 
-	public String doShowWorkflowDetails() throws SystemException
+	public String doShowWorkflowDetails() 
 	{
 		try
 		{
@@ -92,7 +91,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 		return "successWorkflowDetails";
 	}
 
-	public String doShowRunningWorkflowDetails() throws SystemException
+	public String doShowRunningWorkflowDetails() 
 	{
 		try
 		{
@@ -118,12 +117,12 @@ public class WorkflowAction extends InfoGlueAbstractAction
 			e.printStackTrace();
 		}
 
-		logger.info("existingWorkflow:" + existingWorkflow.getName());
-		if(existingWorkflow != null)
+		if(existingWorkflow != null){
+			logger.info("existingWorkflow:" + existingWorkflow.getName());
 			workflow = controller.initializeWorkflow(getInfoGluePrincipal(), existingWorkflow.getName(), actionId, WorkflowController.createWorkflowParameters(ActionContext.getRequest()));
-		else
+		} else {
 			logger.error("No workflow with name:" + workflowName);
-		
+		}
 		this.workflowId = workflow.getWorkflowId();
 		
 		return redirectToView();
@@ -168,10 +167,6 @@ public class WorkflowAction extends InfoGlueAbstractAction
 		{
 			logger.error("An error occurred when invoking an action:" + e.getMessage(), e);
 			return INVALID_ACTION;
-		}
-		catch (WorkflowException e)
-		{
-			throw new SystemException(e);
 		}
 	}
 
@@ -220,8 +215,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 			logger.info("cmsFullBaseUrl:" + cmsFullBaseUrl);
 			if(cmsFullBaseUrl != null && !cmsFullBaseUrl.equals(""))
 				return URLEncoder.encode(cmsFullBaseUrl + "/Workflow!invoke.action", "UTF-8");
-			else
-				return URLEncoder.encode(getURLBase() + "/Workflow!invoke.action", "UTF-8");
+			return URLEncoder.encode(getURLBase() + "/Workflow!invoke.action", "UTF-8");
 		}
 		catch (UnsupportedEncodingException e)
 		{
@@ -351,7 +345,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 
 	
 	
-	public String doGetActiveWorkflowProperties() throws Exception
+	public String doGetActiveWorkflowProperties()
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -401,7 +395,7 @@ public class WorkflowAction extends InfoGlueAbstractAction
 		return NONE;
 	}
 
-	public String doGetAvailableWorkflowProperties() throws Exception
+	public String doGetAvailableWorkflowProperties()
 	{
 		StringBuffer sb = new StringBuffer();
 		

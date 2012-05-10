@@ -54,22 +54,20 @@ public class SiteNodeTag extends ComponentLogicTag
 	{
 	    if(this.siteNodeId != null)
 	        return this.getController().getSiteNode(this.siteNodeId);
-	    else if(this.propertyName != null)
+	    if(this.propertyName != null)
 	    {
 	        if(this.targetSiteNodeId != null)
 	            return this.getComponentLogic().getBoundSiteNode(targetSiteNodeId, propertyName, useInheritance);
-	        else
-	            return this.getComponentLogic().getBoundSiteNode(propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+            return this.getComponentLogic().getBoundSiteNode(propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 	    }
-	    else if(this.getController().getSiteNodeId() != null && this.getController().getSiteNodeId().intValue() > -1)
+	    if(this.getController().getSiteNodeId() != null && this.getController().getSiteNodeId().intValue() > -1)
 	        return this.getController().getSiteNode();
-	    else
-	        return null;
+        return null;
 	}
 	
     public void setSiteNodeId(String siteNodeId) throws JspException
     {
-        this.siteNodeId = evaluateInteger("siteNode", "siteNodeId", siteNodeId);;
+        this.siteNodeId = evaluateInteger("siteNode", "siteNodeId", siteNodeId);
     }
 
     public void setPropertyName(String propertyName) throws JspException

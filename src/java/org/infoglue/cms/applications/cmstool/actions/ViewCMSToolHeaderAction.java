@@ -58,7 +58,7 @@ public class ViewCMSToolHeaderAction extends InfoGlueAbstractAction
 	    return CmsPropertyHandler.getHeaderHTML();
 	}
 
-	public String doExecute() throws Exception
+	public String doExecute()
     {
         return "success";
     }

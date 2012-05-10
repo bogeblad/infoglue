@@ -67,7 +67,7 @@ public class ChildComponentsTag extends ComponentLogicTag
 	    this.slotId = evaluateString("childComponents", "slotId", slotId);
 	}
 
-	public void setSeekRecursive(boolean seekRecursive) throws JspException
+	public void setSeekRecursive(boolean seekRecursive)
 	{
 		this.seekRecursive = seekRecursive;
 	}

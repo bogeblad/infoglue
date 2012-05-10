@@ -30,15 +30,13 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
 
-import webwork.action.CommandDriven;
-
 
 /**
  *
  *
  * @author <a href="mailto:meat_for_the_butcher@yahoo.com">Patrik Nyborg</a>
  */
-public abstract class AbstractFormAction extends AbstractAction implements CommandDriven 
+public abstract class AbstractFormAction extends AbstractAction 
 {
     private final static Logger logger = Logger.getLogger(AbstractFormAction.class.getName());
 
@@ -54,9 +52,6 @@ public abstract class AbstractFormAction extends AbstractAction implements Comma
   // --- [Constructors] --------------------------------------------------------
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public Errors getErrors() {
     return errors;
   }
@@ -66,16 +61,8 @@ public abstract class AbstractFormAction extends AbstractAction implements Comma
   // --- [X Overrides] ---------------------------------------------------------
   // --- [webwork.action.Action implementation] --------------------------------
 
-  /**
-   *
-   */
-  public String execute() throws Exception {
-    try {
+  public String execute() {
       return super.execute();
-    } catch(ConstraintException e) {
-      setErrors(e);
-      return INPUT;
-    }
   }
 
 
@@ -83,9 +70,6 @@ public abstract class AbstractFormAction extends AbstractAction implements Comma
   // --- [Package protected] ---------------------------------------------------
   // --- [Private] -------------------------------------------------------------
 
-  /**
-   *
-   */
   private void setErrors(ConstraintException exception) {
     final Locale locale = getSession().getLocale();
 

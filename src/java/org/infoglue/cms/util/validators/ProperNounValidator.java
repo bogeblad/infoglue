@@ -71,9 +71,6 @@ public class ProperNounValidator extends StringValidator {
     initializePattern(PROPER_NOUN_PATTERN, INVALID_PROPER_NOUN_ERROR_CODE);
   }
 
-  /**
-   *
-   */
   public ProperNounValidator(String fieldName, boolean isRequired, int upperLengthLimit) {
     super(fieldName, isRequired, upperLengthLimit);
     initializePattern(PROPER_NOUN_PATTERN, INVALID_PROPER_NOUN_ERROR_CODE);

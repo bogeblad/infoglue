@@ -46,9 +46,6 @@ public class ContentVersionAddressProvider extends AddressProvider
 	 */
 	private String attributeName;
 	
-	/**
-	 * 
-	 */
 	private ContentVersionVO contentVersionVO;
 	
 	/**
@@ -69,9 +66,6 @@ public class ContentVersionAddressProvider extends AddressProvider
 		addRecipient(getAttribute());
 	}
 	
-	/**
-	 * 
-	 */
 	private String getAttribute() throws WorkflowException
 	{
 		String value = "";

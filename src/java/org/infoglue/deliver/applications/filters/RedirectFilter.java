@@ -147,14 +147,11 @@ public class RedirectFilter implements Filter
             {
                 break;
             } 
-            else 
-            {
-                // Not related to portal - add
-                list.add(t.trim());
-            }
+            // Not related to portal - add
+            list.add(t.trim());
         }
         
-        return (String[]) list.toArray(new String[list.size()]);
+        return list.toArray(new String[list.size()]);
     }
 
 

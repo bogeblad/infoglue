@@ -27,6 +27,9 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServiceDefinitionController;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 
 public class ViewServiceDefinitionAction extends InfoGlueAbstractAction
@@ -47,12 +50,12 @@ public class ViewServiceDefinitionAction extends InfoGlueAbstractAction
         this.serviceDefinitionVO = serviceDefinitionVO;
     }
     
-    protected void initialize(Integer serviceDefinitionId) throws Exception
+    protected void initialize(Integer serviceDefinitionId) throws SystemException
     {
         serviceDefinitionVO = ServiceDefinitionController.getController().getServiceDefinitionVOWithId(serviceDefinitionId);
     } 
 
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         logger.info("Executing doExecute on ViewServiceDefinitionAction..");
         this.initialize(getServiceDefinitionId());

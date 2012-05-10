@@ -55,7 +55,7 @@ public class PublishingToolNodeSupplier extends BaseNodeSupplier
 	private InfoGluePrincipal infogluePrincipal = null;
 	private Locale locale = null;
 
-	public PublishingToolNodeSupplier(InfoGluePrincipal infogluePrincipal, Locale locale) throws SystemException
+	public PublishingToolNodeSupplier(InfoGluePrincipal infogluePrincipal, Locale locale) 
 	{
 		this.infogluePrincipal = infogluePrincipal;
 		this.locale = locale;
@@ -70,14 +70,13 @@ public class PublishingToolNodeSupplier extends BaseNodeSupplier
 	{
 		if (showLeafs)
 			return false;
-		else
-			return true;
+		return true;
 	}
 	
 	/**
 	 * @see com.frovi.ss.Tree.INodeSupplier#getChildContainerNodes(Integer)
 	 */
-	public Collection getChildContainerNodes(Integer parentNode) throws Exception
+	public Collection getChildContainerNodes(Integer parentNode) throws SystemException 
 	{
 		ArrayList r = new ArrayList();
 		PublishingNodeImpl node;

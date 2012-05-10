@@ -37,6 +37,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
@@ -50,7 +51,6 @@ import org.infoglue.cms.entities.management.impl.simple.FormEntryAssetImpl;
 import org.infoglue.cms.entities.management.impl.simple.FormEntryImpl;
 import org.infoglue.cms.entities.management.impl.simple.FormEntryValueImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -78,29 +78,29 @@ public class FormEntryController extends BaseController
 		return new FormEntryController();
 	}
 
-    public FormEntryVO getFormEntryVOWithId(Integer formEntryId) throws SystemException, Bug
+    public FormEntryVO getFormEntryVOWithId(Integer formEntryId) throws SystemException
     {
 		return (FormEntryVO) getVOWithId(FormEntryImpl.class, formEntryId);
     }
 
-    public FormEntry getFormEntryWithId(Integer formEntryId, Database db) throws SystemException, Bug
+    public FormEntry getFormEntryWithId(Integer formEntryId, Database db) throws SystemException
     {
 		return (FormEntry) getObjectWithId(FormEntryImpl.class, formEntryId, db);
     }
 
-    public FormEntryAsset getFormEntryAssetWithId(Integer formEntryAssetId, Database db) throws SystemException, Bug
+    public FormEntryAsset getFormEntryAssetWithId(Integer formEntryAssetId, Database db) throws SystemException
     {
 		return (FormEntryAsset) getObjectWithId(FormEntryAssetImpl.class, formEntryAssetId, db);
     }
 
-    public List getFormEntryVOList() throws SystemException, Bug
+    public List getFormEntryVOList() throws SystemException
     {
 		List redirectVOList = getAllVOObjects(FormEntryImpl.class, "formEntryId");
 
 		return redirectVOList;
     }
 
-    public List getFormEntryVOList(Database db) throws SystemException, Bug
+    public List getFormEntryVOList(Database db) throws SystemException
     {
 		List redirectVOList = getAllVOObjects(FormEntryImpl.class, "formEntryId", db);
 
@@ -112,11 +112,9 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getFormEntryValueVOList(Integer formContentId, String fieldName) throws SystemException, Bug
+	public List getFormEntryValueVOList(Integer formContentId, String fieldName) throws SystemException
 	{
 		List formEntryValueVOList = new ArrayList();
 		
@@ -157,11 +155,9 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getFormEntryVOList(Integer formContentId) throws SystemException, Bug
+	public List getFormEntryVOList(Integer formContentId) throws SystemException
 	{
 		List formEntryVOList = null;
 		
@@ -191,11 +187,9 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getFormEntryValueVOList(Integer formEntryId) throws SystemException, Bug
+	public List getFormEntryValueVOList(Integer formEntryId) throws SystemException
 	{
 		List formEntryValueVOList = null;
 		
@@ -225,11 +219,9 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public List getFormEntryAssetVOList(Integer formEntryId) throws SystemException, Bug
+	public List getFormEntryAssetVOList(Integer formEntryId) throws SystemException
 	{
 		List formEntryAssetVOList = null;
 		
@@ -259,11 +251,9 @@ public class FormEntryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public String getFormEntryAssetUrl(Integer formEntryAssetId, DeliveryContext deliveryContext) throws SystemException, Bug
+	public String getFormEntryAssetUrl(Integer formEntryAssetId, DeliveryContext deliveryContext) throws SystemException
 	{
 		String assetUrl = "";
 		assetUrl = URLComposer.getURLComposer().composeDigitalAssetUrl("", null, "", deliveryContext); 
@@ -306,10 +296,8 @@ public class FormEntryController extends BaseController
 		Timer timer = new Timer();
 		File tmpOutputFile = new File(filePath + File.separator + Thread.currentThread().getId() + "_tmp_" + fileName);
 		File outputFile = new File(filePath + File.separator + fileName);
-		//logger.warn("outputFile:" + filePath + File.separator + fileName + ":" + outputFile.length());
 		if(outputFile.exists())
 		{
-			//logger.warn("The file allready exists so we don't need to dump it again..");
 			return outputFile;
 		}
 
@@ -374,11 +362,9 @@ public class FormEntryController extends BaseController
 	 * @param name
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public List getFormEntryList(Integer formContentId, Database db) throws SystemException, Bug
+	public List getFormEntryList(Integer formContentId, Database db) throws SystemException
 	{
 		List formEntryList = new ArrayList();
 		
@@ -405,7 +391,7 @@ public class FormEntryController extends BaseController
 		return formEntryList;		
 	}
 
-    public FormEntryVO create(FormEntryVO redirectVO) throws ConstraintException, SystemException
+    public FormEntryVO create(FormEntryVO redirectVO) throws SystemException
     {
         FormEntry formEntry = new FormEntryImpl();
         formEntry.setValueObject(redirectVO);
@@ -413,7 +399,7 @@ public class FormEntryController extends BaseController
         return formEntry.getValueObject();
     }
 
-    public FormEntry create(FormEntryVO formEntryVO, List<FormEntryValueVO> formEntryValueVOList, Database db) throws ConstraintException, SystemException, Exception
+    public FormEntry create(FormEntryVO formEntryVO, List<FormEntryValueVO> formEntryValueVOList, Database db) throws ConstraintException, PersistenceException
     {
         FormEntry formEntry = new FormEntryImpl();
         formEntry.setValueObject(formEntryVO);
@@ -445,7 +431,7 @@ public class FormEntryController extends BaseController
     	formEntryAsset = (FormEntryAsset) createEntity(formEntryAsset, db);
 	}
 
-    public void delete(FormEntryVO formEntryVO) throws ConstraintException, SystemException
+    public void delete(FormEntryVO formEntryVO) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         
@@ -459,7 +445,6 @@ public class FormEntryController extends BaseController
  			while(formEntryValuesIterator.hasNext())
  			{
  				FormEntryValue value = (FormEntryValue)formEntryValuesIterator.next();
- 				//value.getFormEntry().getFormEntryValues().remove(value);
  				formEntryValuesIterator.remove();
  				db.remove(value);
  			}
@@ -469,7 +454,6 @@ public class FormEntryController extends BaseController
  			while(formEntryAssetsIterator.hasNext())
  			{
  				FormEntryAsset asset = (FormEntryAsset)formEntryAssetsIterator.next();
- 				//asset.getFormEntry().getFormEntryAssets().remove(asset);
  				formEntryAssetsIterator.remove();
  				db.remove(asset);
  			}
@@ -487,55 +471,10 @@ public class FormEntryController extends BaseController
     }
     
 
-    public FormEntryVO update(FormEntryVO formEntryVO) throws ConstraintException, SystemException
+    public FormEntryVO update(FormEntryVO formEntryVO) throws SystemException
     {
     	return (FormEntryVO) updateEntity(FormEntryImpl.class, formEntryVO);
     }
-    
-	/**
-	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
-	 */
-    /*
-    public void delete(FormEntryVO formEntryVO, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
-    {
-		Database db = CastorDatabaseService.getDatabase();
-		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-
-		beginTransaction(db);
-
-		try
-		{
-			FormEntry formEntry = getFormEntryWithId(formEntryVO.getId(), db);
-			
-			Collection entryValues = formEntry.getFormEntryValues();
-			Iterator entryValuesIterator = entryValues.iterator();
-			while(entryValuesIterator.hasNext())
-			{
-				deleteEntity(
-				entryValuesIterator.remove();
-			}
-			
-			deleteEntity(RepositoryImpl.class, repositoryVO.getRepositoryId(), db);
-	
-			//If any of the validations or setMethods reported an error, we throw them up now before create.
-			ceb.throwIfNotEmpty();
-    
-			commitTransaction(db);
-		}
-		catch(ConstraintException ce)
-		{
-			logger.warn("An error occurred so we should not completes the transaction:" + ce, ce);
-			rollbackTransaction(db);
-			throw ce;
-		}
-		catch(Exception e)
-		{
-			logger.error("An error occurred so we should not completes the transaction:" + e, e);
-			rollbackTransaction(db);
-			throw new SystemException(e.getMessage());
-		}
-    } 
-	*/
     
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller

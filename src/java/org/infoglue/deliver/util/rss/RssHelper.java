@@ -94,7 +94,7 @@ public class RssHelper
      * @throws FeedException
      */
     
-    public SyndFeed getFeed(String feedType, String title, String link, String description, String encoding) throws IOException,FeedException 
+    public SyndFeed getFeed(String feedType, String title, String link, String description, String encoding) 
     {
         
         SyndFeed feed = new SyndFeedImpl();
@@ -127,7 +127,7 @@ public class RssHelper
      * @throws FeedException
      */
     
-    public void addEntry(SyndFeed feed, String title, String link, Date publishedDate, String description, String descriptionContentType) throws IOException,FeedException 
+    public void addEntry(SyndFeed feed, String title, String link, Date publishedDate, String description, String descriptionContentType) 
     {
         DateFormat dateParser = new SimpleDateFormat(DATE_FORMAT);
 

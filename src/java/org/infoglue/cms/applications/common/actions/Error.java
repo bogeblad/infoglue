@@ -38,9 +38,6 @@ public final class Error
     private Throwable throwable;
     private Throwable cause;
 
-    /**
-     *
-     */
     public Error(Throwable throwable, Throwable cause) 
     { 
         this.throwable = throwable;
@@ -49,46 +46,28 @@ public final class Error
 
 
 
-  /**
-   *
-   */
   public String getName() {
     final String fullyQualifiedName = this.throwable.getClass().getName();
     final int index                 = (fullyQualifiedName.lastIndexOf(".") == -1) ? 0 : fullyQualifiedName.lastIndexOf(".") + 1;
     return fullyQualifiedName.substring(index);
   }
 
-  /**
-   *
-   */
   public String getMessage() {
     return this.throwable.getMessage();
   }
 
-  /**
-   *
-   */
   public String getStackTrace() {
     return getStackTrace(this.throwable);
   }
 
-  /**
-   *
-   */
   public boolean hasCause() {
     return this.cause != null;
   }
 
-  /**
-   *
-   */
   public String getCauseMessage() {
     return hasCause() ? this.cause.getMessage() : "";
   }
 
-  /**
-   *
-   */
   public String getCauseStackTrace() {
     return hasCause() ? getStackTrace(this.cause) : "";
   }
@@ -100,9 +79,6 @@ public final class Error
   // --- [Package protected] ---------------------------------------------------
   // --- [Private] -------------------------------------------------------------
 
-  /**
-   *
-   */
   private String getStackTrace(Throwable throwable) {
     final StringBuffer sb    = new StringBuffer();
     final StringTokenizer st = new StringTokenizer(stackTraceToString(throwable), "\n");
@@ -113,9 +89,6 @@ public final class Error
     return sb.toString();
   }
 
-  /**
-   *
-   */
   private String stackTraceToString(Throwable throwable) {
     final StringWriter sw = new StringWriter();
     final PrintWriter pw  = new PrintWriter(sw);

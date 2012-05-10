@@ -48,7 +48,7 @@ public class PropertiesCategoryImpl implements PropertiesCategory
 	}
 
 
-	public BaseEntityVO getVO()			{ return (BaseEntityVO) getValueObject(); }
+	public BaseEntityVO getVO()			{ return getValueObject(); }
 	public void setVO(BaseEntityVO vo)	{ setValueObject((PropertiesCategoryVO) vo); }
 
 	public Integer getId()			{ return getPropertiesCategoryId(); }

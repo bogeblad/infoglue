@@ -52,22 +52,22 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
     
     private boolean showInline = false;
 
-	public String doInput() throws Exception
+	public String doInput()
     {
     	return Action.INPUT;
     }
 
-    public String doInputV3() throws Exception
+    public String doInputV3()
     {
     	return Action.INPUT + "V3";
     }
 
-    public String doInputStandalone() throws Exception
+    public String doInputStandalone()
     {
     	return "inputStandalone";
     }
 
-    public String doInputStandaloneV3() throws Exception
+    public String doInputStandaloneV3()
     {
     	showInline = true;
     	
@@ -89,8 +89,7 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
 	        ActionContext.getResponse().sendRedirect(returnAddress);
 	        return Action.NONE;
 	    }
-	    else
-	        return Action.SUCCESS;
+        return Action.SUCCESS;
 	}
 
 	public String doV3() throws Exception 
@@ -116,8 +115,7 @@ public class UpdateSystemUserPasswordAction extends InfoGlueAbstractAction
 	        ActionContext.getResponse().sendRedirect(returnAddress);
 	        return Action.NONE;
 	    }
-	    else
-	        return Action.SUCCESS + "V3";	    
+        return Action.SUCCESS + "V3";	    
 	}
 
     public String getNewPassword()

@@ -47,6 +47,8 @@ import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 
 /**
@@ -77,7 +79,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
    	private String userSessionKey;
 
 	
-	public String doInput() throws Exception 
+	public String doInput() throws AccessConstraintException, SystemException 
 	{
 		if(this.siteNodeId != null)
 		{
@@ -99,7 +101,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	    return "input";
 	}
 	
-	public String doInputChooseSiteNodes() throws Exception 
+	public String doInputChooseSiteNodes() throws SystemException, ConstraintException 
 	{
 		if(this.siteNodeId != null)
 		{
@@ -120,7 +122,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	    return "inputChooseSiteNodes";
 	}
 
-	public String doInputChooseSiteNodesV3() throws Exception 
+	public String doInputChooseSiteNodesV3() throws SystemException, ConstraintException 
 	{
 		doInputChooseSiteNodes();
 
@@ -144,9 +146,11 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	 * This method gets called when calling this action. 
 	 * If the stateId is 2 which equals that the user tries to prepublish the page. If so we
 	 * ask the user for a comment as this is to be regarded as a new version. 
+	 * @throws SystemException 
+	 * @throws ConstraintException 
 	 */
 	   
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, ConstraintException
     {   
 		setSiteNodeVersionIdList( getRequest().getParameterValues("sel") );
 		Iterator it = getSiteNodeVersionIdList().iterator();
@@ -212,9 +216,12 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	/**
 	 * This method will try to unpublish all liver versions of this sitenode. 
+	 * @throws Exception 
+	 * @throws SystemException 
+	 * @throws NumberFormatException 
 	 */
 	   
-    public String doUnpublishAll() throws Exception
+    public String doUnpublishAll() throws NumberFormatException, SystemException, Exception
     {   
 		String[] siteNodeIds = getRequest().getParameterValues("sel");
 
@@ -290,10 +297,7 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "success";
-        }
+    	return "success";
     }
 
 
@@ -352,9 +356,9 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 		return this.stateId;
 	}
     
-	public SiteNodeVersionVO getLatestSiteNodeVersion(SiteNodeVO siteNode) throws Exception
+	public SiteNodeVersionVO getLatestSiteNodeVersion(SiteNodeVO siteNode) throws SystemException
 	{
-		return SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(siteNode.getId());
+		return SiteNodeVersionController.getLatestPublishedSiteNodeVersionVO(siteNode.getId());
 	}
 	
 	/**

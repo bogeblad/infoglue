@@ -95,14 +95,14 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 	 * @throws Exception
 	 */	
 
-	public String doInput() throws Exception
+	public String doInput()
 	{
 		standardReplacement = "stateYourOldSiteName=stateYourNewSiteName";
 
 		return "input";
 	}
 
-	public String doInputCopy() throws Exception
+	public String doInputCopy() throws SystemException
 	{
 		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
 		
@@ -122,7 +122,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 		try 
 		{
 			//now restore the value and list what we get
-			File file = FileUploadHelper.getUploadedFile(ActionContext.getContext().getMultiPartRequest());
+			File file = FileUploadHelper.getUploadedFile(ActionContext.getMultiPartRequest());
 			if(file == null || !file.exists())
 				throw new SystemException("The file upload must have gone bad as no file reached the import utility.");
 			
@@ -182,7 +182,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 				
 				for(int i=0; i<replacements.length(); i++)
 				{
-					int c = (int)replacements.charAt(i);
+					int c = replacements.charAt(i);
 					if(c > 255 && c < 65533)
 						hasUnicodeChars = true;
 				}

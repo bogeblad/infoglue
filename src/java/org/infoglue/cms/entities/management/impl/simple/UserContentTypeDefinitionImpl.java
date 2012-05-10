@@ -60,7 +60,7 @@ public class UserContentTypeDefinitionImpl implements UserContentTypeDefinition
 
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	public void setVO(BaseEntityVO valueObject) 

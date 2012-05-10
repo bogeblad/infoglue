@@ -76,7 +76,7 @@ public class MakeTree
 	private void FillTree(Integer parent, int level, String expkey, String makekey)
 	{
 		Collection leafs = new ArrayList();
-		Collection roots = new ArrayList();;
+		Collection roots = new ArrayList();
 
 		// Every time this method is called, we are one step
 		// deeper in the tree.

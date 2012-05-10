@@ -196,8 +196,7 @@ public class SetCharacterEncodingFilter implements Filter
     	
     	if(inputCharacterEncoding != null && !inputCharacterEncoding.equals("") && !inputCharacterEncoding.equalsIgnoreCase("@inputCharacterEncoding@"))
     		return inputCharacterEncoding;
-    	else
-    		return (this.encoding);
+		return (this.encoding);
     }
 
 }

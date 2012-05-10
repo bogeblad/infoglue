@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -176,7 +177,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	 * This method returns the contents that are of contentTypeDefinition "PageTemplate" sorted on the property given.
 	 */
 	
-	public List getSortedPageTemplates(String sortProperty) throws Exception
+	public List getSortedPageTemplates(String sortProperty) throws SystemException
 	{
 		SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.parentSiteNodeId);
 		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(parentSiteNodeVO.getRepositoryId());
@@ -193,7 +194,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	 * This method fetches an url to the asset for the component.
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, String key) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, String key)
 	{
 		String imageHref = null;
 		try
@@ -225,12 +226,12 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	 * This method fetches the list of SiteNodeTypeDefinitions
 	 */
 	
-	public List getSiteNodeTypeDefinitions() throws Exception
+	public List getSiteNodeTypeDefinitions() throws SystemException
 	{
 		return SiteNodeTypeDefinitionController.getController().getSortedSiteNodeTypeDefinitionVOList();
 	}      
       
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         ceb = this.siteNodeVO.validate();
     	ceb.throwIfNotEmpty();
@@ -264,7 +265,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     }
 
 
-    public String doInput() throws Exception
+    public String doInput() throws SystemException, AccessConstraintException
     {
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -277,7 +278,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 		return "input";
     }
     
-    public String doExecuteV3() throws Exception
+    public String doExecuteV3() throws SystemException, IOException, ConstraintException
     {
     	logger.info("name:" + this.siteNodeVO.getName());
     	logger.info("publishDateTime:" + this.siteNodeVO.getPublishDateTime());
@@ -338,14 +339,11 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 	        this.getResponse().sendRedirect(messageUrl);
 	        return NONE;
         }
-        else
-        {
-        	return "successV3";
-        }
+    	return "successV3";
     }
 
 
-    public String doInputV3() throws Exception
+    public String doInputV3() throws SystemException, AccessConstraintException
     {    	
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -370,7 +368,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     }
         
     
-	private String getDecoratedPageUrl(Integer siteNodeId) throws Exception
+	private String getDecoratedPageUrl(Integer siteNodeId) throws SystemException
 	{
 		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(this.repositoryId);
 		

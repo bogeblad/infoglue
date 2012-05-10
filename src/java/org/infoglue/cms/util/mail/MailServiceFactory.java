@@ -47,7 +47,7 @@ public class MailServiceFactory
    	 * Returns a MailService object.
      */
   	
-  	public static synchronized MailService getService() throws Exception 
+  	public static synchronized MailService getService() 
   	{
 	    if(session == null) 
 	    {
@@ -75,7 +75,7 @@ public class MailServiceFactory
 	 * specified SMTP server.
 	 * @return SMTP session
 	 */
-	private static Session initializeSession() throws Exception 
+	private static Session initializeSession() 
 	{
 		Properties properties = CmsPropertyHandler.getProperties();
 		if(CmsPropertyHandler.getMailSmtpHost() != null)
@@ -103,8 +103,8 @@ public class MailServiceFactory
 	  	
 	  	if (needsAuthentication) 
 	  	{
-			final String uName = (String)(String)properties.get("mail.smtp.user");
-			final String uPass = (String)(String)properties.get("mail.smtp.password");
+			final String uName = (String)properties.get("mail.smtp.user");
+			final String uPass = (String)properties.get("mail.smtp.password");
 			
 			javax.mail.Authenticator authenticator = new javax.mail.Authenticator() 
 			{
@@ -116,9 +116,6 @@ public class MailServiceFactory
 			
 			return Session.getInstance(properties, authenticator);
 		} 
-		else 
-		{
-			return Session.getInstance(properties);
-	  	}
+		return Session.getInstance(properties);
 	}
 }

@@ -31,6 +31,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentStateController;
 import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 
 
@@ -56,7 +58,7 @@ public class ChangeContentStateAction extends InfoGlueAbstractAction
 	 * ask the user for a comment as this is to be regarded as a new version. 
 	 */
 	   
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, ConstraintException
     {
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
@@ -88,7 +90,7 @@ public class ChangeContentStateAction extends InfoGlueAbstractAction
        	return "success";
     }
 
-	public String doStandalone() throws Exception
+	public String doStandalone() throws ConstraintException, SystemException
 	{      
 		//If the comment is not null we carry out the stateChange
 		if(getStateId().intValue() == 2 && getVersionComment() == null)

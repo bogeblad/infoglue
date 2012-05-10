@@ -23,9 +23,10 @@
 
 package org.infoglue.deliver.controllers.kernel.impl.simple;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.util.HttpUtilities;
 
@@ -37,7 +38,7 @@ public class IntegrationDeliveryController
 	 * Private constructor to enforce factory-use
 	 */
 	
-	private IntegrationDeliveryController(Integer siteNodeId, Integer languageId, Integer contentId) throws SystemException, Exception
+	private IntegrationDeliveryController(Integer siteNodeId, Integer languageId, Integer contentId) 
 	{
 	}
 	
@@ -46,7 +47,7 @@ public class IntegrationDeliveryController
 	 * Factory method
 	 */
 	
-	public static IntegrationDeliveryController getIntegrationDeliveryController(Integer siteNodeId, Integer languageId, Integer contentId) throws SystemException, Exception
+	public static IntegrationDeliveryController getIntegrationDeliveryController(Integer siteNodeId, Integer languageId, Integer contentId) 
 	{
 		return new IntegrationDeliveryController(siteNodeId, languageId, contentId);
 	}
@@ -55,7 +56,7 @@ public class IntegrationDeliveryController
 	 * Factory method
 	 */
 	
-	public static IntegrationDeliveryController getIntegrationDeliveryController(DeliveryContext deliveryContext) throws SystemException, Exception
+	public static IntegrationDeliveryController getIntegrationDeliveryController(DeliveryContext deliveryContext) 
 	{
 		return new IntegrationDeliveryController(deliveryContext.getSiteNodeId(), deliveryContext.getLanguageId(), deliveryContext.getContentId());
 	}
@@ -64,7 +65,7 @@ public class IntegrationDeliveryController
 	 * This method gets an remote URL's content.
 	 */
 	
-	public String getUrlContent(String url, HttpServletRequest request, boolean includeRequest) throws SystemException, Exception
+	public String getUrlContent(String url, HttpServletRequest request, boolean includeRequest) throws IOException 
 	{
 		String response = "";
 		
@@ -77,7 +78,7 @@ public class IntegrationDeliveryController
 	 * This method gets an remote URL's content.
 	 */
 	
-	public String getUrlContent(String url, HttpServletRequest request, boolean includeRequest, String encoding) throws SystemException, Exception
+	public String getUrlContent(String url, HttpServletRequest request, boolean includeRequest, String encoding) throws IOException 
 	{
 		String response = "";
 		

@@ -50,7 +50,7 @@ public class ContentCategoryImpl implements ContentCategory
 	}
 
 
-	public BaseEntityVO getVO()			{ return (BaseEntityVO) getValueObject(); }
+	public BaseEntityVO getVO()			{ return getValueObject(); }
 	public void setVO(BaseEntityVO vo)	{ setValueObject((ContentCategoryVO) vo); }
 
 	public Integer getId()			{ return getContentCategoryId(); }
@@ -72,8 +72,7 @@ public class ContentCategoryImpl implements ContentCategory
 	{
     	if(category == null && valueObject != null)
 			return valueObject.getCategoryId();
-		else
-			return category.getId();
+		return category.getId();
 	}
 
     public void setCategoryId(Integer categoryId)

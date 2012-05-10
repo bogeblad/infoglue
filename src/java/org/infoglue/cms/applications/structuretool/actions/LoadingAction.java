@@ -35,17 +35,17 @@ public class LoadingAction extends ViewCMSAbstractToolAction
 { 
 	private static final long serialVersionUID = 1L;
 
-    public String doExecute() throws Exception
+    public String doExecute()
     {
         return "success";
     }
 
-    public String doExecuteStructure() throws Exception
+    public String doExecuteStructure()
     {
         return "successStructure";
     }
 
-    public String doExecuteContent() throws Exception
+    public String doExecuteContent()
     {
         return "successContent";
     }

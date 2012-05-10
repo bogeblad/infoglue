@@ -33,7 +33,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController
 import org.infoglue.cms.controllers.kernel.impl.simple.InfoGluePrincipalControllerProxy;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
 import org.infoglue.cms.entities.management.CategoryVO;
-import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.InfoGlueTestCase;
 
 /**

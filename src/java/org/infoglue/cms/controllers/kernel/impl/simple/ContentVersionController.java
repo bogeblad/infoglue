@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.OptimizationBeanList;
@@ -67,7 +69,6 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -106,9 +107,9 @@ public class ContentVersionController extends BaseController
 	
 	
 
-    public Integer getContentIdForContentVersion(Integer contentVersionId) throws SystemException, Bug
+    public Integer getContentIdForContentVersion(Integer contentVersionId) throws SystemException
     {
-    	Integer contentId = (Integer)contentMap.get(contentVersionId);
+    	Integer contentId = contentMap.get(contentVersionId);
     	if(contentId == null)
     	{
     		ContentVersionVO ContentVersionVO = getContentVersionVOWithId(contentVersionId);
@@ -120,9 +121,9 @@ public class ContentVersionController extends BaseController
     	return contentId;
     }
 
-    public Integer getContentIdForContentVersion(Integer contentVersionId, Database db) throws SystemException, Bug
+    public Integer getContentIdForContentVersion(Integer contentVersionId, Database db) throws SystemException
     {
-    	Integer contentId = (Integer)contentMap.get(contentVersionId);
+    	Integer contentId = contentMap.get(contentVersionId);
     	if(contentId == null)
     	{
     		ContentVersionVO ContentVersionVO = getContentVersionVOWithId(contentVersionId, db);
@@ -134,37 +135,37 @@ public class ContentVersionController extends BaseController
     	return contentId;
     }
 
-    public ContentVersionVO getFullContentVersionVOWithId(Integer contentVersionId) throws SystemException, Bug
+    public ContentVersionVO getFullContentVersionVOWithId(Integer contentVersionId) throws SystemException
     {
 		return (ContentVersionVO) getVOWithId(ContentVersionImpl.class, contentVersionId);
     }
 
-    public ContentVersionVO getContentVersionVOWithId(Integer contentVersionId) throws SystemException, Bug
+    public ContentVersionVO getContentVersionVOWithId(Integer contentVersionId) throws SystemException
     {
 		return (ContentVersionVO) getVOWithId(SmallContentVersionImpl.class, contentVersionId);
     }
 
-    public ContentVersionVO getContentVersionVOWithId(Integer contentVersionId, Database db) throws SystemException, Bug
+    public ContentVersionVO getContentVersionVOWithId(Integer contentVersionId, Database db) throws SystemException
     {
 		return (ContentVersionVO) getVOWithId(SmallContentVersionImpl.class, contentVersionId, db);
     }
 
-    public ContentVersion getContentVersionWithId(Integer contentVersionId, Database db) throws SystemException, Bug
+    public ContentVersion getContentVersionWithId(Integer contentVersionId, Database db) throws SystemException
     {
 		return (ContentVersion) getObjectWithId(ContentVersionImpl.class, contentVersionId, db);
     }
 
-    public ContentVersion getReadOnlyContentVersionWithId(Integer contentVersionId, Database db) throws SystemException, Bug
+    public ContentVersion getReadOnlyContentVersionWithId(Integer contentVersionId, Database db) throws SystemException
     {
 		return (ContentVersion) getObjectWithIdAsReadOnly(ContentVersionImpl.class, contentVersionId, db);
     }
 
-    public SmallestContentVersionVO getSmallestContentVersionVOWithId(Integer contentVersionId, Database db) throws SystemException, Bug
+    public SmallestContentVersionVO getSmallestContentVersionVOWithId(Integer contentVersionId, Database db) throws SystemException
     {
 		return (SmallestContentVersionVO) getVOWithId(SmallestContentVersionImpl.class, contentVersionId, db);
     }
 
-    public List getContentVersionVOList() throws SystemException, Bug
+    public List getContentVersionVOList() throws SystemException
     {
         return getAllVOObjects(SmallContentVersionImpl.class, "contentVersionId");
     }
@@ -199,7 +200,7 @@ public class ContentVersionController extends BaseController
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public List getContentVersionVOWithParentRecursiveAndRelated(Integer contentId, Integer stateId, boolean mustBeFirst) throws ConstraintException, SystemException
+    public List getContentVersionVOWithParentRecursiveAndRelated(Integer contentId, Integer stateId, boolean mustBeFirst) throws SystemException
 	{
         List contentVersionVOList = new ArrayList();
         
@@ -267,7 +268,7 @@ public class ContentVersionController extends BaseController
 	}
 
 	
-	public List getContentVersionVOWithParent(Integer contentId) throws SystemException, Bug
+	public List getContentVersionVOWithParent(Integer contentId) throws SystemException
     {
         List resultList = new ArrayList();
     	Database db = CastorDatabaseService.getDatabase();
@@ -307,7 +308,7 @@ public class ContentVersionController extends BaseController
 		return resultList;
     }
 
-	public List getContentVersionWithParent(Integer contentId, Database db) throws SystemException, Bug, Exception
+	public List getContentVersionWithParent(Integer contentId, Database db) throws PersistenceException 
     {
         ArrayList resultList = new ArrayList();
     	ContentVersionVO contentVersionVO = null;
@@ -336,10 +337,9 @@ public class ContentVersionController extends BaseController
 	 * @param stateId  The state of the versions
 	 * @return A list of the latest versions matching the given state
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public List getLatestContentVersionVOWithParent(Integer contentId, Integer stateId, boolean mustBeFirst) throws SystemException, Bug
+	public List getLatestContentVersionVOWithParent(Integer contentId, Integer stateId, boolean mustBeFirst) throws SystemException
 	{
 		List resultList = new ArrayList();
 		
@@ -371,11 +371,9 @@ public class ContentVersionController extends BaseController
 	 * @param contentId The content to look for versions in
 	 * @param stateId  The state of the versions
 	 * @return A list of the latest versions matching the given state
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public List getLatestContentVersionWithParent(Integer contentId, Integer stateId, Database db, boolean mustBeFirst) throws SystemException, Bug, Exception
+	public List getLatestContentVersionWithParent(Integer contentId, Integer stateId, Database db, boolean mustBeFirst) throws PersistenceException
 	{
 		ArrayList resultList = new ArrayList();
 		ArrayList langCheck = new ArrayList();
@@ -419,7 +417,7 @@ public class ContentVersionController extends BaseController
 	 * This method returns the latest contentVersion there is for the given content if it is active and is the latest made.
 	 */
 	
-	public List getLatestActiveContentVersionIfInState(Content content, Integer stateId, Database db) throws SystemException, Exception
+	public List getLatestActiveContentVersionIfInState(Content content, Integer stateId, Database db)
 	{
 		List resultList = new ArrayList();
 	    Map lastLanguageVersions = new HashMap();
@@ -472,7 +470,7 @@ public class ContentVersionController extends BaseController
      * This method returns the latest active content version.
      */
     
-   	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId) throws SystemException, Bug
+   	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId) throws SystemException 
     {
     	Database db = CastorDatabaseService.getDatabase();
     	ContentVersionVO contentVersionVO = null;
@@ -500,7 +498,7 @@ public class ContentVersionController extends BaseController
 	 * This method returns the latest active content version.
 	 */
     
-	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Integer stateId, Database db) throws SystemException, Bug, Exception
+	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Integer stateId, Database db) throws SystemException
 	{
     	ContentVersionVO contentVersionVO = null;
 
@@ -515,9 +513,10 @@ public class ContentVersionController extends BaseController
 	
    	/**
 	 * This method returns the latest active content version.
+   	 * @throws PersistenceException 
 	 */
     
-	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
+	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Database db) throws PersistenceException 
 	{
 		ContentVersionVO contentVersionVO = null;
 
@@ -544,24 +543,9 @@ public class ContentVersionController extends BaseController
 	 * This method returns the latest active content version.
 	 */
     
-	public ContentVersion getLatestActiveContentVersion(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
+	public ContentVersion getLatestActiveContentVersion(Integer contentId, Integer languageId, Database db) throws SystemException
 	{
 		ContentVersion contentVersion = null;
-    	
-		/*
-	    OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl cv WHERE cv.owningContent.contentId = $1 AND cv.language.languageId = $2 AND cv.isActive = $3 ORDER BY cv.contentVersionId desc");
-		oql.bind(contentId);
-		oql.bind(languageId);
-		oql.bind(true);
-
-		QueryResults results = oql.execute(Database.ReadOnly);
-		
-		if (results.hasMore()) 
-	    {
-	    	contentVersion = (ContentVersion)results.next();
-	    	logger.info("found one:" + contentVersion.getId());
-	    }
-	    */
 		
 		Content content = ContentController.getContentController().getReadOnlyContentWithId(contentId, db);
 		Collection contentVersions = content.getContentVersions();
@@ -599,7 +583,7 @@ public class ContentVersionController extends BaseController
 	 * This method returns the latest active content version.
 	 */
     
-	public ContentVersion getLatestActiveContentVersionReadOnly(Integer contentId, Integer languageId, Database db) throws SystemException, Bug
+	public ContentVersion getLatestActiveContentVersionReadOnly(Integer contentId, Integer languageId, Database db) throws SystemException
 	{
 		ContentVersion contentVersion = null;
     	
@@ -639,7 +623,7 @@ public class ContentVersionController extends BaseController
 	 * This method returns the latest active content version in a certain version.
 	 */
     
-	public ContentVersion getLatestActiveContentVersionReadOnly(Integer contentId, Integer languageId, Integer stateId, Database db) throws SystemException, Bug
+	public ContentVersion getLatestActiveContentVersionReadOnly(Integer contentId, Integer languageId, Integer stateId, Database db) throws SystemException
 	{
 		ContentVersion contentVersion = null;
     	
@@ -675,7 +659,7 @@ public class ContentVersionController extends BaseController
 		return contentVersion;
 	}
 
-	public ContentVersionVO getLatestContentVersionVO(Integer contentId, Integer languageId) throws SystemException, Bug
+	public ContentVersionVO getLatestContentVersionVO(Integer contentId, Integer languageId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
     	ContentVersionVO contentVersionVO = null;
@@ -699,7 +683,7 @@ public class ContentVersionController extends BaseController
 		return contentVersionVO;
     }
 
-	public ContentVersionVO getLatestContentVersionVO(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
+	public ContentVersionVO getLatestContentVersionVO(Integer contentId, Integer languageId, Database db) throws PersistenceException 
     {
         ContentVersionVO contentVersionVO = null;
         
@@ -722,7 +706,7 @@ public class ContentVersionController extends BaseController
     }
 
 
-	public ContentVersion getContentVersionWithId(Integer contentVersionId) throws SystemException, Bug
+	public ContentVersion getContentVersionWithId(Integer contentVersionId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
     	ContentVersion contentVersion = null;
@@ -747,7 +731,7 @@ public class ContentVersionController extends BaseController
     }
 
 
-	public ContentVersion getLatestContentVersion(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
+	public ContentVersion getLatestContentVersion(Integer contentId, Integer languageId, Database db) throws PersistenceException 
     {
         ContentVersion contentVersion = null;
         
@@ -773,7 +757,7 @@ public class ContentVersionController extends BaseController
 	 * This method created a new contentVersion in the database.
 	 */
 	
-    public ContentVersionVO create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId) throws ConstraintException, SystemException
+    public ContentVersionVO create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId) throws SystemException
     {
     	return create(contentId, languageId, contentVersionVO, oldContentVersionId, true, true);
     }
@@ -783,7 +767,7 @@ public class ContentVersionController extends BaseController
 	 * This method created a new contentVersion in the database.
 	 */
 	
-    public ContentVersionVO create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets) throws ConstraintException, SystemException
+    public ContentVersionVO create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets) throws SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
         ContentVersion contentVersion = null;
@@ -810,7 +794,7 @@ public class ContentVersionController extends BaseController
 	 * so it recognises the change. 
 	 */
     
-    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, Database db) throws ConstraintException, SystemException, Exception
+    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, Database db) throws ConstraintException, SystemException, PersistenceException, IOException
     {
     	return create(contentId, languageId, contentVersionVO, oldContentVersionId, true, true, db);
     }
@@ -820,12 +804,12 @@ public class ContentVersionController extends BaseController
 	 * This method created a new contentVersion in the database. It also updates the owning content
 	 * so it recognises the change. 
 	 */
-    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Database db) throws ConstraintException, SystemException, Exception
+    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Database db) throws ConstraintException, SystemException, PersistenceException, IOException
     {
     	return create(contentId, languageId, contentVersionVO, oldContentVersionId, allowBrokenAssets, duplicateAssets, null, db);
     }
     
-    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, Exception
+    public ContentVersion create(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, PersistenceException, IOException
     {
 		Content content   = ContentController.getContentController().getContentWithId(contentId, db);
     	Language language = LanguageController.getController().getLanguageWithId(languageId, db);
@@ -837,20 +821,13 @@ public class ContentVersionController extends BaseController
 	 * This method created a new contentVersion in the database. It also updates the owning content
 	 * so it recognises the change. 
 	 */
-    
-    /*
-    public ContentVersion create(Content content, Language language, ContentVersionVO contentVersionVO, Integer oldContentVersionId, Database db) throws ConstraintException, SystemException, Exception
-    {
-    	return create(content, language, contentVersionVO, oldContentVersionId, true, db);
-    }
-    */
     public ContentVersion create(Content content, Language language, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Database db) throws ConstraintException, SystemException, Exception
     {
     	return create(content, language, contentVersionVO, oldContentVersionId, allowBrokenAssets, duplicateAssets, null, db);
       
     }
     
-    public ContentVersion create(Content content, Language language, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, Exception
+    public ContentVersion create(Content content, Language language, ContentVersionVO contentVersionVO, Integer oldContentVersionId, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, PersistenceException, IOException
     {
     	ContentVersion contentVersion = new ContentVersionImpl();
 		contentVersion.setValueObject(contentVersionVO);
@@ -864,7 +841,6 @@ public class ContentVersionController extends BaseController
 
         if(oldContentVersionId != null && oldContentVersionId.intValue() != -1)
 		    copyDigitalAssets(getContentVersionWithId(oldContentVersionId, db), contentVersion, allowBrokenAssets, duplicateAssets, excludedAssetId, db);
-		    //contentVersion.setDigitalAssets(getContentVersionWithId(oldContentVersionId, db).getDigitalAssets());
 
         return contentVersion;
     }     
@@ -873,7 +849,7 @@ public class ContentVersionController extends BaseController
 	 * This method deletes an contentversion and notifies the owning content.
 	 */
 	
-    public void delete(ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
+    public void delete(ContentVersionVO contentVersionVO) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);
@@ -940,7 +916,7 @@ public class ContentVersionController extends BaseController
 	 * other versions or contents reference the same asset.
 	 */
 	
-	public void deleteVersionsForContent(Content content, Database db, InfoGluePrincipal principal) throws ConstraintException, SystemException, Bug, Exception
+	public void deleteVersionsForContent(Content content, Database db, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
     {
 	    deleteVersionsForContent(content, db, false, principal);
     }
@@ -951,7 +927,7 @@ public class ContentVersionController extends BaseController
 	 * other versions or contents reference the same asset.
 	 */
 	
-	public void deleteVersionsForContent(Content content, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
+	public void deleteVersionsForContent(Content content, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
     {
     	//TEST
         if(forceDelete)
@@ -1010,7 +986,7 @@ public class ContentVersionController extends BaseController
 	 * This method deletes a digitalAsset.
 	 */
 	
-    public void deleteDigitalAsset(Integer contentId, Integer languageId, String assetKey) throws ConstraintException, SystemException
+    public void deleteDigitalAsset(Integer contentId, Integer languageId, String assetKey) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);
@@ -1186,7 +1162,7 @@ public class ContentVersionController extends BaseController
     	return updatedContentVersionVO; //(ContentVersionVO) updateEntity(ContentVersionImpl.class, realContentVersionVO);
     }        
 
-	public List getPublishedActiveContentVersionVOList(Integer contentId) throws SystemException, Bug, Exception
+	public List getPublishedActiveContentVersionVOList(Integer contentId) throws SystemException
     {
         List contentVersionVOList = new ArrayList();
         
@@ -1223,7 +1199,7 @@ public class ContentVersionController extends BaseController
 		return contentVersionVOList;
     }
 
-	public List getPublishedActiveContentVersionVOList(Integer contentId, Database db) throws SystemException, Bug, Exception
+	public List getPublishedActiveContentVersionVOList(Integer contentId, Database db) throws PersistenceException 
     {
         List contentVersionVOList = new ArrayList();
         
@@ -1247,7 +1223,7 @@ public class ContentVersionController extends BaseController
     }
 
     
-	public ContentVersion getLatestPublishedContentVersion(Integer contentId) throws SystemException, Bug, Exception
+	public ContentVersion getLatestPublishedContentVersion(Integer contentId) throws SystemException, Exception
     {
         ContentVersion contentVersion = null;
         
@@ -1284,7 +1260,7 @@ public class ContentVersionController extends BaseController
     }
 
 
-	public ContentVersion getLatestPublishedContentVersion(Integer contentId, Integer languageId) throws SystemException, Bug, Exception
+	public ContentVersion getLatestPublishedContentVersion(Integer contentId, Integer languageId) throws SystemException, Exception
     {
         ContentVersion contentVersion = null;
         
@@ -1322,7 +1298,7 @@ public class ContentVersionController extends BaseController
     }
 
 
-	public ContentVersion getLatestPublishedContentVersion(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
+	public ContentVersion getLatestPublishedContentVersion(Integer contentId, Integer languageId, Database db) throws PersistenceException 
     {
         ContentVersion contentVersion = null;
         
@@ -1333,7 +1309,7 @@ public class ContentVersionController extends BaseController
     	oql.bind(true);
     	
     	QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode");
+		logger.info("Fetching entity in read/write mode");
 
 		if (results.hasMore()) 
         {
@@ -1351,7 +1327,7 @@ public class ContentVersionController extends BaseController
 	 * This method returns the version previous to the one sent in.
 	 */
 	
-	public ContentVersionVO getPreviousContentVersionVO(Integer contentId, Integer languageId, Integer contentVersionId) throws SystemException, Bug
+	public ContentVersionVO getPreviousContentVersionVO(Integer contentId, Integer languageId, Integer contentVersionId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
     	ContentVersionVO contentVersionVO = null;
@@ -1393,9 +1369,10 @@ public class ContentVersionController extends BaseController
 
 	/**
 	 * This method returns the version previous to the one sent in.
+	 * @throws PersistenceException 
 	 */
 	
-	public ContentVersionVO getPreviousActiveContentVersionVO(Integer contentId, Integer languageId, Integer contentVersionId, Database db) throws SystemException, Bug, Exception
+	public ContentVersionVO getPreviousActiveContentVersionVO(Integer contentId, Integer languageId, Integer contentVersionId, Database db) throws PersistenceException 
     {
     	ContentVersionVO contentVersionVO = null;
 
@@ -1424,7 +1401,7 @@ public class ContentVersionController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public ContentVersionVO deleteDigitalAssetRelation(Integer contentVersionId, Integer digitalAssetId, InfoGluePrincipal principal) throws SystemException, Bug
+	public ContentVersionVO deleteDigitalAssetRelation(Integer contentVersionId, Integer digitalAssetId, InfoGluePrincipal principal) throws SystemException
     {
 		ContentVersionVO editedContentVersionVO = null;
 			
@@ -1435,7 +1412,7 @@ public class ContentVersionController extends BaseController
         {      
         	ContentVersion contentVersion = null;
         	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, db);
-        	DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getDigitalAssetVOWithId(digitalAssetId, db);
+        	DigitalAssetVO digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(digitalAssetId, db);
         	if(!contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 			{
 		    	List events = new ArrayList();
@@ -1483,7 +1460,7 @@ public class ContentVersionController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public void deleteDigitalAssetRelation(Integer contentVersionId, DigitalAsset digitalAsset, Database db) throws SystemException, Bug
+	public void deleteDigitalAssetRelation(Integer contentVersionId, DigitalAsset digitalAsset, Database db) throws SystemException
     {
     	ContentVersion contentVersion = getContentVersionWithId(contentVersionId, db);
 		contentVersion.getDigitalAssets().remove(digitalAsset);
@@ -1495,13 +1472,7 @@ public class ContentVersionController extends BaseController
 	 * This method assigns the same digital assets the old content-version has.
 	 * It's ofcourse important that noone deletes the digital asset itself for then it's lost to everyone.
 	 */
-	/*
-	public void copyDigitalAssets(ContentVersion originalContentVersion, ContentVersion newContentVersion, Database db) throws ConstraintException, SystemException, Exception
-	{
-		copyDigitalAssets(originalContentVersion, newContentVersion, true, db);
-	}
-	*/
-	public void copyDigitalAssets(ContentVersion originalContentVersion, ContentVersion newContentVersion, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, SystemException, Exception
+	public void copyDigitalAssets(ContentVersion originalContentVersion, ContentVersion newContentVersion, boolean allowBrokenAssets, boolean duplicateAssets, Integer excludedAssetId, Database db) throws ConstraintException, IOException
 	{
 	    Collection digitalAssets = originalContentVersion.getDigitalAssets();	
 
@@ -1565,7 +1536,7 @@ public class ContentVersionController extends BaseController
 	    }
 	}	
 
-	public DigitalAssetVO copyDigitalAssetAndRemoveOldReference(ContentVersion contentVersion, DigitalAsset digitalAsset, boolean allowBrokenAssets, Database db) throws ConstraintException, SystemException, Exception
+	public DigitalAssetVO copyDigitalAssetAndRemoveOldReference(ContentVersion contentVersion, DigitalAsset digitalAsset, boolean allowBrokenAssets, Database db) throws ConstraintException, IOException
 	{
 	    logger.info("Copying digitalAsset " + digitalAsset.getAssetKey());
 	    DigitalAssetVO digitalAssetVO = digitalAsset.getValueObject();
@@ -1658,7 +1629,7 @@ public class ContentVersionController extends BaseController
 	 * contentVersioVO is null the contentVersion has not been created yet and no values are present.
 	 */
 	 
-	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal) throws SystemException, Bug
+	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal) throws SystemException
 	{
 		ContentVersionVO contentVersionVO = getContentVersionVOWithId(contentVersionId);
 		
@@ -1696,14 +1667,11 @@ public class ContentVersionController extends BaseController
 							existed = true;
 							break;
 						}
-						else
-						{
-							logger.info("Yep2");
-							CDATASection cdata = document.createCDATASection(attributeValue);
-							n.appendChild(cdata);
-							existed = true;
-							break;
-						}
+						logger.info("Yep2");
+						CDATASection cdata = document.createCDATASection(attributeValue);
+						n.appendChild(cdata);
+						existed = true;
+						break;
 					}
 				}
 				
@@ -1744,7 +1712,7 @@ public class ContentVersionController extends BaseController
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public void getContentAndAffectedItemsRecursive(Integer contentId, Integer stateId, List siteNodeVersionVOList, List contenteVersionVOList, boolean mustBeFirst, boolean includeMetaInfo) throws ConstraintException, SystemException
+    public void getContentAndAffectedItemsRecursive(Integer contentId, Integer stateId, List siteNodeVersionVOList, List contenteVersionVOList, boolean mustBeFirst, boolean includeMetaInfo) throws SystemException
 	{
         Database db = CastorDatabaseService.getDatabase();
 
@@ -1767,7 +1735,7 @@ public class ContentVersionController extends BaseController
         }
 	}
 	
-	private void getContentAndAffectedItemsRecursive(Content content, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, List siteNodeVersionVOList, List contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo) throws ConstraintException, SystemException, Exception
+	private void getContentAndAffectedItemsRecursive(Content content, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, List siteNodeVersionVOList, List contentVersionVOList, boolean mustBeFirst, boolean includeMetaInfo) throws PersistenceException
 	{
 	    //checkedSiteNodes.add(content.getId());
 	    checkedContents.add(content.getId());
@@ -2297,12 +2265,9 @@ public class ContentVersionController extends BaseController
      * @param languageId a valid languagId
      * @param db a db transaction
      * @return a List of contentVersion depending on parent and language id, if none found an empty List is returned.
-     * @throws SystemException if an error occures.
-     * @throws Bug if an error occures.
-     * @throws Exception if an error occures.
      */
     public List<ContentVersionVO> getContentVersionsWithParentAndLanguage(final Integer contentId,
-            final Integer languageId, final Database db) throws SystemException, Bug, Exception
+            final Integer languageId, final Database db) throws SystemException, PersistenceException
     {
         final List<ContentVersion> resultList = new ArrayList<ContentVersion>();
         final OQLQuery oql = db.getOQLQuery("SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl cv WHERE cv.owningContent.contentId = $1 and cv.language.languageId = $2 ORDER BY cv.contentVersionId desc");
@@ -2385,7 +2350,7 @@ public class ContentVersionController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public ContentVersionVO checkStateAndChangeIfNeeded(Integer contentVersionId, InfoGluePrincipal principal) throws SystemException, Bug
+	public ContentVersionVO checkStateAndChangeIfNeeded(Integer contentVersionId, InfoGluePrincipal principal) throws SystemException
     {
 		ContentVersionVO resultingContentVersionVO = null;
 			
@@ -2414,7 +2379,7 @@ public class ContentVersionController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public ContentVersion checkStateAndChangeIfNeeded(Integer contentVersionId, InfoGluePrincipal principal, Database db) throws ConstraintException, SystemException, Bug
+	public ContentVersion checkStateAndChangeIfNeeded(Integer contentVersionId, InfoGluePrincipal principal, Database db) throws ConstraintException, SystemException
     {
     	ContentVersion contentVersion = null;
     	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, db);
@@ -2434,7 +2399,7 @@ public class ContentVersionController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public DigitalAssetVO checkStateAndChangeIfNeeded(Integer contentVersionId, Integer digitalAssetId, InfoGluePrincipal principal, List<Integer> newContentVersionIdList) throws SystemException, Bug
+	public DigitalAssetVO checkStateAndChangeIfNeeded(Integer contentVersionId, Integer digitalAssetId, InfoGluePrincipal principal, List<Integer> newContentVersionIdList) throws SystemException
     {
 		DigitalAssetVO resultingDigitalAssetVO = null;
 			
@@ -2445,20 +2410,20 @@ public class ContentVersionController extends BaseController
         {      
         	ContentVersion contentVersion = null;
         	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, db);
-        	DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getDigitalAssetVOWithId(digitalAssetId, db);
+        	DigitalAssetVO digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(digitalAssetId, db);
     	    if(!contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 			{
 				List events = new ArrayList();
 				contentVersion = ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, principal, contentVersionVO.getContentId(), db, events);
 				newContentVersionIdList.add(contentVersion.getId());
-				digitalAssetVO = DigitalAssetController.getController().getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
+				digitalAssetVO = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
 			}
     	    
     	    boolean duplicateAssetsBetweenVersions = CmsPropertyHandler.getDuplicateAssetsBetweenVersions();
         	logger.info("duplicateAssetsBetweenVersions:" + duplicateAssetsBetweenVersions);
     	    if(!duplicateAssetsBetweenVersions)
     	    {
-    	    	DigitalAsset oldDigitalAsset = DigitalAssetController.getController().getDigitalAssetWithId(digitalAssetId, db);
+    	    	DigitalAsset oldDigitalAsset = DigitalAssetController.getDigitalAssetWithId(digitalAssetId, db);
     	    	logger.info("oldDigitalAsset:" + oldDigitalAsset.getContentVersions().size());
         	    if(oldDigitalAsset.getContentVersions().size() > 1)
     	    	{
@@ -2494,16 +2459,16 @@ public class ContentVersionController extends BaseController
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.
 	 */
-	public DigitalAssetVO checkStateAndChangeIfNeeded(Integer contentVersionId, Integer digitalAssetId, InfoGluePrincipal principal, Database db) throws ConstraintException, SystemException, Bug, Exception
+	public DigitalAssetVO checkStateAndChangeIfNeeded(Integer contentVersionId, Integer digitalAssetId, InfoGluePrincipal principal, Database db) throws ConstraintException, SystemException, Exception
     {
     	ContentVersion contentVersion = null;
     	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, db);
-    	DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getDigitalAssetVOWithId(digitalAssetId, db);
+    	DigitalAssetVO digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(digitalAssetId, db);
 	    if(!contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 		{
 	    	List events = new ArrayList();
 			contentVersion = ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, principal, contentVersionVO.getContentId(), db, events);
-			digitalAssetVO = DigitalAssetController.getController().getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
+			digitalAssetVO = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), digitalAssetVO.getAssetKey(), db);
 		}
     	    
     	return digitalAssetVO;

@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowDefinitionController;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * 	Action class for usecase ViewListWorkflowDefinition
@@ -40,7 +41,7 @@ public class ViewListWorkflowDefinitionAction extends InfoGlueAbstractAction
 
 	private List workflowDefinitions;
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.workflowDefinitions = WorkflowDefinitionController.getController().getWorkflowDefinitionVOList();
     	

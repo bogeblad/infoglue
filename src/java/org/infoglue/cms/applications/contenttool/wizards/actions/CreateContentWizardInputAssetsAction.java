@@ -41,6 +41,7 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 import webwork.action.ActionContext;
@@ -66,7 +67,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
     {
     }
         	
-    public String doInput() throws Exception
+    public String doInput() throws SystemException
     {
 		CreateContentWizardInfoBean createContentWizardInfoBean = this.getCreateContentWizardInfoBean();
         this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(createContentWizardInfoBean.getContentTypeDefinitionId());
@@ -98,7 +99,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 			if(assetKeyDefinition.getIsMandatory().booleanValue())
 			{
 				hasMandatoryAssets = true;
-				DigitalAssetVO asset = DigitalAssetController.getController().getDigitalAssetVO(createContentWizardInfoBean.getContentVO().getId(), languageId, assetKeyDefinition.getAssetKey(), false);
+				DigitalAssetVO asset = DigitalAssetController.getDigitalAssetVO(createContentWizardInfoBean.getContentVO().getId(), languageId, assetKeyDefinition.getAssetKey(), false);
 				if(asset == null)
 				{
 					mandatoryAssetKey = assetKeyDefinition.getAssetKey();
@@ -117,21 +118,14 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 			inputMoreAssets = "false";
 			return "input";
 		}
-		else
+		if(inputMoreAssets != null && inputMoreAssets.equalsIgnoreCase("true"))
 		{
-			if(inputMoreAssets != null && inputMoreAssets.equalsIgnoreCase("true"))
-			{
-				return "input";				
-			}
-			else
-			{
-	    		return "success";
-			}
+			return "input";				
 		}
-
+		return "success";
     }
 
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
 	{
 		InputStream is = null;
 		File renamedFile = null;
@@ -139,7 +133,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 		
 		try 
 		{
-			MultiPartRequestWrapper mpr = ActionContext.getContext().getMultiPartRequest();
+			MultiPartRequestWrapper mpr = ActionContext.getMultiPartRequest();
 			if(mpr != null)
 			{ 
 				String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
@@ -222,7 +216,7 @@ public class CreateContentWizardInputAssetsAction extends CreateContentWizardAbs
 		return doInput();
 	}
     
-	public String doFinish() throws Exception
+	public String doFinish()
 	{
 		return "success";
 	}

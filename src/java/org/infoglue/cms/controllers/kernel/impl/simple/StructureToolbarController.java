@@ -194,15 +194,12 @@ public class StructureToolbarController
 						"",
 						"pageCover");
 			}
-			else
-			{
-				return new ToolbarButton("",
-						getLocalizedString(locale, "tool.structuretool.toolbarV3.pageCoverLabel"), 
-						getLocalizedString(locale, "tool.structuretool.toolbarV3.pageCoverTitle"),
-						"javascript:alert('Cannot edit this page. You must first set the meta info to working. Do this by entering node properties and changing the state to working.');",
-						"",
-						"pageCover");
-			}
+			return new ToolbarButton("",
+					getLocalizedString(locale, "tool.structuretool.toolbarV3.pageCoverLabel"), 
+					getLocalizedString(locale, "tool.structuretool.toolbarV3.pageCoverTitle"),
+					"javascript:alert('Cannot edit this page. You must first set the meta info to working. Do this by entering node properties and changing the state to working.');",
+					"",
+					"pageCover");
 		}
 		catch(Exception e)
 		{

@@ -57,7 +57,7 @@ public abstract class ValidatableEntityVO implements BaseEntityVO
 	// public abstract Integer getId();
 	// end BaseEntityVO	
 
-	protected ConstraintRuleList rules = new ConstraintRuleList();;
+	protected ConstraintRuleList rules = new ConstraintRuleList();
 	
 	public ConstraintRule getRule(String fieldName)
 	{

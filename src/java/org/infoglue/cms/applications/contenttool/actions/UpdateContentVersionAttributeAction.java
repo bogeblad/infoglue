@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
@@ -200,7 +202,7 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 								
 				for(int i=0; i<attributeValue.length(); i++)
 				{
-					int c = (int)attributeValue.charAt(i);
+					int c = attributeValue.charAt(i);
 					//logger.info("c2:" + c + "-" + Integer.toHexString(c));
 					if(c > 255 && c < 65533)
 						hasUnicodeChars = true;
@@ -275,13 +277,13 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 		catch (ConstraintException ce) 
 		{
 			logger.warn("Error saving attribute - not allowed by validation: " + ce.getMessage());
-			this.getResponse().setStatus(this.getResponse().SC_NOT_ACCEPTABLE);
+			this.getResponse().setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
 			return ERROR;
 		}
 		catch (Throwable t) 
 		{
 			logger.error("Error saving attribute: " + t.getMessage(), t);
-			this.getResponse().setStatus(this.getResponse().SC_INTERNAL_SERVER_ERROR);
+			this.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return ERROR;
 		}
 		finally
@@ -297,78 +299,70 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 
 	public String doGetAttributeValue() throws Exception
 	{
-		try
+		super.initialize(this.contentVersionId, this.contentId, this.languageId);
+		this.contentVersionVO = this.getContentVersionVO();
+		if(this.contentVersionVO == null)
 		{
-			super.initialize(this.contentVersionId, this.contentId, this.languageId);
-			this.contentVersionVO = this.getContentVersionVO();
-			if(this.contentVersionVO == null)
+			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
+			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+		
+			StringBuffer sb = new StringBuffer();
+			sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><article xmlns=\"x-schema:ArticleSchema.xml\"><attributes>");
+			List contentTypeAttributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(contentTypeDefinitionVO, true);
+			Iterator contentTypeAttributesIterator = contentTypeAttributes.iterator();
+			while(contentTypeAttributesIterator.hasNext())
 			{
-				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
-				ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
-			
-				StringBuffer sb = new StringBuffer();
-				sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><article xmlns=\"x-schema:ArticleSchema.xml\"><attributes>");
-				List contentTypeAttributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(contentTypeDefinitionVO, true);
-				Iterator contentTypeAttributesIterator = contentTypeAttributes.iterator();
-				while(contentTypeAttributesIterator.hasNext())
-				{
-					ContentTypeAttribute contentTypeAttribute = (ContentTypeAttribute)contentTypeAttributesIterator.next();
-					String initialValue = contentTypeAttribute.getContentTypeAttribute("initialData").getContentTypeAttributeParameterValue().getValue("label");
-					if(initialValue == null || initialValue.trim().equals(""))
-						initialValue = "State " + contentTypeAttribute.getName();
-					sb.append("<" + contentTypeAttribute.getName() + "><![CDATA[" + initialValue + "]]></" + contentTypeAttribute.getName() + ">");
-				}
-				sb.append("</attributes></article>");
-				
-				ContentVersionVO contentVersionVO = new ContentVersionVO();
-				contentVersionVO.setVersionComment("Autocreated");
-				contentVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
-				contentVersionVO.setVersionValue(sb.toString());
-				this.contentVersionVO = ContentVersionController.getContentVersionController().create(contentId, languageId, contentVersionVO, null);
+				ContentTypeAttribute contentTypeAttribute = (ContentTypeAttribute)contentTypeAttributesIterator.next();
+				String initialValue = contentTypeAttribute.getContentTypeAttribute("initialData").getContentTypeAttributeParameterValue().getValue("label");
+				if(initialValue == null || initialValue.trim().equals(""))
+					initialValue = "State " + contentTypeAttribute.getName();
+				sb.append("<" + contentTypeAttribute.getName() + "><![CDATA[" + initialValue + "]]></" + contentTypeAttribute.getName() + ">");
 			}
+			sb.append("</attributes></article>");
+			
+			ContentVersionVO contentVersionVO = new ContentVersionVO();
+			contentVersionVO.setVersionComment("Autocreated");
+			contentVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
+			contentVersionVO.setVersionValue(sb.toString());
+			this.contentVersionVO = ContentVersionController.getContentVersionController().create(contentId, languageId, contentVersionVO, null);
+		}
 
-			AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
-			
-			Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(this.contentVersionVO.getContentId());
-			logger.info("protectedContentId:" + protectedContentId);
-			if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.Write", protectedContentId.toString()))
-				ceb.add(new AccessConstraintException("Content.contentId", "1001"));
-			
-			ceb.throwIfNotEmpty();
-			
-			String attributeValue = "";
-			if(this.contentVersionVO != null)
-			{
-				attributeValue = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, attributeName, false);
-			}
-			
-			logger.info("attributeValue before parse:" + attributeValue);
-			
-    		attributeValue = PageEditorHelper.parseAttributeForInlineEditing(attributeValue, false, getDeliverContext(), contentId, languageId);
-			//logger.info("parseAttributeForInlineEditing done");
-			
-			logger.info("attributeValue:" +attributeValue);
-			/*
-			logger.info("attributeValue:" +attributeValue);
-			for(int i=0; i<attributeValue.length(); i++)
-				logger.info("c3:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
-			*/
-			
-			this.getResponse().setContentType("text/plain; charset=utf-8");
-			this.getResponse().setCharacterEncoding("utf-8");
-			//this.getResponse().setContentType("text/plain");
-	        this.getResponse().getWriter().println(attributeValue);			
-		}
-		catch (Exception e) 
+		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
+		
+		Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(this.contentVersionVO.getContentId());
+		logger.info("protectedContentId:" + protectedContentId);
+		if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.Write", protectedContentId.toString()))
+			ceb.add(new AccessConstraintException("Content.contentId", "1001"));
+		
+		ceb.throwIfNotEmpty();
+		
+		String attributeValue = "";
+		if(this.contentVersionVO != null)
 		{
-			e.printStackTrace();
-			throw e;
+			attributeValue = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, attributeName, false);
 		}
+		
+		logger.info("attributeValue before parse:" + attributeValue);
+		
+		attributeValue = PageEditorHelper.parseAttributeForInlineEditing(attributeValue, false, getDeliverContext(), contentId, languageId);
+		//logger.info("parseAttributeForInlineEditing done");
+		
+		logger.info("attributeValue:" +attributeValue);
+		/*
+		logger.info("attributeValue:" +attributeValue);
+		for(int i=0; i<attributeValue.length(); i++)
+			logger.info("c3:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
+		*/
+		
+		this.getResponse().setContentType("text/plain; charset=utf-8");
+		this.getResponse().setCharacterEncoding("utf-8");
+		//this.getResponse().setContentType("text/plain");
+        this.getResponse().getWriter().println(attributeValue);			
 		
 		return NONE;		
 	}
 		
-	private String parseInlineAssetReferences(String attributeValue) throws Exception
+	private String parseInlineAssetReferences(String attributeValue)
 	{
 		Map<String,String> replacements = new HashMap<String,String>();
 		
@@ -454,17 +448,9 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 							n.getFirstChild().setNodeValue(attributeValue);
 							break;
 						}
-						else
-						{
-							CDATASection cdata = document.createCDATASection(attributeValue);
-							n.appendChild(cdata);
-							break;
-						}
-						/*
-						Node valueNode = n.getFirstChild();
-						n.getFirstChild().setNodeValue(attributeValue);
+						CDATASection cdata = document.createCDATASection(attributeValue);
+						n.appendChild(cdata);
 						break;
-						*/
 					}
 				}
 				contentVersionVO.setVersionValue(XMLHelper.serializeDom(document, new StringBuffer()).toString());		        	

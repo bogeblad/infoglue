@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingController;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * 	Action class for usecase ViewListAvailableServiceBindingUCC 
@@ -41,7 +42,7 @@ public class ViewListAvailableServiceBindingAction extends InfoGlueAbstractActio
 	private List availableServiceBindingVOList;
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.availableServiceBindingVOList = AvailableServiceBindingController.getController().getAvailableServiceBindingVOList();
         return "success";

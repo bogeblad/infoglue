@@ -70,70 +70,31 @@ public class DynamicWebservice
      */
     private static final String PRINCIPAL_ARGUMENT_NAME = "principal";
     
-	/**
-	 * 
-	 */
 	private static final String DEFAULT_NAMESPACE_URI = "http://soapinterop.org/";
 	
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress;
 	
-	/**
-	 * 
-	 */
 	private String operationName;
 	
-	/**
-	 * 
-	 */
 	private QName returnType;
 	
-	/**
-	 * 
-	 */
 	private final List parameters = new ArrayList();
 	
-	/**
-	 * 
-	 */
 	private final List arguments = new ArrayList();
 
-	/**
-	 * 
-	 */
 	private final Map mappings = new HashMap(); // <Class> -> <QName>
 	
-	/**
-	 * 
-	 */
 	private final Map standardMappings = new HashMap(); // <Class> -> <QName>
 	
-	/**
-	 * 
-	 */
 	private Service service;
 	
-	/**
-	 * 
-	 */
 	private Call call;
 	
-	/**
-	 * 
-	 */
 	private Object result;
 	
-	/**
-	 * 
-	 */
 	private DynamicWebserviceSerializer serializer;
 	
 	
-	/**
-	 * 
-	 */
 	public DynamicWebservice(final InfoGluePrincipal remotePrincipal) 
 	{
 		super();
@@ -142,9 +103,6 @@ public class DynamicWebservice
 		addArgument(PRINCIPAL_ARGUMENT_NAME, remotePrincipal.getName());
 	}
 
-	/**
-	 * 
-	 */
 	public void callService()
 	{
 		try
@@ -164,9 +122,6 @@ public class DynamicWebservice
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void configureStandardMappings()
 	{
 		standardMappings.put(Boolean.class, XMLType.XSD_BASE64);
@@ -178,9 +133,6 @@ public class DynamicWebservice
 		standardMappings.put(String.class,  XMLType.XSD_STRING);
 	}
 	
-	/**
-	 * 
-	 */
 	private void configureBasic()
 	{
 		call.setTimeout(30000);
@@ -190,9 +142,6 @@ public class DynamicWebservice
 		call.setReturnType(returnType);
 	}
 	
-	/**
-	 * 
-	 */
 	private void configureParameters()
 	{
 		for(final Iterator i = parameters.iterator(); i.hasNext(); )
@@ -202,9 +151,6 @@ public class DynamicWebservice
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void configureMappings()
 	{
 		for(final Iterator i = mappings.keySet().iterator(); i.hasNext(); )
@@ -215,44 +161,29 @@ public class DynamicWebservice
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	public Object getResult()
 	{
 		return result;
 	}
 	
-	/**
-	 * 
-	 */
 	public void setTargetEndpointAddress(final String targetEndpointAddress) 
 	{
 		logger.debug("targetEndpointAddress=[" + targetEndpointAddress + "]");
 		this.targetEndpointAddress = targetEndpointAddress;
 	}
 
-	/**
-	 * 
-	 */
 	public void setOperationName(final String operationName) 
 	{
 		logger.debug("operationName=[" + operationName + "]");
 		this.operationName = operationName;
 	}
 	
-	/**
-	 * 
-	 */
 	public void setReturnType(final Class c) 
 	{
 		logger.debug("returnType=[" + (c==null ? "null" : getClassName(c)) + "]");
 		returnType = mappingForClass(c); // null is ok
 	}
 
-	/**
-	 * 
-	 */
 	public void setReturnType(final Class c, QName type) 
 	{
 		logger.debug("returnType=[" + (c==null ? "null" : type.getLocalPart()) + "]");
@@ -260,9 +191,6 @@ public class DynamicWebservice
 		returnType = mappingForClass(c); // null is ok
 	}
 
-	/**
-	 * 
-	 */
 	public void addArgument(final String name, final Object value)
 	{
 		assertNameNotNull(name);
@@ -270,9 +198,6 @@ public class DynamicWebservice
 		addArgument(name, mappingForClass(value.getClass()), value);
 	}
 	
-	/**
-	 * 
-	 */
 	public void addArgument(final String name, final Map value)
 	{
 		assertNameNotNull(name);
@@ -281,9 +206,6 @@ public class DynamicWebservice
 		addArgument(name, XMLType.SOAP_ARRAY, serializer.serializeMap(value).toArray());
 	}
 	
-	/**
-	 * 
-	 */
 	public void addArgument(final String name, final Collection value)
 	{
 		assertNameNotNull(name);
@@ -292,9 +214,6 @@ public class DynamicWebservice
 		addArgument(name, XMLType.SOAP_ARRAY, serializer.serializeCollection(value).toArray());
 	}
 
-	/**
-	 * 
-	 */
 	public void addArgument(final String name, final Collection value, final Class[] objectClass)
 	{
 		assertNameNotNull(name);
@@ -308,9 +227,6 @@ public class DynamicWebservice
 		addArgument(name, XMLType.SOAP_ARRAY, serializer.serializeCollection(value).toArray());
 	}
 
-	/**
-	 * 
-	 */
 	public void addArgument(final String name, final Map value, final Class[] objectClass)
 	{
 		assertNameNotNull(name);
@@ -325,9 +241,6 @@ public class DynamicWebservice
 	}
 	
 
-	/**
-	 * 
-	 */
 	public void addNonSerializedArgument(final String name, final Collection value)
 	{
 		assertNameNotNull(name);
@@ -336,9 +249,6 @@ public class DynamicWebservice
 		addArgument(name, XMLType.SOAP_ARRAY, value);
 	}
 
-	/**
-	 * 
-	 */
 	private void assertNameNotNull(final String argument) 
 	{
 		if(argument == null)
@@ -347,18 +257,12 @@ public class DynamicWebservice
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void addArgument(final String name, final QName type, final Object value)
 	{
 	    parameters.add(new Parameter(name, type));
 		arguments.add(value);
 	}
 
-	/**
-	 * 
-	 */
 	private QName mappingForClass(final Class c)
 	{
 		if(c == null)
@@ -376,9 +280,6 @@ public class DynamicWebservice
 		return addMapping(c);
 	}
 
-	/**
-	 * 
-	 */
 	private QName mappingForClass(final Class c, final String namespace)
 	{
 		if(c == null)
@@ -396,9 +297,6 @@ public class DynamicWebservice
 		return addMapping(c, namespace);
 	}
 
-	/**
-	 * 
-	 */
 	private QName addMapping(final Class c) {
 		final String className = getClassName(c);
 		final QName type = new QName(DEFAULT_NAMESPACE_URI + className, className);
@@ -407,9 +305,6 @@ public class DynamicWebservice
 		return type;
 	}
 
-	/**
-	 * 
-	 */
 	private QName addMapping(final Class c, String namespace) {
 		final String className = getClassName(c);
 		final QName type = new QName(namespace + className, className);
@@ -418,9 +313,6 @@ public class DynamicWebservice
 		return type;
 	}
 
-	/**
-	 * 
-	 */
 	public String getClassName(final Class c)
 	{
 		final int firstChar = c.getName().lastIndexOf('.') + 1;

@@ -48,7 +48,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.PrincipalNotFoundException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -214,12 +213,9 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
@@ -452,12 +448,9 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
@@ -545,12 +538,9 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			{
 				return null;
 			}
-			else
-			{
-				infoglueRole = (InfoGlueRole)infoglueRoleObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infoglueRole;
-			}
+			infoglueRole = (InfoGlueRole)infoglueRoleObject;
+			//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infoglueRole;
 		}
 		
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueRole starting ---------\n\n\n");
@@ -567,8 +557,6 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			
 			Attributes attributes = ctx.getAttributes(roleName);
 			logger.info("attributes:" + attributes.toString());
-			if(attributes == null)
-				logger.info("Could not find " + roleName);
 				
 			String name = null;
 			Attribute nameAttribute = attributes.get(roleNameAttribute);
@@ -672,11 +660,8 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			{
 				return null;
 			}
-			else
-			{
-				infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
-				return infoglueGroup;
-			}
+			infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
+			return infoglueGroup;
 		}
 
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueGroup starting ---------\n\n\n");
@@ -832,8 +817,6 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 			
 			Attributes attributes = ctx.getAttributes(userName);
 			logger.info("attributes:" + attributes.toString());
-			if(attributes == null)
-				throw new SystemException("No user attributes found for user:" + userName);
 				
 			Attribute userNameAttribute 		= attributes.get(userNameAttributeFilter);
 			Attribute userDisplayNameAttribute 	= attributes.get(userDisplayNameFilter);
@@ -1545,7 +1528,7 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 		return users;
 	}
 	
-	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException, Bug
+	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException
 	{
 		List users = new ArrayList();
 		//TODO		
@@ -1584,7 +1567,7 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
 		return users;
 	}
 	
-	public List getRoleUsers(String roleName, DirContext ctx) throws Exception
+	public List getRoleUsers(String roleName, DirContext ctx)
 	{
 		List users = new ArrayList();
 		
@@ -1864,7 +1847,7 @@ public class SimplifiedJNDIBasicAuthorizationModule implements AuthorizationModu
     /** 
      * Gets a list of users which is memebers of the given group
      */
-    public List getGroupUsers(String groupName, DirContext ctx) throws Exception
+    public List getGroupUsers(String groupName, DirContext ctx)
     {
 	    logger.info("--------getGroupUsers(String groupName) start---------------");
 		List users = new ArrayList();

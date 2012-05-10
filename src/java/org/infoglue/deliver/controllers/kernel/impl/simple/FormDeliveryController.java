@@ -125,7 +125,7 @@ public class FormDeliveryController
 								NamedNodeMap nodeMap = value.getAttributes();
 								for(int nmi =0; nmi < nodeMap.getLength(); nmi++)
 								{
-									Node attribute = (Node)nodeMap.item(nmi);
+									Node attribute = nodeMap.item(nmi);
 									String valueAttributeName = attribute.getNodeName();
 									String valueAttributeValue = attribute.getNodeValue();
 									contentTypeAttributeParameterValue.addAttribute(valueAttributeName, valueAttributeValue);

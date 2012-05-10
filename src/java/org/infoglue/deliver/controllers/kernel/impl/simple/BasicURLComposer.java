@@ -35,7 +35,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -43,7 +42,6 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
-import org.infoglue.deliver.applications.filters.FilterConstants;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 
@@ -352,7 +350,7 @@ public class BasicURLComposer extends URLComposer
 
         try
 		{
-	        SiteNodeVO siteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
+	        SiteNodeVO siteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(siteNodeId, db);
 	
 	        String deriveProtocolWhenUsingProtocolRedirects = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNodeVO.getRepositoryId(), "deriveProtocolWhenUsingProtocolRedirects");
 			if(deriveProtocolWhenUsingProtocolRedirects == null || deriveProtocolWhenUsingProtocolRedirects.equals("") || !deriveProtocolWhenUsingProtocolRedirects.equals("true") || !deriveProtocolWhenUsingProtocolRedirects.equals("false"))
@@ -406,8 +404,8 @@ public class BasicURLComposer extends URLComposer
         {
             String context = CmsPropertyHandler.getServletContext();
             
-            SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
-            SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
+            SiteNodeVO siteNode = SiteNodeController.getSmallSiteNodeVOWithId(siteNodeId, db);
+            SiteNodeVO currentSiteNode = SiteNodeController.getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
     		if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))
     		{
     			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
@@ -639,15 +637,8 @@ public class BasicURLComposer extends URLComposer
         {           
             if(!useDNSNameInUrls.equalsIgnoreCase("false"))
             {
-	    		if(siteNodeId == null)
-	    			siteNodeId = new Integer(-1);
-	
 	    		if(languageId == null)
 	    			languageId = new Integer(-1);
-	
-	    		if(contentId == null)
-	    			contentId = new Integer(-1);
-	
 	            String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
 
 	            SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, db, true);
@@ -717,16 +708,8 @@ public class BasicURLComposer extends URLComposer
     	        }
                 
                 String servletContext = CmsPropertyHandler.getServletContext();
-    	        
-                if(siteNodeId == null)
-	    			siteNodeId = new Integer(-1);
-	
 	    		if(languageId == null)
 	    			languageId = new Integer(-1);
-	
-	    		if(contentId == null)
-	    			contentId = new Integer(-1);
-	
 	            String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
 	            
 				if(deliveryContext.getHttpServletRequest().getRequestURI().indexOf("!renderDecoratedPage") > -1)
@@ -800,14 +783,8 @@ public class BasicURLComposer extends URLComposer
         }
         else
         {           
-        	if(siteNodeId == null)
-    			siteNodeId = new Integer(-1);
-
     		if(languageId == null)
     			languageId = new Integer(-1);
-
-    		if(contentId == null)
-    			contentId = new Integer(-1);
 
             String arguments = "siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId;
 

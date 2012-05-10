@@ -40,21 +40,21 @@ public class ViewDeploymentChooseServerAction extends InfoGlueAbstractAction
 	//Variables used by the quick deploy feature
 	private Integer contentId;
 	
-	public String doInputQuickV3() throws Exception
+	public String doInputQuickV3()
     {
     	this.deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	
     	return "inputQuickV3";
     }
 
-    public String doInput() throws Exception
+    public String doInput()
     {
     	this.deploymentServers = CmsPropertyHandler.getDeploymentServers();
     	
     	return "input";
     }
 
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	return "success";
     }

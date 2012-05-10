@@ -40,6 +40,9 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 
@@ -54,7 +57,7 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	private static final long serialVersionUID = 1L;
 
 	private String returnAddress;
-	private SiteNodeVO siteNodeVO 				= new SiteNodeVO();;
+	private SiteNodeVO siteNodeVO 				= new SiteNodeVO();
 	private Integer siteNodeTypeDefinitionId 	= null;
 	
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -66,7 +69,7 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	 * @throws Exception
 	 */
 	 
-	public String doInput() throws Exception
+	public String doInput()
 	{
 		return "input";
 	}
@@ -75,10 +78,9 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	 * This method validates the input and handles any deviations.
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
 	 
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException
 	{
 		this.siteNodeVO.setCreatorName(this.getInfoGluePrincipal().getName());
 
@@ -95,7 +97,7 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	 * This method returns the contents that are of contentTypeDefinition "PageTemplate" sorted on the property given.
 	 */
 	
-	public List getSortedPageTemplates(String sortProperty) throws Exception
+	public List getSortedPageTemplates(String sortProperty) throws SystemException
 	{
 		SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.getCreateSiteNodeWizardInfoBean().getParentSiteNodeId());
 		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(parentSiteNodeVO.getRepositoryId());
@@ -112,7 +114,7 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	 * This method fetches an url to the asset for the component.
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, String key) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, String key)
 	{
 		String imageHref = null;
 		try
@@ -144,7 +146,7 @@ public class CreateSiteNodeWizardInputSiteNodeAction extends CreateSiteNodeWizar
 	 * This method fetches the list of SiteNodeTypeDefinitions
 	 */
 	
-	public List getSiteNodeTypeDefinitions() throws Exception
+	public List getSiteNodeTypeDefinitions() throws SystemException
 	{
 		return SiteNodeTypeDefinitionController.getController().getSortedSiteNodeTypeDefinitionVOList();
 	}      

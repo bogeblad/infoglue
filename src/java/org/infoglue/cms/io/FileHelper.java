@@ -29,6 +29,7 @@ import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,8 +40,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -48,11 +52,6 @@ import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 
 import org.apache.log4j.Logger;
 import org.infoglue.deliver.util.Timer;
@@ -69,12 +68,9 @@ public class FileHelper
 	 * @param is_append Dictates if the text should be appended to the existing file. 
 	 * If is_append == true; The text will be added to the existing file.
 	 * If is_append == false; The text will overwrite the existing contents of the file.
-	 *
-	 * @exception java.lang.Exception
-	 * @since 2002-12-12
 	 */
  
-	public synchronized static void writeToFile(File file, String text, boolean isAppend) throws Exception
+	public synchronized static void writeToFile(File file, String text, boolean isAppend) throws IOException 
 	{
 		PrintWriter pout = new PrintWriter(new FileWriter(file, isAppend));
 		pout.println(text);    
@@ -89,31 +85,19 @@ public class FileHelper
 	 * @param is_append Dictates if the text should be appended to the existing file. 
 	 * If is_append == true; The text will be added to the existing file.
 	 * If is_append == false; The text will overwrite the existing contents of the file.
-	 *
-	 * @exception java.lang.Exception
-	 * @since 2002-12-12
 	 */
  
  	//TODO - this is not right.
-	public synchronized static void writeUTF8ToFileSpecial(File file, String text, boolean isAppend) throws Exception
+	public synchronized static void writeUTF8ToFileSpecial(File file, String text, boolean isAppend) throws IOException 
 	{
-		/*
-		FileOutputStream fos = new FileOutputStream(file, isAppend);
-		Writer out = new OutputStreamWriter(fos, "UTF-8");
-		out.write(text);
-		out.flush();
-		out.close();
-		*/
-		
 		DataOutputStream dos = new DataOutputStream(new FileOutputStream(file, isAppend));
 		dos.writeBytes(text);
 		dos.flush();
 		dos.close();
-		
 	}   
 	
 	//TODO - this is not right.
-	public synchronized static void writeUTF8(File file, String text, boolean isAppend) throws Exception
+	public synchronized static void writeUTF8(File file, String text, boolean isAppend) throws IOException 
 	{
 		FileOutputStream fos = new FileOutputStream(file, isAppend);
 		Writer out = new OutputStreamWriter(fos, "UTF-8");
@@ -122,7 +106,7 @@ public class FileHelper
 		out.close();
 	}   
 	
-	public synchronized static void write(File file, String text, boolean isAppend, String charSet) throws Exception
+	public synchronized static void write(File file, String text, boolean isAppend, String charSet) throws IOException 
 	{
 		FileOutputStream fos = new FileOutputStream(file, isAppend);
 		Writer out = new OutputStreamWriter(fos, charSet);
@@ -131,7 +115,7 @@ public class FileHelper
 		out.close();
 		fos.close();
 	}   
-	public synchronized static void writeUTF8ToFile(File file, String text, boolean isAppend) throws Exception
+	public synchronized static void writeUTF8ToFile(File file, String text, boolean isAppend) throws IOException 
 	{
         Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF8"));
         out.write(text);
@@ -147,12 +131,9 @@ public class FileHelper
 	 * @param is_append Dictates if the text should be appended to the existing file. 
 	 * If is_append == true; The text will be added to the existing file.
 	 * If is_append == false; The text will overwrite the existing contents of the file.
-	 *
-	 * @exception java.lang.Exception
-	 * @since 2002-12-12
 	 */
  
-	public synchronized static String readUTF8FromFile(File file) throws Exception
+	public synchronized static String readUTF8FromFile(File file) throws IOException 
 	{
 	    BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF8"));
 	    String str = in.readLine();
@@ -172,12 +153,9 @@ public class FileHelper
 	 * This method reads a file from the disk and converts it to an byte[].
 	 * @author Mattias Bogeblad
 	 * @param file The file read bytes from
-	 *
-	 * @exception java.lang.Exception
-	 * @since 2002-12-12
 	 */
 	
-	public static byte[] getFileBytes(File file) throws Exception
+	public static byte[] getFileBytes(File file) throws IOException 
 	{
 		FileInputStream fis = new FileInputStream(file);
 		byte[] fileBytes = new byte[(int)file.length()];
@@ -192,12 +170,9 @@ public class FileHelper
 	 * This method reads a file from the disk into a string.
 	 * @author Mattias Bogeblad
 	 * @param file The file reads from
-	 *
-	 * @exception java.lang.Exception
-	 * @since 2002-12-12
 	 */
 	
-	public static String getFileAsString(File file) throws Exception
+	public static String getFileAsString(File file) throws IOException 
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -217,12 +192,9 @@ public class FileHelper
 	 * This method reads a file from the disk into a string.
 	 * @author Mattias Bogeblad
 	 * @param file The file reads from
-	 *
-	 * @exception java.lang.Exception
-	 * @since 2002-12-12
 	 */
 	
-	public static String getFileAsString(File file, String charEncoding) throws Exception
+	public static String getFileAsString(File file, String charEncoding) throws IOException 
 	{
 	    BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), charEncoding));
 	    
@@ -237,7 +209,7 @@ public class FileHelper
 		return sb.toString();
 	}
 
-	public static String getFileAsStringOpt(File file) throws Exception 
+	public static String getFileAsStringOpt(File file) throws IOException  
 	{
 		InputStream in = null;
 		byte[] b = new byte[(int)file.length()];
@@ -261,7 +233,7 @@ public class FileHelper
 		return new String(b);
 	}
 			
-	public static String getFileAsStringOpt(File file, String charEncoding) throws Exception 
+	public static String getFileAsStringOpt(File file, String charEncoding) throws IOException  
 	{
 		InputStream in = null;
 		byte[] b = new byte[(int)file.length()];
@@ -305,12 +277,13 @@ public class FileHelper
 	 * This method reads a file from the disk into a string.
 	 * @author Mattias Bogeblad
 	 * @param file The file reads from
+	 * @throws IOException 
 	 *
 	 * @exception java.lang.Exception
 	 * @since 2002-12-12
 	 */
 	
-	public static String getStreamAsString(InputStream inputStream) throws Exception
+	public static String getStreamAsString(InputStream inputStream) throws IOException 
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -338,7 +311,7 @@ public class FileHelper
 	 * @since 2002-12-12
 	 */
 	
-	public static void writeToFile(File file, byte[] data) throws Exception
+	public static void writeToFile(File file, byte[] data) throws IOException 
 	{
 		FileOutputStream fos = new FileOutputStream(file);
 		BufferedOutputStream bos = new BufferedOutputStream(fos, data.length);
@@ -355,7 +328,7 @@ public class FileHelper
 	/**
 	 * Reading the x last lines of a file
 	 */
-	public static String tail(File file, int numberOfLines) throws Exception
+	public static String tail(File file, int numberOfLines) throws IOException 
 	{
 		StringBuffer result = new StringBuffer("");
 		
@@ -410,7 +383,7 @@ public class FileHelper
 	 * This method unzips the cms war-file.
 	 */
 	
-	public static List<File> unzipFile(File file, String targetFolder) throws Exception
+	public static List<File> unzipFile(File file, String targetFolder) throws FileNotFoundException, IOException 
 	{
 		return unzipFile(file, targetFolder, null, true);
 	}
@@ -419,7 +392,7 @@ public class FileHelper
 	 * This method unzips the cms war-file.
 	 */
 	
-	public static List<File> unzipFile(File file, String targetFolder, String[] skipFileTypes, boolean skipHiddenFiles) throws Exception
+	public static List<File> unzipFile(File file, String targetFolder, String[] skipFileTypes, boolean skipHiddenFiles) throws FileNotFoundException, IOException 
 	{
 		new File(targetFolder).mkdirs();
 		
@@ -510,7 +483,7 @@ public class FileHelper
 	 * This method unjars a file.
 	 */
 	
-	public static void unjarFile(File file, String targetFolder) throws Exception
+	public static void unjarFile(File file, String targetFolder) throws IOException 
 	{
 		unjarFile(file, targetFolder, null);
 	}
@@ -519,7 +492,7 @@ public class FileHelper
 	 * This method unjars a file.
 	 */
 	
-	public static void unjarFile(File file, String targetFolder, String[] skipFileTypes) throws Exception
+	public static void unjarFile(File file, String targetFolder, String[] skipFileTypes) throws IOException 
 	{
     	Enumeration entries;
     	

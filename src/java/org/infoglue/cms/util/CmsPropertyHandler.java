@@ -431,8 +431,7 @@ public class CmsPropertyHandler
 		{
 			if(valueObject instanceof NullObject)
 				return null;
-			else	
-				return ((String)valueObject).trim();
+			return ((String)valueObject).trim();
 		}
 	    
 		Timer timer = new Timer();
@@ -646,8 +645,7 @@ public class CmsPropertyHandler
 	{
 		if(operatingMode == null)
 			return getProperty("operatingMode");
-		else
-			return operatingMode; //getProperty("operatingMode"); Concurrency issues...
+		return operatingMode; //getProperty("operatingMode"); Concurrency issues...
 	}
 
 	public static String getOperatingMode(boolean skipHardCache)
@@ -664,8 +662,7 @@ public class CmsPropertyHandler
 	{
 		if(!getOperatingMode().equalsIgnoreCase("3"))
 			return true;
-		else
-			return false;
+		return false;
 	}
 
 	//TODO - refresh if changed....
@@ -734,8 +731,7 @@ public class CmsPropertyHandler
 			String administratorPassword = getProperty("administratorPassword");
 		    if(administratorPassword != null)
 		    	return administratorPassword.equals(password);
-		    else
-		    	return false;
+	    	return false;
 		}
 		catch (Exception e) 
 		{

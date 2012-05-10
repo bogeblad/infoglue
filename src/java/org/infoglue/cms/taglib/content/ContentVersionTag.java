@@ -34,32 +34,17 @@ import org.infoglue.deliver.taglib.AbstractTag;
  */
 public class ContentVersionTag extends AbstractTag 
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5895792525780372296L;
 
-	/**
-	 * 
-	 */
 	private Integer contentId;
 
-	/**
-	 * 
-	 */
 	private Integer languageId;
 	
-	/**
-	 * 
-	 */
 	public ContentVersionTag() 
 	{
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException 
 	{		
 		setResultAttribute(getContentVersion());
@@ -81,17 +66,11 @@ public class ContentVersionTag extends AbstractTag
 		return contentVersion;
 	}
 	
-	/**
-	 * 
-	 */
 	public void setContentId(final String contentId) throws JspException
 	{
 		this.contentId = evaluateInteger("digitalAssets", "contentId", contentId);
 	}
 
-	/**
-	 * 
-	 */
 	public void setLanguageId(final String languageId) throws JspException
 	{
 		this.languageId = evaluateInteger("digitalAssets", "languageId", languageId);

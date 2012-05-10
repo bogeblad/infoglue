@@ -43,12 +43,12 @@ import java.util.ResourceBundle;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.StringManager;
@@ -98,7 +98,7 @@ public class LabelController extends BaseController implements StringManager
    	 * This method deletes a digital asset in the database.
    	 */
 
-   	public static void delete(Integer digitalAssetId) throws ConstraintException, SystemException
+   	public static void delete(Integer digitalAssetId) throws SystemException
    	{
 		deleteEntity(DigitalAssetImpl.class, digitalAssetId);
    	}
@@ -437,7 +437,7 @@ public class LabelController extends BaseController implements StringManager
         return contents;
     }
 
-    public static List getDigitalAssetByName(String name, Database db) throws SystemException, Exception
+    public static List getDigitalAssetByName(String name, Database db) throws PersistenceException
     {
         List contents = new ArrayList();
 

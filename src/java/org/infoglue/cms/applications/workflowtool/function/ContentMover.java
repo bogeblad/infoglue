@@ -35,32 +35,17 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class ContentMover extends ContentFunction 
 {
-	/**
-	 * 
-	 */
 	public static final String DESTINATION_PARAMETER = "move_newParentFolder";
 	
-	/**
-	 * 
-	 */
 	public static final String DESTINATION_PATH_ALGORITHM = "pathAlgorithm";
 	
-	/**
-	 * 
-	 */
 	private ContentVO destinationContentVO;
 	
-	/**
-	 *
-	 */
 	public ContentMover() 
 	{ 
 		super(); 
 	}
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		if(getContentVO() != null)

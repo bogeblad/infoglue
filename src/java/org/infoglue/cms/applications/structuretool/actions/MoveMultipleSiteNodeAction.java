@@ -36,6 +36,9 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeControllerProxy;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.dom.DOMBuilder;
 
@@ -89,7 +92,7 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
 	}
       
 	
-   public String doInput() throws Exception
+   public String doInput() throws SystemException
     {    	
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
@@ -106,7 +109,7 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
         return "input";
     }
     
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         if(this.newParentSiteNodeId == null)
         {

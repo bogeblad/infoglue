@@ -28,14 +28,8 @@ import javax.servlet.jsp.JspException;
  * 
  */
 public class SortContentVersionPropertyTag extends AbstractSortArgumentTag {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3690481298883753782L;
 
-	/**
-	 * 
-	 */
 	public SortContentVersionPropertyTag() 
 	{
 		super();

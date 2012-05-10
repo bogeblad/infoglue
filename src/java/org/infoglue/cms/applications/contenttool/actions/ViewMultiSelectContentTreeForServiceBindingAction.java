@@ -37,6 +37,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.structure.QualifyerVO;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -237,7 +239,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 		return "";
 	}
 	 
-	private void initialize() throws Exception
+	private void initialize() throws ConstraintException, SystemException
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
@@ -247,7 +249,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 		
 	}
 	     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, ConstraintException
     {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 		
@@ -275,7 +277,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
     	}
     }
     
-	public String doChangeRepository() throws Exception
+	public String doChangeRepository() throws ConstraintException, SystemException
 	{
 		this.qualifyers = parseQualifyers(qualifyerString);
 		
@@ -284,7 +286,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 		return "success";
 	}
 	
-	public String doChangeTree() throws Exception
+	public String doChangeTree() throws ConstraintException, SystemException
 	{
 		this.qualifyers = parseQualifyers(qualifyerString);
 		
@@ -293,7 +295,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 		return "success";
 	}
 	
-    public String doAddQualifyer() throws Exception
+    public String doAddQualifyer() throws ConstraintException, SystemException
     {
     	if(this.qualifyerString != null && !this.qualifyerString.equals(""))
     		this.qualifyerString += "," + this.entityId;
@@ -307,7 +309,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
     	return "success";
     }
 
-	public String doAddQualifyerAtPosition() throws Exception
+	public String doAddQualifyerAtPosition() throws ConstraintException, SystemException
 	{
 		if(this.qualifyerString == null || this.qualifyerString.equals("") || this.requestedPosition == null )
 			this.qualifyerString += "," + this.entityId;
@@ -333,7 +335,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 		  	
 		return "success";
 	}
-	public String doMoveQualifyerToPosition() throws Exception
+	public String doMoveQualifyerToPosition() throws ConstraintException, SystemException
 	{
 		this.entityId = new Integer(((QualifyerVO) parseQualifyers(qualifyerString).get(oldSortOrder.intValue())).getValue());
 		this.qualifyers = parseQualifyers(qualifyerString);
@@ -346,7 +348,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
 		return doAddQualifyerAtPosition();
 	}
 
-    public String doMoveQualifyer() throws Exception
+    public String doMoveQualifyer() throws ConstraintException, SystemException
     {	
     	logger.info("------------------------------------->");
 		this.qualifyers = parseQualifyers(qualifyerString);
@@ -358,7 +360,7 @@ public class ViewMultiSelectContentTreeForServiceBindingAction extends InfoGlueA
     }
 
 
-    public String doDeleteQualifyer() throws Exception
+    public String doDeleteQualifyer() throws ConstraintException, SystemException
     {	
     	logger.info("------------------------------------->");
 		this.qualifyers = parseQualifyers(qualifyerString);

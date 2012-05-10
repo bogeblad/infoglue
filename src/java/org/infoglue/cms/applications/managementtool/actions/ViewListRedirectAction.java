@@ -28,6 +28,7 @@ import java.util.List;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.RedirectVO;
+import org.infoglue.cms.exception.SystemException;
 
 
 /**
@@ -45,7 +46,7 @@ public class ViewListRedirectAction extends InfoGlueAbstractAction
 	private String tabId = "userManaged";
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.userRedirects = RedirectController.getController().getUserRedirectVOList();
 		this.systemRedirects = RedirectController.getController().getSystemRedirectVOList();

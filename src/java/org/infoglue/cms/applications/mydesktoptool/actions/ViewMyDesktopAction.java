@@ -39,7 +39,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.cms.util.workflow.StepFilter;
@@ -161,7 +160,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 		return "latestContents";
 	}
 
-	private void populateActiveWorkflowVOList() throws SystemException
+	private void populateActiveWorkflowVOList()
 	{
 		final String showAllWorkflows = CmsPropertyHandler.getShowAllWorkflows();
 		if(showAllWorkflows == null || showAllWorkflows.equalsIgnoreCase("true"))
@@ -452,7 +451,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 	}
 	
 	
-	public String doGetActiveWorkflowProperties() throws Exception
+	public String doGetActiveWorkflowProperties()
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -502,7 +501,7 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 		return NONE;
 	}
 
-	public String doGetAvailableWorkflowProperties() throws Exception
+	public String doGetAvailableWorkflowProperties()
 	{
 		StringBuffer sb = new StringBuffer();
 		

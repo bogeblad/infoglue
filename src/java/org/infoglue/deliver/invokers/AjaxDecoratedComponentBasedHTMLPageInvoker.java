@@ -511,7 +511,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 	}
 
    
-	private String decorateComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId/*, Integer metainfoContentId*/, int maxDepth, int currentDepth) throws Exception
+	private String decorateComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId/*, Integer metainfoContentId*/, int maxDepth, int currentDepth) 
 	{
 		if(currentDepth > maxDepth)
 		{
@@ -1310,7 +1310,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 	 * This method returns a bean representing a list of ComponentProperties that the component has.
 	 */
 	 
-	private List getComponentProperties(Integer componentId, Document document) throws Exception
+	private List getComponentProperties(Integer componentId, Document document) 
 	{
 		//logger.info("componentPropertiesXML:" + componentPropertiesXML);
 		List componentProperties = new ArrayList();
@@ -1476,11 +1476,9 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 	 * This method returns a bean representing a list of ComponentProperties that the component has.
 	 */
 	 
-	private List getComponentProperties(Integer componentId, Document document, TemplateController templateController) throws Exception
+	private List getComponentProperties(Integer componentId, Document document, TemplateController templateController) 
 	{
 		//TODO - h�r kan vi s�kert cache:a.
-		
-		//logger.info("componentPropertiesXML:" + componentPropertiesXML);
 		List componentProperties = new ArrayList();
 		Timer timer = new Timer();
 		timer.setActive(false);
@@ -1489,10 +1487,6 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 		{
 			if(document != null)
 			{
-			//if(componentPropertiesXML != null && componentPropertiesXML.length() > 0)
-			//{
-				//org.w3c.dom.Document document = XMLHelper.readDocumentFromByteArray(componentPropertiesXML.getBytes("UTF-8"));
-
 				timer.printElapsedTime("Read document");
 
 				String propertyXPath = "//property";
@@ -1629,7 +1623,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 	 * This method returns a bean representing a list of ComponentProperties that the component has.
 	 */
 	 
-	private List getComponentTasks(Integer componentId, Document document) throws Exception
+	private List getComponentTasks(Integer componentId, Document document) 
 	{
 		List componentTasks = new ArrayList();
 		Timer timer = new Timer();

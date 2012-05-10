@@ -30,6 +30,7 @@ import java.util.Map;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ThemeController;
+import org.infoglue.cms.exception.SystemException;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -61,9 +62,10 @@ public class ViewMySettingsAction extends InfoGlueAbstractAction
 	
 	/**
      * The main method that fetches the Value-objects for this use-case
+	 * @throws SystemException 
      */
     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
         Map args = new HashMap();
 	    args.put("globalKey", "infoglue");

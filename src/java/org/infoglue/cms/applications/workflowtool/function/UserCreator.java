@@ -36,34 +36,16 @@ public class UserCreator extends InfoglueFunction
 {
     private final static Logger logger = Logger.getLogger(UserCreator.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final String STATUS_OK = "status.user.ok";
 	
-	/**
-	 * 
-	 */
 	private static final String STATUS_NOK = "status.user.nok";
 
-	/**
-	 * 
-	 */
 	private SystemUserVO systemUserVO;
 	
-	/**
-	 * 
-	 */
 	private String[] roleNames;
 	
-	/**
-	 * 
-	 */
 	private String[] groupNames;
 	
-	/**
-	 * 
-	 */
 	public UserCreator()
 	{
 		super();
@@ -94,9 +76,6 @@ public class UserCreator extends InfoglueFunction
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private String[] getRoleNames(final List roles)
 	{
 		final String[] names = new String[roles.size()];
@@ -109,9 +88,6 @@ public class UserCreator extends InfoglueFunction
 		return names;
 	}
 	
-	/**
-	 * 
-	 */
 	private String[] getGroupNames(final List groups)
 	{
 		final String[] names = new String[groups.size()];

@@ -30,7 +30,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,6 +48,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
@@ -66,8 +66,6 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.entities.management.TableCount;
 import org.infoglue.cms.entities.management.UserProperties;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -98,12 +96,12 @@ public class DigitalAssetController extends BaseController
    	 * returns the digital asset VO
    	 */
    	
-   	public static DigitalAssetVO getDigitalAssetVOWithId(Integer digitalAssetId) throws SystemException, Bug
+   	public static DigitalAssetVO getDigitalAssetVOWithId(Integer digitalAssetId) throws SystemException
     {
 		return (DigitalAssetVO) getVOWithId(DigitalAssetImpl.class, digitalAssetId);
     }
 
-   	public static DigitalAssetVO getDigitalAssetVOWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
+   	public static DigitalAssetVO getDigitalAssetVOWithId(Integer digitalAssetId, Database db) throws SystemException
     {
 		return (DigitalAssetVO) getVOWithId(DigitalAssetImpl.class, digitalAssetId, db);
     }
@@ -113,12 +111,12 @@ public class DigitalAssetController extends BaseController
      */
 
 
-    public static DigitalAsset getDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
+    public static DigitalAsset getDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException
     {
 		return (DigitalAsset) getObjectWithId(DigitalAssetImpl.class, digitalAssetId, db);
     }
 
-    public static List<ContentVersionVO> getContentVersionVOListConnectedToAssetWithId(Integer digitalAssetId) throws SystemException, Bug
+    public static List<ContentVersionVO> getContentVersionVOListConnectedToAssetWithId(Integer digitalAssetId) throws SystemException
     {
     	List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
     	
@@ -148,12 +146,12 @@ public class DigitalAssetController extends BaseController
         return versions;
     }
     
-    public static DigitalAsset getMediumDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
+    public static DigitalAsset getMediumDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException
     {
 		return (DigitalAsset) getObjectWithId(MediumDigitalAssetImpl.class, digitalAssetId, db);
     }
 
-    public static DigitalAsset getMediumDigitalAssetWithIdReadOnly(Integer digitalAssetId, Database db) throws SystemException, Bug
+    public static DigitalAsset getMediumDigitalAssetWithIdReadOnly(Integer digitalAssetId, Database db) throws SystemException
     {
 		return (DigitalAsset) getObjectWithIdAsReadOnly(MediumDigitalAssetImpl.class, digitalAssetId, db);
     }
@@ -162,13 +160,13 @@ public class DigitalAssetController extends BaseController
      * returns a shallow digitalasset
      */
 
-    public static DigitalAssetVO getSmallDigitalAssetVOWithId(Integer digitalAssetId) throws SystemException, Bug
+    public static DigitalAssetVO getSmallDigitalAssetVOWithId(Integer digitalAssetId) throws SystemException
     {
     	return (DigitalAssetVO) getVOWithId(SmallDigitalAssetImpl.class, digitalAssetId);
     }
 
 
-    public static DigitalAssetVO getSmallDigitalAssetVOWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
+    public static DigitalAssetVO getSmallDigitalAssetVOWithId(Integer digitalAssetId, Database db) throws SystemException
     {
     	return (DigitalAssetVO) getVOWithId(SmallDigitalAssetImpl.class, digitalAssetId, db);
     }
@@ -177,7 +175,7 @@ public class DigitalAssetController extends BaseController
      * returns a shallow digitalasset
      */
     
-    public static DigitalAsset getSmallDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
+    public static DigitalAsset getSmallDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException
     {
     	return (DigitalAsset) getObjectWithId(SmallDigitalAssetImpl.class, digitalAssetId, db);
     }
@@ -252,7 +250,7 @@ public class DigitalAssetController extends BaseController
    	 * The asset is send in as an InputStream which castor inserts automatically.
    	 */
 
-   	public static DigitalAssetVO create(DigitalAssetVO digitalAssetVO, InputStream is, String entity, Integer entityId) throws ConstraintException, SystemException
+   	public static DigitalAssetVO create(DigitalAssetVO digitalAssetVO, InputStream is, String entity, Integer entityId) throws SystemException
    	{
 		Database db = CastorDatabaseService.getDatabase();
         
@@ -348,7 +346,7 @@ public class DigitalAssetController extends BaseController
    	 * The asset is send in as an InputStream which castor inserts automatically.
    	 */
 
-   	public DigitalAsset create(Database db, DigitalAssetVO digitalAssetVO, InputStream is) throws SystemException, Exception
+   	public DigitalAsset create(Database db, DigitalAssetVO digitalAssetVO, InputStream is) throws PersistenceException 
    	{
 		DigitalAsset digitalAsset = new DigitalAssetImpl();
 		digitalAsset.setValueObject(digitalAssetVO);
@@ -364,7 +362,7 @@ public class DigitalAssetController extends BaseController
    	 * The asset is send in as an InputStream which castor inserts automatically.
    	 */
 
-	public DigitalAssetVO createByCopy(Integer originalContentVersionId, String oldAssetKey, Integer newContentVersionId, String newAssetKey, Database db) throws ConstraintException, SystemException
+	public DigitalAssetVO createByCopy(Integer originalContentVersionId, String oldAssetKey, Integer newContentVersionId, String newAssetKey, Database db) throws SystemException
 	{
 		logger.info("Creating by copying....");
 		logger.info("originalContentVersionId:" + originalContentVersionId);
@@ -400,15 +398,12 @@ public class DigitalAssetController extends BaseController
 			logger.error("An error occurred so we should not complete the transaction:" + e, e);
 			throw new SystemException(e.getMessage());
 		}
-		//contentVersion.getDigitalAssets().add(digitalAsset);
-		
 		return digitalAsset.getValueObject();
 	}
 
 	/**
 	 * This method gets a asset with a special key inside the given transaction.
 	 */
-	
 	public DigitalAsset getDigitalAsset(Integer contentVersionId, String assetKey, Database db) throws SystemException
 	{
 		DigitalAsset digitalAsset = null;
@@ -433,8 +428,7 @@ public class DigitalAssetController extends BaseController
    	/**
    	 * This method deletes a digital asset in the database.
    	 */
-
-   	public static void delete(Integer digitalAssetId) throws ConstraintException, SystemException
+   	public static void delete(Integer digitalAssetId) throws SystemException
    	{
 		deleteEntity(DigitalAssetImpl.class, digitalAssetId);
    	}
@@ -443,7 +437,7 @@ public class DigitalAssetController extends BaseController
    	 * This method deletes a digital asset in the database.
    	 */
 
-   	public void delete(Integer digitalAssetId, Database db) throws ConstraintException, SystemException
+   	public void delete(Integer digitalAssetId, Database db) throws SystemException
    	{
 		deleteEntity(DigitalAssetImpl.class, digitalAssetId, db);
    	}
@@ -452,7 +446,7 @@ public class DigitalAssetController extends BaseController
    	 * This method deletes a digital asset in the database.
    	 */
 
-   	public void delete(Integer digitalAssetId, String entity, Integer entityId) throws ConstraintException, SystemException
+   	public void delete(Integer digitalAssetId, String entity, Integer entityId) throws SystemException
    	{
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -487,7 +481,7 @@ public class DigitalAssetController extends BaseController
         }
    	}
    	
-   	public static File[] getCachedFiles(Integer digitalAssetId) throws SystemException, Exception
+   	public static File[] getCachedFiles(Integer digitalAssetId) 
    	{
 		String folderName = "" + (digitalAssetId.intValue() / 1000);
 
@@ -512,7 +506,7 @@ public class DigitalAssetController extends BaseController
 	 * This method removes all images in the digitalAsset directory which belongs to a certain digital asset.
 	 */
 	
-	public static void deleteCachedDigitalAssets(Integer digitalAssetId) throws SystemException, Exception
+	public static void deleteCachedDigitalAssets(Integer digitalAssetId)
 	{ 
 		try
 		{
@@ -540,7 +534,7 @@ public class DigitalAssetController extends BaseController
    	 * This method updates a digital asset in the database.
    	 */
    	
-   	public static DigitalAssetVO update(DigitalAssetVO digitalAssetVO, InputStream is) throws ConstraintException, SystemException
+   	public static DigitalAssetVO update(DigitalAssetVO digitalAssetVO, InputStream is) throws SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -586,7 +580,7 @@ public class DigitalAssetController extends BaseController
 	 * Should not be available probably as you might destroy for other versions and other contents.
 	 * /
 	/*
-	public static void deleteDigitalAssetsForContentVersionWithId(Integer contentVersionId) throws ConstraintException, SystemException, Bug
+	public static void deleteDigitalAssetsForContentVersionWithId(Integer contentVersionId) throws ConstraintException, SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -630,7 +624,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a list of those digital assets the contentVersion has.
 	 */
 	   	
-	public static List getDigitalAssetVOList(Integer contentVersionId) throws SystemException, Bug
+	public static List getDigitalAssetVOList(Integer contentVersionId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -705,7 +699,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 	   	
-	public static List getDigitalAssetVOList(Integer contentId, Integer languageId, boolean useLanguageFallback) throws SystemException, Bug
+	public static List getDigitalAssetVOList(Integer contentId, Integer languageId, boolean useLanguageFallback) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -734,7 +728,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 	   	
-	public static List getDigitalAssetVOList(Integer contentId, Integer languageId, boolean useLanguageFallback, Database db) throws SystemException, Bug, Exception
+	public static List getDigitalAssetVOList(Integer contentId, Integer languageId, boolean useLanguageFallback, Database db) throws SystemException, Exception
     {
 		String key = "all_" + contentId + "_" + languageId + "_" + useLanguageFallback;
 		String cacheName = "digitalAssetCache";
@@ -841,7 +835,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 
-	public static String getDigitalAssetUrl(Integer digitalAssetId) throws SystemException, Bug
+	public static String getDigitalAssetUrl(Integer digitalAssetId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -889,7 +883,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 
-	public static String getDigitalAssetFilePath(Integer digitalAssetId) throws SystemException, Bug
+	public static String getDigitalAssetFilePath(Integer digitalAssetId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -931,7 +925,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 
-	public static String getDigitalAssetProtectedFilePath(Integer digitalAssetId) throws SystemException, Bug
+	public static String getDigitalAssetProtectedFilePath(Integer digitalAssetId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -992,7 +986,7 @@ public class DigitalAssetController extends BaseController
 	 * from that location. To avoid trouble with in memory blobs.
 	 */
 	
-	public InputStream getAssetInputStream(DigitalAsset digitalAsset, boolean returnNullIfBroken) throws Exception
+	public InputStream getAssetInputStream(DigitalAsset digitalAsset, boolean returnNullIfBroken) throws IOException 
 	{
 		String folderName = "" + (digitalAsset.getDigitalAssetId().intValue() / 1000);
 		if(logger.isInfoEnabled())
@@ -1005,20 +999,16 @@ public class DigitalAssetController extends BaseController
 		{
 			return new FileInputStream(assetFile);
 		}
-		else
-		{
-			if(returnNullIfBroken)
-				return null;
-			else
-				return new ByteArrayInputStream("archived".getBytes());
-		}
+		if(returnNullIfBroken)
+			return null;
+		return new ByteArrayInputStream("archived".getBytes());
 	}
 
 	/**
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 
-	public String getDigitalAssetUrl(DigitalAssetVO digitalAssetVO, Database db) throws SystemException, Bug, Exception
+	public String getDigitalAssetUrl(DigitalAssetVO digitalAssetVO, Database db)
     {
     	String assetUrl = null;
 
@@ -1055,7 +1045,7 @@ public class DigitalAssetController extends BaseController
 	 * content-type of the file. It always fetches the latest one if several assets exists.
 	 */
 	   	
-	public static String getDigitalAssetThumbnailUrl(Integer digitalAssetId) throws SystemException, Bug
+	public static String getDigitalAssetThumbnailUrl(Integer digitalAssetId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -1177,7 +1167,7 @@ public class DigitalAssetController extends BaseController
 	 * content-type of the file. It always fetches the latest one if several assets exists.
 	 */
 	   	
-	public static String getDigitalAssetThumbnailUrl(Integer digitalAssetId, int canvasWidth, int canvasHeight, Color canvasColor, String alignment, String valignment, int width, int height, int quality) throws SystemException, Bug
+	public static String getDigitalAssetThumbnailUrl(Integer digitalAssetId, int canvasWidth, int canvasHeight, Color canvasColor, String alignment, String valignment, int width, int height, int quality) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -1298,7 +1288,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 	   	
-	public static String getDigitalAssetUrl(Integer contentId, Integer languageId) throws SystemException, Bug
+	public static String getDigitalAssetUrl(Integer contentId, Integer languageId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -1346,7 +1336,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 	   	
-	public static String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback) throws SystemException, Bug
+	public static String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -1374,7 +1364,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 	   	
-	public static String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Database db) throws SystemException, Bug, Exception
+	public static String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Database db) throws SystemException, Exception
     {
 		if(contentId == null || assetKey == null)
 		{
@@ -1486,7 +1476,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 	   	
-	public static DigitalAssetVO getDigitalAssetVO(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback) throws SystemException, Bug
+	public static DigitalAssetVO getDigitalAssetVO(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -1515,7 +1505,7 @@ public class DigitalAssetController extends BaseController
 	 * This method should return a DigitalAssetVO
 	 */
 	   	
-	public static DigitalAssetVO getDigitalAssetVO(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Database db) throws SystemException, Bug, Exception
+	public static DigitalAssetVO getDigitalAssetVO(Integer contentId, Integer languageId, String assetKey, boolean useLanguageFallback, Database db) throws SystemException, Exception
     {
     	DigitalAssetVO digitalAssetVO = null;
 
@@ -1553,7 +1543,7 @@ public class DigitalAssetController extends BaseController
 	 * content-type of the file. It always fetches the latest one if several assets exists.
 	 */
 	   	
-	public static String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId) throws SystemException, Bug
+	public static String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -1865,7 +1855,7 @@ public class DigitalAssetController extends BaseController
 	 * that means that the file is allready cached on the server. If not we take out the stream from the 
 	 * digitalAsset-object and dumps it.
 	 */
-	public static boolean dumpDigitalAsset(DigitalAssetVO digitalAssetVO, String fileName, String filePath, Database db) throws Exception
+	public static boolean dumpDigitalAsset(DigitalAssetVO digitalAssetVO, String fileName, String filePath, Database db)
 	{
 		logger.info("fileName:" + fileName);
 		File outputFile = new File(filePath + File.separator + fileName);
@@ -1988,7 +1978,7 @@ public class DigitalAssetController extends BaseController
 	
 	
 
-	public static boolean dumpDigitalAsset(DigitalAsset digitalAsset, String fileName, String filePath) throws Exception
+	public static boolean dumpDigitalAsset(DigitalAsset digitalAsset, String fileName, String filePath) throws IOException 
 	{
 		if(digitalAsset.getAssetFileSize().intValue() == -1)
 		{
@@ -2056,10 +2046,7 @@ public class DigitalAssetController extends BaseController
 	
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		//}
 	}
 

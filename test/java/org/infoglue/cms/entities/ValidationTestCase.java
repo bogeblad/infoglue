@@ -17,7 +17,7 @@ public class ValidationTestCase extends TestCase
 	/**
 	 * Use this to assert that there are NO validation errors
 	 */
-	protected void checkFailure(BaseEntityVO vo) throws Exception
+	protected void checkFailure(BaseEntityVO vo) 
 	{
 		ConstraintExceptionBuffer buffer = vo.validate();
 		assertFalse("No validation errors were found for " + vo, buffer.isEmpty());
@@ -26,7 +26,7 @@ public class ValidationTestCase extends TestCase
 	/**
 	 * Use this to assert that there ARE validation errors
 	 */
-	protected void checkSuccess(BaseEntityVO vo) throws Exception
+	protected void checkSuccess(BaseEntityVO vo) 
 	{
 		ConstraintExceptionBuffer buffer = vo.validate();
 		assertTrue(buffer.toString(), buffer.isEmpty());

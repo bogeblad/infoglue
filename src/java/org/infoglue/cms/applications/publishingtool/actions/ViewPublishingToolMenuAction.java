@@ -41,7 +41,7 @@ public class ViewPublishingToolMenuAction extends TreeViewAbstractAction
 	/**
 	 * @see org.infoglue.cms.applications.common.actions.TreeViewAbstractAction#getNodeSupplier()
 	 */
-	protected INodeSupplier getNodeSupplier() throws Exception
+	protected INodeSupplier getNodeSupplier()
 	{
 		return new PublishingToolNodeSupplier(this.getInfoGluePrincipal(), this.getLocale());
 	}

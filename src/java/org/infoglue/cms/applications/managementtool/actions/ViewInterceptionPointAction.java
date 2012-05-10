@@ -29,6 +29,9 @@ import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptorController;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 public class ViewInterceptionPointAction extends InfoGlueAbstractAction
 {
@@ -49,14 +52,14 @@ public class ViewInterceptionPointAction extends InfoGlueAbstractAction
         this.interceptionPointVO = interceptionPointVO;
     }
        
-    protected void initialize(Integer interceptionPointId) throws Exception
+    protected void initialize(Integer interceptionPointId) throws SystemException
     {
 		interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithId(interceptionPointId);
 		allInterceptors = InterceptorController.getController().getInterceptorVOList();
 		assignedInterceptors = InterceptorController.getController().getInterceptorsVOList(interceptionPointId);
     }   
     
-    public String doExecute() throws Exception
+    public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
         initialize(interceptionPointId);
 

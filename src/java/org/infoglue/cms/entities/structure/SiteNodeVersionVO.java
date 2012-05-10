@@ -52,7 +52,7 @@ public class SiteNodeVersionVO implements BaseEntityVO
     private Integer stateId       		= WORKING_STATE;
     private Integer versionNumber 		= new Integer(1);
     private Date modifiedDateTime 		= DateHelper.getSecondPreciseDate();
-    private String versionComment 		= "No comment";;
+    private String versionComment 		= "No comment";
     private String versionModifier		= null;
     private Boolean isCheckedOut  		= new Boolean(false);
   	private Boolean isActive      		= new Boolean(true);

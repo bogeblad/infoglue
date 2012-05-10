@@ -87,7 +87,7 @@ public class CategoryParameterTag extends TemplateControllerTag
 		
 		try
 		{
-			((ContentVersionParameterInterface) parent).addContentCategory(categoryKey + "=" + fullCategoryName);
+			parent.addContentCategory(categoryKey + "=" + fullCategoryName);
 		}
 		catch (Exception e) 
 		{

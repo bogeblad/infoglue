@@ -31,8 +31,10 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
-import org.jfree.util.Log;
 
 
 /**
@@ -59,7 +61,7 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
 	}
 
        	
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException, AccessConstraintException, ConstraintException
     {
 		super.initialize(getContentTypeDefinitionId());
 
@@ -71,21 +73,21 @@ public class UpdateContentTypeDefinitionAction extends ViewContentTypeDefinition
 		return "success";
 	}
 
-	public String doSaveSimple() throws Exception
+	public String doSaveSimple() throws AccessConstraintException, SystemException, ConstraintException
     {
 		doExecute();
 						
 		return "simple";
 	}
 	
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws AccessConstraintException, SystemException, ConstraintException
     {
 		doExecute();
 						
 		return "saveAndExit";
 	}
 	
-	public void setContentTypeDefinitionId(Integer contentTypeDefinitionId) throws Exception
+	public void setContentTypeDefinitionId(Integer contentTypeDefinitionId)
 	{
 		this.contentTypeDefinitionVO.setContentTypeDefinitionId(contentTypeDefinitionId);	
 	}

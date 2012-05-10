@@ -43,7 +43,6 @@ import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.Event;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.entities.workflow.impl.simple.EventImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -62,7 +61,7 @@ public class EventController extends BaseController
      * Gets the eventVO in a readonly transaction.
      */
     
-    public static EventVO getEventVOWithId(Integer eventId) throws SystemException, Bug
+    public static EventVO getEventVOWithId(Integer eventId) throws SystemException
     {
 		return (EventVO) getVOWithId(EventImpl.class, eventId);
     }
@@ -71,7 +70,7 @@ public class EventController extends BaseController
      * Gets the event in the given transaction.
      */
 	
-    public static Event getEventWithId(Integer eventId, Database db) throws SystemException, Bug
+    public static Event getEventWithId(Integer eventId, Database db) throws SystemException
     {
 		return (Event) getObjectWithId(EventImpl.class, eventId, db);
     }
@@ -80,7 +79,7 @@ public class EventController extends BaseController
      * Gets all events in a read only transaction.
      */
 
-    public List getEventVOList() throws SystemException, Bug
+    public List getEventVOList() throws SystemException
     {
         return getAllVOObjects(EventImpl.class, "eventId");
     }
@@ -191,7 +190,7 @@ public class EventController extends BaseController
 	 * Returns a list of events currently available for the certain entity.
 	 */
 	
-	public static List getEventVOListForEntity(String entityClass, Integer entityId) throws SystemException, Bug
+	public static List getEventVOListForEntity(String entityClass, Integer entityId) throws SystemException
 	{
 		List events = new ArrayList();
 		Database db = CastorDatabaseService.getDatabase();
@@ -230,7 +229,7 @@ public class EventController extends BaseController
 	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
 	 */
 	
-	public static List getPublicationEventVOListForRepository(Integer repositoryId) throws SystemException, Bug
+	public static List getPublicationEventVOListForRepository(Integer repositoryId) throws SystemException
 	{
 		return getPublicationEventVOListForRepository(repositoryId, null, null);
 	}
@@ -239,7 +238,7 @@ public class EventController extends BaseController
 	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
 	 */
 	
-	public static List getPublicationEventVOListForRepository(Integer repositoryId, InfoGluePrincipal principal, String filter) throws SystemException, Bug
+	public static List getPublicationEventVOListForRepository(Integer repositoryId, InfoGluePrincipal principal, String filter) throws SystemException
 	{
 		List events = new ArrayList();
 		boolean hasBrokenItems = false;
@@ -352,7 +351,7 @@ public class EventController extends BaseController
 							siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId(), db);
 							//siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithIdAsReadOnly(event.getEntityId(), db);
 							if(siteNodeVersion.getSiteNodeId() != null)
-								siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
+								siteNode = SiteNodeController.getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
 	            		}
 	            		catch(SystemException e)
 	            		{
@@ -454,7 +453,7 @@ public class EventController extends BaseController
 	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
 	 */
 	
-	public static void cleanPublicationEventVOListForRepository(Integer repositoryId, InfoGluePrincipal principal, String filter) throws SystemException, Bug
+	public static void cleanPublicationEventVOListForRepository(Integer repositoryId, InfoGluePrincipal principal, String filter) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);

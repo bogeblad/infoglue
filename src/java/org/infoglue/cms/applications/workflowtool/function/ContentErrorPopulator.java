@@ -36,39 +36,18 @@ import com.opensymphony.workflow.WorkflowException;
 public class ContentErrorPopulator extends ErrorPopulator 
 {
 
-	/**
-	 * 
-	 */
 	private static final String CONTENT_ERROR_PROPERTYSET_PREFIX = ERROR_PROPERTYSET_PREFIX + "content_";
 	
-	/**
-	 * 
-	 */
 	private static final String CONTENT_VERSION_ERROR_PROPERTYSET_PREFIX = ERROR_PROPERTYSET_PREFIX + "contentversion_";
 	
-	/**
-	 * 
-	 */
 	private LanguageVO language;
 
-	/**
-	 * 
-	 */
 	private ContentTypeDefinitionVO contentTypeDefinitionVO;
 
-	/**
-	 * 
-	 */
 	private ContentValues contentValues;
 
-	/**
-	 * 
-	 */
 	private ContentVersionValues contentVersionValues;
 	
-	/**
-	 * 
-	 */
 	protected void clean() throws WorkflowException
 	{
 		clean(CONTENT_ERROR_PROPERTYSET_PREFIX);
@@ -77,9 +56,6 @@ public class ContentErrorPopulator extends ErrorPopulator
 			clean(language.getLanguageCode() + "_" + CONTENT_VERSION_ERROR_PROPERTYSET_PREFIX);
 	}
 	
-	/**
-	 * 
-	 */
 	protected void populate() throws WorkflowException
 	{
 		populate(new ContentFactory(contentTypeDefinitionVO, contentValues, contentVersionValues, getPrincipal(), language).validate(), language.getLanguageCode());

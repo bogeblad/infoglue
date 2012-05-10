@@ -125,7 +125,7 @@ public class ContentDetailPageTag extends ComponentLogicTag
 						logger.info("contentTypeDefinitionVO:" + contentTypeDefinitionVO.getName());
 						if(contentTypeDefinitionVO.getDetailPageResolverClass() != null && !contentTypeDefinitionVO.getDetailPageResolverClass().equals(""))
 						{
-							ContentDetailPageResolver cdpr = (ContentDetailPageResolver)loadExtensionClass(contentTypeDefinitionVO.getDetailPageResolverClass()).newInstance();;
+							ContentDetailPageResolver cdpr = (ContentDetailPageResolver)loadExtensionClass(contentTypeDefinitionVO.getDetailPageResolverClass()).newInstance();
 							logger.info("cdpr:" + cdpr.getName());
 							SiteNodeVO detailSiteNodeVO = cdpr.getDetailSiteNodeVO(getController().getPrincipal(), contentVO.getId(), contentTypeDefinitionVO.getDetailPageResolverData(), getController().getDatabase());
 							logger.info("detailSiteNodeVO:" + detailSiteNodeVO.getId());
@@ -172,25 +172,20 @@ public class ContentDetailPageTag extends ComponentLogicTag
 	    {
 			if(this.contentId.intValue() < 1)
 				return null;
-
 	    	return this.getController().getContent(this.contentId);
 	    }
-	    else if(this.propertyName != null)
+	    if(this.propertyName != null)
 	    {
 	        if(this.siteNodeId != null)
 	            return this.getComponentLogic().getBoundContentWithDetailSiteNodeId(siteNodeId, propertyName, useInheritance);
-	        else
-	            return this.getComponentLogic().getBoundContentWithDetailSiteNodeId(propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+            return this.getComponentLogic().getBoundContentWithDetailSiteNodeId(propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 	    }
-	    else if(this.getController().getContentId() != null && this.getController().getContentId().intValue() > -1)
+	    if(this.getController().getContentId() != null && this.getController().getContentId().intValue() > -1)
 	    {
 	    	return this.getController().getContent();
 	    }
-	    else
-	    {
-	    	return null;
-	    }
-	}
+    	return null;
+    }
 
     public void setContentId(String contentId) throws JspException
     {

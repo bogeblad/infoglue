@@ -30,32 +30,17 @@ import com.opensymphony.workflow.WorkflowException;
 public class ContentTypeDefinitionProvider extends InfoglueFunction 
 {
 	
-	/**
-	 * 
-	 */
 	public static final String CONTENT_TYPE_DEFINITION_PARAMETER = "contentTypeDefinition";
 
-	/**
-	 * 
-	 */
 	private static final String NAME_ARGUMENT = "contentTypeDefinitionName";
 
-	/**
-	 * 
-	 */
 	private String name;
 	
-	/**
-	 * 
-	 */
 	public ContentTypeDefinitionProvider()
 	{ 
 		super(); 
 	}
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		try 

@@ -81,7 +81,6 @@ import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.ThreadMonitor;
-import org.infoglue.deliver.util.Timer;
 
 import webwork.action.ActionContext;
 
@@ -479,7 +478,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			if(!memoryWarningSent)
 			{
 				float memoryLeft = ((float)Runtime.getRuntime().maxMemory() - (float)Runtime.getRuntime().totalMemory()) / 1024f / 1024f;
-				float percentLeft = (memoryLeft / ((float)Runtime.getRuntime().maxMemory() / 1024f / 1024f)) * 100f;
+				float percentLeft = (memoryLeft / (Runtime.getRuntime().maxMemory() / 1024f / 1024f)) * 100f;
 				float percentLeft2 = ((float)Runtime.getRuntime().freeMemory() / (float)Runtime.getRuntime().totalMemory()) * 100f;
 
 				if(percentLeft < 15 && percentLeft2 < 15)
@@ -592,7 +591,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					{
 						if(originalFullURL.indexOf(protectedProtocolName + "://") > -1)
 						{	
-							String redirectUrl = originalFullURL.replaceFirst(protectedProtocolName + "://", unprotectedProtocolName + "://").replaceFirst(protectedProtocolPort, unprotectedProtocolPort);;
+							String redirectUrl = originalFullURL.replaceFirst(protectedProtocolName + "://", unprotectedProtocolName + "://").replaceFirst(protectedProtocolPort, unprotectedProtocolPort);
 							getResponse().setStatus(new Integer(accessBasedProtocolRedirectHTTPCode));
 							getResponse().sendRedirect(redirectUrl);
 							logger.info("Redirecting user to:" + redirectUrl);
@@ -764,25 +763,22 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				{
 				    throw new SystemException("There was no page invoker class assigned to this page type.");
 				}
-				else
-				{
-				    try
-				    {
-				        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
-				        pageInvoker = pageInvoker.getDecoratedPageInvoker(templateController);
-				        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);
-				        pageInvoker.deliverPage();
-				    }
-				    catch(ClassNotFoundException e)
-				    {
-				        throw new SystemException("An error was thrown when trying to use the page invoker class assigned to this page type:" + e.getMessage(), e);
-				    }
-				    finally
-				    {
-				    	deliveryContext.clear();
-				    	deliveryContext = null;
-				    }
-				}
+			    try
+			    {
+			        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
+			        pageInvoker = pageInvoker.getDecoratedPageInvoker(templateController);
+			        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);
+			        pageInvoker.deliverPage();
+			    }
+			    catch(ClassNotFoundException e)
+			    {
+			        throw new SystemException("An error was thrown when trying to use the page invoker class assigned to this page type:" + e.getMessage(), e);
+			    }
+			    finally
+			    {
+			    	deliveryContext.clear();
+			    	deliveryContext = null;
+			    }
 			}
 			
 			//StatisticsService.getStatisticsService().registerRequest(getRequest(), getResponse(), pagePath, elapsedTime);
@@ -868,7 +864,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			if(!memoryWarningSent)
 			{
 				float memoryLeft = ((float)Runtime.getRuntime().maxMemory() - (float)Runtime.getRuntime().totalMemory()) / 1024f / 1024f;
-				float percentLeft = (memoryLeft / ((float)Runtime.getRuntime().maxMemory() / 1024f / 1024f)) * 100f;
+				float percentLeft = (memoryLeft / (Runtime.getRuntime().maxMemory() / 1024f / 1024f)) * 100f;
 				float percentLeft2 = ((float)Runtime.getRuntime().freeMemory() / (float)Runtime.getRuntime().totalMemory()) * 100f;
 				
 				//System.out.println("memoryLeft:" + memoryLeft);
@@ -928,7 +924,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	 * normal site-delivery version.
 	 */
 	
-	public TemplateController getTemplateController(DatabaseWrapper dbWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal, boolean allowEditOnSightAtAll) throws SystemException, Exception
+	public TemplateController getTemplateController(DatabaseWrapper dbWrapper, Integer siteNodeId, Integer languageId, Integer contentId, HttpServletRequest request, InfoGluePrincipal infoGluePrincipal, boolean allowEditOnSightAtAll) 
 	{
 		TemplateController templateController = new BasicTemplateController(dbWrapper, infoGluePrincipal);
 		templateController.setStandardRequestParameters(siteNodeId, languageId, contentId);	
@@ -1830,7 +1826,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		return url;
   	}
 
-  	private String getErrorUrl() throws Exception 
+  	private String getErrorUrl()   
   	{
   		String errorUrl = CmsPropertyHandler.getErrorUrl();
   		

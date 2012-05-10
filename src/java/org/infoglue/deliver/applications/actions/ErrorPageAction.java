@@ -27,11 +27,11 @@ package org.infoglue.deliver.applications.actions;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.SystemException;
@@ -52,7 +52,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 
     private int responseCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     
-  	private String getErrorUrl(Integer repositoryId) throws Exception 
+  	private String getErrorUrl(Integer repositoryId)  
   	{
   		String errorUrl = CmsPropertyHandler.getErrorUrl();
   		
@@ -74,7 +74,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
   	}
 	
     
-    private List getRepositoryId(HttpServletRequest request) throws ServletException, SystemException, Exception 
+    private List getRepositoryId(HttpServletRequest request) throws SystemException, PersistenceException 
     {
         String serverName = request.getServerName();
         String portNumber = new Integer(request.getServerPort()).toString();
@@ -106,14 +106,14 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 	        if(responseCodeAttribute != null)
 	            responseCode = Integer.parseInt(responseCodeAttribute);
 	        
-	        String responseCodeParameter = (String)this.getRequest().getParameter("responseCode");
+	        String responseCodeParameter = this.getRequest().getParameter("responseCode");
 	        if(responseCodeParameter != null)
 	            responseCode = Integer.parseInt(responseCodeParameter);
 
 	        String requestURI = this.getRequest().getServerName() + this.getRequest().getRequestURI();
 	        
 	        String errorUrlAttribute = (String)this.getRequest().getAttribute("errorUrl");
-	        String errorUrlParameter = (String)this.getRequest().getParameter("errorUrl");
+	        String errorUrlParameter = this.getRequest().getParameter("errorUrl");
 	        
 	        Exception e = (Exception)this.getRequest().getAttribute("error");
 	        if(e != null)
@@ -171,18 +171,14 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 	            
 	            return NONE;
 	        }
-	        else
-	        {
-	            logger.error("No valid error url was defined:" + errorUrl + ". You should fix this.");
-	        	return SUCCESS;
-	        }
+            logger.error("No valid error url was defined:" + errorUrl + ". You should fix this.");
+        	return SUCCESS;
 	    }
     	catch(Throwable t)
     	{
     		logger.error("Error executing ErrorPage action:" + t.getMessage());
     		if(logger.isDebugEnabled())
         		logger.debug("Error executing ErrorPage action:" + t.getMessage(), t);
-    			
     		return SUCCESS;
     	}
     }
@@ -197,7 +193,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
         if(responseCodeAttribute != null)
             responseCode = Integer.parseInt(responseCodeAttribute);
         
-        String responseCodeParameter = (String)this.getRequest().getParameter("responseCode");
+        String responseCodeParameter = this.getRequest().getParameter("responseCode");
         if(responseCodeParameter != null)
             responseCode = Integer.parseInt(responseCodeParameter);
 
@@ -225,8 +221,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
             
             return NONE;
         }
-        else
-            return SUCCESS;
+        return SUCCESS;
     }
 
     public int getResponseCode()

@@ -30,6 +30,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.workflow.EventVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.validators.ConstraintRule;
@@ -92,7 +94,7 @@ public class CreateEditionAction extends ViewPublicationsAction
 		return this.events;
 	}
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, AccessConstraintException, ConstraintException
     {
     	this.publicationVO.setRepositoryId(getRepositoryId());
     	
@@ -100,11 +102,6 @@ public class CreateEditionAction extends ViewPublicationsAction
 
 		// Content versions to publish
     	setEvents(getRequest().getParameterValues("sel"));
-    	
-    	//String[] contents = getRequest().getParameterValues("sel");
-    	//String[] siteNodes = getRequest().getParameterValues("sit");
-    	//setContentToPublish(PublicationController.getContentVersionVOToPublish(contents));
-    	//setSiteNodeToPublish(PublicationController.getSiteNodeVersionVOToPublish(siteNodes));
 
     	ceb.throwIfNotEmpty();		
 
@@ -113,28 +110,28 @@ public class CreateEditionAction extends ViewPublicationsAction
         return "success";
     }
 
-    public String doV3() throws Exception
+    public String doV3() throws SystemException, AccessConstraintException, ConstraintException
     {
     	doExecute();
     	
         return "successV3";
     }
     
-    public String doInput() throws Exception
+    public String doInput() throws SystemException
     {
     	this.publicationVO.PrepareValidation();
     	setEvents(getRequest().getParameterValues("sel"));
     	return "input";
     }    
 
-    public String doInputV3() throws Exception
+    public String doInputV3() throws SystemException
     {
     	this.publicationVO.PrepareValidation();
     	setEvents(getRequest().getParameterValues("sel"));
     	return "inputV3";
     }    
 
-	private void setEvents(String[] eventArguments) throws SystemException, Exception
+	private void setEvents(String[] eventArguments) throws SystemException
 	{
 		List events = new ArrayList();
 		

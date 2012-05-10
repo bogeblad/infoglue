@@ -13,7 +13,7 @@ public class EditionBrowserTest extends ValidationTestCase
 {
 	private EditionBrowser testBrowser;
 
-	public void testPlainCalculations() throws Exception
+	public void testPlainCalculations() 
 	{
 		testBrowser = createBrowser(100, 10, 21);
 		assertEquals("Wrong total pages", 10, testBrowser.getTotalPages());
@@ -26,7 +26,7 @@ public class EditionBrowserTest extends ValidationTestCase
 		assertEquals("Wrong next page index", 31, testBrowser.getNextPageIndex());
 	}
 
-	public void testCurrentPage() throws Exception
+	public void testCurrentPage() 
 	{
 		testBrowser = createBrowser(14, 5, 0);
 		assertEquals("Wrong current page for index 0", 1, testBrowser.getCurrentPage());
@@ -47,7 +47,7 @@ public class EditionBrowserTest extends ValidationTestCase
 		assertEquals("Wrong current page for index 11", 3, testBrowser.getCurrentPage());
 	}
 
-	public void testTotalPages() throws Exception
+	public void testTotalPages() 
 	{
 		testBrowser = createBrowser(0, 5, 0);
 		assertEquals("Wrong total pages for size zero", 1, testBrowser.getTotalPages());
@@ -65,7 +65,7 @@ public class EditionBrowserTest extends ValidationTestCase
 		assertEquals("Wrong total pages for size 101", 21, testBrowser.getTotalPages());
 	}
 
-	public void testPrevious() throws Exception
+	public void testPrevious() 
 	{
 		testBrowser = createBrowser(10, 5, 0);
 		assertEquals("Wrong previous page size for index 0", 0, testBrowser.getPreviousPageSize());
@@ -88,7 +88,7 @@ public class EditionBrowserTest extends ValidationTestCase
 		assertTrue("Does not have previous page for index 6", testBrowser.hasPreviousPage());
 	}
 
-	public void testNext() throws Exception
+	public void testNext() 
 	{
 		testBrowser = createBrowser(10, 5, 0);
 		assertEquals("Wrong next page size for index 0", 5, testBrowser.getNextPageSize());

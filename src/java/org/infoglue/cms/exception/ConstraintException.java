@@ -105,9 +105,6 @@ public class ConstraintException extends Exception
 	    this.result = (result == null) ? "" : result;
 	}
 
-	/**
-	 *
-	 */
 	public ConstraintException(String fieldName, String errorCode, ConstraintException chainedException) 
 	{
 		this(fieldName, errorCode);
@@ -118,30 +115,18 @@ public class ConstraintException extends Exception
 
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public void setChainedException(ConstraintException chainedException) {
     this.chainedException = chainedException;
   }
 
-  /**
-   *
-   */
   public ConstraintException getChainedException() {
     return this.chainedException;
   }
 
-  /**
-   *
-   */
   public String getFieldName() {
     return this.fieldName;
   }
 
-  /**
-   *
-   */
   public String getErrorCode() {
     return this.errorCode;
   }
@@ -171,9 +156,6 @@ public class ConstraintException extends Exception
   // --- [X implementation] ----------------------------------------------------
   // --- [java.lang.Exception Overrides] ---------------------------------------
   
-  /**
-   *
-   */
   public String getMessage() {
     return "Constrain violated on field [" + this.fieldName + "], code [" + this.errorCode + "], extra [" + this.extraInformation + "]"; 
   }
@@ -182,9 +164,6 @@ public class ConstraintException extends Exception
 
   // --- [java.lang.Object Overrides] ------------------------------------------
 
-  /**
-   *
-   */
   public String toString() {
     return "<ConstraintException>[" + getFieldName() + "," + getErrorCode() + "]";
   }

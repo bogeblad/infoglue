@@ -35,7 +35,6 @@ import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.InfoGlueProperty;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
@@ -72,7 +71,7 @@ public class InfoGlueSettingsController extends BaseController implements Castor
 		this.settingsController = CastorSettingsController.getController(this);
 	}
 
-	public InfoGlueProperty getPropertyWithId(Integer id, Database db) throws SystemException, Bug
+	public InfoGlueProperty getPropertyWithId(Integer id, Database db) throws SystemException
     {
     	return (InfoGlueProperty) getObjectWithId(InfoGlueProperty.class, id, db);
     } 
@@ -161,7 +160,7 @@ public class InfoGlueSettingsController extends BaseController implements Castor
 
 	public InfoGlueProperty getProperty(Integer id, Database database) throws Exception
     {
-		InfoGlueProperty property = (InfoGlueProperty)database.load(InfoGlueProperty.class, id);
+		InfoGlueProperty property = database.load(InfoGlueProperty.class, id);
 		
 		return property;
     }
@@ -371,7 +370,7 @@ public class InfoGlueSettingsController extends BaseController implements Castor
     public static Object findOnValueStack(String expr) 
     {
 		ActionContext a = ActionContext.getContext();
-		Object value = a.getValueStack().findValue(expr);
+		Object value = ActionContext.getValueStack().findValue(expr);
 		return value;
 	}
 /*

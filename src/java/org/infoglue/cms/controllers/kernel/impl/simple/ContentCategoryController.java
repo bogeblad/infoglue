@@ -177,7 +177,7 @@ public class ContentCategoryController extends BaseController
 	 * @return	A list of ContentCategoryVO that have the provided content version and attribute
 	 * @throws	SystemException If an error happens
 	 */
-	public List findByContentVersionAttribute(String attribute, ContentVersion contentVersion, Database db, boolean readOnly) throws SystemException
+	public List findByContentVersionAttribute(String attribute, ContentVersion contentVersion, Database db, boolean readOnly) 
 	{
 	    List contentCategoryList = new ArrayList();
 	    
@@ -381,9 +381,10 @@ public class ContentCategoryController extends BaseController
 
 	/**
 	 * Creates a number of ContentCategories from a list of categories and a contentVersion.
+	 * @throws PersistenceException 
 	 */
 	
-	public List create(List categoryList, ContentVersion contentVersion, String attributeName, Database db) throws SystemException, Exception
+	public List create(List categoryList, ContentVersion contentVersion, String attributeName, Database db) throws SystemException, PersistenceException
 	{
 		logger.info("Creating categories on " + contentVersion.getId() + " for attributeName:" + attributeName);
 		List contentCategoryList = new ArrayList();
@@ -428,7 +429,7 @@ public class ContentCategoryController extends BaseController
 		return contentCategoryList;
 	}
 
-	public ContentCategory createWithDatabase(ContentCategoryVO c, Category category, ContentVersion contentVersion, Database db) throws SystemException, PersistenceException
+	public ContentCategory createWithDatabase(ContentCategoryVO c, Category category, ContentVersion contentVersion, Database db) throws PersistenceException
 	{
 		ContentCategory contentCategory = new ContentCategoryImpl();
 		contentCategory.setValueObject(c);
@@ -495,9 +496,10 @@ public class ContentCategoryController extends BaseController
 	/**
 	 * Deletes all ContentCategories for a particular ContentVersion
 	 * @param	versionId The id of the ContentCategory to delete
+	 * @throws PersistenceException 
 	 * @throws	SystemException If an error happens
 	 */
-	public void deleteByContentVersion(ContentVersion contentVersion, Database db) throws SystemException, Exception
+	public void deleteByContentVersion(ContentVersion contentVersion, Database db) throws PersistenceException 
 	{
 	    Iterator contentVersionIterator = contentVersion.getContentCategories().iterator();
 	    while(contentVersionIterator.hasNext())

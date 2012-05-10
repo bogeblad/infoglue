@@ -133,9 +133,6 @@ public class ConstraintExceptionBuffer
   // --- [X implementation] ----------------------------------------------------
   // --- [java.lang.Object Overrides] ------------------------------------------
 
-  /**
-   *
-   */
   public String toString() {
     final StringBuffer sb = new StringBuffer();
 

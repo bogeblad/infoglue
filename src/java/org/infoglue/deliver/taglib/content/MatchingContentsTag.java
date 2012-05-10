@@ -196,7 +196,7 @@ public class MatchingContentsTag extends TemplateControllerTag
 
 	public void setRepositoryIds(String repositoryIds) throws JspException
 	{
-		this.repositoryIds = evaluateString("matchingContentsTag", "repositoryIds", repositoryIds);;
+		this.repositoryIds = evaluateString("matchingContentsTag", "repositoryIds", repositoryIds);
 	}
 
 	public void setCacheInterval(int cacheInterval)
@@ -211,7 +211,7 @@ public class MatchingContentsTag extends TemplateControllerTag
 
 	public void setCacheName(String cacheName) throws JspException
 	{
-		this.cacheName = evaluateString("matchingContentsTag", "cacheName", cacheName);;
+		this.cacheName = evaluateString("matchingContentsTag", "cacheName", cacheName);
 	}
 
 	public void setCacheResult(boolean cacheResult)

@@ -73,9 +73,6 @@ public class SimpleStringManager implements StringManager
   // --- [Public] --------------------------------------------------------------
   // --- [org.infoglue.cms.util.StringManager implementation] -----------------
 
-  /**
-   *
-   */
     public final String getString(String key) 
     {
         try 
@@ -95,30 +92,18 @@ public class SimpleStringManager implements StringManager
         }
     }
 
-  /**
-   *
-   */
   public final String getString(String key, Object args[]) {
     return MessageFormat.format(getString(key), args);
   }
 
-  /**
-   *
-   */
   public final String getString(String key, Object arg) {
     return getString(key, new Object[]{ arg });
   }
 
-  /**
-   *
-   */
   public final String getString(String key, Object arg1, Object arg2) {
     return getString(key, new Object[]{ arg1, arg2 });
   }
 
-  /**
-   *
-   */
   public final String getString(String key, Object arg1, Object arg2, Object arg3) {
     return getString(key, new Object[]{ arg1, arg2, arg3 });
   }
@@ -126,9 +111,6 @@ public class SimpleStringManager implements StringManager
   // --- [X Overrides] ---------------------------------------------------------
   // --- [Package protected] ---------------------------------------------------
 
-  /**
-   *
-   */
   boolean containsKey(String key) {
     try {
       this.bundle.getString(key);

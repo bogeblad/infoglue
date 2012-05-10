@@ -17,9 +17,6 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public abstract class AddressProvider extends InfoglueFunction
 {
-	/**
-	 * 
-	 */
 	private static final String REQUIRED_ARGUMENT = "required";
 	
 	/**
@@ -51,18 +48,12 @@ public abstract class AddressProvider extends InfoglueFunction
 	 */
 	protected abstract void populate() throws WorkflowException;
 
-	/**
-	 * 
-	 */
 	protected final void execute() throws WorkflowException 
 	{
 		populate();
 		setParameter(EmailFunction.TO_PARAMETER, addresses);
 	}
 	
-	/**
-	 * 
-	 */
 	protected final void addRecipient(final String email)
 	{
 		final boolean isEmpty = (email == null || email.trim().length() == 0); 

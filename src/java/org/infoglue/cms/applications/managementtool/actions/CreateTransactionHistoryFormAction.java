@@ -52,7 +52,7 @@ public class CreateTransactionHistoryFormAction extends InfoGlueAbstractAction
         this.name = name;
     }
       
-    public String doExecute() throws Exception
+    public String doExecute()
     {
         //Here we should put things that are needed for this view. 
         //Could be list of choices or other stuff

@@ -34,27 +34,15 @@ import org.infoglue.deliver.taglib.AbstractTag;
  */
 public class ContentTag extends AbstractTag 
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -5895792525780372296L;
 
-	/**
-	 * 
-	 */
 	private Integer contentId;
 
-	/**
-	 * 
-	 */
 	public ContentTag() 
 	{
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException 
 	{		
 		setResultAttribute(getContent());
@@ -76,9 +64,6 @@ public class ContentTag extends AbstractTag
 		return content;
 	}
 	
-	/**
-	 * 
-	 */
 	public void setContentId(final String contentId) throws JspException
 	{
 		this.contentId = evaluateInteger("content", "contentId", contentId);

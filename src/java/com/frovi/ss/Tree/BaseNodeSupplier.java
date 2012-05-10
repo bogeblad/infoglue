@@ -28,7 +28,7 @@ public abstract class BaseNodeSupplier implements INodeSupplier
 		return true;
 	}
 
-	public boolean hasChildren(Integer nodeId) throws SystemException, Exception
+	public boolean hasChildren(Integer nodeId) throws SystemException
 	{
 		// Base functionallity, typically this method is overridden
 		// for performance reasons

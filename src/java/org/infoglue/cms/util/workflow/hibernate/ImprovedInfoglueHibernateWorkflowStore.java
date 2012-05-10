@@ -72,40 +72,14 @@ public class ImprovedInfoglueHibernateWorkflowStore extends AbstractHibernateWor
         }
     }
 
-	/**
-	 * 
-	 */
-    //public InfoglueHibernateWorkflowStore() {}
-
-	/**
-	 * 
-	 */
-    public ImprovedInfoglueHibernateWorkflowStore(SessionFactory sessionFactory) throws StoreException 
+    public ImprovedInfoglueHibernateWorkflowStore(SessionFactory sessionFactory) 
     {
 		super();
 		this.setSessionFactory(sessionFactory);
     }
 
-    
-
-	/**
-	 * 
-	 */
-    /*
-    public void init(Map props) throws StoreException 
-    {
-    	sessionFactory = (SessionFactory) props.get("sessionFactory");
-		super.init(props);
-    }
-    */
-
-	/**
-	 * 
-	 */
     public PropertySet getPropertySet(long entryId) 
     {
-    	//if(true)
-    	//	return null;
     	
     	String key = "psCache_" + entryId;
     	PropertySet ps = (PropertySet)CacheController.getCachedObject("propertySetCache", key);

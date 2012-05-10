@@ -39,7 +39,6 @@ import org.dom4j.Element;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
@@ -128,14 +127,11 @@ public class WebServiceAuthorizationModule implements AuthorizationModule, Seria
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				logger.warn("Returning cached user:" + userName + ":" + infogluePrincipal);
-				if(logger.isDebugEnabled())
-					logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			logger.warn("Returning cached user:" + userName + ":" + infogluePrincipal);
+			if(logger.isDebugEnabled())
+				logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
@@ -593,7 +589,7 @@ public class WebServiceAuthorizationModule implements AuthorizationModule, Seria
 		return users;
 	}
 	
-	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException, Bug
+	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException
 	{
 		List users = new ArrayList();
 		//TODO		

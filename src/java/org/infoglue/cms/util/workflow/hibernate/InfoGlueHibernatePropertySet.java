@@ -14,9 +14,6 @@ import com.opensymphony.module.propertyset.hibernate.PropertySetItem;
  */
 public class InfoGlueHibernatePropertySet extends HibernatePropertySet 
 {
-	/**
-	 * 
-	 */
 	private static final String UTF8_ENCODING = "utf-8";
 	
 	private static final String CONFIGURATION_PROVIDER_ARGUMENT = "configurationProvider";
@@ -25,17 +22,11 @@ public class InfoGlueHibernatePropertySet extends HibernatePropertySet
     private Long entityId;
     private String entityName;
 	
-	/**
-	 * 
-	 */
 	public InfoGlueHibernatePropertySet() 
 	{
 		super();
 	}
 
-	/**
-	 * 
-	 */
     public boolean supportsType(int type) 
     {
 		return (type == PropertySet.DATA) ? true : super.supportsType(type);
@@ -56,9 +47,6 @@ public class InfoGlueHibernatePropertySet extends HibernatePropertySet
 		}
     }
 
-	/**
-	 * 
-	 */
 	public String getDataString(final String key) throws PropertyException 
 	{
 		try 
@@ -73,9 +61,6 @@ public class InfoGlueHibernatePropertySet extends HibernatePropertySet
 		}
 	}
     
-	/**
-	 * 
-	 */
     public void init(Map config, Map args) 
     {
     	super.init(config, args);
@@ -84,17 +69,11 @@ public class InfoGlueHibernatePropertySet extends HibernatePropertySet
         this.entityName     = (String) args.get("entityName");
     }
 	
-	/**
-	 * 
-	 */
     private PropertySetItem findByKey(String key) throws PropertyException 
     {
         return configProvider.getPropertySetDAO().findByKey(entityName, entityId, key);
     }
 
-	/**
-	 * 
-	 */
     protected void setImpl(int type, String key, Object value) throws PropertyException 
     {
 		if(type != PropertySet.DATA)
@@ -107,9 +86,6 @@ public class InfoGlueHibernatePropertySet extends HibernatePropertySet
 		}
     }
 
-	/**
-	 * 
-	 */
     protected void setDataImpl(int type, String key, Object value) throws PropertyException 
     {
 		PropertySetItem item = configProvider.getPropertySetDAO().findByKey(entityName, entityId, key);
@@ -129,9 +105,6 @@ public class InfoGlueHibernatePropertySet extends HibernatePropertySet
         configProvider.getPropertySetDAO().setImpl(item, update);
     }
 
-	/**
-	 * 
-	 */
     protected Object get(int type, String key) throws PropertyException 
     {
 		if(type != PropertySet.DATA)
@@ -141,9 +114,6 @@ public class InfoGlueHibernatePropertySet extends HibernatePropertySet
 		return getData(type, key);
     }
 	
-	/**
-	 * 
-	 */
 	private Object getData(int type, String key) throws PropertyException 
 	{
         final PropertySetItem item = findByKey(key);

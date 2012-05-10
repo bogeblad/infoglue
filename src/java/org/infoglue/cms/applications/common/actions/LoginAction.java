@@ -24,9 +24,11 @@
 package org.infoglue.cms.applications.common.actions;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 import org.infoglue.cms.controllers.usecases.common.LoginUCC;
 import org.infoglue.cms.controllers.usecases.common.LoginUCCFactory;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.AuthenticationModule;
 import org.infoglue.deliver.util.HttpHelper;
 
@@ -68,29 +70,25 @@ public class LoginAction extends InfoGlueAbstractAction
 		return this.errorMessage;
 	}
 	
-	public String doExecute() throws Exception 
+	public String doExecute() 
 	{
-		this.getResponse().setStatus(this.getResponse().SC_FORBIDDEN);
+		this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
 		
 		if(this.getRequest().getRemoteUser() != null)
 			return "redirect";
-		else
-			return "success";
+		return "success";
 	}	
 
-	public String doInvalidLogin() throws Exception 
+	public String doInvalidLogin() 
 	{
 		if(this.getRequest().getRemoteUser() != null)
 		{
 			return "redirect";
 		}
-		else
-		{
-			return "invalidLogin";
-		}
+		return "invalidLogin";
 	}	
 
-	public String doLogonUser() throws Exception 
+	public String doLogonUser() throws SystemException 
 	{
 		LoginUCC loginController = LoginUCCFactory.newLoginUCC();
 		boolean isAccepted = loginController.authorizeSystemUser(this.userName, this.password);
@@ -99,11 +97,8 @@ public class LoginAction extends InfoGlueAbstractAction
 		{
 			return "userAccepted";
 		}
-		else
-		{
-			errorMessage = "The logon information given was incorrect, please verify and try again.";
-			return "invalidLogin";
-		}
+		errorMessage = "The logon information given was incorrect, please verify and try again.";
+		return "invalidLogin";
 	}	
 	
 	/**
@@ -134,8 +129,7 @@ public class LoginAction extends InfoGlueAbstractAction
 		
 		if(redirected)
 			return NONE;
-		else
-			return "logout";
+		return "logout";
 	}
 
 

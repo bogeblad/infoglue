@@ -23,19 +23,9 @@
 
 package org.infoglue.cms.services;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.infoglue.cms.applications.common.ToolbarButton;
-import org.infoglue.cms.controllers.kernel.impl.simple.ToolbarController;
-import org.infoglue.cms.entities.management.Interceptor;
-import org.infoglue.cms.providers.ToolbarProvider;
-import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.interceptors.InfoGlueInterceptor;
 
 /**

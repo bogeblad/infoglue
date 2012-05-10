@@ -42,7 +42,7 @@ public class SmallDigitalAssetImpl extends DigitalAssetImpl
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

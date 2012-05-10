@@ -186,7 +186,7 @@ public abstract class InfoglueFunction extends InfoglueWorkflowBase implements F
 	 * 
 	 * @return the locale associated with the current session.
 	 */
-	protected final Locale getLocale() throws WorkflowException
+	protected final Locale getLocale()
 	{
 		return locale;
 	}

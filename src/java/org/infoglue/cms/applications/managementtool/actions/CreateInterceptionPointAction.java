@@ -30,6 +30,9 @@ import java.util.List;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 
@@ -57,7 +60,7 @@ public class CreateInterceptionPointAction extends InfoGlueAbstractAction
 			
 	}	
 	      
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, AccessConstraintException, ConstraintException
     {
     	if(interceptionPointVOName != null && !interceptionPointVOName.equals(""))
     	{
@@ -72,7 +75,7 @@ public class CreateInterceptionPointAction extends InfoGlueAbstractAction
         return "success";
     }
 
-    public String doInput() throws Exception
+    public String doInput() throws SystemException
     {
     	this.inactiveInterceptionPointVOList = InterceptionPointController.getController().getInactiveInterceptionPointVOList();
     	

@@ -42,14 +42,11 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-import javax.naming.ldap.Control;
-import javax.naming.ldap.InitialLdapContext;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.PrincipalNotFoundException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -333,12 +330,9 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
@@ -573,12 +567,9 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 			{
 				return null;
 			}
-			else
-			{
-				infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
-				//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
-				return infogluePrincipal;
-			}
+			infogluePrincipal = (InfoGluePrincipal)infogluePrincipalObject;
+			//logger.info("Returning cached user:" + userName + ":" + infogluePrincipal);
+			return infogluePrincipal;
 		}
 
 		String administratorUserName = CmsPropertyHandler.getAdministratorUserName();
@@ -667,11 +658,8 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 			{
 				return null;
 			}
-			else
-			{
-				infoglueRole = (InfoGlueRole)infoglueRoleObject;
-				return infoglueRole;
-			}
+			infoglueRole = (InfoGlueRole)infoglueRoleObject;
+			return infoglueRole;
 		}
 
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueRole starting ---------\n\n\n");
@@ -688,8 +676,6 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 			
 			Attributes attributes = ctx.getAttributes(roleName);
 			logger.info("attributes:" + attributes.toString());
-			if(attributes == null)
-				logger.info("Could not find " + roleName);
 				
 			String name = null;
 			Attribute nameAttribute = attributes.get(roleNameAttribute);
@@ -793,11 +779,8 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 			{
 				return null;
 			}
-			else
-			{
-				infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
-				return infoglueGroup;
-			}
+			infoglueGroup = (InfoGlueGroup)infoglueGroupObject;
+			return infoglueGroup;
 		}
 
 		logger.info("\n\n\n ---------- getAuthorizedInfoGlueGroup starting ---------\n\n\n");
@@ -959,8 +942,6 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 			
 			Attributes attributes = ctx.getAttributes(userName);
 			logger.info("attributes:" + attributes.toString());
-			if(attributes == null)
-				throw new SystemException("No user attributes found for user:" + userName);
 				
 			Attribute userNameAttribute 		= attributes.get(userNameAttributeFilter);
 			Attribute userDisplayNameAttribute 	= attributes.get(userDisplayNameFilter);
@@ -1936,14 +1917,14 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 		return users;
 	}
 	
-	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException, Bug
+	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws SystemException
 	{
 		List users = new ArrayList();
 		//TODO		
 		return users;
 	}
 	
-	public List getFilteredUsers(String searchString) throws SystemException, Bug, Exception
+	public List getFilteredUsers(String searchString) throws SystemException, Exception
 	{
 		//TODO
 		return getUsers();
@@ -1976,7 +1957,7 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 		return users;
 	}
 	
-	public List getRoleUsers(String roleName, DirContext ctx, boolean skipCaches) throws Exception
+	public List getRoleUsers(String roleName, DirContext ctx, boolean skipCaches)
 	{
 		List users = new ArrayList();
 		
@@ -2276,7 +2257,7 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
     /** 
      * Gets a list of users which is memebers of the given group
      */
-    public List getGroupUsers(String groupName, DirContext ctx, boolean skipCaches) throws Exception
+    public List getGroupUsers(String groupName, DirContext ctx, boolean skipCaches)
     {
 	    logger.info("--------getGroupUsers(String groupName) start---------------");
 		List users = new ArrayList();

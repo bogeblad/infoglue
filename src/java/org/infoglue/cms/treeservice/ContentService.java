@@ -102,7 +102,7 @@ public class ContentService extends JServiceBuilder
 	    
 		try
         {  
-        	List arguments = (List)envelope.getNodes();
+        	List arguments = envelope.getNodes();
         	logger.info("arguments:" + arguments.size());
         	Integer repositoryId = ((Node)arguments.get(0)).getId();
 			logger.info("repositoryId:" + repositoryId);
@@ -136,7 +136,7 @@ public class ContentService extends JServiceBuilder
 	    
 		try
         {  
-			List arguments = (List)envelope.getNodes();
+			List arguments = envelope.getNodes();
         	Integer contentId = ((Node)arguments.get(0)).getId();
 			logger.info("contentId:" + contentId);
             ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
@@ -168,7 +168,7 @@ public class ContentService extends JServiceBuilder
 	    
 		try
         {  
-			List arguments = (List)envelope.getNodes();
+			List arguments = envelope.getNodes();
         	Integer contentId = ((Node)arguments.get(0)).getId();
 			logger.info("contentId:" + contentId);
             

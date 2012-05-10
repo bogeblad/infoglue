@@ -33,6 +33,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Group;
@@ -41,7 +42,6 @@ import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.entities.management.impl.simple.SmallSystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -69,20 +69,8 @@ public class SystemUserController extends BaseController
 	{
 		return new SystemUserController();
 	}
-	
-	/*
-    public static SystemUser getSystemUserWithId(Integer systemUserId, Database db) throws SystemException, Bug
-    {
-		return (SystemUser) getObjectWithId(SystemUserImpl.class, systemUserId, db);
-    }
-    
-    public SystemUserVO getSystemUserVOWithId(Integer systemUserId) throws SystemException, Bug
-    {
-		return (SystemUserVO) getVOWithId(SystemUserImpl.class, systemUserId);
-    }
-	*/
 
-	public SystemUserVO getSystemUserVOWithName(String name)  throws SystemException, Bug
+	public SystemUserVO getSystemUserVOWithName(String name)  throws SystemException
 	{
 		SystemUserVO systemUserVO = null;
 		Database db = CastorDatabaseService.getDatabase();
@@ -110,7 +98,7 @@ public class SystemUserController extends BaseController
 	 * 	Get the SystemUser with the userName
 	 */
 	 
-	public SystemUserVO getReadOnlySystemUserVOWithName(String userName, Database db)  throws SystemException, Bug
+	public SystemUserVO getReadOnlySystemUserVOWithName(String userName, Database db)  throws SystemException
 	{
 		SystemUserVO systemUserVO = null;
 		
@@ -143,7 +131,7 @@ public class SystemUserController extends BaseController
 	 * 	Get the SystemUser with the userName
 	 */
 	 
-	public SystemUser getReadOnlySystemUserWithName(String userName, Database db)  throws SystemException, Bug
+	public SystemUser getReadOnlySystemUserWithName(String userName, Database db)  throws SystemException
 	{
 		SystemUser systemUser = null;
         OQLQuery	oql;
@@ -174,7 +162,7 @@ public class SystemUserController extends BaseController
 	 * 	Get if the SystemUser with the userName exists
 	 */
 	 
-	public boolean systemUserExists(String userName, Database db) throws SystemException, Bug
+	public boolean systemUserExists(String userName, Database db) throws SystemException
 	{
 		boolean systemUserExists = false;
 		
@@ -206,7 +194,7 @@ public class SystemUserController extends BaseController
 	 * 	Get the SystemUser with the userName
 	 */
 	 
-	public SystemUser getSystemUserWithName(String userName, Database db)  throws SystemException, Bug
+	public SystemUser getSystemUserWithName(String userName, Database db)  throws SystemException
 	{
 		SystemUser systemUser = null;
         OQLQuery oql;
@@ -216,7 +204,7 @@ public class SystemUserController extends BaseController
         	oql.bind(userName);
         	
         	QueryResults results = oql.execute();
-    		this.logger.info("Fetching entity in read/write mode" + userName);
+    		logger.info("Fetching entity in read/write mode" + userName);
 
 			if (results.hasMore()) 
             {
@@ -237,7 +225,7 @@ public class SystemUserController extends BaseController
 
 
 
-	public SystemUserVO getSystemUserVO(String userName, String password)  throws SystemException, Bug
+	public SystemUserVO getSystemUserVO(String userName, String password)  throws SystemException
 	{
 		SystemUserVO systemUserVO = null;
 
@@ -262,7 +250,7 @@ public class SystemUserController extends BaseController
 	}	
 
 
-	public SystemUserVO getSystemUserVO(Database db, String userName, String password)  throws SystemException, Exception
+	public SystemUserVO getSystemUserVO(Database db, String userName, String password) throws PersistenceException  
 	{
 		SystemUserVO systemUserVO = null;
 
@@ -284,7 +272,7 @@ public class SystemUserController extends BaseController
 		return systemUserVO;		
 	}	
     
-	public SystemUser getSystemUser(Database db, String userName, String password)  throws SystemException, Exception
+	public SystemUser getSystemUser(Database db, String userName, String password) throws PersistenceException 
 	{
 		SystemUser systemUser = null;
 		
@@ -293,7 +281,7 @@ public class SystemUserController extends BaseController
 		oql.bind(password);
     	
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode" + userName);
+		logger.info("Fetching entity in read/write mode" + userName);
 
 		if (results.hasMore()) 
 		{
@@ -307,22 +295,22 @@ public class SystemUserController extends BaseController
 		return systemUser;		
 	}	
 	
-    public List getSystemUserVOList() throws SystemException, Bug
+    public List getSystemUserVOList() throws SystemException
     {
         return getAllVOObjects(SmallSystemUserImpl.class, "userName");
     }
 
-    public List getSystemUserVOList(Database db) throws SystemException, Bug
+    public List getSystemUserVOList(Database db) throws SystemException
     {
         return getAllVOObjects(SmallSystemUserImpl.class, "userName", db);
     }
 
-    public List getSystemUserList(Database db) throws SystemException, Bug
+    public List getSystemUserList(Database db) throws SystemException
     {
         return getAllObjects(SystemUserImpl.class, "userName", db);
     }
     
-	public List getFilteredSystemUserVOList(String searchString) throws SystemException, Bug
+	public List getFilteredSystemUserVOList(String searchString) throws SystemException
 	{
 		List filteredList = new ArrayList();
 		
@@ -346,7 +334,7 @@ public class SystemUserController extends BaseController
 		return toVOList(filteredList);
 	}
 
-	public List<SystemUserVO> getSystemUserVOListWithPassword(String password, Database db) throws SystemException, Bug, Exception
+	public List<SystemUserVO> getSystemUserVOListWithPassword(String password, Database db) throws PersistenceException 
 	{
 		List<SystemUserVO> filteredVOList = new ArrayList<SystemUserVO>();
 		
@@ -367,7 +355,7 @@ public class SystemUserController extends BaseController
 		return filteredVOList;
 	}
 
-	public List getFilteredSystemUserList(String searchString, Database db) throws SystemException, Bug, Exception
+	public List getFilteredSystemUserList(String searchString, Database db) throws PersistenceException 
 	{
 		List filteredList = new ArrayList();
 		
@@ -405,7 +393,7 @@ public class SystemUserController extends BaseController
 		return filteredList;
 	}
 
-	public List getFilteredSystemUserVOList(String firstName, String lastName, String userName, String email, String[] roleNames) throws SystemException, Bug
+	public List getFilteredSystemUserVOList(String firstName, String lastName, String userName, String email, String[] roleNames) throws SystemException
 	{
 		List filteredList = new ArrayList();
 		
@@ -429,7 +417,7 @@ public class SystemUserController extends BaseController
 		return toVOList(filteredList);
 	}
 
-	public List getFilteredSystemUserList(String firstName, String lastName, String userName, String email, String[] roleNames, Database db) throws SystemException, Bug, Exception
+	public List getFilteredSystemUserList(String firstName, String lastName, String userName, String email, String[] roleNames, Database db) throws PersistenceException
 	{
 		List filteredList = new ArrayList();
 		
@@ -499,7 +487,7 @@ public class SystemUserController extends BaseController
 	 * CREATE
 	 * 
 	 */
-    public SystemUserVO create(SystemUserVO systemUserVO) throws ConstraintException, SystemException
+    public SystemUserVO create(SystemUserVO systemUserVO) throws SystemException
     {
 		if(CmsPropertyHandler.getUsePasswordEncryption())
 		{
@@ -527,7 +515,7 @@ public class SystemUserController extends BaseController
 	 * CREATE
 	 * 
 	 */
-    public SystemUser create(SystemUserVO systemUserVO, Database db) throws ConstraintException, SystemException, Exception
+    public SystemUser create(SystemUserVO systemUserVO, Database db) throws PersistenceException 
     {
 		if(CmsPropertyHandler.getUsePasswordEncryption())
 		{
@@ -597,7 +585,7 @@ public class SystemUserController extends BaseController
 	 * 
 	 */
 	 
-    public void delete(String userName, Database db) throws ConstraintException, SystemException, Exception
+    public void delete(String userName, Database db) throws SystemException, PersistenceException
     {
 		SystemUser systemUser = getSystemUserWithName(userName, db);
 
@@ -621,13 +609,13 @@ public class SystemUserController extends BaseController
     }        
 
 
-    public SystemUserVO update(SystemUserVO systemUserVO) throws ConstraintException, SystemException
+    public SystemUserVO update(SystemUserVO systemUserVO) throws SystemException
     {
-    	return (SystemUserVO) updateEntity(SystemUserImpl.class, (BaseEntityVO) systemUserVO);
+    	return (SystemUserVO) updateEntity(SystemUserImpl.class, systemUserVO);
     }        
 
 
-    public SystemUserVO update(SystemUserVO systemUserVO, String[] roleNames, String[] groupNames) throws ConstraintException, SystemException
+    public SystemUserVO update(SystemUserVO systemUserVO, String[] roleNames, String[] groupNames) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -642,25 +630,18 @@ public class SystemUserController extends BaseController
             
             commitTransaction(db);
         }
-        catch(ConstraintException ce)
-        {
-        	ce.printStackTrace();
-            logger.warn("An error occurred so we should not completes the transaction:" + ce, ce);
-            rollbackTransaction(db);
-            throw ce;
-        }
-        catch(Exception e)
+        catch(SystemException e)
         {
         	e.printStackTrace();
             logger.error("An error occurred so we should not completes the transaction:" + e, e);
             rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
+            throw e;
         }
 
         return systemUser.getValueObject();
     }        
 
-    public SystemUser update(SystemUserVO systemUserVO, String[] roleNames, String[] groupNames, Database db) throws ConstraintException, SystemException
+    public SystemUser update(SystemUserVO systemUserVO, String[] roleNames, String[] groupNames, Database db) throws SystemException
     {
         SystemUser systemUser = getSystemUserWithName(systemUserVO.getUserName(), db);
         
@@ -694,7 +675,7 @@ public class SystemUserController extends BaseController
         return systemUser;
     }     
 
-    public SystemUserVO update(SystemUserVO systemUserVO, String oldPassword, String[] roleNames, String[] groupNames) throws ConstraintException, SystemException
+    public SystemUserVO update(SystemUserVO systemUserVO, String oldPassword, String[] roleNames, String[] groupNames) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -709,13 +690,7 @@ public class SystemUserController extends BaseController
             
             commitTransaction(db);
         }
-        catch(ConstraintException ce)
-        {
-            logger.warn("An error occurred so we should not completes the transaction:" + ce, ce);
-            rollbackTransaction(db);
-            throw ce;
-        }
-        catch(Exception e)
+        catch(PersistenceException e)
         {
             logger.error("An error occurred so we should not completes the transaction:" + e, e);
             rollbackTransaction(db);
@@ -725,7 +700,7 @@ public class SystemUserController extends BaseController
         return systemUser.getValueObject();
     }        
 
-    public SystemUser update(SystemUserVO systemUserVO, String oldPassword, String[] roleNames, String[] groupNames, Database db) throws ConstraintException, SystemException, Exception
+    public SystemUser update(SystemUserVO systemUserVO, String oldPassword, String[] roleNames, String[] groupNames, Database db) throws SystemException, PersistenceException
     {
     	logger.info("systemUserVO:" + systemUserVO.getUserName());
     	logger.info("oldPassword:" + oldPassword);
@@ -779,14 +754,12 @@ public class SystemUserController extends BaseController
             	group.getSystemUsers().add(systemUser);
             }
 		}
-		
-		//systemUserVO.setPassword(systemUser.getPassword());
 		systemUser.setValueObject(systemUserVO);
 
         return systemUser;
     }     
 
-    public void updatePassword(String userName) throws ConstraintException, SystemException
+    public void updatePassword(String userName) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -856,7 +829,7 @@ public class SystemUserController extends BaseController
 		}
     }        
 
-    public void updateAnonymousPassword(String userName) throws ConstraintException, SystemException
+    public void updateAnonymousPassword(String userName) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -929,7 +902,7 @@ public class SystemUserController extends BaseController
         }
     }    
     
-    public void updatePassword(String userName, String oldPassword, String newPassword, Database db) throws ConstraintException, SystemException, Exception
+    public void updatePassword(String userName, String oldPassword, String newPassword, Database db) throws ConstraintException, PersistenceException
     {
         if(newPassword == null)
             throw new ConstraintException("SystemUser.newPassword", "301");

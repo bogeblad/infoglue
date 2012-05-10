@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.publishingtool.actions;
 import java.util.List;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
+import org.infoglue.cms.exception.SystemException;
 
 public class DeleteEditionAction extends ViewPublicationsAction
 {
@@ -65,7 +66,7 @@ public class DeleteEditionAction extends ViewPublicationsAction
 	 * we unpublish all.
 	 */
 	
-	public String doCheckForModifiedVersions() throws Exception
+	public String doCheckForModifiedVersions() throws SystemException
 	{
 		return doExecute();
 	}
@@ -76,7 +77,7 @@ public class DeleteEditionAction extends ViewPublicationsAction
 	 * we unpublish all.
 	 */
 	
-	public String doV3() throws Exception
+	public String doV3() throws SystemException
 	{
 		doExecute();
 		
@@ -87,9 +88,10 @@ public class DeleteEditionAction extends ViewPublicationsAction
 	 * This method checks if some of the versions has later working-versions and if so we show another dialog 
 	 * asking the editor to confirm what to do with the interfering version. If there are no interfering versions
 	 * we unpublish all.
+	 * @throws SystemException 
 	 */
 
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
 		// Editions to delete (support many, for now template allows only one)
         if(publicationId != null)

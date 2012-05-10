@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.entities.management.RepositoryLanguageVO;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 
 /**
@@ -51,28 +52,28 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 		this.repositoryLanguageVO = repositoryLanguageVO;
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		RepositoryLanguageController.getController().publishRepositoryLanguage(this.repositoryLanguageVO);
 		
 		return "success";
 	}
 	
-	public String doUnpublish() throws Exception 
+	public String doUnpublish() throws SystemException 
 	{
 		RepositoryLanguageController.getController().unpublishRepositoryLanguage(this.repositoryLanguageVO);
 
 		return "success";
 	}
 
-	public String doMoveDown() throws Exception 
+	public String doMoveDown() throws SystemException 
 	{
 		RepositoryLanguageController.getController().moveRepositoryLanguage(this.repositoryLanguageVO, true);
 
 		return "success";
 	}
 
-	public String doMoveUp() throws Exception 
+	public String doMoveUp() throws SystemException 
 	{
 		RepositoryLanguageController.getController().moveRepositoryLanguage(this.repositoryLanguageVO, false);
 
@@ -80,14 +81,14 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 	}
 
 	/*
-	public String doCreate() throws Exception 
+	public String doCreate() 
 	{
 		RepositoryLanguageController.getController().createRepositoryLanguage(this.repositoryId, this.languageId);
 		return "success";
 	}
 	*/
 	
-	public String doUpdate() throws Exception
+	public String doUpdate() throws ConstraintException, SystemException
 	{
     	String[] values = getRequest().getParameterValues("languageId");
 		RepositoryLanguageController.getController().updateRepositoryLanguages(this.repositoryId,values);
@@ -95,7 +96,7 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 		return SUCCESS;	
 	}
 	
-	public void setRepositoryLanguageId(Integer repositoryLanguageId) throws SystemException
+	public void setRepositoryLanguageId(Integer repositoryLanguageId)
 	{
 		this.repositoryLanguageVO.setRepositoryLanguageId(repositoryLanguageId);	
 	}
@@ -105,7 +106,7 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
         return this.repositoryLanguageVO.getRepositoryLanguageId();
     }
         
-	public void setRepositoryId(Integer repositoryId) throws SystemException
+	public void setRepositoryId(Integer repositoryId)
 	{
 		this.repositoryId = repositoryId;	
 	}
@@ -115,7 +116,7 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
         return this.repositoryId;
     }
 
-	public void setLanguageId(Integer languageId) throws SystemException
+	public void setLanguageId(Integer languageId)
 	{
 		this.languageId = languageId;	
 	}

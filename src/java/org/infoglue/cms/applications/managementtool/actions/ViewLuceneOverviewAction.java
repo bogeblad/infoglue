@@ -47,14 +47,14 @@ public class ViewLuceneOverviewAction extends InfoGlueAbstractAction
      * The main method that fetches the Value-object for this use-case
      */
     
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	indexInformation = LuceneController.getController().getIndexInformation();
     	
         return "success";
     }
 
-    public String doDeleteIndex() throws Exception
+    public String doDeleteIndex()
     {
     	if(!running)
     	{
@@ -85,7 +85,7 @@ public class ViewLuceneOverviewAction extends InfoGlueAbstractAction
     	return "success";
     }
 
-    public String doIndexAll() throws Exception
+    public String doIndexAll()
     {
     	if(!running)
     	{

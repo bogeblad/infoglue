@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 
 
@@ -44,7 +45,7 @@ public class ViewListRepositoryAction extends InfoGlueAbstractAction
 	private List repositories;
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 	    this.repositories = RepositoryController.getController().getRepositoryVOListNotMarkedForDeletion();
 	    Collections.sort(this.repositories, new ReflectionComparator("name"));
@@ -52,7 +53,7 @@ public class ViewListRepositoryAction extends InfoGlueAbstractAction
 	    return "success";
 	}
 	
-	public String doV3() throws Exception 
+	public String doV3() throws SystemException 
 	{
 	    this.repositories = RepositoryController.getController().getRepositoryVOListNotMarkedForDeletion();
 	    Collections.sort(this.repositories, new ReflectionComparator("name"));

@@ -36,13 +36,13 @@ import com.opensymphony.workflow.InvalidActionException;
  */
 public class CreateNewsTest extends NewsWorkflowTestCase
 {
-	public void testCreateNewsAndApprove() throws Exception
+	public void testCreateNewsAndApprove() 
 	{
 		checkCreateNews();
 		checkPreviewNewsAndApprove();
 	}
 
-	public void testCreateNewsAndApproveInactive() throws Exception
+	public void testCreateNewsAndApproveInactive() 
 	{
 		testCreateNewsAndApprove();
 
@@ -57,7 +57,7 @@ public class CreateNewsTest extends NewsWorkflowTestCase
 		}
 	}
 
-	public void testCreateNewsTwice() throws Exception
+	public void testCreateNewsTwice() 
 	{
 		checkCreateNews();
 
@@ -76,13 +76,13 @@ public class CreateNewsTest extends NewsWorkflowTestCase
 		}
 	}
 
-	private void checkPreviewNewsAndApprove() throws Exception
+	private void checkPreviewNewsAndApprove() 
 	{
 		invokePreviewNewsAndApprove();
 		assertWorkflowFinished();
 	}
 
-	private void checkCreateNews() throws Exception
+	private void checkCreateNews() 
 	{
 		invokeCreateNews();
 		checkWorkflow(1, 1, 1);

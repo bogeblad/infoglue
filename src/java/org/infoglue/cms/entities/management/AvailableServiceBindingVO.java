@@ -105,7 +105,7 @@ public class AvailableServiceBindingVO implements BaseEntityVO
         return this.visualizationAction;
     }
             
-    public void setVisualizationAction(java.lang.String visualizationAction) throws ConstraintException
+    public void setVisualizationAction(java.lang.String visualizationAction) 
     {
         this.visualizationAction = visualizationAction;
     }
@@ -115,7 +115,7 @@ public class AvailableServiceBindingVO implements BaseEntityVO
         return this.isMandatory;
     }
                 
-    public void setIsMandatory(java.lang.Boolean isMandatory) throws ConstraintException
+    public void setIsMandatory(java.lang.Boolean isMandatory) 
     {
         this.isMandatory = isMandatory;
     }
@@ -125,7 +125,7 @@ public class AvailableServiceBindingVO implements BaseEntityVO
         return this.isUserEditable;
     }
                 
-    public void setIsUserEditable(java.lang.Boolean isUserEditable) throws ConstraintException
+    public void setIsUserEditable(java.lang.Boolean isUserEditable) 
     {
         this.isUserEditable = isUserEditable;
     }
@@ -135,7 +135,7 @@ public class AvailableServiceBindingVO implements BaseEntityVO
         return this.isInheritable;
     }
                 
-    public void setIsInheritable(java.lang.Boolean isInheritable) throws ConstraintException
+    public void setIsInheritable(java.lang.Boolean isInheritable) 
     {
         this.isInheritable = isInheritable;
     }

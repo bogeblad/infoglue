@@ -33,47 +33,29 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public abstract class DatePopulator extends Populator 
 {
-	/**
-	 * 
-	 */
 	private static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm";
 
 	
 	
-	/**
-	 * 
-	 */
 	protected DatePopulator() 
 	{ 
 		super(); 
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate() throws WorkflowException 
 	{
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate(final String name) throws WorkflowException {
 		populate(name, new Date());
 	}
 
-	/**
-	 * 
-	 */
 	protected void populate(final String name, final String value) throws WorkflowException 
 	{
 		populate(name, new VisualFormatter().parseDate(value, DATETIME_PATTERN));
 	}
 
-	/**
-	 * 
-	 */
-	protected void populate(final String name, final Date value) throws WorkflowException 
+	protected void populate(final String name, final Date value) 
 	{
 		doPopulate(name, new VisualFormatter().formatDate(value, DATETIME_PATTERN));
 	}

@@ -40,8 +40,6 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.AccessConstraintException;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -85,25 +83,10 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 	protected void initialize(Integer contentVersionId, Integer contentId, Integer languageId) throws Exception
 	{
 		this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
-		//this.contentVO = ContentController.getContentVOWithId(contentId);
 		this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentId);
 		this.availableLanguages = ContentController.getContentController().getRepositoryLanguages(contentId);
 		
 		this.languageId = ((LanguageVO)this.availableLanguages.get(0)).getLanguageId();
-		/*
-		if(contentVersionId == null)
-		{	
-			//this.contentVersionVO = ContentVersionControllerProxy.getController().getACLatestActiveContentVersionVO(this.getInfoGluePrincipal(), contentId, languageId);
-			//this.contentVersionVO = ContentVersionController.getLatestActiveContentVersionVO(contentId, languageId);
-			this.contentVersionVO = ContentVersionController.getLatestActiveContentVersionVO(contentId, languageId);
-			if(this.contentVersionVO != null)
-				contentVersionId = contentVersionVO.getContentVersionId();
-		}
-
-		if(contentVersionId != null)	
-			this.contentVersionVO = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId);    		 	
-			//this.contentVersionVO = ContentVersionController.getContentVersionVOWithId(contentVersionId);    		 	
-		*/
 		
 		this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().validateAndUpdateContentType(this.contentTypeDefinitionVO);
 		this.attributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(this.contentTypeDefinitionVO, true);
@@ -113,10 +96,9 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 	 * This method presents the user with the initial input screen for creating a content.
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
 	 
-	public String doInput() throws Exception
+	public String doInput() throws NumberFormatException, SystemException, AccessConstraintException
 	{
 		if(parentContentId == null)
 		{
@@ -128,9 +110,6 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 		Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(parentContentId);
 		if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.Create", protectedContentId.toString()))
 			ceb.add(new AccessConstraintException("Content.contentId", "1002"));
-
-		//if(ContentControllerProxy.getController().getIsContentProtected(parentContentId) && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.Create", parentContentId.toString()))
-		//	ceb.add(new AccessConstraintException("Content.contentId", "1002"));
 
 		ceb.throwIfNotEmpty();
 
@@ -176,7 +155,7 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 		return "success";
 	}
 	
-	public Integer getTopRepositoryId() throws ConstraintException, SystemException, Bug
+	public Integer getTopRepositoryId() throws SystemException
 	{
 		List repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 		
@@ -343,53 +322,11 @@ public class CreateContentWizardAction extends InfoGlueAbstractAction implements
 	}
 
 	
-	public List getContentTypeDefinitions() throws Exception
+	public List getContentTypeDefinitions() throws SystemException
 	{
 		return ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
 	}      
 	 
-	/*
-
-    
-      
-    public String doExecute() throws Exception
-    {
-		this.contentVO.setCreatorName(this.getInfoGluePrincipal().getName());
-
-    	ceb = this.contentVO.validate();
-    	ceb.throwIfNotEmpty();
-    			
-    	newContentVO = ContentControllerProxy.getController().acCreate(this.getInfoGluePrincipal(), parentContentId, contentTypeDefinitionId, repositoryId, contentVO);
-		//newContentVO = ContentController.create(parentContentId, contentTypeDefinitionId, repositoryId, contentVO);
-    	
-    	return "success";
-    }
-    
-	public String doBindingView() throws Exception
-	{
-		doExecute();
-		return "bindingView";
-	}
-	
-	public String doTreeView() throws Exception
-	{
-		doExecute();
-		return "treeView";
-	}
-
-    public String doInput() throws Exception
-    {
-		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
-		
-		if(ContentControllerProxy.getController().getIsContentProtected(parentContentId) && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.Create", parentContentId.toString()))
-			ceb.add(new AccessConstraintException("Content.contentId", "1002"));
-
-		ceb.throwIfNotEmpty();
-		
-		return "input";
-    }
-    */
-    
 	public String[] getAllowedContentTypeDefinitionId()
 	{
 		return allowedContentTypeDefinitionId;

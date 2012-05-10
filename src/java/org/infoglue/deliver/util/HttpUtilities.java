@@ -27,10 +27,12 @@ package org.infoglue.deliver.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -72,10 +74,9 @@ public class HttpUtilities
      * @param urlAddress The address of the URL you would like to post to.
      * @param inHash The parameters you would like to post to the URL.
      * @return The result of the postToUrl method as a string.
-     * @exception java.lang.Exception
      */
     
-    public static String postToUrl(String urlAddress, Hashtable inHash) throws Exception
+    public static String postToUrl(String urlAddress, Hashtable inHash) throws IOException 
     {      
     	URL url = new URL(urlAddress);
         URLConnection urlConn = url.openConnection();
@@ -117,10 +118,9 @@ public class HttpUtilities
      * @param urlAddress The address of the URL you would like to post to.
      * @param inHash The parameters you would like to post to the URL.
      * @return The result of the postToUrl method as a string.
-     * @exception java.lang.Exception
      */
     
-    public static String postToUrl(String urlAddress, Hashtable inHash, String userName, String password, boolean shouldEncode) throws Exception
+    public static String postToUrl(String urlAddress, Hashtable inHash, String userName, String password, boolean shouldEncode) throws IOException 
     {        
         String encodedPassword = HTUU.encode(userName + ":" + password);
         
@@ -160,23 +160,21 @@ public class HttpUtilities
     }
 
 	 
-	public static String getUrlContent(String urlAddress, HttpServletRequest request, boolean includeRequest) throws Exception
+	public static String getUrlContent(String urlAddress, HttpServletRequest request, boolean includeRequest) throws IOException 
 	{
 		if(includeRequest)
 			return getUrlContent(urlAddress, requestToHashtable(request));
-		else
-			return getUrlContent(urlAddress);
+		return getUrlContent(urlAddress);
 	}
 
-	public static String getUrlContent(String urlAddress, HttpServletRequest request, boolean includeRequest, String encoding) throws Exception
+	public static String getUrlContent(String urlAddress, HttpServletRequest request, boolean includeRequest, String encoding) throws IOException 
 	{
 		if(includeRequest)
 			return getUrlContent(urlAddress, requestToHashtable(request), encoding);
-		else
-			return getUrlContent(urlAddress, encoding);
+		return getUrlContent(urlAddress, encoding);
 	}
 
-	public static String getUrlContent(String urlAddress, Hashtable inHash) throws Exception
+	public static String getUrlContent(String urlAddress, Hashtable inHash) throws IOException 
 	{
 	    String argString = "";
 	    if(inHash != null)
@@ -209,7 +207,7 @@ public class HttpUtilities
 	}
 
 
-	public static String getUrlContent(String urlAddress, Hashtable inHash, String encoding) throws Exception
+	public static String getUrlContent(String urlAddress, Hashtable inHash, String encoding) throws IOException 
 	{
 		String argString = "";
 		if(inHash != null)
@@ -253,7 +251,7 @@ public class HttpUtilities
 	}
 
 	
-	public static String getUrlContent(String urlAddress) throws Exception
+	public static String getUrlContent(String urlAddress) throws IOException 
 	{
 	    URL url = new URL(urlAddress);
 	    URLConnection connection = url.openConnection();
@@ -274,7 +272,7 @@ public class HttpUtilities
 	}
 	
 	
-	public static String getUrlContent(String urlAddress, String encoding) throws Exception
+	public static String getUrlContent(String urlAddress, String encoding) throws IOException 
 	{
 		URL url = new URL(urlAddress);
 		URLConnection connection = url.openConnection();
@@ -314,10 +312,9 @@ public class HttpUtilities
      * @param urlAddress The address of the URL you would like to get information from.
      * @param inHash The parameters you would like to get from the URL.
      * @return The result of the getUrlContent method as a string.
-     * @exception java.lang.Exception
      */
 	          
-	public static String getUrlContent(String urlAddress, Hashtable inHash, String userName, String password, boolean shouldEncode) throws Exception
+	public static String getUrlContent(String urlAddress, Hashtable inHash, String userName, String password, boolean shouldEncode) throws IOException 
 	{
 	    String encodedPassword = HTUU.encode(userName + ":" + password);
 	    
@@ -350,7 +347,7 @@ public class HttpUtilities
 	
 	
 	
-	public static String getUrlContent(String urlAddress, String data, String userName, String password) throws Exception
+	public static String getUrlContent(String urlAddress, String data, String userName, String password) throws IOException 
 	{
 	    String encodedPassword = HTUU.encode(userName + ":" + password);
 	    
@@ -386,10 +383,9 @@ public class HttpUtilities
 	 * @param urlAddress The address of the URL you would like to get information from.
 	 * @param inHash The parameters you would like to get from the URL.
 	 * @return A input stream.
-	 * @exception java.lang.Exception
 	 */
 	
-	public static InputStream getURLStream(String urlAddress, Hashtable inHash) throws Exception
+	public static InputStream getURLStream(String urlAddress, Hashtable inHash) throws IOException 
 	{
 	    String argString = "";
 	    if(inHash != null)
@@ -419,7 +415,7 @@ public class HttpUtilities
 			for (Enumeration e = request.getParameterNames(); e.hasMoreElements() ;) 
 		    {		        
 		        String name  = (String)e.nextElement();
-		        String value = (String)request.getParameter(name);
+		        String value = request.getParameter(name);
 	            parameters.put(name, value);
 		    }        
 		}
@@ -436,7 +432,7 @@ public class HttpUtilities
 	 * @return A URL encoded string.
 	 */
 		
-	private static String toEncodedString(Hashtable inHash) throws Exception
+	private static String toEncodedString(Hashtable inHash) throws UnsupportedEncodingException 
 	{
 	    StringBuffer buffer = new StringBuffer();
 	    Enumeration names = inHash.keys();

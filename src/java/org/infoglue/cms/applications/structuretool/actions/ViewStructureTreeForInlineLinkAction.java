@@ -32,6 +32,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -83,7 +84,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 		return "ViewStructureTreeForInlineLink.action";
 	}
 	
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
@@ -97,14 +98,14 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 		return "success";					
     }
 
-    public String doUseFCKEditor() throws Exception
+    public String doUseFCKEditor() throws SystemException
     {
         doExecute();
         
 		return "successFCKEditor";					
     }
 
-    public String doUseFCKEditorV3() throws Exception
+    public String doUseFCKEditorV3() throws SystemException
     {
         doExecute();
         
@@ -145,11 +146,11 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	    
 	    try
 	    {
-	        SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(oldSiteNodeId);
+	        SiteNodeVO parentSiteNodeVO = SiteNodeController.getParentSiteNode(oldSiteNodeId);
 		    while(parentSiteNodeVO != null)
 		    {
 		        expansion += parentSiteNodeVO.getId() + "/";
-		        parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(parentSiteNodeVO.getId());
+		        parentSiteNodeVO = SiteNodeController.getParentSiteNode(parentSiteNodeVO.getId());
 		    }
 	    }
 	    catch(Exception e)
@@ -169,11 +170,11 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 	    
 	    try
 	    {
-	        ContentVO parentContentVO = ContentController.getContentController().getParentContent(oldContentId);
+	        ContentVO parentContentVO = ContentController.getParentContent(oldContentId);
 		    while(parentContentVO != null)
 		    {
 		        expansion += parentContentVO.getId() + "/";
-		        parentContentVO = ContentController.getContentController().getParentContent(parentContentVO.getId());
+		        parentContentVO = ContentController.getParentContent(parentContentVO.getId());
 		    }
 	    }
 	    catch(Exception e)

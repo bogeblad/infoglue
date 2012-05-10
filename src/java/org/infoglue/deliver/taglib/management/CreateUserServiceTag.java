@@ -25,32 +25,17 @@ public class CreateUserServiceTag extends TemplateControllerTag
 	 */
 	private static final long serialVersionUID = -1904980538720103871L;
 
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteUserService";
 	
-	/**
-	 * 
-	 */
 	private String operationName = "createUser";
 	
-	/**
-	 * 
-	 */
 	private InfoGluePrincipal principal;
 	
-	/**
-	 * 
-	 */
 	private SystemUserVO systemUserVO;
 
 	private String[] roleNames = new String[]{};
 	private String[] groupNames = new String[]{};
 	
-	/**
-	 * 
-	 */
 	public CreateUserServiceTag() 
 	{
 		super();
@@ -67,9 +52,6 @@ public class CreateUserServiceTag extends TemplateControllerTag
 	    return EVAL_BODY_INCLUDE;
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

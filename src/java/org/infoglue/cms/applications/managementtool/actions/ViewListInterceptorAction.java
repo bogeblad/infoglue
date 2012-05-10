@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptorController;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * 	Action class for usecase ViewListInterceptorAction 
@@ -41,7 +42,7 @@ public class ViewListInterceptorAction extends InfoGlueAbstractAction
 	private List interceptorVOList;
 	
 
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.interceptorVOList = InterceptorController.getController().getInterceptorVOList();
 		

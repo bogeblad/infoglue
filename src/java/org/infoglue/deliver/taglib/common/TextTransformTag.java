@@ -134,7 +134,7 @@ public class TextTransformTag extends TemplateControllerTag
 		    
 		    if(replaceLineBreaks)
 		    {
-		    	if(lineBreakChar.toCharArray().length == 1 && ((int)lineBreakChar.toCharArray()[0] == 10))
+		    	if(lineBreakChar.toCharArray().length == 1 && (lineBreakChar.toCharArray()[0] == 10))
 		    	{
 			    	modifiedText = modifiedText.replaceAll("" + (char)13 + lineBreakChar, lineBreakReplacer);	    
 		    	}

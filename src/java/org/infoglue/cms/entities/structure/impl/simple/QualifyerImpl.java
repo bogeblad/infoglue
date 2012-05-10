@@ -36,7 +36,7 @@ public class QualifyerImpl implements Qualifyer
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

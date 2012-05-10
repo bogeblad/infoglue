@@ -34,6 +34,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 /**
@@ -58,10 +60,11 @@ public class CreateContentWizardInputContentVersionsAction extends CreateContent
 	 * This method presents the user with the initial input screen for creating a content.
 	 * 
 	 * @return
+	 * @throws SystemException 
 	 * @throws Exception
 	 */
 	 
-	public String doInput() throws Exception
+	public String doInput() throws SystemException
 	{
 		CreateContentWizardInfoBean createContentWizardInfoBean = getCreateContentWizardInfoBean();
 		
@@ -82,35 +85,24 @@ public class CreateContentWizardInputContentVersionsAction extends CreateContent
 		
 		if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
        		digitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getId());
-
-		/*
-		boolean missingAsset = false;
-		Iterator assetKeysIterator = assetKeys.iterator();
-		while(assetKeysIterator.hasNext())
-		{
-			AssetKeyDefinition assetKeyDefinition = (AssetKeyDefinition)assetKeysIterator.next();
-			if(!createContentWizardInfoBean.getDigitalAssets().containsKey(assetKeyDefinition.getAssetKey() + "_" + masterLanguageVO.getId()))
-				return "inputAssets";
-		}
-		*/
-		
 		this.contentTypeAttributes = ContentTypeDefinitionController.getController().getContentTypeAttributes(this.contentTypeDefinitionVO, true);
 		
     	String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
     	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
     	    return "inputContentVersions";
-    	else
-    	    return "inputContentVersionsForFCKEditor";
+	    return "inputContentVersionsForFCKEditor";
 	}
 
 	/**
 	 * This method validates the input and handles any deviations.
 	 * 
 	 * @return
+	 * @throws SystemException 
+	 * @throws ConstraintException 
 	 * @throws Exception
 	 */
 	 
-	public String doExecute() throws Exception
+	public String doExecute() throws ConstraintException, SystemException
 	{
 		CreateContentWizardInfoBean createContentWizardInfoBean = getCreateContentWizardInfoBean();
 		

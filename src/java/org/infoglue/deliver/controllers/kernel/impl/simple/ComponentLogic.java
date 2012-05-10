@@ -97,20 +97,6 @@ public class ComponentLogic
  		this.componentDeliveryContext.addUsedContent("content_" + infoGlueComponent.getContentId());
  	}
  	
- 	/*
-	public void getDatabaseStatus(String debug)
-	{
-		try
-		{
-		    this.templateController.getDatabaseStatus(debug);
-		}
-		catch(Exception e) 
-		{
-		    e.printStackTrace();
-		}
-	}
-	*/
-
 	/**
 	 * The method returns a list of ContentVO-objects that is children to the bound content of named binding on the siteNode sent in. 
 	 * The method is great for collection-pages on any site where you want to bind to a folder containing all contents to list.
@@ -124,7 +110,7 @@ public class ComponentLogic
 	 * @return a List of ContentVO objects, 
 	 * @throws Exception if an error occures
 	 */
-	public List getBoundFolderContents(String propertyName, boolean searchRecursive, String sortAttribute, String sortOrder) throws Exception
+	public List getBoundFolderContents(String propertyName, boolean searchRecursive, String sortAttribute, String sortOrder) 
 	{
 	    return getBoundFolderContents(propertyName, searchRecursive, sortAttribute, sortOrder, false);
 	}
@@ -143,17 +129,17 @@ public class ComponentLogic
 	 * @return a List of ContentVO objects,
 	 * @throws Exception if an error occures
 	 */
-	public List getBoundFolderContents(String propertyName, boolean searchRecursive, String sortAttribute, String sortOrder, boolean includeFolders) throws Exception
+	public List getBoundFolderContents(String propertyName, boolean searchRecursive, String sortAttribute, String sortOrder, boolean includeFolders) 
 	{
 		return getBoundFolderContents(propertyName, searchRecursive, sortAttribute, sortOrder, includeFolders, true, true);
 	}
 
-	public List getBoundFolderContents(String propertyName, boolean searchRecursive, String sortAttribute, String sortOrder, boolean includeFolders, boolean useRepositoryInheritance) throws Exception
+	public List getBoundFolderContents(String propertyName, boolean searchRecursive, String sortAttribute, String sortOrder, boolean includeFolders, boolean useRepositoryInheritance) 
 	{
 		return getBoundFolderContents(propertyName, searchRecursive, sortAttribute, sortOrder, includeFolders, useRepositoryInheritance, true);
 	}
 
-	public List getBoundFolderContents(String propertyName, boolean searchRecursive, String sortAttribute, String sortOrder, boolean includeFolders, boolean useRepositoryInheritance, boolean useStructureInheritance) throws Exception
+	public List getBoundFolderContents(String propertyName, boolean searchRecursive, String sortAttribute, String sortOrder, boolean includeFolders, boolean useRepositoryInheritance, boolean useStructureInheritance) 
 	{
 		List childContents = new ArrayList();
 		
@@ -170,7 +156,7 @@ public class ComponentLogic
 	 * The method returns a list of ContentVO-objects that are related to the category of named binding on the siteNode sent in.
 	 * The method is great for collection-pages on any site where you want to bind a category.
 	 */
-	public List getBoundCategoryContents(String categoryAttribute, String typeAttribute) throws Exception
+	public List getBoundCategoryContents(String categoryAttribute, String typeAttribute) 
 	{
 		Map categoryComponent = getInheritedComponentProperty(infoGlueComponent, categoryAttribute, this.useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
 		Map attributeComponent = getInheritedComponentProperty(infoGlueComponent, typeAttribute, this.useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
@@ -185,13 +171,13 @@ public class ComponentLogic
 		return Collections.EMPTY_LIST;
 	}
 
-	public Collection getAssets(String propertyName, boolean useInheritance, boolean useRepositoryInheritance) throws Exception
+	public Collection getAssets(String propertyName, boolean useInheritance, boolean useRepositoryInheritance) 
 	{
 		return getAssets(propertyName, useInheritance, useRepositoryInheritance, true);
 	}
 	
 	
-	public List getContentAssets(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws Exception
+	public List getContentAssets(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) 
 	{
 		List assets = new ArrayList();
 
@@ -203,7 +189,7 @@ public class ComponentLogic
 		return assets;
 	}
 	
-	public List getAssets(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws Exception
+	public List getAssets(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) 
 	{
 		List assets = new ArrayList();
 	
@@ -229,7 +215,7 @@ public class ComponentLogic
 		return assets;
 	}
 	
-	public Collection getAssetUrls(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws Exception
+	public Collection getAssetUrls(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) 
 	{
 		List assetUrls = new ArrayList();
 
@@ -254,7 +240,7 @@ public class ComponentLogic
 		return assetUrls;
 	}
 
-	public String getAssetUrl(String propertyName) throws Exception
+	public String getAssetUrl(String propertyName) 
 	{
 		String assetUrl = "";
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, this.useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
@@ -268,17 +254,17 @@ public class ComponentLogic
 		return assetUrl;
 	}
 
-	public String getAssetUrl(String propertyName, boolean useInheritance) throws Exception
+	public String getAssetUrl(String propertyName, boolean useInheritance) 
 	{
 		return getAssetUrl(propertyName, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
 	}
 
-	public String getAssetUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance) throws Exception
+	public String getAssetUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance) 
 	{
 		return getAssetUrl(propertyName, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
 
-	public String getAssetUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws Exception
+	public String getAssetUrl(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) 
 	{
 		String assetUrl = "";
 
@@ -293,7 +279,7 @@ public class ComponentLogic
 		return assetUrl;
 	}
 
-	public String getAssetUrl(String propertyName, String assetKey) throws Exception
+	public String getAssetUrl(String propertyName, String assetKey) 
 	{
 		String assetUrl = "";
 		 		
@@ -305,17 +291,17 @@ public class ComponentLogic
 		return assetUrl;
 	}
 
-	public String getAssetUrl(String propertyName, String assetKey, boolean useInheritance) throws Exception
+	public String getAssetUrl(String propertyName, String assetKey, boolean useInheritance) 
 	{
 		return getAssetUrl(propertyName, assetKey, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
 	}
 
-	public String getAssetUrl(String propertyName, String assetKey, boolean useInheritance, boolean useRepositoryInheritance) throws Exception
+	public String getAssetUrl(String propertyName, String assetKey, boolean useInheritance, boolean useRepositoryInheritance) 
 	{
 		return getAssetUrl(propertyName, assetKey, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
 
-	public String getAssetUrl(String propertyName, String assetKey, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws Exception
+	public String getAssetUrl(String propertyName, String assetKey, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) 
 	{
 		String assetUrl = "";
 		 		
@@ -327,22 +313,22 @@ public class ComponentLogic
 		return assetUrl;
 	}
 
-	public String getAssetThumbnailUrl(String propertyName, int width, int height) throws Exception
+	public String getAssetThumbnailUrl(String propertyName, int width, int height) 
 	{
 	    return getAssetThumbnailUrl(propertyName, width, height, this.useInheritance, this.useStructureInheritance);
 	}
 
-	public String getAssetThumbnailUrl(String propertyName, int width, int height, boolean useInheritance) throws Exception
+	public String getAssetThumbnailUrl(String propertyName, int width, int height, boolean useInheritance) 
 	{
 	    return getAssetThumbnailUrl(propertyName, width, height, useInheritance, this.useStructureInheritance);
 	}
 
-	public String getAssetThumbnailUrl(String propertyName, int width, int height, boolean useInheritance, boolean useStructureInheritance) throws Exception
+	public String getAssetThumbnailUrl(String propertyName, int width, int height, boolean useInheritance, boolean useStructureInheritance) 
 	{
 		return getAssetThumbnailUrl(propertyName, width, height, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
 	}
 	
-	public String getAssetThumbnailUrl(String propertyName, int width, int height, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws Exception
+	public String getAssetThumbnailUrl(String propertyName, int width, int height, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) 
 	{
 		String assetUrl = "";
 		 		
@@ -354,22 +340,22 @@ public class ComponentLogic
 		return assetUrl;
 	}
 
- 	public String getAssetThumbnailUrl(String propertyName, String assetKey, int width, int height) throws Exception
+ 	public String getAssetThumbnailUrl(String propertyName, String assetKey, int width, int height) 
  	{
  	   return getAssetThumbnailUrl(propertyName, assetKey, width, height, this.useInheritance);
  	}
  	
-	public String getAssetThumbnailUrl(String propertyName, String assetKey, int width, int height, boolean useInheritance) throws Exception
+	public String getAssetThumbnailUrl(String propertyName, String assetKey, int width, int height, boolean useInheritance) 
  	{
 		return getAssetThumbnailUrl(propertyName, assetKey, width, height, useInheritance, true, true);
  	}
 
-	public String getAssetThumbnailUrl(String propertyName, String assetKey, int width, int height, boolean useInheritance, boolean useRepositoryInheritance) throws Exception
+	public String getAssetThumbnailUrl(String propertyName, String assetKey, int width, int height, boolean useInheritance, boolean useRepositoryInheritance) 
  	{
 		return getAssetThumbnailUrl(propertyName, assetKey, width, height, useInheritance, useRepositoryInheritance, true);
  	}
 
-	public String getAssetThumbnailUrl(String propertyName, String assetKey, int width, int height, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws Exception
+	public String getAssetThumbnailUrl(String propertyName, String assetKey, int width, int height, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) 
  	{
 		String assetUrl = "";
 
@@ -388,13 +374,13 @@ public class ComponentLogic
 		return assetUrl;
  	}
 
-	public String getAssetThumbnailUrl(Integer contentId, int width, int height) throws Exception
+	public String getAssetThumbnailUrl(Integer contentId, int width, int height) 
 	{
 		String assetUrl = templateController.getAssetThumbnailUrl(contentId, width, height);
 		return assetUrl;
 	}
 
-	public String getAssetThumbnailUrl(Integer contentId, String assetKey, int width, int height) throws Exception
+	public String getAssetThumbnailUrl(Integer contentId, String assetKey, int width, int height) 
 	{
 		String assetUrl = templateController.getAssetThumbnailUrl(contentId, assetKey, width, height);
 		return assetUrl;
@@ -1145,7 +1131,7 @@ public class ComponentLogic
 		return pages;
 	}
 
-	public String getPageUrl(String propertyName) throws Exception
+	public String getPageUrl(String propertyName) 
 	{
 	    return getPageUrl(propertyName, this.useInheritance);
 	}
@@ -1237,7 +1223,7 @@ public class ComponentLogic
 	 * or controls it on the pageCache parameters.
 	 */
 	 
-	public String getPageAsDigitalAssetUrl(String propertyName) throws Exception
+	public String getPageAsDigitalAssetUrl(String propertyName) 
 	{
 	    return getPageAsDigitalAssetUrl(propertyName, this.useInheritance, "");
 	}
@@ -1808,10 +1794,9 @@ public class ComponentLogic
 	 * This method fetches the component named component property. If not available on the current page metainfo we go up recursive.
 	 */
 	
-	private Map getComponentProperty(String propertyName, boolean useInheritance, boolean useStructureInheritance, Set contentVersionIdList, boolean useRepositoryInheritance, boolean useComponentInheritance) throws Exception
+	private Map getComponentProperty(String propertyName, boolean useInheritance, boolean useStructureInheritance, Set contentVersionIdList, boolean useRepositoryInheritance, boolean useComponentInheritance) 
 	{
 		Map property = (Map)this.infoGlueComponent.getProperties().get(propertyName);
-    	//Map property = getInheritedComponentProperty(this.templateController, templateController.getSiteNodeId(), this.templateController.getLanguageId(), this.templateController.getContentId(), this.infoGlueComponent.getId(), propertyName, contentVersionIdList);
 		
 		if(useInheritance)
 		{
@@ -3417,7 +3402,7 @@ public class ComponentLogic
 	 */
 	private static PageEditorHelper pageEditorHelper = new PageEditorHelper();
 	
-	private ComponentPropertyDefinition getComponentPropertyDefinition(Integer componentContentId, String propertyName, Integer siteNodeId, Integer languageId, Integer contentId, Database db, InfoGluePrincipal principal) throws Exception
+	private ComponentPropertyDefinition getComponentPropertyDefinition(Integer componentContentId, String propertyName, Integer siteNodeId, Integer languageId, Integer contentId, Database db, InfoGluePrincipal principal) 
 	{
 		//TODO - h�r kan vi s�kert cache:a.
 		

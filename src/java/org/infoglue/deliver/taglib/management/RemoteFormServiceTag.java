@@ -29,29 +29,14 @@ public class RemoteFormServiceTag extends TemplateControllerTag
 	 */
 	private List formEntries = new ArrayList();	
 	
-	/**
-	 * 
-	 */
 	private String name;
 	
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteFormService";
 	
-	/**
-	 * 
-	 */
 	private String operationName;
 	
-	/**
-	 * 
-	 */
 	private InfoGluePrincipal principal;
 	
-	/**
-	 * 
-	 */
 	public RemoteFormServiceTag() 
 	{
 		super();
@@ -68,9 +53,6 @@ public class RemoteFormServiceTag extends TemplateControllerTag
 	    return EVAL_BODY_INCLUDE;
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

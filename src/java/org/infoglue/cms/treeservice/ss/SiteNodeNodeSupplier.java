@@ -159,7 +159,7 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 	/**
 	 * @see com.frovi.ss.Tree.INodeSupplier#getChildContainerNodes(Integer)
 	 */
-	public Collection getChildContainerNodes(Integer parentNode) throws SystemException, Exception
+	public Collection getChildContainerNodes(Integer parentNode) throws SystemException
 	{
 		Timer timer = new Timer();
 		

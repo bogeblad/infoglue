@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.exception.SystemException;
 
 /**
  * This class implements the action class for the framed page in the content tool.
@@ -42,14 +43,14 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	private List repositories = null;
 	
-	public String doRepositories() throws Exception
+	public String doRepositories() throws SystemException
     {
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(getInfoGluePrincipal(), false);
         
 		return "successRepositories";
     }
 
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		
         return "success";

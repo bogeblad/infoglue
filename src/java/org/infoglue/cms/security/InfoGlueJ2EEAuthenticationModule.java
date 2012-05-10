@@ -81,10 +81,9 @@ public class InfoGlueJ2EEAuthenticationModule extends AuthenticationModule
 			logger.info("The container had the user logged in:" + request.getUserPrincipal());
 			return request.getUserPrincipal().getName();
 		}
-		else
-			logger.info("No container user logged in:" + request.getUserPrincipal());
+		logger.info("No container user logged in:" + request.getUserPrincipal());
 		
-		HttpSession session = ((HttpServletRequest)request).getSession();
+		HttpSession session = request.getSession();
 
 		//otherwise, we need to authenticate somehow
 		String userName = request.getParameter("j_username");

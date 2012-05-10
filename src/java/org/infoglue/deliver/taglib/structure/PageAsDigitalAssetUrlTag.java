@@ -73,8 +73,7 @@ public class PageAsDigitalAssetUrlTag extends ComponentLogicTag
 	    
 	    if(this.propertyName != null)
 	        return getComponentLogic().getPageAsDigitalAssetUrl(propertyName, languageId, contentId, useInheritance, fileSuffix, cacheUrl, useRepositoryInheritance, useStructureInheritance);
-	    else
-	        return getController().getPageAsDigitalAssetUrl(siteNodeId, languageId, contentId, fileSuffix, cacheUrl);
+        return getController().getPageAsDigitalAssetUrl(siteNodeId, languageId, contentId, fileSuffix, cacheUrl);
 	}
 
 	public void setSiteNodeId(final String siteNodeId) throws JspException
@@ -114,7 +113,7 @@ public class PageAsDigitalAssetUrlTag extends ComponentLogicTag
 
     public void setFileSuffix(String fileSuffix) throws JspException
     {
-        this.fileSuffix = evaluateString("pageAsDigitalAssetUrl", "fileSuffix", fileSuffix);;
+        this.fileSuffix = evaluateString("pageAsDigitalAssetUrl", "fileSuffix", fileSuffix);
     }
 
     public void setExtraParameters(String extraParameters)

@@ -77,9 +77,6 @@ public class StatusBean //implements DynamicWebserviceElement
 		this.createdBeans = createdBeans;
 	}
 	
-	/**
-	 * 
-	 */
 	/*
 	public List serialize() 
 	{
@@ -91,9 +88,6 @@ public class StatusBean //implements DynamicWebserviceElement
 	}
 	*/
 
-	/**
-	 * 
-	 */
 	
 	/* (non-Javadoc)
 	 * @see org.infoglue.deliver.util.webservices.DynamicWebserviceElement#deserialize(java.util.List)

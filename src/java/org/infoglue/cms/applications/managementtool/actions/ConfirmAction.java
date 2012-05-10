@@ -78,7 +78,7 @@ public class ConfirmAction extends InfoGlueAbstractAction
 		this.message = message;	
 	}
 	
-	public String getMessage() throws Exception
+	public String getMessage()
 	{
 		return this.message;	
 	}
@@ -145,7 +145,7 @@ public class ConfirmAction extends InfoGlueAbstractAction
 		}
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() 
 	{
 		if(this.choice.length() > 0)
 		{

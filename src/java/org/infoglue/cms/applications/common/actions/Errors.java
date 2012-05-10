@@ -48,38 +48,23 @@ public final class Errors {
   // --- [Constructors] --------------------------------------------------------
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public final boolean hasErrors() {
     return !this.errors.isEmpty();
   }
 
-  /**
-   *
-   */
   public final boolean hasErrors(String fieldName) {
     return this.errors.containsKey(fieldName);
   }
 
-  /**
-   *
-   */
   public final Collection getErrors(String fieldName) {
     return (Collection) this.errors.get(fieldName);
   }
 
-  /**
-   *
-   */
   public final Collection getAllErrors() {
-	return (Collection) this.errors.values();
+	return this.errors.values();
   }
 
 
-  /**
-   *
-   */
   public final void addError(String fieldName, String errorMessage) {
     if(getErrors(fieldName) == null) {
       this.errors.put(fieldName, new ArrayList());
@@ -92,9 +77,6 @@ public final class Errors {
   // --- [X implementation] ----------------------------------------------------
   // --- [java.lang.Object Overrides] ------------------------------------------
 
-  /**
-   *
-   */
   public String toString() {
     final StringBuffer sb = new StringBuffer("<Errors>[ ");
     
@@ -115,9 +97,6 @@ public final class Errors {
   // --- [Package protected] ---------------------------------------------------
   // --- [Private] -------------------------------------------------------------
 
-  /**
-   *
-   */
   private String toString(Iterator errorMessages) {
     final StringBuffer sb = new StringBuffer();
 

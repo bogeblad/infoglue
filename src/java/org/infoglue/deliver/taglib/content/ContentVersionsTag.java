@@ -76,10 +76,7 @@ public class ContentVersionsTag extends TemplateControllerTag
 
 		    return getController().getContentVersions(contentId, languageId);
 		}
-		else
-		{
-		    return getController().getContentVersions(contentId, null);			
-		}
+	    return getController().getContentVersions(contentId, null);			
 	}
 	
     public void setContent(String content) throws JspException
@@ -94,7 +91,7 @@ public class ContentVersionsTag extends TemplateControllerTag
 
     public void setLanguageId(String languageId) throws JspException
     {
-        this.languageId = evaluateInteger("contentVersions", "languageId", languageId);;
+        this.languageId = evaluateInteger("contentVersions", "languageId", languageId);
     }
     
     public void setIncludeAllLanguages(boolean includeAllLanguages)

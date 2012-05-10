@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -47,13 +46,11 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.extensions.InfoglueExtension;
 import org.infoglue.cms.providers.ComponentModel;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
@@ -103,17 +100,12 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
     	{
     		if(repositoryDecoratedPageInvoker != null && repositoryDecoratedPageInvoker.equalsIgnoreCase("ajax"))
 	    		return new AjaxDecoratedComponentBasedHTMLPageInvoker();
-	    	else
-	    		return new DecoratedComponentBasedHTMLPageInvoker();
+    		return new DecoratedComponentBasedHTMLPageInvoker();
     	}
-    	else
-    	{
-	    	String decoratedPageInvoker = CmsPropertyHandler.getDecoratedPageInvoker();
-	    	if(decoratedPageInvoker != null && decoratedPageInvoker.equalsIgnoreCase("ajax"))
-	    		return new AjaxDecoratedComponentBasedHTMLPageInvoker();
-	    	else
-	    		return new DecoratedComponentBasedHTMLPageInvoker();
-    	}
+    	String decoratedPageInvoker = CmsPropertyHandler.getDecoratedPageInvoker();
+    	if(decoratedPageInvoker != null && decoratedPageInvoker.equalsIgnoreCase("ajax"))
+    		return new AjaxDecoratedComponentBasedHTMLPageInvoker();
+		return new DecoratedComponentBasedHTMLPageInvoker();
     }
 
     protected String appendPagePartTemplates(String componentXML, Integer siteNodeId) throws Exception
@@ -1443,7 +1435,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method renders the base component and all it's children.
 	 */
 
-	private String renderComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, int maxDepth, int currentDepth) throws Exception
+	private String renderComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, int maxDepth, int currentDepth)
 	{
 		if(currentDepth > maxDepth)
 		{
@@ -1662,7 +1654,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method renders the base component and all it's children.
 	 */
 
-	private String preProcessComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, List sortedPageComponents) throws Exception
+	private String preProcessComponent(InfoGlueComponent component, TemplateController templateController, Integer repositoryId, Integer siteNodeId, Integer languageId, Integer contentId, Integer metainfoContentId, List sortedPageComponents)
 	{
 		if(logger.isDebugEnabled())
 		{
@@ -1676,8 +1668,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		StringBuilder decoratedComponent = new StringBuilder();
 		
 		templateController.setComponentLogic(new ComponentLogic(templateController, component));
-		//logger.info("BBBBBBBBBBBBB");
-		//templateController.getDeliveryContext().getUsageListeners().add(templateController.getComponentLogic().getComponentDeliveryContext());
 
 		try
 		{
@@ -1861,7 +1851,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method fetches the component template as a string.
 	 */
    
-	protected String getComponentPreProcessingTemplateString(TemplateController templateController, Integer contentId, InfoGlueComponent component) throws SystemException, Exception
+	protected String getComponentPreProcessingTemplateString(TemplateController templateController, Integer contentId, InfoGlueComponent component) 
 	{
 		String template = null;
 
@@ -1881,7 +1871,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * This method fetches the component template as a string.
 	 */
    
-	protected String getComponentModelClassName(TemplateController templateController, Integer contentId, InfoGlueComponent component) throws SystemException, Exception
+	protected String getComponentModelClassName(TemplateController templateController, Integer contentId, InfoGlueComponent component) 
 	{
 		String modelClassName = null;
 
@@ -1903,9 +1893,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
    
 	protected List getInheritedComponents(Database db, TemplateController templateController, InfoGlueComponent component, Integer siteNodeId, String id, boolean inherit) throws Exception
 	{
-		//logger.info("slotId:" + id);
-		//logger.info("component:" + component);
-		//logger.info("getInheritedComponents with " + component.getName() + ":" + component.getSlotName() + ":" + component.getId());
 		List inheritedComponents = new ArrayList();
 		
 		NodeDeliveryController nodeDeliveryController = NodeDeliveryController.getNodeDeliveryController(templateController.getSiteNodeId(), templateController.getLanguageId(), templateController.getContentId());
@@ -2978,16 +2965,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			if(groups == null)
 				groups = new String[]{"selectiveCacheUpdateNonApplicable"};
 			
-			if(components != null)
-			{
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, components, groups, false);				
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, childComponents, groups, false);				
-			}
-			else
-			{
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, new NullObject(), groups, false);
-				CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, new NullObject(), groups, false);
-			}
+			CacheController.cacheObjectInAdvancedCache("pageComponentsCache", key, components, groups, false);				
+			CacheController.cacheObjectInAdvancedCache("pageComponentsCache", keyChildComponents, childComponents, groups, false);				
 		}		
 		
 		//logger.info("sortedPageComponents:" + sortedPageComponents.size());

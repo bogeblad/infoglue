@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.contenttool.actions;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +63,6 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -265,7 +265,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         initialize(contentVersionId, contentId, languageId, false, true);
     }
     
-    protected void initialize(Integer contentVersionId, Integer contentId, Integer languageId, boolean fallBackToMasterLanguage, boolean checkPermission) throws ConstraintException, Exception
+    protected void initialize(Integer contentVersionId, Integer contentId, Integer languageId, boolean fallBackToMasterLanguage, boolean checkPermission) throws Exception
     {
     	if(contentVersionId != null && contentId == null)
     	{
@@ -359,8 +359,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     	String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
     	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
     	    return "success";
-    	else
-    	    return "successForFCKEditor";
+	    return "successForFCKEditor";
     }
 
     public String doV3() throws Exception
@@ -377,8 +376,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     	String wysiwygEditor = CmsPropertyHandler.getWysiwygEditor();
     	if(wysiwygEditor == null || wysiwygEditor.equalsIgnoreCase("") || wysiwygEditor.equalsIgnoreCase("HTMLArea"))
     	    return "standalone";
-    	else
-    	    return "standaloneForFCKEditor";
+	    return "standaloneForFCKEditor";
 	}
 
 	public String doBackground() throws Exception
@@ -746,8 +744,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     {
         if(this.contentVersionVO != null)
             return this.contentVersionVO.getContentVersionId();
-        else 
-            return null;
+        return null;
     }
     
     public void setContentVersionId(java.lang.Integer contentVersionId)
@@ -826,8 +823,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     {
         if(this.contentVO != null && this.contentVO.getRepositoryId() != null)
             return this.contentVO.getRepositoryId();
-        else
-            return this.repositoryId;
+        return this.repositoryId;
     }
 
 	public List getAvailableLanguages()
@@ -971,7 +967,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try
@@ -993,7 +989,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId)
 	{
 		String imageHref = null;
 		try
@@ -1015,7 +1011,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, Integer languageId) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, Integer languageId)
 	{
 		String imageHref = null;
 		try
@@ -1036,7 +1032,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey) throws Exception
+	public String getDigitalAssetUrl(Integer contentId, Integer languageId, String assetKey)
 	{
 		String imageHref = null;
 		try
@@ -1057,7 +1053,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId)
 	{
 		String imageHref = null;
 		try
@@ -1078,7 +1074,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * Then it returnes a url for it
 	 */
 	
-	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId, String assetKey) throws Exception
+	public String getDigitalAssetThumbnailUrl(Integer contentId, Integer languageId, String assetKey)
 	{
 		String imageHref = null;
 		try
@@ -1265,9 +1261,10 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	/**
 	 * This method gets the WYSIWYG Properties
+	 * @throws IOException 
 	 */
 	
-	public Map getWYSIWYGProperties() throws Exception
+	public Map getWYSIWYGProperties() throws IOException
 	{
 		if(this.WYSIWYGProperties != null)
 			return this.WYSIWYGProperties;
@@ -1348,7 +1345,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * This method returns a infoglue-specific PropertySet
 	 */
 
-	public boolean getEnableCSSPlugin() throws Exception
+	public boolean getEnableCSSPlugin() throws IOException
 	{
 		boolean enableCSSPlugin = false;
 		
@@ -1367,7 +1364,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * This method returns a infoglue-specific PropertySet
 	 */
 
-	public List getCSSList() throws Exception
+	public List getCSSList() throws IOException
 	{
 		List cssList = new ArrayList();
 		
@@ -1389,7 +1386,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * This method returns a infoglue-specific PropertySet
 	 */
 
-	public List getAllowedClasses() throws Exception
+	public List getAllowedClasses() throws IOException
 	{
 		List allowedClasses = new ArrayList();
 		
@@ -1453,8 +1450,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		    String protectCategories = CmsPropertyHandler.getProtectCategories();
 		    if(protectCategories != null && protectCategories.equalsIgnoreCase("true"))
 		        return categoryController.getAuthorizedActiveChildren(categoryId, this.getInfoGluePrincipal());
-			else
-			    return categoryController.findAllActiveChildren(categoryId);
+		    return categoryController.findAllActiveChildren(categoryId);
 		}
 		catch(Exception e)
 		{
@@ -1499,7 +1495,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	 * This method shows the user a list of Components(HTML Templates). 
 	 */
     
-	public List getComponentBindings() throws Exception
+	public List getComponentBindings()
 	{
 		List bindings = new ArrayList();
 			

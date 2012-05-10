@@ -37,16 +37,15 @@ public class ViewCMSToolAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = -2904286525405758091L;
 
 	
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(this.getUserName());
 		if(preferredGUI.equalsIgnoreCase("default"))
 			return "successDefault";
-		else
-			return "success";
+		return "success";
     }
 	
-	public String doLoginStandalone() throws Exception 
+	public String doLoginStandalone()  
 	{
 		return "loginComplete";
 	}	

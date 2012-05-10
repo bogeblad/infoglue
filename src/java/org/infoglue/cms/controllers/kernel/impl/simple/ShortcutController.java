@@ -35,7 +35,6 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.mydesktop.ShortcutVO;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.dom.DOMBuilder;
 
@@ -70,7 +69,7 @@ public class ShortcutController extends BaseController
 	 * @param userPrincipal a user principal
 	 * @return a list ShortcutVOs representing available shortcuts
 	 */
-	public List getAvailableShortcutVOList(InfoGluePrincipal userPrincipal) throws SystemException
+	public List getAvailableShortcutVOList(InfoGluePrincipal userPrincipal)
 	{
 	    List availableShortcutVOList = new ArrayList();
 	     
@@ -125,8 +124,7 @@ public class ShortcutController extends BaseController
 		byte[] valueBytes = propertySet.getData(key);
 	    if(valueBytes != null)
 	    	return new String(valueBytes, "utf-8");
-	    else
-	    	return null;
+    	return null;
 	}
 
 	/**

@@ -73,10 +73,9 @@ public class CastorDatabaseService //extends DatabaseService
 
     /**
      * Set the jdo-object to null hoping to refresh the connection to the database after for example an reconfigure.
-     * @throws SystemException
      */
 
-    public static void reconnectDatabase() throws SystemException
+    public static void reconnectDatabase()
     {
        	jdo = null;
     }

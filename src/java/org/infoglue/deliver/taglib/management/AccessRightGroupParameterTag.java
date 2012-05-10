@@ -82,7 +82,7 @@ public class AccessRightGroupParameterTag extends AbstractTag
 			throw new JspTagException("AccessRightGroupParameterTag must have a AccessRightParameterTag ancestor.");
 		}
 		
-		((AccessRightParameterTag) parent).addAccessRightGroup(groupName);
+		parent.addAccessRightGroup(groupName);
 	}
 	
 	/**

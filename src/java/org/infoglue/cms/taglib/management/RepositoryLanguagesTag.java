@@ -50,18 +50,12 @@ public class RepositoryLanguagesTag extends AbstractTag
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException 
 	{
 		setResultAttribute(getLanguages());
 		return super.doEndTag();
 	}
 	
-	/**
-	 * 
-	 */
 	private Collection getLanguages() throws JspException
 	{
 		try 

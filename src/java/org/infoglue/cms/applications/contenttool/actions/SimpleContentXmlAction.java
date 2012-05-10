@@ -28,6 +28,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
@@ -49,7 +50,6 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -80,7 +80,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
 		return sup;
 	}
 	
-	public String doDigitalAssets() throws Exception
+	public String doDigitalAssets() throws SystemException
 	{
 		String ret = "";
 		DigitalAssetVO digitalAssetVO = null;
@@ -122,14 +122,14 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
 		return contentVersionVO;
 	}
 
-    public Element getContentElement(Integer contentId) throws Bug, Exception
+    public Element getContentElement(Integer contentId) throws SystemException
     {
 		ContentController contentController = ContentController.getContentController();
         ContentVO vo = contentController.getContentVOWithId(contentId);
         return getContentElement(vo);
     }
     
-    public Element getContentElement(ContentVO vo) throws Bug, Exception
+    public Element getContentElement(ContentVO vo) throws SystemException
     {
         Element elm = DocumentHelper.createElement("content");
         
@@ -163,7 +163,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return elm;
     }
 
-    public Element getPlainContentElement(ContentVO vo) throws Bug, Exception
+    public Element getPlainContentElement(ContentVO vo)
     {
         Element elm = DocumentHelper.createElement("content");
         
@@ -178,7 +178,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return elm;
     }
 
-    public Element getContentVersionElement(Integer contentVersionId) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionElement(Integer contentVersionId) throws SystemException, UnsupportedEncodingException
     {
 		ContentVersionController contentVersionController = ContentVersionController.getContentVersionController();
         ContentVersionVO vo = contentVersionController.getContentVersionVOWithId(contentVersionId);
@@ -196,7 +196,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return getContentVersionElement(vo);
     }
     
-    public Element getContentVersionHeadElement(Integer contentVersionId) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionHeadElement(Integer contentVersionId) throws SystemException
     {
 		ContentVersionController contentVersionController = ContentVersionController.getContentVersionController();
         ContentVersionVO vo = contentVersionController.getContentVersionVOWithId(contentVersionId);
@@ -215,7 +215,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return getContentVersionHeadElement(vo);
     }
     
-    public Element getContentVersionElement(ContentVersionVO vo) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionElement(ContentVersionVO vo) throws UnsupportedEncodingException
     {
         Element element = DocumentHelper.createElement("contentVersion");
         element.add(getContentVersionHeadElement(vo));
@@ -223,7 +223,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         return element;
     }
 
-    public Element getContentVersionHeadElement(ContentVersionVO vo) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionHeadElement(ContentVersionVO vo)
     {
         Element head = DocumentHelper.createElement("head");
         head.addAttribute("id", "" + vo.getContentVersionId());
@@ -237,7 +237,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
         
         return head;
     }
-    public Element getContentVersionValueElement(ContentVersionVO vo) throws SystemException, Bug, UnsupportedEncodingException
+    public Element getContentVersionValueElement(ContentVersionVO vo) throws UnsupportedEncodingException
     {
         Element value = DocumentHelper.createElement("value");
         if(enableCompression )
@@ -259,21 +259,21 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
     /*
      * Returns document for a single contentVersion (parent)
      */
-    public String doContentVersion() throws Exception
+    public String doContentVersion() throws SystemException, IOException
 	{
         Document doc = DocumentHelper.createDocument();
         doc.add(getContentVersionElement(parent));
 	    return out(getFormattedDocument(doc));
 	}
 
-    public String doContent() throws Exception
+    public String doContent() throws IOException, SystemException
 	{
         Document doc = DocumentHelper.createDocument();
         doc.add(getContentElement(parent));
 	    return out(getFormattedDocument(doc));
 	}
     
-    public String doRootContent() throws Exception
+    public String doRootContent() throws ConstraintException, SystemException, IOException
 	{
         Document doc = DocumentHelper.createDocument();
         ContentVO rootContent = ContentController.getContentController().getRootContentVO(repositoryId, getInfoGluePrincipal().getName(), true);
@@ -281,7 +281,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
 	    return out(getFormattedDocument(doc));
 	}
 
-    public String doMasterLanguage() throws Exception
+    public String doMasterLanguage() throws IOException, SystemException
 	{
         LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(repositoryId);
 	    return out("" + masterLanguageVO.getId());
@@ -290,7 +290,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
     /*
      * Returns head only for a single contentVersion (parent)
      */
-    public String doContentVersionHead() throws Exception
+    public String doContentVersionHead() throws SystemException, IOException
 	{
         Document doc = DocumentHelper.createDocument();
         Element element = DocumentHelper.createElement("contentVersion");
@@ -304,7 +304,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
     /*
      * Returns all contentVersions for a given content (parent)
      */
-    public String doContentVersions() throws Exception
+    public String doContentVersions() throws IOException, ConstraintException, SystemException
 	{
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("contentVersions");

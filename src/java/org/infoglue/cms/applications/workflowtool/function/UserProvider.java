@@ -31,66 +31,33 @@ import com.opensymphony.workflow.WorkflowException;
  */
 public class UserProvider extends InfoglueFunction 
 {
-	/**
-	 * 
-	 */
 	public static final String USER_PARAMETER = "systemuser";
 	
-	/**
-	 * 
-	 */
 	private static final String USER_PROPERTYSET_PREFIX = "systemuser_";
 
-	/**
-	 * 
-	 */
 	public static final String FIRST_NAME_ATTRIBUTE =  "firstName";
 	
-	/**
-	 * 
-	 */
 	public static final String LAST_NAME_ATTRIBUTE = "lastName";
 	
-	/**
-	 * 
-	 */
 	public static final String USER_NAME_ATTRIBUTE = "userName";
 	
-	/**
-	 * 
-	 */
 	public static final String PASSWORD_ATTRIBUTE = "password";
 	
-	/**
-	 * 
-	 */
 	public static final String EMAIL_ATTRIBUTE = "email";
 	
-	/**
-	 * 
-	 */
 	private SystemUserVO systemUserVO = new SystemUserVO();
 	
-	/**
-	 * 
-	 */
 	public UserProvider()
 	{
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		populate();
 		setParameter(USER_PARAMETER, systemUserVO);
 	}
 	
-	/**
-	 * 
-	 */
 	private void populate()
 	{
 		final String firstName = getPropertySetDataString(USER_PROPERTYSET_PREFIX + FIRST_NAME_ATTRIBUTE); 

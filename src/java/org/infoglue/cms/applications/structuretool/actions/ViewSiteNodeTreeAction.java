@@ -73,7 +73,7 @@ public class ViewSiteNodeTreeAction extends InfoGlueAbstractAction
 		return this.hideLeafs;
 	}    
 	
-    public String doExecute() throws Exception
+    public String doExecute()
     {
     	// Get / Set tree preferance
     	if (tree != null)

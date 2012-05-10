@@ -38,77 +38,35 @@ public class GroupsProvider extends InfoglueFunction
 {
     private final static Logger logger = Logger.getLogger(GroupsProvider.class.getName());
 
-	/**
-	 * 
-	 */
 	public static final String GROUPS_PARAMETER = "groups";
 	
-	/**
-	 * 
-	 */
 	private static final String GROUPS_PROPERTYSET_PREFIX = "groups_";
 	
-	/**
-	 * 
-	 */
 	private static final String MODE_ARGUMENT = "mode";
 	
-	/**
-	 * 
-	 */
 	private static final int REQUEST_MODE = 0;
 	
-	/**
-	 * 
-	 */
 	private static final String REQUEST_MODE_NAME = "request";
 	
-	/**
-	 * 
-	 */
 	private static final int ARGUMENT_MODE = 1;
 	
-	/**
-	 * 
-	 */
 	private static final String ARGUMENT_MODE_NAME = "argument";
 	
-	/**
-	 * 
-	 */
 	private static final int PRINCIPAL_MODE = 2;
 	
-	/**
-	 * 
-	 */
 	private static final String PRINCIPAL_MODE_NAME = "principal";
 	
-	/**
-	 * 
-	 */
 	private static final String GROUPS_ARGUMENT = "groups";
 
-	/**
-	 * 
-	 */
 	private int mode;
 	
-	/**
-	 * 
-	 */
 	private List groups = new ArrayList();
 	
-	/**
-	 * 
-	 */
 	public GroupsProvider()
 	{
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException 
 	{
 		switch(mode)
@@ -126,9 +84,6 @@ public class GroupsProvider extends InfoglueFunction
 		setParameter(GROUPS_PARAMETER, groups);
 	}
 	
-	/**
-	 * 
-	 */
 	private void populateGroupFromAttribute() throws WorkflowException
 	{
 		logger.debug("Populating from attribute.");
@@ -138,10 +93,7 @@ public class GroupsProvider extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	private void populateGroupFromPrincipal() throws WorkflowException
+	private void populateGroupFromPrincipal() 
 	{
 		logger.debug("Populating from principal.");
 		for(final Iterator i = getPrincipal().getGroups().iterator(); i.hasNext(); )
@@ -150,9 +102,6 @@ public class GroupsProvider extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void populateGroupFromRequest() throws WorkflowException
 	{
 		logger.debug("Populating from request.");
@@ -166,9 +115,6 @@ public class GroupsProvider extends InfoglueFunction
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void populateGroup(final String groupName) throws WorkflowException
 	{
 		try
@@ -193,9 +139,6 @@ public class GroupsProvider extends InfoglueFunction
 		this.mode = getMode(getArgument(MODE_ARGUMENT, REQUEST_MODE_NAME));
 	}
 	
-	/**
-	 * 
-	 */
 	private int getMode(final String modeName)
 	{
 		final Map modes = new HashMap();

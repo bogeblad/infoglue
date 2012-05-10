@@ -33,37 +33,22 @@ import org.infoglue.deliver.taglib.AbstractTag;
  */
 public class DigitalAssetUrlTag extends AbstractTag 
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3648763492131170473L;
 	
-	/**
-	 * 
-	 */
 	private Integer digitalAssetId;
 
 
-	/**
-	 * 
-	 */
 	public DigitalAssetUrlTag() 
 	{
 		super();
 	}
 
-	/**
-	 * 
-	 */
 	public int doEndTag() throws JspException 
 	{
 		setResultAttribute(getDigitalAssetUrl());
 		return super.doEndTag();
 	}
 
-	/**
-	 * 
-	 */
 	private String getDigitalAssetUrl() throws JspException 
 	{
 		try
@@ -77,9 +62,6 @@ public class DigitalAssetUrlTag extends AbstractTag
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	public void setDigitalAssetId(final String digitalAssetId) throws JspException
 	{
 		this.digitalAssetId = evaluateInteger("digitalAssetUrl", "digitalAssetId", digitalAssetId);

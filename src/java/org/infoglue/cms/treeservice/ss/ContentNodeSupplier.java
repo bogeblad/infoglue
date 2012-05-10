@@ -111,8 +111,7 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 	{
 		if (showLeafs)
 			return false;
-		else
-			return true;
+		return true;
 	}
 
 	/**

@@ -99,7 +99,7 @@ public class ContentParameterTag extends AbstractTag
 			throw new JspTagException("ContentParameterTag must have a RemoteContentServiceTag ancestor.");
 		}
 
-		((RemoteContentServiceTag) parent).addContentMap(contentMap);
+		parent.addContentMap(contentMap);
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class ContentParameterTag extends AbstractTag
 	 */
 	public void setIsBranch(final String isBranch) throws JspException
 	{
-	    this.contentMap.put("isBranch", (Boolean)evaluate("parameter", "isBranch", isBranch, Boolean.class));
+	    this.contentMap.put("isBranch", evaluate("parameter", "isBranch", isBranch, Boolean.class));
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class ContentParameterTag extends AbstractTag
 	 */
 	public void setExpireDateTime(final String expireDateTime) throws JspException
 	{
-	    this.contentMap.put("expireDateTime", (Date)evaluate("parameter", "expireDateTime", expireDateTime, Date.class));
+	    this.contentMap.put("expireDateTime", evaluate("parameter", "expireDateTime", expireDateTime, Date.class));
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class ContentParameterTag extends AbstractTag
 	 */
 	public void setPublishDateTime(final String publishDateTime) throws JspException
 	{
-	    this.contentMap.put("publishDateTime", (Date)evaluate("parameter", "publishDateTime", publishDateTime, Date.class));
+	    this.contentMap.put("publishDateTime", evaluate("parameter", "publishDateTime", publishDateTime, Date.class));
 	}
 
 	/**

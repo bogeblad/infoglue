@@ -27,23 +27,11 @@ package org.infoglue.cms.webservices.elements;
  */
 public interface Attachment 
 {
-	/**
-	 * 
-	 */
 	public byte[] getBytes();
 	
-	/**
-	 * 
-	 */
 	public int getSize();
 	
-	/**
-	 * 
-	 */
 	public String getName();
 	
-	/**
-	 * 
-	 */
 	public String getContentType();
 }

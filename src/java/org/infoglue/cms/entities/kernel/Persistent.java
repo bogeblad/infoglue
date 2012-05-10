@@ -1,7 +1,5 @@
 package org.infoglue.cms.entities.kernel;
 
-import java.io.Serializable;
-
 import org.infoglue.cms.util.DomainUtils;
 
 /**
@@ -13,7 +11,7 @@ import org.infoglue.cms.util.DomainUtils;
  *
  * @author Frank Febbraro (frank@phase2technology.com)
  */
-public abstract class Persistent implements BaseEntityVO, Comparable, Serializable
+public abstract class Persistent implements BaseEntityVO, Comparable
 {
 	/**
 	 * Returns if this persisten object is unsaved (no generated id)

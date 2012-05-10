@@ -55,19 +55,19 @@ public class CategoryActionTest extends WebWorkTestCase
 			testController.delete(testCategory.getId());
 	}
 
-	public void testNew() throws Exception
+	public void testNew() 
 	{
 		assertSuccess(testAction, "new");
 		assertTrue("Model was not new", testAction.getModel().isUnsaved());
 	}
 
-	public void testList() throws Exception
+	public void testList() 
 	{
 		assertSuccess(testAction, "list");
 		assertNotNull("Categories should not be null", testAction.getModels());
 	}
 
-	public void testEdit() throws Exception
+	public void testEdit() 
 	{
 		testAction.setCategoryId(testCategory.getCategoryId());
 		assertSuccess(testAction, "edit");
@@ -75,7 +75,7 @@ public class CategoryActionTest extends WebWorkTestCase
 		assertEquals("Test Category was not returned", testCategory, testAction.getModel());
 	}
 
-	public void testBadEdit() throws Exception
+	public void testBadEdit() 
 	{
 		testAction.setCategoryId(new Integer(Integer.MIN_VALUE));
 		assertError(testAction, "edit");
@@ -119,7 +119,7 @@ public class CategoryActionTest extends WebWorkTestCase
 		}
 	}
 
-	public void testBadSave() throws Exception
+	public void testBadSave() 
 	{
 		testAction.getCategory().setName(null);
 		assertInput(testAction, "save");
@@ -127,7 +127,7 @@ public class CategoryActionTest extends WebWorkTestCase
 		assertTrue("Contraint Errors do not exist", testAction.getErrors().hasErrors());
 	}
 
-	public void testDeleteRoot() throws Exception
+	public void testDeleteRoot() 
 	{
 		testAction.setCategoryId(testCategory.getCategoryId());
 		testAction.setCommand("delete");
@@ -145,7 +145,7 @@ public class CategoryActionTest extends WebWorkTestCase
 		assertDeleteWorked();
 	}
 
-	public void testBadDelete() throws Exception
+	public void testBadDelete() 
 	{
 		testAction.setCategoryId(new Integer(Integer.MIN_VALUE));
 		assertError(testAction, "delete");

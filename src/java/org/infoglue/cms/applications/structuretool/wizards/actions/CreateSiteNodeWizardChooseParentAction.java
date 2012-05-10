@@ -23,14 +23,13 @@
 
 package org.infoglue.cms.applications.structuretool.wizards.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 
 /**
@@ -66,14 +65,14 @@ public class CreateSiteNodeWizardChooseParentAction extends CreateSiteNodeWizard
 	{
 	}	
 
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
 		return "success";
 	}
 	
-	public Integer getTopRepositoryId() throws ConstraintException, SystemException, Bug
+	public Integer getTopRepositoryId() 
 	{		
 		Integer topRepositoryId = null;
 
@@ -165,7 +164,7 @@ public class CreateSiteNodeWizardChooseParentAction extends CreateSiteNodeWizard
 		returnAddress = string;
 	}
 
-    public String getAllowedSiteNodeTypeIdsAsUrlEncodedString() throws Exception
+    public String getAllowedSiteNodeTypeIdsAsUrlEncodedString() throws UnsupportedEncodingException
     {
         StringBuffer sb = new StringBuffer();
         
@@ -235,7 +234,7 @@ public class CreateSiteNodeWizardChooseParentAction extends CreateSiteNodeWizard
 		return getCreateSiteNodeWizardInfoBean().getReturnAddress();
 	}
 
-	public String getEncodedRefreshAddress() throws Exception
+	public String getEncodedRefreshAddress() throws UnsupportedEncodingException
 	{
 		return URLEncoder.encode(getRefreshAddress(), "UTF-8");
 	}

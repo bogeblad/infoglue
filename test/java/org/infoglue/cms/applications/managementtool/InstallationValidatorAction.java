@@ -51,7 +51,6 @@ import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.AccessRightGroupVO;
 import org.infoglue.cms.entities.management.AccessRightRoleVO;
 import org.infoglue.cms.entities.management.AccessRightUserVO;
-import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
 import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.LanguageVO;
@@ -64,8 +63,6 @@ import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.applications.actions.ViewPageAction;
-import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 
 import webwork.action.Action;
@@ -651,7 +648,7 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
      * This method validates the authorization plugin connection
      * @throws Exception
      */
-    private void validateAuthorization() throws Exception
+    private void validateAuthorization() 
     {
         String name = "Authorization module";
         String description = "Testing if the authorization module can get the data it needs.";
@@ -660,15 +657,6 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
         {
         	InfoGluePrincipal user = UserControllerProxy.getController().getUser("mattias");
             addValidationItem(name, "Testing if the authorization module can get user: ", true, "Found " + user.getName());
-            /*
-        	List users = UserControllerProxy.getController().getAllUsers();
-            List roles = RoleControllerProxy.getController().getAllRoles();
-            List groups = GroupControllerProxy.getController().getAllGroups();
-            
-            addValidationItem(name, "Testing if the authorization module can get users: ", true, "Found " + users.size() + " users.");
-            addValidationItem(name, "Testing if the authorization module can get roles: ", true, "Found " + roles.size() + " roles.");
-            addValidationItem(name, "Testing if the authorization module can get groups: ", true, "Found " + groups.size() + " groups.");
-        	*/
         }
         catch(Exception e)
         {

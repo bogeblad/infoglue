@@ -7,9 +7,6 @@ import javax.servlet.jsp.JspException;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 public class RelatedContentsTag extends TemplateControllerTag {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3761686771326530105L;
 	
 	private Integer contentId;

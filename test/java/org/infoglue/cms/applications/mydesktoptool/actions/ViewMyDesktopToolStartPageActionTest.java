@@ -195,12 +195,12 @@ public class ViewMyDesktopToolStartPageActionTest extends WebWorkTestCase
 		assertResult(expectedResult, action.doStartWorkflow());
 	}
 
-	private void finishWorkflow() throws Exception
+	private void finishWorkflow() 
 	{
 		finishWorkflow(action.getWorkflow().getIdAsPrimitive());
 	}
 
-	private void finishWorkflow(long workflowId) throws Exception
+	private void finishWorkflow(long workflowId) 
 	{
 		controller.invokeAction(getAdminPrincipal(), workflowId, WorkflowTestCase.FINISH_WORKFLOW, WorkflowController.createWorkflowParameters(request));
 	}

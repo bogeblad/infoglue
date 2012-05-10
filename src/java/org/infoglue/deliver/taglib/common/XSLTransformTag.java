@@ -346,7 +346,7 @@ public class XSLTransformTag extends TemplateControllerTag
         this.styleString = evaluateString("XSLTransform", "styleString", styleString);
     }    
 
-    public void setCacheStyle(boolean cacheStyle) throws JspException
+    public void setCacheStyle(boolean cacheStyle) 
     {
         this.cacheStyle = cacheStyle;
     }    

@@ -92,7 +92,7 @@ public class XSLTransformParameterTag extends AbstractTag
 		}
 		
 		if(transformParent != null)
-			((XSLTransformTag) transformParent).addParameter(name, value, scope);
+			transformParent.addParameter(name, value, scope);
 	}
 	
 	/**

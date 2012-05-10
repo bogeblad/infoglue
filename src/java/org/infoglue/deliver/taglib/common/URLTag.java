@@ -174,9 +174,6 @@ public class URLTag extends TemplateControllerTag
 		return parameterNames;
 	}
 	
-	/**
-	 * 
-	 */
 	protected final void addParameter(final String name, final String value)
 	{
         getParameters().add(name + "=" + value);
@@ -341,8 +338,7 @@ public class URLTag extends TemplateControllerTag
 			}
 			if(getBaseURL().indexOf("?") > -1)
 			    return getBaseURL() + (sb.toString().length() > 0 ? "&" + sb.toString() : "");
-			else
-			    return getBaseURL() + (sb.toString().length() > 0 ? "?" + sb.toString() : "");
+		    return getBaseURL() + (sb.toString().length() > 0 ? "?" + sb.toString() : "");
 		}
 		return getBaseURL();
 	}

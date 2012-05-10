@@ -17,7 +17,6 @@ import com.bradmcevoy.http.Auth;
 import com.bradmcevoy.http.CollectionResource;
 import com.bradmcevoy.http.FileItem;
 import com.bradmcevoy.http.FileResource;
-import com.bradmcevoy.http.PropFindableResource;
 import com.bradmcevoy.http.Range;
 import com.bradmcevoy.http.Request;
 import com.bradmcevoy.http.Request.Method;
@@ -25,7 +24,7 @@ import com.bradmcevoy.http.exceptions.BadRequestException;
 import com.bradmcevoy.http.exceptions.ConflictException;
 import com.bradmcevoy.http.exceptions.NotAuthorizedException;
 
-public class DigitalAssetResource implements PropFindableResource, FileResource
+public class DigitalAssetResource implements FileResource
 {
 	private final static Logger logger = Logger.getLogger(DigitalAssetResource.class.getName());
 
@@ -137,14 +136,9 @@ public class DigitalAssetResource implements PropFindableResource, FileResource
 		{
 			if(!(newTargetResource instanceof ContentVersionResource))
 				throw new Exception("Could not move to an entity not based on a content version");
-			else
-			{
-				ContentVersionResource newTargetContentVersionResource = (ContentVersionResource)newTargetResource;
-				if(!newTargetContentVersionResource.getUniqueId().equals(this.cv.getId().toString()))
-					throw new Exception("We do not support moving assets between content versions yet...");
-			}
-				
-				
+			ContentVersionResource newTargetContentVersionResource = (ContentVersionResource)newTargetResource;
+			if(!newTargetContentVersionResource.getUniqueId().equals(this.cv.getId().toString()))
+				throw new Exception("We do not support moving assets between content versions yet...");
 			digitalAsset.setAssetFileName(newName);
 			if(newName.lastIndexOf(".") > -1)
 				digitalAsset.setAssetKey(newName.substring(0,newName.lastIndexOf(".")));

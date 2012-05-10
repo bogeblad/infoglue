@@ -33,6 +33,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InfoGlueSettingsController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
@@ -176,9 +177,10 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 
 	/**
 	 * This method fetches the list of ContentTypeDefinitions
+	 * @throws SystemException 
 	 */
 	
-	public List getContentTypeDefinitions() throws Exception
+	public List getContentTypeDefinitions() throws SystemException
 	{
 	    List contentTypeVOList = null;
 	    

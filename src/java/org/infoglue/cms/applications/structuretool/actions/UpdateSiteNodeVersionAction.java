@@ -24,6 +24,9 @@
 package org.infoglue.cms.applications.structuretool.actions;
 
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -53,7 +56,7 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 		this.ceb = new ConstraintExceptionBuffer();	
 	}
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, SystemException
     {
 		super.initialize(this.siteNodeId, this.languageId);
 		
@@ -62,7 +65,7 @@ public class UpdateSiteNodeVersionAction extends ViewSiteNodeVersionAction
 		return "success";
 	}
 
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws AccessConstraintException, ConstraintException, SystemException
     {
 		doExecute();
 						 

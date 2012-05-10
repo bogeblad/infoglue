@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,8 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 
 
 public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
@@ -66,7 +69,7 @@ public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
 	 * ask the user for a comment as this is to be regarded as a new version. 
 	 */
 	   
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, ConstraintException, IOException
     {   
         setSiteNodeVersionId( getRequest().getParameterValues("selSiteNodeVersions") );
 		Iterator it = siteNodeVersionId.iterator();

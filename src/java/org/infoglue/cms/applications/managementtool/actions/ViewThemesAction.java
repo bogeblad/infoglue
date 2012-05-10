@@ -25,6 +25,8 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,21 +59,21 @@ public class ViewThemesAction extends InfoGlueAbstractAction
 	private List<String> themes = new ArrayList<String>();
 	private String theme = null;
 	
-	public String doExecute() throws Exception
+	public String doExecute()
     {
 		this.themes = ThemeController.getController().getAvailableThemes();
 		
     	return "success";
     }
 
-    public String doInput() throws Exception
+    public String doInput()
     {
     	return "input";
     }
 
-    public String doAdd() throws Exception
+    public String doAdd() throws FileNotFoundException, IOException, SystemException
     {
-		File file = FileUploadHelper.getUploadedFile(ActionContext.getContext().getMultiPartRequest());
+		File file = FileUploadHelper.getUploadedFile(ActionContext.getMultiPartRequest());
 		if(file == null || !file.exists())
 			throw new SystemException("The file upload must have gone bad as no file reached this action.");
 
@@ -113,7 +115,7 @@ public class ViewThemesAction extends InfoGlueAbstractAction
     	return doExecute();
     }
 
-    public String doDelete() throws Exception
+    public String doDelete() throws SystemException
     {
 		File file = new File(CmsPropertyHandler.getContextRootPath() + File.separator + "css" + File.separator + "skins" + File.separator + theme);
 

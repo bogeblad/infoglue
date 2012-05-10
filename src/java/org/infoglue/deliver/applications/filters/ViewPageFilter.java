@@ -49,7 +49,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
@@ -311,8 +310,7 @@ public class ViewPageFilter implements Filter
 	        			logger.info("Could not map URI " + requestURI + " against any page on this website." + "\n" + extraInformation);
 	                    throw new ServletException("Could not map URI " + requestURI + " against any page on this website.");	                    	
 	                }
-	                else
-	                    logger.info("Mapped URI " + requestURI + " --> " + siteNodeId + " in " + (end - start) + "ms");
+                    logger.info("Mapped URI " + requestURI + " --> " + siteNodeId + " in " + (end - start) + "ms");
 	                
 	                Integer contentId = getContentId(httpRequest);
 	                
@@ -331,10 +329,7 @@ public class ViewPageFilter implements Filter
                     	httpResponse.setHeader("Connection", "close");
 	                    return;
                     }
-                    else
-                    {
-	                	throw new ServletException(e);
-	            	} 
+                	throw new ServletException(e);
 	            } 
 	            catch (Exception e) 
 	            {
@@ -351,10 +346,7 @@ public class ViewPageFilter implements Filter
                     	httpResponse.setHeader("Connection", "close");
 	                    return;
                     }
-                    else
-                    {
-	                	throw new ServletException(e);
-	            	}
+                	throw new ServletException(e);
 	            }
 	            finally
 	            {
@@ -594,7 +586,7 @@ public class ViewPageFilter implements Filter
         return languageId;
     }
 
-    private Integer getContentId(HttpServletRequest request) throws ServletException, Exception 
+    private Integer getContentId(HttpServletRequest request) 
     {
         Integer contentId = null;
         
@@ -649,10 +641,9 @@ public class ViewPageFilter implements Filter
             String t = st.nextToken();
             if (t.startsWith("_")) {
                 break;
-            } else {
-                // Not related to portal - add
-                list.add(t.trim());
             }
+            // Not related to portal - add
+            list.add(t.trim());
         }
         return (String[]) list.toArray(new String[list.size()]);
     }
@@ -685,9 +676,9 @@ public class ViewPageFilter implements Filter
 	                requestParameters.put("contentId", new String[] { String.valueOf(-1)});
             }
             
-            String originalServletPath = ((HttpServletRequest)httpServletRequest).getServletPath();
-            String originalRequestURL = ((HttpServletRequest)httpServletRequest).getRequestURL().toString();
-            String originalQueryString = ((HttpServletRequest)httpServletRequest).getQueryString();
+            String originalServletPath = httpServletRequest.getServletPath();
+            String originalRequestURL = httpServletRequest.getRequestURL().toString();
+            String originalQueryString = httpServletRequest.getQueryString();
 
             requestParameters.put("originalServletPath", new String[] { originalServletPath });
     		requestParameters.put("originalRequestURL", new String[] { originalRequestURL });

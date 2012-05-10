@@ -804,7 +804,7 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             	{
             		String existingXML = contentVersionVO.getVersionValue();
             		document = domBuilder.getDocument(existingXML);
-            		attributesRoot = (Element)document.getRootElement().element("attributes");
+            		attributesRoot = document.getRootElement().element("attributes");
             	}
             	else
             	{

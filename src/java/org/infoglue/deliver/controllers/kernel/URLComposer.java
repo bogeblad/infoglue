@@ -26,7 +26,6 @@ package org.infoglue.deliver.controllers.kernel;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
-import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.impl.simple.BasicURLComposer;
 

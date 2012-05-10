@@ -50,24 +50,24 @@ public class WorkflowVOTest extends InfoGlueTestCase
 			workflow.getInitialActions().add(new WorkflowActionVO(new Integer(i)));
 	}
 
-	public void testGetAvailableActions() throws Exception
+	public void testGetAvailableActions() 
 	{
 		assertEquals("Wrong number of available actions:", 3, workflow.getAvailableActions().size());
 	}
 
-	public void testGetAvailableActionsFiltered() throws Exception
+	public void testGetAvailableActionsFiltered() 
 	{
 		assertEquals("Wrong number of admin actions:", 3, workflow.getAvailableActions(adminFilter).size());
 		assertEquals("Wrong number of user actions:", 2, workflow.getAvailableActions(userFilter).size());
 	}
 
-	public void testGetCurrentStepsFiltered() throws Exception
+	public void testGetCurrentStepsFiltered() 
 	{
 		assertEquals("Wrong number of admin steps:", 3, workflow.getCurrentSteps(adminFilter).size());
 		assertEquals("Wrong number of user steps:", 2, workflow.getCurrentSteps(userFilter).size());
 	}
 
-	public void testGetInitialAction() throws Exception
+	public void testGetInitialAction() 
 	{
 		for (int i = 0; i < workflow.getInitialActions().size(); ++i)
 		{
@@ -76,7 +76,7 @@ public class WorkflowVOTest extends InfoGlueTestCase
 		}
 	}
 
-	public void testGetInitialActionNonexistent() throws Exception
+	public void testGetInitialActionNonexistent() 
 	{
 		try
 		{
@@ -89,7 +89,7 @@ public class WorkflowVOTest extends InfoGlueTestCase
 		}
 	}
 
-	public void testGetInitialActionNull() throws Exception
+	public void testGetInitialActionNull() 
 	{
 		try
 		{

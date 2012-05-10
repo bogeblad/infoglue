@@ -106,7 +106,7 @@ public class SavePagePartTemplateTag extends ComponentLogicTag
         this.showInPublishedMode = showInPublishedMode;
     }
     
-	public void setShowInDecoratedMode(boolean showInDecoratedMode) throws JspException
+	public void setShowInDecoratedMode(boolean showInDecoratedMode) 
 	{
 		this.showInDecoratedMode = showInDecoratedMode;
 	}

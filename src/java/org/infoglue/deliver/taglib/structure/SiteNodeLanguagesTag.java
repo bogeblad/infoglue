@@ -56,8 +56,7 @@ public class SiteNodeLanguagesTag extends ComponentLogicTag
 	{
 	    if(this.siteNodeId != null)
 	        return this.getController().getPageLanguages(this.siteNodeId);
-	    else
-	    	return this.getController().getPageLanguages();
+    	return this.getController().getPageLanguages();
 	}
 	
     public void setSiteNodeId(String siteNodeId) throws JspException

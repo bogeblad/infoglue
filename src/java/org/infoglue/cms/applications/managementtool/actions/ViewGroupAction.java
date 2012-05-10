@@ -123,12 +123,12 @@ public class ViewGroupAction extends InfoGlueAbstractAction
         return this.infoGlueGroup.getDescription();
     }
         
-  	public List getAllInfoGluePrincipals() throws Exception
+  	public List getAllInfoGluePrincipals()
 	{
 		return this.infoGluePrincipals;
 	}	
 	
-	public List getAssignedInfoGluePrincipals() throws Exception
+	public List getAssignedInfoGluePrincipals()
 	{
 		return this.assignedInfoGluePrincipals;
 	}

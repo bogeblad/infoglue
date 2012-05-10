@@ -32,6 +32,7 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Language;
@@ -40,7 +41,6 @@ import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
@@ -64,22 +64,12 @@ public class LanguageController extends BaseController
 	{
 		return new LanguageController();
 	}
-
-	/**
-	 * This method returns a specific LanguageVO object
-	 */
-	/*
-	public LanguageVO getLanguageVOWithId(Integer languageId) throws SystemException, Bug
-	{
-		return (LanguageVO)getVOWithId(LanguageImpl.class, languageId);
-	} 
-	*/
 	
 	/**
 	 * This method return a LanguageVO
 	 */
 	
-	public LanguageVO getLanguageVOWithId(Integer languageId) throws SystemException, Exception
+	public LanguageVO getLanguageVOWithId(Integer languageId) throws SystemException
 	{
 		String key = "" + languageId;
 		logger.info("key:" + key);
@@ -103,7 +93,7 @@ public class LanguageController extends BaseController
 	 * This method returns a specific LanguageVO object
 	 */
 	
-	public LanguageVO getLanguageVOWithId(Integer languageId, Database db) throws SystemException, Bug
+	public LanguageVO getLanguageVOWithId(Integer languageId, Database db) throws SystemException
 	{
 		return (LanguageVO)getVOWithId(LanguageImpl.class, languageId, db);
 	} 
@@ -161,11 +151,9 @@ public class LanguageController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public LanguageVO getLanguageVOWithName(String name) throws SystemException, Bug
+	public LanguageVO getLanguageVOWithName(String name) throws SystemException
 	{
 		LanguageVO languageVO = null;
 		
@@ -197,11 +185,9 @@ public class LanguageController extends BaseController
 	 * @param name
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public Language getLanguageWithName(String name, Database db) throws SystemException, Bug
+	public Language getLanguageWithName(String name, Database db) throws SystemException
 	{
 		Language language = null;
 		
@@ -211,7 +197,7 @@ public class LanguageController extends BaseController
 			oql.bind(name);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode" + name);
+			logger.info("Fetching entity in read/write mode" + name);
 
 			if (results.hasMore()) 
 			{
@@ -234,11 +220,9 @@ public class LanguageController extends BaseController
 	 * 
 	 * @param code
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public LanguageVO getLanguageVOWithCode(String code, Database db) throws SystemException, Bug
+	public LanguageVO getLanguageVOWithCode(String code, Database db) throws SystemException
 	{
 		LanguageVO languageVO = null;
 		
@@ -254,11 +238,9 @@ public class LanguageController extends BaseController
 	 * 
 	 * @param code
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public LanguageVO getLanguageVOWithCode(String code) throws SystemException, Bug
+	public LanguageVO getLanguageVOWithCode(String code) throws SystemException
 	{
 		String key = "" + code;
 		LanguageVO languageVO = (LanguageVO)CacheController.getCachedObject("languageCache", key);
@@ -299,11 +281,9 @@ public class LanguageController extends BaseController
 	 * @param code
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public Language getLanguageWithCode(String code, Database db) throws SystemException, Bug
+	public Language getLanguageWithCode(String code, Database db) throws SystemException
 	{
 		Language language = null;
 		
@@ -313,7 +293,7 @@ public class LanguageController extends BaseController
 			oql.bind(code);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode" + code);
+			logger.info("Fetching entity in read/write mode" + code);
 
 			if (results.hasMore()) 
 			{
@@ -331,7 +311,7 @@ public class LanguageController extends BaseController
 		return language;		
 	}
 	
-    public LanguageVO create(LanguageVO languageVO) throws ConstraintException, SystemException
+    public LanguageVO create(LanguageVO languageVO) throws SystemException
     {
         Language ent = new LanguageImpl();
         ent.setValueObject(languageVO);
@@ -339,7 +319,7 @@ public class LanguageController extends BaseController
         return ent.getValueObject();
     }     
 
-    public LanguageVO create(Database db, LanguageVO languageVO) throws ConstraintException, SystemException, Exception
+    public LanguageVO create(Database db, LanguageVO languageVO) throws PersistenceException 
     {
         Language ent = new LanguageImpl();
         ent.setValueObject(languageVO);
@@ -351,7 +331,7 @@ public class LanguageController extends BaseController
 	 * This method removes a Language from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(LanguageVO languageVO) throws ConstraintException, SystemException
+    public void delete(LanguageVO languageVO) throws SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -378,7 +358,7 @@ public class LanguageController extends BaseController
 	 * This method removes a Language from the system and also cleans out all depending repositoryLanguages.
 	 */
 	
-    public void delete(Database db, LanguageVO languageVO) throws ConstraintException, SystemException
+    public void delete(Database db, LanguageVO languageVO) throws SystemException
     {
 		Language language = getLanguageWithId(languageVO.getId(), db);
 		RepositoryLanguageController.getController().deleteAllRepositoryLanguageWithLanguage(language, db);    		
@@ -387,13 +367,13 @@ public class LanguageController extends BaseController
     }        
 
 
-    public Language getLanguageWithId(Integer languageId, Database db) throws SystemException, Bug
+    public Language getLanguageWithId(Integer languageId, Database db) throws SystemException
     {
     	return (Language) getObjectWithId(LanguageImpl.class, languageId, db);
     }
 
 
-    public Language getLanguageWithId(Integer languageId) throws ConstraintException, SystemException, Bug
+    public Language getLanguageWithId(Integer languageId) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -422,7 +402,7 @@ public class LanguageController extends BaseController
     }
 
 
-	public LanguageVO getLanguageVOWithRepositoryLanguageId(Integer repositoryLanguageId) throws ConstraintException, SystemException, Bug
+	public LanguageVO getLanguageVOWithRepositoryLanguageId(Integer repositoryLanguageId) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -450,7 +430,7 @@ public class LanguageController extends BaseController
 		return languageVO;
 	}
 
-    public Language getLanguageWithRepositoryLanguageId(Integer repositoryLanguageId, Database db) throws ConstraintException, SystemException, Bug
+    public Language getLanguageWithRepositoryLanguageId(Integer repositoryLanguageId, Database db) throws SystemException
     {
 		RepositoryLanguage repositoryLanguage = (RepositoryLanguage) getObjectWithId(RepositoryLanguageImpl.class, repositoryLanguageId, db);
 		Language language = repositoryLanguage.getLanguage();
@@ -498,11 +478,9 @@ public class LanguageController extends BaseController
 	 * 
 	 * @param repositoryId
 	 * @return
-	 * @throws SystemException
-	 * @throws Exception
 	 */
 
-	public List getLanguageVOList(Integer repositoryId, Database db) throws SystemException, Exception
+	public List getLanguageVOList(Integer repositoryId, Database db) throws PersistenceException 
     {
 		String key = "" + repositoryId + "_allLanguages";
 		logger.info("key:" + key);
@@ -534,27 +512,8 @@ public class LanguageController extends BaseController
 	        
         return list;
     } 
-	/*
-    public List getLanguageVOList(Integer repositoryId, Database db) throws ConstraintException, SystemException
-    {
-        List languageVOList = new ArrayList();
 
-		Repository repository = RepositoryController.getController().getRepositoryWithId(repositoryId, db);
-        Collection repositoryLanguageList = repository.getRepositoryLanguages();
-    	Iterator repositoryLanguageIterator = repositoryLanguageList.iterator();
-    	while(repositoryLanguageIterator.hasNext())
-		{
-			RepositoryLanguage repositoryLanguage = (RepositoryLanguage)repositoryLanguageIterator.next();
-			languageVOList.add(repositoryLanguage.getLanguage().getValueObject());
-		}
-        	
-        return languageVOList;
-    }
-    */
-
-
-
-	public List getLanguageList(Integer repositoryId, Database db) throws ConstraintException, SystemException
+	public List getLanguageList(Integer repositoryId, Database db) throws SystemException
 	{
 		List languageList = new ArrayList();
 
@@ -570,7 +529,7 @@ public class LanguageController extends BaseController
 		return languageList;
 	}
 
-    public List getLanguageVOList(Database db) throws SystemException, Bug
+    public List getLanguageVOList(Database db) throws SystemException
     {
 		String key = "allLanguageVOList";
 		List languageVOList = (List)CacheController.getCachedObject("languageCache", key);
@@ -590,12 +549,12 @@ public class LanguageController extends BaseController
         //return getAllVOObjects(LanguageImpl.class, "languageId", db);
     }
 
-    public List getLanguageVOList() throws SystemException, Bug
+    public List getLanguageVOList() throws SystemException
     {
         return getAllVOObjects(LanguageImpl.class, "languageId");
     }
 
-    public List getLanguageList(Database db) throws SystemException, Bug
+    public List getLanguageList(Database db) throws SystemException
     {
         return getAllObjects(LanguageImpl.class, "languageId", db);
     }
@@ -605,7 +564,7 @@ public class LanguageController extends BaseController
 	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
 	 */
 	
-	public LanguageVO getMasterLanguage(Integer repositoryId) throws SystemException, Exception
+	public LanguageVO getMasterLanguage(Integer repositoryId) throws SystemException
 	{ 
 		LanguageVO languageVO = null;
 
@@ -657,7 +616,7 @@ public class LanguageController extends BaseController
 	 * todo - add attribute on repositoryLanguage to be able to sort them... and then fetch the first
 	 */
 	
-	public LanguageVO getMasterLanguage(Integer repositoryId, Database db) throws SystemException, Exception
+	public LanguageVO getMasterLanguage(Integer repositoryId, Database db) throws PersistenceException
 	{ 
 		LanguageVO languageVO = null;
 
@@ -687,7 +646,7 @@ public class LanguageController extends BaseController
 	 * This method returns the master language within an transaction. 
 	 */
 	
-	public Language getMasterLanguage(Database db, Integer repositoryId) throws SystemException, Exception
+	public Language getMasterLanguage(Database db, Integer repositoryId) throws PersistenceException
 	{ 
 		Language language = null;
 
@@ -711,7 +670,7 @@ public class LanguageController extends BaseController
 	 * This method deletes the Repository sent in from the system.
 	 */
 	
-	public void deleteLanguage(Integer languageId, Database db) throws SystemException, Bug
+	public void deleteLanguage(Integer languageId, Database db) throws SystemException
 	{
 		try
 		{

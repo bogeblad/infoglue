@@ -42,7 +42,7 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 {
     private final static Logger logger = Logger.getLogger(ViewCMSAbstractToolAction.class.getName());
 
-    public String doV3() throws Exception
+    public String doV3() 
     {
         return "successV3";
     }

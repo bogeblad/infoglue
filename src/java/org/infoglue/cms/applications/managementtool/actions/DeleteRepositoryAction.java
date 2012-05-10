@@ -28,7 +28,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
-import org.infoglue.cms.exception.SystemException;
 
 /**
  * This action removes a repository from the system.
@@ -161,7 +160,7 @@ public class DeleteRepositoryAction extends InfoGlueAbstractAction
 		}
 	}
 
-	public void setRepositoryId(Integer repositoryId) throws SystemException
+	public void setRepositoryId(Integer repositoryId)
 	{
 		this.repositoryVO.setRepositoryId(repositoryId);	
 	}

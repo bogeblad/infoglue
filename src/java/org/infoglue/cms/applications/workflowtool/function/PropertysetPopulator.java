@@ -26,7 +26,6 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.management.LanguageVO;
-import org.infoglue.cms.entities.management.impl.simple.FormEntryAssetImpl;
 
 import com.opensymphony.workflow.WorkflowException;
 
@@ -37,43 +36,25 @@ public class PropertysetPopulator extends InfoglueFunction
 {
     private final static Logger logger = Logger.getLogger(PropertysetPopulator.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final String PREFIX_ARGUMENT = "prefix";
 
-	/**
-	 * 
-	 */
 	private String prefix;
 
-	/**
-	 * 
-	 */
 	private LanguageVO languageVO;
 
 	
 	
-	/**
-	 * 
-	 */
 	public PropertysetPopulator() 
 	{ 
 		super(); 
 	}
 
-	/**
-	 * 
-	 */
 	protected void execute() throws WorkflowException {
 		cleanPropertySet();
 		populate();
 	}
 	
-	/**
-	 * 
-	 */
-	private void populate() throws WorkflowException 
+	private void populate() 
 	{
 		for(final Iterator i = getParameters().keySet().iterator(); i.hasNext(); ) 
 		{
@@ -106,10 +87,7 @@ public class PropertysetPopulator extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	private void cleanPropertySet() throws WorkflowException
+	private void cleanPropertySet()
 	{
 		removeFromPropertySet(prefix, true);
 	}

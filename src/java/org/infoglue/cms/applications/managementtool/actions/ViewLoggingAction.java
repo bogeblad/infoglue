@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,7 +65,7 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 	private List logFiles = new ArrayList();
 	private String logFileName = null;
 
-	public String doDownloadFile() throws Exception
+	public String doDownloadFile() throws SystemException, IOException
 	{
 		boolean allowAccess = true;
         if(!ServerNodeController.getController().getIsIPAllowed(getRequest()))
@@ -154,7 +153,7 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 		return NONE;
 	}
 	
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException, IOException
     {
     	boolean allowAccess = true;
     	if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))

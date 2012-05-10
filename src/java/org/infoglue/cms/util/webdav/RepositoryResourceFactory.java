@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.management.RepositoryVO;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 
@@ -59,10 +58,6 @@ public class RepositoryResourceFactory implements ResourceFactory
 				RepositoryVO repositoryVO = repositoriesIterator.next();
 				list.add( new RepositoryResource(repositoryVO) );
 			}
-		} 
-		catch (ConstraintException e) 
-		{
-			e.printStackTrace();
 		} 
 		catch (SystemException e) 
 		{

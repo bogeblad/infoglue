@@ -174,11 +174,11 @@ public class AuthorizeRemoteAddressTag extends TemplateControllerTag
 
 	public void setAllowDnsLookupForIPs(String allowDnsLookupForIPs) throws JspException
 	{
-		this.allowDnsLookupForIPs = evaluateString("authorizeRemoteAddressTag", "allowDnsLookupForIPs", allowDnsLookupForIPs);;
+		this.allowDnsLookupForIPs = evaluateString("authorizeRemoteAddressTag", "allowDnsLookupForIPs", allowDnsLookupForIPs);
 	}
 
 	public void setTrustedDomains(String trustedDomains) throws JspException
 	{
-		this.trustedDomains = evaluateString("authorizeRemoteAddressTag", "trustedDomains", trustedDomains);;
+		this.trustedDomains = evaluateString("authorizeRemoteAddressTag", "trustedDomains", trustedDomains);
 	}
 }

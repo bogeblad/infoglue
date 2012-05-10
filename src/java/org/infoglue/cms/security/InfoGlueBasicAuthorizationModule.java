@@ -276,24 +276,12 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 					Iterator<GroupVO> groupVOListIterator = groupVOList.iterator();
 					while(groupVOListIterator.hasNext())
 					{
-						GroupVO groupVO = (GroupVO)groupVOListIterator.next();
+						GroupVO groupVO = groupVOListIterator.next();
 						if(logger.isInfoEnabled())
 							logger.info("Adding group:" + groupVO.getGroupName());
 						InfoGlueGroup infoGlueGroup = new InfoGlueGroup(groupVO.getGroupName(), groupVO.getDescription(), this);
 						groups.add(infoGlueGroup);
 					}
-					
-					/*
-					Iterator groupListIterator = systemUser.getGroups().iterator();
-					while(groupListIterator.hasNext())
-					{
-					    Group group = (Group)groupListIterator.next();
-					    if(logger.isInfoEnabled())
-					    	logger.info("Adding group:" + group.getGroupName());
-						InfoGlueGroup infoGlueGroup = new InfoGlueGroup(group.getGroupName(), group.getDescription(), this);
-						groups.add(infoGlueGroup);
-					}
-					*/
 					
 					infogluePrincipal = new InfoGluePrincipal(userName, systemUser.getFirstName(), systemUser.getLastName(), systemUser.getEmail(), roles, groups, isAdministrator, this);
 			    }

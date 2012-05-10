@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
+import org.infoglue.cms.exception.SystemException;
 
 import webwork.action.Action;
 
@@ -41,7 +42,7 @@ public class ViewContentReferencesAction extends InfoGlueAbstractAction
 	private Integer contentId		= null;
 	private List referenceBeanList 	= new ArrayList();
     
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {
 		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(contentId, 100, true);
         

@@ -32,9 +32,6 @@ import org.infoglue.deliver.taglib.component.ComponentLogicTag;
 
 public class DiffTag extends ComponentLogicTag 
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	/**

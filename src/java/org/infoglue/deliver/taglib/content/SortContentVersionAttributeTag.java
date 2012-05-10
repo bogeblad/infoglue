@@ -28,20 +28,11 @@ import javax.servlet.jsp.JspException;
  * 
  */
 public class SortContentVersionAttributeTag extends AbstractSortArgumentTag {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3544957670789821494L;
 	
-	/**
-	 * 
-	 */
 	private String className = String.class.getName();
 	
 	
-	/**
-	 * 
-	 */
 	public SortContentVersionAttributeTag() 
 	{
 		super();
@@ -56,9 +47,6 @@ public class SortContentVersionAttributeTag extends AbstractSortArgumentTag {
         return EVAL_PAGE;
     }
 	
-	/**
-	 * 
-	 */
 	public void setClassName(final String className) throws JspException
 	{
         this.className = evaluateString("SortContentVersionAttributeTag", "className", className);

@@ -23,9 +23,14 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.IOException;
+
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.RolePropertiesController;
 import org.infoglue.cms.entities.management.RolePropertiesVO;
+import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 /**
@@ -51,7 +56,7 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 		this.ceb = new ConstraintExceptionBuffer();	
 	}
 		
-	public String doExecute() throws Exception
+	public String doExecute() throws AccessConstraintException, ConstraintException, IOException, SystemException
 	{
 	    ceb.throwIfNotEmpty();
 		RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
@@ -61,21 +66,21 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 	    return NONE;
 	}
 
-	public String doSaveAndExit() throws Exception
+	public String doSaveAndExit() throws SystemException
 	{
 	    RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 						 
 		return "saveAndExit";
 	}
 
-	public String doSaveAndExitStandalone() throws Exception
+	public String doSaveAndExitStandalone() throws SystemException
 	{
 	    RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 						 
 		return "saveAndExitStandalone";
 	}
 
-	public String doV3() throws Exception
+	public String doV3() throws SystemException, AccessConstraintException, ConstraintException, IOException
 	{
 	    ceb.throwIfNotEmpty();
 		RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
@@ -85,14 +90,14 @@ public class UpdateRolePropertiesAction extends InfoGlueAbstractAction
 	    return NONE;
 	}
 
-	public String doSaveAndExitV3() throws Exception
+	public String doSaveAndExitV3() throws SystemException
 	{
 	    RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 						 
 		return "saveAndExitV3";
 	}
 
-	public String doSaveAndExitStandaloneV3() throws Exception
+	public String doSaveAndExitStandaloneV3() throws SystemException
 	{
 	    RolePropertiesController.getController().update(this.languageId, this.contentTypeDefinitionId, this.rolePropertiesVO);
 						 

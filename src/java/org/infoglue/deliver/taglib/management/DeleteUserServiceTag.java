@@ -20,29 +20,14 @@ public class DeleteUserServiceTag extends TemplateControllerTag
 	 */
 	private static final long serialVersionUID = -1904980538720103871L;
 
-	/**
-	 * 
-	 */
 	private String targetEndpointAddress = CmsPropertyHandler.getWebServicesBaseUrl() + "RemoteUserService";
 	
-	/**
-	 * 
-	 */
 	private String operationName = "deleteUser";
 	
-	/**
-	 * 
-	 */
 	private InfoGluePrincipal principal;
 	
-	/**
-	 * 
-	 */
 	private String userName;
 	
-	/**
-	 * 
-	 */
 	public DeleteUserServiceTag() 
 	{
 		super();
@@ -59,9 +44,6 @@ public class DeleteUserServiceTag extends TemplateControllerTag
 	    return EVAL_BODY_INCLUDE;
 	}
 
-	/**
-	 *
-	 */
    public int doEndTag() throws JspException
    {
 	   try

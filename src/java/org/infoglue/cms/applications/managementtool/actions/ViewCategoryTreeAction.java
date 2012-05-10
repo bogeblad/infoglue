@@ -37,7 +37,7 @@ public class ViewCategoryTreeAction extends TreeViewAbstractAction
 
 	private Integer select;
 
-	public String doBindingView() throws Exception
+	public String doBindingView() throws SystemException
 	{
 		super.doExecute();
 

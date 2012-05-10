@@ -157,7 +157,7 @@ public class InfoGluePrincipalControllerProxy extends BaseController
 	{
 		String key = "" + infoGluePrincipal.getName() + "_" + propertyName + "_" + languageId + "_" + siteNodeId + "_" + useLanguageFallback + "_" + escapeSpecialCharacters + "_" + findLargestValue + "_" + findPrioValue;
 		logger.info("key:" + key);
-		Object object = (String)CacheController.getCachedObject("principalPropertyValueCache", key);
+		Object object = CacheController.getCachedObject("principalPropertyValueCache", key);
 
 	    if(object instanceof NullObject)
 		{
@@ -383,25 +383,8 @@ public class InfoGluePrincipalControllerProxy extends BaseController
 	 * Getting all assets for a Principal - used for personalisation. 
 	 */
 	
-	public List getPrincipalAssets(Database db, InfoGluePrincipal infoGluePrincipal, Integer languageId) throws Exception
+	public List getPrincipalAssets(Database db, InfoGluePrincipal infoGluePrincipal, Integer languageId)
 	{
-		/*
-		String key = "" + infoGluePrincipal.getName() + "_" + languageId;
-		logger.info("key:" + key);
-		Object object = (String)CacheController.getCachedObject("principalPropertyValueCache", key);
-
-	    if(object instanceof NullObject)
-		{
-			logger.info("There was an cached property but it was null:" + object);
-			return null;
-		}
-		else if(object != null)
-		{
-			logger.info("There was an cached principalPropertyValue:" + object);
-			return (String)object;
-		}
-		*/
-		
 		List digitalAssets = new ArrayList();
 		
 		if(infoGluePrincipal == null)
@@ -440,7 +423,7 @@ public class InfoGluePrincipalControllerProxy extends BaseController
 	 * Getting all assets for a Principal - used for personalisation. 
 	 */
 	
-	public DigitalAssetVO getPrincipalAsset(Database db, InfoGluePrincipal infoGluePrincipal, Integer languageId, String assetKey) throws Exception
+	public DigitalAssetVO getPrincipalAsset(Database db, InfoGluePrincipal infoGluePrincipal, Integer languageId, String assetKey)
 	{
 		DigitalAssetVO asset = null;
 		
@@ -453,7 +436,7 @@ public class InfoGluePrincipalControllerProxy extends BaseController
 			Iterator<DigitalAssetVO> assetListIterator = assetList.iterator();
 			while(assetListIterator.hasNext())
 			{
-				DigitalAssetVO currentAsset = (DigitalAssetVO)assetListIterator.next();
+				DigitalAssetVO currentAsset = assetListIterator.next();
 				logger.info("" + currentAsset.getAssetKey() + "=" + assetKey);
 				if(currentAsset.getAssetKey().equals(assetKey))
 				{
@@ -466,15 +449,6 @@ public class InfoGluePrincipalControllerProxy extends BaseController
 		{
 			logger.warn("We could not fetch the list of digitalAssets: " + e.getMessage(), e);
 		}
-		/*
-		if(value != null)
-		    CacheController.getCachedObject("principalPropertyValueCache", key);
-		
-		if(value != null)
-	        CacheController.cacheObject("principalPropertyValueCache", key, value);
-	    else
-	        CacheController.cacheObject("principalPropertyValueCache", key, new NullObject());
-		*/
 		
 		return asset;
 	}	

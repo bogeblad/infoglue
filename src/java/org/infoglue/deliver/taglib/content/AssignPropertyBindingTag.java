@@ -87,7 +87,7 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
     
 	public void setShowDecorated(boolean showDecorated) throws JspException
 	{
-		this.showDecoratedString = evaluateString("AssignPropertyBindingTag", "showDecoratedString", showDecoratedString);;
+		this.showDecoratedString = evaluateString("AssignPropertyBindingTag", "showDecoratedString", showDecoratedString);
 	}
 
     public void setExtraParameters(final String extraParameters) throws JspException
@@ -95,7 +95,7 @@ public class AssignPropertyBindingTag extends ComponentLogicTag
         this.extraParameters = evaluateString("AssignPropertyBindingTag", "extraParameters", extraParameters);
     }
     
-    public void setHideComponentPropertiesOnLoad(final boolean hideComponentPropertiesOnLoad) throws JspException
+    public void setHideComponentPropertiesOnLoad(final boolean hideComponentPropertiesOnLoad) 
     {
         this.hideComponentPropertiesOnLoad = hideComponentPropertiesOnLoad;
     }

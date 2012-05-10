@@ -35,7 +35,7 @@ public class SmallestSiteNodeImpl extends SiteNodeImpl
 	 */
 	public BaseEntityVO getVO() 
 	{
-		return (BaseEntityVO) getValueObject();
+		return getValueObject();
 	}
 
 	/**

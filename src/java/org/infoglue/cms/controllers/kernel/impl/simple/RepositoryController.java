@@ -31,6 +31,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -42,7 +43,6 @@ import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -63,7 +63,7 @@ public class RepositoryController extends BaseController
 		return new RepositoryController();
 	}
 	
-    public RepositoryVO create(RepositoryVO vo) throws ConstraintException, SystemException
+    public RepositoryVO create(RepositoryVO vo) throws SystemException
     {
         Repository ent = new RepositoryImpl();
         ent.setValueObject(vo);
@@ -71,7 +71,7 @@ public class RepositoryController extends BaseController
         return ent.getValueObject();
     }     
 
-    public Repository create(RepositoryVO vo, Database db) throws ConstraintException, SystemException, Exception
+    public Repository create(RepositoryVO vo, Database db) throws PersistenceException 
     {
         Repository ent = new RepositoryImpl();
         ent.setValueObject(vo);
@@ -294,9 +294,9 @@ public class RepositoryController extends BaseController
     } 
     
     
-    public RepositoryVO update(RepositoryVO vo) throws ConstraintException, SystemException
+    public RepositoryVO update(RepositoryVO vo) throws SystemException
     {
-    	return (RepositoryVO) updateEntity(RepositoryImpl.class, (BaseEntityVO) vo);
+    	return (RepositoryVO) updateEntity(RepositoryImpl.class, vo);
     }        
     
     public RepositoryVO update(RepositoryVO repositoryVO, String[] languageValues) throws ConstraintException, SystemException
@@ -352,17 +352,17 @@ public class RepositoryController extends BaseController
     }        
     
 	// Singe object
-    public Repository getRepositoryWithId(Integer id, Database db) throws SystemException, Bug
+    public Repository getRepositoryWithId(Integer id, Database db) throws SystemException
     {
 		return (Repository) getObjectWithId(RepositoryImpl.class, id, db);
     }
 
-    public RepositoryVO getRepositoryVOWithId(Integer repositoryId) throws ConstraintException, SystemException, Bug
+    public RepositoryVO getRepositoryVOWithId(Integer repositoryId) throws SystemException
     {
 		return  (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId);        
     }
 	
-    public RepositoryVO getRepositoryVOWithId(Integer repositoryId, Database db) throws ConstraintException, SystemException, Bug
+    public RepositoryVO getRepositoryVOWithId(Integer repositoryId, Database db) throws SystemException
     {
 		return  (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db);        
     }
@@ -372,11 +372,9 @@ public class RepositoryController extends BaseController
 	 * 
 	 * @param name
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public RepositoryVO getRepositoryVOWithName(String name) throws SystemException, Bug
+	public RepositoryVO getRepositoryVOWithName(String name) throws SystemException
 	{
 		RepositoryVO repositoryVO = null;
 		
@@ -406,11 +404,9 @@ public class RepositoryController extends BaseController
 	 * @param name
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public RepositoryVO getRepositoryVOWithName(String name, Database db) throws SystemException, Bug
+	public RepositoryVO getRepositoryVOWithName(String name, Database db) throws SystemException
 	{
 		RepositoryVO repositoryVO = null;
 		
@@ -445,11 +441,9 @@ public class RepositoryController extends BaseController
 	 * @param name
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public Repository getRepositoryWithName(String name, Database db) throws SystemException, Bug
+	public Repository getRepositoryWithName(String name, Database db) throws SystemException
 	{
 		Repository repository = null;
 		
@@ -459,7 +453,7 @@ public class RepositoryController extends BaseController
 			oql.bind(name);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode" + name);
+			logger.info("Fetching entity in read/write mode" + name);
 
 			if (results.hasMore()) 
 			{
@@ -482,7 +476,7 @@ public class RepositoryController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
     
-    public List getRepositoryVOList() throws ConstraintException, SystemException, Bug
+    public List getRepositoryVOList() throws SystemException
     {   
 		String key = "repositoryVOList";
 		logger.info("key:" + key);
@@ -506,7 +500,7 @@ public class RepositoryController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
 	
-	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog) throws ConstraintException, SystemException, Bug
+	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog) throws SystemException
 	{    	
 		List accessableRepositories = new ArrayList();
     	
@@ -531,7 +525,7 @@ public class RepositoryController extends BaseController
 	 * Returns a repository list marked for deletion.
 	 */
 	
-	public List<RepositoryVO> getRepositoryVOListNotMarkedForDeletion() throws SystemException, Bug
+	public List<RepositoryVO> getRepositoryVOListNotMarkedForDeletion() throws SystemException
 	{
 		String key = "repositoryVOListActive";
 		logger.info("key:" + key);
@@ -580,7 +574,7 @@ public class RepositoryController extends BaseController
 	 * Returns a repository list marked for deletion.
 	 */
 	
-	public List<RepositoryVO> getRepositoryVOListMarkedForDeletion() throws SystemException, Bug
+	public List<RepositoryVO> getRepositoryVOListMarkedForDeletion() throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -618,7 +612,7 @@ public class RepositoryController extends BaseController
 	 * Return the first of all repositories.
 	 */
 	
-	public RepositoryVO getFirstRepositoryVO()  throws SystemException, Bug
+	public RepositoryVO getFirstRepositoryVO()  throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		RepositoryVO repositoryVO = null;
@@ -629,7 +623,7 @@ public class RepositoryController extends BaseController
 		
 			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r ORDER BY r.repositoryId");
         	QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode");
+			logger.info("Fetching entity in read/write mode");
 
 			if (results.hasMore()) 
             {
@@ -654,7 +648,7 @@ public class RepositoryController extends BaseController
 	/**
 	 * This method deletes the Repository sent in from the system.
 	 */	
-	public void delete(Integer repositoryId, Database db) throws SystemException, Bug
+	public void delete(Integer repositoryId, Database db) throws SystemException
 	{
 		try
 		{

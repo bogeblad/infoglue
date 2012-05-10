@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.contenttool.actions.databeans.AccessRightsUserRow;
 import org.infoglue.cms.entities.content.Content;
@@ -56,7 +57,6 @@ import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
@@ -85,42 +85,42 @@ public class AccessRightController extends BaseController
 		return new AccessRightController();
 	}
 	
-	public AccessRight getAccessRightWithId(Integer accessRightId, Database db) throws SystemException, Bug
+	public AccessRight getAccessRightWithId(Integer accessRightId, Database db) throws SystemException
 	{
 		return (AccessRight) getObjectWithId(AccessRightImpl.class, accessRightId, db);
 	}
 
-	public AccessRightVO getAccessRightVOWithId(Integer accessRightId) throws SystemException, Bug
+	public AccessRightVO getAccessRightVOWithId(Integer accessRightId) throws SystemException
 	{
 		return (AccessRightVO) getVOWithId(AccessRightImpl.class, accessRightId);
 	}
   
-	public List getAccessRightVOList() throws SystemException, Bug
+	public List getAccessRightVOList() throws SystemException
 	{
 		return getAllVOObjects(AccessRightImpl.class, "accessRightId");
 	}
 
-	public List getAccessRightVOList(Database db) throws SystemException, Bug
+	public List getAccessRightVOList(Database db) throws SystemException
 	{
 		return this.getAllVOObjects(AccessRightImpl.class, "accessRightId", db);
 	}
 
-	public List getAccessRightUserVOList(Database db) throws SystemException, Bug
+	public List getAccessRightUserVOList(Database db) throws SystemException
 	{
 		return this.getAllVOObjects(AccessRightUserImpl.class, "accessRightUserId", db);
 	}
 
-	public List getAccessRightRoleVOList(Database db) throws SystemException, Bug
+	public List getAccessRightRoleVOList(Database db) throws SystemException
 	{
 		return this.getAllVOObjects(AccessRightRoleImpl.class, "accessRightRoleId", db);
 	}
 
-	public List getAccessRightGroupVOList(Database db) throws SystemException, Bug
+	public List getAccessRightGroupVOList(Database db) throws SystemException
 	{
 		return this.getAllVOObjects(AccessRightGroupImpl.class, "accessRightGroupId", db);
 	}
 
-	public List getAccessRightVOList(String interceptionPointName, String parameters, Database db) throws SystemException, Bug
+	public List getAccessRightVOList(String interceptionPointName, String parameters, Database db) throws SystemException
 	{
 		String key = "" + interceptionPointName + "_" + parameters;
 		List accessRightVOList = (List)CacheController.getCachedObject("authorizationCache", key);
@@ -166,7 +166,7 @@ public class AccessRightController extends BaseController
 		return accessRightVOList;	
 	}
 
-	public List getAccessRightGroupVOList(Integer accessRightId) throws SystemException, Bug
+	public List getAccessRightGroupVOList(Integer accessRightId) throws SystemException
 	{
 		List accessRightGroupVOList = new ArrayList();
 		
@@ -195,7 +195,7 @@ public class AccessRightController extends BaseController
 		return accessRightGroupVOList;	
 	}
 	
-	public List getAccessRightVOList(Integer interceptionPointId, String parameters, String roleName) throws SystemException, Bug
+	public List getAccessRightVOList(Integer interceptionPointId, String parameters, String roleName) throws SystemException
 	{
 		List accessRightVOList = null;
 		
@@ -223,7 +223,7 @@ public class AccessRightController extends BaseController
 	}
 
 	
-	public List getAccessRightVOList(Database db, Integer interceptionPointId, String parameters, String roleName) throws SystemException, Bug
+	public List getAccessRightVOList(Database db, Integer interceptionPointId, String parameters, String roleName) throws SystemException
 	{
 		List accessRightVOList = null;
 		
@@ -238,7 +238,7 @@ public class AccessRightController extends BaseController
 		return accessRightVOList;	
 	}
 
-	public List getAccessRightVOListOnly(Integer interceptionPointId, String parameters) throws SystemException, Bug
+	public List getAccessRightVOListOnly(Integer interceptionPointId, String parameters) throws SystemException
 	{
 		List accessRightVOList = null;
 		
@@ -265,7 +265,7 @@ public class AccessRightController extends BaseController
 		return accessRightVOList;	
 	}
 
-	public List getAccessRightVOListOnly(Database db, Integer interceptionPointId, String parameters) throws SystemException, Bug
+	public List getAccessRightVOListOnly(Database db, Integer interceptionPointId, String parameters) throws SystemException
 	{
 		List accessRightVOList = null;
 		
@@ -280,14 +280,14 @@ public class AccessRightController extends BaseController
 		return accessRightVOList;	
 	}
 
-	public List getAccessRightList(String interceptionPointName, String parameters, String roleName, Database db) throws SystemException, Bug
+	public List getAccessRightList(String interceptionPointName, String parameters, String roleName, Database db) throws SystemException
 	{
 		List accessRightList = getAccessRightList(InterceptionPointController.getController().getInterceptionPointVOWithName(interceptionPointName).getId(), parameters, roleName, db);
 		
 		return accessRightList;		
 	}
 	
-	public List getAccessRightList(Integer interceptionPointId, String parameters, String roleName, Database db) throws SystemException, Bug
+	public List getAccessRightList(Integer interceptionPointId, String parameters, String roleName, Database db) throws SystemException
 	{
 		List accessRightList = new ArrayList();
 		
@@ -311,7 +311,7 @@ public class AccessRightController extends BaseController
 			}
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode" + interceptionPointId);
+			logger.info("Fetching entity in read/write mode" + interceptionPointId);
 
 			while (results.hasMore()) 
 			{
@@ -331,7 +331,7 @@ public class AccessRightController extends BaseController
 		return accessRightList;		
 	}
 
-	public List getAccessRightListOnly(Integer interceptionPointId, String parameters, Database db) throws SystemException, Bug
+	public List getAccessRightListOnly(Integer interceptionPointId, String parameters, Database db) throws SystemException
 	{
 		List accessRightList = new ArrayList();
 		
@@ -353,7 +353,7 @@ public class AccessRightController extends BaseController
 			}
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode");
+			logger.info("Fetching entity in read/write mode");
 
 			while (results.hasMore()) 
 			{
@@ -373,7 +373,7 @@ public class AccessRightController extends BaseController
 		return accessRightList;		
 	}
 
-	public List getAccessRightListOnlyReadOnly(Integer interceptionPointId, Database db) throws SystemException, Bug
+	public List getAccessRightListOnlyReadOnly(Integer interceptionPointId, Database db) throws SystemException
 	{
 		List accessRightList = new ArrayList();
 		
@@ -403,7 +403,7 @@ public class AccessRightController extends BaseController
 	}
 
 	
-	public List getAccessRightListOnlyReadOnly(Integer interceptionPointId, String parameters, Database db) throws SystemException, Bug
+	public List getAccessRightListOnlyReadOnly(Integer interceptionPointId, String parameters, Database db) throws SystemException
 	{
 		List accessRightList = new ArrayList();
 		
@@ -442,7 +442,7 @@ public class AccessRightController extends BaseController
 		return accessRightList;		
 	}
 
-	public List getAccessRightListForEntity(Integer interceptionPointId, String parameters, Database db)  throws SystemException, Bug
+	public List getAccessRightListForEntity(Integer interceptionPointId, String parameters, Database db)  throws SystemException
 	{
 		List accessRightList = new ArrayList();
 		
@@ -468,7 +468,7 @@ public class AccessRightController extends BaseController
 			}
 						
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode");
+			logger.info("Fetching entity in read/write mode");
 
 			while (results.hasMore()) 
 			{
@@ -489,7 +489,7 @@ public class AccessRightController extends BaseController
 	}
 	
 	
-	public List getAccessRightList(Integer interceptionPointId, Database db)  throws SystemException, Bug
+	public List getAccessRightList(Integer interceptionPointId, Database db)  throws SystemException
 	{
 		List accessRightList = new ArrayList();
 		
@@ -502,7 +502,7 @@ public class AccessRightController extends BaseController
 			oql.bind(interceptionPointId);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode");
+			logger.info("Fetching entity in read/write mode");
 
 			while (results.hasMore()) 
 			{
@@ -522,7 +522,7 @@ public class AccessRightController extends BaseController
 		return accessRightList;		
 	}
 
-	public List getAccessRightList(String roleName, Database db)  throws SystemException, Bug
+	public List getAccessRightList(String roleName, Database db)  throws SystemException
 	{
 		List accessRightList = new ArrayList();
 		
@@ -535,7 +535,7 @@ public class AccessRightController extends BaseController
 			oql.bind(roleName);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode");
+			logger.info("Fetching entity in read/write mode");
 
 			while (results.hasMore()) 
 			{
@@ -556,7 +556,7 @@ public class AccessRightController extends BaseController
 	}
 	
 
-	public List getAccessRightList(Integer interceptionPointId, String roleName, Database db)  throws SystemException, Bug
+	public List getAccessRightList(Integer interceptionPointId, String roleName, Database db)  throws SystemException
 	{
 		List accessRightList = new ArrayList();
 		
@@ -574,7 +574,7 @@ public class AccessRightController extends BaseController
 			oql.bind(roleName);
 						
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode");
+			logger.info("Fetching entity in read/write mode");
 
 			while (results.hasMore()) 
 			{
@@ -599,11 +599,9 @@ public class AccessRightController extends BaseController
 	 * @param accessRightVO
 	 * @param db
 	 * @return
-	 * @throws SystemException
-	 * @throws Exception
 	 */
 	
-	public AccessRight create(AccessRightVO accessRightVO, InterceptionPoint interceptionPoint, Database db) throws SystemException, Exception
+	public AccessRight create(AccessRightVO accessRightVO, InterceptionPoint interceptionPoint, Database db) throws PersistenceException 
 	{
 		AccessRight accessRight = new AccessRightImpl();
 		accessRight.setValueObject(accessRightVO);
@@ -616,13 +614,13 @@ public class AccessRightController extends BaseController
 	}     
 
 	
-	public AccessRightVO update(AccessRightVO AccessRightVO) throws ConstraintException, SystemException
+	public AccessRightVO update(AccessRightVO AccessRightVO) throws SystemException
 	{
 		return (AccessRightVO) updateEntity(AccessRightImpl.class, AccessRightVO);
 	}        
 
 	
-	public void update(String parameters, HttpServletRequest request, String interceptionPointCategory) throws ConstraintException, SystemException
+	public void update(String parameters, HttpServletRequest request, String interceptionPointCategory) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -761,7 +759,7 @@ public class AccessRightController extends BaseController
 	}			
 	
 	
-	public void updateGroups(Integer accessRightId, String parameters, String[] groupNames) throws ConstraintException, SystemException
+	public void updateGroups(Integer accessRightId, String parameters, String[] groupNames) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -814,7 +812,7 @@ public class AccessRightController extends BaseController
 	 * @throws SystemException
 	 */
 	
-	public void addUser(String interceptionPointCategory, String parameters, String userName, HttpServletRequest request) throws ConstraintException, SystemException
+	public void addUser(String interceptionPointCategory, String parameters, String userName, HttpServletRequest request) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -919,7 +917,7 @@ public class AccessRightController extends BaseController
 	 * @throws SystemException
 	 */
 	
-	public void addUserRights(String[] interceptionPointNames, String parameters, InfoGluePrincipal principal) throws ConstraintException, SystemException
+	public void addUserRights(String[] interceptionPointNames, String parameters, InfoGluePrincipal principal) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -968,7 +966,7 @@ public class AccessRightController extends BaseController
 	 * @throws SystemException
 	 */
 	
-	public void deleteUser(String interceptionPointCategory, String parameters, String userName, HttpServletRequest request) throws ConstraintException, SystemException
+	public void deleteUser(String interceptionPointCategory, String parameters, String userName, HttpServletRequest request) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -1031,10 +1029,9 @@ public class AccessRightController extends BaseController
 	 * @param db
 	 * @param accessRightRoleVO
 	 * @return
-	 * @throws SystemException
 	 */
 	
-	public AccessRightRole createAccessRightRole(Database db, AccessRightRoleVO accessRightRoleVO, AccessRight accessRight) throws SystemException, Exception
+	public AccessRightRole createAccessRightRole(Database db, AccessRightRoleVO accessRightRoleVO, AccessRight accessRight) throws PersistenceException 
 	{
 	    AccessRightRole accessRightRole = new AccessRightRoleImpl();
 	    accessRightRole.setValueObject(accessRightRoleVO);
@@ -1050,10 +1047,9 @@ public class AccessRightController extends BaseController
 	 * @param db
 	 * @param accessRightGroupVO
 	 * @return
-	 * @throws SystemException
 	 */
 	
-	public AccessRightGroup createAccessRightGroup(Database db, AccessRightGroupVO accessRightGroupVO, AccessRight accessRight) throws SystemException, Exception
+	public AccessRightGroup createAccessRightGroup(Database db, AccessRightGroupVO accessRightGroupVO, AccessRight accessRight) throws PersistenceException 
 	{
 	    AccessRightGroup accessRightGroup = new AccessRightGroupImpl();
 	    accessRightGroup.setValueObject(accessRightGroupVO);
@@ -1069,10 +1065,11 @@ public class AccessRightController extends BaseController
 	 * @param db
 	 * @param accessRightUserVO
 	 * @return
+	 * @throws PersistenceException 
 	 * @throws SystemException
 	 */
 	
-	public AccessRightUser createAccessRightUser(Database db, AccessRightUserVO accessRightUserVO, AccessRight accessRight) throws SystemException, Exception
+	public AccessRightUser createAccessRightUser(Database db, AccessRightUserVO accessRightUserVO, AccessRight accessRight) throws PersistenceException
 	{
 	    AccessRightUser accessRightUser = new AccessRightUserImpl();
 	    accessRightUser.setValueObject(accessRightUserVO);
@@ -1667,7 +1664,7 @@ public class AccessRightController extends BaseController
 
 	
 	
-	public Collection getAccessRightsUserRows(String interceptionPointCategory, String parameters) throws SystemException, Bug
+	public Collection getAccessRightsUserRows(String interceptionPointCategory, String parameters) throws SystemException
 	{
 		Collection principalVOList = null;
 		
@@ -1691,7 +1688,7 @@ public class AccessRightController extends BaseController
 		return principalVOList;	
 	}
 
-	public Collection getAccessRightsUserRows(String interceptionPointCategory, String parameters, Database db) throws SystemException, Bug
+	public Collection getAccessRightsUserRows(String interceptionPointCategory, String parameters, Database db) throws SystemException
 	{
 	    Map accessRightsUserRows = new HashMap();
 		
@@ -1737,7 +1734,7 @@ public class AccessRightController extends BaseController
 		return accessRightsUserRows.values();		
 	}
 
-	public List getAccessRightsUsers(String interceptionPointCategory, String parameters, Database db, boolean readOnly) throws SystemException, Bug
+	public List getAccessRightsUsers(String interceptionPointCategory, String parameters, Database db, boolean readOnly) throws SystemException
 	{
 	    List accessRightsUsers = new ArrayList();
 		
@@ -1782,7 +1779,7 @@ public class AccessRightController extends BaseController
 		return accessRightsUsers;		
 	}
 
-	public List getAccessRightsUsers(String interceptionPointCategory, String parameters, String userName, Database db) throws SystemException, Bug
+	public List getAccessRightsUsers(String interceptionPointCategory, String parameters, String userName, Database db) throws SystemException
 	{
 	    List accessRightsUsers = new ArrayList();
 		
@@ -1828,7 +1825,7 @@ public class AccessRightController extends BaseController
 	//TEST
 	
 	
-	public List getAccessRightUserList(String userName, Database db) throws SystemException, Bug
+	public List getAccessRightUserList(String userName, Database db) throws SystemException
 	{
 		List accessRightUserList = new ArrayList();
 		
@@ -1863,7 +1860,7 @@ public class AccessRightController extends BaseController
 		return accessRightUserList;		
 	}
 
-	public List getAccessRightRoleList(String roleName, Database db, boolean readOnly) throws SystemException, Bug
+	public List getAccessRightRoleList(String roleName, Database db, boolean readOnly) throws SystemException
 	{
 		List accessRightRoleList = new ArrayList();
 		
@@ -1904,7 +1901,7 @@ public class AccessRightController extends BaseController
 		return accessRightRoleList;		
 	}
 
-	public List getAccessRightsRoles(String interceptionPointCategory, String parameters, Database db, boolean readOnly) throws SystemException, Bug
+	public List getAccessRightsRoles(String interceptionPointCategory, String parameters, Database db, boolean readOnly) throws SystemException
 	{
 	    List accessRightsRoles = new ArrayList();
 		
@@ -1949,7 +1946,7 @@ public class AccessRightController extends BaseController
 		return accessRightsRoles;		
 	}
 	
-	public List getAccessRightsGroups(String interceptionPointCategory, String parameters, Database db, boolean readOnly) throws SystemException, Bug
+	public List getAccessRightsGroups(String interceptionPointCategory, String parameters, Database db, boolean readOnly) throws SystemException
 	{
 	    List accessRightsGroups = new ArrayList();
 		
@@ -1994,7 +1991,7 @@ public class AccessRightController extends BaseController
 		return accessRightsGroups;		
 	}
 
-	public List getAccessRightGroupList(String groupName, Database db) throws SystemException, Bug
+	public List getAccessRightGroupList(String groupName, Database db) throws SystemException
 	{
 		List accessRightGroupList = new ArrayList();
 		

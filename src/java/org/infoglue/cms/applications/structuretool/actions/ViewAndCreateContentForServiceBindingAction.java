@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
@@ -193,9 +194,10 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 	 * We first checks if there is a bound content linked - if not one is created in a special folder and
 	 * a new service binding is created to it. The content is then shown to the user for editing. Most of this method should 
 	 * be moved to an controller.
+	 * @throws SystemException 
 	 */
 	
-    public String doExecute() throws Exception
+    public String doExecute() throws SystemException
     {		
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -260,31 +262,30 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 	 * be moved to an controller.
 	 */
 	
-    public String doInline() throws Exception
+    public String doInline() throws SystemException
     {		
     	doExecute();
     	
     	return "successInline";
     }
     
-	public LanguageVO getInitialLanguageVO(Integer contentId, Database db) throws Exception
+	public LanguageVO getInitialLanguageVO(Integer contentId, Database db) throws PersistenceException, NumberFormatException, SystemException
 	{
 		Map args = new HashMap();
 	    args.put("globalKey", "infoglue");
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 
 	    String initialLanguageId = ps.getString("content_" + contentId + "_initialLanguageId");
-	    ContentVO parentContentVO = ContentController.getContentController().getParentContent(contentId, db); 
+	    ContentVO parentContentVO = ContentController.getParentContent(contentId, db); 
 	    while((initialLanguageId == null || initialLanguageId.equalsIgnoreCase("-1")) && parentContentVO != null)
 	    {
 	    	initialLanguageId = ps.getString("content_" + parentContentVO.getId() + "_initialLanguageId");
-		    parentContentVO = ContentController.getContentController().getParentContent(parentContentVO.getId(), db); 
+		    parentContentVO = ContentController.getParentContent(parentContentVO.getId(), db); 
 	    }
 	    
 	    if(initialLanguageId != null && !initialLanguageId.equals("") && !initialLanguageId.equals("-1"))
 	        return LanguageController.getController().getLanguageVOWithId(new Integer(initialLanguageId), db);
-	    else
-	        return LanguageController.getController().getMasterLanguage(repositoryId, db);
+        return LanguageController.getController().getMasterLanguage(repositoryId, db);
 	}
 
 	public List getRepositories()

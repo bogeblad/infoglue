@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -34,9 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.transform.TransformerException;
+
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
@@ -68,16 +73,12 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.XMLHelper;
-import org.infoglue.deliver.applications.databeans.DeliveryContext;
-import org.infoglue.deliver.applications.filters.FilterConstants;
-import org.infoglue.deliver.applications.filters.ViewPageFilter;
-import org.infoglue.deliver.controllers.kernel.URLComposer;
-import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.Timer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -103,7 +104,7 @@ public class SiteNodeController extends BaseController
 	 * This method gets the siteNodeVO with the given id
 	 */
 	 
-    public SiteNodeVO getSiteNodeVOWithId(Integer siteNodeId) throws SystemException, Bug
+    public SiteNodeVO getSiteNodeVOWithId(Integer siteNodeId) throws SystemException
     {
 		return (SiteNodeVO) getVOWithId(SiteNodeImpl.class, siteNodeId);
     }
@@ -112,7 +113,7 @@ public class SiteNodeController extends BaseController
 	 * This method gets the siteNodeVO with the given id
 	 */
 	 
-    public static SiteNodeVO getSiteNodeVOWithId(Integer siteNodeId, Database db) throws SystemException, Bug
+    public static SiteNodeVO getSiteNodeVOWithId(Integer siteNodeId, Database db) throws SystemException
     {
 		return (SiteNodeVO) getVOWithId(SiteNodeImpl.class, siteNodeId, db);
     }
@@ -121,7 +122,7 @@ public class SiteNodeController extends BaseController
 	 * This method gets the siteNodeVO with the given id
 	 */
 	 
-    public static SiteNodeVO getSmallSiteNodeVOWithId(Integer siteNodeId, Database db) throws SystemException, Bug
+    public static SiteNodeVO getSmallSiteNodeVOWithId(Integer siteNodeId, Database db) throws SystemException
     {
     	String key = "" + siteNodeId;
 		SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
@@ -141,27 +142,27 @@ public class SiteNodeController extends BaseController
     }
 
 
-    public SiteNode getSiteNodeWithId(Integer siteNodeId, Database db) throws SystemException, Bug
+    public SiteNode getSiteNodeWithId(Integer siteNodeId, Database db) throws SystemException
     {
         return getSiteNodeWithId(siteNodeId, db, false);
     }
 
-    public SiteNodeVersion getSiteNodeVersionWithId(Integer siteNodeVersionId, Database db) throws SystemException, Bug
+    public SiteNodeVersion getSiteNodeVersionWithId(Integer siteNodeVersionId, Database db) throws SystemException
     {
 		return (SiteNodeVersion) getObjectWithId(SiteNodeVersionImpl.class, siteNodeVersionId, db);
     }
 
-    public static SiteNode getSiteNodeWithId(Integer siteNodeId, Database db, boolean readOnly) throws SystemException, Bug
+    public static SiteNode getSiteNodeWithId(Integer siteNodeId, Database db, boolean readOnly) throws SystemException
     {
         SiteNode siteNode = null;
         try
         {
         	if(readOnly)
-	            siteNode = (SiteNode)db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId, Database.ReadOnly);
+	            siteNode = db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId, Database.ReadOnly);
     		else
     		{
                 logger.info("Loading " + siteNodeId + " in read/write mode.");
-	            siteNode = (SiteNode)db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId);
+	            siteNode = db.load(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, siteNodeId);
     		}
     	}
         catch(Exception e)
@@ -181,7 +182,7 @@ public class SiteNodeController extends BaseController
 	 * Returns a repository list marked for deletion.
 	 */
 	
-	public List<SiteNodeVO> getSiteNodeVOListMarkedForDeletion(Integer repositoryId) throws SystemException, Bug
+	public List<SiteNodeVO> getSiteNodeVOListMarkedForDeletion(Integer repositoryId) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -225,7 +226,7 @@ public class SiteNodeController extends BaseController
 	 * Returns a repository list marked for deletion.
 	 */
 	
-	public Set<SiteNodeVO> getSiteNodeVOListLastModifiedByPincipal(InfoGluePrincipal principal) throws SystemException, Bug
+	public Set<SiteNodeVO> getSiteNodeVOListLastModifiedByPincipal(InfoGluePrincipal principal) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -476,7 +477,7 @@ public class SiteNodeController extends BaseController
 	 * This method restores a siteNode.
 	 */
 	    
-    public void restoreSiteNode(Integer siteNodeId, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
+    public void restoreSiteNode(Integer siteNodeId, InfoGluePrincipal infogluePrincipal) throws SystemException
     {
 	    Database db = CastorDatabaseService.getDatabase();
         
@@ -673,7 +674,7 @@ public class SiteNodeController extends BaseController
 			siteNode.setCreator(infoGluePrincipal.getName());
 
 			//siteNode = (SiteNode) createEntity(siteNode, db);
-			db.create((SiteNode)siteNode);
+			db.create(siteNode);
 		
 			//No siteNode is an island (humhum) so we also have to create an siteNodeVersion for it.
 			SiteNodeVersion siteNodeVersion = SiteNodeVersionController.createInitialSiteNodeVersion(db, siteNode, infoGluePrincipal);
@@ -695,7 +696,7 @@ public class SiteNodeController extends BaseController
 	 * This method returns the value-object of the parent of a specific siteNode. 
 	 */
 	
-    public static SiteNodeVO getParentSiteNode(Integer siteNodeId) throws SystemException, Bug
+    public static SiteNodeVO getParentSiteNode(Integer siteNodeId) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -724,7 +725,7 @@ public class SiteNodeController extends BaseController
 	 * This method returns the value-object of the parent of a specific siteNode. 
 	 */
 	
-	public static SiteNode getParentSiteNode(Integer siteNodeId, Database db) throws SystemException, Bug
+	public static SiteNode getParentSiteNode(Integer siteNodeId, Database db) throws SystemException
 	{
 		SiteNode siteNode = (SiteNode) getObjectWithId(SiteNodeImpl.class, siteNodeId, db);
 		SiteNode parent = siteNode.getParentSiteNode();
@@ -856,7 +857,7 @@ public class SiteNodeController extends BaseController
 	 * of things that should match. The input is a Hashmap with a method and a List of HashMaps.
 	 */
 	
-    public List getSiteNodeVOList(HashMap argumentHashMap) throws SystemException, Bug
+    public List getSiteNodeVOList(HashMap argumentHashMap) throws SystemException
     {
     	List siteNodes = null;
     	
@@ -893,7 +894,7 @@ public class SiteNodeController extends BaseController
 	 * of things that should match. The input is a Hashmap with a method and a List of HashMaps.
 	 */
 	
-    public static List getSiteNodeVOList(HashMap argumentHashMap, Database db) throws SystemException, Bug
+    public static List getSiteNodeVOList(HashMap argumentHashMap, Database db) throws SystemException
     {
     	List siteNodes = null;
     	
@@ -929,7 +930,7 @@ public class SiteNodeController extends BaseController
 	 * This method fetches the root siteNode for a particular repository.
 	 */
 	        
-   	public SiteNodeVO getRootSiteNodeVO(Integer repositoryId) throws ConstraintException, SystemException
+   	public SiteNodeVO getRootSiteNodeVO(Integer repositoryId) throws SystemException
    	{
    		String key = "rootSiteNode_" + repositoryId;
    		SiteNodeVO cachedRootNodeVO = (SiteNodeVO)CacheController.getCachedObject("repositoryRootNodesCache", key);
@@ -969,7 +970,7 @@ public class SiteNodeController extends BaseController
 	 * This method fetches the root siteNode for a particular repository within a certain transaction.
 	 */
 	        
-	public SiteNodeVO getRootSiteNodeVO(Integer repositoryId, Database db) throws ConstraintException, SystemException, Exception
+	public SiteNodeVO getRootSiteNodeVO(Integer repositoryId, Database db) throws PersistenceException
 	{
 		SiteNodeVO siteNodeVO = null;
 		
@@ -993,7 +994,7 @@ public class SiteNodeController extends BaseController
 	 * This method fetches the root siteNode for a particular repository within a certain transaction.
 	 */
 	        
-	public SiteNode getRootSiteNode(Integer repositoryId, Database db) throws ConstraintException, SystemException, Exception
+	public SiteNode getRootSiteNode(Integer repositoryId, Database db) throws PersistenceException 
 	{
 		SiteNode siteNode = null;
 		
@@ -1001,7 +1002,7 @@ public class SiteNodeController extends BaseController
 		oql.bind(repositoryId);
 		
 		QueryResults results = oql.execute();
-		this.logger.info("Fetching entity in read/write mode" + repositoryId);
+		logger.info("Fetching entity in read/write mode" + repositoryId);
 
 		if (results.hasMore()) 
 		{
@@ -1125,7 +1126,7 @@ public class SiteNodeController extends BaseController
 	 * This method moves a siteNode after first making a couple of controls that the move is valid.
 	 */
 	
-    public void changeSiteNodeSortOrder(Integer siteNodeId, Integer beforeSiteNodeId, String direction, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void changeSiteNodeSortOrder(Integer siteNodeId, Integer beforeSiteNodeId, String direction, InfoGluePrincipal infoGluePrincipal) throws SystemException
     {
 	    Database db = CastorDatabaseService.getDatabase();
 
@@ -1206,7 +1207,7 @@ public class SiteNodeController extends BaseController
 	 * This method moves a siteNode after first making a couple of controls that the move is valid.
 	 */
 	
-    public void toggleSiteNodeHidden(Integer siteNodeId, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void toggleSiteNodeHidden(Integer siteNodeId, InfoGluePrincipal infoGluePrincipal) throws SystemException
     {
 	    Database db = CastorDatabaseService.getDatabase();
 
@@ -1298,7 +1299,7 @@ public class SiteNodeController extends BaseController
 	 * This method returns a list of all siteNodes in a repository.
 	 */
 
-	public List getRepositorySiteNodes(Integer repositoryId, Database db) throws SystemException, Exception
+	public List getRepositorySiteNodes(Integer repositoryId, Database db) throws Exception
     {
 		List siteNodes = new ArrayList();
 		
@@ -1323,7 +1324,7 @@ public class SiteNodeController extends BaseController
 	 * This method returns a list of all siteNodes in a repository.
 	 */
 
-	public List getRepositorySiteNodesReadOnly(Integer repositoryId, Database db) throws SystemException, Exception
+	public List getRepositorySiteNodesReadOnly(Integer repositoryId, Database db) throws Exception
     {
 		List siteNodes = new ArrayList();
 		
@@ -1350,13 +1351,9 @@ public class SiteNodeController extends BaseController
 	 * @param db
 	 * @param path
 	 * @param newSiteNode
-	 * @throws SystemException
-	 * @throws Bug
-	 * @throws Exception
-	 * @throws ConstraintException
 	 */
 	
-    public Content createSiteNodeMetaInfoContent(Database db, SiteNode newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId) throws SystemException, Bug, Exception, ConstraintException
+    public Content createSiteNodeMetaInfoContent(Database db, SiteNode newSiteNode, Integer repositoryId, InfoGluePrincipal principal, Integer pageTemplateContentId) throws SystemException, ConstraintException, PersistenceException, UnsupportedEncodingException, IOException, SAXException, TransformerException
     {
         Content content = null;
         
@@ -1463,7 +1460,7 @@ public class SiteNodeController extends BaseController
         return content;
     }
 
-	public LanguageVO getInitialLanguageVO(Database db, Integer contentId, Integer repositoryId) throws Exception
+	public LanguageVO getInitialLanguageVO(Database db, Integer contentId, Integer repositoryId) throws NumberFormatException, SystemException 
 	{
 		Map args = new HashMap();
 	    args.put("globalKey", "infoglue");
@@ -1480,8 +1477,7 @@ public class SiteNodeController extends BaseController
 	    
 	    if(initialLanguageId != null && !initialLanguageId.equals("") && !initialLanguageId.equals("-1"))
 	        return LanguageController.getController().getLanguageVOWithId(new Integer(initialLanguageId));
-	    else
-	        return LanguageController.getController().getMasterLanguage(repositoryId);
+        return LanguageController.getController().getMasterLanguage(repositoryId);
 	}
 
 	/**
@@ -1511,7 +1507,7 @@ public class SiteNodeController extends BaseController
 	}
 
 
-    public void setMetaInfoContentId(Integer siteNodeId, Integer metaInfoContentId) throws ConstraintException, SystemException
+    public void setMetaInfoContentId(Integer siteNodeId, Integer metaInfoContentId) throws SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -1533,14 +1529,14 @@ public class SiteNodeController extends BaseController
 
     }       
 
-    public void setMetaInfoContentId(Integer siteNodeId, Integer metaInfoContentId, Database db) throws ConstraintException, SystemException
+    public void setMetaInfoContentId(Integer siteNodeId, Integer metaInfoContentId, Database db) throws SystemException
     {
         SiteNode siteNode = getSiteNodeWithId(siteNodeId, db);
         siteNode.setMetaInfoContentId(metaInfoContentId);
     }       
     
     
-    public List getSiteNodeVOListWithoutMetaInfoContentId() throws ConstraintException, SystemException
+    public List getSiteNodeVOListWithoutMetaInfoContentId() throws SystemException
     {
 		List siteNodeVOList = new ArrayList();
 
@@ -1566,7 +1562,7 @@ public class SiteNodeController extends BaseController
         return siteNodeVOList;
     }       
 
-    public List getSiteNodesWithoutMetaInfoContentId(Database db) throws ConstraintException, SystemException, Exception
+    public List getSiteNodesWithoutMetaInfoContentId(Database db) throws PersistenceException 
     {
 		List siteNodes = new ArrayList();
 
@@ -1588,7 +1584,7 @@ public class SiteNodeController extends BaseController
     }
 
 
-    public SiteNodeVO getSiteNodeVOWithMetaInfoContentId(Integer contentId) throws ConstraintException, SystemException
+    public SiteNodeVO getSiteNodeVOWithMetaInfoContentId(Integer contentId) throws SystemException
     {
 		SiteNodeVO siteNodeVO = null;
 
@@ -1615,7 +1611,7 @@ public class SiteNodeController extends BaseController
         return siteNodeVO;
     }       
 
-    public SiteNodeVO getSiteNodeVOWithMetaInfoContentId(Database db, Integer contentId) throws ConstraintException, SystemException, Exception
+    public SiteNodeVO getSiteNodeVOWithMetaInfoContentId(Database db, Integer contentId) throws PersistenceException 
     {
 		SiteNodeVO siteNodeVO = null;
 
@@ -1636,7 +1632,7 @@ public class SiteNodeController extends BaseController
 		return siteNodeVO;
     }
 
-    public SiteNode getSiteNodeWithMetaInfoContentId(Database db, Integer contentId) throws ConstraintException, SystemException, Exception
+    public SiteNode getSiteNodeWithMetaInfoContentId(Database db, Integer contentId) throws PersistenceException 
     {
 		SiteNode siteNode = null;
 
@@ -1690,7 +1686,7 @@ public class SiteNodeController extends BaseController
 		return protectedSiteNodeVersionId;
 	}
 
-	public String getSiteNodePath(Integer siteNodeId, Database db) throws Exception
+	public String getSiteNodePath(Integer siteNodeId, Database db) throws SystemException 
 	{
 		StringBuffer sb = new StringBuffer();
 		
@@ -2001,7 +1997,7 @@ public class SiteNodeController extends BaseController
 	 * This method deletes an contentversion and notifies the owning content.
 	 */
 	
- 	public void delete(SiteNodeVersion siteNodeVersion, Database db, boolean forceDelete) throws ConstraintException, SystemException, Exception
+ 	public void delete(SiteNodeVersion siteNodeVersion, Database db, boolean forceDelete) throws ConstraintException, PersistenceException
 	{
 		if (!forceDelete && siteNodeVersion.getStateId().intValue() == ContentVersionVO.PUBLISHED_STATE.intValue() && siteNodeVersion.getIsActive().booleanValue() == true)
 		{
@@ -2018,7 +2014,7 @@ public class SiteNodeController extends BaseController
 		db.remove(siteNodeVersion);
 	}
 
-	public void updateSiteNodeTypeDefinition(Integer siteNodeId, Integer siteNodeTypeDefinitionId) throws ConstraintException, SystemException, Exception
+	public void updateSiteNodeTypeDefinition(Integer siteNodeId, Integer siteNodeTypeDefinitionId) throws SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
     	

@@ -28,9 +28,6 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
 public class ContentTypeDefinitionTag extends TemplateControllerTag {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3257002150969421873L;
 	
 	private Integer contentId;

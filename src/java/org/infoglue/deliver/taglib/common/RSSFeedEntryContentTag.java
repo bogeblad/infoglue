@@ -28,8 +28,6 @@ import javax.servlet.jsp.JspTagException;
 import org.apache.log4j.Logger;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
 
-import com.sun.syndication.feed.synd.SyndCategory;
-import com.sun.syndication.feed.synd.SyndCategoryImpl;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndContentImpl;
 
@@ -99,7 +97,7 @@ public class RSSFeedEntryContentTag extends TemplateControllerTag
 		{
 			throw new JspTagException("RSSFeedEntryContentTag must have a RSSFeedEntryTag ancestor.");
 		}
-		((RSSFeedEntryTag)parent).addEntryContent(content);
+		parent.addEntryContent(content);
 	}
 
 	

@@ -13,11 +13,9 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.deliver.util.HttpHelper;
 
 /**
@@ -31,21 +29,6 @@ import org.infoglue.deliver.util.HttpHelper;
 public class PageFetcher
 {
     private final static Logger logger = Logger.getLogger(PageFetcher.class.getName());
-
-	public static void main(String[] args) throws Exception
-    {				  
-		/*
-    	Map<String,String> parameters = new HashMap<String,String>();
-    	parameters.put("ct_orig_uri","https://forum.tewss.telia.se");
-    	parameters.put("ct_error_uri","http://www.telia.se/privat/security/loginpage.do");
-    	parameters.put("SCAUTHMETHOD","basic");
-    	parameters.put("user","mattiasbogeblad");
-    	parameters.put("password","blader22");
-    	
-    	String url = "https://access.tewss.telia.se/ssotcwss/login";
-    	new PageFetcher().fetchPage(url, "post", new HashMap<String,String>(), new HashMap<String,String>(), parameters, new HashMap<String,String>(), new HashMap<String,String>(), new HashMap<String,String>(), new ArrayList<String>());
-		*/
-     }
 	
 	public String fetchPage(String url, String httpMethod, String proxyHost, Integer proxyPort, Map<String,String> cookies, Map<String,String> inputRequestHeaders, Map<String,String> requestParameters, Map<String,String> returnCookies, Map<String,String> returnHeaders, Map<String,String> statusData, List<String> blockedParameters) throws Exception
 	{
@@ -60,9 +43,6 @@ public class PageFetcher
 		}
     
 		Credentials creds = null;
-        //if (args.length >= 3) {
-		//    creds = new UsernamePasswordCredentials(args[1], args[2]);
-		//}
 
         HttpClient client = new HttpClient();
 
@@ -74,11 +54,6 @@ public class PageFetcher
         {
 	        HostConfiguration config = client.getHostConfiguration();
 	        config.setProxy(proxyHost, (proxyPort == null ? 80 : proxyPort));
-        }
-        
-        if (creds != null) 
-        {
-            client.getState().setCredentials(AuthScope.ANY, creds);
         }
 
         logger.info("URL TO CALL with "  + httpMethod + ":" + url);

@@ -37,52 +37,31 @@ public abstract class ErrorPopulator extends InfoglueFunction
 {
     private final static Logger logger = Logger.getLogger(ErrorPopulator.class.getName());
 
-	/**
-	 * 
-	 */
 	private static final String PACKAGE = "org.infoglue.cms.entities";
 	
-	/**
-	 * 
-	 */
 	private StringManager stringManager; 
 	
-	/**
-	 * 
-	 */
 	protected ErrorPopulator()
 	{
 		super();
 	}
 	
-	/**
-	 * 
-	 */
 	protected final void execute() throws WorkflowException
 	{
 		clean();
 		populate();
 	}
 	
-	/**
-	 * 
-	 */
 	protected abstract void clean() throws WorkflowException;
 
-	/**
-	 * 
-	 */
 	protected abstract void populate() throws WorkflowException;
 	
-	/**
-	 * 
-	 */
-	protected final void clean(final String errorPrefix) throws WorkflowException
+	protected final void clean(final String errorPrefix)
 	{
 		removeFromPropertySet(errorPrefix, true);
 	}
 
-	protected void populate(final ConstraintExceptionBuffer ceb, String languageCode) throws WorkflowException 
+	protected void populate(final ConstraintExceptionBuffer ceb, String languageCode) 
 	{
 		for(ConstraintException e = ceb.toConstraintException(); e != null; e = e.getChainedException())
 		{
@@ -90,17 +69,11 @@ public abstract class ErrorPopulator extends InfoglueFunction
 		}
 	}
 	
-	/**
-	 * 
-	 */
-	private void populateError(final ConstraintException e, String languageCode) throws WorkflowException
+	private void populateError(final ConstraintException e, String languageCode) 
 	{
 		setPropertySetString(getErrorKey(e, languageCode), getStringManager().getString(e.getErrorCode()));
 	}
 	
-	/**
-	 * 
-	 */
 	private String getErrorKey(final ConstraintException e, String languageCode) 
 	{
 		// The field name has the form:
@@ -143,9 +116,6 @@ public abstract class ErrorPopulator extends InfoglueFunction
 		stringManager = StringManagerFactory.getPresentationStringManager(PACKAGE, getLocale()); 
 	}
 	
-	/**
-	 * 
-	 */
 	protected final StringManager getStringManager()
 	{
 	    return stringManager;

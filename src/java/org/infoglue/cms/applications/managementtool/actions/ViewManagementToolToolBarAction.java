@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.UserPropertiesController;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowDefinitionController;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.InfoGlueRole;
@@ -93,7 +95,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 	
 	private InterceptionPointVO interceptionPointVO = null;
 	
-	public String doExecute() throws Exception
+	public String doExecute() throws SystemException
     {
     	if(this.interceptionPointId != null)
 	    	this.interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithId(this.interceptionPointId);
@@ -399,7 +401,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 	}
 	
 
-	private List getRepositoriesButtons() throws Exception
+	private List getRepositoriesButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateRepository!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newRepository"), "tool.managementtool.createRepository.header"));	
@@ -409,7 +411,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getRepositoryDetailsButtons() throws Exception
+	private List getRepositoryDetailsButtons() throws UnsupportedEncodingException
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("Confirm.action?header=tool.managementtool.deleteRepository.header&yesDestination=" + URLEncoder.encode("DeleteRepository!markForDelete!action?repositoryId=" + this.repositoryId, "UTF-8") + "&noDestination=" + URLEncoder.encode("ViewListRepository.action?title=Repositories", "UTF-8") + "&message=tool.managementtool.deleteRepository.text&extraParameters=" + this.name, getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.deleteRepository"), "tool.managementtool.deleteRepository.header"));
@@ -426,7 +428,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 	
-	private List getSystemUsersButtons() throws Exception
+	private List getSystemUsersButtons() throws SystemException 
 	{
 		List buttons = new ArrayList();
 		if(UserControllerProxy.getController().getSupportCreate())
@@ -437,7 +439,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 
-	private List getSystemUserDetailsButtons() throws Exception
+	private List getSystemUserDetailsButtons() throws Exception 
 	{
 		String encodedUserName  = URLEncoder.encode(URLEncoder.encode(this.userName, URIEncoding), URIEncoding);
 
@@ -462,7 +464,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getRolesButtons() throws Exception
+	private List getRolesButtons() throws SystemException 
 	{
 		List buttons = new ArrayList();
 		if(UserControllerProxy.getController().getSupportCreate())
@@ -473,7 +475,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getRoleDetailsButtons() throws Exception
+	private List getRoleDetailsButtons() throws Exception 
 	{
 		List buttons = new ArrayList();
 		
@@ -501,7 +503,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 	
-	private List getGroupsButtons() throws Exception
+	private List getGroupsButtons() throws  Exception
 	{
 		List buttons = new ArrayList();
 		if(UserControllerProxy.getController().getSupportCreate())
@@ -512,7 +514,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getGroupDetailsButtons() throws Exception
+	private List getGroupDetailsButtons() throws  Exception
 	{
 		List buttons = new ArrayList();
 		
@@ -540,7 +542,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getLanguagesButtons() throws Exception
+	private List getLanguagesButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateLanguage!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newLanguage"), "New Language"));	
@@ -548,7 +550,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getLanguageDetailsButtons() throws Exception
+	private List getLanguageDetailsButtons() throws SystemException, Exception
 	{
 		List buttons = new ArrayList();
 		this.name = LanguageController.getController().getLanguageVOWithId(this.languageId).getName();
@@ -556,7 +558,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getInterceptionPointsButtons() throws Exception
+	private List getInterceptionPointsButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateInterceptionPoint!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newInterceptionPoint"), "New InterceptionPoint"));	
@@ -564,7 +566,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getInterceptionPointButtons() throws Exception
+	private List getInterceptionPointButtons() throws SystemException, UnsupportedEncodingException
 	{
 		List buttons = new ArrayList();
 		this.name = InterceptionPointController.getController().getInterceptionPointVOWithId(this.interceptionPointId).getName();
@@ -575,7 +577,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getInterceptorsButtons() throws Exception
+	private List getInterceptorsButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateInterceptor!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newInterceptor"), "New Interceptor"));	
@@ -583,7 +585,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getInterceptorButtons() throws Exception
+	private List getInterceptorButtons() throws UnsupportedEncodingException, SystemException
 	{
 		List buttons = new ArrayList();
 		this.name = InterceptorController.getController().getInterceptorVOWithId(this.interceptorId).getName();
@@ -591,7 +593,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getServiceDefinitionsButtons() throws Exception
+	private List getServiceDefinitionsButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateServiceDefinition!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newServiceDefinition"), "New ServiceDefinition"));	
@@ -599,7 +601,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getServiceDefinitionDetailsButtons() throws Exception
+	private List getServiceDefinitionDetailsButtons() throws UnsupportedEncodingException, SystemException
 	{
 		List buttons = new ArrayList();
 		this.name = ServiceDefinitionController.getController().getServiceDefinitionVOWithId(this.serviceDefinitionId).getName();
@@ -607,7 +609,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getAvailableServiceBindingsButtons() throws Exception
+	private List getAvailableServiceBindingsButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateAvailableServiceBinding!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newAvailableServiceBinding"), "New AvailableServiceBinding"));	
@@ -615,7 +617,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getAvailableServiceBindingDetailsButtons() throws Exception
+	private List getAvailableServiceBindingDetailsButtons() throws UnsupportedEncodingException, SystemException
 	{
 		List buttons = new ArrayList();
 		this.name = AvailableServiceBindingController.getController().getAvailableServiceBindingVOWithId(this.availableServiceBindingId).getName();
@@ -623,7 +625,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getSiteNodeTypeDefinitionsButtons() throws Exception
+	private List getSiteNodeTypeDefinitionsButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateSiteNodeTypeDefinition!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newSiteNodeTypeDefinition"), "New SiteNodeTypeDefinition"));	
@@ -631,7 +633,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getSiteNodeTypeDefinitionDetailsButtons() throws Exception
+	private List getSiteNodeTypeDefinitionDetailsButtons() throws SystemException, UnsupportedEncodingException
 	{
 		List buttons = new ArrayList();
 		this.name = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionVOWithId(this.siteNodeTypeDefinitionId).getName();
@@ -640,7 +642,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 	}
 
 
-	private List getContentTypeDefinitionsButtons() throws Exception
+	private List getContentTypeDefinitionsButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateContentTypeDefinition!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newContentTypeDefinition"), "New ContentTypeDefinition"));	
@@ -648,7 +650,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getContentTypeDefinitionDetailsButtons() throws Exception
+	private List getContentTypeDefinitionDetailsButtons() throws UnsupportedEncodingException, SystemException
 	{
 		List buttons = new ArrayList();
 		this.name = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(this.contentTypeDefinitionId).getName();
@@ -664,7 +666,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getCategoryButtons() throws Exception
+	private List getCategoryButtons() throws UnsupportedEncodingException
 	{
 	    String url = "CategoryManagement!new.action";
 		if(getCategoryId() != null)
@@ -687,12 +689,12 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private ImageButton getAccessRightsButton(String interceptionPointCategory, String extraParameter, String returnAddress) throws Exception
+	private ImageButton getAccessRightsButton(String interceptionPointCategory, String extraParameter, String returnAddress)
 	{
 		return new ImageButton("ViewAccessRights.action?interceptionPointCategory=" + interceptionPointCategory + "&extraParameters=" + extraParameter +"&colorScheme=ManagementTool&returnAddress=" + returnAddress, getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.accessRights"), "tool.managementtool.accessRights.header");
 	}
 
-	private List getRedirectsButtons() throws Exception
+	private List getRedirectsButtons()
 	{
 		
 		List buttons = new ArrayList();
@@ -701,7 +703,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getRedirectDetailsButtons() throws Exception
+	private List getRedirectDetailsButtons() throws UnsupportedEncodingException, SystemException
 	{
 		List buttons = new ArrayList();
 		this.name = RedirectController.getController().getRedirectVOWithId(this.redirectId).getUrl();
@@ -709,7 +711,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getPortletsButtons() throws Exception
+	private List getPortletsButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("UploadPortlet.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newPortlet"), "New Portlet"));	
@@ -718,7 +720,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 	}
 
 	
-	private List getWorkflowDefinitionsButtons() throws Exception
+	private List getWorkflowDefinitionsButtons()
 	{
 		
 		List buttons = new ArrayList();
@@ -727,7 +729,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getWorkflowDefinitionDetailsButtons() throws Exception
+	private List getWorkflowDefinitionDetailsButtons() throws SystemException, UnsupportedEncodingException
 	{
 		List buttons = new ArrayList();
 		this.name = WorkflowDefinitionController.getController().getWorkflowDefinitionVOWithId(this.workflowDefinitionId).getName();
@@ -742,7 +744,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getServerNodesButtons() throws Exception
+	private List getServerNodesButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateServerNode!input.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newServerNode"), "tool.managementtool.createServerNode.header"));	
@@ -752,7 +754,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;
 	}
 	
-	private List getServerNodeDetailsButtons() throws Exception
+	private List getServerNodeDetailsButtons() throws UnsupportedEncodingException
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("Confirm.action?header=tool.managementtool.deleteServerNode.header&yesDestination=" + URLEncoder.encode("DeleteServerNode.action?serverNodeId=" + this.serverNodeId, "UTF-8") + "&noDestination=" + URLEncoder.encode("ViewListServerNode.action?title=ServerNodes", "UTF-8") + "&message=tool.managementtool.deleteServerNode.text&extraParameters=" + this.name, getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.deleteServerNode"), "tool.managementtool.deleteServerNode.header"));
@@ -761,7 +763,7 @@ public class ViewManagementToolToolBarAction extends InfoGlueAbstractAction
 		return buttons;				
 	}
 
-	private List getMessageCenterButtons() throws Exception
+	private List getMessageCenterButtons()
 	{
 		List buttons = new ArrayList();
 		buttons.add(new ImageButton("CreateEmail!inputChooseRecipients.action", getLocalizedString(getSession().getLocale(), "images.managementtool.buttons.newEmail"), "tool.managementtool.createEmail.header"));

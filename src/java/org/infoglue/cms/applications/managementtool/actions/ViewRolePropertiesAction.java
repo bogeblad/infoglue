@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 
@@ -242,12 +243,12 @@ public class ViewRolePropertiesAction extends ViewEntityPropertiesAction
         this.roleName = ownerEntityId;
     }
      
-    public String getReturnAddress() throws Exception
+    public String getReturnAddress() throws UnsupportedEncodingException
     {
         return this.getCurrentAction() + "?roleName=" + formatter.encodeBase64(this.roleName) + "&languageId=" + this.getLanguageId();
     }
 
-    public String getCancelAddress() throws Exception
+    public String getCancelAddress() throws UnsupportedEncodingException
     {
         return this.getCancelAction() + "?roleName=" + formatter.encodeBase64(this.roleName);
     }

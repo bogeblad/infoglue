@@ -56,23 +56,14 @@ public class StringManagerFactory
 
   // --- [Public] --------------------------------------------------------------
 
-  /**
-   *
-   */
   public static synchronized StringManager getSystemStringManager(String packageName) {
     return getStringManager(packageName, SYSTEM, Locale.ENGLISH);
   }
 
-  /**
-   *
-   */
   public static synchronized StringManager getPresentationStringManager(String packageName, Locale locale) {
     return getStringManager(packageName, PRESENTATION, locale);
   }
 
-  /**
-   *
-   */
   public static synchronized StringManager getPresentationStringManager(String packageNames[], Locale locale) 
   {
     logger.info("Getting stringManager");  
@@ -90,9 +81,6 @@ public class StringManagerFactory
   // --- [Package protected] ---------------------------------------------------
   // --- [Private] -------------------------------------------------------------
 
-  /**
-   *
-   */
   private static StringManager getStringManager(String packageName, String suffix, Locale locale) {
     logger.info("packageName:" + packageName);
     final String name       = getName(packageName, suffix, locale);
@@ -106,18 +94,12 @@ public class StringManagerFactory
     return manager;
   }
 
-  /**
-   *
-   */
   
   private final static String getName(String packageName, String suffix, Locale locale) 
   {
     return packageName + suffix + "_" + locale.toString() + ".properties";
   }
 
-  /**
-   *
-   */
   private final static String getBundleName(String packageName, String suffix) {
     return packageName + suffix;
   }

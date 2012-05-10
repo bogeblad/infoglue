@@ -41,7 +41,6 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ServerNode;
 import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.cms.entities.management.impl.simple.ServerNodeImpl;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
@@ -81,7 +80,7 @@ public class ServerNodeController extends BaseController
 	 * @throws ConstraintException
 	 * @throws SystemException
 	 */
-    public ServerNodeVO create(ServerNodeVO vo) throws ConstraintException, SystemException
+    public ServerNodeVO create(ServerNodeVO vo) throws SystemException
     {
         ServerNode ent = new ServerNodeImpl();
         ent.setValueObject(vo);
@@ -89,18 +88,18 @@ public class ServerNodeController extends BaseController
         return ent.getValueObject();
     }     
     
-    public ServerNodeVO update(ServerNodeVO vo) throws ConstraintException, SystemException
+    public ServerNodeVO update(ServerNodeVO vo) throws SystemException
     {
-    	return (ServerNodeVO) updateEntity(ServerNodeImpl.class, (BaseEntityVO) vo);
+    	return (ServerNodeVO) updateEntity(ServerNodeImpl.class, vo);
     }        
         
 	// Singe object
-    public ServerNode getServerNodeWithId(Integer id, Database db) throws SystemException, Bug
+    public ServerNode getServerNodeWithId(Integer id, Database db) throws SystemException
     {
 		return (ServerNode) getObjectWithId(ServerNodeImpl.class, id, db);
     }
 
-    public ServerNodeVO getServerNodeVOWithId(Integer serverNodeId) throws ConstraintException, SystemException, Bug
+    public ServerNodeVO getServerNodeVOWithId(Integer serverNodeId) throws SystemException
     {
 		return  (ServerNodeVO) getVOWithId(ServerNodeImpl.class, serverNodeId);        
     }
@@ -112,10 +111,9 @@ public class ServerNodeController extends BaseController
 	 * @param name
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 	
-	public ServerNodeVO getServerNodeVOWithName(String name) throws SystemException, Bug
+	public ServerNodeVO getServerNodeVOWithName(String name) throws SystemException
 	{
 		ServerNodeVO serverNodeVO = null;
 		
@@ -148,10 +146,9 @@ public class ServerNodeController extends BaseController
 	 * @param db
 	 * @return
 	 * @throws SystemException
-	 * @throws Bug
 	 */
 
-	public ServerNode getServerNodeWithName(String name, Database db) throws SystemException, Bug
+	public ServerNode getServerNodeWithName(String name, Database db) throws SystemException
 	{
 		ServerNode serverNode = null;
 		
@@ -161,7 +158,7 @@ public class ServerNodeController extends BaseController
 			oql.bind(name);
 			
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode" + name);
+			logger.info("Fetching entity in read/write mode" + name);
 
 			if (results.hasMore()) 
 			{
@@ -184,7 +181,7 @@ public class ServerNodeController extends BaseController
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
     
-    public List getServerNodeVOList() throws SystemException, Bug
+    public List getServerNodeVOList() throws SystemException
     {   
 		/*
         String key = "serverNodeVOList";
@@ -205,7 +202,7 @@ public class ServerNodeController extends BaseController
     }
 	
 
-    public void delete(ServerNodeVO serverNodeVO, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
+    public void delete(ServerNodeVO serverNodeVO, InfoGluePrincipal infoGluePrincipal) throws SystemException
     {
     	Integer serverNodeId = serverNodeVO.getId();
     	
@@ -248,8 +245,7 @@ public class ServerNodeController extends BaseController
 	    String allowedAdminIP = ps.getString("allowedAdminIP");
 	    if(allowedAdminIP != null)
 	        return Arrays.asList(allowedAdminIP.split(","));
-	    else
-	        return new ArrayList();
+        return new ArrayList();
 	}
 	
 	public boolean getIsIPAllowed(HttpServletRequest request, String ip)

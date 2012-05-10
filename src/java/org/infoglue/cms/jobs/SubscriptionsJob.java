@@ -42,7 +42,6 @@ import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.interceptors.SubscriptionsInterceptor;
@@ -128,7 +127,7 @@ public class SubscriptionsJob implements Job
 	}
 
 
-	private void handleExpirationEvents(PropertySet ps, int numberOfDays) throws Exception, ConstraintException, SystemException, Bug
+	private void handleExpirationEvents(PropertySet ps, int numberOfDays) throws Exception, ConstraintException, SystemException
 	{
 		List<SiteNodeVO> upcomingSiteNodes = SiteNodeController.getController().getUpcomingExpiringSiteNodes(numberOfDays);
 		Iterator<SiteNodeVO> upcomingSiteNodesIterator = upcomingSiteNodes.iterator();
@@ -193,7 +192,7 @@ public class SubscriptionsJob implements Job
 	}
     
     
-    protected void intercept(Map hashMap, String InterceptionPointName) throws ConstraintException, SystemException, Bug, Exception
+    protected void intercept(Map hashMap, String InterceptionPointName) throws ConstraintException, SystemException, Exception
 	{
     	InfoGluePrincipal principal = UserControllerProxy.getController().getUser(CmsPropertyHandler.getAdministratorUserName());
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);

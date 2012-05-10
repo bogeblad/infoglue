@@ -84,7 +84,7 @@ public class UserPropertiesAttributeParameterTag extends AbstractTag
 		{
 			throw new JspTagException("UserPropertiesAttributeParameterTag must have a RemoteUserPropertiesServiceTag ancestor.");
 		}
-		((RemoteUserPropertiesServiceTag) parent).addUserPropertiesAttribute(name, value);
+		parent.addUserPropertiesAttribute(name, value);
 	}
 	
 	/**

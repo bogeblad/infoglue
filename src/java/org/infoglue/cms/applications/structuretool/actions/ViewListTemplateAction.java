@@ -33,6 +33,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingCo
 import org.infoglue.cms.controllers.kernel.impl.simple.ServiceDefinitionController;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
+import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.services.BaseService;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
@@ -186,9 +188,11 @@ public class ViewListTemplateAction extends InfoGlueAbstractAction
      
     /**
      * This method creates the new serviceBinding.
+     * @throws SystemException 
+     * @throws ConstraintException 
      */
      
-    public String doExecute() throws Exception
+    public String doExecute() throws ConstraintException, SystemException
     {
     	List serviceDefinitions = AvailableServiceBindingController.getController().getServiceDefinitionVOList(this.availableServiceBindingId);
     	if(serviceDefinitions == null || serviceDefinitions.size() == 0)

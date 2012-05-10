@@ -10,13 +10,7 @@ import java.util.List;
  */
 public interface DynamicWebserviceElement 
 {
-	/**
-	 * 
-	 */
 	public List serialize();
 
-	/**
-	 * 
-	 */
 	public void deserialize(List list);
 }

@@ -36,12 +36,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -67,7 +67,7 @@ public class ThemeController extends BaseController
    	 * This method deletes a digital asset in the database.
    	 */
 
-   	public static void delete(Integer digitalAssetId) throws ConstraintException, SystemException
+   	public static void delete(Integer digitalAssetId) throws SystemException
    	{
 		deleteEntity(DigitalAssetImpl.class, digitalAssetId);
    	}
@@ -149,7 +149,7 @@ public class ThemeController extends BaseController
         return contents;
     }
 
-    public static List getDigitalAssetByName(String name, Database db) throws SystemException, Exception
+    public static List getDigitalAssetByName(String name, Database db) throws PersistenceException 
     {
         List contents = new ArrayList();
 
@@ -221,10 +221,7 @@ public class ThemeController extends BaseController
 	        }
 			return theme;
 		}
-		else
-		{
-			return "embla";
-		}
+		return "embla";
 	}
 
 	private static int copyStream(InputStream is, OutputStream os) throws IOException 

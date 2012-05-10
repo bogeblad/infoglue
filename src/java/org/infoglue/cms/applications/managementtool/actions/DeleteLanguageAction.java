@@ -49,7 +49,7 @@ public class DeleteLanguageAction extends InfoGlueAbstractAction
 		this.languageVO = languageVO;
 	}
 	
-	protected String doExecute() throws Exception 
+	protected String doExecute() throws SystemException 
 	{
 		this.languageVO.setLanguageId(this.getLanguageId());
 		LanguageController.getController().delete(languageVO);
@@ -57,7 +57,7 @@ public class DeleteLanguageAction extends InfoGlueAbstractAction
 		return "success";
 	}
 	
-	public void setLanguageId(Integer languageId) throws SystemException
+	public void setLanguageId(Integer languageId)
 	{
 		this.languageVO.setLanguageId(languageId);	
 	}

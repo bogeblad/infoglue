@@ -929,12 +929,18 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 				Node previousNode = null;
 				List<Node> siblings = new ArrayList<Node>();
 				NodeList nl = parentNode.getChildNodes();
+				Element childElement = null;
 				for(int i=0; i<nl.getLength(); i++)
 				{
-					Element childElement = (Element)nl.item(i);
-					logger.info("Child:" + childElement.getAttribute("id") + ":" + childElement.getAttribute("name"));
-					if(childElement.getAttribute("name").equalsIgnoreCase(name) && childElement != component)
-						siblings.add(childElement);
+					if (nl.item(i).getNodeType() == Node.ELEMENT_NODE)
+					{
+						childElement = (Element)nl.item(i);
+						logger.info("Child:" + childElement.getAttribute("id") + ":" + childElement.getAttribute("name"));
+						if(childElement.getAttribute("name").equalsIgnoreCase(name) && childElement != component)
+						{
+							siblings.add(childElement);
+						}
+					}
 				}
 				
 				logger.info("this.newPosition:" + this.newPosition);

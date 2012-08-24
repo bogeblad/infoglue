@@ -294,7 +294,7 @@
 </head>
 <body class="generaltooledit" onload="parent.notifyIsLoaded();parent.notifyExp('${exp}');loaded();" style="margin:0px">
 	
-	<div id="treeDiv" style="float: left; min-width: 200px;">
+	<div id="treeDiv">
 	
 	<!-- NEW DYNAMIC VERSION -->
 	<script type="text/javascript">

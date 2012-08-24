@@ -1110,3 +1110,19 @@ tr.darkblue {
 	color: #FF891E;
 	border-bottom: 2px solid #FF891E;
 }
+
+#itreeFrame 
+{
+	width: 100%;
+}
+
+#treeDiv
+{
+	margin: 5px;
+	overflow: hidden;
+}
+
+.generaltooledit td.menu
+{
+	min-width: 250px;
+}

@@ -274,7 +274,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		{
 			if(logger.isDebugEnabled())
 				logger.debug("Yes - we decided to protect:" + actionName);
-			validateSecurityCode();
+			//validateSecurityCode();
 		}
 	}
 	

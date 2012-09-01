@@ -51,33 +51,14 @@
     <field name="email" type="java.lang.String">
       <sql name="email" type="varchar" dirty="check" />
     </field>
-    <field name="roles" type="org.infoglue.cms.entities.management.impl.simple.RoleImpl" lazy="true" collection="collection">
-      <sql many-key="userName" many-table="cmSystemUserRole"/>
+    <field name="source" type="java.lang.String">
+      <sql name="source" type="varchar" dirty="check" />
     </field>
-    <field name="groups" type="org.infoglue.cms.entities.management.impl.simple.GroupImpl" lazy="true" collection="collection">
-      <sql many-key="userName" many-table="cmSystemUserGroup"/>
+    <field name="isActive" type="java.lang.Boolean">
+      <sql name="isActive" type="integer" dirty="check" />
     </field>
-  </class>
-
-<!--  Mapping for SmallSystemUser  -->
-  <class name="org.infoglue.cms.entities.management.impl.simple.SmallSystemUserImpl" identity="userName">
-    <description>SystemUser</description>
-    <cache-type type="unlimited"/>
-    <map-to table="cmSystemUser"/>
-    <field name="userName" type="java.lang.String">
-      <sql name="userName" type="varchar" dirty="check" />
-    </field>
-    <field name="password" type="java.lang.String">
-      <sql name="password" type="varchar" dirty="check" />
-    </field>
-    <field name="firstName" type="java.lang.String">
-      <sql name="firstName" type="varchar" dirty="check" />
-    </field>
-    <field name="lastName" type="java.lang.String">
-      <sql name="lastName" type="varchar" dirty="check" />
-    </field>
-    <field name="email" type="java.lang.String">
-      <sql name="email" type="varchar" dirty="check" />
+    <field name="modifiedDateTime" type="java.util.Date">
+      <sql name="modifiedDateTime" type="timestamp" dirty="check" />
     </field>
   </class>
 
@@ -134,8 +115,14 @@
     <field name="description" type="java.lang.String">
       <sql name="description" type="varchar" dirty="check" />
     </field>
-    <field name="systemUsers" type="org.infoglue.cms.entities.management.impl.simple.SystemUserImpl" lazy="true" collection="collection">
-      <sql many-key="roleName" many-table="cmSystemUserRole"/>
+    <field name="source" type="java.lang.String">
+      <sql name="source" type="varchar" dirty="check" />
+    </field>
+    <field name="isActive" type="java.lang.Boolean">
+      <sql name="isActive" type="integer" dirty="check" />
+    </field>
+    <field name="modifiedDateTime" type="java.util.Date">
+      <sql name="modifiedDateTime" type="timestamp" dirty="check" />
     </field>
   </class>
   
@@ -150,37 +137,46 @@
     <field name="description" type="java.lang.String">
       <sql name="description" type="varchar" dirty="check" />
     </field>
-    <field name="systemUsers" type="org.infoglue.cms.entities.management.impl.simple.SystemUserImpl" lazy="true" collection="collection">
-      <sql many-key="groupName" many-table="cmSystemUserGroup"/>
+    <field name="source" type="java.lang.String">
+      <sql name="source" type="varchar" dirty="check" />
+    </field>
+    <field name="groupType" type="java.lang.String">
+      <sql name="groupType" type="varchar" dirty="check" />
+    </field>
+    <field name="isActive" type="java.lang.Boolean">
+      <sql name="isActive" type="integer" dirty="check" />
+    </field>
+    <field name="modifiedDateTime" type="java.util.Date">
+      <sql name="modifiedDateTime" type="timestamp" dirty="check" />
     </field>
   </class>
 
-  <!--  Mapping for SmallRole  -->
-  <class name="org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl" identity="roleName">
-    <description>SmallRole</description>
-    <cache-type type="unlimited"/>
-    <map-to table="cmRole"/>
+  <!--  Mapping for SystemUserRole  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl" identity="userName roleName">
+    <description>SystemUserRole</description>
+    <cache-type type="none"/>
+    <map-to table="cmSystemUserRole"/>
+    <field name="userName" type="java.lang.String">
+      <sql name="userName" type="varchar"/>
+    </field>
     <field name="roleName" type="java.lang.String">
-      <sql name="roleName" type="varchar" dirty="check" />
-    </field>
-    <field name="description" type="java.lang.String">
-      <sql name="description" type="varchar" dirty="check" />
+      <sql name="roleName" type="varchar"/>
     </field>
   </class>
 
-  <!--  Mapping for SmallGroup  -->
-  <class name="org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl" identity="groupName">
-    <description>SmallGroup</description>
-    <cache-type type="unlimited"/>
-    <map-to table="cmGroup"/>
+  <!--  Mapping for SystemUserGroup  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl" identity="userName groupName">
+    <description>SystemUserGroup</description>
+    <cache-type type="none"/>
+    <map-to table="cmSystemUserGroup"/>
+    <field name="userName" type="java.lang.String">
+      <sql name="userName" type="varchar"/>
+    </field>
     <field name="groupName" type="java.lang.String">
-      <sql name="groupName" type="varchar" dirty="check" />
-    </field>
-    <field name="description" type="java.lang.String">
-      <sql name="description" type="varchar" dirty="check" />
+      <sql name="groupName" type="varchar"/>
     </field>
   </class>
-
+      
   <!--  Mapping for RoleProperties  -->
   <class name="org.infoglue.cms.entities.management.impl.simple.RolePropertiesImpl" identity="rolePropertiesId" key-generator="IDENTITY">
     <description>RoleProperties</description>
@@ -280,13 +276,13 @@
     <field name="interceptionPoint" type="org.infoglue.cms.entities.management.impl.simple.InterceptionPointImpl">
       <sql name="interceptionPointId"/>
     </field>
-    <field name="roles" type="org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl" lazy="false" collection="collection">
+    <field name="roles" type="org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl" lazy="true" collection="collection">
       <sql many-key="accessRightId"/>
     </field>
-    <field name="groups" type="org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl" lazy="false" collection="collection">
+    <field name="groups" type="org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl" lazy="true" collection="collection">
       <sql many-key="accessRightId"/>
     </field>
-    <field name="users" type="org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl" lazy="false" collection="collection">
+    <field name="users" type="org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl" lazy="true" collection="collection">
       <sql many-key="accessRightId"/>
     </field>
   </class>
@@ -459,17 +455,17 @@
     <field name="forceProtocolChange" type="java.lang.Integer">
       <sql name="forceProtocolChange" type="integer" dirty="check" />
     </field>
-    <field name="sortOrder" type="java.lang.Integer">
-      <sql name="sortOrder" type="integer" dirty="check" />
-    </field>
-    <field name="isHidden" type="java.lang.Boolean">
-      <sql name="isHidden" type="integer" dirty="check" />
-    </field>
     <field name="siteNodeId" type="java.lang.Integer">
       <sql name="siteNodeId"/>
     </field>
    	<field name="versionModifier" type="java.lang.String">
       <sql name="versionModifier" type="varchar" dirty="check" />
+    </field>
+    <field name="sortOrder" type="java.lang.Integer">
+      <sql name="sortOrder" type="integer" dirty="check" />
+    </field>
+    <field name="isHidden" type="java.lang.Boolean">
+      <sql name="isHidden" type="integer" dirty="check" />
     </field>
   </class>
 
@@ -576,25 +572,9 @@
     <field name="siteNodeTypeDefinitionId" type="java.lang.Integer">
       <sql name="siteNodeTypeDefinitionId" type="integer" dirty="check" />
     </field>
-    <!--
-    <field name="childSiteNodes" type="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl" lazy="true" collection="collection">
-      <sql many-key="parentSiteNodeId"/>
-    </field>
-	<field name="siteNodeVersions" type="org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl" lazy="true" collection="collection">
-      <sql many-key="siteNodeId"/>
-    </field>
-    -->
     <field name="creator" type="java.lang.String">
       <sql name="creator" type="varchar" dirty="check" />
     </field>
-    <!--
-    <field name="repository" type="org.infoglue.cms.entities.management.impl.simple.RepositoryImpl" lazy="false">
-      <sql name="repositoryId"/>
-    </field>
-    <field name="siteNodeTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl" lazy="false">
-      <sql name="siteNodeTypeDefinitionId"/>
-    </field>
-	-->
   </class>
 
 <!--  Mapping for SmallestSiteNode  -->
@@ -620,9 +600,18 @@
     <field name="isDeleted" type="java.lang.Boolean">
       <sql name="isDeleted" type="integer" dirty="check" />
     </field>
+    <field name="parentSiteNodeId" type="java.lang.Integer">
+      <sql name="parentSiteNodeId" type="integer" dirty="check" />
+    </field>
     <field name="metaInfoContentId" type="java.lang.Integer">
       <sql name="metaInfoContentId" type="integer" dirty="check" />
     </field>
+    <field name="repositoryId" type="java.lang.Integer">
+      <sql name="repositoryId" type="integer" dirty="check" />
+    </field>
+    <field name="siteNodeTypeDefinitionId" type="java.lang.Integer">
+      <sql name="siteNodeTypeDefinitionId" type="integer" dirty="check" />
+	</field>
     <field name="creator" type="java.lang.String">
       <sql name="creator" type="varchar" dirty="check" />
     </field>
@@ -636,7 +625,6 @@
       <sql name="isHidden" type="integer" dirty="check" />
     </field>
   </class>
-
 
 <!--  Mapping for ServiceBinding  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl" identity="serviceBindingId" key-generator="IDENTITY">
@@ -1005,11 +993,6 @@
     <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
       <sql name="contentTypeDefinitionId"/>
     </field>
-    <!--
-    <field name="repository" type="org.infoglue.cms.entities.management.impl.simple.RepositoryImpl">
-      <sql name="repositoryId"/>
-    </field>
-    -->
   </class>
 
 <!--  Mapping for SmallishContent  -->
@@ -1056,11 +1039,6 @@
     <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
       <sql name="contentTypeDefinitionId"/>
     </field>
-    <!--
-    <field name="repository" type="org.infoglue.cms.entities.management.impl.simple.RepositoryImpl">
-      <sql name="repositoryId"/>
-    </field>
-    -->
   </class>
 
   <!--  Mapping for MediumContent  -->
@@ -1189,7 +1167,58 @@
     <field name="versionValue" type="java.lang.String">
       <sql name="versionValue" type="varchar" dirty="ignore" />
     </field>
+    <!--  
+    <field name="assetCount" type="java.lang.Integer">
+      <sql name="assetCount" type="integer" dirty="ignore"/>
+    </field>
+    -->
   </class>
+  
+  <class name="org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl" identity="contentVersionId" key-generator="IDENTITY">
+    <description>SmallContentVersion</description>
+    <cache-type type="none"/>
+    <map-to table="cmContentVersion"/>
+    <field name="contentVersionId" type="java.lang.Integer">
+      <sql name="contentVersionId" type="integer" dirty="check" />
+    </field>
+    <field name="stateId" type="java.lang.Integer">
+      <sql name="stateId" type="integer" dirty="check" />
+    </field>
+    <field name="modifiedDateTime" type="java.util.Date">
+      <sql name="modifiedDateTime" type="timestamp" dirty="check" />
+    </field>
+    <field name="versionComment" type="java.lang.String">
+      <sql name="versionComment" type="varchar" dirty="check" />
+    </field>
+    <field name="isCheckedOut" type="java.lang.Boolean">
+      <sql name="isCheckedOut" type="integer" dirty="check" />
+    </field>
+    <field name="isActive" type="java.lang.Boolean">
+      <sql name="isActive" type="integer" dirty="check" />
+    </field>
+	<field name="contentId" type="java.lang.Integer">
+      <sql name="contentId" type="integer" dirty="ignore"/>
+    </field>
+    <field name="languageId" type="java.lang.Integer">
+      <sql name="languageId"/>
+    </field>
+    <field name="versionModifier" type="java.lang.String">
+      <sql name="versionModifier" type="varchar" dirty="check" />
+    </field>
+    <field name="versionValue" type="java.lang.String">
+      <sql name="versionValue" type="varchar" dirty="check" />
+    </field>
+    <field name="assetCount" type="java.lang.Integer">
+      <sql name="assetCount" type="integer" dirty="ignore"/>
+    </field>
+    <field name="siteNodeId" type="java.lang.Integer">
+      <sql name="siteNodeId" type="integer" dirty="ignore"/>
+    </field>
+    <field name="siteNodeName" type="java.lang.String">
+      <sql name="siteNodeName" type="varchar" dirty="ignore" />
+    </field>
+  </class>
+  
 
   <class name="org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl" identity="contentVersionId" key-generator="IDENTITY">
     <description>SmallestContentVersion</description>

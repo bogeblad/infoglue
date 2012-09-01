@@ -110,10 +110,14 @@
 	<action name="org.infoglue.deliver.applications.actions.ViewApplicationStateAction" alias="ViewApplicationState">
 		<view name="cleared">ExtendedRedirect.action?url=ViewApplicationState.action</view>
 		<view name="success">/deliver/viewApplicationState.vm</view>
+		<view name="successOngoingPublications">/deliver/viewOngoingPublications.vm</view>
 		<view name="successCacheStatistics">/deliver/viewCacheStatistics.vm</view>
 		<view name="successCacheDetailsStatistics">/deliver/viewCacheDetailsStatistics.vm</view>
 		<view name="successComponentStatistics">/deliver/viewComponentStatistics.vm</view>
+		<view name="clearedComponentStatistics">ExtendedRedirect.action?url=ViewApplicationState!componentStatistics.action</view>
 		<view name="successPageStatistics">/deliver/viewPageStatistics.vm</view>
+		<view name="successLuceneStatistics">/deliver/viewLuceneStatistics.vm</view>
+		<view name="clearedLuceneStatistics">ExtendedRedirect.action?url=ViewApplicationState!luceneStatistics.action</view>
 		<view name="successAsXML">/deliver/viewApplicationStateAsXML.vm</view>
 		<view name="error">/deliver/error.vm</view>
 	</action>

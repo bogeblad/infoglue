@@ -1,10 +1,23 @@
+#if($format != "compact")
 {
 	"sEcho": $sEcho, 
 	"iTotalRecords": $totalRecords, 
 	"iTotalDisplayRecords": $totalDisplayRecords, 
 	"aaData": [ 
 		#foreach($principal in $infogluePrincipals)
-		#if($velocityCount > 1),#end["<a class='deleteCross' title='$ui.getString("tool.common.delete.label") $principal.name' href='DeleteSystemUser.action?userName=$formatter.encodeBase64($principal.name)&igSecurityCode=$securityCode'>&nbsp;</a>","<a class='user' href='ViewSystemUser.action?userName=$formatter.encodeBase64($principal.name)'>$principal.name</a>","$principal.firstName","$principal.lastName"]
+		#if($velocityCount > 1),#end["<a class='deleteCross' title='$ui.getString("tool.common.delete.label") $principal.name' href='DeleteSystemUser.action?userName=$formatter.encodeBase64($principal.name)'>&nbsp;</a>","<a class='user' href='ViewSystemUser.action?userName=$formatter.encodeBase64($principal.name)'>$principal.name</a>","$principal.firstName","$principal.lastName","$principal.source","$ui.getString("entity.Group.isActive.${principal.isActive}.label")","$this.getRolesAndGroups($principal)"]
 		#end
 	] 
 }
+#else
+{
+	"sEcho": $sEcho, 
+	"iTotalRecords": $totalRecords, 
+	"iTotalDisplayRecords": $totalDisplayRecords, 
+	"users": [ 
+		#foreach($principal in $infogluePrincipals)
+		#if($velocityCount > 1),#end["<a class='deleteCross' title='$ui.getString("tool.common.delete.label") $principal.name' href='DeleteSystemUser.action?userName=$formatter.encodeBase64($principal.name)&igSecurityCode=$securityCode'>&nbsp;</a>","<a class='user' href='ViewSystemUser.action?userName=$formatter.encodeBase64($principal.name)'>$principal.name</a>","$principal.firstName","$principal.lastName","$principal.source","$ui.getString("entity.Group.isActive.${principal.isActive}.label")","$this.getRolesAndGroups($principal)"]
+		#end
+	] 
+}
+#end

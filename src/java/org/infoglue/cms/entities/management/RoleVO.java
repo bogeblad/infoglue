@@ -23,16 +23,24 @@
 
 package org.infoglue.cms.entities.management;
 
+import java.util.Date;
+
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.validators.ValidatorFactory;
 
-public class RoleVO  implements BaseEntityVO
+public class RoleVO implements BaseEntityVO
 {
+	public static final String INFOGLUE = "Infoglue";
+
 	private java.lang.String roleName;
 	private java.lang.String description;
-  
+	private String source = INFOGLUE;
+	private Boolean isActive = true;
+    private Date modifiedDateTime = DateHelper.getSecondPreciseDate();
+
 	public String toString()
 	{  
 		return getRoleName();
@@ -66,7 +74,37 @@ public class RoleVO  implements BaseEntityVO
     {
         this.description = description;
     }
+
+    public String getSource()
+    {
+    	return this.source;
+    }
     
+    public void setSource(String source)
+    {
+    	this.source = source;
+    }
+
+    public Boolean getIsActive()
+    {
+    	return this.isActive;
+    }
+    
+    public void setIsActive(Boolean isActive)
+    {
+    	this.isActive = isActive;
+    }
+
+    public java.util.Date getModifiedDateTime()
+    {
+    	return this.modifiedDateTime;
+    }
+    
+    public void setModifiedDateTime(java.util.Date modifiedDateTime)
+    {
+    	this.modifiedDateTime = modifiedDateTime;
+    }
+
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntityVO#validate()
 	 */

@@ -46,6 +46,19 @@ ALTER TABLE cmRedirect ADD expireDateTime datetime NOT NULL default '2050-01-01 
 ALTER TABLE cmRedirect ADD modifier VARCHAR(1024) NOT NULL default 'system';
 ALTER TABLE cmRedirect ADD isUserManaged INTEGER NOT NULL DEFAULT '1';
 
+ALTER TABLE cmSystemUser ADD source VARCHAR(255) NOT NULL default 'infoglue';
+ALTER TABLE cmSystemUser ADD modifiedDateTime datetime NOT NULL default '2010-01-01 01:01:01';
+ALTER TABLE cmSystemUser ADD isActive INTEGER NOT NULL DEFAULT '1';
+
+ALTER TABLE cmRole ADD source VARCHAR(255) NOT NULL default 'infoglue';
+ALTER TABLE cmRole ADD modifiedDateTime datetime NOT NULL default '2010-01-01 01:01:01';
+ALTER TABLE cmRole ADD isActive INTEGER NOT NULL DEFAULT '1';
+
+ALTER TABLE cmGroup ADD groupType VARCHAR(255) NOT NULL default '';
+ALTER TABLE cmGroup ADD source VARCHAR(255) NOT NULL default 'infoglue';
+ALTER TABLE cmGroup ADD modifiedDateTime datetime NOT NULL default '2010-01-01 01:01:01';
+ALTER TABLE cmGroup ADD isActive INTEGER NOT NULL DEFAULT '1';
+
 DROP INDEX cmPropertiesCategory.propCategoryAttrNameIndex;
 DROP INDEX cmPropertiesCategory.propCategoryEntityNameIndex;
 DROP INDEX cmPropertiesCategory.propCategoryEntityIdIndex;

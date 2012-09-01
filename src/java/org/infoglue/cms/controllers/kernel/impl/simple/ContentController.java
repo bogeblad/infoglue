@@ -268,7 +268,8 @@ public class ContentController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
@@ -305,7 +306,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -464,7 +466,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -802,7 +805,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -895,7 +899,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -946,7 +951,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -979,7 +985,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1009,12 +1016,14 @@ public class ContentController extends BaseController
         catch(ConstraintException ce)
         {
             logger.error("An error occurred so we should not complete the transaction:" + ce.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + ce.getMessage(), ce);
             rollbackTransaction(db);
             throw new SystemException(ce.getMessage());
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1083,6 +1092,16 @@ public class ContentController extends BaseController
     }   
 
 	/**
+	 * This method copies the content and possibly subcontents/folders into a target folder
+	 * @param contentId
+	 * @param newParentContentId
+	 */
+	public void copyContent(Integer contentId, Integer newParentContentId, Integer assetMaxSize, String onlyLatestVersions) throws Exception
+	{
+		ExportImportController.getController().exportContents(contentId, newParentContentId, assetMaxSize, onlyLatestVersions);
+	}
+	
+	/**
 	 * Recursively sets the contents repositoryId.
 	 * @param content
 	 * @param newRepository
@@ -1118,7 +1137,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1190,6 +1210,63 @@ public class ContentController extends BaseController
     	}
         return contents;
     }
+	
+    
+	/**
+	 * This method returns a list of the children a siteNode has.
+	 */
+   	
+	public List<ContentVO> getContentVOList(boolean showDeletedItems, Integer limit) throws Exception
+	{
+		List<ContentVO> childrenVOList = new ArrayList<ContentVO>();
+        
+        Database db = CastorDatabaseService.getDatabase();
+
+	    beginTransaction(db);
+
+        try
+        {
+        	childrenVOList = getContentVOList(showDeletedItems, limit, db);            
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+        
+        return childrenVOList;
+	}
+	
+	/**
+	 * This method returns a list of the children a siteNode has.
+	 */
+   	
+	public List<ContentVO> getContentVOList(boolean showDeletedItems, Integer limit, Database db) throws Exception
+	{
+		List<ContentVO> childrenVOList = new ArrayList<ContentVO>();
+		
+		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 ORDER BY c.contentId DESC LIMIT $2");
+		oql.bind(showDeletedItems);
+		oql.bind(limit);
+
+		QueryResults results = oql.execute(Database.ReadOnly);
+		while (results.hasMore()) 
+		{
+			Content content = (Content)results.next();
+			childrenVOList.add(content.getValueObject());
+			
+			String key = "" + content.getValueObject().getId();
+			CacheController.cacheObjectInAdvancedCache("contentCache", key, content.getValueObject());
+		}
+		
+		results.close();
+		oql.close();
+   		
+		return childrenVOList;
+	}
 	
 	/**
 	 * This method is sort of a sql-query-like method where you can send in arguments in form of a list
@@ -1269,7 +1346,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1370,7 +1448,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1411,7 +1490,8 @@ public class ContentController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
@@ -1503,35 +1583,25 @@ public class ContentController extends BaseController
 		return content;
 	}
 	
+
    	/**
    	 * This method returns a list of the children a content has.
    	 */
-/*   	
-   	public List getContentChildrenVOList(Integer parentContentId) throws ConstraintException, SystemException
+   	
+   	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems) throws ConstraintException, SystemException
     {
-   		String key = "" + parentContentId;
-		logger.info("key:" + key);
-		List cachedChildContentVOList = (List)CacheController.getCachedObject("childContentCache", key);
-		if(cachedChildContentVOList != null)
-		{
-			logger.info("There was an cached childContentVOList:" + cachedChildContentVOList.size());
-			return cachedChildContentVOList;
-		}
-		
 		Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
-        List childrenVOList = null;
+        List childrenVOList = new ArrayList();
 
         beginTransaction(db);
-
         try
         {
-            Content content = getReadOnlyContentWithId(parentContentId, db);
-            Collection children = content.getChildren();
-        	childrenVOList = ContentController.toVOList(children);
         	
-            //If any of the validations or setMethods reported an error, we throw them up now before create.
+        	childrenVOList = getContentChildrenVOList(parentContentId, allowedContentTypeIds, showDeletedItems, db);	
+
+        	//If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
             
             commitTransaction(db);
@@ -1544,22 +1614,21 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
-        
-		CacheController.cacheObject("childContentCache", key, childrenVOList);
-        
+   		        
         return childrenVOList;
     } 
-*/
-	
+
+   	
    	/**
    	 * This method returns a list of the children a content has.
    	 */
    	
-   	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems) throws ConstraintException, SystemException
+   	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems, Database db) throws ConstraintException, SystemException, Exception
     {
    		String allowedContentTypeIdsString = "";
    		if(allowedContentTypeIds != null)
@@ -1572,7 +1641,7 @@ public class ContentController extends BaseController
 		if(logger.isInfoEnabled())
 			logger.info("key:" + key);
 		
-		List<ContentVO> cachedChildContentVOList = (List<ContentVO>)CacheController.getCachedObject("childContentCache", key);
+		List<ContentVO> cachedChildContentVOList = (List<ContentVO>)CacheController.getCachedObjectFromAdvancedCache("childContentCache", key);
 		if(cachedChildContentVOList != null)
 		{
 			if(logger.isInfoEnabled())
@@ -1580,98 +1649,53 @@ public class ContentController extends BaseController
 			return cachedChildContentVOList;
 		}
 		
-		Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
         List childrenVOList = new ArrayList();
 
-        beginTransaction(db);
-
-   		Timer t = new Timer();
-   		
-   		/*
-        try
-        {
-            Content content = getReadOnlyContentWithId(parentContentId, db);
-            Collection children = content.getChildren();
-        	childrenVOList = ContentController.toVOList(children);
-        	logger.info("childrenVOList under:" + content.getName() + ":" + childrenVOList.size());
-        	
-            //If any of the validations or setMethods reported an error, we throw them up now before create.
-            ceb.throwIfNotEmpty();
-            
-            commitTransaction(db);
-        }
-        catch(Exception e)
-        {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
-		*/
-   		
-        try
-        {
-        	String contentTypeINClause = "";
-        	if(allowedContentTypeIds != null && allowedContentTypeIds.length > 0)
+    	String contentTypeINClause = "";
+    	if(allowedContentTypeIds != null && allowedContentTypeIds.length > 0)
+    	{
+        	contentTypeINClause = " AND (content.isBranch = true OR content.contentTypeDefinitionId IN LIST (";
+        	for(int i=0; i < allowedContentTypeIds.length; i++)
         	{
-	        	contentTypeINClause = " AND (content.isBranch = true OR content.contentTypeDefinitionId IN LIST (";
-	        	for(int i=0; i < allowedContentTypeIds.length; i++)
-	        	{
-	        		if(i > 0)
-	        			contentTypeINClause += ",";
-	        		contentTypeINClause += "$" + (i+3);
-	        	}
-	        	contentTypeINClause += "))";
+        		if(i > 0)
+        			contentTypeINClause += ",";
+        		contentTypeINClause += "$" + (i+3);
         	}
-        	
-        	String showDeletedItemsClause = " AND content.isDeleted = $2";
-        	
-        	String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY content.contentId";
-        	//logger.info("SQL:" + SQL);
-        	OQLQuery oql = db.getOQLQuery(SQL);
-    		//OQLQuery oql = db.getOQLQuery( "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 ORDER BY content.contentId");
-    		oql.bind(parentContentId);
-    		oql.bind(showDeletedItems);
-    		if(allowedContentTypeIds != null)
-    		{
-	        	for(int i=0; i < allowedContentTypeIds.length; i++)
-	        	{
-	        		logger.info("allowedContentTypeIds[i]:" + allowedContentTypeIds[i]);
-	        		oql.bind(allowedContentTypeIds[i]);
-	        	}
-    		}
-    		
-    		QueryResults results = oql.execute(Database.ReadOnly);
-    		while (results.hasMore()) 
-    		{
-    			Content content = (Content)results.next();
-    			childrenVOList.add(content.getValueObject());
-    		}
-    		
-    		results.close();
-    		oql.close();
-        	
-            //If any of the validations or setMethods reported an error, we throw them up now before create.
-            ceb.throwIfNotEmpty();
-            
-            commitTransaction(db);
-        }
-        catch(ConstraintException ce)
-        {
-            logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
-            rollbackTransaction(db);
-            throw ce;
-        }
-        catch(Exception e)
-        {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
-   		
-		CacheController.cacheObject("childContentCache", key, childrenVOList);
-        
+        	contentTypeINClause += "))";
+    	}
+    	
+    	String showDeletedItemsClause = " AND content.isDeleted = $2";
+    	
+    	String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY content.contentId";
+    	//logger.info("SQL:" + SQL);
+    	OQLQuery oql = db.getOQLQuery(SQL);
+		//OQLQuery oql = db.getOQLQuery( "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 ORDER BY content.contentId");
+		oql.bind(parentContentId);
+		oql.bind(showDeletedItems);
+		if(allowedContentTypeIds != null)
+		{
+        	for(int i=0; i < allowedContentTypeIds.length; i++)
+        	{
+        		logger.info("allowedContentTypeIds[i]:" + allowedContentTypeIds[i]);
+        		oql.bind(allowedContentTypeIds[i]);
+        	}
+		}
+		
+		QueryResults results = oql.execute(Database.ReadOnly);
+		while (results.hasMore()) 
+		{
+			Content content = (Content)results.next();
+			childrenVOList.add(content.getValueObject());
+		}
+		
+		if(childrenVOList != null)
+			CacheController.cacheObjectInAdvancedCache("childContentCache", key, childrenVOList, new String[]{"content_" + parentContentId}, true);
+
+		results.close();
+		oql.close();
+    	   		        
         return childrenVOList;
     } 
 	
@@ -1713,7 +1737,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1751,7 +1776,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -1780,7 +1806,8 @@ public class ContentController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
@@ -1861,7 +1888,8 @@ public class ContentController extends BaseController
 				HashMap arguments = new HashMap();
 				arguments.put("method", "selectContentListOnIdList");
             		
-				List qualifyerList = new ArrayList();
+				List<Map> qualifyerList = new ArrayList<Map>();
+				
 				Collection qualifyers = serviceBinding.getBindingQualifyers();
 
 				qualifyers = sortQualifyers(qualifyers);
@@ -1870,22 +1898,35 @@ public class ContentController extends BaseController
 				while(iterator.hasNext())
 				{
 					Qualifyer qualifyer = (Qualifyer)iterator.next();
-					HashMap argument = new HashMap();
+					Map argument = new HashMap();
 					argument.put(qualifyer.getName(), qualifyer.getValue());
 					qualifyerList.add(argument);
 				}
 				arguments.put("arguments", qualifyerList);
         		
-				List contents = service.selectMatchingEntities(arguments, db);
-        		
-				if(contents != null)
+				try
 				{
-					Iterator i = contents.iterator();
-					while(i.hasNext())
+					List contents = service.selectMatchingEntities(arguments, db);
+	        		
+					if(contents != null)
 					{
-						ContentVO candidate = (ContentVO)i.next();
-						result.add(candidate);        		
+						Iterator i = contents.iterator();
+						while(i.hasNext())
+						{
+							ContentVO candidate = (ContentVO)i.next();
+							result.add(candidate);        		
+						}
 					}
+				}
+				catch (SystemException e) 
+				{
+					logger.warn("Error getting entities:" + e.getMessage());
+					logger.info("Error getting entities:" + e.getMessage(), e);
+					for(Map arg : qualifyerList)
+					{
+						logger.info("arg:" + arg);
+					}
+					//throw e;
 				}
 			}
 		}
@@ -2021,7 +2062,8 @@ public class ContentController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
@@ -2344,7 +2386,7 @@ public class ContentController extends BaseController
         try
         {
     		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE " +
-    				"c.expireDateTime > $1 AND c.expireDateTime < $2 AND c.publishDateTime < $3");
+    				"c.expireDateTime > $1 AND c.expireDateTime < $2 AND c.publishDateTime < $3 ORDER BY c.contentId");
 
         	Calendar now = Calendar.getInstance();
         	Date currentDate = now.getTime();
@@ -2368,7 +2410,8 @@ public class ContentController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -2388,7 +2431,7 @@ public class ContentController extends BaseController
         try
         {
     		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE " +
-        			"c.expireDateTime > $1 AND c.expireDateTime < $2 AND c.publishDateTime < $3 AND c.contentVersions.versionModifier = $4");
+        			"c.expireDateTime > $1 AND c.expireDateTime < $2 AND c.publishDateTime < $3 AND c.contentVersions.versionModifier = $4 ORDER BY c.contentId");
     		
         	Calendar now = Calendar.getInstance();
         	Date currentDate = now.getTime();
@@ -2486,8 +2529,6 @@ public class ContentController extends BaseController
 		if(logger.isInfoEnabled())
 			logger.info("qualifyerXML:" + qualifyerXML);
 		
-		Timer t = new Timer();
-		
 		List<ContentVO> relatedContentVOList = new ArrayList<ContentVO>();
 
 		try
@@ -2536,7 +2577,8 @@ public class ContentController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred trying to get related contents from qualifyerXML " + qualifyerXML + ":" + e.getMessage(), e);
+			logger.error("An error occurred trying to get related contents from qualifyerXML " + qualifyerXML + ":" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
 		}
 		
 		return relatedContentVOList;
@@ -2601,7 +2643,8 @@ public class ContentController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred trying to get related contents from qualifyerXML " + qualifyerXML + ":" + e.getMessage(), e);
+			logger.error("An error occurred trying to get related contents from qualifyerXML " + qualifyerXML + ":" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
 		}
 
 		return relatedPages;

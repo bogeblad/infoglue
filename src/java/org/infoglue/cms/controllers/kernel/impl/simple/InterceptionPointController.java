@@ -49,6 +49,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * This class is a helper class for the use case handle InterceptionPoint
@@ -96,6 +97,7 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ContentVersion.Publish", new InterceptionPointVO("ContentVersion", "ContentVersion.Publish", "Intercepts the direct publishing of a content version", true));
 	    
 	    systemInterceptionPoints.put("Repository.Read", new InterceptionPointVO("Repository", "Repository.Read", "Gives a user access to look at a repository", true));
+	    systemInterceptionPoints.put("Repository.Write", new InterceptionPointVO("Repository", "Repository.Write", "Gives a user possible access to write in the repository", true));
 	    systemInterceptionPoints.put("Repository.ReadForBinding", new InterceptionPointVO("Repository", "Repository.ReadForBinding", "This point intercepts when a user tries to read the repository in a binding dialog", true));
 	    
 	    systemInterceptionPoints.put("SiteNodeVersion.Read", new InterceptionPointVO("SiteNodeVersion", "SiteNodeVersion.Read", "Intercepts the read of a SiteNodeVersion", true));
@@ -250,6 +252,65 @@ public class InterceptionPointController extends BaseController
 		return getAllVOObjects(InterceptionPointImpl.class, "category", "asc");
 	}	
 
+	public List getInterceptorsVOList(Integer interceptionPointId) throws SystemException, Bug
+	{
+		List interceptorVOList = null;
+		
+		Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+
+			interceptorVOList = getInterceptorsVOList(interceptionPointId, db);
+
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+			logger.info("An error occurred so we should not complete the transaction:" + e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+		
+		return interceptorVOList;	
+	}
+	
+	/**
+	 * Gets the interceptors for this interceptionPoint withing a transaction
+	 * 
+	 * @param interceptionPointId
+	 * @param db
+	 * @return
+	 * @throws SystemException
+	 * @throws Bug
+	 */
+	
+	public List getInterceptorsVOList(Integer interceptionPointId, Database db)  throws SystemException, Bug
+	{
+		String key = "" + interceptionPointId;
+		logger.info("key:" + key);
+		List cachedInterceptorVOList = (List)CacheController.getCachedObject("interceptorsCache", key);
+		if(cachedInterceptorVOList != null)
+		{
+			logger.info("There was an cached InterceptorVOList:" + cachedInterceptorVOList.size());
+			return cachedInterceptorVOList;
+		}
+		
+		List interceptorsVOList = null;
+		
+		InterceptionPoint interceptionPoint = this.getInterceptionPointWithId(interceptionPointId, db);
+		
+		Collection interceptors = interceptionPoint.getInterceptors();
+		
+		interceptorsVOList = toVOList(interceptors);
+		
+		CacheController.cacheObject("interceptorsCache", key, interceptorsVOList);
+
+		return interceptorsVOList;		
+	}
+
+	
 	public InterceptionPointVO getInterceptionPointVOWithName(String interceptorPointName)  throws SystemException, Bug
 	{
 		InterceptionPointVO interceptionPointVO = null;
@@ -276,12 +337,13 @@ public class InterceptionPointController extends BaseController
 
 	public InterceptionPointVO getInterceptionPointVOWithName(String interceptorPointName, Database db)  throws SystemException, Bug
 	{
+		String cacheName = "interceptionPointCache";
 	    String key = "" + interceptorPointName;
-		logger.info("key:" + key);
+		//logger.info("key:" + key);
 		
 		InterceptionPointVO interceptionPointVO = null;
 		
-	    Object object = CacheController.getCachedObject("interceptionPointCache", key);
+	    Object object = CacheController.getCachedObject(cacheName, key);
 		
 	    if(object instanceof NullObject)
 		{
@@ -293,16 +355,6 @@ public class InterceptionPointController extends BaseController
 		}
 		else
 		{
-
-		/*
-		InterceptionPointVO interceptionPointVO = (InterceptionPointVO)CacheController.getCachedObject("interceptionPointCache", key);
-		if(interceptionPointVO != null)
-		{
-			logger.info("There was an cached interceptionPointVO:" + interceptionPointVO);
-		}
-		else
-		{
-		*/	
 			InterceptionPoint interceptorPoint = null;
 			
 			try
@@ -315,12 +367,11 @@ public class InterceptionPointController extends BaseController
 				{
 					interceptorPoint = (InterceptionPoint)results.next();
 					interceptionPointVO = interceptorPoint.getValueObject();
-												 
-					CacheController.cacheObject("interceptionPointCache", key, interceptionPointVO);				
+					CacheController.cacheObject(cacheName, key, interceptionPointVO);				
 				}
 				else
 				{	
-				    CacheController.cacheObject("interceptionPointCache", key, new NullObject());
+				    CacheController.cacheObject(cacheName, key, new NullObject());
 				}
 				
 				results.close();
@@ -519,7 +570,6 @@ public class InterceptionPointController extends BaseController
 		} 
 		catch (Exception e) 
 		{
-			e.printStackTrace();
 			logger.info("An error occurred so we should not complete the transaction:" + e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());

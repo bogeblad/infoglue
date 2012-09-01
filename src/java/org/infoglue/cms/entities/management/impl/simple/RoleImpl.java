@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.entities.management.impl.simple;
 
-import java.util.ArrayList;
-
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Role;
 import org.infoglue.cms.entities.management.RoleVO;
@@ -33,7 +31,6 @@ import org.infoglue.cms.exception.ConstraintException;
 public class RoleImpl implements Role
 {
 	private RoleVO valueObject = new RoleVO();
-	private java.util.Collection systemUsers = new ArrayList();
      
 	public Integer getId()
 	{
@@ -94,14 +91,34 @@ public class RoleImpl implements Role
         this.valueObject.setDescription(description);
 	}
       
-    public java.util.Collection getSystemUsers()
+    public String getSource()
     {
-        return this.systemUsers;
+    	return this.valueObject.getSource();
     }
-            
-    public void setSystemUsers (java.util.Collection systemUsers)
+    
+    public void setSource(String source)
     {
-        this.systemUsers = systemUsers;
+    	this.valueObject.setSource(source);
+    }
+
+    public Boolean getIsActive()
+    {
+    	return this.valueObject.getIsActive();
+    }
+    
+    public void setIsActive(Boolean isActive)
+    {
+    	this.valueObject.setIsActive(isActive);
+    }
+
+    public java.util.Date getModifiedDateTime()
+    {
+    	return this.valueObject.getModifiedDateTime();
+    }
+    
+    public void setModifiedDateTime(java.util.Date modifiedDateTime)
+    {
+    	this.valueObject.setModifiedDateTime(modifiedDateTime);
     }
       
 }        

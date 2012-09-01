@@ -141,14 +141,17 @@ public class WYSIWYGPropertiesAction extends InfoGlueAbstractAction
 			
 			StringWriter tempString = new StringWriter();
 			PrintWriter pw = new PrintWriter(tempString);
-			new VelocityTemplateProcessor().renderTemplate(parameters, pw, this.WYSIWYGProperties, true);
+			logger.info("this.WYSIWYGProperties:" + this.WYSIWYGProperties);
+			VelocityTemplateProcessor vtp = new VelocityTemplateProcessor();
+			vtp.renderTemplate(parameters, pw, this.WYSIWYGProperties, true);
 			this.WYSIWYGProperties = tempString.toString();
 					
 		    this.getResponse().setContentType("text/javascript");
 	    }
-	    catch (Exception e1)
+	    catch (Throwable t1)
         {
-            e1.printStackTrace();
+            logger.error("Error parsing WYSIWYGProperties:" + t1.getMessage());
+            logger.warn("Error parsing WYSIWYGProperties:" + t1.getMessage(), t1);
         }
 	    
 	    return this.WYSIWYGProperties;

@@ -36,14 +36,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Category;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.entities.content.Content;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
 import org.infoglue.cms.entities.management.LanguageVO;
@@ -73,6 +75,7 @@ import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 
@@ -382,7 +385,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns the SiteNodeVO that is sent in.
 	 */
 	
-	public SiteNodeVO getSiteNodeVO(Database db, Integer siteNodeId) throws SystemException
+	public SiteNodeVO getSiteNodeVO(Database db, Integer siteNodeId) throws SystemException, Exception
 	{
 		if(siteNodeId == null || siteNodeId.intValue() < 1)
 			return null;
@@ -390,18 +393,19 @@ public class NodeDeliveryController extends BaseDeliveryController
 		if(deliveryContext != null)
 			deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
 		
-		String key = "" + siteNodeId;
-		SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
-		if(siteNodeVO != null)
-		{
+		//String key = "" + siteNodeId;
+		//SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
+		//if(siteNodeVO != null)
+		//{
 			//logger.info("There was an cached siteNodeVO:" + siteNodeVO);
-		}
-		else
-		{
-			siteNodeVO = (SiteNodeVO)getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
-			if(siteNodeVO != null)
-				CacheController.cacheObjectInAdvancedCache("siteNodeCache", key, siteNodeVO);
-		}
+		//}
+		//else
+		//{
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+			//siteNodeVO = (SiteNodeVO)getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
+			//if(siteNodeVO != null)
+			//	CacheController.cacheObjectInAdvancedCache("siteNodeCache", key, siteNodeVO);
+		//}
 		
 		return siteNodeVO;
 	}
@@ -600,9 +604,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 
 	/**
 	 * This method returns the SiteNodeVO that is the parent to the one sent in.
+	 * @throws Exception 
 	 */
 	
-	public SiteNodeVO getParentSiteNode(Database db, Integer siteNodeId) throws SystemException
+	public SiteNodeVO getParentSiteNode(Database db, Integer siteNodeId) throws Exception
 	{
 		String key = "" + siteNodeId;
 		
@@ -623,11 +628,12 @@ public class NodeDeliveryController extends BaseDeliveryController
 		}
 		else
 		{
-			SiteNode siteNode = (SiteNode)getObjectWithId(SmallSiteNodeImpl.class, siteNodeId, db);
-            SiteNode parentSiteNode = siteNode.getParentSiteNode();
-            if(parentSiteNode != null)		
+			//SiteNode siteNode = (SiteNode)getObjectWithId(SmallSiteNodeImpl.class, siteNodeId, db);
+			SiteNodeVO siteNode = getSiteNodeVO(db, siteNodeId);
+			//SiteNode parentSiteNode = siteNode.getParentSiteNode();
+            if(siteNode.getParentSiteNodeId() != null)		
             {
-                parentSiteNodeVO = parentSiteNode.getValueObject();
+                parentSiteNodeVO = getSiteNodeVO(db, siteNode.getParentSiteNodeId());
             	CacheController.cacheObject("parentSiteNodeCache", key, parentSiteNodeVO);
     		}
             else
@@ -1237,6 +1243,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 	}
 
 
+	/**
+	 * This method returns a list of contents bound to the named availableServiceBinding.
+	 */
+	
 	public List getBoundContents(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean useLanguageFallback, String availableServiceBindingName, boolean inheritParentBindings, boolean includeFolders, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
@@ -1322,7 +1332,9 @@ public class NodeDeliveryController extends BaseDeliveryController
 							//Checking to see that now is between the contents publish and expire-date. 
 							//if(ContentDeliveryController.getContentDeliveryController().isValidContent(candidate.getId(), languageId, useLanguageFallback, infoGluePrincipal))
 							//	boundContentVOList.add(candidate);        		
-							Content candidateContent = (Content)getObjectWithId(ContentImpl.class, candidate.getId(), db); 
+							
+							//Content candidateContent = (Content)getObjectWithId(ContentImpl.class, candidate.getId(), db); 
+							ContentVO candidateContent = ContentController.getContentController().getSmallContentVOWithId(candidate.getId(), db);
 							
 							if(logger.isInfoEnabled())
 								logger.info("candidateContent:" + candidateContent.getName());
@@ -1673,25 +1685,20 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public String getPageNavigationTitle(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String metaBindingName, String attributeName, boolean useLanguageFallback, DeliveryContext deliveryContext, boolean escapeHTML) throws SystemException, Exception
 	{
 		String navTitle = "";
-		Timer t = new Timer();
 		
 		if(contentId == null || contentId.intValue() == -1)
 		{
 			ContentVO content = getBoundContent(db, infoGluePrincipal, siteNodeId, languageId, useLanguageFallback, metaBindingName, deliveryContext);
-			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getBoundContent 1", t.getElapsedTimeNanos());
 			if(content != null)
 				navTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), languageId, attributeName, siteNodeId, useLanguageFallback, deliveryContext, infoGluePrincipal, escapeHTML, true);
-			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentAttribute 1", t.getElapsedTimeNanos());
 		}
 		else
 		{
 			navTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, contentId, languageId, attributeName, siteNodeId, useLanguageFallback, deliveryContext, infoGluePrincipal, escapeHTML, true);
-			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentAttribute 2", t.getElapsedTimeNanos());
 		}
 		
 		return navTitle;
 	}
-
 	
     public Integer getSiteNodeId(Database db, InfoGluePrincipal infogluePrincipal, Integer repositoryId, String path, String attributeName, Integer parentSiteNodeId, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
@@ -1811,7 +1818,8 @@ public class NodeDeliveryController extends BaseDeliveryController
         
         if(attributeName.equals("SiteNode.name"))
         {
-            SiteNode siteNode = this.getSiteNode(db, siteNodeId);
+            SiteNodeVO siteNode = this.getSiteNodeVO(db, siteNodeId);
+            //SiteNode siteNode = this.getSiteNode(db, siteNodeId);
             pathPart = siteNode.getName();
         }
         else
@@ -2258,7 +2266,6 @@ public class NodeDeliveryController extends BaseDeliveryController
         return siteNodeVO;	
 	}
 
-
 	
 	/**
 	 * This method returns the list of siteNodeVO which is children to this one.
@@ -2273,21 +2280,36 @@ public class NodeDeliveryController extends BaseDeliveryController
 			return null;
 		}
     	
-        String key = "" + siteNodeId;
+        String key = "" + siteNodeId + "_" + false;
 		logger.info("key in getChildSiteNodes:" + key);
 		List siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
+		
+		if(siteNodeVOList == null)
+		{
+			SiteNodeVO parentSiteNodeVO = getSiteNodeVO(db, siteNodeId);
+			if(parentSiteNodeVO.getChildCount() != null && parentSiteNodeVO.getChildCount() == 0)
+			{
+				//logger.info("Skipping node as it has no children...");
+				return new ArrayList();
+			}
+		}
+
+		
 		if(siteNodeVOList != null)
 		{
 		    logger.info("There was a cached list of child sitenodes:" + siteNodeVOList.size());
 		}
 		else
 		{
+	   		//logger.info("Querying for children to siteNode " + siteNodeId);
+	   		Timer t = new Timer();
+	   		
 	        siteNodeVOList = new ArrayList();
 		    
 	        StringBuffer SQL = new StringBuffer();
 	    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
 	    	{
-		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.metaInfoContentId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden from cmSiNo sn, cmSiNoVer snv ");
+		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden from cmSiNo sn, cmSiNoVer snv ");
 		   		SQL.append("where ");
 		   		SQL.append("sn.parentSiNoId = $1 ");
 		   		SQL.append("AND sn.isDeleted = $2 ");
@@ -2302,7 +2324,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	    	}
 	    	else
 	    	{
-		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.metaInfoContentId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden from cmSiteNode sn, cmSiteNodeVersion snv ");
+		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden from cmSiteNode sn, cmSiteNodeVersion snv ");
 		   		SQL.append("where ");
 		   		SQL.append("sn.parentSiteNodeId = $1 ");
 		   		SQL.append("AND sn.isDeleted = $2 ");
@@ -2325,7 +2347,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 			oql.bind(getOperatingMode());
 	    	
 	    	QueryResults results = oql.execute(Database.ReadOnly);
-			
+	    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
+	    	
 			while (results.hasMore()) 
 	        {
 	        	SiteNode siteNode = (SiteNode)results.next();
@@ -2333,6 +2356,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	        	if(isValidSiteNode(siteNode, db))
 	        	    siteNodeVOList.add(siteNode.getValueObject());
 			}
+	    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 2", t.getElapsedTime());
 
 			results.close();
 			oql.close();
@@ -2354,12 +2378,9 @@ public class NodeDeliveryController extends BaseDeliveryController
 			}
 	        */
 	        
-			CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeVOList);
+			CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeVOList, new String[] {"siteNode_" + siteNodeId}, true);
 		}
-		
-		//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes", t.getElapsedTime());
-		//logger.warn("getChildSiteNodes end:" + siteNodeId);
-		
+				
 		return siteNodeVOList;	
 	}
 

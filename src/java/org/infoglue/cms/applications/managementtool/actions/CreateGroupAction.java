@@ -36,6 +36,7 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.DateHelper;
 
 
 /**
@@ -86,7 +87,7 @@ public class CreateGroupAction extends InfoGlueAbstractAction
     				
 		String[] userNames = getRequest().getParameterValues("userName");
 		String[] contentTypeDefinitionIds = getRequest().getParameterValues("contentTypeDefinitionId");
-
+		
 		GroupControllerProxy.getController().createGroup(this.groupVO);
 		if(userNames != null)
 		{
@@ -146,6 +147,36 @@ public class CreateGroupAction extends InfoGlueAbstractAction
 	{
 		return this.groupVO.getDescription();	
 	}
+
+    public String getSource()
+    {
+    	return this.groupVO.getSource();
+    }
+    
+    public void setSource(String source)
+    {
+    	this.groupVO.setSource(source);
+    }
+
+    public String getGroupType()
+    {
+    	return this.groupVO.getGroupType();
+    }
+    
+    public void setGroupType(String groupType)
+    {
+    	this.groupVO.setGroupType(groupType);
+    }
+
+    public Boolean getIsActive()
+    {
+    	return this.groupVO.getIsActive();
+    }
+    
+    public void setIsActive(Boolean isActive)
+    {
+    	this.groupVO.setIsActive(isActive);
+    }
 
 	public List getInfoGluePrincipals()
 	{

@@ -1655,17 +1655,45 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			
 			if(assetKey != null)
 			{
-				logger.debug("assetKey:" + assetKey);
-				String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
-				if(fromEncoding == null)
-					fromEncoding = "iso-8859-1";
+				boolean isUTF8 = false;
+				boolean hasUnicodeChars = false;
+				if(assetKey.indexOf((char)65533) > -1)
+					isUTF8 = true;
 				
-				String toEncoding = CmsPropertyHandler.getUploadToEncoding();
-				if(toEncoding == null)
-					toEncoding = "utf-8";
-				
-				this.assetKey = new String(this.assetKey.getBytes(fromEncoding), toEncoding);
-				logger.debug("assetKey:" + assetKey);
+				for(int i=0; i<assetKey.length(); i++)
+				{
+					int c = (int)assetKey.charAt(i);
+					if(c > 255 && c < 65533)
+						hasUnicodeChars = true;
+				}
+				logger.info("isUTF8:" + isUTF8);
+				logger.info("hasUnicodeChars:" + hasUnicodeChars);
+
+				if(!isUTF8 && !hasUnicodeChars)
+				{
+					String fromEncoding = CmsPropertyHandler.getAssetKeyFromEncoding();
+					if(fromEncoding == null)
+						fromEncoding = "iso-8859-1";
+					
+					String toEncoding = CmsPropertyHandler.getAssetKeyToEncoding();
+					if(toEncoding == null)
+						toEncoding = "utf-8";
+					
+					String[] controlChars = new String[]{"Œ","Š","š","","€","…","å","ä","ö","Å","Ä","Ö"};
+					boolean convert = true;
+					for(String charToTest : controlChars)
+					{
+						if(logger.isInfoEnabled())
+							logger.info("Index for " + charToTest + ":"  + assetKey.indexOf(charToTest));
+						if(assetKey.indexOf(charToTest) > -1)
+							convert = false;
+					}
+						
+					if(convert)
+					{
+						assetKey = new String(assetKey.getBytes(fromEncoding), toEncoding);
+					}
+				}
 			}
 			
 			Element newComponent = addBindingElement(component, entity, entityId, assetKey);

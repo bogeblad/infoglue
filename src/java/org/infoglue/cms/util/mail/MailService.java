@@ -190,6 +190,25 @@ public class MailService
 	        sendPlain(from, to, cc, bcc, bounceAddress, replyTo, subject, content, encoding);
 	}
 
+	public void sendWarningMail(String subject, String message) 
+	{
+        String warningEmailReceiver = CmsPropertyHandler.getWarningEmailReceiver();
+        logger.info("warningEmailReceiver: " + warningEmailReceiver);
+        if(warningEmailReceiver != null && !warningEmailReceiver.equals("") && warningEmailReceiver.indexOf("@warningEmailReceiver@") == -1)
+        {
+			try
+			{
+		        logger.info("Mailing: " + warningEmailReceiver);
+				MailServiceFactory.getService().sendEmail(CmsPropertyHandler.getMailContentType(), warningEmailReceiver, warningEmailReceiver, null, null, null, null, subject, message.replaceAll("\n", "<br/>"), "utf-8");
+			} 
+			catch (Exception e)
+			{
+				logger.error("Could not send mail:" + e.getMessage());
+				logger.warn("Could not send mail:" + e.getMessage(), e);
+			}
+        }
+	}
+
 	/**
 	 *
 	 * @param from the sender of the email.

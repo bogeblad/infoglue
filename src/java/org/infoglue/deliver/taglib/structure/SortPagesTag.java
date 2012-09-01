@@ -30,13 +30,18 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.util.sorters.HardcodedPageComparator;
 import org.infoglue.cms.util.sorters.PageComparator;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 public class SortPagesTag extends TemplateControllerTag 
 {
 	private static final long serialVersionUID = 3257003254859576632L;
+
+    public final static Logger logger = Logger.getLogger(SortPagesTag.class.getName());
 
 	private Comparator comparator;
 	
@@ -62,6 +67,8 @@ public class SortPagesTag extends TemplateControllerTag
 	 */
 	public int doEndTag() throws JspException
     {
+		Timer t = new Timer();
+		
 		if(input != null && input.size() > 0)
 		{
 		    if(this.type.equalsIgnoreCase("HardcodedPageComparator") || namesInOrderString != null)
@@ -73,6 +80,9 @@ public class SortPagesTag extends TemplateControllerTag
 			produceResult(input);
 		}
 		
+		if(logger.isInfoEnabled())
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("SortPagesTag", t.getElapsedTimeNanos() / 1000);
+
 		comparator = null;
 		input = new ArrayList();
 		

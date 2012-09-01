@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
+
 /**
  * @author Mattias Bogeblad
  */
@@ -72,6 +74,21 @@ public class RequestAnalyser
         return Counter.getNumberOfActiveRequests();
     }
 
+    public int getApproximateNumberOfDatabaseQueries()
+    {
+        return Counter.getApproximateNumberOfDatabaseQueries();
+    }
+
+    public void incApproximateNumberOfDatabaseQueries()
+    {
+        Counter.incApproximateNumberOfDatabaseQueries();
+    }
+
+    public void decApproximateNumberOfDatabaseQueries()
+    {
+        Counter.decApproximateNumberOfDatabaseQueries();
+    }
+
     public int getTotalNumberOfRequests()
     {
         return Counter.getTotalNumberOfRequests();
@@ -92,19 +109,34 @@ public class RequestAnalyser
         return Counter.getNumberOfPublicationsSinceStart();
     }
 
-    public void resetNumberOfPublicationsSinceStart()
+    public void resetLatestPublications()
     {
-        Counter.resetNumberOfPublicationsSinceStart();
+        Counter.resetLatestPublications();
     }
 
-    public List getLatestPublications()
+    public List<CacheEvictionBean> getLatestPublications()
     {
         return Counter.getLatestPublications();
     }
 
-    public void addPublication(String description)
+    public void addPublication(CacheEvictionBean bean)
     {
-        Counter.addPublication(description);
+        Counter.addPublication(bean);
+    }
+
+    public List<CacheEvictionBean> getOngoingPublications()
+    {
+        return Counter.getOngoingPublications();
+    }
+
+    public void addOngoingPublications(CacheEvictionBean bean)
+    {
+        Counter.addOngoingPublication(bean);
+    }
+
+    public void removeOngoingPublications(CacheEvictionBean bean)
+    {
+        Counter.removeOngoingPublication(bean);
     }
 
     public void incNumberOfCurrentRequests(ThreadMonitor tk)

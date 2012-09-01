@@ -740,17 +740,19 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 
             initializePrincipal(principalName);
             
-            Integer contentVersionId = (Integer)contentVersion.get("contentVersionId");
-            Integer contentId 		 = (Integer)contentVersion.get("contentId");
-            Integer languageId 		 = (Integer)contentVersion.get("languageId");
-            Integer stateId			 = (Integer)contentVersion.get("stateId");
-            String versionComment 	 = (String)contentVersion.get("versionComment");
-            Boolean allowHTMLContent = (Boolean)contentVersion.get("allowHTMLContent");
+            Integer contentVersionId 		= (Integer)contentVersion.get("contentVersionId");
+            Integer contentId 		 		= (Integer)contentVersion.get("contentId");
+            Integer languageId 		 		= (Integer)contentVersion.get("languageId");
+            Integer stateId			 		= (Integer)contentVersion.get("stateId");
+            String versionComment 	 		= (String)contentVersion.get("versionComment");
+            Boolean allowHTMLContent 		= (Boolean)contentVersion.get("allowHTMLContent");
             Boolean allowExternalLinks 		= (Boolean)contentVersion.get("allowExternalLinks");
-            Boolean allowDollarSigns = (Boolean)contentVersion.get("allowDollarSigns");
-            Boolean allowAnchorSigns = (Boolean)contentVersion.get("allowAnchorSigns");
+            Boolean allowDollarSigns 		= (Boolean)contentVersion.get("allowDollarSigns");
+            Boolean allowAnchorSigns 		= (Boolean)contentVersion.get("allowAnchorSigns");
             Boolean keepExistingAttributes 	= (Boolean)contentVersion.get("keepExistingAttributes");
             Boolean keepExistingCategories 	= (Boolean)contentVersion.get("keepExistingCategories");
+            Boolean updateExistingAssets 	= (Boolean)contentVersion.get("updateExistingAssets");
+            Boolean createVersionIfNotExists = (Boolean)contentVersion.get("createVersionIfNotExists");
 
             if(allowHTMLContent == null)
             	allowHTMLContent = new Boolean(false);
@@ -761,22 +763,30 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             if(keepExistingCategories == null)
             	keepExistingCategories = new Boolean(true);
 
+            if(updateExistingAssets == null)
+            	updateExistingAssets = new Boolean(true);
+
             if(allowDollarSigns == null)
             	allowDollarSigns = new Boolean(false);
             if(allowAnchorSigns == null)
             	allowAnchorSigns = new Boolean(true);
             
+            if(createVersionIfNotExists == null)
+            	createVersionIfNotExists = new Boolean(true);
+
             logger.info("contentVersionId:" + contentVersionId);
             logger.info("contentId:" + contentId);
             logger.info("languageId:" + languageId);
             logger.info("stateId:" + stateId);
             logger.info("keepExistingAttributes:" + keepExistingAttributes);
             logger.info("keepExistingCategories:" + keepExistingCategories);
+            logger.info("updateExistingAssets:" + updateExistingAssets);
             logger.info("versionComment:" + versionComment);
             logger.info("allowHTMLContent:" + allowHTMLContent);
             logger.info("allowExternalLinks:" + allowExternalLinks);
 	        logger.info("allowDollarSigns:" + allowDollarSigns);
 	        logger.info("allowAnchorSigns:" + allowAnchorSigns);
+	        logger.info("createVersionIfNotExists:" + createVersionIfNotExists);
 
             ContentVersionVO contentVersionVO = null;
             if(contentVersionId != null)
@@ -784,12 +794,30 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
             else
                 contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
                 
+            logger.info("contentVersionVO:" + contentVersionVO);
+
             if(contentVersionVO == null)
-                return new Boolean(false);
-                
-            contentVersionVO.setVersionComment(versionComment);
-            contentVersionVO.setModifiedDateTime(new Date());
-            contentVersionVO.setVersionModifier("" + principalName);
+            {
+            	logger.info("createVersionIfNotExists:" + createVersionIfNotExists);
+            	if(createVersionIfNotExists)
+            	{
+            		ContentVersionVO newContentVersionVO = new ContentVersionVO();
+            		newContentVersionVO.setVersionComment(versionComment);
+            		newContentVersionVO.setModifiedDateTime(new Date());
+            		newContentVersionVO.setVersionModifier("" + principalName);
+
+    	            contentVersionVO = contentVersionControllerProxy.acCreate(this.principal, contentId, languageId, newContentVersionVO);            		
+    	            logger.info("contentVersionVO:" + contentVersionVO);
+            	}
+            	else
+            		return new Boolean(false);            	
+            }
+            else
+            {
+	            contentVersionVO.setVersionComment(versionComment);
+	            contentVersionVO.setModifiedDateTime(new Date());
+	            contentVersionVO.setVersionModifier("" + principalName);
+            }
             
             Map attributes = (Map)contentVersion.get("contentVersionAttributes");
             
@@ -863,7 +891,7 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 		        {
 		            RemoteAttachment remoteAttachment = (RemoteAttachment)digitalAssetIterator.next();
 	    	        logger.info("digitalAssets in ws:" + remoteAttachment);
-	    	        
+	    	        	    	        
 	            	DigitalAssetVO newAsset = new DigitalAssetVO();
 					newAsset.setAssetContentType(remoteAttachment.getContentType());
 					newAsset.setAssetKey(remoteAttachment.getName());
@@ -872,7 +900,10 @@ public class RemoteContentServiceImpl extends RemoteInfoGlueService
 					newAsset.setAssetFileSize(new Integer(new Long(remoteAttachment.getBytes().length).intValue()));
 					InputStream is = new ByteArrayInputStream(remoteAttachment.getBytes());
 	
-	    	        DigitalAssetController.create(newAsset, is, contentVersionVO.getContentVersionId(), principal);
+	    	        if(updateExistingAssets)
+	    	        	ContentVersionController.getContentVersionController().createOrUpdateDigitalAsset(newAsset, is, contentVersionVO.getContentVersionId(), principal);
+	    	        else
+	    	        	DigitalAssetController.create(newAsset, is, contentVersionVO.getContentVersionId(), principal);
 	    	    }
             }
             			

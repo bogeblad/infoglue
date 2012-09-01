@@ -26,9 +26,12 @@ package org.infoglue.cms.security;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.infoglue.cms.util.DateHelper;
 
 
 /**
@@ -46,8 +49,11 @@ public class InfoGluePrincipal implements Principal, Serializable
 	private final String firstName;
 	private final String lastName;
 	private final String email;
-	private final List roles;
-	private final List groups;
+	private final String source;
+	private final Boolean isActive;
+	private final Date modifiedDateTime;
+	private final List<InfoGlueRole> roles;
+	private final List<InfoGlueGroup> groups;
 	private Map metaInformation;
 	private final boolean isAdministrator;
 	private final AuthorizationModule autorizationModule;
@@ -59,14 +65,18 @@ public class InfoGluePrincipal implements Principal, Serializable
 	
 	public InfoGluePrincipal(String name, String displayName, String firstName, String lastName, String email, List roles, List groups, boolean isAdministrator, AuthorizationModule autorizationModule)
 	{
-		InfoGlueRole infoGlueRole = new InfoGlueRole("anonymous", "The default anonymous role", autorizationModule);
-		roles.add(infoGlueRole);
+		InfoGlueRole infoGlueRole = new InfoGlueRole("anonymous", "anonymous", "The default anonymous role", autorizationModule);
+		if(roles != null)
+			roles.add(infoGlueRole);
 
 		this.name = name;
 		this.displayName = displayName;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+		this.source = "infoglue";
+		this.isActive = true;
+		this.modifiedDateTime = DateHelper.getSecondPreciseDate();
 		this.roles = roles;
 		this.groups = groups;
 		this.metaInformation = new HashMap();
@@ -81,7 +91,7 @@ public class InfoGluePrincipal implements Principal, Serializable
 	
 	public InfoGluePrincipal(String name, String displayName, String firstName, String lastName, String email, List roles, List groups, Map metaInformation, boolean isAdministrator, AuthorizationModule autorizationModule)
 	{
-		InfoGlueRole infoGlueRole = new InfoGlueRole("anonymous", "The default anonymous role", autorizationModule);
+		InfoGlueRole infoGlueRole = new InfoGlueRole("anonymous", "anonymous", "The default anonymous role", autorizationModule);
 		roles.add(infoGlueRole);
 
 		this.name = name;
@@ -89,6 +99,29 @@ public class InfoGluePrincipal implements Principal, Serializable
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+		this.source = "infoglue";
+		this.isActive = true;
+		this.modifiedDateTime = DateHelper.getSecondPreciseDate();
+		this.roles = roles;
+		this.groups = groups;
+		this.metaInformation = metaInformation;
+		this.isAdministrator = isAdministrator;
+		this.autorizationModule = autorizationModule;
+	}
+
+	public InfoGluePrincipal(String name, String displayName, String firstName, String lastName, String email, String source, Boolean isActive, Date modifiedDateTime, List roles, List groups, Map metaInformation, boolean isAdministrator, AuthorizationModule autorizationModule)
+	{
+		InfoGlueRole infoGlueRole = new InfoGlueRole("anonymous", "anonymous", "The default anonymous role", autorizationModule);
+		roles.add(infoGlueRole);
+
+		this.name = name;
+		this.displayName = displayName;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.source = source;
+		this.isActive = isActive;
+		this.modifiedDateTime = modifiedDateTime;
 		this.roles = roles;
 		this.groups = groups;
 		this.metaInformation = metaInformation;
@@ -121,12 +154,27 @@ public class InfoGluePrincipal implements Principal, Serializable
 		return email;
 	}
 
-	public List getRoles()
+	public String getSource()
+	{
+		return source;
+	}
+		
+	public Boolean getIsActive()
+	{
+		return isActive;
+	}
+	
+	public Date getModifiedDateTime()
+	{
+		return modifiedDateTime;
+	}
+
+	public List<InfoGlueRole> getRoles()
 	{
 		return Collections.unmodifiableList(roles);
 	}
 	
-    public List getGroups()
+    public List<InfoGlueGroup> getGroups()
     {
         return Collections.unmodifiableList(groups);
     }

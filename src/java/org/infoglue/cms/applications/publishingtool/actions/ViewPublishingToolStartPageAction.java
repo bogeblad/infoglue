@@ -84,9 +84,12 @@ public class ViewPublishingToolStartPageAction extends InfoGlueAbstractAction
     	return this.repositories;
     }
      
+    /**
+     * Returns the events up for publishing.
+     */
     public List getPublicationEvents(Integer repositoryId, String filter) throws SystemException, Exception
     {
-    	List events = PublicationController.getPublicationEvents(repositoryId, getInfoGluePrincipal(), filter);
+    	List events = PublicationController.getPublicationEvents(repositoryId, getInfoGluePrincipal(), filter, false);
 
     	return events;
     }

@@ -52,12 +52,16 @@ public interface SystemUser extends IBaseEntity
     
     public void setEmail(java.lang.String email) throws ConstraintException;
     
-    public java.util.Collection getRoles();
+    public String getSource();
     
-    public void setRoles(java.util.Collection roles);
+    public void setSource(String source);
 
-    public java.util.Collection getGroups();
+    public Boolean getIsActive();
     
-    public void setGroups(java.util.Collection groups);
+    public void setIsActive(Boolean isActive);
+
+    public java.util.Date getModifiedDateTime();
+    
+    public void setModifiedDateTime(java.util.Date modifiedDateTime);
 
 }

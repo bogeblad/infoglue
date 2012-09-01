@@ -26,6 +26,8 @@ package org.infoglue.deliver.taglib.structure;
 import javax.servlet.jsp.JspException;
 
 import org.infoglue.deliver.taglib.TemplateControllerTag;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 public class IsSiteNodeParentToCurrentSiteNodeTag extends TemplateControllerTag {
 	private static final long serialVersionUID = 4050206323348354355L;
@@ -39,7 +41,10 @@ public class IsSiteNodeParentToCurrentSiteNodeTag extends TemplateControllerTag 
 
 	public int doEndTag() throws JspException
     {
+		Timer t = new Timer();
 		setResultAttribute(new Boolean(this.getController().getIsParentToCurrent(siteNodeId)));
+	    RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentAttribute tag", t.getElapsedTimeNanos() / 1000);
+
         return EVAL_PAGE;
     }
 

@@ -38,6 +38,7 @@ import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.portal.services.PortletEntityRegistryServiceDBImpl;
 
 
@@ -87,6 +88,58 @@ public class PortletAssetController extends DigitalAssetController
         return digitalAsset;
     }
 
+    /**
+     * This method finds and returns an asset containing the portlet registry. 
+     * It only works in the case you have stated "digitalAssetPortletRegistryId" in your deliver.properties.
+     */
+    public static DigitalAsset getPortletRegistry() throws SystemException
+    {
+        Database db = CastorDatabaseService.getDatabase();
+    	
+        String portletId = CmsPropertyHandler.getDigitalAssetPortletRegistryId();
+        
+        DigitalAsset da = null;
+        if(portletId == null || portletId.equals("") || portletId.equalsIgnoreCase("@digitalAssetPortletRegistryId@"))
+        	return da;
+        	
+        beginTransaction(db);
+        try 
+        {
+        	da = DigitalAssetController.getDigitalAssetWithId(Integer.valueOf(portletId), db);
+            
+            commitTransaction(db);
+        } 
+        catch (Exception e) 
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return da;
+    }
+    
+    public DigitalAsset getPortletRegistry(Database db) throws SystemException
+    {        
+        String portletId = CmsPropertyHandler.getDigitalAssetPortletRegistryId();
+        
+        DigitalAsset da = null;
+        if(portletId == null || portletId.equals("") || portletId.equalsIgnoreCase("@digitalAssetPortletRegistryId@"))
+        	return da;
+
+        try 
+        {
+        	da = DigitalAssetController.getDigitalAssetWithId(Integer.valueOf(portletId), db);
+        } 
+        catch (Exception e) 
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            throw new SystemException(e.getMessage());
+        }
+
+        return da;
+    }
+    
     public static List getDigitalAssetByName(String name) throws SystemException 
     {
         Database db = CastorDatabaseService.getDatabase();

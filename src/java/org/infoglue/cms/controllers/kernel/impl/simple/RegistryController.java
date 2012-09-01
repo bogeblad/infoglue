@@ -19,8 +19,6 @@
  * Place, Suite 330 / Boston, MA 02111-1307 / USA.
  *
  * ===============================================================================
- *
- * $Id: RegistryController.java,v 1.38 2010/02/22 08:14:26 mattias Exp $
  */
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
@@ -1338,31 +1336,41 @@ public class RegistryController extends BaseController
 	/**
 	 * Gets matching references
 	 */
-	
 	public List getMatchingRegistryVOListForReferencingEntity(String referencingEntityName, String referencingEntityId, Database db) throws SystemException, Exception
 	{
-	    List matchingRegistryVOList = new ArrayList();
-
-	    logger.info("referencingEntityName:" + referencingEntityName);
-	    logger.info("referencingEntityId:" + referencingEntityId);
+		String cacheName = "registryCache";
+		String cacheKey = "" + referencingEntityName + "_" + referencingEntityId;
 		
-	    OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RegistryImpl r WHERE r.referencingEntityName = $1 AND r.referencingEntityId = $2 ORDER BY r.registryId");
-		oql.bind(referencingEntityName);
-		oql.bind(referencingEntityId);
+		List matchingRegistryVOList = (List)CacheController.getCachedObjectFromAdvancedCache(cacheName, cacheKey); 
+		if(matchingRegistryVOList != null)
+		{
+			return matchingRegistryVOList;
+		}
+		else
+		{
+		    matchingRegistryVOList = new ArrayList();
+		    			
+		    OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RegistryImpl r WHERE r.referencingEntityName = $1 AND r.referencingEntityId = $2 ORDER BY r.registryId");
+			oql.bind(referencingEntityName);
+			oql.bind(referencingEntityId);
+			
+			QueryResults results = oql.execute(Database.ReadOnly);
+			
+			while (results.hasMore()) 
+	        {
+	            Registry registry = (Registry)results.next();
+	            RegistryVO registryVO = registry.getValueObject();
+	    	    //logger.info("found match:" + registryVO.getEntityName() + ":" + registryVO.getEntityId());
+	            
+	            matchingRegistryVOList.add(registryVO);
+	        }       
+			
+			CacheController.cacheObjectInAdvancedCache(cacheName, cacheKey, matchingRegistryVOList, new String[]{""+cacheKey.hashCode()}, true);
+			
+			results.close();
+			oql.close();
+		}
 		
-		QueryResults results = oql.execute(Database.ReadOnly);
-		
-		while (results.hasMore()) 
-        {
-            Registry registry = (Registry)results.next();
-            RegistryVO registryVO = registry.getValueObject();
-    	    logger.info("found match:" + registryVO.getEntityName() + ":" + registryVO.getEntityId());
-            
-            matchingRegistryVOList.add(registryVO);
-        }       
-		
-		results.close();
-		oql.close();
 
 		return matchingRegistryVOList;		
 	}

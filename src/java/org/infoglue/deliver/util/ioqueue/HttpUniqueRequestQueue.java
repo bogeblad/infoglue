@@ -30,8 +30,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-/*
- *  Kill a thread after a given timeout has elapsed
+/**
+ * This is a queue thread. It works by trying again and again with 10 seconds intervals 
+ * to request http data from whatever source the queue bean defines. Each bean can define it's own fetcher so this 
+ * class is ignorant of what the call consists of or what consitutes success.
  */
 
 public class HttpUniqueRequestQueue implements Runnable
@@ -48,6 +50,9 @@ public class HttpUniqueRequestQueue implements Runnable
 	{
 	}
 
+	/**
+	 * Singleton getter
+	 */
 	public static HttpUniqueRequestQueue getHttpUniqueRequestQueue()
 	{
 		if(singleton == null)
@@ -60,6 +65,9 @@ public class HttpUniqueRequestQueue implements Runnable
 		return singleton;
 	}
 
+	/**
+	 * This method adds a new bean to the queue
+	 */
 	public void addHttpUniqueRequestQueueBean(HttpUniqueRequestQueueBean bean)
 	{
 		logger.info("Adding url..");
@@ -70,6 +78,11 @@ public class HttpUniqueRequestQueue implements Runnable
 		logger.info("Done...");
 	}
 	
+	/**
+	 * The thread/runnable implementation. It basically just loops forever each 10 seconds and on each run it
+	 * takes all queued beans and ask the bean to invoke it's fetcher. If the fetcher does not report an error 
+	 * the bean is regarded as finished and is removed.
+	 */
 	public synchronized void run()
 	{
 		logger.info("Running HttpUniqueRequestQueue...");

@@ -62,7 +62,7 @@ public class ViewLuceneOverviewAction extends InfoGlueAbstractAction
     	
     		try
     		{
-    	    	LuceneController.getController().deleteIndex();
+    	    	LuceneController.getController().clearIndex();
     	    	
     	    	indexInformation = LuceneController.getController().getIndexInformation();
         		

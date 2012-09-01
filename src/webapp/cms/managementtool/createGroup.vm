@@ -9,7 +9,10 @@
 	<form name="editForm" method="post" action="CreateGroup.action">
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 		<p>#editField("Group.groupName" "groupName" $!groupName "51")</p>
-		<p>#editTextArea("Group.description" "description" $description "50" "5" "normaltextarea")</p>
+		<p>#editField("Group.description" "description" $description "51")</p>
+		<p>#editField("Group.source" "source" $source "51")</p>
+		<p>#editField("Group.groupType" "groupType" $groupType "51")</p>
+		<p>#yesNoDropDown("Group.isActive" "isActive" $isActive)</p>
 	</form>
 
 </div>

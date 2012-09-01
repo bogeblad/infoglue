@@ -67,7 +67,7 @@ import org.infoglue.cms.util.sorters.ReflectionComparator;
  *  between two of the same modules.
  */
 
-public class GenericCombinedAuthorizationModule implements AuthorizationModule, Serializable
+public class GenericCombinedAuthorizationModule extends BasicAuthorizationModule implements AuthorizationModule, Serializable
 {
     private final static Logger logger = Logger.getLogger(GenericCombinedAuthorizationModule.class.getName());
 
@@ -207,7 +207,7 @@ public class GenericCombinedAuthorizationModule implements AuthorizationModule, 
 	/**
 	 * This method gets a users roles
 	 */
-
+/*
 	public List authorizeUser(String userName) throws Exception
 	{
 		List roles = new ArrayList();
@@ -231,7 +231,7 @@ public class GenericCombinedAuthorizationModule implements AuthorizationModule, 
 
 		return roles;
 	}
-
+*/
 	
 	/**
 	 * This method gets a list of roles
@@ -332,7 +332,7 @@ public class GenericCombinedAuthorizationModule implements AuthorizationModule, 
 		return users;
 	}
 
-	public List getFilteredUsers(String searchString) throws Exception 
+	public List getFilteredUsers(Integer offset, Integer limit,	String sortProperty, String direction, String searchString, boolean populateRolesAndGroups) throws Exception 
 	{
 		List users = new ArrayList();
 
@@ -345,7 +345,7 @@ public class GenericCombinedAuthorizationModule implements AuthorizationModule, 
 			
 			try
 			{
-				users.addAll(getAuthorizationModule(authorizerClassName, i).getFilteredUsers(searchString));
+				users.addAll(getAuthorizationModule(authorizerClassName, i).getFilteredUsers(offset, limit, sortProperty, direction, searchString, populateRolesAndGroups));
 			}
 			catch(Exception e)
 			{
@@ -646,5 +646,23 @@ public class GenericCombinedAuthorizationModule implements AuthorizationModule, 
     {
         return this.transactionObject;
     }
+
+	@Override
+	public Integer getRoleCount(String searchString) throws Exception 
+	{
+		return getRoles().size();
+	}
+
+	@Override
+	public Integer getGroupCount(String searchString) throws Exception 
+	{
+		return getGroups().size();
+	}
+
+	@Override
+	public Integer getUserCount(String searchString) throws Exception 
+	{
+		return getUsers().size();
+	}
 
 }

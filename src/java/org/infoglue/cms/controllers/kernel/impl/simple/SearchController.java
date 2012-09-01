@@ -35,19 +35,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Searcher;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.NIOFSDirectory;
+import org.apache.lucene.util.Version;
 import org.apache.xerces.parsers.DOMParser;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -59,9 +58,7 @@ import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
-import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
@@ -76,7 +73,12 @@ import org.xml.sax.InputSource;
 public class SearchController extends BaseController 
 {
     private final static Logger logger = Logger.getLogger(SearchController.class.getName());
-
+    
+    public static SearchController getController()
+    {
+    	return new SearchController();
+    }
+    
 	public static String getAttributeValue(String xml,String key)
 	{
 		String value = "";
@@ -155,7 +157,7 @@ public class SearchController extends BaseController
    	public Set getContents(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
    	{
    		Set contents = new HashSet();
-   		List contentVersions = getContentVersionVOList(repositoryId, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, searchAssets);
+   		List contentVersions = getContentVersionVOList(repositoryId, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, searchAssets, false);
    		Iterator contentVersionsIterator = contentVersions.iterator();
    		while(contentVersionsIterator.hasNext())
    		{
@@ -169,30 +171,41 @@ public class SearchController extends BaseController
 
    	public List<ContentVersionVO> getContentVersionVOList(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
    	{
-		List<ContentVersionVO> matchingContents = getContentVersionVOList(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, caseSensitive, stateId);
-			
-		return matchingContents;		
+		return getContentVersionVOList(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, caseSensitive, stateId);
    	}
 
    	public List<ContentVersionVO> getContentVersionVOList(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
    	{
-		List<ContentVersionVO> matchingContents = getContentVersionVOList(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, searchAssets);
-			
-		return matchingContents;		
+		return getContentVersionVOList(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, searchAssets, false);
+   	}
+
+   	public List<ContentVersionVO> getContentVersionVOList(Integer repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAssets, boolean includeSiteNodes) throws SystemException, Bug
+   	{
+		return getContentVersionVOList(new Integer[]{repositoryId}, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, searchAssets, includeSiteNodes);
    	}
 
    	public List<ContentVersionVO> getContentVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
    	{
-   		return getContentVersionVOList(repositoryId, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, false);
+   		return getContentVersionVOList(repositoryId, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, false, false);
+   	}
+
+   	public List<ContentVersionVO> getContentVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String name, Integer languageId, Integer[] contentTypeDefinitionId, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
+   	{
+   		return getContentVersionVOList(repositoryId, searchString, maxRows, name, languageId, contentTypeDefinitionId, null, caseSensitive, stateId, searchAssets, false);
    	}
 
    	public List<ContentVersionVO> getContentVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionId, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
+   	{
+   		return getContentVersionVOList(repositoryId, searchString, maxRows, userName, languageId, contentTypeDefinitionId, excludedContentTypeDefinitionIds, caseSensitive, stateId, searchAssets, false);
+   	}
+
+   	public List<ContentVersionVO> getContentVersionVOList(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionId, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean searchAssets, boolean includeSiteNodes) throws SystemException, Bug
    	{
    		String internalSearchEngine = CmsPropertyHandler.getInternalSearchEngine();
    		if(internalSearchEngine.equalsIgnoreCase("sqlSearch"))
    			return getContentVersionVOListFromCastor(repositoryId, searchString, maxRows, userName, languageId, contentTypeDefinitionId, excludedContentTypeDefinitionIds, caseSensitive, stateId, searchAssets);
    		else
-   			return getContentVersionVOListFromLucene(repositoryId, searchString, maxRows, userName, languageId, contentTypeDefinitionId, excludedContentTypeDefinitionIds, caseSensitive, stateId, searchAssets);
+   			return getContentVersionVOListFromLucene(repositoryId, searchString, maxRows, userName, languageId, contentTypeDefinitionId, excludedContentTypeDefinitionIds, caseSensitive, stateId, searchAssets, includeSiteNodes, null);
    	}
    	
    	private List<ContentVersionVO> getContentVersionVOListFromCastor(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionId, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean searchAssets) throws SystemException, Bug
@@ -205,22 +218,25 @@ public class SearchController extends BaseController
 		{
 			beginTransaction(db);
 
-			String repositoryArgument = " AND (";
-			
 			int index = 3;
 			List repArguments = new ArrayList();
-			
-			for(int i=0; i<repositoryId.length; i++)
+
+			String repositoryArgument = "";
+			if(repositoryId != null && repositoryId.length > 0)
 			{
-				if(i > 0)
-					repositoryArgument += " OR ";
-				
-				repositoryArgument += "cv.owningContent.repository.repositoryId = $" + index;
-			    repArguments.add(repositoryId[i]);
-				index++;
+				repositoryArgument = " AND (";
+				for(int i=0; i<repositoryId.length; i++)
+				{
+					if(i > 0)
+						repositoryArgument += " OR ";
+					
+					repositoryArgument += "cv.owningContent.repository.repositoryId = $" + index;
+				    repArguments.add(repositoryId[i]);
+					index++;
+				}
+				repositoryArgument += ")";
 			}
-			repositoryArgument += ")";
-				
+			
 			//int index = 4;
 			String extraArguments = "";
 			String inverse = "";
@@ -567,7 +583,16 @@ public class SearchController extends BaseController
 		
    	}
    	
-   	public static List<DigitalAssetVO> getDigitalAssets(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
+   	public List<DigitalAssetVO> getDigitalAssets(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
+   	{
+   		String internalSearchEngine = CmsPropertyHandler.getInternalSearchEngine();
+   		if(internalSearchEngine.equalsIgnoreCase("sqlSearch"))
+   			return getDigitalAssetsFromCastor(repositoryId, searchString, assetTypeFilter, maxRows);
+   		else
+   			return getDigitalAssetsFromLucene(repositoryId, searchString, assetTypeFilter, maxRows);
+   	}
+
+   	public static List<DigitalAssetVO> getDigitalAssetsFromCastor(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
    	{
    		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
 
@@ -631,9 +656,89 @@ public class SearchController extends BaseController
 		}
 		
 		return matchingAssets;
-		
    	}
 
+   	public List<DigitalAssetVO> getDigitalAssetsFromLucene(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
+   	{
+   		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
+
+   		if(searchString != null && !searchString.endsWith("*"))
+			searchString = searchString + "*";
+   		
+		Database db = CastorDatabaseService.getDatabase();
+		
+		try
+		{
+			beginTransaction(db);
+
+			String[] fields = new String[]{"isAsset","contents"};
+			String[] queries = new String[]{"true","" + searchString};
+			BooleanClause.Occur[] flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST,BooleanClause.Occur.MUST};
+
+			if(assetTypeFilter != null && !assetTypeFilter.equals("*"))
+			{
+				fields = new String[]{"isAsset","contents","contents"};
+				queries = new String[]{"true","" + searchString,"" + assetTypeFilter + "*"};
+				flags = new BooleanClause.Occur[]{BooleanClause.Occur.MUST,BooleanClause.Occur.MUST,BooleanClause.Occur.MUST};
+			}
+
+			SortField sortField = new SortField("modificationDateTime", SortField.LONG, true);
+			Sort sort = new Sort(sortField);
+			List<org.apache.lucene.document.Document> documents = LuceneController.getController().queryDocuments(fields, flags, queries, sort, maxRows);
+
+			for(org.apache.lucene.document.Document document : documents)
+			{
+				logger.info("document for asset:" + document);
+				String digitalAssetIdString = document.get("digitalAssetId");
+				if(digitalAssetIdString != null)
+				{
+					DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getSmallDigitalAssetVOWithId(Integer.parseInt(digitalAssetIdString), db);
+					matchingAssets.add(digitalAssetVO);
+				}
+			}
+		
+		
+			/*
+			while(assetResults.hasMore() && currentCount < maxRows) 
+			{
+				SmallDigitalAssetImpl smallAsset = (SmallDigitalAssetImpl)assetResults.next();
+				//if(smallAsset.getAssetContentType().matches(assetTypeFilter))
+				if(assetTypeFilter == null || assetTypeFilter.equals("*") || assetTypeFilter.indexOf(smallAsset.getAssetContentType()) > -1)
+				{
+					DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithId(smallAsset.getId(), db);
+					logger.info("Found a asset matching " + searchString + ":" + asset.getId());
+					Collection versions = asset.getContentVersions();
+					Iterator versionsIterator = versions.iterator();
+					while(versionsIterator.hasNext())
+					{
+						ContentVersion contentVersion = (ContentVersion)versionsIterator.next();
+						if(contentVersion.getValueObject().getContentId().intValue() != previousContentId.intValue() || contentVersion.getValueObject().getLanguageId().intValue() != previousLanguageId.intValue())
+						{
+						    ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVersion.getValueObject().getContentId(), contentVersion.getValueObject().getLanguageId(), db);
+							if(latestContentVersion != null && latestContentVersion.getId().intValue() == contentVersion.getId().intValue())
+							{
+								matchingAssets.add(asset.getValueObject());
+							    previousContentId = contentVersion.getValueObject().getContentId();
+							    previousLanguageId = contentVersion.getValueObject().getLanguageId();
+							    currentCount++;
+							}
+						}						
+					}
+				}
+			}*/
+			
+			commitTransaction(db);
+		}
+		catch ( Exception e )
+		{
+			rollbackTransaction(db);
+			throw new SystemException("An error occurred when we tried to search. Reason:" + e.getMessage(), e);			
+		}
+		
+		return matchingAssets;
+		
+   	}
+   	
    	public static List<DigitalAssetVO> getLatestDigitalAssets(Integer[] repositoryId, String assetTypeFilter, int maxRows) throws SystemException, Bug
    	{
    		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
@@ -736,11 +841,11 @@ public class SearchController extends BaseController
 			    
 			    String value = contentVersion.getVersionValue();
 			    
-			    System.out.println("searchString:" + searchString);
+			    logger.info("searchString:" + searchString);
 			    
 			    if(!caseSensitive)			    
 			    	searchString = "(?i)" + searchString;
-			    System.out.println("searchString:" + searchString);
+			    logger.info("searchString:" + searchString);
 			    
 			    value = value.replaceAll(searchString, replaceString);
 			    	
@@ -764,38 +869,20 @@ public class SearchController extends BaseController
    	/**
    	 * This method searches with lucene
    	 */
-   	private List<ContentVersionVO> getContentVersionVOListFromLucene(Integer[] repositoryIdAsIntegerToSearch, String searchString, int maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionIds, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean includeAssets) throws SystemException, Bug
+   	public List<ContentVersionVO> getContentVersionVOListFromLucene(Integer[] repositoryIdAsIntegerToSearch, String searchString, Integer maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionIds, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean includeAssets, boolean includeSiteNodes, String categoriesExpression) throws SystemException, Bug
    	{
    		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
    		
 	   	try 
 	    {
-			String index = CmsPropertyHandler.getContextRootPath() + File.separator + "lucene" + File.separator + "index";
-		    
-			boolean indexExists = IndexReader.indexExists(new File(index));
-			if(!indexExists)
+			if(searchString != null)
 			{
-			    try 
-			    {
-			    	File INDEX_DIR = new File(index);
-			    	IndexWriter writer = new IndexWriter(INDEX_DIR, new StandardAnalyzer());
-			    	logger.info("Indexing to directory '" + INDEX_DIR + "'...");
-			    	writer.updateDocument(new Term("initializer", "true"), getDocument("initializer"));
-			    	logger.info("Optimizing...");
-			    	writer.optimize();
-			    	writer.close();
-			    } 
-			    catch (Exception e) 
-			    {
-			    	logger.error("An error creating index:" + e.getMessage(), e);
-			    }
+				/*if(searchString.indexOf(" ") > -1)
+					searchString = "\"" + searchString + "\"";
+				else*/ if(!searchString.endsWith("*"))
+					searchString = searchString + "*";
 			}
-
-			/*if(searchString.indexOf(" ") > -1)
-				searchString = "\"" + searchString + "\"";
-			else*/ if(!searchString.endsWith("*"))
-				searchString = searchString + "*";
-
+			
 			List<String> fieldNames = new ArrayList<String>();
 			List<String> queryStrings = new ArrayList<String>();
 			List<BooleanClause.Occur> booleanList = new ArrayList<BooleanClause.Occur>();
@@ -873,10 +960,26 @@ public class SearchController extends BaseController
 			}
 			if(stateId != null && !stateId.equals(""))
 			{
-				fieldNames.add("stateId");
-				queryStrings.add("" + stateId);
-				booleanList.add(BooleanClause.Occur.MUST);
+				if(stateId == 0)
+				{
+					fieldNames.add("stateId");
+					queryStrings.add("0 OR 1 OR 2 OR 3");
+					booleanList.add(BooleanClause.Occur.MUST);					
+				}
+				else if(stateId == 2)
+				{
+					fieldNames.add("stateId");
+					queryStrings.add("2 OR 3");
+					booleanList.add(BooleanClause.Occur.MUST);					
+				}
+				else
+				{
+					fieldNames.add("stateId");
+					queryStrings.add("" + stateId);
+					booleanList.add(BooleanClause.Occur.MUST);
+				}
 			}
+			
 			if(!includeAssets)
 			{
 				fieldNames.add("isAsset");
@@ -884,11 +987,44 @@ public class SearchController extends BaseController
 				booleanList.add(BooleanClause.Occur.MUST_NOT);
 			}
 			
+			if(categoriesExpression != null && !categoriesExpression.equals(""))
+			{
+				fieldNames.add("categories");
+				queryStrings.add("" + categoriesExpression);
+				booleanList.add(BooleanClause.Occur.MUST);
+			}
+			
+			
 			if(searchString != null && searchString.length() > 0)
 			{
 				fieldNames.add("contents");
 				queryStrings.add(searchString);
 				booleanList.add(BooleanClause.Occur.MUST);
+			}
+			
+			if(!includeSiteNodes)
+			{
+				if(logger.isInfoEnabled())
+					logger.info("Detta var inte metaInfoFråga");
+				fieldNames.add("isSiteNode");
+				queryStrings.add("true");
+				booleanList.add(BooleanClause.Occur.MUST_NOT);
+			}
+			else
+			{
+				if(logger.isInfoEnabled())
+					logger.info("Detta var inte metaInfoFråga");
+				fieldNames.add("isSiteNode");
+				queryStrings.add("true");
+				booleanList.add(BooleanClause.Occur.MUST);
+			}
+
+			if(logger.isInfoEnabled())
+			{
+				for(String queryString : queryStrings)
+				{
+					logger.info("queryString:" + queryString);
+				}
 			}
 			
 			String[] fields = new String[fieldNames.size()];
@@ -900,95 +1036,102 @@ public class SearchController extends BaseController
 			BooleanClause.Occur[] flags = new BooleanClause.Occur[fieldNames.size()];
 			flags = (BooleanClause.Occur[])booleanList.toArray(flags);
 			
-		    IndexReader reader = IndexReader.open(index);
+			SortField sortField = new SortField("publishDateTime", SortField.LONG, true);
+			Sort sort = new Sort(sortField);
+			List<org.apache.lucene.document.Document> documents = LuceneController.getController().queryDocuments(fields, flags, queries, sort, maxRows);
+			
+			logger.info(documents.size() + " total matching documents");
 	
-		    Searcher searcher = new IndexSearcher(reader);
-		    Analyzer analyzer = new StandardAnalyzer(new String[]{});
-
-			Query query = MultiFieldQueryParser.parse(queries, fields, flags, analyzer);
-			logger.info("Searching for: " + query.toString());
-	
-			Hits hits = searcher.search(query);
-	
-			logger.info(hits.length() + " total matching documents");
-	
-			final int HITS_PER_PAGE = new Integer(maxRows);
-			for (int start = 0; start < hits.length(); start += HITS_PER_PAGE)
+			for(org.apache.lucene.document.Document doc : documents)
 			{
-				int end = Math.min(hits.length(), start + HITS_PER_PAGE);
-				for (int i = start; i < end; i++)
+				String contentVersionId = doc.get("contentVersionId");
+				String contentId = doc.get("contentId");
+				String siteNodeId = doc.get("siteNodeId");
+				if(logger.isInfoEnabled())
 				{
-					org.apache.lucene.document.Document doc = hits.doc(i);
-					String contentVersionId = doc.get("contentVersionId");
-					String contentId = doc.get("contentId");
 					logger.info("doc:" + doc);
 					logger.info("contentVersionId:" + contentVersionId);
 					logger.info("contentId:" + contentId);
-					
-					if(contentVersionId == null && contentId != null)
+					logger.info("siteNodeId:" + siteNodeId);
+				}
+				
+				if(siteNodeId != null)
+				{
+					try
 					{
-						try
+						SiteNodeVO snVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
+						if(snVO.getMetaInfoContentId() != null)
 						{
-							ContentVO cvo = ContentController.getContentController().getContentVOWithId(new Integer(contentId));
-							logger.info("cvo:" + cvo);
-
-							String path = doc.get("path");
-							if (path != null)
-							{
-								logger.info((i + 1) + ". " + path);
-								String title = doc.get("title");
-								if (title != null)
-								{
-									logger.info("   Title: " + doc.get("title"));
-								}
-							} 
-							else
-							{
-								logger.info((i + 1) + ". " + "No path for this document");
-							}
+							if(languageId == null)
+								languageId = LanguageController.getController().getMasterLanguage(snVO.getRepositoryId()).getId();
+							ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(snVO.getMetaInfoContentId(), languageId, Integer.parseInt(CmsPropertyHandler.getOperatingMode()));
+							logger.info("cvvo:" + cvVO.getContentName() + "(" + cvVO.getContentId() + ")");
+							contentVersionVOList.add(cvVO);
 						}
-						catch (Exception e) 
-						{
-							logger.error("ContentVersion with id:" + contentVersionId + " was not valid - skipping but how did the index become corrupt?");
-							deleteVersionFromIndex(contentVersionId);
-						}						
 					}
-					else
+					catch (Exception e) 
 					{
-						try
+						logger.error("SiteNode with id:" + siteNodeId + " was not valid.");
+					}						
+				}
+				else if(contentVersionId == null && contentId != null)
+				{
+					try
+					{
+						ContentVO cvo = ContentController.getContentController().getContentVOWithId(new Integer(contentId));
+						logger.info("cvo:" + cvo);
+
+						String path = doc.get("path");
+						if (path != null)
 						{
-							ContentVersionVO cvvo = ContentVersionController.getContentVersionController().getFullContentVersionVOWithId(new Integer(contentVersionId));
-							logger.info("cvvo:" + cvvo);
-							contentVersionVOList.add(cvvo);
-						
-							String path = doc.get("path");
-							if (path != null)
+							logger.info("" + path);
+							String title = doc.get("title");
+							if (title != null)
 							{
-								logger.info((i + 1) + ". " + path);
-								String title = doc.get("title");
-								if (title != null)
-								{
-									logger.info("   Title: " + doc.get("title"));
-								}
-							} 
-							else
-							{
-								logger.info((i + 1) + ". " + "No path for this document");
+								logger.info("   Title: " + doc.get("title"));
 							}
-						}
-						catch (Exception e) 
+						} 
+						else
 						{
-							logger.error("ContentVersion with id:" + contentVersionId + " was not valid - skipping but how did the index become corrupt?");
-							deleteVersionFromIndex(contentVersionId);
+							logger.info("No path for this document");
 						}
+					}
+					catch (Exception e) 
+					{
+						logger.error("ContentVersion with id:" + contentVersionId + " was not valid - skipping but how did the index become corrupt?");
+						deleteVersionFromIndex(contentVersionId);
+					}						
+				}
+				else
+				{
+					try
+					{
+						ContentVersionVO cvvo = ContentVersionController.getContentVersionController().getFullContentVersionVOWithId(new Integer(contentVersionId));
+						logger.info("cvvo:" + cvvo.getContentName() + "(" + cvvo.getContentId() + ")");
+						contentVersionVOList.add(cvvo);
+					
+						String path = doc.get("path");
+						if (path != null)
+						{
+							logger.info("" + path);
+							String title = doc.get("title");
+							if (title != null)
+							{
+								logger.info("   Title: " + doc.get("title"));
+							}
+						} 
+						else
+						{
+							logger.info("No path for this document");
+						}
+					}
+					catch (Exception e) 
+					{
+						logger.error("ContentVersion with id:" + contentVersionId + " was not valid - skipping but how did the index become corrupt?");
+						deleteVersionFromIndex(contentVersionId);
 					}
 				}
-	
-				if (queries != null) // non-interactive
-					break;
 			}
-			
-			reader.close();	
 	    } 
 	    catch (Exception e) 
 	    {
@@ -1009,11 +1152,9 @@ public class SearchController extends BaseController
 
    	private List<SiteNodeVersionVO> getSiteNodeVersionVOListFromCastor(Integer[] repositoryId, String searchString, int maxRows, String userName, Integer languageId, Integer caseSensitive, Integer stateId) throws SystemException, Bug
    	{
-		List<SiteNodeVersionVO> matching = new ArrayList<SiteNodeVersionVO>();
+   		List<SiteNodeVersionVO> matching = new ArrayList<SiteNodeVersionVO>();
 
-   		ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
-
-		List<ContentVersionVO> matchingMetaInfoContentVersionVOList = getContentVersionVOList(repositoryId, searchString, maxRows, userName, languageId, new Integer[]{ctd.getId()}, null, caseSensitive, stateId, false);
+		List<ContentVersionVO> matchingMetaInfoContentVersionVOList = getContentVersionVOList(repositoryId, searchString, maxRows, userName, languageId, null, null, caseSensitive, stateId, false, true);
 		Iterator<ContentVersionVO> matchingMetaInfoContentVersionVOListIterator = matchingMetaInfoContentVersionVOList.iterator();
 		while(matchingMetaInfoContentVersionVOListIterator.hasNext())
 		{
@@ -1022,7 +1163,7 @@ public class SearchController extends BaseController
 			{
 				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVersionVO.getContentId());				
 				SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeVO.getId());
-				matching.add(siteNodeVersionVO);
+		   		matching.add(siteNodeVersionVO);
 			}
 			catch (Exception e) 
 			{
@@ -1030,93 +1171,7 @@ public class SearchController extends BaseController
 			}
 		}
 		
-		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-		Database db = CastorDatabaseService.getDatabase();
-		try
-		{
-			beginTransaction(db);
-
-			String repositoryArgument = " AND (";
-			
-			int index = 3;
-			List repArguments = new ArrayList();
-			
-			for(int i=0; i<repositoryId.length; i++)
-			{
-				if(i > 0)
-					repositoryArgument += " OR ";
-				
-				repositoryArgument += "snv.owningSiteNode.repository.repositoryId = $" + index;
-			    repArguments.add(repositoryId[i]);
-				index++;
-			}
-			repositoryArgument += ")";
-				
-			//int index = 4;
-			String extraArguments = "";
-			String inverse = "";
-			List arguments = new ArrayList();
-						
-			if(userName != null && !userName.equalsIgnoreCase(""))
-			{
-			    extraArguments += " AND snv.versionModifier = $" + index;
-			    arguments.add(userName);
-				index++;
-			}
-			if(stateId != null)
-			{
-			    extraArguments += " AND cv.stateId = $" + index;
-			    arguments.add(stateId);
-				index++;
-			}
-			    
-			String sql = "SELECT snv FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl snv WHERE snv.isActive = $1 AND snv.owningSiteNode.name = $2 " + repositoryArgument + extraArguments + " ORDER BY snv.owningSiteNode asc, snv.siteNodeVersionId desc";
-			logger.info("sql:" + sql);
-			OQLQuery oql = db.getOQLQuery(sql);
-			oql.bind(new Boolean(true));
-			oql.bind(searchString);
-			Iterator repIterator = repArguments.iterator();
-			while(repIterator.hasNext())
-			{
-				Integer repositoryIdAsInteger = (Integer)repIterator.next();
-				oql.bind(repositoryIdAsInteger);
-			}
-	        
-			Iterator iterator = arguments.iterator();
-			while(iterator.hasNext())
-			{
-			    oql.bind(iterator.next());
-			}
-			
-			QueryResults results = oql.execute(Database.ReadOnly);
-			
-			Integer previousSiteNodeId  = new Integer(-1);
-			int currentCount = 0;
-			while(results.hasMore() && currentCount < maxRows) 
-			{
-				SiteNodeVersion siteNodeVersionVersion = (SiteNodeVersion)results.next();
-				logger.info("Found a version matching " + searchString + ":" + siteNodeVersionVersion.getId() + "=" + siteNodeVersionVersion.getOwningSiteNode().getName());
-				if(siteNodeVersionVersion.getOwningSiteNode().getId().intValue() != previousSiteNodeId.intValue())
-				{
-				    matching.add(siteNodeVersionVersion.getValueObject());
-				    previousSiteNodeId = siteNodeVersionVersion.getOwningSiteNode().getId();
-				    currentCount++;
-				}
-			}
-
-			results.close();
-			oql.close();
-			
-			commitTransaction(db);
-		}
-		catch ( Exception e )
-		{
-			rollbackTransaction(db);
-			throw new SystemException("An error occurred when we tried to search. Reason:" + e.getMessage(), e);			
-		}
-		
-		return matching;
-		
+		return matching;		
    	}
    	
    	
@@ -1128,12 +1183,16 @@ public class SearchController extends BaseController
 			String index = CmsPropertyHandler.getContextRootPath() + File.separator + "lucene" + File.separator + "index";
 
 	    	File INDEX_DIR = new File(index);
-	    	writer = new IndexWriter(INDEX_DIR, new StandardAnalyzer());
+
+			Directory directory = new NIOFSDirectory(INDEX_DIR);
+			
+	    	StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
+			IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, analyzer);
+
+	    	writer = new IndexWriter(directory, config);
 	    	logger.info("Indexing to directory '" + INDEX_DIR + "'...");
 	    	logger.info("Deleting contentVersionId:" + contentVersionId);
 		    writer.deleteDocuments(new Term("contentVersionId", "" + contentVersionId));
-		    logger.info("Optimizing...");
-	    	writer.optimize();
 	    	writer.close();	    	
 	    } 
 	    catch (Exception e) 
@@ -1146,7 +1205,7 @@ public class SearchController extends BaseController
 	{
 		org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();
 
-		doc.add(new Field("modified", DateTools.timeToString(new Date().getTime(), DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.UN_TOKENIZED));
+		doc.add(new Field("modified", DateTools.timeToString(new Date().getTime(), DateTools.Resolution.MINUTE), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("contents", new StringReader(text)));
 
 		return doc;

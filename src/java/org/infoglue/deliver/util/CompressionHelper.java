@@ -40,7 +40,7 @@ public class CompressionHelper
 {
     private final static Logger logger = Logger.getLogger(CompressionHelper.class.getName());
 
-    public byte[] compress(String string) 
+    public static byte[] compress(String string) 
     {
         byte[] bytes = null;
         
@@ -75,7 +75,7 @@ public class CompressionHelper
         return bytes;
     }
     
-    public String decompress(byte[] bytes)
+    public static String decompress(byte[] bytes)
     {
         try
         {

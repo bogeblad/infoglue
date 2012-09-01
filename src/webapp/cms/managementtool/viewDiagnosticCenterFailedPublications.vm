@@ -1,0 +1,76 @@
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+		});
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.repositoryList.header" "" "" false true $!disableCloseButton $headerMarkup true "")
+
+	<div id="menutoolbar">
+		<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 10px; padding-top: 8px;"></div>
+		<div id="menutoolbarRight" style="float: right;">
+			<a class="igToolbarButton igToolbarHeaderButton" href="#" onclick="if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();" id="exitButton" name="exitButton" title="Close dialog/window"><span class="igToolbarButtonOuterSpan igToolbarHeaderButton"><span class="close" title="Close dialog/window">Close</span></span></a>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	
+	<div>
+		<h3>Failed publications</h3>
+	
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Modified date</th>
+					<th>Publisher</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				#foreach ($publicationVO in $this.getFailedPublicationVOList("$liveInstanceValidationUrl"))
+				
+					<tr>
+						<td>$publicationVO.name</td>
+						<td>
+							$publicationVO.description
+						</td>
+						<td>$formatter.formatDate($publicationVO.getPublicationDateTime(), "yyyy-MM-dd HH:mm")</td>
+						<td>$publicationVO.publisher</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
+
+	</div>
+
+	<div id="footertoolbar" onfocus="this.blur();">
+		<div style="float:left; margin-left: 10px;">
+			<input type="button" class="cancel" id="footerButton2" name="footerButton2" title="Cancel" value="Cancel">
+			<script type="text/javascript">
+			<!--
+			$("#footerButton2").click(function (){
+				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
+			});
+			-->
+			</script>
+		</div>
+	</div>
+					
+#endLightCommonToolV3()

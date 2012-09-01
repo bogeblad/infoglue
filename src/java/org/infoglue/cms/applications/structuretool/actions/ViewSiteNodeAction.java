@@ -147,7 +147,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 
 	protected void initialize(Integer siteNodeId, Database db) throws Exception
 	{
-		this.siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeId, db);
+		this.siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(this.siteNodeVO.getRepositoryId());
 		this.siteNodeVersionVO = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getACLatestActiveSiteNodeVersionVO(this.getInfoGluePrincipal(), siteNodeId, db);
 		ContentVersionVO latestActiveMetaInfoContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId());

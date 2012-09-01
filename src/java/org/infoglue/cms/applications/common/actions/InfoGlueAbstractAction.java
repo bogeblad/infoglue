@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,7 +79,10 @@ import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
+import org.infoglue.deliver.util.LiveInstanceMonitor;
 import org.infoglue.deliver.util.graphics.ColorHelper;
+import org.infoglue.deliver.util.ioqueue.PublicationQueue;
+import org.infoglue.deliver.util.ioqueue.PublicationQueueBean;
 
 import webwork.action.ActionContext;
 import webwork.config.Configuration;
@@ -864,6 +868,15 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
     	return CmsPropertyHandler.getAllowPublicationEventFilter();
     }
 
+    /**
+     * Getter for if the system should allow a user to override the 
+     * version modifyer upon publication. 
+     */
+	public String getAllowOverrideModifyer()
+	{
+	    return CmsPropertyHandler.getAllowOverrideModifyer();
+	}
+
     public Locale getLocale()
     {
         return this.getSession().getLocale();
@@ -931,6 +944,31 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	public void setToolName(String toolName)
 	{
 		this.getSession().setToolName(toolName);
+	}
+
+	/**
+	 * Helper method to get the instance status defined by the delivery-base-url.
+	 */
+	public Boolean getInstanceStatus(String baseUrl)
+	{
+		return LiveInstanceMonitor.getInstance().getServerStatus(baseUrl);
+	}
+
+	/**
+	 * This method returns a map of all the registered deliver instances and their current state.
+	 */
+	public Map<String,Boolean> getInstanceStatusMap()
+	{
+		return LiveInstanceMonitor.getInstance().getInstanceStatusMap();
+	}
+
+	/**
+	 * This method returns a set of all queued publication beans divided inte a map where each set represents a certain deliver instance.
+	 * So it returns all the queues so to speak.
+	 */
+	public Map<String, Set<PublicationQueueBean>> getInstancePublicationQueueBeans()
+	{
+		return PublicationQueue.getPublicationQueue().getInstancePublicationQueueBeans();
 	}
 
 	//--------------------------------------------------------------------------
@@ -1244,6 +1282,20 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return DigitalAssetController.getController().getContentId(digitalAssetId);
 	}
 
+	public LanguageVO getLanguageVO(Integer languageId) throws Exception
+	{
+		LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(languageId);
+
+		return languageVO;
+	}
+
+	public ContentVO getContentVO(Integer contentId) throws Exception
+	{
+		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
+
+		return contentVO;
+	}
+
 	public String getContentPath(Integer contentId) throws Exception
 	{
 		StringBuffer sb = new StringBuffer();
@@ -1331,7 +1383,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 				InfoGlueInterceptor infoGlueInterceptor = InterceptionService.getService().getInterceptor(interceptorVO.getName());
 				if(infoGlueInterceptor == null)
 					infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
-				System.out.println("infoGlueInterceptor:" + infoGlueInterceptor);
+				logger.info("infoGlueInterceptor:" + infoGlueInterceptor);
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap, allowCreatorAccess);
 			}
 			catch(ClassNotFoundException e)

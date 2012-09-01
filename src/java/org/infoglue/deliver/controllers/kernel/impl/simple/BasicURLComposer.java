@@ -352,7 +352,7 @@ public class BasicURLComposer extends URLComposer
 
         try
 		{
-	        SiteNodeVO siteNodeVO = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
+        	SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 	
 	        String deriveProtocolWhenUsingProtocolRedirects = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNodeVO.getRepositoryId(), "deriveProtocolWhenUsingProtocolRedirects");
 			if(deriveProtocolWhenUsingProtocolRedirects == null || deriveProtocolWhenUsingProtocolRedirects.equals("") || !deriveProtocolWhenUsingProtocolRedirects.equals("true") || !deriveProtocolWhenUsingProtocolRedirects.equals("false"))
@@ -365,7 +365,7 @@ public class BasicURLComposer extends URLComposer
 				NodeDeliveryController nodeDeliveryController = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
 		    	Integer protectedSiteNodeVersionId = nodeDeliveryController.getProtectedSiteNodeVersionId(db, siteNodeId);
 		    	String originalFullURL = deliveryContext.getOriginalFullURL();
-		    	
+
 		    	boolean isAnonymousAccepted = true;
 		    	if(protectedSiteNodeVersionId != null)
 		    	{
@@ -406,8 +406,9 @@ public class BasicURLComposer extends URLComposer
         {
             String context = CmsPropertyHandler.getServletContext();
             
-            SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
-            SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
+            SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+            SiteNodeVO currentSiteNode = SiteNodeController.getController().getSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
+
     		if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))
     		{
     			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
@@ -650,10 +651,15 @@ public class BasicURLComposer extends URLComposer
 	
 	            String arguments = "siteNodeId=" + siteNodeId + getRequestArgumentDelimiter() + "languageId=" + languageId + getRequestArgumentDelimiter() + "contentId=" + contentId;
 
-	            SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, db, true);
+	            //SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, db, true);
+	            SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 	    		String dnsName = CmsPropertyHandler.getWebServerAddress();
-	    		if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-	    			dnsName = siteNode.getRepository().getDnsName();
+	    		if(siteNode != null)
+	    		{
+	    			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNode.getRepositoryId(), db);
+		    		if(siteNode != null && repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+		    			dnsName = repositoryVO.getDnsName();
+	    		}
 
 	        	String operatingMode = CmsPropertyHandler.getOperatingMode();
 			    String keyword = "";

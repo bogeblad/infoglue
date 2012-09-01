@@ -35,11 +35,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.infoglue.cms.applications.common.Session;
 import org.infoglue.cms.applications.common.ValueConverter;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.applications.managementtool.actions.CreateSystemUserAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.exception.ConfigurationError;
 import org.infoglue.cms.util.StringManager;
@@ -62,7 +64,9 @@ import com.opensymphony.module.propertyset.PropertySetManager;
  */
 public class VelocityServlet extends WebWorkVelocityServlet
 {
-	private static final long serialVersionUID = 408929363112264207L;
+    private final static Logger logger = Logger.getLogger(VelocityServlet.class.getName());
+
+    private static final long serialVersionUID = 408929363112264207L;
 
 	private static final String PACKAGE_NAMES_INIT_PARAM = "packageNames";
 
@@ -130,7 +134,7 @@ public class VelocityServlet extends WebWorkVelocityServlet
             }
             catch (Throwable e) 
             {
-				System.out.println("Error:" + e.getMessage() + " - setting locale to english");
+				logger.error("Error:" + e.getMessage() + " - setting locale to english");
             	session.setLocale(java.util.Locale.ENGLISH);
             }        	
         }

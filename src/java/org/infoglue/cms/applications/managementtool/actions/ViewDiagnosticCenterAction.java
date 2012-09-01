@@ -28,8 +28,12 @@ import java.util.List;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.BaseController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.entities.management.TableCount;
+import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
+import org.infoglue.deliver.util.ioqueue.PublicationQueue;
 
 /**
  * This class represents the diagnostic screen of the system
@@ -49,49 +53,69 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
 	private int numberOfContentVersions = 0;
 	private int numberOfDigitalAssets = 0;
 	private int numberOfUnusedDigitalAssets = 0;
-		
+	
+	//The url to validate
+	private String liveInstanceValidationUrl = "";
+
+	//The address to return the user to after come action commands
+	private String returnAddress = "";
+		    
+	/**
+	 * This method does several checks and return the diagnostic view.
+	 */
 	public String doExecute() throws Exception
-    {
+    {		
     	this.internalDeliverUrls = CmsPropertyHandler.getInternalDeliveryUrls();
     	this.publicDeliverUrls = CmsPropertyHandler.getPublicDeliveryUrls();
-    	
+
     	String tableName = "cmSiteNode";
+    	String columnName = "repositoryId";
     	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     		tableName = "cmSiNo";
 
-    	TableCount tableCount = BaseController.getTableCount(tableName);
+    	TableCount tableCount = BaseController.getTableCount(tableName, columnName);
     	if(tableCount != null)
     		numberOfSiteNodes = tableCount.getCount();
 
     	tableName = "cmSiteNodeVersion";
+    	columnName = "siteNodeId";
     	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    	{
     		tableName = "cmSiNoVer";
+        	columnName = "siNoId";
+    	}
 
-    	tableCount = BaseController.getTableCount(tableName);
+    	tableCount = BaseController.getTableCount(tableName, columnName);
     	if(tableCount != null)
     		numberOfSiteNodeVersions = tableCount.getCount();
 
     	tableName = "cmContent";
+    	columnName = "repositoryId";
     	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     		tableName = "cmCont";
 
-    	tableCount = BaseController.getTableCount(tableName);
+    	tableCount = BaseController.getTableCount(tableName, columnName);
     	if(tableCount != null)
     		numberOfContents = tableCount.getCount();
 
     	tableName = "cmContentVersion";
+    	columnName = "contentId";
     	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    	{
     		tableName = "cmContVer";
+        	columnName = "contId";
+    	}
 
-    	tableCount = BaseController.getTableCount(tableName);
+    	tableCount = BaseController.getTableCount(tableName, columnName);
     	if(tableCount != null)
     		numberOfContentVersions = tableCount.getCount();
 
     	tableName = "cmDigitalAsset";
+    	columnName = "assetFileSize";
     	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     		tableName = "cmDigAsset";
     	
-    	tableCount = BaseController.getTableCount(tableName);
+    	tableCount = BaseController.getTableCount(tableName, columnName);
     	if(tableCount != null)
     		numberOfDigitalAssets = tableCount.getCount();
 
@@ -102,6 +126,31 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
         return "success";
     }
 
+	/**
+     * This action allows to clear notification queue manually. It can return the user to the
+     * same normal diagnostics view again or to a custom url if sent in.
+     */
+    public String doClearQueue() throws Exception
+    {
+    	PublicationQueue.getPublicationQueue().clearPublicationQueueBean(liveInstanceValidationUrl);
+    	
+        if(this.returnAddress != null && !this.returnAddress.equals(""))
+        {
+            this.getResponse().sendRedirect(this.returnAddress);
+            return NONE;
+        }
+        
+        return "cleared";
+    }
+	
+	/**
+     * This action allows to view the failed publications.
+     */
+    public String doViewFailedPublications() throws Exception
+    {
+        return "successFailedPublications";
+    }
+    
 	public List getInternalDeliverUrls()
 	{
 		return internalDeliverUrls;
@@ -142,4 +191,54 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
 		return numberOfUnusedDigitalAssets;
 	}
 
+	public String getLiveInstanceValidationUrl() 
+	{
+		return liveInstanceValidationUrl;
+	}
+
+	public void setLiveInstanceValidationUrl(String liveInstanceValidationUrl) 
+	{
+		this.liveInstanceValidationUrl = liveInstanceValidationUrl;
+	}
+
+	public String getReturnAddress() 
+	{
+		return returnAddress;
+	}
+
+	public void setReturnAddress(String returnAddress) 
+	{
+		this.returnAddress = returnAddress;
+	}
+
+	public PublicationQueue getPublicationQueue()
+	{
+		return PublicationQueue.getPublicationQueue();
+	}
+
+	/**
+	 * Method which returns the timestamp (if any) of the last manual clearing of the publication queue for a particular instance.
+	 */
+	public String getInstancePublicationQueueManualClearTimestamp(String baseUrl)
+	{
+		return PublicationQueue.getPublicationQueue().getInstancePublicationQueueManualClearTimestamp(baseUrl);
+	}
+
+	/**
+	 * Method which returns all ongoing publications for a certain instance. It calls the instance to check which ones are in process.
+	 */
+	public List<CacheEvictionBean> getOngoingPublicationBeans(String baseUrl)
+	{
+		return PublicationController.getOngoingPublicationStatusList(baseUrl);
+	}
+
+	/**
+	 * Method which returns all failed publications for a certain instance. It calls the instance to check which ones failed.
+	 */
+	public List<PublicationVO> getFailedPublicationVOList(String baseUrl)
+	{
+		return PublicationController.getController().getFailedPublicationVOList(baseUrl);
+	}
+
+	
 }

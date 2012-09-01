@@ -44,6 +44,8 @@ public class UpdateContentVersionTag extends InfoGlueWebServiceTag implements Co
 	private Boolean allowAnchorSigns = true;
 	private Boolean keepExistingAttributes = false;
 	private Boolean keepExistingCategories = true;
+	private Boolean updateExistingAssets = true;
+	private Boolean createVersionIfNotExists = true;
 	
     /**
      *  
@@ -87,10 +89,18 @@ public class UpdateContentVersionTag extends InfoGlueWebServiceTag implements Co
                 contentVersion.put("allowHTMLContent", this.allowHTMLContent);
             if(this.allowExternalLinks != null)
                 contentVersion.put("allowExternalLinks", this.allowExternalLinks);
+            if(this.allowDollarSigns != null)
+                contentVersion.put("allowDollarSigns", this.allowDollarSigns);
+            if(this.allowAnchorSigns != null)
+                contentVersion.put("allowAnchorSigns", this.allowAnchorSigns);
             if(this.keepExistingAttributes != null)
                 contentVersion.put("keepExistingAttributes", this.keepExistingAttributes);
             if(this.keepExistingAttributes != null)
                 contentVersion.put("keepExistingCategories", this.keepExistingCategories);
+            if(this.updateExistingAssets != null)
+                contentVersion.put("updateExistingAssets", this.updateExistingAssets);
+            if(this.createVersionIfNotExists != null)
+                contentVersion.put("createVersionIfNotExists", this.createVersionIfNotExists);
             if(this.versionValue != null)
                 contentVersion.put("versionValue", this.versionValue);
                
@@ -111,8 +121,12 @@ public class UpdateContentVersionTag extends InfoGlueWebServiceTag implements Co
         this.stateId = null;
         this.allowHTMLContent = false;
         this.allowExternalLinks = false;
+        this.allowDollarSigns = false;
+        this.allowAnchorSigns = false;
         this.keepExistingAttributes = false;
         this.keepExistingCategories = true;
+        this.updateExistingAssets = true;
+        this.createVersionIfNotExists = true;
         return EVAL_PAGE;
     }
 
@@ -198,7 +212,7 @@ public class UpdateContentVersionTag extends InfoGlueWebServiceTag implements Co
     public void setVersionComment(String versionComment) throws JspException
     {
         this.versionComment = evaluateString("updateContentVersion", "versionComment", versionComment);
-    }
+    } 
 
     public void setVersionValue(String versionValue) throws JspException
     {
@@ -233,6 +247,16 @@ public class UpdateContentVersionTag extends InfoGlueWebServiceTag implements Co
 	public void setKeepExistingCategories(final String keepExistingCategories) throws JspException
 	{
 		this.keepExistingCategories = (Boolean)evaluate("updateContentVersion", "keepExistingCategories", keepExistingCategories, Boolean.class);
+	}
+
+	public void setUpdateExistingAssets(final String updateExistingAssets) throws JspException
+	{
+		this.updateExistingAssets = (Boolean)evaluate("updateContentVersion", "updateExistingAssets", updateExistingAssets, Boolean.class);
+	}
+
+	public void setCreateVersionIfNotExists(final String createVersionIfNotExists) throws JspException
+	{
+	    this.createVersionIfNotExists = (Boolean)evaluate("updateContentVersion", "createVersionIfNotExists", createVersionIfNotExists, Boolean.class);
 	}
 
     public String getOperationName()

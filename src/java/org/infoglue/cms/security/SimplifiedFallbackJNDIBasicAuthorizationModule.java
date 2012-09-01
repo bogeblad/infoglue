@@ -254,51 +254,6 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 		return ctx;
 	}
 
-	/**
-	 * This method gets a Context - either by an anonymous bind or a real bind
-	 */
-	/*
-	public DirContext getContext(Control[] controls) throws Exception
-	{
-		String connectionURL 		= this.extraProperties.getProperty("connectionURL");
-		String ldapVersion			= this.extraProperties.getProperty("ldapVersion");
-		String socketFactory		= this.extraProperties.getProperty("socketFactory");
-		String authenticationMethod	= this.extraProperties.getProperty("authenticationMethod");
-		String connectionName		= this.extraProperties.getProperty("connectionName");
-		String connectionPassword	= this.extraProperties.getProperty("connectionPassword");
-
-		// Create a Hashtable object.
-		Hashtable env = new Hashtable();
-		
-		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-
-		env.put(Context.PROVIDER_URL, connectionURL);
-		if(ldapVersion != null && !ldapVersion.equals("3"))
-			env.put("java.naming.ldap.version", ldapVersion); 		
-		else
-			env.put("java.naming.ldap.version", "3"); 
-		
-		if(socketFactory != null && !socketFactory.equals(""))
-			env.put("java.naming.ldap.factory.socket", "org.infoglue.cms.security.DummySSLSocketFactory");
-		
-		if(authenticationMethod != null && authenticationMethod.equals("none"))
-		{
-			env.put(Context.SECURITY_AUTHENTICATION, "none");
-		}
-		else
-		{
-			env.put(Context.SECURITY_AUTHENTICATION, "simple");
-			env.put(Context.SECURITY_PRINCIPAL, connectionName);
-			env.put(Context.SECURITY_CREDENTIALS, connectionPassword);
-		}
-			
-		env.put("com.sun.jndi.ldap.connect.pool", "true");
-		
-		DirContext ctx = new InitialLdapContext(env, controls); 
-		
-		return ctx;
-	}
-	*/
 
 	/**
 	 * Gets an authorized InfoGluePrincipal 
@@ -1943,7 +1898,7 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
 		return users;
 	}
 	
-	public List getFilteredUsers(String searchString) throws SystemException, Bug, Exception
+	public List getFilteredUsers(Integer offset, Integer limit,	String sortProperty, String direction, String searchString, boolean populateRolesAndGroups) throws SystemException, Bug, Exception
 	{
 		//TODO
 		return getUsers();
@@ -2465,4 +2420,95 @@ public class SimplifiedFallbackJNDIBasicAuthorizationModule extends Thread imple
     	return (getAuthorizedInfoGlueGroup(groupName) == null ? false : true);
     }
 
+	public Integer getRoleCount(String searchString) throws Exception 
+	{
+		return getRoles().size();
+	}
+
+	public Integer getGroupCount(String searchString) throws Exception 
+	{
+		return getGroups().size();
+	}
+
+	public Integer getUserCount(String searchString) throws Exception 
+	{
+		return getUsers().size();
+	}
+	
+	//Very bad basic implementation - should be overwritten by implementing class so it's effective.
+	public Integer getRoleUserCount(String roleName, String searchString) throws Exception 
+	{
+		return getRoleUsers(roleName, null, null, null, null, searchString).size();
+	}
+
+	//Very bad basic implementation - should be overwritten by implementing class so it's effective.
+	public Integer getRoleUserInvertedCount(String roleName, String searchString) throws Exception 
+	{
+		List<InfoGluePrincipal> allUsers = getFilteredUsers(null, null, null, null, searchString, false);
+		List<InfoGluePrincipal> assignedUsers = getRoleUsers(roleName, null, null, null, null, searchString);
+		
+		List<InfoGluePrincipal> newAllUsers = new ArrayList<InfoGluePrincipal>();
+		newAllUsers.addAll(allUsers);
+		newAllUsers.removeAll(assignedUsers);
+		
+		return newAllUsers.size();
+	}
+
+	//Very bad basic implementation - should be overwritten by implementing class so it's effective.
+	public Integer getGroupUserCount(String groupName, String searchString) throws Exception 
+	{
+		return getGroupUsers(groupName, null, null, null, null, searchString).size();
+	}
+
+	//Very bad basic implementation - should be overwritten by implementing class so it's effective.
+	public Integer getGroupUserInvertedCount(String groupName, String searchString) throws Exception 
+	{
+		List<InfoGluePrincipal> allUsers = getFilteredUsers(null, null, null, null, searchString, false);
+		List<InfoGluePrincipal> assignedUsers = getGroupUsers(groupName, null, null, null, null, searchString);
+		
+		List<InfoGluePrincipal> newAllUsers = new ArrayList<InfoGluePrincipal>();
+		newAllUsers.addAll(allUsers);
+		newAllUsers.removeAll(assignedUsers);
+		
+		return newAllUsers.size();
+	}
+
+	//Very bad basic implementation - should be overwritten by implementing class so it's effective.
+	public List<InfoGluePrincipal> getRoleUsers(String roleName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws Exception 
+	{
+		return getRoleUsers(roleName);
+	}
+
+	//Very bad basic implementation - should be overwritten by implementing class so it's effective.
+	public List<InfoGluePrincipal> getRoleUsersInverted(String roleName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws Exception 
+	{
+		List<InfoGluePrincipal> allUsers = getFilteredUsers(null, null, null, null, searchString, false);
+		List<InfoGluePrincipal> assignedUsers = getRoleUsers(roleName);
+		
+		List<InfoGluePrincipal> newAllUsers = new ArrayList<InfoGluePrincipal>();
+		newAllUsers.addAll(allUsers);
+		newAllUsers.removeAll(assignedUsers);
+
+		return newAllUsers;
+	}
+
+	//Very bad basic implementation - should be overwritten by implementing class so it's effective.
+	public List<InfoGluePrincipal> getGroupUsers(String groupName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws Exception 
+	{
+		return getGroupUsers(groupName);
+	}
+
+	//Very bad basic implementation - should be overwritten by implementing class so it's effective.
+	public List<InfoGluePrincipal> getGroupUsersInverted(String groupName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws Exception 
+	{
+		List<InfoGluePrincipal> allUsers = getFilteredUsers(null, null, null, null, searchString, false);
+		List<InfoGluePrincipal> assignedUsers = getGroupUsers(groupName);
+		
+		List<InfoGluePrincipal> newAllUsers = new ArrayList<InfoGluePrincipal>();
+		newAllUsers.addAll(allUsers);
+		newAllUsers.removeAll(assignedUsers);
+
+		return newAllUsers;
+	}
+	
 }

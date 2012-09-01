@@ -87,10 +87,16 @@
 			{
 				listForm.action = "UnpublishContentVersion!unpublishAll.action"
 				listForm.versionComment.value = commentElm.value;
-				if(overrideVersionModifyerElm.checked == true)
-					listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+				
+				if(overrideVersionModifyerElm)
+				{
+					if(overrideVersionModifyerElm.checked == true)
+						listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+					else
+						listForm.overrideVersionModifyer.value = "false";
+				}
 				else
-					listForm.overrideVersionModifyer.value = "false";
+					listForm.overrideVersionModifyer.value = "true";				
 				
 				listForm.attemptDirectPublishing.value = attemptDirectPublishing;
 				listForm.submit();
@@ -142,12 +148,14 @@
 			<tr>
 				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "normaltextarea")</td>
 			</tr>		
+			#if($!this.allowOverrideModifyer != "false")
 			<tr>
 				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
 				<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
 			</tr>	
+			#end
 			
 		</table>
 	</td>

@@ -79,6 +79,7 @@ import org.infoglue.deliver.portal.PortalService;
 import org.infoglue.deliver.util.BrowserBean;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
+import org.infoglue.deliver.util.HttpUtilities;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.ThreadMonitor;
 import org.infoglue.deliver.util.Timer;
@@ -289,6 +290,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				}
 			}
 			
+			if(!isUserRedirected)
+				isUserRedirected = rewriteUrl();
+			
 			String pageKey = this.nodeDeliveryController.getPageCacheKey(dbWrapper.getDatabase(), this.getHttpSession(), getRequest(), this.siteNodeId, this.languageId, this.contentId, browserBean.getUseragent(), this.getRequest().getQueryString(), "");
 
 	    	if(logger.isInfoEnabled())
@@ -429,9 +433,15 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			extraInformation += "User IP: " + getRequest().getRemoteAddr();
 
 			if(e instanceof java.net.SocketException || e.getCause() != null && e.getCause() instanceof java.net.SocketException)
-				logger.error("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation);
+			{
+				logger.error("An error occurred (se warning log for further info):" + e.getMessage());
+				logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation, e);
+			}
 			else
-				logger.error("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation, e);
+			{
+				logger.error("An error occurred (se warning log for further info):" + e.getMessage());
+				logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation, e);
+			}
 			
 			rollbackTransaction(dbWrapper.getDatabase());
 
@@ -531,7 +541,44 @@ public class ViewPageAction extends InfoGlueAbstractAction
         return NONE;
     }
 
+
     /**
+     * This method handles redirect of any special cases where we need to redirect the user based on particular situations. 
+     * For example to remove a CAS-ticket in the URL or similar.
+     * @return true if the user was redirected.
+     * @throws Exception
+     */
+    private boolean rewriteUrl() throws Exception
+    {
+    	boolean isUserRedirected = false;
+    	
+    	String URI = getOriginalURI();
+		if(logger.isInfoEnabled())
+		{
+			logger.info("Ticket:" + getRequest().getParameter("ticket"));
+			logger.info("URI:" + URI);
+		}
+		
+		if(getRequest().getMethod().equalsIgnoreCase("get") && getRequest().getParameter("ticket") != null && getRequest().getParameter("ticket").length() > 0)
+		{
+			String queryString = getOriginalQueryString();
+			if(logger.isInfoEnabled())
+				logger.info("queryString:" + queryString);
+			String remainingQueryString = HttpUtilities.removeParameter(queryString, "ticket");
+			if(logger.isInfoEnabled())
+				logger.info("remainingQueryString:" + remainingQueryString);
+
+			if(logger.isInfoEnabled())
+				logger.info("Redirecting to:" + URI + (remainingQueryString != null && !remainingQueryString.equals("") ? "?" + remainingQueryString : ""));
+			getResponse().sendRedirect(URI + (remainingQueryString != null && !remainingQueryString.equals("") ? "?" + remainingQueryString : ""));
+			//return true;
+			isUserRedirected = true;
+		}
+		
+		return isUserRedirected;
+	}
+
+	/**
      * This method checks out for and switches between protocols if set depending on if the page was protected or not.
      * @param protectedSiteNodeVersionId
      * @return
@@ -580,7 +627,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				{
 					if(originalFullURL.indexOf(unprotectedProtocolName + "://") > -1)
 					{	
-						String redirectUrl = originalFullURL.replaceFirst(unprotectedProtocolName + "://", protectedProtocolName + "://").replaceFirst(unprotectedProtocolPort, protectedProtocolPort);
+						String redirectUrl = originalFullURL.replaceFirst(unprotectedProtocolName + "://", protectedProtocolName + "://").replaceFirst(":" + unprotectedProtocolPort + "/", ":" + protectedProtocolPort + "/");
 						getResponse().sendRedirect(redirectUrl);
 						logger.info("Redirecting user to:" + redirectUrl);
 						isUserRedirected = true;
@@ -592,7 +639,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					{
 						if(originalFullURL.indexOf(protectedProtocolName + "://") > -1)
 						{	
-							String redirectUrl = originalFullURL.replaceFirst(protectedProtocolName + "://", unprotectedProtocolName + "://").replaceFirst(protectedProtocolPort, unprotectedProtocolPort);;
+							String redirectUrl = originalFullURL.replaceFirst(protectedProtocolName + "://", unprotectedProtocolName + "://").replaceFirst(":" + protectedProtocolPort + "/", ":" + unprotectedProtocolPort + "/");
 							getResponse().setStatus(new Integer(accessBasedProtocolRedirectHTTPCode));
 							getResponse().sendRedirect(redirectUrl);
 							logger.info("Redirecting user to:" + redirectUrl);
@@ -685,6 +732,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					isUserRedirected = handleExtranetLogic(dbWrapper.getDatabase(), true);
 			}
 			*/
+			
+			if(!isUserRedirected)
+				isUserRedirected = rewriteUrl();
 			
 	    	String pageKey = this.nodeDeliveryController.getPageCacheKey(dbWrapper.getDatabase(), this.getHttpSession(), this.getRequest(), this.siteNodeId, this.languageId, this.contentId, browserBean.getUseragent(), this.getRequest().getQueryString(), "_" + this.showSimple + "_pagecomponentDecorated");
 
@@ -1025,7 +1075,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeVOCache", "" + getSiteNodeId());
 				if(siteNodeVO == null)
 				{
-					siteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(getSiteNodeId(), db);
+					siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId(), db);
 					CacheController.cacheObjectInAdvancedCache("siteNodeVOCache", "" + getSiteNodeId(), siteNodeVO);
 				}
 				repositoryId = siteNodeVO.getRepositoryId();
@@ -1535,6 +1585,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				{
 				    this.getHttpSession().removeAttribute("infogluePrincipal");
 				    this.principal = null;
+
 				    return true;
 				}
 				else if(principal != null)
@@ -1598,7 +1649,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		{
 			logger.error("An error occurred:" + e.getMessage(), e);
 		}
-		
+				
 		return isRedirected;
 	}
 	
@@ -1768,7 +1819,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	 * Gets the SiteNodeType definition of this given node
 	 * @return
 	 */
-	private SiteNodeTypeDefinitionVO getSiteNodeTypeDefinition(Integer siteNodeId, Database db) throws SystemException
+	private SiteNodeTypeDefinitionVO getSiteNodeTypeDefinition(Integer siteNodeId, Database db) throws SystemException, Exception
 	{
 	    String key = "" + siteNodeId;
 		logger.info("key:" + key);
@@ -1780,7 +1831,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		}
 		else
 		{
-			SiteNodeVO siteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(getSiteNodeId(), db);
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId(), db);
 
 			if(siteNodeVO == null)
 			    throw new SystemException("There was no page with this id.");
@@ -1842,6 +1893,20 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		
 		return errorUrl;
   	}
+
+	/**
+	 * This method returns the exact full url excluding query string from the original request - not modified
+	 * @return
+	 */
+	
+	public String getOriginalURI()
+	{
+    	String originalRequestURI = this.getRequest().getParameter("originalRequestURI");
+    	if(originalRequestURI == null || originalRequestURI.length() == 0)
+    		originalRequestURI = this.getRequest().getRequestURI().toString();
+
+    	return originalRequestURI;
+	}
 
 	/**
 	 * This method returns the exact full url excluding query string from the original request - not modified

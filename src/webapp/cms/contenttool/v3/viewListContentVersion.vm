@@ -94,6 +94,18 @@
 	<div style="clear: both;"></div>
 
 	<h3>$ui.getString("tool.contenttool.publishContent.header")</h3>
+	
+	#set($errorPart = "")
+	#foreach($instanceBaseUrl in $this.getInstanceStatusMap().keySet())
+		#set($instanceStatus = $this.getInstanceStatus($instanceBaseUrl))
+		#if(!$instanceStatus)
+			#if($errorPart == "")
+				#set($errorPart = "The following instances are to be notified of updates but are currently not responding and will be notified when available:<br/>")
+			#end
+			#set($errorPart = "$errorPart $instanceBaseUrl<br/>")
+		#end
+	#end
+	#if($errorPart != "")<p class="errorNotice">$errorPart <br/>You can continue and any healthy servers will operate as expected but please notify your system administrator if this message persists.</p>#end
 		
 	<div class="inlineTabDiv">	
 	

@@ -64,8 +64,10 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		hashMap.put("siteNodeId", parentSiteNodeId);
     	
 		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal);
-
-		return SiteNodeController.getController().create(parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
+		
+		SiteNodeVO sn = SiteNodeController.getController().create(parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
+	
+		return sn;
 	}   
 
 	/**
@@ -79,7 +81,9 @@ public class SiteNodeControllerProxy extends SiteNodeController
     	
 		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal, db);
 
-		return SiteNodeController.getController().create(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
+		SiteNode sn = SiteNodeController.getController().create(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
+
+		return sn;
 	}   
     
 	/**

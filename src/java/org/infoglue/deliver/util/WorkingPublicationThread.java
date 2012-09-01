@@ -23,11 +23,18 @@
 package org.infoglue.deliver.util;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptorController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
+import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
@@ -43,15 +50,16 @@ import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingI
 import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
-import org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl;
-import org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl;
-import org.infoglue.cms.entities.management.impl.simple.SmallSystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
+import org.infoglue.cms.entities.publishing.PublicationDetailVO;
+import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationDetailImpl;
+import org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
+import org.infoglue.cms.services.CacheEvictionBeanListenerService;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
@@ -66,6 +74,7 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryC
 public class WorkingPublicationThread extends Thread
 {
     public final static Logger logger = Logger.getLogger(WorkingPublicationThread.class.getName());
+	private static VisualFormatter formatter = new VisualFormatter();
 
     private List cacheEvictionBeans = new ArrayList();
 	
@@ -110,6 +119,9 @@ public class WorkingPublicationThread extends Thread
 				while(i.hasNext())
 				{
 				    CacheEvictionBean cacheEvictionBean = (CacheEvictionBean)i.next();
+				    
+				    RequestAnalyser.getRequestAnalyser().addOngoingPublications(cacheEvictionBean);
+
 				    String className = cacheEvictionBean.getClassName();
 				    String objectId = cacheEvictionBean.getObjectId();
 				    String objectName = cacheEvictionBean.getObjectName();
@@ -121,12 +133,13 @@ public class WorkingPublicationThread extends Thread
 					logger.info("typeId:" + typeId);
 
 					try
-					{
+					{						
 				        boolean isDependsClass = false;
 					    if(className != null && className.equalsIgnoreCase(PublicationDetailImpl.class.getName()))
 					        isDependsClass = true;
 				
 					    CacheController.clearCaches(className, objectId, null);
+						CacheController.setForcedCacheEvictionMode(true);
 			
 					    logger.info("Updating className with id:" + className + ":" + objectId);
 					    if(className != null && !typeId.equalsIgnoreCase("" + NotificationMessage.SYSTEM))
@@ -136,10 +149,7 @@ public class WorkingPublicationThread extends Thread
 						    if(!isDependsClass && 
 						    		className.equalsIgnoreCase(SystemUserImpl.class.getName()) || 
 						    		className.equalsIgnoreCase(RoleImpl.class.getName()) || 
-						    		className.equalsIgnoreCase(GroupImpl.class.getName()) || 
-						    		className.equalsIgnoreCase(SmallSystemUserImpl.class.getName()) || 
-						    		className.equalsIgnoreCase(SmallRoleImpl.class.getName()) || 
-						    		className.equalsIgnoreCase(SmallGroupImpl.class.getName()))
+						    		className.equalsIgnoreCase(GroupImpl.class.getName()))
 						    {
 						        Object[] ids = {objectId};
 						        CacheController.clearCache(type, ids);
@@ -231,33 +241,70 @@ public class WorkingPublicationThread extends Thread
 								//Removing all scriptExtensionBundles to make sure
 								CacheController.removeScriptExtensionBundles();							    	
 							}
-							else if(Class.forName(className).getName().equals(SystemUserImpl.class.getName()))
+							else if(Class.forName(className).getName().equals(PublicationImpl.class.getName()))
 							{
-							    Class typesExtra = SmallSystemUserImpl.class;
-								Object[] idsExtra = {objectId};
-								CacheController.clearCache(typesExtra, idsExtra);
+								logger.error("**************************************");
+								logger.error("*    HERE THE MAGIC SHOULD HAPPEN IN WORKING    * " + objectId);
+								logger.error("**************************************");
+								
+								PublicationVO publicationVO = PublicationController.getController().getPublicationVO(new Integer(objectId));
+								if(publicationVO != null)
+								{
+									List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(new Integer(objectId));
+									Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
+									while(publicationDetailVOListIterator.hasNext())
+									{
+										PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
+										logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
+										logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
+										
+										logger.info("Going to index:" + publicationDetailVO.getClass() + ":" + publicationDetailVO.getEntityId() + ":" + publicationDetailVO.getTypeId());
+										//Fixa sŒ detta funkar och att delete av version ocksŒ slŒr
+										NotificationMessage notificationMessage2 = new NotificationMessage("LuceneController", publicationDetailVO.getEntityClass(), "SYSTEM", publicationDetailVO.getTypeId(), publicationDetailVO.getEntityId(), "" + publicationDetailVO.getName());
+										new Thread(new SearchIndexHelper(notificationMessage2)).start();
+										logger.info("------------------------------------------->Done indexing in working thread");
+										
+										if(publicationDetailVO.getEntityClass().indexOf("pageCache") > -1)
+										{
+									    	if(publicationDetailVO.getEntityClass().equals("pageCacheExtra"))
+									    	{
+									    		CacheController.clearCacheForGroup("pageCacheExtra", "selectiveCacheUpdateNonApplicable");
+									    	}
+									    	else
+									    	{
+									    		CacheController.clearCacheForGroup("pageCache", "selectiveCacheUpdateNonApplicable");							    		
+									    	}
+										}
+									}
+								}
 							}
-							else if(Class.forName(className).getName().equals(RoleImpl.class.getName()))
-							{
-							    Class typesExtra = SmallRoleImpl.class;
-								Object[] idsExtra = {objectId};
-								CacheController.clearCache(typesExtra, idsExtra);
-							}
-							else if(Class.forName(className).getName().equals(GroupImpl.class.getName()))
-							{
-							    Class typesExtra = SmallGroupImpl.class;
-								Object[] idsExtra = {objectId};
-								CacheController.clearCache(typesExtra, idsExtra);
-							}
-	
+							
 						    logger.info("4");
 						}	
+					    
+					    if(!className.equals(SystemUserImpl.class.getName()) &&
+					       !className.equals(RoleImpl.class.getName()) &&
+					       !className.equals(GroupImpl.class.getName()))
+					 		{
+					    		logger.info("Going to index:" + className + ":" + objectId + ":" + typeId);
+								//Fixa sŒ detta funkar och att delete av version ocksŒ slŒr
+								NotificationMessage notificationMessage = new NotificationMessage("LuceneController", className, "SYSTEM", Integer.parseInt(typeId), Integer.parseInt(objectId), "" + objectName);
+								new Thread(new SearchIndexHelper(notificationMessage)).start();
+								LuceneController.getController().notify(notificationMessage);
+								logger.info("------------------------------------------->Done indexing in working thread");
+					 		
+								CacheEvictionBeanListenerService.getService().notifyListeners(cacheEvictionBean);
+					 		}
 					}
 					catch (Exception e) 
 					{
 						logger.error("Error handling cache update message:" + className + ":" + objectId);
-						//e.printStackTrace();
 					}
+					
+				    RequestAnalyser.getRequestAnalyser().removeOngoingPublications(cacheEvictionBean);
+				    cacheEvictionBean.setProcessed();
+				    //if(cacheEvictionBean.getPublicationId() > -1)
+				    	RequestAnalyser.getRequestAnalyser().addPublication(cacheEvictionBean);
 				}
 			} 
 			catch (Exception e)
@@ -283,4 +330,5 @@ public class WorkingPublicationThread extends Thread
         RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
 		logger.info("released block");
 	}
+
 }

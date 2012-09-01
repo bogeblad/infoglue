@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -49,6 +50,8 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 public class RepositoryController extends BaseController
 {
@@ -673,6 +676,8 @@ public class RepositoryController extends BaseController
     
 	public boolean getIsAccessApproved(Integer repositoryId, InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog) throws SystemException
 	{
+		Timer t = new Timer();
+		
 		logger.info("getIsAccessApproved for " + repositoryId + " AND " + infoGluePrincipal + " AND " + isBindingDialog);
 		boolean hasAccess = false;
     	
@@ -695,7 +700,9 @@ public class RepositoryController extends BaseController
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
-		
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Reading access rights for Repository.Read", t.getElapsedTime());
+		//t.printElapsedTime("Reading access rights for:" + repositoryId);
+
 		return hasAccess;
 	}	
     

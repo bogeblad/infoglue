@@ -23,6 +23,10 @@
 
 package org.infoglue.cms.util;
 
+/**
+ * This bean contains all information about what kind of notification message to send to
+ * the deliver instaces.
+ */
 public class NotificationMessage
 {
 	public final static int TRANS_CREATE      		= 0;
@@ -36,18 +40,32 @@ public class NotificationMessage
 	public final static int AUTHENTICATION_FAILED   = 201;
 	public final static int AUTHORIZATION_FAILED	= 202;
 	
-	public final static String TRANS_CREATE_TEXT 	= "create";
-	public final static String TRANS_UPDATE_TEXT 	= "update";
-	public final static String TRANS_DELETE_TEXT		= "delete";
-	public final static String PUBLISHING_TEXT   	= "publishing";
-	public final static String DENIED_PUBLISHING_TEXT = "publishing denied";
-	public final static String UNPUBLISHING_TEXT   	= "unpublishing";
-	public final static String SYSTEM_TEXT   	= "general configuration change";
-	public final static String AUTHENTICATION_SUCCESS_TEXT   	= "authentication success";
-	public final static String AUTHENTICATION_FAILED_TEXT   	= "authentication failed";
-	public final static String AUTHORIZATION_FAILED_TEXT   	= "authorization failed";
+	public final static int WORKING_NOTIFICATION_QUEUED = 300;
+	public final static int WORKING_NOTIFICATION_FAILED = 301;
+	public final static int LIVE_NOTIFICATION_QUEUED 	= 302;
+	public final static int LIVE_NOTIFICATION_FAILED 	= 303;
+	public final static int SERVER_UNAVAILABLE			= 304;
+	public final static int LIVE_NOTIFICATION_SOLVED 	= 305;
+	public final static int SERVER_UNAVAILABLE_SOLVED	= 306;
+	
+	public final static String TRANS_CREATE_TEXT 		= "Create";
+	public final static String TRANS_UPDATE_TEXT 		= "Update";
+	public final static String TRANS_DELETE_TEXT		= "Delete";
+	public final static String PUBLISHING_TEXT   		= "Publishing";
+	public final static String DENIED_PUBLISHING_TEXT	= "Publishing denied";
+	public final static String UNPUBLISHING_TEXT   		= "Unpublishing";
+	public final static String SYSTEM_TEXT   			= "General configuration change";
+	public final static String AUTHENTICATION_SUCCESS_TEXT   	= "Authentication success";
+	public final static String AUTHENTICATION_FAILED_TEXT   	= "Authentication failed";
+	public final static String AUTHORIZATION_FAILED_TEXT   		= "Authorization failed";
 
+	public final static String LIVE_NOTIFICATION_SOLVED_TEXT 	= "Publication republished";
+	public final static String LIVE_NOTIFICATION_QUEUED_TEXT   	= "Publication queued";
+	public final static String LIVE_NOTIFICATION_FAILED_TEXT   	= "Publication failed";
+	public final static String SERVER_UNAVAILABLE_TEXT   		= "Server unavailable";
+	public final static String SERVER_UNAVAILABLE_SOLVED_TEXT   = "Server available again";
 
+	private long timeStamp = System.currentTimeMillis();
 	private String name;
 	private String systemUserName;
 	private int type;
@@ -96,6 +114,11 @@ public class NotificationMessage
 		return this.objectName;
 	}
 
+	public long getTimestamp()
+	{
+		return this.timeStamp;
+	}
+
 	public static String getTransactionTypeName(Integer transactionType)
 	{
 		switch (transactionType.intValue())
@@ -116,6 +139,17 @@ public class NotificationMessage
 				return AUTHORIZATION_FAILED_TEXT;
 			case (AUTHORIZATION_FAILED):
 				return AUTHORIZATION_FAILED_TEXT;
+
+			case (LIVE_NOTIFICATION_QUEUED):
+				return LIVE_NOTIFICATION_QUEUED_TEXT;
+			case (LIVE_NOTIFICATION_FAILED):
+				return LIVE_NOTIFICATION_FAILED_TEXT;
+			case (LIVE_NOTIFICATION_SOLVED):
+				return LIVE_NOTIFICATION_SOLVED_TEXT;
+			case (SERVER_UNAVAILABLE):
+				return SERVER_UNAVAILABLE_TEXT;
+			case (SERVER_UNAVAILABLE_SOLVED):
+				return SERVER_UNAVAILABLE_SOLVED_TEXT;
 		}
 		return "unknown - map " + transactionType + " to correct text";
 	}

@@ -22,12 +22,16 @@
  */
 package org.infoglue.cms.util.sorters;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
@@ -39,6 +43,10 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
  */
 class CompoundComparable implements Comparable 
 {
+    private final static Logger logger = Logger.getLogger(CompoundComparable.class.getName());
+
+	private Collator collation = Collator.getInstance();
+	
 	/**
 	 * The list of contained comparables.
 	 */
@@ -49,6 +57,17 @@ class CompoundComparable implements Comparable
 	 */
 	private final List orders = new ArrayList(); // type: <Boolean>
 	
+	private CompoundComparable()
+	{
+		logger.warn("no location");
+	}
+
+	public CompoundComparable(Locale locale)
+	{
+		if(locale != null)
+			collation = Collator.getInstance(locale);
+	}
+
 	/**
 	 * Compares two <code>CompoundComparable</code> objects by comparing all
 	 * contained comparable against each other.
@@ -93,6 +112,7 @@ class CompoundComparable implements Comparable
 		final Comparable c2      = (Comparable) other.comparables.get(index);
 		final Boolean ascending  = (Boolean) orders.get(index);
 		return ascending.booleanValue() ? c1.compareTo(c2) : c2.compareTo(c1);
+		//return ascending.booleanValue() ? collation.compare(c1, c2) : collation.compare(c2, c1);
 	}
 	
 	/**

@@ -30,10 +30,12 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
@@ -328,12 +330,12 @@ public class HttpHelper implements IOFetcher
 		return getUrlContent(urlAddress, requestProperties, null, timeout);
 	}
 	
-	public String getUrlContent(String urlAddress, Map requestProperties, String encoding, int timeout) throws Exception
+	public String getUrlContent(String urlAddress, Map requestProperties, String encoding, int timeout) throws MalformedURLException, IOException, Exception
 	{
 		return getUrlContent(urlAddress, requestProperties, new HashMap(), encoding, timeout);
 	}
 	
-	public String getUrlContent(String urlAddress, Map requestProperties, Map requestParameters, String encoding, int timeout) throws Exception
+	public String getUrlContent(String urlAddress, Map requestProperties, Map requestParameters, String encoding, int timeout) throws MalformedURLException, IOException, Exception
 	{
 		String argString = "";
 		if(requestParameters != null)

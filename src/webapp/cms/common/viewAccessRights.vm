@@ -1,5 +1,10 @@
 #define( $headerMarkup )
 
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
 	
 	<script type="text/javascript">
@@ -211,6 +216,11 @@
 			text-indent: 2px;
 			text-align: left;
 		}
+		
+		.groupTable #footertoolbar {
+			position: absolute !important;
+			bottom: 0px;
+		}
 	</style>
 #end
 
@@ -320,6 +330,8 @@
 				#set($roleIndex = 0)
 				#foreach ($role in $roleList)
 				
+					#if($role.isActive)
+		
 					#set($isOdd = $velocityCount % 2)
 					#if($isOdd==0)
 						#set($class = "class='lightGreen'")
@@ -369,6 +381,7 @@
 						<td>&nbsp;</td>
 					</tr>
 					#set($roleIndex = $roleIndex + 1)
+				#end
 				#end
 				</table>	
 			</form>
@@ -500,6 +513,8 @@
 				
 					function confirmGroupSave(form, field, interceptionPointName)
 					{
+						$("#" + $(form).attr("id") + " .dataTables_filter input").val("").trigger('keypress').trigger('keydown').trigger('keyup');
+					
 						var y=0;
 						var selected = false;
 						//alert("groups:" + groups.length);
@@ -547,66 +562,92 @@
 							form.submit();
 						}
 					}
-						
+					
+					$(document).ready(function(){
+						#set($extraParameter = '"sScrollY": "300px", "bPaginate": false, "bScrollCollapse": true, "aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+						#initDataTableImpl("dataTable${interceptionPointVO.id}" $extraParameter)
+					});
+		
 				</script>
 				
-				<div id="groups$accessRightId" style="position: absolute; overflow: auto; top: 10px; left: 150px; visibility: hidden; width:400px; height:500px; background-color: white; border:1px solid black;">
+				<div id="groups$accessRightId" class="groupTable" style="position: absolute; overflow: auto; top: 10px; left: 50px; visibility: hidden; width:700px; height:500px; background-color: white; border:1px solid black;">
+
 					<form method="POST" name="groups${accessRightId}Form" action="UpdateAccessRights!addGroups.action">
-					<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory">
-					<input type="hidden" name="parameters" value="$extraParameters">
-					<input type="hidden" name="accessRightId" value="$accessRightId">
-					<input type="hidden" name="returnAddress" value="$returnAddress">
-					
-					<table width="100%" bgcolor="white" cellpadding="0" cellspacing="0" border="0">
-					<tr class="darkgreen">
-						<td class="smalllabel">&nbsp;</td>
-						<td class="smalllabel" width="90%">Group</td>
-					</tr>
-					<tr>
-						<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-					</tr>
-					<tr>
-						<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-					</tr>
-					
-					#foreach($group in $groupList)
-					
-						#set($selected = "")
-						#foreach($accessRightGroup in $accessRightGroups)
-							#if($accessRightGroup.groupName == $group.name)
-								#set($selected = "checked='1'")
-							#end
-						#end
-			
-						#if($interceptionPointVO.name == "Content.Read" || $interceptionPointVO.name == "SiteNodeVersion.Read")
-							#set($anonymousGroupsCount = 0)
-							#foreach($anonymousGroup in $anonymousPrincipal.groups)
-								#if($anonymousGroup.name == $group.name)
-									<script type="text/javascript">
-										//alert("Anonymous group found $group.name");
-										groups[$anonymousGroupsCount] = "${interceptionPointVO.id}_${group.name}_hasAccess";
-									</script>
-									#set($anonymousGroupsCount = $anonymousGroupsCount + 1)
+						<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory">
+						<input type="hidden" name="parameters" value="$extraParameters">
+						<input type="hidden" name="accessRightId" value="$accessRightId">
+						<input type="hidden" name="returnAddress" value="$returnAddress">
+
+						<div id="menutoolbar">
+							<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+								<div style="float: left; padding-top: 8px; padding-left: 10px;">$ui.getString("tool.managementtool.assignedGroups.label")</div>
+							</div>
+							<div id="menutoolbarRight" style="float:right">
+								<a class='igToolbarButton igToolbarHeaderButton' href="#" onclick="hideDiv('groups$accessRightId');" title="$ui.getString("tool.common.closeWindowButton.title")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='close' title="$ui.getString("tool.common.closeWindowButton.title")">$ui.getString("tool.common.closeWindowButton.label")</span></span></a>
+							</div>
+						</div>
+
+
+						<div style="clear: both;"></div>
+
+						<table bgcolor="white" cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable${interceptionPointVO.id}">
+						<thead>
+							<tr>
+								<th>&nbsp;</th>
+								<th>$ui.getString("entity.Group.groupName.label")</th>
+								<th>$ui.getString("entity.Group.source.label")</th>
+								<th>$ui.getString("entity.Group.groupType.label")</th>
+							</tr>
+						</thead>
+						
+						<tbody>
+							#foreach($group in $groupList)
+								
+								#if($group.isActive)
+									#set($selected = "")
+									#set($selectedSortText = "1")
+									#foreach($accessRightGroup in $accessRightGroups)
+										#if($accessRightGroup.groupName == $group.name)
+											#set($selected = "checked='1'")
+											#set($selectedSortText = "0")
+										#end
+									#end
+						
+									#if($interceptionPointVO.name == "Content.Read" || $interceptionPointVO.name == "SiteNodeVersion.Read")
+										#set($anonymousGroupsCount = 0)
+										#foreach($anonymousGroup in $anonymousPrincipal.groups)
+											#if($anonymousGroup.name == $group.name)
+												<script type="text/javascript">
+													//alert("Anonymous group found $group.name");
+													groups[$anonymousGroupsCount] = "${interceptionPointVO.id}_${group.name}_hasAccess";
+												</script>
+												#set($anonymousGroupsCount = $anonymousGroupsCount + 1)
+											#end
+										#end
+									#end
+						
+									<tr>
+										<td><span style="display:none;">$selectedSortText</span><input type="checkbox" id="${interceptionPointVO.id}_${group.name}_hasAccess" name="groupName" value="${group.name}" $selected/></td>
+									  	<td>$group.displayName</td>
+									  	<td>$group.source</td>
+									  	<td>$group.groupType</td>
+									</tr>
 								#end
 							#end
-						#end
-			
-					<tr>
-						  	<td><input type="checkbox" id="${interceptionPointVO.id}_${group.name}_hasAccess" name="groupName" value="${group.name}" $selected></td>
-					  	<td>$group.displayName</td>
-					</tr>
-					#end
-					<tr>
-					  	<td colspan="2">&nbsp;</td>
-					</tr>
-					<tr>
-					  	<td colspan="2">
-					  	<a href="javascript:confirmGroupSave(document.groups${accessRightId}Form, document.groups${accessRightId}Form.groupName, '$interceptionPointVO.name');"><img src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25" border="0"></a>
-					  	<img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" onclick="hideDiv('groups$accessRightId');">
-					  	</td>
-					</tr>
-					</table>
+							
+						</tbody>
+						
+						</table>
+
 					</form>
+					
+					<div style="clear: both;"></div>
+					<div id="footertoolbar" onfocus="this.blur();">
+						<div style="float:left; margin-left: 10px;">
+							<input type="button" class='save' onclick="confirmGroupSave(document.groups${accessRightId}Form, document.groups${accessRightId}Form.groupName, '$interceptionPointVO.name');" title="$ui.getString("tool.common.saveButton.title")" value="$ui.getString("tool.common.saveButton.label")"/>
+							<input type="button" class='cancel' onclick="hideDiv('groups$accessRightId');" title="$ui.getString("tool.common.cancelButton.title")" value="$ui.getString("tool.common.cancelButton.label")"/>
+						</div>
+					</div>					
 				</div>			
 			#end
 			#set($interceptionPointIndex = $interceptionPointIndex + 1)

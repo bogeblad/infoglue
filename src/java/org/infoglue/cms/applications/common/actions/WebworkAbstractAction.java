@@ -48,6 +48,8 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.StringManager;
 import org.infoglue.cms.util.StringManagerFactory;
 import org.infoglue.deliver.util.BrowserBean;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 import webwork.action.Action;
 import webwork.action.CommandDriven;
@@ -117,10 +119,13 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 
 
   /**
-   *
+	 * This is the main execution point for any webwork action.
+	 * Lately we added statistics on each action for debugging and optimization purposes.
    */
     public String execute() throws Exception 
     {
+    	Timer t = new Timer();
+    	
     	String result = "";
     	
         try 
@@ -131,10 +136,14 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
         	protectFromCSSAttacks(this.getClass().getName(), this.commandName);
         	
         	result = isCommand() ? invokeCommand() : doExecute();
+        	setStandardResponseHeaders();
+
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("" + this.getUnencodedCurrentURI(), t.getElapsedTime());
         } 
         catch(ResultException e) 
         {
-        	logger.error("ResultException " + e, e);
+        	logger.error("ResultException " + e.getMessage());
+        	logger.warn("ResultException " + e.getMessage(), e);
         	result = e.getResult();
         } 
 		catch(AccessConstraintException e) 
@@ -146,21 +155,32 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
         catch(ConstraintException e) 
         {
         	logger.info("ConstraintException " + e, e);
-            setErrors(e);
-			if(e.getResult() != null && !e.getResult().equals(""))
-				result = e.getResult();
-			else
-				result = INPUT;
+        	List<LinkBean> linkBeans = e.getLinkBeans();
+        	if(linkBeans != null && linkBeans.size() > 0)
+        	{
+        		getResponse().sendRedirect(linkBeans.get(0).getActionURL());
+        		result = NONE;
+        	}
+        	else
+        	{
+	        	setErrors(e);
+				if(e.getResult() != null && !e.getResult().equals(""))
+					result = e.getResult();
+				else
+					result = INPUT;
+        	}
         } 
         catch(Bug e) 
         {
-        	logger.error("Bug " + e);
+        	logger.error("Bug " + e.getMessage());
+        	logger.warn("Bug  " + e.getMessage(), e);
             setError(e, e.getCause());
             result = ERROR;
         } 
         catch(ConfigurationError e) 
         {
-        	logger.error("ConfigurationError " + e);
+         	logger.error("ConfigurationError " + e.getMessage());
+         	logger.warn("ConfigurationError " + e.getMessage(), e);
             setError(e, e.getCause());
             result = ERROR;
         } 
@@ -174,13 +194,17 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 					logger.warn("SystemException on url: " + getUnencodedCurrentUrl() + "\n" + e.getMessage(), e);				
 			}
 			else
-				logger.error("SystemException: " + e.getMessage(), e);
-            setError(e, e.getCause());
+			{
+	            logger.error("SystemException: " + e.getMessage());
+	            logger.warn("SystemException: " + e.getMessage(), e);
+			}
+			setError(e, e.getCause());
             result = ERROR;
         } 
         catch(Throwable e) 
         {
-            logger.error("Throwable " + e, new Exception(e));
+            logger.error("Throwable " + e.getMessage());
+            logger.warn("Throwable " + e.getMessage(), new Exception(e));
             final Bug bug = new Bug("Uncaught exception!", e);
             setError(bug, bug.getCause());
             result = ERROR;
@@ -193,7 +217,8 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
         }
         catch(Exception e)
         {
-        	e.printStackTrace();
+        	logger.error("Error notifying listener " + e.getMessage());
+        	logger.warn("Error notifying listener " + e.getMessage(), e);
         }
         
         return result;
@@ -223,6 +248,17 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 		String urlParameters = getRequest().getQueryString();
 		
 		return urlBase + (urlParameters != null ? "?" + urlParameters : "");
+	}
+
+	/**
+	 * This method returns the URI to the current page.
+	 */
+	
+	public String getUnencodedCurrentURI() throws Exception
+	{
+		String urlBase = getRequest().getRequestURI().toString();
+		
+		return urlBase;
 	}
 
     /**
@@ -325,11 +361,13 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
   	}
 
   	/**
-   	 *
+   	 * This is a complement to the normal webwork execution which allows for a command-based execution of actions. 
    	 */
   	
   	private String invokeCommand() throws Exception 
   	{
+  		Timer t = new Timer();
+  		
     	final StringBuffer methodName = new StringBuffer("do" + this.commandName);
     	methodName.setCharAt(2, Character.toUpperCase(methodName.charAt(2)));
 
@@ -341,11 +379,13 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     		
       		final Method method = getClass().getMethod(methodName.toString(), new Class[0]);
       		result = (String) method.invoke(this, new Object[0]);
+      		
+        	setStandardResponseHeaders();
+
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("" + this.getUnencodedCurrentURI(), t.getElapsedTime());
     	} 
     	catch(Exception ie) 
     	{
-    		ie.printStackTrace();
-    		
 			if(ie.getMessage() != null)
 				logger.error("Exception in top action:" + ie.getMessage(), ie);
     	    
@@ -367,11 +407,20 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 			catch(ConstraintException e) 
 			{
 				logger.info("ConstraintException " + e, e);
-				setErrors(e);
-				if(e.getResult() != null && !e.getResult().equals(""))
-					result = e.getResult();
-				else
-					result = INPUT;
+	        	List<LinkBean> linkBeans = e.getLinkBeans();
+	        	if(linkBeans != null && linkBeans.size() > 0)
+	        	{
+	        		logger.info("linkBean:" + linkBeans.get(0).getActionURL());
+	        		getResponse().sendRedirect(linkBeans.get(0).getActionURL());
+	        	}
+	        	else
+	        	{
+	        		setErrors(e);
+					if(e.getResult() != null && !e.getResult().equals(""))
+						result = e.getResult();
+					else
+						result = INPUT;
+	        	}
 			} 
 			catch(Bug e) 
 			{
@@ -421,6 +470,22 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     	
   	}
 
+  	/**
+  	 * This method adds a header to all responses which makes all latest IE-browsers fallback to IE8-mode.
+  	 * Some aspects of Infoglue (FCKEditor) does not work in IE9 for example.
+  	 */
+	public void setStandardResponseHeaders() 
+	{
+		try
+		{
+			getResponse().setHeader("X-UA-Compatible", "IE=EmulateIE8");
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Could not set headers:" + e.getMessage());
+		}
+	}
+
     public final String getRoot() 
     {
     	return request.getContextPath();
@@ -440,7 +505,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	 */
 
 	protected abstract String doExecute() throws Exception;
-
+	
 	/**
 	 * 
 	 */

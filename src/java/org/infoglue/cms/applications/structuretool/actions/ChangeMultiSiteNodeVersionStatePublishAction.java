@@ -24,8 +24,10 @@
 package org.infoglue.cms.applications.structuretool.actions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
@@ -73,8 +75,20 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
     public String doExecute() throws Exception
     {      
 		setSiteNodeVersionId( getRequest().getParameterValues("selSiteNodeVersions") );
+		
+		//Interception point for publishing - allows for validation plugins etc
 		Iterator it = siteNodeVersionId.iterator();
-
+		while(it.hasNext())
+		{
+			Integer siteNodeVersionId = (Integer)it.next();
+			Map hashMap = new HashMap();
+			hashMap.put("siteNodeVersionId", siteNodeVersionId);
+			hashMap.put("siteNodeVersionIdList", getRequest().getParameterValues("selSiteNodeVersions"));
+			intercept(hashMap, "SiteNodeVersion.SubmitToPublish", this.getInfoGluePrincipal());
+		}
+		//End interception
+		
+		it = siteNodeVersionId.iterator();
 		List events = new ArrayList();
 		while(it.hasNext())
 		{

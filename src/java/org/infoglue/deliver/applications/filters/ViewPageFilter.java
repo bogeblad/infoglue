@@ -49,7 +49,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
-import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RedirectController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
@@ -322,7 +321,8 @@ public class ViewPageFilter implements Filter
 	            catch (SystemException e) 
 	            {
 	                BaseDeliveryController.rollbackTransaction(db);
-	                logger.error("Failed to resolve siteNodeId", e);
+	                logger.error("Failed to resolve siteNodeId:" + e.getMessage());
+	                logger.warn("Failed to resolve siteNodeId:" + e.getMessage(), e);
 	                String systemRedirectUrl = RedirectController.getController().getSystemRedirectUrl(httpRequest);
                     if(systemRedirectUrl != null && systemRedirectUrl.length() > 0)
                     {
@@ -687,10 +687,12 @@ public class ViewPageFilter implements Filter
             
             String originalServletPath = ((HttpServletRequest)httpServletRequest).getServletPath();
             String originalRequestURL = ((HttpServletRequest)httpServletRequest).getRequestURL().toString();
+            String originalRequestURI = ((HttpServletRequest)httpServletRequest).getRequestURI();
             String originalQueryString = ((HttpServletRequest)httpServletRequest).getQueryString();
 
             requestParameters.put("originalServletPath", new String[] { originalServletPath });
     		requestParameters.put("originalRequestURL", new String[] { originalRequestURL });
+    		requestParameters.put("originalRequestURI", new String[] { originalRequestURI });
     		if(originalQueryString != null && originalQueryString.length() > 0)
     			requestParameters.put("originalQueryString", new String[] { originalQueryString });
     			

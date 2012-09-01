@@ -455,10 +455,13 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				while(contentVersionIdIterator.hasNext())
 				{
 					Integer currentContentVersionId = (Integer)contentVersionIdIterator.next();
-					templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
-			    	//logger.info("\nThere was a cached page string and the meta info content version was " + contentVersionId);
-			    	templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().add(currentContentVersionId);
-			    	templateController.getDeliveryContext().getUsedPageComponentsMetaInfoContentVersionIdSet().add(currentContentVersionId);
+					if(contentVersionId != null)
+					{
+						templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
+				    	//logger.info("\nThere was a cached page string and the meta info content version was " + contentVersionId);
+				    	templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().add(currentContentVersionId);
+				    	templateController.getDeliveryContext().getUsedPageComponentsMetaInfoContentVersionIdSet().add(currentContentVersionId);
+					}
 				}
 			}
 			

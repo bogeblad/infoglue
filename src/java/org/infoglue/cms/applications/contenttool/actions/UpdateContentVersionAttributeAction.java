@@ -117,9 +117,14 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 
 	private static Boolean active = new Boolean(false);
 	
+	/**
+	 * This command updates a certain attribute in a content version.
+	 * Lately we added a timeout on the wait for other threads to finish to avoid locks.
+	 */
 	public String doSaveAndReturnValue()
     {
-		while(active)
+		int index = 0;
+		while(active && index < 100)
 		{
 			logger.info("Waiting for previous thread..");
 			try
@@ -129,6 +134,7 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 			catch (Exception e)
 			{
 			}
+			index++;
 		}
 		
 		synchronized(active)
@@ -189,8 +195,6 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 				logger.info("c:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
 			*/
 			
-			logger.info("attributeValue real:" + attributeValue);
-			
 			if(attributeValue != null)
 			{
 				boolean isUTF8 = false;
@@ -219,39 +223,22 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 					if(toEncoding == null)
 						toEncoding = "utf-8";
 					
-					if(attributeValue.indexOf("Â") == -1 && 
-					   attributeValue.indexOf("‰") == -1 && 
-					   attributeValue.indexOf("ˆ") == -1 && 
-					   attributeValue.indexOf("≈") == -1 && 
-					   attributeValue.indexOf("ƒ") == -1 && 
-					   attributeValue.indexOf("÷") == -1)
+					String[] controlChars = new String[]{"å","ä","ö","Å","Ä","Ö","Â","‰","ˆ","≈","ƒ","÷"};
+					boolean convert = true;
+					for(String charToTest : controlChars)
 					{
-						//logger.info("Converting...");
+						if(logger.isInfoEnabled())
+							logger.info("Index for " + charToTest + ":"  + attributeValue.indexOf(charToTest));
+						if(attributeValue.indexOf(charToTest) > -1)
+							convert = false;
+					}
+						
+					if(convert)
+					{
 						attributeValue = new String(attributeValue.getBytes(fromEncoding), toEncoding);
 					}
+
 				}
-				logger.info("attributeValue real:" + attributeValue);
-				logger.info("attributeValue refs:" + "InfoGlue CMS och Portalplattform åäö ÅÄÖ");
-				/*
-				String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
-				if(fromEncoding == null)
-					fromEncoding = "iso-8859-1";
-				
-				String toEncoding = CmsPropertyHandler.getUploadToEncoding();
-				if(toEncoding == null)
-					toEncoding = "utf-8";
-
-				String testattributeValue = new String(attributeValue.getBytes(fromEncoding), toEncoding);
-				if(testattributeValue.indexOf((char)65533) == -1)
-					attributeValue = testattributeValue;
-				*/
-				
-				/*
-				for(int i=0; i<attributeValue.length(); i++)
-					logger.info("c2:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
-
-				logger.info("attributeValue after:" + attributeValue);
-				*/
 				
 				logger.info("\n\nattributeValue original:" + attributeValue);
 				attributeValue = parseInlineAssetReferences(attributeValue);

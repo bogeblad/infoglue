@@ -1,67 +1,240 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-#beginManagementTool("tool.managementtool.viewGroup.header" "tool.managementtool.viewGroup.header" "groupName=$formatter.encodeBase64($groupName)")
-
-<SCRIPT type="text/javascript" SRC="script/OptionTransfer.js"></SCRIPT>
-
-<SCRIPT LANGUAGE="JavaScript">
-
-	var opt = new OptionTransfer("unassignedUserNameList","userName");
-	opt.setAutoSort(true);
-	opt.setDelimiter(",");
-	opt.saveRemovedLeftOptions("removedLeft");
-	opt.saveRemovedRightOptions("removedRight");
-	opt.saveAddedLeftOptions("addedLeft");
-	opt.saveAddedRightOptions("addedRight");
-	opt.saveNewLeftOptions("newLeft");
-	opt.saveNewRightOptions("newRight");
+#define($headerMarkup)
 	
-	function markNearestOption()
-	{
-		var searchField = document.getElementById("searchField");
-		var list        = document.getElementById("unassignedUserNameList");
-		//alert("list:" + list);
+	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" media="all" />
+	
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
 		
-	  	sNode = list.options;
-	  	for(i=0;i<sNode.length;i++)
-		{
-			currentNode = sNode[i];
-			//alert("currentNode:" + currentNode.text);
-			//alert("searchField:" + searchField.value);
-			//alert("index:" + currentNode.text.indexOf(searchField.value));
-			if(currentNode.text.toLowerCase().indexOf(searchField.value.toLowerCase()) > -1)
-			{
-				list.selectedIndex = i;
-			  	break;		
+		#TB_ajaxContent {
+			padding: 0px !important;
+			width: 100% !important;
 			}
-	  	}
-	}
-	
-	function save(form)
-	{
-		var list = document.getElementById("userName");
-		
-	  	sNode = list.options;
-	  	for(i=0;i<sNode.length;i++)
-		{
-			currentNode = sNode[i];
-			//alert("CurrentNode:" + currentNode);
-			//alert("currentNode:" + currentNode.name);
-			//alert("CurrentNode:" + currentNode.selected);
-			currentNode.selected = true;
+			
+		td {
+			border-bottom: 0px !important;
 		}
-		form.submit();
-	}
 
-	function saveAndExit(form, action)
-	{
-		form.action = action;
-		save(form);
-	}
+	</style>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
 
-</SCRIPT>
+	<script type="text/javascript">
+	<!-- 	
+		var isDataTable2Initiated = false;
+		var isBatchViewInitiated = false;
+						
+		var encodedGroupName = "$encodedGroupName";
+		
+		$(document).ready(function(){
+			#set($extraParameter = '"iDisplayLength": 10, "bProcessing": true, "bServerSide": true, "fnServerData": function ( sSource, aoData, fnCallback ) { jQuery.post( sSource, aoData, fnCallback, "json" ); }, "sAjaxSource": "ViewListSystemUser!processAndFilterAssignedForGroup.action?groupName=" + encodedGroupName, "aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+
+			#initDataTableImpl("dataTable" $extraParameter)
+			
+			#if($hasAccessToManageUsers && $supportsUpdate)
+				#initDeleteLink()
+			#else
+				$(".deleteCross").live("click", function () {
+					#if(!$hasAccessToManageUsers)
+						alert("You are not allowed to administer users for this group");
+					#else if(!$supportsUpdate)
+						alert("This group is not manageble from Infoglue");
+					#end
+					return false;
+				});
+			#end
+			
+			$("#dataTable_processing").prepend("<img src='css/embla/images/loading.gif' width='16'/>").css("color", "blue");
+			$("#dataTable_filter input[type=text]").hide();
+			$("#dataTable_filter").append("<input type='text' id='searchField'/> <img id='reset' src='images/v3/cross.png'>");
+			$("#reset").click(function() { $("#searchField").val(""); $("#dataTable_filter input[type=text]").val("").trigger('keyup'); }).hide();
+			$("#searchField").keyup(function(e) {
+				if(e.keyCode == 13) {
+					if($("#searchField").val().length == 0)
+					{
+						$("#reset").trigger('click');	
+					}
+					else if($("#searchField").val().length > 2)
+					{
+						//alert("search:" + $("#dataTable_filter input[type=text]"));
+						$("#dataTable_filter input[type=text]").val($("#searchField").val()).trigger('keyup');
+						$("#reset").show();
+					}
+					else
+						alert("You must state at least 3 characters for the search to work");
+				}
+			});
+
+			$("#tabsContainer").tabs({ 
+				show:function(e, ui) { 
+					if(ui.index == 0) 
+					{
+						if(!isDataTable2Initiated)
+						{
+							#set($extraParameter2 = '"iDisplayLength": 10, "bProcessing": true, "bServerSide": true, "fnServerData": function ( sSource, aoData, fnCallback ) { jQuery.post( sSource, aoData, fnCallback, "json" ); }, "sAjaxSource": "ViewListSystemUser!popupProcessAndFilter.action?filterAssignedGroupUsers=true&groupName=" + encodedGroupName, "aoColumns": [ { "sWidth": "30px" }, null, null ]')
+							#initDataTableImpl("dataTable2" $extraParameter2)
+				
+							$("#dataTable2_processing").prepend("<img src='css/embla/images/loading.gif' width='16'/>").css("color", "blue");
+							$("#dataTable2_filter input[type=text]").hide();
+							$("#dataTable2_filter").append("<input type='text' id='searchField2'/> <img id='reset2' src='images/v3/cross.png'>");
+							$("#reset2").click(function() { $("#searchField2").val(""); $("#dataTable2_filter input[type=text]").val("").trigger('keyup'); }).hide();
+							$("#searchField2").keyup(function(e) {
+								if(e.keyCode == 13) {
+									if($("#searchField2").val().length == 0)
+									{
+										$("#reset2").trigger('click');	
+									}
+									else if($("#searchField2").val().length > 2)
+									{
+										$("#dataTable2_filter input[type=text]").val($("#searchField2").val()).trigger('keyup');
+										$("#reset2").show();
+									}
+									else
+										alert("You must state at least 3 characters for the search to work");
+								}
+							});
+		
+							isDataTable2Initiated=true;
+						}
+					}	
+					else if(ui.index == 1) 
+					{
+						if(!isBatchViewInitiated)
+						{	
+							$('#rightButton').click(function() {  
+						  		return !$('#unAssignedUserNames option:selected').remove().appendTo('#userName');  
+						 	});  
+						 	$('#leftButton').click(function() {  
+						  		return !$('#userName option:selected').remove().appendTo('#unAssignedUserNames');  
+						 	});  
+							
+							#if($hasAccessToManageUsers)
+								$('#rightAllButton').click(function() {  
+							  		return !$('#unAssignedUserNames option').remove().appendTo('#userName');  
+							 	});  
+							 	$('#leftAllButton').click(function() {  
+							  		return !$('#userName option').remove().appendTo('#unAssignedUserNames');  
+							 	});  
+							#end
+
+							jQuery.getJSON("ViewListSystemUser!processAndFilterAssignedForGroup.action?groupName=" + encodedGroupName + "&sEcho=" + new Date().getTime() + "&format=compact", function(data) {
+								//alert("Receiving:" + data.users.length);
+								$("#userName").empty();
+								jQuery.each(data.users, function(i,item){
+									//alert("item:" + item.name);
+									$("#userName").append("<option value='" + item.userName + "'>" + item.name + "</option>");
+								});
+								
+								jQuery.getJSON("ViewListSystemUser!popupProcessAndFilter.action?sEcho=" + new Date().getTime() + "&format=compact&filterAssignedGroupUsers=true&groupName=" + encodedGroupName, function(data) {
+									//alert("Receiving:" + data.users.length);
+									$("#unAssignedUserNames").empty();
+									jQuery.each(data.users, function(i,item){
+										//alert("item:" + item.name);
+										$("#unAssignedUserNames").append("<option value='" + item.userName + "'>" + item.name + "</option>");
+									});
+								});
+								
+							});
+
+							isBatchViewInitiated=true;
+						}
+					}
+						
+					resizeScrollArea();
+				}
+			});			
+		});
+						
+		function selectUser(userName)
+		{
+			$.post("UpdateGroup!addUser.action", { "userName": "" + userName, groupName: "$groupName", igSecurityCode: "$securityCode"}, function(data) { document.location.href = "ViewGroup.action?groupName=$encodedGroupName"; } );
+			//document.location.href = "ViewGroup.action?groupName=$encodedGroupName";
+		}
+		
+		function save(form)
+		{
+			form.submit();
+		}
+	
+		function saveAndExit(form, action)
+		{
+			form.action = action;
+			save(form);
+		}
+		
+		function showAddUserDialog()
+		{
+			openInlineDiv('#TB_inline?inlineId=addUserDialog', 600, 800, false, false, 'Add user to this group');
+			
+			$("#searchFieldBatch").keypress(function (e) {
+				if((e.which ? e.which : e.keyCode) == 13)
+				{
+					searchUsers(false);
+					return false;
+				}
+				else
+					return true;
+			});
+		}
+
+		function searchUsers(active)
+		{
+			var searchString = $("#searchFieldBatch").val();
+			if(searchString.length == 0)
+			{
+				jQuery.getJSON("ViewListSystemUser!popupProcessAndFilter.action?groupName=" + encodedGroupName + "&filterAssignedGroupUsers=true&sEcho=" + new Date().getTime() + "&format=compact", function(data) {
+					$("#unAssignedUserNames").empty();
+					jQuery.each(data.users, function(i,item){
+						$("#unAssignedUserNames").append("<option value='" + item.userName + "'>" + item.name + "</option>");
+					});
+				});
+			}
+			if(searchString.length < 3)
+			{
+				if(active)
+					alert("Must state at least 3 characters");
+			}
+			else
+			{
+				//alert("Searching for " + searchString);
+				jQuery.getJSON("ViewListSystemUser!popupProcessAndFilter.action?groupName=" + encodedGroupName + "&sSearch=" + searchString + "&filterAssignedGroupUsers=true&sEcho=" + new Date().getTime() + "&format=compact", function(data) {
+					//alert("Receiving:" + data.users.length);
+					$("#unAssignedUserNames").empty();
+					jQuery.each(data.users, function(i,item){
+						//alert("item:" + item.name);
+						$("#unAssignedUserNames").append("<option value='" + item.userName + "'>" + item.name + "</option>");
+					});
+				});
+			}
+		}
+		
+		//Batch assign
+		function assignUsers()
+		{
+			$("#unAssignedUserNames").empty();
+			document.batchForm.newGroupName.value = document.editForm.newGroupName.value;
+			document.batchForm.description.value = document.editForm.description.value;
+			
+			var list = document.getElementById("userName");
+		  	sNode = list.options;
+		  	for(i=0;i<sNode.length;i++)
+			{
+				currentNode = sNode[i];
+				currentNode.selected = true;
+			}
+			
+			$("#batchForm").submit();
+		}
+
+	-->
+	</script>
+
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#set($encodedGroupName = $formatter.encodeBase64($groupName))
 
 #if($supportsUpdate == false)
 	#set($readonly = "disabled")
@@ -69,103 +242,140 @@
 	#set($readonly = "")
 #end
 #set($hasAccessToManageUsers = $this.hasAccessTo("Group.ManageUsers", "$groupName"))
+#set($isAnonymousGroup = false)
+#if($!groupName == "anonymous")
+	#set($hasAccessToManageUsers = false)
+	#set($isAnonymousGroup = true)
+#end
 
-<div class="fullymarginalized">
-	<form method="POST" name="editForm" action="UpdateGroup.action">
+#beginLightCommonToolV3Impl("tool.managementtool.viewGroup.header" "" "groupName=$formatter.encodeBase64($groupName)" false true $!disableCloseButton $headerMarkup true "")
+
+	##lightMenuToolbar("" $buttons $rightButtons) 
+	
+	<div id="addUserDialog" style="display: none; padding-bottom: 10px; padding-top: 30px;">
+		
+		<div id="tabsContainer" class="flora" style="margin-top: 10px;">      
+			<ul>
+		        <li><a href="#basicTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
+		        <li><a href="#batchTab"><span>Batch</span></a></li>	        
+		    </ul>
+	
+			<div id="basicTab" class="inlineTabDiv">
+				<h4>Click on the name of the user you wish to add to this group</h4>
+				<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable2">
+					<thead>
+						<tr>
+							<th>$ui.getString("entity.SystemUser.userName.label")</th>
+							<th>$ui.getString("entity.SystemUser.firstName.label")</th>
+							<th>$ui.getString("entity.SystemUser.lastName.label")</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+			
+			<div id="batchTab" class="inlineTabDiv">
+				<h4>Mark users and click the add all - will replace all existing users</h4>
+				<form id="batchForm" name="batchForm" action="UpdateGroup.action" method="post">
+					<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+					<input type="hidden" name="groupName" value="$!groupName">
+					<input type="hidden" name="newGroupName" value="">
+					<input type="hidden" name="description" value="">
+					<table>
+					<tr>
+						<td valign="top">
+							<input type="textfield" id="searchFieldBatch" value="" style="width: 220px"/> <input type="button" onclick="searchUsers(true);" value="Search" class="search" style="border: 0px;"/><br/>
+							<select id="unAssignedUserNames" name="unAssignedUserNames" multiple="1" size="20" style="width: 300px">
+								<option>Loading users... please wait</option>
+							</select>
+						</td>
+						<td valign="middle">
+							<INPUT TYPE="button" id="rightButton" name="right" VALUE="&gt;&gt;" style="width:50px; font-family: verdana; font-size: 10px; padding-left: 4px !important"><BR><BR>
+							<INPUT TYPE="button" id="rightAllButton" name="rightAll" VALUE="All &gt;&gt;" style="width:50px; font-family: verdana; font-size: 10px; padding-left: 4px !important"><BR><BR>
+							<INPUT TYPE="button" id="leftButton" name="left" VALUE="&lt;&lt;" style="width:50px; font-family: verdana; font-size: 10px; padding-left: 4px !important"><BR><BR>
+							<INPUT TYPE="button" id="leftAllButton" name="leftAll" VALUE="All &lt;&lt;" style="width:50px; font-family: verdana; font-size: 10px; padding-left: 4px !important">
+						</td>
+						<td valign="top" style="padding-top: 7px;">
+							Assigned users<br/>
+							<select id="userName" name="userName" multiple="1" size="20" style="width: 300px;">
+								<option>Loading users... please wait</option>
+							</select>
+						</td>
+					</tr>
+					</table>
+					
+					<div onfocus="this.blur();" id="toolbar">
+						<div style="float: left; margin-left: 10px;">
+							<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="assignUsers();"/>
+						</div>
+					</div>
+				</form>
+								
+			</div>
+		</div>
+	</div>
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.managementtool.viewGroup.header") #if(!$supportsUpdate)(Read only)#end</h3>
+	
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		
+	<form method="post" name="editForm" action="UpdateGroup.action">
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 		<input type="hidden" name="groupName" value="$!groupName">
-		<table>
-			<tr>
-				<td>#editReadOnlyField("Group.groupName" "newGroupName" $!groupName "51" "disabled")</td>
-			</tr>	
-				
-			<tr>
-				<td width="400">#editReadOnlyTextArea("Group.description" "description" $!description "50" "5" "normaltextarea" $readonly)</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			
-			<tr>
-				<td class="biglabel">Manage the members in this group below</td>
-			</tr>
-			<tr>
-			  <td>
-				<table width="100%" border="0">
-				  <tr>
-				    <td>State a name or choose from list:<br>
-				        <input type="text" id="searchField" name="searchField" style="font-size: 10px; width:300px;"/ onkeypress="javascript:markNearestOption();" onchange="javascript:markNearestOption();">
-				      </td>
-				    <td>&nbsp;</td>
-				    <td valign="bottom">Current Members</td>
-				  </tr>
-				  <tr>
-				    <td>
-				    	<SELECT $readonly id="unassignedUserNameList" NAME="unassignedUserNameList" MULTIPLE SIZE="10" #if($hasAccessToManageUsers)onDblClick="opt.transferRight()"#end style="font-size: 10px; width:300px;">
-				        #if($supportsUpdate)
-							#if($hasAccessToManageUsers)
-					          	#foreach ($infoGluePrincipal in $allInfoGluePrincipals)
-									#set($checked = "")
-									#foreach ($assignedInfoGluePrincipal in $assignedInfoGluePrincipals)
-										#if($assignedInfoGluePrincipal.getName() == $infoGluePrincipal.getName())
-											#set($checked = "checked")
-										#end 
-									#end
-									
-									#if($checked == "")
-										<option value="$infoGluePrincipal.name" title="$infoGluePrincipal.name">$infoGluePrincipal.name</option>
-									#end
-								#end
-							#else
-								<option value="" title="You are not allowed to assign users">You are not allowed to assign users</option>
-							#end
-						#else
-							<option value="" title="No need to show users">No need to show users</option>
-						#end	
-				        </select>
-				    </td>
-				    <td align="center">
-				        <INPUT TYPE="button" NAME="right" VALUE="&gt;&gt;" ONCLICK="opt.transferRight()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
-						<INPUT TYPE="button" NAME="right" VALUE="All &gt;&gt;" ONCLICK="opt.transferAllRight()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
-						<INPUT TYPE="button" NAME="left" VALUE="&lt;&lt;" ONCLICK="opt.transferLeft()" style="width:50px; font-family: verdana; font-size: 10px;"><BR><BR>
-						<INPUT TYPE="button" NAME="left" VALUE="All &lt;&lt;" ONCLICK="opt.transferAllLeft()" style="width:50px; font-family: verdana; font-size: 10px;">
-				    </td>
-				    <td>
-				      	<SELECT $readonly id="userName" name="userName" multiple size="10" #if($hasAccessToManageUsers)onDblClick="opt.transferLeft()"#end style="font-size: 10px; width:300px;">
-				        	#foreach ($assignedInfoGluePrincipal in $assignedInfoGluePrincipals)
-								<option value="$assignedInfoGluePrincipal.name" title="$assignedInfoGluePrincipal.name">$assignedInfoGluePrincipal.name</option>
-							#end
-					    </select>
-				    </td>
-				</tr>
-				</table>
-				</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-		
-			<tr>
-				<td class="biglabel">Base group properties on content type definition</td>
-			</tr>
-			<tr>
-				<td>	
-					<select name="contentTypeDefinitionId">
-						<option value="">Choose type</option>
-					#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
-						#set($selected = "")
-						#foreach ($assignedContentTypeDefinitionVO in $assignedContentTypeDefinitionVOList)
-							#if($assignedContentTypeDefinitionVO.id == $contentTypeDefinitionVO.id)
-								#set($selected = "selected")
-							#end 
-						#end
-						<option value="$contentTypeDefinitionVO.id" $selected>$contentTypeDefinitionVO.getName()</option>
+		<p>
+			#editTextFieldCSS("Group.groupName" "newGroupName" $!groupName "50" true $readonly "longtextfield")
+		</p>
+		<p>
+			#editTextFieldCSS("Group.description" "description" $!description "50" true $readonly "longtextfield")
+		</p>
+		<p>
+			#editTextFieldCSS("Group.source" "source" $!source "50" false $readonly "longtextfield")
+		</p>
+		<p>
+			#editTextFieldCSS("Group.groupType" "groupType" $!groupType "50" false $readonly "longtextfield")
+		</p>
+		<p>
+			#yesNoDropDown("Group.isActive" "isActive" $isActive)
+		</p>
+		<p>
+			$ui.getString("tool.contenttool.lastUpdatedLabel"): $modifiedDateTime
+		</p>
+					
+		<h4>Base group properties on content type definition</h4>
+		<p>	
+			<select name="contentTypeDefinitionId" $readonly>
+				<option value="">Choose type</option>
+				#foreach ($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
+					#set($selected = "")
+					#foreach ($assignedContentTypeDefinitionVO in $assignedContentTypeDefinitionVOList)
+						#if($assignedContentTypeDefinitionVO.id == $contentTypeDefinitionVO.id)
+							#set($selected = "selected")
+						#end 
 					#end
-					</select>
-				</td>
-			</tr>
-			
-		</table>
+					<option value="$contentTypeDefinitionVO.id" $selected>$contentTypeDefinitionVO.getName()</option>
+				#end
+			</select>
+		</p>			
+		
+		<h4>Users assigned to this group #if($supportsUpdate && $hasAccessToManageUsers) - <a href="javascript:showAddUserDialog();">Add users</a>#else (you are not allowed to add users)#end</h4>
+		<p>
+		  	<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+				<thead>
+					<tr>
+						<th>Action</th>
+						<th>$ui.getString("entity.SystemUser.userName.label")</th>
+						<th>$ui.getString("entity.SystemUser.firstName.label")</th>
+						<th>$ui.getString("entity.SystemUser.lastName.label")</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</p>
+
 	</form>
 	
 </div>
@@ -179,11 +389,6 @@
 	</div>
 </div>
 #end
-
-<script type="text/javascript">
-	//alert("Initializing form..");
-	opt.init(document.editForm);
-</script>
 
 </body>
 </html>

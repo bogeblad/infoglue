@@ -23,11 +23,17 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import org.apache.commons.codec.binary.Base64;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupPropertiesController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.exception.ConstraintException;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.DateHelper;
 
 /**
  * @author Mattias Bogeblad
@@ -35,9 +41,13 @@ import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class UpdateGroupAction extends ViewGroupAction
 {
+	private VisualFormatter formatter = new VisualFormatter();
+
 	private ConstraintExceptionBuffer ceb;
 	private GroupVO groupVO;
 	
+	private String userName;
+
 	public UpdateGroupAction()
 	{
 		this(new GroupVO());
@@ -58,13 +68,12 @@ public class UpdateGroupAction extends ViewGroupAction
 
 		String[] values = getRequest().getParameterValues("userName");
 		String[] contentTypeDefinitionIds = getRequest().getParameterValues("contentTypeDefinitionId");
-
 		GroupControllerProxy.getController().updateGroup(this.groupVO, values);
 		
 		if(contentTypeDefinitionIds != null && contentTypeDefinitionIds.length > 0 && !contentTypeDefinitionIds[0].equals(""))
 			GroupPropertiesController.getController().updateContentTypeDefinitions(this.getGroupName(), contentTypeDefinitionIds);
 		
-		return "success";
+		return "successRedirect";
 	}
 	
 	public String doSaveAndExit() throws Exception
@@ -74,6 +83,20 @@ public class UpdateGroupAction extends ViewGroupAction
 		return "saveAndExit";
 	}
 
+	public String doDeleteUser() throws Exception
+    {
+		GroupControllerProxy.getController().removeUser(getGroupName(), this.userName);
+		
+		return "successRedirect";
+	}
+
+	public String doAddUser() throws Exception
+    {
+		GroupControllerProxy.getController().addUser(getGroupName(), this.userName);
+		
+		return "successRedirect";
+	}
+	
 	public String doV3() throws Exception
     {
 		try
@@ -104,14 +127,53 @@ public class UpdateGroupAction extends ViewGroupAction
 		return "saveAndExitV3";
 	}
 
-    public void setGroupName(String groupName)
+    public void setGroupName(String groupName) throws Exception
     {
+		if(groupName != null)
+		{
+			byte[] bytes = Base64.decodeBase64(groupName);
+			String decodedGroupName = new String(bytes, "utf-8");
+			if(GroupControllerProxy.getController().groupExists(decodedGroupName))
+			{
+				groupName = decodedGroupName;
+			}
+			else
+			{
+				String fromEncoding = CmsPropertyHandler.getURIEncoding();
+				String toEncoding = "utf-8";
+				
+				String testGroupName = new String(groupName.getBytes(fromEncoding), toEncoding);
+				if(testGroupName.indexOf((char)65533) == -1)
+					groupName = testGroupName;
+			}
+		}
+		
 		this.groupVO.setGroupName(groupName);
     }
     
+    public void setUserName(String userName) throws Exception
+    {
+		if(userName != null)
+		{
+			byte[] bytes = Base64.decodeBase64(userName);
+			String decodedUserName = new String(bytes, "utf-8");
+			if(UserControllerProxy.getController().userExists(decodedUserName))
+			{
+				userName = decodedUserName;
+			}
+		}
+
+		this.userName = userName;
+    }
+
 	public String getGroupName()
 	{
 		return this.groupVO.getGroupName();	
+	}
+
+	public String getEncodedGroupName() throws Exception
+	{
+		return formatter.encodeBase64(this.groupVO.getGroupName());	
 	}
 	
 	public void setDescription(java.lang.String description)
@@ -124,5 +186,34 @@ public class UpdateGroupAction extends ViewGroupAction
 		return this.groupVO.getDescription();	
 	}
 	
+    public String getSource()
+    {
+    	return this.groupVO.getSource();
+    }
+    
+    public void setSource(String source)
+    {
+    	this.groupVO.setSource(source);
+    }
+
+    public String getGroupType()
+    {
+    	return this.groupVO.getGroupType();
+    }
+    
+    public void setGroupType(String groupType)
+    {
+    	this.groupVO.setGroupType(groupType);
+    }
+    
+    public Boolean getIsActive()
+    {
+    	return this.groupVO.getIsActive();
+    }
+    
+    public void setIsActive(Boolean isActive)
+    {
+    	this.groupVO.setIsActive(isActive);
+    }
 
 }

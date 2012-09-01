@@ -51,6 +51,9 @@ public class ViewListTransactionHistoryAction extends InfoGlueAbstractAction
 	
 	private List transactionHistoryVOList;
 	
+	/**
+	 * This is the main execution method. Allows for a few filtering options to show only events / transactions of a certain kind.
+	 */
 	protected String doExecute() throws Exception 
 	{
 		/*
@@ -74,6 +77,21 @@ public class ViewListTransactionHistoryAction extends InfoGlueAbstractAction
 			typeFilterFull.add("0");
 			typeFilterFull.add("1");
 			typeFilterFull.add("2");
+		}
+		else if(typeFilter != null && typeFilter.equals("publ"))
+		{
+			typeFilterFull = new ArrayList();
+			typeFilterFull.add("300");
+			typeFilterFull.add("301");
+			typeFilterFull.add("302");
+			typeFilterFull.add("303");
+			typeFilterFull.add("305");
+		}
+		else if(typeFilter != null && typeFilter.equals("surv"))
+		{
+			typeFilterFull = new ArrayList();
+			typeFilterFull.add("304");
+			typeFilterFull.add("306");
 		}
 		
 		

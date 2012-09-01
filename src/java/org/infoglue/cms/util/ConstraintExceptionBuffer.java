@@ -94,7 +94,16 @@ public class ConstraintExceptionBuffer
       // set chained to null but don't mess with the parameter.
       final String fieldName = exception.getFieldName();
       final String errorCode = exception.getErrorCode();
-		ConstraintException ce = new ConstraintException(fieldName, errorCode);
+      final String extraInformation = exception.getExtraInformation();
+      ConstraintException ce = null;
+      if(extraInformation != null && !extraInformation.equals(""))
+		  ce = new ConstraintException(fieldName, errorCode, extraInformation);
+	  else
+		  ce = new ConstraintException(fieldName, errorCode);
+		
+      if(exception.getLinkBeans() != null && exception.getLinkBeans().size() > 0)
+    	  ce.getLinkBeans().addAll(exception.getLinkBeans());
+      
       this.exceptions.add(ce);
       add(exception.getChainedException());
     }

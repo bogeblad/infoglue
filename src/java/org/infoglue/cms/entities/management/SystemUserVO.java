@@ -24,12 +24,14 @@
 package org.infoglue.cms.entities.management;
 
 
+import java.util.Date;
 import java.util.Iterator;
 
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.kernel.ValidatableEntityVO;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.validators.Constants;
 import org.infoglue.cms.util.validators.ConstraintRule;
 import org.infoglue.cms.util.validators.EmailValidator;
@@ -39,6 +41,7 @@ import org.infoglue.cms.util.validators.StringValidator;
 
 public class SystemUserVO extends ValidatableEntityVO implements BaseEntityVO
 {
+	public static final String INFOGLUE = "Infoglue";
 
 	private long timeStamp = 0;
     private java.lang.String userName;
@@ -46,7 +49,11 @@ public class SystemUserVO extends ValidatableEntityVO implements BaseEntityVO
     private java.lang.String firstName;
     private java.lang.String lastName;
     private java.lang.String email;
-    
+
+    private String source = INFOGLUE;
+	private Boolean isActive = true;
+    private Date modifiedDateTime = DateHelper.getSecondPreciseDate();
+
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntityVO#getId()
 	 */
@@ -108,9 +115,38 @@ public class SystemUserVO extends ValidatableEntityVO implements BaseEntityVO
     public void setEmail(java.lang.String email) 
     {
         this.email = email;
-
     }
 
+    public String getSource()
+    {
+    	return this.source;
+    }
+    
+    public void setSource(String source)
+    {
+    	this.source = source;
+    }
+
+    public Boolean getIsActive()
+    {
+    	return this.isActive;
+    }
+    
+    public void setIsActive(Boolean isActive)
+    {
+    	this.isActive = isActive;
+    }
+
+    public java.util.Date getModifiedDateTime()
+    {
+    	return this.modifiedDateTime;
+    }
+    
+    public void setModifiedDateTime(java.util.Date modifiedDateTime)
+    {
+    	this.modifiedDateTime = modifiedDateTime;
+    }
+    
 	public void PrepareValidation()
 	{
 		// Define the constraint rules for this valueobject

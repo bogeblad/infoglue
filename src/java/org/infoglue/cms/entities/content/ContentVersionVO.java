@@ -30,6 +30,7 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.validators.ContentVersionValidator;
+import org.infoglue.deliver.util.CompressionHelper;
 
 public class ContentVersionVO implements BaseEntityVO
 {
@@ -55,8 +56,12 @@ public class ContentVersionVO implements BaseEntityVO
     private Integer contentTypeDefinitionId		= null;
     private String versionModifier				= null;
 	private String versionValue   	 			= "";
-	    
-    public java.lang.Integer getContentVersionId()
+	private byte[] compressedVersionValue 		= null;
+	private Integer assetCount					= null;
+	private String siteNodeName					= null;
+	private Integer siteNodeId					= null;
+	
+	public java.lang.Integer getContentVersionId()
     {
         return this.contentVersionId;
     }
@@ -98,12 +103,20 @@ public class ContentVersionVO implements BaseEntityVO
     
     public String getVersionValue()
     {
-        return this.versionValue;
+    	if(compressedVersionValue != null && compressedVersionValue.length > 0)
+    	{
+    		return CompressionHelper.decompress(compressedVersionValue);
+    	}
+    	else 
+    		return this.versionValue;
     }
                 
     public void setVersionValue(String versionValue)
     {
-    	this.versionValue = versionValue;
+    	if(versionValue != null && versionValue.length() > 0)
+    	{
+    		compressedVersionValue = CompressionHelper.compress(versionValue);
+    	}
     }
     
     public Date getModifiedDateTime()
@@ -231,6 +244,36 @@ public class ContentVersionVO implements BaseEntityVO
 	public void setLanguageName(String string) 
 	{
 		languageName = string;
+	}
+
+	public Integer getAssetCount() 
+	{
+		return assetCount;
+	}
+
+	public void setAssetCount(Integer assetCount) 
+	{
+		this.assetCount = assetCount;
+	}
+	
+	public String getSiteNodeName() 
+	{
+		return siteNodeName;
+	}
+
+	public void setSiteNodeName(String siteNodeName) 
+	{
+		this.siteNodeName = siteNodeName;
+	}
+
+	public Integer getSiteNodeId() 
+	{
+		return siteNodeId;
+	}
+
+	public void setSiteNodeId(Integer siteNodeId) 
+	{
+		this.siteNodeId = siteNodeId;
 	}
 
 	public String toString()

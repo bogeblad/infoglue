@@ -99,6 +99,19 @@
 				<td>&nbsp;</td>
 			</tr>
 			<tr>
+				<td>
+					#editReadOnlyField("SystemUser.source" "source" $source "51" "$readonly")
+				</td>
+				<td>
+					#yesNoDropDown("SystemUser.isActive" "isActive" $isActive)
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					$ui.getString("tool.contenttool.lastUpdatedLabel"): $modifiedDateTime
+				</td>
+			</tr>
+			<tr>
 				<td>&nbsp;</td>
 			</tr>
 			
@@ -107,7 +120,7 @@
 			</tr>
 			<tr>
 			  <td colspan="2">
-				<table width="50%" border="0">
+				<table width="100%" border="0">
 				  <tr>
 				    <td>State a name or choose from list:<br>
 				        <input type="text" id="roleSearchField" name="roleSearchField" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;"/ onkeypress="javascript:markNearestOption('roleSearchField', 'unassignedRoleNameList');" onchange="javascript:markNearestOption('roleSearchField', 'unassignedRoleNameList');">
@@ -117,7 +130,7 @@
 				  </tr>
 				  <tr>
 				    <td>
-				    	<SELECT $readonly id="unassignedRoleNameList" NAME="unassignedRoleNameList" MULTIPLE SIZE="10" onDblClick="opt1.transferRight()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+				    	<select $readonly id="unassignedRoleNameList" name="unassignedRoleNameList" MULTIPLE SIZE="10" onDblClick="opt1.transferRight()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
 				        #if($supportsUpdate)
 				          	#foreach ($roleVO in $allRoles)
 								#set($hasAccessToManageUsersInRole = $this.hasAccessTo("Role.ManageUsers", "$roleVO.name"))
@@ -133,7 +146,7 @@
 								#end
 							#end
 						#else
-							<option value="" disabled="1" style="color:#999;>No need to show roles</option>
+							<option value="" disabled="1" style="color:#999;">No need to show roles</option>
 						#end	
 				        </select>
 				    </td>
@@ -144,7 +157,7 @@
 						<INPUT TYPE="button" NAME="roleLeft" VALUE="All &lt;&lt;" ONCLICK="opt1.transferAllLeft()" style="width:50px; font-family: verdana; font-size: 10px;">
 				    </td>
 				    <td>
-				      	<SELECT $readonly id="roleName" name="roleName" multiple size="10" onDblClick="opt1.transferLeft()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
+				      	<select $readonly id="roleName" name="roleName" multiple size="10" onDblClick="opt1.transferLeft()" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;">
 				        	#foreach ($assignedRoleVO in $assignedRoles)
 								#set($hasAccessToManageUsersInRole = $this.hasAccessTo("Role.ManageUsers", "$assignedRoleVO.name"))
 								<option value="$assignedRoleVO.name" title="$assignedRoleVO.name" #if(!$hasAccessToManageUsersInRole)disabled="1" style="color:#999; background:white;"#end>$assignedRoleVO.name</option>

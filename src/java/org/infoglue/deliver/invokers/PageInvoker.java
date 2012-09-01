@@ -46,7 +46,7 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
-import org.infoglue.cms.entities.content.SmallestContentVersionVO;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.exception.Bug;
@@ -524,8 +524,9 @@ public abstract class PageInvoker
 		    			{
 		    				processed++;
 		    				Integer contentVersionId = new Integer(versionId);
-			    			SmallestContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getSmallestContentVersionVOWithId(contentVersionId, getDatabase());
-			    			if(lastModifiedDateTime == null || contentVersion.getModifiedDateTime().after(lastModifiedDateTime))
+			    			//SmallestContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getSmallestContentVersionVOWithId(contentVersionId, getDatabase());
+		    				ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId(contentVersionId, getDatabase());
+		    				if(lastModifiedDateTime == null || contentVersion.getModifiedDateTime().after(lastModifiedDateTime))
 			    			{
 			    				lastModifiedDateTime = contentVersion.getModifiedDateTime();
 			    			}
@@ -888,7 +889,7 @@ public abstract class PageInvoker
         boolean active = ((portalEnabled != null) && portalEnabled.equals("true"));
 		if (active) 
 		{
-		    PortalController pController = new PortalController(getRequest(), getResponse());
+		    PortalController pController = new PortalController(getRequest(), getResponse(), getTemplateController().getDeliveryContext());
 		    context.put(PortalController.NAME, pController);
 		    if(logger.isInfoEnabled())
 		    {

@@ -26,7 +26,6 @@ package org.infoglue.deliver.applications.actions;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.net.InetAddress;
-import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +44,7 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.portalImpl.services.ServiceManager;
 import org.apache.pluto.portalImpl.services.portletentityregistry.PortletEntityRegistry;
@@ -52,14 +52,18 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
+import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.AuthenticationModule;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.CmsSessionContextListener;
 import org.infoglue.cms.util.sorters.AverageInvokingTimeComparator;
-import org.infoglue.deliver.controllers.kernel.impl.simple.RepositoryDeliveryController;
+import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
+import org.infoglue.deliver.controllers.kernel.impl.simple.ExtranetController;
 import org.infoglue.deliver.portal.ServletConfigContainer;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
@@ -95,6 +99,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	
 	private String cacheName				= "";
 	private boolean clearFileCache			= false;
+	private boolean preCache 				= false;
 
 	private String className				= "";
 	private String logLevel					= "";
@@ -102,6 +107,11 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	private String attributeName			= "";
 	private String returnAddress			= null;
 
+	private String searchField				= "contents";
+	private String searchString				= "";
+	private Integer maxHits					= 100;
+	private List<Document> docs 			= null;
+	
 	private static VisualFormatter formatter = new VisualFormatter();
 	
 	/**
@@ -159,55 +169,182 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 		String returnValue = null;
 		
         boolean allowAccess = false;
-        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
+        try
         {
-			Principal principal = (Principal)this.getHttpSession().getAttribute("infogluePrincipal");
-        	logger.info("principal:" + principal);
-        	Principal anonymousPrincipal = this.getAnonymousPrincipal();
-        	if(principal == null || principal.getName().equals(anonymousPrincipal.getName()))
+        	if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
         	{
-            	this.getHttpSession().removeAttribute("infogluePrincipal");
-    		    this.getHttpSession().removeAttribute("infoglueRemoteUser");
-    		    this.getHttpSession().removeAttribute("cmsUserName");
-
-    		    String redirectUrl = getRedirectUrl(getRequest(), getResponse());								
-    			getResponse().sendRedirect(redirectUrl);
-    			returnValue = NONE;
-        	}
-        	else
-        	{
-				if(AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "ViewApplicationState.Read", false, true))
-				{
-					allowAccess = true;
-				}
-				else
-				{
-		        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") and username [" + principal + "] was denied access to ViewApplicationState.");
-
-		        	this.getHttpSession().removeAttribute("infogluePrincipal");
+	        	Principal principal = getPrincipal();
+	        	logger.info("principal:" + principal);
+	        	if(principal == null)
+	        		principal = (Principal)this.getHttpSession().getAttribute("infogluePrincipal");
+	        	
+	        	logger.info("principal:" + principal);
+	        	Principal anonymousPrincipal = this.getAnonymousPrincipal();
+	        	if(principal == null || principal.getName().equals(anonymousPrincipal.getName()))
+	        	{
+	            	this.getHttpSession().removeAttribute("infogluePrincipal");
 	    		    this.getHttpSession().removeAttribute("infoglueRemoteUser");
 	    		    this.getHttpSession().removeAttribute("cmsUserName");
-
-	    		    this.getResponse().setContentType("text/plain");
-		            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
-		            this.getResponse().getWriter().println("You have no access to this view as you don't have ViewApplicationState.Read-rights.");				
+	
+	    		    String redirectUrl = getRedirectUrl(getRequest(), getResponse());								
+	    			getResponse().sendRedirect(redirectUrl);
+	    			returnValue = NONE;
+	        	}
+	        	else
+	        	{
+					if(AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "ViewApplicationState.Read", false, true))
+					{
+						allowAccess = true;
+					}
+					else
+					{
+			        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") and username [" + principal + "] was denied access to ViewApplicationState.");
+	
+			        	this.getHttpSession().removeAttribute("infogluePrincipal");
+		    		    this.getHttpSession().removeAttribute("infoglueRemoteUser");
+		    		    this.getHttpSession().removeAttribute("cmsUserName");
+	
+		    		    this.getResponse().setContentType("text/plain");
+			            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+			            this.getResponse().getWriter().println("You have no access to this view as you don't have ViewApplicationState.Read-rights.");				
+			            returnValue = NONE;
+					}
+	        	}
+	        	
+			    if(!allowAccess)
+		        {
+		        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") and username [" + principal + "] was denied access to ViewApplicationState.");
+			    	this.getResponse().setContentType("text/plain");
+			        this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+		            this.getResponse().getWriter().println("You have no access to this view - talk to your administrator if you should.");				
 		            returnValue = NONE;
-				}
-        	}
-        	
-		    if(!allowAccess)
-	        {
-	        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") and username [" + principal + "] was denied access to ViewApplicationState.");
-		    	this.getResponse().setContentType("text/plain");
-		        this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
-	            this.getResponse().getWriter().println("You have no access to this view - talk to your administrator if you should.");				
-	            returnValue = NONE;
+		        }
 	        }
         }
-
+        catch (Exception e) 
+        {
+        	logger.warn("Error checking for access: " + e.getMessage());
+		}
 		return returnValue;
 	}
 
+    /**
+	 * This method validates that the current page is accessible to the requesting user.
+	 * It fetches information from the page metainfo about if the page is protected and if it is 
+	 * validates the users credentials against the extranet database,
+	 */
+	
+	public Principal getPrincipal() throws SystemException, Exception
+	{
+		Principal principal = (Principal)this.getHttpSession().getAttribute("infogluePrincipal");
+		logger.info("principal:" + principal);
+
+		try
+		{
+			if(principal == null || CmsPropertyHandler.getAnonymousUser().equalsIgnoreCase(principal.getName()))
+			{
+				if(logger.isInfoEnabled())
+					logger.info("Principal in session was:" + principal + " - we clear it as only cms-users are allowed.");
+
+				if(principal != null)
+				{
+					principal = null;
+					this.getHttpSession().removeAttribute("infogluePrincipal");
+				    this.getHttpSession().removeAttribute("infoglueRemoteUser");
+				    this.getHttpSession().removeAttribute("cmsUserName");
+
+					Map status = new HashMap();
+					status.put("redirected", new Boolean(false));
+					principal = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), getRequest(), false).loginUser(getRequest(), getResponse(), status);
+					Boolean redirected = (Boolean)status.get("redirected");
+					if(redirected != null && redirected.booleanValue())
+					{
+					    this.getHttpSession().removeAttribute("infogluePrincipal");
+					    principal = null;
+					    return principal;
+					}
+					else if(principal != null)
+					{
+					    this.getHttpSession().setAttribute("infogluePrincipal", principal);
+						this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
+						this.getHttpSession().setAttribute("cmsUserName", principal.getName());
+					}
+				}
+				
+			    if(principal == null)
+			        principal = loginWithRequestArguments();
+
+			    if(principal == null || CmsPropertyHandler.getAnonymousUser().equalsIgnoreCase(principal.getName()))
+			    {
+					String ssoUserName = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), this.getRequest(), false).getSSOUserName(getRequest());
+					if(ssoUserName != null)
+					{
+						principal = UserControllerProxy.getController().getUser(ssoUserName);
+						if(principal != null)
+						{
+						    this.getHttpSession().setAttribute("infogluePrincipal", principal);
+							this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
+							this.getHttpSession().setAttribute("cmsUserName", principal.getName());
+						}
+					}
+			    }							
+			}
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred:" + e.getMessage(), e);
+		}
+		
+		return principal;
+	}
+	
+	/**
+	 * This method (if enabled in deliver.properties) checks for arguments in the request
+	 * and logs the user in if available.
+	 * 
+	 * @return Principal
+	 * @throws Exception
+	 */
+	private Principal loginWithRequestArguments() throws Exception
+	{
+	    Principal principal = null;
+	    
+        String userName = this.getRequest().getParameter("j_username");
+	    String password = this.getRequest().getParameter("j_password");
+	    String ticket 	= null; //this.getRequest().getParameter("ticket");
+		
+		if(ticket != null)
+	    {
+		    Map arguments = new HashMap();
+		    arguments.put("ticket", ticket);
+		    
+			principal = ExtranetController.getController().getAuthenticatedPrincipal(arguments, this.getRequest());
+			if(principal != null)
+			{
+			    this.getHttpSession().setAttribute("infogluePrincipal", principal);
+				this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
+				this.getHttpSession().setAttribute("cmsUserName", principal.getName());
+			}
+	    }		    
+	    else if(userName != null && password != null)
+	    {
+		    Map arguments = new HashMap();
+		    arguments.put("j_username", userName);
+		    arguments.put("j_password", password);
+		    
+			principal = ExtranetController.getController().getAuthenticatedPrincipal(arguments, this.getRequest());
+			if(principal != null)
+			{
+			    this.getHttpSession().setAttribute("infogluePrincipal", principal);
+				this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
+				this.getHttpSession().setAttribute("cmsUserName", principal.getName());
+			}
+	    }
+	    
+	    return principal;
+	}
+
+	
     /**
      * This action allows clearing of the given cache manually.
      */
@@ -235,6 +372,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
     /**
      * This action allows clearing of the given cache manually.
      */
+    /*
     public String doFlushCache() throws Exception
     {
     	String returnValue = handleAccess(this.getRequest());
@@ -253,6 +391,7 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
  
         return "cleared";
     }
+    */
 
     /**
      * This action allows clearing of the given cache manually.
@@ -480,9 +619,18 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         CacheController.clearServerNodeProperty(true);
         CacheController.clearCastorCaches();
         CacheController.clearCaches(null, null, null);
+        CacheController.clearFileCaches("pageCache");
         //CacheController.resetSpecial();
         if(clearFileCache)
         	CacheController.clearFileCaches();
+        
+        if(preCache)
+        {
+        	if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
+        		CacheController.preCacheCMSEntities();
+        	else
+        		CacheController.preCacheDeliverEntities();
+        }
         
         if(this.returnAddress != null && !this.returnAddress.equals(""))
         {
@@ -638,6 +786,20 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         return "cleared";
     }
 
+    public String doOngoingPublicationDetails() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+
+        return "successOngoingPublications";
+    }
+    
+    public List<CacheEvictionBean> getOngoingPublications()
+    {
+    	return RequestAnalyser.getRequestAnalyser().getOngoingPublications();
+    }
+    
     public String doComponentStatistics() throws Exception
     {
     	String returnValue = handleAccess(this.getRequest());
@@ -716,6 +878,143 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         return "successCacheDetailsStatistics";
     }
 
+    public String doClearPublications() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+        
+    	RequestAnalyser.getRequestAnalyser().resetLatestPublications();
+    	
+        return "cleared";
+    }
+
+    //Lucene stuff
+    private static boolean running = false;
+	private String statusMessage = "";
+	private Map indexInformation;
+
+    public String doLuceneStatistics() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+
+    	indexInformation = LuceneController.getController().getIndexInformation();
+
+        return "successLuceneStatistics";
+    }
+
+    public String doDeleteIndex() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+
+    	if(!running)
+    	{
+    		running = true;
+    	
+    		try
+    		{
+    	    	LuceneController.getController().clearIndex();
+    	    	
+    	    	indexInformation = LuceneController.getController().getIndexInformation();
+        		
+    	    	statusMessage = "Deletion complete.";
+    		}
+    		catch (Throwable t) 
+    		{
+    			statusMessage = "Deletion failed: " + t.getMessage();
+			}
+    		finally
+    		{
+    			running = false;
+    		}
+    	}
+    	else
+    	{
+    		statusMessage = "Running... wait until complete.";
+    	}
+    	
+    	return "clearedLuceneStatistics";
+    }
+
+    public String doIndexAll() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+
+    	if(!running)
+    	{
+    		running = true;
+    	
+    		try
+    		{
+    			logger.info("Going to index all");
+    			new Thread(new Runnable() { public void run() {try {LuceneController.getController().indexAll();} catch (Exception e) {}}}).start();
+    			logger.info("------------------------------------------->Done indexing all from ViewApplicationState");
+    			
+    	    	//LuceneController.getController().indexAll();
+    	    	
+    	    	indexInformation = LuceneController.getController().getIndexInformation();
+        		
+    	    	statusMessage = "Reindex complete.";
+    		}
+    		catch (Throwable t) 
+    		{
+    			statusMessage = "Reindex failed: " + t.getMessage();
+			}
+    		finally
+    		{
+    			running = false;
+    		}
+    	}
+    	else
+    	{
+    		statusMessage = "Running... wait until complete.";
+    	}
+    	
+        return "clearedLuceneStatistics";
+    }
+
+    public String doSearch() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+
+    	indexInformation = LuceneController.getController().getIndexInformation();
+
+		try
+		{
+			logger.info("Going to search all");
+			this.docs = LuceneController.getController().queryDocuments(searchField, searchString, maxHits);
+			logger.info("Searched docs in ViewApplicationState:" + docs.size());
+    		
+	    	statusMessage = "Reindex complete.";
+		}
+		catch (Throwable t) 
+		{
+			statusMessage = "Reindex failed: " + t.getMessage();
+		}
+    	
+        return "successLuceneStatistics";
+    }
+    
+    public Map getIndexInformation()
+	{
+		return indexInformation;
+	}
+
+	public String getStatusMessage()
+	{
+		return statusMessage;
+	}
+	
+	//End lucene stuff
+    
     private String getRedirectUrl(HttpServletRequest request, HttpServletResponse response) throws ServletException, Exception 
   	{
 		String url = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), request, false).getLoginDialogUrl(request, response);
@@ -745,21 +1044,33 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         addPermGenStatistics(states);
         states.add(getList("Number of sessions <br/>(remains for " + (Integer.parseInt(sessionTimeout) / 60) + " minutes after last request)", "" + CmsSessionContextListener.getActiveSessions()));
         states.add(getList("Number of request being handled now", "" + RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests()));
-        states.add(getList("Number of active request being handled now", "" + RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests()));
+        states.add(getList("Number of active request being handled now", "" + RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() + " <a href=\"ViewApplicationState!decreaseActiveCount.action\">Decrease (experts)</a>"));
         states.add(getList("Total number of requests handled", "" + RequestAnalyser.getRequestAnalyser().getTotalNumberOfRequests()));
-        states.add(getList("Average processing time per request (ms)", "" + RequestAnalyser.getRequestAnalyser().getAverageElapsedTime()));
+        states.add(getList("Average processing time per request (ms)", "" + RequestAnalyser.getRequestAnalyser().getAverageElapsedTime() + " <a href=\"ViewApplicationState!resetAverageResponseTimeStatistics.action\">(Reset)</a>"));
         states.add(getList("Slowest request (ms)", "" + RequestAnalyser.getRequestAnalyser().getMaxElapsedTime()));
         states.add(getList("Number of pages in the statistics", RequestAnalyser.getAllPageUrls().size()));
 
-        states.add(getList("<br/><strong>Latest publications</strong>", "&nbsp;"));
-        List publications = RequestAnalyser.getRequestAnalyser().getLatestPublications();
-        Iterator publicationsIterator = publications.iterator();
+        states.add(getList("<br/><strong>Ongoing publications (handling in process)</strong>", "&nbsp;"));
+    	states.add(getList("Number of publications in process", "" + RequestAnalyser.getRequestAnalyser().getOngoingPublications().size() + " <a href=\"ViewApplicationState!ongoingPublicationDetails.action\">(Details)</a>"));
+        List<CacheEvictionBean> publications = RequestAnalyser.getRequestAnalyser().getLatestPublications();
+
+        states.add(getList("<br/><strong>Latest publications (Finished, Timestamp, user, object name)</strong>", "&nbsp;"));
+        
+        List<CacheEvictionBean> publicationsToShow = new ArrayList<CacheEvictionBean>();
+        publicationsToShow.addAll(publications);
+    	Collections.reverse(publicationsToShow);
+        if(publications.size() > 20)
+        	publicationsToShow = publicationsToShow.subList(0, 20);
+        
+        Iterator<CacheEvictionBean> publicationsIterator = publicationsToShow.iterator();
         while(publicationsIterator.hasNext())
         {
-        	String publication = (String)publicationsIterator.next();
-        	states.add(getList("Date/type:", "" + publication));
+        	CacheEvictionBean publication = publicationsIterator.next();
+        	states.add(getList("<a href=\"javascript:void(0);\" onclick=\"window.open('" + CmsPropertyHandler.getCmsFullBaseUrl() + "/ViewPublications!showPublicationDetails.action?publicationId=" + publication.getPublicationId() + "', 'Publication details', 'width=900,height=600');\">PublicationId: " + publication.getPublicationId() + ", User: " + publication.getUserName() + ", Finished: " + formatter.formatDate(publication.getProcessedTimestamp(), "yyyy-MM-dd HH:mm:ss") + ", Initiated: " + formatter.formatDate(publication.getTimestamp(), "yyyy-MM-dd HH:mm:ss") + ", Received: " + formatter.formatDate(publication.getReceivedTimestamp(), "yyyy-MM-dd HH:mm:ss") + ", Entity: " + publication.getClassName().replaceAll(".*\\.", "") + "</a>", ""));
         }
 		        
+        states.add(getList("<a href=\"ViewApplicationState!clearPublications.action\">Clear (" + publications.size() + " publications done since last reset)</a>", "&nbsp;"));
+
     	getApplicationAttributes();
     	
 		//this.getHttpSession().invalidate();
@@ -884,6 +1195,11 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         this.clearFileCache = clearFileCache;
     }
 
+    public void setPreCache(boolean preCache)
+    {
+        this.preCache = preCache;
+    }
+
     public int getActiveNumberOfSessions() throws Exception
     {
     	return CmsSessionContextListener.getActiveSessions();
@@ -992,4 +1308,44 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 		this.returnAddress = returnAddress;
 	}
 
+	public String getSearchString()
+	{
+		return searchString;
+	}
+
+	public void setSearchString(String searchString)
+	{
+		this.searchString = searchString;
+	}
+
+	public String getSearchField()
+	{
+		return searchField;
+	}
+
+	public void setSearchField(String searchField)
+	{
+		this.searchField = searchField;
+	}
+
+	public Integer getMaxHits()
+	{
+		return maxHits;
+	}
+
+	public void setMaxHits(Integer maxHits)
+	{
+		this.maxHits = maxHits;
+	}
+
+	public List<Document> getSearchResult()
+	{
+		return this.docs;
+	}
+
+	private VisualFormatter vf = new VisualFormatter();
+	public VisualFormatter getFormatter()
+	{
+		return vf;
+	}
 }

@@ -42,7 +42,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
  * This authorization module works firstly against an JNDI source and second against the ordinary infoglue database.
  */
 
-public class CombinedJNDIBasicAuthorizationModule implements AuthorizationModule, Serializable
+public class CombinedJNDIBasicAuthorizationModule extends BasicAuthorizationModule implements AuthorizationModule, Serializable
 {
     private final static Logger logger = Logger.getLogger(CombinedJNDIBasicAuthorizationModule.class.getName());
 
@@ -160,7 +160,7 @@ public class CombinedJNDIBasicAuthorizationModule implements AuthorizationModule
 	/**
 	 * This method gets a users roles
 	 */
-
+/*
 	public List authorizeUser(String userName) throws Exception
 	{
 		List roles = new ArrayList();
@@ -183,7 +183,7 @@ public class CombinedJNDIBasicAuthorizationModule implements AuthorizationModule
 
 		return roles;
 	}
-
+*/
 	
 	/**
 	 * This method gets a list of roles
@@ -266,13 +266,13 @@ public class CombinedJNDIBasicAuthorizationModule implements AuthorizationModule
 		return users;
 	}
 	
-	public List getFilteredUsers(String searchString) throws Exception 
+	public List getFilteredUsers(Integer offset, Integer limit,	String sortProperty, String direction, String searchString, boolean populateRolesAndGroups) throws Exception 
 	{
 		List users = new ArrayList();
 		
 		try
 		{
-			users.addAll(getMainAuthorizationModule().getFilteredUsers(searchString));
+			users.addAll(getMainAuthorizationModule().getFilteredUsers(offset, limit, sortProperty, direction, searchString, populateRolesAndGroups));
 		}		
 		catch(Exception e)
 		{
@@ -280,7 +280,7 @@ public class CombinedJNDIBasicAuthorizationModule implements AuthorizationModule
 
 		try
 		{
-			users.addAll(getFallbackAuthorizationModule().getFilteredUsers(searchString));
+			users.addAll(getFallbackAuthorizationModule().getFilteredUsers(offset, limit, sortProperty, direction, searchString, populateRolesAndGroups));
 		}		
 		catch(Exception e)
 		{
@@ -512,5 +512,23 @@ public class CombinedJNDIBasicAuthorizationModule implements AuthorizationModule
     {
         return this.transactionObject;
     }
+
+	@Override
+	public Integer getRoleCount(String searchString) throws Exception 
+	{
+		return getRoles().size();
+	}
+
+	@Override
+	public Integer getGroupCount(String searchString) throws Exception 
+	{
+		return getGroups().size();
+	}
+
+	@Override
+	public Integer getUserCount(String searchString) throws Exception 
+	{
+		return getUsers().size();
+	}
 
 }

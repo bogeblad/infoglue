@@ -46,7 +46,7 @@ public class SiteNodeVO implements BaseEntityVO
     private Boolean isDeleted 		= new Boolean(false);
     private Integer repositoryId 	= null;    
   	private Integer siteNodeTypeDefinitionId = null;  
-  	private Integer childCount;
+  	private Integer childCount		= null;
   	private Integer sortOrder;
   	private Boolean isHidden 		= new Boolean(false);
   	

@@ -107,16 +107,14 @@
   </tr>
   #foreach($state in $states)
   <tr>
-    <td style="border-bottom: 1px solid #999999;" class="text">$state.get(0)</td>
-    <td  style="border-bottom: 1px solid #999999;" class="text" colspan="3">$state.get(1)</td>
+  	#if($state.get(1) == "")
+    	<td style="border-bottom: 1px solid #999999;" class="text" colspan="4">$state.get(0)</td>
+	#else
+    	<td style="border-bottom: 1px solid #999999;" class="text">$state.get(0)</td>
+    	<td  style="border-bottom: 1px solid #999999;" class="text" colspan="3">$state.get(1)</td>
+    #end
   </tr>
   #end
-  <tr>
-    <td class="text" colspan="4"><a href="ViewApplicationState!resetAverageResponseTimeStatistics.action">Reset average response time</a></td>
-  </tr>
-  <tr>
-    <td class="text" colspan="4"><a href="ViewApplicationState!decreaseActiveCount.action">Decrease active user count (only in special situations)</a></td>
-  </tr>
   
   <!--	
   <tr class="label">
@@ -181,33 +179,14 @@
     </td>
   </tr>
 
-#*
-  <tr class="label">
-    <td>InfoGlue cache name</td>
-    <td>Cached items</td>
-    <td>Statistics</td>
-    <td>Actions <a href="ViewApplicationState!clearCaches.action">Clear All</a></td>
-  </tr>
-  #foreach($cacheName in $caches.keySet())
-      #set($cache = $caches.get($cacheName))
-	  <tr>
-	    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">$cacheName</td>
-	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top">#if($caches.get($cacheName).class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") $cache.getCache().getSize() #else $cache.size() #end</td>
-	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top">
-	    	#if($cache.class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") 
-	    		<span style="font-size: 8pt; font-style: italic;">$eventListeners.get("${cacheName}_cacheEntryEventListener").toString()
-		        <br/>
-		        $eventListeners.get("${cacheName}_cacheMapAccessEventListener").toString()</span>
-	    	#else 
-	    		No additional statistics
-	    	#end
-	    </td>
-	    <td style="border-bottom: 1px solid #999999;"  class="text" valign="top"><a href="ViewApplicationState!clearCache.action?cacheName=$cacheName">Clear</a> | <a href="ViewApplicationState!clearCache.action?cacheName=$cacheName&clearFileCache=true">Clear (also fileCache)</a></td>
-	  </tr>
-  #end
-*#
   <tr>
-    <td colspan="4" class="text"><a href="ViewApplicationState!clearCastorCaches.action">Clear castor caches</a> | <a href="ViewApplicationState!clearCaches.action">Clear All</a> | <a href="ViewApplicationState!clearCaches.action?clearFileCache=true">Clear All (also fileCache)</a> | <a href="ViewApplicationState!reCache.action">Recache sitenodes</a></td>
+	<td colspan="4" class="text">
+    	<a href="ViewApplicationState!clearCastorCaches.action">Clear castor caches</a> | 
+    	<a href="ViewApplicationState!clearCaches.action">Clear All</a> | 
+    	<a href="ViewApplicationState!clearCaches.action?clearFileCache=true">Clear All (also fileCache)</a> | 
+    	<a href="ViewApplicationState!reCache.action">Recache sitenodes</a> |
+	    <a href="ViewApplicationState!clearCaches.action?clearFileCache=true&preCache=true">Clear (also fileCache and pre cache)</a>
+    </td>
   </tr>
 
   <tr><td colspan="4">&nbsp;</td></tr>
@@ -357,6 +336,7 @@
     	<li><a href="ViewApplicationState!cacheStatistics.action">Cache statistics</a></li>
     	<li><a href="ViewApplicationState!componentStatistics.action">Component statistics</a></li>
     	<li><a href="ViewApplicationState!pageStatistics.action">Page statistics</a></li>
+    	<li><a href="ViewApplicationState!luceneStatistics.action">Lucene search index statistics</a></li>
     	<li><a href="jsp/BlockedThread.jsp">Suspected thread locks (On Java 5-setups only).</a></li>
 		<li><a href="jsp/ThreadAnalysis.jsp">List of all active threads (On Java 5-setups only).</a></li>
 		<li><a href="jsp/PermGen.jsp">Detailed memory info (On Java 5-setups only).</a></li>

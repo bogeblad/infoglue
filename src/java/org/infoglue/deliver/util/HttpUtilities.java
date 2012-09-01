@@ -34,8 +34,12 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -468,6 +472,34 @@ public class HttpUtilities
 	        }
 	    }
 	    return buffer.toString();
+	}
+
+	/**
+	 * This method removes a parameter from a given queryString
+	 * @param queryString The querystring to search
+	 * @param parameterName The parameter to replace
+	 * @return The new queryString
+	 */
+
+	public static String removeParameter(String queryString, final String parameterName) {
+	    List<String> list = new ArrayList<String>(Arrays.asList(queryString.split("&")));
+	    Iterator<String> listIterator = list.iterator();
+	    while(listIterator.hasNext())
+	    {
+	    	String parameter = listIterator.next();
+	    	if(parameter.startsWith(parameterName + "="))
+	    		listIterator.remove();
+	    }
+
+	    String newQueryString = "";
+	    for(String param : list)
+	    {
+	    	if(newQueryString.length() > 0)
+	    		newQueryString += "&";
+	    	newQueryString += param;
+	    }
+	    
+	    return newQueryString;
 	}
 
 }

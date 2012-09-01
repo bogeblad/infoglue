@@ -178,6 +178,13 @@ public class SiteNodeStateController extends BaseController
 	    	//If the user changes the state to publish we create a copy and set that copy to publish.
 	    	if(stateId.intValue() == SiteNodeVersionVO.PUBLISH_STATE.intValue())
 	    	{
+	    		//TEST
+	    		Map hashMap = new HashMap();
+	    		hashMap.put("siteNodeVersionId", oldSiteNodeVersion.getId());
+	        	
+	    		intercept(hashMap, "SiteNodeVersion.SubmitToPublish", infoGluePrincipal);
+	    		//END TEST
+	    		
 	    		logger.info("About to copy the working copy to a publish-one");
 	    		//First we update the old working-version so it gets a comment
 	    		

@@ -66,8 +66,6 @@ public class ChangeNotificationController
 	
 	public void put(NotificationMessage notificationMessage) 
 	{
-		//if(notificationMessage.getClassName().equalsIgnoreCase("ServerNodeProperties"))
-		//	Thread.dumpStack();
 	
 		//logger.info("Adding notificationMessage:" + notificationMessage);
 	    list.getList().add(notificationMessage);
@@ -113,6 +111,8 @@ public class ChangeNotificationController
 			while(internalMessageListIterator.hasNext())
 			{
 				NotificationMessage notificationMessage = (NotificationMessage)internalMessageListIterator.next();
+				internalMessage.put(i + ".userName", notificationMessage.getSystemUserName());
+				internalMessage.put(i + ".timestamp", notificationMessage.getTimestamp());
 				internalMessage.put(i + ".className", notificationMessage.getClassName());
 				internalMessage.put(i + ".objectId", notificationMessage.getObjectId());
 				internalMessage.put(i + ".objectName", notificationMessage.getObjectName());
@@ -133,12 +133,16 @@ public class ChangeNotificationController
 				//For mixed env where we want to do cms upgrade first - remove when we release a new version
 				if(i == 0)
 				{
+					publicMessage.put("userName", notificationMessage.getSystemUserName());
+					publicMessage.put("timestamp", notificationMessage.getTimestamp());
 					publicMessage.put("className", notificationMessage.getClassName());
 					publicMessage.put("objectId", notificationMessage.getObjectId());
 					publicMessage.put("objectName", notificationMessage.getObjectName());
 					publicMessage.put("typeId", "" + notificationMessage.getType());
 				}
 				
+				publicMessage.put(i + ".userName", notificationMessage.getSystemUserName());
+				publicMessage.put(i + ".timestamp", notificationMessage.getTimestamp());
 				publicMessage.put(i + ".className", notificationMessage.getClassName());
 				publicMessage.put(i + ".objectId", notificationMessage.getObjectId());
 				publicMessage.put(i + ".objectName", notificationMessage.getObjectName());

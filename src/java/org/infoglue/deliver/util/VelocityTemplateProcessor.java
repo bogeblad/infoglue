@@ -109,6 +109,10 @@ public class VelocityTemplateProcessor
 	
 	public void renderTemplate(final Map params, PrintWriter pw, String templateAsString, boolean forceVelocity, InfoGlueComponent component, String statisticsSuffix) throws Exception 
 	{
+	 	String componentName = "Unknown name or not a component";
+	 	if(component != null)
+	    	componentName = "" + component.getName() + "(" + component.getContentId() + ")";
+
 		try
 		{
 		    final Timer timer = new Timer();
@@ -152,10 +156,6 @@ public class VelocityTemplateProcessor
 			        boolean finished = Velocity.evaluate(context, pw, "Generator Error", reader);        
 		        }
 		    }
-
-		 	String componentName = "Unknown name or not a component";
-		 	if(component != null)
-		    	componentName = "" + component.getName() + "(" + component.getContentId() + ")";
 		    
 		    RequestAnalyser.getRequestAnalyser().registerComponentStatistics(componentName + (statisticsSuffix == null ? "" : statisticsSuffix), timer.getElapsedTime());
 	        if(logger.isInfoEnabled())
@@ -163,6 +163,7 @@ public class VelocityTemplateProcessor
 		}
 		catch(Exception e)
 		{
+			logger.error("Error rendering template[" + componentName + "]. You should fix this. Find more information in the warning log.");
 			logger.warn("Error rendering template:" + e.getMessage(), e);
 			logger.info("templateAsString: \n" + (templateAsString.length() > 500 ? templateAsString.substring(0, 500) + "... (template truncated)." : templateAsString));
 		    

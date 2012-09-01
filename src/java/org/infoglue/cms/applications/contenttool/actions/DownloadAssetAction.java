@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 
@@ -34,6 +35,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 
 public class DownloadAssetAction extends InfoGlueAbstractAction
 {
+    private final static Logger logger = Logger.getLogger(DownloadAssetAction.class.getName());
+
 	private static final long serialVersionUID = 1L;
 	
 	private Integer contentId;
@@ -51,7 +54,7 @@ public class DownloadAssetAction extends InfoGlueAbstractAction
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.warn("Could not download asset on contentId:" + contentId + " (" + languageId + "/" + assetKey + ")");
 		}
 		
 		return NONE;

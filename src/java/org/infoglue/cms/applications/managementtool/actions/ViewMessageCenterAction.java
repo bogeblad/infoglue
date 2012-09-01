@@ -133,7 +133,7 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
         return "successMessageSent";
     }
 
-    public static void addSystemMessage(String userName, Integer messageType, String command) throws Exception
+    public static void addSystemMessage(String userName, Integer messageType, String command)
     {
     	systemMessagesChat.addMessage(userName, messageType, command);
     }

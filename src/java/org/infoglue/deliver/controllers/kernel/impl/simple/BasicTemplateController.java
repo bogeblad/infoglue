@@ -65,6 +65,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryConditions;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
@@ -74,6 +75,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ExtendedSearchCriterias;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupPropertiesController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InfoGluePrincipalControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneCategoryConditions;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
@@ -1815,7 +1817,10 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ " + this.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
+			if(this.getComponentLogic() != null && this.getComponentLogic().getInfoGlueComponent() != null)
+				logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ " + this.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
+			else
+				logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ null - how? ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
 			//logger.error("\nError on url: " + this.getOriginalFullURL() + "\nAn error occurred trying to get attributeName=" + attributeName + " on content " + contentId + "\nReason:" + e.getMessage(), e);
 		}
 				
@@ -1916,7 +1921,10 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ " + this.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
+			if(this.getComponentLogic() != null && this.getComponentLogic().getInfoGlueComponent() != null)
+				logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ " + this.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
+			else
+				logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ null - how? ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
 			//logger.error("\nError on url: " + this.getOriginalFullURL() + "\nAn error occurred trying to get attributeName=" + attributeName + " on content " + contentId + "\nReason:" + e.getMessage(), e);
 		}
 				
@@ -1959,7 +1967,10 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ " + this.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
+			if(this.getComponentLogic() != null && this.getComponentLogic().getInfoGlueComponent() != null)
+				logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ " + this.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
+			else
+				logger.warn("\nError on url: " + this.getOriginalFullURL() + "\n    ComponentName=[ null - how? ]\nAn error occurred trying to get attributeName=" + attributeName + " on content " + this.contentId + "\nReason:" + e.getMessage());
 			//logger.error("\nError on url: " + this.getOriginalFullURL() + "\nAn error occurred trying to get attributeName=" + attributeName + " on content version" + version.getId() + "\nReason:" + e.getMessage(), e);
 		}
 	
@@ -2139,7 +2150,7 @@ public class BasicTemplateController implements TemplateController
 			if(contentId != null)
 			{
 				String unparsedAttributeValue = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, languageId, attributeName, this.siteNodeId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal, false);
-				//logger.info("Found unparsedAttributeValue:" + unparsedAttributeValue);
+				logger.info("Found unparsedAttributeValue:" + unparsedAttributeValue);
 				
 				templateLogicContext.put("inlineContentId", contentId);
 				
@@ -4742,26 +4753,6 @@ public class BasicTemplateController implements TemplateController
 		return this.getContentId(siteNodeId, META_INFO_BINDING_NAME);
 	}
 	
-	/**
-	 * This method gets the children of a content.
-	 */
-	
-	public Collection getChildContents(Integer contentId, boolean includeFolders)
-	{
-		List childContents = null;
-		
-		try
-		{
-			childContents = ContentDeliveryController.getContentDeliveryController().getChildContents(getDatabase(), this.getPrincipal(), contentId, this.languageId, USE_LANGUAGE_FALLBACK, includeFolders, this.deliveryContext);
-		}
-		catch(Exception e)
-		{
-			logger.error("An error occurred trying to get childContents for contentId " + contentId + ":" + e.getMessage(), e);
-		}
-				
-		return childContents;
-	}
-
 
 	/**
 	 * Getter for bound contentId for a binding on a special siteNode
@@ -4906,8 +4897,17 @@ public class BasicTemplateController implements TemplateController
 	
 	public List getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck)
 	{
+		return getMatchingContents(contentTypeDefinitionNamesString, categoryConditionString, freeText, freeTextAttributeNames, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, useLanguageFallback, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, languageId, skipLanguageCheck, null, false);
+	}
+	
+	/**
+	 * This method searches for all contents matching
+	 */
+	
+	public List<ContentVO> getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck, Integer startNodeId, Boolean useLucene)
+	{
 		Timer t = new Timer();
-
+		
 		deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
 		
 		if((freeText != null && !freeText.equals("")) || (freeTextAttributeNames != null && freeTextAttributeNames.size() > 0) || fromDate != null || toDate != null || expireFromDate != null || expireToDate != null || (versionModifier != null && !versionModifier.equals("")) || !deliveryContext.getOperatingMode().equals(CmsPropertyHandler.getOperatingMode()))
@@ -4936,72 +4936,179 @@ public class BasicTemplateController implements TemplateController
 		if(cacheKey != null && !cacheKey.equals(""))
 			key = cacheKey;
 		
-		List cachedMatchingContents = (List)CacheController.getCachedObjectFromAdvancedCache(cacheName, key, cacheInterval);
-		if(cachedMatchingContents == null || !cacheResult)
+		List matchingContents = (List)CacheController.getCachedObjectFromAdvancedCache(cacheName, key, cacheInterval);
+		if(matchingContents == null || !cacheResult)
 		{
-			logger.info("Getting matching contents from db for key:" + key);
-			
 			try
 			{
-			    List contentTypeDefinitionVOList = new ArrayList();
-			    String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
-			    for(int i=0; i<contentTypeDefinitionNames.length; i++)
-			    {
-			        ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNames[i], getDatabase());
-			        if(contentTypeDefinitionVO != null)
-			        	contentTypeDefinitionVOList.add(contentTypeDefinitionVO);
-			    }
-	
-			    final CategoryConditions categoryConditions = CategoryConditions.parse(categoryConditionString);
-			    
-				final ExtendedSearchCriterias criterias = new ExtendedSearchCriterias(this.getOperatingMode().intValue());
-				criterias.setCategoryConditions(categoryConditions);
-				criterias.setLanguage(this.getLanguage(localLanguageId));
-				if(skipLanguageCheck != null)
-					criterias.setSkipLanguageCheck(skipLanguageCheck);
-				if(freeText != null && freeTextAttributeNames != null)
-					criterias.setFreetext(freeText, freeTextAttributeNames);
-				criterias.setContentTypeDefinitions(contentTypeDefinitionVOList);
-				criterias.setDates(fromDate, toDate);
-				criterias.setExpireDates(expireFromDate, expireToDate);
-				criterias.setMaximumNumberOfItems(maximumNumberOfItems);
-				if(versionModifier != null)
-					criterias.setVersionModifier(versionModifier);
-				if(repositoryIdList != null && repositoryIdList.size() > 0)
-					criterias.setRepositoryIdList(repositoryIdList);
+				Set<Content> set = null;
 				
-				final Set set = ExtendedSearchController.getController().search(criterias, getDatabase());
-				
-				final List result = new ArrayList();
-				for(Iterator i = set.iterator(); i.hasNext(); ) 
+				if(useLucene)
 				{
-					final Content content = (Content) i.next();
-					//if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), content.getId(), localLanguageId, USE_LANGUAGE_FALLBACK, true, getPrincipal(), this.deliveryContext))
-					if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), content, localLanguageId, USE_LANGUAGE_FALLBACK, true, getPrincipal(), this.deliveryContext, false, false))
-					{
-						result.add(content.getValueObject());
-					}
-				}
+				    List<Integer> contentTypeDefinitionIdList = new ArrayList<Integer>();
+				    String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
+				    for(int i=0; i<contentTypeDefinitionNames.length; i++)
+				    {
+				        ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNames[i], getDatabase());
+				        if(contentTypeDefinitionVO != null)
+				        	contentTypeDefinitionIdList.add(contentTypeDefinitionVO.getId());
+				    }
+	
+				    logger.info("categoryConditionString:" + categoryConditionString);
+				    String categoriesExpression = LuceneCategoryConditions.parse(categoryConditionString);
+				    logger.info("categoriesExpression:" + categoriesExpression);
+				    boolean includeAssets = false;
+				    Integer caseSensitive = 0;
+				    
+				    Integer[] contentTypeDefinitionsIdArray = null;
+				    if(contentTypeDefinitionIdList != null)
+				    {
+				    	contentTypeDefinitionsIdArray = new Integer[contentTypeDefinitionIdList.size()];
+				    	contentTypeDefinitionIdList.toArray(contentTypeDefinitionsIdArray);
+				    }
 
-				if(cacheResult)
-					CacheController.cacheObjectInAdvancedCache(cacheName, key, result, null, false);
-				
-				return result;
+				    Integer[] repositoryIdArray = null;
+				    if(repositoryIdList != null)
+				    {
+				    	repositoryIdArray = new Integer[repositoryIdList.size()];
+				    	repositoryIdList.toArray(repositoryIdArray);
+				    }
+				    if(maximumNumberOfItems == null)
+				    	maximumNumberOfItems = 1000;
+				    	
+					SearchController sc = new SearchController();
+					logger.info("this.getOperatingMode().intValue():" + this.getOperatingMode().intValue());
+					logger.info("sc:" + sc);
+					List<ContentVersionVO> list = sc.getContentVersionVOListFromLucene(repositoryIdArray, freeText, maximumNumberOfItems, versionModifier, languageId, contentTypeDefinitionsIdArray, null, caseSensitive, this.getOperatingMode().intValue(), includeAssets, false, categoriesExpression);
+					logger.info("Returned list:" + list.size());
+					
+					final List result = new ArrayList();
+					for(ContentVersionVO cvVO : list) 
+					{
+						final ContentVO contentVO = ContentController.getContentController().getContentVOWithId(cvVO.getContentId(), this.getDatabase());
+						if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), contentVO, localLanguageId, USE_LANGUAGE_FALLBACK, true, getPrincipal(), this.deliveryContext, false, false))
+						{
+							result.add(contentVO);
+						}
+					}
+					matchingContents = result;
+				}
+				else
+				{
+					logger.info("Getting matching contents from db for key:" + key);
+					
+				    List contentTypeDefinitionVOList = new ArrayList();
+				    String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
+				    for(int i=0; i<contentTypeDefinitionNames.length; i++)
+				    {
+				        ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNames[i], getDatabase());
+				        if(contentTypeDefinitionVO != null)
+				        	contentTypeDefinitionVOList.add(contentTypeDefinitionVO);
+				    }
+	
+				    final CategoryConditions categoryConditions = CategoryConditions.parse(categoryConditionString);
+	
+					final ExtendedSearchCriterias criterias = new ExtendedSearchCriterias(this.getOperatingMode().intValue());
+					criterias.setCategoryConditions(categoryConditions);
+					criterias.setLanguage(this.getLanguage(localLanguageId));
+					if(skipLanguageCheck != null)
+						criterias.setSkipLanguageCheck(skipLanguageCheck);
+					if(freeText != null && freeTextAttributeNames != null)
+						criterias.setFreetext(freeText, freeTextAttributeNames);
+					criterias.setContentTypeDefinitions(contentTypeDefinitionVOList);
+					criterias.setDates(fromDate, toDate);
+					criterias.setExpireDates(expireFromDate, expireToDate);
+					criterias.setMaximumNumberOfItems(maximumNumberOfItems);
+					if(versionModifier != null)
+						criterias.setVersionModifier(versionModifier);
+					if(repositoryIdList != null && repositoryIdList.size() > 0)
+						criterias.setRepositoryIdList(repositoryIdList);
+	
+					set = ExtendedSearchController.getController().search(criterias, getDatabase());	
+					
+					final List result = new ArrayList();
+					for(Iterator i = set.iterator(); i.hasNext(); ) 
+					{
+						final Content content = (Content) i.next();
+						//if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), content.getId(), localLanguageId, USE_LANGUAGE_FALLBACK, true, getPrincipal(), this.deliveryContext))
+						if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), content.getValueObject(), localLanguageId, USE_LANGUAGE_FALLBACK, true, getPrincipal(), this.deliveryContext, false, false))
+						{
+							if(startNodeId != null)
+							{
+								if(hasNodeIdAsParent(content.getContentId(), startNodeId))
+								{
+									result.add(content.getValueObject());
+								}
+							}
+							else
+							{
+								result.add(content.getValueObject());
+							}
+						}
+					}
+					
+					if(cacheResult)
+						CacheController.cacheObjectInAdvancedCache(cacheName, key, result, null, false);
+					
+					matchingContents = result;
+				}
 			}
 			catch(Exception e)
 			{
 				logger.warn("An error occurred trying to get Matching Contents for contentTypeDefinitionNamesString: " + contentTypeDefinitionNamesString + ":" + e.getMessage(), e);
 			}
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMatchingContents", t.getElapsedTime());
+			return matchingContents;
 		}
-		else if(cachedMatchingContents != null)
+		else if(matchingContents != null)
 		{
 			logger.info("Getting cached contents for key:" + key);
-			return cachedMatchingContents;
+			return matchingContents;
 		}
 		
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMatchingContents", t.getElapsedTime());
 
 		return Collections.EMPTY_LIST;
+	}
+
+	private boolean hasNodeIdAsParent(Integer currentNodeId, Integer parentId)
+	{
+		boolean hasParentWithId = false;
+		
+		try
+		{
+			if(currentNodeId != null && parentId != null && currentNodeId.intValue() == parentId.intValue())
+			{
+				hasParentWithId = true; 
+			}
+			else
+			{
+				ContentVO currentNodeVO = ContentDeliveryController.getContentDeliveryController().getContentVO(currentNodeId, getDatabase());
+				if(currentNodeVO != null)
+				{
+					Integer parentNodeId = currentNodeVO.getParentContentId();
+					
+					if(parentNodeId == null)
+					{
+						hasParentWithId = false;
+					}
+					else if(parentNodeId == parentId.intValue())
+					{
+						hasParentWithId = true;
+					}
+					else
+					{
+						hasParentWithId = hasNodeIdAsParent(parentNodeId, parentId);
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred:" + e.getMessage(), e);
+		}
+		
+		return hasParentWithId;
 	}
 
 	/**
@@ -5251,7 +5358,7 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.warn("An error occurred trying to get current page path:" + e.getMessage());
+			logger.warn("An error occurred trying to get current page path:" + e.getMessage(), e);
 		}
 				
 		return pagePath;
@@ -5931,7 +6038,7 @@ public class BasicTemplateController implements TemplateController
 			SiteNodeVO siteNodeVO = (SiteNodeVO)i.next();
 			
 			this.getDeliveryContext().addUsedSiteNode("siteNode_" + siteNodeVO.getId());
-			
+
 			if((!hideUnauthorizedPages || getHasUserPageAccess(siteNodeVO.getId())) && (showHidden || !siteNodeVO.getIsHidden()))
 			{
 				try
@@ -5940,13 +6047,11 @@ public class BasicTemplateController implements TemplateController
 					webPage.setSiteNodeId(siteNodeVO.getSiteNodeId());
 					webPage.setLanguageId(this.languageId);
 					webPage.setContentId(null);
-					webPage.setNavigationTitle(this.nodeDeliveryController.getPageNavigationTitle(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, null, META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, USE_LANGUAGE_FALLBACK, this.deliveryContext, escapeHTML));
+					webPage.setNavigationTitle(this.nodeDeliveryController.getPageNavigationTitle(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, siteNodeVO.getMetaInfoContentId(), META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, USE_LANGUAGE_FALLBACK, this.deliveryContext, escapeHTML));
 					webPage.setMetaInfoContentId(this.nodeDeliveryController.getMetaInfoContentId(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), META_INFO_BINDING_NAME, USE_INHERITANCE, this.deliveryContext));
-					
 					SiteNodeVersionVO siteNodeVersionVO = this.nodeDeliveryController.getLatestActiveSiteNodeVersionVO(getDatabase(), siteNodeVO.getSiteNodeId());
 					webPage.setSortOrder(siteNodeVersionVO.getSortOrder());
 					webPage.setIsHidden(siteNodeVersionVO.getIsHidden());
-					
 					webPage.setUrl(this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, null, this.deliveryContext));
 					childPages.add(webPage);
 				}
@@ -5956,7 +6061,7 @@ public class BasicTemplateController implements TemplateController
 				}
 			}
 		}
-		
+
 		return childPages;
 	}
 	
@@ -5997,11 +6102,16 @@ public class BasicTemplateController implements TemplateController
 	
 	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden)
 	{
+		Timer t = new Timer();
 		List childPages = new ArrayList();
 		try
 		{
 			List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId);
+			if(logger.isInfoEnabled())
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes", t.getElapsedTimeNanos() / 1000);
 			childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden);
+			if(logger.isInfoEnabled())
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getPages", t.getElapsedTimeNanos() / 1000);
 		}
 		catch(Exception e)
 		{
@@ -6272,6 +6382,28 @@ public class BasicTemplateController implements TemplateController
 		}
 		
 		return boundContents;
+	}
+
+	/**
+	 * This method gets the children of a content.
+	 */
+	
+	public Collection getChildContents(Integer contentId, boolean includeFolders)
+	{
+		List childContents = null;
+		
+		try
+		{
+			//Timer t = new Timer();
+			childContents = ContentDeliveryController.getContentDeliveryController().getChildContents(getDatabase(), this.getPrincipal(), contentId, this.languageId, USE_LANGUAGE_FALLBACK, includeFolders, this.deliveryContext);
+			//t.printElapsedTime("getChildContents took");
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred trying to get childContents for contentId " + contentId + ":" + e.getMessage(), e);
+		}
+				
+		return childContents;
 	}
 
 	/**
@@ -7191,7 +7323,7 @@ public class BasicTemplateController implements TemplateController
 			    arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 
-	            infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, null);
+	            infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, getHttpServletRequest());
 	        }
 	        
 			WorkflowController workflowController = WorkflowController.getController();
@@ -7224,7 +7356,7 @@ public class BasicTemplateController implements TemplateController
 	            arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 			    
-			    infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, null);
+			    infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, getHttpServletRequest());
 	        }
 	        
 			WorkflowController workflowController = WorkflowController.getController();
@@ -7255,7 +7387,7 @@ public class BasicTemplateController implements TemplateController
 	            arguments.put("j_username", CmsPropertyHandler.getAnonymousUser());
 			    arguments.put("j_password", CmsPropertyHandler.getAnonymousPassword());
 
-		        infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, null);
+		        infoGluePrincipal = (InfoGluePrincipal) ExtranetController.getController().getAuthenticatedPrincipal(arguments, getHttpServletRequest());
 	        }
 
 			WorkflowController workflowController = WorkflowController.getController();
@@ -7552,7 +7684,7 @@ public class BasicTemplateController implements TemplateController
 	
 	public String getLogoutURL() throws Exception
 	{
-		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(this.getDatabase(), null, this.getHttpServletRequest(), false);
+		AuthenticationModule authenticationModule = AuthenticationModule.getAuthenticationModule(this.getDatabase(), null, getHttpServletRequest(), false);
 	    return authenticationModule.getLogoutUrl();
 	}
 

@@ -329,6 +329,7 @@
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyAllowFolderType" "onlyAllowFolderType" "$this.getPropertyValue('onlyAllowFolderType')" "$!cmsPH.onlyAllowFolderType")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.skipResultDialogIfPossible" "skipResultDialogIfPossible" "$this.getPropertyValue('skipResultDialogIfPossible')" "$!cmsPH.skipResultDialogIfPossible")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.allowOverrideModifyer" "allowOverrideModifyer" "$this.getPropertyValue('allowOverrideModifyer')" "$!cmsPH.allowOverrideModifyer")
 				
 				#set($SQLSearch = ["$ui.getString('entity.ServerNode.property.sqlSearch.value')", "$ui.getString('entity.ServerNode.property.sqlSearch.label')"])
 				#set($luceneSearch = ["$ui.getString('entity.ServerNode.property.luceneSearch.value')", "$ui.getString('entity.ServerNode.property.luceneSearch.label')"])

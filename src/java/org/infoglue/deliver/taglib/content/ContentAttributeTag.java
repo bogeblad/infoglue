@@ -27,11 +27,15 @@ import java.util.Map;
 
 import javax.servlet.jsp.JspException;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
+import org.infoglue.deliver.taglib.structure.ChildPagesTag;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Support;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * This is an attempt to make an TagLib for attempts to get a ContentAttribute from a content referenced by a component
@@ -52,6 +56,8 @@ public class ContentAttributeTag extends ComponentLogicTag
 {
 	private static final long serialVersionUID = 3257850991142318897L;
 	
+    public final static Logger logger = Logger.getLogger(ContentAttributeTag.class.getName());
+
 	private ContentVersionVO contentVersionVO;
 	private Integer contentId;
 	private String propertyName;
@@ -87,6 +93,7 @@ public class ContentAttributeTag extends ComponentLogicTag
 	{
 	    String result = null;
 	    
+	    Timer t = new Timer();
 	    if(contentVersionVO != null)
 	    {
 	    	if(!parse)
@@ -135,6 +142,9 @@ public class ContentAttributeTag extends ComponentLogicTag
         {
             throw new JspException("You must specify either contentId or propertyName");
         }
+	    
+	    if(logger.isInfoEnabled())
+	    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentAttribute tag", t.getElapsedTimeNanos() / 1000);
 
 	    return result;
 	}

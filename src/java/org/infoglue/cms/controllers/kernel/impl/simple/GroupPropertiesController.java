@@ -60,6 +60,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -269,44 +270,84 @@ public class GroupPropertiesController extends BaseController
 
 	public List getGroupPropertiesList(String groupName, Integer languageId, Database db, boolean readOnly) throws ConstraintException, SystemException, Exception
 	{
+		return getGroupPropertiesList(groupName, languageId, db, readOnly, true);
+	}
+	
+	
+	/**
+	 * This method gets a list of groupProperties for a group
+	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
+	 */
+
+	public List getGroupPropertiesList(String groupName, Integer languageId, Database db, boolean readOnly, boolean retry) throws ConstraintException, SystemException, Exception
+	{
 		List groupPropertiesList = new ArrayList();
-
-		OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.GroupPropertiesImpl f WHERE f.groupName = $1 AND f.language = $2 ORDER BY f.groupPropertiesId");
-		oql.bind(groupName);
-		oql.bind(languageId);
-
-		if(logger.isInfoEnabled())
+		try
 		{
-			logger.info("groupName:" + groupName);
-			logger.info("languageId:" + languageId);
+			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
+
+			OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.GroupPropertiesImpl f WHERE f.groupName = $1 AND f.language = $2 ORDER BY f.groupPropertiesId");
+			oql.bind(groupName);
+			oql.bind(languageId);
+	
+			if(logger.isInfoEnabled())
+			{
+				logger.info("groupName:" + groupName);
+				logger.info("languageId:" + languageId);
+			}
+	
+			QueryResults results;
+			if(readOnly)
+			{
+				logger.info("Fetching groupPropertiesList in readonly mode");
+			    results = oql.execute(Database.ReadOnly);
+			}
+			else
+			{
+				logger.info("Fetching groupPropertiesList in read/write mode");
+			    results = oql.execute();
+			}   
+	
+			while (results.hasMore()) 
+			{
+				GroupProperties groupProperties = (GroupProperties)results.next();
+				logger.info("Found one:" + groupProperties);
+				groupPropertiesList.add(groupProperties);
+			}
+			
+			logger.info("In total:" + groupPropertiesList.size());
+	
+			results.close();
+			oql.close();
 		}
-
-		QueryResults results;
-		if(readOnly)
+		catch(Exception e)
+        {
+			try
+			{
+				if(retry)
+				{
+					logger.warn("Error getting groupPropertiesList. Message: " + e.getMessage() + ". Retrying...");
+					groupPropertiesList = getGroupPropertiesList(groupName, languageId, db, readOnly, false);
+				}
+				else
+				{
+					logger.warn("Error getting groupPropertiesList. Message: " + e.getMessage() + ". Not retrying...");
+					throw e;
+				}
+			}
+			catch(Exception e2)
+			{
+	            throw e2;    
+			}
+        }
+		finally
 		{
-			logger.info("Fetching groupPropertiesList in readonly mode");
-		    results = oql.execute(Database.ReadOnly);
-		}
-		else
-		{
-			logger.info("Fetching groupPropertiesList in read/write mode");
-		    results = oql.execute();
-		}   
-
-		while (results.hasMore()) 
-		{
-			GroupProperties groupProperties = (GroupProperties)results.next();
-			logger.info("Found one:" + groupProperties);
-			groupPropertiesList.add(groupProperties);
+			RequestAnalyser.getRequestAnalyser().decApproximateNumberOfDatabaseQueries();
 		}
 		
-		logger.info("In total:" + groupPropertiesList.size());
-
-		results.close();
-		oql.close();
-
 		return groupPropertiesList;
 	}
+
 
 	public Set<InfoGlueGroup> getGroupsByMatchingProperty(String propertyName, String value, Integer languageId, boolean useLanguageFallback, Database db) throws ConstraintException, SystemException, Exception
 	{
@@ -992,7 +1033,8 @@ public class GroupPropertiesController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.warn("An error getting related contents:" + e.getMessage(), e);
+			logger.warn("An error getting related contents:" + e.getMessage());
+			logger.info("An error getting related contents:" + e.getMessage(), e);
 		}
 		
 		return contents;
@@ -1068,7 +1110,8 @@ public class GroupPropertiesController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.warn("An error getting related contents:" + e.getMessage(), e);
+			logger.warn("An error getting related pages:" + e.getMessage());
+			logger.info("An error getting related pages:" + e.getMessage(), e);
 		}
 		
 		return siteNodes;

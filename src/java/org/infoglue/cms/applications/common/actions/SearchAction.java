@@ -29,19 +29,23 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SearchController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.util.Timer;
 
 import webwork.action.Action;
 
@@ -62,9 +66,9 @@ public class SearchAction extends InfoGlueAbstractAction
 
 	private static final long serialVersionUID = 1L;
 	
-	private List contentVersionVOList = new ArrayList();
+	private List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
 	private List<BaseEntityVO> baseEntityVOList = new ArrayList<BaseEntityVO>();
-	private Set contentVOSet;
+	private Set<ContentVersionVO> contentVOSet;
 	private List<DigitalAssetVO> digitalAssetVOList = null;
 	private List<SiteNodeVersionVO> siteNodeVersionVOList = new ArrayList<SiteNodeVersionVO>();
 	private Integer repositoryId;
@@ -145,6 +149,8 @@ public class SearchAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception 
 	{
+		Timer t = new Timer();
+		
 	    int maxRows = 100;
 		try
 		{
@@ -167,7 +173,7 @@ public class SearchAction extends InfoGlueAbstractAction
 			}
 		}
 		else
-		{
+		{		
 			logger.debug("repositoryIdToSearch:" + repositoryIdToSearch);
 			if(repositoryIdToSearch != null)
 			{
@@ -177,21 +183,24 @@ public class SearchAction extends InfoGlueAbstractAction
 					repositoryIdAsIntegerToSearch[i] = new Integer(repositoryIdToSearch[i]);
 					selectedRepositoryIdList.add(repositoryIdToSearch[i]);
 				}
-				
-				ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
-				
-				contentVersionVOList = searchController.getContentVersionVOList(repositoryIdAsIntegerToSearch, this.getSearchString(), maxRows, name, languageId, new Integer[]{contentTypeDefinitionId}, new Integer[]{ctd.getId()}, caseSensitive, stateId, false);
+								
+				contentVersionVOList = searchController.getContentVersionVOList(repositoryIdAsIntegerToSearch, this.getSearchString(), maxRows, name, languageId, new Integer[]{contentTypeDefinitionId}, null, caseSensitive, stateId, false, false);
+				t.printElapsedTime("contentVersionVOList took");
 				siteNodeVersionVOList = searchController.getSiteNodeVersionVOList(repositoryIdAsIntegerToSearch, this.getSearchString(), maxRows, name, languageId, caseSensitive, stateId);
-				digitalAssetVOList = SearchController.getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), null, maxRows);
+				t.printElapsedTime("siteNodeVersionVOList took");
+				digitalAssetVOList = searchController.getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), null, maxRows);
+				t.printElapsedTime("digitalAssetVOList took");
 			}
 			else
 			{
 				logger.debug("repositoryId:" + this.repositoryId);
-				ContentTypeDefinitionVO ctd = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
-
-				contentVersionVOList = searchController.getContentVersionVOList(new Integer[] {this.repositoryId}, this.getSearchString(), maxRows, name, languageId, new Integer[]{contentTypeDefinitionId}, new Integer[]{ctd.getId()}, caseSensitive, stateId, includeAssets);
+			
+				contentVersionVOList = searchController.getContentVersionVOList(new Integer[] {this.repositoryId}, this.getSearchString(), maxRows, name, languageId, new Integer[]{contentTypeDefinitionId}, null, caseSensitive, stateId, false, false);
+				t.printElapsedTime("contentVersionVOList took");
 				siteNodeVersionVOList = searchController.getSiteNodeVersionVOList(new Integer[]{this.repositoryId}, this.getSearchString(), maxRows, name, languageId, caseSensitive, stateId);
-				digitalAssetVOList = SearchController.getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows);
+				t.printElapsedTime("siteNodeVersionVOList took");
+				digitalAssetVOList = searchController.getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows);
+				t.printElapsedTime("digitalAssetVOList took");
 				selectedRepositoryIdList.add("" + this.repositoryId);
 			}
 		}
@@ -202,7 +211,7 @@ public class SearchAction extends InfoGlueAbstractAction
 		}
 
 	    //this.principals = UserControllerProxy.getController().getAllUsers();
-	    this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId);
+	    this.availableLanguages = LanguageController.getController().getLanguageVOList();
 	    this.contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 
@@ -311,11 +320,11 @@ public class SearchAction extends InfoGlueAbstractAction
 				selectedRepositoryIdList.add(repositoryIdToSearch[i]);
 			}
 			
-			digitalAssetVOList = SearchController.getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), assetTypeFilter, maxRows);
+			digitalAssetVOList = SearchController.getController().getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), assetTypeFilter, maxRows);
 		}
 		else 
 		{
-			digitalAssetVOList = SearchController.getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows);
+			digitalAssetVOList = SearchController.getController().getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows);
 			selectedRepositoryIdList.add("" + this.repositoryId);
 		}
 
@@ -370,7 +379,8 @@ public class SearchAction extends InfoGlueAbstractAction
 		}
 
 	    this.principals = UserControllerProxy.getController().getAllUsers();
-	    this.availableLanguages = LanguageController.getController().getLanguageVOList(this.repositoryId);
+	    this.availableLanguages = LanguageController.getController().getLanguageVOList();
+	    
 	    this.contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 		selectedRepositoryIdList.add("" + this.repositoryId);

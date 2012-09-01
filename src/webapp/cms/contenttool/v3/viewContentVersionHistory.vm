@@ -122,9 +122,9 @@
 				<tr>
 					<td><input type="checkbox" id="contentVersionId" value="$contentVersionVO.id"/></td>
 					<td>$contentVersionVO.id</td>
-					<td>$contentVersionVO.languageName</td>
+					<td>$this.getLanguageVO($contentVersionVO.languageId).name</td>
 					<td>#stateInText($contentVersionVO.stateId)</td>
-					<td>$contentVersionVO.modifiedDateTime</td>
+					<td>$formatter.formatDate($contentVersionVO.modifiedDateTime, 'yyyy-MM-dd HH:mm:ss')</td>
 					<td>$contentVersionVO.versionModifier</td>
 					<td>$contentVersionVO.versionComment</td>
 				</tr>

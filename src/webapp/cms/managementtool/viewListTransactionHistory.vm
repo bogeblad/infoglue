@@ -106,6 +106,8 @@
 					<option value="">---------</option>
 					<option value="auth" #checkSelected("$typeFilter" "auth")>Authentication/Authorization operations</option>
 					<option value="crud" #checkSelected("$typeFilter" "crud")>Create/Update/Delete operations</option>
+					<option value="publ" #checkSelected("$typeFilter" "publ")>Publication operations</option>
+					<option value="surv" #checkSelected("$typeFilter" "surv")>Server surveillance</option>
 				</select>
 				<br/><br/>
 				
@@ -137,8 +139,8 @@
 					<th>User</th>
 					<th>Date/time</th>
 					<th>Type</th>
-					<th>Object id</th>
-					<th>Object name</th>
+					<th>object id</th>
+					<th>object name</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -149,8 +151,8 @@
 						<td>$transactionHistoryVO.getSystemUserName()</td>
 						<td>$formatter.formatDate($transactionHistoryVO.getTransactionDateTime(), 'yyyy-MM-dd HH:mm')</td>
 						<td>$transactionHistoryVO.getTransactionTypeName()</td>
+						<td>#if($transactionHistoryVO.transactionObjectName.length() > 50) $transactionHistoryVO.transactionObjectName.substring(0,50) #else $transactionHistoryVO.transactionObjectName #end</td>
 						<td>$transactionHistoryVO.getTransactionObjectId()</td>
-						<td>$transactionHistoryVO.getTransactionObjectName()</td>
 					</tr>
 				#end
 				

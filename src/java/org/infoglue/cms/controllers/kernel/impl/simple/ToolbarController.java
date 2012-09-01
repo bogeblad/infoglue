@@ -809,6 +809,13 @@ public class ToolbarController implements ToolbarProvider
 				  "",
 				  "exportContent");
 
+		ToolbarButton copyContentButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentTitle"),
+				  "CopyContent!input.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId(),
+				  "",
+				  "copyContent");
+
 		ToolbarButton importContentButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.importContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.importContentTitle"),
@@ -825,6 +832,7 @@ public class ToolbarController implements ToolbarProvider
 
 		syncTreeButton.getSubButtons().add(runTaskButton);
 		syncTreeButton.getSubButtons().add(changeContentTypeButton);
+		syncTreeButton.getSubButtons().add(copyContentButton);
 		syncTreeButton.getSubButtons().add(exportContentButton);
 		syncTreeButton.getSubButtons().add(importContentButton);
 		syncTreeButton.getSubButtons().add(createContentsFromUploadButton);

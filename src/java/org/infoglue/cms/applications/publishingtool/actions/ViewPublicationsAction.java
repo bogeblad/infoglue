@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.publishingtool.actions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
@@ -55,8 +56,11 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 	private RepositoryVO repositoryVO;
 	private List publicationEvents;
 	private List publicationDetailVOList;
+	private List<String[]> publicationStatusList = new ArrayList<String[]>();
 	private EditionBrowser editionBrowser;
 	private String filter = null;
+
+	public List<String[]> getPublicationStatusList(){ return publicationStatusList; }
 
 	public int getStartIndex()			{ return startIndex; }
 	public void setStartIndex(int i)	{ startIndex = i; }
@@ -90,6 +94,11 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
         return "successV3";
     }
 
+	/**
+	 * The main execution point. Populates any filter settings (not common) and also the repo, the publication events (items to be published) and
+	 * an edition browser so you can see earlier publications. 
+	 */
+
 	public String doExecute() throws Exception
 	{
 		if(filter == null)
@@ -106,15 +115,20 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 		}
 
 		repositoryVO		= RepositoryController.getController().getRepositoryVOWithId(repositoryId);
-		publicationEvents	= PublicationController.getPublicationEvents(repositoryId, getInfoGluePrincipal(), filter);
+		publicationEvents	= PublicationController.getPublicationEvents(repositoryId, getInfoGluePrincipal(), filter, true);
 		editionBrowser		= PublicationController.getEditionPage(repositoryId, startIndex);
 					
 		return SUCCESS;
 	}
 	
+	/**
+	 * This command shows the items in a earlier publication. It also shows the status reported from all the 
+	 * deliver instances on if the publication was processed or not.
+	 */
 	public String doShowPublicationDetails() throws Exception
 	{
-		this.publicationDetailVOList = PublicationController.getPublicationDetailVOList(publicationId);
+		this.publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(publicationId);
+		this.publicationStatusList = PublicationController.getPublicationStatusList(publicationId);
 		
 		return "showPublicationDetails";
 	}
@@ -151,7 +165,7 @@ public class ViewPublicationsAction extends InfoGlueAbstractAction
 
 	public static List getPublicationDetails(Integer publicationId) throws SystemException
 	{
-		return PublicationController.getPublicationDetailVOList(publicationId);
+		return PublicationController.getController().getPublicationDetailVOList(publicationId);
 	}
 
 	public ContentVO getOwningContent(Integer id) throws SystemException

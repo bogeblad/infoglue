@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
@@ -70,11 +71,19 @@ import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.cms.util.RemoteCacheUpdater;
 import org.infoglue.cms.util.mail.MailServiceFactory;
+import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
+import org.infoglue.deliver.util.HttpHelper;
+import org.infoglue.deliver.util.LiveInstanceMonitor;
 import org.infoglue.deliver.util.VelocityTemplateProcessor;
+import org.jfree.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 /**
- * PublicationController.java
+ * This controller is responsible for all publications management. 
+ *  
  *
  * @author Stefan Sik, Mattias Bogeblad
  */
@@ -100,6 +109,14 @@ public class PublicationController extends BaseController
 	}
 
 	/**
+	 * This method just returns the publication with the given id.
+	 */
+	public PublicationVO getPublicationVOWithId(Integer publicationId) throws SystemException
+	{
+		return (PublicationVO) getVOWithId(PublicationImpl.class, publicationId);
+	}
+
+	/**
 	 * This method just returns the publication detail with the given id.
 	 */
 	public PublicationDetailVO getPublicationDetailVOWithId(Integer publicationDetailId) throws SystemException
@@ -120,9 +137,9 @@ public class PublicationController extends BaseController
 	 * This method returns a list of those events that are publication events and
 	 * concerns this repository and the submitter is in a group that the publisher also is in.
 	 */
-	public static List getPublicationEvents(Integer repositoryId, InfoGluePrincipal principal, String filter) throws SystemException, Exception
+	public static List getPublicationEvents(Integer repositoryId, InfoGluePrincipal principal, String filter, boolean validate) throws SystemException, Exception
 	{
-		return EventController.getPublicationEventVOListForRepository(repositoryId, principal, filter);
+		return EventController.getPublicationEventVOListForRepository(repositoryId, principal, filter, validate);
 	}
 
 	/**
@@ -153,7 +170,8 @@ public class PublicationController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            logger.error("An error occurred so we should not completes the transaction:" + e);
+            logger.warn("An error occurred so we should not completes the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -572,6 +590,96 @@ public class PublicationController extends BaseController
 
 
 	/**
+	 * This method creates a new publication with the given publicationDetails.
+	 */
+	public PublicationVO createAndPublish(PublicationVO publicationVO, List<PublicationDetailVO> publicationDetailVOList, String publisherName) throws SystemException
+    {
+    	Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+	        beginTransaction(db);
+
+	        publicationVO = createAndPublish(publicationVO, publicationDetailVOList, publisherName, db);
+	        
+	        commitTransaction(db);
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred when we tried to commit the publication: " + e.getMessage(), e);
+	    	rollbackTransaction(db);
+		}
+
+        return publicationVO;
+    }
+
+	/**
+	 * This method creates a new publication with the given publicationDetails.
+	 */
+	public PublicationVO createAndPublish(PublicationVO publicationVO, List<PublicationDetailVO> publicationDetailVOList, String publisherName, Database db) throws SystemException, Exception
+    {
+	   	logger.info("*********************************");
+    	logger.info("Creating edition ");
+    	logger.info("*********************************");
+
+        Publication publication = new PublicationImpl();
+        publicationVO.setPublicationDateTime(Calendar.getInstance().getTime());
+        publication.setValueObject(publicationVO);
+		publication.setPublisher("SYSTEM");
+
+		for(PublicationDetailVO publicationDetailVO : publicationDetailVOList)
+		{
+			createPublicationInformation(publication, publicationDetailVO, db);
+		}
+
+		db.create(publication);
+
+        // Replicate database!!!
+        try
+		{
+	    	logger.info("Starting replication...");
+			ReplicationMySqlController.updateSlaveServer();
+	    	logger.info("Finished replication...");
+		}
+		catch (Exception e)
+		{
+			logger.error("An error occurred when we tried to replicate the data:" + e.getMessage(), e);
+		}
+
+        // Notify the listeners!!!
+        try
+		{
+            Map hashMap = new HashMap();
+        	hashMap.put("publicationId", publicationVO.getId());
+        	
+        	logger.info("*****************Calling Publication.Write");
+    		intercept(hashMap, "Publication.Write", UserControllerProxy.getController().getUser(publisherName));
+		}
+		catch (Exception e)
+		{
+			logger.error("An error occurred when we tried to replicate the data:" + e.getMessage(), e);
+		}
+
+		// Update live site!!!
+		try
+		{
+			logger.info("Notifying the entire system about a publishing...");
+			NotificationMessage notificationMessage = new NotificationMessage("PublicationController.createAndPublish():", PublicationImpl.class.getName(), publisherName, NotificationMessage.PUBLISHING, publicationVO.getId(), publicationVO.getName());
+			//NotificationMessage notificationMessage = new NotificationMessage("PublicationController.createAndPublish():", NotificationMessage.PUBLISHING_TEXT, infoGluePrincipal.getName(), NotificationMessage.PUBLISHING, publicationVO.getId(), "org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl");
+			ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+	      	RemoteCacheUpdater.pushAndClearSystemNotificationMessages(publisherName);
+			//RemoteCacheUpdater.clearSystemNotificationMessages();
+			logger.info("Finished Notifying...");
+		}
+		catch (Exception e)
+		{
+			logger.error("An error occurred when we tried to replicate the data:" + e.getMessage(), e);
+		}
+
+        return publicationVO;
+    }
+	
+	/**
 	 * Creates a connection between contentversion or siteNodeVersion and publication, ie adds a contentversion
 	 * to the publication.
 	 */
@@ -696,6 +804,23 @@ public class PublicationController extends BaseController
 	}
 
 	/**
+	 * Creates a connection between contentversion or siteNodeVersion and publication, ie adds a contentversion
+	 * to the publication.
+	 */
+	private static void createPublicationInformation(Publication publication, PublicationDetailVO publicationDetailVO, Database db) throws Exception
+	{
+		PublicationDetail publicationDetail = new PublicationDetailImpl();
+		publicationDetail.setValueObject(publicationDetailVO);
+		publicationDetail.setPublication((PublicationImpl)publication);
+
+		Collection publicationDetails = publication.getPublicationDetails();
+		if(publicationDetails == null)
+			publication.setPublicationDetails(new ArrayList());
+
+		publication.getPublicationDetails().add(publicationDetail);
+	}
+	
+	/**
 	 * This method (currently used for testing) will create a Publication with associated PublicationDetails children.
 	 */
 	public static PublicationVO create(PublicationVO publication) throws SystemException
@@ -735,9 +860,28 @@ public class PublicationController extends BaseController
 	/**
 	 * This method returns a list of all details a publication has.
 	 */
-	public static List getPublicationDetailVOList(Integer publicationId) throws SystemException
+	public PublicationVO getPublicationVO(Integer publicationId) throws SystemException
 	{
-		List publicationDetails = new ArrayList();
+		PublicationVO publicationVO = null;
+		
+        try
+        {
+        	publicationVO = getPublicationVOWithId(publicationId);
+        }
+        catch(Exception e)
+        {
+            logger.error("We could not find publication in database:" + e.getMessage(), e);
+        }
+
+        return publicationVO;
+	}
+	
+	/**
+	 * This method returns a list of all details a publication has.
+	 */
+	public List<PublicationDetailVO> getPublicationDetailVOList(Integer publicationId) throws SystemException
+	{
+		List<PublicationDetailVO> publicationDetails = new ArrayList<PublicationDetailVO>();
 
 		Database db = CastorDatabaseService.getDatabase();
 		beginTransaction(db);
@@ -745,7 +889,7 @@ public class PublicationController extends BaseController
         try
         {
         	Publication publication = getPublicationWithId(publicationId, db);
-        	Collection details = publication.getPublicationDetails();
+        	Collection<PublicationDetailVO> details = publication.getPublicationDetails();
             publicationDetails = toVOList(details);
 
 			commitTransaction(db);
@@ -758,6 +902,207 @@ public class PublicationController extends BaseController
         }
 
         return publicationDetails;
+	}
+
+	/**
+	 * This method returns a list of all details a publication has.
+	 */
+	public static List<String[]> getPublicationStatusList(Integer publicationId) throws SystemException
+	{
+		List publicationDetails = new ArrayList();
+
+		List<String> publicUrls = CmsPropertyHandler.getPublicDeliveryUrls();
+
+		for(String deliverUrl : publicUrls)
+		{
+			String address = deliverUrl + "/UpdateCache!getPublicationState.action?publicationId=" + publicationId;
+			if(address.indexOf("@") > -1)
+			{
+				publicationDetails.add(new String[]{"" + deliverUrl, "Error", "Not valid server url"});
+			}
+			else
+			{
+				try
+				{
+					Boolean serverStatus = LiveInstanceMonitor.getInstance().getServerStatus(deliverUrl);
+					if(!serverStatus)
+					{
+						publicationDetails.add(new String[]{"" + deliverUrl, "Error", "Server not available for status query"});					
+					}
+					else
+					{
+						HttpHelper httpHelper = new HttpHelper();
+						String response = httpHelper.getUrlContent(address, 2000);
+						logger.info("response:" + response);
+						if(response != null && response.indexOf("status=Unknown;") > -1)
+						{
+							if(response.indexOf("serverStartDateTime:") > -1)
+							{
+								String applicationStartupDateTimeString = response.substring(response.indexOf("serverStartDateTime:") + 20).trim();
+								logger.info("applicationStartupDateTimeString:" + applicationStartupDateTimeString);
+								VisualFormatter visualFormatter = new VisualFormatter();
+								Date serverStartupDate = visualFormatter.parseDate(applicationStartupDateTimeString, "yyyy-MM-dd HH:mm:ss");
+								PublicationVO publicationVO = PublicationController.getController().getPublicationVO(publicationId);
+								if(publicationVO.getPublicationDateTime().before(serverStartupDate))
+									publicationDetails.add(new String[]{"" + deliverUrl, "N/A", "Application restarted after the publication: " + applicationStartupDateTimeString});							
+								else
+									publicationDetails.add(new String[]{"" + deliverUrl, "N/A", "No information found"});							
+							}
+							else
+							{
+								publicationDetails.add(new String[]{"" + deliverUrl, "N/A", "No information found"});							
+							}
+						}
+						else
+						{
+							Map<String,String> responseMap = httpHelper.toMap(response.trim(), "utf-8");
+							CacheEvictionBean bean = CacheEvictionBean.getCacheEvictionBean(responseMap);
+							if(bean == null)
+								throw new Exception("No information found");
+							
+							VisualFormatter visualFormatter = new VisualFormatter();
+							publicationDetails.add(new String[]{"" + deliverUrl, responseMap.get("status"), "" + visualFormatter.formatDate(bean.getProcessedTimestamp(), "yyyy-MM-dd HH:mm:ss")});
+						}
+					}
+				}
+				catch(Exception e)
+				{
+					logger.error("Problem getting publication status:" + e.getMessage());
+					publicationDetails.add(new String[]{"" + deliverUrl, "Error", "" + e.getMessage()});
+				}
+			}
+		}
+		
+        return publicationDetails;
+	}
+	
+	/**
+	 * This method returns a list of all details a publication has.
+	 */
+	public static Date getApplicationStartDate(String deliverUrl) throws SystemException
+	{
+		Date serverStartupDate = new Date();
+		
+		String address = deliverUrl + "/UpdateCache!getPublicationState.action?publicationId=1";
+		try
+		{
+			Boolean serverStatus = LiveInstanceMonitor.getInstance().getServerStatus(deliverUrl);
+			if(!serverStatus)
+			{
+				throw new Exception("Server down... could not get start date");					
+			}
+			else
+			{
+				HttpHelper httpHelper = new HttpHelper();
+				String response = httpHelper.getUrlContent(address, 2000);
+				logger.info("response:" + response);
+				if(response != null && response.indexOf("status=Unknown;") > -1)
+				{
+					if(response.indexOf("serverStartDateTime:") > -1)
+					{
+						String applicationStartupDateTimeString = response.substring(response.indexOf("serverStartDateTime:") + 20).trim();
+						logger.info("applicationStartupDateTimeString:" + applicationStartupDateTimeString);
+						VisualFormatter visualFormatter = new VisualFormatter();
+						serverStartupDate = visualFormatter.parseDate(applicationStartupDateTimeString, "yyyy-MM-dd HH:mm:ss");
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.error("Problem getting application startup date:" + e.getMessage());
+		}
+		
+        return serverStartupDate;
+	}
+	
+	
+	/**
+	 * This method fetches a json-list from the live server in question with all ongoing publications.
+	 */
+	public static List<CacheEvictionBean> getOngoingPublicationStatusList(String baseUrl)
+	{
+		List<CacheEvictionBean> beans = new ArrayList<CacheEvictionBean>();
+		
+		String address = baseUrl + "/UpdateCache!getOngoingPublications.action";
+		try
+		{
+			HttpHelper httpHelper = new HttpHelper();
+			String response = httpHelper.getUrlContent(address, 2000);
+			
+			Gson gson = new Gson();
+			
+			java.lang.reflect.Type listOfCacheEvictionBeans = new TypeToken<List<CacheEvictionBean>>(){}.getType();
+			beans = gson.fromJson(response, listOfCacheEvictionBeans);
+		}
+		catch(Exception e)
+		{
+			logger.error("Error getting ongoing publication status:" + e.getMessage());
+		}
+		
+        return beans;
+	}
+
+	
+	public List<PublicationVO> getFailedPublicationVOList(String baseUrl)
+	{
+		List<PublicationVO> failedPublications = new ArrayList<PublicationVO>();
+		
+		try
+		{
+			Calendar minus24hours = Calendar.getInstance();
+			minus24hours.add(Calendar.HOUR_OF_DAY, -24);
+
+			Date applicationStartupDate = getApplicationStartDate(baseUrl);
+			if(applicationStartupDate.after(minus24hours.getTime()))
+				minus24hours.setTime(applicationStartupDate);
+
+			List<PublicationVO> publicationsToCheck = getPublicationsSinceDate(minus24hours.getTime());
+			List<CacheEvictionBean> latestPublications = getLatestPublicationList(baseUrl);
+			for(PublicationVO publication : publicationsToCheck)
+			{
+				boolean found = false;
+				for(CacheEvictionBean bean : latestPublications)
+				{
+					if(bean.getPublicationId().equals(publication.getId()))
+						found = true;
+				}
+				if(!found)
+					failedPublications.add(publication);
+			}
+		}
+		catch (Exception e) 
+		{
+			logger.error("Error getting failed publications:" + e.getMessage());
+		}
+		
+		return failedPublications;
+	}
+	
+	/**
+	 * This method fetches a json-list from the live server in question with all ongoing publications.
+	 */
+	public static List<CacheEvictionBean> getLatestPublicationList(String baseUrl)
+	{
+		List<CacheEvictionBean> beans = new ArrayList<CacheEvictionBean>();
+		
+		String address = baseUrl + "/UpdateCache!getLatestPublications.action";
+		try
+		{
+			HttpHelper httpHelper = new HttpHelper();
+			String response = httpHelper.getUrlContent(address, 2000);
+			
+			Gson gson = new Gson();
+			
+			java.lang.reflect.Type listOfCacheEvictionBeans = new TypeToken<List<CacheEvictionBean>>(){}.getType();
+			beans = gson.fromJson(response, listOfCacheEvictionBeans);
+		}
+		catch(Exception e)
+		{
+			logger.error("Error getting latest publication:" + e.getMessage());
+		}
+		
+        return beans;
 	}
 
 
@@ -1072,6 +1417,8 @@ public class PublicationController extends BaseController
 			if(hasAccessToPublishingTool)
 			{
 				boolean hasAccessToRepository = hasAccessTo("Repository.Read", "" + repositoryId, infogluePrincipal);
+				if(!hasAccessToRepository)
+					hasAccessToRepository = hasAccessTo("Repository.Write", "" + repositoryId, infogluePrincipal);
 				if(hasAccessToRepository)
 				{
 					if(recipients.indexOf(infogluePrincipal.getEmail()) == -1)

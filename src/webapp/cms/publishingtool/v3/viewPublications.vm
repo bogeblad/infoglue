@@ -21,7 +21,7 @@
 	<!--
 		function showHide(a)
 		{
-			parent.openInlineDiv("ViewPublications!showPublicationDetails.action?publicationId=" + a, 500, 600, true, true, "PublicationDetails");
+			parent.openInlineDiv("ViewPublications!showPublicationDetails.action?publicationId=" + a, 700, 900, true, true, "PublicationDetails");
 		}
 		
 		function ruSure(txt, url)

@@ -255,6 +255,7 @@ public class ContentVO implements BaseEntityVO
 			.append(" expireDateTime=").append(expireDateTime)
 			.append(" isBranch=").append(isBranch)
 			.append(" isProtected=").append(isProtected)
+			.append(" isDeleted=").append(isDeleted)
 			.append(" repositoryId=").append(repositoryId)
 			.append(" contentTypeDefinitionId=").append(contentTypeDefinitionId)
 			.append(" parentContentId=").append(parentContentId)

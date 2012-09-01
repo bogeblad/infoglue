@@ -24,6 +24,7 @@
 package org.infoglue.cms.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 
@@ -49,11 +51,22 @@ public class FileUploadHelper
 {
     private final static Logger logger = Logger.getLogger(FileUploadHelper.class.getName());
 
-    public FileUploadHelper()
+    private FileUploadHelper()
     {
-        // don't instanciate, use static methods
+        // don't instantiate, use static methods
     }
     
+    /**
+     * Moves all files (i.e. all files returned by {@linkplain MultiPartRequestWrapper#getFileNames()})
+     * in the {@link MultiPartRequestWrapper} to InfoGlue's
+     * {@linkplain CmsPropertyHandler#getDigitalAssetUploadPath()}
+     *  and returns a reference to the last file moved.
+     * 
+     * The files are moved with {@link File#renameTo(File)} and if a file move fails a
+     * copy'n'delete action is tried instead. The copied file is kept even if the delete-file action fails.  
+     * @param mpr The uploaded files will be retrieved from this object
+     * @return A reference to the file (at it's target location) that was moved last from the request.
+     */
 	public static File getUploadedFile(MultiPartRequestWrapper mpr)
 	{
 		File renamedFile = null;
@@ -71,11 +84,9 @@ public class FileUploadHelper
 					logger.info("file:" + file.getPath() + ":" + file.exists());
 					if(file != null)
 					{
-						//String contentType    = mpr.getContentType(name);
 						String fileSystemName = mpr.getFilesystemName(name);
 						
 						String fileName = "Import_" + System.currentTimeMillis() + fileSystemName;
-						//fileName = new VisualFormatter().replaceNonAscii(fileName, '_');
 						fileName = new VisualFormatter().replaceNiceURINonAsciiWithSpecifiedChars(fileName, CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
 						
 						String filePath = CmsPropertyHandler.getDigitalAssetUploadPath();
@@ -84,7 +95,37 @@ public class FileUploadHelper
 						
 						renamedFile = new File(fileSystemName);
 						boolean isRenamed = file.renameTo(renamedFile);
-						logger.info("renamed file:" + renamedFile.getPath() + ":" + renamedFile.exists() + ":" + isRenamed);
+						if (logger.isInfoEnabled())
+						{
+							logger.info("rename file " + (isRenamed ? "succeeded" : "failed") + ": " + renamedFile.getPath() + " (target exists: " + renamedFile.exists() + ")");
+						}
+						if (!isRenamed)
+						{
+							logger.info("Trying to copy/delete file instead");
+							try
+							{
+								long start = System.currentTimeMillis();
+								FileUtils.copyFile(file, renamedFile);
+								long end = System.currentTimeMillis();
+								if (logger.isDebugEnabled())
+								{
+									logger.debug("File copy took " + (end - start) + " ms");
+								}
+								if (!file.delete())
+								{
+									logger.warn("File was copied but source could not be removed. Source: " + file.getPath());
+								}
+								else
+								{
+									logger.info("Copy/delete succeeded");
+								}
+							}
+							catch (IOException ex)
+							{
+								logger.info("Copy file failed. Message: " + ex.getMessage());
+								renamedFile = null;
+							}
+						}
 					}
 				}
 			}

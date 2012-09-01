@@ -87,9 +87,13 @@ public class RemoteInfoGlueService
         	attributeValue = attributeValue.replaceAll("<%/*[^%>]+%>", "");
         }
         
-        attributeValue = attributeValue.replaceAll("templateLogic.getPageUrl", "\\$templateLogic.getPageUrl");
-        attributeValue = attributeValue.replaceAll("templateLogic.getInlineAssetUrl", "\\$templateLogic.getInlineAssetUrl");
-
+        if(!allowDollarSign)
+        {
+        	attributeValue = attributeValue.replaceAll("templateLogic.getPageUrl", "\\$templateLogic.getPageUrl");
+        	attributeValue = attributeValue.replaceAll("templateLogic.getInlineAssetUrl", "\\$templateLogic.getInlineAssetUrl");
+        	attributeValue = attributeValue.replaceAll("templateLogic.languageId", "\\$templateLogic.languageId");
+        }
+        
         return attributeValue;
     }
 

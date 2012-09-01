@@ -26,12 +26,14 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.log4j.Category;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.LockNotGrantedException;
@@ -60,6 +62,7 @@ import org.infoglue.cms.util.validators.ConstraintRule;
 import org.infoglue.cms.util.validators.EmailValidator;
 import org.infoglue.cms.util.validators.StringValidator;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.RequestAnalyser;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -564,15 +567,45 @@ public abstract class BaseController
 	
     protected static Object getObjectWithIdAsReadOnly(Class arg, Integer id, Database db) throws SystemException, Bug
     {
+        return getObjectWithIdAsReadOnly(arg, id, db, true);
+    }
+
+	/**
+	 * This method fetches one object / entity within a transaction.
+	 **/
+	
+    protected static Object getObjectWithIdAsReadOnly(Class arg, Integer id, Database db, boolean retry) throws SystemException, Bug
+    {
         Object object = null;
         try
         {
+			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
             object = db.load(arg, id, Database.ReadOnly);    			
         }
         catch(Exception e)
         {
-            throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+			try
+			{
+				if(retry)
+				{
+					logger.warn("Error getting object. Message: " + e.getMessage() + ". Retrying...");
+					object = getObjectWithIdAsReadOnly(arg, id, db, false);
+				}
+				else
+				{
+					logger.warn("Error getting object. Message: " + e.getMessage() + ". No retrying again.");
+					throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+				}
+			}
+			catch(Exception e2)
+			{
+	            throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+			}
         }
+		finally
+		{
+			RequestAnalyser.getRequestAnalyser().decApproximateNumberOfDatabaseQueries();
+		}
     
         if(object == null)
         {
@@ -1365,6 +1398,65 @@ public abstract class BaseController
         return tableCount;
 	}
 
+	public static TableCount getTableCount(String tableName, String columnName) throws Exception
+	{
+		TableCount tableCount = null;
+		
+		Database db = CastorDatabaseService.getDatabase();
+
+        beginTransaction(db);
+
+        try
+        {
+        	OQLQuery oql = db.getOQLQuery("CALL SQL SELECT count(" + columnName + ") FROM " + tableName + " AS org.infoglue.cms.entities.management.TableCount");
+
+        	QueryResults results = oql.execute();
+    		if(results.hasMore()) 
+            {
+    			tableCount = (TableCount)results.next();
+    		}
+
+    		results.close();
+    		oql.close();
+        	
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return tableCount;
+	}
+	
+    public static Category getCastorCategory()
+    {
+        Enumeration enumeration = Logger.getCurrentCategories();
+        while(enumeration.hasMoreElements())
+        {
+            Category category = (Category)enumeration.nextElement();
+            if(category.getName().equalsIgnoreCase("org.exolab.castor"))
+                return category;
+        }
+        
+        return null;
+    }
+
+    public static Category getCastorJDOCategory()
+    {
+        Enumeration enumeration = Logger.getCurrentCategories();
+        while(enumeration.hasMoreElements())
+        {
+            Category category = (Category)enumeration.nextElement();
+            if(category.getName().equalsIgnoreCase("org.exolab.castor.jdo"))
+                return category;
+        }
+        
+        return null;
+    }
 
 	public abstract BaseEntityVO getNewVO();
 }

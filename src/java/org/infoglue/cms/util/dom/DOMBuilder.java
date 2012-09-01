@@ -228,7 +228,7 @@ public class DOMBuilder
 	}
 	
 	/**
-	 * This method writes a document to System.out.
+	 * This method writes a document to standard output stream.
 	 */
 
 	public void writeDebug(Document document) throws Exception 
@@ -245,7 +245,7 @@ public class DOMBuilder
 	}
 
 	/**
-	 * This method writes a element to System.out.
+	 * This method writes a element to standard output stream.
 	 */
 	
 	public void writeDebug(Element element) throws Exception 

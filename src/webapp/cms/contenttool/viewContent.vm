@@ -251,7 +251,7 @@
 	#set($count = 0)
 	#foreach ($referenceBean in $referenceBeanList)
 		#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
-			#if($count < 20)
+			#if($count < 200)
 				#set($hasContentReferences = true)
 				#set($lastIndex = $referenceBean.versions.size() - 1)
 				#if($isOdd)
@@ -273,7 +273,7 @@
 			#set($count = $count + 1)	
 		#end
 	#end
-	#if($count > 20)
+	#if($count > 200)
 		#if($isOdd)
 			#set($class = "class='lightgreen'")
 			#set($isOdd = false)
@@ -308,7 +308,7 @@
 	#set($count = 0)
 	#foreach ($referenceBean in $referenceBeanList)
 		#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
-			#if($count < 20)
+			#if($count < 200)
 				#set($hasPageReferences = true)
 				#set($lastIndex = $referenceBean.versions.size() - 1)
 				#if($isOdd)
@@ -331,7 +331,7 @@
 		#end
 	#end
 
-	#if($count > 20)
+	#if($count > 200)
 		#if($isOdd)
 			#set($class = "class='lightgreen'")
 			#set($isOdd = false)

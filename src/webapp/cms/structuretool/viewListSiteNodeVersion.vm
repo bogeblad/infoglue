@@ -100,10 +100,15 @@
 			{
 				listForm.action = "ChangeMultiSiteNodeVersionStatePublish.action"
 				listForm.versionComment.value = commentElm.value;
-				if(overrideVersionModifyerElm.checked == true)
-					listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+				if(overrideVersionModifyerElm)
+				{
+					if(overrideVersionModifyerElm.checked == true)
+						listForm.overrideVersionModifyer.value = overrideVersionModifyerElm.value;
+					else
+						listForm.overrideVersionModifyer.value = "false";
+				}
 				else
-					listForm.overrideVersionModifyer.value = "false";
+					listForm.overrideVersionModifyer.value = "true";
 					
 				#if($allowPublicationEventFilter == "true")
 					var xrecipientFilter = document.getElementById("xrecipientFilter");
@@ -123,7 +128,7 @@
 
 <div class="fullymarginalized">
 
-#if($this.hasAccessTo("PublishingTool.Read") && $this.hasAccessTo("Repository.Read", "$!repositoryId"))
+#if($this.hasAccessTo("PublishingTool.Read") && ($this.hasAccessTo("Repository.Read", "$!repositoryId") || $this.hasAccessTo("Repository.Write", "$!repositoryId")))
 <a href="javascript:submitToPublish('true');">
 <img src="$ui.getString("images.contenttool.buttons.publish")" width="60" height="25" border="0">
 </a>
@@ -164,12 +169,14 @@
 			<tr>
 				<td colspan="3">#editTextArea("SiteNodeVersion.versionComment" "xversionComment" $!versionComment "10" "10" "normaltextarea")</td>
 			</tr>		
+			#if($!this.allowOverrideModifyer != "false")
 			<tr>
 				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
 				<td colspan="3">#yesNoCheckBox("SiteNodeVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
 			</tr>	
+			#end
 			
 			#if($allowPublicationEventFilter == "true")
 				#if($infoGluePrincipal.groups.size() > 1)
@@ -239,7 +246,7 @@
 		#set($displayName = "$snv.versionModifier")
 	#end
 
-	#set( $row = ["<img src='images/tree/structureRoot.gif'> $snv.getSiteNodeName() ($snv.getId())", $ui.getString("tool.common.publishing.typePageLabel"), "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+	#set( $row = ["<img src='images/tree/structureRoot.gif'>$this.getSiteNodePath($snv.siteNodeId) ($snv.getId())", $ui.getString("tool.common.publishing.typePageLabel"), "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
 	#set($cnt = $cnt + 1)
 	
 	#lvAddRow($row $cnt $snv.getId())

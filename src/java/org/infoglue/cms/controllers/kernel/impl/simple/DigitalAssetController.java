@@ -536,6 +536,30 @@ public class DigitalAssetController extends BaseController
 		}
 	}
 	
+	
+   	/**
+   	 * This method updates a digital asset in the database.
+   	 */
+   	
+   	public static DigitalAssetVO update(DigitalAssetVO digitalAssetVO, InputStream is, Database db) throws ConstraintException, SystemException
+    {
+		DigitalAsset digitalAsset = null;
+		
+		if(is == null)
+		{
+			digitalAsset = getMediumDigitalAssetWithId(digitalAssetVO.getId(), db);
+			digitalAsset.setValueObject(digitalAssetVO);
+		}
+		else
+		{
+			digitalAsset = getDigitalAssetWithId(digitalAssetVO.getId(), db);
+			digitalAsset.setValueObject(digitalAssetVO);
+		    digitalAsset.setAssetBlob(is);
+		}
+
+		return digitalAsset.getValueObject();		
+    } 
+   	
    	/**
    	 * This method updates a digital asset in the database.
    	 */
@@ -836,6 +860,8 @@ public class DigitalAssetController extends BaseController
 		}
 	}
 
+
+
 	
 	/**
 	 * This method should return a String containing the URL for this digital asset.
@@ -885,6 +911,28 @@ public class DigitalAssetController extends BaseController
 		return assetUrl;
     }
 
+	/**
+	 * This method should return a String containing the URL for this digital asset.
+	 */
+
+	public static String getDigitalAssetFilePath(DigitalAssetVO digitalAssetVO, Database db) throws Exception
+    {
+    	String assetPath = null;
+
+		String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
+		if(logger.isInfoEnabled())
+		{
+			logger.info("folderName:" + folderName);
+			logger.info("Found a digital asset:" + digitalAssetVO.getAssetFileName());
+		}
+		String fileName = digitalAssetVO.getDigitalAssetId() + "_" + digitalAssetVO.getAssetFileName();
+		String filePath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
+		dumpDigitalAsset(digitalAssetVO, fileName, filePath, db);
+		assetPath = filePath + File.separator + fileName;
+    	
+		return assetPath;
+    }
+	
 	/**
 	 * This method should return a String containing the URL for this digital asset.
 	 */
@@ -1381,11 +1429,9 @@ public class DigitalAssetController extends BaseController
 			logger.warn("Asset key was null or contentId was null:" + contentId + ":" + assetKey);
 		}
 		
-
     	String assetUrl = null;
 
     	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
-    	
     	if(logger.isInfoEnabled())
     	{
 	    	logger.info("content:" + contentVO.getName());
@@ -1393,18 +1439,45 @@ public class DigitalAssetController extends BaseController
 	    	logger.info("languageId:" + languageId);
 	    	logger.info("assetKey:" + assetKey);
     	}
-    	
+
 		if(assetKey != null)
 		{
-			String fromEncoding = CmsPropertyHandler.getAssetKeyFromEncoding();
-			if(fromEncoding == null)
-				fromEncoding = "iso-8859-1";
 			
-			String toEncoding = CmsPropertyHandler.getAssetKeyToEncoding();
-			if(toEncoding == null)
-				toEncoding = "utf-8";
+			boolean isUTF8 = false;
+			boolean hasUnicodeChars = false;
+			if(assetKey.indexOf((char)65533) > -1)
+				isUTF8 = true;
 			
-			assetKey = new String(assetKey.getBytes(fromEncoding), toEncoding);
+			for(int i=0; i<assetKey.length(); i++)
+			{
+				int c = (int)assetKey.charAt(i);
+				if(c > 255 && c < 65533)
+					hasUnicodeChars = true;
+			}
+
+			if(!isUTF8 && !hasUnicodeChars)
+			{
+				String fromEncoding = CmsPropertyHandler.getAssetKeyFromEncoding();
+				if(fromEncoding == null)
+					fromEncoding = "iso-8859-1";
+				
+				String toEncoding = CmsPropertyHandler.getAssetKeyToEncoding();
+				if(toEncoding == null)
+					toEncoding = "utf-8";
+				
+				String[] controlChars = new String[]{"Œ","Š","š","","€","…","å","ä","ö","Å","Ä","Ö"};
+				boolean convert = true;
+				for(String charToTest : controlChars)
+				{
+					if(assetKey.indexOf(charToTest) > -1)
+						convert = false;
+				}
+					
+				if(convert)
+				{
+					assetKey = new String(assetKey.getBytes(fromEncoding), toEncoding);
+				}
+			}			
 		}
 		
 		StringBuffer sb = new StringBuffer(256);
@@ -1424,12 +1497,14 @@ public class DigitalAssetController extends BaseController
 
     	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, db);
     	LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(contentVO.getRepositoryId(), db);	
-
-		logger.info("contentVersionVO:" + contentVersionVO);
+    	if(logger.isInfoEnabled())
+    		logger.info("contentVersionVO:" + contentVersionVO);
+    	
 		if(contentVersionVO != null)
 		{
 			DigitalAssetVO digitalAssetVO = getLatestDigitalAssetVO(contentVersionVO.getContentVersionId(), assetKey, db);
-			logger.info("digitalAssetVO:" + digitalAssetVO);
+			if(logger.isInfoEnabled())
+				logger.info("digitalAssetVO:" + digitalAssetVO);
 			if(digitalAssetVO != null)
 			{
 				String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
@@ -1835,9 +1910,9 @@ public class DigitalAssetController extends BaseController
 
         try
         {
-			OQLQuery oql = db.getOQLQuery("CALL SQL select count(*) from cmDigitalAsset da where da.assetKey NOT LIKE '%portletentityregistry.xml%' AND da.assetContentType NOT LIKE '%application%' AND da.digitalAssetId not in (select digitalAssetId from cmContentVersionDigitalAsset) AND da.digitalAssetId not in (select digitalAssetId from cmGroupPropertiesDigitalAsset) AND da.digitalAssetId not in (select digitalAssetId from cmRolePropertiesDigitalAsset) AND da.digitalAssetId not in (select digitalAssetId from cmUserPropertiesDigitalAsset) AS org.infoglue.cms.entities.management.TableCount");
+			OQLQuery oql = db.getOQLQuery("CALL SQL select count(*) from cmDigitalAsset da where da.assetKey <> 'portletentityregistry.xml' AND (da.assetcontenttype like 'application/apple%' OR da.assetcontenttype like 'application/postscript%' OR da.assetcontenttype like 'application/x-shock%' OR da.assetcontenttype like 'application/ms%' OR da.assetcontenttype like 'application/vnd%' OR da.assetcontenttype like 'application/pdf%' OR da.assetcontenttype like 'image/%' OR da.assetcontenttype like 'video/%' OR da.assetcontenttype like 'audio/%' OR da.assetcontenttype like 'message/rfc%' OR da.assetfilename like '%.pdf' OR da.assetfilename like '%.jpg' OR da.assetfilename like '%.doc' OR da.assetfilename like '%.dot' OR da.assetfilename like '%.xls' OR da.assetfilename like '%.psd' OR da.assetfilename like '%.exe') AND da.digitalAssetId not in (select digitalAssetId from cmContentVersionDigitalAsset) AND da.digitalAssetId not in (select digitalAssetId from cmGroupPropertiesDigitalAsset) AND  da.digitalAssetId not in (select digitalAssetId from cmRolePropertiesDigitalAsset) AND da.digitalAssetId not in (select digitalAssetId from cmUserPropertiesDigitalAsset) AS org.infoglue.cms.entities.management.TableCount");
 	    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
-	    		oql = db.getOQLQuery("CALL SQL select count(*) from cmDigAsset da where da.assetKey NOT LIKE '%portletentityregistry.xml%' AND da.assetContentType NOT LIKE '%application%' AND da.digAssetId not in (select digAssetId from cmContVerDigAsset) AND da.digAssetId not in (select digAssetId from cmGroupPropDigAsset) AND da.digAssetId not in (select digAssetId from cmRolePropDigAsset) AND da.digAssetId not in (select digAssetId from cmUserPropDigAsset) AS org.infoglue.cms.entities.management.TableCount");
+	    		oql = db.getOQLQuery("CALL SQL select count(*) from cmDigAsset da where da.assetKey <> 'portletentityregistry.xml' AND (da.assetcontenttype like 'application/apple%' OR da.assetcontenttype like 'application/postscript%' OR da.assetcontenttype like 'application/x-shock%' OR da.assetcontenttype like 'application/ms%' OR da.assetcontenttype like 'application/vnd%' OR da.assetcontenttype like 'application/pdf%' OR da.assetcontenttype like 'image/%' OR da.assetcontenttype like 'video/%' OR da.assetcontenttype like 'audio/%' OR da.assetcontenttype like 'message/rfc%' OR da.assetfilename like '%.pdf' OR da.assetfilename like '%.jpg' OR da.assetfilename like '%.doc' OR da.assetfilename like '%.dot' OR da.assetfilename like '%.xls' OR da.assetfilename like '%.psd' OR da.assetfilename like '%.exe') AND da.digAssetId not in (select digAssetId from cmContVerDigAsset) AND da.digAssetId not in (select digAssetId from cmGroupPropDigAsset) AND  da.digAssetId not in (select digAssetId from cmRolePropDigAsset) AND da.digAssetId not in (select digAssetId from cmUserPropDigAsset) AS org.infoglue.cms.entities.management.TableCount");
 	 
 	    	QueryResults results = oql.execute(Database.ReadOnly);
 			if(results.hasMore()) 

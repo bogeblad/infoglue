@@ -24,13 +24,11 @@ package org.infoglue.deliver.jobs;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
-import org.infoglue.cms.entities.publishing.PublicationVO;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.quartz.Job;
@@ -47,79 +45,25 @@ public class ExpireCacheJob implements Job
 {
     private final static Logger logger = Logger.getLogger(ExpireCacheJob.class.getName());
     private static Integer intervalCount = 0;
+    private static AtomicBoolean running = new AtomicBoolean(false);
     
     private static long lastCacheCheck = System.currentTimeMillis();
     private static long lastCacheCleanup = System.currentTimeMillis();
     
-    private static long lastRun = System.currentTimeMillis();
-    
-    private static Date systemPublicationSyncDate = CmsPropertyHandler.getStartupTime();
-
     public synchronized void execute(JobExecutionContext context) throws JobExecutionException
     {
-    	//logger.info("context:" + CmsPropertyHandler.getContextRootPath());
-    	long diffLastRun = ((System.currentTimeMillis() - lastRun) / 1000);
-    	if(diffLastRun < 300)
-    		return;
-    	
-    	lastRun = System.currentTimeMillis();
-    	
-    	long diffLastCacheCheck1 = ((System.currentTimeMillis() - lastCacheCheck) / 1000);
-    	logger.info("diffLastCacheCheck1 " + diffLastCacheCheck1 + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
-	    if(diffLastCacheCheck1 > 30)
+    	long diffLastCacheCheck = ((System.currentTimeMillis() - lastCacheCheck) / 1000);
+		logger.info("diffLastCacheCheck " + diffLastCacheCheck + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
+		if(running.compareAndSet(false, true))
 		{
-	        synchronized(RequestAnalyser.getRequestAnalyser()) 
-		    {
-		       	if(RequestAnalyser.getRequestAnalyser().getBlockRequests())
-			    {
-				    logger.warn("evictWaitingCache allready in progress - returning to avoid conflict");
-			        return;
-			    }
-	
-		       	RequestAnalyser.getRequestAnalyser().setBlockRequests(true);
-			}
-	
-			try
-	        {
-		    	if(CmsPropertyHandler.getOperatingMode().equals("3"))
-		    	{
-		    		logger.debug("Checking publications...");
-		    		//Check if we should check for publications just to make sure the system has not lost connection to the cms. If we have not received the latest publications we clear all.
-		    		Integer numberOfPublicationsSinceStart = RequestAnalyser.getRequestAnalyser().getNumberOfPublicationsSinceStart();
-		    		logger.debug("numberOfPublicationsSinceStart:" + numberOfPublicationsSinceStart);
-		    		List<PublicationVO> publicationsVOListSinceStart = PublicationController.getController().getPublicationsSinceDate(systemPublicationSyncDate);
-		    		logger.debug("publicationsVOListSinceStart:" + publicationsVOListSinceStart.size());
-		    		if(numberOfPublicationsSinceStart != publicationsVOListSinceStart.size())
-		    		{
-		    			logger.error("Telling infoglue to recache all as the number of publications processed are not the same as the number of publications made - could be a sync issue.");
-					    CacheEvictionBean cacheEvictionBean = new CacheEvictionBean("ServerNodeProperties", "100", "0", "ServerNodeProperties");
-					    synchronized(CacheController.notifications)
-				        {	
-					    	CacheController.notifications.add(cacheEvictionBean);
-					    	systemPublicationSyncDate = new Date();
-					    	RequestAnalyser.getRequestAnalyser().resetNumberOfPublicationsSinceStart();
-				        }
-		    		}
-		    		else
-		    		{
-				    	systemPublicationSyncDate = new Date();
-				    	RequestAnalyser.getRequestAnalyser().resetNumberOfPublicationsSinceStart();
-		    		}
-		    	}		
-
-		    	lastCacheCheck = System.currentTimeMillis();
-	        }
-	        catch(Exception e)
-	        {
-	            logger.error("An error occurred when we tried to validate caches:" + e.getMessage(), e);
-	        }
-		    
-	        logger.debug("releasing block");
-		    RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
+			//logger.warn("Should run.....");
+		}
+		else
+		{
+			//logger.warn("Returning as allready running thread");
+			return;
     	}
 	    
-    	long diffLastCacheCheck = ((System.currentTimeMillis() - lastCacheCheck) / 1000);
-    	logger.debug("diffLastCacheCheck " + diffLastCacheCheck + " in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
 	    if(diffLastCacheCheck > 600)
 		{
 	        synchronized(RequestAnalyser.getRequestAnalyser()) 
@@ -127,6 +71,7 @@ public class ExpireCacheJob implements Job
 		       	if(RequestAnalyser.getRequestAnalyser().getBlockRequests())
 			    {
 				    logger.warn("evictWaitingCache allready in progress - returning to avoid conflict");
+				    running.set(false);
 			        return;
 			    }
 	
@@ -146,20 +91,21 @@ public class ExpireCacheJob implements Job
 	            logger.warn("An error occurred when we tried to validate caches:" + e.getMessage(), e);
 	        }
 		    
-	        logger.debug("releasing block");
+		    logger.info("releasing block");
 		    RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
     	}
     	
     	long diff = ((System.currentTimeMillis() - lastCacheCleanup) / 1000);
     	if(diff > 3600)
     	{
-    		logger.debug("Cleaning heavy caches so memory footprint is kept low:" + diff);
+    		logger.info("Cleaning heavy caches so memory footprint is kept low:" + diff);
             /*
             synchronized(RequestAnalyser.getRequestAnalyser()) 
     	    {
     	       	if(RequestAnalyser.getRequestAnalyser().getBlockRequests())
     		    {
     			    logger.warn("evictWaitingCache allready in progress - returning to avoid conflict");
+					running.set(false);
     		        return;
     		    }
 
@@ -217,6 +163,7 @@ public class ExpireCacheJob implements Job
         	       	if(RequestAnalyser.getRequestAnalyser().getBlockRequests())
         		    {
         			    logger.warn("evictWaitingCache allready in progress - returning to avoid conflict");
+        			    running.set(false);
         		        return;
         		    }
 
@@ -318,6 +265,8 @@ public class ExpireCacheJob implements Job
                 RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
             }
             
+			new Thread(new Runnable() { public void run() {try {LuceneController.getController().notifyListeners(true, true); LuceneController.getController().index();} catch (Exception e) {}}}).start();
+            
             synchronized (intervalCount)
 			{
                 intervalCount++;
@@ -378,6 +327,8 @@ public class ExpireCacheJob implements Job
             logger.error("An error occurred when we tried to update cache:" + e.getMessage());
             logger.warn("An error occurred when we tried to update cache:" + e.getMessage(), e);
         }
+        
+        running.set(false);
     }
     
 

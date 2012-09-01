@@ -195,6 +195,12 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 		super.initialize(this.contentVersionId, this.contentId, this.languageId);
 		ceb.throwIfNotEmpty();
 		
+		if(this.attributeName == null)
+			this.attributeName = "";
+			
+		if(this.currentEditorId == null)
+			this.currentEditorId = 1;
+			
 		try
 		{
 			this.contentVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
@@ -281,9 +287,10 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			logger.warn("Error in UpdateContentVersion.doStandaloneXML: " + e.getMessage());
+			if(logger.isInfoEnabled())
+				logger.info("Error in UpdateContentVersion.doStandaloneXML: " + e.getMessage(), e);
 		}
-		logger.info("Done standalone XML...");
 		
 		return NONE;
 	}
@@ -336,77 +343,88 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	
 	public String doXml() throws IOException, SystemException, Bug, DocumentException
 	{
-		String xmlResult = null;
-		getResponse().setContentType("text/xml; charset=UTF-8");
-    	getResponse().setHeader("Cache-Control","no-cache"); 
-    	getResponse().setHeader("Pragma","no-cache");
-    	getResponse().setDateHeader ("Expires", 0);
-		PrintWriter out = getResponse().getWriter();
-		XMLWriter xmlWriter = new XMLWriter(out);
-		XStream xStream = new XStream();
-		xStream.omitField(contentVersionVO.getClass(),"versionValue");
-		
-		// super.initialize(this.contentVersionId, this.contentId, this.languageId);
-		
-		ContentVersionVO currentContentVersionVO = null;
-		ContentVersionVO activeContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
-		
-		/*
-		 * Are we trying to update the active version?
-		 */
-		if(activeContentVersionVO.getContentVersionId().equals(this.contentVersionVO.getContentVersionId()))
+		try
 		{
-			if(this.contentVersionVO.getId() != null)
-			{
-				currentContentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
-			}
+			String xmlResult = null;
+			getResponse().setContentType("text/xml; charset=UTF-8");
+	    	getResponse().setHeader("Cache-Control","no-cache"); 
+	    	getResponse().setHeader("Pragma","no-cache");
+	    	getResponse().setDateHeader ("Expires", 0);
+			PrintWriter out = getResponse().getWriter();
+			XMLWriter xmlWriter = new XMLWriter(out);
+			XStream xStream = new XStream();
+			xStream.omitField(contentVersionVO.getClass(),"versionValue");
 			
-			if(currentContentVersionVO == null || this.oldModifiedDateTime == currentContentVersionVO.getModifiedDateTime().getTime())
+			// super.initialize(this.contentVersionId, this.contentId, this.languageId);
+			
+			ContentVersionVO currentContentVersionVO = null;
+			ContentVersionVO activeContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
+			
+			/*
+			 * Are we trying to update the active version?
+			 */
+			if(activeContentVersionVO.getContentVersionId().equals(this.contentVersionVO.getContentVersionId()))
 			{
-				this.contentVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
-				
-				try
+				if(this.contentVersionVO.getId() != null)
 				{
-					if(activeContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+					currentContentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
+				}
+				
+				if(currentContentVersionVO == null || this.oldModifiedDateTime == currentContentVersionVO.getModifiedDateTime().getTime())
+				{
+					this.contentVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
+					
+					try
 					{
-					    this.contentVersionVO = ContentVersionControllerProxy.getController().acUpdate(this.getInfoGluePrincipal(), this.contentId, this.languageId, this.contentVersionVO);
-					    this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
-					    this.oldModifiedDateTime = this.contentVersionVO.getModifiedDateTime().getTime();
-					    xmlResult = xStream.toXML(contentVersionVO);
+						if(activeContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+						{
+						    this.contentVersionVO = ContentVersionControllerProxy.getController().acUpdate(this.getInfoGluePrincipal(), this.contentId, this.languageId, this.contentVersionVO);
+						    this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
+						    this.oldModifiedDateTime = this.contentVersionVO.getModifiedDateTime().getTime();
+						    xmlResult = xStream.toXML(contentVersionVO);
+						}
+						else
+						{
+							xmlResult = "<invalidstate/>";
+						}
 					}
-					else
+					catch(ConstraintException ce)
 					{
-						xmlResult = "<invalidstate/>";
+						ce.printStackTrace();
+						xmlResult = xStream.toXML(ce);
+					}
+					catch (Exception e) 
+					{
+						e.printStackTrace();
+					    xmlResult = xStream.toXML(e);
 					}
 				}
-				catch(ConstraintException ce)
+				else
 				{
-				    xmlResult = xStream.toXML(ce);
-				} catch (Exception e) {
-				    xmlResult = xStream.toXML(e);
+					this.contentVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
+					super.contentVersionVO = this.contentVersionVO;
+					concurrentModification = true;
+		            xmlResult = "<concurrentmodification/>";
 				}
 			}
 			else
 			{
-				this.contentVersionVO.setVersionModifier(this.getInfoGluePrincipal().getName());
-				super.contentVersionVO = this.contentVersionVO;
-				concurrentModification = true;
-	            xmlResult = "<concurrentmodification/>";
+				/*
+				 * Not updating active version
+				 */
+				xmlResult = "<invalidversion/>";
 			}
-		}
-		else
-		{
+			
 			/*
-			 * Not updating active version
+			 * Output
 			 */
-			xmlResult = "<invalidversion/>";
+			xmlWriter.write(DocumentHelper.parseText(xmlResult));
+	        xmlWriter.flush();
 		}
-		
-		/*
-		 * Output
-		 */
-		xmlWriter.write(DocumentHelper.parseText(xmlResult));
-        xmlWriter.flush();
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
 		
 		return NONE;
 	}

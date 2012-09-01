@@ -155,12 +155,38 @@ public class ExtendedSearchController extends BaseController
 	 */
 	public Set search(final ExtendedSearchCriterias criterias, final Database db) throws SystemException
 	{
+		return searchExecute(criterias, db, false);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public Set searchOrderByDate(final ExtendedSearchCriterias criterias, final Database db) throws SystemException
+	{
+		return searchExecute(criterias, db, true);
+	}
+	
+	/**
+	 * 
+	 */
+	public Set searchExecute(final ExtendedSearchCriterias criterias, final Database db, final boolean sortByDate) throws SystemException
+	{
 		if(criterias == null)
 			return new HashSet();
 		
 		try 
 		{
-			final SqlBuilder sqlBuilder = new SqlBuilder(criterias);
+			final SqlBuilder sqlBuilder;
+			
+			if(sortByDate)
+			{
+				sqlBuilder = new SqlBuilder(criterias, true);
+			}
+			else
+			{
+				sqlBuilder = new SqlBuilder(criterias);
+			}
 		    if(logger.isDebugEnabled())
 		    	logger.debug("sql:" + sqlBuilder.getSQL());
 		    
@@ -341,6 +367,25 @@ class SqlBuilder
 	/**
 	 * 
 	 */
+	public SqlBuilder(final ExtendedSearchCriterias criterias, final boolean sortByDate) 
+	{
+		super();
+		this.criterias = criterias;
+		this.bindings  = new ArrayList();
+		
+		logger.debug("===[sql]==============================================================");
+		if(sortByDate)
+			this.sql = generateSortByDate();
+		else
+			this.sql = generate();
+		logger.debug("======================================================================");
+		logger.debug(sql);
+		logger.debug("===[/sql]=============================================================");
+	}
+
+	/**
+	 * 
+	 */
 	public String getSQL() 
 	{
 		return sql;
@@ -352,6 +397,14 @@ class SqlBuilder
 	public List getBindings() 
 	{
 		return bindings;
+	}
+	
+	/**
+	 * 
+	 */
+	private String generateSortByDate() 
+	{
+		return "CALL SQL" + SPACE + (ExtendedSearchController.useFull() ? generateSelectClause() : generateSelectClauseShort()) + SPACE + generateFromClause() + SPACE + generateWhereClause() + SPACE + (ExtendedSearchController.useFull() ? generateOrderByDateClause() : generateOrderByDateClauseShort()) + generateLimitClause() + SPACE + "AS " + SmallContentImpl.class.getName();
 	}
 	
 	/**
@@ -484,6 +537,11 @@ class SqlBuilder
 		return "ORDER BY " + CONTENT_ALIAS + ".ContId";
 	}
 
+	private String generateOrderByDateClauseShort() 
+	{
+		return "ORDER BY " + CONTENT_ALIAS + ".publishDateTime" +  " DESC" ;
+	}
+
 	/**
 	 * 
 	 */
@@ -505,6 +563,14 @@ class SqlBuilder
 	private String generateOrderByClause() 
 	{
 		return "ORDER BY " + CONTENT_ALIAS + ".contentId";
+	}
+
+	/**
+	 * 
+	 */
+	private String generateOrderByDateClause() 
+	{
+		return "ORDER BY " + CONTENT_ALIAS + ".publishDateTime" + " DESC";
 	}
 
 	

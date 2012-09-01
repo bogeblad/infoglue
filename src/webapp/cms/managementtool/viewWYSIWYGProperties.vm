@@ -1,1 +1,1 @@
-$WYSIWYGProperties
+$this.getWYSIWYGProperties()

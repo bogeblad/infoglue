@@ -170,20 +170,12 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 		cacheLeafs = new ArrayList();
 		//List children = null;
 
-		String sortProperty = CmsPropertyHandler.getStructureTreeSort();
-		String isHiddenProperty = CmsPropertyHandler.getStructureTreeIsHiddenProperty();
-
         beginTransaction(db);
 
         try
         {
-        	/*
-            SiteNode parentSiteNode = SiteNodeController.getSiteNodeWithId(parentNode, db, true);
-	        Collection children = parentSiteNode.getChildSiteNodes();
-	    	List childrenVOList = SiteNodeController.toVOList(children);
-			*/
         	List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(parentNode, false, db);
-        	
+
         	/*
 			Iterator childrenVOListIterator = childrenVOList.iterator();
 			while(childrenVOListIterator.hasNext())
@@ -315,6 +307,8 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 				{
 					//logger.info("Changing sortOrder from:" + vo.getSortOrder() + " to " + expectedSortOrder);
 					SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, vo.getId());
+		        	if(logger.isInfoEnabled())
+		        		timer.printElapsedTime("getLatestActiveSiteNodeVersion took");
 					if(latestSiteNodeVersion != null)
 					{
 						latestSiteNodeVersion.setSortOrder(expectedSortOrder);
@@ -328,6 +322,8 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 				else if(vo.getIsHidden() == null && isHiddenObject != null)
 				{
 					SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, vo.getId());
+					if(logger.isInfoEnabled())
+			        	timer.printElapsedTime("getLatestActiveSiteNodeVersion 2 took");
 					if(latestSiteNodeVersion != null)
 					{
 						//logger.info("Setting hidden:" + isHiddenObject + " on " + latestSiteNodeVersion.getId());

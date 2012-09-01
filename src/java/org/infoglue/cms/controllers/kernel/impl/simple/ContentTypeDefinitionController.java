@@ -351,9 +351,7 @@ public class ContentTypeDefinitionController extends BaseController
 		{
 			beginTransaction(db);
 
-			ContentTypeDefinition contentTypeDefinition = getContentTypeDefinitionWithName(name, db);
-			if(contentTypeDefinition != null)
-				contentTypeDefinitionVO = contentTypeDefinition.getValueObject();
+			contentTypeDefinitionVO = getContentTypeDefinitionVOWithName(name, db);
 
 			commitTransaction(db);
 		}
@@ -752,32 +750,41 @@ public class ContentTypeDefinitionController extends BaseController
 	 * This method returns the asset keys in the content type definition for generation.
 	 */
 
-	public List getDefinedCategoryKeys(ContentTypeDefinitionVO contentTypeDefinitionVO, Boolean includeInherited)
+	public List<CategoryAttribute> getDefinedCategoryKeys(ContentTypeDefinitionVO contentTypeDefinitionVO, Boolean includeInherited)
 	{
-		List<CategoryAttribute> definedCategoryKeys = new ArrayList<CategoryAttribute>();
-		definedCategoryKeys.addAll(getCategoryInfo(getEnumerationNodeList(contentTypeDefinitionVO.getSchemaValue(), CATEGORY_KEYS)));
-
-		//logger.info("definedCategoryKeys found in " + contentTypeDefinitionVO.getName() + ":" + definedCategoryKeys.size());
-		if(includeInherited && contentTypeDefinitionVO.getParentId() != null && contentTypeDefinitionVO.getParentId() > -1)
+		//List<CategoryAttribute> definedCategoryKeys = new ArrayList<CategoryAttribute>();
+		
+		String cacheName = "contentTypeCategoryKeysCache";
+		String key = "" + contentTypeDefinitionVO.getId() + "_" + includeInherited;
+		List<CategoryAttribute> definedCategoryKeys = (List<CategoryAttribute>)CacheController.getCachedObjectFromAdvancedCache(cacheName, key, 60);
+		if(definedCategoryKeys == null)
 		{
-			//logger.info("Looking deeper below : " + contentTypeDefinitionVO.getName());
-			try
+			definedCategoryKeys = new ArrayList<CategoryAttribute>();
+			definedCategoryKeys.addAll(getCategoryInfo(getEnumerationNodeList(contentTypeDefinitionVO.getSchemaValue(), CATEGORY_KEYS)));
+	
+			//logger.info("definedCategoryKeys found in " + contentTypeDefinitionVO.getName() + ":" + definedCategoryKeys.size());
+			if(includeInherited && contentTypeDefinitionVO.getParentId() != null && contentTypeDefinitionVO.getParentId() > -1)
 			{
-				ContentTypeDefinitionVO parentContentTypeDefinitionVO = getContentTypeDefinitionVOWithId(contentTypeDefinitionVO.getParentId());
-				if(parentContentTypeDefinitionVO != null)
+				//logger.info("Looking deeper below : " + contentTypeDefinitionVO.getName());
+				try
 				{
-					List<CategoryAttribute> definedParentCategoryKeys = getCategoryInfo(getEnumerationNodeList(parentContentTypeDefinitionVO.getSchemaValue(), CATEGORY_KEYS));
-					//logger.info("asset keys found in parent " + parentContentTypeDefinitionVO.getName() + ":" + definedParentCategoryKeys.size());
-					for(CategoryAttribute categoryAttribute : definedParentCategoryKeys)
-						categoryAttribute.setInherited(true);
-					
-					definedCategoryKeys.addAll(0, definedParentCategoryKeys);
+					ContentTypeDefinitionVO parentContentTypeDefinitionVO = getContentTypeDefinitionVOWithId(contentTypeDefinitionVO.getParentId());
+					if(parentContentTypeDefinitionVO != null)
+					{
+						List<CategoryAttribute> definedParentCategoryKeys = getCategoryInfo(getEnumerationNodeList(parentContentTypeDefinitionVO.getSchemaValue(), CATEGORY_KEYS));
+						//logger.info("asset keys found in parent " + parentContentTypeDefinitionVO.getName() + ":" + definedParentCategoryKeys.size());
+						for(CategoryAttribute categoryAttribute : definedParentCategoryKeys)
+							categoryAttribute.setInherited(true);
+						
+						definedCategoryKeys.addAll(0, definedParentCategoryKeys);
+					}
+				}
+				catch (Exception e) 
+				{
+					logger.error("Error reading inherited asset keys: " + e.getMessage(), e);
 				}
 			}
-			catch (Exception e) 
-			{
-				logger.error("Error reading inherited asset keys: " + e.getMessage(), e);
-			}
+			CacheController.cacheObjectInAdvancedCache(cacheName, key, definedCategoryKeys);
 		}
 		
 		return definedCategoryKeys;
@@ -903,7 +910,8 @@ public class ContentTypeDefinitionController extends BaseController
         }
         catch(Exception e)
         {
-        	logger.warn("An error occurred when trying to fetch the asset keys:" + e.getMessage(), e);
+        	logger.warn("An error occurred when trying to fetch the asset keys:" + e.getMessage());
+        	logger.warn("contentTypeDefinitionString:" + contentTypeDefinitionString.substring(0, 200));
         }
 
 		return EMPTY_NODELIST;

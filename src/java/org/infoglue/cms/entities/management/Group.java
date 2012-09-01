@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.entities.management;
 
-import java.util.Collection;
-
 import org.infoglue.cms.entities.kernel.IBaseEntity;
 import org.infoglue.cms.exception.ConstraintException;
 
@@ -43,9 +41,20 @@ public interface Group extends IBaseEntity
     public void setGroupName(String groupName) throws ConstraintException;
 
     public void setDescription(String description) throws ConstraintException;
+
+    public String getSource();
     
-    public Collection getSystemUsers();
+    public void setSource(String source);
+
+    public String getGroupType();
     
-    public void setSystemUsers(java.util.Collection systemUsers);
-        
+    public void setGroupType(String groupType);
+
+    public Boolean getIsActive();
+    
+    public void setIsActive(Boolean isActive);
+
+    public java.util.Date getModifiedDateTime();
+    
+    public void setModifiedDateTime(java.util.Date modifiedDateTime);
 }

@@ -346,7 +346,7 @@ public class LanguageDeliveryController extends BaseDeliveryController
 	 */
 	public LanguageVO getMasterLanguageForSiteNode(Database db, Integer siteNodeId) throws SystemException, Exception
 	{ 
-		SiteNodeVO smallestSiteNodeVO = SiteNodeController.getSmallSiteNodeVOWithId(siteNodeId, db);
+		SiteNodeVO smallestSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 		return getMasterLanguageForRepository(smallestSiteNodeVO.getRepositoryId(), db);
 	}
 

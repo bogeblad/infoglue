@@ -661,7 +661,7 @@
 	</div>
 	
 	<div id="allDivs">
-	
+		
     	<div id="tabsContainer" class="cleanTopDiv" style="#if($translate == false)width: 100%;#else width: 550px; #end float:left;">
     	
     	<ul>

@@ -43,6 +43,24 @@ public class VisualFormatter
     {
     }
     
+    /**
+     * This method takes a date in the form of milliseconds from 1970 and formats it as a 
+     * string according to the java.text.SimpleDateFormat syntax.
+     *
+     * @param timeAsMillis - Date in the form of millseconds
+     * @param pattern - The output format
+     * @return The formatted date as a string
+     */
+    public String formatDate(long timeAsMillis, String pattern)
+    {	
+    	Date date = new Date(timeAsMillis);
+    	
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+        String dateString = formatter.format(date);
+
+        return dateString;
+    }
+
     public String formatDate(Date date, String pattern)
     {	
         if(date == null)
@@ -480,7 +498,6 @@ public class VisualFormatter
 		
 		boolean toLowerCase = CmsPropertyHandler.getNiceURIUseLowerCase();
 		Properties properties = CmsPropertyHandler.getCharacterReplacingMapping();
-		
 		StringBuffer sb = new StringBuffer();
 		int n = s.length();
 		for (int i = 0; i < n; i++) 

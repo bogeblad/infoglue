@@ -26,9 +26,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +41,6 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
-import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.FileComparator;
@@ -66,6 +63,10 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 	private List logFiles = new ArrayList();
 	private String logFileName = null;
 
+	/**
+	 * This command allows the user to download a logfile. It does some access controls first
+	 * and also makes sure you cannot download any arbitraty file.
+	 */
 	public String doDownloadFile() throws Exception
 	{
 		boolean allowAccess = true;
@@ -154,6 +155,9 @@ public class ViewLoggingAction extends InfoGlueAbstractAction
 		return NONE;
 	}
 	
+	/**
+	 * This is the normal log view action. Takes a file name as input and tail the file with x-lines.
+	 */
     public String doExecute() throws Exception
     {
     	boolean allowAccess = true;

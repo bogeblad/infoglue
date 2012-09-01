@@ -69,6 +69,11 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 	
 		String[] roles = getRequest().getParameterValues("roleName");
 		String[] groups = getRequest().getParameterValues("groupName");
+		if(roles == null)
+			roles = new String[]{};
+		if(groups == null)
+			groups = new String[]{};
+		
 		String[] contentTypeDefinitionIds = getRequest().getParameterValues("contentTypeDefinitionId");
 		
 		UserControllerProxy.getController().updateUser(this.systemUserVO, roles, groups);
@@ -158,12 +163,31 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
     	return this.systemUserVO.getEmail();
     }
 
-
     public void setEmail(java.lang.String email) throws Exception
     {
     	this.systemUserVO.setEmail(email);
     }
 
+    public String getSource()
+    {
+    	return this.systemUserVO.getSource();
+    }
+    
+    public void setSource(String source)
+    {
+    	this.systemUserVO.setSource(source);
+    }
+
+    public Boolean getIsActive()
+    {
+    	return this.systemUserVO.getIsActive();
+    }
+    
+    public void setIsActive(Boolean isActive)
+    {
+    	this.systemUserVO.setIsActive(isActive);
+    }
+    
     public java.lang.String getPassword()
     {
     	return this.systemUserVO.getPassword();

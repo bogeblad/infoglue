@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -50,5 +51,22 @@ public class DateHelper
 
 		return now.getTime();
 		*/
+    }
+    
+    /**
+     * This method returns a Date initialized without milliseconds. 
+     * This is very important when saving items i oracle as dates.
+     * 
+     * @return
+     */
+    
+    public static String getFormattedCurrentDateTime(String pattern)
+    {
+    	Date date = new Date();
+            
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+        String dateString = formatter.format(date);
+
+        return dateString;
     }
 }

@@ -25,21 +25,27 @@ package org.infoglue.deliver.taglib.content;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 
 import javax.servlet.jsp.JspException;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.util.sorters.ContentSort;
 import org.infoglue.deliver.taglib.TemplateControllerTag;
+import org.infoglue.deliver.taglib.structure.ChildPagesTag;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
-public class ContentSortTag extends TemplateControllerTag {
-	/**
-	 * 
-	 */
+public class ContentSortTag extends TemplateControllerTag 
+{
 	private static final long serialVersionUID = 3257003254859576632L;
+
+    public final static Logger logger = Logger.getLogger(ContentSortTag.class.getName());
 
 	private ContentSort sorter;
 	private Collection input = new ArrayList();
 	private String comparatorClass;
+	private Locale comparatorLocale = Locale.getDefault();
 
 	/**
 	 *
@@ -87,6 +93,7 @@ public class ContentSortTag extends TemplateControllerTag {
 	 */
 	public int doEndTag() throws JspException
     {
+		Timer t = new Timer();
 		if(comparatorClass!=null && !comparatorClass.equals("")) 
 		{
 			produceResult(sorter.getContentResult(comparatorClass));
@@ -96,10 +103,14 @@ public class ContentSortTag extends TemplateControllerTag {
 			produceResult(sorter.getContentResult());	
 		}
 
+	    if(logger.isInfoEnabled())
+	    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ContentSort tag", t.getElapsedTimeNanos() / 1000);	    	
+
 		this.sorter.clear();
 		this.sorter = null;
 		this.input = new ArrayList();
 		this.comparatorClass = null;
+		this.comparatorLocale = Locale.getDefault();
 		
         return EVAL_PAGE;
     }
@@ -119,6 +130,15 @@ public class ContentSortTag extends TemplateControllerTag {
 	public void setComparatorClass(String comparatorClass) 
 	{
 		this.comparatorClass = comparatorClass;
+	}
+
+	/**
+	 * @param comparatorClass the comparatorClass to set
+	 */
+	
+	public void setComparatorLocale(String comparatorLocale) throws JspException
+	{
+		this.comparatorLocale = (Locale)evaluate("contentSort", "comparatorLocale", comparatorLocale, Locale.class);
 	}
 
 }

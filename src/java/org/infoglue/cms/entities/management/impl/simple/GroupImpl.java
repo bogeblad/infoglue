@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.entities.management.impl.simple;
 
-import java.util.ArrayList;
-
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Group;
 import org.infoglue.cms.entities.management.GroupVO;
@@ -33,7 +31,6 @@ import org.infoglue.cms.exception.ConstraintException;
 public class GroupImpl implements Group
 {
 	private GroupVO valueObject = new GroupVO();
-	private java.util.Collection systemUsers = new ArrayList();
      
 	public Integer getId()
 	{
@@ -94,14 +91,43 @@ public class GroupImpl implements Group
         this.valueObject.setDescription(description);
 	}
       
-    public java.util.Collection getSystemUsers()
+    public String getSource()
     {
-        return this.systemUsers;
+    	return this.valueObject.getSource();
     }
-            
-    public void setSystemUsers (java.util.Collection systemUsers)
+    
+    public void setSource(String source)
     {
-        this.systemUsers = systemUsers;
+    	this.valueObject.setSource(source);
     }
-      
+
+    public String getGroupType()
+    {
+    	return this.valueObject.getGroupType();
+    }
+    
+    public void setGroupType(String groupType)
+    {
+    	this.valueObject.setGroupType(groupType);
+    }
+
+    public Boolean getIsActive()
+    {
+    	return this.valueObject.getIsActive();
+    }
+    
+    public void setIsActive(Boolean isActive)
+    {
+    	this.valueObject.setIsActive(isActive);
+    }
+
+    public java.util.Date getModifiedDateTime()
+    {
+    	return this.valueObject.getModifiedDateTime();
+    }
+    
+    public void setModifiedDateTime(java.util.Date modifiedDateTime)
+    {
+    	this.valueObject.setModifiedDateTime(modifiedDateTime);
+    }
 }        

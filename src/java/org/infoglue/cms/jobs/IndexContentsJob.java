@@ -22,6 +22,8 @@
 */
 package org.infoglue.cms.jobs;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -52,15 +54,13 @@ public class IndexContentsJob implements Job
     		running = true;
     	else
     	{
-    		logger.info("CleanOldVersionsJob allready running... skipping.");
+    		logger.warn("IndexContentsJob allready running... skipping.");
     		return;
     	}
     	
     	try
 		{
-    		String internalSearchEngine = CmsPropertyHandler.getInternalSearchEngine();
-	    	if(internalSearchEngine.equalsIgnoreCase("lucene"))
-	    		LuceneController.getController().notifyListeners();
+			new Thread(new Runnable() { public void run() {try {LuceneController.getController().notifyListeners(true, true); LuceneController.getController().index();} catch (Exception e) {}}}).start();
 		}
 		catch(Exception e)
 	    {

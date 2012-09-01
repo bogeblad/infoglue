@@ -16,7 +16,8 @@
 		
 		<table border="0" class="display" id="dataTable" style="margin-left: 16px;">
 		<tr>
-			<th style="border-bottom: 1px solid #CCC;" align="left" width="70%">CMS Context/URL</th>
+			<th style="border-bottom: 1px solid #CCC;" align="left" width="30%">CMS Context/URL</th>
+			<th style="border-bottom: 1px solid #CCC;" align="left">Status</th>
 			<th style="border-bottom: 1px solid #CCC;" align="left">Actions</th>
 		</tr>
 		<tr>
@@ -24,55 +25,99 @@
 				<a href="ViewApplicationState.action">infoglueCMS</a>
 			</td>
 			<td>
-				<a href="ViewApplicationState!clearCaches.action?returnAddress=$formatter.encodeURI($originalFullURL)">Clear caches</a> | <a href="ViewLogging.action" target="_blank">Logs</a>
+				<div style="height: 20px; background-position: 0px 0px; text-indent: 20px;" class="okstatus">&nbsp;</div>
+			</td>
+			<td>
+				<a href="ViewApplicationState!clearCaches.action?returnAddress=$formatter.encodeURI($originalFullURL)">Clear caches</a> | 
+				<a href="ViewLogging.action" target="_blank">Logs</a> | 
+				<a href="ViewDiagnosticsCenter!clearQueue.action?returnAddress=$formatter.encodeURI($originalFullURL)">Clear queue</a>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">&nbsp;</td>
 		</tr>		
 		<tr>
-			<th style="border-bottom: 1px solid #CCC;" align="left" width="70%">Working/Preview Context/URL</th>
+			<th style="border-bottom: 1px solid #CCC;" align="left">Working/Preview Context/URL</th>
+			<th style="border-bottom: 1px solid #CCC;" align="left">Status</th>
 			<th style="border-bottom: 1px solid #CCC;" align="left">Actions</th>
 		</tr>
 		#foreach($url in $internalDeliverUrls)
-		<tr>
-			<td>
-				<a href="$url/ViewApplicationState.action">$url</a>
-			</td>
-			<td>
-				<a href="$url/ViewApplicationState!clearCaches.action?returnAddress=$formatter.encodeURI($originalFullURL)">Clear caches</a> | <a href="$url/ViewLogging.action" target="_blank">Logs</a>
-			</td>
-		</tr>
+			#set($beans = $this.getPublicationQueue().getInstancePublicationQueueBeans("$url"))
+			<tr>
+				<td>
+					<a href="$url/ViewApplicationState.action">$url</a>
+				</td>
+				<td>
+					#set($ongoingPublicationBeans = $!this.getOngoingPublicationBeans("$url"))
+					#if($!this.getInstanceStatus("$url") == "false")
+						<div style="margin-top: 5px; height: 20px; background-position: 0px 0px; text-indent: 20px;" class="nokstatus">($beans.size() in queue)</div>			
+					#elseif($!this.getInstanceStatus("$url") == "true")
+						<div style="margin-top: 5px; height: 20px; background-position: 0px 0px; text-indent: 20px;" class="okstatus">($beans.size() in queue)</div>
+					#else
+						<div style="margin-top: 5px; height: 20px; background-position: 0px 0px; text-indent: 20px;">Waiting for status</div>
+					#end
+				</td>
+				<td>
+					<a href="$url/ViewApplicationState!clearCaches.action?returnAddress=$formatter.encodeURI($originalFullURL)">Clear caches</a> | 
+					<a href="$url/ViewLogging.action" target="_blank">Logs</a> | 
+					<a href="ViewDiagnosticsCenter!clearQueue.action?returnAddress=$formatter.encodeURI($originalFullURL)">Clear queue</a>
+				</td>
+			</tr>
 		#end
 		<tr>
 			<td colspan="2">&nbsp;</td>
 		</tr>		
 		<tr>
-			<th style="border-bottom: 1px solid #CCC;" align="left" width="70%">Live Context/URL</th>
+			<th style="border-bottom: 1px solid #CCC;" align="left">Live Context/URL</th>
+			<th style="border-bottom: 1px solid #CCC;" align="left">Status</th>
 			<th style="border-bottom: 1px solid #CCC;" align="left">Actions</th>
 		</tr>
 		#foreach($url in $publicDeliverUrls)
-		<tr>
-			<td>
-				<a href="$url/ViewApplicationState.action">$url</a>
-			</td>
-			<td>
-				<a href="$url/ViewApplicationState!clearCaches.action?returnAddress=$formatter.encodeURI($originalFullURL)">Clear caches</a> | <a href="$url/ViewLogging.action" target="_blank">Logs</a>
-			</td>
-		</tr>
+			#set($beans = $this.getPublicationQueue().getInstancePublicationQueueBeans("$url"))
+			#set($lastCleared = $this.getInstancePublicationQueueManualClearTimestamp("$url"))
+			<tr>
+				<td>
+					<a href="$url/ViewApplicationState.action">$url</a>
+				</td>
+				<td>
+					#set($ongoingPublicationBeans = $!this.getOngoingPublicationBeans("$url"))
+					#set($failedPublications = $!this.getFailedPublicationVOList("$url"))
+					#if($!this.getInstanceStatus("$url") == "false")
+						<div style="margin-top: 5px; height: 20px; background-position: 0px 0px; text-indent: 20px;" class="nokstatus">
+							(
+								$beans.size() in queue, 
+							 	<a href="javascript:void(0);" onclick="window.open('$url/ViewApplicationState!ongoingPublicationDetails.action', 'Failed publications', 'width=900,height=600');">$ongoingPublicationBeans.size() ongoing</a>, 
+							 	<a href="javascript:void(0);" onclick="window.open('ViewDiagnosticCenter!viewFailedPublications.action?liveInstanceValidationUrl=$formatter.encodeURI($url)', 'Failed publications', 'width=900,height=600');">$failedPublications.size() failed</a>)
+						</div>	
+					#elseif($!this.getInstanceStatus("$url") == "true")
+						<div style="margin-top: 5px; height: 20px; background-position: 0px 0px; text-indent: 20px;" class="okstatus">
+							($beans.size() in queue, 
+								<a href="javascript:void(0);" onclick="window.open('$url/ViewApplicationState!ongoingPublicationDetails.action', 'Failed publications', 'width=900,height=600');">$ongoingPublicationBeans.size() ongoing</a>, 
+						 	 	<a href="javascript:void(0);" onclick="window.open('ViewDiagnosticCenter!viewFailedPublications.action?liveInstanceValidationUrl=$formatter.encodeURI($url)', 'Failed publications', 'width=900,height=600');">$failedPublications.size() failed</a>)
+						</div>
+					#else
+						<div style="margin-top: 5px; height: 20px; background-position: 0px 0px; text-indent: 20px;">Waiting for status</div>
+					#end
+				</td>
+				<td>
+					<a href="$url/ViewApplicationState!clearCaches.action?returnAddress=$formatter.encodeURI($originalFullURL)">Clear caches</a> | 
+					<a href="$url/ViewLogging.action" target="_blank">Logs</a> | 
+					<a href="ViewDiagnosticCenter!clearQueue.action?liveInstanceValidationUrl=$formatter.encodeURI($url)&returnAddress=$formatter.encodeURI($originalFullURL)">Clear queue ($lastCleared)</a>
+				</td>
+			</tr>
 		#end
 		<tr>
-			<td colspan="2">&nbsp;</td>
+			<td colspan="3">&nbsp;</td>
 		</tr>		
 		<tr>
-			<th style="border-bottom: 1px solid #CCC;" align="left" width="70%">Statistics</th>
-			<th style="border-bottom: 1px solid #CCC;" align="left">&nbsp;</th>
+			<th style="border-bottom: 1px solid #CCC;" align="left">Statistics</th>
+			<th colspan="2" style="border-bottom: 1px solid #CCC;" align="left">&nbsp;</th>
 		</tr>
-		<tr><td width="70%">Number of siteNodes</td><td>$numberOfSiteNodes</td></tr>
-		<tr><td>Number of siteNodeVersions</td><td>$numberOfSiteNodeVersions</td></tr>
-		<tr><td>Number of contents</td><td>$numberOfContents</td></tr>
-		<tr><td>Number of content versions</td><td>$numberOfContentVersions</td></tr>
-		<tr><td>Number of digitalAssets</td><td>$numberOfDigitalAssets</td></tr>
+		<tr><td>Number of siteNodes</td><td colspan="2">$numberOfSiteNodes</td></tr>
+		<tr><td>Number of siteNodeVersions</td><td colspan="2">$numberOfSiteNodeVersions</td></tr>
+		<tr><td>Number of contents</td><td colspan="2">$numberOfContents</td></tr>
+		<tr><td>Number of content versions</td><td colspan="2">$numberOfContentVersions</td></tr>
+		<tr><td>Number of digitalAssets</td><td colspan="2">$numberOfDigitalAssets</td></tr>
 	</table>
 	<p>
 		Number of unused digitalAssets (could potentially be removed): $numberOfUnusedDigitalAssets<br />
@@ -81,11 +126,11 @@
 	<p>
 		MySQL and SQLServer: 
 	</p>
-	<p style="background-color: white; width: 600px; border: 1px solid black; padding: 4px; color: blue;">delete from cmDigitalAsset cmDigitalAsset where cmDigitalAsset.assetKey NOT LIKE '%portletentityregistry.xml%' AND cmDigitalAsset.assetContentType NOT LIKE '%application%' AND cmDigitalAsset.digitalAssetId not in (select digitalAssetId from cmContentVersionDigitalAsset) AND cmDigitalAsset.digitalAssetId not in (select digitalAssetId from cmGroupPropertiesDigitalAsset) AND cmDigitalAsset.digitalAssetId not in (select digitalAssetId from cmRolePropertiesDigitalAsset) AND cmDigitalAsset.digitalAssetId not in (select digitalAssetId from cmUserPropertiesDigitalAsset)</p>
+	<p style="background-color: white; width: 600px; border: 1px solid black; padding: 4px; color: blue;">delete from cmDigitalAsset da where da.assetKey <> 'portletentityregistry.xml' AND (da.assetcontenttype like 'application/apple%' OR da.assetcontenttype like 'application/postscript%' OR da.assetcontenttype like 'application/x-shock%' OR da.assetcontenttype like 'application/ms%' OR da.assetcontenttype like 'application/vnd%' OR da.assetcontenttype like 'application/pdf%' OR da.assetcontenttype like 'image/%' OR da.assetcontenttype like 'video/%' OR da.assetcontenttype like 'audio/%' OR da.assetcontenttype like 'message/rfc%' OR da.assetfilename like '%.pdf' OR da.assetfilename like '%.jpg' OR da.assetfilename like '%.doc' OR da.assetfilename like '%.dot' OR da.assetfilename like '%.xls' OR da.assetfilename like '%.psd' OR da.assetfilename like '%.exe') AND da.digitalAssetId not in (select digitalAssetId from cmContentVersionDigitalAsset) AND da.digitalAssetId not in (select digitalAssetId from cmGroupPropertiesDigitalAsset) AND  da.digitalAssetId not in (select digitalAssetId from cmRolePropertiesDigitalAsset) AND da.digitalAssetId not in (select digitalAssetId from cmUserPropertiesDigitalAsset)</p>
 	<p>
 		Oracle: 
 	</p>
-	<p style="background-color: white; width: 600px; border: 1px solid black; padding: 4px; color: blue;">delete from cmDigAsset where cmDigAsset.assetKey NOT LIKE '%portletentityregistry.xml%' AND cmDigAsset.assetContentType NOT LIKE '%application%' AND cmDigAsset.digAssetId not in (select digAssetId from cmContVerDigAsset) AND cmDigAsset.digAssetId not in (select digAssetId from cmGroupPropDigAsset) AND cmDigAsset.digAssetId not in (select digAssetId from cmRolePropDigAsset) AND cmDigAsset.digAssetId not in (select digAssetId from cmUserPropDigAsset)</p>
+	<p style="background-color: white; width: 600px; border: 1px solid black; padding: 4px; color: blue;">delete from cmDigAsset da where da.assetKey <> 'portletentityregistry.xml' AND (da.assetcontenttype like 'application/apple%' OR da.assetcontenttype like 'application/postscript%' OR da.assetcontenttype like 'application/x-shock%' OR da.assetcontenttype like 'application/ms%' OR da.assetcontenttype like 'application/vnd%' OR da.assetcontenttype like 'application/pdf%' OR da.assetcontenttype like 'image/%' OR da.assetcontenttype like 'video/%' OR da.assetcontenttype like 'audio/%' OR da.assetcontenttype like 'message/rfc%' OR da.assetfilename like '%.pdf' OR da.assetfilename like '%.jpg' OR da.assetfilename like '%.doc' OR da.assetfilename like '%.dot' OR da.assetfilename like '%.xls' OR da.assetfilename like '%.psd' OR da.assetfilename like '%.exe') AND da.digAssetId not in (select digAssetId from cmContVerDigAsset) AND da.digAssetId not in (select digAssetId from cmGroupPropDigAsset) AND  da.digAssetId not in (select digAssetId from cmRolePropDigAsset) AND da.digAssetId not in (select digAssetId from cmUserPropDigAsset)</p>
 		
 	</div>
 		

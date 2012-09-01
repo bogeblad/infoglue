@@ -45,19 +45,18 @@ public class ViewGroupAction extends InfoGlueAbstractAction
 	private String groupName;
 	private boolean supportsUpdate = true;
 	private InfoGlueGroup infoGlueGroup;
-	private List infoGluePrincipals = new ArrayList();
-	private List assignedInfoGluePrincipals;
 	private List contentTypeDefinitionVOList;
 	private List assignedContentTypeDefinitionVOList;    
 	
+	/**
+	 * This method initializes the view by populating all the entities. 
+	 * It fetches the group itself, the type of authorization update support and all the assigned principals.
+	 * It then populates a list of unassigned principals.
+	 */
     protected void initialize(String groupName) throws Exception
     {
-		//this.supportsUpdate				= GroupControllerProxy.getController().getSupportUpdate();
 		this.infoGlueGroup				= GroupControllerProxy.getController().getGroup(groupName);
 		this.supportsUpdate 			= this.infoGlueGroup.getAutorizationModule().getSupportUpdate();
-		this.assignedInfoGluePrincipals	= this.infoGlueGroup.getAutorizationModule().getGroupUsers(groupName);
-		if(this.supportsUpdate) //Only fetch if the user can edit.
-			this.infoGluePrincipals			= this.infoGlueGroup.getAutorizationModule().getUsers();
 		
 		this.contentTypeDefinitionVOList 			= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_GROUP_PROPERTIES);
 		this.assignedContentTypeDefinitionVOList 	= GroupPropertiesController.getController().getContentTypeDefinitionVOList(groupName);  
@@ -122,17 +121,27 @@ public class ViewGroupAction extends InfoGlueAbstractAction
     {
         return this.infoGlueGroup.getDescription();
     }
-        
-  	public List getAllInfoGluePrincipals() throws Exception
-	{
-		return this.infoGluePrincipals;
-	}	
-	
-	public List getAssignedInfoGluePrincipals() throws Exception
-	{
-		return this.assignedInfoGluePrincipals;
-	}
 
+    public java.lang.String getSource()
+    {
+        return this.infoGlueGroup.getSource();
+    }
+
+    public java.lang.String getGroupType()
+    {
+        return this.infoGlueGroup.getGroupType();
+    }
+
+    public Boolean getIsActive()
+    {
+    	return this.infoGlueGroup.getIsActive();
+    }
+
+    public java.util.Date getModifiedDateTime()
+    {
+        return this.infoGlueGroup.getModifiedDateTime();
+    }
+	
 	public List getAssignedContentTypeDefinitionVOList()
 	{
 		return assignedContentTypeDefinitionVOList;

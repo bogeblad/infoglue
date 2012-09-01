@@ -44,12 +44,13 @@ public class ViewContentVersionHistoryAction extends InfoGlueAbstractAction
 	private Integer contentId;
 	private List contentVersionVOList;
 	private Boolean inline					= false;
+	private ContentVO contentVO = null;
 
 	protected String doExecute() throws Exception 
 	{
-	    ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.contentId);
-	    contentVersionVOList = ContentVersionController.getContentVersionController().getContentVersionVOWithParent(contentId);
-
+	    this.contentVO = ContentController.getContentController().getContentVOWithId(this.contentId);
+	    contentVersionVOList = ContentVersionController.getContentVersionController().getSmallestContentVersionVOList(contentId);
+	    
 	    return "success";
 	}
 
@@ -92,4 +93,10 @@ public class ViewContentVersionHistoryAction extends InfoGlueAbstractAction
     {
         return inline;
     }
+    
+	public ContentVO getContentVO() 
+	{
+		return this.contentVO;
+	}
+
 }

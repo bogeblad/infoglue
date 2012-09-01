@@ -46,6 +46,19 @@ ALTER TABLE cmContentTypeDefinition ADD COLUMN parentContentTypeDefinitionId int
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverClass VARCHAR(255) DEFAULT '';
 ALTER TABLE cmContentTypeDefinition ADD COLUMN detailPageResolverData VARCHAR(1024) DEFAULT '';
 
+ALTER TABLE cmGroup ADD COLUMN source VARCHAR(45) NOT NULL DEFAULT 'infoglue';
+ALTER TABLE cmGroup ADD COLUMN groupType VARCHAR(45) NOT NULL DEFAULT ''; 
+ALTER TABLE cmGroup ADD COLUMN isActive TINYINT NOT NULL DEFAULT 1;
+ALTER TABLE cmGroup ADD COLUMN modifiedDateTime TIMESTAMP NOT NULL DEFAULT '2010-01-01 12:00:00';
+
+ALTER TABLE cmRole ADD COLUMN source VARCHAR(45) NOT NULL DEFAULT 'infoglue';
+ALTER TABLE cmRole ADD COLUMN isActive TINYINT NOT NULL DEFAULT 1;
+ALTER TABLE cmRole ADD COLUMN modifiedDateTime TIMESTAMP NOT NULL DEFAULT '2010-01-01 12:00:00';
+
+ALTER TABLE cmSystemUser ADD COLUMN source VARCHAR(45) NOT NULL DEFAULT 'infoglue';
+ALTER TABLE cmSystemUser ADD COLUMN isActive TINYINT NOT NULL DEFAULT 1;
+ALTER TABLE cmSystemUser ADD COLUMN modifiedDateTime TIMESTAMP NOT NULL DEFAULT '2010-01-01 12:00:00';
+
 ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryAttrNameIndex;
 ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryEntityNameIndex;
 ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryEntityIdIndex;
@@ -60,12 +73,19 @@ create index propCategoryCategoryIdIndex on cmPropertiesCategory(categoryId);
 create index categoryParentIdIndex on cmCategory(parentId);
 create index categoryNameIndex on cmCategory(name(100));
 
+create index contentVersionModifierIndex on cmContentVersion(versionModifier(20));
+create index siteNodeVersionModifierIndex on cmSiteNodeVersion(versionModifier(20));
+
 CREATE INDEX assetKeyIndex ON cmDigitalAsset(assetKey(255));
 CREATE INDEX assetFileNameIndex ON cmDigitalAsset(assetFileName(255));
 CREATE INDEX assetFileSizeIndex ON cmDigitalAsset(assetFileSize);
 CREATE INDEX assetContentTypeIndex ON cmDigitalAsset(assetContentType);
 
 CREATE INDEX redirectUrlIndex ON cmRedirect(redirectUrl(255));
+
+CREATE INDEX accessRightIDIndex ON cmAccessRightUser(accessRightId);
+CREATE INDEX accessRightIDIndex ON cmAccessRightRole(accessRightId);
+CREATE INDEX accessRightIDIndex ON cmAccessRightGroup(accessRightId);
 
 ALTER TABLE cmAccessRight CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 ALTER TABLE cmAccessRightGroup CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;

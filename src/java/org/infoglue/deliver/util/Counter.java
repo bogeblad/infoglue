@@ -33,13 +33,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.util.sorters.AverageInvokingTimeComparator;
+import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.invokers.ComponentBasedHTMLPageInvoker;
 
 /**
  * @author mattias
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * This class contains a lot of statistics. Badly implemented now that Atomic operations are part of Java.
  */
 public class Counter
 {
@@ -48,12 +48,14 @@ public class Counter
     private static Integer count = new Integer(0);
     private static Integer activeCount = new Integer(0);
     private static Integer totalCount = new Integer(0);
+    private static Integer approximateNumberOfDatabaseQueries = new Integer(0);
     private static Long totalElapsedTime = new Long(0);
     private static Long maxElapsedTime = new Long(0);
     private static Map allComponentsStatistics = new HashMap();
     private static Map allPageStatistics = new HashMap();
-    private static LinkedBlockingQueue latestPublications = new LinkedBlockingQueue(10);
-    private static Integer numberOfPublicationsSinceStart = new Integer(0);
+    private static LinkedBlockingQueue<CacheEvictionBean> latestPublications = new LinkedBlockingQueue<CacheEvictionBean>(200);
+    private static List<CacheEvictionBean> ongoingPublications = new ArrayList<CacheEvictionBean>();
+     private static Integer numberOfPublicationsSinceStart = new Integer(0);
     
     private Counter(){}
 
@@ -85,12 +87,29 @@ public class Counter
         return maxElapsedTime.longValue();
     }
 
-    static List getLatestPublications()
+    static int getApproximateNumberOfDatabaseQueries()
     {
-    	List latestPublicationsList = new ArrayList();
+        return approximateNumberOfDatabaseQueries.intValue();
+    }
+
+    static void incApproximateNumberOfDatabaseQueries()
+    {
+    	approximateNumberOfDatabaseQueries = new Integer(approximateNumberOfDatabaseQueries.intValue() + 1);
+    }
+
+    static void decApproximateNumberOfDatabaseQueries()
+    {
+    	if(approximateNumberOfDatabaseQueries > 0)
+    		approximateNumberOfDatabaseQueries = new Integer(approximateNumberOfDatabaseQueries.intValue() - 1);
+    }
+
+    
+    static List<CacheEvictionBean> getLatestPublications()
+    {
+    	List<CacheEvictionBean> latestPublicationsList = new ArrayList<CacheEvictionBean>();
     	synchronized (latestPublications)
 		{
-    		Iterator latestPublicationsIterator = latestPublications.iterator();
+    		Iterator<CacheEvictionBean> latestPublicationsIterator = latestPublications.iterator();
     		while(latestPublicationsIterator.hasNext())
     		{
     			latestPublicationsList.add(latestPublicationsIterator.next());
@@ -99,19 +118,41 @@ public class Counter
         return latestPublicationsList;
     }
 
+    static void resetLatestPublications()
+    {
+    	synchronized (latestPublications)
+		{
+    		latestPublications.clear();
+    		numberOfPublicationsSinceStart = 0;
+		}
+    }
+
+    static List<CacheEvictionBean> getOngoingPublications()
+    {
+    	List<CacheEvictionBean> ongoingPublicationsList = new ArrayList<CacheEvictionBean>();
+    	synchronized (ongoingPublications)
+		{
+    		Iterator<CacheEvictionBean> ongoingPublicationsIterator = ongoingPublications.iterator();
+    		while(ongoingPublicationsIterator.hasNext())
+    		{
+    			ongoingPublicationsList.add(ongoingPublicationsIterator.next());
+    		}
+		}
+        return ongoingPublicationsList;
+    }
+    
     static Integer getNumberOfPublicationsSinceStart()
     {
-    	return numberOfPublicationsSinceStart;
+    	synchronized (latestPublications)
+		{
+    		return latestPublications.size();
+		}
+    	//return numberOfPublicationsSinceStart;
     }
 
-    static void resetNumberOfPublicationsSinceStart()
+    synchronized static void addPublication(CacheEvictionBean bean)
     {
-    	numberOfPublicationsSinceStart = 0;
-    }
-
-    synchronized static void addPublication(String description)
-    {
-    	if(description.indexOf("ServerNodeProperties") == -1)
+    	if(bean.getClassName().indexOf("ServerNodeProperties") == -1)
     		numberOfPublicationsSinceStart++;
 
     	synchronized (latestPublications)
@@ -119,7 +160,23 @@ public class Counter
     		if(latestPublications.remainingCapacity() == 0)
     			latestPublications.poll();
     		
-    		latestPublications.add(description);
+    		latestPublications.add(bean);
+		}
+    }
+    
+    synchronized static void addOngoingPublication(CacheEvictionBean bean)
+    {
+    	synchronized (ongoingPublications)
+		{
+    		ongoingPublications.add(bean);
+		}
+    }
+    
+    synchronized static void removeOngoingPublication(CacheEvictionBean bean)
+    {
+    	synchronized (ongoingPublications)
+		{
+    		ongoingPublications.remove(bean);
 		}
     }
 

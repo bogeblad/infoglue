@@ -3106,6 +3106,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 	});
 #end
 
+
 #macro(renderContentTypes $contentTypeDefinitionVOList $level)
 	#foreach($contentTypeDefinitionVO in $contentTypeDefinitionVOList)
 		#set($children = $this.getContentTypeDefinitions($contentTypeDefinitionVO.id))

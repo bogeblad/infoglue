@@ -38,6 +38,7 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.kernel.IBaseEntity;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.deliver.util.RequestAnalyser;
 
 
 /**
@@ -58,16 +59,46 @@ public abstract class BaseDeliveryController
 	
 	protected Object getObjectWithId(Class arg, Integer id, Database db) throws SystemException, Bug
 	{
+		return getObjectWithId(arg, id, db, true);
+	}
+	
+	/**
+	 * This method fetches one object / entity within a transaction.
+	 **/
+	
+	protected Object getObjectWithId(Class arg, Integer id, Database db, boolean retry) throws SystemException, Bug
+	{
 		Object object = null;
 		try
 		{
+			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
 			object = db.load(arg, id, Database.ReadOnly);
 		}
 		catch(Exception e)
 		{
-			throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+			try
+			{
+				if(retry)
+				{
+					logger.warn("Error getting object. Message: " + e.getMessage() + ". Retrying...");
+					object = getObjectWithId(arg, id, db, false);
+				}
+				else
+				{
+					logger.warn("Error getting object. Message: " + e.getMessage() + ". Not retrying...");
+					throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);
+				}
+			}
+			catch(Exception e2)
+			{
+				throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+			}
 		}
-    
+		finally
+		{
+			RequestAnalyser.getRequestAnalyser().decApproximateNumberOfDatabaseQueries();
+		}
+		
 		if(object == null)
 		{
 			throw new Bug("The object with id [" + id + "] was not found. This should never happen.");
@@ -75,21 +106,51 @@ public abstract class BaseDeliveryController
 		return object;
 	}
 	
-	
+
 	/**
 	 * This method fetches one object in read only mode and returns it's value object.
 	 */
 	
 	protected BaseEntityVO getVOWithId(Class arg, Integer id, Database db) throws SystemException, Bug
 	{
+		return getVOWithId(arg, id, db, true);
+	}
+	
+	/**
+	 * This method fetches one object in read only mode and returns it's value object.
+	 */
+	
+	protected BaseEntityVO getVOWithId(Class arg, Integer id, Database db, boolean retry) throws SystemException, Bug
+	{
 		IBaseEntity vo = null;
 		try
 		{
+			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
 			vo = (IBaseEntity)db.load(arg, id, Database.ReadOnly);
 		}
 		catch(Exception e)
 		{
-			throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+			try
+			{
+				if(retry)
+				{
+					logger.warn("Error getting object. Message: " + e.getMessage() + ". Retrying...");
+					vo = (IBaseEntity)getVOWithId(arg, id, db, false);
+				}
+				else
+				{
+					logger.warn("Error getting object. Message: " + e.getMessage() + ". Not retrying...");
+					throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);
+				}
+			}
+			catch(Exception e2)
+			{
+				throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
+			}
+		}
+		finally
+		{
+			RequestAnalyser.getRequestAnalyser().decApproximateNumberOfDatabaseQueries();
 		}
     
 		if(vo == null)

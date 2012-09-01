@@ -48,6 +48,15 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 	private Integer languageId;
 	private Integer contentTypeDefinitionId;
 	private boolean forcePublication = true;
+
+	private Boolean allowHTMLContent = false;
+	private Boolean allowExternalLinks = false;
+	private Boolean allowDollarSigns = false;
+	private Boolean allowAnchorSigns = true;
+	private Boolean keepExistingAttributes = false;
+	private Boolean keepExistingCategories = true;
+	private Boolean updateExistingAssets = true;
+
 	private Map userPropertiesAttributesMap = new HashMap();
 	private List digitalAssets = new ArrayList();
 	
@@ -93,9 +102,17 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 				   
 		   ws.addArgument("contentTypeDefinitionId", this.contentTypeDefinitionId);
 		   ws.addArgument("forcePublication", this.forcePublication);
+		   ws.addArgument("allowHTMLContent", this.allowHTMLContent);
+		   ws.addArgument("allowExternalLinks", this.allowExternalLinks);
+		   ws.addArgument("allowDollarSigns", this.allowDollarSigns);
+		   ws.addArgument("allowAnchorSigns", this.allowAnchorSigns);
+		   ws.addArgument("keepExistingAttributes", this.keepExistingAttributes);
+		   ws.addArgument("keepExistingCategories", this.keepExistingCategories);
+		   ws.addArgument("updateExistingAssets", this.updateExistingAssets);
+
 		   ws.addArgument("userPropertiesAttributesMap", userPropertiesAttributesMap);
 		   ws.addArgument("digitalAssets", digitalAssets);
-		   
+
 		   ws.callService();
 		   setResultAttribute(ws.getResult());
 	   }   
@@ -112,6 +129,14 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 	   this.digitalAssets = new ArrayList();
 	   this.principal = null;
 	   
+       this.allowHTMLContent = false;
+       this.allowExternalLinks = false;
+       this.allowDollarSigns = false;
+       this.allowAnchorSigns = false;
+       this.keepExistingAttributes = false;
+       this.keepExistingCategories = true;
+       this.updateExistingAssets = true;
+
        return EVAL_PAGE;
    }
    
@@ -193,23 +218,40 @@ public class RemoteUserPropertiesServiceTag extends TemplateControllerTag implem
 		this.userPropertiesAttributesMap.put(name, value);
 	}
 
-	/**
-	 * Adds the content category to the contentVersion Value.
-	 * 
-	 * @throws JspException if the ancestor tag isn't a url tag.
-	 */
-	/*
-	public void addContentCategory(String contentCategory) throws JspException
+	public void setAllowHTMLContent(final String allowHTMLContent) throws JspException
 	{
-	    List contentCategories = (List)this.contentVersion.get("contentCategories");
-	    if(contentCategories == null)
-	    {
-	    	contentCategories = new ArrayList();
-	        this.contentVersion.put("contentCategories", contentCategories);
-	    }
-
-	    contentCategories.add(contentCategory);
+		this.allowHTMLContent = (Boolean)evaluate("updateContentVersion", "allowHTMLContent", allowHTMLContent, Boolean.class);
 	}
-	*/
+
+	public void setAllowExternalLinks(final String allowExternalLinks) throws JspException
+	{
+		this.allowExternalLinks = (Boolean)evaluate("updateContentVersion", "allowExternalLinks", allowExternalLinks, Boolean.class);
+	}
+
+	public void setAllowDollarSigns(final String allowDollarSigns) throws JspException
+	{
+		this.allowDollarSigns = (Boolean)evaluate("updateContentVersion", "allowDollarSigns", allowDollarSigns, Boolean.class);
+	}
+
+	public void setAllowAnchorSigns(final String allowAnchorSigns) throws JspException
+	{
+		this.allowAnchorSigns = (Boolean)evaluate("updateContentVersion", "allowAnchorSigns", allowAnchorSigns, Boolean.class);
+	}
+
+	public void setKeepExistingAttributes(final String keepExistingAttributes) throws JspException
+	{
+		this.keepExistingAttributes = (Boolean)evaluate("updateContentVersion", "keepExistingAttributes", keepExistingAttributes, Boolean.class);
+	}
+
+	public void setKeepExistingCategories(final String keepExistingCategories) throws JspException
+	{
+		this.keepExistingCategories = (Boolean)evaluate("updateContentVersion", "keepExistingCategories", keepExistingCategories, Boolean.class);
+	}
+
+	public void setUpdateExistingAssets(final String updateExistingAssets) throws JspException
+	{
+		this.updateExistingAssets = (Boolean)evaluate("updateContentVersion", "updateExistingAssets", updateExistingAssets, Boolean.class);
+	}
+
 
 }

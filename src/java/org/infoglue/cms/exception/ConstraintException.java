@@ -97,7 +97,7 @@ public class ConstraintException extends Exception
 	public ConstraintException(String fieldName, String errorCode, String extraInformation, String result) 
   	{
 		super();
-
+		
 	    // defensive, otherwise add null checks in equals()
 	    this.fieldName = (fieldName == null) ? "" : fieldName;      
 	    this.errorCode = (errorCode == null) ? "" : errorCode;      

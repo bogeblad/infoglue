@@ -335,7 +335,7 @@ public class ComponentController extends BaseController
 				if(masterLanguageVO != null)
 				{
 					//logger.info("masterLanguageVO for " + contentVO.getRepositoryId() + " is " + masterLanguageVO);
-		        	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getContentId(), masterLanguageVO.getId());
+		        	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getContentId(), masterLanguageVO.getId(), db);
 		        	String groupName = null;
 		        	if(contentVersionVO != null)
 		        		groupName = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);

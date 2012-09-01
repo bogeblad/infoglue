@@ -25,6 +25,7 @@ package org.infoglue.deliver.util;
 
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -32,7 +33,9 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.RollingFileAppender;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.extensions.ExtensionLoader;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -47,6 +50,8 @@ import com.opensymphony.oscache.base.OSCacheUtility;
 
 public final class DeliverContextListener implements ServletContextListener 
 {
+    private final static Logger logger = Logger.getLogger(DeliverContextListener.class.getName());
+
 	private static CacheController cacheController = new CacheController();
 	
 	private static ServletContext servletContext = null;
@@ -101,8 +106,14 @@ public final class DeliverContextListener implements ServletContextListener
 			if(intervalString != null)
 				cacheController.setCacheExpireInterval(Integer.parseInt(intervalString));
 			
-			//logger.info("Clearing previous filebased page cache");
-        	CacheController.clearFileCaches("pageCache");
+        	try 
+        	{
+        		CacheController.clearFileCaches("pageCache");
+        	}
+        	catch (Exception e) 
+        	{
+				logger.error("Could not clear file cache:" + e.getMessage());
+			}
 
 			//Starting the cache-expire-thread
 			if(cacheController.getExpireCacheAutomatically())
@@ -120,6 +131,8 @@ public final class DeliverContextListener implements ServletContextListener
 			
 			InfoGlueAuthenticationFilter.initializeProperties();
 						
+			CacheController.preCacheDeliverEntities();
+			
 			CmsPropertyHandler.setStartupTime(new Date()); 
 			
 			System.out.println("**************************************\n");

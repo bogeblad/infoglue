@@ -26,6 +26,9 @@ package org.infoglue.cms.applications.cmstool.actions;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
@@ -40,15 +43,24 @@ import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingI
 import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
-import org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl;
-import org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl;
-import org.infoglue.cms.entities.management.impl.simple.SmallSystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
+import org.infoglue.cms.util.ChangeNotificationController;
+import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.cms.util.NotificationMessage;
+import org.infoglue.cms.util.RemoteCacheUpdater;
+import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.HttpHelper;
+import org.jfree.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 
 /**
@@ -84,6 +96,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
     {
 	
     }
+    
     
     /**
      * This method will just reply to a testcall. 
@@ -173,24 +186,6 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 					Object[] idsExtraMedium = {new Integer(objectId)};
 					CacheController.clearCache(typesExtraMedium, idsExtraMedium);
 				}
-				else if(Class.forName(className).getName().equals(SystemUserImpl.class.getName()))
-				{
-				    Class typesExtra = SmallSystemUserImpl.class;
-					Object[] idsExtra = {objectId};
-					CacheController.clearCache(typesExtra, idsExtra);
-				}
-				else if(Class.forName(className).getName().equals(RoleImpl.class.getName()))
-				{
-				    Class typesExtra = SmallRoleImpl.class;
-					Object[] idsExtra = {objectId};
-					CacheController.clearCache(typesExtra, idsExtra);
-				}
-				else if(Class.forName(className).getName().equals(GroupImpl.class.getName()))
-				{
-				    Class typesExtra = SmallGroupImpl.class;
-					Object[] idsExtra = {objectId};
-					CacheController.clearCache(typesExtra, idsExtra);
-				}
 
 				CacheController.clearCache("workflowCache");
 				CacheController.clearCache("myActiveWorkflows");
@@ -232,11 +227,32 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 				}
 				if(className.indexOf("Content") > 0)
 				{
-					CacheController.clearCache("childContentCache");					
+					CacheController.clearCacheForGroup("childContentCache", "content_" + objectId);
+					try
+					{
+						ContentVO contentVO = ContentController.getContentController().getContentVOWithId(Integer.parseInt(objectId));
+						if(contentVO != null && contentVO.getParentContentId() != null)
+							CacheController.clearCacheForGroup("childContentCache", "content_" + contentVO.getParentContentId());					
+					}
+					catch (Exception e) 
+					{
+						logger.warn("Error when looking for parent content to update: " + e.getMessage(), e);
+					}
 				}
 				if(className.indexOf("SiteNode") > 0 || className.indexOf("Content") > 0)
 				{
 					CacheController.clearCache("NavigationCache");					
+					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + objectId);
+					try
+					{
+						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(Integer.parseInt(objectId));
+						if(siteNodeVO.getParentSiteNodeId() != null)
+							CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());					
+					}
+					catch (Exception e) 
+					{
+						logger.warn("Error in UpdateCacheAction:" + e.getMessage(), e);
+					}
 				}
 				if(className.indexOf("DigitalAsset") > 0 || className.indexOf("ContentVersion") > 0)
 				{

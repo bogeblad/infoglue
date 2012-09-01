@@ -217,10 +217,25 @@ public class PortletEntityRegistryServiceDBImpl extends PortletEntityRegistrySer
         return builder.toXML(getPortletApplicationEntityList());
     }
 
-    private DigitalAsset getPortletRegistry() throws Exception {
+    /**
+     * This method fetches the portlet registry asset. It is an XML stored as an DigitalAsset.
+     * First it tries to get the asset based on a hard-coded ID (for maximum performance required by UMU) 
+     * but normally this is not given and then it searches for an asset based on asset name. 
+     */
+    private DigitalAsset getPortletRegistry() throws Exception 
+    {
+    	// Try to get the portlet by id in order to optimize the db fetch (can take up to 5 minutes to get
+    	// the PORTLET_REGISTRY_CONTENT_NAME when getting it by name).
+    	DigitalAsset da = PortletAssetController.getPortletRegistry();
+    	if(da != null)
+    	{
+    		return da;
+    	}
+    	
+    	// Fallback: Try to get the portlet by name
         List das = PortletAssetController.getDigitalAssetByName(PORTLET_REGISTRY_CONTENT_NAME);
         if (das != null && das.size() > 0) {
-            DigitalAsset da = (DigitalAsset) das.get(0);
+            da = (DigitalAsset) das.get(0);
             LOG.debug("Registry located as id=" + da.getId());
             return da;
         } else {
@@ -228,7 +243,6 @@ public class PortletEntityRegistryServiceDBImpl extends PortletEntityRegistrySer
         }
         return null;
     }
-
     /*
      * (non-Javadoc)
      * 

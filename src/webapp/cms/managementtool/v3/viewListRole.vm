@@ -9,7 +9,7 @@
 	<!-- 		
 		$(document).ready(function(){
 			
-			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null, null, null ]')
 			#initDataTableImpl("dataTable" $extraParameter)
 			
 			#initDeleteLink()
@@ -39,6 +39,8 @@
 					<th>$ui.getString("entity.Role.roleName.label")</th>
 					<th>$ui.getString("entity.Role.displayName.label")</th>
 					<th>$ui.getString("entity.Role.description.label")</th>
+					<th>$ui.getString("entity.Role.source.label")</th>
+					<th>$ui.getString("entity.Role.isActive.label")</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -50,12 +52,10 @@
 							##<a href="#" class="role" onclick="top.openUrlInWorkArea('ViewRole!V3.action?roleName=$role.name', '$role.name', 'management', '$ui.getString("tool.common.managementTabLabelPrefix")'); return false;">$role.name</a>
 							<a class="role" href="ViewRole.action?roleName=$formatter.encodeBase64($role.name)">$role.name</a>
 						</td>
-						<td>
-							$role.displayName
-						</td>
-						<td>
-							$role.description
-						</td>
+						<td>$role.displayName</td>
+						<td>$role.description</td>
+						<td>$role.source</td>
+						<td>$ui.getString("entity.Group.isActive.${role.isActive}.label")</td>
 					</tr>
 				#end
 				

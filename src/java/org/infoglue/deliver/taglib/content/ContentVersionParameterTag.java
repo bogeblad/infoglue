@@ -201,4 +201,12 @@ public class ContentVersionParameterTag extends AbstractTag implements ContentVe
 	    this.contentVersion.put("allowAnchorSigns", evaluate("remoteContentService", "allowAnchorSigns", allowAnchorSigns, Boolean.class));
 	}
 
+	/**
+	 * 
+	 */
+	public void setCreateVersionIfNotExists(final String createVersionIfNotExists) throws JspException
+	{
+	    this.contentVersion.put("createVersionIfNotExists", evaluate("remoteContentService", "createVersionIfNotExists", createVersionIfNotExists, Boolean.class));
+	}
+
 }

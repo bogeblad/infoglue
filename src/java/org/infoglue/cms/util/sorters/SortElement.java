@@ -24,10 +24,15 @@
 package org.infoglue.cms.util.sorters;
 
 import java.lang.reflect.Constructor;
+import java.text.Collator;
+import java.util.Locale;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.exception.SystemException;
 import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 
 /**
@@ -44,7 +49,9 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.TemplateController;
 
 public class SortElement implements Comparable 
 {
-	/**
+    private final static Logger logger = Logger.getLogger(SortElement.class.getName());
+
+   	/**
 	 * The controller to use when interacting with the model.
 	 */
 	private final TemplateController controller;
@@ -62,7 +69,7 @@ public class SortElement implements Comparable
 	/**
 	 * The comparable of the element to sort. 
 	 */
-	private final CompoundComparable comparable = new CompoundComparable(); 
+	private CompoundComparable comparable = null; //new CompoundComparable(); 
 
 	/**
 	 * Constructs a sort element for the specified content.
@@ -74,6 +81,17 @@ public class SortElement implements Comparable
 	{
 		this.controller = controller;
 		this.contentVO  = contentVO;
+		if(this.controller != null)
+		{
+			try 
+			{
+				this.comparable = new CompoundComparable(controller.getLocale());
+			} 
+			catch (SystemException e) 
+			{
+				logger.error("Error:" + e.getMessage());
+			}
+		}
 	}
 
 	/**
@@ -86,6 +104,18 @@ public class SortElement implements Comparable
 	{
 		this.controller       = controller;
 		this.contentVersionVO = contentVersionVO;
+		if(this.controller != null)
+		{
+			try 
+			{
+				logger.info("controller.getLocale():" + controller.getLocale());
+				this.comparable = new CompoundComparable(controller.getLocale());
+			} 
+			catch (SystemException e) 
+			{
+				logger.error("Error:" + e.getMessage());
+			}
+		}
 	}
 
 	/**
@@ -229,6 +259,7 @@ public class SortElement implements Comparable
 			throw new ClassCastException();
 		}
 		final SortElement other = (SortElement) o;
+		//return collation.compare(comparable, other.comparable);
 		return comparable.compareTo(other.comparable);
 	}
 }

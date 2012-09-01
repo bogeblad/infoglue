@@ -24,9 +24,8 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -35,9 +34,9 @@ import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Role;
 import org.infoglue.cms.entities.management.RoleVO;
-import org.infoglue.cms.entities.management.SystemUser;
+import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
-import org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl;
+import org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
@@ -72,45 +71,30 @@ public class RoleController extends BaseController
 	{
 		return (Role)getObjectWithId(RoleImpl.class, roleName, db);
 	}
-    
-    /*
-    public static List getRoleVOList(Database db) throws SystemException, Bug
-    {
-        return getAllVOObjects(RoleImpl.class, db);
-    }
-	*/
 	
     public RoleVO getRoleVOWithId(Integer roleId) throws SystemException, Bug
     {
-		return (RoleVO) getVOWithId(SmallRoleImpl.class, roleId);
+		return (RoleVO) getVOWithId(RoleImpl.class, roleId);
     }
 
 	public RoleVO getRoleVOWithId(String roleName) throws SystemException, Bug
 	{
-		return (RoleVO) getVOWithId(SmallRoleImpl.class, roleName);
+		return (RoleVO) getVOWithId(RoleImpl.class, roleName);
 	}
 
 	public RoleVO getRoleVOWithId(String roleName, Database db) throws SystemException, Bug
 	{
-		return (RoleVO) getVOWithId(SmallRoleImpl.class, roleName, db);
+		return (RoleVO) getVOWithId(RoleImpl.class, roleName, db);
 	}
-
-    // Simple, without db
-	/*
-    public static Role getRoleWithId(Integer roleId) throws SystemException, Bug
-    {
-		return (Role) getObjectWithId(RoleImpl.class, roleId);
-    }
-    */
     
     public List getRoleVOList() throws SystemException, Bug
     {
-        return getAllVOObjects(SmallRoleImpl.class, "roleName");
+        return getAllVOObjects(RoleImpl.class, "roleName");
     }
 
     public List getRoleVOList(Database db) throws SystemException, Bug
     {
-        return getAllVOObjects(SmallRoleImpl.class, "roleName", db);
+        return getAllVOObjects(RoleImpl.class, "roleName", db);
     }
 
     public RoleVO create(RoleVO roleVO) throws ConstraintException, SystemException
@@ -129,62 +113,58 @@ public class RoleController extends BaseController
         return role;
     }     
 
-    public void delete(RoleVO roleVO) throws ConstraintException, SystemException
+    public void delete(RoleVO roleVO) throws ConstraintException, SystemException, Exception
     {
+    	removeUsers(roleVO.getRoleName());
     	deleteEntity(RoleImpl.class, roleVO.getRoleName());
     }        
 
     public void delete(RoleVO roleVO, Database db) throws ConstraintException, SystemException, Exception
     {
+    	removeUsers(roleVO.getRoleName());
     	deleteEntity(RoleImpl.class, roleVO.getRoleName(), db);
     }        
 
-	public void delete(String roleName) throws ConstraintException, SystemException
+	public void delete(String roleName) throws ConstraintException, SystemException, Exception
 	{
+    	removeUsers(roleName);
 		deleteEntity(RoleImpl.class, roleName);
 	}        
 
 	public void delete(String roleName, Database db) throws ConstraintException, SystemException, Exception
 	{
+    	removeUsers(roleName);
 		deleteEntity(RoleImpl.class, roleName, db);
 	}        
 
+
 	// Get list of users accosiated with this role
-	public List getRoleSystemUserVOList(String userName, Database db)  throws SystemException, Bug
+	public List<SystemUserVO> getRoleSystemUserVOList(Integer offset, Integer limit, String sortProperty, String direction, String searchString, String roleName, Database db)  throws SystemException, Bug
 	{
-		Collection systemUsers = null;
-		List systemUsersVO = new ArrayList();
-		Role role = null;
+		List<SystemUserVO> systemUsersVOList = new ArrayList();
 		
 		try 
 		{
-			role = getRoleWithName(userName, db);
-			systemUsers = role.getSystemUsers();		
-			
-			Iterator it = systemUsers.iterator();
-			while (it.hasNext())
-			{
-				SystemUser systemUser = (SystemUser) it.next();
-				systemUsersVO.add(systemUser.getValueObject());
-			}
+			systemUsersVOList = SystemUserController.getController().getFilteredSystemUserList(offset, limit, sortProperty, direction, searchString, roleName, null, db);
 		}
 		catch( Exception e)		
 		{
 			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
 		}
 		
-		return systemUsersVO;		
+		return systemUsersVOList;		
 	}
 
-	public List getRoleSystemUserVOList(String roleName)  throws SystemException, Bug
+	public List getRoleSystemUserVOList(Integer offset, Integer limit, String sortProperty, String direction, String searchString, String roleName)  throws SystemException, Bug
 	{
-		List systemUsersVO = null;
+		List<SystemUserVO> systemUsersVOList = new ArrayList();
+		
 		Database db = CastorDatabaseService.getDatabase();
 		try
 		{
 			beginTransaction(db);
 			
-			systemUsersVO = getRoleSystemUserVOList(roleName, db);
+			systemUsersVOList = getRoleSystemUserVOList(offset, limit, sortProperty, direction, searchString, roleName, db);
 			
 			commitTransaction(db);
 		}
@@ -193,18 +173,140 @@ public class RoleController extends BaseController
 			rollbackTransaction(db);
 			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
 		}		
-		return systemUsersVO;
+		return systemUsersVOList;
 	}
 
+	// Get list of users accosiated with this role
+	public Integer getRoleSystemUserCount(String roleName, String searchString, Database db)  throws SystemException, Bug
+	{
+		Integer count = 0;
+		
+		try 
+		{
+			count = SystemUserController.getController().getFilteredSystemUserCount(roleName, null, searchString, db);
+		}
+		catch( Exception e)		
+		{
+			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
+		}
+		
+		return count;		
+	}
+
+	public Integer getRoleSystemUserCount(String roleName, String searchString)  throws SystemException, Bug
+	{
+		Integer count = 0;
+		
+		Database db = CastorDatabaseService.getDatabase();
+		try
+		{
+			beginTransaction(db);
+			
+			count = getRoleSystemUserCount(roleName, searchString, db);
+			
+			commitTransaction(db);
+		}
+		catch ( Exception e )
+		{
+			rollbackTransaction(db);
+			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
+		}
+		
+		return count;
+	}
+
+	// Get list of users accosiated with this role
+	public List<SystemUserVO> getRoleSystemUserVOListInverted(Integer offset, Integer limit, String sortProperty, String direction, String searchString, String roleName, Database db)  throws SystemException, Bug
+	{
+		List<SystemUserVO> systemUsersVOList = new ArrayList();
+		
+		try 
+		{
+			systemUsersVOList = SystemUserController.getController().getFilteredSystemUserListInvertedOnRoleOrGroup(offset, limit, sortProperty, direction, searchString, roleName, null, db);
+		}
+		catch( Exception e)		
+		{
+			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
+		}
+		
+		return systemUsersVOList;		
+	}
+
+	public List<SystemUserVO> getRoleSystemUserVOListInverted(Integer offset, Integer limit, String sortProperty, String direction, String searchString, String roleName)  throws SystemException, Bug
+	{
+		List<SystemUserVO> systemUsersVOList = new ArrayList();
+		
+		Database db = CastorDatabaseService.getDatabase();
+		try
+		{
+			beginTransaction(db);
+			
+			systemUsersVOList = getRoleSystemUserVOListInverted(offset, limit, sortProperty, direction, searchString, roleName, db);
+			
+			commitTransaction(db);
+		}
+		catch ( Exception e )
+		{
+			rollbackTransaction(db);
+			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
+		}		
+		return systemUsersVOList;
+	}
+	
+	public Integer getRoleSystemUserCountInverted(String roleName, String searchString, Database db)  throws SystemException, Bug
+	{
+		Integer count = 0;
+		
+		try 
+		{
+			count = SystemUserController.getController().getFilteredSystemUserCountInverted(roleName, null, searchString, db);
+		}
+		catch( Exception e)		
+		{
+			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
+		}
+		
+		return count;		
+	}
+
+	public Integer getRoleSystemUserCountInverted(String roleName, String searchString)  throws SystemException, Bug
+	{
+		Integer count = 0;
+		
+		Database db = CastorDatabaseService.getDatabase();
+		try
+		{
+			beginTransaction(db);
+			
+			count = getRoleSystemUserCountInverted(roleName, searchString, db);
+			
+			commitTransaction(db);
+		}
+		catch ( Exception e )
+		{
+			rollbackTransaction(db);
+			throw new SystemException("An error occurred when we tried to fetch a list of users in this role. Reason:" + e.getMessage(), e);			
+		}
+		
+		return count;
+	}
+/*
     public RoleVO update(RoleVO roleVO) throws ConstraintException, SystemException
     {
     	return (RoleVO) updateEntity(RoleImpl.class, (BaseEntityVO) roleVO);
     }        
 
-
-    public RoleVO update(RoleVO roleVO, String[] systemUsers) throws ConstraintException, SystemException
+    public RoleVO update(RoleVO roleVO, Database db) throws ConstraintException, SystemException
     {
-        Database db = CastorDatabaseService.getDatabase();
+    	return (RoleVO) updateEntity(RoleImpl.class, (BaseEntityVO) roleVO, db);
+    }        
+*/
+    public RoleVO update(RoleVO roleVO, Set<String> userNamesSet) throws ConstraintException, SystemException, Exception
+    {
+    	if(userNamesSet != null)
+    		removeUsers(roleVO.getRoleName());
+
+    	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
         Role role = null;
@@ -214,7 +316,7 @@ public class RoleController extends BaseController
         try
         {
             //add validation here if needed
-			role = update(roleVO, systemUsers, db);
+			role = update(roleVO, userNamesSet, db);
 
             //If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
@@ -237,22 +339,18 @@ public class RoleController extends BaseController
         return role.getValueObject();
     }        
 
-    public Role update(RoleVO roleVO, String[] systemUsers, Database db) throws ConstraintException, SystemException
+    public Role update(RoleVO roleVO, Set<String> userNamesSet, Database db) throws ConstraintException, SystemException, Exception
     {
         Role role = getRoleWithName(roleVO.getRoleName(), db);
-		role.getSystemUsers().clear();
-		
-		if(systemUsers != null)
-		{
-			for (int i=0; i < systemUsers.length; i++)
-            {
-        		SystemUser systemUser = SystemUserController.getController().getSystemUserWithName(systemUsers[i], db);
-        		
-            	role.getSystemUsers().add(systemUser);
-				systemUser.getRoles().add(role);
-            }
-		}
-       	
+        
+        if(userNamesSet != null)
+    	{
+	        for (String userName : userNamesSet)
+	        {
+				addUser(roleVO.getRoleName(), userName, db);
+	        }
+    	}
+        
         role.setValueObject(roleVO);
 
         return role;
@@ -276,8 +374,6 @@ public class RoleController extends BaseController
 		{
 			beginTransaction(db);
 			
-			//SystemUser systemUser = SystemUserController.getController().getSystemUserWithName(userName, db);
-			//roleVOList = toVOList(systemUser.getRoles());
 			roleVOList = getRoleVOList(userName, db);
 				
 			commitTransaction(db);
@@ -298,7 +394,7 @@ public class RoleController extends BaseController
 	 * @throws SystemException
 	 * @throws Bug
 	 */
-	
+	/*
 	public Collection getRoleList(String userName, Database db)  throws SystemException, Bug
 	{
 	    Collection roleList = null;
@@ -308,7 +404,8 @@ public class RoleController extends BaseController
 		
 		return roleList;
 	}
-
+	*/
+	
 	/**
 	 * 	Get the the roles for a 
 	 */
@@ -320,7 +417,7 @@ public class RoleController extends BaseController
         OQLQuery oql;
         try
         {										
-        	oql = db.getOQLQuery( "CALL SQL SELECT r.roleName, r.description FROM cmRole r, cmSystemUserRole sur WHERE r.roleName = sur.roleName AND sur.userName = $1 AS org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl");
+        	oql = db.getOQLQuery( "CALL SQL SELECT r.roleName, r.description, r.source, r.isActive, r.modifiedDateTime FROM cmRole r, cmSystemUserRole sur WHERE r.roleName = sur.roleName AND sur.userName = $1 AS org.infoglue.cms.entities.management.impl.simple.RoleImpl");
         	oql.bind(userName);
         	
         	QueryResults results = oql.execute(Database.ReadOnly);
@@ -373,16 +470,15 @@ public class RoleController extends BaseController
         }
     }        
 
-    public void addUser(String roleName, String userName, Database db) throws ConstraintException, SystemException
+    public void addUser(String roleName, String userName, Database db) throws ConstraintException, SystemException, Exception
     {
-		Role role = getRoleWithName(roleName, db);
-		
-		if(userName != null)
+    	if(userName != null)
 		{
-    		SystemUser systemUser = SystemUserController.getController().getSystemUserWithName(userName, db);
+    		SystemUserRoleImpl sur = new SystemUserRoleImpl();
+    		sur.setUserName(userName);
+    		sur.setRoleName(roleName);
     		
-        	role.getSystemUsers().add(systemUser);
-			systemUser.getRoles().add(role);
+    		db.create(sur);
 		}
     }
     
@@ -444,27 +540,50 @@ public class RoleController extends BaseController
         }
     }        
 
-    public void removeUser(String roleName, String userName, Database db) throws ConstraintException, SystemException
+    public void removeUser(String roleName, String userName, Database db) throws ConstraintException, SystemException, Exception
     {
-		Role role = getRoleWithName(roleName, db);
+    	OQLQuery oql = db.getOQLQuery( "SELECT sur FROM org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl sur WHERE sur.roleName = $1 AND sur.userName = $2");
+    	oql.bind(roleName);
+    	oql.bind(userName);
+    	
+    	QueryResults results = oql.execute();
+		while (results.hasMore()) 
+        {
+			SystemUserRoleImpl sur = (SystemUserRoleImpl)results.nextElement();
+			db.remove(sur);
+        }
 		
-		if(userName != null)
-		{
-			SystemUser systemUser = null;
-			Iterator systemUsersIterator = role.getSystemUsers().iterator();
-			while(systemUsersIterator.hasNext())
-			{
-				systemUser = (SystemUser)systemUsersIterator.next();
-	        	if(systemUser.getUserName().equals(userName))
-	        		break;
-			}
-			
-			if(systemUser != null)
-			{
-				role.getSystemUsers().remove(systemUser);
-				systemUser.getRoles().remove(role);
-			}
-		}
+		results.close();
+		oql.close();
+    }
+
+    public void removeUsers(String roleName) throws ConstraintException, SystemException, Exception
+    {
+    	Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+        try
+        {
+        	OQLQuery oql = db.getOQLQuery( "SELECT sur FROM org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl sur WHERE sur.roleName = $1");
+        	oql.bind(roleName);
+        	
+        	QueryResults results = oql.execute();
+    		while (results.hasMore()) 
+            {
+    			SystemUserRoleImpl sur = (SystemUserRoleImpl)results.nextElement();
+    			db.remove(sur);
+            }
+    		
+    		results.close();
+    		oql.close();
+
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
     }
 
 	/**
@@ -477,7 +596,7 @@ public class RoleController extends BaseController
 		
         try
         {										
-        	OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl r WHERE r.roleName = $1");
+        	OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RoleImpl r WHERE r.roleName = $1");
         	oql.bind(roleName);
         	
         	QueryResults results = oql.execute(Database.ReadOnly);

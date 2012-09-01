@@ -8,7 +8,7 @@
 	<script type="text/javascript">
 	<!-- 		
 		$(document).ready(function(){
-			#set($extraParameter = '"bProcessing": true, "bServerSide": true, "fnServerData": function ( sSource, aoData, fnCallback ) { jQuery.post( sSource, aoData, fnCallback, "json" ); }, "sAjaxSource": "ViewListSystemUser!processAndFilter.action", "aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#set($extraParameter = '"iDisplayLength": 10, "bProcessing": true, "bServerSide": true, "fnServerData": function ( sSource, aoData, fnCallback ) { jQuery.post( sSource, aoData, fnCallback, "json" ); }, "sAjaxSource": "ViewListSystemUser!processAndFilter.action", "aoColumns": [ { "sWidth": "30px" }, null, null, null, null, null, null ]')
 
 			#initDataTableImpl("dataTable" $extraParameter)
 			#initDeleteLink()
@@ -55,6 +55,9 @@
 					<th>$ui.getString("entity.SystemUser.userName.label")</th>
 					<th>$ui.getString("entity.SystemUser.firstName.label")</th>
 					<th>$ui.getString("entity.SystemUser.lastName.label")</th>
+					<th>$ui.getString("entity.Group.source.label")</th>
+					<th>$ui.getString("entity.Group.isActive.label")</th>
+					<th>$ui.getString("tool.managementtool.assignedRoles.label") / $ui.getString("tool.managementtool.assignedGroups.label")</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -68,6 +71,9 @@
 						</td>
 						<td>$infogluePrincipal.firstName</td>
 						<td>$infogluePrincipal.lastName</td>
+						<td>$infogluePrincipal.source</td>
+						<td>$ui.getString("entity.Group.isActive.${principal.isActive}.label")</td>
+						<td>$this.getRolesAndGroups($infogluePrincipal)</td>
 					</tr>
 				#end
 				

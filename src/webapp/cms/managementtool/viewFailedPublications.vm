@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<title>CMS - failed publications</title>
+	
+	<style>
+	<!--
+		table 
+		{
+			width : 90%;
+			margin-right: auto;
+			margin-left: auto;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+		.header 
+		{
+			font-family : Tahoma, Arial;
+			font-size 	: 14pt;
+			font-weight : bold;
+		}
+		.label
+		{
+			font-family		 : Tahoma, Arial;
+			font-size		 : 8pt;
+			font-weight 	 : bold;
+			background-color : #CCCCCC;
+		}
+		.labelsub
+		{
+			font-family		 : Tahoma, Arial;
+			font-size		 : 8pt;
+			font-weight 	 : bold;
+			background-color : #FFFFFF;
+		}
+		.text 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+		}
+		.texttrue 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+		}
+		.textfalse 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+			color  		:red;
+		}
+		.fullymarginalized 
+		{
+			margin-left	: 50px;
+			margin-right: 50px;
+			margin-top	: 10%;
+		}
+
+		
+	-->
+	</style>
+
+</head>
+
+<body>
+
+<table cellpadding="4" cellspacing="0">
+  <tr>
+    <td colspan="4" class="header">Failed publications ($liveInstanceValidationUrl)</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text">&nbsp;</td>
+  </tr>
+  <tr class="label">
+    <td>Publication timestamp</td>
+    <td>Username</td>
+    <td>Summary name (if content or page)</td>
+    <td>Description</td>
+    <td>Details</td>
+  </tr>
+  #foreach($bean in $this.getFailedPublicationVOList("$liveInstanceValidationUrl"))
+  <tr>
+    <td class="text">$formatter.formatDate($bean.publicationDateTime,"yyyy-MM-dd HH:mm:ss")</td>
+    <td class="text">$bean.publisher</td>
+    <td class="text">$bean.name</td>
+    <td class="text">$bean.description</td>
+    <td class="text"><a href="javascript:void(0);" onclick="window.open('ViewPublications!showPublicationDetails.action?publicationId=$bean.publicationId', 'Publication details', 'width=900,height=600');">Details</a></td>
+  </tr>
+  #end
+  #if($this.failedPublications.size() == 0)
+  <tr>
+    <td class="text" colspan="4">No failed publications at the moment</td>
+  </tr>
+  #end
+</table>
+
+</body>
+
+</html>

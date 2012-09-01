@@ -149,7 +149,27 @@ public class CreateRoleAction extends InfoGlueAbstractAction
 		return this.roleVO.getDescription();	
 	}
 
-	public List getInfoGluePrincipals()
+    public String getSource()
+    {
+    	return this.roleVO.getSource();
+    }
+    
+    public void setSource(String source)
+    {
+    	this.roleVO.setSource(source);
+    }
+
+    public Boolean getIsActive()
+    {
+    	return this.roleVO.getIsActive();
+    }
+    
+    public void setIsActive(Boolean isActive)
+    {
+    	this.roleVO.setIsActive(isActive);
+    }
+
+    public List getInfoGluePrincipals()
 	{
 		return infoGluePrincipals;
 	}

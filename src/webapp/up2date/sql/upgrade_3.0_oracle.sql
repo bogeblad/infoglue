@@ -46,6 +46,19 @@ ALTER TABLE cmRedirect ADD expireDateTime date;
 ALTER TABLE cmRedirect ADD modifier varchar2(1024) DEFAULT 'system' NOT NULL;
 ALTER TABLE cmRedirect ADD isUserManaged number DEFAULT 1 NOT NULL;
 
+ALTER TABLE cmSystemUser ADD source varchar2(255) default 'infoglue' NOT NULL;
+ALTER TABLE cmSystemUser ADD modifiedDateTime date default sysdate;
+ALTER TABLE cmSystemUser ADD isActive number default 1 NOT NULL;
+
+ALTER TABLE cmRole ADD source varchar2(255) default 'infoglue' NOT NULL;
+ALTER TABLE cmRole ADD modifiedDateTime date  default sysdate;
+ALTER TABLE cmRole ADD isActive number default 1 NOT NULL;
+
+ALTER TABLE cmGroup ADD groupType varchar2(255) default ' ' NOT NULL;
+ALTER TABLE cmGroup ADD source varchar2(255) default 'infoglue' NOT NULL;
+ALTER TABLE cmGroup ADD modifiedDateTime date default sysdate;
+ALTER TABLE cmGroup ADD isActive number default 1 NOT NULL;
+
 drop index propCategoryAttrNameIndex;
 drop index propCategoryEntityNameIndex;
 drop index propCategoryEntityNameIndex;

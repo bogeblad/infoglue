@@ -26,6 +26,7 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -169,25 +170,22 @@ public class UserControllerProxy extends BaseController
 	/**
 	 * This method returns a list of all sought for users
 	 */
-	
-    public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleNames) throws Exception
+	/*
+    public List<InfoGluePrincipal> getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleNames) throws Exception
     {
-    	List users = new ArrayList();
-    	
-		users = getAuthorizationModule().getFilteredUsers(firstName, lastName, userName, email, roleNames);
+    	List<InfoGluePrincipal> users = getAuthorizationModule().getFilteredUsers(firstName, lastName, userName, email, roleNames);
     	
     	return users;
     }
+    */
     
 	/**
 	 * This method returns a list of all sought for users
 	 */
 	
-    public List getFilteredUsers(String searchString) throws Exception
+    public List<InfoGluePrincipal> getFilteredUsers(Integer offset, Integer limit, String sortProperty, String direction, String searchString, boolean populateRolesAndGroups) throws Exception
     {
-    	List users = new ArrayList();
-    	
-		users = getAuthorizationModule().getFilteredUsers(searchString);
+    	List<InfoGluePrincipal> users = getAuthorizationModule().getFilteredUsers(offset, limit, sortProperty, direction, searchString, populateRolesAndGroups);
     	
     	return users;
     }
@@ -243,8 +241,9 @@ public class UserControllerProxy extends BaseController
 	public InfoGluePrincipal createUser(SystemUserVO systemUserVO) throws ConstraintException, SystemException, Exception
 	{
 		getAuthorizationModule().createInfoGluePrincipal(systemUserVO);
-    	
-		return getUser(systemUserVO.getUserName());
+
+		return new InfoGluePrincipal(systemUserVO.getUserName(), systemUserVO.getUserName(), systemUserVO.getFirstName(), systemUserVO.getLastName(), systemUserVO.getEmail(), systemUserVO.getSource(), systemUserVO.getIsActive(), systemUserVO.getModifiedDateTime(), new ArrayList(), new ArrayList(), new HashMap(), false, getAuthorizationModule());
+		//return getUser(systemUserVO.getUserName());
 	}
 
 	/**
@@ -302,6 +301,21 @@ public class UserControllerProxy extends BaseController
 	public void deleteUser(String userName) throws ConstraintException, SystemException, Exception
 	{
 		getAuthorizationModule().deleteInfoGluePrincipal(userName);
+	}
+	
+	public Integer getRoleCount(String searchString) throws ConstraintException, SystemException, Exception
+	{
+		return getAuthorizationModule().getRoleCount(searchString);
+	}
+
+	public Integer getGroupCount(String searchString) throws ConstraintException, SystemException, Exception
+	{
+		return getAuthorizationModule().getGroupCount(searchString);
+	}
+	
+	public Integer getUserCount(String searchString) throws ConstraintException, SystemException, Exception
+	{
+		return getAuthorizationModule().getUserCount(searchString);
 	}
 	
 	public BaseEntityVO getNewVO()

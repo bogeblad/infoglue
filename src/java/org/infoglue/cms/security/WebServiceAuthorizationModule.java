@@ -50,10 +50,10 @@ import org.infoglue.deliver.util.webservices.WebServiceHelper;
 /**
  * @author Mattias Bogeblad
  *
- * This authentication module authenticates an user against the ordinary infoglue database.
+ * This authentication module authenticates an user against a webservice.
  */
 
-public class WebServiceAuthorizationModule implements AuthorizationModule, Serializable
+public class WebServiceAuthorizationModule extends BasicAuthorizationModule implements AuthorizationModule, Serializable
 {
     private final static Logger logger = Logger.getLogger(WebServiceAuthorizationModule.class.getName());
     private final static DOMBuilder domHelper = new DOMBuilder();
@@ -600,7 +600,7 @@ public class WebServiceAuthorizationModule implements AuthorizationModule, Seria
 		return users;
 	}
 
-	public List getFilteredUsers(String searchString) throws Exception 
+	public List getFilteredUsers(Integer offset, Integer limit,	String sortProperty, String direction, String searchString, boolean populateRolesAndGroups) throws Exception 
 	{
 		return getUsers();
 	}
@@ -836,5 +836,23 @@ public class WebServiceAuthorizationModule implements AuthorizationModule, Seria
     {
     	return (getAuthorizedInfoGlueGroup(groupName) == null ? false : true);
     }
+
+	@Override
+	public Integer getRoleCount(String searchString) throws Exception 
+	{
+		return getRoles().size();
+	}
+
+	@Override
+	public Integer getGroupCount(String searchString) throws Exception 
+	{
+		return getGroups().size();
+	}
+
+	@Override
+	public Integer getUserCount(String searchString) throws Exception 
+	{
+		return getUsers().size();
+	}
 
 }

@@ -286,4 +286,15 @@ public class SmallContentImpl extends ContentImpl
 	{
 		return this.valueObject.getParentContentId();
 	}
+	
+    public Boolean getIsDeleted()
+    {
+    	return this.valueObject.getIsDeleted();
+	}
+    
+    public void setIsDeleted(Boolean isDeleted)
+	{
+    	this.valueObject.setIsDeleted(isDeleted);
+	}
+
 }        

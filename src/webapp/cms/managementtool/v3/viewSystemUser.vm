@@ -75,6 +75,10 @@
 	#editTextFieldCSS("SystemUser.firstName" "firstName" "$!firstName" "51" true, "$readonly")
 	#editTextFieldCSS("SystemUser.lastName" "lastName" "$!lastName" "51" true "$readonly")
 	#editTextFieldCSS("SystemUser.email" "email" $!email "51" true "$readonly")
+	
+	#editTextFieldCSS("SystemUser.source" "source" $source "51" true "$readonly")
+	<p>#yesNoDropDown("SystemUser.isActive" "isActive" $isActive)</p>
+	
 	<br/>
 	<a href="UpdateSystemUser!changePasswordV3.action?userName=$formatter.encodeURI($userName)">Send me a new password</a>
 		

@@ -525,13 +525,15 @@ Rights saved...
 		<table width="100%" bgcolor="white" cellpadding="0" cellspacing="0" border="0">
 		<tr class="darkgreen">
 			<td class="smalllabel">&nbsp;</td>
-			<td class="smalllabel" width="90%">Group</td>
+			<td class="smalllabel" width="60%">Group</td>
+			<td class="smalllabel">Source</td>
+			<td class="smalllabel">Type</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
 		</tr>
 		
 		#foreach($group in $groupList)
@@ -559,13 +561,15 @@ Rights saved...
 		<tr>
 			  	<td><input type="checkbox" id="${interceptionPointVO.id}_${group.name}_hasAccess" name="groupName" value="${group.name}" $selected></td>
 		  	<td>$group.displayName</td>
+		  	<td>$group.source</td>
+		  	<td>$group.groupType</td>
 		</tr>
 		#end
 		<tr>
-		  	<td colspan="2">&nbsp;</td>
+		  	<td colspan="4">&nbsp;</td>
 		</tr>
 		<tr>
-		  	<td colspan="2">
+		  	<td colspan="4">
 		  	<a href="javascript:confirmGroupSave(document.groups${accessRightId}Form, document.groups${accessRightId}Form.groupName, '$interceptionPointVO.name');"><img src="$ui.getString("images.managementtool.buttons.save")" width="50" height="25" border="0"></a>
 		  	<img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" onclick="hideDiv('groups$accessRightId');">
 		  	</td>

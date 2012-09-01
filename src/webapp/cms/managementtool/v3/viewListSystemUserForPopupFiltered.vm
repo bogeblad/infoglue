@@ -1,3 +1,4 @@
+#if($format != "compact")
 {
 	"sEcho": $sEcho, 
 	"iTotalRecords": $totalRecords, 
@@ -8,3 +9,15 @@
 		#end
 	] 
 }
+#else
+{
+	"sEcho": $sEcho, 
+	"iTotalRecords": $totalRecords, 
+	"iTotalDisplayRecords": $totalDisplayRecords, 
+	"users": [ 
+		#foreach($principal in $infogluePrincipals)
+		#if($velocityCount > 1),#end{"userName": "$principal.name", "name": "$principal.firstName $principal.lastName"}
+		#end
+	] 
+}
+#end

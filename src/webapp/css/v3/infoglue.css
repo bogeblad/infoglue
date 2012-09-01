@@ -656,6 +656,13 @@ p.error {
 span.error {
 	color: red;
 }
+p.errorNotice {
+	color: red;
+	font-weight: bold;
+	padding-left: 20px;
+	background: url("../../images/v3/denyPublicationIcon.png") no-repeat 0px 0px;
+	line-height: 20px;
+}
 
 /* MY General button classes */
 .yui-skin-sam .yui-button {

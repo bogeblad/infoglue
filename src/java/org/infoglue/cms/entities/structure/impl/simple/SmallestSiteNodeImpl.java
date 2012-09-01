@@ -129,6 +129,16 @@ public class SmallestSiteNodeImpl extends SiteNodeImpl
         this.valueObject.setMetaInfoContentId(metaInfoContentId);
     }
 
+    public Integer getRepositoryId()
+    {
+        return this.valueObject.getRepositoryId();
+    }
+    
+    public void setRepositoryId(Integer repositoryId)
+    {
+        this.valueObject.setRepositoryId(repositoryId);
+    }
+
     public Integer getSiteNodeTypeDefinitionId()
     {
         return this.valueObject.getSiteNodeTypeDefinitionId();
@@ -179,7 +189,7 @@ public class SmallestSiteNodeImpl extends SiteNodeImpl
         this.valueObject.setIsHidden(isHidden);
     }
 
-	public void setParentContentId(Integer parentSiteNodeId)
+	public void setParentSiteNodeId(Integer parentSiteNodeId)
 	{
 		this.valueObject.setParentSiteNodeId(parentSiteNodeId);
 	}

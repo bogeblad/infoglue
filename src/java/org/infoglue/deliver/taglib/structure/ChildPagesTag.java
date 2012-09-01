@@ -25,10 +25,16 @@ package org.infoglue.deliver.taglib.structure;
 
 import javax.servlet.jsp.JspException;
 
+import org.apache.log4j.Logger;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
-public class ChildPagesTag extends ComponentLogicTag {
+public class ChildPagesTag extends ComponentLogicTag 
+{
 	private static final long serialVersionUID = 4050206323348354355L;
+
+    public final static Logger logger = Logger.getLogger(ChildPagesTag.class.getName());
 
 	private Integer siteNodeId;
 	private String propertyName;
@@ -41,13 +47,23 @@ public class ChildPagesTag extends ComponentLogicTag {
 		
 	public int doEndTag() throws JspException
     {
+		Timer t = new Timer();
+		
 	    if(this.siteNodeId != null)
+	    {
 	        setResultAttribute(this.getController().getChildPages(this.siteNodeId, this.escapeHTML, this.hideUnauthorizedPages, this.includeHidden));
+		    //if(logger.isInfoEnabled())
+		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 1 tag", t.getElapsedTimeNanos() / 1000);	    	
+	    }
         else if(this.propertyName != null)
+        {
             setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, this.includeHidden, useRepositoryInheritance, useStructureInheritance));
+		    //if(logger.isInfoEnabled())
+		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 2 tag", t.getElapsedTimeNanos() / 1000);
+        }
         else
             throw new JspException("You must state either propertyName or siteNodeId");
-	    
+
 	    this.siteNodeId = null;
 	    this.propertyName = null;
 	    this.useInheritance = true;

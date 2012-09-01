@@ -23,8 +23,6 @@
 
 package org.infoglue.cms.entities.management;
 
-import java.util.Collection;
-
 import org.infoglue.cms.entities.kernel.IBaseEntity;
 import org.infoglue.cms.exception.ConstraintException;
 
@@ -44,8 +42,15 @@ public interface Role extends IBaseEntity
 
     public void setDescription(String description) throws ConstraintException;
     
-    public Collection getSystemUsers();
+    public String getSource();
     
-    public void setSystemUsers(java.util.Collection systemUsers);
-        
+    public void setSource(String source);
+
+    public Boolean getIsActive();
+    
+    public void setIsActive(Boolean isActive);
+
+    public java.util.Date getModifiedDateTime();
+    
+    public void setModifiedDateTime(java.util.Date modifiedDateTime);        
 }

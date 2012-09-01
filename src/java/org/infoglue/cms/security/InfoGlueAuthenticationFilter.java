@@ -60,6 +60,7 @@ import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.deliver.applications.filters.URIMatcher;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
+import org.infoglue.deliver.util.HttpUtilities;
 
 /**
  * This filter protects actions withing InfoGlue from access without authentication. 
@@ -176,7 +177,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 				logger.info("URI: + " + URI);
 				logger.info("URL: + " + URL);
 			}
-	
+			
 			String requestURI = URLDecoder.decode(getContextRelativeURI(httpServletRequest), "UTF-8");
 			if(URI == null)
 				logger.error("URI was null - requestURI:" + requestURI);
@@ -433,6 +434,14 @@ public class InfoGlueAuthenticationFilter implements Filter
 				
 				NotificationMessage notificationMessage = new NotificationMessage("Login success:", "Authentication", logUserName, NotificationMessage.AUTHENTICATION_SUCCESS, "" + authenticatedUserName, "name");
 				TransactionHistoryController.getController().create(notificationMessage);
+				
+				logger.info("URI:" + httpServletRequest.getRequestURI() + ":" + httpServletRequest.getParameter("ticket"));
+				if(httpServletRequest.getMethod().equalsIgnoreCase("get") && httpServletRequest.getParameter("ticket") != null && httpServletRequest.getParameter("ticket").length() > 0)
+				{
+					String remainingQueryString = HttpUtilities.removeParameter(httpServletRequest.getQueryString(), "ticket");
+					httpServletResponse.sendRedirect(URI + (remainingQueryString != null && !remainingQueryString.equals("") ? "?" + remainingQueryString : ""));
+					return;
+				}
 
 			    if(successLoginBaseUrl != null && !URL.startsWith(successLoginBaseUrl))
 			    {

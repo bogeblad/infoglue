@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+	<title>Delivery engine - ongoing publications</title>
+	
+	<style>
+	<!--
+		table 
+		{
+			width : 900px;
+			margin-right: auto;
+			margin-left: auto;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+		.header 
+		{
+			font-family : Tahoma, Arial;
+			font-size 	: 14pt;
+			font-weight : bold;
+		}
+		.label
+		{
+			font-family		 : Tahoma, Arial;
+			font-size		 : 8pt;
+			font-weight 	 : bold;
+			background-color : #CCCCCC;
+		}
+		.labelsub
+		{
+			font-family		 : Tahoma, Arial;
+			font-size		 : 8pt;
+			font-weight 	 : bold;
+			background-color : #FFFFFF;
+		}
+		.text 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+		}
+		.texttrue 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+		}
+		.textfalse 
+		{
+			font-family	:Tahoma, Arial;
+			font-size	:8pt;
+			color  		:red;
+		}
+		.fullymarginalized 
+		{
+			margin-left	: 50px;
+			margin-right: 50px;
+			margin-top	: 10%;
+		}
+
+		
+	-->
+	</style>
+
+</head>
+
+<body>
+
+<table cellpadding="4" cellspacing="0">
+  <tr>
+    <td colspan="4" class="header">Ongoing publications ($serverName)</td>
+  </tr>
+  <tr>
+    <td colspan="4" class="text">&nbsp;</td>
+  </tr>
+  <tr class="label">
+    <td>Publication timestamp</td>
+    <td>Received timestamp</td>
+    <td>Username</td>
+    <td>Summary name (if content or page)</td>
+    <td>Entity Type</td>
+    <td>Entity ID</td>
+  </tr>
+  #foreach($bean in $this.ongoingPublications)
+  <tr>
+    <td class="text">$formatter.formatDate($bean.timestamp,"yyyy-MM-dd HH:mm:ss")</td>
+    <td class="text">$formatter.formatDate($bean.receivedTimestamp,"yyyy-MM-dd HH:mm:ss")</td>
+    <td class="text">$bean.getUserName()</td>
+    <td class="text">$bean.getObjectName()</td>
+    <td class="text">$bean.getClassName()</td>
+    <td class="text">$bean.getObjectId()</td>
+  </tr>
+  #end
+  #if($this.ongoingPublications.size() == 0)
+  <tr>
+    <td class="text" colspan="4">No ongoing publications at the moment</td>
+  </tr>
+  #end
+</table>
+
+</body>
+
+</html>

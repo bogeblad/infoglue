@@ -725,3 +725,9 @@ li.normalitem {
 	white-space: nowrap;
 	cursor: move;
 	}
+.okstatus {
+	background:url(../images/ok_icon.gif) no-repeat left center; background-position: 4px 2px;
+}
+.nokstatus {
+	background:url(../images/v3/cross.png) no-repeat left center; background-position: 4px 2px;
+}

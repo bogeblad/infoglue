@@ -47,6 +47,7 @@ import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * @author Mattias Bogeblad
@@ -232,14 +233,14 @@ public class EventController extends BaseController
 	
 	public static List getPublicationEventVOListForRepository(Integer repositoryId) throws SystemException, Bug
 	{
-		return getPublicationEventVOListForRepository(repositoryId, null, null);
+		return getPublicationEventVOListForRepository(repositoryId, null, null, false);
 	}
 	
 	/**
 	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
 	 */
 	
-	public static List getPublicationEventVOListForRepository(Integer repositoryId, InfoGluePrincipal principal, String filter) throws SystemException, Bug
+	public static List getPublicationEventVOListForRepository(Integer repositoryId, InfoGluePrincipal principal, String filter, boolean validate) throws SystemException, Bug
 	{
 		List events = new ArrayList();
 		boolean hasBrokenItems = false;
@@ -255,6 +256,7 @@ public class EventController extends BaseController
         	oql.bind(EventVO.UNPUBLISH_LATEST);
         	oql.bind(repositoryId);
         	
+        	//logger.info("Fetching entity in read/write mode" + repositoryId);
         	QueryResults results = oql.execute(Database.READONLY);
         	
 			while (results.hasMore()) 
@@ -265,166 +267,170 @@ public class EventController extends BaseController
             	//logger.warn("entityId:" + event.getEntityId());
 
             	boolean isValid = true;
-            	try
+            	
+            	if(validate)
             	{
-	            	if(event.getEntityClass().equalsIgnoreCase(ContentVersion.class.getName()))
+	            	try
 	            	{
-	            		//ContentVersion contentVersion = null;
-	            		ContentVersionVO contentVersionVO = null;
-	            		ContentVO contentVO = null;
-	            		try
-	            		{
-	            			contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(event.getEntityId(), db);
-	            			//contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(event.getEntityId(), db);
-	            			if(contentVersionVO != null && contentVersionVO.getContentId() != null)
-	            				contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId(), db);
-	            		}
-	            		catch(SystemException e)
-	            		{
-	            			hasBrokenItems = true;
-	            			throw e;
-	            		}
-	            		
-	            		if(contentVersionVO == null || contentVO == null)
-	    	            {
-							isValid = false;
-	            			hasBrokenItems = true;
-						}
-	            		else
-	            		{
-	            			if(principal != null && filter != null && filter.equalsIgnoreCase("groupBased"))
-		        		    {
-	            				String versionModifier = contentVersionVO.getVersionModifier();
-	            				if(versionModifier != null)
-	            				{
-	            					InfoGluePrincipal versionModifierPrincipal = UserControllerProxy.getController(db).getUser(versionModifier);
-	            					if(versionModifierPrincipal != null)
-	            					{
-	            						boolean hasGroup = false;
-	            						
-	            						List groups = versionModifierPrincipal.getGroups();
-	            						Iterator groupsIterator = groups.iterator();
-	            						while(groupsIterator.hasNext())
-	            						{
-	            							InfoGlueGroup group = (InfoGlueGroup)groupsIterator.next();
-	            							if(principal.getGroups().contains(group))
-	            								hasGroup = true;
-	            						}
-	            						
-	            						if(!hasGroup)
-	            							isValid = false;
-	            					}
-	            				}
-		        		    }
-		            		else if(principal != null && filter != null && filter.indexOf("groupNameBased_") > -1)
+		            	if(event.getEntityClass().equalsIgnoreCase(ContentVersion.class.getName()))
+		            	{
+		            		//ContentVersion contentVersion = null;
+		            		ContentVersionVO contentVersionVO = null;
+		            		ContentVO contentVO = null;
+		            		try
 		            		{
-	            				String versionModifier = contentVersionVO.getVersionModifier();
-	            				if(versionModifier != null)
-	            				{
-	            					InfoGluePrincipal versionModifierPrincipal = UserControllerProxy.getController(db).getUser(versionModifier);
-	            					if(versionModifierPrincipal != null)
-	            					{
-	            						boolean hasGroup = false;
-	            						String groupName = filter.substring(filter.indexOf("_") + 1);
-	            						
-	            						List groups = versionModifierPrincipal.getGroups();
-	            						Iterator groupsIterator = groups.iterator();
-	            						while(groupsIterator.hasNext())
-	            						{
-	            							InfoGlueGroup group = (InfoGlueGroup)groupsIterator.next();
-	            							if(groupName.equalsIgnoreCase(group.getName()))
-	            								hasGroup = true;
-	            						}
-	            						
-	            						if(!hasGroup)
-	            							isValid = false;
-	            					}
-	            				}	            			
+		            			contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(event.getEntityId(), db);
+		            			//contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(event.getEntityId(), db);
+		            			if(contentVersionVO != null && contentVersionVO.getContentId() != null)
+		            				contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId(), db);
 		            		}
-	            		}
-	            	}
-					else if(event.getEntityClass().equalsIgnoreCase(SiteNodeVersion.class.getName()))
-					{
-						SiteNodeVersionVO siteNodeVersion = null;
-						SiteNodeVO siteNode = null;
-						try
-	            		{
-							siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId(), db);
-							//siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithIdAsReadOnly(event.getEntityId(), db);
-							if(siteNodeVersion.getSiteNodeId() != null)
-								siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
-	            		}
-	            		catch(SystemException e)
-	            		{
-	            			hasBrokenItems = true;
-	            			throw e;
-	            		}
-
-						if(siteNodeVersion == null || siteNode == null)
-						{
-	            			hasBrokenItems = true;
-						    isValid = false;
-						}
-						else
-	            		{
-	            			if(principal != null && filter != null && filter.equalsIgnoreCase("groupBased"))
-		        		    {
-	            				String versionModifier = siteNodeVersion.getVersionModifier();
-	            				if(versionModifier != null)
-	            				{
-	            					InfoGluePrincipal versionModifierPrincipal = UserControllerProxy.getController(db).getUser(versionModifier);
-	            					if(versionModifierPrincipal != null)
-	            					{
-	            						boolean hasGroup = false;
-	            						
-	            						List groups = versionModifierPrincipal.getGroups();
-	            						Iterator groupsIterator = groups.iterator();
-	            						while(groupsIterator.hasNext())
-	            						{
-	            							InfoGlueGroup group = (InfoGlueGroup)groupsIterator.next();
-	            							if(principal.getGroups().contains(group))
-	            								hasGroup = true;
-	            						}
-	            						
-	            						if(!hasGroup)
-	            							isValid = false;
-	            					}
-	            				}
-							}
-		            		else if(principal != null && filter != null && filter.indexOf("groupNameBased_") > -1)
+		            		catch(SystemException e)
 		            		{
-	            				String versionModifier = siteNodeVersion.getVersionModifier();
-	            				if(versionModifier != null)
-	            				{
-	            					InfoGluePrincipal versionModifierPrincipal = UserControllerProxy.getController(db).getUser(versionModifier);
-	            					if(versionModifierPrincipal != null)
-	            					{
-	            						boolean hasGroup = false;
-	            						String groupName = filter.substring(filter.indexOf("_") + 1);
-	            						
-	            						List groups = versionModifierPrincipal.getGroups();
-	            						Iterator groupsIterator = groups.iterator();
-	            						while(groupsIterator.hasNext())
-	            						{
-	            							InfoGlueGroup group = (InfoGlueGroup)groupsIterator.next();
-	            							if(groupName.equalsIgnoreCase(group.getName()))
-	            								hasGroup = true;
-	            						}
-	            						
-	            						if(!hasGroup)
-	            							isValid = false;
-	            					}
-	            				}	            		
+		            			hasBrokenItems = true;
+		            			throw e;
+		            		}
+		            		
+		            		if(contentVersionVO == null || contentVO == null)
+		    	            {
+								isValid = false;
+		            			hasBrokenItems = true;
 							}
-	            		}
+		            		else
+		            		{
+		            			if(principal != null && filter != null && filter.equalsIgnoreCase("groupBased"))
+			        		    {
+		            				String versionModifier = contentVersionVO.getVersionModifier();
+		            				if(versionModifier != null)
+		            				{
+		            					InfoGluePrincipal versionModifierPrincipal = UserControllerProxy.getController(db).getUser(versionModifier);
+		            					if(versionModifierPrincipal != null)
+		            					{
+		            						boolean hasGroup = false;
+		            						
+		            						List groups = versionModifierPrincipal.getGroups();
+		            						Iterator groupsIterator = groups.iterator();
+		            						while(groupsIterator.hasNext())
+		            						{
+		            							InfoGlueGroup group = (InfoGlueGroup)groupsIterator.next();
+		            							if(principal.getGroups().contains(group))
+		            								hasGroup = true;
+		            						}
+		            						
+		            						if(!hasGroup)
+		            							isValid = false;
+		            					}
+		            				}
+			        		    }
+			            		else if(principal != null && filter != null && filter.indexOf("groupNameBased_") > -1)
+			            		{
+		            				String versionModifier = contentVersionVO.getVersionModifier();
+		            				if(versionModifier != null)
+		            				{
+		            					InfoGluePrincipal versionModifierPrincipal = UserControllerProxy.getController(db).getUser(versionModifier);
+		            					if(versionModifierPrincipal != null)
+		            					{
+		            						boolean hasGroup = false;
+		            						String groupName = filter.substring(filter.indexOf("_") + 1);
+		            						
+		            						List groups = versionModifierPrincipal.getGroups();
+		            						Iterator groupsIterator = groups.iterator();
+		            						while(groupsIterator.hasNext())
+		            						{
+		            							InfoGlueGroup group = (InfoGlueGroup)groupsIterator.next();
+		            							if(groupName.equalsIgnoreCase(group.getName()))
+		            								hasGroup = true;
+		            						}
+		            						
+		            						if(!hasGroup)
+		            							isValid = false;
+		            					}
+		            				}	            			
+			            		}
+		            		}
+		            	}
+						else if(event.getEntityClass().equalsIgnoreCase(SiteNodeVersion.class.getName()))
+						{
+							SiteNodeVersionVO siteNodeVersion = null;
+							SiteNodeVO siteNode = null;
+							try
+		            		{
+								siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId(), db);
+								//siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithIdAsReadOnly(event.getEntityId(), db);
+								if(siteNodeVersion.getSiteNodeId() != null)
+									siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
+		            		}
+		            		catch(SystemException e)
+		            		{
+		            			hasBrokenItems = true;
+		            			throw e;
+		            		}
+	
+							if(siteNodeVersion == null || siteNode == null)
+							{
+		            			hasBrokenItems = true;
+							    isValid = false;
+							}
+							else
+		            		{
+		            			if(principal != null && filter != null && filter.equalsIgnoreCase("groupBased"))
+			        		    {
+		            				String versionModifier = siteNodeVersion.getVersionModifier();
+		            				if(versionModifier != null)
+		            				{
+		            					InfoGluePrincipal versionModifierPrincipal = UserControllerProxy.getController(db).getUser(versionModifier);
+		            					if(versionModifierPrincipal != null)
+		            					{
+		            						boolean hasGroup = false;
+		            						
+		            						List groups = versionModifierPrincipal.getGroups();
+		            						Iterator groupsIterator = groups.iterator();
+		            						while(groupsIterator.hasNext())
+		            						{
+		            							InfoGlueGroup group = (InfoGlueGroup)groupsIterator.next();
+		            							if(principal.getGroups().contains(group))
+		            								hasGroup = true;
+		            						}
+		            						
+		            						if(!hasGroup)
+		            							isValid = false;
+		            					}
+		            				}
+								}
+			            		else if(principal != null && filter != null && filter.indexOf("groupNameBased_") > -1)
+			            		{
+		            				String versionModifier = siteNodeVersion.getVersionModifier();
+		            				if(versionModifier != null)
+		            				{
+		            					InfoGluePrincipal versionModifierPrincipal = UserControllerProxy.getController(db).getUser(versionModifier);
+		            					if(versionModifierPrincipal != null)
+		            					{
+		            						boolean hasGroup = false;
+		            						String groupName = filter.substring(filter.indexOf("_") + 1);
+		            						
+		            						List groups = versionModifierPrincipal.getGroups();
+		            						Iterator groupsIterator = groups.iterator();
+		            						while(groupsIterator.hasNext())
+		            						{
+		            							InfoGlueGroup group = (InfoGlueGroup)groupsIterator.next();
+		            							if(groupName.equalsIgnoreCase(group.getName()))
+		            								hasGroup = true;
+		            						}
+		            						
+		            						if(!hasGroup)
+		            							isValid = false;
+		            					}
+		            				}	            		
+								}
+		            		}
+						}
 					}
-				}
-				catch(Exception e)
-				{
-					isValid = false;
-        			hasBrokenItems = true;
-				}
-				
+					catch(Exception e)
+					{
+						isValid = false;
+	        			hasBrokenItems = true;
+					}
+            	}
+            	
 				if(isValid && !hasBrokenItems)
 	            	events.add(event.getValueObject());
             }
@@ -444,7 +450,7 @@ public class EventController extends BaseController
         if(hasBrokenItems)
         {
         	cleanPublicationEventVOListForRepository(repositoryId, principal, filter);
-        	events = getPublicationEventVOListForRepository(repositoryId, principal, filter);
+        	events = getPublicationEventVOListForRepository(repositoryId, principal, filter, validate);
         }
 
         return events;	

@@ -35,6 +35,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionCont
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.extensions.ExtensionLoader;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.LiveInstanceMonitor;
 
 import com.opensymphony.oscache.base.OSCacheUtility;
 
@@ -108,7 +109,12 @@ public final class CmsContextListener implements ServletContextListener
 				if(cacheController.getExpireCacheAutomatically())
 					cacheController.start();
 			}
-							
+			
+			CacheController.preCacheCMSEntities();
+
+			System.out.println("Starting deliver instance monitoring");
+			LiveInstanceMonitor.getInstance();
+			
 			System.out.println("Start introspection");
 			ExtensionLoader el = new ExtensionLoader();
 			el.startExtensions();

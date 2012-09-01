@@ -23,7 +23,7 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -45,19 +45,19 @@ public class ViewRoleAction extends InfoGlueAbstractAction
 	private String roleName;
 	private boolean supportsUpdate = true;
 	private InfoGlueRole infoGlueRole;
-	private List infoGluePrincipals = new ArrayList();
-	private List assignedInfoGluePrincipals;
 	private List contentTypeDefinitionVOList;
 	private List assignedContentTypeDefinitionVOList;    
 	
+	/**
+	 * This method initializes the view by populating all the entities. 
+	 * It fetches the role itself, the type of authorization update support and all the assigned principals.
+	 * It then populates a list of unassigned principals.
+	 */
+
     protected void initialize(String roleName) throws Exception
     {
-		//this.supportsUpdate				= RoleControllerProxy.getController().getSupportUpdate();
 		this.infoGlueRole				= RoleControllerProxy.getController().getRole(roleName);
 		this.supportsUpdate				= this.infoGlueRole.getAutorizationModule().getSupportUpdate();
-		this.assignedInfoGluePrincipals	= this.infoGlueRole.getAutorizationModule().getRoleUsers(roleName);
-		if(this.supportsUpdate) //Only fetch if the user can edit.
-			this.infoGluePrincipals		= this.infoGlueRole.getAutorizationModule().getUsers();
 			
 		this.contentTypeDefinitionVOList 			= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_ROLE_PROPERTIES);
 		this.assignedContentTypeDefinitionVOList 	= RolePropertiesController.getController().getContentTypeDefinitionVOList(roleName);  
@@ -121,18 +121,23 @@ public class ViewRoleAction extends InfoGlueAbstractAction
     {
         return this.infoGlueRole.getDescription();
     }
-        
-  	public List getAllInfoGluePrincipals() throws Exception
-	{
-		return this.infoGluePrincipals;
-	}	
-	
-	public List getAssignedInfoGluePrincipals() throws Exception
-	{
-		return this.assignedInfoGluePrincipals;
-	}
 
-	public List getAssignedContentTypeDefinitionVOList()
+    public String getSource()
+    {
+        return this.infoGlueRole.getSource();
+    }
+
+    public Boolean getIsActive()
+    {
+        return this.infoGlueRole.getIsActive();
+    }
+
+    public Date getModifiedDateTime()
+    {
+        return infoGlueRole.getModifiedDateTime();
+    }
+
+    public List getAssignedContentTypeDefinitionVOList()
 	{
 		return assignedContentTypeDefinitionVOList;
 	}

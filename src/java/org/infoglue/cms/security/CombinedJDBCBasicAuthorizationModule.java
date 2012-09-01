@@ -42,7 +42,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
  * This authorization module works firstly against an JDBC source and second against the ordinary infoglue database.
  */
 
-public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule, Serializable
+public class CombinedJDBCBasicAuthorizationModule extends BasicAuthorizationModule implements AuthorizationModule, Serializable
 {
     private final static Logger logger = Logger.getLogger(CombinedJDBCBasicAuthorizationModule.class.getName());
 
@@ -157,33 +157,6 @@ public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule
 	}
 
 	
-	/**
-	 * This method gets a users roles
-	 */
-
-	public List authorizeUser(String userName) throws Exception
-	{
-		List roles = new ArrayList();
-		
-		try
-		{
-			roles.addAll(getMainAuthorizationModule().authorizeUser(userName));
-		}		
-		catch(Exception e)
-		{
-		}
-
-		try
-		{
-			roles.addAll(getFallbackAuthorizationModule().authorizeUser(userName));
-		}		
-		catch(Exception e)
-		{
-		}
-
-		return roles;
-	}
-
 	
 	/**
 	 * This method gets a list of roles
@@ -266,13 +239,13 @@ public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule
 		return users;
 	}
 	
-	public List getFilteredUsers(String searchString) throws Exception 
+	public List getFilteredUsers(Integer offset, Integer limit,	String sortProperty, String direction, String searchString, boolean populateRolesAndGroups) throws Exception 
 	{
 		List users = new ArrayList();
 		
 		try
 		{
-			users.addAll(getMainAuthorizationModule().getFilteredUsers(searchString));
+			users.addAll(getMainAuthorizationModule().getFilteredUsers(offset, limit, sortProperty, direction, searchString, populateRolesAndGroups));
 		}		
 		catch(Exception e)
 		{
@@ -280,7 +253,7 @@ public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule
 
 		try
 		{
-			users.addAll(getFallbackAuthorizationModule().getFilteredUsers(searchString));
+			users.addAll(getFallbackAuthorizationModule().getFilteredUsers(offset, limit, sortProperty, direction, searchString, populateRolesAndGroups));
 		}		
 		catch(Exception e)
 		{
@@ -514,6 +487,5 @@ public class CombinedJDBCBasicAuthorizationModule implements AuthorizationModule
     {
         return this.transactionObject;
     }
-
 
 }

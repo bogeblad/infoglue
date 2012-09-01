@@ -1,60 +1,112 @@
-<html>
-<head>
-	<link rel="stylesheet" type="text/css" href="css/cms.css" />
-	<script language="JavaScript" src="script/listview.js"></script>
-	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
-	<META HTTP-EQUIV="expires" CONTENT="-1" />
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<style>
-	<!--
-		.marginalized {
-			border: solid 0px red;
-			padding: 5px 5px 5px 5px;
-		}
-	-->
+#define($headerMarkup)
+
+	<style type="text/css">
+		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
 	</style>
-</head>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
 
-<body class="marginalized" style="background-color: WHITE;">
+	<script type="text/javascript">
+	<!-- 		
+		$(document).ready(function(){
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null, null ]')
+			#initDataTableImpl("dataTable" $extraParameter)
+			#initDataTableImpl("dataTable2" $extraParameter)
+		});
+	-->
+	</script>
+#end
 
-	<div style="color: 000000; font-family: verdana, arial, sans-serif; font-size: 8pt;">
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.repositoryList.header" "" "" false true $!disableCloseButton $headerMarkup true "")
+
+	<div id="menutoolbar">
+		<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 10px; padding-top: 8px;"></div>
+		<div id="menutoolbarRight" style="float: right;">
+			<a class="igToolbarButton igToolbarHeaderButton" href="#" onclick="if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();" id="exitButton" name="exitButton" title="Close dialog/window"><span class="igToolbarButtonOuterSpan igToolbarHeaderButton"><span class="close" title="Close dialog/window">Close</span></span></a>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
 	
-		#set( $row = "<h4>Items in publication</h4>")
-		#foreach ($publicationEvent in $publicationDetailVOList)
-		
-			#if($publicationEvent.entityClass.indexOf("ContentVersion") > -1)
-				#if($publicationEvent.typeId == 3)
-					#set($icon = "<img src='images/tree/unpublishContentItem.gif' border=0>")
-				#else
-					#set($icon = "<img src='images/tree/contentItem.gif' border=0>")
-				#end
-			#else
-				#if($publicationEvent.typeId == 3)
-					#set($icon = "<img src='images/tree/unpublishSiteNodeItem.gif' border=0>")
-				#else
-					#set($icon = "<img src='images/tree/siteNodeItem.gif' border=0>")
-				#end
-			#end
-		
-			#if($velocityCount != $publicationDetailVOList.size() || $publicationDetailVOList.size() > 0)
-				#set( $tree = "<img src='images/tree/space05.gif' alt=''><img src='images/tree/space0.gif'><img src='images/tree/space3.gif' alt=''>  $icon")
-				#set($newLine = "<br/><img src='images/tree/space05.gif'><img src='images/tree/space0.gif' alt=''><img src='images/tree/space1.gif' alt=''> <img src='images/tree/space0.gif' alt=''>")
-			#else
-				#set( $tree = "<img src='images/tree/space05.gif' alt=''><img src='images/tree/space0.gif'><img src='images/tree/space2.gif' alt=''> $icon")
-				#set($newLine = "<br/><img src='images/tree/space05.gif'><img src='images/tree/space0.gif' alt=''><img src='images/tree/space0.gif' alt=''> <img src='images/tree/space0.gif' alt=''>")
-			#end
-		
-			#set($modifiedDate = $formatter.formatDate($publicationEvent.creationDateTime, "yyyy-MM-dd HH:mm"))
-			#set( $row = "$row<nobr>$tree $publicationEvent.name ($publicationEvent.description) $newLine <font color=669999><small>modified: $modifiedDate </small></font></nobr> <br>")
-			
-		#end
-		$row
+	<div>
+		<h3>Items in publication</h3>
+	
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Modified date</th>
+				</tr>
+			</thead>
+			<tbody>
 
-		<br>
-		<br>
-		<a href="#" onclick="if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();"><img border="0" src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25"></a>
+				#foreach ($publicationEvent in $publicationDetailVOList)
+				
+					#if($publicationEvent.entityClass.indexOf("ContentVersion") > -1)
+						#if($publicationEvent.typeId == 3)
+							#set($icon = "<img src='images/tree/unpublishContentItem.gif' border=0>")
+						#else
+							#set($icon = "<img src='images/tree/contentItem.gif' border=0>")
+						#end
+					#else
+						#if($publicationEvent.typeId == 3)
+							#set($icon = "<img src='images/tree/unpublishSiteNodeItem.gif' border=0>")
+						#else
+							#set($icon = "<img src='images/tree/siteNodeItem.gif' border=0>")
+						#end
+					#end
+						
+					<tr>
+						<td>$publicationEvent.name</td>
+						<td>
+							$publicationEvent.description
+						</td>
+						<td>$formatter.formatDate($publicationEvent.creationDateTime, "yyyy-MM-dd HH:mm:ss")</td>
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
 
+		<h3>Publication status</h3>
+
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable2">
+			<thead>
+				<tr>
+					<th>Server</th>
+					<th>Status</th>
+					<th>Information</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				#foreach ($status in $publicationStatusList)
+				
+					<tr>
+						#foreach ($stat in $status)
+						<td>$stat</td>
+						#end	
+					</tr>
+				#end
+				
+			</tbody>
+		</table>
 	</div>
 
-</body>
-</html>
+	<div id="footertoolbar" onfocus="this.blur();">
+		<div style="float:left; margin-left: 10px;">
+			<input type="button" class="cancel" id="footerButton2" name="footerButton2" title="Cancel" value="Cancel">
+			<script type="text/javascript">
+			<!--
+			$("#footerButton2").click(function (){
+				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
+			});
+			-->
+			</script>
+		</div>
+	</div>
+					
+#endLightCommonToolV3()

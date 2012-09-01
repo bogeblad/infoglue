@@ -93,6 +93,10 @@
 				<td>#editField("SystemUser.email" "email" $!email "51")</td><td>&nbsp;</td>
 			</tr>
 			<tr>
+				<td>#editField("SystemUser.source" "source" $!source "51")</td>
+				<td>#yesNoDropDown("SystemUser.isActive" "isActive" $isActive)</td>
+			</tr>
+			<tr>
 				<td>&nbsp;</td><td>&nbsp;</td>
 			</tr>
 		

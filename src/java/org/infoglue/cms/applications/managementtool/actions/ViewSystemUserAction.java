@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.managementtool.actions;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
@@ -182,6 +183,21 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 		return infoGluePrincipal.getEmail();
 	}
 	
+    public String getSource()
+    {
+        return infoGluePrincipal.getSource();
+    }
+
+    public Boolean getIsActive()
+    {
+        return infoGluePrincipal.getIsActive();
+    }
+
+    public Date getModifiedDateTime()
+    {
+        return infoGluePrincipal.getModifiedDateTime();
+    }
+
 	public boolean getSupportsUpdate()
 	{
 		return this.supportsUpdate;

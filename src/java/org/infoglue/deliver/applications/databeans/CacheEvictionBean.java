@@ -23,8 +23,13 @@
 
 package org.infoglue.deliver.applications.databeans;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.infoglue.deliver.util.HttpHelper;
+
 /**
- * This class is meant to store information about a cache update.
+ * This class contains information about a cache update.
  * 
  * @author mattias
  */
@@ -45,19 +50,65 @@ public class CacheEvictionBean
 	public final static String DENIED_PUBLISHING_TEXT 	= "publishing denied";
 	public final static String UNPUBLISHING_TEXT   		= "unpublishing";
 
+	private long receivedTimestamp = System.currentTimeMillis();
+	private long processedTimestamp = -1;
+
+	private Integer publicationId = -1;
+	private String userName = "Unknown";
+	private long timestamp = System.currentTimeMillis() - 2000;
 	private String className = null;
 	private String objectId = null;
 	private String objectName = null;
 	private String typeId = null;
 
-	public CacheEvictionBean(String className, String typeId, String objectId, String objectName)
+	public CacheEvictionBean(Integer publicationId, String userName, String timestamp, String className, String typeId, String objectId, String objectName)
 	{
+		this.publicationId = publicationId;
+		if(userName != null)
+			this.userName = userName;
+		if(timestamp != null)
+			this.timestamp = Long.parseLong(timestamp);
 		this.className = className;
 		this.typeId = typeId;
 		this.objectId = objectId;
 		this.objectName = objectName;	
 	}
+
+	public CacheEvictionBean(Integer publicationId, String userName, String timestamp, String className, String typeId, String objectId, String objectName, String receivedTimestamp, String processedTimestamp)
+	{
+		this.publicationId = publicationId;
+		if(userName != null)
+			this.userName = userName;
+		if(timestamp != null)
+			this.timestamp = Long.parseLong(timestamp);
+		this.className = className;
+		this.typeId = typeId;
+		this.objectId = objectId;
+		this.objectName = objectName;	
+		this.receivedTimestamp = Long.parseLong(receivedTimestamp);
+		this.processedTimestamp = Long.parseLong(processedTimestamp);
+	}
+
+	public Integer getPublicationId()
+    {
+        return publicationId;
+    }
 	
+	public String getUserName()
+    {
+        return userName;
+    }
+	
+	public long getTimestamp()
+    {
+        return timestamp;
+    }
+
+	public long getReceivedTimestamp()
+    {
+        return receivedTimestamp;
+    }
+
     public String getClassName()
     {
         return className;
@@ -78,6 +129,16 @@ public class CacheEvictionBean
         return typeId;
     }
 
+	public void setProcessed()
+	{
+		this.processedTimestamp = System.currentTimeMillis();
+	}
+
+	public long getProcessedTimestamp()
+    {
+        return processedTimestamp;
+    }
+
 	public static String getTransactionTypeName(Integer transactionType)
 	{
 		switch (transactionType.intValue())
@@ -94,5 +155,37 @@ public class CacheEvictionBean
 				return DENIED_PUBLISHING_TEXT;
 		}
 		return "unknown - map " + transactionType + " to correct text";
+	}
+
+	public static CacheEvictionBean getCacheEvictionBean(Map<String,String> map)
+	{
+		if(map.get("publicationId") == null)
+			return null;
+		
+		CacheEvictionBean newBean = new CacheEvictionBean(new Integer(map.get("publicationId")),map.get("userName"), map.get("timestamp"),map.get("className"), map.get("typeId"), map.get("objectId"), map.get("objectName"), map.get("receivedTimestamp"), map.get("processedTimestamp"));
+		
+		return newBean;
+	}
+
+	public String toQueryString() throws Exception
+	{
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("publicationId", "" + this.getPublicationId());
+		map.put("userName", this.getUserName());
+		map.put("timestamp", "" + this.getTimestamp());
+		map.put("className", this.getClassName());
+		map.put("objectId", this.getObjectId());
+		map.put("objectName", this.getObjectName());
+		map.put("typeId", this.getTypeId());
+		map.put("receivedTimestamp", "" + this.getReceivedTimestamp());
+		map.put("processedTimestamp", "" + this.getProcessedTimestamp());
+		String status = "Received";
+		if(getProcessedTimestamp() > 0)
+			status = "Processed";
+		
+		map.put("status", "" + status);
+		
+		HttpHelper helper = new HttpHelper();
+		return helper.toEncodedString(map, "utf-8");
 	}
 }

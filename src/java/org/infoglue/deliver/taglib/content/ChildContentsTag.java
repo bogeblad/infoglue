@@ -23,17 +23,22 @@
 
 package org.infoglue.deliver.taglib.content;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.jsp.JspException;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.deliver.taglib.component.ComponentLogicTag;
 
 public class ChildContentsTag extends ComponentLogicTag 
 {
 	private static final long serialVersionUID = 4050206323348354355L;
+	private final static Logger logger = Logger.getLogger(ChildContentsTag.class);
 
 	private Integer contentId;
 	private String propertyName;
@@ -65,12 +70,22 @@ public class ChildContentsTag extends ComponentLogicTag
 	    
 	    if(contents != null && contents.size() > 0 && matchingName != null)
 	    {
-	    	Iterator contentsIterator = contents.iterator();
-	    	while(contentsIterator.hasNext())
+	    	try
 	    	{
-	    		ContentVO contentVO = (ContentVO)contentsIterator.next();
-	    		if(!contentVO.getName().matches(matchingName))
-	    			contentsIterator.remove();
+		    	List<ContentVO> matchingContents = new ArrayList<ContentVO>();
+		    	Pattern p = Pattern.compile(matchingName);
+		    	Iterator contentsIterator = contents.iterator();
+		    	while(contentsIterator.hasNext())
+		    	{
+		    		ContentVO contentVO = (ContentVO)contentsIterator.next();
+		    		if(p.matcher(contentVO.getName()).matches())
+		    			matchingContents.add(contentVO);
+		    	}
+		    	contents = matchingContents;
+	    	}
+	    	catch (PatternSyntaxException ex)
+	    	{
+	    		logger.info("The given matchingName '" + this.matchingName + "' was not a valid regex-pattern. Message: " + ex.getMessage());
 	    	}
 	    }
 	    

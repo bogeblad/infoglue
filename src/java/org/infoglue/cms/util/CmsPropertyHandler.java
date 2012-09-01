@@ -75,6 +75,7 @@ public class CmsPropertyHandler
 	private static PropertySet propertySet			= null; 
 
 	private static String serverNodeName			= null;
+	private static String digitalAssetPortletRegistryId = null;
 	
 	private static String globalSettingsServerNodeId= "-1";
 	private static String localSettingsServerNodeId	= null;
@@ -102,6 +103,10 @@ public class CmsPropertyHandler
 	private static Boolean useHashCodeInCaches 				= null;
 	private static Boolean useSynchronizationOnCaches 		= null;
 	   
+	public static String getDigitalAssetPortletRegistryId()
+	{
+		 return digitalAssetPortletRegistryId;
+	}
 	public static void setApplicationName(String theApplicationName)
 	{
 		CmsPropertyHandler.applicationName = theApplicationName;
@@ -169,7 +174,6 @@ public class CmsPropertyHandler
 	    	timer.setActive(false);
 	    	
 			System.out.println("Initializing properties from file.....");
-			//Thread.dumpStack();
 			
 			cachedProperties = new Properties();
 			if(propertyFile != null)
@@ -177,7 +181,9 @@ public class CmsPropertyHandler
 			else
 				cachedProperties.load(CmsPropertyHandler.class.getClassLoader().getResource("/" + applicationName + ".properties").openStream());
 			    //cachedProperties.load(CmsPropertyHandler.class.getResourceAsStream("/" + applicationName + ".properties"));
-			
+
+			digitalAssetPortletRegistryId = cachedProperties.getProperty("digitalAssetPortletRegistryId");
+
 			if(logger.isInfoEnabled())
 				cachedProperties.list(System.out);
 			
@@ -198,8 +204,6 @@ public class CmsPropertyHandler
 		    try
 		    {
 		    	propertySet = PropertySetManager.getInstance("jdbc", args);
-		    	//logger.info("propertySet:" + propertySet);
-		    	//logger.info("propertySet.allowedAdminIP:" + propertySet.getString("allowedAdminIP"));
 		    	if(logger.isInfoEnabled())
 		    		logger.info("propertySet: " + propertySet);
 		    }
@@ -830,7 +834,7 @@ public class CmsPropertyHandler
 		if(webServicesBaseUrl != null && !webServicesBaseUrl.startsWith("http"))
 		{
 			webServicesBaseUrl = "" + defaultScheme + "://127.0.0.1:" + defaultPort + "" + webServicesBaseUrl;
-			System.out.println("Rewriting webServicesBaseUrl - now:" + webServicesBaseUrl);
+			logger.warn("Rewriting webServicesBaseUrl - now:" + webServicesBaseUrl);
 		}
 		return webServicesBaseUrl;
 	}
@@ -892,8 +896,7 @@ public class CmsPropertyHandler
 	
 	public static String getPreviewDeliveryUrl()
 	{
-		String previewDeliveryUrl = getServerNodeProperty("previewDeliveryUrl", true);
-		return previewDeliveryUrl;
+	    return getServerNodeProperty("previewDeliveryUrl", true);
 	}
 
 	public static String getStagingDeliveryUrl()
@@ -1018,7 +1021,7 @@ public class CmsPropertyHandler
 
 	public static String getInternalSearchEngine()
 	{
-		return getServerNodeProperty("internalSearchEngine", true, "sqlSearch");
+		return getServerNodeProperty("internalSearchEngine", true, "lucene");
 	}
 
 	public static String getMaxRows()
@@ -1394,8 +1397,6 @@ public class CmsPropertyHandler
 	{
 		if(enableNiceURI == null || skipHardCache)
 		{
-			//if(!skipHardCache)
-			//	System.out.println("New value read and not because it was a recache");
 			String value = null;
 			if(!getOperatingMode().equals("3"))
 				value = getServerNodeProperty("enableNiceURIInWorking", true, "true");
@@ -1755,6 +1756,11 @@ public class CmsPropertyHandler
         return getServerNodeProperty("encodeCasServiceUrl", true, "true");
 	}
 
+	public static String getAllowOverrideModifyer()
+	{
+	    return getServerNodeProperty("allowOverrideModifyer", true, "true");
+	}
+
 	public static String getSetDerivedLastModifiedInLive()
 	{
 		return getSetDerivedLastModifiedInLive(false);
@@ -1857,7 +1863,6 @@ public class CmsPropertyHandler
 			catch(Exception e)
 			{
 			    logger.error("Error loading properties from string. Reason:" + e.getMessage());
-				//e.printStackTrace();
 			}
 		}
 	    else

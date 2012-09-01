@@ -56,6 +56,7 @@ import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * This action represents the CreateSiteNode Usecase.
@@ -239,19 +240,24 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     	logger.info("publishDateTime:" + this.siteNodeVO.getPublishDateTime());
     	logger.info("expireDateTime:" + this.siteNodeVO.getExpireDateTime());
     	logger.info("isBranch:" + this.siteNodeVO.getIsBranch());
-    	
+
+    	Timer t = new Timer();
+
     	Database db = CastorDatabaseService.getDatabase();
 
         beginTransaction(db);
+        t.printElapsedTime("beginTransaction took");
 
         try
         {
             SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
             newSiteNodeVO = newSiteNode.getValueObject();
-            
+            t.printElapsedTime("acCreate took");
             SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId);
+            t.printElapsedTime("createSiteNodeMetaInfoContent took");
             
             commitTransaction(db);
+            t.printElapsedTime("commitTransaction took");
         }
         catch(Exception e)
         {
@@ -284,11 +290,16 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     	logger.info("expireDateTime:" + this.siteNodeVO.getExpireDateTime());
     	logger.info("isBranch:" + this.siteNodeVO.getIsBranch());
     	
+    	Timer t = new Timer();
+    	if(!logger.isInfoEnabled())
+    		t.setActive(false);
+    	
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
         beginTransaction(db);
-
+        
+        t.printElapsedTime("Begin took");
         try
         {
         	ceb = this.siteNodeVO.validate();
@@ -296,10 +307,14 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
 
         	SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
             newSiteNodeVO = newSiteNode.getValueObject();
+            t.printElapsedTime("acCreate took");
             
             SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId);
+            t.printElapsedTime("createSiteNodeMetaInfoContent took");
             
             commitTransaction(db);
+
+            t.printElapsedTime("commitTransaction took");
 
     		String createSiteNodeInlineOperationViewCreatedPageLinkText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationViewCreatedPageLinkText");
     		String createSiteNodeInlineOperationViewCreatedPageTitleText = getLocalizedString(getLocale(), "tool.structuretool.createSiteNodeInlineOperationViewCreatedPageTitleText");

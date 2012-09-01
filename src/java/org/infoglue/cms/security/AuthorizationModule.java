@@ -76,48 +76,109 @@ public interface AuthorizationModule
 	
 	public InfoGlueGroup getAuthorizedInfoGlueGroup(String groupName) throws Exception;
 
+
 	/**
-	 * This method is used to fetch a users roles.  
+	 * This method returns the number of roles available.  
 	 */
 
-	public List authorizeUser(String userName) throws Exception;
+	public Integer getRoleCount(String searchString) throws Exception;
+
+	/**
+	 * This method returns the number of groups available.   
+	 */
+
+	public Integer getGroupCount(String searchString) throws Exception;
+
+	/**
+	 * This method returns the number of users available.  
+	 */
+
+	public Integer getUserCount(String searchString) throws Exception;
+
+	/**
+	 * This method returns the number of users are connected to the given role (optionally filtered by search string).  
+	 */
+
+	public Integer getRoleUserCount(String roleName, String searchString) throws Exception;
+
+	/**
+	 * This method returns the number of users are connected to the given role (optionally filtered by search string).  
+	 */
+
+	public Integer getRoleUserInvertedCount(String roleName, String searchString) throws Exception;
+
+	/**
+	 * This method returns the number of users are connected to the given group (optionally filtered by search string).  
+	 */
+
+	public Integer getGroupUserCount(String groupName, String searchString) throws Exception;
+
+	/**
+	 * This method returns the number of users are connected to the given group (optionally filtered by search string).  
+	 */
+
+	public Integer getGroupUserInvertedCount(String groupName, String searchString) throws Exception;
 
 	/**
 	 * This method is used to fetch all available roles.  
 	 */
 
-	public List getRoles() throws Exception;
+	public List<InfoGlueRole> getRoles() throws Exception;
 
 	/**
 	 * This method is used to fetch all available groups.  
 	 */
 
-	public List getGroups() throws Exception;
+	public List<InfoGlueGroup> getGroups() throws Exception;
 
 	/**
 	 * This method is used to fetch all users.  
 	 */
 
-	public List getUsers() throws Exception;
+	public List<InfoGluePrincipal> getUsers() throws Exception;
 
 	/**
 	 * This method is used to fetch all users part of the named role.
 	 * @deprecated
 	 */
 
-	public List getUsers(String roleName) throws Exception;
-	
+	public List<InfoGluePrincipal> getUsers(String roleName) throws Exception;
+
 	/**
 	 * This method is used to fetch all users part of the named role.  
 	 */
 
-	public List getRoleUsers(String roleName) throws Exception;
+	public List<InfoGluePrincipal> getRoleUsers(String roleName) throws Exception;
+
+	/**
+	 * This method is used to fetch all users part of the named role.  
+	 */
+
+	public List<InfoGluePrincipal> getRoleUsers(String roleName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws Exception;
+
+	/**
+	 * This method is used to fetch all users not part of the named role.  
+	 */
+
+	public List<InfoGluePrincipal> getRoleUsersInverted(String roleName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws Exception;
 
 	/**
 	 * This method is used to fetch all users part of the named group.  
 	 */
 
-	public List getGroupUsers(String groupName) throws Exception;
+	public List<InfoGluePrincipal> getGroupUsers(String groupName) throws Exception;
+
+	/**
+	 * This method is used to fetch all users part of the named group.  
+	 */
+
+	public List<InfoGluePrincipal> getGroupUsers(String groupName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws Exception;
+
+	/**
+	 * This method is used to fetch all users not part of the named group.  
+	 */
+
+	public List<InfoGluePrincipal> getGroupUsersInverted(String groupName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws Exception;
 
 	/**
 	 * This method is used to get a filtered list of all users.
@@ -131,9 +192,7 @@ public interface AuthorizationModule
 	 * @throws Bug
 	 */
 	
-	public List getFilteredUsers(String firstName, String lastName, String userName, String email, String[] roleIds) throws Exception;
-
-	public List getFilteredUsers(String searchString) throws Exception;
+	public List<InfoGluePrincipal> getFilteredUsers(Integer offset, Integer limit, String sortProperty, String direction, String searchString, boolean populateRolesAndGroups) throws Exception;
 
 	/**
 	 * This method is used to create a new user.  

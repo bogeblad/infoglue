@@ -45,12 +45,19 @@
 			
 				#foreach ($repositoryVO in $repositories)
 					#set($events = $this.getPublicationEvents($repositoryVO.getId(), "all"))
+					#if($events.size() > 0)
+						#set($status = "<strong>$events.size() items up for publishing</strong>")	
+					#else
+						#set($status = "No items")	
+					#end
+					#*
 					#set($groupEvents = $this.getPublicationEvents($repositoryVO.getId(), "groupBased"))
 					#if($events.size() > 0)
 						#set($status = "<strong>$events.size() items up for publishing ($groupEvents.size() by group members)</strong>")	
 					#else
 						#set($status = "No items")	
 					#end
+					*#
 					<tr>
 						<td>
 							<a href="javascript:void(0);" onclick="openUrlInWorkArea('ViewPublications!V3.action?repositoryId=$repositoryVO.id', '$repositoryVO.getName()', 'publishing', '$publishingTabLabelPrefix');">$repositoryVO.name</a>

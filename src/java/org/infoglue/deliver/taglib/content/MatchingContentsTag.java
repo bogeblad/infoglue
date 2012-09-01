@@ -60,6 +60,9 @@ public class MatchingContentsTag extends TemplateControllerTag
 	private String repositoryIds = null;
 	private Integer languageId = null;
 	private Boolean skipLanguageCheck = false;
+	private Integer startNodeId;
+
+	private Boolean useLucene = false;
 	
     public MatchingContentsTag()
     {
@@ -106,7 +109,7 @@ public class MatchingContentsTag extends TemplateControllerTag
 			logger.warn("Problem setting maximumNumberOfItemsInMatchingContentsSearch:" + e.getMessage());
 		}
 		
-	    setResultAttribute(getController().getMatchingContents(contentTypeDefinitionNames, categoryCondition, freeText, freeTextAttributeNamesList, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, true, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, this.languageId, skipLanguageCheck));
+	    setResultAttribute(getController().getMatchingContents(contentTypeDefinitionNames, categoryCondition, freeText, freeTextAttributeNamesList, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, true, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, this.languageId, skipLanguageCheck, startNodeId, this.useLucene));
 	    
 	    this.contentTypeDefinitionNames = null;
 	    this.categoryCondition = null;
@@ -126,6 +129,10 @@ public class MatchingContentsTag extends TemplateControllerTag
 		this.repositoryIds = null;
 		this.languageId = null;
 		this.skipLanguageCheck = false;
+
+		this.startNodeId = null;
+		
+		this.useLucene = false;
 		
 	    long runningTime = t.getElapsedTime();
 	    if(runningTime > 500)
@@ -218,5 +225,15 @@ public class MatchingContentsTag extends TemplateControllerTag
 	{
 		this.cacheResult = cacheResult;
 	}
+
+	public void setStartNodeId(String startNodeId) throws JspException
+	{
+		this.startNodeId = evaluateInteger("matchingContentsTag", "startNodeId", startNodeId);
+	}
+
+    public void setUseLucene(String useLucene) throws JspException
+    {
+        this.useLucene = (Boolean)evaluate("matchingContentsTag", "useLucene", useLucene, Boolean.class);
+    }
 
 }

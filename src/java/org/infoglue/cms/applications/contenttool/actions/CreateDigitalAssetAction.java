@@ -251,6 +251,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 							toEncoding = "utf-8";
 						
 		            	digitalAssetKey = new String(digitalAssetKey.getBytes(fromEncoding), toEncoding);
+		            	fileSystemName = new String(fileSystemName.getBytes(fromEncoding), toEncoding);
 		            			            	
 		            	logger.info("digitalAssetKey:" + digitalAssetKey);
 		            	logger.info("name:" + name);
@@ -299,10 +300,9 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		            	file = mpr.getFile(name);
 						String fileName = fileSystemName;
 
-		            	logger.info("fileSystemName:" + fileSystemName);
-
+		            	logger.info("fileName:" + fileName);
 		            	fileName = formatter.replaceNiceURINonAsciiWithSpecifiedChars(fileName, CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
-	            		//fileName = formatter.replaceNonAscii(fileName, '_');
+		            	logger.info("fileName after conversion:" + fileName);
 						
 						String tempFileName = "tmp_" + System.currentTimeMillis() + "_" + fileName;
 		            	//String filePath = file.getParentFile().getPath();

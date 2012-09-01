@@ -167,7 +167,55 @@ public class RoleControllerProxy extends BaseController
     	
 		return infoGluePrincipals;
 	}
-    
+
+	/**
+	 * This method returns a list of InfoGlue Principals which are part of this role
+	 */
+	
+	public List<InfoGluePrincipal> getInfoGluePrincipals(String roleName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws ConstraintException, SystemException, Exception
+	{
+		List infoGluePrincipals = new ArrayList();
+    	
+		infoGluePrincipals = getAuthorizationModule().getRoleUsers(roleName, offset, limit, sortProperty, direction, searchString);
+		
+		return infoGluePrincipals;
+	}
+
+	/**
+	 * This method returns a list of InfoGlue Principals which are part of this role
+	 */
+	
+	public Integer getInfoGluePrincipalsCount(String roleName, String searchString) throws ConstraintException, SystemException, Exception
+	{
+		Integer count = getAuthorizationModule().getRoleUserCount(roleName, searchString);
+		
+		return count;
+	}
+
+	/**
+	 * This method returns a list of InfoGlue Principals which are not part of this role
+	 */
+	
+	public List<InfoGluePrincipal> getInfoGluePrincipalsNotInRole(String roleName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws ConstraintException, SystemException, Exception
+	{
+		List infoGluePrincipals = new ArrayList();
+    	
+		infoGluePrincipals = getAuthorizationModule().getRoleUsersInverted(roleName, offset, limit, sortProperty, direction, searchString);
+		
+		return infoGluePrincipals;
+	}
+
+	/**
+	 * This method returns a count of InfoGlue Principals which are not part of this role
+	 */
+	
+	public Integer getInfoGluePrincipalsNotInRoleCount(String roleName, String searchString) throws ConstraintException, SystemException, Exception
+	{
+		Integer count = getAuthorizationModule().getRoleUserInvertedCount(roleName, searchString);
+		
+		return count;
+	}
+
     
 	/**
 	 * This method creates a new role

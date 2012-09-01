@@ -166,7 +166,55 @@ public class GroupControllerProxy extends BaseController
 
 		return infoGluePrincipals;
 	}
-    
+
+	/**
+	 * This method returns a list of InfoGlue Principals which are part of this group
+	 */
+	
+	public List<InfoGluePrincipal> getInfoGluePrincipals(String groupName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws ConstraintException, SystemException, Exception
+	{
+		List infoGluePrincipals = new ArrayList();
+    	
+		infoGluePrincipals = getAuthorizationModule().getGroupUsers(groupName, offset, limit, sortProperty, direction, searchString);
+		
+		return infoGluePrincipals;
+	}
+
+	/**
+	 * This method returns a list of InfoGlue Principals which are part of this group
+	 */
+	
+	public Integer getInfoGluePrincipalsCount(String groupName, String searchString) throws ConstraintException, SystemException, Exception
+	{
+		Integer count = getAuthorizationModule().getGroupUserCount(groupName, searchString);
+		
+		return count;
+	}
+
+	/**
+	 * This method returns a list of InfoGlue Principals which are part of this group
+	 */
+	
+	public List<InfoGluePrincipal> getInfoGluePrincipalsNotInGroup(String groupName, Integer offset, Integer limit, String sortProperty, String direction, String searchString) throws ConstraintException, SystemException, Exception
+	{
+		List infoGluePrincipals = new ArrayList();
+    	
+		infoGluePrincipals = getAuthorizationModule().getGroupUsersInverted(groupName, offset, limit, sortProperty, direction, searchString);
+		
+		return infoGluePrincipals;
+	}
+
+	/**
+	 * This method returns a list of InfoGlue Principals which are part of this group
+	 */
+	
+	public Integer getInfoGluePrincipalsNotInGroupCount(String groupName, String searchString) throws ConstraintException, SystemException, Exception
+	{
+		Integer count = getAuthorizationModule().getGroupUserInvertedCount(groupName, searchString);
+		
+		return count;
+	}
+
     
 	/**
 	 * This method creates a new group

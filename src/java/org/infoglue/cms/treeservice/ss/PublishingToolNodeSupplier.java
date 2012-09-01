@@ -91,8 +91,8 @@ public class PublishingToolNodeSupplier extends BaseNodeSupplier
 			RepositoryVO repositoryVO = (RepositoryVO)repositoryVOListIterator.next();
 			
 			Timer t = new Timer();
-			List events = PublicationController.getPublicationEvents(repositoryVO.getId(), infogluePrincipal, "all");
-			List groupEvents = PublicationController.getPublicationEvents(repositoryVO.getId(), infogluePrincipal, "groupBased");
+			List events = PublicationController.getPublicationEvents(repositoryVO.getId(), infogluePrincipal, "all", false);
+			List groupEvents = PublicationController.getPublicationEvents(repositoryVO.getId(), infogluePrincipal, "groupBased", false);
 			//t.printElapsedTime("Events took...");
 			
 			r.add(new PublishingNodeImpl(repositoryVO.getId(), "" + repositoryVO.getName() + " (" + (events.size() > 0 ? "<strong>" : "") + events.size() + (events.size() > 0 ? "</strong>" : "") + "/" + (groupEvents.size() > 0 ? "<strong>" : "") + groupEvents.size() + (groupEvents.size() > 0 ? "</strong>" : "") + ")", "ViewPublications!V3.action?repositoryId=" + repositoryVO.getId(), parameters));

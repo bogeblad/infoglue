@@ -597,6 +597,8 @@
 		<view name="userSearch">/cms/managementtool/viewListSystemUserSearch.vm</view>
 		<view name="successFiltered">/cms/managementtool/v3/viewListSystemUserFiltered.vm</view>
 		<view name="successPopupFiltered">/cms/managementtool/v3/viewListSystemUserForPopupFiltered.vm</view>
+		<view name="successFilteredAssignedForRole">/cms/managementtool/v3/viewListSystemUserFilteredAssignedForRole.vm</view>
+		<view name="successFilteredAssignedForGroup">/cms/managementtool/v3/viewListSystemUserFilteredAssignedForGroup.vm</view>
 		<view name="error">/cms/managementtool/error.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.ViewSystemUserAction" alias="ViewSystemUser">
@@ -697,6 +699,7 @@
 	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateRoleAction" alias="UpdateRole">
 		<view name="input">/cms/managementtool/viewRole.vm</view>
 		<view name="success">ViewRole.action</view>
+		<view name="successRedirect">ExtendedRedirect.action?url=ViewRole.action?roleName=${encodedRoleName}</view>
 		<view name="saveAndExit">ViewListRole.action</view>
 		<view name="inputV3">/cms/managementtool/v3/viewRole.vm</view>
 		<view name="successV3">ViewRole.action</view>
@@ -760,6 +763,7 @@
 	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateGroupAction" alias="UpdateGroup">
 		<view name="input">/cms/managementtool/viewGroup.vm</view>
 		<view name="success">ViewGroup.action</view>
+		<view name="successRedirect">ExtendedRedirect.action?url=ViewGroup.action?groupName=${encodedGroupName}</view>
 		<view name="saveAndExit">ViewListGroup.action</view>
 		<view name="inputV3">/cms/managementtool/v3/viewGroup.vm</view>
 		<view name="successV3">ViewGroup!v3.action</view>
@@ -925,6 +929,12 @@
 		<view name="chooseDestinationV3">/cms/contenttool/v3/viewMoveMultipleContentsChooseDestination.vm</view>
 		<view name="success">/cms/contenttool/viewMoveMultipleContentsFinished.vm</view>
 		<view name="successV3">ViewInlineOperationMessages</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.CopyContentAction" alias="CopyContent">
+		<view name="input">/cms/contenttool/v3/viewContentTreeForCopy.vm</view>
+		<view name="success">ViewInlineOperationMessages</view>
 		<view name="error">/cms/contenttool/error.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>
@@ -1481,13 +1491,18 @@
 	</action>
 	
 	<!-- Application state action - used to monitor the delivery engine -->
+	<!-- Application state action - used to monitor the delivery engine -->
 	<action name="org.infoglue.deliver.applications.actions.ViewApplicationStateAction" alias="ViewApplicationState">
 		<view name="cleared">ExtendedRedirect.action?url=ViewApplicationState.action</view>
 		<view name="success">/deliver/viewApplicationState.vm</view>
+		<view name="successOngoingPublications">/deliver/viewOngoingPublications.vm</view>
 		<view name="successCacheStatistics">/deliver/viewCacheStatistics.vm</view>
 		<view name="successCacheDetailsStatistics">/deliver/viewCacheDetailsStatistics.vm</view>
 		<view name="successComponentStatistics">/deliver/viewComponentStatistics.vm</view>
+		<view name="clearedComponentStatistics">ExtendedRedirect.action?url=ViewApplicationState!componentStatistics.action</view>
 		<view name="successPageStatistics">/deliver/viewPageStatistics.vm</view>
+		<view name="successLuceneStatistics">/deliver/viewLuceneStatistics.vm</view>
+		<view name="clearedLuceneStatistics">ExtendedRedirect.action?url=ViewApplicationState!luceneStatistics.action</view>
 		<view name="successAsXML">/deliver/viewApplicationStateAsXML.vm</view>
 		<view name="error">/deliver/error.vm</view>
 	</action>
@@ -1720,6 +1735,7 @@
 
 	<action name="org.infoglue.cms.applications.managementtool.actions.ViewDiagnosticCenterAction" alias="ViewDiagnosticCenter">
 		<view name="success">/cms/managementtool/viewDiagnosticCenter.vm</view>
+		<view name="successFailedPublications">/cms/managementtool/viewFailedPublications.vm</view>
 		<view name="error">/cms/managementtool/error.vm</view>
 	</action>
 

@@ -460,12 +460,12 @@
 				</tr>		
 				
 				<tr>
-					<td style="height: 27px;">
+					<td style="height: 32px;">
 						$ui.getString("tool.structuretool.chooseContentsForBindingInstructions")
 					</td>
 				</tr>
 				<tr>
-					<td style="border: 1px solid #C7D1B3; background-color: white; height: 430px; float: left;">
+					<td style="border: 1px solid #C7D1B3; background-color: white; height: 430px;">
 						<div style="height: 430px; float: left; overflow: auto; width: 100%;">
 						<table id="bindings" border="1">
 					  	

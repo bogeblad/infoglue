@@ -337,7 +337,7 @@
                         includes="**/*"/>
 			<zipfileset dir="${conf}"
                         prefix="WEB-INF"
-                        includes="server-config.wsdd"/>
+                        includes="server-config.wsdd,web-app_2_3.dtd"/>
 			<zipfileset dir="${conf}"
 			prefix="META-INF" 
 			includes="context.xml"/>
@@ -390,7 +390,7 @@
                         includes="**/*"/>
 			<zipfileset dir="${conf}"
                         prefix="WEB-INF"
-                        includes="server-config.wsdd"/>
+                        includes="server-config.wsdd,web-app_2_3.dtd"/>
 			<zipfileset dir="${conf}"
 			prefix="META-INF" 
 			includes="context.xml"/>
@@ -480,6 +480,9 @@
                         prefix="WEB-INF/config"
                         includes="**/*"/>
 			<zipfileset dir="${conf}"
+                        prefix="WEB-INF"
+                        includes="web-app_2_3.dtd"/>
+			<zipfileset dir="${conf}"
 			prefix="META-INF"
 			includes="context.xml"/>
 		</war>
@@ -514,6 +517,9 @@
             		<zipfileset dir="${conf}/config"
                         prefix="WEB-INF/config"
                         includes="**/*"/>
+			<zipfileset dir="${conf}"
+                        prefix="WEB-INF"
+                        includes="web-app_2_3.dtd"/>
 			<zipfileset dir="${conf}"
 			prefix="META-INF"
 			includes="context.xml"/>
@@ -550,6 +556,9 @@
                         prefix="WEB-INF/config"
                         includes="**/*"/>
 			<zipfileset dir="${conf}"
+                        prefix="WEB-INF"
+                        includes="web-app_2_3.dtd"/>
+			<zipfileset dir="${conf}"
 			prefix="META-INF"
 			includes="context.xml"/>
 		</war>
@@ -562,6 +571,9 @@
 	<target name="deploy-cms" depends="clean,war-cms" description="Unpacks war to deploy dir" if="deploy.dir.cms">
 		<unwar src="${cms.war.file}" dest="${deploy.dir.cms}"/>
 		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.cms}/WEB-INF/web-app_2_3.dtd" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
 	</target>
@@ -587,6 +599,9 @@
 		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
+		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.working}/WEB-INF/web-app_2_3.dtd" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
 	</target>
 
 	<!--
@@ -609,6 +624,9 @@
 		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.preview}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
+		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.preview}/WEB-INF/web-app_2_3.dtd" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
 	</target>
 
 	<!--
@@ -629,6 +647,9 @@
 			</filterset>
 		</copy>
 		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.live}/WEB-INF/web.xml" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.live}/WEB-INF/web-app_2_3.dtd" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
 			<copy file="${conf}/robots-live.txt" tofile="${deploy.dir.live}/robots.txt" overwrite="true">
@@ -1024,7 +1045,7 @@
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">
-			<fileset dir="${conf}" includes="server-config.wsdd"/>
+			<fileset dir="${conf}" includes="server-config.wsdd,web-app_2_3.dtd"/>
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
@@ -1128,8 +1149,7 @@
 		</copy>
 		<copy todir="${deploy.dir.working}/META-INF" overwrite="true">
 			<fileset dir="${conf}" includes="context.xml"/>
-		</copy>
-		
+		</copy>	
 	</target>
 	
 	<target name="installDeliverPreview" depends="clean,compile" description="Compiles the classes if class and moves configs to the right spot" if="deploy.dir.preview">
@@ -1394,7 +1414,7 @@
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">
-			<fileset dir="${conf}" includes="server-config.wsdd"/>
+			<fileset dir="${conf}" includes="server-config.wsdd,web-app_2_3.dtd"/>
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
@@ -1403,7 +1423,6 @@
 		<copy todir="${deploy.dir.cms}/META-INF" overwrite="true">
 			<fileset dir="${conf}" includes="context.xml"/>
 		</copy>					
-
 	</target>
 	
 	
@@ -1499,6 +1518,7 @@
 		<copy todir="${deploy.dir.working}/META-INF" overwrite="true">
 			<fileset dir="${conf}" includes="context.xml"/>
 		</copy>
+
 		
 	</target>
 	
@@ -1761,7 +1781,7 @@
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF" overwrite="true">
-			<fileset dir="${conf}" includes="server-config.wsdd"/>
+			<fileset dir="${conf}" includes="server-config.wsdd,web-app_2_3.dtd"/>
 		</copy>
 
 		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
@@ -1770,7 +1790,6 @@
 		<copy todir="${deploy.dir.cms}/META-INF" overwrite="true">
 			<fileset dir="${conf}" includes="context.xml"/>
 		</copy>					
-
 	</target>
 	
 	<!--

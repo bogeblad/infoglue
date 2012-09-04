@@ -468,7 +468,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="border: 1px solid #F0E1B4; background-color: white; height: 430px; float: left;">
+					<td style="border: 1px solid #F0E1B4; background-color: white; height: 430px;">
 						<div style="height: 430px; float: left; overflow: auto; width: 100%;">
 						<table id="bindings" border="1">
 					  	

@@ -70,6 +70,7 @@
 					//alert("currentMenutoolbarLeftUrl:" + currentMenutoolbarLeftUrl);
 	   	   	  		var position = currentMenutoolbarLeftUrl.indexOf("siteNodeId=${newSiteNodeId}&");
 	   	   	  		//alert("position:" + position + ": changeType: $changeTypeId");
+					var refreshWorkSurface = false;
 					if("$changeTypeId" == "3")
 					{
 						#if($siteNodeId)
@@ -84,7 +85,6 @@
 					}
 					else if(position == -1) 
 					{
-						//alert(window.name);
 						if(window.name.indexOf("TB_iframe") == -1)
 						{
 	    					//top.refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=$newSiteNodeId&repositoryId=$repositoryId&isBranch=true', $unrefreshedNodeId, $changeTypeId, -1);
@@ -96,116 +96,32 @@
 						}
 					  	else
 					  	{
-					  		if(parent.refreshWorkSurface)
-						  		parent.refreshWorkSurface();
-						  	else if(parent.parent.refreshWorkSurface)
-						  		parent.parent.refreshWorkSurface();
+							refreshWorkSurface = true;
 						}
 					}
 				}
 				
 				if(actionUrl && target && targetTitle)
 				{
+					//alert("actionUrl:" + actionUrl);
 					if(parent.openUrlInWorkArea)
 						parent.openUrlInWorkArea(actionUrl);
 					else if(parent.parent.openUrlInWorkArea)
 						parent.parent.openUrlInWorkArea(actionUrl);
+				}
+				else if(refreshWorkSurface)
+				{
+					//alert("Refreshing work surface as no action seems to have done it");
+					if(parent.refreshWorkSurface)
+				  		parent.refreshWorkSurface();
+				  	else if(parent.parent.refreshWorkSurface)
+				  		parent.parent.refreshWorkSurface();
 				}
 			}
 			else
 			{
 				top.document.location.href = actionUrl;
 			}
-			
-			/*
-			if(parent.refreshNode)
-			{
-				#if($siteNodeId)
-					parent.refreshNode($siteNodeId, 2, $siteNodeId);
-				#else
-					parent.refreshNode($this.getActionExtraData("unrefreshedNodeId"), $changeTypeId, $newSiteNodeId);
-				#end
-				
-				var currentMenutoolbarLeftUrl = parent.getCurrentMenutoolbarLeftUrl();
-				//alert("currentMenutoolbarLeftUrl:" + currentMenutoolbarLeftUrl);
-   	   	  		var position = currentMenutoolbarLeftUrl.indexOf("siteNodeId=${newSiteNodeId}&");
-   	   	  		//alert("position:" + position + ": changeType: $changeTypeId");
-				if("$changeTypeId" == "3")
-				{
-					#if($siteNodeId)
-						parent.openUrlInWorkArea(actionUrl, "AAAAAAA", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
-					#else
-						parent.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "$!this.getActionExtraData('siteNodeName')", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
-					#end
-				}
-				else if(position == -1) 
-				{
-					if(window.name.indexOf("TB_iframe") == -1)
-					{
-    					parent.refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=$newSiteNodeId&repositoryId=$repositoryId&isBranch=true', $unrefreshedNodeId, $changeTypeId, -1);
-						#if($siteNodeId)
-	    					parent.openUrlInWorkArea(actionUrl, "AAAAAAAA", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
-						#else
-	    					parent.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "$!this.getActionExtraData('siteNodeName')", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
-						#end
-					}
-				  	else
-				  		parent.refreshWorkArea("structure");
-				}
-			}
-			else 
-			{
-				if(top.getIsIGStandardTools && top.getIsIGStandardTools() == true)
-				{
-					if(top.getActiveToolName() == "ContentTool")
-					{
-						#if($unrefreshedNodeId && $changeTypeId && $newContentId)
-							top.frames["contentTreeIframe"].refreshContent($unrefreshedNodeId, $changeTypeId, $newContentId);
-						#end
-						
-						//if($changeTypeId == "4")
-					}
-					else
-					{
-						#if($siteNodeId)
-							top.frames["structureTreeIframe"].refreshNode($siteNodeId, 2, $siteNodeId);
-						#else
-							top.frames["structureTreeIframe"].refreshNode($this.getActionExtraData("unrefreshedNodeId"), $changeTypeId, $newSiteNodeId);
-						#end
-						
-						var currentMenutoolbarLeftUrl = top.getCurrentMenutoolbarLeftUrl();
-						//alert("currentMenutoolbarLeftUrl:" + currentMenutoolbarLeftUrl);
-		   	   	  		var position = currentMenutoolbarLeftUrl.indexOf("siteNodeId=${newSiteNodeId}&");
-		   	   	  		//alert("position:" + position + ": changeType: $changeTypeId");
-						if("$changeTypeId" == "3")
-						{
-							#if($siteNodeId)
-								top.openUrlInWorkArea(actionUrl, "AAAAAAA", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
-							#else
-								top.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "$!this.getActionExtraData('siteNodeName')", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
-							#end
-						}
-						else if(position == -1) 
-						{
-							if(window.name.indexOf("TB_iframe") == -1)
-							{
-		    					top.refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=$newSiteNodeId&repositoryId=$repositoryId&isBranch=true', $unrefreshedNodeId, $changeTypeId, -1);
-								#if($siteNodeId)
-			    					top.openUrlInWorkArea(actionUrl, "AAAAAAAA", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
-								#else
-			    					top.openUrlInWorkArea("ViewSiteNode.action?siteNodeId=$newSiteNodeId&repositoryId=$repositoryId", "$!this.getActionExtraData('siteNodeName')", "structure", "$ui.getString("tool.common.pageTabLabelPrefix")");
-								#end
-							}
-						  	else
-						  		top.refreshWorkArea("structure");
-						}
-					}
-					
-					if(actionUrl && target && targetTitle)
-						top.openUrlInWorkArea(actionUrl, targetTitle, target);
-				}
-			}
-			*/
 			
 			closeDialog();
 		}

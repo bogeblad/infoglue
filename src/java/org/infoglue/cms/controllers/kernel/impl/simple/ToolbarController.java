@@ -1233,11 +1233,26 @@ public class ToolbarController implements ToolbarProvider
 									  "javascript:validateAndSubmitContentFormThenSubmitToPublish();",
 				  					  "images/v3/publishIcon.gif"));
 		*/
+
+		String cancelJS = "document.location.reload(true);";
+		if(request.getRequestURI().indexOf("UpdateContentVersion") > -1)
+		{
+			String contentIdParameter = request.getParameter("contentId");
+			String languageIdParameter = request.getParameter("languageId");
+			String repositoryIdParameter = request.getParameter("repositoryId");
+			String contentVersionIdParameter = request.getParameter("contentVersionId");
+
+			cancelJS = "document.location.href = 'ViewContent!V3.action?contentId=" + contentIdParameter + "&repositoryId=" + repositoryIdParameter + "';";
+			if(languageIdParameter != null && !languageIdParameter.equals(""))
+				cancelJS = "document.location.href = 'ViewContentVersion!V3.action?contentId=" + contentIdParameter + "&languageId=" + languageIdParameter + "';";
+			if(contentVersionIdParameter != null && !contentVersionIdParameter.equals(""))
+				cancelJS = cancelJS.replaceFirst("';", "&contentVersionIdParameter=" + contentVersionIdParameter + "';");
+		}
 		
 		buttons.add(new ToolbarButton("cancel",
 				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"), 
 				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"),
-				  					  "document.location.reload(true);",
+				  					  cancelJS,
 				  					  "images/v3/cancelIcon.gif",
 				  					  "left",
 									  "cancel",

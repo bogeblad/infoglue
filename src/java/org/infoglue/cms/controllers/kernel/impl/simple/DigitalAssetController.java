@@ -862,12 +862,21 @@ public class DigitalAssetController extends BaseController
 
 
 
-	
+
 	/**
 	 * This method should return a String containing the URL for this digital asset.
 	 */
 
 	public static String getDigitalAssetUrl(Integer digitalAssetId) throws SystemException, Bug
+	{
+		return getDigitalAssetUrl(digitalAssetId, false);
+	}
+
+	/**
+	 * This method should return a String containing the URL for this digital asset.
+	 */
+
+	public static String getDigitalAssetUrl(Integer digitalAssetId, boolean fullURL) throws SystemException, Bug
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -894,9 +903,13 @@ public class DigitalAssetController extends BaseController
 				
 				//File outputFile = new File(filePath + File.separator + fileName);
 				if(!fileExists)
-					assetUrl = CmsPropertyHandler.getWebServerAddress() + "/" + CmsPropertyHandler.getImagesBaseUrl() + "/" + BROKENFILENAME;
+				{
+					assetUrl = (fullURL ? CmsPropertyHandler.getWebServerAddress() : "") + "/" + CmsPropertyHandler.getImagesBaseUrl() + "/" + BROKENFILENAME;
+				}
 				else
-					assetUrl = CmsPropertyHandler.getWebServerAddress() + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + folderName + "/" + fileName;
+				{
+					assetUrl = (fullURL ? CmsPropertyHandler.getWebServerAddress() : "") + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + folderName + "/" + fileName;
+				}
 			}			       	
 
             commitTransaction(db);

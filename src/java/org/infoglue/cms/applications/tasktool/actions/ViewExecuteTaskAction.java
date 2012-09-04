@@ -40,6 +40,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.util.VelocityTemplateProcessor;
 
 public class ViewExecuteTaskAction extends InfoGlueAbstractAction
@@ -117,44 +118,60 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 
 	public String doExecuteTask() throws Exception
 	{
-		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.getTaskContentId());
-		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getId(), LanguageController.getController().getMasterLanguage((Integer)getHttpSession().getAttribute("repositoryId")).getId());
-		
-		//TODO - should not do this but find one available version probably
-		if(contentVersionVO == null)
-			contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getId(), ((LanguageVO)LanguageController.getController().getLanguageVOList().get(0)).getId());
-		
-		String code = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO.getId(), "ScriptCode", false);
-		String userOutputHTML = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO.getId(), "UserOutputHTML", false);
-		
-		ScriptController scriptController = getScriptController();
-		scriptController.setRequest(this.getRequest());
-		scriptController.setResponse(this.getResponse());
-		scriptController.beginTransaction();
-
-		Map context = new HashMap();
-		context.put("scriptLogic", scriptController);
-
-		StringWriter cacheString = new StringWriter();
-		PrintWriter cachedStream = new PrintWriter(cacheString);
-		new VelocityTemplateProcessor().renderTemplate(context, cachedStream, code);
-		//renderTemplate(context, cachedStream, code);
-		String result = cacheString.toString();
-		
-		scriptController.commitTransaction();
-		
-		cacheString = new StringWriter();
-		cachedStream = new PrintWriter(cacheString);
-		new VelocityTemplateProcessor().renderTemplate(context, cachedStream, userOutputHTML);
-		//renderTemplate(context, cachedStream, userOutputHTML);
-		result = cacheString.toString();
-
-		getResponse().setContentType("text/html");
-		PrintWriter out = getResponse().getWriter();
-		out.println(result);
-		out.flush();
-		out.close();
-				
+		try
+		{
+			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.getTaskContentId());
+			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getId(), LanguageController.getController().getMasterLanguage((Integer)getHttpSession().getAttribute("repositoryId")).getId());
+			
+			//TODO - should not do this but find one available version probably
+			if(contentVersionVO == null)
+				contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getId(), ((LanguageVO)LanguageController.getController().getLanguageVOList().get(0)).getId());
+			
+			String code = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO.getId(), "ScriptCode", false);
+			String userOutputHTML = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO.getId(), "UserOutputHTML", false);
+			
+			ScriptController scriptController = getScriptController();
+			scriptController.setRequest(this.getRequest());
+			scriptController.setResponse(this.getResponse());
+			scriptController.beginTransaction();
+	
+			Map context = new HashMap();
+			context.put("scriptLogic", scriptController);
+	
+			InfoGlueComponent fakeComponent = new InfoGlueComponent();
+			fakeComponent.setName(contentVO.getName());
+			fakeComponent.setContentId(contentVO.getId());
+			
+			StringWriter cacheString = new StringWriter();
+			PrintWriter cachedStream = new PrintWriter(cacheString);
+			new VelocityTemplateProcessor().renderTemplate(context, cachedStream, code, false, fakeComponent);
+			//renderTemplate(context, cachedStream, code);
+			String result = cacheString.toString();
+			
+			scriptController.commitTransaction();
+			
+			cacheString = new StringWriter();
+			cachedStream = new PrintWriter(cacheString);
+			new VelocityTemplateProcessor().renderTemplate(context, cachedStream, userOutputHTML, false, fakeComponent);
+			//renderTemplate(context, cachedStream, userOutputHTML);
+			result = cacheString.toString();
+	
+			getResponse().setContentType("text/html");
+			PrintWriter out = getResponse().getWriter();
+			out.println(result);
+			out.flush();
+			out.close();
+		}
+		catch (Throwable e) 
+		{
+			e.printStackTrace();
+			
+			getResponse().setContentType("text/html");
+			PrintWriter out = getResponse().getWriter();
+			out.println("Error:" + e.getMessage());
+			out.flush();
+			out.close();
+		}
 		return NONE;
 	}
 

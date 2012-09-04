@@ -301,7 +301,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	        		this.languageId = languageId;
         		}
         	}
-        	
+
         	this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
 		    
         	if(this.contentVersionVO == null && fallBackToMasterLanguage)
@@ -346,6 +346,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         if(this.toLanguageId != null)
 			this.currentLanguageVO = LanguageController.getController().getLanguageVOWithId(toLanguageId);
         else if(this.languageId != null)
+        	this.currentLanguageVO = LanguageController.getController().getLanguageVOWithId(this.languageId);
+        else if(languageId != null)
         	this.currentLanguageVO = LanguageController.getController().getLanguageVOWithId(languageId);
 
         if(this.anchor == null && getRequest().getParameter("anchor") != null)

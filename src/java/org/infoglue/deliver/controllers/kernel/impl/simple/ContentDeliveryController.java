@@ -2634,12 +2634,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 		}
 		
 		List sortedContentVOList = new ArrayList();
-		Timer t = new Timer();
 		List unsortedChildren = getChildContents(infoGluePrincipal, languageId, useLanguageFallback, contentId, siteNodeId, searchRecursive, maximumNumberOfLevels, db, includeFolders, deliveryContext);
-		t.printElapsedTime("getChildContents tooook");
 		List sortedContents   = sortContents(db, unsortedChildren, languageId, siteNodeId, sortAttribute, sortOrder, useLanguageFallback, includeFolders, deliveryContext, infoGluePrincipal);
-		t.printElapsedTime("sortContents tooook");
-
+		
 		Iterator boundContentsIterator = sortedContents.iterator();
 		while(boundContentsIterator.hasNext())
 		{

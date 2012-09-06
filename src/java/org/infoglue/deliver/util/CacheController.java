@@ -223,8 +223,8 @@ public class CacheController extends Thread
     	if(defeatCachesValue == true)
     	{
     		try 
-    		{
-				clearCastorCaches();
+    		{ 
+				clearCastorCaches(); 
 			} 
     		catch (Exception e) 
     		{

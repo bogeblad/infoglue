@@ -813,7 +813,8 @@ public class LuceneController extends BaseController implements NotificationList
 			int newLastContentVersionId = getNotificationMessages(notificationMessages, languageVO, lastCommitedContentVersionId, lastCommitedDateTime);
 			while(newLastContentVersionId != -1)
 			{
-				t.printElapsedTime("Queueing " + notificationMessages.size() + " notificationMessages for indexing");
+				if(logger.isInfoEnabled())
+					t.printElapsedTime("Queueing " + notificationMessages.size() + " notificationMessages for indexing");
 				for(NotificationMessage notificationMessage : notificationMessages)
 				{
 					notify(notificationMessage);
@@ -832,7 +833,8 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			
 		}
-		t2.printElapsedTime("All indexing took");
+		if(logger.isInfoEnabled())
+			t2.printElapsedTime("All indexing took");
 
 		return true;
 	}

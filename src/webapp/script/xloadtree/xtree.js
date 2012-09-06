@@ -228,19 +228,22 @@ WebFXTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 		}
 		webFXTreeHandler.insertHTMLBeforeEnd(document.getElementById(this.id + '-cont'), node.toString());
 		//alert("Regging draggable on:" + node.id);
-		$("#" + node.id + " a").draggable({ helper: 'clone' });
+		$("#" + node.id + "").draggable({ helper: 'clone' });
+		//$("#" + node.id + " a").draggable({ helper: 'clone' });
+		//$("#" + node.id + " img").draggable({ helper: 'clone' });
 		//$("#" + node.id + " a").text($("#" + node.id + " a").text() + ":" + node.myType)
 		if(webFXTreeConfig.allowDropOnLeafs || node.folder || node.myType == "Folder")
 		{
-			$("#" + node.id + " a").droppable({
+			$("#" + node.id + "").droppable({
 				hoverClass: 'ui-state-active',
 				tolerance: 'pointer',
 			    drop: function(event, ui) { 
 					var dragEl = $(ui.draggable); 
-					var movedNodeId = dragEl.attr("entityId");
-					var parentNodeId = dragEl.attr("parentEntityId");
-					var newParentNodeId = $("#" + node.id + " a").attr("entityId");
-					//alert('dropped:' + movedNodeId + " on " + newParentNodeId);
+					var aTag = dragEl.children("a");
+					var movedNodeId = aTag.attr("entityId");
+					var parentNodeId = aTag.attr("parentEntityId");
+					var newParentNodeId = $("#" + node.id + " a").attr("entityId");		
+					
 					moveNode(movedNodeId, newParentNodeId, parentNodeId);
 				}
 			});

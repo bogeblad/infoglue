@@ -97,7 +97,8 @@ function uploadProgress(file, bytesLoaded) {
 function uploadSuccess(file, serverData) {
 	//alert("Upload ok:" + file + ": " + serverData);
 	try {
-		var dataArray = serverData.split(":");
+		var dataArray = serverData.split("#");
+		//alert("serverData:" + serverData);
 		addImage("" + dataArray[0], dataArray[1]);
 
 		var progress = new FileProgress(file,  this.customSettings.upload_target);

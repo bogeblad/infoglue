@@ -351,7 +351,12 @@
 		#foreach($assetKeyDefinition in $definedAssetKeys)
 			assetSizeArray["$assetKeyDefinition.assetKey"] = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
 		#end
-				
+		
+		function close()
+		{
+			if(parent.refreshView)
+				parent.refreshView("contentVersionAssets");		
+		}
 	-->
 	</script>
 	

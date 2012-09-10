@@ -35,8 +35,9 @@ public class PrincipalPropertyTag extends TemplateControllerTag
 	private String userName;
 	private InfoGluePrincipal principal;
 	private String attributeName;
-	private Integer languageId = null;
-	
+	private Integer languageId 		= null;
+    private boolean defeatCaches	= false;
+
     public PrincipalPropertyTag()
     {
         super();
@@ -47,6 +48,10 @@ public class PrincipalPropertyTag extends TemplateControllerTag
 		if(languageId == null)
     		languageId = getController().getLanguageId();
     	
+        //Here we store the defeat caches setting for later reset
+        boolean previousDefeatCaches = getController().getDeliveryContext().getDefeatCaches();
+        getController().getDeliveryContext().setDefeatCaches(defeatCaches);
+
 	    if(userName != null && !userName.equals(""))
 	    {
 	        setResultAttribute(this.getController().getPrincipalPropertyValue(getController().getPrincipal(userName), attributeName, languageId));
@@ -60,9 +65,13 @@ public class PrincipalPropertyTag extends TemplateControllerTag
 	    	setResultAttribute(getController().getPrincipalPropertyValue(attributeName, languageId));
 	    }
 	    	
-        languageId = null;
-        userName = null;
-        principal = null;
+        //Resetting the defeatcaches setting
+        getController().getDeliveryContext().setDefeatCaches(previousDefeatCaches);
+
+        languageId 		= null;
+        userName 		= null;
+        principal 		= null;
+	    defeatCaches 	= false;
 
         return EVAL_PAGE;
     }
@@ -86,4 +95,10 @@ public class PrincipalPropertyTag extends TemplateControllerTag
     {
  	   this.languageId = this.evaluateInteger("principal", "languageId", languageIdString);
     }
+    
+    public void setDefeatCaches(final String defeatCaches) throws JspException
+    {
+        this.defeatCaches = (Boolean)evaluate("contentAttribute", "defeatCaches", defeatCaches, Boolean.class);
+    }
+
 }

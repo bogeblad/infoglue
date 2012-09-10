@@ -174,7 +174,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 			String assetThumbnailUrl = getAssetThumbnailUrl();
 			logger.info("assetThumbnailUrl:" + assetThumbnailUrl);
 			this.getResponse().setContentType("text/plain");
-	        this.getResponse().getWriter().println(assetThumbnailUrl + ":" + this.digitalAssetKey);
+	        this.getResponse().getWriter().println(assetThumbnailUrl + "#" + this.digitalAssetKey);
 	        return NONE;
 		}
 		else
@@ -613,7 +613,8 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		}
 		catch (Exception e) 
 		{
-			e.printStackTrace();
+			logger.error("Error running image transformation:" + e.getMessage());
+			logger.warn("Error running image transformation:" + e.getMessage(), e);
 		}
 		
 		return keepOriginal;

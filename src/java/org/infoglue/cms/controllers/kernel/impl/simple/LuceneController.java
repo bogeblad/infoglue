@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.Writer;
@@ -1668,8 +1669,9 @@ public class LuceneController extends BaseController implements NotificationList
 		String filePath = DigitalAssetController.getController().getDigitalAssetFilePath(digitalAssetVO, db);
 		if(logger.isInfoEnabled())
 			logger.info("filePath if we should index file:" + filePath);
-		String text = extractTextToIndex(digitalAssetVO, new File(filePath));
-	
+		File file = new File(filePath);
+		String text = extractTextToIndex(digitalAssetVO, file);
+
 		doc.add(new Field("contents", new StringReader(text)));
 		
 		return doc;
@@ -1807,8 +1809,10 @@ public class LuceneController extends BaseController implements NotificationList
 		{
 			try
 			{
+				InputStream is = new FileInputStream(file);
 				POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
-
+				is.close();
+				
 				// Create a document for this file
 				HWPFDocument doc = new HWPFDocument(fs);
 

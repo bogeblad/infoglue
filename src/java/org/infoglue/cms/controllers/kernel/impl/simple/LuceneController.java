@@ -322,6 +322,7 @@ public class LuceneController extends BaseController implements NotificationList
 		Timer tt = new Timer();
 		logger.warn("INDEXING ALL - correct?");
 		Thread.dumpStack();
+		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		
 		logger.info("------------------------------Got indexAll directive....");
 		if (indexingInitialized.compareAndSet(false, true)) 
@@ -855,11 +856,11 @@ public class LuceneController extends BaseController implements NotificationList
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, newLastSiteNodeVersionId, 10000, true, db, true);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, newLastSiteNodeVersionId, 250, true, db, true);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), newLastSiteNodeVersionId, 10000, true, db, true);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), newLastSiteNodeVersionId, 250, true, db, true);				
 			}
 			
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -913,11 +914,11 @@ public class LuceneController extends BaseController implements NotificationList
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, 0, lastContentVersionId, 1000, true, db, false);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, 0, lastContentVersionId, 250, true, db, false);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, 1000, true, db, false);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, 250, true, db, false);				
 			}
 			
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1010,11 +1011,11 @@ public class LuceneController extends BaseController implements NotificationList
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, lastContentVersionId, 1000, true, db, true);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, lastContentVersionId, 250, true, db, true);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, 1000, true, db, true);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, 250, true, db, true);				
 			}
 			
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1079,7 +1080,7 @@ public class LuceneController extends BaseController implements NotificationList
 
 	private int getNotificationMessages(List notificationMessages, LanguageVO languageVO, int lastContentVersionId, Date lastCheckDateTime) throws Exception
 	{
-		//logger.error("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId + ":" + lastCheckDateTime);
+		logger.info("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId + ":" + lastCheckDateTime);
 
 		int newLastContentVersionId = -1;
 		
@@ -1115,8 +1116,11 @@ public class LuceneController extends BaseController implements NotificationList
 						while(digitalAssetVOListIterator.hasNext())
 						{
 							DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
-							NotificationMessage assetNotificationMessage = new NotificationMessage("LuceneController", DigitalAssetImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, assetVO.getId(), "dummy");
-							notificationMessages.add(assetNotificationMessage);							
+							if(assetVO.getAssetFileSize() < 10000000) //Do not index large files
+							{
+								NotificationMessage assetNotificationMessage = new NotificationMessage("LuceneController", DigitalAssetImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, assetVO.getId(), "dummy");
+								notificationMessages.add(assetNotificationMessage);
+							}
 						}
 					}
 					
@@ -1179,7 +1183,7 @@ public class LuceneController extends BaseController implements NotificationList
 		    finally
 		    {
 		    	indexedDocumentsSinceLastOptimize++;
-		    	if(indexedDocumentsSinceLastOptimize > 2000)
+		    	if(indexedDocumentsSinceLastOptimize > 1000)
 		    	{
 		    		//logger.info("Optimizing...");
 		    		writer.optimize();
@@ -1224,7 +1228,6 @@ public class LuceneController extends BaseController implements NotificationList
 		else if(notificationMessage.getClassName().equals(DigitalAssetImpl.class.getName()) || notificationMessage.getClassName().equals(DigitalAsset.class.getName()))
 		{
 			logger.info("++++++++++++++Got an DigitalAssetImpl notification: " + notificationMessage.getObjectId());
-
 			Database db2 = CastorDatabaseService.getDatabase();
 
 			beginTransaction(db2);

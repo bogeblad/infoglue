@@ -36,7 +36,9 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.util.CacheController;
 
 /**
  * @author Mattias Bogeblad
@@ -47,6 +49,8 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 
 public class DeliveryContext implements UsageListener
 {
+    private final static Logger logger = Logger.getLogger(DeliveryContext.class.getName());
+
 	public static final String META_INFO_BINDING_NAME 					= "Meta information";
 	public static final String TEMPLATE_ATTRIBUTE_NAME   				= "Template";
 	public static final String TITLE_ATTRIBUTE_NAME     		 		= "Title";
@@ -100,6 +104,7 @@ public class DeliveryContext implements UsageListener
 	private Set usedPageComponentsMetaInfoContentVersionIdSet = new HashSet();
 	
 	private Date lastModifiedDateTime = null;
+	private boolean registerLastModifiedDate = false;
 	
 	//private InfoGluePrincipal infoGluePrincipal = null;
 	
@@ -126,6 +131,9 @@ public class DeliveryContext implements UsageListener
 	//This variable controls if tags and logic should consider the logged in editor principal even if the ordinary principal is anonymous when checking for access rights etc.
 	private boolean considerEditorInDecoratedMode = true;
 	
+	//The variable sets if methods should skip using caches if possible
+	private boolean defeatCaches = false;
+
 	private String operatingMode = null;
 	
 	private Map pageAttributes = new HashMap();
@@ -136,6 +144,10 @@ public class DeliveryContext implements UsageListener
 	private Map<String, Set<String>> cssExtensionBundles = new HashMap<String, Set<String>>();
 	private Map httpHeaders = new HashMap();
 	
+	//Possible place to put debug data for a request. It's limiting and should only be used for compact targeted debug.
+	private boolean debugMode = false;
+	private String debugInformation = "";
+
 	public static DeliveryContext getDeliveryContext()
 	{
 		return new DeliveryContext();
@@ -153,6 +165,7 @@ public class DeliveryContext implements UsageListener
 
 	private DeliveryContext(boolean registerLastModifiedDate)
 	{
+		this.registerLastModifiedDate = registerLastModifiedDate;
 	}
 	
 	public void clear()
@@ -455,6 +468,17 @@ public class DeliveryContext implements UsageListener
 		this.evaluateFullPage = evaluateFullPage;
 	}
 
+    public void setDefeatCaches(boolean defeatCaches)
+    {
+        this.defeatCaches = defeatCaches;
+        CacheController.setDefeatCaches(defeatCaches);
+    }
+
+    public boolean getDefeatCaches()
+    {
+        return this.defeatCaches;
+    }
+
 	public boolean getValidateOnDates()
 	{
 		return validateOnDates;
@@ -478,6 +502,14 @@ public class DeliveryContext implements UsageListener
 	public Set getUsedPageMetaInfoContentVersionIdSet() 
 	{
 		return usedPageMetaInfoContentVersionIdSet;
+	}
+
+	public void addUsedPageComponentsMetaInfoContentVersionId(Integer contentVersionId) 
+	{
+		if(contentVersionId == null)
+			logger.warn("Null was sent in...");
+		else
+			this.usedPageComponentsMetaInfoContentVersionIdSet.add(contentVersionId);
 	}
 
 	public Set getUsedPageComponentsMetaInfoContentVersionIdSet() 
@@ -700,6 +732,43 @@ public class DeliveryContext implements UsageListener
     	String originalQueryString = getOriginalQueryString();
 
     	return originalRequestURL + (originalQueryString == null ? "" : "?" + originalQueryString);
+	}
+
+	/**
+	 * This method returns the debug information
+	 */
+	
+	public String getDebugInformation()
+	{
+    	return this.debugInformation;
+	}
+
+	/**
+	 * This method adds debug information for eventual later use
+	 */
+	
+	public void addDebugInformation(String debug)
+	{
+		if(this.debugMode)
+			this.debugInformation = this.debugInformation + "\n" + debug;
+	}
+
+	/**
+	 * This method adds debug information for eventual later use
+	 */
+	
+	public void setDebugMode(boolean debugMode)
+	{
+    	this.debugMode = debugMode;
+	}
+
+	/**
+	 * This method adds debug information for eventual later use
+	 */
+	
+	public void resetDebugMode()
+	{
+		this.debugInformation = "";
 	}
 
 }

@@ -1343,7 +1343,8 @@ public class ContentVersionController extends BaseController
         beginTransaction(db);
 		try
         {
-		    ContentVersion contentVersion = this.getLatestActiveContentVersion(contentId, languageId, db);
+		    ContentVersionVO contentVersionVO = this.getLatestActiveContentVersionVO(contentId, languageId, db);
+	    	ContentVersion contentVersion = getContentVersionWithId(contentVersionVO.getId(), db);
 		    
 		    Collection digitalAssets = contentVersion.getDigitalAssets();
 			Iterator assetIterator = digitalAssets.iterator();

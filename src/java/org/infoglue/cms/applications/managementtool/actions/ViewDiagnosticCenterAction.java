@@ -119,9 +119,11 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
     	if(tableCount != null)
     		numberOfDigitalAssets = tableCount.getCount();
 
+    	/*//Removing for performance for now
     	tableCount = DigitalAssetController.getNumberOfUnusedAssets();
     	if(tableCount != null)
     		numberOfUnusedDigitalAssets = tableCount.getCount();
+    	*/
     	
         return "success";
     }

@@ -68,6 +68,8 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
     	this.internalDeliverUrls = CmsPropertyHandler.getInternalDeliveryUrls();
     	this.publicDeliverUrls = CmsPropertyHandler.getPublicDeliveryUrls();
 
+    	/*//Removing for performance for now
+    	
     	String tableName = "cmSiteNode";
     	String columnName = "repositoryId";
     	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
@@ -119,7 +121,6 @@ public class ViewDiagnosticCenterAction extends InfoGlueAbstractAction
     	if(tableCount != null)
     		numberOfDigitalAssets = tableCount.getCount();
 
-    	/*//Removing for performance for now
     	tableCount = DigitalAssetController.getNumberOfUnusedAssets();
     	if(tableCount != null)
     		numberOfUnusedDigitalAssets = tableCount.getCount();

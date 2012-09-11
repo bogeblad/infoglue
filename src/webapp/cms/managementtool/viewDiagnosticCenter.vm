@@ -106,6 +106,7 @@
 				</td>
 			</tr>
 		#end
+		#*
 		<tr>
 			<td colspan="3">&nbsp;</td>
 		</tr>		
@@ -118,9 +119,10 @@
 		<tr><td>Number of contents</td><td colspan="2">$numberOfContents</td></tr>
 		<tr><td>Number of content versions</td><td colspan="2">$numberOfContentVersions</td></tr>
 		<tr><td>Number of digitalAssets</td><td colspan="2">$numberOfDigitalAssets</td></tr>
+		*#
 	</table>
 	<p>
-		Number of unused digitalAssets (could potentially be removed): $numberOfUnusedDigitalAssets<br />
+		#*Number of unused digitalAssets (could potentially be removed): $numberOfUnusedDigitalAssets<br />*#
 		SQL to remove unused assets:
 	</p>
 	<p>

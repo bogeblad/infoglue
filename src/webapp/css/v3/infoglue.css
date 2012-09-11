@@ -577,6 +577,13 @@ li.page { background:url(../../images/v3/pageIcon.gif) no-repeat left center; ba
 	padding-left:28px;
 }
 
+.okstatus {
+	background:url(../../images/ok_icon.gif) no-repeat left center; background-position: 4px 2px;
+}
+.nokstatus {
+	background:url(../../images/v3/cross.png) no-repeat left center; background-position: 4px 2px;
+}
+
 /******************
  Controls input fields
 ******************/

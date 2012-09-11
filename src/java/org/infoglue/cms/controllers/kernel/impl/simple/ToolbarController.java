@@ -1249,13 +1249,13 @@ public class ToolbarController implements ToolbarProvider
 				cancelJS = cancelJS.replaceFirst("';", "&contentVersionIdParameter=" + contentVersionIdParameter + "';");
 		}
 		
-		buttons.add(new ToolbarButton("cancel",
-				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"), 
-				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"),
+		buttons.add(new ToolbarButton("reset",
+				  					  getLocalizedString(locale, "tool.common.resetButton.label"), 
+				  					  getLocalizedString(locale, "tool.common.resetButton.label"),
 				  					  cancelJS,
 				  					  "images/v3/cancelIcon.gif",
 				  					  "left",
-									  "cancel",
+									  "reset",
 				  					  true));
 		
 		return buttons;

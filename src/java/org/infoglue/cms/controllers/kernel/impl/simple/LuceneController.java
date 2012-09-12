@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.Writer;
@@ -176,19 +177,34 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		else
 		{
-			return new IndexWriter(directory, config);
+			IndexWriter indexWriter = new IndexWriter(directory, config);
+			return indexWriter;
 		}
 	}
 
+	private static int reopened = 0;
+	private static IndexReader indexReader = null;
 	private IndexReader getIndexReader() throws Exception
 	{
-		return IndexReader.open(getDirectory(), true);
+		if(indexReader == null)
+		{
+			indexReader = IndexReader.open(getDirectory(), true);
+		}
+		if(!indexReader.isCurrent())
+		{
+			reopened++;
+			indexReader.close();
+			indexReader = IndexReader.open(getDirectory(), true);
+			//indexReader = IndexReader.openIfChanged(indexReader, true);
+			logger.info("reopened:" + reopened);
+		}
+		
+		return indexReader;
 	}
 
 	private IndexSearcher getIndexSearcher() throws Exception
 	{
-		IndexReader reader = IndexReader.open(getDirectory(), true);
-	    return new IndexSearcher(reader);
+		return new IndexSearcher(getIndexReader());
 	}
 	
 	private Boolean getIsIndexedLocked() throws Exception
@@ -202,7 +218,7 @@ public class LuceneController extends BaseController implements NotificationList
 		Directory directory = getDirectory();
 		IndexWriter.unlock(directory);
 	}
-
+	
 	public Map<String,Object> getIndexInformation() throws Exception
 	{
 		Map<String,Object> info = new HashMap<String,Object>();
@@ -211,10 +227,10 @@ public class LuceneController extends BaseController implements NotificationList
 	    {
 			Directory directory = getDirectory();
 			
-		    IndexReader reader = IndexReader.open(directory);
+		    IndexReader reader = getIndexReader();
 		    int maxDoc = reader.maxDoc();
 		    int numDoc = reader.numDocs();
-		    long lastModified = IndexReader.lastModified(directory);
+		    long lastModified = getIndexReader().lastModified(directory);
 
 		    info.put("maxDoc", new Integer(maxDoc));
 		    info.put("numDoc", new Integer(numDoc));
@@ -468,7 +484,13 @@ public class LuceneController extends BaseController implements NotificationList
 			{
 				logger.info("Releasing indexing flag");
 				this.indexingInitialized.set(false);
+				stopIndexing.set(false);
 			}
+		}
+		else
+		{
+			stopIndexing.set(true);
+			logger.error("Could not delete index while clearing index.");
 		}
 	}
 
@@ -482,7 +504,7 @@ public class LuceneController extends BaseController implements NotificationList
 		IndexSearcher searcher = getIndexSearcher();
 		Query query = new QueryParser(Version.LUCENE_34, "contents", getStandardAnalyzer()).parse(text);
 		TopDocs hits = searcher.search(query, numberOfHits);
-		logger.error(hits.totalHits + " total matching documents for '" + text + "'");
+		logger.info(hits.totalHits + " total matching documents for '" + text + "'");
 
 		return hits;
 	}
@@ -508,7 +530,7 @@ public class LuceneController extends BaseController implements NotificationList
 		IndexSearcher searcher = getIndexSearcher();
 		Query query = new QueryParser(Version.LUCENE_34, field, getStandardAnalyzer()).parse(text);
 		TopDocs hits = searcher.search(query, numberOfHits);
-		logger.error(hits.totalHits + " total matching documents for '" + field + ":" + text + "'");
+		logger.info(hits.totalHits + " total matching documents for '" + field + ":" + text + "'");
 		List<Document> docs = new ArrayList<Document>();
 		for(ScoreDoc scoreDoc : hits.scoreDocs)
 		{
@@ -526,7 +548,7 @@ public class LuceneController extends BaseController implements NotificationList
 		Query query = MultiFieldQueryParser.parse(Version.LUCENE_34, queries, fields, flags, getStandardAnalyzer());
 		//Query query = new QueryParser(Version.LUCENE_34, "contents", getStandardAnalyzer()).parse(text);
 		TopDocs hits = searcher.search(query, numberOfHits);
-		logger.error(hits.totalHits + " total matching documents for '" + queries + "'");
+		logger.info(hits.totalHits + " total matching documents for '" + queries + "'");
 
 		return hits;
 	}
@@ -557,12 +579,12 @@ public class LuceneController extends BaseController implements NotificationList
 	{
 		Query query = new QueryParser(Version.LUCENE_34, "contents", analyzer).parse(text);
 		TopDocs hits = searcher.search(query, 50);
-		logger.error(hits.totalHits + " total matching documents for '" + text + "'");
+		logger.info(hits.totalHits + " total matching documents for '" + text + "'");
 		for(ScoreDoc scoreDoc : hits.scoreDocs)
 		{
 			org.apache.lucene.document.Document doc = searcher.doc(scoreDoc.doc);
 			String cvId = doc.get("contentVersionId");
-			logger.error("cvId: " + cvId);
+			logger.info("cvId: " + cvId);
 		}
 	}
 
@@ -577,6 +599,11 @@ public class LuceneController extends BaseController implements NotificationList
 		logger.info("------------------------------Got indexAll directive....");
 		if (indexingInitialized.compareAndSet(false, true)) 
 		{
+			//createTestIndex();
+			//indexingInitialized.set(false);
+			//if(true)
+			//	return true;
+
 			try
 			{
 				Timer t = new Timer();
@@ -586,7 +613,7 @@ public class LuceneController extends BaseController implements NotificationList
 				logger.info("Indexing all normal contents....");
 				List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
 				Iterator<LanguageVO> languageVOListIterator = languageVOList.iterator();
-				while(languageVOListIterator.hasNext())
+				outer:while(languageVOListIterator.hasNext())
 				{
 					LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
 					logger.info("Getting notification messages for " + languageVO.getName());
@@ -785,6 +812,7 @@ public class LuceneController extends BaseController implements NotificationList
 		boolean initDoneLocally = false;
 		boolean finishDoneLocally = false;
 
+		stopIndexing.set(false);
 		logger.info("------------------------------->notifyListeners before check in " + CmsPropertyHandler.getContextRootPath());
 		if (!checkForIndexingJobs || indexingInitialized.compareAndSet(false, true)) 
 		{
@@ -1035,7 +1063,6 @@ public class LuceneController extends BaseController implements NotificationList
 				}
 				
 				logger.info("OOOOOOOOOOOOOO:" + getLastCommitedContentVersionId());
-				t.printElapsedTime("Closing writer took");
 			}
 			catch (Exception e) 
 			{
@@ -1099,14 +1126,11 @@ public class LuceneController extends BaseController implements NotificationList
 
 				Date lastCommitedModifiedDate = getLastCommitedModifiedDate();
 				
-				logger.error("lastCommitedContentVersionId: " + lastCommitedContentVersionId);
-				logger.error("lastCommitedModifiedDate: " + lastCommitedModifiedDate);
-				
 				Calendar yesterday = Calendar.getInstance();
 				yesterday.add(Calendar.HOUR_OF_DAY, -1);
 				
-				logger.info("lastCommitedContentVersionId:" + lastCommitedContentVersionId);
-				logger.info("lastCommitedModifiedDate:" + lastCommitedModifiedDate);
+				logger.info("lastCommitedContentVersionId: " + lastCommitedContentVersionId);
+				logger.info("lastCommitedModifiedDate: " + lastCommitedModifiedDate);
 				indexReader = getIndexReader();
 				boolean didIndex = false;
 				if(lastCommitedContentVersionId == -1 || indexAllDocumentMetaData != null || indexReader.numDocs() < 100)
@@ -1141,6 +1165,7 @@ public class LuceneController extends BaseController implements NotificationList
 	}
 
 
+
 	public boolean indexIncremental(Integer lastCommitedContentVersionId, Date lastCommitedDateTime) throws Exception
 	{
 		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
@@ -1154,7 +1179,7 @@ public class LuceneController extends BaseController implements NotificationList
 	    
 		List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
 		Iterator<LanguageVO> languageVOListIterator = languageVOList.iterator();
-		while(languageVOListIterator.hasNext())
+		outer:while(languageVOListIterator.hasNext())
 		{
 			LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
 
@@ -1163,14 +1188,18 @@ public class LuceneController extends BaseController implements NotificationList
 			int newLastContentVersionId = getNotificationMessages(notificationMessages, languageVO, lastCommitedContentVersionId, lastCommitedDateTime);
 			while(newLastContentVersionId != -1)
 			{
-				t.printElapsedTime("Queueing " + notificationMessages.size() + " notificationMessages for indexing");
+				if(stopIndexing.get())
+					break outer;
+
+				if(logger.isInfoEnabled())
+					t.printElapsedTime("Queueing " + notificationMessages.size() + " notificationMessages for indexing");
 				for(NotificationMessage notificationMessage : notificationMessages)
 				{
 					notify(notificationMessage);
 				}
 				notifyListeners(true, false);
 				notificationMessages.clear();
-				t.printElapsedTime("Indexing size():" + notificationMessages.size() + " took");
+				//t.printElapsedTime("Indexing size():" + notificationMessages.size() + " took");
 				
 				Integer newLastContentVersionIdCandidate = getNotificationMessages(notificationMessages, languageVO, newLastContentVersionId, lastCommitedDateTime);
 				logger.info("newLastContentVersionIdCandidate:" + newLastContentVersionIdCandidate + "=" + newLastContentVersionId);
@@ -1182,7 +1211,8 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			
 		}
-		t2.printElapsedTime("All indexing took");
+		if(logger.isInfoEnabled())
+			t2.printElapsedTime("All indexing took");
 
 		return true;
 	}
@@ -1190,7 +1220,7 @@ public class LuceneController extends BaseController implements NotificationList
 	private int getNotificationMessagesForStructure(List<NotificationMessage> notificationMessages, LanguageVO languageVO, int lastSiteNodeVersionId) throws Exception
 	{
 		Timer t = new Timer();
-		logger.error("getNotificationMessages:" + lastSiteNodeVersionId);
+		logger.info("getNotificationMessages:" + lastSiteNodeVersionId);
 
 		int newLastSiteNodeVersionId = -1;
 		
@@ -1222,7 +1252,7 @@ public class LuceneController extends BaseController implements NotificationList
 				newLastSiteNodeVersionId = version.getId().intValue();
 			}
 						
-			logger.error("Finished round 1:" + notificationMessages.size() + ":" + newLastSiteNodeVersionId);
+			logger.info("Finished round 1:" + notificationMessages.size() + ":" + newLastSiteNodeVersionId);
 		}
 		catch ( Exception e )
 		{
@@ -1335,7 +1365,7 @@ public class LuceneController extends BaseController implements NotificationList
 	private int getPageNotificationMessages(List notificationMessages, LanguageVO languageVO, int lastContentVersionId) throws Exception
 	{
 		Timer t = new Timer();
-		logger.error("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId);
+		logger.info("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId);
 
 		logger.info("notifyListeners actually running");
 		if(getIsIndexedLocked())
@@ -1408,7 +1438,7 @@ public class LuceneController extends BaseController implements NotificationList
 				newLastContentVersionId = version.getId().intValue();
 			}
 						
-			logger.error("Finished round 3:" + notificationMessages.size() + ":" + newLastContentVersionId);
+			logger.info("Finished round 3:" + notificationMessages.size() + ":" + newLastContentVersionId);
 		}
 		catch ( Exception e )
 		{
@@ -1427,7 +1457,7 @@ public class LuceneController extends BaseController implements NotificationList
 
 	private int getNotificationMessages(List notificationMessages, LanguageVO languageVO, int lastContentVersionId, Date lastCheckDateTime) throws Exception
 	{
-		//logger.error("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId + ":" + lastCheckDateTime);
+		logger.info("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId + ":" + lastCheckDateTime);
 
 		int newLastContentVersionId = -1;
 		
@@ -1463,8 +1493,11 @@ public class LuceneController extends BaseController implements NotificationList
 						while(digitalAssetVOListIterator.hasNext())
 						{
 							DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
-							NotificationMessage assetNotificationMessage = new NotificationMessage("LuceneController", DigitalAssetImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, assetVO.getId(), "dummy");
-							notificationMessages.add(assetNotificationMessage);							
+							if(assetVO.getAssetFileSize() < 10000000) //Do not index large files
+							{
+								NotificationMessage assetNotificationMessage = new NotificationMessage("LuceneController", DigitalAssetImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, assetVO.getId(), "dummy");
+								notificationMessages.add(assetNotificationMessage);
+							}
 						}
 					}
 					
@@ -1479,7 +1512,7 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 						
 			results.close();
-			logger.error("Finished round 4:" + processedItems + ":" + newLastContentVersionId);
+			logger.info("Finished round 4:" + processedItems + ":" + newLastContentVersionId);
 		}
 		catch ( Exception e )
 		{
@@ -1527,7 +1560,7 @@ public class LuceneController extends BaseController implements NotificationList
 		    finally
 		    {
 		    	indexedDocumentsSinceLastOptimize++;
-		    	if(indexedDocumentsSinceLastOptimize > 2000)
+		    	if(indexedDocumentsSinceLastOptimize > 1000)
 		    	{
 		    		//logger.info("Optimizing...");
 		    		//writer.optimize();
@@ -1572,14 +1605,13 @@ public class LuceneController extends BaseController implements NotificationList
 		else if(notificationMessage.getClassName().equals(DigitalAssetImpl.class.getName()) || notificationMessage.getClassName().equals(DigitalAsset.class.getName()))
 		{
 			logger.info("++++++++++++++Got an DigitalAssetImpl notification: " + notificationMessage.getObjectId());
-
 			Database db2 = CastorDatabaseService.getDatabase();
 
 			beginTransaction(db2);
 			
 			try
 			{			
-				//////////ANTAGLIGEN ONï¿½DIGT MED MEDIUM hï¿½r
+				//////////ANTAGLIGEN ON…DIGT MED MEDIUM hŠr
 				MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
 				Collection contentVersions = asset.getContentVersions();
@@ -1619,7 +1651,7 @@ public class LuceneController extends BaseController implements NotificationList
 			//Deleting all info based on content
 			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
 			logger.info("Deleting all info on:" + siteNodeId);
-			//TODO - Fixa sï¿½ inte assets tas med hï¿½r....
+			//TODO - Fixa sŒ inte assets tas med hŠr....
 		    Query query = new QueryParser(Version.LUCENE_34, "siteNodeId", analyzer).parse("" + siteNodeId); 
 			writer.deleteDocuments(query);
 			//End
@@ -1640,7 +1672,7 @@ public class LuceneController extends BaseController implements NotificationList
 			//Deleting all info based on content
 			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
 			logger.info("Deleting all info on:" + contentId);
-			//TODO - Fixa sï¿½ inte assets tas med hï¿½r....
+			//TODO - Fixa sŒ inte assets tas med hŠr....
 			
 			String[] fields = new String[]{"isAsset","contentId"};
 			String[] queries = new String[]{"true","" + contentId};
@@ -2023,14 +2055,15 @@ public class LuceneController extends BaseController implements NotificationList
 		// get tokenized and indexed.
 		doc.add(new Field("contents", new StringReader(digitalAssetVO.getAssetKey() + " " + digitalAssetVO.getAssetFileName() + " " + digitalAssetVO.getAssetContentType())));
 
-		String url = DigitalAssetController.getController().getDigitalAssetUrl(digitalAssetVO, db);
-		if(logger.isInfoEnabled())
-			logger.info("url if we should index file:" + url);
+		//String url = DigitalAssetController.getController().getDigitalAssetUrl(digitalAssetVO, db);
+		//if(logger.isInfoEnabled())
+		//	logger.info("url if we should index file:" + url);
 		String filePath = DigitalAssetController.getController().getDigitalAssetFilePath(digitalAssetVO, db);
 		if(logger.isInfoEnabled())
 			logger.info("filePath if we should index file:" + filePath);
-		String text = extractTextToIndex(digitalAssetVO, new File(filePath));
-	
+		File file = new File(filePath);
+		String text = extractTextToIndex(digitalAssetVO, file);
+
 		doc.add(new Field("contents", new StringReader(text)));
 		
 		return doc;
@@ -2095,8 +2128,10 @@ public class LuceneController extends BaseController implements NotificationList
 		{
 			try
 			{
+				InputStream is = new FileInputStream(file);
 				POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
-
+				is.close();
+				
 				// Create a document for this file
 				HWPFDocument doc = new HWPFDocument(fs);
 

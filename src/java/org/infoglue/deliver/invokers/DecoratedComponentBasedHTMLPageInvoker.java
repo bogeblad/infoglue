@@ -29,12 +29,16 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -1554,23 +1558,60 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 								optionsIterator = errorOptions.iterator();
 							}
 						}
+						
+						String exactMatchOptionName = getExactMatch(componentProperty);
 
+						//Now let's check for smaller matches
 						while(optionsIterator.hasNext())
 						{
 						    ComponentPropertyOption option = (ComponentPropertyOption)optionsIterator.next();
-						    boolean isSame = false;
-						    if(componentProperty != null && componentProperty.getValue() != null && option != null && option.getValue() != null)
-						    {
-						    	String[] values = componentProperty.getValue().split(",");
-						    	for(int i=0; i<values.length; i++)
-						    	{
-						    		isSame = values[i].equals(option.getValue());
-						    		if(isSame)
-						    			break;
-						    	}
-						    }
+						    boolean debug = false;
+						    if(componentProperty.getName().equalsIgnoreCase("SelectTest"))
+						    	debug = true;
 						    
-						    sb.append("<option value=\"" + option.getValue() + "\"" + (isSame ? " selected=\"1\"" : "") + ">" + option.getName() + "</option>");
+						    try
+						    {
+							    boolean isSame = false;
+							    if(componentProperty != null && componentProperty.getValue() != null && option != null && option.getValue() != null)
+							    {
+							    	if(exactMatchOptionName != null && option.getName().equals(exactMatchOptionName))
+							    	{
+							    		isSame = true;
+							    	}
+							    	else if(exactMatchOptionName == null)
+							    	{
+								    	//The option values
+								    	String optionValue = option.getValue();
+								    	//The saved values
+								    	String[] values = componentProperty.getValue().split(",");
+									    logger.debug("optionValue:" + optionValue);
+									    logger.debug("savedValue:" + componentProperty.getValue());
+									    
+								    	int matches = 0;
+								    	for(int i=0; i<values.length; i++)
+								    	{
+								    		String savedValue = values[i];
+								    		logger.debug("savedValue part:" + savedValue);
+								    		logger.debug("optionValue:" + optionValue);
+								    		boolean matchesValue = savedValue.equals(optionValue);
+								    		if(matchesValue)
+								    		{
+								    			isSame = true;
+								    			logger.debug("Match on individual saved value:" + optionValue);
+								    			break;
+								    		}
+								    	}
+							    	}
+							    }
+							    
+							    logger.debug("isSame: " + isSame + " : " + option.getValue());
+			
+							    sb.append("<option value=\"" + option.getValue() + "\"" + (isSame ? " selected=\"1\"" : "") + ">" + option.getName() + "</option>");
+						    }
+						    catch (Exception e) 
+						    {
+						    	logger.error("Error setting picked value:" + e.getMessage(), e);
+							}
 						}
 						
 					    sb.append("</select></td>");
@@ -1720,6 +1761,65 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		sb.append("</div>");
 
 		return sb.toString();
+	}
+
+	/**
+	 * This method searches the list of options for this select (most often) and looks for a perfect match. It is a bit smart so it 
+	 * takes all the saved values and boils them down to only unique values (if a commaseparated string) and also disregards any order.
+	 * So if an option "All" is selected which holds all id's and also some individual id:s "All" is the perfect match and will be choosen and the individual not.
+	 * @param componentProperty
+	 * @return
+	 */
+	public String getExactMatch(ComponentProperty componentProperty) 
+	{
+		String exactMatchOptionName = null;
+		Iterator optionsPerfectMatchIterator = componentProperty.getOptions().iterator();
+		while(optionsPerfectMatchIterator.hasNext())
+		{
+		    ComponentPropertyOption option = (ComponentPropertyOption)optionsPerfectMatchIterator.next();
+		    try
+		    {
+			    if(componentProperty != null && componentProperty.getValue() != null && option != null && option.getValue() != null)
+			    {
+			    	//The option values
+			    	String optionValue = option.getValue();
+			    	//The saved values
+			    	String[] optionValueArray = optionValue.split(",");
+			    	String[] values = componentProperty.getValue().split(",");
+				    logger.info("optionValue:" + optionValue);
+				    logger.info("savedValue:" + componentProperty.getValue());
+					
+			        Set<String> optionValueSet = new HashSet(Arrays.asList(optionValueArray));
+				    List<String> optionValueList = new ArrayList(Arrays.asList(optionValueSet.toArray()));
+				    Collections.sort(optionValueList);
+
+				    Set<String> valuesSet = new HashSet(Arrays.asList(values));
+				    List<String> valuesList = new ArrayList(Arrays.asList(valuesSet.toArray()));
+				    Collections.sort(valuesList);
+				    
+				    String newOptionValue = "";
+				    for(String value : optionValueList)
+				    	newOptionValue += value + ",";
+
+				    String newValuesList = "";
+				    for(String value : valuesList)
+				    	newValuesList += value + ",";
+				    
+				    logger.info("newOptionValue:" + newOptionValue);
+				    logger.info("newValuesList:" + newValuesList);
+				    
+				    if(newOptionValue.equals(newValuesList))
+				    	exactMatchOptionName = option.getName();
+			    }
+		    }
+		    catch (Exception e) 
+		    {
+		    	logger.error("Error getting exact match: " + e.getMessage(), e);
+			}
+		}
+
+	    logger.info("exactMatchOptionName: " + exactMatchOptionName);
+		return exactMatchOptionName;
 	}
 
 	

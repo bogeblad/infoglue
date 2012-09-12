@@ -367,7 +367,7 @@ public class LuceneController extends BaseController implements NotificationList
 				Timer t = new Timer();
 				Timer t2 = new Timer();
 				
-				//Indexing all normal contents
+				//Indexing all normal contents now
 				logger.info("Indexing all normal contents....");
 				List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
 				Iterator<LanguageVO> languageVOListIterator = languageVOList.iterator();

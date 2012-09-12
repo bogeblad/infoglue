@@ -1092,8 +1092,8 @@
 						</p>
 					</div>
 					
-					<div id="optionsParagraph" style="display: block;">
-						<fieldset>
+					<div id="optionsParagraph" style="display: block; margin-left: 20px;">
+						<fieldset style="width:80%">
 						<legend>Options</legend>
 						<table id="optionsParent" border="0">
 					  	<tr>

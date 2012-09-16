@@ -23,6 +23,7 @@
 package org.infoglue.cms.jobs;
 
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
@@ -41,36 +42,48 @@ public class IndexContentsJob implements Job
 {
     private final static Logger logger = Logger.getLogger(IndexContentsJob.class.getName());
 
-    private static boolean running = false;
-    
+    private static AtomicBoolean running = new AtomicBoolean(false);
+
     public synchronized void execute(JobExecutionContext context) throws JobExecutionException
     {
     	logger.info("*********************************************************************");
-    	logger.info("* Starting version cleanup job which should run with nice intervals *");
-    	logger.info("* Purpose is to keep the database size at a minimum 				 *");
+    	logger.info("* Starting content index job which should run with nice intervals 	 *");
+    	logger.info("* Purpose is to keep the lucene index up2date				 		 *");
     	logger.info("*********************************************************************");
 
-    	if(!running)
-    		running = true;
+    	logger.info("running:" + running.get());
+
+    	if (running.compareAndSet(false, true)) 
+    	{
+        	try
+    		{
+        		logger.info("*********************************************************************");
+        		logger.info("Starting index contents...:" + CmsPropertyHandler.getApplicationName() + ":" + CmsPropertyHandler.getContextRootPath());
+        		logger.info("*********************************************************************");
+				try 
+				{
+					LuceneController.getController().notifyListeners(true, true); 
+					LuceneController.getController().index();
+				} 
+				catch (Exception e) 
+				{}
+    		}
+    		catch(Exception e)
+    	    {
+    	    	logger.error("Could not index everything: " + e.getMessage());
+    	    }
+    		finally
+    		{
+    			logger.info("Finished indexing ?????????????????????????????????????????");
+    			running.set(false);
+    		}
+    	}	
     	else
     	{
-    		logger.warn("IndexContentsJob allready running... skipping.");
+        	logger.warn("IndexContentsJob allready running... skipping.");
     		return;
     	}
     	
-    	try
-		{
-			new Thread(new Runnable() { public void run() {try {LuceneController.getController().notifyListeners(true, true); LuceneController.getController().index();} catch (Exception e) {}}}).start();
-		}
-		catch(Exception e)
-	    {
-	    	logger.error("Could not index everything: " + e.getMessage());
-	    }
-		finally
-		{
-			running = false;
-		}
-		
 	   	logger.info("Index-job finished");
     }
     

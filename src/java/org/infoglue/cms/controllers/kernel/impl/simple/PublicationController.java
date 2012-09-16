@@ -511,6 +511,19 @@ public class PublicationController extends BaseController
 	        publicationVO = createAndPublish(publicationVO, events, overrideVersionModifyer, infoGluePrincipal, db);
 	        
 	        commitTransaction(db);
+		
+	        // Notify the interceptors!!!
+	        try
+			{
+	            Map hashMap = new HashMap();
+	        	hashMap.put("publicationId", publicationVO.getId());
+	        	
+	    		intercept(hashMap, "Publication.Written", infoGluePrincipal);
+			}
+			catch (Exception e)
+			{
+				logger.error("An error occurred when we tried to replicate the data:" + e.getMessage(), e);
+			}
 		}
 		catch(Exception e)
 		{
@@ -888,10 +901,12 @@ public class PublicationController extends BaseController
 
         try
         {
+        	publicationDetails = getPublicationDetailVOList(publicationId, db);
+        	/*
         	Publication publication = getPublicationWithId(publicationId, db);
         	Collection<PublicationDetailVO> details = publication.getPublicationDetails();
             publicationDetails = toVOList(details);
-
+			*/
 			commitTransaction(db);
         }
         catch(Exception e)
@@ -900,6 +915,20 @@ public class PublicationController extends BaseController
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
+
+        return publicationDetails;
+	}
+
+	/**
+	 * This method returns a list of all details a publication has.
+	 */
+	public List<PublicationDetailVO> getPublicationDetailVOList(Integer publicationId, Database db) throws SystemException
+	{
+		List<PublicationDetailVO> publicationDetails = new ArrayList<PublicationDetailVO>();
+
+    	Publication publication = getPublicationWithId(publicationId, db);
+    	Collection<PublicationDetailVO> details = publication.getPublicationDetails();
+        publicationDetails = toVOList(details);
 
         return publicationDetails;
 	}

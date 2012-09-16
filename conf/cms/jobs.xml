@@ -93,6 +93,7 @@
 			</cron>
 		</trigger>
 	</job>
+
 	<job>
 		<job-detail>
 			<name>IndexContents</name>
@@ -109,8 +110,8 @@
 				<group>infoglueJobs</group>
 				<job-name>IndexContents</job-name>
 				<job-group>infoglueJobs</job-group>
-				<!--<cron-expression>0 0 1 * * ?</cron-expression>-->
-				<cron-expression>0 0/2 * * * ?</cron-expression>
+				<!--<cron-expression>0/30 * * * * ?</cron-expression>-->
+				<cron-expression>0 0/5 * * * ?</cron-expression>
 			</cron>
 		</trigger>
 	</job>

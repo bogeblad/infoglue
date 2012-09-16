@@ -32,4 +32,26 @@
 		</trigger>
 	</job>
 
+	<job>
+		<job-detail>
+			<name>IndexContents</name>
+			<group>infoglueIndexJobs</group>
+			<job-class>org.infoglue.cms.jobs.IndexContentsJob</job-class>
+			<volatility>false</volatility>
+			<durability>false</durability>
+			<recover>false</recover>
+		</job-detail>
+			        
+		<trigger>
+			<cron>
+				<name>infoglueIndexContentsTrigger</name>
+				<group>infoglueJobs</group>
+				<job-name>IndexContents</job-name>
+				<job-group>infoglueJobs</job-group>
+				<!--<cron-expression>0/30 * * * * ?</cron-expression>-->
+				<cron-expression>0 0/5 * * * ?</cron-expression>
+			</cron>
+		</trigger>
+	</job>
+
 </quartz>

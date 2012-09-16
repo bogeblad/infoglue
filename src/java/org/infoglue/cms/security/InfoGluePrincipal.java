@@ -25,6 +25,7 @@ package org.infoglue.cms.security;
 
 import java.io.Serializable;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -92,6 +93,11 @@ public class InfoGluePrincipal implements Principal, Serializable
 	public InfoGluePrincipal(String name, String displayName, String firstName, String lastName, String email, List roles, List groups, Map metaInformation, boolean isAdministrator, AuthorizationModule autorizationModule)
 	{
 		InfoGlueRole infoGlueRole = new InfoGlueRole("anonymous", "anonymous", "The default anonymous role", autorizationModule);
+		if(roles == null)
+			roles = new ArrayList();
+		if(groups == null)
+			groups = new ArrayList();
+		
 		roles.add(infoGlueRole);
 
 		this.name = name;

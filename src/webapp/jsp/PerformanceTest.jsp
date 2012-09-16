@@ -55,26 +55,28 @@
 <%
 org.infoglue.deliver.util.Timer timer = new org.infoglue.deliver.util.Timer();
 
-java.util.Collection nodes = SiteNodeController.getAllVOObjects(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, "name", "asc");
+java.util.List nodes = SiteNodeController.getController().getSiteNodeVOList(false, 0, 1000);
+//java.util.Collection nodes = SiteNodeController.getAllVOObjects(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, "name", "asc");
 long elapsedTime = timer.getElapsedTime();
 float thisAvg = (float)elapsedTime/(float)nodes.size();
-float refAvg = (float)89/(float)369;
+float refAvg = (float)6022/(float)1000;
 String tdClass = "currentBetter";
 if(thisAvg > refAvg)
 	tdClass = "currentWorse";
 	
-out.println("<tr><td>Reading sitenodes</td><td>" + nodes.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>369</td><td class='ref'>89</td><td class='ref'>" + refAvg + "</td></tr>");
+out.println("<tr><td>Reading sitenodes</td><td>" + nodes.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>1000</td><td class='ref'>6022</td><td class='ref'>" + refAvg + "</td></tr>");
 
-java.util.Collection contents = ContentController.getAllVOObjects(org.infoglue.cms.entities.content.impl.simple.ContentImpl.class, "name", "asc");
+//java.util.Collection contents = ContentController.getAllVOObjects(org.infoglue.cms.entities.content.impl.simple.ContentImpl.class, "name", "asc");
+java.util.List contents = ContentController.getContentController().getContentVOList(false, 1000);
 elapsedTime = timer.getElapsedTime();
 thisAvg = (float)elapsedTime/(float)contents.size();
-refAvg = (float)60/(float)969;
+refAvg = (float)84/(float)1000;
 tdClass = "currentBetter";
 if(thisAvg > refAvg)
 	tdClass = "currentWorse";
 
 
-out.println("<tr><td>Reading contents</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>969</td><td class='ref'>60</td><td class='ref'>" + refAvg + "</td></tr>");
+out.println("<tr><td>Reading contents</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>1000</td><td class='ref'>84</td><td class='ref'>" + refAvg + "</td></tr>");
 
 java.util.Iterator contentsIterator = contents.iterator();
 while(contentsIterator.hasNext())
@@ -88,12 +90,12 @@ while(contentsIterator.hasNext())
 
 elapsedTime = timer.getElapsedTime();
 thisAvg =  (float)elapsedTime/(float)contents.size();
-refAvg = (float)1062/(float)969;
+refAvg = (float)1136/(float)1000;
 tdClass = "currentBetter";
 if(thisAvg > refAvg)
 	tdClass = "currentWorse";
 	
-out.println("<tr><td>Reading latest contentVersion</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>969</td><td class='ref'>1062</td><td class='ref'>" + refAvg + "</td></tr>");
+out.println("<tr><td>Reading latest contentVersion</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>1000</td><td class='ref'>1136</td><td class='ref'>" + refAvg + "</td></tr>");
 %>
 </table>
 

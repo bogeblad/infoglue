@@ -333,7 +333,7 @@
 <!--  Mapping for SiteNodeVersion  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl" identity="siteNodeVersionId" key-generator="SEQUENCE">
     <description>SiteNodeVersion</description>
-    <cache-type type="unlimited"/>
+    <cache-type type="unlimited" capacity="10000"/>
     <!--<cache-type type="none"/>-->
     <map-to table="cmSiNoVer"/>
     <field name="siteNodeVersionId" type="java.lang.Integer">
@@ -404,7 +404,7 @@
 <!--  Mapping for SmallSiteNodeVersion  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl" identity="siteNodeVersionId" key-generator="SEQUENCE">
     <description>SiteNodeVersion</description>
-    <cache-type type="unlimited"/>
+    <cache-type type="count-limited" capacity="10000"/>
     <map-to table="cmSiNoVer"/>
     <field name="siteNodeVersionId" type="java.lang.Integer">
       <sql name="SiNoVerId" type="integer" dirty="check" />
@@ -494,7 +494,7 @@
 <!--  Mapping for SiteNode  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl" identity="siteNodeId" key-generator="SEQUENCE">
     <description>SiteNode</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="count-limited" capacity="10000"/>
     <map-to table="cmSiNo"/>
     <field name="siteNodeId" type="java.lang.Integer">
       <sql name="SiNoId" type="integer" dirty="check" />
@@ -540,7 +540,7 @@
 <!--  Mapping for SmallSiteNode  -->
   <class name="org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl" identity="siteNodeId" key-generator="SEQUENCE">
     <description>SmallSiteNode</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="count-limited" capacity="10000"/>
     <map-to table="cmSiNo"/>
     <field name="siteNodeId" type="java.lang.Integer">
       <sql name="SiNoId" type="integer" dirty="check" />
@@ -903,7 +903,7 @@
 <!--  Mapping for Content  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.ContentImpl" identity="contentId" key-generator="SEQUENCE">
     <description>Content</description>
-    <cache-type type="unlimited" capacity="5000"/>
+    <cache-type type="count-limited" capacity="5000"/>
     <map-to table="cmCont"/>
     <field name="contentId" type="java.lang.Integer">
       <sql name="ContId" type="integer" dirty="check" />
@@ -957,7 +957,7 @@
 <!--  Mapping for SmallContent  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.SmallContentImpl" identity="contentId" key-generator="SEQUENCE">
     <description>SmallContent</description>
-	<cache-type type="unlimited" capacity="10000"/>
+	<cache-type type="count-limited" capacity="10000"/>
     <map-to table="cmCont"/>
     <field name="contentId" type="java.lang.Integer">
       <sql name="ContId" type="integer" dirty="check" />
@@ -1001,7 +1001,7 @@
 <!--  Mapping for SmallishContent  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl" identity="contentId" key-generator="SEQUENCE">
     <description>SmallishContent</description>
-	<cache-type type="unlimited" capacity="10000"/>
+	<cache-type type="count-limited" capacity="10000"/>
     <map-to table="cmCont"/>
     <field name="contentId" type="java.lang.Integer">
       <sql name="ContId" type="integer" dirty="check" />
@@ -1047,7 +1047,7 @@
   <!--  Mapping for MediumContent  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.MediumContentImpl" identity="contentId" key-generator="SEQUENCE">
     <description>MediumContent</description>
-	<cache-type type="unlimited" capacity="10000"/>
+	<cache-type type="count-limited" capacity="10000"/>
     <map-to table="cmCont"/>
     <field name="contentId" type="java.lang.Integer">
       <sql name="ContId" type="integer" dirty="check" />
@@ -1317,7 +1317,7 @@
 <!--  Mapping for SmallDigitalAsset  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl" identity="digitalAssetId" key-generator="SEQUENCE">
     <description>DigitalAsset</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="count-limited" capacity="10000"/>
     <map-to table="cmDigAsset"/>
     <field name="digitalAssetId" type="java.lang.Integer">
       <sql name="DigAssetId" type="integer" dirty="check" />
@@ -1356,7 +1356,7 @@
 <!--  Mapping for MediumDigitalAsset  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl" identity="digitalAssetId" key-generator="SEQUENCE">
     <description>MediumDigitalAsset</description>
-    <cache-type type="unlimited" capacity="10000"/>
+    <cache-type type="count-limited" capacity="10000"/>
     <map-to table="cmDigAsset"/>
     <field name="digitalAssetId" type="java.lang.Integer">
       <sql name="DigAssetId" type="integer" dirty="check" />
@@ -1475,7 +1475,7 @@
 <!--  Mapping for Publication  -->
   <class name="org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl" identity="publicationId" key-generator="SEQUENCE">
     <description>Publication</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="unlimited" capacity="3000"/>
     <map-to table="cmPublication"/>
     <field name="publicationId" type="java.lang.Integer">
       <sql name="publicationId" type="integer" dirty="check" />
@@ -1504,7 +1504,7 @@
 <!--  Mapping for PublicationDetail  -->
   <class name="org.infoglue.cms.entities.publishing.impl.simple.PublicationDetailImpl" depends="org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl" identity="publicationDetailId" key-generator="SEQUENCE">
     <description>PublicationDetail</description>
-    <cache-type type="unlimited" capacity="1000"/>
+    <cache-type type="unlimited" capacity="10000"/>
     <map-to table="cmPublicationDetail"/>
     <field name="publicationDetailId" type="java.lang.Integer">
       <sql name="publicationDetailId" type="integer" dirty="check" />

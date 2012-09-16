@@ -265,8 +265,6 @@ public class ExpireCacheJob implements Job
                 RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
             }
             
-			new Thread(new Runnable() { public void run() {try {LuceneController.getController().notifyListeners(true, true); LuceneController.getController().index();} catch (Exception e) {}}}).start();
-            
             synchronized (intervalCount)
 			{
                 intervalCount++;
@@ -327,6 +325,27 @@ public class ExpireCacheJob implements Job
             logger.error("An error occurred when we tried to update cache:" + e.getMessage());
             logger.warn("An error occurred when we tried to update cache:" + e.getMessage(), e);
         }
+        /*
+		System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:" + CmsPropertyHandler.getApplicationName() + ":" + CmsPropertyHandler.getContextRootPath());
+    	try
+		{
+        	System.out.println("*********************************************************************");
+    		System.out.println("Starting index contents...:" + CmsPropertyHandler.getApplicationName() + ":" + CmsPropertyHandler.getContextRootPath());
+        	System.out.println("*********************************************************************");
+			try 
+			{
+				LuceneController.getController().notifyListeners(true, true); 
+				LuceneController.getController().index();
+			} 
+			catch (Exception e) 
+			{}
+		}
+		catch(Exception e)
+	    {
+	    	logger.error("Could not index everything: " + e.getMessage());
+	    }
+		//new Thread(new Runnable() { public void run() {try {LuceneController.getController().notifyListeners(true, true); LuceneController.getController().index();} catch (Exception e) {}}}).start();
+		*/
         
         running.set(false);
     }

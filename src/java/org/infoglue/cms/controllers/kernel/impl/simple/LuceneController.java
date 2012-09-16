@@ -152,7 +152,7 @@ public class LuceneController extends BaseController implements NotificationList
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, getStandardAnalyzer());
 		IndexWriter indexWriter = new IndexWriter(directory, config);
 		indexWriter.deleteDocuments(new Term("initializer", "true"));
-		indexWriter.close();
+		indexWriter.close(true);
 	}
 	
 	private IndexWriter getIndexWriter() throws Exception
@@ -228,8 +228,8 @@ public class LuceneController extends BaseController implements NotificationList
 		    info.put("numDoc", new Integer(numDoc));
 		    info.put("lastModified", new Date(lastModified));
 		    info.put("lastCommitedContentVersionId", getLastCommitedContentVersionId());
-
-			//reader.close();
+		    
+		    //reader.close();
 		    //directory.close();
 	    } 
 	    catch (Exception e) 
@@ -251,7 +251,7 @@ public class LuceneController extends BaseController implements NotificationList
 				logger.info("NumDocs:" + getIndexReader().numDocs());
 				IndexWriter writer = getIndexWriter();
 				writer.deleteAll();
-				writer.close();
+				writer.close(true);
 				logger.info("NumDocs after delete:" + getIndexReader().numDocs());
 			}
 			catch (Exception e) 
@@ -348,9 +348,10 @@ public class LuceneController extends BaseController implements NotificationList
 
 	public boolean indexAll() throws Exception
 	{
-		Timer tt = new Timer();
+		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
+			return false;
+		
 		logger.warn("INDEXING ALL - correct?");
-		Thread.dumpStack();
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		
 		stopIndexing.set(false);
@@ -375,9 +376,8 @@ public class LuceneController extends BaseController implements NotificationList
 				{
 					LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
 					
-					List<NotificationMessage> notificationMessages = new ArrayList<NotificationMessage>();
 					logger.info("Getting notification messages for " + languageVO.getName());
-					int newLastContentVersionId = getContentNotificationMessages(notificationMessages, languageVO, 0);
+					int newLastContentVersionId = getContentNotificationMessages(languageVO, 0);
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessages", t.getElapsedTime());
 					logger.info("newLastContentVersionId " + newLastContentVersionId);
 					while(newLastContentVersionId != -1)
@@ -385,8 +385,8 @@ public class LuceneController extends BaseController implements NotificationList
 						if(stopIndexing.get())
 							break outer;
 						
-						Thread.sleep(10000);
-						newLastContentVersionId = getContentNotificationMessages(notificationMessages, languageVO, newLastContentVersionId);
+						Thread.sleep(5000);
+						newLastContentVersionId = getContentNotificationMessages(languageVO, newLastContentVersionId);
 						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessages 2", t.getElapsedTime());
 						logger.info("newLastContentVersionId " + newLastContentVersionId);
 					}
@@ -407,7 +407,7 @@ public class LuceneController extends BaseController implements NotificationList
 						if(stopIndexing.get())
 							break outer;
 
-						Thread.sleep(10000);
+						Thread.sleep(5000);
 						newLastSiteNodeVersionId = getPageNotificationMessages(notificationMessages, languageVO, newLastSiteNodeVersionId);
 						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessages 2", t.getElapsedTime());
 						logger.info("newLastSiteNodeVersionId " + newLastSiteNodeVersionId);
@@ -474,16 +474,12 @@ public class LuceneController extends BaseController implements NotificationList
 		    	{
 		    		//writer.optimize();
 		    		//writer.optimize(true);
-		    		System.out.println("Sleeping...:" + getIndexInformation().get("numDoc"));
+		    		logger.info("Sleeping...:" + getIndexInformation().get("numDoc"));
 		    		Thread.sleep(5000);
 		    	}
 			}
 			
-			writer.close();
-			//writer.close(true);
-
-			System.out.println("Sleeping last...:" + getIndexInformation().get("numDoc"));
-			Thread.sleep(10000);
+			writer.close(true);
 		}
 		catch (Exception e) 
 		{
@@ -542,6 +538,9 @@ public class LuceneController extends BaseController implements NotificationList
 	
 	public void notifyListeners(boolean forceVersionIndexing, boolean checkForIndexingJobs) throws IOException, Exception
 	{
+		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
+			return;
+
 		boolean initDoneLocally = false;
 		boolean finishDoneLocally = false;
 
@@ -566,7 +565,7 @@ public class LuceneController extends BaseController implements NotificationList
 			List<NotificationMessage> baseEntitiesToIndexMessageList = new ArrayList<NotificationMessage>();
 			
 			List<String> existingSignatures = new ArrayList<String>();
-			logger.info("Before AAAAA:" + internalMessageList.size());
+			logger.info("Before AAAAA:" + internalMessageList.size() + ":" + existingSignatures.size());
 			Iterator cleanupInternalMessageListIterator = internalMessageList.iterator();
 			while(cleanupInternalMessageListIterator.hasNext())
 			{
@@ -712,7 +711,7 @@ public class LuceneController extends BaseController implements NotificationList
 				}
 			}
 			internalMessageList = baseEntitiesToIndexMessageList;
-			logger.info("After in [" + CmsPropertyHandler.getContextRootPath() + "]:" + internalMessageList.size());
+			logger.info("After in [" + CmsPropertyHandler.getContextRootPath() + "]:" + internalMessageList.size() + ":" + existingSignatures.size());
 			
 			try
 			{
@@ -789,7 +788,7 @@ public class LuceneController extends BaseController implements NotificationList
 				}
 				finally
 				{
-					writer.close();
+					writer.close(true);
 				}
 				
 				logger.info("OOOOOOOOOOOOOO:" + getLastCommitedContentVersionId());
@@ -828,22 +827,24 @@ public class LuceneController extends BaseController implements NotificationList
 			if(initDoneLocally && !finishDoneLocally)
 				logger.error("EEEEEEEEEEEEEEERRRRRRRRRRRRRRROOOOOOOOOOOORRRRRRRR aaaaaaa");
 
+			logger.info("internalMessageList 1:" + internalMessageList.size() + " / " + qeuedMessages.size());
 		}
 		else
 		{
 			logger.warn("------------------------------->Indexing job allready running... skipping in " + CmsPropertyHandler.getContextRootPath());
 		}
+		logger.info("queued messages 1:" + qeuedMessages.size());
 	}
 	
 
 	public void index() throws Exception
 	{
-		//if(true)
-		//	return;
+		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
+			return;
 		
 		stopIndexing.set(false);
 		logger.warn("################# starting index");
-		//if (indexingInitialized.compareAndSet(false, true)) 
+		//if (indexStarted.compareAndSet(false, true)) 
 		//{
 			IndexReader indexReader = null;
 			try
@@ -879,21 +880,11 @@ public class LuceneController extends BaseController implements NotificationList
 			{
 				logger.error("Error indexing notifications:" + e.getMessage(), e);
 			}
-			/*
-			finally
-			{
-				logger.info("Releasing indexing flag");
-				if(indexReader != null)
-				{
-					try { indexReader.close(); } catch (Exception e2) {}
-				}
-			}
-			*/
 		/*
 		}
 		else
 		{
-			logger.info("################# skipping index");
+			logger.error("################# skipping index, was allready started");
 		}
 		*/
 	}
@@ -902,8 +893,8 @@ public class LuceneController extends BaseController implements NotificationList
 
 	public boolean indexIncremental(Integer lastCommitedContentVersionId, Date lastCommitedDateTime) throws Exception
 	{
-		//if(true)
-		//	return true;
+		if(!CmsPropertyHandler.getInternalSearchEngine().equalsIgnoreCase("lucene"))
+			return false;
 
 		Timer t = new Timer();
 		Timer t2 = new Timer();
@@ -999,7 +990,7 @@ public class LuceneController extends BaseController implements NotificationList
 		return newLastSiteNodeVersionId;
 	}
 	
-	private int getContentNotificationMessages(List notificationMessages, LanguageVO languageVO, int lastContentVersionId) throws Exception
+	private int getContentNotificationMessages(LanguageVO languageVO, int lastContentVersionId) throws Exception
 	{
 		Timer t = new Timer();
 		logger.info("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId);
@@ -1079,7 +1070,7 @@ public class LuceneController extends BaseController implements NotificationList
 				newLastContentVersionId = version.getId().intValue();
 			}
 						
-			logger.info("Finished round 2:" + notificationMessages.size() + ":" + newLastContentVersionId);
+			//logger.info("Finished round 2:" + notificationMessages.size() + ":" + newLastContentVersionId);
 		}
 		catch ( Exception e )
 		{
@@ -1088,7 +1079,7 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		finally
 		{
-			try{setLastCommitedContentVersionId(writer, newLastContentVersionId); writer.optimize(); writer.close();}catch (Exception e) {e.printStackTrace();}
+			try{setLastCommitedContentVersionId(writer, newLastContentVersionId); writer.close(true);}catch (Exception e) {e.printStackTrace();}
 		}
 		
 		commitTransaction(db);
@@ -1181,7 +1172,7 @@ public class LuceneController extends BaseController implements NotificationList
 		}
 		finally
 		{
-			try{setLastCommitedContentVersionId(writer, newLastContentVersionId); writer.optimize(); writer.close();}catch (Exception e) {e.printStackTrace();}
+			try{setLastCommitedContentVersionId(writer, newLastContentVersionId); writer.close(true);}catch (Exception e) {e.printStackTrace();}
 		}
 		
 		commitTransaction(db);
@@ -1297,7 +1288,7 @@ public class LuceneController extends BaseController implements NotificationList
 		    	if(indexedDocumentsSinceLastOptimize > 1000)
 		    	{
 		    		//logger.info("Optimizing...");
-		    		writer.optimize();
+		    		//writer.optimize();
 		    		indexedDocumentsSinceLastOptimize = 0;
 		    	}
 		    	//writer.close();	    	

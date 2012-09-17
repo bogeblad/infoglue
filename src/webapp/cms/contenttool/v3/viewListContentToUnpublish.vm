@@ -147,7 +147,7 @@
 
 		#set($cnt = 0)
 		#foreach($c in $contents)
-			#set( $row = ["<img src='images/v3/contentIcon.gif'> $c.getName() ($c.getId())", $ui.getString("tool.common.publishing.typeContentLabel")] )
+			#set( $row = ["<img src='images/v3/contentIcon.gif'> $this.getContentPath($c.id).replaceAll(' ', '&nbsp;') ($c.getId())", $ui.getString("tool.common.publishing.typeContentLabel")] )
 			#set($cnt = $cnt + 1)
 			#lvAddRowV3($row $cnt $c.id false)
 		#end

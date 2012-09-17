@@ -349,6 +349,8 @@
 				#set($option2 = ["classic", "Classic"])
 				#set($componentBindningAssetBrowserOptions = [$option1, $option2]) 
 				#selectFieldCSS("ServerNode.property.componentBindningAssetBrowser" "componentBindningAssetBrowser" $this.getPropertyValue('componentBindningAssetBrowser') $componentBindningAssetBrowserOptions "$!cmsPH.componentBindningAssetBrowser")
+
+				#editPropertyFieldCSS("ServerNode.property.GACode" "gaCode" "$this.getPropertyValue('gaCode')" "51" "$!serverNodeId" "$!cmsPH.getGACode()")
 				
 				#editPropertyFieldCSS("ServerNode.property.workingStyleInformation" "workingStyleInformation" "$this.getPropertyValue('workingStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.workingStyleInformation")
 				#editPropertyFieldCSS("ServerNode.property.finalStyleInformation" "finalStyleInformation" "$this.getPropertyValue('finalStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.finalStyleInformation")

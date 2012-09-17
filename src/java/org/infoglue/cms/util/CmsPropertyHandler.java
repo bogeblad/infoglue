@@ -1024,6 +1024,11 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("internalSearchEngine", true, "lucene");
 	}
 
+	public static String getGACode()
+	{
+		return getServerNodeProperty("gaCode", true, "");
+	}
+
 	public static String getMaxRows()
 	{
 		return getServerNodeProperty("maxRows", true, "100");

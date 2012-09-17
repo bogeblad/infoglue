@@ -798,6 +798,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return CmsPropertyHandler.getGACode();
 	}
 
+	public String getHeaderHTML()
+	{
+		return CmsPropertyHandler.getHeaderHTML();
+	}
+
     public String getColorScheme()
     {
         return colorScheme;

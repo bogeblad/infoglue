@@ -221,6 +221,12 @@
 			#end
 		</div>
 		
+		#if($this.getHeaderHTML() != "")
+			<div style="position: absolute; top: 2px; right: 10px;">
+				$this.getHeaderHTML()
+			</div>
+		#end
+				
 		<div style="float: right; padding-top: 10px;">
 		
 			#*

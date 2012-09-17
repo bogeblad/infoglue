@@ -793,6 +793,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return CmsPropertyHandler.getSkipResultDialogIfPossible();
 	}
 
+	public String getGACode()
+	{
+		return CmsPropertyHandler.getGACode();
+	}
+
     public String getColorScheme()
     {
         return colorScheme;

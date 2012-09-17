@@ -27,6 +27,28 @@
 #end
 
 ##*****************************************************
+## This is the include of Google Analytics			  *
+##*****************************************************
+
+#macro(includeGA)
+	#if($this.getGACode() != "")
+	<script type="text/javascript">
+	
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', '$this.getGACode()']);
+	  _gaq.push(['_trackPageview']);
+	
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	
+	</script>
+	#end
+#end
+
+##*****************************************************
 ## This is the header for all V3 managementtool pages *
 ##*****************************************************
 
@@ -353,6 +375,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	-->
 #if($endHeadAndDefineBody)
+
+	#includeGA()
+
 </head>
 
 <body class="generaltooledit yui-skin-sam">
@@ -495,16 +520,19 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 #if($endHeadAndDefineBody)
+	
+	#includeGA()
+
 </head>
 
 <body class="generaltooledit yui-skin-sam $!extraBodyClass">
 
-<div id="genericDialog" title="genericQuestion" style="display: none">
-	<h3>Confirmation</h3>
-	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>$ui.getString("tool.common.confirmation.text")</p>
-</div>
-
-#set( $lvColor = "silver")
+	<div id="genericDialog" title="genericQuestion" style="display: none">
+		<h3>Confirmation</h3>
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>$ui.getString("tool.common.confirmation.text")</p>
+	</div>
+	
+	#set( $lvColor = "silver")
 #end
 
 #end
@@ -617,6 +645,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 #if($endHeadAndDefineBody)
+
+	#includeGA()
+
 </head>
 
 <body class="generaltooledit $extraBodyClass">
@@ -766,6 +797,9 @@
 	<meta http-equiv="Cache-Control" content="no-cache" />
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	#includeGA()
+	
 </head>
 
 <body class="managementtooledit">
@@ -1002,6 +1036,9 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 #if($endHeadAndDefineBody)
+
+	#includeGA()
+
 </head>
 
 <body class="generaltooledit yui-skin-sam">

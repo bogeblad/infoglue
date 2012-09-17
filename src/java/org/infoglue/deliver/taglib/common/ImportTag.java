@@ -46,8 +46,8 @@ public class ImportTag extends TemplateControllerTag
 
 	private String url;
 	private String charEncoding;
-	private Map requestProperties = new HashMap();
-	private Map requestParameters = new HashMap();
+	private Map<String, String> requestProperties = new HashMap<String, String>();
+	private Map<String, String> requestParameters = new HashMap<String, String>();
 	private Integer timeout = new Integer(30000);
 	
 	private Boolean useCache = false;
@@ -56,6 +56,7 @@ public class ImportTag extends TemplateControllerTag
 	private Boolean useFileCacheFallback = false;
 	private String fileCacheCharEncoding = null;
 	private Integer cacheTimeout = new Integer(3600); 
+	private Boolean skipExpiredContentFallback = false;
 	
 	private HttpHelper helper = new HttpHelper();
 	
@@ -109,6 +110,9 @@ public class ImportTag extends TemplateControllerTag
 			if(fileCacheCharEncoding == null)
 				fileCacheCharEncoding = charEncoding;
 
+			if(fileCacheCharEncoding == null)
+				fileCacheCharEncoding = "iso-8859-1";
+			
 			if(!useCache && !useFileCacheFallback)
 			{
 				if(logger.isInfoEnabled())
@@ -144,10 +148,11 @@ public class ImportTag extends TemplateControllerTag
 				if(logger.isInfoEnabled())
 					t.printElapsedTime("Getting timed cache result:" + cachedResult);
 				
-				if((cachedResult == null || cachedResult.equals("")))
+				if(((cachedResult == null || cachedResult.equals(""))) && !skipExpiredContentFallback)
 				{
 					logger.info("No cached result either in memory or in filecache - getting old if exists");
 					cachedResult = (String)CacheController.getCachedObjectFromAdvancedCache(cacheName, localCacheKey, useFileCacheFallback, fileCacheCharEncoding, useCache);
+					getController().getDeliveryContext().setDisablePageCache(true);
 
 					callInBackground = true;
 				}
@@ -159,12 +164,7 @@ public class ImportTag extends TemplateControllerTag
 					
 					cachedResult = helper.getUrlContent(url, requestProperties, requestParameters, charEncoding, timeout.intValue());
 					
-					if(logger.isInfoEnabled())
-						t.printElapsedTime("5 took..");
 					resultHandler.handleResult(cachedResult);
-					
-					if(logger.isInfoEnabled())
-						t.printElapsedTime("6 took..");
 				}
 				else if(callInBackground)
 				{
@@ -194,6 +194,7 @@ public class ImportTag extends TemplateControllerTag
 		this.useFileCacheFallback = false;
 		this.charEncoding = null;
 		this.fileCacheCharEncoding = null;
+		this.skipExpiredContentFallback = false;
 		
         return EVAL_PAGE;
     }
@@ -242,6 +243,11 @@ public class ImportTag extends TemplateControllerTag
         this.useCache = (Boolean)evaluate("importTag", "useCache", useCache, Boolean.class);
     }
 
+    public void setSkipExpiredContentFallback(String skipExpiredContentFallback) throws JspException
+    {
+        this.skipExpiredContentFallback = (Boolean)evaluate("importTag", "skipExpiredContentFallback", skipExpiredContentFallback, Boolean.class);
+    }
+    
     public void setUseFileCacheFallback(String useFileCacheFallback) throws JspException
     {
         this.useFileCacheFallback = (Boolean)evaluate("importTag", "useFileCacheFallback", useFileCacheFallback, Boolean.class);

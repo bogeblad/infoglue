@@ -45,6 +45,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.tree.DefaultAttribute;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.applications.databeans.GenericOptionDefinition;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
@@ -1537,7 +1538,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 						sb.append("			<td class=\"igpropertyvalue igpropertyDivider\" align=\"left\"><input type=\"hidden\" name=\"" + propertyIndex + "_propertyName\" value=\"" + componentProperty.getName() + "\"/><select class=\"propertyselect\" name=\"" + componentProperty.getName() + "\" onchange=\"setDirty();\"" + (componentProperty.getAllowMultipleSelections() ? " multiple=\"1\" size=\"3\"" : "") + ">");
 						
 						Iterator optionsIterator = componentProperty.getOptions().iterator();
-						
+						List<GenericOptionDefinition> options = null;
+							
 						if(componentProperty.getDataProvider() != null && !componentProperty.getDataProvider().equals(""))
 						{
 							try
@@ -1545,7 +1547,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 								PropertyOptionsDataProvider provider = (PropertyOptionsDataProvider)Class.forName(componentProperty.getDataProvider()).newInstance();
 								logger.info("componentProperty.getDataProviderParameters():" + componentProperty.getDataProviderParameters());
 								Map parameters = httpHelper.toMap(componentProperty.getDataProviderParameters(), "UTF-8", ";");
-								optionsIterator = provider.getOptions(parameters, locale.getLanguage(), principal, templateController.getDatabase()).iterator();
+								options = provider.getOptions(parameters, locale.getLanguage(), principal, templateController.getDatabase());
+								optionsIterator = options.iterator();
 							}
 							catch (Exception e) 
 							{
@@ -1559,8 +1562,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 							}
 						}
 						
-						String exactMatchOptionName = getExactMatch(componentProperty);
-
+						String exactMatchOptionName = getExactMatch(componentProperty, options);
+						//System.out.println("exactMatchOptionName:" + exactMatchOptionName);
+						
 						//Now let's check for smaller matches
 						while(optionsIterator.hasNext())
 						{
@@ -1770,13 +1774,17 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	 * @param componentProperty
 	 * @return
 	 */
-	public String getExactMatch(ComponentProperty componentProperty) 
+	public String getExactMatch(ComponentProperty componentProperty, List<GenericOptionDefinition> options) 
 	{
 		String exactMatchOptionName = null;
-		Iterator optionsPerfectMatchIterator = componentProperty.getOptions().iterator();
+		
+		Iterator<GenericOptionDefinition> optionsPerfectMatchIterator = componentProperty.getOptions().iterator();
+		if(options != null)
+			optionsPerfectMatchIterator = options.iterator();
+
 		while(optionsPerfectMatchIterator.hasNext())
 		{
-		    ComponentPropertyOption option = (ComponentPropertyOption)optionsPerfectMatchIterator.next();
+			GenericOptionDefinition option = optionsPerfectMatchIterator.next();
 		    try
 		    {
 			    if(componentProperty != null && componentProperty.getValue() != null && option != null && option.getValue() != null)

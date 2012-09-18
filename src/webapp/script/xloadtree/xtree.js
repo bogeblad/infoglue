@@ -67,8 +67,11 @@ var webFXTreeConfig = {
 	openFolderIcon  : 'css/images/openfoldericon.png',
 	hiddenFolderIcon      : 'css/images/hiddenFoldericon.png',
 	hiddenOpenFolderIcon  : 'css/images/hiddenOpenfoldericon.png',
+<<<<<<< HEAD
 	hiddenProtectedFolderIcon      : 'css/images/hiddenProtectedFoldericon.png',
 	hiddenProtectedOpenFolderIcon  : 'css/images/hiddenProtectedOpenfoldericon.png',
+=======
+>>>>>>> Fixat bilder.
 	protectedFolderIcon   	: 'css/images/protectedFolder.png',
 	protectedOpenFolderIcon : 'css/images/protectedOpenFolder.png',
 	fileIcon        : 'css/images/file.png',
@@ -736,7 +739,7 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 		classInfo = "finishedTreeItem";
 		stateInfo = " (finished)";
 		if(languageCode == "sv")
-			stateInfo = " (slutförd)";
+			stateInfo = " (slutfï¿½rd)";
 	}
 	else if(this.stateId == "2"){ 
 		classInfo = "publishTreeItem";

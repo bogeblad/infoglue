@@ -2171,7 +2171,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				{
 					InfoGlueComponent slotComponent = (InfoGlueComponent)slotComponentIterator.next();
 					//ContentVO componentContent = templateController.getContent(slotComponent.getContentId()); 
-					//String imageUrl = "" + this.getRequest().getContextPath() + "/images/componentIcon.gif";
+					//String imageUrl = "" + this.getRequest().getContextPath() + "/css/images/componentIcon.gif";
 					//String imageUrlTemp = getDigitalAssetUrl(componentContent.getId(), "thumbnail");
 					//if(imageUrlTemp != null && imageUrlTemp.length() > 0)
 					//	imageUrl = imageUrlTemp;

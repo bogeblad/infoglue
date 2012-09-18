@@ -2,10 +2,17 @@
 
 body.generaltooledit {
 	color            : #000000;
+<<<<<<< HEAD
 	background-color : #f6f6f6;
 	padding			 : 0px;
 	margin			 : 0px;
 	width			 : 100%;
+=======
+	background-color: #f6f6f6;
+	padding			 : 0px;
+	margin			 : 0px;
+	width			 : 100%; 
+>>>>>>> Fixat bilder.
 	float			 : left;
 	font-family      : verdana, arial, sans-serif;
 	font-size        : 11px;
@@ -826,6 +833,7 @@ span.error {
 .yui-skin-sam .yui-split-button-disabled button {
 	background-image: url(split-button-arrow-disabled.png);
 }
+<<<<<<< HEAD
 
 #menuOverlayDiv {
 	display: none;
@@ -847,3 +855,5 @@ span.error {
 	border-right: 1px solid rgb(130, 130, 130);
 	right: -10px;
 }
+=======
+>>>>>>> Fixat bilder.

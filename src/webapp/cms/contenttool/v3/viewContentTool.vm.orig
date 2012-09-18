@@ -5,23 +5,13 @@
 	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 
-	<script type="text/javascript" src="script/embla/dragProxy.js"></script>
 	<script type="text/javascript" src="script/embla/admin.js"></script>
-	
 	<script type="text/javascript">
-		var currentSiteNodeId;
-		var currentRepositoryId;
 		
-		function setPageContext(siteNodeId, repositoryId)
-		{
-			currentSiteNodeId = siteNodeId;
-			currentRepositoryId = repositoryId;
-		}		
-	
 		/* Proxy functions */
-		function refreshPage(siteNodeId, changeTypeId, addedSiteNodeId)
+		function refreshContent(contentId, changeTypeId, addedContentId)
 		{
-			$("#treeIframe").get(0).contentWindow.refreshNode(siteNodeId, changeTypeId, addedSiteNodeId);
+			$("#treeIframe").get(0).contentWindow.refreshContent(contentId, changeTypeId, addedContentId);
 		}		
 	
 		function openUrlInWorkArea(url)
@@ -29,19 +19,32 @@
 			//alert("url:" + url);
 			document.getElementById("workIframe").src = url;
 		}
-	
+
+		function refreshAll()
+		{
+			if($("#workIframe").get(0).contentWindow.refreshAll)
+				$("#workIframe").get(0).contentWindow.refreshAll();
+		}
+
 		function refreshWorkSurface()
 		{
 			//alert("refreshWorkSurface");
 			$("#workIframe").get(0).contentDocument.location.reload();
 		}
-		
+				
+		function refreshView(viewName)
+		{
+			//alert("viewName:" + viewName + ":" + $("#workIframe").attr("src"));
+			if($("#workIframe").get(0).contentWindow.refreshView)
+				$("#workIframe").get(0).contentWindow.refreshView(viewName);
+		}
+	
 		function resize(isLoop)
 		{
 			var windowWidth = $(window).width();
 			var windowHeight = $(window).height();
 			$("#toolsColumn").height(windowHeight - $("#toolsColumn").offset().top);
-			$("#treeIframe").height($("#toolsColumn").height() - $("#toolsColumn").position().top - $("#paletteDiv").height());
+			$("#treeIframe").height($("#toolsColumn").height() - $("#toolsColumn").position().top);
 			$("#work").width(windowWidth - ($("#toolsColumn").width() + 6)).height($("#toolsColumn").height());
 			$("#workIframe").width($("#work").width()).height($("#work").height());
 			
@@ -55,13 +58,13 @@
 			
 			setTimeout("refreshTreeSize();",500);			
 		}
-	
+
 		function refreshTreeSize()
 		{
 			if($("#treeIframe").get(0).contentWindow.resizeTreeIframe)
 				$("#treeIframe").get(0).contentWindow.resizeTreeIframe($("#treeIframe").height(), $("#treeIframe").width());
 		}
-			
+				
 		function refreshRepositoryList()
 		{
 			jQuery.getJSON("ViewCommonAjaxServices!repositories.action", function(jsonData) {
@@ -92,123 +95,40 @@
 	   		window.onresize = function() {
 	   			resize(false);
    			}
-			
+
 			$("#toolsColumn").resizable({ 
-				handles: 'e',
+				handles: 'e', 
 				maxWidth: 460,
 				minWidth: 250, 
 				start: function (event, ui) {
+<<<<<<< HEAD
 					 $("#menuOverlayDiv").show();
 				},
 				stop: function(event, ui) { 
 					resize(false); 
-					$("#menuOverlayDiv").hide();
+					 $("#menuOverlayDiv").hide();
+=======
+					 $("#toolsColumn").append("<div id=\"resizeFramesIsolator\" style=\"position: fixed; z-index: 1000; left: 0pt; top: 0pt; right: 0pt; bottom: 0pt;\"></div>");
+				},
+				stop: function(event, ui) { 
+					$("#resizeFramesIsolator").remove();
+					resize(false); 
+>>>>>>> Fixed some UMU issues
 				} 
 			});
-			
-			$("#workIframe").load(function() {
 
-				try
-				{
-					//alert("Doc1:" + document.getElementById("workIframe").src);
-					//alert("Doc2:" + $("#workIframe").get(0).contentDocument.location.href);
-					$($("#workIframe").get(0).contentDocument).mouseup(function(){
-						//alert("Dropped component maybe");
-						//emptyDragHTML();
-						$("#menuOverlayDiv").hide();
-					});
-				}
-				catch(e)
-				{
-					//alert("Error:" + e);
-				}
-				
-				//alert("Just loaded:" + $("#workIframe").get(0).contentDocument.location.href);
-				try
-				{
-					if(refreshTopToolBar)
-					{
-						var url = document.getElementById("workIframe").src;
-						try
-						{	
-							url = $("#workIframe").get(0).contentDocument.location.href;
-						}
-						catch(e)
-						{
-							//alert("Error:" + e);
-						}
-						
-						//alert("url:" + url);
-						if(url.indexOf("siteNodeId=") > -1)
-						{
-							var loadedSiteNodeId = getRequestParameter(url, "siteNodeId");
-							//alert("loadedSiteNodeId:" + loadedSiteNodeId + ":" + currentRepositoryId);
-							refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=' + loadedSiteNodeId, -1, -1, -1);
-							syncWithTree(loadedSiteNodeId, currentRepositoryId, "treeIframe");
-							
-							var stateChanged = getRequestParameter(url, "stateChanged");
-							//alert(loadedSiteNodeId + ":" + stateChanged);
-							if(stateChanged == "true")
-							{
-								try
-								{
-									refreshPage(loadedSiteNodeId, 1, loadedSiteNodeId);
-								}
-								catch(e) {alert("e:" + e);}
-							}
-						}
-					}
-				}
-				catch(e)
-				{
-					//alert("Error:" + e);
-				}
-			});
-
-			#set($rootSiteNode = $this.getRepositoryRootSiteNode($repositoryId))
-			#if(!$rootSiteNode)
-				//alert("No sitenode created yet...");
-				jQuery.get("ViewSiteNode!V3.action?siteNodeId=&repositoryId=$repositoryId", function(data) {
-					//alert('Reloaded menu');
-					setTimeout("document.location.reload();", 500);
-					});
-			#else
-				openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=$rootSiteNode.id&repositoryId=$repositoryId");
-			#end
+			openUrlInWorkArea("ViewContentToolStartPage!V3.action");
 			
 			$("#menuOverlayDiv").mouseout(function () {
 				$("#structureToolDiv").mouseup();
 			});
 		});
-	
+		
 		function changeRepository(selectBox)
 		{
-			document.location.href = "ViewStructureTool!V3.action?repositoryId=" + selectBox.value;
+			document.location.href = "ViewContentTool!V3.action?repositoryId=" + selectBox.value;
 		}	
-
-		function changeRepositoryById(repositoryId)
-		{
-			document.location.href = "ViewStructureTool!V3.action?repositoryId=" + repositoryId;
-		}	
-		
-		function toggleFavourites()
-		{
-			if($("#paletteIframe").height() == 0)
-			{
-				//$("#treeIframe").height($("#treeIframe").height() - 120);
-				$("#paletteDiv").height(120 + $("#componentPaletteHeader").height());
-				$("#paletteIframe").height(120);
-				$("#componentPaletteHeader img").attr("src", "css/images/v3/downArrows.png");
-			}
-			else
-			{
-				$("#paletteDiv").height($("#componentPaletteHeader").height());
-				$("#paletteIframe").height(0);
-				$("#componentPaletteHeader img").attr("src", "css/images/v3/upArrows.png");
-			}
-			resize(false);
-		}
-				
+						
 		var structureToolMenuUrl = "ViewStructureToolMenu!V3.action?repositoryId=";
 		var contentToolMenuUrl	 = "ViewContentToolMenu!V3.action?repositoryId=";
 		
@@ -231,9 +151,9 @@
 			$('#toolsColumn > *').hide(); 
 			$('#minimizedBar').show(); 
 			$('#toolsColumn').width(20);
-			resize(false); 
+			resize(); 
 		}
-
+		
 		function toggleToolColumn()
 		{
 			var currentWidth = $('#toolsColumn').width(); 
@@ -255,16 +175,17 @@
 			$('#toolsColumn > *').show(); 
 			$('#minimizedBar').hide(); 
 			$('#toolsColumn').width(getOldWidth());
-			resize(false); 
+			resize(); 
 		}
+		
 	</script>
 #end
  
-#beginLightCommonToolV3Impl("tool.common.adminTool.header" "" "" false true true $headerMarkup false "")
+#beginLightCommonToolV3Impl("tool.common.adminTool.header" "" "" false true true $!headerMarkup false "")
 
-<div id="structureToolDiv" style="float: left; width: 100%; height: 100%; overflow: hidden;">
+<div style="float: left; width: 100%; height: 100%; overflow: hidden;">
 	<div id="menutoolbar" class="$toolbarVariant">
-		<div id="menutoolbarLeft" style="width: 100%;">
+		<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
 		</div>
 	</div>
 	<div style="clear: both"></div>
@@ -276,31 +197,17 @@
 		
 		<div class="onlyExpanded" id="repositoryChoiceDiv">
 	    	<select id="repositorySelect" onchange="changeRepository(this);">
-	    		#set($treeRepositoryId = $!repositoryId)
 	    		#foreach($repository in $authorizedRepositoryVOList)
-	    			#if(!$treeRepositoryId)
-		    			#set($treeRepositoryId = $repository.id)
-	    			#end
 	    		<option value="$repository.id" #if($repository.id == $repositoryId)selected="selected"#end>$repository.name</option>
 	    		#end
 	    	</select>
 	    	<img src="css/images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
 	    	<img src="css/images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
-<<<<<<< HEAD
 	    	<img src="css/images/v3/update_img.gif" onclick="toggleToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="toggle"/>
-=======
->>>>>>> Fixat bilder.
 	    </div>
 	
-		<iframe id="treeIframe" name="treeIframe" src="ViewStructureToolMenu!V3.action?repositoryId=$treeRepositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
+		<iframe id="treeIframe" name="treeIframe" src="ViewContentToolMenu!V3.action?repositoryId=$repositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
 	
-		<div class="onlyExpanded" id="paletteDiv">
-	    	<div id="componentPaletteHeader">
-	    		<h3>$ui.getString('tool.common.favouriteComponentsHeader')</h3>
-	    		<a href="javascript:toggleFavourites();" style="float: right;"><img src="css/images/v3/downArrows.png" style="margin-top: 3px; margin-right: 2px;" width="16" height="16" border="0" alt="Close area"/></a>
-	        </div>
-			<iframe id="paletteIframe" name="paletteIframe" src="ViewComponentPalette.action" width="100%" height="120" frameborder="0" allowtransparency="true"></iframe>
-	    </div>
 	</div>
 
 	<div id="work" style="float: left;">

@@ -318,9 +318,15 @@
 
 	<div style="clear: both;"></div>
 	
+<<<<<<< HEAD
 	<div id="selectedAssetsListHeader">$ui.getString("tool.contenttool.assetDialog.selectedAssets")</div>
 	<div id="selectedAssetsList">
 		<div id="selectedAssetsListMargin">
+=======
+	<div id="selectedAssetsListHeader" style="float: left; width: 100%; border-bottom: 1px solid #9caabd; height: 14px; padding-top: 2px; background-color: #ccc; font-size: 10px; font-family: verdana; font-weight: bold; text-indent: 16px; background-image:url(css/images/v3/tableHeaderBackground.gif); background-repeat:repeat-x;">$ui.getString("tool.contenttool.assetDialog.selectedAssets")</div>
+	<div id="selectedAssetsList" style="overflow: auto; width: 100%; border: 0px solid #ccc; float: left; height: 120px; background-color: white;">
+		<div id="selectedAssetsListMargin" style="float: left; margin-left: 14px; margin-right: 14px;">
+>>>>>>> Fixat bilder.
 		</div>
 	</div>
 	

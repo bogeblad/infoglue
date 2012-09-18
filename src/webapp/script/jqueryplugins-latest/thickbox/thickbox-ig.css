@@ -27,7 +27,11 @@
 /* ----------------------------------------------------------------------------------------------------------------*/
 #TB_overlay {
 	position: fixed;
+<<<<<<< HEAD
 	z-index:1020;
+=======
+	z-index:100;
+>>>>>>> Fixat bilder.
 	top: 0px;
 	left: 0px;
 	height:100%;
@@ -45,7 +49,11 @@
 #TB_window {
 	position: fixed;
 	background: #ffffff;
+<<<<<<< HEAD
 	z-index: 1030;
+=======
+	z-index: 102;
+>>>>>>> Fixat bilder.
 	color:#000000;
 	display:none;
 	border: 4px solid #525252;
@@ -114,7 +122,11 @@
 	display:none;
 	height:13px;
 	width:208px;
+<<<<<<< HEAD
 	z-index:1025;
+=======
+	z-index:103;
+>>>>>>> Fixat bilder.
 	top: 50%;
 	left: 50%;
 	margin: -6px 0 0 -104px; /* -height/2 0 0 -width/2 */

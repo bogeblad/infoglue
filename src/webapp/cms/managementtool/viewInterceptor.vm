@@ -8,6 +8,8 @@
 
 	<form method="post" name="editForm" action="UpdateInterceptor.action">
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+		<input type="hidden" name="interceptorId" value="$!interceptorId">
+
 		<p>#editField("Interceptor.name" "name" $!interceptorVO.name "50")</p>
 		<p>#editField("Interceptor.description" "description" $!interceptorVO.description "50")</p>
 		<p>#editField("Interceptor.className" "className" $!interceptorVO.className "50")</p>

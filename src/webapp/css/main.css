@@ -2,17 +2,12 @@
 
 body.generaltooledit {
 	color            : #000000;
-<<<<<<< HEAD
-	background-color : #f6f6f6;
-	padding			 : 0px;
-	margin			 : 0px;
-	width			 : 100%;
-=======
+
 	background-color: #f6f6f6;
 	padding			 : 0px;
 	margin			 : 0px;
 	width			 : 100%; 
->>>>>>> Fixat bilder.
+
 	float			 : left;
 	font-family      : verdana, arial, sans-serif;
 	font-size        : 11px;

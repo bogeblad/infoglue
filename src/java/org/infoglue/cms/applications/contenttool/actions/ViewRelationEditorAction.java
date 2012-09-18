@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
@@ -48,6 +49,8 @@ import org.infoglue.cms.util.dom.DOMBuilder;
 
 public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 {
+    private final static Logger logger = Logger.getLogger(ViewRelationEditorAction.class.getName());
+
 	//protected Integer contentVersionId			= null;
 	protected Integer entityId					= null;
 	protected String entityName					= null;
@@ -206,12 +209,17 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	protected void initialize() throws Exception
 	{
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
-
+		logger.info("this.repositories:" + this.repositories);
+		logger.info("this.repositoryId:" + this.repositoryId);
 		if(this.repositoryId == null)
 		{
 			this.repositoryId = (Integer)getHttpSession().getAttribute("repositoryId");
+			logger.info("session repo:" + this.repositoryId);
 			if(this.repositoryId == null)
+			{
 				this.repositoryId = RepositoryController.getController().getFirstRepositoryVO().getRepositoryId();		
+				logger.info("first repo:" + this.repositoryId);
+			}
 		}
 
 		//this.relationXML = ContentVersionController.getAttributeValue(getContentVersionId(), getContentVersionAttributeName(), false);

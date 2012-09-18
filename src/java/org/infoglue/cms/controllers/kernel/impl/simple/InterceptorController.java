@@ -258,7 +258,6 @@ public class InterceptorController extends BaseController
 			ConstraintExceptionBuffer ceb = interceptorVO.validate();
 			ceb.throwIfNotEmpty();
 			
-			logger.info("InterceptorId:" + interceptorVO.getInterceptorId());
 			Interceptor interceptor = this.getInterceptorWithId(interceptorVO.getInterceptorId(), db);
 
 			interceptor.setValueObject(interceptorVO);

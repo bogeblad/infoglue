@@ -197,8 +197,12 @@ public class CacheController extends Thread
 
     public static Boolean getDefeatCaches() 
     {
-        return (Boolean) defeatCaches.get();
+    	if(defeatCaches != null)
+    		return (Boolean) defeatCaches.get();
+    	else
+    		return false;
     }
+
     public static void setDefeatCaches(Boolean defeatCachesValue) 
     {
     	if(logger.isInfoEnabled())

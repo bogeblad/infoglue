@@ -598,13 +598,26 @@ public class ComponentLogic
 		String propertyValue = "";
 		
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
-		if(property != null)
-		{	
-			propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage());
-			if(propertyValue == null)
-			{
-				propertyValue = (String)property.get("path");
+		
+		try{
+			if(property != null)
+			{	
+				ComponentPropertyDefinition propertyDefinition = 
+					getComponentPropertyDefinition(this.infoGlueComponent.getContentId(), propertyName, templateController.getSiteNodeId(), templateController.getLanguageId(), templateController.getContentId(), templateController.getDatabase(), templateController.getPrincipal());
+				boolean languageVariationAllowed = propertyDefinition.getAllowLanguageVariations();
+				
+				if(languageVariationAllowed)
+				{
+					propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage()); 
+					
+					if((propertyValue == null || propertyValue.equals("")) && useLanguageFallback)
+						propertyValue = (String)property.get("path");
+				}
+				else
+					propertyValue = (String)property.get("path");
 			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 		
 		if(propertyValue == null || propertyValue.equals(""))
@@ -613,21 +626,23 @@ public class ComponentLogic
 			{
 				ContentVO contentVO = templateController.getContent(this.infoGlueComponent.getContentId());
 				LanguageVO masterLanguage = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(templateController.getDatabase(), contentVO.getRepositoryId());
-	
+				
 				ComponentPropertyDefinition propertyDefinition = getComponentPropertyDefinition(this.infoGlueComponent.getContentId(), propertyName, templateController.getSiteNodeId(), masterLanguage.getId(), templateController.getContentId(), templateController.getDatabase(), templateController.getPrincipal());
+
 				if(propertyDefinition != null && propertyDefinition.getDefaultValue() != null)
 					propertyValue = propertyDefinition.getDefaultValue();
 			}
-			catch (Exception e) 
+			catch (Exception e)
 			{
 				logger.error("Error getting propertyValue on + " + propertyName + ":" + e.getMessage(), e);
 			}
 		}
-				
+
 		if(propertyValue != null)
 			propertyValue = propertyValue.replaceAll("igbr", separator);
 
 		return propertyValue;
+	}
 	}
 
 	public String getPropertyValue(String propertyName, boolean useLangaugeFallback, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance, boolean useComponentInheritance, InfoGlueComponent component) throws SystemException

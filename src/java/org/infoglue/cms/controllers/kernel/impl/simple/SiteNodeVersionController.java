@@ -410,6 +410,27 @@ public class SiteNodeVersionController extends BaseController
 		oql.bind(siteNodeId);
 		oql.bind(new Boolean(true));
 		
+		QueryResults results = oql.execute();
+		
+		if (results.hasMore()) 
+	    {
+	    	siteNodeVersion = (SiteNodeVersion)results.next();
+        }
+
+		results.close();
+		oql.close();
+
+		return siteNodeVersion;
+    }
+
+	public SiteNodeVersion getLatestActiveSiteNodeVersionReadOnly(Database db, Integer siteNodeId) throws SystemException, Bug, Exception
+    {
+	    SiteNodeVersion siteNodeVersion = null;
+	    
+	    OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl cv WHERE cv.owningSiteNode.siteNodeId = $1 AND cv.isActive = $2 ORDER BY cv.siteNodeVersionId desc");
+		oql.bind(siteNodeId);
+		oql.bind(new Boolean(true));
+		
 		QueryResults results = oql.execute(Database.ReadOnly);
 		
 		if (results.hasMore()) 
@@ -1177,25 +1198,26 @@ public class SiteNodeVersionController extends BaseController
         }
 	}
 
-	private void getSiteNodeAndAffectedItemsRecursive(SiteNodeVO siteNodeVO, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, Set siteNodeVersionVOList, Set contentVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
+	private void getSiteNodeAndAffectedItemsRecursive(SiteNodeVO siteNodeVO, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
 	{
 		getSiteNodeAndAffectedItemsRecursive(siteNodeVO, stateId, checkedSiteNodes, checkedContents, db, siteNodeVersionVOList, contentVersionVOList, includeMetaInfo, true, principal);
 	}
 	
-	private void getSiteNodeAndAffectedItemsRecursive(SiteNodeVO siteNodeVO, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, Set siteNodeVersionVOList, Set contentVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
+	private void getSiteNodeAndAffectedItemsRecursive(SiteNodeVO siteNodeVO, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
 	{
 	    checkedSiteNodes.add(siteNodeVO.getId());
         
+	    logger.info("Checking siteNode:" + siteNodeVO.getName() + ":" + stateId + " EXISTING:" + siteNodeVersionVOList.size());
 		// Get the versions of this siteNode.
 		//SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersionIfInState(siteNode, stateId, db);
 		SiteNodeVersionVO siteNodeVersionVO = getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
 		//SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersion(db, siteNodeVO.getId());
-		if(siteNodeVersionVO != null && siteNodeVersionVO.getStateId().intValue() == stateId.intValue())
+		if(siteNodeVersionVO != null && siteNodeVersionVO.getStateId().intValue() == stateId.intValue() && !siteNodeVO.getIsDeleted())
 		{			
 		    siteNodeVersionVOList.add(siteNodeVersionVO);
 		}
 		
-		if(siteNodeVersionVO != null)
+		if(siteNodeVersionVO != null && !siteNodeVO.getIsDeleted())
 		{			
 			List relatedEntities = RegistryController.getController().getMatchingRegistryVOListForReferencingEntity(SiteNodeVersion.class.getName(), siteNodeVersionVO.getId().toString(), db);
 	        Iterator relatedEntitiesIterator = relatedEntities.iterator();
@@ -1226,7 +1248,7 @@ public class SiteNodeVersionController extends BaseController
 		                }
 	
 		                //if(relatedSiteNodeVersion != null && relatedSiteNodeVersion.getStateId().intValue() == stateId.intValue() && siteNode.getRepository().getId().intValue() == relatedSiteNodeVersion.getOwningSiteNode().getRepository().getId().intValue())
-		                if(relatedSiteNodeVersionVO != null && allowedSiteNodeVersion && relatedSiteNodeVersionVO.getStateId().intValue() == stateId.intValue())
+		                if(relatedSiteNodeVersionVO != null && allowedSiteNodeVersion && relatedSiteNodeVersionVO.getStateId().intValue() == stateId.intValue() && !relatedSiteNodeVO.getIsDeleted())
 		    	        {
 		                    siteNodeVersionVOList.add(relatedSiteNodeVersionVO);
 		                }
@@ -1271,7 +1293,9 @@ public class SiteNodeVersionController extends BaseController
 				                //if(relatedContentVersion != null && siteNode.getRepository().getId().intValue() == relatedContentVersion.getOwningContent().getRepository().getId().intValue())
 					            if(relatedContentVersionVO != null && allowedContent)
 				                {
-				                    contentVersionVOList.add(relatedContentVersionVO);
+					            	if(!relatedContentVO.getIsDeleted())
+					            		contentVersionVOList.add(relatedContentVersionVO);
+					            	
 				                    logger.info("relatedContentVersion:" + relatedContentVersionVO.getContentName());
 				                    ContentVersionController.getContentVersionController().getContentAndAffectedItemsRecursive(relatedContentVO, ContentVersionVO.WORKING_STATE, checkedSiteNodes, checkedContents, db, siteNodeVersionVOList, contentVersionVOList, true, false, 3, 0);
 				                }
@@ -1289,7 +1313,7 @@ public class SiteNodeVersionController extends BaseController
 			}
 		}
 		
-        if(recurseSiteNodes)
+        if(recurseSiteNodes && !siteNodeVO.getIsDeleted())
         {
 			// Get the children of this siteNode and do the recursion
         	List childSiteNodeList = SiteNodeController.getController().getSiteNodeChildrenVOList(siteNodeVO.getId(), db);

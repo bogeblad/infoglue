@@ -125,18 +125,20 @@ function closeContextMenu()
 	$("#contextMenuDiv").hide();
 }
 
-function showContextMenu(ajaxUrl, e)
+function showContextMenu(ajaxUrl, e, aWindow)
 {
 	//alert("e:" + e);
 	//alert("ajaxUrl:" + ajaxUrl);
-	//alert("Offset:" + document.getElementById("activeTool").offsetTop);
 		
 	if(!e)
 		e = window.event;
- 
+
+	var xOffset = (aWindow.parent.pageXOffset !== undefined) ? aWindow.parent.pageXOffset : (aWindow.parent.document.documentElement || aWindow.parent.document.body.parentNode || aWindow.parent.document.body).scrollLeft;
+	var yOffset = (aWindow.parent.pageYOffset !== undefined) ? aWindow.parent.pageYOffset : (aWindow.parent.document.documentElement || aWindow.parent.document.body.parentNode || aWindow.parent.document.body).scrollTop;
+	
 	var clientX = getEventPositionX(e) + 16;
-	var clientY = getEventPositionY(e) + 80;
-		
+	var clientY = getEventPositionY(e) - yOffset + 80;
+	
 	var rightedge = document.body.clientWidth - clientX;
 	var bottomedge = getWindowHeight() - clientY;
 

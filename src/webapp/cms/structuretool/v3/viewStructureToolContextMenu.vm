@@ -89,7 +89,8 @@
 	$("#contextMenuDiv #moveUp").click(function () {
 		jQuery.get("ChangeSiteNodeSortOrder.action", { siteNodeId:"$siteNodeId", direction:"up"}, function(data){
 		  	$('#treeIframe').get(0).contentWindow.refreshNode($siteNodeVO.parentSiteNodeId, 4, null);
-		  	refreshWorkArea("structure");
+		  	//refreshWorkArea("structure");
+		  	refreshWorkSurface("structure");
 		});
 	});
 
@@ -98,7 +99,8 @@
 		jQuery.get("ChangeSiteNodeSortOrder.action", { siteNodeId:"$siteNodeId", direction:"down"}, function(data){
 		  	//alert("Moved: " + data);
 		  	$('#treeIframe').get(0).contentWindow.refreshNode($siteNodeVO.parentSiteNodeId, 4, null);
-		  	refreshWorkArea("structure");
+		  	//refreshWorkArea("structure");
+			refreshWorkSurface("structure");
 		});
 	});
 

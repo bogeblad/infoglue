@@ -231,7 +231,7 @@
 			}
 		}
 		
-		function showContextMenu(element, e)
+		function showContextMenu(element, e, aWindow)
 		{
     		//alert("e:" + e);
 			//alert("element:" + element);
@@ -242,11 +242,11 @@
      		sendSignal = false;
 
 			if(parent && parent.showContextMenu)
-				return parent.showContextMenu("ViewContentToolAjaxServices.action?contentId=" + element, e);
+				return parent.showContextMenu("ViewContentToolAjaxServices.action?contentId=" + element, e, aWindow);
 			if(parent.parent && parent.parent.showContextMenu)
-				return parent.parent.showContextMenu("ViewContentToolAjaxServices.action?contentId=" + element, e);
+				return parent.parent.showContextMenu("ViewContentToolAjaxServices.action?contentId=" + element, e, aWindow);
 			else if(top.showContextMenu)
-				return top.showContextMenu("ViewContentToolAjaxServices.action?contentId=" + element, e);
+				return top.showContextMenu("ViewContentToolAjaxServices.action?contentId=" + element, e, aWindow);
 			else
 			{
     			var clientX = getEventPositionX(e);

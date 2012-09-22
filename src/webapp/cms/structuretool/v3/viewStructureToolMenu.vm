@@ -77,6 +77,12 @@
 		{
 			frames['itreeFrame'].refreshTreeNode(parseInt(nodeId), parseInt(changeTypeId), parseInt(addedNodeId));
 		}
+
+	    function markSelected(nodeId)
+		{
+			setTimeout("1000");
+				frames['itreeFrame'].markSelected(parseInt(nodeId));
+		}
 	    
 	   	function notifyIsLoaded()
 	    {

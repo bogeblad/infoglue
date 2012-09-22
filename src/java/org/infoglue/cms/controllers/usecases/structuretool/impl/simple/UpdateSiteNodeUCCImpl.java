@@ -126,7 +126,7 @@ public class UpdateSiteNodeUCCImpl extends BaseUCCController implements UpdateSi
 	            siteNode.setSiteNodeTypeDefinition((SiteNodeTypeDefinitionImpl)SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionWithId(siteNodeTypeDefinitionId, db));
 
             
-			SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, siteNodeVO.getSiteNodeId()).getValueObject();
+			SiteNodeVersionVO latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionReadOnly(db, siteNodeVO.getSiteNodeId()).getValueObject();
 			
 			latestSiteNodeVersionVO.setContentType(updatedSiteNodeVersionVO.getContentType());
 			latestSiteNodeVersionVO.setPageCacheKey(updatedSiteNodeVersionVO.getPageCacheKey());

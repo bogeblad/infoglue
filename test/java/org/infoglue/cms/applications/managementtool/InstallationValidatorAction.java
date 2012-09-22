@@ -384,7 +384,7 @@ public class InstallationValidatorAction extends InfoGlueAbstractAction
 			    			
 			    			Integer metaInfoContentId = null;
 			    			
-			    			SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, siteNode.getId());
+			    			SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionReadOnly(db, siteNode.getId());
 			    			
 			    			boolean hasMetaInfo = false;
 			    			

@@ -1081,6 +1081,7 @@ public class ContentTypeDefinitionController extends BaseController
 		int i = 0;
 		try
 		{
+			logger.info("schemaValue:" + schemaValue);
 			org.dom4j.Document document = domBuilder.getDocument(schemaValue);
 
 			String attributesXPath = "/xs:schema/xs:complexType/xs:all/xs:element/xs:complexType/xs:all/xs:element";

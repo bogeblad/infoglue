@@ -577,7 +577,7 @@ public class SiteNodeController extends BaseController
 	{
 		boolean isDeletable = true;
 		
-		SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, siteNode.getId());
+		SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionReadOnly(db, siteNode.getId());
 		if(latestSiteNodeVersion != null && latestSiteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES))
 		{
 			boolean hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, infogluePrincipal, "SiteNodeVersion.DeleteSiteNode", "" + latestSiteNodeVersion.getId());
@@ -1548,6 +1548,41 @@ public class SiteNodeController extends BaseController
 
             //If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
+            
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+        
+        
+	    db = CastorDatabaseService.getDatabase();
+
+        beginTransaction(db);
+
+        try
+        {
+        	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId, db);
+			//Fixes a nice ordered list
+			List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
+			Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
+			int index = 0;
+			while(childrenVOListIterator.hasNext())
+			{
+				SiteNodeVO childSiteNodeVO = childrenVOListIterator.next();
+				SiteNodeVersion latestChildSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, childSiteNodeVO.getId());
+
+				Integer currentSortOrder = latestChildSiteNodeVersion.getSortOrder();
+				logger.info("currentSortOrder:" + currentSortOrder + " on " + childSiteNodeVO.getName());
+				if(currentSortOrder != 100)
+				{
+					latestChildSiteNodeVersion.setSortOrder(index);
+					index++;
+				}
+			}
             
             commitTransaction(db);
         }

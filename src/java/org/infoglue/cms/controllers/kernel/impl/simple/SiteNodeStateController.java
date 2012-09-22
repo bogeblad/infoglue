@@ -169,7 +169,8 @@ public class SiteNodeStateController extends BaseController
 				newSiteNodeVersionVO.setDisableForceIdentityCheck(oldSiteNodeVersion.getDisableForceIdentityCheck());
 				newSiteNodeVersionVO.setForceProtocolChange(oldSiteNodeVersion.getForceProtocolChange());
 				newSiteNodeVersionVO.setIsHidden(oldSiteNodeVersion.getIsHidden());
-			    
+				newSiteNodeVersionVO.setSortOrder(oldSiteNodeVersion.getSortOrder());
+				
 				newSiteNodeVersion = SiteNodeVersionController.create(siteNodeId, infoGluePrincipal, newSiteNodeVersionVO, db);
 				copyServiceBindings(oldSiteNodeVersion, newSiteNodeVersion, db);
 				copyAccessRights(oldSiteNodeVersion, newSiteNodeVersion, db);
@@ -215,7 +216,8 @@ public class SiteNodeStateController extends BaseController
 				newSiteNodeVersionVO.setDisableForceIdentityCheck(oldSiteNodeVersion.getDisableForceIdentityCheck());
 				newSiteNodeVersionVO.setForceProtocolChange(oldSiteNodeVersion.getForceProtocolChange());
 				newSiteNodeVersionVO.setIsHidden(oldSiteNodeVersion.getIsHidden());
-
+				newSiteNodeVersionVO.setSortOrder(oldSiteNodeVersion.getSortOrder());
+				
 		    	newSiteNodeVersion = SiteNodeVersionController.create(siteNodeId, infoGluePrincipal, newSiteNodeVersionVO, db);
 				copyServiceBindings(oldSiteNodeVersion, newSiteNodeVersion, db);
 				copyAccessRights(oldSiteNodeVersion, newSiteNodeVersion, db);

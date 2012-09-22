@@ -23,11 +23,12 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
@@ -61,8 +62,9 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	private static final long serialVersionUID = 1L;
 
-	private Set siteNodeVersionVOList = new TreeSet(Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
-	private Set contentVersionVOList = new TreeSet(Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
+	private List<SiteNodeVersionVO> siteNodeVersionVOList = null;
+	private List<ContentVersionVO> contentVersionVOList = null;
+	
 	private Integer siteNodeVersionId;
 	private Integer siteNodeId;
 	private Integer languageId;
@@ -77,6 +79,9 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		Set<ContentVersionVO> contentVersionVOList = new HashSet<ContentVersionVO>();
+		Set<SiteNodeVersionVO> siteNodeVersionVOList = new HashSet<SiteNodeVersionVO>();
+
 		logger.info("siteNodeId:" + this.siteNodeId);
 		logger.info("siteNodeVersionId:" + this.siteNodeVersionId);
 		if(this.siteNodeVersionId == null)
@@ -110,13 +115,19 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, language.getId());
 						if(contentVersionVO != null && contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 						{
-							this.contentVersionVOList.add(contentVersionVO);
+							contentVersionVOList.add(contentVersionVO);
 						}
 					}
 				}
 			}
 			
-			SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(this.siteNodeId, SiteNodeVersionVO.WORKING_STATE, this.siteNodeVersionVOList, this.contentVersionVOList, false, recurseSiteNodes, this.getInfoGluePrincipal());
+			SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(this.siteNodeId, SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, recurseSiteNodes, this.getInfoGluePrincipal());
+
+			this.siteNodeVersionVOList = new ArrayList<SiteNodeVersionVO>(siteNodeVersionVOList);
+			this.contentVersionVOList = new ArrayList<ContentVersionVO>(contentVersionVOList);
+			
+			Collections.sort(this.siteNodeVersionVOList, Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
+			Collections.sort(this.contentVersionVOList, Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
 		}
 
 	    return "success";
@@ -143,7 +154,7 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 	}
 
 
-	public Set getSiteNodeVersions()
+	public List<SiteNodeVersionVO> getSiteNodeVersions()
 	{
 		return this.siteNodeVersionVOList;		
 	}
@@ -194,12 +205,12 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
         this.repositoryId = repositoryId;
     }
     
-    public Set getContentVersionVOList()
+    public List<ContentVersionVO> getContentVersionVOList()
     {
         return contentVersionVOList;
     }
     
-    public Set getSiteNodeVersionVOList()
+    public List<SiteNodeVersionVO> getSiteNodeVersionVOList()
     {
         return siteNodeVersionVOList;
     }

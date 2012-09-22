@@ -51,6 +51,7 @@ import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
@@ -98,6 +99,8 @@ import org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.UserContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.QualifyerImpl;
 import org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
@@ -1645,7 +1648,8 @@ public class CacheController extends Thread
 							    	try
 							    	{
 								    	logger.info("BeforesiteNodeVersionVO...");
-								    	Integer siteNodeId = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(entityId)).getSiteNodeId();
+								    	SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(entityId));
+								    	Integer siteNodeId = snvVO.getSiteNodeId();
 								    	if(siteNodeId != null)
 							    		{
 									    	logger.info("Before flushGroup2...");
@@ -1653,7 +1657,16 @@ public class CacheController extends Thread
 									    		clearFileCacheForGroup(cacheInstance, "siteNode_" + siteNodeId);
 							    			else
 							    				cacheInstance.flushGroup("siteNode_" + siteNodeId);
-									    	logger.info("After flushGroup2...");
+
+							    			if(cacheName.equals("childSiteNodesCache"))
+							    			{
+										    	SiteNodeVO snVO = SiteNodeController.getController().getSiteNodeVOWithId(snvVO.getSiteNodeId());
+										    	if(snVO.getParentSiteNodeId() != null)
+										    		cacheInstance.flushGroup("siteNode_" + snVO.getParentSiteNodeId());
+										    	logger.info("Clearing for:" + snVO.getParentSiteNodeId());
+							    			}
+							    			
+							    			logger.info("After flushGroup2...");
 							    		}
 							    	}
 							    	catch(SystemException se)

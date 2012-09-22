@@ -56,7 +56,10 @@ function getEventPositionX(e)
 	
 	if (navigator.appName == "Microsoft Internet Explorer")
 	{
-    	mX = event.clientX + getScrollX();
+		if(!e)
+			e = window.event;
+
+    	mX = e.clientX + getScrollX();
   	}
   	else 
   	{
@@ -70,10 +73,12 @@ function getEventPositionX(e)
 function getEventPositionY(e) 
 {
 	var mY = 0;
-
 	if (navigator.appName == "Microsoft Internet Explorer")
 	{
-    	mY = event.clientY + getScrollY();
+		if(!e)
+			e = window.event;
+		
+    	mY = e.clientY + getScrollY();
   	}
   	else 
   	{

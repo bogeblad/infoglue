@@ -223,7 +223,7 @@
 			}
 		}	
 
-		function showContextMenu(element, e)
+		function showContextMenu(element, e, aWindow)
 		{
     		//alert("e:" + e);
 			//alert("element:" + element);
@@ -234,11 +234,11 @@
      		sendSignal = false;
      		
      		if(parent && parent.showContextMenu)
-				return parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e);
+				return parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e, aWindow);
 			else if(parent.parent && parent.parent.showContextMenu)
-				return parent.parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e);
+				return parent.parent.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e, aWindow);
 			else if(top.showContextMenu)
-				return top.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e);
+				return top.showContextMenu("ViewStructureToolAjaxServices!contextMenu.action?siteNodeId=" + element, e, aWindow);
 			else
 			{
     			var clientX = getEventPositionX(e);

@@ -1,4 +1,4 @@
-.ui-tabs .ui-tabs-hide {
+192.168.101.116.ui-tabs .ui-tabs-hide {
      display: none;
 }
 
@@ -9,7 +9,7 @@
 .inlineTabDiv {
 	padding-left: 20px;
 	overflow: auto;
-	background-color: white;
+	background-color: white !important;
 }
 .inlineTabDiv > form, .inlineTabDiv > table {
 	margin: 10px;

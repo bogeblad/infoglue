@@ -6,7 +6,6 @@ html, body {
 	height: 54px;
     background-image: url(images/headerBackground.png); 
 	background-repeat: repeat-x; 
-	min-width: 1024px;
 }
 #searchForm {
 	float: left; 

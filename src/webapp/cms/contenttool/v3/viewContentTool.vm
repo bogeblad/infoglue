@@ -195,10 +195,7 @@
 	    	</select>
 	    	<img src="css/images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
 	    	<img src="css/images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
-<<<<<<< HEAD
 	    	<img src="css/images/v3/update_img.gif" onclick="toggleToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="toggle"/>
-=======
->>>>>>> Fixat bilder.
 	    </div>
 	
 		<iframe id="treeIframe" name="treeIframe" src="ViewContentToolMenu!V3.action?repositoryId=$repositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>

@@ -207,7 +207,7 @@ public class WorkflowController extends BaseController
 	{
 		WorkflowVO workflow = null;
 		
-		List<WorkflowVO> workflows = getCurrentWorkflowVOList(principal);
+		List<WorkflowVO> workflows = getCurrentWorkflowVOList(principal, null);
 		logger.info("workflows:" + workflows);
 		if(workflows != null)
 		{
@@ -326,7 +326,7 @@ public class WorkflowController extends BaseController
 	 * @return a list of WorkflowVOs representing all active workflows
 	 * @throws SystemException if an error occurs while finding the current workflows
 	 */
-	public List<WorkflowVO> getCurrentWorkflowVOList(InfoGluePrincipal userPrincipal) throws SystemException
+	public List<WorkflowVO> getCurrentWorkflowVOList(InfoGluePrincipal userPrincipal, Integer maxNumberOfWorkflows) throws SystemException
 	{
 		List<WorkflowVO> list = new ArrayList<WorkflowVO>();
 		
@@ -340,7 +340,7 @@ public class WorkflowController extends BaseController
 			tx = session.beginTransaction();
 
 			WorkflowFacade wf = new WorkflowFacade(userPrincipal, hibernateSessionFactory, session);
-			list = wf.getActiveWorkflows();
+			list = wf.getActiveWorkflows(maxNumberOfWorkflows);
 			
 			session.flush();
 
@@ -383,7 +383,7 @@ public class WorkflowController extends BaseController
 	 * @return a list of WorkflowVOs owned by the principal.
 	 * @throws SystemException if an error occurs while finding the workflows
 	 */
-	public List getMyCurrentWorkflowVOList(InfoGluePrincipal userPrincipal) throws SystemException
+	public List getMyCurrentWorkflowVOList(InfoGluePrincipal userPrincipal, Integer maxNumberOfWorkflows) throws SystemException
 	{
 		List list = new ArrayList();
 		
@@ -397,7 +397,7 @@ public class WorkflowController extends BaseController
 			tx = session.beginTransaction();
 
 			WorkflowFacade wf = new WorkflowFacade(userPrincipal, hibernateSessionFactory, session);
-			list = wf.getMyActiveWorkflows(userPrincipal);
+			list = wf.getMyActiveWorkflows(userPrincipal, maxNumberOfWorkflows);
 			
 			session.flush();
 

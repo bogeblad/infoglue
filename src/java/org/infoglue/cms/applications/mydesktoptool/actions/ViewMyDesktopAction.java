@@ -166,11 +166,11 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 		final String showAllWorkflows = CmsPropertyHandler.getShowAllWorkflows();
 		if(showAllWorkflows == null || showAllWorkflows.equalsIgnoreCase("true"))
 		{
-			workflowVOList = controller.getCurrentWorkflowVOList(getInfoGluePrincipal());
+			workflowVOList = controller.getCurrentWorkflowVOList(getInfoGluePrincipal(), 20);
 		}
 		else
 		{
-			workflowVOList = controller.getMyCurrentWorkflowVOList(getInfoGluePrincipal());
+			workflowVOList = controller.getMyCurrentWorkflowVOList(getInfoGluePrincipal(), 20);
 		}
 	}
 

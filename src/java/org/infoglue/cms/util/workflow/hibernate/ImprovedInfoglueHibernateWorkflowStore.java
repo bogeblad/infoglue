@@ -127,7 +127,7 @@ public class ImprovedInfoglueHibernateWorkflowStore extends AbstractHibernateWor
 				
 				Map args2 = new HashMap();
 				args2.put("PropertySet", PropertySetManager.getInstance("hibernate", args));
-				args2.put("bulkload", new Boolean(true));
+				args2.put("bulkload", new Boolean(false));
 				
 				ps.init(new HashMap(), args2);
 				

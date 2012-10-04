@@ -518,7 +518,7 @@
 									</td>
 									<td align="right">
 		                            #if($entityId)
-										<a href="javascript:addCategory('${keyAttribute}', '${dropdownName}');"><img src="$ui.getString("images.contenttool.buttons.addCategory")" border="0"/></a>
+										<a href="javascript:addCategory('${keyAttribute}', '${dropdownName}');"><img src="images/v3/add.png" border="0"/></a>
 									#end
 									</td>
 								</tr>

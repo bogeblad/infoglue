@@ -35,6 +35,17 @@
 			document.getElementById("userName").value = "$infoGluePrincipal.name";
 		}
 		
+		function toggleRole(roleName)
+		{
+			#foreach($interceptionPointVO in $interceptionPointVOList)
+				var checkboxName = "${interceptionPointVO.id}_" + roleName + "_hasAccess";
+				if($("#" + checkboxName).attr('checked'))
+					$("#" + checkboxName).attr('checked', false);
+				else
+					$("#" + checkboxName).attr('checked', true);
+			#end
+		}
+		
 		function deleteUser(userName)
 		{
 			document.addUserForm.action = "UpdateAccessRights!deleteUserV3.action";
@@ -240,12 +251,13 @@
 	<div id="tabsContainer" class="flora cleanTopDiv">      
 
 		<ul>
-	        <li><a href="#rolesTab"><span>$ui.getString("tool.common.accessRights.rolesAndGroupsTabLabel")</span></a></li>	        
+	        <li><a href="#rolesTab"><span>$ui.getString("tool.common.accessRights.rolesAndGroupsTabLabel")</span></a></li>
 	        <li><a href="#usersTab"><span>$ui.getString("tool.common.accessRights.usersTabLabel") <b>($accessRightsUserRows.size())</b></span></a></li>	        
+	        <li><a href="#debugTab"><span>Debug</b></span></a></li>	        
 	    </ul>
 
 		<div id="rolesTab" class="inlineTabDiv">
-
+			
 			<form method="post" name="editForm" action="UpdateAccessRights.action">
 				<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory"/>
 				<input type="hidden" name="parameters" value="$extraParameters"/>
@@ -258,25 +270,15 @@
 				
 				#set($interceptionPointIndex = 0)
 				#foreach($interceptionPointVO in $interceptionPointVOList)
-					#set($accessRightId = -1)
-					#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
-					#set($accessRightIds = $this.getAccessRightIds($interceptionPointVO.id, $extraParameters))
-					#foreach($currentAccessRightId in $accessRightIds)
-						#set($accessRightGroups = $this.getAccessRightGroups($currentAccessRightId))
-						#if($accessRightGroups.size() > 0)
-							#set($accessRightId = $currentAccessRightId)
-						#end
+					#set($accessRightGroupIndex = 0)
+					#set($groups = [])
+					#set($groups = $accessRightGroupsMap.get($interceptionPointVO.id))
+					#foreach($accessRightGroup in $groups)
+						<input type="hidden" name="${interceptionPointVO.id}_${accessRightGroupIndex}_groupName" value="$accessRightGroup.groupName"/>
+						#set($accessRightGroupIndex = $accessRightGroupIndex + 1)
 					#end
-				
-					#if($accessRightId > -1)
-						#set($accessRightGroupIndex = 0)
-						#foreach($accessRightGroup in $this.getAccessRightGroups($accessRightId))
-							<input type="hidden" name="${interceptionPointVO.id}_${accessRightGroupIndex}_groupName" value="$accessRightGroup.groupName"/>
-							#set($accessRightGroupIndex = $accessRightGroupIndex + 1)
-						#end
-					#end
-					#set($interceptionPointIndex = $interceptionPointIndex + 1)
 				#end
+				
 				
 				<script type="text/javascript">var useAnonymousWarningCheck = false;</script>
 				
@@ -289,6 +291,7 @@
 				<table id="rolesTable" border="0" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
 					<th>$ui.getString("tool.common.accessRights.roleNameLabel")</th>
+					<th>&nbsp;</th>
 					<th><img src="images/trans.gif" width="10" height="1" alt=""/></th>
 					#set($colspan = 1)
 					#foreach($interceptionPointVO in $interceptionPointVOList)
@@ -298,27 +301,30 @@
 			
 						##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
 						#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
+
 							#set($accessRightId = -1)
-							#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
-							#set($accessRightIds = $this.getAccessRightIds($interceptionPointVO.id, $extraParameters))
 							#set($hasGroupLimitations = false)
-							#foreach($currentAccessRightId in $accessRightIds)
-								#set($accessRightGroups = $this.getAccessRightGroups($currentAccessRightId))
-								#if($accessRightGroups.size() > 0)
-									#set($hasGroupLimitations = true)
-									#set($accessRightId = $currentAccessRightId)
-								#end
+							#set($accessRightId = $accessRightHasAccessMap.get("${interceptionPointVO.id}_${extraParameters}"))
+							#set($accessRightGroups = [])
+							#set($accessRightGroups = $accessRightGroupsMap.get($accessRightId))
+							#if($accessRightGroups.size() > 0)
+								#set($hasGroupLimitations = true)
 							#end
+							
 							#set($dotIndex = $interceptionPointVO.name.indexOf(".") + 1)
 							<th style="text-align: center;">$interceptionPointVO.name.substring($dotIndex)
-							#if($accessRightId > -1)
+							##if($accessRightId > -1)
 								#if($hasGroupLimitations)
 									<script type="text/javascript">hasGroupLimitation = true;</script>
 									<br/><a href="javascript:showDiv('groups$accessRightId');" title="Limited by groups also - click to view."><img src="images/groups.gif" border="0" alt=""/></a>
 								#else
-									<br/><a href="javascript:showDiv('groups$accessRightId');" title="Not limited by groups at the moment"><img src="images/groupsInactive.gif" border="0" alt=""/></a>
+									#if($accessRightId > -1)
+										<br/><a href="javascript:showDiv('groups$accessRightId');" title="Not limited by groups at the moment"><img src="images/groupsInactive.gif" border="0" alt=""/></a>
+									#else
+										<br/><a href="javascript:alert('You must state at least one role first');" title="Not limited by groups at the moment"><img src="images/groupsInactive.gif" border="0" alt=""/></a>
+									#end
 								#end
-							#end
+							##end
 							</th>
 							<th><img src="images/trans.gif" width="10" height="1" alt=""/></th>
 							#set($colspan = $colspan + 3)
@@ -344,6 +350,7 @@
 							$role.displayName #if($role.displayName == "anonymous") (All users, logged in or not have this role)#end
 							<input type="hidden" name="${roleIndex}_roleName" value="$role.name"/>
 						</td>
+						<td><img src="images/v3/check.png" width="16" height="16" alt="Check/uncheck all on this row" title="Check/uncheck all on this row" onclick="toggleRole('${role.name}');"/></td>
 						<td>&nbsp;</td>
 						#set($interceptionPointIndex = 0)
 						#foreach($interceptionPointVO in $interceptionPointVOList)
@@ -351,11 +358,14 @@
 							#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
 								<td style="text-align: center;">
 									#set($checked = "")
-									#if($this.getHasAccessRight($interceptionPointVO.id, $extraParameters, $role.name))
+									#set($key = "${interceptionPointVO.id}_${extraParameters}_$role.name")
+									#set($key2 = "${interceptionPointVO.id}_${extraParameters}")
+									#set($hasAccess = $accessRightHasAccessMap.get($key))
+									#if($hasAccess)
 										#set($checked = "checked")
-										#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
-									#end 
-									
+										#set($accessRightId = $accessRightHasAccessMap.get($key2))
+									#end
+																		
 									#if($interceptionPointVO.name == "Content.Read" || $interceptionPointVO.name == "SiteNodeVersion.Read")
 										#set($anonymousRolesCount = 0)
 										#foreach($anonymousRole in $anonymousPrincipal.roles)
@@ -406,7 +416,9 @@
 						##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
 						#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
 							#set($accessRightId = -1)
-							#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
+				
+							#set($keyAccessRightId = "${interceptionPointVO.id}_${extraParameters}")
+							#set($accessRightId = $accessRightHasAccessMap.get($keyAccessRightId))
 							#set($dotIndex = $interceptionPointVO.name.indexOf(".") + 1)
 							<th style="text-align: center;">$interceptionPointVO.name.substring($dotIndex)</th>
 							<th><img src="images/trans.gif" width="10" height="1" alt=""/></th>
@@ -489,6 +501,10 @@
 			</form>		
 		</div>
 
+		<div id="debugTab" class="inlineTabDiv">
+			<pre>$extraAccessRightInfo</pre>
+		</div>
+		
 		#**************************************#
 		#* GROUPS DIV                         *#
 		#**************************************#
@@ -496,19 +512,17 @@
 		#set($interceptionPointIndex = 0)
 		#foreach($interceptionPointVO in $interceptionPointVOList)
 			#set($accessRightId = -1)
-			#set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
-			#set($accessRightIds = $this.getAccessRightIds($interceptionPointVO.id, $extraParameters))
+			
+			#set($keyAccessRightId = "${interceptionPointVO.id}_${extraParameters}")
+			#set($accessRightId = $accessRightHasAccessMap.get($keyAccessRightId))
+			
+			##set($accessRightIds = $this.getAccessRightIds($interceptionPointVO.id, $extraParameters))
 			
 			#if($accessRightId > -1)
-				#set($accessRightGroups = $this.getAccessRightGroups($accessRightId))
-				#foreach($currentAccessRightId in $accessRightIds)
-					#set($accessRightGroupsCandidate = $this.getAccessRightGroups($currentAccessRightId))
-					#if($accessRightGroupsCandidate.size() > 0)
-						#set($accessRightGroups = $accessRightGroupsCandidate)
-						#set($accessRightId = $currentAccessRightId)
-					#end
-				#end						
 				
+				#set($accessRightGroups = [])
+				##set($accessRightGroups = $this.getAccessRightGroups($accessRightId))
+				#set($accessRightGroups = $accessRightGroupsMap.get($accessRightId))
 				<script type="text/javascript">
 				
 					function confirmGroupSave(form, field, interceptionPointName)
@@ -572,7 +586,7 @@
 				
 				<div id="groups$accessRightId" class="groupTable" style="position: absolute; overflow: auto; top: 10px; left: 50px; visibility: hidden; width:700px; height:500px; background-color: white; border:1px solid black;">
 
-					<form method="POST" name="groups${accessRightId}Form" action="UpdateAccessRights!addGroups.action">
+					<form method="POST" id="groups${accessRightId}Form" name="groups${accessRightId}Form" action="UpdateAccessRights!addGroups.action">
 						<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory">
 						<input type="hidden" name="parameters" value="$extraParameters">
 						<input type="hidden" name="accessRightId" value="$accessRightId">

@@ -37,6 +37,7 @@ import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.deliver.util.Timer;
 
 public class DefaultToolsProvider implements ToolsProvider 
 {
@@ -44,6 +45,8 @@ public class DefaultToolsProvider implements ToolsProvider
 
 	public List<InfoglueTool> getTools(InfoGluePrincipal principal, Locale locale) 
 	{
+		Timer t = new Timer();
+		
 		List<InfoglueTool> tools = new ArrayList<InfoglueTool>();
 		
 		if(hasAccessTo(principal, "StructureTool.Read", true))
@@ -94,7 +97,6 @@ public class DefaultToolsProvider implements ToolsProvider
 				logger.error("Problem loading calendar system:" + e.getMessage(), e);
 			}
 		}
-
 		if(hasAccessTo(principal, "SearchTool.Read", true))
 			tools.add(new InfoglueTool("SearchTool", "Search.action?initSearch=true", "", LabelController.getController(locale).getLocalizedString(locale, "tool.common.searchTool.name"), "Global search", "search", ""));
 

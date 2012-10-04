@@ -9,9 +9,12 @@ import java.util.StringTokenizer;
 
 import javax.transaction.NotSupportedException;
 
+import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
+
+import com.sun.star.beans.GetDirectPropertyTolerantResult;
 
 // TODO: cleanup
 
@@ -436,7 +439,7 @@ public class CategoryConditions implements ICategoryContainerCondition {
 	/**
 	 * 
 	 */
-	public static CategoryConditions parse(final String s) { return new ConditionsParser().parse(s); }
+	public static CategoryConditions parse(final String s, Database db) { return new ConditionsParser().parse(s, db); }
 	
 	/**
 	 * 
@@ -544,40 +547,40 @@ class ConditionsParser {
 	/**
 	 * 
 	 */
-	public CategoryConditions parse(final String s) {
+	public CategoryConditions parse(final String s, Database db) {
 		final String parseString = (s == null ? "" : s);
 		final StringTokenizer st = new StringTokenizer(AND_START + parseString + AND_END, AND_START + AND_END + OR_START + OR_END + CONDITION_DELIMITER, true);
 		final List tokens = tokensToList(st);
 		
 		final CategoryConditions conditions = createContainer(tokens);
-		parse(conditions, tokens);
+		parse(conditions, tokens, db);
 		return conditions;
 	}
 	
 	/**
 	 * 
 	 */
-	private void parse(CategoryConditions conditions, final List tokens) {
+	private void parse(CategoryConditions conditions, final List tokens, Database db) {
 		if(tokens.isEmpty() || isContainerEndToken(tokens))
 			return;
 		if(isContainerStartToken(tokens))
-			parseContainer(conditions, tokens);
+			parseContainer(conditions, tokens, db);
 		else if(isConditionDelimiterToken(tokens))
 			parseConditionDelimiter(conditions, tokens);
 		else
-			parseCategory(conditions, tokens);
+			parseCategory(conditions, tokens, db);
 		
-		parse(conditions, tokens);
+		parse(conditions, tokens, db);
 	}
 	
 	/**
 	 * 
 	 */
-	private void parseContainer(CategoryConditions conditions, final List tokens) {
+	private void parseContainer(CategoryConditions conditions, final List tokens, Database db) {
 		final CategoryConditions newConditions = createContainer(tokens);
 		
 		final String startToken = (String) tokens.remove(0);
-		parse(newConditions, tokens);
+		parse(newConditions, tokens, db);
 		matchContainerTokens(startToken, tokens);
 		conditions.add(newConditions);
 	}
@@ -594,7 +597,7 @@ class ConditionsParser {
 	/**
 	 * 
 	 */
-	private void parseCategory(CategoryConditions conditions, final List tokens) {
+	private void parseCategory(CategoryConditions conditions, final List tokens, Database db) {
 		final String token = (String) tokens.remove(0);
 		final List terms = tokensToList(new StringTokenizer(token, CATEGORY_DELIMITER, true));
 		if(terms.size() != 3)
@@ -610,7 +613,7 @@ class ConditionsParser {
 			CategoryVO categoryVO = null;
 			if(!isNotSetArgument && !isSetArgument)
 			{
-				categoryVO = CategoryController.getController().findByPath(path); 
+				categoryVO = CategoryController.getController().findByPath(path, db); 
 				if(categoryVO == null)
 					throw new IllegalArgumentException("ConditionsParser.parseCategory() - no such category [" + path + "].");
 			}

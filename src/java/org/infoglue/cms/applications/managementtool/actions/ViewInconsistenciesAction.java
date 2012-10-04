@@ -23,13 +23,23 @@
 
 package org.infoglue.cms.applications.managementtool.actions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InconsistenciesController;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.management.AccessRight;
+import org.infoglue.cms.entities.management.AccessRightGroupVO;
+import org.infoglue.cms.entities.management.AccessRightRoleVO;
+import org.infoglue.cms.entities.management.AccessRightUserVO;
+import org.infoglue.cms.entities.management.AccessRightVO;
+import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.entities.management.TableCount;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
@@ -47,7 +57,20 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 	private List inconsistencies = null;
 	private Integer registryId = null;
 	
-    public String doInput() throws Exception
+	private List<AccessRightVO> accessRightVOList = new ArrayList<AccessRightVO>();
+	private String accessRightsStatusText = null;
+
+	private List<AccessRightVO> duplicateAccessRightVOList = new ArrayList<AccessRightVO>(); 
+	private List<AccessRightVO> duplicateAutoDeletableAccessRightVOList = new ArrayList<AccessRightVO>(); 
+	private List<AccessRightVO> duplicateAutoMergableAccessRightVOList = new ArrayList<AccessRightVO>(); 
+		
+	private Integer interceptionPointId;
+	private String parameters;
+	private String[] roleNames = new String[]{};
+	private String[] groupNames = new String[]{};
+	private String[] userNames = new String[]{};
+	
+	public String doInput() throws Exception
     {
     	return "input";
     }
@@ -73,6 +96,60 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 		return inconsistencies;
 	}
     
+    public String doInputAccessRights() throws Exception
+    {
+    	this.accessRightsStatusText = AccessRightController.getController().getAccessRightsStatusText();
+    	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
+    	    	
+    	return "inputAccessRights";
+    }
+
+    public String doFixAccessRightInconsistencies() throws Exception
+    {
+    	this.accessRightsStatusText = AccessRightController.getController().fixAccessRightInconsistencies();
+    	this.accessRightsStatusText += AccessRightController.getController().getAccessRightsStatusText();
+    	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
+        
+    	return "inputAccessRights";
+    }
+
+    public String doFixEmptyAccessRightInconsistencies() throws Exception
+    {
+    	this.accessRightsStatusText = AccessRightController.getController().fixEmptyAccessRightInconsistencies();
+    	this.accessRightsStatusText += AccessRightController.getController().getAccessRightsStatusText();
+    	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
+        
+    	return "inputAccessRights";
+    }
+
+    public String doFixAutoMergableAccessRightInconsistencies() throws Exception
+    {
+    	this.accessRightsStatusText = AccessRightController.getController().fixAutoMergableAccessRightInconsistencies();
+    	this.accessRightsStatusText += AccessRightController.getController().getAccessRightsStatusText();
+    	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
+        
+    	return "inputAccessRights";
+    }
+
+    public String doMergeAccessRight() throws Exception
+    {
+    	this.accessRightsStatusText = AccessRightController.getController().mergeAccessRight(this.interceptionPointId, this.parameters, this.roleNames, this.groupNames, this.userNames);
+    	this.accessRightsStatusText += AccessRightController.getController().getAccessRightsStatusText();
+    	AccessRightController.getController().getAllDuplicates(true, true, duplicateAccessRightVOList, duplicateAutoDeletableAccessRightVOList, duplicateAutoMergableAccessRightVOList);
+        
+    	return "inputAccessRights";
+    }
+
+    public String doFixAccessRightDuplicates() throws Exception
+    {
+    	/*
+    	AccessRightController.getController().fixAccessRightDuplicate(this.accessRightIds);
+    	
+    	this.accessRightVOList = AccessRightController.getController().getAllDuplicates();
+        */
+    	return "inputAccessRights";
+    }
+
     public SiteNodeVO getSiteNodeVO(String siteNodeId) throws NumberFormatException, SystemException, Bug
     {
     	return SiteNodeController.getController().getSiteNodeVOWithId(new Integer(siteNodeId));
@@ -92,4 +169,50 @@ public class ViewInconsistenciesAction extends InfoGlueAbstractAction
 	{
 		this.registryId = registryId;
 	}
+	
+	public String getAccessRightsStatusText() 
+	{
+		return accessRightsStatusText;
+	}
+
+	public List<AccessRightVO> getDuplicateAccessRightVOList() 
+	{
+		return duplicateAccessRightVOList;
+	}
+
+	public List<AccessRightVO> getDuplicateAutoDeletableAccessRightVOList() 
+	{
+		return duplicateAutoDeletableAccessRightVOList;
+	}
+
+	public List<AccessRightVO> getDuplicateAutoMergableAccessRightVOList() 
+	{
+		return duplicateAutoMergableAccessRightVOList;
+	}
+
+	public void setInterceptionPointId(Integer interceptionPointId) 
+	{
+		this.interceptionPointId = interceptionPointId;
+	}
+
+	public void setParameters(String parameters) 
+	{
+		this.parameters = parameters;
+	}
+
+	public void setRoleNames(String[] roleNames) 
+	{	
+		this.roleNames = roleNames;
+	}
+
+	public void setGroupNames(String[] groupNames) 
+	{
+		this.groupNames = groupNames;
+	}
+
+	public void setUserNames(String[] userNames) 
+	{
+		this.userNames = userNames;
+	}
+
 }

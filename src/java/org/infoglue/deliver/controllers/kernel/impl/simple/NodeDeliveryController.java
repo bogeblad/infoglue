@@ -1334,7 +1334,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 							//	boundContentVOList.add(candidate);        		
 							
 							//Content candidateContent = (Content)getObjectWithId(ContentImpl.class, candidate.getId(), db); 
-							ContentVO candidateContent = ContentController.getContentController().getSmallContentVOWithId(candidate.getId(), db);
+							ContentVO candidateContent = ContentController.getContentController().getSmallContentVOWithId(candidate.getId(), db, deliveryContext);
 							
 							if(logger.isInfoEnabled())
 								logger.info("candidateContent:" + candidateContent.getName());
@@ -2086,7 +2086,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         	}
 	        for (int i = numberOfPaths;i < path.length; i++) 
 	        {
-	            if (i < 0) 
+	        	if (i < 0) 
 	            {
 	  	    		if(logger.isInfoEnabled())
 		    	        logger.info("Getting root node");
@@ -2283,7 +2283,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         String key = "" + siteNodeId + "_" + false;
 		logger.info("key in getChildSiteNodes:" + key);
 		List siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
-		
+
 		if(siteNodeVOList == null)
 		{
 			SiteNodeVO parentSiteNodeVO = getSiteNodeVO(db, siteNodeId);
@@ -2309,7 +2309,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	        StringBuffer SQL = new StringBuffer();
 	    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
 	    	{
-		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden from cmSiNo sn, cmSiNoVer snv ");
+		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiNo sn, cmSiNoVer snv ");
 		   		SQL.append("where ");
 		   		SQL.append("sn.parentSiNoId = $1 ");
 		   		SQL.append("AND sn.isDeleted = $2 ");
@@ -2324,7 +2324,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	    	}
 	    	else
 	    	{
-		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden from cmSiteNode sn, cmSiteNodeVersion snv ");
+		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiteNode sn, cmSiteNodeVersion snv ");
 		   		SQL.append("where ");
 		   		SQL.append("sn.parentSiteNodeId = $1 ");
 		   		SQL.append("AND sn.isDeleted = $2 ");
@@ -2338,6 +2338,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 		   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 	    	}
 
+	    	//System.out.println("SQL:" + SQL);
+	    	//System.out.println("siteNodeId:" + siteNodeId);
 	    	//logger.info("SQL:" + SQL);
 	    	//logger.info("siteNodeId:" + siteNodeId);
 	    	OQLQuery oql = db.getOQLQuery(SQL.toString());

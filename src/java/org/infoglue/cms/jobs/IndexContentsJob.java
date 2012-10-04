@@ -22,6 +22,7 @@
 */
 package org.infoglue.cms.jobs;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -50,7 +51,16 @@ public class IndexContentsJob implements Job
     	logger.info("* Starting content index job which should run with nice intervals 	 *");
     	logger.info("* Purpose is to keep the lucene index up2date				 		 *");
     	logger.info("*********************************************************************");
-
+    	
+    	//if(true)
+    	//	return;
+    	
+    	if(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) > 7 && Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < 24)
+    	{
+    		System.out.println("Returning as we don't want to index during the days..");
+    		return;
+    	}
+    	
     	logger.info("running:" + running.get());
 
     	if (running.compareAndSet(false, true)) 

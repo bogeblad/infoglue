@@ -42,6 +42,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PropertiesCategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.QualifyerVO;
@@ -50,6 +51,7 @@ import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
+import org.infoglue.deliver.util.Timer;
 
 public abstract class ViewEntityPropertiesAction extends InfoGlueAbstractAction
 {
@@ -338,22 +340,30 @@ public abstract class ViewEntityPropertiesAction extends InfoGlueAbstractAction
 	 * @return A list of all Children (and their children, etc)
 	 */
 	
-	public List getAvailableCategories(Integer categoryId)
+	public List<CategoryVO> getAvailableCategories(Integer categoryId)
 	{
+		List<CategoryVO> availableCategories = Collections.EMPTY_LIST;
+		Timer t = new Timer();
 		try
 		{	
 		    String protectCategories = CmsPropertyHandler.getProtectCategories();
 		    if(protectCategories != null && protectCategories.equalsIgnoreCase("true"))
-		        return getCategoryController().getAuthorizedActiveChildren(categoryId, this.getInfoGluePrincipal());
+		    {
+		    	availableCategories = getCategoryController().getAuthorizedActiveChildren(categoryId, this.getInfoGluePrincipal());
+				t.printElapsedTime("getAuthorizedActiveChildren");
+}
 			else
-			    return getCategoryController().findAllActiveChildren(categoryId);
+			{
+				availableCategories = getCategoryController().getActiveChildrenCategoryVOList(categoryId);
+				t.printElapsedTime("findAllActiveChildren");
+			}
 		}
 		catch(Exception e)
 		{
 			logger.warn("We could not fetch the list of categories: " + e.getMessage(), e);
 		}
-
-		return Collections.EMPTY_LIST;
+		
+		return availableCategories;
 	}
 
 	

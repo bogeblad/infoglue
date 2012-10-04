@@ -50,9 +50,11 @@ import org.exolab.castor.jdo.CacheManager;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentRelationImpl;
@@ -255,6 +257,12 @@ public class CacheController extends Thread
 
 	public static synchronized void preCacheDeliverEntities() throws Exception 
 	{
+		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 100000);
+		logger.error("snVOList:" + snVOList.size() + " fetched and precached");
+
+		List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 300000);
+		logger.error("cList:" + cList.size() + " fetched and precached");
+		
 		/*
 		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 100000);
 		logger.info("snVOList:" + snVOList.size() + " fetched and precached");
@@ -471,7 +479,9 @@ public class CacheController extends Thread
 				if(cacheName != null && cacheName.equalsIgnoreCase("childSiteNodesCache"))
 		    		cacheCapacity = "20000";
 				if(cacheName != null && cacheName.equalsIgnoreCase("siteNodeCache"))
-		    		cacheCapacity = "30000";
+		    		cacheCapacity = "100000";
+				if(cacheName != null && cacheName.equalsIgnoreCase("contentCache"))
+		    		cacheCapacity = "300000";
 				if(cacheName != null && cacheName.equalsIgnoreCase("latestSiteNodeVersionCache"))
 		    		cacheCapacity = "30000";
 					
@@ -1316,6 +1326,10 @@ public class CacheController extends Thread
 						clear = true;
 					}
 					if(cacheName.equalsIgnoreCase("availableServiceBindingCache") && entity.indexOf("AvailableServiceBinding") > 0)
+					{	
+						clear = true;
+					}
+					if(cacheName.equalsIgnoreCase("categoriesCache") && entity.indexOf("Category") > 0)
 					{	
 						clear = true;
 					}

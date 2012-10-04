@@ -1923,7 +1923,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 			
 			if(entityClass.equalsIgnoreCase("Content"))
 			{
-				ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(new Integer(entityId), getDatabase());
+				ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(getDatabase(), new Integer(entityId), null);
 				ComponentBinding componentBinding = new ComponentBinding();
 				componentBinding.setId(new Integer(id));
 				componentBinding.setComponentId(componentId);

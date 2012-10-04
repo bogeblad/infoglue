@@ -578,32 +578,54 @@ public class ComponentLogic
 		return getPropertyValue(propertyName, true);
 	}
 
-	public String getPropertyValue(String propertyName, boolean useLangaugeFallback) throws SystemException
+	public String getPropertyValue(String propertyName, boolean useLanguageFallback) throws SystemException
 	{
-		return getPropertyValue(propertyName, useLangaugeFallback, this.useInheritance);
+		return getPropertyValue(propertyName, useLanguageFallback, this.useInheritance);
 	}
 
-	public String getPropertyValue(String propertyName, boolean useLangaugeFallback, boolean useInheritance) throws SystemException
+	public String getPropertyValue(String propertyName, boolean useLanguageFallback, boolean useInheritance) throws SystemException
 	{
-		return getPropertyValue(propertyName, useLangaugeFallback, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
+		return getPropertyValue(propertyName, useLanguageFallback, useInheritance, this.useRepositoryInheritance, this.useStructureInheritance);
 	}
 
-	public String getPropertyValue(String propertyName, boolean useLangaugeFallback, boolean useInheritance, boolean useRepositoryInheritance) throws SystemException
+	public String getPropertyValue(String propertyName, boolean useLanguageFallback, boolean useInheritance, boolean useRepositoryInheritance) throws SystemException
 	{
-		return getPropertyValue(propertyName, useLangaugeFallback, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
+		return getPropertyValue(propertyName, useLanguageFallback, useInheritance, useRepositoryInheritance, this.useStructureInheritance);
 	}
 
-	public String getPropertyValue(String propertyName, boolean useLangaugeFallback, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws SystemException
+	public String getPropertyValue(String propertyName, boolean useLanguageFallback, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance) throws SystemException
 	{
 		String propertyValue = "";
 		
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		if(property != null)
 		{	
-			propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage());
-			if(propertyValue == null)
+			try
 			{
-				propertyValue = (String)property.get("path");
+				ComponentPropertyDefinition propertyDefinition = getComponentPropertyDefinition(this.infoGlueComponent.getContentId(), propertyName, templateController.getSiteNodeId(), templateController.getLanguageId(), templateController.getContentId(), templateController.getDatabase(), templateController.getPrincipal());
+			    if(propertyDefinition != null)
+			    {
+					boolean languageVariationAllowed = propertyDefinition.getAllowLanguageVariations();
+					if(languageVariationAllowed)
+					{
+						propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage()); 
+						if((propertyValue == null || propertyValue.equals("")) && useLanguageFallback)
+							propertyValue = (String)property.get("path");
+					}
+					else
+						propertyValue = (String)property.get("path");
+					 	 
+					propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage());
+					if(propertyValue == null)
+					{
+						propertyValue = (String)property.get("path");
+					}
+			    }
+			}
+			catch (Exception e) 
+			{
+				logger.error("Infoglue reported a problem reading component property values: " + e.getMessage());
+				logger.warn("Infoglue reported a problem reading component property values: " + e.getMessage(), e);
 			}
 		}
 		

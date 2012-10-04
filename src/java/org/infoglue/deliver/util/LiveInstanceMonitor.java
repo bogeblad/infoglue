@@ -83,7 +83,7 @@ public class LiveInstanceMonitor implements Runnable
 		{
 			try
 			{
-				Thread.sleep(30000);
+				Thread.sleep(60000);
 				logger.info("Validating instances");
 				
 				validateInstances();

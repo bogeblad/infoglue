@@ -124,12 +124,17 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 		cacheLeafs = new ArrayList();
 		
 		Timer t = new Timer();
-
+		if(!logger.isInfoEnabled())
+			t.setActive(false);
+		
 		List children = null;
 		try
 		{
 			//children = ContentController.getContentController().getContentChildrenVOList(parentNode);
-			children = ContentController.getContentController().getContentChildrenVOList(parentNode, allowedContentTypeIds, false);
+			children = ContentController.getContentController().getContentChildrenVOList(parentNode, this.languageVOList, allowedContentTypeIds, false);
+			t.printElapsedTime("Getting children the new way took");
+			//children = ContentController.getContentController().getContentChildrenVOListOld(parentNode, allowedContentTypeIds, false);
+			//t.printElapsedTime("Getting children the old way took");
 		}
 		catch (ConstraintException e)
 		{
@@ -194,6 +199,7 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 		String sortProperty = CmsPropertyHandler.getContentTreeSort();
 		if(sortProperty != null)
 			Collections.sort(children, new ReflectionComparator(sortProperty));
+		t.printElapsedTime("sorting children took");
 		
 		Iterator i = children.iterator();
 		while(i.hasNext())
@@ -216,6 +222,7 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 					logger.warn("Problem getting access to meta info:" + e.getMessage(), e);
 				}
 			}
+			t.printElapsedTime("Access right took");
 			
 			if(hasUserContentAccess)
 			{
@@ -230,6 +237,12 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 				if(vo.getIsProtected().intValue() == ContentVO.YES.intValue())
 					node.getParameters().put("isProtected", "true");
 				
+				if(vo.getStateId() != null && vo.getStateId() < ContentVersionVO.PUBLISHED_STATE)
+					node.getParameters().put("stateId", "" + vo.getStateId());
+				t.printElapsedTime("Getting state took");
+				
+				
+				/*
 				try
 				{
 					Iterator languageVOListIterator = languageVOList.iterator();
@@ -243,11 +256,13 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 							break;
 						}
 					}
+					//t.printElapsedTime("Getting state took");
 				}
 				catch (Exception e) 
 				{
 					logger.warn("A problem when fecthing latest master content version: " + e.getMessage(), e);
 				}
+				*/
 				
 				if (vo.getIsBranch().booleanValue())
 				{
@@ -265,9 +280,8 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 			}			
 		}
 
-		if(logger.isDebugEnabled())
-			t.printElapsedTime("Done sorting children");
-		
+		t.printElapsedTime("Done sorting children");
+
 		return ret;
 	}
 	

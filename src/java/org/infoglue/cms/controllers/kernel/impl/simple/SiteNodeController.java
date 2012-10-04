@@ -146,12 +146,12 @@ public class SiteNodeController extends BaseController
 	   		StringBuffer SQL = new StringBuffer();
 	    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
 	    	{
-		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, 1 AS sortOrder, 0 AS isHidden from cmSiNo sn ");
+		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, 1 AS sortOrder, -1 AS isHidden, -1 AS stateId, -1 AS isProtected from cmSiNo sn ");
 		   		SQL.append("where sn.siNoId = $1 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 	    	}
 	    	else
 	    	{
-		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, 1 AS sortOrder, 0 AS isHidden from cmSiteNode sn ");
+		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, 1 AS sortOrder, -1 AS isHidden, -1 AS stateId, -1 AS isProtected from cmSiteNode sn ");
 		   		SQL.append("where sn.siteNodeId = $1 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 	    	}
 	
@@ -924,7 +924,7 @@ public class SiteNodeController extends BaseController
    		StringBuffer SQL = new StringBuffer();
     	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     	{
-	   		SQL.append("CALL SQL select snv.siNoVerId, snv.stateId, snv.verNumber, snv.modifiedDateTime, snv.verComment, snv.isCheckedOut, snv.isActive, snv.isProtected, snv.disablePageCache, snv.disableEditOnSight, snv.disableLanguages, snv.contentType, snv.pageCacheKey, snv.pageCacheTimeout, snv.disableForceIDCheck, snv.forceProtocolChange, snv.siNoId, snv.versionModifier, snv.sortOrder, snv.isHidden from cmSiNo sn, cmSiNoVer snv ");
+	   		SQL.append("CALL SQL select snv.siNoVerId, snv.stateId, snv.verNumber, snv.modifiedDateTime, snv.verComment, snv.isCheckedOut, snv.isActive, snv.isProtected, snv.disablePageCache, snv.disableEditOnSight, snv.disableLanguages, snv.contentType, snv.pageCacheKey, snv.pageCacheTimeout, snv.disableForceIDCheck, snv.forceProtocolChange, snv.siNoId, snv.versionModifier, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiNo sn, cmSiNoVer snv ");
 	   		SQL.append("where ");
 	   		SQL.append("sn.isDeleted = $1 ");
 	   		SQL.append("AND snv.siNoId = sn.siNoId ");
@@ -938,7 +938,7 @@ public class SiteNodeController extends BaseController
     	}
     	else
     	{
-	   		SQL.append("CALL SQL select snv.siteNodeVersionId, snv.stateId, snv.versionNumber, snv.modifiedDateTime, snv.versionComment, snv.isCheckedOut, snv.isActive, snv.isProtected, snv.disablePageCache, snv.disableEditOnSight, snv.disableLanguages, snv.contentType, snv.pageCacheKey, snv.pageCacheTimeout, snv.disableForceIDCheck, snv.forceProtocolChange, snv.siteNodeId, snv.versionModifier, snv.sortOrder, snv.isHidden from cmSiteNode sn, cmSiteNodeVersion snv ");
+	   		SQL.append("CALL SQL select snv.siteNodeVersionId, snv.stateId, snv.versionNumber, snv.modifiedDateTime, snv.versionComment, snv.isCheckedOut, snv.isActive, snv.isProtected, snv.disablePageCache, snv.disableEditOnSight, snv.disableLanguages, snv.contentType, snv.pageCacheKey, snv.pageCacheTimeout, snv.disableForceIDCheck, snv.forceProtocolChange, snv.siteNodeId, snv.versionModifier, snv.sortOrder, snv.isHidden snv.stateId, snv.isProtected from cmSiteNode sn, cmSiteNodeVersion snv ");
 	   		SQL.append("where ");
 	   		SQL.append("sn.isDeleted = $1 ");
 	   		SQL.append("AND snv.siteNodeId = sn.siteNodeId ");
@@ -1024,7 +1024,7 @@ public class SiteNodeController extends BaseController
    		StringBuffer SQL = new StringBuffer();
     	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     	{
-	   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden from cmSiNo sn, cmSiNoVer snv ");
+	   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiNo sn, cmSiNoVer snv ");
 	   		SQL.append("where ");
 	   		SQL.append("sn.isDeleted = $1 ");
 	   		SQL.append("AND snv.siNoId = sn.siNoId ");
@@ -1038,7 +1038,7 @@ public class SiteNodeController extends BaseController
     	}
     	else
     	{
-	   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden from cmSiteNode sn, cmSiteNodeVersion snv ");
+	   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiteNode sn, cmSiteNodeVersion snv ");
 	   		SQL.append("where ");
 	   		SQL.append("sn.isDeleted = $1 ");
 	   		SQL.append("AND snv.siteNodeId = sn.siteNodeId ");
@@ -1155,7 +1155,7 @@ public class SiteNodeController extends BaseController
    		StringBuffer SQL = new StringBuffer();
     	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     	{
-	   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden from cmSiNo sn, cmSiNoVer snv ");
+	   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiNo sn, cmSiNoVer snv ");
 	   		SQL.append("where ");
 	   		SQL.append("sn.parentSiNoId = $1 ");
 	   		SQL.append("AND sn.isDeleted = $2 ");
@@ -1170,7 +1170,7 @@ public class SiteNodeController extends BaseController
     	}
     	else
     	{
-	   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden from cmSiteNode sn, cmSiteNodeVersion snv ");
+	   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiteNode sn, cmSiteNodeVersion snv ");
 	   		SQL.append("where ");
 	   		SQL.append("sn.parentSiteNodeId = $1 ");
 	   		SQL.append("AND sn.isDeleted = $2 ");
@@ -1184,7 +1184,7 @@ public class SiteNodeController extends BaseController
 	   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
     	}
 
-    	//logger.info("SQL:" + SQL);
+    	//System.out.println("SQL:" + SQL);
     	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
     	//logger.info("showDeletedItems:" + showDeletedItems);
     	OQLQuery oql = db.getOQLQuery(SQL.toString());
@@ -1197,6 +1197,7 @@ public class SiteNodeController extends BaseController
 		while (results.hasMore()) 
 		{
 			SiteNode siteNode = (SiteNode)results.next();
+			//System.out.println("Name:" + siteNode.getName() + ":" + siteNode.getValueObject().getStateId() + ":" + siteNode.getValueObject().getIsProtected() + ":" + siteNode.getValueObject().getIsProtected());
 			childrenVOList.add(siteNode.getValueObject());
 		}
 		
@@ -1309,7 +1310,9 @@ public class SiteNodeController extends BaseController
 			
     		if(siteNodeVO != null)
     			CacheController.cacheObject("repositoryRootNodesCache", key, siteNodeVO);
-
+    		else
+    			System.out.println("repositoryId:" + repositoryId + " had no root");
+    		
 			commitTransaction(db);
         }
         catch(Exception e)

@@ -84,11 +84,10 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 				if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 				{
 					Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
-					if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.ChangeAccessRights", siteNodeVersionId.toString()))
+					if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.ChangeAccessRights", protectedSiteNodeVersionId.toString()))
 						ceb.add(new AccessConstraintException("SiteNodeVersion.siteNodeId", "1006"));
 				}
 			}
-			
 			ceb.throwIfNotEmpty();
 		}
 		

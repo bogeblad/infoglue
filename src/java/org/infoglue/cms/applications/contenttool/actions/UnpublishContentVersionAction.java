@@ -38,10 +38,12 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.AccessConstraintException;
@@ -135,7 +137,9 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 			
 			ceb.throwIfNotEmpty();
 
-			contentVOList = ContentController.getContentController().getContentVOWithParentRecursive(contentId);
+	    	List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList(contentVO.getRepositoryId());
+	    	
+			contentVOList = ContentController.getContentController().getContentVOWithParentRecursive(contentId, languageVOList);
 		}
 
 	    return "inputChooseContents";

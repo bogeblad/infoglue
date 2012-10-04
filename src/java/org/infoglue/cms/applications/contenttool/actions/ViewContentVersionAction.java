@@ -1456,7 +1456,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		    if(protectCategories != null && protectCategories.equalsIgnoreCase("true"))
 		        return categoryController.getAuthorizedActiveChildren(categoryId, this.getInfoGluePrincipal());
 			else
-			    return categoryController.findAllActiveChildren(categoryId);
+			    return categoryController.getActiveChildrenCategoryVOList(categoryId);
 		}
 		catch(Exception e)
 		{

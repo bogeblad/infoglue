@@ -145,6 +145,11 @@ public class ContentVersionController extends BaseController
 		return (ContentVersionVO) getVOWithId(ContentVersionImpl.class, contentVersionId);
     }
 
+    public ContentVersionVO getFullContentVersionVOWithId(Integer contentVersionId, Database db) throws SystemException, Bug
+    {
+		return (ContentVersionVO) getVOWithId(ContentVersionImpl.class, contentVersionId, db);
+    }
+
     public ContentVersionVO getContentVersionVOWithId(Integer contentVersionId) throws SystemException, Bug
     {
 		return (ContentVersionVO) getVOWithId(SmallContentVersionImpl.class, contentVersionId);
@@ -792,23 +797,42 @@ public class ContentVersionController extends BaseController
     
 	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
 	{
-		ContentVersionVO contentVersionVO = null;
+		//Thread.dumpStack();
+		String contentVersionKey = "contentVersionVO_" + contentId + "_" + languageId + "_active";
+		ContentVersionVO contentVersionVO = (ContentVersionVO)CacheController.getCachedObjectFromAdvancedCache("contentVersionCache", contentVersionKey);
+		if(contentVersionVO != null)
+		{
+			//System.out.println("There was an cached contentVersionVO:" + contentVersionVO.getContentVersionId());
+			//logger.info("There was an cached contentVersionVO:" + contentVersionVO.getContentVersionId());
+		}
+		else
+		{
+			if(logger.isInfoEnabled())
+				logger.info("Querying for contentVersionVO:" + contentVersionKey);
 
-        OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.contentId = $1 AND cv.languageId = $2 AND cv.isActive = $3 ORDER BY cv.contentVersionId desc");
-    	oql.bind(contentId);
-    	oql.bind(languageId);
-		oql.bind(true);
-    	
-    	QueryResults results = oql.execute(Database.ReadOnly);
-		
-		if (results.hasMore()) 
-        {
-			ContentVersion contentVersion = (ContentVersion)results.next();
-			contentVersionVO = contentVersion.getValueObject();
-        }
-		
-		results.close();
-		oql.close();
+			//ContentVersionVO contentVersionVO = null;
+	
+	        OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.contentId = $1 AND cv.languageId = $2 AND cv.isActive = $3 ORDER BY cv.contentVersionId desc");
+	    	oql.bind(contentId);
+	    	oql.bind(languageId);
+			oql.bind(true);
+	    	
+	    	QueryResults results = oql.execute(Database.ReadOnly);
+			
+			if (results.hasMore()) 
+	        {
+				ContentVersion contentVersion = (ContentVersion)results.next();
+				contentVersionVO = contentVersion.getValueObject();
+				
+				if(contentVersionVO != null)
+				{
+					CacheController.cacheObjectInAdvancedCache("contentVersionCache", contentVersionKey, contentVersionVO, new String[]{"contentVersion_" + contentVersionVO.getId(), "content_" + contentVersionVO.getContentId()}, true);
+				}
+	        }
+			
+			results.close();
+			oql.close();
+		}
 
 		return contentVersionVO;
 	}

@@ -61,6 +61,7 @@ import org.infoglue.deliver.applications.filters.URIMatcher;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.HttpUtilities;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * This filter protects actions withing InfoGlue from access without authentication. 
@@ -250,7 +251,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 			    sessionTimeout = "1800";
 			
 			session.setMaxInactiveInterval(new Integer(sessionTimeout).intValue());
-	
+			
 			// if our attribute's already present, don't do anything
 			//logger.info("User:" + session.getAttribute(INFOGLUE_FILTER_USER));
 			if (session != null && session.getAttribute(INFOGLUE_FILTER_USER) != null) 
@@ -330,7 +331,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 					authenticatedUserName = authenticateUser(httpServletRequest, httpServletResponse, fc);
 				}
 			}
-			
+
 			logger.info("authenticatedUserName:" + authenticatedUserName);
 			
 			if(authenticatedUserName != null)
@@ -338,6 +339,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 				logger.info("Getting the principal from user name:" + authenticatedUserName);
 				
 				InfoGluePrincipal user = getAuthenticatedUser(authenticatedUserName);
+				
 				if(user == null || (!user.getIsAdministrator() && !hasAuthorizedRole(user)))
 				{	
 					//throw new Exception("This user is not authorized to log in...");
@@ -423,7 +425,7 @@ public class InfoGlueAuthenticationFilter implements Filter
 			    	logger.error("Error: " + e.getMessage(), e);
 				}
 			    //END TEST
-			    
+
 				String logUserName = userName;
 				if(logUserName == null || logUserName.equals("") && user != null)
 					logUserName = user.getName();

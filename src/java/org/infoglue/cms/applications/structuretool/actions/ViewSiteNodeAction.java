@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.AvailableServiceBindingController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
@@ -41,6 +42,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServiceBindingController;
@@ -51,6 +53,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
+import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.QualifyerVO;
@@ -61,6 +64,7 @@ import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
+import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -133,6 +137,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 			if(latestMetaInfoContentVersionVO == null)
 				SiteNodeVersionController.getController().getAndRepairLatestContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId());
 		}
+		
 		logger.info("siteNodeVersionVO:" + siteNodeVersionVO);
 		this.repositoryId = this.siteNodeVO.getRepositoryId();
 		//SiteNodeControllerProxy.getController().getACSiteNodeVOWithId(this.getInfoGluePrincipal(), siteNodeId);
@@ -140,8 +145,11 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		if(siteNodeVO.getSiteNodeTypeDefinitionId() != null)
 		{
 			this.siteNodeTypeDefinitionVO = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionVOWithId(siteNodeVO.getSiteNodeTypeDefinitionId());
-			this.availableServiceBindings = SiteNodeTypeDefinitionController.getController().getAvailableServiceBindingVOList(siteNodeVO.getSiteNodeTypeDefinitionId());
-			this.serviceBindings = SiteNodeVersionController.getServiceBindningVOList(siteNodeVersionVO.getSiteNodeVersionId());
+			if(siteNodeTypeDefinitionVO.getName().equalsIgnoreCase("HTMLPage"))
+			{
+				this.availableServiceBindings = SiteNodeTypeDefinitionController.getController().getAvailableServiceBindingVOList(siteNodeVO.getSiteNodeTypeDefinitionId());
+				this.serviceBindings = SiteNodeVersionController.getServiceBindningVOList(siteNodeVersionVO.getSiteNodeVersionId());
+			}
 		}
 	} 
 
@@ -166,7 +174,9 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 			if(latestMetaInfoContentVersionVO == null)
 				SiteNodeVersionController.getController().getAndRepairLatestContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId());
 		}
-						
+
+		repairBrokenProtection(db);
+
 	    if(this.siteNodeVO.getMetaInfoContentId() == null || this.siteNodeVO.getMetaInfoContentId().intValue() == -1)
 	    {
 	        boolean hadMetaInfo = false;
@@ -206,9 +216,34 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 		if(siteNodeVO.getSiteNodeTypeDefinitionId() != null)
 		{
 			this.siteNodeTypeDefinitionVO = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionVOWithId(siteNodeVO.getSiteNodeTypeDefinitionId(), db);
-			this.availableServiceBindings = SiteNodeTypeDefinitionController.getController().getAvailableServiceBindingVOList(siteNodeVO.getSiteNodeTypeDefinitionId(), db);
-			if(siteNodeVersionVO != null)
-				this.serviceBindings = SiteNodeVersionController.getServiceBindningVOList(siteNodeVersionVO.getSiteNodeVersionId(), db);
+			if(siteNodeTypeDefinitionVO.getName().equalsIgnoreCase("HTMLPage"))
+			{
+				this.availableServiceBindings = SiteNodeTypeDefinitionController.getController().getAvailableServiceBindingVOList(siteNodeVO.getSiteNodeTypeDefinitionId(), db);
+				if(siteNodeVersionVO != null)
+					this.serviceBindings = SiteNodeVersionController.getServiceBindningVOList(siteNodeVersionVO.getSiteNodeVersionId(), db);
+			}
+		}
+	}
+
+	public void repairBrokenProtection(Database db) throws SystemException, Bug 
+	{
+		if(this.siteNodeVersionVO != null && this.siteNodeVersionVO.getIsProtected().intValue() == 1)
+		{
+			System.out.println("Let's check access rights so they are not null...");
+			InterceptionPointVO ipReadVO = InterceptionPointController.getController().getInterceptionPointVOWithName("SiteNodeVersion.Read", db);
+			InterceptionPointVO ipWriteVO = InterceptionPointController.getController().getInterceptionPointVOWithName("SiteNodeVersion.Write", db);
+			if(ipReadVO != null && ipWriteVO != null)
+			{
+				List accessRightListRead = AccessRightController.getController().getAccessRightListOnlyReadOnly(ipReadVO.getId(), "" + this.siteNodeVersionVO.getId(), db);
+				List accessRightListWrite = AccessRightController.getController().getAccessRightListOnlyReadOnly(ipWriteVO.getId(), "" + this.siteNodeVersionVO.getId(), db);
+				if((accessRightListRead == null || accessRightListRead.size() == 0) && (accessRightListWrite == null || accessRightListWrite.size() == 0))
+				{
+					System.out.println("Removing isProtected as there are no access rights");
+					SiteNodeVersion sn = SiteNodeVersionController.getController().getSiteNodeVersionWithId(this.siteNodeVersionVO.getId(), db);
+					if(sn != null)
+						sn.setIsProtected(SiteNodeVersionVO.INHERITED);
+				}
+			}
 		}
 	} 
 

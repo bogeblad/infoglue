@@ -33,7 +33,9 @@ import javax.servlet.ServletException;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.net.CommunicationEnvelope;
 import org.infoglue.cms.net.Node;
 
@@ -65,10 +67,12 @@ public class ContentService extends JServiceBuilder
             {
                 responseEnvelope = getContent(envelope);
             }
+            /*
             else if(action.equals("selectChildNodes"))
             {
                 responseEnvelope = getChildContents(envelope);
             }
+            */
             /*
             else if(action.equals("createContent"))
             {
@@ -159,45 +163,5 @@ public class ContentService extends JServiceBuilder
 	}
 
 
-    /**
-     * This method fetches the root Content of this site
-     */
-    public CommunicationEnvelope getChildContents(CommunicationEnvelope envelope)
-	{
-        CommunicationEnvelope responseEnvelope = new CommunicationEnvelope();
-	    
-		try
-        {  
-			List arguments = (List)envelope.getNodes();
-        	Integer contentId = ((Node)arguments.get(0)).getId();
-			logger.info("contentId:" + contentId);
-            
-            List childContents = ContentController.getContentController().getContentChildrenVOList(contentId, null, false);
-			
-			List nodes = new ArrayList();
-			Iterator childIterator = childContents.iterator();
-			
-			while(childIterator.hasNext())
-			{
-				ContentVO contentVO = (ContentVO)childIterator.next();
-				Node node = new Node();
-	            node.setId(contentVO.getContentId());
-	            node.setName(contentVO.getName());
-	            node.setIsBranch(contentVO.getIsBranch());
-	            nodes.add(node);
-			}        
-			 
-            responseEnvelope.setNodes(nodes);
-        }
-        catch (Exception e)
-        {
-            responseEnvelope.setStatus("1");
-            e.printStackTrace();    
-        }
-        return responseEnvelope;
-	}
-
-
-	
 
 }

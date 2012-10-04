@@ -3969,7 +3969,7 @@ public class BasicTemplateController implements TemplateController
 
             ContentVersionVO contentVersionVO = cdc.getContentVersionVO(getDatabase(), this.siteNodeId, contentId,this.languageId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal );
             
-            Integer contentTypeDefinitionId = cdc.getContentVO(contentId, getDatabase() ).getContentTypeDefinitionId();
+            Integer contentTypeDefinitionId = cdc.getContentVO(getDatabase(), contentId, deliveryContext ).getContentTypeDefinitionId();
           
             ContentTypeDefinitionVO contentTypeDefinitionVO = ctdc.getContentTypeDefinitionVOWithId( contentTypeDefinitionId );
             Iterator attrIterator = ctdc.getContentTypeAttributes(contentTypeDefinitionVO, true).iterator();
@@ -4932,6 +4932,8 @@ public class BasicTemplateController implements TemplateController
 				repositoryIdString.append("," + repositoryIdListIterator.next());
 		}
 		
+		//t.printElapsedTime("MC 1");
+		
 		String key = "sortedMatchingContents" + contentTypeDefinitionNamesString + "_" + categoryConditionString + "_publishDateTime_languageId_" + localLanguageId + "_" + useLanguageFallback + "_" + maximumNumberOfItems + "_" + repositoryIdString + "_" + skipLanguageCheck;
 		if(cacheKey != null && !cacheKey.equals(""))
 			key = cacheKey;
@@ -4997,6 +4999,7 @@ public class BasicTemplateController implements TemplateController
 				{
 					logger.info("Getting matching contents from db for key:" + key);
 					
+					//t.printElapsedTime("MC 2.0");
 				    List contentTypeDefinitionVOList = new ArrayList();
 				    String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
 				    for(int i=0; i<contentTypeDefinitionNames.length; i++)
@@ -5006,7 +5009,10 @@ public class BasicTemplateController implements TemplateController
 				        	contentTypeDefinitionVOList.add(contentTypeDefinitionVO);
 				    }
 	
-				    final CategoryConditions categoryConditions = CategoryConditions.parse(categoryConditionString);
+				    //t.printElapsedTime("MC 2.01");
+
+				    final CategoryConditions categoryConditions = CategoryConditions.parse(categoryConditionString, getDatabase());
+				    //t.printElapsedTime("MC 2.1");
 	
 					final ExtendedSearchCriterias criterias = new ExtendedSearchCriterias(this.getOperatingMode().intValue());
 					criterias.setCategoryConditions(categoryConditions);
@@ -5015,17 +5021,23 @@ public class BasicTemplateController implements TemplateController
 						criterias.setSkipLanguageCheck(skipLanguageCheck);
 					if(freeText != null && freeTextAttributeNames != null)
 						criterias.setFreetext(freeText, freeTextAttributeNames);
+					//t.printElapsedTime("MC 2.2");
 					criterias.setContentTypeDefinitions(contentTypeDefinitionVOList);
 					criterias.setDates(fromDate, toDate);
 					criterias.setExpireDates(expireFromDate, expireToDate);
 					criterias.setMaximumNumberOfItems(maximumNumberOfItems);
+					//t.printElapsedTime("MC 2.3");
 					if(versionModifier != null)
 						criterias.setVersionModifier(versionModifier);
 					if(repositoryIdList != null && repositoryIdList.size() > 0)
 						criterias.setRepositoryIdList(repositoryIdList);
-	
+
+					//t.printElapsedTime("MC 3");
+
 					set = ExtendedSearchController.getController().search(criterias, getDatabase());	
-					
+
+					//t.printElapsedTime("MC 4");
+
 					final List result = new ArrayList();
 					for(Iterator i = set.iterator(); i.hasNext(); ) 
 					{
@@ -5046,6 +5058,8 @@ public class BasicTemplateController implements TemplateController
 							}
 						}
 					}
+					
+					//t.printElapsedTime("MC 5");
 					
 					if(cacheResult)
 						CacheController.cacheObjectInAdvancedCache(cacheName, key, result, null, false);
@@ -5083,7 +5097,7 @@ public class BasicTemplateController implements TemplateController
 			}
 			else
 			{
-				ContentVO currentNodeVO = ContentDeliveryController.getContentDeliveryController().getContentVO(currentNodeId, getDatabase());
+				ContentVO currentNodeVO = ContentDeliveryController.getContentDeliveryController().getContentVO(getDatabase(), currentNodeId, null);
 				if(currentNodeVO != null)
 				{
 					Integer parentNodeId = currentNodeVO.getParentContentId();

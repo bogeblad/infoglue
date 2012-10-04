@@ -336,7 +336,6 @@ public class SiteNodeVersionVO implements BaseEntityVO
 	        if(sv != null && sv.getSiteNodeVersionId().equals(this.siteNodeVersionId))
 	            equals = true;
 	    }
-	    
 	    return equals;
 	}
 	

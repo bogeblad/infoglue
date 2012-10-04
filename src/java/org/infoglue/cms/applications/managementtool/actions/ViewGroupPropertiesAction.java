@@ -36,6 +36,7 @@ import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.GroupPropertiesVO;
 import org.infoglue.cms.security.InfoGlueGroup;
+import org.infoglue.deliver.util.Timer;
 
 public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 {
@@ -56,13 +57,17 @@ public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 
 	protected void initialize(String groupName) throws Exception
 	{
+		Timer t = new Timer();
+		
 	    super.initialize();
-				
+		t.printElapsedTime("initialize 1");
+		
 		logger.info("groupName:" + groupName);
 
 		List contentTypeDefinitionVOList = GroupPropertiesController.getController().getContentTypeDefinitionVOList(groupName);
 		if(contentTypeDefinitionVOList != null && contentTypeDefinitionVOList.size() > 0)
 			this.setContentTypeDefinitionVO((ContentTypeDefinitionVO)contentTypeDefinitionVOList.get(0));
+		t.printElapsedTime("initialize 2");
 		
 		InfoGlueGroup infoGlueGroup = GroupControllerProxy.getController().getGroup(groupName);
 		groupPropertiesVOList = GroupPropertiesController.getController().getGroupPropertiesVOList(groupName, this.getLanguageId());
@@ -75,14 +80,13 @@ public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 		{
 			this.setContentTypeDefinitionId(this.getContentTypeDefinitionVO().getContentTypeDefinitionId());
 		}
+		t.printElapsedTime("initialize 3");
 		
 		logger.info("this.groupPropertiesVO:" + this.groupPropertiesVO);
 		
 		this.setAttributes(ContentTypeDefinitionController.getController().getContentTypeAttributes(this.getContentTypeDefinitionVO().getSchemaValue(), true, getLanguageCode(), getInfoGluePrincipal(), null));	
 	
-		logger.info("attributes:" + this.getContentTypeAttributes().size());		
-		logger.info("availableLanguages:" + this.getAvailableLanguages().size());		
-		
+		t.printElapsedTime("initialize 4");
 	} 
 
 	public String doExecute() throws Exception
@@ -161,17 +165,21 @@ public class ViewGroupPropertiesAction extends ViewEntityPropertiesAction
 	 */
 	public List getRelatedCategories(String attribute)
 	{
+		Timer t = new Timer();
+		List relatedCategories = Collections.EMPTY_LIST;
+		
 		try
 		{
 			if(this.groupPropertiesVO != null && this.groupPropertiesVO.getId() != null)
-		    	return getPropertiesCategoryController().findByPropertiesAttribute(attribute, GroupProperties.class.getName(),  this.groupPropertiesVO.getId());
+				relatedCategories = getPropertiesCategoryController().findByPropertiesAttribute(attribute, GroupProperties.class.getName(),  this.groupPropertiesVO.getId());
 		}
 		catch(Exception e)
 		{
 			logger.warn("We could not fetch the list of defined category keys: " + e.getMessage(), e);
 		}
+		t.printElapsedTime("getRelatedCategories took");
 
-		return Collections.EMPTY_LIST;
+		return relatedCategories;
 	}
 
 	

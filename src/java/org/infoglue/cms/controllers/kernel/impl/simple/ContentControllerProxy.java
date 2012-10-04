@@ -71,7 +71,7 @@ public class ContentControllerProxy extends ContentController
     	
 		intercept(hashMap, "Content.Read", infogluePrincipal);
 				
-		return getSmallContentVOWithId(contentId, db);
+		return getSmallContentVOWithId(contentId, db, null);
     } 
 
 	/**

@@ -64,8 +64,11 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.services.BaseService;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 import com.opensymphony.module.propertyset.PropertySet;
@@ -102,15 +105,53 @@ public class ContentController extends BaseController
     	return (ContentVO) getVOWithId(SmallContentImpl.class, contentId);
     } 
 
-	public ContentVO getContentVOWithId(Integer contentId, Database db) throws SystemException, Bug
+	public ContentVO getContentVOWithIdDirectly(Integer contentId, Database db) throws SystemException, Bug
     {
     	return (ContentVO) getVOWithId(SmallContentImpl.class, contentId, db);
     } 
 
-	public ContentVO getSmallContentVOWithId(Integer contentId, Database db) throws SystemException, Bug
+	public ContentVO getContentVOWithId(Integer contentId, Database db) throws SystemException, Bug, Exception
+    {
+    	return getSmallContentVOWithId(contentId, db, null);
+    } 
+
+	public ContentVO getSmallContentVOWithId(Integer contentId, Database db) throws SystemException, Bug, Exception
+    {
+    	return getSmallContentVOWithId(contentId, db, null);
+    } 
+
+	public ContentVO getSmallContentVOWithIdDirectly(Integer contentId, Database db) throws SystemException, Bug
     {
     	return (ContentVO) getVOWithId(SmallContentImpl.class, contentId, db);
     } 
+
+	/**
+	 * This method return a contentVO
+	 */
+	
+	public ContentVO getSmallContentVOWithId(Integer contentId, Database db, DeliveryContext deliveryContext) throws SystemException, Exception
+	{
+		if(contentId == null || contentId.intValue() < 1)
+			return null;
+
+		if(deliveryContext != null)
+			deliveryContext.addUsedContent("content_" + contentId);
+
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = getSmallContentVOWithIdDirectly(contentId, db);
+			if(contentVO != null)
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+		}
+		
+		return contentVO;
+	}
 
     public Content getContentWithId(Integer contentId, Database db) throws SystemException, Bug
     {
@@ -1291,7 +1332,7 @@ public class ContentController extends BaseController
 				HashMap argument = (HashMap)argumentIterator.next(); 
 				Integer contentId = new Integer((String)argument.get("contentId"));
 				logger.info("Getting the content with Id:" + contentId);
-				contents.add(getSmallContentVOWithId(contentId, db));
+				contents.add(getSmallContentVOWithId(contentId, db, null));
 			}
     	}
         else if(method.equalsIgnoreCase("selectListOnContentTypeName"))
@@ -1582,13 +1623,21 @@ public class ContentController extends BaseController
 
 		return content;
 	}
-	
 
    	/**
    	 * This method returns a list of the children a content has.
    	 */
    	
    	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems) throws ConstraintException, SystemException
+    {
+   		return getContentChildrenVOList(parentContentId, new ArrayList<LanguageVO>(), allowedContentTypeIds, showDeletedItems);
+    }
+
+   	/**
+   	 * This method returns a list of the children a content has.
+   	 */
+   	
+   	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, List<LanguageVO> languageVOList, String[] allowedContentTypeIds, Boolean showDeletedItems) throws ConstraintException, SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -1599,7 +1648,46 @@ public class ContentController extends BaseController
         try
         {
         	
-        	childrenVOList = getContentChildrenVOList(parentContentId, allowedContentTypeIds, showDeletedItems, db);	
+        	childrenVOList = getContentChildrenVOList(parentContentId, languageVOList, allowedContentTypeIds, showDeletedItems, db);	
+
+        	//If any of the validations or setMethods reported an error, we throw them up now before create.
+            ceb.throwIfNotEmpty();
+            
+            commitTransaction(db);
+        }
+        catch(ConstraintException ce)
+        {
+            logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+            rollbackTransaction(db);
+            throw ce;
+        }
+        catch(Exception e)
+        {
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+   		        
+        return childrenVOList;
+    } 
+   	
+   	/**
+   	 * This method returns a list of the children a content has.
+   	 */
+   	
+   	public List<ContentVO> getContentChildrenVOListOld(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems) throws ConstraintException, SystemException
+    {
+		Database db = CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        List childrenVOList = new ArrayList();
+
+        beginTransaction(db);
+        try
+        {
+        	
+        	childrenVOList = getContentChildrenVOListOld(parentContentId, allowedContentTypeIds, showDeletedItems, db);	
 
         	//If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
@@ -1623,12 +1711,173 @@ public class ContentController extends BaseController
         return childrenVOList;
     } 
 
-   	
+
    	/**
    	 * This method returns a list of the children a content has.
    	 */
    	
    	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems, Database db) throws ConstraintException, SystemException, Exception
+    {
+   		return getContentChildrenVOList(parentContentId, new ArrayList<LanguageVO>(), allowedContentTypeIds, showDeletedItems, db);
+    }
+   	
+   	/**
+   	 * This method returns a list of the children a content has.
+   	 */
+   	
+   	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, List<LanguageVO> languageVOList, String[] allowedContentTypeIds, Boolean showDeletedItems, Database db) throws ConstraintException, SystemException, Exception
+    {
+   		String allowedContentTypeIdsString = "";
+   		if(allowedContentTypeIds != null)
+   		{
+	   		for(int i=0; i < allowedContentTypeIds.length; i++)
+	   			allowedContentTypeIdsString += "_" + allowedContentTypeIds[i];
+   		}
+   		
+   		String key = "" + parentContentId + allowedContentTypeIdsString + "_" + showDeletedItems;
+		if(logger.isInfoEnabled())
+			logger.info("key:" + key);
+		
+		List<ContentVO> cachedChildContentVOList = (List<ContentVO>)CacheController.getCachedObjectFromAdvancedCache("childContentCache", key);
+		if(cachedChildContentVOList != null)
+		{
+			if(logger.isInfoEnabled())
+				logger.info("There was an cached childContentVOList:" + cachedChildContentVOList.size());
+			return cachedChildContentVOList;
+		}
+		
+        List childrenVOList = new ArrayList();
+        
+        boolean shortTables = false;
+        if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+        	shortTables = true;
+
+    	String contentTypeINClause = "";
+    	if(allowedContentTypeIds != null && allowedContentTypeIds.length > 0)
+    	{
+        	contentTypeINClause = " AND (isBranch = true OR " + (shortTables ? "contentTypeDefId" : "contentTypeDefinitionId") + " IN (";
+        	for(int i=0; i < allowedContentTypeIds.length; i++)
+        	{
+        		if(i > 0)
+        			contentTypeINClause += ",";
+        		contentTypeINClause += "$" + (i+3);
+        	}
+        	contentTypeINClause += "))";
+    	}
+    	
+    	String showDeletedItemsClause = " AND isDeleted = $2";
+    		
+    	//List<LanguageVO> languages = LanguageController.getController().getLanguageVOList(repositoryId, db);
+
+    	StringBuilder sb = new StringBuilder();
+
+    	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    	{
+	    	sb.append("CALL SQL select c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, ");
+	    	sb.append("c.creator, c.contentTypeDefId, c.repositoryId, c.parentContId, ");
+	    	sb.append("(");
+	    	sb.append("  select stateId from cmContVer cv2 where  ");
+			sb.append("  cv2.contentId = c.contentId ");
+			if(languageVOList.size() > 0)
+			{
+				sb.append("AND  (    ");
+		
+		    	int index = 0;
+		    	for(LanguageVO language : languageVOList)
+		    	{
+		    		if(index > 0)
+		        		sb.append(" OR ");
+		    			
+		    		sb.append("  cv2.ContVerId in ");
+		        	sb.append("  (select max(ContVerId) from cmContVer where contentId = c.contentId AND isActive = 1 AND languageId = " + language.getLanguageId() + ")");
+		        	index++;
+		    	}
+		
+				sb.append(" )");
+			}
+			
+			sb.append("  group by cv2.contentId order by cv2.ContVerId desc");
+			sb.append(") ");
+			sb.append("AS stateId, ");
+	    	sb.append("(select count(contentId) from cmCont where parentContentId = c.contentId) AS childCount ");
+	    	sb.append("from ");
+	    	sb.append("cmCont c ");
+	    	sb.append("WHERE parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " group by c.contentId ORDER BY c.contentId asc AS org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl ");
+    	}
+    	else
+    	{
+	    	sb.append("CALL SQL select c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, ");
+	    	sb.append("c.creator, c.contentTypeDefinitionId, c.repositoryId, c.parentContentId, ");
+	    	sb.append("(");
+	    	sb.append("  select stateId from cmContentVersion cv2 where  ");
+			sb.append("  cv2.contentId = c.contentId ");
+			if(languageVOList.size() > 0)
+			{
+				sb.append("AND   (    ");
+		
+		    	int index = 0;
+		    	for(LanguageVO language : languageVOList)
+		    	{
+		    		if(index > 0)
+		        		sb.append(" OR ");
+		    			
+		    		sb.append("  cv2.contentVersionId in ");
+		        	sb.append("  (select max(contentVersionId) from cmContentVersion where contentId = c.contentId AND isActive = 1 AND languageId = " + language.getLanguageId() + ")");
+		        	index++;
+		    	}
+	
+		    	sb.append(" )");
+			}
+
+			sb.append("  group by cv2.contentId order by cv2.contentVersionId desc");
+			sb.append(") ");
+			sb.append("AS stateId, ");
+	    	sb.append("(select count(*) from cmContent where parentContentId = c.contentId) AS childCount ");
+	    	sb.append("from ");
+	    	sb.append("cmContent c ");
+	    	sb.append("WHERE parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " group by c.contentId ORDER BY c.contentId asc AS org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl ");
+    	}
+    	
+    	String SQL = sb.toString();
+    	//System.out.println(SQL);
+    	//System.out.println(parentContentId);
+    	
+    	//String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY content.contentId";
+    	//logger.info("SQL:" + SQL);
+    	OQLQuery oql = db.getOQLQuery(SQL);
+		//OQLQuery oql = db.getOQLQuery( "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 ORDER BY content.contentId");
+		oql.bind(parentContentId);
+		oql.bind(showDeletedItems);
+		if(allowedContentTypeIds != null)
+		{
+        	for(int i=0; i < allowedContentTypeIds.length; i++)
+        	{
+        		logger.info("allowedContentTypeIds[i]:" + allowedContentTypeIds[i]);
+        		oql.bind(allowedContentTypeIds[i]);
+        	}
+		}
+		
+		QueryResults results = oql.execute(Database.ReadOnly);
+		while (results.hasMore()) 
+		{
+			Content content = (Content)results.next();
+			childrenVOList.add(content.getValueObject());
+		}
+		
+		if(childrenVOList != null)
+			CacheController.cacheObjectInAdvancedCache("childContentCache", key, childrenVOList, new String[]{"content_" + parentContentId}, true);
+
+		results.close();
+		oql.close();
+    	   		        
+        return childrenVOList;
+    } 
+   	
+   	/**
+   	 * This method returns a list of the children a content has.
+   	 */
+   	
+   	public List<ContentVO> getContentChildrenVOListOld(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems, Database db) throws ConstraintException, SystemException, Exception
     {
    		String allowedContentTypeIdsString = "";
    		if(allowedContentTypeIds != null)
@@ -1698,6 +1947,7 @@ public class ContentController extends BaseController
     	   		        
         return childrenVOList;
     } 
+   	
 	
 	/**
 	 * This method returns the contentTypeDefinitionVO which is associated with this content.
@@ -1714,10 +1964,11 @@ public class ContentController extends BaseController
 
         try
         {
-        	ContentVO smallContentVO = getSmallContentVOWithId(contentId, db);
+        	ContentVO smallContentVO = getSmallContentVOWithId(contentId, db, null);
+        	Timer t = new Timer();
         	if(smallContentVO != null && smallContentVO.getContentTypeDefinitionId() != null)
 	        	contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(smallContentVO.getContentTypeDefinitionId(), db);
-
+        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentTypeDefinitionVOWithId", (t.getElapsedTimeNanos() / 1000));
         	/*
 	        Content content = getReadOnlyMediumContentWithId(contentId, db);
         	if(content != null && content.getContentTypeDefinition() != null)
@@ -2227,23 +2478,23 @@ public class ContentController extends BaseController
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public List getContentVOWithParentRecursive(Integer contentId) throws ConstraintException, SystemException
+    public List getContentVOWithParentRecursive(Integer contentId, List<LanguageVO> languageVOList) throws ConstraintException, SystemException
 	{
-		return getContentVOWithParentRecursive(contentId, new ArrayList());
+		return getContentVOWithParentRecursive(contentId, languageVOList, new ArrayList());
 	}
 	
-	private List getContentVOWithParentRecursive(Integer contentId, List resultList) throws ConstraintException, SystemException
+	private List getContentVOWithParentRecursive(Integer contentId, List<LanguageVO> languageVOList, List resultList) throws ConstraintException, SystemException
 	{
 		// Get the versions of this content.
 		resultList.add(getContentVOWithId(contentId));
 		
 		// Get the children of this content and do the recursion
-		List childContentList = ContentController.getContentController().getContentChildrenVOList(contentId, null, false);
+		List childContentList = ContentController.getContentController().getContentChildrenVOList(contentId, languageVOList, null, false);
 		Iterator cit = childContentList.iterator();
 		while (cit.hasNext())
 		{
 			ContentVO contentVO = (ContentVO) cit.next();
-			getContentVOWithParentRecursive(contentVO.getId(), resultList);
+			getContentVOWithParentRecursive(contentVO.getId(), languageVOList, resultList);
 		}
 	
 		return resultList;

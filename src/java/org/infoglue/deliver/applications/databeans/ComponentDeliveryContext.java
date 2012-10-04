@@ -24,7 +24,9 @@
 package org.infoglue.deliver.applications.databeans;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 
@@ -41,10 +43,10 @@ public class ComponentDeliveryContext implements UsageListener
 	//private InfoGlueComponent infoGlueComponent;
 	    
 	//This section has control over what contents and sitenodes are used where so the pagecache can be selectively updated.
-	private List usedContents = new ArrayList();
-	private List usedContentVersions = new ArrayList();
-	private List usedSiteNodes = new ArrayList();
-	private List usedSiteNodeVersions = new ArrayList();
+	private Set<String> usedContents 			= new HashSet<String>();
+	private Set<String> usedContentVersions 	= new HashSet<String>();
+	private Set<String> usedSiteNodes 			= new HashSet<String>();
+	private Set<String> usedSiteNodeVersions 	= new HashSet<String>();
 	
 	//private DeliveryContext deliveryContext;
 	private String pageKey = null;
@@ -60,19 +62,22 @@ public class ComponentDeliveryContext implements UsageListener
 	    //this.deliveryContext = deliveryContext;
 	    //this.infoGlueComponent = infoGlueComponent;
  		this.componentKey = pageKey + "_" + infoGlueComponent.getId();
+		//System.out.println("ComponentDeliveryContext:" + componentKey + ":" + Thread.currentThread().getId());
+		//if(componentKey.indexOf("13471_7") > -1)
+		//	Thread.dumpStack();
 	}
 	
     public void addUsedContent(String usedContent)
     {
         synchronized(usedContents)
         {
-            this.usedContents.add(usedContent);
+        	this.usedContents.add(usedContent);
         }
     }
 
     public void addUsedSiteNode(String usedSiteNode)
     {
-        synchronized(usedSiteNodes)
+    	synchronized(usedSiteNodes)
         {
             this.usedSiteNodes.add(usedSiteNode);
         }
@@ -96,7 +101,7 @@ public class ComponentDeliveryContext implements UsageListener
     
     public String[] getAllUsedEntities()
     {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         synchronized(usedContents)
         {
             list.addAll(this.usedContents);

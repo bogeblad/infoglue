@@ -47,6 +47,7 @@ import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl;
+import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.GroupPropertiesImpl;
@@ -102,9 +103,12 @@ public class CmsJDOCallback implements CallbackInterceptor
 
     public Class loaded(Object object, short accessMode) throws Exception
     {
-		//logger.error("Loaded " + object.getClass().getName() + " accessMode:" + accessMode);
-		//if(accessMode == AccessMode.Shared.getId())
-    	//	Thread.dumpStack();
+    	//System.out.println("Loaded 1" + object.getClass().getName());
+    	//System.out.print(".");
+    	//if(accessMode == AccessMode.Shared.getId())
+    	//logger.error("Loaded 1" + object.getClass().getName() + " accessMode:" + accessMode);
+		if(accessMode == AccessMode.Shared.getId() && object.getClass().getName().indexOf(".CategoryImpl") > -1)
+    		Thread.dumpStack();
 		
 		// return ( (Persistent) object ).jdoLoad(accessMode);
         return null;
@@ -112,9 +116,34 @@ public class CmsJDOCallback implements CallbackInterceptor
 
 	public Class loaded(Object arg0, AccessMode arg1) throws Exception 
 	{
-		//logger.error("Loaded " + arg0.getClass().getName() + " accessMode:" + arg1);
+    	//System.out.println("Loaded 2" + arg0.getClass().getName());
+		//System.out.println("Loaded 2" + arg0.getClass().getName());
+		
+		if(arg0.getClass().getName().indexOf(".RepositoryImpl") > -1 || arg0.getClass().getName().indexOf(".AvailableServiceBindingImpl") > -1
+    			 || arg0.getClass().getName().indexOf(".SystemUserImpl") > -1
+    			 || arg0.getClass().getName().indexOf(".LanguageImpl") > -1)
+		{
+			//System.out.println("Loaded 2" + arg0.getClass().getName());
+			//Thread.dumpStack();
+		}
+		
+		/*
+			Thread.dumpStack();
+		*/
+		/*
+    	if(logger.isDebugEnabled())
+		{			
+			if(arg0.getClass().getName().indexOf(".SmallContentImpl") > -1)
+				Thread.dumpStack();
+		}
+		*/
+		//	System.out.println("Loaded 2" + arg0.getClass().getName());
+    	
+    	//System.out.print(".");
 		//if(arg1.getId() == AccessMode.Shared.getId())
-		//	Thread.dumpStack();
+		//logger.error("Loaded 2" + arg0.getClass().getName() + " accessMode:" + arg1);
+		if(arg1.getId() == AccessMode.Shared.getId() && arg0.getClass().getName().indexOf(".CategoryImpl") > -1)
+			Thread.dumpStack();
 		
 		return null;
 	}
@@ -156,6 +185,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 			if(object.getClass().getName().equals(RepositoryImpl.class.getName()))
 			{
 				CacheController.clearCache("repositoryCache");
+			}
+			else if(object.getClass().getName().equals(CategoryImpl.class.getName()))
+			{
+				CacheController.clearCache("categoriesCache");
 			}
 			else if(object.getClass().getName().equals(InterceptionPointImpl.class.getName()))
 			{
@@ -437,6 +470,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 				CacheController.clearCache("repositoryCache");
 			}
+			else if(object.getClass().getName().equals(CategoryImpl.class.getName()))
+			{
+				CacheController.clearCache("categoriesCache");
+			}
 			else if(object.getClass().getName().equals(InterceptionPointImpl.class.getName()))
 			{
 				CacheController.clearCache("interceptionPointCache");
@@ -621,6 +658,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 				CacheController.clearCache("repositoryCache");
 				CacheController.clearCache("repositoryRootNodesCache");
+			}
+			else if(object.getClass().getName().equals(CategoryImpl.class.getName()))
+			{
+				CacheController.clearCache("categoriesCache");
 			}
 			else if(object.getClass().getName().equals(InterceptionPointImpl.class.getName()))
 			{

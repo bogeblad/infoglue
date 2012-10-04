@@ -2131,7 +2131,7 @@ public class PageEditorHelper extends BaseDeliveryController
 				
 				try
 				{
-				    ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(contentId, db);
+				    ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(db, contentId, null);
 				    //logger.info("contentVO for current component:" + contentVO.getName());
 				    //logger.info("slotName:" + slotName + " should get connected with content_" + contentVO.getId());
 				    
@@ -2160,7 +2160,7 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(pagePartTemplateContentId != null && !pagePartTemplateContentId.equals("") && !pagePartTemplateContentId.equals("-1"))
 					{
 						Integer pptContentId = new Integer(pagePartTemplateContentId);
-					    ContentVO pptContentIdContentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(pptContentId, db);
+					    ContentVO pptContentIdContentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(db, pptContentId, null);
 
 						InfoGlueComponent partTemplateReferenceComponent = new InfoGlueComponent();
 						partTemplateReferenceComponent.setPositionInSlot(new Integer(slotPosition));

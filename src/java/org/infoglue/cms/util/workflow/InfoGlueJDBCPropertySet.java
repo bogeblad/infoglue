@@ -55,6 +55,7 @@ import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 import com.opensymphony.module.propertyset.InvalidPropertyTypeException;
@@ -529,8 +530,13 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     	if(logger.isInfoEnabled())
     		logger.info("Getting value for key:" + key + ":" + type);
     	
+    	Timer t = new Timer();
+    	
         String sql = "SELECT " + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName + " WHERE " + colItemKey + " = ? AND " + colGlobalKey + " = ?";
-
+        System.out.println("sql:" + sql);
+        System.out.println("key:" + key);
+        System.out.println("globalKey:" + globalKey);
+        
         Object o = null;
         Connection conn = null;
 
@@ -616,6 +622,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             closeConnection(conn);
         }
         
+        RequestAnalyser.getRequestAnalyser().registerComponentStatistics("InfoGlueJDBCPropertySet.get()", t.getElapsedTime());
 		if(valueMap == null)
 			valueMap = new HashMap();
 

@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -47,13 +46,11 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.SystemException;
-import org.infoglue.cms.extensions.InfoglueExtension;
 import org.infoglue.cms.providers.ComponentModel;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.dom.DOMBuilder;
@@ -305,7 +302,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		{
 			InfoGlueComponent component = (InfoGlueComponent)unsortedPageComponentsIterator.next();
 
-			this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), component));
+			//this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), component));
 			//this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
 			
 			int index = 0;
@@ -314,7 +311,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			{
 				InfoGlueComponent sortedComponent = (InfoGlueComponent)sortedPageComponentsIterator.next();
 
-				this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), sortedComponent));
+				//this.getTemplateController().setComponentLogic(new ComponentLogic(this.getTemplateController(), sortedComponent));
 				//this.getTemplateController().getDeliveryContext().getUsageListeners().add(this.getTemplateController().getComponentLogic().getComponentDeliveryContext());
 
 				if(sortedComponent.getPreProcessingOrder().compareTo(component.getPreProcessingOrder()) < 0)
@@ -455,7 +452,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				while(contentVersionIdIterator.hasNext())
 				{
 					Integer currentContentVersionId = (Integer)contentVersionIdIterator.next();
-					if(contentVersionId != null)
+					if(currentContentVersionId != null)
 					{
 						templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
 				    	//logger.info("\nThere was a cached page string and the meta info content version was " + contentVersionId);
@@ -824,7 +821,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			//logger.info("contentId 2:" + contentId);
 			//logger.info("name 2:" + name);
 			
-			ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(contentId, db);
+			ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(db, contentId, templateController.getDeliveryContext());
 			
 			component = new InfoGlueComponent();
 			component.setId(id);
@@ -1282,7 +1279,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			Integer contentId 	= new Integer(child.getAttributeValue(child.getNamespaceName(), "contentId"));
 			String name 	  	= child.getAttributeValue(child.getNamespaceName(), "name");
 	
-			ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(contentId, db);
+			ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(db, contentId, templateController.getDeliveryContext());
 			
 			component = new InfoGlueComponent();
 			component.setId(id);
@@ -2682,7 +2679,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 
 				try
 				{
-				    ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(contentId, db);
+				    ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(db, contentId, templateController.getDeliveryContext());
 				    //logger.info("slotName:" + slotName + " should get connected with content_" + contentVO.getId());
 				    
 				    groups = new String[]{"content_" + contentVO.getId()};
@@ -2702,7 +2699,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 					if(pagePartTemplateContentId != null && !pagePartTemplateContentId.equals("") && !pagePartTemplateContentId.equals("-1"))
 					{
 						Integer pptContentId = new Integer(pagePartTemplateContentId);
-					    ContentVO pptContentIdContentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(pptContentId, db);
+					    ContentVO pptContentIdContentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(db, pptContentId, templateController.getDeliveryContext());
 
 						InfoGlueComponent partTemplateReferenceComponent = new InfoGlueComponent();
 						partTemplateReferenceComponent.setPositionInSlot(new Integer(slotPosition));

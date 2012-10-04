@@ -118,6 +118,22 @@ public class PropertiesCategoryController extends BaseController
 	}
 
 	/**
+	 * Find a List of PropertiesCategories for the specific attribute and Properties Version.
+	 * @param	attribute The attribute name of the PropertiesCategory to find
+	 * @param	versionId The Properties Version id of the PropertiesCategory to find
+	 * @return	A list of PropertiesCategoryVO that have the provided properties version and attribute
+	 * @throws	SystemException If an error happens
+	 */
+	public List findByPropertiesAttributeReadOnly(String attribute, String entityName, Integer entityId, Database db) throws SystemException
+	{
+		List params = new ArrayList();
+		params.add(attribute);
+		params.add(entityName);
+		params.add(entityId);
+	    return executeQueryReadOnly(findByPropertiesAttribute, params, db);
+	}
+
+	/**
 	 * Find a List of PropertiesCategories for a Properties Version.
 	 * @param	versionId The Properties Version id of the PropertiesCategory to find
 	 * @return	A list of PropertiesCategoryVO that have the provided properties version and attribute

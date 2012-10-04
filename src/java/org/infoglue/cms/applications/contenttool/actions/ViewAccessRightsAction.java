@@ -25,12 +25,16 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
@@ -38,13 +42,20 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.management.AccessRight;
+import org.infoglue.cms.entities.management.AccessRightGroup;
+import org.infoglue.cms.entities.management.AccessRightGroupVO;
+import org.infoglue.cms.entities.management.AccessRightRole;
+import org.infoglue.cms.entities.management.AccessRightUser;
 import org.infoglue.cms.entities.management.AccessRightVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
+import org.infoglue.deliver.util.Timer;
 
 
 /** 
@@ -72,8 +83,11 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	private List roleList = null;
 	private List groupList = null;
 	private Collection accessRightsUserRows = null;
+	private Map<Integer,List<AccessRightGroupVO>> accessRightGroupsMap = new HashMap<Integer,List<AccessRightGroupVO>>();
+	private Map<String,Object> accessRightHasAccessMap = new HashMap<String,Object>();
+	private String extraAccessRightInfo = "";
 
-    public String doV3() throws Exception
+	public String doV3() throws Exception
     {
     	doExecute();
     	return "successV3";
@@ -81,6 +95,8 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
     
     public String doExecute() throws Exception
     {
+    	Timer t = new Timer();
+    	
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(interceptionPointCategory.equalsIgnoreCase("Content"))
@@ -90,15 +106,19 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 			    
 		    Integer contentId = new Integer(extraParameters);
 			ContentVO contentVO = ContentControllerProxy.getController().getContentVOWithId(contentId);
-
+			t.printElapsedTime("Access 1");
+			
 			if(!contentVO.getCreatorName().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 			{
 				if(ContentControllerProxy.getController().getIsContentProtected(contentId) && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.ChangeAccessRights", contentId.toString()))
 				{
+					t.printElapsedTime("Access 2");
 					InterceptionPointVO changeInterceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.ChangeAccessRights");
 					InterceptionPointVO readInterceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.Read");
+					t.printElapsedTime("Access 3");
 					List changeAccessRightVOList = AccessRightController.getController().getAccessRightVOListOnly(changeInterceptionPointVO.getId(), "" + contentId);
 					List readAccessRightVOList = AccessRightController.getController().getAccessRightVOListOnly(readInterceptionPointVO.getId(), "" + contentId);
+					t.printElapsedTime("Access 4");
 					logger.info("changeAccessRightVOList:" + changeAccessRightVOList.size());
 					logger.info("readAccessRightVOList:" + readAccessRightVOList.size());
 					if(changeAccessRightVOList.size() > 0 && readAccessRightVOList.size() > 0)
@@ -134,21 +154,136 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 		
 		ceb.throwIfNotEmpty();
 		
+		//t.printElapsedTime("Access 5");
+
 		this.interceptionPointVOList = InterceptionPointController.getController().getInterceptionPointVOList(interceptionPointCategory);
+		//t.printElapsedTime("Access 6");
 		this.roleList = RoleControllerProxy.getController().getAllRoles();
+		//t.printElapsedTime("Access 7");
 		this.groupList = GroupControllerProxy.getController().getAllGroups();
+		//t.printElapsedTime("Access 8");
 		
 		this.accessRightsUserRows = AccessRightController.getController().getAccessRightsUserRows(interceptionPointCategory, extraParameters);
+		//t.printElapsedTime("Access 9");
+		
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+
+        try
+        {
+    		for(InterceptionPointVO interceptionPointVO : (List<InterceptionPointVO>)this.interceptionPointVOList)
+    		{
+    			this.extraAccessRightInfo += getExtraAccessRightText(interceptionPointVO, getExtraParameters(), db);
+
+    			Integer accessRightId = getAccessRightId(interceptionPointVO.getId(), getExtraParameters(), db);
+    			//Integer[] accessRightIds = getAccessRightIds(interceptionPointVO.getId(), getExtraParameters(), db);
+    			
+    			//System.out.println("Adding:" + "" + interceptionPointVO.getId() + "_" + getExtraParameters() + "=" + accessRightId );
+    			accessRightHasAccessMap.put("" + interceptionPointVO.getId() + "_" + getExtraParameters(), accessRightId);
+    			
+    			for(InfoGlueRole role : (List<InfoGlueRole>)this.roleList)
+    			{
+        			Boolean hasAccess = getHasAccessRight(interceptionPointVO.getId(), getExtraParameters(), role.getName(), db);
+        			accessRightHasAccessMap.put("" + interceptionPointVO.getId() + "_" + getExtraParameters() + "_" + role.getName(), hasAccess);
+        			//System.out.println("" + interceptionPointVO.getId() + "_" + getExtraParameters() + "_" + role.getName() + "=" + hasAccess);
+    			}
+    			
+    			/*
+    			for(Integer currentAccessRightId : accessRightIds)
+    			{
+    				List<AccessRightGroupVO> currentAccessRightGroupVOList = AccessRightController.getController().getAccessRightGroupVOList(currentAccessRightId, db);
+    				if(currentAccessRightGroupVOList.size() > 0)
+    				{
+    					accessRightId = currentAccessRightId;
+    				}
+    			}
+    			*/
+    			
+    			if(accessRightId != null && accessRightId > -1)
+    			{
+    				List<AccessRightGroupVO> accessRightGroupVOList = AccessRightController.getController().getAccessRightGroupVOList(accessRightId, db);
+    				logger.info("accessRightGroupVOList:" + accessRightGroupVOList.size() + " to " + accessRightId);
+    				accessRightGroupsMap.put(accessRightId, accessRightGroupVOList);
+    				accessRightGroupsMap.put(interceptionPointVO.getId(), accessRightGroupVOList);
+    			}
+    		}		
+            
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+        //t.printElapsedTime("Access 10");
 		
     	return "success";
     }
-    
+
+	private String getExtraAccessRightText(InterceptionPointVO ipVO, String parameters) throws Exception
+	{
+		String sb = "";
+
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+
+        try
+        {
+        	sb = getExtraAccessRightText(ipVO, parameters, db);
+            
+        	commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+        
+        return sb;
+	}
+
+        	
+	private String getExtraAccessRightText(InterceptionPointVO ipVO, String parameters, Database db) throws Exception
+	{
+		StringBuilder sb = new StringBuilder();
+
+    	sb.append("Access rights for " + ipVO.getName() + "(" + parameters + ")\n");
+
+       	List<AccessRight> accessRights = AccessRightController.getController().getAccessRightListOnlyReadOnly(ipVO.getId(), extraParameters, db);
+        for(AccessRight accessRight : accessRights)	
+        {
+        	sb.append("    Access right " + accessRight.getId() + "\n");
+        	sb.append("    Roles\n");
+        	for(AccessRightRole arr : (Collection<AccessRightRole>)accessRight.getRoles())
+        	{
+            	sb.append("        Access right role " + arr.getRoleName() + "(" + arr.getId() + ")\n");            		
+        	}
+        	sb.append("    Groups\n");
+        	for(AccessRightGroup arg : (Collection<AccessRightGroup>)accessRight.getGroups())
+        	{
+            	sb.append("        Access right group " + arg.getGroupName() + "(" + arg.getId() + ")\n");            		
+        	}
+        	sb.append("    Users\n");
+        	for(AccessRightUser aru : (Collection<AccessRightUser>)accessRight.getUsers())
+        	{
+            	sb.append("        Access right user " + aru.getUserName() + "(" + aru.getId() + ")\n");            		
+        	}
+        	sb.append("\n");
+        }
+        
+        return sb.toString();
+	}
+
 	public boolean getHasAccessRight(Integer interceptionPointId, String extraParameters, String roleName) throws SystemException, Bug
 	{
+		Timer t = new Timer();
 	    try
 	    {
 			List accessRights = AccessRightController.getController().getAccessRightVOList(interceptionPointId, extraParameters, roleName);
 			boolean hasAccessRight = (accessRights.size() > 0) ? true : false;
+			t.printElapsedTime("getHasAccessRight");
 			return hasAccessRight;
 	    }
 	    catch(Exception e)
@@ -157,15 +292,45 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	        throw new SystemException(e);
 	    }
 	}
-	
+
+	public boolean getHasAccessRight(Integer interceptionPointId, String extraParameters, String roleName, Database db) throws SystemException, Bug
+	{
+		//Timer t = new Timer();
+	    try
+	    {
+			List accessRights = AccessRightController.getController().getAccessRightVOList(db, interceptionPointId, extraParameters, roleName);
+			boolean hasAccessRight = (accessRights.size() > 0) ? true : false;
+			//t.printElapsedTime("getHasAccessRight");
+			return hasAccessRight;
+	    }
+	    catch(Exception e)
+	    {
+	        logger.warn(e);
+	        throw new SystemException(e);
+	    }
+	}
+
 	public Integer getAccessRightId(Integer interceptionPointId, String extraParameters) throws SystemException, Bug
 	{
+		//Timer t = new Timer();
 		List accessRights = AccessRightController.getController().getAccessRightVOListOnly(interceptionPointId, extraParameters);
+		//t.printElapsedTime("getAccessRightId");
+
+		return accessRights.size() > 0 ? ((AccessRightVO)accessRights.get(0)).getAccessRightId() : null;
+	}
+
+	public Integer getAccessRightId(Integer interceptionPointId, String extraParameters, Database db) throws SystemException, Bug
+	{
+		//Timer t = new Timer();
+		List accessRights = AccessRightController.getController().getAccessRightVOListOnly(db, interceptionPointId, extraParameters);
+		//t.printElapsedTime("getAccessRightId");
+
 		return accessRights.size() > 0 ? ((AccessRightVO)accessRights.get(0)).getAccessRightId() : null;
 	}
 
 	public Integer[] getAccessRightIds(Integer interceptionPointId, String extraParameters) throws SystemException, Bug
 	{
+		//Timer t = new Timer();
 		List accessRights = AccessRightController.getController().getAccessRightVOListOnly(interceptionPointId, extraParameters);
 		Integer[] accessRightIds = new Integer[accessRights.size()];
 		Iterator accessRightsIterator = accessRights.iterator();
@@ -175,12 +340,31 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 			accessRightIds[i] = ((AccessRightVO)accessRightsIterator.next()).getId();
             i++;
 		}
+		//t.printElapsedTime("getAccessRightIds");
 		return accessRightIds;
 	}
 
-	public Collection getAccessRightGroups(Integer accessRightId) throws SystemException, Bug
+	public Integer[] getAccessRightIds(Integer interceptionPointId, String extraParameters, Database db) throws SystemException, Bug
 	{
-	    Collection accessRightGroups = AccessRightController.getController().getAccessRightGroupVOList(accessRightId);
+		//Timer t = new Timer();
+		List accessRights = AccessRightController.getController().getAccessRightVOListOnly(db, interceptionPointId, extraParameters);
+		Integer[] accessRightIds = new Integer[accessRights.size()];
+		Iterator accessRightsIterator = accessRights.iterator();
+		int i=0;
+		while(accessRightsIterator.hasNext())
+		{
+			accessRightIds[i] = ((AccessRightVO)accessRightsIterator.next()).getId();
+            i++;
+		}
+		//t.printElapsedTime("getAccessRightIds");
+		return accessRightIds;
+	}
+
+	public List<AccessRightGroupVO> getAccessRightGroups(Integer accessRightId) throws SystemException, Bug
+	{
+		//Timer t = new Timer();
+		List<AccessRightGroupVO> accessRightGroups = AccessRightController.getController().getAccessRightGroupVOList(accessRightId);
+		//t.printElapsedTime("accessRightGroups");
 		return accessRightGroups;
 	}
 		
@@ -274,6 +458,16 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
         return accessRightsUserRows;
     }
 
+	public Map<Integer, List<AccessRightGroupVO>> getAccessRightGroupsMap() 
+	{
+		return accessRightGroupsMap;
+	}
+
+	public Map<String, Object> getAccessRightHasAccessMap() 
+	{
+		return accessRightHasAccessMap;
+	}
+
 	public String getSaved()
 	{
 		return saved;
@@ -302,6 +496,11 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	public void setCloseOnLoad(Boolean closeOnLoad)
 	{
 		this.closeOnLoad = closeOnLoad;
+	}
+	
+	public String getExtraAccessRightInfo()
+	{
+		return extraAccessRightInfo;
 	}
 
 }

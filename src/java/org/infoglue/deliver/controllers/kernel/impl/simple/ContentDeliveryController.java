@@ -137,7 +137,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	/**
 	 * This method return a contentVO
 	 */
-	
+	/*
 	public ContentVO getContentVO(Integer contentId, Database db) throws SystemException, Exception
 	{
 		if(contentId == null || contentId.intValue() < 1)
@@ -149,6 +149,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		return contentVO;
 	}
+	*/
 	
 	/**
 	 * This method return a contentVO
@@ -159,7 +160,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(contentId == null || contentId.intValue() < 1)
 			return null;
 
-		deliveryContext.addUsedContent("content_" + contentId);
+		if(deliveryContext != null)
+			deliveryContext.addUsedContent("content_" + contentId);
 
 		String key = "" + contentId;
 		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
@@ -349,7 +351,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		ContentVersion contentVersion = null;
 		
 		//MediumContentImpl content = (MediumContentImpl)getObjectWithId(MediumContentImpl.class, contentId, db);
-		ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
+		ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db, deliveryContext);
 		
 		boolean isValidContent = isValidContent(infoGluePrincipal, content, languageId, useLanguageFallback, false, db, deliveryContext);
 		if(isValidContent)
@@ -393,8 +395,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 		SmallestContentVersionVO contentVersion = null;
 		
 		//MediumContentImpl content = (MediumContentImpl)getObjectWithId(MediumContentImpl.class, contentId, db);
-		ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
-		
+		ContentVO content = getContentVO(db, contentId, deliveryContext); //ContentController.getContentController().getSmallContentVOWithId(contentId, db);
+			
 		boolean isValidContent = isValidContent(infoGluePrincipal, content, languageId, useLanguageFallback, false, db, deliveryContext);
 		if(isValidContent)
 		{
@@ -490,7 +492,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		ContentVersionVO contentVersion = null;
 		
 		//MediumContentImpl content = (MediumContentImpl)getObjectWithId(MediumContentImpl.class, contentId, db);
-		ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
+		ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db, deliveryContext);
 
 		boolean isValidContent = isValidContent(infoGluePrincipal, content, languageId, false, false, db, deliveryContext);
 		if(isValidContent)
@@ -518,7 +520,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			useLanguageFallback = true;
 				
 		//MediumContentImpl content = (MediumContentImpl)getObjectWithId(MediumContentImpl.class, contentId, db);
-		ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
+		ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db, deliveryContext);
 		
 		boolean isValidContent = isValidContent(infoGluePrincipal, content, languageId, useLanguageFallback, false, db, deliveryContext);
 		if(isValidContent)
@@ -870,7 +872,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 			{
 			    if(contentId != null)
 			    {
-					Integer protectedContentId = ContentDeliveryController.getContentDeliveryController().getProtectedContentId(db, contentId);
+			    	
+			    	Integer protectedContentId = ContentDeliveryController.getContentDeliveryController().getProtectedContentId(db, getContentVO(db, contentId, null));
+					//Integer protectedContentId = ContentDeliveryController.getContentDeliveryController().getProtectedContentId(db, contentId);
 					logger.info("IsProtected:" + protectedContentId);
 					if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Read", protectedContentId.toString()))
 					{
@@ -1204,7 +1208,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    
 	    //Content content = (MediumContentImpl)getObjectWithId(MediumContentImpl.class, contentId, db);
 	    //Content content = ContentController.getContentController().getContentWithId(contentId, db);
-	    ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
+	    ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db, deliveryContext);
 	    
 	    SmallestContentVersionVO mostRecentVersion = getSmallestContentVersionVO(db, siteNodeId, content.getContentId(), languageId, useLanguageFallback, deliveryContext, infoGluePrincipal);
 		boolean isProperVersion = (mostRecentVersion != null) && (mostRecentVersion.getId().equals(version.getId()));
@@ -3253,7 +3257,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					if(parentContentId != null)
 					{
 						//TODO - optimera
-						ContentVO parentContentVO = ContentController.getContentController().getSmallContentVOWithId(parentContentId, db);
+						ContentVO parentContentVO = ContentController.getContentController().getSmallContentVOWithId(parentContentId, db, null);
 						protectedContentId = getProtectedContentId(db, parentContentVO); 
 					}
 				}

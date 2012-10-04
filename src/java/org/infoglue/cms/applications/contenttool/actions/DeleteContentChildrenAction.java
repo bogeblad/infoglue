@@ -33,8 +33,10 @@ import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.InconsistenciesController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.management.LanguageVO;
 
 /**
  * This action removes a content from the system.
@@ -79,8 +81,10 @@ public class DeleteContentChildrenAction extends InfoGlueAbstractAction
 	public String doExecute() throws Exception 
 	{
     	String userSessionKey = "" + System.currentTimeMillis();
-
-		List children = ContentController.getContentController().getContentChildrenVOList(contentVO.getContentId(), null, false);
+    	
+    	List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList(contentVO.getRepositoryId());
+    	
+		List children = ContentController.getContentController().getContentChildrenVOList(contentVO.getContentId(), languageVOList, null, false);
 		Iterator childrenIterator = children.iterator();
 		while(childrenIterator.hasNext())
 		{

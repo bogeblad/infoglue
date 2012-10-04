@@ -65,6 +65,7 @@ import org.infoglue.deliver.integration.dataproviders.PropertyOptionsDataProvide
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.Timer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -416,17 +417,21 @@ public class ContentTypeDefinitionController extends BaseController
 
 	public ContentTypeDefinitionVO getContentTypeDefinitionVOWithName(String name, Database db) throws SystemException, Bug
 	{
+		Timer t = new Timer();
+		
 		String key = "" + name;
+		//System.out.println("key:" + key);
 		logger.info("key:" + key);
 		ContentTypeDefinitionVO contentTypeDefinitionVO = (ContentTypeDefinitionVO)CacheController.getCachedObject("contentTypeDefinitionCache", key);
+		//t.printElapsedTime("1");
 		if(contentTypeDefinitionVO != null)
 		{
 			logger.info("There was an cached contentTypeDefinitionVO:" + contentTypeDefinitionVO);
 		}
 		else
 		{
-			logger.info("Refetching contentTypeDefinitionVO:" + contentTypeDefinitionVO);
-
+			logger.info("Refetching contentTypeDefinitionVO:" + name);
+			//System.out.println("Refetching contentTypeDefinitionVO:" + name);
 			try
 			{
 				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl f WHERE f.name = $1");
@@ -437,7 +442,8 @@ public class ContentTypeDefinitionController extends BaseController
 				{
 				    ContentTypeDefinition contentTypeDefinition = (ContentTypeDefinition)results.next();
 				    contentTypeDefinitionVO = contentTypeDefinition.getValueObject();
-
+				    
+				    //System.out.println("Caching " + contentTypeDefinitionVO.getName());
 				    CacheController.cacheObject("contentTypeDefinitionCache", key, contentTypeDefinitionVO);
 				}
 				
@@ -448,8 +454,10 @@ public class ContentTypeDefinitionController extends BaseController
 			{
 				throw new SystemException("An error occurred when we tried to fetch a named ContentTypeDefinition. Reason:" + e.getMessage(), e);
 			}
+			//t.printElapsedTime("2");
 		}
 		
+		//t.printElapsedTime("END");
 		return contentTypeDefinitionVO;
 	}
 

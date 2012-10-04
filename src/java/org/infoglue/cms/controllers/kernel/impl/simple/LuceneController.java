@@ -61,6 +61,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
@@ -109,9 +110,16 @@ public class LuceneController extends BaseController implements NotificationList
     private static int indexedDocumentsSinceLastOptimize = 0;
     private Integer lastCommitedContentVersionId = -1;
     
+    private static Integer numberOfVersionToIndexInBatch = 1000;
+
     private static AtomicBoolean indexingInitialized = new AtomicBoolean(false);
     private static AtomicBoolean stopIndexing = new AtomicBoolean(false);
     
+	public static void setNumberOfVersionToIndexInBatch(Integer numberOfVersionToIndexInBatch) 
+	{
+		numberOfVersionToIndexInBatch = numberOfVersionToIndexInBatch;
+	}
+
     public static void stopIndexing()
     {
     	stopIndexing.set(true);
@@ -229,6 +237,15 @@ public class LuceneController extends BaseController implements NotificationList
 		    info.put("lastModified", new Date(lastModified));
 		    info.put("lastCommitedContentVersionId", getLastCommitedContentVersionId());
 		    
+			List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
+			Iterator<LanguageVO> languageVOListIterator = languageVOList.iterator();
+			outer:while(languageVOListIterator.hasNext())
+			{
+				LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
+			    info.put("indexAllLastCommittedContentVersionId_" + languageVO.getId(), getIndexAllLastCommittedContentVersionId(languageVO.getId()));
+			    info.put("indexAllLastCommittedSiteNodeVersionId_" + languageVO.getId(), getIndexAllLastCommittedSiteNodeVersionId(languageVO.getId()));
+			}
+			
 		    //reader.close();
 		    //directory.close();
 	    } 
@@ -241,7 +258,212 @@ public class LuceneController extends BaseController implements NotificationList
 	    return info;
 	}
 
+	public Integer getIndexAllLastCommittedContentVersionId(Integer languageId) throws Exception
+	{
+		Integer indexAllLastCommittedContentVersionId = null;
+		try 
+	    {
+			Document indexAllDocumentMetaData = getIndexAllStatusDocument();
+			if(indexAllDocumentMetaData != null && indexAllDocumentMetaData.get("lastCommitedContentVersionId_" + languageId) != null && !indexAllDocumentMetaData.get("lastCommitedContentVersionId_" + languageId).equals("null"))
+				indexAllLastCommittedContentVersionId = new Integer(indexAllDocumentMetaData.get("lastCommitedContentVersionId_" + languageId));
+	    } 
+	    catch (Exception e) 
+	    {
+	    	logger.error("Error creating index:" + e.getMessage(), e);
+	    	throw e;
+	    }
+	    
+	    return indexAllLastCommittedContentVersionId;
+	}
+
+	public Integer getIndexAllLastCommittedSiteNodeVersionId(Integer languageId) throws Exception
+	{
+		Integer indexAllLastCommittedSiteNodeVersionId = null;
+		try 
+	    {
+			Document indexAllDocumentMetaData = getIndexAllStatusDocument();
+			if(indexAllDocumentMetaData != null && indexAllDocumentMetaData.get("lastCommitedSiteNodeVersionId_" + languageId) != null && !indexAllDocumentMetaData.get("lastCommitedSiteNodeVersionId_" + languageId).equals("null"))
+ 				indexAllLastCommittedSiteNodeVersionId = new Integer(indexAllDocumentMetaData.get("lastCommitedSiteNodeVersionId_" + languageId));
+	    } 
+	    catch (Exception e) 
+	    {
+	    	logger.error("Error creating index:" + e.getMessage(), e);
+	    	throw e;
+	    }
+	    
+	    return indexAllLastCommittedSiteNodeVersionId;
+	}
+
+	public Document createStatusDocument(Integer lastCommitedContentVersionId) throws Exception
+	{
+		Document doc = new Document();
+
+		doc.add(new Field("lastCommitedContentVersionId", "" + lastCommitedContentVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new Field("lastCommitedModifiedDate", "" + new Date().getTime(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new Field("meta", new StringReader("lastCommitedContentVersionId")));
+
+		return doc;
+	}
+
+	public Document getStatusDocument() throws Exception
+	{
+	    List<Document> docs = queryDocuments("meta", "lastCommitedContentVersionId", 5);
+		logger.info(docs.size() + " total matching documents for 'lastCommitedContentVersionId'");
+		return (docs != null && docs.size() > 0 ? docs.get(0) : null);
+	}
+
+	public Document getIndexAllStatusDocument() throws Exception
+	{
+	    List<Document> docs = queryDocuments(new Term("meta", "indexAllRunning"), 5);
+		logger.info(docs.size() + " total matching documents for 'indexAllRunning'");
+		return (docs != null && docs.size() > 0 ? docs.get(0) : null);
+	}
+
+	public Integer getLastCommitedContentVersionId() throws Exception
+	{
+		Integer lastCommitedContentVersionId = -1;
+		
+		Document doc = getStatusDocument();
+		logger.info("STATUS doc:" + doc);
+		if(doc != null)
+		{
+			String lastCommitedContentVersionIdString = doc.get("lastCommitedContentVersionId");
+			
+			logger.info("doc:" + doc);
+			logger.info("lastCommitedContentVersionId:" + lastCommitedContentVersionIdString);
+			
+			lastCommitedContentVersionId = Integer.parseInt(lastCommitedContentVersionIdString);
+		}
+		
+		return lastCommitedContentVersionId;
+	}
+
+	private void setLastCommitedContentVersionId(IndexWriter writer, Integer lastCommitedContentVersionId) throws Exception 
+	{
+		Integer prevLastCommitedContentVersionId = getLastCommitedContentVersionId();
+		logger.info("prevLastCommitedContentVersionId:" + prevLastCommitedContentVersionId);
+		logger.info("lastCommitedContentVersionId:" + lastCommitedContentVersionId);
+		if(lastCommitedContentVersionId == -1 || prevLastCommitedContentVersionId > lastCommitedContentVersionId)
+			return;
+		
+		logger.info("setLastCommitedContentVersionId:" + lastCommitedContentVersionId);
+		Query query = new QueryParser(Version.LUCENE_34, "meta", getStandardAnalyzer()).parse("lastCommitedContentVersionId");
+		writer.deleteDocuments(query);
+		writer.addDocument(createStatusDocument(lastCommitedContentVersionId));
+	}
 	
+	public Date getLastCommitedModifiedDate() throws Exception
+	{
+		Date lastCommitedModifiedDate = new Date(10000);
+		
+		Document doc = getStatusDocument();
+		if(doc != null)
+		{
+			String lastCommitedModifiedDateString = doc.get("lastCommitedModifiedDate");
+	
+			logger.info("doc:" + doc);
+			logger.info("lastCommitedModifiedDate:" + lastCommitedModifiedDateString);
+			
+			Date d = new Date();
+			d.setTime(Long.parseLong(lastCommitedModifiedDateString));
+			lastCommitedModifiedDate = d;
+		}
+		
+		return lastCommitedModifiedDate;
+	}
+
+	private void registerIndexAllProcessOngoing(Integer lastCommitedContentVersionId, Integer lastCommitedSiteNodeVersionId, Integer languageId) throws Exception
+	{
+		//MŒste skrivas om fšr att uppdatera bŠttre....
+		
+		//Document doc = new Document();
+		IndexWriter writer = getIndexWriter();
+
+		IndexSearcher searcher = getIndexSearcher();
+		Term term = new Term("meta", "indexAllRunning");
+		TermQuery query = new TermQuery(term);
+		
+		//Query query = new QueryParser(Version.LUCENE_34, "meta", getStandardAnalyzer()).parse("indexAllRunning");
+		TopDocs hits = searcher.search(query, 50);
+		//System.out.println("hits:" + hits);
+		//System.out.println("hits.scoreDocs.length:" + hits.scoreDocs.length);
+		
+		if(hits.scoreDocs.length > 1)
+			System.out.println("Must be wrong - should only be one of these docs:" + hits.scoreDocs.length);
+		
+		if(hits.scoreDocs.length > 0)
+		{
+			for(ScoreDoc scoreDoc : hits.scoreDocs)
+			{
+				org.apache.lucene.document.Document docExisting = searcher.doc(scoreDoc.doc);
+				//System.out.println("Updating doc...:" + docExisting);
+
+				//System.out.println("lastCommitedContentVersionId:" + lastCommitedContentVersionId);
+				//System.out.println("lastCommitedSiteNodeVersionId:" + lastCommitedSiteNodeVersionId);
+				//System.out.println("languageId:" + languageId);
+				if(lastCommitedContentVersionId != null && lastCommitedContentVersionId != -1)
+				{
+					docExisting.removeFields("lastCommitedContentVersionId_" + languageId);
+					docExisting.add(new Field("lastCommitedContentVersionId_" + languageId, "" + lastCommitedContentVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
+				}
+				
+				if(lastCommitedSiteNodeVersionId != null && lastCommitedSiteNodeVersionId != -1)
+				{
+					docExisting.removeFields("lastCommitedSiteNodeVersionId_" + languageId);
+					docExisting.add(new Field("lastCommitedSiteNodeVersionId_" + languageId, "" + lastCommitedSiteNodeVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
+				}
+
+				docExisting.removeFields("lastCommitedModifiedDate");
+				docExisting.add(new Field("lastCommitedModifiedDate", "" + new Date().getTime(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+				//docExisting.add(new Field("meta", new StringReader("indexAllRunning")));
+				//docExisting.add(new Field("meta", "indexAllRunning", Field.Store.YES, Field.Index.NOT_ANALYZED));
+					
+				writer.updateDocument(term, docExisting);
+				//System.out.println("Updating doc...:" + docExisting);
+				//Term t = new Term("meta", "indexAllRunning");
+				break;
+			}
+		}
+		else
+		{
+			Document docExisting = new Document();
+			//System.out.println("lastCommitedContentVersionId:" + lastCommitedContentVersionId);
+			//System.out.println("lastCommitedSiteNodeVersionId:" + lastCommitedSiteNodeVersionId);
+			//System.out.println("languageId:" + languageId);
+			
+			if(lastCommitedContentVersionId != null)
+				docExisting.add(new Field("lastCommitedContentVersionId_" + languageId, "" + lastCommitedContentVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			if(lastCommitedSiteNodeVersionId != null)
+				docExisting.add(new Field("lastCommitedSiteNodeVersionId_" + languageId, "" + lastCommitedSiteNodeVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
+			docExisting.add(new Field("lastCommitedModifiedDate", "" + new Date().getTime(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+			//docExisting.add(new Field("meta", new StringReader("indexAllRunning")));
+			docExisting.add(new Field("meta", "indexAllRunning", Field.Store.YES, Field.Index.NOT_ANALYZED));
+			
+			writer.addDocument(docExisting);
+		}
+		searcher.close();
+		
+		//Query query = new QueryParser(Version.LUCENE_34, "meta", getStandardAnalyzer()).parse("indexAllRunning");
+		//writer.deleteDocuments(query);
+
+		
+		//writer.updateDocument(term, doc);
+		//writer.addDocument(doc);
+		writer.close(true);
+	}
+
+	private void registerIndexAllProcessDone() throws Exception
+	{
+		IndexWriter writer = getIndexWriter();
+
+		//Query query = new QueryParser(Version.LUCENE_34, "meta", getStandardAnalyzer()).parse("indexAllRunning");
+		Term term = new Term("meta", "indexAllRunning");
+		TermQuery query = new TermQuery(term);
+		
+		writer.deleteDocuments(query);		
+		writer.close(true);
+	}
+
 	public void clearIndex() throws Exception
 	{
 		if (indexingInitialized.compareAndSet(false, true)) 
@@ -286,7 +508,23 @@ public class LuceneController extends BaseController implements NotificationList
 
 		return hits;
 	}
-	
+
+	public List<Document> queryDocuments(Term term, Integer numberOfHits) throws Exception 
+	{
+		IndexSearcher searcher = getIndexSearcher();
+		Query query = new TermQuery(term);
+		TopDocs hits = searcher.search(query, numberOfHits);
+		logger.info(hits.totalHits + " total matching documents for '" + term.field() + ":" + term.text() + "'");
+		List<Document> docs = new ArrayList<Document>();
+		for(ScoreDoc scoreDoc : hits.scoreDocs)
+		{
+			org.apache.lucene.document.Document doc = searcher.doc(scoreDoc.doc);
+			docs.add(doc);
+		}
+		searcher.close();
+		return docs;
+	}
+
 	public List<Document> queryDocuments(String field, String text, Integer numberOfHits) throws Exception 
 	{
 		IndexSearcher searcher = getIndexSearcher();
@@ -320,9 +558,13 @@ public class LuceneController extends BaseController implements NotificationList
 		IndexSearcher searcher = getIndexSearcher();
 		Query query = MultiFieldQueryParser.parse(Version.LUCENE_34, queries, fields, flags, getStandardAnalyzer());
 		logger.info("query:" + query);
+		
+		//System.out.println("query:" + query);
+		
 		//Query query = new QueryParser(Version.LUCENE_34, "contents", getStandardAnalyzer()).parse(text);
 		TopDocs hits = searcher.search(query, numberOfHits);
 		logger.info(hits.totalHits + " total matching documents for '" + queries + "'");
+		//System.out.println(hits.totalHits + " total matching documents for '" + queries + "'");
 		List<Document> docs = new ArrayList<Document>();
 		for(ScoreDoc scoreDoc : hits.scoreDocs)
 		{
@@ -367,7 +609,7 @@ public class LuceneController extends BaseController implements NotificationList
 			{
 				Timer t = new Timer();
 				Timer t2 = new Timer();
-				
+		
 				//Indexing all normal contents now
 				logger.info("Indexing all normal contents....");
 				List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
@@ -375,9 +617,19 @@ public class LuceneController extends BaseController implements NotificationList
 				outer:while(languageVOListIterator.hasNext())
 				{
 					LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
-					
 					logger.info("Getting notification messages for " + languageVO.getName());
-					int newLastContentVersionId = getContentNotificationMessages(languageVO, 0);
+
+					Integer previousIndexAllLastContentVersionId = getIndexAllLastCommittedContentVersionId(languageVO.getId());
+					int startID = 0;
+					if(previousIndexAllLastContentVersionId != null)
+						startID = previousIndexAllLastContentVersionId;
+					
+					System.out.println("Starting from " + startID);
+					int newLastContentVersionId = getContentNotificationMessages(languageVO, startID);
+					System.out.println("newLastContentVersionId: " + newLastContentVersionId + " on " + languageVO.getName());
+					
+					registerIndexAllProcessOngoing(newLastContentVersionId, null, languageVO.getId());
+					//previousIndexAllLastContentVersionId = newLastContentVersionId;
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessages", t.getElapsedTime());
 					logger.info("newLastContentVersionId " + newLastContentVersionId);
 					while(newLastContentVersionId != -1)
@@ -387,11 +639,14 @@ public class LuceneController extends BaseController implements NotificationList
 						
 						Thread.sleep(5000);
 						newLastContentVersionId = getContentNotificationMessages(languageVO, newLastContentVersionId);
+						System.out.println("newLastContentVersionId: " + newLastContentVersionId + " on " + languageVO.getName());
+						registerIndexAllProcessOngoing(newLastContentVersionId, null, languageVO.getId());
+						//previousIndexAllLastContentVersionId = newLastContentVersionId;
 						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessages 2", t.getElapsedTime());
 						logger.info("newLastContentVersionId " + newLastContentVersionId);
 					}
 				}
-
+				
 				languageVOList = LanguageController.getController().getLanguageVOList();
 				languageVOListIterator = languageVOList.iterator();
 				outer:while(languageVOListIterator.hasNext())
@@ -399,7 +654,17 @@ public class LuceneController extends BaseController implements NotificationList
 					LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
 					
 					List<NotificationMessage> notificationMessages = new ArrayList<NotificationMessage>();
-					int newLastSiteNodeVersionId = getPageNotificationMessages(notificationMessages, languageVO, 0);
+					
+					Integer previousIndexAllLastSiteNodeVersionId = getIndexAllLastCommittedSiteNodeVersionId(languageVO.getId());
+					int startID = 0;
+					if(previousIndexAllLastSiteNodeVersionId != null)
+						startID = previousIndexAllLastSiteNodeVersionId;
+
+					System.out.println("Starting from " + startID);
+					int newLastSiteNodeVersionId = getPageNotificationMessages(notificationMessages, languageVO, startID);
+					System.out.println("newLastSiteNodeVersionId " + newLastSiteNodeVersionId + " on " + languageVO.getName());
+					registerIndexAllProcessOngoing(null, newLastSiteNodeVersionId, languageVO.getId());
+					//previousIndexAllLastSiteNodeVersionId = newLastSiteNodeVersionId;
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessagesForStructure", t.getElapsedTime());
 					logger.info("newLastSiteNodeVersionId " + newLastSiteNodeVersionId);
 					while(newLastSiteNodeVersionId != -1)
@@ -409,10 +674,15 @@ public class LuceneController extends BaseController implements NotificationList
 
 						Thread.sleep(5000);
 						newLastSiteNodeVersionId = getPageNotificationMessages(notificationMessages, languageVO, newLastSiteNodeVersionId);
+						System.out.println("newLastSiteNodeVersionId " + newLastSiteNodeVersionId + " on " + languageVO.getName());
+						registerIndexAllProcessOngoing(null, newLastSiteNodeVersionId, languageVO.getId());
+						//previousIndexAllLastSiteNodeVersionId = newLastSiteNodeVersionId;
 						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessages 2", t.getElapsedTime());
 						logger.info("newLastSiteNodeVersionId " + newLastSiteNodeVersionId);
 					}
 				}
+				
+				registerIndexAllProcessDone();
 				
 				t2.printElapsedTime("All indexing took");
 			}
@@ -615,37 +885,40 @@ public class LuceneController extends BaseController implements NotificationList
 					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId((Integer)notificationMessage.getObjectId());
 					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId());
 					
-					ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
-					if(ctdVO != null && ctdVO.getName().equals("Meta info"))
+					if(contentVO.getContentTypeDefinitionId() != null)
 					{
-						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVO.getContentId());
-						NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
-						String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + newNotificationMessage.getType();
-						if(!existingSignatures.contains(key))
+						ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+						if(ctdVO != null && ctdVO.getName().equals("Meta info"))
 						{
-							logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());
-							baseEntitiesToIndexMessageList.add(newNotificationMessage);
-							existingSignatures.add(key);
+							SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVO.getContentId());
+							NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
+							String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + newNotificationMessage.getType();
+							if(!existingSignatures.contains(key))
+							{
+								logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());
+								baseEntitiesToIndexMessageList.add(newNotificationMessage);
+								existingSignatures.add(key);
+							}
+							else
+							{
+								logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
+							}
+	
 						}
 						else
 						{
-							logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
-						}
-
-					}
-					else
-					{
-						NotificationMessage newNotificationMessage = new NotificationMessage("" + contentVersionVO.getContentName(), ContentImpl.class.getName(), "SYSTEM", notificationMessage.getType(), contentVersionVO.getContentId(), "" + contentVersionVO.getContentName());
-						String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_" + newNotificationMessage.getType();
-						if(!existingSignatures.contains(key))
-						{
-							logger.info("++++++++++++++Got an Content notification - just adding it: " + newNotificationMessage.getObjectId());
-							baseEntitiesToIndexMessageList.add(newNotificationMessage);
-							existingSignatures.add(key);
-						}
-						else
-						{
-							logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
+							NotificationMessage newNotificationMessage = new NotificationMessage("" + contentVersionVO.getContentName(), ContentImpl.class.getName(), "SYSTEM", notificationMessage.getType(), contentVersionVO.getContentId(), "" + contentVersionVO.getContentName());
+							String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_" + newNotificationMessage.getType();
+							if(!existingSignatures.contains(key))
+							{
+								logger.info("++++++++++++++Got an Content notification - just adding it: " + newNotificationMessage.getObjectId());
+								baseEntitiesToIndexMessageList.add(newNotificationMessage);
+								existingSignatures.add(key);
+							}
+							else
+							{
+								logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
+							}
 						}
 					}
 				}
@@ -850,6 +1123,9 @@ public class LuceneController extends BaseController implements NotificationList
 			try
 			{
 				Integer lastCommitedContentVersionId = getLastCommitedContentVersionId();
+				Document indexAllDocumentMetaData = getIndexAllStatusDocument();
+				//Integer previousIndexAllLastContentVersionId = getIndexAllLastCommittedContentVersionId();
+
 				Date lastCommitedModifiedDate = getLastCommitedModifiedDate();
 				
 				Calendar yesterday = Calendar.getInstance();
@@ -859,8 +1135,9 @@ public class LuceneController extends BaseController implements NotificationList
 				logger.info("lastCommitedModifiedDate: " + lastCommitedModifiedDate);
 				indexReader = getIndexReader();
 				boolean didIndex = false;
-				if(lastCommitedContentVersionId == -1 || indexReader.numDocs() < 100)
+				if(lastCommitedContentVersionId == -1 || indexAllDocumentMetaData != null || indexReader.numDocs() < 100)
 				{
+					System.out.println("indexAll as it seemed to be not ready.....");
 					logger.info("###########################IndexAll");
 					didIndex = indexAll();
 				}
@@ -958,11 +1235,11 @@ public class LuceneController extends BaseController implements NotificationList
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, newLastSiteNodeVersionId, 250, true, db, true);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, true, db, true);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), newLastSiteNodeVersionId, 250, true, db, true);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), newLastSiteNodeVersionId, numberOfVersionToIndexInBatch, true, db, true);				
 			}
 			
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1016,11 +1293,11 @@ public class LuceneController extends BaseController implements NotificationList
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, 0, lastContentVersionId, 250, true, db, false);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, true, db, false);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, 250, true, db, false);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(null, contentTypeDefinitionVO.getId(), languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, true, db, false);				
 			}
 			
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1113,11 +1390,11 @@ public class LuceneController extends BaseController implements NotificationList
 			List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
 			if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, lastContentVersionId, 250, true, db, true);
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, 0, lastContentVersionId, numberOfVersionToIndexInBatch, true, db, true);
 			}
 			else
 			{
-				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, 250, true, db, true);				
+				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, true, db, true);				
 			}
 			
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
@@ -1410,7 +1687,7 @@ public class LuceneController extends BaseController implements NotificationList
 			
 			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
 			
-			Document document = getDocumentFromContent(contentVO, notificationMessage, writer, forceVersionIndexing);
+			Document document = getDocumentFromContent(contentVO, notificationMessage, writer, forceVersionIndexing, db);
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDocumentFromContent", (t.getElapsedTimeNanos() / 1000));
 			
 			if(document != null)
@@ -1521,7 +1798,13 @@ public class LuceneController extends BaseController implements NotificationList
 		doc.add(new Field("lastModifier", "" + siteNodeVO.getCreatorName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("isAsset", "false", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("isSiteNode", "true", Field.Store.YES, Field.Index.NOT_ANALYZED));
-		//doc.add(new Field("contentTypeDefinitionId", "" + ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db).getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		
+		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
+		doc.add(new NumericField("modificationDateTime", Field.Store.YES, true).setLongValue(siteNodeVersionVO.getModifiedDateTime().getTime()));
+		doc.add(new Field("siteNodeVersionId", "" + siteNodeVersionVO.getSiteNodeVersionId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new Field("stateId", "" + siteNodeVersionVO.getStateId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		
+		doc.add(new Field("path", "" + getSiteNodePath(siteNodeVO.getId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
 		// Add the uid as a field, so that index can be incrementally
 		// maintained.
@@ -1548,7 +1831,7 @@ public class LuceneController extends BaseController implements NotificationList
 		// return the document
 		return doc;
 	}
-	
+		
 	public Document getSiteNodeDocument(ContentVersionVO contentVersionVO, IndexWriter writer, Database db) throws Exception, InterruptedException
 	{
 		Timer t = new Timer();
@@ -1574,6 +1857,8 @@ public class LuceneController extends BaseController implements NotificationList
 		doc.add(new Field("isSiteNode", "true", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		//doc.add(new Field("contentTypeDefinitionId", "" + ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db).getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
+		doc.add(new Field("path", "" + getSiteNodePath(contentVersionVO.getSiteNodeId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
+
 		// Add the uid as a field, so that index can be incrementally
 		// maintained.
 		// This field is not stored with document, it is indexed, but it is not
@@ -1583,15 +1868,17 @@ public class LuceneController extends BaseController implements NotificationList
 		// Add the tag-stripped contents as a Reader-valued Text field so it
 		// will
 		// get tokenized and indexed.
-		doc.add(new Field("contents", new StringReader(contentVersionVO.getSiteNodeName())));
-		doc.add(new Field("contents", new StringReader(contentVersionVO.getVersionValue())));
+		if(contentVersionVO.getSiteNodeName() != null)
+			doc.add(new Field("contents", new StringReader(contentVersionVO.getSiteNodeName())));
+		if(contentVersionVO.getVersionValue() != null)
+			doc.add(new Field("contents", new StringReader(contentVersionVO.getVersionValue())));
 
 
 		// return the document
 		return doc;
 	}
 	
-	public Document getDocumentFromContent(ContentVO contentVO, NotificationMessage message, IndexWriter writer, boolean indexVersions) throws Exception, InterruptedException
+	public Document getDocumentFromContent(ContentVO contentVO, NotificationMessage message, IndexWriter writer, boolean indexVersions, Database db) throws Exception, InterruptedException
 	{
 		logger.info("getDocumentFromContent:" + contentVO.getName() + ":" + contentVO.getIsDeleted());
 
@@ -1629,6 +1916,8 @@ public class LuceneController extends BaseController implements NotificationList
 		doc.add(new Field("lastModifier", "" + contentVO.getCreatorName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("isAsset", "false", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
+		doc.add(new Field("path", "" + getContentPath(contentVO.getId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
+
 		// Add the uid as a field, so that index can be incrementally
 		// maintained.
 		// This field is not stored with document, it is indexed, but it is not
@@ -1675,6 +1964,8 @@ public class LuceneController extends BaseController implements NotificationList
 		doc.add(new Field("stateId", "" + contentVersionVO.getStateId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("isAsset", "false", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
+		doc.add(new Field("path", "" + getContentPath(contentVO.getId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
+
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Indexing normalFields", (t.getElapsedTimeNanos() / 1000));
 		
 		//Testing adding the categories for this version
@@ -1752,6 +2043,8 @@ public class LuceneController extends BaseController implements NotificationList
 		doc.add(new Field("stateId", "" + contentVersionVO.getStateId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("isAsset", "true", Field.Store.YES, Field.Index.NOT_ANALYZED));
 
+		doc.add(new Field("path", "" + getContentPath(contentVO.getId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
+
 		// Add the uid as a field, so that index can be incrementally
 		// maintained.
 		// This field is not stored with document, it is indexed, but it is not
@@ -1778,79 +2071,6 @@ public class LuceneController extends BaseController implements NotificationList
 		return doc;
 	}
 
-	public Document createStatusDocument(Integer lastCommitedContentVersionId) throws Exception
-	{
-		logger.info("CCCCCCCCReatng status doc");
-		Document doc = new Document();
-
-		doc.add(new Field("lastCommitedContentVersionId", "" + lastCommitedContentVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
-		doc.add(new Field("lastCommitedModifiedDate", "" + new Date().getTime(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		//doc.add(new Field("uid", "contentId_" + contentVO.getId(), Field.Store.NO, Field.Index.NOT_ANALYZED));
-		//doc.add(new Field("meta", "lastCommitedContentVersionId", Field.Store.YES, Field.Index.NOT_ANALYZED));
-		doc.add(new Field("meta", new StringReader("lastCommitedContentVersionId")));
-
-		return doc;
-	}
-	
-	public Document getStatusDocument() throws Exception
-	{
-	    List<Document> docs = queryDocuments("meta", "lastCommitedContentVersionId", 5);
-		logger.info(docs.size() + " total matching documents for 'lastCommitedContentVersionId'");
-		return (docs != null && docs.size() > 0 ? docs.get(0) : null);
-	}
-	
-	public Integer getLastCommitedContentVersionId() throws Exception
-	{
-		Integer lastCommitedContentVersionId = -1;
-		
-		Document doc = getStatusDocument();
-		logger.info("STATUS doc:" + doc);
-		if(doc != null)
-		{
-			String lastCommitedContentVersionIdString = doc.get("lastCommitedContentVersionId");
-			
-			logger.info("doc:" + doc);
-			logger.info("lastCommitedContentVersionId:" + lastCommitedContentVersionIdString);
-			
-			lastCommitedContentVersionId = Integer.parseInt(lastCommitedContentVersionIdString);
-		}
-		
-		return lastCommitedContentVersionId;
-	}
-
-	private void setLastCommitedContentVersionId(IndexWriter writer, Integer lastCommitedContentVersionId) throws Exception 
-	{
-		Integer prevLastCommitedContentVersionId = getLastCommitedContentVersionId();
-		logger.info("prevLastCommitedContentVersionId:" + prevLastCommitedContentVersionId);
-		logger.info("lastCommitedContentVersionId:" + lastCommitedContentVersionId);
-		if(lastCommitedContentVersionId == -1 || prevLastCommitedContentVersionId > lastCommitedContentVersionId)
-			return;
-		
-		logger.info("setLastCommitedContentVersionId:" + lastCommitedContentVersionId);
-		Query query = new QueryParser(Version.LUCENE_34, "meta", getStandardAnalyzer()).parse("lastCommitedContentVersionId");
-		writer.deleteDocuments(query);
-		writer.addDocument(createStatusDocument(lastCommitedContentVersionId));
-	}
-	
-	public Date getLastCommitedModifiedDate() throws Exception
-	{
-		Date lastCommitedModifiedDate = new Date(10000);
-		
-		Document doc = getStatusDocument();
-		if(doc != null)
-		{
-			String lastCommitedModifiedDateString = doc.get("lastCommitedModifiedDate");
-	
-			logger.info("doc:" + doc);
-			logger.info("lastCommitedModifiedDate:" + lastCommitedModifiedDateString);
-			
-			Date d = new Date();
-			d.setTime(Long.parseLong(lastCommitedModifiedDateString));
-			lastCommitedModifiedDate = d;
-		}
-		
-		return lastCommitedModifiedDate;
-	}
 
 	private String extractTextToIndex(DigitalAssetVO digitalAssetVO, File file)
 	{
@@ -1936,6 +2156,40 @@ public class LuceneController extends BaseController implements NotificationList
 		return text;
 	}
 	
+	
+	public String getContentPath(Integer contentId, Database db) throws Exception
+	{
+		StringBuffer sb = new StringBuffer();
+		
+		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
+		sb.insert(0, contentVO.getName());
+		while(contentVO.getParentContentId() != null)
+		{
+			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
+			sb.insert(0, contentVO.getName() + "/");
+		}
+		sb.insert(0, "/");
+		
+		return sb.toString();
+	}
+
+	public String getSiteNodePath(Integer siteNodeId, Database db) throws Exception
+	{
+		StringBuffer sb = new StringBuffer();
+		
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+		while(siteNodeVO != null)
+		{
+			sb.insert(0, "/" + siteNodeVO.getName());
+			if(siteNodeVO.getParentSiteNodeId() != null)
+				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
+			else
+				siteNodeVO = null;
+		}
+		
+		return sb.toString();
+	}
+
 	/**
 	 * This is a method that never should be called.
 	 */

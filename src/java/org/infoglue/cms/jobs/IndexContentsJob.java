@@ -54,12 +54,13 @@ public class IndexContentsJob implements Job
     	
     	//if(true)
     	//	return;
-    	
+    	/*
     	if(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) > 7 && Calendar.getInstance().get(Calendar.HOUR_OF_DAY) < 24)
     	{
     		System.out.println("Returning as we don't want to index during the days..");
     		return;
     	}
+    	*/
     	
     	logger.info("running:" + running.get());
 

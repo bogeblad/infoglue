@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.PersistenceException;
@@ -45,6 +46,7 @@ import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * The ContentCategoryController manages all actions related to persistence
@@ -71,6 +73,12 @@ public class ContentCategoryController extends BaseController
 			.append("WHERE c.attributeName = $1 ")
 			.append("AND c.contentVersion.contentVersionId = $2")
 			.append("ORDER BY c.category.name").toString();
+
+	private static final String findByContentVersionAttributeSmall = new StringBuffer("SELECT c ")
+	.append("FROM org.infoglue.cms.entities.content.impl.simple.SmallContentCategoryImpl c ")
+	.append("WHERE c.attributeName = $1 ")
+	.append("AND c.contentVersionId = $2")
+	.append("ORDER BY c.contentCategoryId").toString();
 
 	private static final String findByCategory = new StringBuffer("SELECT c ")
 			.append("FROM org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl c ")
@@ -135,6 +143,15 @@ public class ContentCategoryController extends BaseController
 		
 		return contentCategoryVOList;
 	}
+	
+	public List findSmallByContentVersionAttributeReadOnly(String attribute, Integer versionId, Database db) throws SystemException
+	{	    
+	    List params = new ArrayList();
+		params.add(attribute);
+		params.add(versionId);
+		return executeQueryReadOnly(findByContentVersionAttributeSmall, params, db);
+	}
+	
 
 	/**
 	 * Find a List of ContentCategories for the specific attribute and Content Version.
@@ -146,14 +163,42 @@ public class ContentCategoryController extends BaseController
 	public List findByContentVersionAttribute(String attribute, Integer versionId, Database db, boolean readOnly) throws SystemException
 	{
 	    List contentCategoryList = new ArrayList();
+	    Timer t = new Timer();
 	    
+	    //getCastorCategory().setLevel(Level.DEBUG);
+	    //getCastorJDOCategory().setLevel(Level.DEBUG);
+	    //TODO - kan optimeras mycket
+	    		
+	    List contentCategories = findByContentVersionReadOnly(versionId, db);
+	    //getCastorCategory().setLevel(Level.WARN);
+	    //getCastorJDOCategory().setLevel(Level.WARN);
+	    
+	    //t.printElapsedTime("contentCategories");
+		if(contentCategories != null)
+		{
+		    Iterator contentCategoriesIterator = contentCategories.iterator();
+		    while(contentCategoriesIterator.hasNext())
+		    {
+		        ContentCategory contentCategory = (ContentCategory)contentCategoriesIterator.next();
+		        if(contentCategory.getAttributeName().equals(attribute))
+		        {
+		            contentCategoryList.add(contentCategory);
+		        }
+		    }
+		}
+		return contentCategoryList;
+
+	    /*
 	    ContentVersion contentVersion = null;
 	    if(readOnly)
 	        contentVersion = ContentVersionController.getContentVersionController().getReadOnlyContentVersionWithId(versionId, db);
 		else
 		    contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(versionId, db);
-		    
+	    
+	    t.printElapsedTime("getting contentVersion");
+	    
 	    Collection contentCategories = contentVersion.getContentCategories();
+	    t.printElapsedTime("contentCategories");
 		if(contentCategories != null)
 		{
 		    Iterator contentCategoriesIterator = contentCategories.iterator();
@@ -168,6 +213,7 @@ public class ContentCategoryController extends BaseController
 		}
 
 		return contentCategoryList;
+		*/
 	}
 
 	/**
@@ -225,6 +271,19 @@ public class ContentCategoryController extends BaseController
 		List params = new ArrayList();
 		params.add(versionId);
 		return executeQuery(findByContentVersion, params, db);
+	}
+
+	/**
+	 * Find a List of ContentCategories for a Content Version.
+	 * @param	versionId The Content Version id of the ContentCategory to find
+	 * @return	A list of ContentCategoryVO that have the provided content version and attribute
+	 * @throws	SystemException If an error happens
+	 */
+	public List findByContentVersionReadOnly(Integer versionId, Database db) throws SystemException
+	{
+		List params = new ArrayList();
+		params.add(versionId);
+		return executeQueryReadOnly(findByContentVersion, params, db);
 	}
 
 	

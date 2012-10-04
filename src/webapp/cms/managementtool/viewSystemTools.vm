@@ -108,6 +108,10 @@
 					<td>$ui.getString("tool.managementtool.performanceTool.title")</td>
 				</tr>
 				<tr>
+					<td class="inconsistencies"><a href="ViewInconsistencies!inputAccessRights.action" class="systemLinkLabel">$ui.getString("tool.managementtool.inconsistenciesTool.title") on access rights</a></td>
+					<td>Resolves and cleans inconsistencies on access rights</td>
+				</tr>
+				<tr>
 					<td class="inconsistencies"><a href="ViewInconsistencies!input.action?title=Inconsistencies" class="systemLinkLabel">$ui.getString("tool.managementtool.inconsistenciesTool.title")</a></td>
 					<td>$ui.getString("tool.managementtool.inconsistenciesTool.introduction")</td>
 				</tr>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  
+#beginManagementTool("tool.managementtool.viewSystemTools.header" "tool.managementtool.viewSystemTools.header" "")
+<style type="text/css">
+	h1 {
+		font-size: 14px;
+	}
+	h2 {
+		font-size: 12px;
+	}
+	h3 {
+		font-size: 10px;
+	}
+	td, p {
+		font-size: 10px;
+	}
+	.mergeItem {
+		border: 1px solid #ccc;
+		background: #EFEFEF;
+		margin: 20px;
+		padding: 4px;
+	}
+	table {
+		width: 98%;
+		border-collapse: collapse;
+  		border: 1px solid #333;
+	}
+	td, th {
+	  border: 1px solid #333;
+	  padding: 2px;
+	}
+</style>
+<div class="fullymarginalized" style="color: black;">
+
+	<h3>$ui.getString("tool.managementtool.inconsistenciesTool.header") on access rights</h3>
+	<p>
+		$accessRightsStatusText
+	</p>	
+	<p>
+		<a href="ViewInconsistencies!fixAccessRightInconsistencies.action">Remove them (OBS: this action is irreversible and slow).</a>
+	</p>
+	
+	<h1>Access right duplicates which is empty and can be removed ($duplicateAutoDeletableAccessRightVOList.size())</h1>
+	<p>
+	#foreach($accessRightVO in $duplicateAutoDeletableAccessRightVOList)
+		$accessRightVO.accessRightId - $accessRightVO.interceptionPointId - $accessRightVO.parameters<br/>
+	#end
+	</p>
+	<p>
+		<a href="ViewInconsistencies!fixEmptyAccessRightInconsistencies.action">Remove them (OBS: this action is irreversible and slow).</a>
+	</p>
+	<h1>Access right duplicates which is easy to merge as only contained users ($duplicateAutoMergableAccessRightVOList.size())</h1>
+	<p>
+	#foreach($accessRightVO in $duplicateAutoMergableAccessRightVOList)
+		$accessRightVO.accessRightId - $accessRightVO.interceptionPointId - $accessRightVO.parameters<br/>
+	#end
+	</p>
+	<p>
+		<a href="ViewInconsistencies!fixAutoMergableAccessRightInconsistencies.action">Remove them (OBS: this action is irreversible and slow).</a>
+	</p>
+	
+	
+	<h1>Access right duplicates ($duplicateAccessRightVOList.size())</h1>
+		#set($key = "")
+		#foreach($accessRightVO in $duplicateAccessRightVOList)
+			#set($newKey = "${accessRightVO.interceptionPointId}_${accessRightVO.parameters}")
+			#if($key != $newKey && $key != "")
+				<input type="submit" value="Merge"/>
+			</form>
+			</div>
+			#end
+			#if($key != $newKey)
+			<div class="mergeItem">
+			<form action="ViewInconsistencies!mergeAccessRight.action" method="post">
+				<input type="hidden" name="interceptionPointId" value="$accessRightVO.interceptionPointId"/>
+				<input type="hidden" name="parameters" value="$accessRightVO.parameters"/>
+			#end		
+			<h2>Access right $accessRightVO.id ($newKey) ($accessRightVO.name)</h2>
+			<table>
+			<tr>
+				<th width="25%">Roles</th> 
+				<th width="25%">Groups</th> 
+				<th width="25%">Users</th> 
+			</tr>
+			<tr>
+				<td>
+					#foreach($arr in $accessRightVO.roles)
+						<input type="checkbox" checked="1" name="roleNames" value="$arr.roleName"/> $arr.roleName ($arr.id)<br/>
+					#end
+				</td>
+				<td> 
+					#foreach($arg in $accessRightVO.groups)
+						<input type="checkbox" checked="1" name="groupNames" value="$arg.groupName"/> $arg.groupName ($arg.id)<br/>
+					#end
+				</td>
+				<td>
+					#foreach($aru in $accessRightVO.users)
+						<input type="checkbox" checked="1" name="userNames" value="$aru.userName"/> $aru.userName ($aru.id),
+					#end
+				</td>
+			</tr>
+			</table>
+			#set($key = $newKey)
+		#end
+		<input type="submit" value="Merge"/>
+		</form>
+	</div>
+</div>
+
+<div onfocus="this.blur();" id="footertoolbar">
+	<div style="float: left; margin-left: 10px;">
+		<input type="button" class="next" value="$ui.getString("tool.common.nextButton.label")" onclick="document.location.href = 'ViewInconsistencies!fixAccessRightInconsistencies.action';"/>
+		<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.location.href='ViewSystemTools.action';"/>
+	</div>
+</div>
+
+</body>
+</html>

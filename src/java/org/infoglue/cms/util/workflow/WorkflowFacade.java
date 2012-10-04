@@ -587,11 +587,14 @@ public class WorkflowFacade
 	 * @return a list of WorkflowVOs representing all active workflows
 	 * @throws SystemException if an error occurs finding the active workflows
 	 */
-	public List<WorkflowVO> getActiveWorkflows() throws SystemException
+	public List<WorkflowVO> getActiveWorkflows(Integer maxNumberOfWorkflows) throws SystemException
 	{
 		List<WorkflowVO> workflowVOs = new ArrayList<WorkflowVO>();
 
 		List<WorkflowVO> activeWorkflows = findActiveWorkflows();
+		//System.out.println("activeWorkflows:" + activeWorkflows.size());
+		if(maxNumberOfWorkflows != null && activeWorkflows.size() > maxNumberOfWorkflows)
+			activeWorkflows = activeWorkflows.subList(0, maxNumberOfWorkflows);
 		Iterator activeWorkflowsIterator = activeWorkflows.iterator();
 		while (activeWorkflowsIterator.hasNext())
 		{
@@ -611,7 +614,7 @@ public class WorkflowFacade
 	 * @return the workflows owned by the specified principal.
 	 */
 	
-	public List getMyActiveWorkflows(final InfoGluePrincipal principal) throws SystemException
+	public List getMyActiveWorkflows(final InfoGluePrincipal principal, Integer maxNumberOfWorkflows) throws SystemException
 	{		
 		String key = "myWorkflows_" + principal.getName();
 		List workflows = (List)CacheController.getCachedObject("myActiveWorkflows", key);
@@ -620,35 +623,37 @@ public class WorkflowFacade
 		{
 				if(principal.getIsAdministrator())
 				{
-					workflows = getActiveWorkflows();
+					workflows = getActiveWorkflows(maxNumberOfWorkflows);
 				}
-				
-				Collection owners = OwnerFactory.createAll(principal);
-				Expression[] expressions = new Expression[owners.size()];
-				
-				Iterator ownersIterator = owners.iterator();
-				int i = 0;
-				while(ownersIterator.hasNext())
+				else
 				{
-					Owner owner = (Owner)ownersIterator.next();
-					Expression expression = new FieldExpression(FieldExpression.OWNER, FieldExpression.CURRENT_STEPS, FieldExpression.EQUALS, owner.getIdentifier());
-					expressions[i] = expression;
-					i++;
-				}				
-				
-				final Set workflowVOs = new HashSet();
-				workflowVOs.addAll(createWorkflowsForOwner(expressions));
-	
-				/*
-				final Set workflowVOs = new HashSet();
-				for(final Iterator owners = OwnerFactory.createAll(principal).iterator(); owners.hasNext(); )
-				{
-					final Owner owner = (Owner) owners.next();
-					workflowVOs.addAll(createWorkflowsForOwner(owner));
+					Collection owners = OwnerFactory.createAll(principal);
+					Expression[] expressions = new Expression[owners.size()];
+					
+					Iterator ownersIterator = owners.iterator();
+					int i = 0;
+					while(ownersIterator.hasNext())
+					{
+						Owner owner = (Owner)ownersIterator.next();
+						Expression expression = new FieldExpression(FieldExpression.OWNER, FieldExpression.CURRENT_STEPS, FieldExpression.EQUALS, owner.getIdentifier());
+						expressions[i] = expression;
+						i++;
+					}				
+					
+					final Set workflowVOs = new HashSet();
+					workflowVOs.addAll(createWorkflowsForOwner(expressions, maxNumberOfWorkflows));
+		
+					/*
+					final Set workflowVOs = new HashSet();
+					for(final Iterator owners = OwnerFactory.createAll(principal).iterator(); owners.hasNext(); )
+					{
+						final Owner owner = (Owner) owners.next();
+						workflowVOs.addAll(createWorkflowsForOwner(owner));
+					}
+					*/
+					
+					workflows = new ArrayList(workflowVOs);
 				}
-				*/
-				
-				workflows = new ArrayList(workflowVOs);
 				CacheController.cacheObject("myActiveWorkflows", key, workflows);
 		}
 		
@@ -682,12 +687,14 @@ public class WorkflowFacade
 	 * @return the value objects.
 	 * @throws SystemException if an error occurs when creating the value objects.
 	 */
-	private final Set createWorkflowsForOwner(final Expression[] expressions) throws SystemException
+	private final Set createWorkflowsForOwner(final Expression[] expressions, Integer maxNumberOfWorkflows) throws SystemException
 	{
 		try
 		{
 			final Set workflowVOs = new HashSet(); 
 			List workflows = findWorkflows(expressions);
+			if(maxNumberOfWorkflows != null && workflows.size() > maxNumberOfWorkflows)
+				workflows = workflows.subList(0, maxNumberOfWorkflows);
 			Iterator workflowsIterator = workflows.iterator();
 			while (workflowsIterator.hasNext())
 			{

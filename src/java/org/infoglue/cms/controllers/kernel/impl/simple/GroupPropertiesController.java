@@ -1178,7 +1178,7 @@ public class GroupPropertiesController extends BaseController
 		}
 		else
 		{
-			List relatedCategories = getRelatedCategories(groupName, languageId, attribute, db);
+			List relatedCategories = getRelatedCategoriesReadOnly(groupName, languageId, attribute, db);
 			if(relatedCategories != null)
 			{
 			    relatedCategoriesVOList = toVOList(relatedCategories);
@@ -1213,6 +1213,47 @@ public class GroupPropertiesController extends BaseController
 			if(groupPropertyVO != null && groupPropertyVO.getId() != null)
 			{
 		    	List propertiesCategoryList = PropertiesCategoryController.getController().findByPropertiesAttribute(attribute, GroupProperties.class.getName(), groupPropertyVO.getId(), db);
+
+		    	Iterator propertiesCategoryListIterator = propertiesCategoryList.iterator();
+		    	while(propertiesCategoryListIterator.hasNext())
+		    	{
+		    	    PropertiesCategory propertiesCategory = (PropertiesCategory)propertiesCategoryListIterator.next();
+		    	    relatedCategories.add(propertiesCategory.getCategory());
+		    	}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.warn("We could not fetch the list of defined category keys: " + e.getMessage(), e);
+		}
+
+		return relatedCategories;
+	}
+
+	/**
+	 * Returns all current Category relationships for th specified attribute name
+	 * @param attribute
+	 * @return
+	 */
+	
+	public List getRelatedCategoriesReadOnly(String groupName, Integer languageId, String attribute, Database db)
+	{
+	    List relatedCategories = new ArrayList();
+	    
+		try
+		{
+		    List groupPropertiesVOList = this.getGroupPropertiesVOList(groupName, languageId, db);
+		    Iterator iterator = groupPropertiesVOList.iterator();
+		    GroupPropertiesVO groupPropertyVO = null;
+		    while(iterator.hasNext())
+		    {
+		        groupPropertyVO = (GroupPropertiesVO)iterator.next();
+		        break;
+		    }
+
+			if(groupPropertyVO != null && groupPropertyVO.getId() != null)
+			{
+		    	List propertiesCategoryList = PropertiesCategoryController.getController().findByPropertiesAttributeReadOnly(attribute, GroupProperties.class.getName(), groupPropertyVO.getId(), db);
 
 		    	Iterator propertiesCategoryListIterator = propertiesCategoryList.iterator();
 		    	while(propertiesCategoryListIterator.hasNext())

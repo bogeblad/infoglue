@@ -45,6 +45,7 @@ import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.Term;
 import org.apache.pluto.PortletContainerServices;
 import org.apache.pluto.portalImpl.services.ServiceManager;
 import org.apache.pluto.portalImpl.services.portletentityregistry.PortletEntityRegistry;
@@ -52,10 +53,13 @@ import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
+import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.AuthenticationModule;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -979,6 +983,43 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         return "clearedLuceneStatistics";
     }
 
+    public String doIndex() throws Exception
+    {
+    	String returnValue = handleAccess(this.getRequest());
+    	if(returnValue != null)
+    		return returnValue;
+
+    	if(!running)
+    	{
+    		running = true;
+    	
+    		try
+    		{
+    			logger.info("Going to index all");
+    			new Thread(new Runnable() { public void run() {try {LuceneController.getController().index();} catch (Exception e) {}}}).start();
+    			logger.info("------------------------------------------->Done indexing all from ViewApplicationState");
+    			
+    	    	indexInformation = LuceneController.getController().getIndexInformation();
+        		
+    	    	statusMessage = "Reindex complete.";
+    		}
+    		catch (Throwable t) 
+    		{
+    			statusMessage = "Reindex failed: " + t.getMessage();
+			}
+    		finally
+    		{
+    			running = false;
+    		}
+    	}
+    	else
+    	{
+    		statusMessage = "Running... wait until complete.";
+    	}
+    	
+        return "clearedLuceneStatistics";
+    }
+
     public String doSearch() throws Exception
     {
     	String returnValue = handleAccess(this.getRequest());
@@ -991,6 +1032,9 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 		{
 			logger.info("Going to search all");
 			this.docs = LuceneController.getController().queryDocuments(searchField, searchString, maxHits);
+			System.out.println("Docs:" + this.docs.size());
+			//this.docs.addAll(LuceneController.getController().queryDocuments(new Term(searchField, searchString), maxHits));
+			//System.out.println("Docs2:" + this.docs.size());
 			logger.info("Searched docs in ViewApplicationState:" + docs.size());
     		
 	    	statusMessage = "Reindex complete.";
@@ -1341,6 +1385,11 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 	public List<Document> getSearchResult()
 	{
 		return this.docs;
+	}
+	
+	public List<LanguageVO> getLanguages() throws SystemException, Bug
+	{
+		return LanguageController.getController().getLanguageVOList();
 	}
 
 	private VisualFormatter vf = new VisualFormatter();

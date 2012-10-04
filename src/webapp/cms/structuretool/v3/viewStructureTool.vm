@@ -258,7 +258,11 @@
 		
 		<div class="onlyExpanded" id="repositoryChoiceDiv">
 	    	<select id="repositorySelect" onchange="changeRepository(this);">
+	    		#set($treeRepositoryId = $!repositoryId)
 	    		#foreach($repository in $authorizedRepositoryVOList)
+	    			#if(!$treeRepositoryId)
+		    			#set($treeRepositoryId = $repository.id)
+	    			#end
 	    		<option value="$repository.id" #if($repository.id == $repositoryId)selected="selected"#end>$repository.name</option>
 	    		#end
 	    	</select>
@@ -266,7 +270,7 @@
 	    	<img src="images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
 	    </div>
 	
-		<iframe id="treeIframe" name="treeIframe" src="ViewStructureToolMenu!V3.action?repositoryId=$repositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
+		<iframe id="treeIframe" name="treeIframe" src="ViewStructureToolMenu!V3.action?repositoryId=$treeRepositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
 	
 		<div class="onlyExpanded" id="paletteDiv">
 	    	<div id="componentPaletteHeader">

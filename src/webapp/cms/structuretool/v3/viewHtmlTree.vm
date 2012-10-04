@@ -313,6 +313,8 @@
 	webFXTreeConfig.openFolderIcon	= "script/xloadtree/images/xp/page.png";
 	webFXTreeConfig.hiddenFolderIcon		= "script/xloadtree/images/xp/pageHidden.png";
 	webFXTreeConfig.hiddenOpenFolderIcon	= "script/xloadtree/images/xp/pageHidden.png";
+	webFXTreeConfig.hiddenProtectedFolderIcon		= "script/xloadtree/images/xp/pageHiddenProtected.png";
+	webFXTreeConfig.hiddenProtectedOpenFolderIcon	= "script/xloadtree/images/xp/pageHiddenProtected.png";
 	webFXTreeConfig.protectedFolderIcon		= "script/xloadtree/images/xp/pageProtected.png";
 	webFXTreeConfig.protectedOpenFolderIcon	= "script/xloadtree/images/xp/pageProtected.png";
 	webFXTreeConfig.fileIcon		= "script/xloadtree/images/xp/file.png";

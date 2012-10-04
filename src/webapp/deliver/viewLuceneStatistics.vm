@@ -106,10 +106,16 @@
 			<b>Maximum docs:</b> $indexInformation.get("maxDoc")<br/>
 			<b>Index last modified:</b> $indexInformation.get("lastModified")<br/>
 			<b>Index lastCommitedContentVersionId:</b> $indexInformation.get("lastCommitedContentVersionId")<br/>
+			#foreach($languageVO in $this.languages)
+				#set($key = "indexAllLastCommittedContentVersionId_$languageVO.id")
+				#set($key2 = "indexAllLastCommittedSiteNodeVersionId_$languageVO.id")
+				<b>Index lastCommitedContentVersionId for $languageVO.name:</b> $!indexInformation.get("$key")<br/>
+				<b>Index lastCommitedSiteNodeVersionId for $languageVO.name:</b> $!indexInformation.get("$key2")<br/>
+			#end
 			<br>
 			<a href="ViewApplicationState!luceneStatistics.action">Refresh view</a><br>
 			<br>
-			<a href="ViewApplicationState!deleteIndex.action">Delete index</a> | <a href="ViewApplicationState!indexAll.action">Reindex all</a> 
+			<a href="ViewApplicationState!deleteIndex.action">Delete index</a> | <a href="ViewApplicationState!index.action">index</a> | <a href="ViewApplicationState!indexAll.action">Reindex all</a> 
 		</p>
 		<hr/>
 		

@@ -205,7 +205,7 @@ public abstract class WorkflowTestCase extends InfoGlueTestCase
 	 */
 	protected WorkflowVO findCurrentWorkflow() throws Exception
 	{
-		return findWorkflow(controller.getCurrentWorkflowVOList(getUserPrincipal()));
+		return findWorkflow(controller.getCurrentWorkflowVOList(getUserPrincipal(), null));
 	}
 
 	/**

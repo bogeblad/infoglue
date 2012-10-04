@@ -209,7 +209,12 @@ function _xmlTreeToJsTree(oNode) {
 	if(type.indexOf("Folder") > -1)
 	{
 		if(isHidden == "true")
-			icon = webFXTreeConfig.hiddenFolderIcon;
+		{
+			if(isProtected == 'true')
+				icon = webFXTreeConfig.hiddenProtectedFolderIcon;
+			else
+				icon = webFXTreeConfig.hiddenFolderIcon;
+		}
 		else
 		{
 			if(isProtected == 'true')
@@ -219,7 +224,10 @@ function _xmlTreeToJsTree(oNode) {
 		}
 			
 		if(isHidden == "true")
-			openIcon = webFXTreeConfig.hiddenOpenFolderIcon;
+			if(isProtected == 'true')
+				openIcon = webFXTreeConfig.hiddenProtectedOpenFolderIcon;
+			else
+				openIcon = webFXTreeConfig.hiddenOpenFolderIcon;
 		else
 		{
 			if(isProtected == 'true')

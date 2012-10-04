@@ -60,7 +60,7 @@ public class WorkflowControllerTest extends NewsWorkflowTestCase
 
 	public void testGetCurrentWorkflowVOList() throws Exception
 	{
-		List workflows = WorkflowController.getController().getCurrentWorkflowVOList(getUserPrincipal());
+		List workflows = WorkflowController.getController().getCurrentWorkflowVOList(getUserPrincipal(), null);
 		assertFalse("There should be at least one active workflow", workflows.isEmpty());
 		assertNotNull("Current workflow should be in the list", findCurrentWorkflow());
 	}

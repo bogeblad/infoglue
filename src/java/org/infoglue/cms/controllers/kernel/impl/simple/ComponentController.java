@@ -49,6 +49,7 @@ import org.infoglue.cms.util.sorters.ContentComparator;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.Timer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -299,6 +300,10 @@ public class ComponentController extends BaseController
 	
 	public List getComponents(String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroups/*, String[] disallowedComponentGroups*/, InfoGluePrincipal principal, Database db) throws Exception
 	{
+		Timer t = new Timer();
+		if(!logger.isDebugEnabled())
+			t.setActive(false);
+		
 		HashMap arguments = new HashMap();
 		arguments.put("method", "selectListOnContentTypeName");
 		
@@ -311,11 +316,17 @@ public class ComponentController extends BaseController
 		argumentList.add(argument2);
 		arguments.put("arguments", argumentList);
 		
+		t.printElapsedTime("comp 1");
+		
 		List results = ContentControllerProxy.getController().getACContentVOList(principal, arguments, "Component.Select", db);
 
+		t.printElapsedTime("comp 2");
+		
 	    Iterator resultsIterator = results.iterator();
 	    while(resultsIterator.hasNext())
 	    {
+			t.printElapsedTime("comp 3.1");
+
 	        ContentVO contentVO = (ContentVO)resultsIterator.next();
 
 			boolean isPartOfAllowedComponentNames = false;
@@ -332,10 +343,12 @@ public class ComponentController extends BaseController
 			if(allowedComponentGroups != null && allowedComponentGroups.length > 0 && contentVO.getRepositoryId() != null)
 			{
 				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId(), db);
+				t.printElapsedTime("comp 3.2");
 				if(masterLanguageVO != null)
 				{
 					//logger.info("masterLanguageVO for " + contentVO.getRepositoryId() + " is " + masterLanguageVO);
 		        	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getContentId(), masterLanguageVO.getId(), db);
+					t.printElapsedTime("comp 3.3");
 		        	String groupName = null;
 		        	if(contentVersionVO != null)
 		        		groupName = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
@@ -348,6 +361,8 @@ public class ComponentController extends BaseController
 			        }
 				}
 			}
+
+			t.printElapsedTime("comp 3.2");
 
 			boolean isPartOfDisallowedComponentNames = false;
 			if(disallowedComponentNames != null && disallowedComponentNames.length > 0)
@@ -381,6 +396,8 @@ public class ComponentController extends BaseController
 				//logger.info("Removing from results:" + contentVO.getName());
 				resultsIterator.remove();				
 			}
+			
+			t.printElapsedTime("comp 4");
 	    }
 		
 		return results;	

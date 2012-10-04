@@ -57,8 +57,9 @@ public class ContentVO implements BaseEntityVO
   	private String fullPath = null; //Can well be null... used in some views only
   	private String[] versions = new String[0]; //Can well be null... used in some views only
   	private ContentVersionVO contentVersionVO; //= new ArrayList(); //Can well be null... used in some views only and must be manually populated
+  	private Integer stateId = null; //Can well be null... used in some views only - reflects only the lowest state in each language if most current.
   
-  	private static SimpleTimeZone stmz = new SimpleTimeZone(-8 * 60 * 60 * 1000, "GMT");
+	private static SimpleTimeZone stmz = new SimpleTimeZone(-8 * 60 * 60 * 1000, "GMT");
     
   	//Used if an application wants to add more properties to this item... used for performance reasons.
   	private Map extraProperties = new Hashtable();
@@ -292,6 +293,21 @@ public class ContentVO implements BaseEntityVO
 	{
 		return this.versions;
 	}
+	
+  	/**
+	 * @return the stateId
+	 */
+	public Integer getStateId() {
+		return stateId;
+	}
+
+	/**
+	 * @param stateId the stateId to set
+	 */
+	public void setStateId(Integer stateId) {
+		this.stateId = stateId;
+	}
+
 
 	public ContentVersionVO getContentVersion()
 	{

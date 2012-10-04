@@ -189,14 +189,37 @@ public class SmallestSiteNodeImpl extends SiteNodeImpl
         this.valueObject.setIsHidden(isHidden);
     }
 
+    public Integer getStateId()
+    {
+        return this.valueObject.getStateId();
+    }
+            
+    public void setStateId(Integer stateId)
+    {
+    	if(stateId != null && stateId > -1)
+    		this.valueObject.setStateId(stateId);
+    }
+
 	public void setParentSiteNodeId(Integer parentSiteNodeId)
 	{
-		this.valueObject.setParentSiteNodeId(parentSiteNodeId);
+    	if(parentSiteNodeId != null && parentSiteNodeId > -1)
+    		this.valueObject.setParentSiteNodeId(parentSiteNodeId);
 	}
 
 	public Integer getParentSiteNodeId()
 	{
 		return this.valueObject.getParentSiteNodeId();
 	}
+
+    public Integer getIsProtected()
+    {
+        return this.valueObject.getIsProtected();
+    }
+            
+    public void setIsProtected(Integer isProtected)
+    {
+    	if(isProtected != null && isProtected > -1)
+    		this.valueObject.setIsProtected(isProtected);
+    }
 
 }        

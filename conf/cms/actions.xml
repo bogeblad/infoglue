@@ -51,6 +51,7 @@
 	<action name="org.infoglue.cms.applications.managementtool.actions.ViewInconsistenciesAction" alias="ViewInconsistencies">
 		<view name="input">/cms/managementtool/viewInconsistenciesInput.vm</view>
 		<view name="success">/cms/managementtool/viewInconsistencies.vm</view>
+		<view name="inputAccessRights">/cms/managementtool/viewInconsistenciesAccessRightsInput.vm</view>
 		<view name="error">/cms/managementtool/error.vm</view>
 	</action>
 

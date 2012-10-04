@@ -285,6 +285,22 @@
       <sql many-key="accessRightId"/>
     </field>
   </class>
+
+<!--  Mapping for SmallAccessRight  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl" identity="accessRightId" key-generator="IDENTITY">
+    <description>AccessRight</description>
+    <cache-type type="none"/>
+    <map-to table="cmAccessRight"/>
+    <field name="accessRightId" type="java.lang.Integer">
+      <sql name="accessRightId" type="integer" dirty="check" />
+    </field>
+    <field name="parameters" type="java.lang.String">
+      <sql name="parameters" type="varchar" dirty="check" />
+    </field>
+    <field name="interceptionPointId" type="java.lang.Integer">
+      <sql name="interceptionPointId" type="integer" dirty="check" />
+    </field>
+  </class>
   
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl" identity="accessRightRoleId" key-generator="IDENTITY">
     <description>AccessRightRole</description>
@@ -622,6 +638,12 @@
     </field>
     <field name="isHidden" type="java.lang.Boolean">
       <sql name="isHidden" type="integer" dirty="check" />
+    </field>
+    <field name="stateId" type="java.lang.Integer">
+      <sql name="stateId" type="integer" dirty="check" />
+    </field>
+    <field name="isProtected" type="java.lang.Integer">
+      <sql name="isProtected" type="integer" dirty="check" />
     </field>
   </class>
 
@@ -1601,11 +1623,30 @@
 			<sql name="contentVersionId" type="integer" dirty="check" />
 		</field>
 		-->
-		<field name="contentVersion" type="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl">
+		<field name="contentVersion" type="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" lazy="true">
 		  <sql name="contentVersionId"/>
 		</field>
-		<field name="category" type="org.infoglue.cms.entities.management.impl.simple.CategoryImpl">
+		<field name="category" type="org.infoglue.cms.entities.management.impl.simple.CategoryImpl" lazy="true">
 		  <sql name="categoryId"/>
+		</field>
+	</class>
+
+    <!--  Mapping for SmallContentCategory  -->
+	<class name="org.infoglue.cms.entities.content.impl.simple.SmallContentCategoryImpl" identity="contentCategoryId" key-generator="IDENTITY">
+		<description>SmallContentCategory</description>
+		<cache-type type="unlimited" capacity="10000"/>
+		<map-to table="cmContentCategory"/>
+		<field name="contentCategoryId" type="java.lang.Integer">
+			<sql name="contentCategoryId" type="integer" dirty="check" />
+		</field>
+		<field name="attributeName" type="java.lang.String">
+			<sql name="attributeName" type="varchar" dirty="check" />
+		</field>
+		<field name="contentVersionId" type="java.lang.Integer">
+			<sql name="contentVersionId" type="integer" dirty="check" />
+		</field>
+		<field name="categoryId" type="java.lang.Integer">
+		  <sql name="categoryId" type="integer" dirty="check"/>
 		</field>
 	</class>
 
@@ -1626,7 +1667,7 @@
 		<field name="entityId" type="java.lang.Integer">
 			<sql name="entityId" type="integer" dirty="check" />
 		</field>
-		<field name="category" type="org.infoglue.cms.entities.management.impl.simple.CategoryImpl">
+		<field name="category" type="org.infoglue.cms.entities.management.impl.simple.CategoryImpl" lazy="true">
 		  <sql name="categoryId"/>
 		</field>
 	</class>

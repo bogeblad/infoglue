@@ -287,6 +287,22 @@
     </field>
   </class>
 
+<!--  Mapping for SmallAccessRight  -->
+  <class name="org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl" identity="accessRightId" key-generator="SEQUENCE">
+    <description>SmallAccessRight</description>
+    <cache-type type="none"/>
+    <map-to table="cmAccessRight"/>
+    <field name="accessRightId" type="java.lang.Integer">
+      <sql name="accessRightId" type="integer" dirty="check" />
+    </field>
+    <field name="parameters" type="java.lang.String">
+      <sql name="parameters" type="varchar" dirty="check" />
+    </field>
+    <field name="interceptionPointId" type="java.lang.Integer">
+      <sql name="interceptionPointId" type="integer" dirty="check" />
+    </field>
+  </class>
+
   <class name="org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl" identity="accessRightRoleId" key-generator="SEQUENCE">
     <description>AccessRightRole</description>
     <cache-type type="unlimited" capacity="10000"/>
@@ -624,6 +640,12 @@
     </field>
     <field name="isHidden" type="java.lang.Boolean">
       <sql name="isHidden" type="integer" dirty="check" />
+    </field>
+    <field name="stateId" type="java.lang.Integer">
+      <sql name="stateId" type="integer" dirty="check" />
+    </field>
+    <field name="isProtected" type="java.lang.Integer">
+      <sql name="isProtected" type="integer" dirty="check" />
     </field>
   </class>
 

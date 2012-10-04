@@ -36,6 +36,7 @@ public class DigitalAssetVO implements BaseEntityVO, Cloneable
     private java.lang.String assetContentType;
     private java.lang.Integer assetFileSize;
     
+    private String contentPath;
 
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntityVO#getId()
@@ -114,7 +115,17 @@ public class DigitalAssetVO implements BaseEntityVO, Cloneable
     {
         this.assetFileSize = assetFileSize;
     }
-    
+
+    public java.lang.String getContentPath()
+    {
+        return this.contentPath;
+    }
+                
+    public void setContentPath(java.lang.String contentPath)
+    {
+        this.contentPath = contentPath;
+    }
+
 	public DigitalAssetVO createCopy() throws Exception
 	{
 		return (DigitalAssetVO)this.clone();

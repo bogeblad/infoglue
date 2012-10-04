@@ -49,6 +49,8 @@ public class SiteNodeVO implements BaseEntityVO
   	private Integer childCount		= null;
   	private Integer sortOrder;
   	private Boolean isHidden 		= new Boolean(false);
+  	private Integer stateId			= null;
+  	private Integer isProtected 	= null;
   	
   	private String creatorName;
 	private Integer metaInfoContentId 	= new Integer(-1);
@@ -262,6 +264,26 @@ public class SiteNodeVO implements BaseEntityVO
 	{
 		this.sortOrder = sortOrder;
 	}
+
+    public Integer getStateId()
+    {
+        return stateId;
+    }
+            
+    public void setStateId(Integer stateId)
+    {
+        this.stateId = stateId;
+    }
+
+    public Integer getIsProtected()
+    {
+        return this.isProtected;
+    }
+            
+    public void setIsProtected(Integer isProtected)
+    {
+        this.isProtected = isProtected;
+    }
 
 }
         

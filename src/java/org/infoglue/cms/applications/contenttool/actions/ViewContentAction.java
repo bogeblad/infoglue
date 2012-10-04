@@ -28,23 +28,31 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InfoGlueSettingsController;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersion;
+import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.Bug;
@@ -53,6 +61,7 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
+import org.infoglue.deliver.util.Timer;
 
 import webwork.action.Action;
 
@@ -85,13 +94,52 @@ public class ViewContentAction extends InfoGlueAbstractAction
     {
         this.contentVO = contentVO;
     }
-    
+
+	public void repairBrokenProtection() throws SystemException, Bug 
+	{
+		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(getContentId());
+		System.out.println("repairBrokenProtection...");
+		if(contentVO != null && contentVO.getIsProtected().intValue() == 1)
+		{
+			Database db = CastorDatabaseService.getDatabase();
+
+			try 
+			{
+				beginTransaction(db);
+
+				System.out.println("Let's check access rights so they are not null CONTENT...");
+				InterceptionPointVO ipReadVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.Read", db);
+				InterceptionPointVO ipWriteVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.Write", db);
+				if(ipReadVO != null && ipWriteVO != null)
+				{
+					List accessRightListRead = AccessRightController.getController().getAccessRightListOnlyReadOnly(ipReadVO.getId(), "" + contentVO.getId(), db);
+					List accessRightListWrite = AccessRightController.getController().getAccessRightListOnlyReadOnly(ipWriteVO.getId(), "" + contentVO.getId(), db);
+					if((accessRightListRead == null || accessRightListRead.size() == 0) && (accessRightListWrite == null || accessRightListWrite.size() == 0))
+					{
+						System.out.println("Removing isProtected as there are no access rights");
+						Content c = ContentController.getContentController().getContentWithId(contentVO.getId(), db);
+						if(c != null)
+							c.setIsProtected(ContentVO.INHERITED);
+					}
+				}
+				commitTransaction(db);
+			} 
+			catch (Exception e) 
+			{
+			    logger.info("An error occurred so we should not complete the transaction:" + e);
+				rollbackTransaction(db);
+				throw new SystemException(e.getMessage());					
+			}
+		}
+	} 
+
     protected void initialize(Integer contentId) throws Exception
     {   
+    	Timer t = new Timer();
 		this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentId);
         this.availableLanguages = RepositoryLanguageController.getController().getAvailableLanguageVOListForRepositoryId(this.contentVO.getRepositoryId());
-        
+        t.printElapsedTime("ViwContent 1");
         if(this.repositoryId == null)
             this.repositoryId = this.contentVO.getRepositoryId();
         
@@ -107,10 +155,7 @@ public class ViewContentAction extends InfoGlueAbstractAction
        		this.defaultFolderContentTypeName = InfoGlueSettingsController.getInfoGlueSettingsController().getProperty("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName", "applicationProperties", null, false, false, false, false, null);
 		    if(this.defaultFolderContentTypeName == null || this.defaultFolderContentTypeName.equals(""))
 		    	this.defaultFolderContentTypeName = "Folder";
-
 		}
-        
-		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(contentId, 100, true);
     } 
 
     public String doExecute() throws Exception
@@ -139,11 +184,14 @@ public class ViewContentAction extends InfoGlueAbstractAction
 	        else
 	        {
 	            this.initialize(getContentId());
+	    		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(getContentId(), 100, true);
+	            
 	            return "success";
 	        }
         }
         catch(ConstraintException ce)
         {
+    		repairBrokenProtection();
             throw ce;
         }
         catch(Exception e) 
@@ -164,7 +212,9 @@ public class ViewContentAction extends InfoGlueAbstractAction
 	{
 		try
         {
+			System.out.println("1");
 	        ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());
+			System.out.println("2");
 	        
 	        if(contentVO.getRepositoryId() != null && !hasAccessTo("Repository.Read", "" + contentVO.getRepositoryId()))
 	        {
@@ -190,10 +240,18 @@ public class ViewContentAction extends InfoGlueAbstractAction
         }
         catch(ConstraintException ce)
         {
+			System.out.println("3");
+    		repairBrokenProtection();
             throw ce;
         }
         catch(Exception e) 
         {
+			System.out.println("4");
+            e.printStackTrace();
+        }
+        catch(Throwable e) 
+        {
+			System.out.println("5");
             e.printStackTrace();
         }
         

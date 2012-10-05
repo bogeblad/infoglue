@@ -13,8 +13,8 @@
 
 	<script type="text/javascript" src="script/v3/infoglue.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
 
 	<script type="text/javascript" src="/infoglueDeliverWorking/script/ajaxComponentEditor.js"></script>

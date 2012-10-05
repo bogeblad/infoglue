@@ -1,9 +1,9 @@
 #define( $headerMarkup )
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
-	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/adminEmbla.css" />
+	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 
 	<script type="text/javascript" src="script/embla/dragProxy.js"></script>
 	<script type="text/javascript" src="script/embla/admin.js"></script>
@@ -98,11 +98,11 @@
 				maxWidth: 460,
 				minWidth: 250, 
 				start: function (event, ui) {
-					 $("#toolsColumn").append("<div id=\"resizeFramesIsolator\" style=\"position: fixed; z-index: 1000; left: 0pt; top: 0pt; right: 0pt; bottom: 0pt;\"></div>");
+					 $("#menuOverlayDiv").show();
 				},
 				stop: function(event, ui) { 
-					$("#resizeFramesIsolator").remove();
 					resize(false); 
+					$("#menuOverlayDiv").hide();
 				} 
 			});
 			
@@ -175,6 +175,10 @@
 			#else
 				openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=$rootSiteNode.id&repositoryId=$repositoryId");
 			#end
+			
+			$("#menuOverlayDiv").mouseout(function () {
+				$("#structureToolDiv").mouseup();
+			});
 		});
 	
 		function changeRepository(selectBox)
@@ -194,13 +198,13 @@
 				//$("#treeIframe").height($("#treeIframe").height() - 120);
 				$("#paletteDiv").height(120 + $("#componentPaletteHeader").height());
 				$("#paletteIframe").height(120);
-				$("#componentPaletteHeader img").attr("src", "images/v3/downArrows.png");
+				$("#componentPaletteHeader img").attr("src", "css/images/v3/downArrows.png");
 			}
 			else
 			{
 				$("#paletteDiv").height($("#componentPaletteHeader").height());
 				$("#paletteIframe").height(0);
-				$("#componentPaletteHeader img").attr("src", "images/v3/upArrows.png");
+				$("#componentPaletteHeader img").attr("src", "css/images/v3/upArrows.png");
 			}
 			resize(false);
 		}
@@ -230,6 +234,20 @@
 			resize(false); 
 		}
 
+		function toggleToolColumn()
+		{
+			var currentWidth = $('#toolsColumn').width(); 
+			if (currentWidth < 320)
+			{
+				$('#toolsColumn').width(460);
+			}
+			else
+			{
+				$('#toolsColumn').width(250);
+			}
+			resize(); 
+		}
+
 		function restoreToolColumn()
 		{
 			//$('#work').width($('#work').width() - getOldWidth() - 20);
@@ -244,7 +262,7 @@
  
 #beginLightCommonToolV3Impl("tool.common.adminTool.header" "" "" false true true $headerMarkup false "")
 
-<div style="float: left; width: 100%; height: 100%; overflow: hidden;">
+<div id="structureToolDiv" style="float: left; width: 100%; height: 100%; overflow: hidden;">
 	<div id="menutoolbar" class="$toolbarVariant">
 		<div id="menutoolbarLeft" style="width: 100%;">
 		</div>
@@ -253,7 +271,7 @@
 	
 	<div id="toolsColumn">
 		<div id="minimizedBar" style="display: none; width: 100%; float: left;">
-	    	<img src="images/v3/doubleForwardArrows.png" onclick="restoreToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+	    	<img src="css/images/v3/doubleForwardArrows.png" onclick="restoreToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
 		</div>
 		
 		<div class="onlyExpanded" id="repositoryChoiceDiv">
@@ -266,8 +284,9 @@
 	    		<option value="$repository.id" #if($repository.id == $repositoryId)selected="selected"#end>$repository.name</option>
 	    		#end
 	    	</select>
-	    	<img src="images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
-	    	<img src="images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+	    	<img src="css/images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
+	    	<img src="css/images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+	    	<img src="css/images/v3/update_img.gif" onclick="toggleToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="toggle"/>
 	    </div>
 	
 		<iframe id="treeIframe" name="treeIframe" src="ViewStructureToolMenu!V3.action?repositoryId=$treeRepositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
@@ -275,7 +294,7 @@
 		<div class="onlyExpanded" id="paletteDiv">
 	    	<div id="componentPaletteHeader">
 	    		<h3>$ui.getString('tool.common.favouriteComponentsHeader')</h3>
-	    		<a href="javascript:toggleFavourites();" style="float: right;"><img src="images/v3/downArrows.png" style="margin-top: 3px; margin-right: 2px;" width="16" height="16" border="0" alt="Close area"/></a>
+	    		<a href="javascript:toggleFavourites();" style="float: right;"><img src="css/images/v3/downArrows.png" style="margin-top: 3px; margin-right: 2px;" width="16" height="16" border="0" alt="Close area"/></a>
 	        </div>
 			<iframe id="paletteIframe" name="paletteIframe" src="ViewComponentPalette.action" width="100%" height="120" frameborder="0" allowtransparency="true"></iframe>
 	    </div>
@@ -286,11 +305,9 @@
 	</div>
 </div>
 
-<div id="contextMenuDiv">
-</div>
+<div id="contextMenuDiv"></div>
 
-<div id="menuOverlayDiv" style="display: none; position: absolute; z-index: 100;">
-</div>
+<div id="menuOverlayDiv"></div>
 
 </body>
 </html>

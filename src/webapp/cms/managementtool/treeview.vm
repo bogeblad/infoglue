@@ -50,7 +50,7 @@
 						id="icon${n.getId()}" 
 						myLabel="${n.getTitle()}" 
 						class="tree-icon" 
-						src="images/tree/contentRoot.gif">
+						src="css/images/tree/contentRoot.gif">
 						
 			#else
 			
@@ -111,7 +111,7 @@
 			## Fix treelines
 			#foreach ($s in $n.getRowList())
 				#if ($velocityCount != $n.getRowList().size())		
-					<img src='images/tree/xp/$preImg$s$postImg'/>
+					<img src='css/images/tree/xp/$preImg$s$postImg'/>
 				#else
 					#set($last = $s)
 				#end
@@ -119,9 +119,9 @@
 			
 			## Fix openclose image
 			#if ($n.hasChildren())
-				<a class="branch" target="_self" href="?exp=$exp$addremove$n.getThisKey()$myTreeArgs"><img src="images/tree/xp/f$preOCImg$last$postImg" border=0 /></a>
+				<a class="branch" target="_self" href="?exp=$exp$addremove$n.getThisKey()$myTreeArgs"><img src="css/images/tree/xp/f$preOCImg$last$postImg" border=0 /></a>
 			#else
-				<img src='images/tree/xp/$preImg$last$postImg'/>
+				<img src='css/images/tree/xp/$preImg$last$postImg'/>
 			#end
 		#end
 
@@ -153,7 +153,7 @@
 			## Fix treelines
 			#foreach ($s in $n.getRowList())
 				#if ($velocityCount != $n.getRowList().size())		
-					<img width=16 height=16 src='images/tree/$preImg$s$postImg'>
+					<img width=16 height=16 src='css/images/tree/$preImg$s$postImg'>
 				#else
 					#set($last = $s)
 				#end
@@ -161,9 +161,9 @@
 			
 			## Fix openclose image
 			#if ($n.hasChildren())
-				<a target="_self" href="?exp=$exp$addremove$n.getThisKey()$myTreeArgs"><img width=16 height=16 src="images/tree/f$preOCImg$last$postImg" border=0></a>
+				<a target="_self" href="?exp=$exp$addremove$n.getThisKey()$myTreeArgs"><img width=16 height=16 src="css/images/tree/f$preOCImg$last$postImg" border=0></a>
 			#else
-				<img width=16 height=16 src='images/tree/$preImg$last$postImg'>
+				<img width=16 height=16 src='css/images/tree/$preImg$last$postImg'>
 			#end
 		#end
 
@@ -189,15 +189,15 @@
 		#if (!$n.isRoot())		
 			## Fix treelines
 			#foreach ($s in $n.getRowList())
-				<img width=16 height=16 src='images/tree/$preImg$s$postImg'>
+				<img width=16 height=16 src='css/images/tree/$preImg$s$postImg'>
 			#end
 			
 			## Fix openclose image
 			#if ($n.isContainer())
 				#if ($n.hasChildren())
-					<a target="_self" href="?exp=$exp$addremove$n.getThisKey()$myTreeArgs"><img width=16 height=16 src="images/tree/folder$preOCImg$postImg" border=0></a>
+					<a target="_self" href="?exp=$exp$addremove$n.getThisKey()$myTreeArgs"><img width=16 height=16 src="css/images/tree/folder$preOCImg$postImg" border=0></a>
 				#else
-					<img width=16 height=16 src='images/tree/emptyfolder.gif'>
+					<img width=16 height=16 src='css/images/tree/emptyfolder.gif'>
 				#end
 			#end
 		#end

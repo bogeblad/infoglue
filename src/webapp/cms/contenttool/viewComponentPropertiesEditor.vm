@@ -2,8 +2,8 @@
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
 	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
 
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
 	<script type="text/javascript" src="script/vector.js"></script>
 	<script type="text/javascript" src="script/qualifyer.js"></script>
@@ -186,7 +186,7 @@
 			if(!skipSeparator)
 			{
 				var separator = document.createElement("img");
-				separator.setAttribute("src", "images/trans.gif");
+				separator.setAttribute("src", "css/images/trans.gif");
 				separator.setAttribute("border", "0");
 				separator.setAttribute("width", "5");
 				separator.setAttribute("height", "1");
@@ -216,9 +216,9 @@
 				var actionTD = document.createElement("TD");
 				actionTD.setAttribute("width", "50");
 				actionTD.setAttribute("valign", "top");
-				addImageLink(actionTD, "javascript:movePropertyOptionDown(" + i + ");", "images/downArrow.gif");
-				addImageLink(actionTD, "javascript:movePropertyOptionUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deletePropertyOption(" + i + ");", "images/delete.gif");
+				addImageLink(actionTD, "javascript:movePropertyOptionDown(" + i + ");", "css/images/downArrow.gif");
+				addImageLink(actionTD, "javascript:movePropertyOptionUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deletePropertyOption(" + i + ");", "css/images/delete.gif");
 			
 				myTR.appendChild(actionTD);
 			
@@ -226,7 +226,7 @@
 				addTD(myTR, componentPropertyOptionDefinition.value)
 
 				var actionTD = document.createElement("TD");
-				addImageLink(actionTD, "javascript:showOption(" + itemIndex + "," + i + ");", "images/properties.gif");
+				addImageLink(actionTD, "javascript:showOption(" + itemIndex + "," + i + ");", "css/images/properties.gif");
 				myTR.appendChild(actionTD);
 				mytablebody.appendChild(myTR);
 			}
@@ -507,9 +507,9 @@
 				var actionTD = document.createElement("TD");
 				actionTD.setAttribute("width", "50");
 				actionTD.setAttribute("valign", "top");
-				addImageLink(actionTD, "javascript:movePropertyDown(" + i + ");", "images/downArrow.gif");
-				addImageLink(actionTD, "javascript:movePropertyUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deleteProperty(" + i + ");", "images/v3/cross.png");
+				addImageLink(actionTD, "javascript:movePropertyDown(" + i + ");", "css/images/downArrow.gif");
+				addImageLink(actionTD, "javascript:movePropertyUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteProperty(" + i + ");", "css/images/v3/cross.png");
 				myTR.appendChild(actionTD);
 				
 				addTD(myTR, componentPropertyDefinition.name)
@@ -525,8 +525,8 @@
 				actionTD.setAttribute("align", "right");
 				actionTD.setAttribute("valign", "top");
 				actionTD.setAttribute("style", "white-space: nowrap");
-				addImageLink(actionTD, "javascript:showProperties(" + i + ");", "images/v3/metadataIcon.gif");
-				addImageLinkImpl(actionTD, "javascript:showAccessRights('${contentId}_" + componentPropertyDefinition.name + "');", "images/v3/file_locked.png", true);
+				addImageLink(actionTD, "javascript:showProperties(" + i + ");", "css/images/v3/metadataIcon.gif");
+				addImageLinkImpl(actionTD, "javascript:showAccessRights('${contentId}_" + componentPropertyDefinition.name + "');", "css/images/v3/file_locked.png", true);
 				myTR.appendChild(actionTD);
 
 				mytablebody.appendChild(myTR);
@@ -535,7 +535,7 @@
 	        mytable.appendChild(mytablebody);
 	        parent.appendChild(mytable);
 	        
-	   		$("#properties").prepend("<thead style='border-bottom: 1px solid black; background-color: #ECECEC; font-weight: bold;'><tr><td>&nbsp;</td><td>$ui.getString("tool.contenttool.componentProperties.nameLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.displayNameLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.typeLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.entityLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.multipleLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.assetBindingLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.contentTypesLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.descriptionLabel")</td><td align='right'><img src='images/v3/file_locked.png' onclick='showMultiAccessRights(propertiesString);'/></td></tr></thead>");
+	   		$("#properties").prepend("<thead style='border-bottom: 1px solid black; background-color: #ECECEC; font-weight: bold;'><tr><td>&nbsp;</td><td>$ui.getString("tool.contenttool.componentProperties.nameLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.displayNameLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.typeLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.entityLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.multipleLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.assetBindingLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.contentTypesLabel")</td><td>$ui.getString("tool.contenttool.componentProperties.descriptionLabel")</td><td align='right'><img src='css/images/v3/file_locked.png' onclick='showMultiAccessRights(propertiesString);'/></td></tr></thead>");
 	        
 		}
 
@@ -568,16 +568,16 @@
 				var actionTD = document.createElement("TD");
 				actionTD.setAttribute("width", "50");
 				actionTD.setAttribute("valign", "top");
-				addImageLink(actionTD, "javascript:movePropertyOptionDown(" + i + ");", "images/downArrow.gif");
-				addImageLink(actionTD, "javascript:movePropertyOptionUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deletePropertyOption(" + i + ");", "images/delete.gif");
+				addImageLink(actionTD, "javascript:movePropertyOptionDown(" + i + ");", "css/images/downArrow.gif");
+				addImageLink(actionTD, "javascript:movePropertyOptionUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deletePropertyOption(" + i + ");", "css/images/delete.gif");
 				myTR.appendChild(actionTD);
 				
 				addTD(myTR, componentPropertyOptionDefinition.name)
 				addTD(myTR, componentPropertyOptionDefinition.value)
 
 				var actionTD = document.createElement("TD");
-				addImageLink(actionTD, "javascript:showOption(" + itemIndex + "," + i + ");", "images/properties.gif");
+				addImageLink(actionTD, "javascript:showOption(" + itemIndex + "," + i + ");", "css/images/properties.gif");
 				myTR.appendChild(actionTD);
 
 				mytablebody.appendChild(myTR);
@@ -1106,7 +1106,7 @@
 							</td>	
 						</tr>
 						</tr>
-					  		<td><img src="images/trans.gif" height="5" width="1"/></td>	
+					  		<td><img src="css/images/trans.gif" height="5" width="1"/></td>	
 						</tr>
 						</tr>
 					  		<td><a href="javascript:addOption();">Add new option</a></td>	

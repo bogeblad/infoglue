@@ -1,9 +1,9 @@
 #define($headerMarkup)
 
 	<style type="text/css">
-		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
 	</style>
-	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" charset="utf-8">
 	<!--
 		$(document).ready(function() {
@@ -20,54 +20,54 @@
 			background-position: 8px 6px;
 		}
 		.archive {
-			background-image: url('images/v3/archiveIcon.png');
+			background-image: url('css/images/v3/archiveIcon.png');
 			text-indent: 20px;
 			white-space: nowrap;
 		}
 		
 		.validation {
-			background-image: url('images/v3/validationIcon.png');
+			background-image: url('css/images/v3/validationIcon.png');
 			text-indent: 20px;
 			white-space: nowrap;
 		}
 		
 		.performance {
-			background-image: url('images/v3/performanceIcon.png');
+			background-image: url('css/images/v3/performanceIcon.png');
 			text-indent: 20px;
 			white-space: nowrap;
 		}
 		
 		.logviewer {
-			background-image: url('images/v3/logviewerIcon.png');
+			background-image: url('css/images/v3/logviewerIcon.png');
 			text-indent: 20px;
 			white-space: nowrap;
 		}
 		
 		.inconsistencies {
-			background-image: url('images/v3/inconsistenciesIcon.png');
+			background-image: url('css/images/v3/inconsistenciesIcon.png');
 			text-indent: 20px;
 			white-space: nowrap;
 		}
 		
 		.deployment {
-			background-image: url('images/v3/deploymentIcon.png');
+			background-image: url('css/images/v3/deploymentIcon.png');
 			text-indent: 20px;
 			white-space: nowrap;
 		}
 		
 		.deploymentVC {
-			background-image: url('images/v3/deploymentVCIcon.png');
+			background-image: url('css/images/v3/deploymentVCIcon.png');
 			text-indent: 20px;
 			white-space: nowrap;
 		}
 		
 		.password {
-			background-image: url('images/v3/passwordIcon.png');
+			background-image: url('css/images/v3/passwordIcon.png');
 			text-indent: 20px;
 		}
 		
 		.lucene {
-			background-image: url('images/v3/luceneIcon.png');
+			background-image: url('css/images/v3/luceneIcon.png');
 			text-indent: 20px;
 		}
 	</style>

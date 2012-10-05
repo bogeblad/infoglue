@@ -24,7 +24,7 @@
 			## Fix treelines
 			#foreach ($s in $n.getRowList())
 				#if ($velocityCount != $n.getRowList().size())		
-					<img src='images/tree/xp/$preImg$s$postImg' alt=''/>
+					<img src='css/images/tree/xp/$preImg$s$postImg' alt=''/>
 				#else
 					#set($last = $s)
 				#end
@@ -32,9 +32,9 @@
 			
 			## Fix openclose image
 			#if ($n.hasChildren())
-				<a class="branch" target="_self" href="?exp=$exp$addremove$n.getThisKey()$myTreeArgs"><img src="images/tree/xp/f$preOCImg$last$postImg" border='0'  alt=''/></a>
+				<a class="branch" target="_self" href="?exp=$exp$addremove$n.getThisKey()$myTreeArgs"><img src="css/images/tree/xp/f$preOCImg$last$postImg" border='0'  alt=''/></a>
 			#else
-				<img src='images/tree/xp/$preImg$last$postImg' alt=''/>
+				<img src='css/images/tree/xp/$preImg$last$postImg' alt=''/>
 			#end
 		#end
 
@@ -54,7 +54,8 @@
 	<title>Menus</title>
 
 	<link rel="stylesheet" type="text/css" href="css/treeview.css" /> 
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" media="all" />
+	<link rel="stylesheet" type="text/css" href="css/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" media="all" />
 
 	<script type="text/javascript">
 	<!-- 
@@ -81,7 +82,7 @@
     	## drawItem procedure (called from tree renderer for every item in the list, [se #parse below] )
     	## this is a local macro
     	#set($canDrag = ' ondragstart="startDrag();" ondragend="endDrag();"')
-    	#set($imgPath = "images/tree/xp/")	
+    	#set($imgPath = "css/images/tree/xp/")	
    		#set($rootTitle = $ui.getString("tool.publishingtool.allRepositories.label"))
     	
     	#macro(drawItem $n)
@@ -91,7 +92,7 @@
     			#if ($n.isContainer())
     				#if ($n.isRoot())
     					#set($nodeTitle="$rootTitle")
-    					<img class="tree-icon" src="images/tree/publishingRoot.gif" alt=""/>
+    					<img class="tree-icon" src="css/images/tree/publishingRoot.gif" alt=""/>
     				#else
     					#set($nodeTitle="${n.getTitle()}")				
     					<img class="tree-icon" src="${imgPath}emptyfolder$preOCImg$postImg" alt=""/>

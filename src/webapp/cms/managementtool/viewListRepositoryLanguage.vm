@@ -1,9 +1,9 @@
 #define($headerMarkup)
 
 	<style type="text/css">
-		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
 	</style>
-	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 
 	<script type="text/javascript">
 	<!-- 		
@@ -66,15 +66,15 @@
 							#end
 						
 							#if($velocityCount == 1)
-						   		#set($moveUp = "<img src='images/trans.gif' width='10' border='0'>")
+						   		#set($moveUp = "<img src='css/images/trans.gif' width='10' border='0'>")
 						   	#else
-							 	#set ($moveUp = "<a href='RepositoryLanguage!moveUp.action?repositoryId=$repository.repositoryId&repositoryLanguageId=$repositoryLanguageVO.repositoryLanguageId&igSecurityCode=$securityCode'><img src='images/upArrow.gif' border='0'></a>")
+							 	#set ($moveUp = "<a href='RepositoryLanguage!moveUp.action?repositoryId=$repository.repositoryId&repositoryLanguageId=$repositoryLanguageVO.repositoryLanguageId&igSecurityCode=$securityCode'><img src='css/images/upArrow.gif' border='0'></a>")
 							#end
 							
 							#if($velocityCount == $availableLanguages.size())
-						   		#set($moveDown = "<img src='images/trans.gif' width='10' border='0'>")
+						   		#set($moveDown = "<img src='css/images/trans.gif' width='10' border='0'>")
 						   	#else
-								#set ($moveDown = "<a href='RepositoryLanguage!moveDown.action?repositoryId=$repository.repositoryId&repositoryLanguageId=$repositoryLanguageVO.repositoryLanguageId&igSecurityCode=$securityCode'><img src='images/downArrow.gif' border='0'></a>")
+								#set ($moveDown = "<a href='RepositoryLanguage!moveDown.action?repositoryId=$repository.repositoryId&repositoryLanguageId=$repositoryLanguageVO.repositoryLanguageId&igSecurityCode=$securityCode'><img src='css/images/downArrow.gif' border='0'></a>")
 							#end
 	
 							<tr>

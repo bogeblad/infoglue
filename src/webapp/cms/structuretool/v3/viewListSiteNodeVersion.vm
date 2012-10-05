@@ -157,7 +157,7 @@
 				</tr>		
 				#if($!this.allowOverrideModifyer != "false")
 				<tr>
-					<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+					<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 				</tr>
 				<tr>
 					<td colspan="3">#yesNoCheckBox("SiteNodeVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
@@ -167,7 +167,7 @@
 				#if($allowPublicationEventFilter == "true")
 					#if($infoGluePrincipal.groups.size() > 1)
 						<tr>
-							<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+							<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 						</tr>
 						<tr>
 							<td colspan="3">
@@ -234,7 +234,7 @@
 			#set($displayName = "$snv.versionModifier")
 		#end
 				
-		#set( $row = ["<img src='images/v3/pageIcon.gif'> $this.getSiteNodePath($snv.siteNodeId) ($snv.getId())", $ui.getString("tool.common.publishing.typePageLabel"), "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+		#set( $row = ["<img src='css/images/v3/pageIcon.gif'> $this.getSiteNodePath($snv.siteNodeId) ($snv.getId())", $ui.getString("tool.common.publishing.typePageLabel"), "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
 		#set($cnt = $cnt + 1)
 		
 		#lvAddRowV3($row $cnt $snv.id false)
@@ -251,7 +251,7 @@
 			#set($displayName = "$cv.versionModifier")
 		#end
 		
-		#set( $row = ["<img src='images/v3/contentIcon.gif'> $this.getContentPath($cv.contentId).replaceAll(' ', '&nbsp;') ($cv.getId())", $ui.getString("tool.common.publishing.typeContentLabel"), "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+		#set( $row = ["<img src='css/images/v3/contentIcon.gif'> $this.getContentPath($cv.contentId).replaceAll(' ', '&nbsp;') ($cv.getId())", $ui.getString("tool.common.publishing.typeContentLabel"), "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
 		#set($cnt = $cnt + 1)
 		
 		#lvAddRowV3($row $cnt $cv.id false)

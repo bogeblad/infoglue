@@ -8,7 +8,7 @@
 		<font face="Verdana" size="-1" color="#006699"><strong>System is working</strong></font>
 		<hr width="80%" SIZE="2">
 	</div>
-	<div style="width: 100%; text-align: center;"><img alt="" src="images/workinganim.gif" /></div>
+	<div style="width: 100%; text-align: center;"><img alt="" src="css/images/workinganim.gif" /></div>
 </div>
 #end
 
@@ -17,13 +17,9 @@
 ##*****************************************************
 
 #macro(includeLatestJQuery)
-	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
-	<!--
-	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
-	-->
-	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.8.7.custom/css/smoothness/jquery-ui-1.8.7.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.8.7.custom/js/jquery-ui-1.8.7.custom.min.js"></script>
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+	<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 #end
 
 ##*****************************************************
@@ -74,9 +70,9 @@
 	<script type="text/javascript" src="script/yui/build/container/container_core-min.js"></script>
 	<script type="text/javascript" src="script/yui/build/menu/menu-min.js"></script>
 	
-	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 	
 	#if($hasDataTable)
 		<link rel="stylesheet" type="text/css" href="script/yui/build/fonts/fonts-min.css" />
@@ -88,8 +84,8 @@
 
 	<script type="text/javascript" src="script/v3/infoglue.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
 		
 	<style type="text/css">
@@ -209,7 +205,7 @@
 		}
 		
 		.yui-skin-sam .yui-dt th {
-			background: #D8D8DA url(images/v3/tableHeaderBackground.gif) repeat-x 0 0;
+			background: #D8D8DA url(css/images/v3/tableHeaderBackground.gif) repeat-x 0 0;
 			font-family: arial;
 			font-size: 8pt;
 			margin:0;
@@ -409,18 +405,21 @@
 <head>
 	<title>$ui.getString($titleKey)</title>
 	
-	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 	
 	<script type="text/javascript" src="script/v3/infoglue.js"></script>
 	<script type="text/javascript" src="script/v3/infoglueWidgets.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglueWidgets.css" /> 
-	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/infoglueWidgets.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen" />
 			
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/work.css" />
+	<link rel="stylesheet" type="text/css" href="css/work.css" />
+	<link rel="stylesheet" type="text/css" href="css/main.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
+	
 	
 	<script type="text/javascript">
 	<!--
@@ -551,19 +550,18 @@
 <head>
 	<title>$ui.getString($titleKey)</title>
 	
-	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 	
 	<script type="text/javascript" src="script/embla/infoglue.js"></script>
 	<script type="text/javascript" src="script/embla/infoglueWidgets.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="css/embla/main.css" media="screen"/>
-	<link rel="stylesheet" type="text/css" href="css/embla/widgets.css" media="screen"/> 
-	<link rel="stylesheet" type="text/css" href="css/embla/tabs.css" media="screen" />
-	
-	##<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
-	
+	<link rel="stylesheet" type="text/css" href="css/main.css" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="css/widgets.css" media="screen"/> 
+	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" media="screen"/>
+
 	<script type="text/javascript">
 	<!--
 		try { document.execCommand('BackgroundImageCache', false, true); } catch(e) {}
@@ -770,9 +768,9 @@
 	<script type="text/javascript" src="applications/jscalendar/calendar-setup.js"></script>
 	
 	#if($this.defaultGUI != "classic")
-		<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-		<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
-		<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+		<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+		<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+		<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 		
 		<script type="text/javascript" src="script/v3/infoglue.js"></script>
 		<script type="text/javascript" src="script/v3/infoglueWidgets.js"></script>
@@ -786,11 +784,13 @@
 		-->
 		</script>
 	
-		<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-		<link rel="stylesheet" type="text/css" href="css/v3/infoglueWidgets.css" /> 
-		<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+		<link rel="stylesheet" type="text/css" href="css/infoglueWidgets.css" /> 
+		<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen" />
 		
-		<link rel="stylesheet" type="text/css" href="css/skins/${theme}/work.css" />
+		<link rel="stylesheet" type="text/css" href="css/work.css" />
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 	#end
 
 	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
@@ -832,7 +832,7 @@
 	<script type="text/javascript" src="script/yui/build/container/container_core-min.js"></script>
 	<script type="text/javascript" src="script/yui/build/menu/menu-min.js"></script>
 
-	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
 	
 	#if($hasDataTable)
 		<link rel="stylesheet" type="text/css" href="script/yui/build/fonts/fonts-min.css" />
@@ -842,7 +842,7 @@
 		<script type="text/javascript" src="script/yui/build/datatable/datatable-beta-min.js"></script>
 	#end
 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
 	
 		
@@ -913,7 +913,7 @@
 		}
 		
 		.yui-skin-sam .yui-dt th {
-			background: #D8D8DA url(images/v3/tableHeaderBackground.gif) repeat-x 0 0;
+			background: #D8D8DA url(css/images/v3/tableHeaderBackground.gif) repeat-x 0 0;
 			font-family: arial;
 			font-size: 8pt;
 			margin:0;
@@ -1063,8 +1063,7 @@
 	<script type="text/javascript" src="script/calendar1.js"></script>
 	<script type="text/javascript" src="script/editor.js"></script>
 
-	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-igcommon15.min.js"></script>
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="applications/jscalendar/skins/aqua/theme.css" />
 	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
@@ -1649,7 +1648,7 @@
   #end
   <br/>
   <textarea class="$className" wrap="virtual" id="$fieldName" name="$fieldName" rows="$rows" cols="$cols">$!fieldValue</textarea>
-  <a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="images/delete.gif" border="0"/></a>
+  <a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="css/images/delete.gif" border="0"/></a>
 #end
 
 #macro(editPropertyTextAreaCSS $fieldNameKey $fieldName $fieldValue $cols $rows $className $serverNodeId $actualCurrentValue)
@@ -1660,7 +1659,7 @@
   	<div class="row">
 		<label for="$fieldName">$fieldNameLabel</label>
 	  	<textarea class="$className" wrap="virtual" id="$fieldName" name="$fieldName" rows="$rows" cols="$cols">$!fieldValue</textarea>
-	  	<a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="images/delete.gif" border="0"/></a>
+	  	<a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="css/images/delete.gif" border="0"/></a>
 	  	<a href="#" onclick="$('#actualCurrentValue p').html($('#currentActualValue$fieldName').html()); $('#actualCurrentValue').show('slow');">Show current value</a>
 	  	<p id="currentActualValue$fieldName" style="display:none;"><textarea>$actualCurrentValue</textarea></p>
 	</div>
@@ -1752,7 +1751,7 @@
     #end
   #end
   <br/>
-  <input type="text" $readOnly class="$className" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>&nbsp;<a name="calendar_$fieldName" id="calendar_$fieldName"><img src="images/calendar.gif" border="0" alt="choose date"/></a>
+  <input type="text" $readOnly class="$className" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>&nbsp;<a name="calendar_$fieldName" id="calendar_$fieldName"><img src="css/images/calendar.gif" border="0" alt="choose date"/></a>
   <script type="text/javascript">
     Calendar.setup({
 	        inputField     :    "$fieldName",     		// id of the input field
@@ -1769,7 +1768,7 @@
 
 #macro(editDateFieldCSS $fieldNameKey $fieldName $fieldValue $length $className $url $readOnly)
   <label for="$fieldName">$ui.getString("${fieldNameKey}")</label>
-  <input type="text" $readOnly class="$className" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>&nbsp;<a name="calendar_$fieldName" id="calendar_$fieldName"><img src="images/calendar.gif" border="0" alt="choose date"/></a>
+  <input type="text" $readOnly class="$className" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>&nbsp;<a name="calendar_$fieldName" id="calendar_$fieldName"><img src="css/images/calendar.gif" border="0" alt="choose date"/></a>
   <script type="text/javascript">
     Calendar.setup({
 	        inputField     :    "$fieldName",     		// id of the input field
@@ -2168,7 +2167,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 			#set($parentCount = $velocityCount)
 			#if($button.subButtons.size() == 0)
 				#if($parentCount > 1)
-					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+					<img class="divider" src="css/images/trans.gif" width="2" height="20"/>
 				#end
 				<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
 
@@ -2238,7 +2237,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 				</script>
 			#else
 				#if($parentCount > 1)
-					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+					<img class="divider" src="css/images/trans.gif" width="2" height="20"/>
 				#end
 				<div id="buttons$parentCount" style="height: 26px; overflow: visible; display: block; float: left; border: 0px solid red;">
 					<div id="initialButton">
@@ -2435,7 +2434,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 			#set($parentCount = $velocityCount)
 			#if($button.subButtons.size() == 0)
 				#if($parentCount > 1)
-					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+					<img class="divider" src="css/images/trans.gif" width="2" height="20"/>
 				#end
 				<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
 
@@ -2505,7 +2504,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 				</script>
 			#else
 				#if($parentCount > 1)
-					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+					<img class="divider" src="css/images/trans.gif" width="2" height="20"/>
 				#end
 					<div id="initialButton">
 						<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
@@ -2698,12 +2697,12 @@ $ui.getString("entity.${fieldNameKey}.label")
 	</td>
 </tr>
 <tr>
-	<td><img src="images/trans.gif" width="10" height="1" /></td>
+	<td><img src="css/images/trans.gif" width="10" height="1" /></td>
 	<td align="left">
 		<small><font color="#666666" face="Verdana">$ui.getString("tool.common.treestyleLabel"): <a style="color: #666666" target="header" href="View${tooltarget}ToolHeader.action?tree=applet&repositoryId=${repositoryId}">$ui.getString("tool.common.treestyleApplet")</a> | <a style="color: #666666" target="header" href="View${tooltarget}ToolHeader.action?tree=html&repositoryId=${repositoryId}">$ui.getString("tool.common.treestyleHTML")</a></font></small>
 		<br/><br/>
 	</td>
-	<td><img src="images/trans.gif" width="10" height="1"/></td>
+	<td><img src="css/images/trans.gif" width="10" height="1"/></td>
 </tr>
 </table>
 #end
@@ -2817,7 +2816,7 @@ $ui.getString("entity.${fieldNameKey}.label")
   #end
   <br/>
   <input type="text" class="text" name="$fieldName" value="$!fieldValue" size="$length"/>
-  <a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="images/delete.gif" border="0"/></a>
+  <a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="css/images/delete.gif" border="0"/></a>
 #end
 
 #macro(editPropertyField $fieldNameKey $fieldName $fieldValue $length $serverNodeId)
@@ -2837,7 +2836,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 	<div class="row">
 		<label for="$fieldName">$fieldNameLabel</label>
   	  	<input type="text" class="text" id="$fieldName" name="$fieldName" value="$!fieldValue" size="$length"/>
-  	  	<a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="images/delete.gif" border="0"/></a> ($currentActualValue)
+  	  	<a href="javascript:deleteProperty($!serverNodeId, '$fieldName');"><img src="css/images/delete.gif" border="0"/></a> ($currentActualValue)
 	</div>
 #end
 
@@ -2976,12 +2975,12 @@ $ui.getString("entity.${fieldNameKey}.label")
         	</div>
             <div class="actionDiv">
             	<p style="afloat: left; margin-top: 36px;">
-           			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
-           			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
+           			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
+           			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
            		</p>
         		<p style="afloat: left; margin-top: 5px;">
-        			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
-        			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
+        			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
+        			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
         		</p>
         	</div>
         	<div class="optionsDiv">
@@ -3280,7 +3279,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 		#end
 		
 		<tr>
-			<td colspan="3"><a id="${attribute.name}Anchor" name="${attribute.name}Anchor"/><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><a id="${attribute.name}Anchor" name="${attribute.name}Anchor"/><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3" class="$tdClass">
@@ -3294,7 +3293,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 				#elseif($attribute.inputType == "datefield")
                     <label for="$attribute.name">$attributeTitle ("$attribute.name") $attributeDescription
 					#printErrorV3("ContentVersion.$attribute.name" false)</label>
-					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="images/calendar.gif" border="0"/></a>
+					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="css/images/calendar.gif" border="0"/></a>
 					<script type="text/javascript">
 					<!--
 						Calendar.setup({
@@ -3405,7 +3404,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 								for (i=0;i<paths.length;i++)
 								{
 									var path = paths[i];
-									$("#${attribute.name}RelationTable").append('<tr><td valign="middle"><img src="images/tree/xp/item.png"></td><td valign="middle">' + path + '</td></tr>');
+									$("#${attribute.name}RelationTable").append('<tr><td valign="middle"><img src="css/images/tree/xp/item.png"></td><td valign="middle">' + path + '</td></tr>');
 								}
 								allowSave = true;
 							}
@@ -3423,7 +3422,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.path 
@@ -3467,7 +3466,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 								for (i=0;i<paths.length;i++)
 								{
 									var path = paths[i];
-									$("#${attribute.name}RelationTable").append('<tr><td valign="middle"><img src="images/tree/xp/item.png"></td><td valign="middle">' + path + '</td></tr>');
+									$("#${attribute.name}RelationTable").append('<tr><td valign="middle"><img src="css/images/tree/xp/item.png"></td><td valign="middle">' + path + '</td></tr>');
 								}
 								allowSave = true;
 							}
@@ -3485,7 +3484,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -3640,12 +3639,12 @@ $ui.getString("entity.${fieldNameKey}.label")
                 	</div>
                     <div class="actionDiv">
                     	<p style="afloat: left; margin-top: 36px;">
-                   			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
-                   			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                   			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                   			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
                    		</p>
                 		<p style="afloat: left; margin-top: 5px;">
-                			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
-                			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
+                			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
                 		</p>
                 	</div>
                 	<div class="optionsDiv">

@@ -81,8 +81,8 @@
 	    {
 	    	//alert("Tree was loaded - notifyIsLoaded");
 	    	treeIsLoaded = true;
-	    	document.getElementById('treeDiv').style.left = '2px';
-	    	document.getElementById('treeDiv').style.right = '2px';	   
+	    	//document.getElementById('treeDiv').style.left = '2px';
+	    	//document.getElementById('treeDiv').style.right = '2px';	   
 	    	setTimeout("expandTreeAfterLoaded();", 500); 	
 	    }
 	    
@@ -124,7 +124,8 @@
 
 		function resizeTreeIframe(height, width)
 		{
-			$(treeView()).height(height).width(width);
+			//$(treeView()).height(height).width(width);
+			$(treeView()).height(height);
 		}
 
 		$(document).ready(function(){
@@ -138,12 +139,14 @@
 	-->
 	</script>
 	
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 </head>
 
 <body class="generaltooledit">
 
-    <div id="treeDiv" style="position:absolute; margin-top: 10px; margin-left: 6px; top: 0px; bottom: 6px; float: left;">
+    <div id="treeDivContainer" class="onlyExpanded">
     	<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?repositoryId=${repositoryId}" width="220" height="950" align="bottom" allowtransparency="true"></iframe>
 	</div>
 	

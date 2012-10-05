@@ -93,13 +93,13 @@
 				<td class="smalllabel" colspan="2">Select which page to link to</td>
 			</tr>
 			<tr>
-				<td bgcolor="#FEF8D0" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td bgcolor="#FEF8D0" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 			</tr>
 			<tr>
-				<td bgcolor="#F0E1B4" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td bgcolor="#F0E1B4" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 			</tr>
 			<tr>
-				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 			</tr>		
 	
 			<tr>
@@ -113,7 +113,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 			</tr>	
 			<tr>
 				<td class="menu" colspan="2">   
@@ -142,13 +142,13 @@
 				<td class="smalllabel" colspan="2">Click on the content you wish to add to the link</td>
 			</tr>
 			<tr>
-				<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 			</tr>
 			<tr>
-				<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 			</tr>
 			<tr>
-				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 			</tr>		
 			<!-- 
 			HERE IS THE REPOSITORY-LIST FOR LATER 
@@ -164,7 +164,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 			</tr>		
 			<tr>
 				<td class="menu" colspan="2">  
@@ -200,13 +200,13 @@
 			<td class="smalllabel" colspan="2">Select page to link to and press save</td>
 		</tr>
 		<tr>
-			<td bgcolor="#FEF8D0" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#FEF8D0" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#F0E1B4" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#F0E1B4" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="30"></td>
+			<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="30"></td>
 		</tr>
 		<tr>
 			<td colspan="3">

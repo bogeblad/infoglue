@@ -101,10 +101,10 @@
 							#set($isOdd = true)
 						#end
 						
-						##set($imageUrl = "images/componentIcon.gif")
+						##set($imageUrl = "css/images/componentIcon.gif")
 						#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
 						#if(!$imageUrl || $imageUrl == "")
-							#set($imageUrl = "images/undefinedPageTemplate.jpg")
+							#set($imageUrl = "css/images/undefinedPageTemplate.jpg")
 						#end
 						<td id="digitalAsset$content.id" valign="bottom" align="center" class="bordered">
 							<a href="javascript:markPageTemplate(this, $content.id);"><img src="$imageUrl" border="0" style="width: 100px;"></a>&nbsp;<br>

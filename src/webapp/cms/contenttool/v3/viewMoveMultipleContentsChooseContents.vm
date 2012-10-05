@@ -138,7 +138,7 @@
 			parent.appendChild(link);
 
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", "5");
 			separator.setAttribute("height", "1");
@@ -170,9 +170,9 @@
 				var myTR = document.createElement("TR");
 				var actionTD = document.createElement("TD");
 				actionTD.setAttribute("width", "15");
-				//addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "images/downArrow.gif");
-				//addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "images/delete.gif");
+				//addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "css/images/downArrow.gif");
+				//addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "css/images/delete.gif");
 				var qualifyerTD = document.createElement("TD");
 				qualifyerTD.setAttribute("align", "left");
 				var qualifyerText = document.createTextNode(qualifyer.getPath());

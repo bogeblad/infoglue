@@ -1,6 +1,6 @@
 #define( $headerMarkup )
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" media="all" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" media="all" />
 	
 	<style type="text/css">
 	<!--
@@ -237,7 +237,7 @@
 							<div style="width: 300px; display: inline;" id="summaryDiv${deviatingContent.localVersion.id}"></div>
 						</td>
 						<td style="padding-right: 16px" width="20">
-							<a href="#" title="$ui.getString("tool.managementtool.deploymentQuick.compareLabel")" onclick="openInlineDiv('#TB_inline?inlineId=diffDiv${deviatingContent.localVersion.id}', 768, 980, false, false, '$ui.getString("tool.managementtool.deploymentQuick.diffViewHeaderLabel")');"><img src="images/diff.gif" alt="$ui.getString("tool.managementtool.deploymentQuick.compareLabel")" border="0"/></a>
+							<a href="#" title="$ui.getString("tool.managementtool.deploymentQuick.compareLabel")" onclick="openInlineDiv('#TB_inline?inlineId=diffDiv${deviatingContent.localVersion.id}', 768, 980, false, false, '$ui.getString("tool.managementtool.deploymentQuick.diffViewHeaderLabel")');"><img src="css/images/diff.gif" alt="$ui.getString("tool.managementtool.deploymentQuick.compareLabel")" border="0"/></a>
 
 							<textarea style="display: none;" id="text1$deviatingContent.localVersion.id">$value1Clean</textarea>
 							<textarea style="display: none;" id="text2$deviatingContent.localVersion.id">$value2Clean</textarea>

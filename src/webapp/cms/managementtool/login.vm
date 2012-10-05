@@ -80,45 +80,45 @@
 
 <table class="loginbox" align="center" border="1" cellspacing="5" cellpadding="0">
 <tr>
-	<td valign="top" class="borderedCell"><img src="images/login.jpg" width="130" height="237"></td>
+	<td valign="top" class="borderedCell"><img src="css/images/login.jpg" width="130" height="237"></td>
 	<td valign="top" class="borderedCell">
 		<table align="center" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td colspan="2" style="background-image: url('images/loginHeader.jpg'); background-repeat: no-repeat; width: 210px; height: 40px;"><img src="images/trans.gif" width="210" height="40"></td>
+			<td colspan="2" style="background-image: url('css/images/loginHeader.jpg'); background-repeat: no-repeat; width: 210px; height: 40px;"><img src="css/images/trans.gif" width="210" height="40"></td>
 		</tr>	
 		<tr>
-			<td colspan="2"><img src="images/trans.gif" width="1" height="30"></td>
+			<td colspan="2"><img src="css/images/trans.gif" width="1" height="30"></td>
 		</tr>	
 		<tr>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 			<td>Username</td>
 		</tr>	
 		<tr>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 			<td><input class="input" type="text" id="j_username" name="j_username" value=""></td>
 		</tr>	
 		<tr>
 			<td colspan="2">&nbsp;</td>
 		</tr>	
 		<tr>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 			<td>Password</td>
 		</tr>	
 		<tr>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 			<td><input class="input" type="password" name="j_password" value=""></td>
 		</tr>	
 		<tr>
 			<td colspan="2">&nbsp;</td>
 		</tr>	
 		<tr>	
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 			<td>
-		      	<input type="image" src="images/loginButtonGrey_en.gif">
+		      	<input type="image" src="css/images/loginButtonGrey_en.gif">
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2"><img src="images/trans.gif" width="1" height="10"></td>
+			<td colspan="2"><img src="css/images/trans.gif" width="1" height="10"></td>
 		</tr>	
 		</table>
 	</td>

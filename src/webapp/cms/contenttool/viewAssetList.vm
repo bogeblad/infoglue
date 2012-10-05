@@ -133,7 +133,7 @@ function initSub()
 		<div class="group">
 			<div class="header">$digitalAssetCol.contentName   
 			#if($digitalAssetCol.locked)
-				<img src="images/locked.gif" title="This content is published. Create a working copy to attach new files.">
+				<img src="css/images/locked.gif" title="This content is published. Create a working copy to attach new files.">
 			#end
 			($digitalAssetCol.assets.size())
 			#if($showLeafs)

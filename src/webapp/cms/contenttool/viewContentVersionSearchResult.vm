@@ -296,7 +296,7 @@
 	</td>	
 </tr>
 <tr>
-	<td colspan="2"><img src="images/trans.gif" height="10" width="1"></td>
+	<td colspan="2"><img src="css/images/trans.gif" height="10" width="1"></td>
 </tr>
 <tr>
 	<input type="hidden" name="contentVersionId" value="">

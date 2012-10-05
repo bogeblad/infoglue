@@ -227,7 +227,7 @@
 	<td colspan="7">	
 		<p>
 		#editTextField3($ui.getString("tool.contenttool.searchString.label") "tool.contenttool.searchString.label" "searchString" $searchString "30" "normaltextfield") 
-		<input type="image" src="images/okButton_se.gif" style="width: 31px; height: 19px;" />
+		<input type="image" src="css/images/okButton_se.gif" style="width: 31px; height: 19px;" />
 		</p>
 	</td>
 </tr>
@@ -248,7 +248,7 @@
 	<script type="text/javascript">var path_${contentVO.contentId} = "$path";</script>	
 	#set( $fnutt = '"')
 	#set( $rowUrl = "javascript:setSelected($contentVO.contentId, $contentRepositoryId, path_${contentVO.contentId});")
-	#set( $row = ["<a href='$rowUrl'>$contentVO.name</a>", "<span onmouseover='return overlib(${fnutt}$path${fnutt}, WIDTH, 400, BGCOLOR, ${fnutt}#FFFFFF${fnutt});' onmouseout='return nd();'><img src='images/questionMarkGrad.gif'/></span>"] )
+	#set( $row = ["<a href='$rowUrl'>$contentVO.name</a>", "<span onmouseover='return overlib(${fnutt}$path${fnutt}, WIDTH, 400, BGCOLOR, ${fnutt}#FFFFFF${fnutt});' onmouseout='return nd();'><img src='css/images/questionMarkGrad.gif'/></span>"] )
 	#set($cnt = $cnt + 1)
 	
 	#lvAddRow($row $cnt $contentId)

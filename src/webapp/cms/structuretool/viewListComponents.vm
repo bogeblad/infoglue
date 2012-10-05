@@ -1,9 +1,9 @@
 #define( $headerMarkup )
 
 	<style type="text/css">
-		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
 	</style>
-	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 
 	<script type="text/javascript">
 	<!-- 
@@ -100,7 +100,7 @@
 				#if("$!imageUrl" == "")
 					#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
 					#if("$!imageUrl" == "")
-						#set($imageUrl = "images/componentIcon.gif")
+						#set($imageUrl = "css/images/componentIcon.gif")
 					#end
 				#end
 				<tr>

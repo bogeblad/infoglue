@@ -169,14 +169,14 @@
 				<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
 			</tr>		
 			<tr>
-				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
 				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "normaltextarea")</td>
 			</tr>		
 			#if($!this.allowOverrideModifyer != "false")
 			<tr>
-				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
 				<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
@@ -186,7 +186,7 @@
 			#if($allowPublicationEventFilter == "true")
 				#if($infoGluePrincipal.groups.size() > 1)
 					<tr>
-						<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+						<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 					</tr>
 					<tr>
 						<td colspan="3">
@@ -243,7 +243,7 @@
 		#set($displayName = "$cv.versionModifier")
 	#end
 	
-	#set( $row = ["<img src='images/tree/contentRoot.gif'> $cv.getContentName() - $cv.getLanguageName() ($cv.getId())", "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+	#set( $row = ["<img src='css/images/tree/contentRoot.gif'> $cv.getContentName() - $cv.getLanguageName() ($cv.getId())", "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
 	#set($cnt = $cnt + 1)
 	
 	#lvAddRow($row $cnt $cv.getId())
@@ -257,7 +257,7 @@
 		#set($displayName = "$snv.versionModifier")
 	#end
 	
-	#set( $row = ["<img src='images/tree/structureRoot.gif'> $snv.getSiteNodeName() ($snv.getId())", "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+	#set( $row = ["<img src='css/images/tree/structureRoot.gif'> $snv.getSiteNodeName() ($snv.getId())", "$formatter.formatDate($snv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
 	#set($cnt = $cnt + 1)
 	
 	#lvAddRow($row $cnt $snv.getId())

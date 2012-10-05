@@ -98,14 +98,14 @@
 				<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
 			</tr>		
 			<tr>
-				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
 				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "normaltextarea")</td>
 			</tr>		
 			#if($!this.allowOverrideModifyer != "false")
 			<tr>
-				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
 				<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
@@ -147,7 +147,7 @@
 
 		#set($cnt = 0)
 		#foreach($c in $contents)
-			#set( $row = ["<img src='images/v3/contentIcon.gif'> $this.getContentPath($c.id).replaceAll(' ', '&nbsp;') ($c.getId())", $ui.getString("tool.common.publishing.typeContentLabel")] )
+			#set( $row = ["<img src='css/images/v3/contentIcon.gif'> $this.getContentPath($c.id).replaceAll(' ', '&nbsp;') ($c.getId())", $ui.getString("tool.common.publishing.typeContentLabel")] )
 			#set($cnt = $cnt + 1)
 			#lvAddRowV3($row $cnt $c.id false)
 		#end

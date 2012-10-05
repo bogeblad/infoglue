@@ -19,7 +19,7 @@
 
 	#foreach($attribute in $contentTypeAttributes)
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3"><b>$attribute.name</b></td>
@@ -35,7 +35,7 @@
 	#foreach($categoryKey in $definedCategoryKeys)
 		#set($keyAttribute = $categoryKey.value)
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3"><b>$categoryKey.title ($keyAttribute)<b></td>

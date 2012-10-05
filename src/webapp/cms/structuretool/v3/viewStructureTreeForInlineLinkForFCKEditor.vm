@@ -113,7 +113,7 @@
 	-->
 	</script>
 	
-	<link rel="stylesheet" type="text/css" href="css/v3/assets.css" />
+	<link rel="stylesheet" type="text/css" href="css/assets.css" />
 	<style type="text/css">
 		.linkContainer {
 			width: 660px;
@@ -124,7 +124,7 @@
 		}
 		
 		.optionalContent {
-			background:url(images/v3/optionalLinkContent.gif) no-repeat center;
+			background:url(css/images/v3/optionalLinkContent.gif) no-repeat center;
 			background-position: 0px 0px;
 			font-family:Arial, Helvetica, sans-serif;
 			font-size:11px;
@@ -164,7 +164,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 			</tr>	
 			<tr>
 				<td class="menu" colspan="2" style="border: 1px solid silver;">   
@@ -176,7 +176,7 @@
 		</div>
 	</td>	
 	<td valign="middle" width="20">
-		<img src="images/trans.gif" width="20" height="1"/>
+		<img src="css/images/trans.gif" width="20" height="1"/>
 		<a href="javascript:enableContentDiv();" class="optionalContent" title="$ui.getString('tool.contenttool.linkDialog.optionalContentTitle')"></a>
 	</td>
 	<td valign="top">
@@ -193,7 +193,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+				<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 			</tr>		
 			<tr>
 				<td class="menu" colspan="2" style="border: 1px solid silver;">  

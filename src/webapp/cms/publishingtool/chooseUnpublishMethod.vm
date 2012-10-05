@@ -17,19 +17,19 @@
 			#set($lvConstraint = -1) 
 			<table cellpadding="0" cellspacing="0" border="0" width="100%">
 			<tr class="white">
-				<td id="t0" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-				<td id="t1" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-				<td id="t2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td id="t0" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
+				<td id="t1" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
+				<td id="t2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 			</tr>
 			<tr class="darkbrown" valign="center">
-				<td id='lleft' class="white" width=1><img src="images/trans.gif" width="1" height="1"></td>
+				<td id='lleft' class="white" width=1><img src="css/images/trans.gif" width="1" height="1"></td>
 				<td class="listheader"><div class="minormarginalized">Mark those you items where you want to keep the newer version - those not marked are unpublished and the unpublished versions information overrides later changes</div></td>
-				<td id='lright' class="dark" width=1><img src="images/trans.gif" width="1" height="1"></td>
+				<td id='lright' class="dark" width=1><img src="css/images/trans.gif" width="1" height="1"></td>
 			</tr>
 			<tr class="dark">
-				<td id="b0" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-				<td id="b1" height="1"><img src="images/trans.gif" width="1" height="1"></td>
-				<td id="b2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+				<td id="b0" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
+				<td id="b1" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
+				<td id="b2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 			</tr>
 					
 			
@@ -54,15 +54,15 @@
 							
 							#if($publicationDetail.entityClass.indexOf("ContentVersion") > -1)
 								#if($publicationDetail.typeId == 3)
-									#set($icon = "<img src='images/tree/unpublishContentItem.gif' border=0>")
+									#set($icon = "<img src='css/images/tree/unpublishContentItem.gif' border=0>")
 								#else
-									#set($icon = "<img src='images/tree/contentItem.gif' border=0>")
+									#set($icon = "<img src='css/images/tree/contentItem.gif' border=0>")
 								#end
 							#else
 								#if($publicationDetail.typeId == 3)
-									#set($icon = "<img src='images/tree/unpublishSiteNodeItem.gif' border=0>")
+									#set($icon = "<img src='css/images/tree/unpublishSiteNodeItem.gif' border=0>")
 								#else
-									#set($icon = "<img src='images/tree/siteNodeItem.gif' border=0>")
+									#set($icon = "<img src='css/images/tree/siteNodeItem.gif' border=0>")
 								#end	
 							#end
 							$icon $publicationDetail.name ($publicationDetail.description)

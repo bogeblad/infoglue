@@ -1,10 +1,10 @@
 #define($headerMarkup)
 	
 	<style type="text/css">
-		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
 	</style>
 	#*
-	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 	*#
 	<script type="text/javascript" charset="utf-8">
 	<!--
@@ -122,13 +122,13 @@
 		}		
 		
 		.content {
-			background-image: url(images/v3/contentIcon.gif);
+			background-image: url(css/images/v3/contentIcon.gif);
 			background-position: 0px 0px;
 			background-repeat: no-repeat;
 			text-indent: 16px;
 		}
 		.page {
-			background-image: url(images/v3/pageIcon.gif);
+			background-image: url(css/images/v3/pageIcon.gif);
 			background-position: 0px 0px;
 			background-repeat: no-repeat;
 			text-indent: 16px;
@@ -323,7 +323,7 @@
 							</td>
 							<td style="whitespace: nowrap;">							
 								$!action
-								<a href="#" class="workflow" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');"><img src="images/v3/info.png" border="0" alt="info"></a>
+								<a href="#" class="workflow" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');"><img src="css/images/v3/info.png" border="0" alt="info"></a>
 							</td>
 						</tr>
 						
@@ -401,8 +401,8 @@
 							</td>
 							<td>
 								#if($availableWorkflowVO.status == 0)
-									<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="images/v3/start.png" border="0" alt="Start workflow"></a>
-									<a href="#" onclick="parent.openInlineDiv('Workflow!showWorkflowDetails.action?workflowName=$formatter.encodeURI($availableWorkflowVO.name)', 600, 800, true, true, 'Workflow');"><img src="images/v3/info.png" border="0" alt="info"></a>
+									<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="css/images/v3/start.png" border="0" alt="Start workflow"></a>
+									<a href="#" onclick="parent.openInlineDiv('Workflow!showWorkflowDetails.action?workflowName=$formatter.encodeURI($availableWorkflowVO.name)', 600, 800, true, true, 'Workflow');"><img src="css/images/v3/info.png" border="0" alt="info"></a>
 								#end
 							</td>
 						</tr>
@@ -440,7 +440,7 @@
 								<a title="$fullTitle" href="$availableShortcutVO.getURL()" #if($availableShortcutVO.popup == true)target="_blank"#end>$visibleTitle</a>
 							</td>
 							<td>
-								<a href="$availableShortcutVO.getURL()" #if($availableShortcutVO.popup == true)target="_blank"#end><img src="images/v3/start.png" border="0" alt="Start workflow"></a>
+								<a href="$availableShortcutVO.getURL()" #if($availableShortcutVO.popup == true)target="_blank"#end><img src="css/images/v3/start.png" border="0" alt="Start workflow"></a>
 							</td>
 						</tr>
 						#set($cnt = $cnt + 1)

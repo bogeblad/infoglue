@@ -91,7 +91,7 @@
 			
 			<tr>
 				<td>#editReadOnlyField("SystemUser.userName" "newUserName" $!userName "51" "disabled")</td>
-				<td>#editReadOnlyPasswordField("SystemUser.password" "password" "********" "20" "disabled")<img src="images/trans.gif" width="10" height="1"><a href="UpdateSystemUser!changePassword.action?userName=$formatter.encodeURI($userName)&igSecurityCode=$!securityCode">Send me a new password<a></td>
+				<td>#editReadOnlyPasswordField("SystemUser.password" "password" "********" "20" "disabled")<img src="css/images/trans.gif" width="10" height="1"><a href="UpdateSystemUser!changePassword.action?userName=$formatter.encodeURI($userName)&igSecurityCode=$!securityCode">Send me a new password<a></td>
 			</tr>
 		
 			<tr>

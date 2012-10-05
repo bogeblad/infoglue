@@ -45,10 +45,10 @@
 		<td class="smalllabel" width="90%" align="right"><a href="javascript:hideUsers();">Close</a></td>
 	</tr>
 	<tr>
-		<td class="lightblue" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td class="lightblue" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td class="darkblue" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td class="darkblue" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 		
 	#foreach($user in $infogluePrincipals)

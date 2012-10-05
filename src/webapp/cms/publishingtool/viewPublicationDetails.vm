@@ -47,15 +47,15 @@
 				
 					#if($publicationEvent.entityClass.indexOf("ContentVersion") > -1)
 						#if($publicationEvent.typeId == 3)
-							#set($icon = "<img src='images/tree/unpublishContentItem.gif' border=0>")
+							#set($icon = "<img src='css/images/tree/unpublishContentItem.gif' border=0>")
 						#else
-							#set($icon = "<img src='images/tree/contentItem.gif' border=0>")
+							#set($icon = "<img src='css/images/tree/contentItem.gif' border=0>")
 						#end
 					#else
 						#if($publicationEvent.typeId == 3)
-							#set($icon = "<img src='images/tree/unpublishSiteNodeItem.gif' border=0>")
+							#set($icon = "<img src='css/images/tree/unpublishSiteNodeItem.gif' border=0>")
 						#else
-							#set($icon = "<img src='images/tree/siteNodeItem.gif' border=0>")
+							#set($icon = "<img src='css/images/tree/siteNodeItem.gif' border=0>")
 						#end
 					#end
 						

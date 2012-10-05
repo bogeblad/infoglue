@@ -23,13 +23,13 @@
 		<td colspan="3" class="biglabel">$ui.getString("tool.publishingtool.publicationDeniedComment")</td>
 	</tr>		
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<td colspan="3">#editTextArea("ContentVersion.versionComment" "comment" $!comment "10" "10" "normaltextarea")</td>
 	</tr>		
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		#foreach($sel in $selList)

@@ -43,9 +43,9 @@
 				});
 			#end
 			
-			$("#dataTable_processing").prepend("<img src='css/embla/images/loading.gif' width='16'/>").css("color", "blue");
+			$("#dataTable_processing").prepend("<img src='css/images/loading.gif' width='16'/>").css("color", "blue");
 			$("#dataTable_filter input[type=text]").hide();
-			$("#dataTable_filter").append("<input type='text' id='searchField'/> <img id='reset' src='images/v3/cross.png'>");
+			$("#dataTable_filter").append("<input type='text' id='searchField'/> <img id='reset' src='css/images/v3/cross.png'>");
 			$("#reset").click(function() { $("#searchField").val(""); $("#dataTable_filter input[type=text]").val("").trigger('keyup'); }).hide();
 			$("#searchField").keyup(function(e) {
 				if(e.keyCode == 13) {
@@ -73,9 +73,9 @@
 							#set($extraParameter2 = '"iDisplayLength": 10, "bProcessing": true, "bServerSide": true, "fnServerData": function ( sSource, aoData, fnCallback ) { jQuery.post( sSource, aoData, fnCallback, "json" ); }, "sAjaxSource": "ViewListSystemUser!popupProcessAndFilter.action?filterAssignedRoleUsers=true&roleName=" + encodedRoleName, "aoColumns": [ { "sWidth": "30px" }, null, null ]')
 							#initDataTableImpl("dataTable2" $extraParameter2)
 				
-							$("#dataTable2_processing").prepend("<img src='css/embla/images/loading.gif' width='16'/>").css("color", "blue");
+							$("#dataTable2_processing").prepend("<img src='css/images/loading.gif' width='16'/>").css("color", "blue");
 							$("#dataTable2_filter input[type=text]").hide();
-							$("#dataTable2_filter").append("<input type='text' id='searchField2'/> <img id='reset2' src='images/v3/cross.png'>");
+							$("#dataTable2_filter").append("<input type='text' id='searchField2'/> <img id='reset2' src='css/images/v3/cross.png'>");
 							$("#reset2").click(function() { $("#searchField2").val(""); $("#dataTable2_filter input[type=text]").val("").trigger('keyup'); }).hide();
 							$("#searchField2").keyup(function(e) {
 								if(e.keyCode == 13) {

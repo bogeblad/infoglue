@@ -357,7 +357,7 @@
 			#end
 			</select>
 		</td>
-		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td width="40%"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td>
 			#set($dropIndex = 1)
 			$ui.getString("tool.contenttool.stateLabel")<br/>
@@ -444,7 +444,7 @@
 	#end
 	
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 	</tr>
 	<tr>
 		<input type="hidden" name="contentId" value="$!contentId">
@@ -561,7 +561,7 @@
 		#end
 		
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr class="$trClass">
 			<td colspan="3">
@@ -575,7 +575,7 @@
 				#elseif($attribute.inputType == "datefield")
 					$attributeTitle ("$attribute.name") $attributeDescription
 					#printError("ContentVersion.$attribute.name")
-					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="images/calendar.gif" border="0"/></a>
+					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="css/images/calendar.gif" border="0"/></a>
 					<script type="text/javascript">
 						Calendar.setup({
 						        inputField     :    "$attribute.name",     		// id of the input field
@@ -687,7 +687,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -733,7 +733,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -824,7 +824,7 @@
 		</tr>
 	#end
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		#set($allCategoryKeys = $definedCategoryKeys)
 		#if($allCategoryKeys.size() > 0)
@@ -868,7 +868,7 @@
 						<tr $class>
 							<td width="50%">$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)</td>
 							<td width="50%" align="right">
-								<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="images/delete.gif" border="0"/></a>
+								<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="css/images/delete.gif" border="0"/></a>
 							</td>
 						</tr>
 					#end
@@ -889,7 +889,7 @@
 		</tr>
 		#end
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3">

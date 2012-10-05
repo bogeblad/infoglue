@@ -123,10 +123,11 @@
 	<!-- END -->
 
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
 
 	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 </head>
 <body class="generaltooledit" onload="if(parent.notifyIsLoaded)parent.notifyIsLoaded();if(parent.notifyExp)parent.notifyExp('${exp}');loaded();">
 
@@ -139,8 +140,8 @@
 		#end
 	#end
 		
-	//webFXTreeConfig.rootIcon		= "images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/folder.png";
-	//webFXTreeConfig.openRootIcon	= "images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/openfolder.png";
+	//webFXTreeConfig.rootIcon		= "css/images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/folder.png";
+	//webFXTreeConfig.openRootIcon	= "css/images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/openfolder.png";
 	webFXTreeConfig.rootIcon		= "script/xloadtree/images/xp/folder.png"; // "script/xloadtree/images/xp/folder.png";
 	webFXTreeConfig.openRootIcon	= "script/xloadtree/images/xp/openfolder.png"; // "script/xloadtree/images/xp/openfolder.png";
 	webFXTreeConfig.skinBasePath 	= "script/xloadtree/images/xp/";

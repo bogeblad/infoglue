@@ -1,9 +1,9 @@
 #define($headerMarkup)
 
 	<style type="text/css">
-		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
 	</style>
-	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" charset="utf-8">
 	<!--
 		function invokeWorkflowView(workflowId, actionId, view)
@@ -76,8 +76,8 @@
 					</td>
 					<td style="whitespace: nowrap;">
 						#if($availableWorkflowVO.status == 0)
-							<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="images/v3/start.png" border="0" alt="Start workflow"></a>&nbsp;
-							<a href="#" onclick="parent.openInlineDiv('Workflow!showWorkflowDetails.action?workflowName=$formatter.encodeURI($availableWorkflowVO.name)', 600, 800, true, true, 'Workflow');"><img src="images/v3/info.png" border="0" alt="info"></a>
+							<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="css/images/v3/start.png" border="0" alt="Start workflow"></a>&nbsp;
+							<a href="#" onclick="parent.openInlineDiv('Workflow!showWorkflowDetails.action?workflowName=$formatter.encodeURI($availableWorkflowVO.name)', 600, 800, true, true, 'Workflow');"><img src="css/images/v3/info.png" border="0" alt="info"></a>
 						#end
 					</td>
 				</tr>

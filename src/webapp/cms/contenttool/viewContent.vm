@@ -57,14 +57,14 @@
 			<td colspan="7"><span class="warningText">$ui.getString("tool.contenttool.publishRejectedShortText")</span></td>
 		</tr>
 		<tr>
-			<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="7"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 	#elseif($contentEvent.typeId == 4)
 		<tr>
 			<td colspan="7"><span class="warningText">$ui.getString("tool.contenttool.unpublishRejectedShortText") <nobr>$contentEvent.name</nobr>.</span> - <a href="DeleteEvent.action?eventId=$contentEvent.id&url=$currentUrl">$ui.getString("tool.contenttool.close")</a></td>
 		</tr>
 		<tr>
-			<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="7"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 	#end
 	
@@ -88,7 +88,7 @@
 	</tr>		
 	##end
 	<tr>
-		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="7"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<td colspan="7">
@@ -96,7 +96,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="7"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	
 	<tr> 
@@ -115,7 +115,7 @@
 		</td>
 	</tr>		
 	<tr>
-		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="7"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	
 	##if(!$isBranch)
@@ -142,22 +142,22 @@
 		</td>
 	</tr>
 	<tr>
-		<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="7"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr class="darkgreen">
 		<td class="smalllabel" nowrap="1">$ui.getString("tool.contenttool.languageVersionsLabel")</td>
-		<td class="smalllabel"><img src="images/trans.gif" width="10" height="1"></td>
+		<td class="smalllabel"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td class="smalllabel" nowrap="1">$ui.getString("tool.contenttool.stateLabel")</td>
-		<td class="smalllabel"><img src="images/trans.gif" width="10" height="1"></td>
+		<td class="smalllabel"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td class="smalllabel" nowrap="1">$ui.getString("tool.contenttool.lastUpdatedLabel")</td>
-		<td class="smalllabel"><img src="images/trans.gif" width="10" height="1"></td>
+		<td class="smalllabel"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td></td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="7" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="7" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#C7D1B3" colspan="7" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#C7D1B3" colspan="7" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 		
 	#set($isOdd = true)
@@ -222,7 +222,7 @@
 			<td>&nbsp;</td>
 			<td>
 				#if($contentVersionVO.stateId == 0)
-					<a href="javascript:confirmAction('Do you really want to delete the languageVersion ?', 'DeleteContentVersion.action?repositoryId=${repositoryId}&contentVersionId=${contentVersionVO.contentVersionId}&contentId=${contentId}');"><img src="images/delete.gif" border="0"></a>
+					<a href="javascript:confirmAction('Do you really want to delete the languageVersion ?', 'DeleteContentVersion.action?repositoryId=${repositoryId}&contentVersionId=${contentVersionVO.contentVersionId}&contentId=${contentId}');"><img src="css/images/delete.gif" border="0"></a>
 				#end
 			</td>
 		</tr>	
@@ -232,7 +232,7 @@
 	##end		
 
 	<tr>
-		<td colspan="7"><img src="images/trans.gif" height="30" width="1"></td>
+		<td colspan="7"><img src="css/images/trans.gif" height="30" width="1"></td>
 	</tr>
 	</table>
 				
@@ -241,10 +241,10 @@
 		<td class="smalllabel" colspan="3">$ui.getString("tool.contenttool.contentVersionReferences.header")</td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#C7D1B3" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#C7D1B3" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	#set($hasContentReferences = false)
 	#set($isOdd = true)
@@ -262,12 +262,12 @@
 					#set($isOdd = true)
 				#end
 				<tr $class>
-					<td width="16"><img src="images/tree/contentRoot.gif" width="16" height="16"></td>
+					<td width="16"><img src="css/images/tree/contentRoot.gif" width="16" height="16"></td>
 					<td width="100%">
 						<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.name</a>
 	 					- #if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.contenttool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.contenttool.versions"))
 	 				</td>
-					<td width="16"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+					<td width="16"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank"><img src="css/images/edit.gif" border="0"></a></td>
 				</tr>
 			#end
 			#set($count = $count + 1)	
@@ -292,16 +292,16 @@
 		</tr>	
 	#end
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr class="darkgreen">
 		<td class="smalllabel" colspan="3">$ui.getString("tool.contenttool.siteNodeReferences.header")</td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#C7D1B3" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#C7D1B3" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	#set($hasPageReferences = false)
 	#set($isOdd = true)
@@ -319,12 +319,12 @@
 					#set($isOdd = true)
 				#end
 				<tr $class>
-					<td width="16"><img src="images/tree/structureRoot.gif"></td>
+					<td width="16"><img src="css/images/tree/structureRoot.gif"></td>
 					<td width="100%">
 						<a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$referenceBean.name</a>
 						- #if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.structuretool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.structuretool.versions"))
 					</td>
-					<td width="16"><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+					<td width="16"><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank"><img src="css/images/edit.gif" border="0"></a></td>
 				</tr>	
 			#end
 			#set($count = $count + 1)
@@ -351,7 +351,7 @@
 	#end
 	
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<input type="hidden" name="contentId" value="$!contentId">

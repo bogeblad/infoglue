@@ -55,14 +55,14 @@
 
 <table border="0" cellspacing="0" cellpadding="0" width=100%>
 <tr>
-	<td><img src="images/trans.gif" width="14" height="22"></td>
-	<td><img src="images/publishingToolTab.gif" width="120" height="22" border="0"></td>
-	<td><img src="images/trans.gif" width="1" height="22"></td>	
+	<td><img src="css/images/trans.gif" width="14" height="22"></td>
+	<td><img src="css/images/publishingToolTab.gif" width="120" height="22" border="0"></td>
+	<td><img src="css/images/trans.gif" width="1" height="22"></td>	
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="14" height="1"></td>
-	<td class="darkbrown"><img src="images/trans.gif" width="0" height="1"></td>		
-	<td bgcolor="#FFFFFF" width="100%"><img src="images/trans.gif" width="2" height="1"></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="14" height="1"></td>
+	<td class="darkbrown"><img src="css/images/trans.gif" width="0" height="1"></td>		
+	<td bgcolor="#FFFFFF" width="100%"><img src="css/images/trans.gif" width="2" height="1"></td>
 </tr>
 <tr height=26>
 
@@ -78,7 +78,7 @@
 				#set( $contentVO = $this.getOwningContent($cId) )
 				#set( $title = "${contentVO.getName()}")
 				#set( $comment = "${contentVersionVO.getVersionComment()}")
-				#set($navBar = "${navBar}<a icon='images/tree/contentItem.gif' title='${title}' id='lnk${cnt}' href='ViewContentVersion!preview.action?contentId=$contentVO.contentId&contentVersionId=$contentVersionVO.getContentVersionId()' target='previewMain'>${cnt}</a> ")						
+				#set($navBar = "${navBar}<a icon='css/images/tree/contentItem.gif' title='${title}' id='lnk${cnt}' href='ViewContentVersion!preview.action?contentId=$contentVO.contentId&contentVersionId=$contentVersionVO.getContentVersionId()' target='previewMain'>${cnt}</a> ")						
 				#set($cnt = $cnt + 1)
 			#end
 
@@ -89,7 +89,7 @@
 				#set( $title = "${siteNodeVO.getName()}")
 				#set( $comment = "${siteNodeVersionVO.getVersionComment()}")
 				
-				#set($navBar = "${navBar}<a icon='images/tree/structureItem.gif' comment='${comment}' title='${title}' id='lnk${cnt}' href='$previewUrl?siteNodeId=$siteNodeVO.getSiteNodeId()' target='previewMain'>${cnt}</a> ")
+				#set($navBar = "${navBar}<a icon='css/images/tree/structureItem.gif' comment='${comment}' title='${title}' id='lnk${cnt}' href='$previewUrl?siteNodeId=$siteNodeVO.getSiteNodeId()' target='previewMain'>${cnt}</a> ")
 				#set($cnt = $cnt + 1)				
 			#end
 
@@ -102,11 +102,11 @@
 					<tr>
 						<td width=10></td>
 						<td width=30>
-							<a href="JavaScript:showPrev();"><img src='images/previous.gif' border=0></a>
+							<a href="JavaScript:showPrev();"><img src='css/images/previous.gif' border=0></a>
 						</td>
 						<td id="counter" width=60> </td>
 						<td width=50>
-							<a href="JavaScript:showNext();"><img src='images/next.gif' border=0></a>  
+							<a href="JavaScript:showNext();"><img src='css/images/next.gif' border=0></a>  
 						</td>
 						<td id="nav">
 						</td>
@@ -117,7 +117,7 @@
 </tr>
 
 <tr>
-<td bgcolor="#000000" width="100%" colspan=3><img src="images/trans.gif" width="2" height="1"></td>
+<td bgcolor="#000000" width="100%" colspan=3><img src="css/images/trans.gif" width="2" height="1"></td>
 </tr>
 
 </table>

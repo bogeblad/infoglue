@@ -7,7 +7,7 @@
 			#set($parentCount = $velocityCount)
 			#if($button.subButtons.size() == 0)
 				#if($parentCount > 1)
-					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+					<img class="divider" src="css/images/trans.gif" width="2" height="20"/>
 				#end
 				<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
 
@@ -81,7 +81,7 @@
 				</script>
 			#else
 				#if($parentCount > 1)
-					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+					<img class="divider" src="css/images/trans.gif" width="2" height="20"/>
 				#end
 					<div id="initialButton">
 						<a class="igToolbarButton igToolbarHeaderButton" href="#" id="button$parentCount" name="button$parentCount" title="$button.title"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='$button.cssClass' title="$button.title">$button.text</span></span></a>
@@ -252,7 +252,7 @@
 			#set($parentCount = $velocityCount)
 			#if($button.subButtons.size() == 0)
 				<div id="button$parentCount" name="button$parentCount" class="igEmblaLargeButton" title="$button.title">
-					<img src="images/trans.gif" alt="$button.title" class="$subButton.cssClass" width="32" height="32"/><br/>
+					<img src="css/images/trans.gif" alt="$button.title" class="$subButton.cssClass" width="32" height="32"/><br/>
 					<span title="$button.title">$button.text</span>
 				</div>
 
@@ -322,11 +322,11 @@
 				</script>
 			#else
 				#if($parentCount > 1)
-					<img class="divider" src="images/trans.gif" width="2" height="20"/>
+					<img class="divider" src="css/images/trans.gif" width="2" height="20"/>
 				#end
 					<div id="button${parentCount}Group" class="igEmblaButtonGroup">
 						<div id="button$parentCount" name="button$parentCount" class="igEmblaLargeButton" title="$button.title">
-							<img src="images/trans.gif" alt="$button.title" class="$subButton.cssClass" width="32" height="32"/><br/>
+							<img src="css/images/trans.gif" alt="$button.title" class="$subButton.cssClass" width="32" height="32"/><br/>
 							<span title="$button.title">$button.text</span>
 						</div>
 						<br/>

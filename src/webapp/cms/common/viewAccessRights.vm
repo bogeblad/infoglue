@@ -292,7 +292,7 @@
 				<tr>
 					<th>$ui.getString("tool.common.accessRights.roleNameLabel")</th>
 					<th>&nbsp;</th>
-					<th><img src="images/trans.gif" width="10" height="1" alt=""/></th>
+					<th><img src="css/images/trans.gif" width="10" height="1" alt=""/></th>
 					#set($colspan = 1)
 					#foreach($interceptionPointVO in $interceptionPointVOList)
 						#if($interceptionPointVO.name == "Content.Read" || $interceptionPointVO.name == "SiteNodeVersion.Read")
@@ -316,17 +316,17 @@
 							##if($accessRightId > -1)
 								#if($hasGroupLimitations)
 									<script type="text/javascript">hasGroupLimitation = true;</script>
-									<br/><a href="javascript:showDiv('groups$accessRightId');" title="Limited by groups also - click to view."><img src="images/groups.gif" border="0" alt=""/></a>
+									<br/><a href="javascript:showDiv('groups$accessRightId');" title="Limited by groups also - click to view."><img src="css/images/groups.gif" border="0" alt=""/></a>
 								#else
 									#if($accessRightId > -1)
-										<br/><a href="javascript:showDiv('groups$accessRightId');" title="Not limited by groups at the moment"><img src="images/groupsInactive.gif" border="0" alt=""/></a>
+									<br/><a href="javascript:showDiv('groups$accessRightId');" title="Not limited by groups at the moment"><img src="css/images/groupsInactive.gif" border="0" alt=""/></a>
 									#else
 										<br/><a href="javascript:alert('You must state at least one role first');" title="Not limited by groups at the moment"><img src="images/groupsInactive.gif" border="0" alt=""/></a>
 									#end
 								#end
 							##end
 							</th>
-							<th><img src="images/trans.gif" width="10" height="1" alt=""/></th>
+							<th><img src="css/images/trans.gif" width="10" height="1" alt=""/></th>
 							#set($colspan = $colspan + 3)
 						#end
 					#end
@@ -350,7 +350,7 @@
 							$role.displayName #if($role.displayName == "anonymous") (All users, logged in or not have this role)#end
 							<input type="hidden" name="${roleIndex}_roleName" value="$role.name"/>
 						</td>
-						<td><img src="images/v3/check.png" width="16" height="16" alt="Check/uncheck all on this row" title="Check/uncheck all on this row" onclick="toggleRole('${role.name}');"/></td>
+						<td><img src="css/images/v3/check.png" width="16" height="16" alt="Check/uncheck all on this row" title="Check/uncheck all on this row" onclick="toggleRole('${role.name}');"/></td>
 						<td>&nbsp;</td>
 						#set($interceptionPointIndex = 0)
 						#foreach($interceptionPointVO in $interceptionPointVOList)
@@ -410,7 +410,7 @@
 				<table id="usersTable" border="0" width="100%" cellpadding="0" cellspacing="0">
 				<tr>
 					<th style="white-space:nowrap;">$ui.getString("tool.common.accessRights.usersWithAccessLabel")</th>
-					<th><img src="images/trans.gif" width="10" height="1" alt=""/></th>
+					<th><img src="css/images/trans.gif" width="10" height="1" alt=""/></th>
 					#set($colspan = 1)
 					#foreach($interceptionPointVO in $interceptionPointVOList)
 						##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
@@ -421,11 +421,11 @@
 							#set($accessRightId = $accessRightHasAccessMap.get($keyAccessRightId))
 							#set($dotIndex = $interceptionPointVO.name.indexOf(".") + 1)
 							<th style="text-align: center;">$interceptionPointVO.name.substring($dotIndex)</th>
-							<th><img src="images/trans.gif" width="10" height="1" alt=""/></th>
+							<th><img src="css/images/trans.gif" width="10" height="1" alt=""/></th>
 							#set($colspan = $colspan + 2)
 						#end
 					#end
-					<th><img src="images/trans.gif" width="10" height="1" alt=""/></th>		
+					<th><img src="css/images/trans.gif" width="10" height="1" alt=""/></th>		
 				</tr>
 				
 				#foreach($accessRightsUserRow in $accessRightsUserRows)
@@ -449,7 +449,7 @@
 							#set($interceptionPointIndex = $interceptionPointIndex + 1)
 						#end
 					#end
-					<td><a href="javascript:deleteUser('$accessRightsUserRow.userName');"><img src="images/delete.gif" width="12" height="12" border="0" alt=""/></a></td>
+					<td><a href="javascript:deleteUser('$accessRightsUserRow.userName');"><img src="css/images/delete.gif" width="12" height="12" border="0" alt=""/></a></td>
 				</tr>
 				#end	
 
@@ -471,10 +471,10 @@
 				<tr>
 					<td style="border-bottom: 0px; padding-top: 4px; white-space: nowrap;">
 						<input type="textfield" id="userName" name="userName" value="" style="display: block; float: left; width: 80px;"/>
-						<a href="javascript:showUsers();" style="display: block; float: left; height: 20px; width: 20px; background: url(images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
-						<a href="javascript:selectMyself();" style="display: block; float: left; height: 20px; width: 20px; background: url(images/user18.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+						<a href="javascript:showUsers();" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+						<a href="javascript:selectMyself();" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/user18.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
 						<div style="clear:both;"></div>
-						<a href="javascript:document.addUserForm.submit();" style="display: block; float: left; border: 1px solid #ccc; height: 14px; background: url(images/v3/footerBackground.gif) repeat-x 0px -10px; white-space: nowrap; padding: 2px 10px 2px 10px; margin-left: 4px;">$ui.getString("tool.common.accessRights.addUserButtonLabel")</a>
+						<a href="javascript:document.addUserForm.submit();" style="display: block; float: left; border: 1px solid #ccc; height: 14px; background: url(css/images/v3/footerBackground.gif) repeat-x 0px -10px; white-space: nowrap; padding: 2px 10px 2px 10px; margin-left: 4px;">$ui.getString("tool.common.accessRights.addUserButtonLabel")</a>
 					</td>
 					<td style="border-bottom: 0px; text-align: center;">&nbsp;</td>
 					#set($interceptionPointIndex = 0)

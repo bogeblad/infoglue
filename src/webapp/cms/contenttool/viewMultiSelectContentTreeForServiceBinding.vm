@@ -215,13 +215,13 @@
 		{
 		    var dragData = window.event.dataTransfer;
 	    	dragData.dropEffect = 'link';
-			obj.src = "images/dropqualifyer.gif";
+			obj.src = "css/images/dropqualifyer.gif";
 			obj.height="19";
 		    window.event.dataTransfer.getData('Text');
 		}
 		function qexitDrag(obj)
 		{
-			obj.src = "images/trans.gif";
+			obj.src = "css/images/trans.gif";
 			if(obj.pos != -1) obj.height="4";
 		}
 
@@ -260,13 +260,13 @@
 			<td class="smalllabel">Click on page the binding should use and then "add".</td>
 		</tr>
 		<tr>
-			<td height="1" bgcolor="#FEF8D0"><img src="images/trans.gif" width="1" height="1"></td>
+			<td height="1" bgcolor="#FEF8D0"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1" bgcolor="#F0E1B4"><img src="images/trans.gif" width="1" height="1"></td>
+			<td height="1" bgcolor="#F0E1B4"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		<!-- 
 		HERE IS THE REPOSITORY-LIST FOR LATER 
@@ -282,7 +282,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>	
 		<tr>
 			<td class="menu">   
@@ -298,7 +298,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href="javascript:addQualifyer();"><img src="images/addButtonBlue.gif" border="0"></a>
+				<a href="javascript:addQualifyer();"><img src="css/images/addButtonBlue.gif" border="0"></a>
 				<a href="javascript:submitBinding();"><img src="$ui.getString("images.contenttool.buttons.save")" border="0"></a>
 				<a href="javascript:window.close();"><img src="$ui.getString("images.contenttool.buttons.cancel")" border="0"></a>
 			</td>
@@ -322,13 +322,13 @@
 			<td class="smalllabel">The following pages is in the binding so far</td>
 		</tr>
 		<tr>
-			<td height="1" bgcolor="#FEF8D0"><img src="images/trans.gif" width="1" height="1"></td>
+			<td height="1" bgcolor="#FEF8D0"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1" bgcolor="#F0E1B4"><img src="images/trans.gif" width="1" height="1"></td>
+			<td height="1" bgcolor="#F0E1B4"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 
 		#set($isOdd = true)
@@ -345,19 +345,19 @@
 			#set($value = $qualifyer.value)
 			<tr $class id="tr$qualifyer.sortOrder" style="display:">
 				<td>
-					<img pos="$qualifyer.sortOrder" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="5" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
+					<img pos="$qualifyer.sortOrder" id="drop$qualifyer.sortOrder" src="css/images/trans.gif" width="280" height="5" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
 					#if($count < $qualifyers.size() - 1)
-						<a href="javascript:moveQualifyer(0,$qualifyer.sortOrder);"><img src="images/downArrow.gif" border="0"></a>
+						<a href="javascript:moveQualifyer(0,$qualifyer.sortOrder);"><img src="css/images/downArrow.gif" border="0"></a>
 					#else
-						<img src="images/trans.gif" border="0" width="11" height="10">
+						<img src="css/images/trans.gif" border="0" width="11" height="10">
 					#end
 					
 					#if($count > 0)
-						<a href="javascript:moveQualifyer(1,$qualifyer.sortOrder);"><img src="images/upArrow.gif" border="0" width="11" height="10"></a>
+						<a href="javascript:moveQualifyer(1,$qualifyer.sortOrder);"><img src="css/images/upArrow.gif" border="0" width="11" height="10"></a>
 					#else
-						<img src="images/trans.gif" border="0" width="11" height="10">
+						<img src="css/images/trans.gif" border="0" width="11" height="10">
 					#end
-					<a href="javascript:deleteQualifyer($qualifyer.sortOrder);"><img src="images/delete.gif" border="0"></a>
+					<a href="javascript:deleteQualifyer($qualifyer.sortOrder);"><img src="css/images/delete.gif" border="0"></a>
 					
 					<a href="JavaScript:void();" id="q$qualifyer.sortOrder" ondragstart="qstartDrag(this);" ondragend="qendDrag(this);" source="qlist" pos="$qualifyer.sortOrder">
 					$this.getQualifyerPath($value)
@@ -368,7 +368,7 @@
 		#end 		    
 		<tr>
 			<td>
-			<img pos="-1" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
+			<img pos="-1" id="drop$qualifyer.sortOrder" src="css/images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
 			&nbsp;
 			</td>
 		</tr>

@@ -51,7 +51,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2"><img src="images/trans.gif" width="1" height="6"/></td>
+				<td colspan="2"><img src="css/images/trans.gif" width="1" height="6"/></td>
 			</tr>
 			<tr class="sectionDivider">
 				<td colspan="2"><b>Validation</b></td>
@@ -64,9 +64,9 @@
 					<tr>
 						<td width="90%">$validator.name</td>
 						<td>&nbsp;</td>
-						<td><a href="javascript:showDiv('${attribute.name}_${validator.name}_layer');"><img src="images/properties.gif" border="0"></a></td>
+						<td><a href="javascript:showDiv('${attribute.name}_${validator.name}_layer');"><img src="css/images/properties.gif" border="0"></a></td>
 						<td>&nbsp;</td>
-						<td><a href="ViewContentTypeDefinition!deleteAttributeValidator.action?contentTypeDefinitionId=$contentTypeDefinitionId&attributeName=${attribute.name}&attributeValidatorName=${validator.name}&attributeToExpand=$attribute.name"><img src="images/delete.gif" border="0"></a></td>
+						<td><a href="ViewContentTypeDefinition!deleteAttributeValidator.action?contentTypeDefinitionId=$contentTypeDefinitionId&attributeName=${attribute.name}&attributeValidatorName=${validator.name}&attributeToExpand=$attribute.name"><img src="css/images/delete.gif" border="0"></a></td>
 						<td>&nbsp;</td>
 					</tr>
 					</table>					
@@ -80,7 +80,7 @@
 			</tr>
 		
 			<tr>
-				<td colspan="2"><img src="images/trans.gif" width="1" height="6"/></td>
+				<td colspan="2"><img src="css/images/trans.gif" width="1" height="6"/></td>
 			</tr>
 			<tr class="sectionDivider">
 				<td colspan="2"><b>Extra parameters</b></td>
@@ -144,8 +144,8 @@
 							<td>$value.getLocalizedValue("id", "$!currentContentTypeEditorViewLanguageCode")</td>
 							<td>
 								<nobr>
-								<a href="javascript:showDiv('${attribute.name}${parameter.key}${value.id}PropertyLayer');"><img src="images/properties.gif" border="0"></a>
-								<a href="ViewContentTypeDefinition!deleteAttributeParameterValue.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name&attributeParameterId=$parameter.key&attributeParameterValueId=$value.id&attributeToExpand=$attribute.name"><img src="images/delete.gif" border="0"></a>
+								<a href="javascript:showDiv('${attribute.name}${parameter.key}${value.id}PropertyLayer');"><img src="css/images/properties.gif" border="0"></a>
+								<a href="ViewContentTypeDefinition!deleteAttributeParameterValue.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name&attributeParameterId=$parameter.key&attributeParameterValueId=$value.id&attributeToExpand=$attribute.name"><img src="css/images/delete.gif" border="0"></a>
 								</nobr>
 							</td>
 						</tr>
@@ -160,7 +160,7 @@
 			#end
 			<tr>
 				<td colspan="2">
-					<img src="images/trans.gif" width="80" height="5" border="0">
+					<img src="css/images/trans.gif" width="80" height="5" border="0">
 				</td>
 			</tr>
 			</table>
@@ -184,7 +184,7 @@
 		<h3>Validator arguments</h3>
 		<table border="0" cellpadding="4" cellspacing="0" style="margin-left: 12px; margin-right: 10px;">
 		<tr>
-			<td colspan="2"><img src="images/trans.gif" height="5" width="1"></td>
+			<td colspan="2"><img src="css/images/trans.gif" height="5" width="1"></td>
 		</tr>
 		#set($index = 0)
 		#foreach($key in $validator.arguments.keySet())
@@ -201,7 +201,7 @@
 		#end
 		<tr>
 			<td colspan="2">
-				<img src="images/trans.gif" width="80" height="25" border="0">
+				<img src="css/images/trans.gif" width="80" height="25" border="0">
 			</td>
 		</tr>
 		<tr>
@@ -243,7 +243,7 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<img src="images/trans.gif" width="80" height="25" border="0">
+					<img src="css/images/trans.gif" width="80" height="25" border="0">
 				</td>
 			</tr>
 			<tr>

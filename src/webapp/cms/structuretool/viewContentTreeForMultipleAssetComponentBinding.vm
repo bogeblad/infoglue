@@ -239,7 +239,7 @@
 
 			
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", "5");
 			separator.setAttribute("height", height);
@@ -253,7 +253,7 @@
 		function addDividerImage(parent, width, height)
 		{
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", width);
 			separator.setAttribute("height", height);
@@ -295,9 +295,9 @@
 				myLI.setAttribute("itemID", i);
 				myLI.setAttribute("style", "height: 110px; padding-top: 6px;");
 				
-				addImageLink(myLI, "javascript:moveBindingDown(" + i + ");", "images/downArrow.gif", false, false, "75");
-				addImageLink(myLI, "javascript:moveBindingUp(" + i + ");", "images/upArrow.gif", false, false, "75");
-				addImageLink(myLI, "javascript:deleteBinding(" + i + ");", "images/delete.gif", false, false, "75");
+				addImageLink(myLI, "javascript:moveBindingDown(" + i + ");", "css/images/downArrow.gif", false, false, "75");
+				addImageLink(myLI, "javascript:moveBindingUp(" + i + ");", "css/images/upArrow.gif", false, false, "75");
+				addImageLink(myLI, "javascript:deleteBinding(" + i + ");", "css/images/delete.gif", false, false, "75");
 				addDividerImage(myLI, 1, 16);
 								
 				myActionList.appendChild(myLI);
@@ -593,13 +593,13 @@
 			<td class="smalllabel">Choose content to choose asset from</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		<tr>
 			<td>
@@ -612,7 +612,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>	
 		<tr>
 			<td class="menu">  
@@ -659,19 +659,19 @@
 			<td class="smalllabel">$ui.getString("tool.contenttool.associatedAttachments")</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="2"></td>
 		</tr>		
 		<tr>
 			<td>Double click on an asset or drag it to the selection list to use them in binding.</td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>		
 		<tr>
 			<td>
@@ -693,13 +693,13 @@
 			<td class="smalllabel">Assigned assets so far</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="2"></td>
 		</tr>		
 		
 		<tr>

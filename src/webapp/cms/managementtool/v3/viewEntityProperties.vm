@@ -290,7 +290,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -339,7 +339,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -469,7 +469,7 @@
 							#end
 							<div style="float: left; $bgcolor padding: 4px;">
 								<div style="float:left;">$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)</div>
-								<div style="float:right;"><a href="javascript:deleteCategory('$relation.propertiesCategoryId');"><img src="images/delete.gif" border="0"/></a></div>
+								<div style="float:right;"><a href="javascript:deleteCategory('$relation.propertiesCategoryId');"><img src="css/images/delete.gif" border="0"/></a></div>
 							</div>
 							<div style="clear: both;"></div>
 						#end

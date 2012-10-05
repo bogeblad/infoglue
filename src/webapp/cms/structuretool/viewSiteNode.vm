@@ -61,7 +61,7 @@ function changeSiteNodeState(siteNodeVersionId)
 			</td>
 		</tr>
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 	#end
 
@@ -73,7 +73,7 @@ function changeSiteNodeState(siteNodeVersionId)
 			</td>
 		</tr>
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 	#elseif($siteNodeEvent.typeId == 4)
 		<tr>
@@ -82,13 +82,13 @@ function changeSiteNodeState(siteNodeVersionId)
 			</td>
 		</tr>
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 	#end
 
 	<tr>
 		<td>#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" $readonly)</td>
-		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		<td>
 			#set($dropIndex = 1)
 			$ui.getString("tool.contenttool.stateLabel")<br/>
@@ -144,7 +144,7 @@ function changeSiteNodeState(siteNodeVersionId)
 		<td></td>
 	</tr>		
 	<tr>
-		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>	
 	<tr>
 		<td colspan="4">
@@ -152,7 +152,7 @@ function changeSiteNodeState(siteNodeVersionId)
 		</td>
 	</tr>
 	<tr>
-		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>	
 	
 	#if($enableDateTimeDirectEditing == "true")
@@ -163,7 +163,7 @@ function changeSiteNodeState(siteNodeVersionId)
 	
 	<tr>
 		<td>#editDateField("SiteNode.publishDateTime" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")</td>
-		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		<td>
 			#set($isProtectedReadonly = "")
 			#set($protectedSiteNodeVersionId = $!this.getProtectedSiteNodeVersionId($siteNodeVersionId))
@@ -181,7 +181,7 @@ function changeSiteNodeState(siteNodeVersionId)
 	</tr>		
 	<tr>
 		<td>#editDateField("SiteNode.expireDateTime" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</td>
-		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		<td>
 			$ui.getString("entity.SiteNode.disablePageCache.label")<br>
 			<input type="radio" name="disablePageCache" value="0" #if($!disablePageCache == 0) checked="1" #end $readonly> $ui.getString("tool.common.no")
@@ -192,7 +192,7 @@ function changeSiteNodeState(siteNodeVersionId)
 	</tr>		
 	<tr>
 		<td>#editTextField("SiteNode.contentType" "contentType" $!contentType "30" "date" $readonly)</td>
-		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		<td>
 			$ui.getString("entity.SiteNode.disableEditOnSight.label")<br>
 			<input type="radio" name="disableEditOnSight" value="0" #if($!disableEditOnSight == 0) checked="1" #end $readonly> $ui.getString("tool.common.no")
@@ -203,7 +203,7 @@ function changeSiteNodeState(siteNodeVersionId)
 	</tr>		
 	<tr>
 		<td>#editTextField("SiteNode.pageCacheKey" "pageCacheKey" $!pageCacheKey "30" "date" $readonly)</td>
-		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		<td>
 			$ui.getString("entity.SiteNode.disableLanguages.label")<br>
 			<input type="radio" name="disableLanguages" value="0" #if($!disableLanguages == 0) checked="1" #end $readonly> $ui.getString("tool.common.no")
@@ -214,7 +214,7 @@ function changeSiteNodeState(siteNodeVersionId)
 	</tr>		
 	<tr>
 		<td>#editTextField("SiteNode.pageCacheTimeout" "pageCacheTimeout" $!pageCacheTimeout "30" "date" $readonly)</td>
-		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		<td>
 			$ui.getString("entity.SiteNode.disableForceIdentityCheck.label")<br>
 			<input type="radio" name="disableForceIdentityCheck" value="0" #if($!disableForceIdentityCheck == 0) checked="1" #end $readonly> $ui.getString("tool.common.no")
@@ -234,7 +234,7 @@ function changeSiteNodeState(siteNodeVersionId)
 				<option value="3" #if($!forceProtocolChange == 3) selected="1" #end $readonly> $ui.getString("entity.SiteNode.forceProtocolChangeForceSecurelabel")</option>	
 			</select>
 		</td>
-		<td><img src="images/trans.gif" width="20" height="1"></td>
+		<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		<td>&nbsp;</td>
 		<td></td>
 	</tr>
@@ -242,7 +242,7 @@ function changeSiteNodeState(siteNodeVersionId)
 		<input type="hidden" name="forceProtocolChange" value="$forceProtocolChange"/>
 	#end		
 	<tr>
-		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	
 	#if(!$isSiteNodeTypeDefinitionAssigned)
@@ -264,7 +264,7 @@ function changeSiteNodeState(siteNodeVersionId)
 			</td>
 		</tr>
 		<tr>
-			<td colspan="7"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="7"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 	</table>
 	
@@ -274,10 +274,10 @@ function changeSiteNodeState(siteNodeVersionId)
 		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.disableLanguages.header")</td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
 		<td width="100%" colspan="3">
@@ -287,16 +287,16 @@ function changeSiteNodeState(siteNodeVersionId)
 		</td>
 	</tr>	
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr class="darkapricot">
 		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.enableLanguages.header")</td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
 		<td width="100%" colspan="3">
@@ -306,7 +306,7 @@ function changeSiteNodeState(siteNodeVersionId)
 		</td>
 	</tr>	
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	#end
 	
@@ -314,10 +314,10 @@ function changeSiteNodeState(siteNodeVersionId)
 		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.contentVersionReferences.header")</td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	#set($referenceLimit = 20)
 	#set($hasContentReferences = false)
@@ -336,12 +336,12 @@ function changeSiteNodeState(siteNodeVersionId)
 					#set($isOdd = true)
 				#end
 				<tr $class>
-					<td width="16"><img src="images/tree/contentRoot.gif" width="16" height="16"></td>
+					<td width="16"><img src="css/images/tree/contentRoot.gif" width="16" height="16"></td>
 					<td width="100%">
 						<a title="$this.getContentPath($referenceBean.referencingCompletingObject.contentId)" href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.name</a>
 	 					- #if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.contenttool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.contenttool.versions"))
 	 				</td>
-					<td width="16"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+					<td width="16"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank"><img src="css/images/edit.gif" border="0"></a></td>
 				</tr>	
 			#end
 			#set($count = $count + 1)
@@ -366,16 +366,16 @@ function changeSiteNodeState(siteNodeVersionId)
 		</tr>	
 	#end
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr class="darkapricot">
 		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.siteNodeReferences.header")</td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	#set($hasPageReferences = false)
 	#set($isOdd = true)
@@ -393,12 +393,12 @@ function changeSiteNodeState(siteNodeVersionId)
 					#set($isOdd = true)
 				#end
 				<tr $class>
-					<td width="16"><img src="images/tree/structureRoot.gif"></td>
+					<td width="16"><img src="css/images/tree/structureRoot.gif"></td>
 					<td width="100%">
 						<a title="$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)" href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$referenceBean.name</a>
 						- #if($referenceBean.versions.get($lastIndex).registryVOList.size() > 1) $referenceBean.versions.get($lastIndex).registryVOList.size() $ui.getString("tool.structuretool.referencesFound") #end ($referenceBean.versions.size() $ui.getString("tool.structuretool.versions"))
 					</td>
-					<td width="16"><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+					<td width="16"><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank"><img src="css/images/edit.gif" border="0"></a></td>
 				</tr>	
 			#end
 			#set($count = $count + 1)			
@@ -423,17 +423,17 @@ function changeSiteNodeState(siteNodeVersionId)
 		</tr>	
 	#end
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	
 	<tr class="darkapricot">
 		<td class="smalllabel" colspan="3">$ui.getString("tool.structuretool.contentAndSiteNodesReferenced.header")</td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#F0E1B4" colspan="3" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	#set($isOdd = true)
 	#set($count = 0)
@@ -449,11 +449,11 @@ function changeSiteNodeState(siteNodeVersionId)
 					#set($isOdd = true)
 				#end
 				<tr $class>
-					<td width="16"><img src="images/tree/contentRoot.gif" width="16" height="16"></td>
+					<td width="16"><img src="css/images/tree/contentRoot.gif" width="16" height="16"></td>
 					<td width="100%">
 						<a title="$this.getContentPath($referencingEntity.id)" href="ViewContent.action?contentId=$referencingEntity.id" target="_blank">$referencingEntity.name</a>
 	 				</td>
-					<td width="16"><a href="ViewContent.action?contentId=$referencingEntity.id" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+					<td width="16"><a href="ViewContent.action?contentId=$referencingEntity.id" target="_blank"><img src="css/images/edit.gif" border="0"></a></td>
 				</tr>	
 				
 			#elseif($referencingEntity.class.name.indexOf("SiteNode") > -1)
@@ -466,11 +466,11 @@ function changeSiteNodeState(siteNodeVersionId)
 					#set($isOdd = true)
 				#end
 				<tr $class>
-					<td width="16"><img src="images/tree/contentRoot.gif" width="16" height="16"></td>
+					<td width="16"><img src="css/images/tree/contentRoot.gif" width="16" height="16"></td>
 					<td width="100%">
 						<a title="$this.getSiteNodePath($referencingEntity.id)" href="ViewSiteNode.action?contentId=$referencingEntity.id" target="_blank">$referencingEntity.name</a>
 	 				</td>
-					<td width="16"><a href="ViewSiteNode.action?contentId=$referencingEntity.id" target="_blank"><img src="images/edit.gif" border="0"></a></td>
+					<td width="16"><a href="ViewSiteNode.action?contentId=$referencingEntity.id" target="_blank"><img src="css/images/edit.gif" border="0"></a></td>
 				</tr>	
 	
 			#end
@@ -507,19 +507,19 @@ function changeSiteNodeState(siteNodeVersionId)
 		  <td colspan="4" valign="top">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 		<tr class="darkapricot">
 			<td class="smalllabel" nowrap>Content Bindings</td>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 			<td class="smalllabel">State</td>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="300" height="1"></td>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="css/images/trans.gif" width="300" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		#set($isOdd = true)
 		#foreach ($availableServiceBindingVO in $sortedAvailableContentServiceBindings)
@@ -583,7 +583,7 @@ function changeSiteNodeState(siteNodeVersionId)
 					
 					<td align="center">
 						#if($serviceBindingId > 0 && $readonly == "") 
-							<a href="javascript:confirmAction('Do you really want to remove the binding to the content $formatter.escapeForJavascripts($qualifyer)?', 'DeleteServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&serviceBindingId=$serviceBindingId');"><img src="images/delete.gif" border="0"></a>
+							<a href="javascript:confirmAction('Do you really want to remove the binding to the content $formatter.escapeForJavascripts($qualifyer)?', 'DeleteServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&serviceBindingId=$serviceBindingId');"><img src="css/images/delete.gif" border="0"></a>
 						#end	
 					</td>
 				</tr>	
@@ -595,19 +595,19 @@ function changeSiteNodeState(siteNodeVersionId)
 		<td colspan="4" valign="top">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 		<tr class="darkapricot">
 			<td class="smalllabel" nowrap>Structure Bindings</td>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 			<td class="smalllabel" width="60%">State</td>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="300" height="1"></td>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="css/images/trans.gif" width="300" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		#set($isOdd = true)
 		#foreach ($availableServiceBindingVO in $sortedAvailableStructureServiceBindings)
@@ -662,7 +662,7 @@ function changeSiteNodeState(siteNodeVersionId)
 					<td><a title="$qualifyerFullPath">$qualifyer</a></td>
 					<td align="center">
 						#if($serviceBindingId > 0 && $readonly == "") 
-							<a href="javascript:confirmAction('Do you really want to remove the binding to the content $formatter.escapeForJavascripts($qualifyer)?', 'DeleteServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&serviceBindingId=$serviceBindingId');"><img src="images/delete.gif" border="0"></a>
+							<a href="javascript:confirmAction('Do you really want to remove the binding to the content $formatter.escapeForJavascripts($qualifyer)?', 'DeleteServiceBinding.action?repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersion.getSiteNodeVersionId()&serviceBindingId=$serviceBindingId');"><img src="css/images/delete.gif" border="0"></a>
 						#end	
 					</td>
 				</tr>	
@@ -674,7 +674,7 @@ function changeSiteNodeState(siteNodeVersionId)
 	#end
 	
 	<tr>
-		<td colspan="8"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="8"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<td colspan="8">

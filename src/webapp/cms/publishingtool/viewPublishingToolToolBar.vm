@@ -264,30 +264,30 @@
 <div style="LEFT:1px; RIGHT:2px; position:absolute; TOP:1px; BOTTOM:1px; visibility:visible; z-index:0">
 <table class="publishingtool" cellpadding="0" cellspacing="0" border="0">
 <tr>
-	<td colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="28"></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="28"></td>
 	<td valign="middle" width="100%" height="100%">
 		
 		#foreach($button in $buttons)
 			#if($button.isSelfContained)
-				<a title="$button.getTooltip()" href="$button.getActionUrl()"><img src="$button.getImageUrl()" height="22" width="76" border="0"></a><img src="images/splitter.gif">						 
+				<a title="$button.getTooltip()" href="$button.getActionUrl()"><img src="$button.getImageUrl()" height="22" width="76" border="0"></a><img src="css/images/splitter.gif">						 
 			#else
-				<a title="$button.getTooltip()" href="javascript:openMainArea('$button.getActionUrl()', '$button.getTitle()');"><img src="$button.getImageUrl()" height="22" width="76" border="0"></a><img src="images/splitter.gif">
+				<a title="$button.getTooltip()" href="javascript:openMainArea('$button.getActionUrl()', '$button.getTitle()');"><img src="$button.getImageUrl()" height="22" width="76" border="0"></a><img src="css/images/splitter.gif">
 			#end
 		#end
 		<a valign=middle height=27 id='progress' name='progress' style='visibility:hidden'>
-			<img valign=middle src='images/working.gif' border='0' /> <font color=black size=-1 valign=middel>Loading...</font>
+			<img valign=middle src='css/images/working.gif' border='0' /> <font color=black size=-1 valign=middel>Loading...</font>
 		</a> 		
 	</td>
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"> 
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"> 
 	</td>
 	
 	
 </tr>
 <tr>
-	<td colspan="3" bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+	<td colspan="3" bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 </table>
 </div>

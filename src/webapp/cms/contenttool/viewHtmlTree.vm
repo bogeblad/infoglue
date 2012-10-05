@@ -291,8 +291,8 @@
 	#end
 	
 	
-	webFXTreeConfig.rootIcon		= "images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/folder.png";
-	webFXTreeConfig.openRootIcon	= "images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/openfolder.png";
+	webFXTreeConfig.rootIcon		= "css/images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/folder.png";
+	webFXTreeConfig.openRootIcon	= "css/images/tree/contentRoot.gif"; // "script/xloadtree/images/xp/openfolder.png";
 	webFXTreeConfig.skinBasePath 	= "script/xloadtree/images/xp/";
 	webFXTreeConfig.folderIcon		= "script/xloadtree/images/xp/folder.png";
 	webFXTreeConfig.openFolderIcon	= "script/xloadtree/images/xp/openfolder.png";
@@ -367,7 +367,7 @@
 	## drawItem procedure (called from tree renderer for every item in the list, [se #parse below] )
 	## this is a local macro
 	#set($canDrag = ' ondragstart="startDrag();" ondragend="endDrag();"')
-	#set($imgPath="images/tree/xp/")	
+	#set($imgPath="css/images/tree/xp/")	
 	
 	#set($parentId = 0)
 	
@@ -386,7 +386,7 @@
 			#if ($n.isContainer())
 				#set($acceptdrop='ondrop="drop()" ondragover="overDrag()" ondragenter="enterDrag()" ondragleave="exitDrag()"')
 				#if ($n.isRoot())
-					<img $acceptdrop id="icon${nId}" myLabel="${n.getTitle()}" class="tree-icon" src="images/tree/contentRoot.gif">
+					<img $acceptdrop id="icon${nId}" myLabel="${n.getTitle()}" class="tree-icon" src="css/images/tree/contentRoot.gif">
 				#else
 					<img $canDrag $acceptdrop class="tree-icon" src="${imgPath}${imgStart}$preOCImg$postImg" id="icon${nId}" myLabel="${n.getTitle()}" />
 				#end
@@ -448,13 +448,13 @@
 	// Create the folder menu ( the menu that shows when a folder is selected )
 	//
 	cMenu = new Menu();
-	cMenu.add( new MenuItem( "Folder", function () { createFolder(); }, "images/ContentfolderClosed.gif" ) );
+	cMenu.add( new MenuItem( "Folder", function () { createFolder(); }, "css/images/ContentfolderClosed.gif" ) );
 	cMenu.add( new MenuSeparator() );
 	// Loop through content type definitions
 	#foreach($c in  $contentTypeDefinitions)
-		cMenu.add( new MenuItem( "$c.getName()", function () { create($c.contentTypeDefinitionId, '$c.getName()'); }, "images/Contentdocument.gif" ) );
+		cMenu.add( new MenuItem( "$c.getName()", function () { create($c.contentTypeDefinitionId, '$c.getName()'); }, "css/images/Contentdocument.gif" ) );
 	#end
-	folderMenu.add(tmp = new MenuItem( "Create new", null, "images/tree/contentItem.gif", cMenu))
+	folderMenu.add(tmp = new MenuItem( "Create new", null, "css/images/tree/contentItem.gif", cMenu))
 	folderMenu.add( new MenuSeparator() );
 	folderMenu.add( new MenuItem( "Submit to publish...", function () { alert("Not implemented yet"); }, null ) );
 	folderMenu.add( new MenuItem( "Move...", function () { alert("Not implemented yet"); }, null ) );

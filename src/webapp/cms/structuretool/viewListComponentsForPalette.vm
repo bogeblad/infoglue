@@ -27,13 +27,13 @@
 			<td colspan="2" class="smalllabel">Drag a component to the slot</td>
 		</tr>
 		<tr>
-			<td colspan="2" height="1" bgcolor="#FEF8D0"><img src="images/trans.gif" width="1" height="1"></td>
+			<td colspan="2" height="1" bgcolor="#FEF8D0"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td colspan="2" height="1" bgcolor="#F0E1B4"><img src="images/trans.gif" width="1" height="1"></td>
+			<td colspan="2" height="1" bgcolor="#F0E1B4"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td colspan="2" height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>
 		<tr>
 			<td height="1"><strong>Icon</strong></td>

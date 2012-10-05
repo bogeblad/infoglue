@@ -1,11 +1,11 @@
 #define( $headerMarkup )
 
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
  	#if($prefferedWYSIWYG == "ckeditor3")
 
- 		<script type="text/javascript" src="${root}/applications/ckeditor/ckeditor.js"></script>
+ 		<script type="text/javascript" src="${root}/applications/ckeditor-latest/ckeditor.js"></script>
 		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
 
 	#else
@@ -784,7 +784,7 @@
 							#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
 	    					#foreach($relation in $relatedCategories)
 	                    	<li style="border-bottom: 1px solid #ccc;">
-	                           	<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="images/v3/cross.png" border="0"/></a>
+	                           	<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="css/images/v3/cross.png" border="0"/></a>
 	    						$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)
 	    					</li>
 	    					#end
@@ -894,7 +894,7 @@
     						#end
     						
     						<tr>
-    							<td colspan="3"><a id="${attribute.name}AnchorComp" name="${attribute.name}AnchorComp"/><img src="images/trans.gif" width="1" height="5"/></td>
+    							<td colspan="3"><a id="${attribute.name}AnchorComp" name="${attribute.name}AnchorComp"/><img src="css/images/trans.gif" width="1" height="5"/></td>
     						</tr>
     						<tr>
     							<td colspan="3">

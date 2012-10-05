@@ -22,13 +22,13 @@
 		<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
 	</tr>		
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<td colspan="3">#editTextArea("ContentVersion.versionComment" "versionComment" $!versionComment "10" "10" "normaltextarea")</td>
 	</tr>		
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "overrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
@@ -37,7 +37,7 @@
 	#if($allowPublicationEventFilter == "true")
 		#if($infoGluePrincipal.groups.size() > 1)
 			<tr>
-				<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
 				<td colspan="3">
@@ -60,7 +60,7 @@
 	#end
 	
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<input type="hidden" name="contentId" value="$!contentId">

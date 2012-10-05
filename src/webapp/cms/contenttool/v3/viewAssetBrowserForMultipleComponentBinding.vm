@@ -1,6 +1,6 @@
 #beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogForMultipleBindingsHeader" "" "" false false $!disableCloseButton)
 
-<link rel="stylesheet" type="text/css" href="css/v3/assets.css" />
+<link rel="stylesheet" type="text/css" href="css/assets.css" />
 <style type="text/css">
 .imgBox {
 	width:114px;
@@ -72,7 +72,7 @@
 			if(shortAssetKey.length > 14) 
 				shortAssetKey = shortAssetKey.substring(0,14);
 			
-			$("#selectedAssetsListMargin").append("<div class='imgBox' style='margin: 4px;'><div class='imgBoxTop' style='background:url(images/v3/imgbox_bg.gif) repeat;'><div id='imgBoxTopInner' class='imgBoxTopInner'><img src='" + binding.getAssetUrl() + "'/><p class='assetKeyP'>" + shortAssetKey + "</a></p><br/><img src='images/arrowleft.gif' style='border: 0px' onclick='moveBindingUp(" + i + ");'/> <img src='images/delete.gif' style='border: 0px' onclick='deleteBinding(" + i + ");'/> <img src='images/arrowright.gif' style='border: 0px' onclick='moveBindingDown(" + i + ");'/></div></div>");
+			$("#selectedAssetsListMargin").append("<div class='imgBox' style='margin: 4px;'><div class='imgBoxTop' style='background:url(css/images/v3/imgbox_bg.gif) repeat;'><div id='imgBoxTopInner' class='imgBoxTopInner'><img src='" + binding.getAssetUrl() + "'/><p class='assetKeyP'>" + shortAssetKey + "</a></p><br/><img src='css/images/arrowleft.gif' style='border: 0px' onclick='moveBindingUp(" + i + ");'/> <img src='css/images/delete.gif' style='border: 0px' onclick='deleteBinding(" + i + ");'/> <img src='css/images/arrowright.gif' style='border: 0px' onclick='moveBindingDown(" + i + ");'/></div></div>");
 		}
 		/*		        
 		dragsort.makeListSortable(document.getElementById("currentBindings"), verticalOnly, changeOrder);
@@ -292,7 +292,7 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3>$ui.getString("tool.contenttool.assetDialog.assetDialogHeader") - filtered on: "$assetTypeFilter"</h3>
+	<h3>$ui.getString("tool.contenttool.assetDialog.assetDialogHeader") - $ui.getString("tool.contenttool.assetDialog.filteredOn"): "$assetTypeFilter"</h3>
 
 	<div id="tabsContainer" style="width: 100%; float: left;" class="flora">      
 
@@ -302,25 +302,25 @@
 	        <li><a href="#searchTab"><span>$ui.getString("tool.contenttool.assetDialog.searchAssetsTabLabel")</span></a></li>	        
 	    </ul>
 
-		<div id="repositoryBrowserTab" class="inlineTabDiv">
-			<iframe frameborder="0" name="repositoryBrowserFrame" id="repositoryBrowserFrame" src="" width="670" height="410" ></iframe>
+		<div id="repositoryBrowserTab" class="inlineTabDiv" style="margin-bottom: 0;">
+			<iframe frameborder="0" name="repositoryBrowserFrame" id="repositoryBrowserFrame" src="" width="670" height="410"></iframe>
 		</div>
 				
-		<div id="latestUploadedTab" class="inlineTabDiv">
-			<iframe frameborder="0" name="latestAssetsFrame" id="latestAssetsFrame" src="" width="670" height="400" ></iframe>
+		<div id="latestUploadedTab" class="inlineTabDiv" style="margin-bottom: 0;">
+			<iframe frameborder="0" name="latestAssetsFrame" id="latestAssetsFrame" src="" width="670" height="400"></iframe>
 		</div>
 		
-		<div id="searchTab" class="inlineTabDiv">
-			<iframe frameborder="0" name="contentVersionAssetSearchFrame" id="contentVersionAssetSearchFrame" src="" width="670" height="400" ></iframe>
+		<div id="searchTab" class="inlineTabDiv" style="margin-bottom: 0;">
+			<iframe frameborder="0" name="contentVersionAssetSearchFrame" id="contentVersionAssetSearchFrame" src="" width="670" height="400"></iframe>
 		</div>
 
 	</div>
 
 	<div style="clear: both;"></div>
 	
-	<div id="selectedAssetsListHeader" style="float: left; width: 100%; border-bottom: 1px solid #9caabd; height: 14px; padding-top: 2px; background-color: #ccc; font-size: 10px; font-family: verdana; font-weight: bold; text-indent: 16px; background-image:url(images/v3/tableHeaderBackground.gif); background-repeat:repeat-x;">$ui.getString("tool.contenttool.assetDialog.selectedAssets")</div>
-	<div id="selectedAssetsList" style="overflow: auto; width: 100%; border: 0px solid #ccc; float: left; height: 120px; background-color: white;">
-		<div id="selectedAssetsListMargin" style="float: left; margin-left: 14px; margin-right: 14px;">
+	<div id="selectedAssetsListHeader">$ui.getString("tool.contenttool.assetDialog.selectedAssets")</div>
+	<div id="selectedAssetsList">
+		<div id="selectedAssetsListMargin">
 		</div>
 	</div>
 	

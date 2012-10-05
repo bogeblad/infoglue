@@ -194,16 +194,16 @@
 		<table cellpadding="0" cellspacing="0" border="0" width="350">
 		<tr class="darkgreen">
 			<td class="smalllabel">$ui.getString("tool.contenttool.chooseContentLabel")</td>
-			<td class="smalllabel"><img src="images/spyglassIcon.gif" width="16" height="16" onclick="toggleDiv('searchDiv', 'treeDiv');"></td>
+			<td class="smalllabel"><img src="css/images/spyglassIcon.gif" width="16" height="16" onclick="toggleDiv('searchDiv', 'treeDiv');"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		<!-- 
 		HERE IS THE REPOSITORY-LIST FOR LATER 
@@ -219,7 +219,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		<tr>
 			<td class="menu">  
@@ -232,7 +232,7 @@
 		</tr>	
 		<!--
 		<tr>
-			<td colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			<td colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>
 		<tr>
 			<td colspan="2">
@@ -261,13 +261,13 @@
 			<td class="smalllabel">$ui.getString("tool.contenttool.associatedAttachments")</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		<tr>
 			<td>

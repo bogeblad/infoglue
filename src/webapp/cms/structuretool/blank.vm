@@ -21,13 +21,13 @@
 		<td colspan="3" class="biglabel">No SiteNodeId</td>
 	</tr>		
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<td colspan="3">There was no siteNodeId sent to the action so we cannot show it. Perhaps you have deleted all site nodes. In that case choose repository again in the header.</td>
 	</tr>		
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	
 </table>

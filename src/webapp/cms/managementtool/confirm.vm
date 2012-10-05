@@ -25,19 +25,19 @@
 			<TD>
 				<TABLE width="100%" style="BORDER-RIGHT: 2px outset; BORDER-TOP: 2px outset; BORDER-LEFT: 2px outset; BORDER-BOTTOM: 2px outset" cellSpacing="0" cellPadding="0" border="0">
 				<TR height="25" bgColor="blue">
-					<TD style="padding-left: 5px;" background="images/dialogHeaderBG.gif" noWrap colSpan="1" rowSpan="1" width=100%><FONT face="Tahoma" color="#ffffff" size="2"> $ui.getString($header) </FONT></TD>
+					<TD style="padding-left: 5px;" background="css/images/dialogHeaderBG.gif" noWrap colSpan="1" rowSpan="1" width=100%><FONT face="Tahoma" color="#ffffff" size="2"> $ui.getString($header) </FONT></TD>
 				</TR>
 				<tr height="3">
-					<td colspan="2"><img src="images/trans.gif" width="1" height="1"></td>
+					<td colspan="2"><img src="css/images/trans.gif" width="1" height="1"></td>
 				</tr>
 				<TR>
 					<TD colspan="2" valign="top">
 						<table bgColor="#D4D0C8" height=100% border=0 width=100%>
 						<tr>
 							<td width=1>&nbsp;</td>
-							<td valign="top" align=left width=1><img src="images/confirmIcon.gif"/></td>
+							<td valign="top" align=left width=1><img src="css/images/confirmIcon.gif"/></td>
 							<td valign="top" width=100%><br><font face="verdana, tahoma, arial" color="#000000" size=-1>$ui.getString($message)<br><br>#if($extraParameters && $extraParameters != "")$!extraParameters#end<br/><br/></font></td>
-							<td width=3><img src="images/trans.gif" width="1" height="1"></td>
+							<td width=3><img src="css/images/trans.gif" width="1" height="1"></td>
 						</tr>
 						<tr height=100%>
 							<td colspan=4 align=center valign=bottom>
@@ -50,7 +50,7 @@
 							</td>
 						</tr>
 						<tr height="6">
-							<td colspan="4"><img src="images/trans.gif" width="1" height="1"></td>
+							<td colspan="4"><img src="css/images/trans.gif" width="1" height="1"></td>
 						</tr>
 					</table>
 					</TD>

@@ -1,7 +1,7 @@
 #define($headerMarkup)
 
-	<script src="script/jqueryplugins/jcrop/js/jquery.Jcrop.min.js"></script>
-	<link rel="stylesheet" href="script/jqueryplugins/jcrop/css/jquery.Jcrop.css" type="text/css" />
+	<script src="script/jqueryplugins-latest/jcrop/js/jquery.Jcrop.min.js"></script>
+	<link rel="stylesheet" href="script/jqueryplugins-latest/jcrop/css/jquery.Jcrop.css" type="text/css" />
 	
 	<script type="text/javascript">
 		<!--
@@ -414,7 +414,7 @@
 			      <td width="10" style="border: 1px solid black;">
 			  	  <input type="text" name="digitalAssetKey" id="tt" size="20" onfocus="ddHide();" style="border: 1px solid #FFFFFF" value="$!digitalAssetKey"></td>
 			      <td onClick="ddClick();" style="border: 1px solid black;">
-			      <img border="0" src="images/combodown.gif" width="15" height="20"></td>
+			      <img border="0" src="css/images/combodown.gif" width="15" height="20"></td>
 			    </tr>
 			  </table>
 			  <select size="5" name="dd" id="dd" style="margin-left: 16px; border:0px solid #FFFFFF; width: 163px; height: 100; visibility: hidden; z-index: 100; position: absolute;" onClick="ddListClick();">

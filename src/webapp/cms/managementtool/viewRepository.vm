@@ -66,7 +66,6 @@
 			actualLivePath = "/" + livePath; 
 		}
 		
-		var explanation = "<p><b>$ui.getString("entity.Repository.dnsNameExplainIntro.label")</b><br/><br/>";
 		explanation += "1. $ui.getString("entity.Repository.dnsNameExplain1.label"):<br/> <a href='" + workingUrl + "'><b>" + workingUrl + "</b></a><br/><br/>";
 		explanation += "2. $ui.getString("entity.Repository.dnsNameExplain2.label"):<br/> <a href='" + previewUrl + "'><b>" + previewUrl + "</b></a><br/><br/>";
 		explanation += "3. $ui.getString("entity.Repository.dnsNameExplain3.label"):<br/> <a href='" + workingUrl + actualWorkingPath + "'><b>" + workingUrl + actualWorkingPath + "</b></a><br/><br/>";
@@ -74,6 +73,7 @@
 		explanation += "5. $ui.getString("entity.Repository.dnsNameExplain5.label"):<br/> <b>" + extraUrls + " (Path: " + actualWorkingPath + ")</b><br/><br/>";
 		explanation += "6. $ui.getString("entity.Repository.dnsNameExplain6.label"):<br/> <b>" + extraUrls + " (Path: " + actualLivePath + ")</b><br/><br/></p>";
 		
+		var explanation = "<p><b>$ui.getString("entity.Repository.dnsNameExplainIntro.label")</b><br/><br/>";
 		$("#explanationParagraph").html("" + explanation).show("slow");
 		$("#explanation").show("slow");
 	}
@@ -83,7 +83,6 @@
 		$("#dnsName").css("color","#999999");
 
 		$("#dnsName").click(function () {
-			alert("$ui.getString("entity.Repository.dnsNameAlert.label")");
 			$("#dnsFields").show("slow");
 	    });
 	    
@@ -108,42 +107,45 @@
 </div>
 
 <div class="fullymarginalized">
-
 	<table class="managementtooledit" cellpadding="2" cellspacing="2" border="0">
 	<form name="editForm" method="POST" action="UpdateRepository.action">
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 		<tr>
 			<td>
-				<p>#editField("Repository.name" "name" $!name "51")</p>
-				<p>#editField("Repository.description" "description" $!description "51")</p>
-				<p>#editReadOnlyField("Repository.dnsName" "dnsName" $!dnsName "51" "READONLY") <a href="javascript:explainNiceURI();">$ui.getString("entity.Repository.explainNiceURI.label")</a></p>
-				
-				<fieldset id="dnsFields" style="display:none; padding: 4px; width: 100%;">
-					<legend>Domain/Host/Nice URI settings</legend>
-					<p>
-						$ui.getString("entity.Repository.explainNiceURIWorkingUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingUrl" name="workingUrl" value="$!repositoryVO.workingBaseUrl"/><br/><br/>
-						$ui.getString("entity.Repository.explainNiceURIPreviewUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="previewUrl" name="previewUrl" value="$!repositoryVO.previewBaseUrl"/><br/><br/>
-						$ui.getString("entity.Repository.explainNiceURILiveUrl.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="liveUrl" name="liveUrl" value="$!repositoryVO.liveBaseUrl"/><br/><br/>
-						$ui.getString("entity.Repository.explainNiceURIExtraUrl.label"):<br/> <textarea class="normaltextarea" style="width: 600px; height: 50px;" id="extraUrls" name="extraUrls">$!repositoryVO.extraUrlsFormatted</textarea><br/><br/>
-						$ui.getString("entity.Repository.explainNiceURIWorkingPath.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingPath" name="workingPath" value="$!repositoryVO.workingPath"/><br/><br/>
-						$ui.getString("entity.Repository.explainNiceURILivePath.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="livePath" name="livePath" value="$!repositoryVO.path"/><br/><br/>
-						<a href="#" onclick="$('#dnsFields').hide('slow');">$ui.getString("tool.common.closeWindowButton.label")</a>
-					</p>
-				</fieldset>
+				<span class="blockHeading">Repository settings</b></span>
+				#editField("Repository.name" "name" $!name "51")<br/>
+				#editField("Repository.description" "description" $!description "51")<br/>
+				#editReadOnlyField("Repository.dnsName" "dnsName" $!dnsName "51" "READONLY")<br/> 
 			</td>
 		</tr>
 		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td><p><b>$ui.getString("entity.Repository.addedLanguages.label")</b></p></td>
+			<td>
+				<span class="blockHeading">Working</b></span>
+				$ui.getString("entity.Repository.explainNiceURIWorkingUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingUrl" name="workingUrl" value="$!repositoryVO.workingBaseUrl"/><br/>
+				$ui.getString("entity.Repository.explainNiceURIWorkingPath.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="workingPath" name="workingPath" value="$!repositoryVO.workingPath"/><br/>
+				<br/>
+				<span class="blockHeading">Live</span>
+				$ui.getString("entity.Repository.explainNiceURILiveUrl.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="liveUrl" name="liveUrl" value="$!repositoryVO.liveBaseUrl"/><br/>
+				$ui.getString("entity.Repository.explainNiceURILivePath.label"):<br/> <input class="longtextfield" type="textfield" style="width: 600px;" id="livePath" name="livePath" value="$!repositoryVO.path"/><br/>
+				<br/>
+				<span class="blockHeading">Preview</span>
+				$ui.getString("entity.Repository.explainNiceURIPreviewUrl.label"):<br/> <input class="longtextfield" style="width: 600px;" type="textfield" id="previewUrl" name="previewUrl" value="$!repositoryVO.previewBaseUrl"/><br/>
+				<br/>
+				<span class="blockHeading">Special</span>
+				$ui.getString("entity.Repository.explainNiceURIExtraUrl.label"):<br/> <textarea class="normaltextarea" style="width: 600px; height: 50px;" id="extraUrls" name="extraUrls">$!repositoryVO.extraUrlsFormatted</textarea><br/>
+				<br/>
+				<a href="javascript:explainNiceURI();">$ui.getString("entity.Repository.explainNiceURI.label")</a>
+			</td>
 		</tr>
 		<tr>
 			<td>
 				#if($languageVOList.size() > 0)
+					<span class="blockHeading">Languages</b></span>
+					$ui.getString("entity.Repository.addedLanguages.label")
+					<br/><br/>
 					<ul style="list-style-type: none; margin: 0px; padding-left: 16px; float: left;">
 					#foreach ($languageVO in $languageVOList)
-						<li style="height: 16px; background-repeat: no-repeat; background-position: 0px 0px; padding-left: 18px; background-image: url(images/v3/check.png);">$languageVO.name #if($velocityCount == 1) (Master) #end</li>
+						<li style="height: 16px; background-repeat: no-repeat; background-position: 0px 0px; padding-left: 18px; background-image: url(css/images/v3/check.png);">$languageVO.name #if($velocityCount == 1) (Master) #end</li>
 					#end
 					</ul>
 				#else

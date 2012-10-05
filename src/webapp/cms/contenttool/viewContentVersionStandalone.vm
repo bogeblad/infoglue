@@ -483,7 +483,7 @@
 			#end
 			</select>
 		</td>
-		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td width="40%"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td>
 			#set($dropIndex = 1)
 			$ui.getString("tool.contenttool.stateLabel")<br/>
@@ -648,7 +648,7 @@
 		#end
 		
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr class="$trClass">
 			<td colspan="3">
@@ -751,7 +751,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -797,7 +797,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -890,7 +890,7 @@
 		</tr>
 	#end
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3">

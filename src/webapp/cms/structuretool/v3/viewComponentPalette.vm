@@ -9,8 +9,9 @@
 
 	#includeLatestJQuery()
 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 
 	<script type="text/javascript">
 	<!--
@@ -70,7 +71,7 @@
 					#set($assetUrl = $this.getDigitalAssetUrl($componentContent.id, $masterLanguageVO.id, 'thumbnail'))
 				#end
 				#if(!$assetUrl || $assetUrl == "")
-					#set($assetUrl = "images/v3/commonComponentIcon.png")
+					#set($assetUrl = "css/images/v3/commonComponentIcon.png")
 				#end
 				
 				#set($description = "$!componentContent.extraProperties.get('Description')")

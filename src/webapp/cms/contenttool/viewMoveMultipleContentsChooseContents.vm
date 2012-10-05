@@ -134,7 +134,7 @@
 			parent.appendChild(link);
 
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", "5");
 			separator.setAttribute("height", "1");
@@ -166,9 +166,9 @@
 				var myTR = document.createElement("TR");
 				var actionTD = document.createElement("TD");
 				actionTD.setAttribute("width", "15");
-				//addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "images/downArrow.gif");
-				//addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "images/delete.gif");
+				//addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "css/images/downArrow.gif");
+				//addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "css/images/delete.gif");
 				var qualifyerTD = document.createElement("TD");
 				qualifyerTD.setAttribute("align", "left");
 				var qualifyerText = document.createTextNode(qualifyer.getPath());
@@ -320,7 +320,7 @@
 
 <body class="contenttooledit" onload="javascript:init();" onMouseUp="clearDrag(event);">
 
-<div id="buffer" style="top: 0; left: 0"><img src="images/tree/xp/item.png"></div>
+<div id="buffer" style="top: 0; left: 0"><img src="css/images/tree/xp/item.png"></div>
 
 <div id="savingLayer" class="infobackground">
 	<div class="infoheader">Saving changes</div>
@@ -336,13 +336,13 @@
 			<td class="smalllabel">Add the contents you want to move and click "Next".</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		<tr>
 			<td>
@@ -355,7 +355,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>	
 		<tr>
 			<td class="menu" style="border: 1px solid #C7D1B3;">   
@@ -400,13 +400,13 @@
 			<td class="smalllabel">The following contents will be moved</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="2"></td>
 		</tr>		
 		
 		<tr>
@@ -425,7 +425,7 @@
 				
 		<tr>
 			<td style="border: 1px solid #C7D1B3; border-top: 0px solid #C7D1B3;" onMouseUp="checkDrag(event);">
-			<img pos="-1" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
+			<img pos="-1" id="drop$qualifyer.sortOrder" src="css/images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
 			&nbsp;
 			</td>
 		</tr>

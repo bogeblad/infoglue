@@ -1,7 +1,7 @@
 #beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogHeader" "" "" false false $!disableCloseButton)
 
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
 	<script type="text/javascript" src="script/embla/admin.js"></script>
 

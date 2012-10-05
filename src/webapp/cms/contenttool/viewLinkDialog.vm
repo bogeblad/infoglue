@@ -210,9 +210,9 @@
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 	<td class="activeTabControl" id="externalLinkTD" style="background-color: white;"><a href="javascript:changeTab('externalLink');">External Link</a></td>
-	<td><img src="images/trans.gif" width="3" height="1"></td>
+	<td><img src="css/images/trans.gif" width="3" height="1"></td>
 	<td class="inactiveTabControl" id="internalLinkTD" style="background-color: #F0E1B4;"><a href="javascript:changeTab('internalLink');">$ui.getString("tool.contenttool.inlineImageInternalLinkTitle")</a></td>
-	<td><img src="images/trans.gif" width="3" height="1"></td>
+	<td><img src="css/images/trans.gif" width="3" height="1"></td>
 	<td class="inactiveTabControl" id="internalAssetTD" style="background-color: #C7D1B3; border-right:1px solid black;"><a href="javascript:changeTab('internalAsset');">$ui.getString("tool.contenttool.inlineImageUploadedAssetTitle")</a></td>
 </tr>
 </table>

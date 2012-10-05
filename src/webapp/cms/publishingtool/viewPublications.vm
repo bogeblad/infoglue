@@ -40,10 +40,10 @@
 
 <table width=100%>
 <tr>
-<td width=50%><img src="images/trans.gif" width="350" height="1"></td><td></td><td width=50%><img src="images/trans.gif" width="350" height="1"></td>
+<td width=50%><img src="css/images/trans.gif" width="350" height="1"></td><td></td><td width=50%><img src="css/images/trans.gif" width="350" height="1"></td>
 </tr>
 
-<!--tr><td><img src="images/greydot.gif" height="1" width="100%" border=0></td><td></td><td><img src="images/greydot.gif" height="1" width="100%" border=0></td></tr-->
+<!--tr><td><img src="css/images/greydot.gif" height="1" width="100%" border=0></td><td></td><td><img src="css/images/greydot.gif" height="1" width="100%" border=0></td></tr-->
 
 <tr>
 <td valign="top">
@@ -105,15 +105,15 @@ Filter:
 
 	#if($publicationEvent.entityClass.indexOf("ContentVersion") > -1)
 		#if($publicationEvent.typeId == 3)
-			#set($icon = "<img src='images/tree/unpublishContentItem.gif' border=0>")
+			#set($icon = "<img src='css/images/tree/unpublishContentItem.gif' border=0>")
 		#else
-			#set($icon = "<img src='images/tree/contentItem.gif' border=0>")
+			#set($icon = "<img src='css/images/tree/contentItem.gif' border=0>")
 		#end
 	#else
 		#if($publicationEvent.typeId == 3)
-			#set($icon = "<img src='images/tree/unpublishSiteNodeItem.gif' border=0>")
+			#set($icon = "<img src='css/images/tree/unpublishSiteNodeItem.gif' border=0>")
 		#else
-			#set($icon = "<img src='images/tree/siteNodeItem.gif' border=0>")
+			#set($icon = "<img src='css/images/tree/siteNodeItem.gif' border=0>")
 		#end
 	#end
 
@@ -139,7 +139,7 @@ Filter:
 
 
 #if( $cnt==0)
-	<tr><td>&nbsp;No versions marked for publishing available</td><td><img src="images/trans.gif" width="200" height="1"/></td><td></td></tr>
+	<tr><td>&nbsp;No versions marked for publishing available</td><td><img src="css/images/trans.gif" width="200" height="1"/></td><td></td></tr>
 #end
 
 #lvEnd()
@@ -158,7 +158,7 @@ Filter:
 </td>
 
 <!-- LINE BETWEEN TABLES -->
-<td valign="top">&nbsp; <img src="images/greydot.gif" height="$vh" width="2" border=0 align=left></td>
+<td valign="top">&nbsp; <img src="css/images/greydot.gif" height="$vh" width="2" border=0 align=left></td>
 
 <td valign="top">
 
@@ -180,7 +180,7 @@ Filter:
 	#hiddenField("repositoryId" $repositoryId)
 
 
-## Start on odd but dont reset cnt, for rowid´s sake
+## Start on odd but dont reset cnt, for rowidï¿½s sake
 #set( $chk = $cnt % 2)
 #if($chk==1)
 	#set($cnt = $cnt + 1)
@@ -200,7 +200,7 @@ Filter:
 		#set( $chkbox = "<input type='checkbox' disabled='true'/>")
 	#end
 
-	#set( $row = "<a onclick=showHide('$publicationVO.getPublicationId()');><!--<img id='i$publicationVO.getPublicationId()' src='images/tree/smallplus.gif' border=0>--></a><a href=JavaScript:showHide('$publicationVO.getPublicationId()');>$publicationVO.getName()</a>")
+	#set( $row = "<a onclick=showHide('$publicationVO.getPublicationId()');><!--<img id='i$publicationVO.getPublicationId()' src='css/images/tree/smallplus.gif' border=0>--></a><a href=JavaScript:showHide('$publicationVO.getPublicationId()');>$publicationVO.getName()</a>")
 
 	##set( $row = "$row <div id='e$publicationVO.getPublicationId()' style='width: 300px; display:none;'>")
 	##set( $row = "$row <iframe frameborder='0' id='$publicationVO.getPublicationId()IFrame' src='' width='300' height='100' align='baseline' style='width:100%; height=100%; margin: 0px 0px 0px 0px; padding: 0px 0px 0px 0px;'></iframe> ")
@@ -230,7 +230,7 @@ Filter:
 				#set( $prevEnd = $editionBrowser.previousPageIndex + $editionBrowser.previousPageSize)
 				<a href="$pageUrl&startIndex=$editionBrowser.previousPageIndex">&lt;&lt; $prevStart - $prevEnd</a>
 			#else
-				<img src="images/trans.gif" width="10" height="1"/>
+				<img src="css/images/trans.gif" width="10" height="1"/>
 			#end
 		</td>
 		<td align="center" width="34%">Page $editionBrowser.currentPage of $editionBrowser.totalPages</td>
@@ -240,7 +240,7 @@ Filter:
 				#set( $nextEnd = $editionBrowser.nextPageIndex + $editionBrowser.nextPageSize)
 				<a href="$pageUrl&startIndex=$editionBrowser.nextPageIndex">$nextStart - $nextEnd &gt;&gt;</a>
 			#else
-				<img src="images/trans.gif" width="10" height="1"/>
+				<img src="css/images/trans.gif" width="10" height="1"/>
 			#end
 		</td>
 	</tr>

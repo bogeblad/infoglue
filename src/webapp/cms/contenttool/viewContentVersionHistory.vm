@@ -43,7 +43,7 @@
 	
 	#set($nameLink = "<a href='javascript:openVersion($cv.id, $cv.languageId);'>$cv.getContentName()</a>")
 	#set($state = $ui.getString( $stateStrings.get( $cv.stateId ) ) )
-	#set($row = ["<input type='hidden' name='rowtitle' value='$cv.getLanguageName() ($cv.getId())'/> <img src='images/tree/contentRoot.gif'/> $nameLink", "$cv.getLanguageName() ($cv.getId())", "$state", "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd HH:mm:ss')","$displayName", "$cv.versionComment"] )
+	#set($row = ["<input type='hidden' name='rowtitle' value='$cv.getLanguageName() ($cv.getId())'/> <img src='css/images/tree/contentRoot.gif'/> $nameLink", "$cv.getLanguageName() ($cv.getId())", "$state", "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd HH:mm:ss')","$displayName", "$cv.versionComment"] )
 	#set($cnt = $cnt + 1)
 	
 	#lvAddRow($row $cnt $cv.getId())

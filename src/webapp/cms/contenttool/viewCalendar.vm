@@ -14,7 +14,7 @@ var ARR_WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 // day week starts from (normally 0-Mo or 1-Su)
 var NUM_WEEKSTART = 1;
 // path to the directory where calendar images are stored. trailing slash req.
-var STR_ICONPATH = 'images/';
+var STR_ICONPATH = 'css/images/';
 
 var dt_current = new Date($!date);
 if(dt_current == null)

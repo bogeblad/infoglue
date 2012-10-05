@@ -6,8 +6,9 @@
 <head>
 	<title>Menus</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 	<script type="text/javascript" src="script/listview.js"></script>
 
 	#includeLatestJQuery()
@@ -86,8 +87,8 @@
 	    
 	   	function notifyIsLoaded()
 	    {
-	    	document.getElementById('treeDiv').style.left = '2px';
-	    	document.getElementById('treeDiv').style.right = '2px';
+	    	//document.getElementById('treeDiv').style.left = '2px';
+	    	//document.getElementById('treeDiv').style.right = '2px';
 	    }
 
 	    function notifyExp(v)
@@ -118,7 +119,8 @@
 		function resizeTreeIframe(height, width)
 		{
 			if(height > 20 && width > 20)
-				$(treeView()).height(height).width(width);
+				//$(treeView()).height(height).width(width);
+				$(treeView()).height(height);
 		}
 		
 		$(document).ready(function(){
@@ -137,7 +139,7 @@
 
 <body class="generaltooledit">
 
-    <div class="onlyExpanded" id="treeDiv" style="position:absolute; margin-top: 10px; margin-left: 6px; top: 0px; bottom: 6px; float: left;">
+    <div id="treeDivContainer" class="onlyExpanded">
 		<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureHtmlTree!V3.action?repositoryId=${repositoryId}" width="220" height="150" allowtransparency="true"></iframe>
     </div>
 	

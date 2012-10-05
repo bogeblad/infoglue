@@ -63,7 +63,7 @@
 					<td colspan="2" class="propertiesheader">Edit values</td>
 				</tr>
 				<tr>
-					<td colspan="2"><img src="images/trans.gif" height="5" width="1"></td>
+					<td colspan="2"><img src="css/images/trans.gif" height="5" width="1"></td>
 				</tr>
 				<tr>
 					<td><b>Label</b></td>
@@ -75,7 +75,7 @@
 				</tr>
 				<tr>
 					<td colspan="2">
-						<img src="images/trans.gif" width="80" height="25" border="0">
+						<img src="css/images/trans.gif" width="80" height="25" border="0">
 					</td>
 				</tr>
 				<tr>
@@ -112,7 +112,7 @@
 		<td colspan="2" class="propertiesheader">Properties for attribute</td>
 	</tr>
 	<tr>
-		<td colspan="2"><img src="images/trans.gif" height="5" width="1"></td>
+		<td colspan="2"><img src="css/images/trans.gif" height="5" width="1"></td>
 	</tr>
 	<tr>
 		<td><b>Name</b></td>
@@ -161,8 +161,8 @@
 					<td>$value.getLocalizedValue("id", "$!currentContentTypeEditorViewLanguageCode")</td>
 					<td>
 						<nobr>
-						<a href="javascript:showDiv('${attribute.name}${parameter.key}${value.id}PropertyLayer');"><img src="images/properties.gif" border="0"></a>
-						<a href="ViewFormEditor!deleteAttributeParameterValue.action?contentVersionId=$contentVersionId&contentVersionAttributeName=$contentVersionAttributeName&title=$title&attributeName=$attribute.name&attributeParameterId=$parameter.key&attributeParameterValueId=$value.id&attributeToExpand=$attribute.name"><img src="images/delete.gif" border="0"></a>				
+						<a href="javascript:showDiv('${attribute.name}${parameter.key}${value.id}PropertyLayer');"><img src="css/images/properties.gif" border="0"></a>
+						<a href="ViewFormEditor!deleteAttributeParameterValue.action?contentVersionId=$contentVersionId&contentVersionAttributeName=$contentVersionAttributeName&title=$title&attributeName=$attribute.name&attributeParameterId=$parameter.key&attributeParameterValueId=$value.id&attributeToExpand=$attribute.name"><img src="css/images/delete.gif" border="0"></a>				
 						</nobr>
 					</td>
 				</tr>
@@ -177,7 +177,7 @@
 	#end
 	<tr>
 		<td colspan="2">
-			<img src="images/trans.gif" width="80" height="25" border="0">
+			<img src="css/images/trans.gif" width="80" height="25" border="0">
 		</td>
 	</tr>
 	<tr>
@@ -232,7 +232,7 @@
 						</select>
 					</td>
 					<td width="70%">
-						<a href="javascript:submitNewAttribute();"><img src="images/insertFormElement.gif" border="0"></a>
+						<a href="javascript:submitNewAttribute();"><img src="css/images/insertFormElement.gif" border="0"></a>
 					</td>
 					<td align="right">
 						<select onChange="javascript:changeViewLanguage();" size="1" name="languageCode" class="sitedropbox">
@@ -253,13 +253,13 @@
 					#set($title = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", "$!currentContentTypeEditorViewLanguageCode"))
 							
 					<tr>
-						<td><nobr><a href="ViewFormEditor!moveAttributeUp.action?contentVersionId=$contentVersionId&contentVersionAttributeName=$contentVersionAttributeName&title=$title&attributeName=$attribute.name"><img src="images/moveUp.gif" border="0"></a><a href="ViewFormEditor!moveAttributeDown.action?contentVersionId=$contentVersionId&contentVersionAttributeName=$contentVersionAttributeName&title=$title&attributeName=$attribute.name"><img src="images/moveDown.gif" border="0"></a></nobr></td>
-						<td><img src="images/${attribute.inputType}Icon.gif"></td>
+						<td><nobr><a href="ViewFormEditor!moveAttributeUp.action?contentVersionId=$contentVersionId&contentVersionAttributeName=$contentVersionAttributeName&title=$title&attributeName=$attribute.name"><img src="css/images/moveUp.gif" border="0"></a><a href="ViewFormEditor!moveAttributeDown.action?contentVersionId=$contentVersionId&contentVersionAttributeName=$contentVersionAttributeName&title=$title&attributeName=$attribute.name"><img src="css/images/moveDown.gif" border="0"></a></nobr></td>
+						<td><img src="css/images/${attribute.inputType}Icon.gif"></td>
 						<td width="90%">$attribute.name ($title) of type $attribute.inputType</td>
 						<td>
 							<nobr>
-							<a href="javascript:showDiv('${attribute.name}PropertyLayer');"><img src="images/properties.gif" border="0"></a>
-							<a href="ViewFormEditor!deleteAttribute.action?contentVersionId=$contentVersionId&contentVersionAttributeName=$contentVersionAttributeName&title=$title&attributeName=$attribute.name"><img src="images/delete.gif" border="0"></a>				
+							<a href="javascript:showDiv('${attribute.name}PropertyLayer');"><img src="css/images/properties.gif" border="0"></a>
+							<a href="ViewFormEditor!deleteAttribute.action?contentVersionId=$contentVersionId&contentVersionAttributeName=$contentVersionAttributeName&title=$title&attributeName=$attribute.name"><img src="css/images/delete.gif" border="0"></a>				
 							</nobr>
 						</td>
 					</tr>

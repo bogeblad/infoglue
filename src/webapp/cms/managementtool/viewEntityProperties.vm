@@ -141,7 +141,7 @@
 					#end
 					</select>
 				</td>
-				<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+				<td width="40%"><img src="css/images/trans.gif" width="10" height="1"></td>
 				<td>&nbsp;</td>
 			</tr>	
 			<tr>
@@ -219,7 +219,7 @@
 				#end
 				
 				<tr>
-					<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+					<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 				</tr>
 				<tr>
 					<td colspan="3">
@@ -264,7 +264,7 @@
 							#if($enableWYSIWYG == "true")
 								<!-- Here comes the WYSIWYG-editor layer -->
 								<div id="${attribute.name}EditorType1" name="${attribute.name}EditorType1" style="position:absolute; visibility: hidden; width:${width}px; height:${wysiwygHeight}px; z-index:1; border: 0px none #000000;">
-								    <img src="images/trans.gif" width="1" height="12">
+								    <img src="css/images/trans.gif" width="1" height="12">
 								    <br>
 								    <table cellpadding="0" cellspacing="0" border="0">
 								    <tr>
@@ -310,7 +310,7 @@
 								<!-- Here comes the Form editor layer -->
 								<input type="hidden" name="${attribute.name}EditorType3IsActive" value="false">
 								<div id="${attribute.name}EditorType3" name="${attribute.name}EditorType3" style="position:absolute; visibility: hidden; width:${width}px; height:${height}px; z-index:1; border: 0px none #000000;">
-								    <img src="images/trans.gif" width="1" height="12">
+								    <img src="css/images/trans.gif" width="1" height="12">
 								    <br>
 								    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 								    <tr>
@@ -348,7 +348,7 @@
 												#foreach($qualifyer in $qualifyers)
 													<tr>
 														<td valign="middle">
-														<img src="images/tree/xp/item.png"> 
+														<img src="css/images/tree/xp/item.png"> 
 														</td>
 														<td valign="middle">
 														$qualifyer.getPath() 
@@ -395,7 +395,7 @@
 												#foreach($qualifyer in $qualifyers)
 													<tr>
 														<td valign="middle">
-														<img src="images/tree/xp/item.png"> 
+														<img src="css/images/tree/xp/item.png"> 
 														</td>
 														<td valign="middle">
 														$qualifyer.getPath() 
@@ -491,7 +491,7 @@
 			
 			#if($entityId)
 				<tr>
-					<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+					<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 				</tr>
 				#set($allCategoryKeys = $definedCategoryKeys)
 				#if($allCategoryKeys.size() > 0)
@@ -518,7 +518,7 @@
 									</td>
 									<td align="right">
 		                            #if($entityId)
-										<a href="javascript:addCategory('${keyAttribute}', '${dropdownName}');"><img src="images/v3/add.png" border="0"/></a>
+										<a href="javascript:addCategory('${keyAttribute}', '${dropdownName}');"><img src="css/images/v3/add.png" border="0"/></a>
 									#end
 									</td>
 								</tr>
@@ -535,7 +535,7 @@
 								<tr $class>
 									<td width="50%">$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)</td>
 									<td width="50%" align="right">
-										<a href="javascript:deleteCategory('$relation.propertiesCategoryId');"><img src="images/delete.gif" border="0"/></a>
+										<a href="javascript:deleteCategory('$relation.propertiesCategoryId');"><img src="css/images/delete.gif" border="0"/></a>
 									</td>
 								</tr>
 							#end
@@ -555,7 +555,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+					<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 				</tr>
 				
 				#end

@@ -25,52 +25,52 @@
 				#if($inconsistency.referencingEntityCompletingName == "org.infoglue.cms.entities.content.Content")
 					#if($inconsistency.referenceType == 0)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Innehållet med id $inconsistency.entityId refererades som en länk i innehållet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId refererades som en lï¿½nk i innehï¿½llet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 1)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Innehållet med id $inconsistency.entityId hade en fil som refereras som en inline bild i innehållet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId hade en fil som refereras som en inline bild i innehï¿½llet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 5)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Sidan med id $inconsistency.entityId refererades som en sidrelation i innehållet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
+						Sidan med id $inconsistency.entityId refererades som en sidrelation i innehï¿½llet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 6)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Innehållet med id $inconsistency.entityId refererades som en innehållsrelation i innehållet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId refererades som en innehï¿½llsrelation i innehï¿½llet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
 					#end
 				#elseif($inconsistency.referencingEntityCompletingName == "org.infoglue.cms.entities.structure.SiteNode")
 					#if($inconsistency.referenceType == 0)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Innehållet med id $inconsistency.entityId refererades som en länk i innehållet "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId refererades som en lï¿½nk i innehï¿½llet "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 1)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Innehållet med id $inconsistency.entityId hade en fil som refereras som en inline bild i innehållet "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId hade en fil som refereras som en inline bild i innehï¿½llet "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 2)
 						#set($viewUrl = "${componentRendererUrl}${componentRendererAction}?siteNodeId=$inconsistency.referencingEntityCompletingId")
-						Innehållet med id $inconsistency.entityId refererades som en komponent av en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId refererades som en komponent av en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 3)
 						#set($viewUrl = "${componentRendererUrl}${componentRendererAction}?siteNodeId=$inconsistency.referencingEntityCompletingId")
-						Innehållet med id $inconsistency.entityId refererades av en komponent på en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId refererades av en komponent pï¿½ en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
 					#end
 				#end
 			#elseif($inconsistency.entityName == "org.infoglue.cms.entities.structure.SiteNode")
 				#if($inconsistency.referencingEntityCompletingName == "org.infoglue.cms.entities.content.Content")
 					#if($inconsistency.referenceType == 0)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Sidan med id $inconsistency.entityId refererades i texten av en version av innehållet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
+						Sidan med id $inconsistency.entityId refererades i texten av en version av innehï¿½llet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 1)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Innehållet med id $inconsistency.entityId hade en fil som refereras som en inline bild i innehållet "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId hade en fil som refereras som en inline bild i innehï¿½llet "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 2)
 						#set($viewUrl = "${componentRendererUrl}${componentRendererAction}?siteNodeId=$inconsistency.referencingEntityCompletingId")
-						Innehållet med id $inconsistency.entityId refererades som en komponent av en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId refererades som en komponent av en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 3)
 						#set($viewUrl = "${componentRendererUrl}${componentRendererAction}?siteNodeId=$inconsistency.referencingEntityCompletingId")
-						Innehållet med id $inconsistency.entityId refererades av en komponent på en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId refererades av en komponent pï¿½ en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 5)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Sidan med id $inconsistency.entityId refererades som en sidrelation i innehållet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
+						Sidan med id $inconsistency.entityId refererades som en sidrelation i innehï¿½llet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
 					#elseif($inconsistency.referenceType == 6)
 						#set($editUrl = "ViewContentVersion!standalone.action?contentVersionId=$inconsistency.referencingEntityId")
-						Innehållet med id $inconsistency.entityId refererades som en innehållsrelation i innehållet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
+						Innehï¿½llet med id $inconsistency.entityId refererades som en innehï¿½llsrelation i innehï¿½llet "$this.getContentVO($inconsistency.referencingEntityCompletingId).name"
 					#end
 				#elseif($inconsistency.referencingEntityCompletingName == "org.infoglue.cms.entities.structure.SiteNode")
 					Sidan med id $inconsistency.entityId refererades av en version av sidan "$this.getSiteNodeVO($inconsistency.referencingEntityCompletingId).name"
@@ -79,11 +79,11 @@
 			</td>
 			<td>
 				#if($editUrl && $editUrl != "")
-					<a href="$editUrl" target="_blank"><img src="images/edit.gif" border="0" alt="Fix"></a>
+					<a href="$editUrl" target="_blank"><img src="css/images/edit.gif" border="0" alt="Fix"></a>
 				#else
-					<a href="$viewUrl" target="_blank"><img src="images/preview_icon.gif" border="0" alt="Preview"></a>
+					<a href="$viewUrl" target="_blank"><img src="css/images/preview_icon.gif" border="0" alt="Preview"></a>
 				#end
-				<a href="ViewInconsistencies!removeReference.action?registryId=$inconsistency.id"><img src="images/ok_icon.gif" border="0" alt="Fix"></a>
+				<a href="ViewInconsistencies!removeReference.action?registryId=$inconsistency.id"><img src="css/images/ok_icon.gif" border="0" alt="Fix"></a>
 			</td>
 		#end
 		</tr>

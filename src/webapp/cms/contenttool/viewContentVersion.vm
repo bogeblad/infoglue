@@ -180,8 +180,8 @@
 	<script type="text/javascript" src="script/calendar1.js"></script>
 	<script type="text/javascript" src="script/editor.js"></script>
 
-	<script type="text/javascript" src="script/jquery/jquery-1.2.6.min.js"></script>
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-igcommon15.min.js"></script>
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 
 	<script type="text/javascript" src="script/hotkeys.js"></script>
 	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />
@@ -521,7 +521,7 @@
 			#end
 			</select>
 		</td>
-		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td width="40%"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td>
 			#set($dropIndex = 1)
 			$ui.getString("tool.contenttool.stateLabel")<br/>
@@ -687,7 +687,7 @@
 		#set($currentEditorId = 0)
 		
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3">
@@ -791,7 +791,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -837,7 +837,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -930,7 +930,7 @@
 		</tr>
 	#end
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		#set($allCategoryKeys = $definedCategoryKeys)
 		#if($allCategoryKeys.size() > 0)
@@ -974,7 +974,7 @@
 						<tr $class>
 							<td width="50%">$relation.category.getLocalizedDisplayName($this.languageCode, "none")</td>
 							<td width="50%" align="right">
-								<a href="javascript:deleteCategory('$relation.contentCategoryId');"><img src="images/delete.gif" border="0"/></a>
+								<a href="javascript:deleteCategory('$relation.contentCategoryId');"><img src="css/images/delete.gif" border="0"/></a>
 							</td>
 						</tr>
 					#end
@@ -995,7 +995,7 @@
 		</tr>
 		#end
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3">

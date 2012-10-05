@@ -13,10 +13,10 @@
 			if(selectedAssetElement)
 			{
 				selectedAssetElement.parentNode.style.border = "1px solid #d8d8d8";
-				selectedAssetElement.parentNode.style.background = "url(images/v3/imgbox_bg.gif) repeat";
-				selectedAssetElement.parentNode.style.backgroundImage = "url(images/v3/imgbox_bg.gif)";
-				selectedAssetElement.style.background = "url(images/v3/imgbox_bg.gif) repeat";
-				selectedAssetElement.style.backgroundImage = "url(images/v3/imgbox_bg.gif)";
+				selectedAssetElement.parentNode.style.background = "url(css/images/v3/imgbox_bg.gif) repeat";
+				selectedAssetElement.parentNode.style.backgroundImage = "url(css/images/v3/imgbox_bg.gif)";
+				selectedAssetElement.style.background = "url(css/images/v3/imgbox_bg.gif) repeat";
+				selectedAssetElement.style.backgroundImage = "url(css/images/v3/imgbox_bg.gif)";
 			}
 			
 			contentId = aContentId;	
@@ -31,10 +31,10 @@
 			if(selectedAssetElement)
 			{
 				selectedAssetElement.parentNode.style.border = "1px solid orange";
-				selectedAssetElement.parentNode.style.background = "url(images/v3/imgboxselected_bg.gif) repeat";
-				selectedAssetElement.parentNode.style.backgroundImage = "url(images/v3/imgboxselected_bg.gif)";
-				selectedAssetElement.style.background = "url(images/v3/imgboxselected_bg.gif) repeat";
-				selectedAssetElement.style.backgroundImage = "url(images/v3/imgboxselected_bg.gif)";
+				selectedAssetElement.parentNode.style.background = "url(css/images/v3/imgboxselected_bg.gif) repeat";
+				selectedAssetElement.parentNode.style.backgroundImage = "url(css/images/v3/imgboxselected_bg.gif)";
+				selectedAssetElement.style.background = "url(css/images/v3/imgboxselected_bg.gif) repeat";
+				selectedAssetElement.style.backgroundImage = "url(css/images/v3/imgboxselected_bg.gif)";
 			}
 		}
 	
@@ -110,7 +110,7 @@
 		});
 	-->
 	</script>
-	<link rel="stylesheet" type="text/css" href="css/v3/assets.css" />
+	<link rel="stylesheet" type="text/css" href="css/assets.css" />
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
 	
 </head>
@@ -123,7 +123,7 @@
 #foreach($digitalAsset in $inheritedDigitalAssets)
 	#set($digitalAssetUrl = $this.getDigitalAssetUrl($digitalAsset.digitalAssetId))
 	<div class="imgBox">
-    	<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == "$digitalAsset.assetKey") style="background:url(images/v3/imgboxselected_bg.gif) repeat;" #else style="background:url(images/v3/imgbox_bg.gif) repeat;" #end>
+    	<div class="imgBoxTop" id="digitalAsset$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')" #if($assetKey == "$digitalAsset.assetKey") style="background:url(css/images/v3/imgboxselected_bg.gif) repeat;" #else style="background:url(css/images/v3/imgbox_bg.gif) repeat;" #end>
             <div id="imgBoxTopInner" class="imgBoxTopInner">
             	<input type="hidden" id="digitalAsset$formatter.encodeURI($formatter.encodeURI($digitalAsset.assetKey, 'utf-8'), 'utf-8')" value="$digitalAssetUrl">
 				#set($singleEncodedAssetKey = "$formatter.encodeURI($digitalAsset.assetKey, 'utf-8')")

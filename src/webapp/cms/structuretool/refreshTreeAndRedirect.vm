@@ -17,7 +17,7 @@
 <body onload="refreshStructureToolBar('$this.getCMSBaseUrl()', 'tool.structuretool.siteNodeDetailsHeader', 'tool.structuretool.siteNodeDetailsHeader', 'siteNodeId=$siteNodeId&siteNodeVersionId=$siteNodeVersionId&repositoryId=$!repositoryId&isBranch=$isBranch', '$unrefreshedSiteNodeId', '$changeTypeId', '$siteNodeId');">
 
 <div style="top: 50px; left: 50px; width: 300px; height: 200px; position: absolute; text-align: center;">
-	<img src="images/workinganim.gif" style=""/><br>
+	<img src="css/images/workinganim.gif" style=""/><br>
 	Loading new page
 </div>
 

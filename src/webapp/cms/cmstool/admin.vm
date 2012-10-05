@@ -1,11 +1,11 @@
 #define( $headerMarkup )
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
-	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 	
-	<link rel="stylesheet" type="text/css" href="css/skins/admin.css" />
+	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 	
 	<script type="text/javascript">
@@ -34,7 +34,7 @@
 													activateTool('mydesktopMarkup', '$ui.getString('tool.common.myDesktopTool.name')', '$ui.getString("tool.common.adminTool.header")', false, '$ui.getString("tool.common.mydesktopTabLabelPrefix")'); 
 											},
 											panelTemplate: '<div id="newTabDiv" class="inlineTabDiv newTabDiv">Loading...</div>',
-											tabTemplate: '<li><a id="newTabLabel" href="#{href}"><span>#{label}</span></a> <a href="#" id="newTabLabelMaximize" style="padding-right: 2px;"><span style="display: inline; width: 14px; float: left; background: url(images/v3/maximizeTabIcon.png) no-repeat; cursor: pointer;">&nbsp;</span></a> <a href="#" id="newTabLabelClose" style="padding-left: 4px;"><span style="display: inline; width: 14px; float: left; background: url(images/v3/closeTabIcon.gif); cursor: pointer;">&nbsp;</span></a></li>',
+											tabTemplate: '<li><a id="newTabLabel" href="#{href}"><span>#{label}</span></a> <a href="#" id="newTabLabelMaximize" style="padding-right: 2px;"><span style="display: inline; width: 14px; float: left; background: url(css/images/v3/maximizeTabIcon.png) no-repeat; cursor: pointer;">&nbsp;</span></a> <a href="#" id="newTabLabelClose" style="padding-left: 4px;"><span style="display: inline; width: 14px; float: left; background: url(css/images/v3/closeTabIcon.gif); cursor: pointer;">&nbsp;</span></a></li>',
 											add: function(event, ui) { $("#tabsContainer").tabs("select", "\#" + ui.panel.id); }
 										});
 
@@ -127,8 +127,8 @@
 	
 	<script type="text/javascript" src="script/v3/admin.js"></script>
 	
-	<link rel="icon" href="images/icons/ig-16.png" type="image/png" />
-	<link rel="SHORTCUT ICON" href="images/icons/ig-16.png" />
+	<link rel="icon" href="css/images/icons/ig-16.png" type="image/png" />
+	<link rel="SHORTCUT ICON" href="css/images/icons/ig-16.png" />
 	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 	<meta http-equiv="Cache-Control" content="no-cache" />
 	<meta http-equiv="Pragma" content="no-cache" />
@@ -137,7 +137,7 @@
 
 #define( $rightMenuMarkup )
 	<form name="searchForm" id="searchForm" method="post" action="#" onsubmit="return search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');">
-		<input type="text" name="searchField" id="searchField" value="$ui.getString("tool.common.searchDialog.searchFieldDefaultText")"/> <img id="searchButton" src="images/v3/searchButtonIcon.png" onclick="if($('#searchField').val() == '$ui.getString("tool.common.searchDialog.searchFieldDefaultText")') alert('State search text'); else search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" alt="Search"/>
+		<input type="text" name="searchField" id="searchField" value="$ui.getString("tool.common.searchDialog.searchFieldDefaultText")"/> <img id="searchButton" src="css/images/v3/searchButtonIcon.png" onclick="if($('#searchField').val() == '$ui.getString("tool.common.searchDialog.searchFieldDefaultText")') alert('State search text'); else search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" alt="Search"/>
 	</form>
 #end
 
@@ -174,7 +174,7 @@
 				<div id="structureMarkup" style="display: none; float: left;">
 					<div class="onlyExpanded" id="structureRepositoryChoiceDiv" style="float: left;">
                     	<a id="structureRepositoriesDivHandle" href="#" onclick="$('#structureRepositoriesDiv').toggle(); return false;" style="display: block; float: left; width: 90%; overflow: hidden; margin-top: 6px; margin-bottom: 6px; font-weight: bold; text-indent: 8px; text-decoration: none;">$repositoryName</a>
-                    	<img src="images/v3/refresh.png" onclick="$('#structureTreeIframe').get(0).contentWindow.reload(); return false;" style="display: block; float: left; width: 16px; overflow: hidden; margin-left: 4px; margin-top: 6px; margin-bottom: 6px; font-weight: bold;" alt="reload"/>
+                    	<img src="css/images/v3/refresh.png" onclick="$('#structureTreeIframe').get(0).contentWindow.reload(); return false;" style="display: block; float: left; width: 16px; overflow: hidden; margin-left: 4px; margin-top: 6px; margin-bottom: 6px; font-weight: bold;" alt="reload"/>
                     	<div id="structureRepositoriesDiv" class="repositoryList" style="position: absolute; margin-top: 25px; z-index: 10; display: none;">
                     		<ul>
                     			#foreach($repository in $authorizedRepositoryVOList)
@@ -190,7 +190,7 @@
 					<div class="onlyExpanded" id="paletteDiv" style="float: left; height: 150px;">
                     	<div id="componentPaletteHeader">
                     		<h3 style="float: left;">$ui.getString('tool.common.favouriteComponentsHeader')</h3>
-                    		<a href="javascript:toggleFavourites();" style="float: right;"><img src="images/v3/downArrows.png" style="margin-top: 1px; margin-right: 1px;" width="16" height="16" border="0" alt="Close area"/></a>
+                    		<a href="javascript:toggleFavourites();" style="float: right;"><img src="css/images/v3/downArrows.png" style="margin-top: 1px; margin-right: 1px;" width="16" height="16" border="0" alt="Close area"/></a>
                         </div>
 						<iframe id="paletteIframe" name="paletteIframe" src="ViewComponentPalette.action" width="100%" height="150" frameborder="0"></iframe>
                     </div>
@@ -200,7 +200,7 @@
 				<div id="contentMarkup" style="display: none; float: left;">
 					<div class="onlyExpanded" id="contentRepositoryChoiceDiv" style="float: left;">
                     	<a id="contentRepositoriesDivHandle" href="#" onclick="$('#contentRepositoriesDiv').toggle(); return false;" style="display: block; float: left; width: 90%; overflow: hidden; margin-top: 6px; margin-bottom: 6px; font-weight: bold; text-indent: 8px; text-decoration: none;">$repositoryName</a>
-                    	<img src="images/v3/refresh.png" onclick="$('#contentTreeIframe').get(0).contentWindow.reload(); return false;" style="display: block; float: left; width: 16px; overflow: hidden; margin-left: 4px; margin-top: 6px; margin-bottom: 6px; font-weight: bold;" alt="reload"/>
+                    	<img src="css/images/v3/refresh.png" onclick="$('#contentTreeIframe').get(0).contentWindow.reload(); return false;" style="display: block; float: left; width: 16px; overflow: hidden; margin-left: 4px; margin-top: 6px; margin-bottom: 6px; font-weight: bold;" alt="reload"/>
                     	<div id="contentRepositoriesDiv" class="repositoryList" style="position: absolute; margin-top: 25px; z-index: 10; display: none;">
                     		<ul>
                     			#foreach($repository in $authorizedRepositoryVOList)
@@ -241,7 +241,7 @@
 			<div style="clear: both;"></div>
 			
 			<div id="availableTools">
-				<div id="availableToolsSizeControlBar"><img src="images/v3/smallBarDownArrow.png" width="7" height="7" onclick="toggleAvailableToolsSize();" alt="minimize"/></div>
+				<div id="availableToolsSizeControlBar"><img src="css/images/v3/smallBarDownArrow.png" width="7" height="7" onclick="toggleAvailableToolsSize();" alt="minimize"/></div>
 				<ul>
 					#if($this.hasAccessTo("StructureTool.Read"))
 					<li id="structureMarkupLink"><a href="#" class="structure" onclick="return activateTool('structureMarkup', '$ui.getString('tool.common.structureTool.name')', '$ui.getString("tool.common.adminTool.header")', true, '$ui.getString("tool.common.pageTabLabelPrefix")');">$ui.getString('tool.common.structureTool.name')</a></li>
@@ -327,7 +327,7 @@
 		</div>
 
 		<div id="logotypeBox">
-			<img src="images/v3/infoglueLogo.png" alt="logo"/><!--<a href="#" onclick="refreshRepositoryList();">Refresh</a>-->
+			<img src="css/images/v3/infoglueLogo.png" alt="logo"/><!--<a href="#" onclick="refreshRepositoryList();">Refresh</a>-->
 		</div>
 	</div>
 	

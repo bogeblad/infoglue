@@ -10,7 +10,7 @@
   <body>
     <table class="outer">
       <tr>
-        <td style="width:91"><img src="images/tomcat.gif" alt="Holigrow" width="91" height="91"/></td>
+        <td style="width:91"><img src="css/images/tomcat.gif" alt="Holigrow" width="91" height="91"/></td>
         <td><p class="application-title">$error.getName()</p></td>
       </tr><tr>
         <td colspan="2"><hr/></td>

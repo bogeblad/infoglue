@@ -1,9 +1,9 @@
 #define($headerMarkup)
 
 	<style type="text/css">
-		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
 	</style>
-	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" charset="utf-8">
 	<!--
 		function invokeWorkflowView(workflowId, actionId, view)
@@ -84,7 +84,7 @@
 					#end
 				#end
 				
-				#set($row = ["<a href='javascript:showDiv(${quote}activeWorkflow${workflowVO.workflowId}DetailsProperties${quote});'><img src='images/infoWorkflow.gif' border='0' alt='Start workflow'></a>", "<a title='$fullTitle' href='javascript:showDiv(${quote}activeWorkflow${workflowVO.workflowId}DetailsProperties${quote});'>$visibleTitle</a>", "$!action"])
+				#set($row = ["<a href='javascript:showDiv(${quote}activeWorkflow${workflowVO.workflowId}DetailsProperties${quote});'><img src='css/images/infoWorkflow.gif' border='0' alt='Start workflow'></a>", "<a title='$fullTitle' href='javascript:showDiv(${quote}activeWorkflow${workflowVO.workflowId}DetailsProperties${quote});'>$visibleTitle</a>", "$!action"])
 				#set($cnt = $cnt + 1)
 				
 				#foreach($workflowActionVO in $myActions)

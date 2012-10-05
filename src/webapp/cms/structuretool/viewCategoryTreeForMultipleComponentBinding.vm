@@ -138,13 +138,13 @@
 		{
 		    var dragData = window.event.dataTransfer;
 	    	dragData.dropEffect = 'link';
-			obj.src = "images/dropqualifyer.gif";
+			obj.src = "css/images/dropqualifyer.gif";
 			obj.height="19";
 		    window.event.dataTransfer.getData('Text');
 		}
 		function qexitDrag(obj)
 		{
-			obj.src = "images/trans.gif";
+			obj.src = "css/images/trans.gif";
 			if(obj.pos != -1) obj.height="4";
 		}
 
@@ -243,7 +243,7 @@
 			parent.appendChild(link);
 
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", "5");
 			separator.setAttribute("height", "1");
@@ -277,9 +277,9 @@
 				var myTR = document.createElement("TR");
 				var actionTD = document.createElement("TD");
 				actionTD.setAttribute("width", "50");
-				addImageLink(actionTD, "javascript:moveBindingDown(" + i + ");", "images/downArrow.gif");
-				addImageLink(actionTD, "javascript:moveBindingUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deleteBinding(" + i + ");", "images/delete.gif");
+				addImageLink(actionTD, "javascript:moveBindingDown(" + i + ");", "css/images/downArrow.gif");
+				addImageLink(actionTD, "javascript:moveBindingUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteBinding(" + i + ");", "css/images/delete.gif");
 				var bindingTD = document.createElement("TD");
 				bindingTD.setAttribute("align", "left");
 				var bindingText = document.createTextNode(binding.getPath());
@@ -401,13 +401,13 @@
 			<td class="smalllabel">Click on page the Category should use and then "add".</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>
 		<tr>
 			<td class="menu">
@@ -419,7 +419,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href="javascript:addQualifyer();"><img src="images/addButtonBlue.gif" border="0"></a>
+				<a href="javascript:addQualifyer();"><img src="css/images/addButtonBlue.gif" border="0"></a>
 				<a href="javascript:submitBinding();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
 				<a href="javascript:cancel();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
 			</td>
@@ -443,13 +443,13 @@
 			<td class="smalllabel">The following Categories are bound so far</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>
 
 		<tr>
@@ -463,7 +463,7 @@
 
 		<tr>
 			<td>
-			<img pos="-1" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
+			<img pos="-1" id="drop$qualifyer.sortOrder" src="css/images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
 			&nbsp;
 			</td>
 		</tr>

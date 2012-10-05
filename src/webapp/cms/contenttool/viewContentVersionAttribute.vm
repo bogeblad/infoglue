@@ -52,7 +52,7 @@
 			#end
 			</select>
 		</td>
-		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td width="40%"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td>
 			Current state<br/>
 			<select class="mediumdrop" name="stateId" onChange="javascript:changeContentState($!contentVersionId);">
@@ -141,7 +141,7 @@
 
 		#if($attribute.name == "$attributeName")
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3">
@@ -170,7 +170,7 @@
 					#if($enableWYSIWYG == "true")
 						<!-- Here comes the WYSIWYG-editor layer -->
 						<div id="${attribute.name}EditorType1" name="${attribute.name}EditorType1" style="position:absolute; visibility: hidden; width:${width}px; height:${wysiwygHeight}px; z-index:1; border: 0px none #000000;">
-						    <img src="images/trans.gif" width="1" height="12">
+						    <img src="css/images/trans.gif" width="1" height="12">
 						    <br>
 						    <table cellpadding="0" cellspacing="0" border="0">
 						    <tr>

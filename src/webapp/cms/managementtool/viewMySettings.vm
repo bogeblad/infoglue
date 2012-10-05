@@ -87,7 +87,6 @@
 		<td>	
 			$ui.getString("tool.managementtool.mysettings.theme.label")<br/>
 			<select class="sitedropbox" name="theme">
-				<option value="">Default</option>
 				#foreach($availableTheme in $themes)
 					<option value="$availableTheme" #if($theme == "$availableTheme")selected="1"#end>$availableTheme</option>
 				#end

@@ -20,9 +20,8 @@
 <body class="mydesktoptooledit">
 #set( $lvColor = "yellow")
 
-<script type="text/javascript" src="script/jquery/jquery-1.2.6.min.js"></script>
-<script type="text/javascript" src="script/jqueryplugins/ui/jquery.dimensions.js"></script>
-<script type="text/javascript" src="script/jqueryplugins/ui/ui.accordion.js"></script>
+<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+<script type="text/javascript" src="script/jqueryplugins/ui-latest/js/jquery-ui-latest.js"></script>
 <script>
   $(document).ready(function(){
     //$("#example").accordion({fillSpace: true});
@@ -169,8 +168,8 @@
 							#end
 						#end
 						
-						##set($row = ["<a href='javascript:showDiv(${quote}activeWorkflow${workflowVO.workflowId}DetailsProperties${quote});'><img src='images/infoWorkflow.gif' border='0' alt='Start workflow'></a>", "<a title='$fullTitle' href='javascript:showDiv(${quote}activeWorkflow${workflowVO.workflowId}DetailsProperties${quote});'>$visibleTitle</a>", "$!action"])
-						#set($row = ["<a href='javascript:showWorkflowProperties(${workflowVO.workflowId});'><img src='images/infoWorkflow.gif' border='0' alt='Start workflow'></a>", "<a title='$fullTitle' href='javascript:showWorkflowProperties(${workflowVO.workflowId});'>$visibleTitle</a>", "$!action"])
+						##set($row = ["<a href='javascript:showDiv(${quote}activeWorkflow${workflowVO.workflowId}DetailsProperties${quote});'><img src='css/images/infoWorkflow.gif' border='0' alt='Start workflow'></a>", "<a title='$fullTitle' href='javascript:showDiv(${quote}activeWorkflow${workflowVO.workflowId}DetailsProperties${quote});'>$visibleTitle</a>", "$!action"])
+						#set($row = ["<a href='javascript:showWorkflowProperties(${workflowVO.workflowId});'><img src='css/images/infoWorkflow.gif' border='0' alt='Start workflow'></a>", "<a title='$fullTitle' href='javascript:showWorkflowProperties(${workflowVO.workflowId});'>$visibleTitle</a>", "$!action"])
 						#set($cnt = $cnt + 1)
 						#lvAddRow($row $cnt "$workflowVO.getWorkflowId()")
 					#end
@@ -213,10 +212,10 @@
 						#end
 						
 						#if($availableWorkflowVO.status == 0)
-							##set($row = ["<a href=${quote}javascript:showAvailableWorkflowProperties('$formatter.encodeURI($availableWorkflowVO.name)');${quote}><img src='images/infoWorkflow.gif' border='0' alt='Workflow info'></a>", "<a title='$fullTitle' href='javascript:openUrl(${quote}ViewMyDesktopToolStartPage!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())${quote}, false);'>$visibleTitle</a>", "<a href='ViewMyDesktopToolStartPage!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())'><img src='images/startWorkflow.gif' border='0' alt='Start workflow'></a>"])
-							#set($row = ["<a href=${quote}javascript:showAvailableWorkflowProperties('$formatter.encodeURI($availableWorkflowVO.name)');${quote}><img src='images/infoWorkflow.gif' border='0' alt='Workflow info'></a>", "<a title='$fullTitle' href='ViewMyDesktopToolStartPage!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())'>$visibleTitle</a>", "<a href='ViewMyDesktopToolStartPage!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())'><img src='images/startWorkflow.gif' border='0' alt='Start workflow'></a>"])
+							##set($row = ["<a href=${quote}javascript:showAvailableWorkflowProperties('$formatter.encodeURI($availableWorkflowVO.name)');${quote}><img src='css/images/infoWorkflow.gif' border='0' alt='Workflow info'></a>", "<a title='$fullTitle' href='javascript:openUrl(${quote}ViewMyDesktopToolStartPage!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())${quote}, false);'>$visibleTitle</a>", "<a href='ViewMyDesktopToolStartPage!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())'><img src='css/images/startWorkflow.gif' border='0' alt='Start workflow'></a>"])
+							#set($row = ["<a href=${quote}javascript:showAvailableWorkflowProperties('$formatter.encodeURI($availableWorkflowVO.name)');${quote}><img src='css/images/infoWorkflow.gif' border='0' alt='Workflow info'></a>", "<a title='$fullTitle' href='ViewMyDesktopToolStartPage!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())'>$visibleTitle</a>", "<a href='ViewMyDesktopToolStartPage!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())'><img src='css/images/startWorkflow.gif' border='0' alt='Start workflow'></a>"])
 						#else
-							#set($row = ["<a href=${quote}javascript:showAvailableWorkflowProperties('$formatter.encodeURI($availableWorkflowVO.name)');${quote}><img src='images/infoWorkflow.gif' border='0' alt='Workflow info'></a>", "<a title='$fullTitle' style='color:red'>$visibleTitle</a>", "&nbsp;"])
+							#set($row = ["<a href=${quote}javascript:showAvailableWorkflowProperties('$formatter.encodeURI($availableWorkflowVO.name)');${quote}><img src='css/images/infoWorkflow.gif' border='0' alt='Workflow info'></a>", "<a title='$fullTitle' style='color:red'>$visibleTitle</a>", "&nbsp;"])
 						#end
 		
 						#set($cnt = $cnt + 1)
@@ -257,7 +256,7 @@
 							#set($visibleTitle = "$fullTitle.substring(0,37)...")
 						#end
 		
-						#set($row = ["<a href='javascript:showDiv(${quote}availableShortcut${availableShortcutVO.name}DetailsProperties${quote});'><img src='images/infoWorkflow.gif' border='0' alt='Start Shortcut'></a>", "<a title='$fullTitle' href='javascript:openUrl(${quote}$availableShortcutVO.getURL()${quote}, $availableShortcutVO.popup);'>$visibleTitle</a>", "<a href='$availableShortcutVO.getURL()' #if($availableShortcutVO.popup == true)target='_blank'#end><img src='images/startWorkflow.gif' border='0' alt='Start workflow'></a>"])
+						#set($row = ["<a href='javascript:showDiv(${quote}availableShortcut${availableShortcutVO.name}DetailsProperties${quote});'><img src='css/images/infoWorkflow.gif' border='0' alt='Start Shortcut'></a>", "<a title='$fullTitle' href='javascript:openUrl(${quote}$availableShortcutVO.getURL()${quote}, $availableShortcutVO.popup);'>$visibleTitle</a>", "<a href='$availableShortcutVO.getURL()' #if($availableShortcutVO.popup == true)target='_blank'#end><img src='css/images/startWorkflow.gif' border='0' alt='Start workflow'></a>"])
 						#set($cnt = $cnt + 1)
 						#lvAddRow($row $cnt "$availableShortcutVO.getShortcutId()")
 					#end

@@ -40,7 +40,7 @@ function toggleBlock(id)
 </div>
 
 <div id="usersTitle"> 
-	<div><span style="font-size: 12px; font-weight: bold;">$ui.getString("tool.managementtool.users.title")</span>&nbsp;<a href="javascript:toggleBlock('users');"><img src="images/downArrow.gif" border="0"></a></div>
+	<div><span style="font-size: 12px; font-weight: bold;">$ui.getString("tool.managementtool.users.title")</span>&nbsp;<a href="javascript:toggleBlock('users');"><img src="css/images/downArrow.gif" border="0"></a></div>
 
 	<div id="users" style="display:none; height:200px; overflow:auto; border: 1px solid #666666;"> 
 	#foreach ($userVO in $users)

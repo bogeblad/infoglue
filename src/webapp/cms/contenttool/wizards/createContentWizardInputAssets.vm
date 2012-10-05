@@ -173,7 +173,7 @@
 	<div class="infoheader">Saving changes</div>
 	<div class="infobody">
 		<br>Uploading file - please wait!<br><br>
-		<img src="images/progressbar.gif">
+		<img src="css/images/progressbar.gif">
 	</div>
 </div>
 
@@ -210,7 +210,7 @@
 			      <td width="10" style="border: solid 1px #000000;">
 			  		<input type="text" name="digitalAssetKey" id="tt" asize="20" onfocus="ddHide();" onChange="keyChanged();" style="width: 200px; border: 1px solid #FFFFFF;"></td>
 			      	<td onClick="ddClick();" style="border: solid 1px #000000;">
-			      	<img border="0" src="images/combodown.gif" width="15" height="20"></td>
+			      	<img border="0" src="css/images/combodown.gif" width="15" height="20"></td>
 			    </tr>
 			  	</table>
 			  	<select size="5" name="dd" id="dd" style="border:0px solid #FFFFFF; width: 222px; height: 80px; visibility: hidden; z-index: 100; position: absolute;" onClick="ddListClick();">

@@ -26,7 +26,7 @@
 		{
 			var repositoryId = selectBox.value;
 		   	qualifyerXML = createXML();
-		    var url = "$updateAction?updateAction=$updateAction&repositoryId=" + repositoryId + "&entityName=$entityName&entityId=$entityId&attributeName=$attributeName&qualifyerXML=" + escape(qualifyerXML);
+		    var url = "$updateAction?updateAction=$updateAction&repositoryId=" + repositoryId + "&entityName=$entityName&entityId=$entityId&attributeName=$attributeName&callbackMethod=$callbackMethod&qualifyerXML=" + escape(qualifyerXML);
 			document.location.href = url;
 		}
 		 	    				
@@ -151,7 +151,7 @@
 			parent.appendChild(link);
 
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", "5");
 			separator.setAttribute("height", "1");
@@ -165,7 +165,7 @@
 		function addDividerImage(parent, width, height)
 		{
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", width);
 			separator.setAttribute("height", height);
@@ -196,9 +196,9 @@
 				var myTR = document.createElement("tr");
 				var actionTD = document.createElement("td");
 				actionTD.setAttribute("width", "50");
-				addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "images/downArrow.gif");
-				addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "images/delete.gif");
+				addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "css/images/downArrow.gif");
+				addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "css/images/delete.gif");
 				var qualifyerTD = document.createElement("td");
 				qualifyerTD.setAttribute("align", "left");
 				var qualifyerText = document.createTextNode(qualifyer.getPath().replace(/&quot;/,"\""));
@@ -337,7 +337,7 @@
 					<td class="smalllabel">$ui.getString("tool.structuretool.chooseContentsForRelationLabel")</td>
 				</tr>
 				<tr>
-					<td height="1"><img src="images/trans.gif" width="1" height="7"></td>
+					<td height="1"><img src="css/images/trans.gif" width="1" height="7"></td>
 				</tr>		
 				<tr>
 					<td>
@@ -350,7 +350,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+					<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 				</tr>	
 				<tr>
 					<td class="menu" style="border: 1px solid #C7D1B3;">    
@@ -378,7 +378,7 @@
 					<td class="smalllabel">$ui.getString("tool.structuretool.choosenContentsForBindingLabel")</td>
 				</tr>
 				<tr>
-					<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+					<td height="1"><img src="css/images/trans.gif" width="1" height="2"></td>
 				</tr>		
 				
 				<tr>

@@ -120,10 +120,11 @@
 	<!-- END -->
 
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
 
 	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/menu.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 </head>
 <body class="generaltooledit" onload="if(parent.notifyIsLoaded)parent.notifyIsLoaded();parent.notifyExp('${exp}');loaded();" style="margin:0px">
 
@@ -131,13 +132,13 @@
 	<!-- NEW DYNAMIC VERSION -->
 	<script type="text/javascript">
 	<!--
-	//webFXTreeConfig.rootIcon		= "images/v3/pageTreeIcon.gif"; 
-	//webFXTreeConfig.openRootIcon	= "images/v3/pageTreeIcon.gif"; 
-	//webFXTreeConfig.folderIcon		= "images/v3/pageTreeIcon.gif";
-	//webFXTreeConfig.openFolderIcon	= "images/v3/pageTreeIcon.gif";
+	//webFXTreeConfig.rootIcon		= "css/images/v3/pageTreeIcon.gif"; 
+	//webFXTreeConfig.openRootIcon	= "css/images/v3/pageTreeIcon.gif"; 
+	//webFXTreeConfig.folderIcon		= "css/images/v3/pageTreeIcon.gif";
+	//webFXTreeConfig.openFolderIcon	= "css/images/v3/pageTreeIcon.gif";
 
-	//webFXTreeConfig.rootIcon		= "images/tree/structureRoot.gif"; 
-	//webFXTreeConfig.openRootIcon	= "images/tree/structureRoot.gif"; 
+	//webFXTreeConfig.rootIcon		= "css/images/tree/structureRoot.gif"; 
+	//webFXTreeConfig.openRootIcon	= "css/images/tree/structureRoot.gif"; 
 	webFXTreeConfig.rootIcon		= "script/xloadtree/images/xp/page.png"; 
 	webFXTreeConfig.openRootIcon	= "script/xloadtree/images/xp/page.png"; 
 	webFXTreeConfig.folderIcon		= "script/xloadtree/images/xp/page.png";

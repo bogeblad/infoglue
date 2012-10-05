@@ -37,13 +37,13 @@
 <form name="selectbox" method="post" action="">
 <table border="0" class="publishingtool" cellspacing="0" cellpadding="0" width="100%" height="100%">
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></td>
-	<td colspan="7"><img src="images/trans.gif" width="1" height="10"/></td>
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1" /></td>
+	<td colspan="7"><img src="css/images/trans.gif" width="1" height="10"/></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
-	<td class="toolheader"><img src="images/$ui.getString("images.publishingtool.repositoryLabel")" width="70" height="19"/></td> 
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
+	<td class="toolheader"><img src="css/images/$ui.getString("images.publishingtool.repositoryLabel")" width="70" height="19"/></td> 
 	<td>
   		<select size="1" name="repositoryId" class="sitedropbox" onchange="reloadMenu(this);">
 		    #if ($repositories.size() > 1)
@@ -55,15 +55,15 @@
 		    #end
 		</select>
 	</td>
-	<td class="toolheader"><img src="images/trans.gif" width="10" height="19"/></td>
-	<td class="toolheader"><img src="images/trans.gif" width="48" height="19"/></td>
-	<td class="toolheader" width="80%"><img src="images/trans.gif" width="1" height="1"/></td>
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td class="toolheader"><img src="css/images/trans.gif" width="10" height="19"/></td>
+	<td class="toolheader"><img src="css/images/trans.gif" width="48" height="19"/></td>
+	<td class="toolheader" width="80%"><img src="css/images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
-	<td colspan="7"><img src="images/trans.gif" width="1" height="10"/></td>
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
+	<td colspan="7"><img src="css/images/trans.gif" width="1" height="10"/></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 </table>
 </form>

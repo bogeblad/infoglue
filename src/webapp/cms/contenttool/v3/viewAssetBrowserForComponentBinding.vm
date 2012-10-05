@@ -1,7 +1,7 @@
 #define( $headerMarkup )
 
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 	
 #end
 
@@ -177,7 +177,7 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3>$ui.getString("tool.contenttool.assetDialog.assetDialogHeader") - filtered on: "$assetTypeFilter"</h3>
+	<h3>$ui.getString("tool.contenttool.assetDialog.assetDialogHeader") - $ui.getString("tool.contenttool.assetDialog.filteredOn"): "$assetTypeFilter"</h3>
 
 	<div id="tabsContainer" class="flora">      
 

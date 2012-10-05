@@ -55,7 +55,7 @@ function changeSiteNodeState(siteNodeVersionId)
 			#end
 			</select>
 		</td>
-		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td width="40%"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td>
 			#set($dropIndex = 1)
 			$ui.getString("tool.contenttool.stateLabel")<br/>
@@ -125,7 +125,7 @@ function changeSiteNodeState(siteNodeVersionId)
 		
 	#foreach($attribute in $contentTypeAttributes)
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3">

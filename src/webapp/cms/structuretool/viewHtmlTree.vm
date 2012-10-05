@@ -248,8 +248,8 @@
 	<!-- NEW DYNAMIC VERSION -->
 	<link type="text/css" rel="stylesheet" href="script/xloadtree/xtree.css" />
 	<script type="text/javascript">
-	webFXTreeConfig.rootIcon		= "images/tree/structureRoot.gif"; // "script/xloadtree/images/xp/folder.png";
-	webFXTreeConfig.openRootIcon	= "images/tree/structureRoot.gif"; // "script/xloadtree/images/xp/openfolder.png";
+	webFXTreeConfig.rootIcon		= "css/images/tree/structureRoot.gif"; // "script/xloadtree/images/xp/folder.png";
+	webFXTreeConfig.openRootIcon	= "css/images/tree/structureRoot.gif"; // "script/xloadtree/images/xp/openfolder.png";
 	webFXTreeConfig.folderIcon		= "script/xloadtree/images/xp/page.png";
 	webFXTreeConfig.openFolderIcon	= "script/xloadtree/images/xp/page.png";
 	webFXTreeConfig.hiddenFolderIcon		= "script/xloadtree/images/xp/pageHidden.png";
@@ -325,7 +325,7 @@
 	## drawItem procedure (called from tree renderer for every item in the list, [se #parse below] )
 	## this is a local macro
 	#set($canDrag = ' ondragstart="startDrag();" ondragend="endDrag();"')
-	#set($imgPath="images/tree/xp/")	
+	#set($imgPath="css/images/tree/xp/")	
 	
 	#macro(drawItem $n)
 			####
@@ -335,7 +335,7 @@
 			
 				#set($acceptdrop='ondrop="drop()" ondragover="overDrag()" ondragenter="enterDrag()" ondragleave="exitDrag()"')
 				#if ($n.isRoot())
-					<img $acceptdrop id="icon${n.getId()}" myLabel="${n.getTitle()}" class="tree-icon" src="images/tree/structureRoot.gif">
+					<img $acceptdrop id="icon${n.getId()}" myLabel="${n.getTitle()}" class="tree-icon" src="css/images/tree/structureRoot.gif">
 				#else
 					<img $canDrag $acceptdrop class="tree-icon" src="${imgPath}emptyfolder$preOCImg$postImg" id="icon${n.getId()}" myLabel="${n.getTitle()}" />
 				#end

@@ -114,13 +114,13 @@
 
 <table border="0" class="contenttool" cellspacing="0" cellpadding="0">
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></td>
-	<td colspan="7"><img src="images/trans.gif" width="1" height="10" /></td>
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1" /></td>
+	<td colspan="7"><img src="css/images/trans.gif" width="1" height="10" /></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1" /></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1" /></td>
-	<td class="toolheader"><img src="images/$ui.getString("images.contenttool.repositoryLabel")" width="70" height="19" /></td> 
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1" /></td>
+	<td class="toolheader"><img src="css/images/$ui.getString("images.contenttool.repositoryLabel")" width="70" height="19" /></td> 
 	<td>
 		<form name="selectbox" method="post" action="">
 		<select size="1" name="repositoryId" class="sitedropbox" onchange="reloadMenu(this);" >
@@ -139,27 +139,27 @@
 	</td>
 	
 
-	<td class="toolheader"><img src="images/trans.gif" width="10" height="19" /></td>
-	<td class="toolheader"><img src="images/$ui.getString("images.contenttool.searchLabel")" width="48" height="19" /></td>
+	<td class="toolheader"><img src="css/images/trans.gif" width="10" height="19" /></td>
+	<td class="toolheader"><img src="css/images/$ui.getString("images.contenttool.searchLabel")" width="48" height="19" /></td>
 	<td class="toolheader"></td>
 	<td class="toolheader" style="white-space:nowrap">
 		<form name="searchForm" method="post" action="#" target="main" onsubmit="return postSearchForm();">
 			<input type="hidden" name="repositoryId" value="$!repositoryId" />	
 			<input type="text" class="searchfield" name="searchString" value="" style="vertical-align:top"  />
-			<img src="images/trans.gif" width="5" height="19" />
+			<img src="css/images/trans.gif" width="5" height="19" />
 			<img onclick="return postSearchForm();" src="$ui.getString("images.contenttool.ok")" width="31px" height="19px" border="0"/>
-			<img src="images/trans.gif" width="5" height="19"/>
+			<img src="css/images/trans.gif" width="5" height="19"/>
 			<img onclick="return openSearchForm();" src="$ui.getString("images.contenttool.advanced")" width="62" height="19" border="0"/>
 		</form>
 	</td>
-	<td class="toolheader" width="70%"><img src="images/trans.gif" width="1" height="1" /></td>
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td class="toolheader" width="70%"><img src="css/images/trans.gif" width="1" height="1" /></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"/></td>
 
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
-	<td colspan="7"><img src="images/trans.gif" width="1" height="10"/></td>
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
+	<td colspan="7"><img src="css/images/trans.gif" width="1" height="10"/></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 </table>
 
@@ -167,7 +167,7 @@
 <div style="left:0px; position:absolute; top:39px; visibility:visible; z-index:0">
 <table cellpadding="0" cellspacing="0" border="0" width="100%" style="height: 1px">
 <tr>
-	<td bgcolor="#999999" width="100%"><img src="images/trans.gif" width="1" height="1" /></td>
+	<td bgcolor="#999999" width="100%"><img src="css/images/trans.gif" width="1" height="1" /></td>
 </tr>
 </table>	
 </div>

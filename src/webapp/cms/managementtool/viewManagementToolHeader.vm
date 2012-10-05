@@ -37,12 +37,12 @@
 <!--<form name="selectbox" method="POST" action="">-->
 <table style="border-right:1px solid white;border-left:1px solid white; height:100%;" border="0" class="managementtool" cellspacing="0" cellpadding="0" width="100%" height="100%">
 <tr>
-	<td><img src="images/trans.gif" width="1" height="40"></a></td>
+	<td><img src="css/images/trans.gif" width="1" height="40"></a></td>
 </tr>
 <!--
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></a>
-	<td class="toolheader"><img src="images/$ui.getString("images.managementtool.repositoryLabel")" width="70" height="19"></td> 
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></a>
+	<td class="toolheader"><img src="css/images/$ui.getString("images.managementtool.repositoryLabel")" width="70" height="19"></td> 
 	<td>
   		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:reloadMenu(this);">
 		    <option value="beg" selected>$ui.getString("tool.managementtool.chooseRepositoryLabel")</option>
@@ -52,13 +52,13 @@
 		    #end
 		</select>
 	</td>
-	<td class="toolheader"><img src="images/trans.gif" width="10" height="19"></td>
-	<td class="toolheader"><img src="images/trans.gif" width="48" height="19"></td>
-	<td class="toolheader" width="80%"><img src="images/trans.gif" width="1" height="1"></td>
+	<td class="toolheader"><img src="css/images/trans.gif" width="10" height="19"></td>
+	<td class="toolheader"><img src="css/images/trans.gif" width="48" height="19"></td>
+	<td class="toolheader" width="80%"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
-	<td colspan="7"><img src="images/trans.gif" width="1" height="10"></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
+	<td colspan="7"><img src="css/images/trans.gif" width="1" height="10"></td>
 </tr>
 -->
 </table>
@@ -67,7 +67,7 @@
 <!--div style="LEFT:0px; position:absolute; TOP:39px; visibility:visible; z-index:0">
 <table cellpadding="0" cellspacing="0" border="0" width="100%" height="1">
 <tr>
-	<td bgcolor="#999999" width="100%"><img src="images/trans.gif" width="1" height="1"></td>
+	<td bgcolor="#999999" width="100%"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 </table>	
 </div-->

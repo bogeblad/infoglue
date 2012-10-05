@@ -191,7 +191,7 @@
 			parent.appendChild(link);
 
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", "5");
 			separator.setAttribute("height", "1");
@@ -205,7 +205,7 @@
 		function addDividerImage(parent, width, height)
 		{
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", width);
 			separator.setAttribute("height", height);
@@ -246,9 +246,9 @@
 				var myLI = document.createElement("li");
 				myLI.setAttribute("itemID", i);
 				
-				addImageLink(myLI, "javascript:moveBindingDown(" + i + ");", "images/downArrow.gif");
-				addImageLink(myLI, "javascript:moveBindingUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(myLI, "javascript:deleteBinding(" + i + ");", "images/delete.gif");
+				addImageLink(myLI, "javascript:moveBindingDown(" + i + ");", "css/images/downArrow.gif");
+				addImageLink(myLI, "javascript:moveBindingUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(myLI, "javascript:deleteBinding(" + i + ");", "css/images/delete.gif");
 				addDividerImage(myLI, 1, 16);
 								
 				myActionList.appendChild(myLI);
@@ -574,7 +574,7 @@
 
 <body class="contenttooledit" onload="javascript:init();" onMouseUp="clearDrag(event);">
 
-<div id="buffer" style="top: 0; left: 0"><img src="images/tree/xp/item.png"></div>
+<div id="buffer" style="top: 0; left: 0"><img src="css/images/tree/xp/item.png"></div>
 
 <div id="savingLayer" class="infobackground">
 	<div class="infoheader">Saving changes</div>
@@ -590,13 +590,13 @@
 			<td class="smalllabel">Click on page the binding should use and then "add".</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		<tr>
 			<td>
@@ -609,7 +609,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>	
 		<tr>
 			<td class="menu" style="border: 1px solid #C7D1B3;">    
@@ -625,7 +625,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href="javascript:addQualifyer();"><img src="images/addButtonBlue.gif" border="0"></a>
+				<a href="javascript:addQualifyer();"><img src="css/images/addButtonBlue.gif" border="0"></a>
 				<a href="javascript:submitBinding();"><img src="$ui.getString("images.structuretool.buttons.save")" border="0"></a>
 				<a href="javascript:window.close();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a>
 			</td>
@@ -652,13 +652,13 @@
 			<td class="smalllabel">The following contents are bound so far</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="2"></td>
 		</tr>		
 		
 		<tr>

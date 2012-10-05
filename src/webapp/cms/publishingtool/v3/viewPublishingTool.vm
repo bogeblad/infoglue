@@ -1,9 +1,10 @@
 #define( $headerMarkup )
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
-	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/adminEmbla.css" />
+	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/main.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 
 	<script type="text/javascript" src="script/embla/admin.js"></script>
 	<script type="text/javascript">

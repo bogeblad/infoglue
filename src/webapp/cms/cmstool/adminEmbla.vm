@@ -1,11 +1,11 @@
 #define( $headerMarkup )
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 	
-	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 	
-	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />	
 	
 	<script type="text/javascript">
@@ -197,8 +197,8 @@
 	<script type="text/javascript" src="script/embla/drag.js"></script>
 	<script type="text/javascript" src="script/embla/admin.js"></script>
 	
-	<link rel="icon" href="images/icons/ig-16.png" type="image/png" />
-	<link rel="SHORTCUT ICON" href="images/icons/ig-16.png" />
+	<link rel="icon" href="css/images/icons/ig-16.png" type="image/png" />
+	<link rel="SHORTCUT ICON" href="css/images/icons/ig-16.png" />
 	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 	<meta http-equiv="Cache-Control" content="no-cache" />
 	<meta http-equiv="Pragma" content="no-cache" />
@@ -233,7 +233,7 @@
 		
 			#*
 			<form name="searchForm" id="searchForm" method="post" action="" onsubmit="return search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" style="float: left;">
-				<input type="text" name="searchField" id="searchField" value="$ui.getString("tool.common.searchDialog.searchFieldDefaultText")"/> <img id="searchButton" src="images/trans.gif" onclick="if($('#searchField').val() == '$ui.getString("tool.common.searchDialog.searchFieldDefaultText")') alert('State search text'); else search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" alt="Search"/>
+				<input type="text" name="searchField" id="searchField" value="$ui.getString("tool.common.searchDialog.searchFieldDefaultText")"/> <img id="searchButton" src="css/images/trans.gif" onclick="if($('#searchField').val() == '$ui.getString("tool.common.searchDialog.searchFieldDefaultText")') alert('State search text'); else search($repositoryId, '$ui.getString("tool.common.searchTabLabelPrefix")');" alt="Search"/>
 			</form>
 			*#
 				

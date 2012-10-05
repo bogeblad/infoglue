@@ -225,9 +225,9 @@
 <div style="LEFT:0px; RIGHT:0px; position:absolute; TOP:0px; height:100%; visibility:visible; z-index:0">
 <table class="structuretool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 	<td valign="top" width="100%" height="100%"></td>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 </table>
 </div>
@@ -236,15 +236,15 @@
 <div class="onlyExpanded" style="LEFT:2px; RIGHT:2px; position:absolute; TOP:1px; BOTTOM:6px; height:100%; visibility:visible; z-index:0;">
 <table class="structuretool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 <tr>
-	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 	<td valign="top" width="100%">
 		
 		<table cellpadding="0" cellspacing="0" border="0">
 		<tr>
-			<td class="menu"><img src="images/trans.gif" height="15"></td>
+			<td class="menu"><img src="css/images/trans.gif" height="15"></td>
 		</tr>
 		<tr>
 			<td class="menu" width="100%" height="100%">
@@ -257,10 +257,10 @@
 		</tr>	
 		</table>
 	</td>	
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 <tr>
-	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 </table>
 </div>
@@ -269,15 +269,15 @@
 <div class="onlyExpanded" id="treeDiv" style="LEFT:-500px; RIGHT:500px; position:absolute; TOP:1px; BOTTOM:6px; height:100%; visibility:visible; z-index:0; background-color: #F0E1B4;">
 <table class="structuretool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 <tr>
-	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 	<td valign="top" width="100%">
 		
 		<table cellpadding="0" cellspacing="0" border="0">
 		<tr>
-			<td class="menu" style="background-color: #F0E1B4;"><img src="images/trans.gif" height="15"></td>
+			<td class="menu" style="background-color: #F0E1B4;"><img src="css/images/trans.gif" height="15"></td>
 		</tr>
 		<tr>
 			<td class="menu">    
@@ -291,10 +291,10 @@
 		</table>
 	
 	</td>	
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 <tr>
-	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"></td>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"></td>
 </tr>
 </table>
 </div>
@@ -303,11 +303,11 @@
 #treeSelector("Structure")
 
 <div class="onlyExpanded" style="RIGHT:26px; position:absolute; BOTTOM: 3px; visibility:visible; z-index:0">
-	<a href="javascript:removeCookies(); window.location.reload(false);"><img src="images/refresh.gif" width="13" height="16" border="0" alt="Refresh the menu and reset all tool cookies"></a>
+	<a href="javascript:removeCookies(); window.location.reload(false);"><img src="css/images/refresh.gif" width="13" height="16" border="0" alt="Refresh the menu and reset all tool cookies"></a>
 </div>
 
 <div style="RIGHT:6px; position:absolute; BOTTOM:0px; visibility:visible; z-index:0; margin: 0px; padding: 0px; float: left; display: block;">
-	<a class="onlyExpanded" href="javascript:this.parent.minimizeMenu();"><img src="images/arrowleft.gif" width="5" height="10" border="0" alt="Click to minimize menu" style="padding-bottom: 4px;"></a><a href="javascript:this.parent.increaseSize();">&nbsp;<img src="images/arrowright.gif" width="5" height="10" border="0" alt="Click to make menu bigger" style="padding-bottom: 4px;"></a>
+	<a class="onlyExpanded" href="javascript:this.parent.minimizeMenu();"><img src="css/images/arrowleft.gif" width="5" height="10" border="0" alt="Click to minimize menu" style="padding-bottom: 4px;"></a><a href="javascript:this.parent.increaseSize();">&nbsp;<img src="css/images/arrowright.gif" width="5" height="10" border="0" alt="Click to make menu bigger" style="padding-bottom: 4px;"></a>
 </div>
 
 

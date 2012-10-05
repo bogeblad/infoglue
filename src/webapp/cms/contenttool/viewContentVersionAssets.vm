@@ -250,20 +250,20 @@
 			<td class="smalllabel" colspan="2">$ui.getString("tool.structuretool.linkProperties")</td>
 		</tr>
 		<tr>
-			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#EEF7DC" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#C7D1B3" colspan="2" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>	
 		<tr>
 			<td class="label">Title&nbsp;(tooltip):&nbsp;</td>
 		    <td><input type="text" id="f_title" style="width: 250px" /></td>
 		</tr>
 		<tr>
-			<td height="1" colspan="2"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1" colspan="2"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>	
 		<tr>
 			<td class="label">Target:</td>

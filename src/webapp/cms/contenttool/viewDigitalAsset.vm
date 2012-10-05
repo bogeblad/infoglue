@@ -36,8 +36,8 @@
 
 	<script type="text/javascript" src="script/v3/infoglue.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen">
 
 	<link href="applications/swfupload/css/infoglue.css" rel="stylesheet" type="text/css" />
 
@@ -423,7 +423,7 @@
 						      <td width="10" style="border: 1px solid black;">
 						  		<input type="text" name="digitalAssetKey" id="tt" size="20" onfocus="ddHide();" onChange="keyChanged();" style="border: 1px solid #FFFFFF" #if($definedAssetKeys.size() > 0)value="$definedAssetKeys.get(0).assetKey" #end></td>
 						      	<td onClick="ddClick();" style="border: 1px solid black;">
-						      	<img border="0" src="images/combodown.gif" width="15" height="20">
+						      	<img border="0" src="css/images/combodown.gif" width="15" height="20">
 						      </td>
 						    </tr>
 						  </table>

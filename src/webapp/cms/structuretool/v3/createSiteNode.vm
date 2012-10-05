@@ -12,7 +12,9 @@
 <script type="text/javascript">
 <!--
 	$(document).ready(function(){
-		$("#tabsContainer").tabs({ show:function() { resizeScrollArea(); } });
+		$("#tabsContainer").tabs({ show:function() { 
+			resizeScrollArea();
+		}});
 
 		setTimeout("focusFirst();", 200);
 	});
@@ -84,12 +86,12 @@
 					#foreach ($content in $sortedPageTemplates)
 						##if($filterRepositoryId == -1 || $content.repositoryId == $filterRepositoryId)
 							
-							##set($imageUrl = "images/componentIcon.gif")
+							##set($imageUrl = "css/images/componentIcon.gif")
 							#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
 							#if(!$imageUrl || $imageUrl == "")
-								#set($imageUrl = "images/undefinedPageTemplate.jpg")
+								#set($imageUrl = "css/images/undefinedPageTemplate.jpg")
 							#end
-							<div style="float: left; margin-left: 16px; margin-bottom: 16px; width: 200px; min-height: 140px; background:url(images/v3/imgbox_bg.gif) repeat; border:solid 1px #d8d8d8;">
+							<div style="float: left; margin-left: 16px; margin-bottom: 16px; width: 200px; min-height: 140px; background:url(css/images/v3/imgbox_bg.gif) repeat; border:solid 1px #d8d8d8;">
 								<div style="float: left; width: 100%; margin-top: 6px;">
 									<img id="digitalAsset$content.id" src="$imageUrl" onclick="markPageTemplate(this, $content.id);" border="0" style="width: 100px; border: 1px solid black; margin: 4px 50px 4px 50px;" alt="$content.getName()" title="$content.getName()">
 								</div><br/>

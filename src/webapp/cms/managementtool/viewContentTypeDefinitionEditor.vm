@@ -194,7 +194,7 @@
 	</tr>
 	<tr>
 		<td colspan="2">
-			<img src="images/trans.gif" width="80" height="5" border="0">
+			<img src="css/images/trans.gif" width="80" height="5" border="0">
 		</td>
 	</tr>
 	<tr>
@@ -358,15 +358,15 @@
 					#set($title = $!attribute.getContentTypeAttribute("title").getContentTypeAttributeParameterValue().getLocalizedValue("label", "$!currentContentTypeEditorViewLanguageCode"))
 					
 					<tr>
-						<td height="20" style="border-bottom: 1px solid #ccc">#if(!$attribute.inherited)<a href="ViewContentTypeDefinition!moveAttributeUp.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name"><img src="images/moveUp.gif" border="0"></a><a href="ViewContentTypeDefinition!moveAttributeDown.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name"><img src="images/moveDown.gif" border="0"></a>#end</td>
-						<td style="border-bottom: 1px solid #ccc"><img src="images/v3/fieldIcons/${attribute.inputType}.png"></td>
+						<td height="20" style="border-bottom: 1px solid #ccc">#if(!$attribute.inherited)<a href="ViewContentTypeDefinition!moveAttributeUp.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name"><img src="css/images/moveUp.gif" border="0"></a><a href="ViewContentTypeDefinition!moveAttributeDown.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name"><img src="css/images/moveDown.gif" border="0"></a>#end</td>
+						<td style="border-bottom: 1px solid #ccc"><img src="css/images/v3/fieldIcons/${attribute.inputType}.png"></td>
 						<td style="border-bottom: 1px solid #ccc" width="90%">
 							#if(!$attribute.inherited)<a name="${attribute.name}" href="javascript:showProperty('${attribute.name}');">#end$attribute.name ($title) of type $attribute.inputType#if(!$attribute.inherited)</a>#end
 						</td>
 						<td style="border-bottom: 1px solid #ccc">
 							#if(!$attribute.inherited)
-							<a href="javascript:showProperty('${attribute.name}');"><img src="images/properties.gif" border="0"></a>
-							<a href="ViewContentTypeDefinition!deleteAttribute.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name"><img src="images/delete.gif" border="0"></a>
+							<a href="javascript:showProperty('${attribute.name}');"><img src="css/images/properties.gif" border="0"></a>
+							<a href="ViewContentTypeDefinition!deleteAttribute.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&attributeName=$attribute.name"><img src="css/images/delete.gif" border="0"></a>
 							#end
 						</td>
 					</tr>
@@ -390,8 +390,8 @@
 				<tr>
 					<td align="right">
 						#if(!$category.inherited)
-						<a href="javascript:showDiv('${categoryKey}PropertyLayer');"><img src="images/properties.gif" border="0"></a>
-						<a href="ViewContentTypeDefinition!deleteCategoryKey.action?contentTypeDefinitionId=$contentTypeDefinitionId&categoryKey=$categoryKey"><img src="images/delete.gif" border="0"></a>
+						<a href="javascript:showDiv('${categoryKey}PropertyLayer');"><img src="css/images/properties.gif" border="0"></a>
+						<a href="ViewContentTypeDefinition!deleteCategoryKey.action?contentTypeDefinitionId=$contentTypeDefinitionId&categoryKey=$categoryKey"><img src="css/images/delete.gif" border="0"></a>
 						#end
 					</td>
 					<td width="45%">#if(!$category.inherited)<a href="javascript:showDiv('${categoryKey}PropertyLayer');">#end$category.title ($categoryKey)#if(!$category.inherited)</a>#end</td>
@@ -419,9 +419,9 @@
 				<tr>
 					<td width="10%">
 						#if(!$assetKeyDefinition.inherited)
-						<a href="ViewContentTypeDefinition!moveAssetKeyUp.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&assetKey=$assetKeyDefinition.assetKey"><img src="images/moveUp.gif" border="0"></a><a href="ViewContentTypeDefinition!moveAssetKeyDown.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&assetKey=$assetKeyDefinition.assetKey"><img src="images/moveDown.gif" border="0"></a>
-						<a href="javascript:showDiv('${assetKeyDefinition.assetKey}PropertyLayer');"><img src="images/properties.gif" border="0"></a>
-						<a href="ViewContentTypeDefinition!deleteAssetKey.action?contentTypeDefinitionId=$contentTypeDefinitionId&assetKey=$assetKeyDefinition.assetKey"><img src="images/delete.gif" border="0"></a>
+						<a href="ViewContentTypeDefinition!moveAssetKeyUp.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&assetKey=$assetKeyDefinition.assetKey"><img src="css/images/moveUp.gif" border="0"></a><a href="ViewContentTypeDefinition!moveAssetKeyDown.action?contentTypeDefinitionId=$contentTypeDefinitionId&title=$title&assetKey=$assetKeyDefinition.assetKey"><img src="css/images/moveDown.gif" border="0"></a>
+						<a href="javascript:showDiv('${assetKeyDefinition.assetKey}PropertyLayer');"><img src="css/images/properties.gif" border="0"></a>
+						<a href="ViewContentTypeDefinition!deleteAssetKey.action?contentTypeDefinitionId=$contentTypeDefinitionId&assetKey=$assetKeyDefinition.assetKey"><img src="css/images/delete.gif" border="0"></a>
 						#end	
 					</td>
 					<td align="left" width="40%"><nobr>#if(!$assetKeyDefinition.inherited)<a href="javascript:showDiv('${assetKeyDefinition.assetKey}PropertyLayer');">#end$assetKeyDefinition.assetKey#if(!$assetKeyDefinition.inherited)</a>#end</nobr></td>

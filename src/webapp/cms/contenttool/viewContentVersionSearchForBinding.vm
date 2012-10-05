@@ -14,7 +14,7 @@
 	<td colspan="7">	
 		<p>
 		#editTextField3($ui.getString("tool.contenttool.searchString.label") "tool.contenttool.searchString.label" "searchString" $searchString "30" "normaltextfield")
-		<input type="image" src="images/okButton_se.gif" style="width: 31px; height: 19px;" />
+		<input type="image" src="css/images/okButton_se.gif" style="width: 31px; height: 19px;" />
 		</p>
 	</td>
 </tr>

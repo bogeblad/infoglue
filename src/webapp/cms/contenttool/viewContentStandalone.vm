@@ -72,14 +72,14 @@
 			<td colspan="4"><span class="warningText">$ui.getString("tool.contenttool.publishRejectedShortText")</span></td>
 		</tr>
 		<tr>
-			<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 	#elseif($contentEvent.typeId == 4)
 		<tr>
 			<td colspan="4"><span class="warningText">$ui.getString("tool.contenttool.unpublishRejectedShortText") <nobr>$contentEvent.name</nobr>.</span> - <a href="DeleteEvent.action?eventId=$contentEvent.id&url=$currentUrl">$ui.getString("tool.contenttool.close")</a></td>
 		</tr>
 		<tr>
-			<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+			<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 		</tr>
 	#end
 
@@ -100,7 +100,7 @@
 		<td colspan="4">#editDateField("Content.expireDateTime" "expireDateTime" $!expireDateTime "30" "date" "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</td>
 	</tr>		
 	<tr>
-		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	
 	#if(!$contentVO.contentTypeDefinitionId)
@@ -126,7 +126,7 @@
 		</td>
 	</tr>
 	<tr>
-		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr class="darkgreen">
 		<td class="smalllabel">$ui.getString("tool.contenttool.languageVersionsLabel")</td>
@@ -135,10 +135,10 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#EEF7DC" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 	<tr>
-		<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		<td bgcolor="#C7D1B3" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 	</tr>
 		
 	#set($isOdd = true)
@@ -189,7 +189,7 @@
 			</td>
 			<td>
 				#if($contentVersionVO.stateId == 0)
-					<a href="javascript:confirmAction('Do you really want to delete the languageVersion ?', 'DeleteContentVersion.action?repositoryId=${repositoryId}&contentVersionId=${contentVersionVO.contentVersionId}&contentId=${contentId}');"><img src="images/delete.gif" border="0"></a>
+					<a href="javascript:confirmAction('Do you really want to delete the languageVersion ?', 'DeleteContentVersion.action?repositoryId=${repositoryId}&contentVersionId=${contentVersionVO.contentVersionId}&contentId=${contentId}');"><img src="css/images/delete.gif" border="0"></a>
 				#end
 			
 			</td>
@@ -201,7 +201,7 @@
 	##end		
 
 	<tr>
-		<td colspan="4"><img src="images/trans.gif" height="10" width="1"></td>
+		<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
 	</tr>
 	<tr>
 		<input type="hidden" name="contentId" value="$!contentId">

@@ -10,7 +10,7 @@
 
 	<script type="text/javascript" src="${root}/applications/FCKEditor/fckeditor.js"></script>
 	<script type="text/javascript" src="${root}/script/v3/infoglueWidgets.js"></script>
-	<link rel="stylesheet" type="text/css" href="${root}/css/v3/infoglueWidgets.css" /> 
+	<link rel="stylesheet" type="text/css" href="${root}/css/infoglueWidgets.css" /> 
 	
 	<script type="text/javascript">
 				
@@ -65,8 +65,8 @@
 	<script type="text/javascript" src="script/editorForFCKEditor.js"></script>
 	<script type="text/javascript" src="script/hotkeys.js"></script>
 
-	<script type="text/javascript" src="script/jquery/jquery-1.2.6.min.js"></script>
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-igcommon15.min.js"></script>
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 
 	<link rel="stylesheet" type="text/css" media="all" href="applications/jscalendar/skins/aqua/theme.css" />
 	<script type="text/javascript" src="applications/jscalendar/calendar.js"></script>
@@ -355,7 +355,7 @@
 			#end
 			</select>
 		</td>
-		<td width="40%"><img src="images/trans.gif" width="10" height="1"></td>
+		<td width="40%"><img src="css/images/trans.gif" width="10" height="1"></td>
 		<td>
 			#set($dropIndex = 1)
 			$ui.getString("tool.contenttool.stateLabel")<br/>
@@ -435,7 +435,7 @@
 			
 	#if($contentVersionVO)
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 	</tr>
 	<tr>
 		#set($displayName = "$!this.getInfoGluePrincipal($contentVersionVO.versionModifier).displayName")
@@ -448,7 +448,7 @@
 	#end
 	
 	<tr>
-		<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+		<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 	</tr>
 	<tr>
 		<td colspan="3">
@@ -570,7 +570,7 @@
 		#set($currentEditorId = 0)
 		
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3">
@@ -584,7 +584,7 @@
 				#elseif($attribute.inputType == "datefield")
 					$attributeTitle ("$attribute.name") $attributeDescription
 					#printError("ContentVersion.$attribute.name")
-					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="images/calendar.gif" border="0"/></a>
+					<input $readonly type="text" length="20" class="date" maxlength="20" id="$attribute.name" name="$attribute.name" value="$value"/>&nbsp;<a name="calendar_$attribute.name" id="calendar_$attribute.name"><img src="css/images/calendar.gif" border="0"/></a>
 					<script type="text/javascript">
 						Calendar.setup({
 						        inputField     :    "$attribute.name",     		// id of the input field
@@ -699,7 +699,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -745,7 +745,7 @@
 									#foreach($qualifyer in $qualifyers)
 										<tr>
 											<td valign="middle">
-											<img src="images/tree/xp/item.png"> 
+											<img src="css/images/tree/xp/item.png"> 
 											</td>
 											<td valign="middle">
 											$qualifyer.getPath() 
@@ -907,12 +907,12 @@
                         	</div>
                             <div class="actionDiv">
                             	<p style="afloat: left; margin-top: 36px;">
-                           			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
-                           			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                           			<a href="javascript:moveAllMarked('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/backwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                           			<a href="javascript:moveAllMarked('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/forwardBlue.gif) no-repeat center center;">&nbsp;</a>
                            		</p>
                         		<p style="afloat: left; margin-top: 5px;">
-                        			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
-                        			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
+                        			<a href="javascript:moveAll('${attribute.name}', 'rightSelect$attribute.name', 'leftSelect$attribute.name');" style="float: left; margin-left: 8px; background: url(css/images/rewindBlue.gif) no-repeat center center;">&nbsp;</a>
+                        			<a href="javascript:moveAll('${attribute.name}', 'leftSelect$attribute.name', 'rightSelect$attribute.name');" style="float: right; margin-right: 8px; background: url(css/images/fastForwardBlue.gif) no-repeat center center;">&nbsp;</a>
                         		</p>
                         	</div>
                         	<div class="optionsDiv">
@@ -963,7 +963,7 @@
 		</tr>
 	#end
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		#set($allCategoryKeys = $definedCategoryKeys)
 		#if($allCategoryKeys.size() > 0)
@@ -1007,7 +1007,7 @@
 						<tr $class>
 							<td width="50%">$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)</td>
 							<td width="50%" align="right">
-								<a href="javascript:deleteCategory('$relation.contentCategoryId');"><img src="images/delete.gif" border="0"/></a>
+								<a href="javascript:deleteCategory('$relation.contentCategoryId');"><img src="css/images/delete.gif" border="0"/></a>
 							</td>
 						</tr>
 					#end
@@ -1028,7 +1028,7 @@
 		</tr>
 		#end
 		<tr>
-			<td colspan="3"><img src="images/trans.gif" width="1" height="5"/></td>
+			<td colspan="3"><img src="css/images/trans.gif" width="1" height="5"/></td>
 		</tr>
 		<tr>
 			<td colspan="3">

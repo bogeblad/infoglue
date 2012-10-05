@@ -1,9 +1,9 @@
 #define( $headerMarkup )
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
-	<link rel="stylesheet" type="text/css" href="css/embla/admin.css" media="screen" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/adminEmbla.css" />
+	<link rel="stylesheet" type="text/css" href="css/admin.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 
 	<script type="text/javascript" src="script/embla/admin.js"></script>
 	<script type="text/javascript">
@@ -96,9 +96,24 @@
 	   			resize(false);
    			}
 
-			$("#toolsColumn").resizable({ handles: 'e', stop: function(event, ui) { resize(false); } });
+			$("#toolsColumn").resizable({ 
+				handles: 'e', 
+				maxWidth: 460,
+				minWidth: 250, 
+				start: function (event, ui) {
+					 $("#menuOverlayDiv").show();
+				},
+				stop: function(event, ui) { 
+					resize(false); 
+					 $("#menuOverlayDiv").hide();
+				} 
+			});
 
 			openUrlInWorkArea("ViewContentToolStartPage!V3.action");
+			
+			$("#menuOverlayDiv").mouseout(function () {
+				$("#structureToolDiv").mouseup();
+			});
 		});
 		
 		function changeRepository(selectBox)
@@ -130,6 +145,20 @@
 			$('#toolsColumn').width(20);
 			resize(); 
 		}
+		
+		function toggleToolColumn()
+		{
+			var currentWidth = $('#toolsColumn').width(); 
+			if (currentWidth < 320)
+			{
+				$('#toolsColumn').width(460);
+			}
+			else
+			{
+				$('#toolsColumn').width(250);
+			}
+			resize(); 
+		}
 
 		function restoreToolColumn()
 		{
@@ -155,7 +184,7 @@
 	
 	<div id="toolsColumn">
 		<div id="minimizedBar" style="display: none; width: 100%; float: left;">
-	    	<img src="images/v3/doubleForwardArrows.png" onclick="restoreToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+	    	<img src="css/images/v3/doubleForwardArrows.png" onclick="restoreToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
 		</div>
 		
 		<div class="onlyExpanded" id="repositoryChoiceDiv">
@@ -164,8 +193,9 @@
 	    		<option value="$repository.id" #if($repository.id == $repositoryId)selected="selected"#end>$repository.name</option>
 	    		#end
 	    	</select>
-	    	<img src="images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
-	    	<img src="images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+	    	<img src="css/images/v3/reload.png" onclick="refreshRepositoryList(); $('#treeIframe').get(0).contentWindow.reload();" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 6px;" alt="reload"/>
+	    	<img src="css/images/v3/doubleBackArrows.png" onclick="minimizeToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="reload"/>
+	    	<img src="css/images/v3/update_img.gif" onclick="toggleToolColumn(); return false;" style="display: block; float: left; width: 16px; height:16; margin-left: 4px; margin-top: 8px;" alt="toggle"/>
 	    </div>
 	
 		<iframe id="treeIframe" name="treeIframe" src="ViewContentToolMenu!V3.action?repositoryId=$repositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
@@ -177,8 +207,9 @@
 	</div>
 </div>
 
-<div id="contextMenuDiv">
-</div>
+<div id="contextMenuDiv"></div>
+
+<div id="menuOverlayDiv"></div>
 
 </body>
 </html>

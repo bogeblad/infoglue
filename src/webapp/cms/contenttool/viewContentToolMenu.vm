@@ -226,9 +226,9 @@
 <div style="LEFT:0px; RIGHT:0px; position:absolute; TOP:0px; height:100%; visibility:visible; z-index:0">
 <table class="contenttool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
 	<td valign="top" width="100%" height="100%"></td>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 </table>
 </div>
@@ -237,15 +237,15 @@
 <div id="loadingDiv" style="left:2px; right:2px; position:absolute; top:1px; bottom:6px; height:100%; visibility:visible; z-index:0;">
 <table class="contenttool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 <tr>
-	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
 	<td valign="top" width="100%">
 		
 		<table cellpadding="0" cellspacing="0" border="0">
 		<tr>
-			<td class="menu"><img src="images/trans.gif" height="15"/></td>
+			<td class="menu"><img src="css/images/trans.gif" height="15"/></td>
 		</tr>
 		<tr>
 			<td class="menu" width="100%" height="100%">    
@@ -258,10 +258,10 @@
 		</tr>	
 		</table>
 	</td>	
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 <tr>
-	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 </table>
 </div>
@@ -271,15 +271,15 @@
 <div id="treeDiv" style="left:-500px; right:500px; position:absolute; top:1px; bottom:6px; height:100%; visibility:visible; z-index:0">
 <table class="contenttool" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 <tr>
-	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 <tr>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
 	<td valign="top" width="100%">
 		
 		<table cellpadding="0" cellspacing="0" border="0">
 		<tr>
-			<td class="menu"><img src="images/trans.gif" height="15"/></td>
+			<td class="menu"><img src="css/images/trans.gif" height="15"/></td>
 		</tr>
 		<tr>
 			<td class="menu" width="100%" height="100%">   
@@ -294,10 +294,10 @@
 		</table>
 	
 	</td>	
-	<td bgcolor="#999999"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td bgcolor="#999999"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 <tr>
-	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="images/trans.gif" width="1" height="1"/></td>
+	<td height="1" colspan="3" bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="1" height="1"/></td>
 </tr>
 </table>
 </div>
@@ -305,11 +305,11 @@
 #treeSelector("Content")
 
 <div style="RIGHT:22px; position:absolute; BOTTOM: 3px; visibility:visible; z-index:0">
-	<a href="javascript:removeCookies(); window.location.reload(false);"><img src="images/refresh.gif" width="13" height="16" border="0" alt="Refresh the menu and reset all tool cookies"></a>
+	<a href="javascript:removeCookies(); window.location.reload(false);"><img src="css/images/refresh.gif" width="13" height="16" border="0" alt="Refresh the menu and reset all tool cookies"></a>
 </div>
 
 <div style="right:2px; position:absolute; bottom:0px; visibility:visible; z-index:0">
-	<a href="javascript:this.parent.increaseSize();" title="$ui.getString("tool.common.increaseMenuSize.text")"><img src="images/expandRight.gif" width="20" height="20" border="0" alt="$ui.getString("tool.common.increaseMenuSize.text")" /></a>
+	<a href="javascript:this.parent.increaseSize();" title="$ui.getString("tool.common.increaseMenuSize.text")"><img src="css/images/expandRight.gif" width="20" height="20" border="0" alt="$ui.getString("tool.common.increaseMenuSize.text")" /></a>
 </div>
 	
 </body>

@@ -1,6 +1,6 @@
 #beginManagementToolV3("tool.managementtool.messageSent.title" "" false)
 
-<link rel="stylesheet" href="script/jqueryplugins/ui/themes/flora/flora.all.css" type="text/css" media="screen" title="Flora (Default)">
+<link rel="stylesheet" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" type="text/css" media="screen" title="Flora (Default)">
 <script type="text/javascript">
 	function closeDialog()
 	{

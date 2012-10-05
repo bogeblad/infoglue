@@ -152,7 +152,7 @@
 			parent.appendChild(link);
 
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", "5");
 			separator.setAttribute("height", "1");
@@ -166,7 +166,7 @@
 		function addDividerImage(parent, width, height)
 		{
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", width);
 			separator.setAttribute("height", height);
@@ -197,9 +197,9 @@
 				var myTR = document.createElement("tr");
 				var actionTD = document.createElement("td");
 				actionTD.setAttribute("width", "50");
-				addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "images/downArrow.gif");
-				addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "images/delete.gif");
+				addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "css/images/downArrow.gif");
+				addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "css/images/delete.gif");
 				var qualifyerTD = document.createElement("td");
 				qualifyerTD.setAttribute("align", "left");
 				var qualifyerText = document.createTextNode(qualifyer.getPath().replace(/&quot;/,"\""));
@@ -342,7 +342,7 @@
 					<td class="smalllabel">$ui.getString("tool.structuretool.chooseContentsForRelationLabel")</td>
 				</tr>
 				<tr>
-					<td height="1"><img src="images/trans.gif" width="1" height="7"></td>
+					<td height="1"><img src="css/images/trans.gif" width="1" height="7"></td>
 				</tr>		
 				<tr>
 					<td>
@@ -355,7 +355,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+					<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 				</tr>	
 				<tr>
 					<td class="menu" style="border: 1px solid #C7D1B3;">    
@@ -383,7 +383,7 @@
 					<td class="smalllabel">$ui.getString("tool.structuretool.choosenContentsForBindingLabel")</td>
 				</tr>
 				<tr>
-					<td height="1"><img src="images/trans.gif" width="1" height="2"></td>
+					<td height="1"><img src="css/images/trans.gif" width="1" height="2"></td>
 				</tr>		
 				
 				<tr>
@@ -588,7 +588,7 @@
 			parent.appendChild(link);
 
 			var separator = document.createElement("img");
-			separator.setAttribute("src", "images/trans.gif");
+			separator.setAttribute("src", "css/images/trans.gif");
 			separator.setAttribute("border", "0");
 			separator.setAttribute("width", "5");
 			separator.setAttribute("height", "1");
@@ -620,9 +620,9 @@
 				var myTR = document.createElement("TR");
 				var actionTD = document.createElement("TD");
 				actionTD.setAttribute("width", "50");
-				addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "images/downArrow.gif");
-				addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "images/upArrow.gif");
-				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "images/delete.gif");
+				addImageLink(actionTD, "javascript:moveQualifyerDown(" + i + ");", "css/images/downArrow.gif");
+				addImageLink(actionTD, "javascript:moveQualifyerUp(" + i + ");", "css/images/upArrow.gif");
+				addImageLink(actionTD, "javascript:deleteQualifyer(" + i + ");", "css/images/delete.gif");
 				var qualifyerTD = document.createElement("TD");
 				qualifyerTD.setAttribute("align", "left");
 				var qualifyerText = document.createTextNode(qualifyer.getPath().replace(/&quot;/,"\""));
@@ -722,13 +722,13 @@
 			<td class="smalllabel">Mark the sitenodes you want to relate and click "Add".</td>
 		</tr>
 		<tr>
-			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		<tr>
 			<td>
@@ -741,7 +741,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>	
 		<tr>
 			<td class="menu">   
@@ -757,7 +757,7 @@
 		</tr>
 		<tr>
 			<td>
-				<a href="javascript:addQualifyer();"><img src="images/addButtonBlue.gif" border="0"></a>
+				<a href="javascript:addQualifyer();"><img src="css/images/addButtonBlue.gif" border="0"></a>
 				<a href="javascript:submitQualifyer();"><img src="$ui.getString("images.contenttool.buttons.save")" border="0"></a>
 				<a href="javascript:window.opener.location.reload();window.close();"><img src="$ui.getString("images.contenttool.buttons.close")" width="50" height="25" border="0"></a>
 			</td>
@@ -781,13 +781,13 @@
 			<td class="smalllabel">The following pages are bound so far</td>
 		</tr>
 		<tr>
-			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="css/images/trans.gif" width="1" height="1"></td>
 		</tr>
 		<tr>
-			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+			<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 		</tr>		
 		
 		<tr>
@@ -800,7 +800,7 @@
 				
 		<tr>
 			<td>
-			<img pos="-1" id="drop$qualifyer.sortOrder" src="images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
+			<img pos="-1" id="drop$qualifyer.sortOrder" src="css/images/trans.gif" width="280" height="19" ondrop="qdrop(this)" ondragover="qoverDrag(this)" ondragenter="qenterDrag(this)" ondragleave="qexitDrag(this)"><br>
 			&nbsp;
 			</td>
 		</tr>

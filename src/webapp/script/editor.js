@@ -357,7 +357,7 @@ function transformAttribute(plainAttribute, document)
 			imgTag = imgTag.replace(/\'/gi, "\"");
 			//alert("imgTag:" + imgTag);
 			
-			assetUrl = "images/imagePlaceHolder.jpg";
+			assetUrl = "css/images/imagePlaceHolder.jpg";
 			//alert("imgTag:" + imgTag);
 			//alert("indexOf:" + imgTag.indexOf("getInlineAssetUrl"));
 			if(imgTag.indexOf("getInlineAssetUrl") > -1)
@@ -461,7 +461,7 @@ function transformAttribute(plainAttribute, document)
 			imgTag = imgTag.replace(/\'/gi, "\"");
 			//alert("imgTag:" + imgTag);
 			
-			assetUrl = "images/imagePlaceHolder.jpg";
+			assetUrl = "css/images/imagePlaceHolder.jpg";
 			//alert("imgTag:" + imgTag);
 			//alert("indexOf:" + imgTag.indexOf("getInlineAssetUrl"));
 			if(imgTag.indexOf("getInlineAssetUrl") > -1)
@@ -683,7 +683,7 @@ function untransformAttribute(plainAttribute)
 			//alert(imgTag);
 			originalTagEndIndex = imgTag.indexOf("\"");
 			//alert("originalTagEndIndex:" + originalTagEndIndex);
-			//alert("ImageTag med påhäng:" + imgTag + ":" + imgTag.length + ":" + originalTagEndIndex);
+			//alert("ImageTag med pï¿½hï¿½ng:" + imgTag + ":" + imgTag.length + ":" + originalTagEndIndex);
 			imgTag = imgTag.substring(0, originalTagEndIndex);
 			//alert(imgTag);
 			imgTag = unescape(imgTag);

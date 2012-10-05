@@ -28,7 +28,7 @@ function startDrag(){
 	srcIdLink.className = "dragging";
 
 	// srcObjOrigSrc = srcObj.src;
-	// srcObj.src = 'images/tree/xp/itemghost.png';
+	// srcObj.src = 'css/images/tree/xp/itemghost.png';
 	
 	
 
@@ -59,7 +59,7 @@ function endDrag() {
 function enterDrag() {
 	// Drop ikon
 	
-	// Kolla om destObj inte blivit återställt
+	// Kolla om destObj inte blivit ï¿½terstï¿½llt
 	if (destObj != null)
 	{
 		if (destObj.src.indexOf(".drop.png") > -1)
@@ -88,7 +88,7 @@ function exitDrag() {
 	if (destObj != null)
 	    if (destObj.id != srcIdIcon.id)
 	    {
-			// Återställ ikon
+			// ï¿½terstï¿½ll ikon
 		    var justId = destObj.id.slice(4,destObj.id.length);
 			var destLink = document.getElementById("link" + justId);		
 			destLink.className = "";

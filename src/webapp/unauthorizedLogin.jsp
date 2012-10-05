@@ -89,17 +89,17 @@
 <form name="inputForm" method="POST" action="$referringUrl">
 <table class="loginbox" align="center" border="0" cellspacing="5" cellpadding="0">
 <tr>
-	<td valign="top" class="borderedCell"><img src="images/login.jpg" width="130" height="235"></td>
+	<td valign="top" class="borderedCell"><img src="css/images/login.jpg" width="130" height="235"></td>
 	<td valign="top" class="borderedCell">
 		<table align="center" border="0" cellspacing="0" cellpadding="0" width="80">
 		<tr>
-			<td colspan="2" style="border-bottom: 1px solid #000000;"><img src="images/loginHeader.jpg" width="210" height="38"></td>
+			<td colspan="2" style="border-bottom: 1px solid #000000;"><img src="css/images/loginHeader.jpg" width="210" height="38"></td>
 		</tr>	
 		<tr>
-			<td colspan="2"><img src="images/trans.gif" width="1" height="20"></td>
+			<td colspan="2"><img src="css/images/trans.gif" width="1" height="20"></td>
 		</tr>	
 		<tr>
-			<td><img src="images/trans.gif" width="20" height="1"></td>
+			<td><img src="css/images/trans.gif" width="20" height="1"></td>
 			<td>You are not authorized to use<br> the administrative tools in InfoGlue. <br>
 				<br>Please talk to the system<br> administrator for access!<br>
 				<!--<%= request.getParameter("errorMessage") %>-->

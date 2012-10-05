@@ -7,7 +7,7 @@ if (window.pathToRoot == null)
 	pathToRoot = "./";
 
 document.write('<link type="text/css" rel="stylesheet" href="webfxlayout.local.css">');
-webfxMenuDefaultImagePath = pathToRoot + "images/";
+webfxMenuDefaultImagePath = pathToRoot + "css/images/";
 
 /* end includes */
 

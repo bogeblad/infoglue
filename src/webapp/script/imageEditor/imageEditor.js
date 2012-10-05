@@ -181,7 +181,7 @@ function createColorPicker(initialColor,initialOpacity,callback){
 var form=document.createElement("form");
 form.onsubmit=function(){return false;};
 var tBody=ac(ac(form,ce("table",{width: "100%"})),ce("tbody"));
-var testCard=ac(ac(ac(tBody,ce("tr")),ce("td")),ce("img",{src: "images/testcard.png"}));
+var testCard=ac(ac(ac(tBody,ce("tr")),ce("td")),ce("img",{src: "css/images/testcard.png"}));
 testCard.onmousemove=function(event){
 if (!event) event=window.event;
 colorTableMove('color_at_point',testCard,event);};
@@ -1853,7 +1853,7 @@ var imagePoint=new mousePointToElementPoint(cursorPos.x,cursorPos.y);
 canvas.onmousedown=oldonmousedown;
 var pin1=id("left_pin");
 if (pin1==null){
-pin1=createPin("left_pin","images/bluepin.gif");
+pin1=createPin("left_pin","css/images/bluepin.gif");
 document.body.appendChild(pin1);}
 pin1.style.display="block";
 pin1.style.left=""+(cursorPos.x -7)+"px";
@@ -2129,7 +2129,7 @@ event=(event)?event:window.event;
 ac(cl(configContent),tx(PXN8STRINGS.SPIRIT_LEVEL_PROMPT2));
 var pin1=id("left_pin");
 if (pin1==null){
-pin1=createPin("left_pin","images/bluepin.gif");
+pin1=createPin("left_pin","css/images/bluepin.gif");
 document.body.appendChild(pin1);}
 pin1.style.display="block";
 var cursorPos=getCursorPosition(event);
@@ -2146,7 +2146,7 @@ points.right.x=PXN8.position.x;
 points.right.y=PXN8.position.y;
 var pin2=id("right_pin");
 if (pin2==null){
-pin2=createPin("right_pin","images/redpin.gif");
+pin2=createPin("right_pin","css/images/redpin.gif");
 document.body.appendChild(pin2);}
 pin2.style.display="block";
 var cursorPos=getCursorPosition(event); pin2.style.left=""+(cursorPos.x -7)+"px";

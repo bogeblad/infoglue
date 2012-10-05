@@ -91,25 +91,34 @@ function getEventPositionY(e)
 
 function getWindowHeight()
 {
+	/*
 	var y;
 	if (self.innerHeight) // all except Explorer
 	{
 		y = self.innerHeight;
+		alert("Riktig browser: " + y);
 	}
 	else if (document.documentElement && document.documentElement.clientHeight)
 		// Explorer 6 Strict Mode
 	{
 		y = document.documentElement.clientHeight;
+		alert("Riktigt usel  browser: " + y);
 	}
 	else if (document.body) // other Explorers
 	{
 		y = document.body.clientHeight;
+		alert("Usel browser: " + y);
 	}
 	return y;
+	*/
+	
+	var height = $(window).height();
+	return height;
 }
 
 function getWindowWidth()
 {
+	/*
 	var x;
 	if (self.innerHeight) // all except Explorer
 	{
@@ -125,6 +134,10 @@ function getWindowWidth()
 		x = document.body.clientWidth;
 	}
 	return x;
+	*/
+	
+	var width = $(window).width();
+	return width;
 }
 
 function resizeInlineTabDivsImproved()
@@ -317,33 +330,39 @@ function closeInlineDiv()
 function resizeScrollArea()
 {
 	var windowHeight = getWindowHeight();
-	//alert("windowHeight:" + $(window).height() + ":" + windowHeight);
-	$(".inlineTabDiv").each(function(index) {
-		//alert(index + ': ' + $(this).attr("id"));
+	
+	if (windowHeight <= 0)
+	{
+		//alert("Fönsterhöjden blev 0. Sätter default till 672 istället.");
+		windowHeight = 672;
+	}
+	else
+	{
+		//alert("element: " + $(window).attr("id") + " - Fönsterhöjden är: " + windowHeight);
+	}
+		
+	$(".inlineTabDiv").each(function(index) 
+	{
 	    var offset = $(this).offset().top;
-	    //alert("offset:" + offset);
-	    //alert($("#footertoolbar").height());
+
 	    if($("#footertoolbar").size() == 0)
 	    	$(this).css("margin-bottom", "0px");
 	    
 	    var marginBottom = parseInt($(this).css("margin-bottom"));
-	    //alert("Check:" + $("#footertoolbar").size() + " : " + marginBottom);
 	    if($("#footertoolbar").size() == 0)
 	    	var inlineDivHeight = windowHeight - offset - $("#footertoolbar").height() - marginBottom;
 	    else
 	    	var inlineDivHeight = windowHeight - offset - marginBottom;
 	    	
-	    //	$("#footertoolbar").
-	    //	inlineDivHeight = inlineDivHeight - 43; 
+	    //alert("Sätter höjden på " + $(this).attr("id") + " till: " + inlineDivHeight);
 	    
-	    //alert("Height:" + inlineDivHeight);
 		$(this).height(inlineDivHeight);
 		
 		$("#" + $(this).attr("id") + " > iframe").each(function(index) {
 			$(this).height(inlineDivHeight);
 		});
 
-	  });
+	});
 }
 
 /*

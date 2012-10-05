@@ -81,9 +81,9 @@ pageContext.setAttribute("stacktrace", sb.toString());
 
 	</style> 
 	
-	<link type="text/css" href="<%= request.getContextPath() %>/script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="<%= request.getContextPath() %>/script/jquery/jquery-1.4.min.js"></script>
-	<script type="text/javascript" src="<%= request.getContextPath() %>/script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	<link type="text/css" href="<%= request.getContextPath() %>/script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+	<script type="text/javascript" src="<%= request.getContextPath() %>/script/jquery-latest/jquery.min.js"></script>
+	<script type="text/javascript" src="<%= request.getContextPath() %>/script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 
 	<script type="text/javascript">
 	<!--
@@ -152,9 +152,9 @@ pageContext.setAttribute("stacktrace", sb.toString());
 		.ui-button { outline: 0; margin:0; padding: .4em 1em .5em; text-decoration:none;  !important; cursor:pointer; position: relative; text-align: center; }
 		.ui-dialog .ui-state-highlight, .ui-dialog .ui-state-error { padding: .3em;  }
 		
-		.bug { display: block; float: left; line-height: 24px; width: 100%; background: url(<%= request.getContextPath() %>/images/v3/bug.png) no-repeat 0px 2px; text-indent: 24px; }
-		.stack { display: block; float: left; line-height: 24px; width: 100%; background: url(<%= request.getContextPath() %>/images/v3/stack.png) no-repeat 0px 2px; text-indent: 24px; }
-		.close { display: block; float: left; line-height: 24px; width: 100%; background:url(<%= request.getContextPath() %>/images/v3/closeWindowIcon.gif) no-repeat 3px 4px; text-indent: 24px; margin-top: 20px; }
+		.bug { display: block; float: left; line-height: 24px; width: 100%; background: url(<%= request.getContextPath() %>/css/images/v3/bug.png) no-repeat 0px 2px; text-indent: 24px; }
+		.stack { display: block; float: left; line-height: 24px; width: 100%; background: url(<%= request.getContextPath() %>/css/images/v3/stack.png) no-repeat 0px 2px; text-indent: 24px; }
+		.close { display: block; float: left; line-height: 24px; width: 100%; background:url(<%= request.getContextPath() %>/css/images/v3/closeWindowIcon.gif) no-repeat 3px 4px; text-indent: 24px; margin-top: 20px; }
 		
 	</style>
 	
@@ -188,17 +188,17 @@ pageContext.setAttribute("stacktrace", sb.toString());
 
 <table class="loginbox" align="center" border="1" cellspacing="5" cellpadding="0">
 <tr>
-	<td valign="top" class="borderedCell"><img src="<%= request.getContextPath() %>/images/login.jpg" width="130" height="237"/></td>
+	<td valign="top" class="borderedCell"><img src="<%= request.getContextPath() %>/css/images/login.jpg" width="130" height="237"/></td>
 	<td valign="top" class="borderedCell">
 		<table align="center" border="0" cellspacing="0" cellpadding="0" width="200">
 		<tr>
-			<td colspan="2" style="background-image: url(<%= request.getContextPath() %>/images/errorHeaderBackground.gif); background-repeat: repeat-x;" align="center"><img src="images/error.jpg"></td>
+			<td colspan="2" style="background-image: url(<%= request.getContextPath() %>/css/images/errorHeaderBackground.gif); background-repeat: repeat-x;" align="center"><img src="css/images/error.jpg"></td>
 		</tr>	
 		<tr>
-			<td colspan="2"><img src="<%= request.getContextPath() %>/images/trans.gif" width="1" height="20"></td>
+			<td colspan="2"><img src="<%= request.getContextPath() %>/css/images/trans.gif" width="1" height="20"></td>
 		</tr>
 		<tr>
-			<td><img src="<%= request.getContextPath() %>/images/trans.gif" width="20" height="1"></td>
+			<td><img src="<%= request.getContextPath() %>/css/images/trans.gif" width="20" height="1"></td>
 			<td>
 				Page not Found or an error occurred. Either way we could not serve your request.<br/><br/>
 				System message: <c:out value="${requestScope.error.message}"/><br/><br/>

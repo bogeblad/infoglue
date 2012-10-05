@@ -3,9 +3,9 @@
 <tree>
 	<tree text="Loads tree2.xml" src="tree2.xml"/>
 	<tree text="Loads NOT_AVAILABLE.xml" src="NOT_AVAILABLE.xml"
-		icon="images/xp/folder.png"/>
+		icon="css/images/xp/folder.png"/>
 	<tree text="Loads emptytree.xml" src="emptytree.xml"
-		icon="images/xp/folder.png"/>
+		icon="css/images/xp/folder.png"/>
 	<tree text="Loaded Item 3" action="javascript:alert(3)" />
 	<tree text="Loaded Item 4" action="javascript:alert(4)">
 		<tree text="Loaded Item 4.1" action="javascript:alert(2.1)" />

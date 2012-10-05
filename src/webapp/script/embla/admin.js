@@ -170,14 +170,14 @@ function toggleAvailableToolsSize()
 		$("#availableTools li").css("width", "100%").removeClass("minimized");
 		$("#availableTools").removeClass("minimized");
 		$("#availableToolsSizeControlBar").removeClass("minimized");
-		$("#availableToolsSizeControlBar img").attr("src","images/v3/smallBarDownArrow.png");
+		$("#availableToolsSizeControlBar img").attr("src","css/images/v3/smallBarDownArrow.png");
 	}
 	else
 	{
 		$("#availableTools li").css("width", "26px").css("overflow", "hidden").addClass("minimized");
 		$("#availableTools").addClass("minimized");
 		$("#availableToolsSizeControlBar").addClass("minimized");
-		$("#availableToolsSizeControlBar img").attr("src","images/v3/smallBarUpArrow.png");
+		$("#availableToolsSizeControlBar img").attr("src","css/images/v3/smallBarUpArrow.png");
 	}
 }
 

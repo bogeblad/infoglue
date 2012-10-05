@@ -349,7 +349,7 @@ Edit on sight classes
 	font-size: 14px;
 	width: 200px;
 	overflow: hidden;
-	background-image: url('../images/v3/tileGradient.gif');
+	background-image: url('images/v3/tileGradient.gif');
 	background-repeat: repeat-y;
 	background-position: left;
 	background-color: #F9F8F7;
@@ -387,7 +387,7 @@ width:100%;
 padding: 0px;
 aposition:relative;
 background-color:white;
-background-image:url("../images/v3/toolbarBackground.gif");
+background-image:url("images/v3/toolbarBackground.gif");
 background-repeat:repeat-x;
 border:0px;
 border-bottom:1px solid #9CAABD;
@@ -406,7 +406,7 @@ border-bottom:1px solid #9CAABD;
 }
 .igDialogFooter, .componentPropertiesFooter {
     background-color: white;
-    background-image: url("../images/v3/footerBackground.gif");
+    background-image: url("images/v3/footerBackground.gif");
     background-repeat: repeat-x;
     border-top: 0 solid #9CAABD;
     abottom: 0;
@@ -434,10 +434,10 @@ border-bottom:1px solid #9CAABD;
 { 
 	background-color: #d0e5f5;
 }
-.save { background:url(../images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
-.saveAndExit {background:url(../images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
-.cancel {background:url(../images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}
-.close {background:url(../images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
+.save { background:url(images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.saveAndExit {background:url(images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.cancel {background:url(images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}
+.close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
 
 .igPropertiesTable {
 	border-collapse: separate;
@@ -787,7 +787,7 @@ select.mediumdrop {
 .editOnSightDiv {
 	border: 1px solid black;
 	background-color: #F9F8F7;
-	background-image: url('../images/contextBackground.gif');
+	background-image: url('images/contextBackground.gif');
 	background-repeat: repeat-y;
 	text-align: left;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
@@ -817,7 +817,7 @@ select.mediumdrop {
 	margin: 0px 0px 0px 0px;
 	}
 .editOnSightMenuDiv {
-	background:url(../images/v3/tileGradient.gif) repeat-y left;
+	background:url(images/v3/tileGradient.gif) repeat-y left;
 	margin: 0px;
 	padding: 0px;	
 }
@@ -852,36 +852,36 @@ a.editOnSightHref:hover{
 	text-decoration:none;
 	color: black;
 }
-.linkMetadata { background:url(../images/v3/metadataIcon.gif) no-repeat left center; background-position: 4px 2px;}
-.linkCreatePage {background:url(../images/v3/createPageIcon.gif) no-repeat left center; background-position: 4px 2px;}
-.linkEditArticle {background:url(../images/v3/editContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkCategorizeArticle {background:url(../images/v3/categorizeContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkPublish {background:url(../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkNotify {background:url(../images/v3/notifyIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkTakeContent {background:url(../images/v3/subscribeToContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkTakePage {background:url(../images/v3/subscribeToPageIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkTranslate {background:url(../images/v3/translateContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkCreateNews {background:url(../images/v3/createNewsForContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkMySettings {background:url(../images/v3/mySettingsIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMetadata { background:url(images/v3/metadataIcon.gif) no-repeat left center; background-position: 4px 2px;}
+.linkCreatePage {background:url(images/v3/createPageIcon.gif) no-repeat left center; background-position: 4px 2px;}
+.linkEditArticle {background:url(images/v3/editContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCategorizeArticle {background:url(images/v3/categorizeContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkPublish {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkNotify {background:url(images/v3/notifyIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTakeContent {background:url(images/v3/subscribeToContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTakePage {background:url(images/v3/subscribeToPageIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkTranslate {background:url(images/v3/translateContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCreateNews {background:url(images/v3/createNewsForContentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMySettings {background:url(images/v3/mySettingsIcon.gif) no-repeat left center; background-position: 4px 6px;}
 
-.linkAddComponent {background:url(../images/v3/addComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkDeleteComponent {background:url(../images/v3/deleteComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkChangeComponent {background:url(../images/v3/changeComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkCreatePageTemplate {background:url(../images/v3/savePageTemplateIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkMoveComponentUp {background:url(../images/v3/moveComponentUpIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkMoveComponentDown {background:url(../images/v3/moveComponentDownIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkEnableSortComponent {background:url(../images/v3/moveIcon.png) no-repeat left center; background-position: 4px 6px;}
-.linkComponentProperties {background:url(../images/v3/componentPropertiesIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkPageComponents {background:url(../images/v3/structureIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkOpenInNewWindow {background:url(../images/v3/openInNewWindowIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkViewSource {background:url(../images/v3/showHTMLIcon.gif) no-repeat left center; background-position: 4px 6px;}
-.linkAccessRights {background:url(../images/v3/accessRightIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkAddComponent {background:url(images/v3/addComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkDeleteComponent {background:url(images/v3/deleteComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkChangeComponent {background:url(images/v3/changeComponentIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkCreatePageTemplate {background:url(images/v3/savePageTemplateIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMoveComponentUp {background:url(images/v3/moveComponentUpIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkMoveComponentDown {background:url(images/v3/moveComponentDownIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkEnableSortComponent {background:url(images/v3/moveIcon.png) no-repeat left center; background-position: 4px 6px;}
+.linkComponentProperties {background:url(images/v3/componentPropertiesIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkPageComponents {background:url(images/v3/structureIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkOpenInNewWindow {background:url(images/v3/openInNewWindowIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkViewSource {background:url(images/v3/showHTMLIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkAccessRights {background:url(images/v3/accessRightIcon.gif) no-repeat left center; background-position: 4px 6px;}
 
-.linkComponentTask {background:url(../images/v3/componentTaskIcon.gif) no-repeat left center; background-position: 4px 6px;}
+.linkComponentTask {background:url(images/v3/componentTaskIcon.gif) no-repeat left center; background-position: 4px 6px;}
 
-.linkSave {background:url(../images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px -2px;}
-.linkCancel {background:url(../images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 0px;}
-.linkInfoGlueFunctions {background:url(../images/v3/infoglueFunctionsIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.linkSave {background:url(images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px -2px;}
+.linkCancel {background:url(images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.linkInfoGlueFunctions {background:url(images/v3/infoglueFunctionsIcon.gif) no-repeat left center; background-position: 0px 0px;}
 
 .linkMetadata, .linkCreatePage, .linkEditArticle, .linkCategorizeArticle, .linkPublish, .linkNotify, 
 .linkTakeContent, .linkTakePage, .linkTranslate, .linkCreateNews, .linkMySettings, .linkAddComponent, .linkDeleteComponent,
@@ -893,7 +893,7 @@ padding-left:28px;
 /* Button in IG */
 .igButton
 {
-	background-image: url("../images/v3/igButtonBackground.png");
+	background-image: url("images/v3/igButtonBackground.png");
 	background-position: 100% -26px;
 	background-repeat: no-repeat;
 	line-height: 26px;
@@ -910,7 +910,7 @@ padding-left:28px;
 
 .igButtonOuterSpan
 {
-	background-image: url("../images/v3/igButtonBackground.png");
+	background-image: url("images/v3/igButtonBackground.png");
 	background-position: 0px 0px;
 	background-repeat: no-repeat;
 	font-family: Tahoma, Verdana, Arial, sans-serif;

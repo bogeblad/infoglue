@@ -89,40 +89,40 @@
 
 <table class="loginbox" align="center" border="1" cellspacing="5" cellpadding="0">
 <tr>
-	<td valign="top" class="borderedCell"><img src="$this.getURLBase()/images/login.jpg" width="130" height="237"/></td>
+	<td valign="top" class="borderedCell"><img src="$this.getURLBase()/css/images/login.jpg" width="130" height="237"/></td>
 	<td valign="top" class="borderedCell">
 		<table align="center" border="0" cellspacing="0" cellpadding="0" width="200">
 		<tr>
-			<td colspan="2" style="background-image: url($this.getURLBase()/images/errorHeaderBackground.gif); background-repeat: repeat-x;" align="center"><img src="$this.getURLBase()/images/error.jpg"></td>
+			<td colspan="2" style="background-image: url($this.getURLBase()/css/images/errorHeaderBackground.gif); background-repeat: repeat-x;" align="center"><img src="$this.getURLBase()css//images/error.jpg"></td>
 		</tr>	
 		<tr>
-			<td colspan="2"><img src="$this.getURLBase()/images/trans.gif" width="1" height="20"></td>
+			<td colspan="2"><img src="$this.getURLBase()css//images/trans.gif" width="1" height="20"></td>
 		</tr>	
 		<tr>
-			<td><img src="$this.getURLBase()/images/trans.gif" width="20" height="1"></td>
+			<td><img src="$this.getURLBase()css//images/trans.gif" width="20" height="1"></td>
 			<td>Message: $error.getMessage()</td>
 		</tr>
 		<tr>
 			<td colspan="2">&nbsp;</td>
 		</tr>
 		<tr>
-			<td><img src="$this.getURLBase()/images/trans.gif" width="20" height="1"></td>
+			<td><img src="$this.getURLBase()css//images/trans.gif" width="20" height="1"></td>
 			<td>Click <a href="javascript:toggleStacktrace();">here</a> to toggle stacktrace</td>
 		</tr>
 		<tr>
 			<td colspan="2">
 				<table id="stacktrace" style="display:none;">
 				<tr>
-		            <td><img src="$this.getURLBase()/images/trans.gif" width="20" height="1"></td>
+		            <td><img src="$this.getURLBase()css//images/trans.gif" width="20" height="1"></td>
 		            <td>$error.getStackTrace()</td>
 		        </tr>
 		        #if($error.hasCause())
 		        <tr>
-		          <td><img src="$this.getURLBase()/images/trans.gif" width="20" height="1"></td>
+		          <td><img src="$this.getURLBase()/css/images/trans.gif" width="20" height="1"></td>
 		          <td>$error.getCauseMessage()</td>
 		        </tr>
 		        <tr>
-		          <td><img src="$this.getURLBase()/images/trans.gif" width="20" height="1"></td>
+		          <td><img src="$this.getURLBase()/css/images/trans.gif" width="20" height="1"></td>
 		          <td>$error.getCauseStackTrace()</td>
 		        </tr>
 		        #end

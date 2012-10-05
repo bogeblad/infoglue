@@ -19,18 +19,19 @@
 <head>
 	<title>$ui.getString($titleKey)</title>
 	
-	<link type="text/css" href="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/css/redmond/jquery-ui-1.7.2.custom.css" rel="stylesheet" />	
-	<script type="text/javascript" src="script/jquery/jquery-1.4.4.min.js"></script>
-	<script type="text/javascript" src="script/jqueryplugins/ui/jquery-ui-1.7.2.full.redmond/js/jquery-ui-1.7.2.custom.min.js"></script>
+	<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+	<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+	<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 	
 	<script type="text/javascript" src="script/v3/infoglue.js"></script>
 	<script type="text/javascript" src="script/v3/infoglueWidgets.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglueWidgets.css" /> 
-	<link rel="stylesheet" type="text/css" href="css/v3/tabs.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="css/infoglueWidgets.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen" />
 			
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/work.css" />
+	<link rel="stylesheet" type="text/css" href="css/work.css" />
+	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 	
 	<script type="text/javascript">
 	<!--

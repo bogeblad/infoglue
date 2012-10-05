@@ -17,16 +17,16 @@
 
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-	<td><img src="images/trans.gif" width="4" height="1"/></td>
-	<td colspan="3" bgcolor="#FFFFFF" width="100%"><img src="images/trans.gif" width="1" height="1"/></td>	
-	<td><img src="images/trans.gif" width="4" height="1"/></td>
+	<td><img src="css/images/trans.gif" width="4" height="1"/></td>
+	<td colspan="3" bgcolor="#FFFFFF" width="100%"><img src="css/images/trans.gif" width="1" height="1"/></td>	
+	<td><img src="css/images/trans.gif" width="4" height="1"/></td>
 </tr>
 <tr>
-	<td><img src="images/trans.gif" width="4" height="1"/></td>
+	<td><img src="css/images/trans.gif" width="4" height="1"/></td>
 	<td class="whitelabel" style="padding-top: 5px; font-size: 11px;" width="90%" valign="top"><b>$ui.getString("footer.application.name") Version build:</b> $infoGlueVersion ($infoGlueVersionReleaseDate)</td>
-	<td class="whitelabel" style="padding-top: 5px;" align="right" valign="top"><img src="images/$ui.getString("images.header.loggedInAsLabel")" width="119" height="13"/><img src="images/trans.gif" width="5" height="13"/></td>
+	<td class="whitelabel" style="padding-top: 5px;" align="right" valign="top"><img src="css/images/$ui.getString("images.header.loggedInAsLabel")" width="119" height="13"/><img src="css/images/trans.gif" width="5" height="13"/></td>
 	<td class="whitelabel" style="padding-top: 5px; font-size: 12px; font-family: Arial, Verdana; white-space:nowrap;" valign="top">&nbsp;$infoGluePrincipal.displayName</td>
-	<td><img src="images/trans.gif" width="4" height="1"/></td>
+	<td><img src="css/images/trans.gif" width="4" height="1"/></td>
 </tr>
 </table>
 

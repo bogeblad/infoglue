@@ -481,11 +481,21 @@ public class ComponentLogic
 	{
 		String attributeValue = "";
 
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts"))
+		{
+			templateController.getDeliveryContext().setDebugMode(true);
+		}
+
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		Integer contentId = getContentId(property);
 		if(contentId != null)
 			attributeValue = templateController.getContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
-
+		
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") && (attributeValue == null || attributeValue.equals("")))
+		{
+			logger.warn(templateController.getDeliveryContext().getDebugInformation());
+		}
+		
 		return attributeValue;
 	}
 
@@ -534,15 +544,35 @@ public class ComponentLogic
 	public String getParsedContentAttribute(String propertyName, Integer languageId, String attributeName, boolean disableEditOnSight, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance, boolean escapeVelocityCode)
 	{
 		String attributeValue = "";
-
+		
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts"))
+		{
+			templateController.getDeliveryContext().setDebugMode(true);
+		}
+		templateController.getDeliveryContext().addDebugInformation("DEBUG MiniArticleShortcuts");
+		templateController.getDeliveryContext().addDebugInformation("DEBUG propertyName:" + propertyName + " / languageId:" + languageId + " / attributeName:" + attributeName + " / disableEditOnSight: " + disableEditOnSight + " / useInheritance: " + useInheritance + " / useRepositoryInheritance: " + useRepositoryInheritance + " / useStructureInheritance: " + useStructureInheritance + " / escapeVelocityCode: " + escapeVelocityCode);
+		
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+		templateController.getDeliveryContext().addDebugInformation("DEBUG property:" + property);
 		Integer contentId = getContentId(property);
+		templateController.getDeliveryContext().addDebugInformation("DEBUG contentId:" + contentId);
 		if(contentId != null)
 		{
 			if(!escapeVelocityCode)
+			{
 				attributeValue = templateController.getParsedContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
+				templateController.getDeliveryContext().addDebugInformation("DEBUG getParsedContentAttribute:" + (attributeValue == null || attributeValue.length() < 501 ? attributeValue : attributeValue.substring(0,500)));
+			}
 			else
+			{
 				attributeValue = templateController.getEscapedParsedContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
+				templateController.getDeliveryContext().addDebugInformation("DEBUG getEscapedParsedContentAttribute:" +  (attributeValue == null || attributeValue.length() < 501 ? attributeValue : attributeValue.substring(0,500)));
+			}
+		}
+		
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") && (attributeValue == null || attributeValue.equals("")))
+		{
+			logger.warn(templateController.getDeliveryContext().getDebugInformation());
 		}
 		
 		return attributeValue;
@@ -1442,6 +1472,7 @@ public class ComponentLogic
 		    String versionKey = key + "_contentVersionIds";
 			Object propertyCandidate = CacheController.getCachedObjectFromAdvancedCache("componentPropertyCache", key);
 			Set propertyCandidateVersions = (Set)CacheController.getCachedObjectFromAdvancedCache("componentPropertyVersionIdCache", versionKey);
+			templateController.getDeliveryContext().addDebugInformation("DEBUG key:" + key + "=" + propertyCandidate);
 			
 			if(propertyCandidate != null)
 			{
@@ -1456,6 +1487,7 @@ public class ComponentLogic
 			else
 			{
 				property = getComponentProperty(propertyName, useInheritance, useStructureInheritance, contentVersionIdList, useRepositoryInheritance, useComponentInheritance);
+				templateController.getDeliveryContext().addDebugInformation("DEBUG property 2:" + property);
 				if(property == null)
 				{	
 					property = (Map)component.getProperties().get(propertyName);
@@ -1467,6 +1499,7 @@ public class ComponentLogic
 						parentComponent = parentComponent.getParentComponent();
 					}
 				}
+				templateController.getDeliveryContext().addDebugInformation("DEBUG property 3:" + property);
 				
 			    Set groups = new HashSet();
 				Iterator contentVersionIdListIterator = contentVersionIdList.iterator();
@@ -1532,6 +1565,9 @@ public class ComponentLogic
 		}
 		catch(Exception e)
 		{
+			if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO ERROR: " + propertyName + " (Thread" + Thread.currentThread().getId() + ")" + e.getMessage() + "\n");
+
 			logger.error("Error getting propertyValue on + " + propertyName + ":" + e.getMessage(), e);
 		}
 		
@@ -1916,6 +1952,8 @@ public class ComponentLogic
 		//Map property = (Map)this.infoGlueComponent.getProperties().get(propertyName);
 		//logger.info("property1:" + property);
 		Map property = getInheritedComponentProperty(this.templateController, siteNodeId, this.templateController.getLanguageId(), this.templateController.getContentId(), this.infoGlueComponent.getId(), propertyName, contentVersionIdList);
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO property inside getComponentProperty: " + property + " (Thread" + Thread.currentThread().getId() + ")\n");
 		
 		if(useInheritance && property == null)
 		{
@@ -1972,7 +2010,10 @@ public class ComponentLogic
 		Object propertyCandidate = CacheController.getCachedObjectFromAdvancedCache("componentPropertyCache", key.toString());
 		Set propertyCandidateVersions = (Set)CacheController.getCachedObjectFromAdvancedCache("componentPropertyVersionIdCache", versionKey);
 		Map property = null;
-			
+
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+			templateController.getDeliveryContext().addDebugInformation("DEBUG getInheritedComponentProperty key:" + key + "=" + propertyCandidate);
+		
 		if(propertyCandidate != null)
 		{
 			if(propertyCandidate instanceof NullObject)
@@ -2003,6 +2044,18 @@ public class ComponentLogic
 		else
 		{
 			String inheritedPageComponentsXML = getPageComponentsString(templateController, siteNodeId, languageId, contentId, contentVersionIdList);
+			if((siteNodeId == 100081 && propertyName.equals("GUFlashImages")) || propertyName.equals("MiniArticleShortcuts"))
+			{
+				String xmlRep = "";
+				if(inheritedPageComponentsXML == null) 
+					xmlRep = "Null - no XML found";
+				else
+					xmlRep = inheritedPageComponentsXML;
+				
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO inheritedPageComponentsXML: " + inheritedPageComponentsXML.length() + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate);
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO xmlRep: " + xmlRep + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate);
+			}
+			
 			if(logger.isDebugEnabled())
 			{
 				logger.info("Checking for property " + propertyName + " on siteNodeId " + siteNodeId);
@@ -2014,6 +2067,15 @@ public class ComponentLogic
 				property = parseProperties(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
 			}
 			
+			if(siteNodeId == 100081 && propertyName.equals("GUFlashImages"))
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO parsed property: " + property + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
+
+			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO parsed property: " + property + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
+
+			if(contentVersionIdList.size() == 0)
+				contentVersionIdList.add("selectiveCacheUpdateNonApplicable");
+
 			if(property != null && contentVersionIdList.size() > 0)
 	        {
 			    Set groups = new HashSet();
@@ -2047,6 +2109,9 @@ public class ComponentLogic
 		    }
 			else
 			{
+				if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+					logger.warn("DEBUG: Going to store a NullObject in componentPropertyCache for " + propertyName + ". Why: \n" + this.templateController.getDeliveryContext().getDebugInformation());
+								
 				if(property == null && contentVersionIdList.size() > 0)
 				{
 				    Set groups = new HashSet();
@@ -2075,14 +2140,20 @@ public class ComponentLogic
 				    groups.add("siteNode_" + siteNodeId);
 
 //				  	TODO - TEST - NOT SAFE
+				    if(key.indexOf("MiniArticleShortcuts") > -1 || key.indexOf("MiniArticleShortcuts") > -1)
+				    	logger.warn("Storing NULL:" + templateController.getDeliveryContext().getDebugInformation());
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key.toString(), new NullObject(), groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
 				}
+				/*
 				else
 				{
 //					TODO - TEST - NOT SAFE
+				    if(key.indexOf("MiniArticleShortcuts") > -1 || key.indexOf("MiniArticleShortcuts") > -1)
+				    	logger.warn("Storing NULL:" + templateController.getDeliveryContext().getDebugInformation());
 					CacheController.cacheObjectInAdvancedCache("componentPropertyCache", key.toString(), new NullObject(), new String[]{}, false);
 				}
+				*/
 			}
 		}
 				
@@ -2352,6 +2423,9 @@ public class ComponentLogic
         
 		String propertyXPath = "//component[@id=" + componentId + "]/properties/property[@name='" + propertyName + "']";
 		
+		if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO propertyXPath: " + propertyXPath + " (Thread" + Thread.currentThread().getId() + ").\n");
+
 		Xb1XPath xpathObject = (Xb1XPath)cachedXPathObjects.get(propertyXPath);
         if(xpathObject == null)
         {
@@ -2365,6 +2439,8 @@ public class ComponentLogic
 		if(anl == null || anl.size() == 0)
 		{
 			String globalPropertyXPath = "(//component/properties/property[@name='" + propertyName + "'])[1]";
+			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO globalPropertyXPath: " + globalPropertyXPath + " (Thread" + Thread.currentThread().getId() + ").\n");
 			
 			Xb1XPath globalXpathObject = new Xb1XPath( globalPropertyXPath );
 	        anl = globalXpathObject.selectNodes( doc );
@@ -2440,6 +2516,9 @@ public class ComponentLogic
 					property.put(attribute.getName(), attribute.getValue());
 			}
 
+			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO property halfway: " + property + " (Thread" + Thread.currentThread().getId() + ").\n");
+
 			List bindings = new ArrayList();
 			
 			Iterator bindingNodeListIterator = infosetItem.elements(infosetItem.getNamespace(), "binding").iterator();
@@ -2450,6 +2529,9 @@ public class ComponentLogic
 				String entityId = bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "entityId");
 				String assetKey = bindingElement.getAttributeValue(infosetItem.getNamespaceName(), "assetKey");
 				//logger.info("Binding found:" + entityName + ":" + entityId);
+
+				if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+					this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO property halfway: " + entityName + ":" + entityId + ":" + assetKey + " (Thread" + Thread.currentThread().getId() + ").\n");
 
 				ComponentBinding componentBinding = new ComponentBinding();
 				//componentBinding.setId(new Integer(id));
@@ -2474,6 +2556,8 @@ public class ComponentLogic
 				} 
 				*/
 			}
+			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO bindings: " + bindings.size() + " (Thread" + Thread.currentThread().getId() + ").\n");
 			
 			property.put("bindings", bindings);
 		}
@@ -2977,6 +3061,8 @@ public class ComponentLogic
 		Set contentVersionIds = (Set)CacheController.getCachedObjectFromAdvancedCache("componentEditorVersionIdCache", versionKey);
 		if(cachedPageComponentsString != null)
 		{
+			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO returning cachedPageComponentsString: " + cachedPageComponentsString.length() + " (Thread" + Thread.currentThread().getId() + ").\n");
+
 		    if(usedContentVersionId != null && contentVersionIds != null)
 		        usedContentVersionId.addAll(contentVersionIds);
 
@@ -2988,6 +3074,8 @@ public class ComponentLogic
 		NodeDeliveryController ndc = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
 		ContentVO contentVO = ndc.getBoundContent(templateController.getDatabase(), templateController.getPrincipal(), siteNodeId, languageId, true, "Meta information", templateController.getDeliveryContext());
 		
+			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO getting XML: " + contentVO + " (Thread" + Thread.currentThread().getId() + ").\n");
+
 		if(contentVO == null)
 			throw new SystemException("There was no Meta Information bound to this page [" + siteNodeId + "] which makes it impossible to render.");	
 		
@@ -3467,6 +3555,7 @@ public class ComponentLogic
 
 		try
 		{
+			//pageEditorHelper.setTemplateController(this.templateController);
 			org.dom4j.Document document = pageEditorHelper.getComponentPropertiesDOM4JDocument(siteNodeId, languageId, componentContentId, db, principal);
 			
 			if(document != null)

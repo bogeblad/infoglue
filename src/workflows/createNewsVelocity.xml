@@ -41,7 +41,7 @@
 
 	<global-actions>
 		<action id="200" name="Restart Workflow">
-			<meta name="icon">images/mydesktop/restart.gif</meta>
+			<meta name="icon">css/images/mydesktop/restart.gif</meta>
 			<meta name="altKey">Restart</meta>
 			<restrict-to>
 				<conditions>
@@ -56,7 +56,7 @@
 			</results>
 		</action>
 		<action id="201" name="Finish Workflow">
-			<meta name="icon">images/mydesktop/stop.gif</meta>
+			<meta name="icon">css/images/mydesktop/stop.gif</meta>
 			<meta name="altKey">Finish</meta>
 			<restrict-to>
 				<conditions>

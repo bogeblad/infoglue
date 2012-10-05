@@ -610,7 +610,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.contenttool.save.label"), 
 									  getLocalizedString(locale, "tool.contenttool.save.label"),
 									  "validateAndSubmitContentForm();",
-									  "images/v3/saveInlineIcon.gif",
+									  "css/images/v3/saveInlineIcon.gif",
 									  "left",
 									  "save",
 									  true));
@@ -619,7 +619,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.contenttool.saveAndExit.label"), 
 									  getLocalizedString(locale, "tool.contenttool.saveAndExit.label"),
 									  "validateAndSubmitContentFormThenExit();",
-									  "images/v3/saveAndExitInlineIcon.gif",
+									  "css/images/v3/saveAndExitInlineIcon.gif",
 									  "left",
 									  "saveAndExit",
 									  true));
@@ -628,7 +628,7 @@ public class ToolbarController implements ToolbarProvider
 				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"), 
 				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"),
 				  					  "cancel();",
-				  					  "images/v3/cancelIcon.gif",
+				  					  "css/images/v3/cancelIcon.gif",
 				  					  "left",
 				  					  "cancel",
 				  					  true));
@@ -775,7 +775,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentButtonLabel"), 
 				  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentButtonLabel"),
 				  "ViewAccessRights!V3.action?interceptionPointCategory=Content&extraParameters=" + contentVO.getId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "images/v3/accessRightIcon.gif",
+				  "css/images/v3/accessRightIcon.gif",
 				  "accessRights"));
 		}
 		
@@ -1125,14 +1125,14 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentButtonLabel"),
 					  "ViewAccessRights!V3.action?interceptionPointCategory=Content&extraParameters=" + contentVO.getId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-					  "images/v3/accessRightIcon.gif",
+					  "css/images/v3/accessRightIcon.gif",
 					  "accessRights");
 
 			ToolbarButton contentVersionAccessRight = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentVersionButtonLabel"), 
 				  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentVersionButtonLabel"),
 				  "ViewAccessRights!V3.action?interceptionPointCategory=ContentVersion&extraParameters=" + contentId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "images/v3/accessRightIcon.gif",
+				  "css/images/v3/accessRightIcon.gif",
 				  "accessRights");
 	
 			contentAccessRight.getSubButtons().add(contentVersionAccessRight);
@@ -1231,7 +1231,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.contenttool.publish.label"), 
 									  getLocalizedString(locale, "tool.contenttool.publish.label"),
 									  "javascript:validateAndSubmitContentFormThenSubmitToPublish();",
-				  					  "images/v3/publishIcon.gif"));
+				  					  "css/images/v3/publishIcon.gif"));
 		*/
 
 		String cancelJS = "document.location.reload(true);";
@@ -1253,7 +1253,7 @@ public class ToolbarController implements ToolbarProvider
 				  					  getLocalizedString(locale, "tool.common.resetButton.label"), 
 				  					  getLocalizedString(locale, "tool.common.resetButton.label"),
 				  					  cancelJS,
-				  					  "images/v3/cancelIcon.gif",
+				  					  "css/images/v3/cancelIcon.gif",
 				  					  "left",
 									  "reset",
 				  					  true));
@@ -1300,7 +1300,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.contenttool.saveAndExit.label"), 
 									  getLocalizedString(locale, "tool.contenttool.saveAndExit.label"),
 									  "validateAndSubmitContentFormThenClose();",
-									  "images/v3/saveAndExitInlineIcon.gif",
+									  "css/images/v3/saveAndExitInlineIcon.gif",
 									  "left",
 									  "saveAndExit",
 									  true));
@@ -1311,7 +1311,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.contenttool.publish.label"), 
 									  getLocalizedString(locale, "tool.contenttool.publish.label"),
 									  "javascript:validateAndSubmitContentFormThenSubmitToPublish();",
-				  					  "images/v3/publishIcon.gif"));
+				  					  "css/images/v3/publishIcon.gif"));
 		*/
 	
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
@@ -1656,14 +1656,14 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.common.nextButton.label"), 
 									  getLocalizedString(locale, "tool.common.nextButton.label"),
 									  "javascript:validateAndSubmitContentForm();",
-									  "images/v3/saveInlineIcon.gif",
+									  "css/images/v3/saveInlineIcon.gif",
 									  "save"));
 		
 		buttons.add(new ToolbarButton("",
 				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"), 
 				  					  getLocalizedString(locale, "tool.contenttool.cancel.label"),
 				  					  "if(parent && parent.closeInlineDiv) parent.parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  					  "images/v3/cancelIcon.gif",
+				  					  "css/images/v3/cancelIcon.gif",
 				  					  "left",
 									  "cancel",
 				  					  true));
@@ -1776,7 +1776,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonLabel"), 
 				  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonTitle"),
 				  "ViewAccessRights!V3.action?interceptionPointCategory=SiteNodeVersion&extraParameters=" + siteNodeVersionVO.getId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "images/v3/accessRightIcon.gif",
+				  "css/images/v3/accessRightIcon.gif",
 				  "accessRights"));
 		//}
 
@@ -1843,7 +1843,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.contenttool.save.label"), 
 				  getLocalizedString(locale, "tool.contenttool.save.label"),
 				  "javascript:validateAndSubmitContentForm();",
-				  "images/v3/saveInlineIcon.gif",
+				  "css/images/v3/saveInlineIcon.gif",
 				  "save"));
 	
 		return buttons;
@@ -1886,7 +1886,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.addButton.label"), 
 				  getLocalizedString(locale, "tool.common.addButton.label"),
 				  "add();",
-				  "images/v3/addIcon.png",
+				  "css/images/v3/addIcon.png",
 				  "left",
 				  "add",
 				  true));
@@ -1903,7 +1903,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.common.compare.label"), 
 									  getLocalizedString(locale, "tool.common.compare.label"),
 									  "compare();",
-									  "images/v3/compareIcon.gif",
+									  "css/images/v3/compareIcon.gif",
 									  "left",
 									  "compare",
 									  true);
@@ -1974,7 +1974,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.nextButton.label"), 
 				  getLocalizedString(locale, "tool.common.nextButton.label"),
 				  "next();",
-				  "images/v3/nextBackground.gif",
+				  "css/images/v3/nextBackground.gif",
 				  "left",
 				  "next",
 				  true));
@@ -1992,7 +1992,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.common.nextButton.label"), 
 									  getLocalizedString(locale, "tool.common.nextButton.label"),
 									  "submitForm();",
-									  "images/v3/nextBackground.gif",
+									  "css/images/v3/nextBackground.gif",
 				  					  "left",
 									  "next",
 									  true));
@@ -2001,7 +2001,7 @@ public class ToolbarController implements ToolbarProvider
 				  					  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  					  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  					  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  					  "images/v3/cancelIcon.gif",
+				  					  "css/images/v3/cancelIcon.gif",
 				  					  "left",
 				  					  "cancel",
 				  					  true));
@@ -2017,7 +2017,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.managementtool.sendMessage.label"), 
 									  getLocalizedString(locale, "tool.managementtool.sendMessage.label"),
 									  "submitForm();",
-									  "images/v3/nextBackground.gif",
+									  "css/images/v3/nextBackground.gif",
 				  					  "left",
 									  "commit",
 									  true));
@@ -2026,7 +2026,7 @@ public class ToolbarController implements ToolbarProvider
 				  					  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  					  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  					  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  					  "images/v3/cancelIcon.gif",
+				  					  "css/images/v3/cancelIcon.gif",
 				  					  "left",
 				  					  "cancel",
 				  					  true));
@@ -2080,7 +2080,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.publishing.publishButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.publishing.publishButtonLabel"),
 					  "submitToPublish('true');",
-					  "images/v3/publishPageIcon.gif",
+					  "css/images/v3/publishPageIcon.gif",
 					  "left",
 					  "publish",
 					  true));
@@ -2092,7 +2092,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.publishing.submitToPublishButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.publishing.submitToPublishButtonLabel"),
 					  "submitToPublish('false');",
-					  "images/v3/publishPageIcon.gif",
+					  "css/images/v3/publishPageIcon.gif",
 					  "left",
 					  "submitToPublish",
 					  true));
@@ -2102,7 +2102,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  "images/v3/cancelIcon.gif",
+				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
 				  true));
@@ -2134,7 +2134,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.unpublishing.unpublishButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.unpublishing.unpublishButtonLabel"),
 					  "submitToPublish('true');",
-					  "images/v3/unpublishPageIcon.gif",
+					  "css/images/v3/unpublishPageIcon.gif",
 					  "left",
 					  "publish",
 					  true));
@@ -2146,7 +2146,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"),
 					  "submitToPublish('false');",
-					  "images/v3/unpublishPageIcon.gif",
+					  "css/images/v3/unpublishPageIcon.gif",
 					  "left",
 					  "submitToPublish",
 					  true));
@@ -2156,7 +2156,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  "images/v3/cancelIcon.gif",
+				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
 				  true));
@@ -2188,7 +2188,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.publishing.publishButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.publishing.publishButtonLabel"),
 					  "submitToPublish('true');",
-					  "images/v3/publishContentIcon.gif",
+					  "css/images/v3/publishContentIcon.gif",
 					  "left",
 					  "publish",
 					  true));
@@ -2200,7 +2200,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.publishing.submitToPublishButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.publishing.submitToPublishButtonLabel"),
 					  "submitToPublish('false');",
-					  "images/v3/publishContentIcon.gif",
+					  "css/images/v3/publishContentIcon.gif",
 					  "left",
 					  "submitToPublish",
 					  true));
@@ -2210,7 +2210,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  "images/v3/cancelIcon.gif",
+				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
 				  true));
@@ -2242,7 +2242,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.unpublishing.unpublishButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.unpublishing.unpublishButtonLabel"),
 					  "submitToPublish('true');",
-					  "images/v3/publishPageIcon.gif",
+					  "css/images/v3/publishPageIcon.gif",
 					  "left",
 					  "publish",
 					  true));
@@ -2254,7 +2254,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.unpublishing.submitToUnpublishButtonLabel"),
 					  "submitToPublish('false');",
-					  "images/v3/publishPageIcon.gif",
+					  "css/images/v3/publishPageIcon.gif",
 					  "left",
 					  "submitToPublish",
 					  true));
@@ -2264,7 +2264,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  "images/v3/cancelIcon.gif",
+				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
 				  true));
@@ -2279,7 +2279,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.createSubscription.header"), 
 				  getLocalizedString(locale, "tool.common.createSubscription.header"),
 				  "showDiv('newSubscriptionForm')",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "create",
 				  true));
@@ -2301,7 +2301,7 @@ public class ToolbarController implements ToolbarProvider
 											  getLocalizedString(locale, "tool.managementtool.createSystemUser.header"), 
 											  getLocalizedString(locale, "tool.managementtool.createSystemUser.header"),
 											  "CreateSystemUser!input.action",
-											  "images/v3/createBackgroundPenPaper.gif",
+											  "css/images/v3/createBackgroundPenPaper.gif",
 											  "create",
 											  "workIframe"));
 			}
@@ -2343,7 +2343,7 @@ public class ToolbarController implements ToolbarProvider
 						getLocalizedString(locale, "tool.managementtool.deleteSystemUser.header"), 
 						getLocalizedString(locale, "tool.managementtool.deleteSystemUser.header"),
 						"DeleteSystemUser.action?userName=" + formatter.encodeBase64(userName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-						"images/v3/createBackgroundPenPaper.gif",
+						"css/images/v3/createBackgroundPenPaper.gif",
 						"left",
 						"delete",
 						false,
@@ -2359,7 +2359,7 @@ public class ToolbarController implements ToolbarProvider
 						  getLocalizedString(locale, "tool.managementtool.viewSystemUserPasswordDialog.header"), 
 						  getLocalizedString(locale, "tool.managementtool.viewSystemUserPasswordDialog.header"),
 						  "UpdateSystemUserPassword!input.action?userName=" + formatter.encodeBase64(userName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-						  "images/v3/passwordIcon.gif",
+						  "css/images/v3/passwordIcon.gif",
 						  "accessRights",
 						  "workIframe"));
 
@@ -2374,7 +2374,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.managementtool.viewUserProperties.header"), 
 					  getLocalizedString(locale, "tool.managementtool.viewUserProperties.header"),
 					  "ViewUserProperties.action?userName=" + formatter.encodeBase64(userName),
-					  "images/v3/advancedSettingsIcon.gif",
+					  "css/images/v3/advancedSettingsIcon.gif",
 					  "properties",
 					  "workIframe"));
 
@@ -2387,7 +2387,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.managementtool.transferAccessRights.header"), 
 					  getLocalizedString(locale, "tool.managementtool.transferAccessRights.header"),
 					  "AuthorizationSwitchManagement!inputUser.action?userName=" + formatter.encodeBase64(userName),
-					  "images/v3/createBackgroundPenPaper.gif",
+					  "css/images/v3/createBackgroundPenPaper.gif",
 					  "create",
 					  "workIframe"));
 		}
@@ -2407,7 +2407,7 @@ public class ToolbarController implements ToolbarProvider
 											  getLocalizedString(locale, "tool.managementtool.createRole.header"), 
 											  getLocalizedString(locale, "tool.managementtool.createRole.header"),
 											  "CreateRole!input.action",
-											  "images/v3/createBackgroundPenPaper.gif",
+											  "css/images/v3/createBackgroundPenPaper.gif",
 											  "create",
 											  "workIframe"));
 			}
@@ -2446,7 +2446,7 @@ public class ToolbarController implements ToolbarProvider
 						getLocalizedString(locale, "tool.managementtool.deleteRole.header"), 
 						getLocalizedString(locale, "tool.managementtool.deleteRole.header"),
 						"DeleteRole.action?roleName=" + formatter.encodeBase64(roleName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-						"images/v3/createBackgroundPenPaper.gif",
+						"css/images/v3/createBackgroundPenPaper.gif",
 						"left",
 						"delete",
 						false,
@@ -2467,7 +2467,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.managementtool.viewRoleProperties.header"), 
 					  getLocalizedString(locale, "tool.managementtool.viewRoleProperties.header"),
 					  "ViewRoleProperties.action?roleName=" + formatter.encodeBase64(roleName),
-					  "images/v3/advancedSettingsIcon.gif",
+					  "css/images/v3/advancedSettingsIcon.gif",
 					  "properties",
 					  "workIframe"));
 				//}
@@ -2482,7 +2482,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.contenttool.accessRights.header"), 
 				  getLocalizedString(locale, "tool.contenttool.accessRights.header"),
 				  "ViewAccessRights.action?interceptionPointCategory=Role&extraParameters=" + URLEncoder.encode(primaryKey, URIEncoding) + "&returnAddress=ViewRole!v3.action?roleName=" + URLEncoder.encode(primaryKey, URIEncoding) + "&colorScheme=ManagementTool",
-				  "images/v3/accessRightsIcon.gif",
+				  "css/images/v3/accessRightsIcon.gif",
 				  "accessRights"));
 		}
 		*/
@@ -2507,7 +2507,7 @@ public class ToolbarController implements ToolbarProvider
 											  getLocalizedString(locale, "tool.managementtool.createGroup.header"), 
 											  getLocalizedString(locale, "tool.managementtool.createGroup.header"),
 											  "CreateGroup!input.action",
-											  "images/v3/createBackgroundPenPaper.gif",
+											  "css/images/v3/createBackgroundPenPaper.gif",
 											  "create",
 											  "workIframe"));
 			//}
@@ -2546,7 +2546,7 @@ public class ToolbarController implements ToolbarProvider
 						getLocalizedString(locale, "tool.managementtool.deleteGroup.header"), 
 						getLocalizedString(locale, "tool.managementtool.deleteGroup.header"),
 						"DeleteGroup.action?groupName=" + formatter.encodeBase64(groupName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-						"images/v3/createBackgroundPenPaper.gif",
+						"css/images/v3/createBackgroundPenPaper.gif",
 						"left",
 						"delete",
 						false,
@@ -2567,7 +2567,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.managementtool.viewGroupProperties.header"), 
 					  getLocalizedString(locale, "tool.managementtool.viewGroupProperties.header"),
 					  "ViewGroupProperties.action?groupName=" + formatter.encodeBase64(groupName),
-					  "images/v3/advancedSettingsIcon.gif",
+					  "css/images/v3/advancedSettingsIcon.gif",
 					  "properties",
 					  "workIframe"));
 				//}
@@ -2582,7 +2582,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.contenttool.accessRights.header"), 
 				  getLocalizedString(locale, "tool.contenttool.accessRights.header"),
 				  "ViewAccessRights.action?interceptionPointCategory=Group&extraParameters=" + URLEncoder.encode(primaryKey, URIEncoding) + "&returnAddress=ViewGroup!v3.action?groupName=" + URLEncoder.encode(primaryKey, URIEncoding) + "&colorScheme=ManagementTool",
-				  "images/v3/accessRightsIcon.gif",
+				  "css/images/v3/accessRightsIcon.gif",
 				  "accessRights"));
 		}
 		*/
@@ -2723,7 +2723,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createRepository.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createRepository.header"),
 				  "CreateRepository!inputV3.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -2731,7 +2731,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteRepositories.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteRepositories.header"),
 				"submitListForm('repository');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -2765,7 +2765,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.deleteRepository.header"), 
 				  getLocalizedString(locale, "tool.managementtool.deleteRepository.header"),
 				  "DeleteRepository!markForDelete.action?repositoryId=" + repositoryId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "create",
 				  false,
@@ -2804,7 +2804,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.contenttool.accessRights.header"), 
 				  getLocalizedString(locale, "tool.contenttool.accessRights.header"),
 				  "ViewAccessRights!V3.action?interceptionPointCategory=Repository&extraParameters=" + request.getParameter("repositoryId") + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "images/v3/accessRightIcon.gif",
+				  "css/images/v3/accessRightIcon.gif",
 				  "accessRights",
 				  "inlineDiv"));
 		
@@ -2836,7 +2836,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createLanguage.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createLanguage.header"),
 				  "CreateLanguage!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -2844,7 +2844,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteLanguages.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteLanguages.header"),
 				"submitListForm('language');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -2868,7 +2868,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.deleteLanguage.header"), 
 				  getLocalizedString(locale, "tool.managementtool.deleteLanguage.header"),
 				  "DeleteLanguage.action?languageId=" + languageId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "create",
 				  false,
@@ -2893,7 +2893,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createCategory.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createCategory.header"),
 				  url,
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -2901,7 +2901,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteCategories.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteCategories.header"),
 				"submitListForm('category');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -2920,7 +2920,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonTitle"),
 					  "ViewAccessRights!V3.action?interceptionPointCategory=Category&extraParameters=" + categoryVO.getName() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-					  "images/v3/accessRightIcon.gif",
+					  "css/images/v3/accessRightIcon.gif",
 					  "accessRights",
 					  "inlineDiv"));
 	    }
@@ -2936,7 +2936,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createContentTypeDefinition.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createContentTypeDefinition.header"),
 				  "CreateContentTypeDefinition!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -2944,7 +2944,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteContentTypeDefinitions.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteContentTypeDefinitions.header"),
 				"submitListForm('contentTypeDefinition');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -2968,7 +2968,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.deleteContentTypeDefinition.header"), 
 				  getLocalizedString(locale, "tool.managementtool.deleteContentTypeDefinition.header"),
 				  "DeleteContentTypeDefinition.action?deleteContentTypeDefinitionId=" + contentTypeDefinitionId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "delete",
 				  false,
@@ -2991,7 +2991,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonTitle"),
 					  "ViewAccessRights!V3.action?interceptionPointCategory=ContentTypeDefinition&extraParameters=" + contentTypeDefinitionVO.getName() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-					  "images/v3/accessRightIcon.gif",
+					  "css/images/v3/accessRightIcon.gif",
 					  "accessRights",
 					  "inlineDiv"));
 	    }
@@ -3007,7 +3007,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createWorkflowDefinition.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createWorkflowDefinition.header"),
 				  "CreateWorkflowDefinition!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -3015,7 +3015,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteWorkflowDefinitions.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteWorkflowDefinitions.header"),
 				"submitListForm('workflowDefinition');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -3039,7 +3039,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.deleteWorkflowDefinition.header"), 
 				  getLocalizedString(locale, "tool.managementtool.deleteWorkflowDefinition.header"),
 				  "DeleteWorkflowDefinition.action?workflowDefinitionId=" + workflowDefinitionId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "delete",
 				  false,
@@ -3055,7 +3055,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonLabel"), 
 					  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonTitle"),
 					  "ViewAccessRights!V3.action?interceptionPointCategory=Workflow&extraParameters=" + workflowDefinitionVO.getName() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-					  "images/v3/accessRightIcon.gif",
+					  "css/images/v3/accessRightIcon.gif",
 					  "accessRights",
 					  "inlineDiv"));
 	    }
@@ -3071,7 +3071,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createPortlet.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createPortlet.header"),
 				  "UploadPortlet.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 
@@ -3086,7 +3086,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createRedirect.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createRedirect.header"),
 				  "CreateRedirect!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -3094,7 +3094,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteRedirects.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteRedirects.header"),
 				"submitListForm('redirect');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -3117,7 +3117,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.deleteRedirect.header"), 
 				  getLocalizedString(locale, "tool.managementtool.deleteRedirect.header"),
 				  "DeleteRedirect.action?redirectId=" + redirectId + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "left",
 				  "delete",
 				  false,
@@ -3138,7 +3138,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createInterceptionPoint.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createInterceptionPoint.header"),
 				  "CreateInterceptionPoint!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		
@@ -3147,7 +3147,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteInterceptionPoints.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteInterceptionPoints.header"),
 				"submitListForm('interceptionPoint');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -3171,7 +3171,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteInterceptionPoints.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteInterceptionPoints.header"),
 				"DeleteInterceptionPoint.action?interceptionPointId=" + interceptionPointVO.getId() + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				false, 
@@ -3184,7 +3184,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.contenttool.accessRights.header"), 
 				  getLocalizedString(locale, "tool.contenttool.accessRights.header"),
 				  "ViewAccessRights!V3.action?interceptionPointCategory=" + interceptionPointVO.getCategory() + "&interceptionPointId=" + interceptionPointVO.getId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "images/v3/accessRightsIcon.gif",
+				  "css/images/v3/accessRightsIcon.gif",
 				  "accessRights",
 				  "inlineDiv"));
 
@@ -3199,7 +3199,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createInterceptor.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createInterceptor.header"),
 				  "CreateInterceptor!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -3207,7 +3207,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteInterceptors.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteInterceptors.header"),
 				"submitListForm('interceptor');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -3230,7 +3230,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteInterceptor.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteInterceptor.header"),
 				"DeleteInterceptor.action?interceptorId=" + interceptorVO.getId() + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				false, 
@@ -3251,7 +3251,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createServiceDefinition.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createServiceDefinition.header"),
 				  "CreateServiceDefinition!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -3259,7 +3259,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteServiceDefinitions.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteServiceDefinitions.header"),
 				"submitListForm('serviceDefinition');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -3281,7 +3281,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteServiceDefinition.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteServiceDefinition.header"),
 				"DeleteServiceDefinition.action?serviceDefinitionId=" + serviceDefinitionVO.getId() + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				false, 
@@ -3302,7 +3302,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createAvailableServiceBinding.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createAvailableServiceBinding.header"),
 				  "CreateAvailableServiceBinding!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -3310,7 +3310,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteAvailableServiceBindings.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteAvailableServiceBindings.header"),
 				"submitListForm('availableServiceBinding');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -3332,7 +3332,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteAvailableServiceBinding.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteAvailableServiceBinding.header"),
 				"DeleteAvailableServiceBinding.action?availableServiceBindingId=" + availableServiceBindingVO.getId() + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				false, 
@@ -3352,7 +3352,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createSiteNodeTypeDefinition.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createSiteNodeTypeDefinition.header"),
 				  "CreateSiteNodeTypeDefinition!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -3360,7 +3360,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteSiteNodeTypeDefinitions.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteSiteNodeTypeDefinitions.header"),
 				"submitListForm('siteNodeTypeDefinition');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -3382,7 +3382,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteSiteNodeTypeDefinition.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteSiteNodeTypeDefinition.header"),
 				"DeleteSiteNodeTypeDefinition.action?siteNodeTypeDefinitionId=" + siteNodeTypeDefinitionVO.getId() + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				false, 
@@ -3403,7 +3403,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createServerNode.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createServerNode.header"),
 				  "CreateServerNode!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 		/*
@@ -3411,7 +3411,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.managementtool.deleteServerNodes.header"),
 				getLocalizedString(locale, "tool.managementtool.deleteServerNodes.header"),
 				"submitListForm('serverNode');",
-				"images/v3/deleteBackgroundWasteBasket.gif",
+				"css/images/v3/deleteBackgroundWasteBasket.gif",
 				"left",
 				"delete",
 				true, 
@@ -3424,7 +3424,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.editServerNodeProperties.header"), 
 				  getLocalizedString(locale, "tool.managementtool.editServerNodeProperties.header"),
 				  "ViewServerNodeProperties.action?serverNodeId=-1",
-				  "images/v3/deleteBackgroundWasteBasket.gif",
+				  "css/images/v3/deleteBackgroundWasteBasket.gif",
 				  "delete",
 				  "workIframe"));
 
@@ -3468,7 +3468,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.createEmail.header"), 
 				  getLocalizedString(locale, "tool.managementtool.createEmail.header"),
 				  "CreateEmail!inputChooseRecipientsV3.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create"));
 
 		return buttons;
@@ -3482,7 +3482,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.uploadTheme.header"), 
 				  getLocalizedString(locale, "tool.managementtool.uploadTheme.header"),
 				  "ViewThemes!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 
@@ -3497,7 +3497,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.managementtool.uploadTranslation.header"), 
 				  getLocalizedString(locale, "tool.managementtool.uploadTranslation.header"),
 				  "ViewLabels!input.action",
-				  "images/v3/createBackgroundPenPaper.gif",
+				  "css/images/v3/createBackgroundPenPaper.gif",
 				  "create",
 				  "workIframe"));
 
@@ -3513,7 +3513,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.nextButton.label"), 
 				  getLocalizedString(locale, "tool.common.nextButton.label"),
 				  "submitForm();",
-				  "images/v3/nextBackground.gif",
+				  "css/images/v3/nextBackground.gif",
 				  "left",
 				  "next",
 				  true));
@@ -3522,7 +3522,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  "images/v3/cancelIcon.gif",
+				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
 				  true));
@@ -3538,7 +3538,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.nextButton.label"), 
 				  getLocalizedString(locale, "tool.common.nextButton.label"),
 				  "submitForm();",
-				  "images/v3/nextBackground.gif",
+				  "css/images/v3/nextBackground.gif",
 				  "left",
 				  "next",
 				  true));
@@ -3547,7 +3547,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  "images/v3/cancelIcon.gif",
+				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
 				  true));
@@ -3565,7 +3565,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.publishtool.preview.header"), 
 				  getLocalizedString(locale, "tool.publishtool.preview.header"),
 				  "submitToPreview();",
-				  "images/v3/previewIcon.png",
+				  "css/images/v3/previewIcon.png",
 				  "left",
 				  "preview",
 				  true));
@@ -3574,7 +3574,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.publishtool.createEdition.header"), 
 				  getLocalizedString(locale, "tool.publishtool.createEdition.header"),
 				  "submitToCreate();",
-				  "images/v3/previewIcon.png",
+				  "css/images/v3/previewIcon.png",
 				  "left",
 				  "create",
 				  true));
@@ -3583,7 +3583,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.publishtool.unpublishEdition.header"), 
 				  getLocalizedString(locale, "tool.publishtool.unpublishEdition.header"),
 				  "submitToUnpublish();",
-				  "images/v3/trashcan.png",
+				  "css/images/v3/trashcan.png",
 				  "left",
 				  "trashcan",
 				  true));
@@ -3592,7 +3592,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.publishtool.denyPublication.header"), 
 				  getLocalizedString(locale, "tool.publishtool.denyPublication.header"),
 				  "submitToDeny();",
-				  "images/v3/denyPublicationIcon.png",
+				  "css/images/v3/denyPublicationIcon.png",
 				  "left",
 				  "denyPublication",
 				  true));
@@ -3635,7 +3635,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.publishtool.previewEnvironment.header"), 
 					  getLocalizedString(locale, "tool.publishtool.previewEnvironment.header"),
 					  "javascript:openPopup('" + previewUrl + "?repositoryName=" + repositoryName + "', 'StagingPreview', 'width=800,height=600,resizable=yes,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes');",
-					  "images/v3/previewIcon.png",
+					  "css/images/v3/previewIcon.png",
 					  "left",
 					  "preview",
 					  true));
@@ -3658,7 +3658,7 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.publishingtool.pushChanges.header"), 
 					  getLocalizedString(locale, "tool.publishingtool.pushChanges.header"),
 					  "ViewPublications!pushSystemNotificationMessages.action",
-					  "images/v3/publishIcon.png",
+					  "css/images/v3/publishIcon.png",
 					  "publish",
 					  "publishingWorkIframe"));
 	    }
@@ -3673,7 +3673,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.managementtool.mysettings.header"), 
 									  getLocalizedString(locale, "tool.managementtool.mysettings.header"),
 									  "javascript:openMySettings();",
-									  "images/v3/mySettingsIcon.gif",
+									  "css/images/v3/mySettingsIcon.gif",
 									  "left",
 									  "mySettings",
 									  true));
@@ -3710,7 +3710,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.common.helpButton.label"), 
 									  getLocalizedString(locale, "tool.common.helpButton.title"),
 									  helpPageUrl,
-									  "images/v3/helpIcon.gif",
+									  "css/images/v3/helpIcon.gif",
 									  "help"));
 
 		return buttons;
@@ -3724,7 +3724,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.common.closeWindowButton.label"), 
 									  getLocalizedString(locale, "tool.common.closeWindowButton.title"),
 									  "if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}",
-				  					  "images/v3/closeWindowIcon.gif",
+				  					  "css/images/v3/closeWindowIcon.gif",
 				  					  "right",
 									  "close",
 				  					  true));
@@ -3737,7 +3737,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.common.closeWindowButton.label"), 
 									  getLocalizedString(locale, "tool.common.closeWindowButton.title"),
 									  "if(close) close(); if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}",
-				  					  "images/v3/closeWindowIcon.gif",
+				  					  "css/images/v3/closeWindowIcon.gif",
 				  					  "right",
 									  "close",
 				  					  true);
@@ -3749,7 +3749,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 									  getLocalizedString(locale, "tool.common.cancelButton.label"),
 									  "if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}",
-				  					  "images/v3/cancel.gif",
+				  					  "css/images/v3/cancel.gif",
 				  					  "left",
 									  "cancel",
 				  					  true);
@@ -3761,7 +3761,7 @@ public class ToolbarController implements ToolbarProvider
 									  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 									  getLocalizedString(locale, "tool.common.cancelButton.label"),
 									  cancelJavascript,
-				  					  "images/v3/cancel.gif",
+				  					  "css/images/v3/cancel.gif",
 				  					  "left",
 									  "cancel",
 				  					  true);
@@ -3869,7 +3869,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.nextButton.label"), 
 				  getLocalizedString(locale, "tool.common.nextButton.label"),
 				  "next();",
-				  "images/v3/nextBackground.gif",
+				  "css/images/v3/nextBackground.gif",
 				  "left",
 				  "next",
 				  true));
@@ -3878,7 +3878,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  "images/v3/cancelIcon.gif",
+				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
 				  true));
@@ -3894,7 +3894,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.addButton.label"), 
 				  getLocalizedString(locale, "tool.common.addButton.label"),
 				  "add();",
-				  "images/v3/addIcon.png",
+				  "css/images/v3/addIcon.png",
 				  "left",
 				  "add",
 				  true));
@@ -3903,7 +3903,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.nextButton.label"), 
 				  getLocalizedString(locale, "tool.common.nextButton.label"),
 				  "next();",
-				  "images/v3/nextBackground.gif",
+				  "css/images/v3/nextBackground.gif",
 				  "left",
 				  "next",
 				  true));
@@ -3912,7 +3912,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.cancelButton.label"), 
 				  getLocalizedString(locale, "tool.common.cancelButton.label"),
 				  "if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();",
-				  "images/v3/cancelIcon.gif",
+				  "css/images/v3/cancelIcon.gif",
 				  "left",
 				  "cancel",
 				  true));
@@ -3928,7 +3928,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.common.addButton.label"), 
 				  getLocalizedString(locale, "tool.common.addButton.label"),
 				  "add();",
-				  "images/v3/addIcon.png",
+				  "css/images/v3/addIcon.png",
 				  "left",
 				  "add",
 				  true));
@@ -3982,7 +3982,7 @@ public class ToolbarController implements ToolbarProvider
 				  label,
 				  title,
 				  javascriptCode,
-				  "images/v3/saveInlineIcon.gif",
+				  "css/images/v3/saveInlineIcon.gif",
 				  "left",
 				  "save",
 				  true);
@@ -3994,7 +3994,7 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.contenttool.saveAndExit.label"), 
 				  getLocalizedString(locale, "tool.contenttool.saveAndExit.label"),
 				  "saveAndExit(\"" + exitUrl + "\");",
-				  "images/v3/saveAndExitInlineIcon.gif",
+				  "css/images/v3/saveAndExitInlineIcon.gif",
 				  "left",
 				  "saveAndExit",
 				  true);
@@ -4011,7 +4011,7 @@ public class ToolbarController implements ToolbarProvider
 				getLocalizedString(locale, "tool.contenttool.cancel.label"),
 				getLocalizedString(locale, "tool.contenttool.cancel.label"),
 				"" + cancelUrl + "",
-				"images/v3/cancelIcon.gif",
+				"css/images/v3/cancelIcon.gif",
 				"left",
 				"cancel",
 				isJavascript,

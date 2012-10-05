@@ -125,7 +125,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     public String execute() throws Exception 
     {
     	Timer t = new Timer();
-    	
+
     	String result = "";
     	
         try 
@@ -138,7 +138,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
         	result = isCommand() ? invokeCommand() : doExecute();
         	setStandardResponseHeaders();
 
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("" + this.getUnencodedCurrentURI(), t.getElapsedTime());
+        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("" + this.getUnencodedCurrentURI(), t.getElapsedTime());
         } 
         catch(ResultException e) 
         {
@@ -469,7 +469,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
         return result;
     	
   	}
-
+  	
   	/**
   	 * This method adds a header to all responses which makes all latest IE-browsers fallback to IE8-mode.
   	 * Some aspects of Infoglue (FCKEditor) does not work in IE9 for example.

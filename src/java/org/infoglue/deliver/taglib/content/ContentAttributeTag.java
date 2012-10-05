@@ -135,7 +135,7 @@ public class ContentAttributeTag extends ComponentLogicTag
             }
 	        else
             {
-	            result = getComponentLogic().getParsedContentAttribute(propertyName, languageId, attributeName, disableEditOnSight, useInheritance, useRepositoryInheritance, useStructureInheritance, escapeVelocityCode);
+	        	result = getComponentLogic().getParsedContentAttribute(propertyName, languageId, attributeName, disableEditOnSight, useInheritance, useRepositoryInheritance, useStructureInheritance, escapeVelocityCode);
             }
         }
         else

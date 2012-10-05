@@ -1690,37 +1690,37 @@ public class DigitalAssetController extends BaseController
 						}
 						else if(contentType.equalsIgnoreCase("application/pdf"))
 						{
-							assetUrl = "images/pdf.gif"; 
+							assetUrl = "css/images/pdf.gif"; 
 						}
 						else if(contentType.equalsIgnoreCase("application/msword"))
 						{
-							assetUrl = "images/msword.gif"; 
+							assetUrl = "css/images/msword.gif"; 
 						}
 						else if(contentType.equalsIgnoreCase("application/vnd.ms-excel"))
 						{
-							assetUrl = "images/msexcel.gif"; 
+							assetUrl = "css/images/msexcel.gif"; 
 						}
 						else if(contentType.equalsIgnoreCase("application/vnd.ms-powerpoint"))
 						{
-							assetUrl = "images/mspowerpoint.gif"; 
+							assetUrl = "css/images/mspowerpoint.gif"; 
 						}
 						else if(contentType.equalsIgnoreCase("application/zip"))
 						{
-							assetUrl = "images/zipIcon.gif"; 
+							assetUrl = "css/images/zipIcon.gif"; 
 						}
 						else if(contentType.equalsIgnoreCase("text/xml"))
 						{
-							assetUrl = "images/xmlIcon.gif"; 
+							assetUrl = "css/images/xmlIcon.gif"; 
 						}
 						else
 						{
-							assetUrl = "images/digitalAsset.gif"; 
+							assetUrl = "css/images/digitalAsset.gif"; 
 						}		
 					}	
 				}	
 				else
 				{
-					assetUrl = "images/notDefined.gif";
+					assetUrl = "css/images/notDefined.gif";
 				}		       	
 			}
 			            

@@ -10,7 +10,7 @@
 <head>
 	<title>Small performance test</title>
 
-	<link rel="stylesheet" type="text/css" href="../css/v3/infoglue.css" />
+	<link rel="stylesheet" type="text/css" href="../css/infoglue.css" />
 	<style type="text/css">
 	<!--
 		#perfTestTable {

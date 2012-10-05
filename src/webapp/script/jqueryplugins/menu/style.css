@@ -33,7 +33,7 @@ html>body .innerbox
 {
 	margin: 0;
 	display: inherit;
-	background:url(../../../images/v3/tileGradient.gif) repeat-y left;
+	background:url(../../../css/images/v3/tileGradient.gif) repeat-y left;
 }
 
 #root-menu-div ul {
@@ -56,7 +56,7 @@ li.menu-separator.active{
 	background-color: transparent;
 }
 li.active {
-	background-image:url(../../../images/v3/tileGradientActive.gif);
+	background-image:url(../../../css/images/v3/tileGradientActive.gif);
 	background-repeat: repeat-y;
 	background-position: left;
 	background-color: #bbb;

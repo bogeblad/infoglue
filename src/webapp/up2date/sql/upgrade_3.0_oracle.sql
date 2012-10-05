@@ -73,14 +73,24 @@ create index propCategoryCategoryIdIndex on cmPropertiesCategory(categoryId);
 create index categoryParentIdIndex on cmCategory(parentId);
 create index categoryNameIndex on cmCategory(name);
 
-create index assetKeyIndex on cmDigitalAsset(assetKey);
-create index assetFileNameIndex on cmDigitalAsset(assetFileName);
-create index assetFileSizeIndex on cmDigitalAsset(assetFileSize);
-create index assetContentTypeIndex on cmDigitalAsset(assetContentType);
+create index assetKeyIndex on cmDigAsset(assetKey);
+create index assetFileNameIndex on cmDigAsset(assetFileName);
+create index assetFileSizeIndex on cmDigAsset(assetFileSize);
+create index assetContentTypeIndex on cmDigAsset(assetContentType);
 
 CREATE INDEX redirectUrlIndex ON cmRedirect(redirectUrl);
 
+CREATE INDEX "OS_PROPERTYENTRY_ENTNAMEINDEX" ON OS_PROPERTYENTRY(entity_name);
+CREATE INDEX "OS_PROPERTYENTRY_ENTIDINDEX" ON OS_PROPERTYENTRY(entity_id);
 
+CREATE INDEX publicationDateIndex ON cmPublication(publicationDateTime);
+CREATE INDEX publicationDetailPublIDIndex ON cmPublicationDetail(publicationId);
+
+CREATE INDEX groupPropDigAssetIdIndex ON cmGroupPropDigAsset(digAssetId);
+CREATE INDEX rolePropDigAssetIdIndex ON cmRolePropDigAsset(digAssetId);
+CREATE INDEX userPropDigAssetIdIndex ON cmUserPropDigAsset(digAssetId);
+CREATE INDEX contVerDigAssetIdIndex ON cmContVerDigAsset(digAssetId);
+CREATE INDEX contVerContVerIdIndex ON cmContVerDigAsset(contVerId);
 
 
 

@@ -53,9 +53,9 @@ function toggleDivExpansion(id)
 
 	var statusImage = document.getElementById(id + "Image");
 	if(div && div.style.display == "block")
-		statusImage.src = "images/arrowDown.gif";
+		statusImage.src = "css/images/arrowDown.gif";
 	else
-		statusImage.src = "images/arrowright.gif";		
+		statusImage.src = "css/images/arrowright.gif";		
 }
 
 

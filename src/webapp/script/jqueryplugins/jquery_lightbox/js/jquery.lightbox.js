@@ -360,10 +360,10 @@
 				lightbox:	'css/jquery.lightbox.css'
 			},
 			images: {
-				prev:		'images/prev.gif',
-				next:		'images/next.gif',
-				blank:		'images/blank.gif',
-				loading:	'images/loading.gif'
+				prev:		'../images/prev.gif',
+				next:		'../images/next.gif',
+				blank:		'../images/blank.gif',
+				loading:	'../images/loading.gif'
 			}
 		},
 		
@@ -711,8 +711,8 @@
 					var cHeight = $('#lightbox-imageBox').height();
 			
 					// Get the width and height of the selected image plus the padding
-					var nWidth	= (iWidth  + (this.padding * 2)); // Plus the image´s width and the left and right padding value
-					var nHeight	= (iHeight + (this.padding * 2)); // Plus the image´s height and the left and right padding value
+					var nWidth	= (iWidth  + (this.padding * 2)); // Plus the imageï¿½s width and the left and right padding value
+					var nHeight	= (iHeight + (this.padding * 2)); // Plus the imageï¿½s height and the left and right padding value
 					
 					// Diferences
 					var dWidth  = cWidth  - nWidth;
@@ -794,7 +794,7 @@
 					// ---------------------------------
 					// Set navigation
 		
-					// Instead to define this configuration in CSS file, we define here. And it´s need to IE. Just.
+					// Instead to define this configuration in CSS file, we define here. And itï¿½s need to IE. Just.
 					$('#lightbox-nav-btnPrev, #lightbox-nav-btnNext').css({ 'background' : 'transparent url(' + this.files.images.blank + ') no-repeat' });
 					
 					// If not first, show previous button

@@ -503,13 +503,13 @@ function toggleFavourites()
 	{
 		$("#paletteDiv").height(150);
 		$("#paletteIframe").height(150);
-		$("#componentPaletteHeader img").attr("src", "images/v3/downArrows.png");
+		$("#componentPaletteHeader img").attr("src", "css/images/v3/downArrows.png");
 	}
 	else
 	{
 		$("#paletteDiv").height(20);
 		$("#paletteIframe").height(0);
-		$("#componentPaletteHeader img").attr("src", "images/v3/upArrows.png");
+		$("#componentPaletteHeader img").attr("src", "css/images/v3/upArrows.png");
 	}
 	resize();
 }
@@ -521,14 +521,14 @@ function toggleAvailableToolsSize()
 		$("#availableTools li").css("width", "100%").removeClass("minimized");
 		$("#availableTools").removeClass("minimized");
 		$("#availableToolsSizeControlBar").removeClass("minimized");
-		$("#availableToolsSizeControlBar img").attr("src","images/v3/smallBarDownArrow.png");
+		$("#availableToolsSizeControlBar img").attr("src","css/images/v3/smallBarDownArrow.png");
 	}
 	else
 	{
 		$("#availableTools li").css("width", "26px").css("overflow", "hidden").addClass("minimized");
 		$("#availableTools").addClass("minimized");
 		$("#availableToolsSizeControlBar").addClass("minimized");
-		$("#availableToolsSizeControlBar img").attr("src","images/v3/smallBarUpArrow.png");
+		$("#availableToolsSizeControlBar img").attr("src","css/images/v3/smallBarUpArrow.png");
 	}
 }
 

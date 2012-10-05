@@ -108,7 +108,7 @@ html, body {
 	height:		100%;
 	margin:		0;
 	padding:	0;
-	background:	url("images/background-shadow.gif") repeat-y white;
+	background:	url("css/images/background-shadow.gif") repeat-y white;
 	color:		black;
 	
 	font-size:	13px;

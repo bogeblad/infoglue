@@ -34,7 +34,7 @@
 			margin			 : 0px;
 			padding-top	     : 10px;
 			text-indent		 : 10px;
-			background		 : url(images/v3/messageHeaderBackground.gif) repeat-x; 
+			background		 : url(css/images/v3/messageHeaderBackground.gif) repeat-x; 
 			height			 : 40px;
 		}
 

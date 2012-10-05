@@ -84,7 +84,7 @@
 
 <div style="left:20px; position:absolute; top:10px; visibility:visible; z-index:0">
 	#if($headerHTML == "")
-		<img src="images/logotypeInfoGlue.gif" width="315" height="14"/>
+		<img src="css/images/logotypeInfoGlue.gif" width="315" height="14"/>
 	#else
 		$headerHTML
 	#end
@@ -95,10 +95,10 @@
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
 <tr>
 	#set($toolcount = 0)
-	<td colspan="2"><img src="images/trans.gif" width="14" height="22"/></td>
+	<td colspan="2"><img src="css/images/trans.gif" width="14" height="22"/></td>
 	#if($this.hasAccessTo("ContentTool.Read"))
-		<td><a href="javascript:changeTool(0);"><img src="images/$ui.getString("images.header.contentToolTab")" width="120" height="22" border="0"/></a></td>
-		<td><img src="images/trans.gif" width="2" height="22"/></td>
+		<td><a href="javascript:changeTool(0);"><img src="css/images/$ui.getString("images.header.contentToolTab")" width="120" height="22" border="0"/></a></td>
+		<td><img src="css/images/trans.gif" width="2" height="22"/></td>
 		#if($toolName == "ContentTool")
 			#set($activeToolPos = $toolcount)
 			#set($activeColor = "#C7D1B3")	
@@ -106,8 +106,8 @@
 		#set($toolcount = $toolcount + 1) 
 	#end
 	#if($this.hasAccessTo("StructureTool.Read"))
-		<td><a href="javascript:changeTool(1);"><img src="images/$ui.getString("images.header.structureToolTab")" width="120" height="22" border="0"/></a></td>
-		<td><img src="images/trans.gif" width="2" height="22"/></td>
+		<td><a href="javascript:changeTool(1);"><img src="css/images/$ui.getString("images.header.structureToolTab")" width="120" height="22" border="0"/></a></td>
+		<td><img src="css/images/trans.gif" width="2" height="22"/></td>
 		#if($toolName == "StructureTool")
 			#set($activeToolPos = $toolcount)	
 			#set($activeColor = "#F0E1B4")
@@ -115,8 +115,8 @@
 		#set($toolcount = $toolcount + 1)
 	#end
 	#if($this.hasAccessTo("ManagementTool.Read"))
-		<td><a href="javascript:changeTool(2);"><img src="images/$ui.getString("images.header.managementToolTab")" width="120" height="22" border="0"/></a></td>
-		<td><img src="images/trans.gif" width="2" height="22"/></td>
+		<td><a href="javascript:changeTool(2);"><img src="css/images/$ui.getString("images.header.managementToolTab")" width="120" height="22" border="0"/></a></td>
+		<td><img src="css/images/trans.gif" width="2" height="22"/></td>
 		#if($toolName == "ManagementTool")
 			#set($activeToolPos = $toolcount)	
 			#set($activeColor = "#C2D0E2")
@@ -124,8 +124,8 @@
 		#set($toolcount = $toolcount + 1)
 	#end
 	#if($this.hasAccessTo("PublishingTool.Read"))
-		<td><a href="javascript:changeTool(3);"><img src="images/$ui.getString("images.header.publishingToolTab")" width="120" height="22" border="0"/></a></td>
-		<td><img src="images/trans.gif" width="1" height="22"/></td>	
+		<td><a href="javascript:changeTool(3);"><img src="css/images/$ui.getString("images.header.publishingToolTab")" width="120" height="22" border="0"/></a></td>
+		<td><img src="css/images/trans.gif" width="1" height="22"/></td>	
 		#if($toolName == "PublishingTool")
 			#set($activeToolPos = $toolcount)
 			#set($activeColor = "#D2CBBC")	
@@ -134,8 +134,8 @@
 	#end
 
 	#if($this.hasAccessTo("MyDesktopTool.Read"))
-		<td><a href="javascript:changeTool(4);"><img src="images/$ui.getString("images.header.myDesktopToolTab")" width="120" height="22" border="0"/></a></td>
-		<td><img src="images/trans.gif" width="1" height="22"/></td>	
+		<td><a href="javascript:changeTool(4);"><img src="css/images/$ui.getString("images.header.myDesktopToolTab")" width="120" height="22" border="0"/></a></td>
+		<td><img src="css/images/trans.gif" width="1" height="22"/></td>	
 		#if($toolName == "MyDesktopTool")
 			#set($activeToolPos = $toolcount)
 			#set($activeColor = "#dcd787")	
@@ -143,52 +143,52 @@
 		#set($toolcount = $toolcount + 1)
 	#end
 
-	<td><img src="images/trans.gif" width="4" height="22"/></td>
+	<td><img src="css/images/trans.gif" width="4" height="22"/></td>
 </tr>
 <tr>
-	<td><img src="images/trans.gif" width="4" height="1"/></td>
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="14" height="1"/></td>
+	<td><img src="css/images/trans.gif" width="4" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="14" height="1"/></td>
 
 	#if($activeToolPos == 0)
-		<td bgcolor="$activeColor"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="$activeColor"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#else
-		<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#end
 	
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="2" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="2" height="1"/></td>
 	
 	#if($activeToolPos == 1)
-		<td bgcolor="$activeColor"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="$activeColor"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#else
-		<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#end
 	
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="2" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="2" height="1"/></td>
 	
 	#if($activeToolPos == 2)
-		<td bgcolor="$activeColor"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="$activeColor"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#else
-		<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#end
 	
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="2" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="2" height="1"/></td>
 	
 	#if($activeToolPos == 3)
-		<td bgcolor="$activeColor"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="$activeColor"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#else
-		<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#end
 
-	<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="2" height="1"/></td>
+	<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="2" height="1"/></td>
 	
 	#if($activeToolPos == 4)
-		<td bgcolor="$activeColor"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="$activeColor"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#else
-		<td bgcolor="#FFFFFF"><img src="images/trans.gif" width="118" height="1"/></td>
+		<td bgcolor="#FFFFFF"><img src="css/images/trans.gif" width="118" height="1"/></td>
 	#end
 
-	<td bgcolor="#FFFFFF" width="100%"><img src="images/trans.gif" width="2" height="1"/></td>
-	<td><img src="images/trans.gif" width="4" height="1"/></td>
+	<td bgcolor="#FFFFFF" width="100%"><img src="css/images/trans.gif" width="2" height="1"/></td>
+	<td><img src="css/images/trans.gif" width="4" height="1"/></td>
 
 </tr>
 </table>
@@ -200,7 +200,7 @@
 <tr>
 	<td align="right" nowrap="1">
 	#if($toolLocales.size() > 1)
-		<img src="images/$ui.getString("images.header.languageLabel")"/><img src="images/trans.gif" width="3" height="5"/>
+		<img src="css/images/$ui.getString("images.header.languageLabel")"/><img src="css/images/trans.gif" width="3" height="5"/>
 	#end
 	</td>
 	<td align="right" width="100">
@@ -220,24 +220,24 @@
 <div style="right:15px; position:absolute; top:27px; visibility: visible; z-index:1; border:0px solid black;">
 <table border="0" cellspacing="0" cellpadding="0" width="100">
 <tr>
-	<td align="right"><a href="javascript:openMySettings();"><img src="images/$ui.getString("images.header.mySettingLabel")" border="0"/></a>
-			<img src="images/trans.gif" width="10" height="13"/>
-		<a href="javascript:openHelpWindow();"><img src="images/$ui.getString("images.header.helpLabel")" border="0"/></a>
+	<td align="right"><a href="javascript:openMySettings();"><img src="css/images/$ui.getString("images.header.mySettingLabel")" border="0"/></a>
+			<img src="css/images/trans.gif" width="10" height="13"/>
+		<a href="javascript:openHelpWindow();"><img src="css/images/$ui.getString("images.header.helpLabel")" border="0"/></a>
 	</td>
 	<!--
-	<td align="right" colspan="5" avalign="top" nowrap="1"><img src="images/$ui.getString("images.header.loggedInAsLabel")" width="119" height="13"><img src="images/trans.gif" width="3" height="13">$userName</td>
+	<td align="right" colspan="5" avalign="top" nowrap="1"><img src="css/images/$ui.getString("images.header.loggedInAsLabel")" width="119" height="13"><img src="css/images/trans.gif" width="3" height="13">$userName</td>
 	-->
 </tr>
 <!--
 <tr>
-	<td colspan="5"><img src="images/trans.gif" width="1" height="3"></td>
+	<td colspan="5"><img src="css/images/trans.gif" width="1" height="3"></td>
 </tr>
 -->
 <tr>
 	<td align="right" colspan="5" nowrap="1">
-		<a href="javascript:logout();"><img src="images/$ui.getString("images.header.logoutLabel")" border="0"/></a>
-		<img src="images/trans.gif" width="10" height="13"/>
-		<a href="javascript:openToolWindow();"><img src="images/$ui.getString("images.header.newWindowLabel")" border="0"/></a>
+		<a href="javascript:logout();"><img src="css/images/$ui.getString("images.header.logoutLabel")" border="0"/></a>
+		<img src="css/images/trans.gif" width="10" height="13"/>
+		<a href="javascript:openToolWindow();"><img src="css/images/$ui.getString("images.header.newWindowLabel")" border="0"/></a>
 	</td>
 </tr>
 </table>

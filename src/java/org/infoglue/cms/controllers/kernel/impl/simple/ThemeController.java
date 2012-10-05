@@ -223,7 +223,7 @@ public class ThemeController extends BaseController
 		}
 		else
 		{
-			return "embla";
+			return "Default";
 		}
 	}
 

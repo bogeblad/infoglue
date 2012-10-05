@@ -135,7 +135,7 @@ public class PageEditorHelper extends BaseDeliveryController
 		List languages = LanguageDeliveryController.getLanguageDeliveryController().getLanguagesForSiteNode(db, siteNodeId, principal);
 
 		sb.append("<div id=\"componentProperties\" oncontextmenu=\"if (event && event.stopPropagation) {event.stopPropagation();}else if (window.event) {window.event.cancelBubble = true;}return false;\">");
-		sb.append("	<div id=\"componentPropertiesHandle\"><div id=\"leftComponentPropertiesHandle\">Properties - " + componentName + " - " + slotName + "</div><div id=\"rightComponentPropertiesHandle\"><a href=\"javascript:closeDiv('componentProperties');\" class=\"white\"><img src=\"" + componentEditorUrl + "/images/closeIcon.gif\" border=\"0\"/></a></div></div>");
+		sb.append("	<div id=\"componentPropertiesHandle\"><div id=\"leftComponentPropertiesHandle\">Properties - " + componentName + " - " + slotName + "</div><div id=\"rightComponentPropertiesHandle\"><a href=\"javascript:closeDiv('componentProperties');\" class=\"white\"><img src=\"" + componentEditorUrl + "/css/images/closeIcon.gif\" border=\"0\"/></a></div></div>");
 		sb.append("	<div id=\"componentPropertiesBody\">");
 		
 		sb.append("	<form id=\"componentPropertiesForm\" name=\"component" + componentId + "PropertiesForm\" action=\"" + componentEditorUrl + "ViewSiteNodePageComponents!updateComponentProperties.action\" method=\"post\">");
@@ -233,7 +233,7 @@ public class PageEditorHelper extends BaseDeliveryController
 
 				sb.append("	<div class=\"propertyRow\">");
 				sb.append("		<div class=\"propertyRowLeft\">");
-				sb.append("			" + getLocalizedString(locale, "deliver.editOnSight.advancedProperties") + " <img src='images/downArrow.gif' onclick=\"$('.advancedProperty" + componentId + "').toggle();\"/>");
+				sb.append("			" + getLocalizedString(locale, "deliver.editOnSight.advancedProperties") + " <img src='css/images/downArrow.gif' onclick=\"$('.advancedProperty" + componentId + "').toggle();\"/>");
 				sb.append("		</div>");
 				sb.append("	</div>");
 				sb.append("	<div style=\"clear:both;\"></div>");
@@ -402,14 +402,14 @@ public class PageEditorHelper extends BaseDeliveryController
 					{	
 						if(hasAccessToProperty && createUrl != null)
 						{
-							sb.append("			<a class=\"componentEditorLink\" href=\"" + createUrl + "\"><img src=\"" + componentEditorUrl + "/images/createContent.gif\" border=\"0\" alt=\"Create new content to show\"></a>");
+							sb.append("			<a class=\"componentEditorLink\" href=\"" + createUrl + "\"><img src=\"" + componentEditorUrl + "/css/images/createContent.gif\" border=\"0\" alt=\"Create new content to show\"></a>");
 						}
 					}
 					else
 					{
 						if(hasAccessToProperty)
 						{
-							sb.append("			<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&componentId=" + componentId + "&propertyName=" + componentProperty.getName() + "&showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\"/></a>");
+							sb.append("			<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&componentId=" + componentId + "&propertyName=" + componentProperty.getName() + "&showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/css/images/delete.gif\" border=\"0\"/></a>");
 						}
 					}
 					sb.append("			</div>");
@@ -496,7 +496,7 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(hasAccessToProperty)
 					{
 						sb.append("	<div class=\"actionGroup\">");
-						sb.append("		<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\"/></a>");
+						sb.append("		<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/css/images/delete.gif\" border=\"0\"/></a>");
 						sb.append("	</div>");
 					}
 					sb.append("	</div>");
@@ -524,7 +524,7 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(hasAccessToProperty)
 					{
 						sb.append("			<input type=\"hidden\" name=\"" + propertyIndex + "_propertyName\" value=\"" + componentProperty.getName() + "\"/>");
-						sb.append("			<input type=\"text\" class=\"propertydatefield\" style=\"width: 100px;\" id=\"" + componentProperty.getName() + "\" name=\"" + componentProperty.getName() + "\" value=\"" + componentProperty.getValue() + "\" onkeydown=\"setDirty();\"/>&nbsp;<a name=\"calendar_" + componentProperty.getName() + "\" id=\"calendar_" + componentProperty.getName() + "\"><img src=\"" + componentEditorUrl + "/images/calendar.gif\" border=\"0\"/></a>");
+						sb.append("			<input type=\"text\" class=\"propertydatefield\" style=\"width: 100px;\" id=\"" + componentProperty.getName() + "\" name=\"" + componentProperty.getName() + "\" value=\"" + componentProperty.getValue() + "\" onkeydown=\"setDirty();\"/>&nbsp;<a name=\"calendar_" + componentProperty.getName() + "\" id=\"calendar_" + componentProperty.getName() + "\"><img src=\"" + componentEditorUrl + "/css/images/calendar.gif\" border=\"0\"/></a>");
 						sb.append("			<script type=\"text/javascript\">");
 						sb.append("				Calendar.setup({");
 						sb.append("	        		inputField     :    \"" + componentProperty.getName() + "\",");
@@ -545,7 +545,7 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(hasAccessToProperty)
 					{
 						sb.append("	<div class=\"actionGroup\">");
-						sb.append("		<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\"/></a>");
+						sb.append("		<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/css/images/delete.gif\" border=\"0\"/></a>");
 						sb.append("	</div>");
 					}
 					sb.append("	</div>");
@@ -585,7 +585,7 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(hasAccessToProperty)
 					{
 						sb.append("	<div class=\"actionGroup\">");
-						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\"/></a>");
+						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/css/images/delete.gif\" border=\"0\"/></a>");
 						sb.append("	</div>");
 					}
 					sb.append("	</div>");
@@ -655,7 +655,7 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(hasAccessToProperty)
 					{
 						sb.append("	<div class=\"actionGroup\">");
-						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\"/></a>");
+						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/css/images/delete.gif\" border=\"0\"/></a>");
 						sb.append("	</div>");
 					}
 					sb.append("	</div>");
@@ -737,7 +737,7 @@ public class PageEditorHelper extends BaseDeliveryController
 					if(hasAccessToProperty)
 					{
 						sb.append("	<div class=\"actionGroup\">");
-						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\"/></a>");
+						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/css/images/delete.gif\" border=\"0\"/></a>");
 						sb.append("	</div>");
 					}
 					
@@ -786,7 +786,7 @@ public class PageEditorHelper extends BaseDeliveryController
 						sb.append("	" + componentProperty.getName() + "");
 		
 					if(hasAccessToProperty)
-						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\"/></a>");
+						sb.append("	<a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + componentId + "&amp;propertyName=" + componentProperty.getName() + "&amp;showSimple=" + showSimple + "\"><img src=\"" + componentEditorUrl + "/css/images/delete.gif\" border=\"0\"/></a>");
 					
 					sb.append("	</div>");
 					
@@ -1155,13 +1155,13 @@ public class PageEditorHelper extends BaseDeliveryController
 			
 			sb.append("<div id=\"pageComponents\" style=\"left:0px; top:0px; width: 450px; height: 500px;\" oncontextmenu=\"if (event && event.stopPropagation) {event.stopPropagation();}else if (window.event) {window.event.cancelBubble = true;}return false;\">");
 	
-			sb.append("	 <div id=\"dragCorner\" style=\"position: absolute; width: 16px; height: 16px; background-color: white; bottom: 0px; right: 0px;\"><a href=\"javascript:expandWindow('pageComponents');\"><img src=\"" + contextPath + "/images/enlarge.gif\" border=\"0\" width=\"16\" height=\"16\"/></a></div>");
+			sb.append("	 <div id=\"dragCorner\" style=\"position: absolute; width: 16px; height: 16px; background-color: white; bottom: 0px; right: 0px;\"><a href=\"javascript:expandWindow('pageComponents');\"><img src=\"" + contextPath + "/css/images/enlarge.gif\" border=\"0\" width=\"16\" height=\"16\"/></a></div>");
 				
-			sb.append("	 <div id=\"pageComponentsHandle\" class=\"componentPropertiesHandle\"><div id=\"leftHandleNarrow\">Page components</div><div id=\"rightPaletteHandle\"><a href=\"javascript:hideDiv('pageComponents');\" class=\"white\"><img src=\"" + contextPath + "/images/closeIcon.gif\" border=\"0\"/></a></div></div>");
+			sb.append("	 <div id=\"pageComponentsHandle\" class=\"componentPropertiesHandle\"><div id=\"leftHandleNarrow\">Page components</div><div id=\"rightPaletteHandle\"><a href=\"javascript:hideDiv('pageComponents');\" class=\"white\"><img src=\"" + contextPath + "/css/images/closeIcon.gif\" border=\"0\"/></a></div></div>");
 			sb.append("	 <div id=\"pageComponentsBody\" class=\"componentPropertiesBody\" style=\"height: 480px;\"><table class=\"igtable\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
 	
 			sb.append("	 <tr class=\"igtr\">");
-		    sb.append("		<td class=\"igtd\" colspan=\"20\"><img src=\"" + contextPath + "/images/tcross.png\" width=\"19\" height=\"16\"><span id=\"" + component.getId() + component.getSlotName() + "ClickableDiv\" class=\"iglabel\"><img src=\"" + contextPath + "/images/slotIcon.gif\" width=\"16\" height=\"16\"><img src=\"" + contextPath + "/images/trans.gif\" width=\"5\" height=\"1\">" + component.getName() + "</span><script type=\"text/javascript\">initializeSlotEventHandler('" + component.getId() + component.getSlotName() + "ClickableDiv', '" + contextPath + "ViewSiteNodePageComponents!listComponents.action?CCC=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&parentComponentId=" + component.getId() + "&slotId=base&showSimple=" + showSimple + "', '', '', 'base', '" + component.getContentId() + "');</script></td>");
+		    sb.append("		<td class=\"igtd\" colspan=\"20\"><img src=\"" + contextPath + "/css/images/tcross.png\" width=\"19\" height=\"16\"><span id=\"" + component.getId() + component.getSlotName() + "ClickableDiv\" class=\"iglabel\"><img src=\"" + contextPath + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\"><img src=\"" + contextPath + "/css/images/trans.gif\" width=\"5\" height=\"1\">" + component.getName() + "</span><script type=\"text/javascript\">initializeSlotEventHandler('" + component.getId() + component.getSlotName() + "ClickableDiv', '" + contextPath + "ViewSiteNodePageComponents!listComponents.action?CCC=1&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + (contentId == null ? "-1" : contentId) + "&parentComponentId=" + component.getId() + "&slotId=base&showSimple=" + showSimple + "', '', '', 'base', '" + component.getContentId() + "');</script></td>");
 			sb.append("	 </tr>");
 			
 			renderComponentTree(db, sb, component, 0, 0, 1, contextPath, repositoryId, siteNodeId, languageId, contentId, showSimple, originalFullURL);
@@ -1169,7 +1169,7 @@ public class PageEditorHelper extends BaseDeliveryController
 			sb.append("	 <tr class=\"igtr\">");
 			for(int i=0; i<20; i++)
 			{
-				sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/trans.gif\" width=\"19\" height=\"1\"></td>");
+				sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/trans.gif\" width=\"19\" height=\"1\"></td>");
 			}
 			sb.append("	 </tr>");
 			sb.append("	 </table>");
@@ -1194,11 +1194,11 @@ public class PageEditorHelper extends BaseDeliveryController
 		int colspan = 20 - level;
 		
 		sb.append("		<tr class=\"igtr\">");
-		sb.append("			<td class=\"igtd\"><img src=\"" + contextPath + "/images/trans.gif\" width=\"19\" height=\"16\"></td>");
+		sb.append("			<td class=\"igtd\"><img src=\"" + contextPath + "/css/images/trans.gif\" width=\"19\" height=\"16\"></td>");
 		
 		for(int i=0; i<level; i++)
 		{
-			sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/vline.png\" width=\"19\" height=\"16\"></td>");
+			sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/vline.png\" width=\"19\" height=\"16\"></td>");
 		}
 
 		String tasks = "";
@@ -1214,14 +1214,14 @@ public class PageEditorHelper extends BaseDeliveryController
 				tasks = "showComponentTasks('componentTasks', 'repositoryId=" + repositoryId + "&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&componentId=" + component.getId() + "&componentContentId=" + component.getContentId() + "&slotId=-1&showSimple=false&showLegend=false&slotClicked=false&treeItem=true&originalUrl=" + URLEncoder.encode(originalUrl, "UTF-8") + "', false, event);";
 		}
 
-		sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/tcross.png\" width=\"19\" height=\"16\"></td><td class=\"igtd\"><img src=\"" + contextPath + "/images/componentIcon.gif\" width=\"16\" height=\"16\"></td><td class=\"igtd\" colspan=\"" + (colspan - 2) + "\"><span id=\"" + component.getId() + "\" oncontextmenu=\"" + tasks + "\" aoncontextmenu=\"hideDiv('pageComponents');\">" + componentContentVO.getName() + "</span>");
+		sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/tcross.png\" width=\"19\" height=\"16\"></td><td class=\"igtd\"><img src=\"" + contextPath + "/css/images/componentIcon.gif\" width=\"16\" height=\"16\"></td><td class=\"igtd\" colspan=\"" + (colspan - 2) + "\"><span id=\"" + component.getId() + "\" oncontextmenu=\"" + tasks + "\" aoncontextmenu=\"hideDiv('pageComponents');\">" + componentContentVO.getName() + "</span>");
 		String upUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&componentId=" + component.getId() + "&direction=0&showSimple=" + showSimple + "";
 		String downUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&componentId=" + component.getId() + "&direction=1&showSimple=" + showSimple + "";
 		
 		if(position > 0)
-		    sb.append("<a href=\"" + upUrl + "\"><img src=\"" + contextPath + "/images/upArrow.gif\" border=\"0\" width=\"11\" width=\"10\"></a>");
+		    sb.append("<a href=\"" + upUrl + "\"><img src=\"" + contextPath + "/css/images/upArrow.gif\" border=\"0\" width=\"11\" width=\"10\"></a>");
 		if(maxPosition > position)
-		    sb.append("<a href=\"" + downUrl + "\"><img src=\"" + contextPath + "/images/downArrow.gif\" border=\"0\" width=\"11\" width=\"10\"></a>");
+		    sb.append("<a href=\"" + downUrl + "\"><img src=\"" + contextPath + "/css/images/downArrow.gif\" border=\"0\" width=\"11\" width=\"10\"></a>");
 		
 		sb.append("</td>");
 		
@@ -1233,15 +1233,15 @@ public class PageEditorHelper extends BaseDeliveryController
 			Slot slot = (Slot)slotIterator.next();
 	
 			sb.append("		<tr class=\"igtr\">");
-			sb.append("			<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/trans.gif\" width=\"19\" height=\"16\"></td><td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/vline.png\" width=\"19\" height=\"16\"></td>");
+			sb.append("			<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/trans.gif\" width=\"19\" height=\"16\"></td><td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/vline.png\" width=\"19\" height=\"16\"></td>");
 			for(int i=0; i<level; i++)
 			{
-				sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/vline.png\" width=\"19\" height=\"16\"></td>");
+				sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/vline.png\" width=\"19\" height=\"16\"></td>");
 			}
 			if(slot.getComponents().size() > 0)
-				sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/tcross.png\" width=\"19\" height=\"16\"></td><td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/slotIcon.gif\" width=\"16\" height=\"16\"></td>");
+				sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/tcross.png\" width=\"19\" height=\"16\"></td><td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\"></td>");
 			else
-				sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/endline.png\" width=\"19\" height=\"16\"></td><td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/images/slotIcon.gif\" width=\"16\" height=\"16\"></td>");
+				sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/endline.png\" width=\"19\" height=\"16\"></td><td class=\"igtd\" width=\"19\"><img src=\"" + contextPath + "/css/images/slotIcon.gif\" width=\"16\" height=\"16\"></td>");
 
 		    String allowedComponentNamesAsEncodedString = slot.getAllowedComponentsArrayAsUrlEncodedString();
 		    String disallowedComponentNamesAsEncodedString = slot.getDisallowedComponentsArrayAsUrlEncodedString();
@@ -1264,7 +1264,7 @@ public class PageEditorHelper extends BaseDeliveryController
 					InfoGlueComponent slotComponent = (InfoGlueComponent)slotComponentIterator.next();
 					ContentVO componentContent = ContentController.getContentController().getContentVOWithId(slotComponent.getContentId(), db); 
 					
-					String imageUrl = "" + contextPath + "/images/componentIcon.gif";
+					String imageUrl = "" + contextPath + "/css/images/componentIcon.gif";
 					//String imageUrlTemp = getDigitalAssetUrl(componentContent.getId(), "thumbnail");
 					//if(imageUrlTemp != null && imageUrlTemp.length() > 0)
 					//	imageUrl = imageUrlTemp;
@@ -1887,7 +1887,7 @@ public class PageEditorHelper extends BaseDeliveryController
 	    	        	
 	    	        	String imageUrl = getDigitalAssetUrl(componentContentVO.getId(), "thumbnail", db);
 	    				if(imageUrl == null || imageUrl.length() == 0)
-	    					imageUrl = "images/componentIcon.gif";
+	    					imageUrl = "css/images/componentIcon.gif";
 
 	    				sb.append("<div id=\"componentRow\" name=\"" +  componentContentVO.getId() + "\" class=\"dragable\">");
 	    	    		

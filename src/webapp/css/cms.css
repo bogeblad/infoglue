@@ -201,7 +201,7 @@ tr.darksilver {
 	background-color : #e6e8e6;
 }
 td.highlightedAttribute {
-	background: url("../images/v3/markedAttributeBackground.gif") 0px 0px no-repeat;
+	background: url("images/v3/markedAttributeBackground.gif") 0px 0px no-repeat;
 }
 
 table.bordered {	
@@ -618,7 +618,7 @@ a:focus {
 	color:white;
 	font-family: Tahoma, Arial, Helvetica, sans-serif;
 	font-size: 10pt;
-	background-image: url('../images/handleBackground.gif');
+	background-image: url('images/handleBackground.gif');
 	}
 
 h2 {
@@ -639,49 +639,49 @@ h2 {
 }
 
 .archiveImage {
-	background-image: url('../images/archiveIcon.gif');
+	background-image: url('images/archiveIcon.gif');
 	background-repeat: no-repeat;
 	background-position: top center;
 }
 
 .validationImage {
-	background-image: url('../images/validationIcon.gif');
+	background-image: url('images/validationIcon.gif');
 	background-repeat: no-repeat;		
 	background-position: top center;
 }
 
 .logviewerImage {
-	background-image: url('../images/logviewerIcon.gif');
+	background-image: url('images/logviewerIcon.gif');
 	background-repeat: no-repeat;		
 	background-position: top center;
 }
 
 .inconsistenciesImage {
-	background-image: url('../images/inconsistenciesIcon.gif');
+	background-image: url('images/inconsistenciesIcon.gif');
 	background-repeat: no-repeat;		
 	background-position: top center;
 }
 
 .deploymentImage {
-	background-image: url('../images/deploymentIcon.gif');
+	background-image: url('images/deploymentIcon.gif');
 	background-repeat: no-repeat;
 	background-position: top center;
 }
 
 .deploymentVCImage {
-	background-image: url('../images/deploymentVCIcon.png');
+	background-image: url('images/deploymentVCIcon.png');
 	background-repeat: no-repeat;
 	background-position: top center;
 }
 
 .passwordImage {
-	background-image: url('../images/passwordIcon.gif');
+	background-image: url('images/passwordIcon.gif');
 	background-repeat: no-repeat;
 	background-position: top center;
 }
 
 .luceneImage {
-	background-image: url('../images/luceneIcon.png');
+	background-image: url('images/luceneIcon.png');
 	background-repeat: no-repeat;
 	background-position: top center;
 }
@@ -726,8 +726,15 @@ li.normalitem {
 	cursor: move;
 	}
 .okstatus {
-	background:url(../images/ok_icon.gif) no-repeat left center; background-position: 4px 2px;
+	background:url(images/ok_icon.gif) no-repeat left center; background-position: 4px 2px;
 }
 .nokstatus {
-	background:url(../images/v3/cross.png) no-repeat left center; background-position: 4px 2px;
+	background:url(images/v3/cross.png) no-repeat left center; background-position: 4px 2px;
+}
+.blockHeading 
+{
+	font-weight: bold;
+	clear: both;
+	display: block;
+	margin: 5px 0;
 }

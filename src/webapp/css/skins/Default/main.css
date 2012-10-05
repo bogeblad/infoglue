@@ -1,0 +1,828 @@
+* :focus { outline: 0; }
+
+body.generaltooledit {
+	color            : #000000;
+	background-color: #f6f6f6;
+	padding			 : 0px;
+	margin			 : 0px;
+	width			 : 100%; 
+	float			 : left;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+}
+#menutoolbar {
+	padding-top: 2px;
+	margin: 0px;
+	border-bottom: 1px solid #9caabd;
+	width: 100%; 
+	height: 32px;
+	background-image: url("../../images/v3/toolbarBackground.gif");
+	background-repeat: repeat-x;
+	background-color: white;
+	float: left;
+}
+#footertoolbar {
+	position: fixed; 
+	height: 43px;
+	width: 100%; 
+	bottom: 0px; 
+	margin: 0px;
+	border-top: 0px solid #9caabd;
+	width: 100%; 
+	background-image: url("../../images/v3/footerBackground.gif");
+	background-repeat: repeat-x;
+	background-color: white;
+	float: left;
+}
+#roles {
+	padding: 0px;
+	margin: 0px;
+	width: 100%; 
+	float: left;
+	}
+
+#igEditArea {
+	padding: 0px;
+	margin: 0 0 43px 0;
+	/*padding-bottom: 20px;*/
+	width: 100%; 
+	float: left;
+	display: inline;
+	/*background-color: #d6e7f7;*/
+}
+h1, h2, h3, h4, p {
+	margin-left: 16px;
+}
+
+.igScrollArea {
+	overflow: auto;
+}
+.ig-section-label {
+	font-weight		 : bold;
+}
+
+/* Here comes text classes */
+h1 {
+	font-family		 : Arial, San serif;
+	font-size		 : 24px;
+	font-weight		 : bold;
+	color			 : black;
+}
+h2 {
+	font-family		 : Arial, San serif;
+	font-size        : 20px;
+	font-weight		 : bold;
+	color			 : black;
+}
+h3 {
+	font-family		 : Arial, San serif;
+	font-size        : 16px;
+	font-weight		 : bold;
+	color			 : black;
+}
+h4 {
+	font-family		 : Arial, San serif;
+	font-size        : 12px;
+	font-weight		 : bold;
+	color			 : black;
+	margin-bottom	 : 6px;
+}
+
+
+/* HERE COMES THE FORM CLASSES */
+
+.ig-form {
+	float: left;
+	padding: 0px;
+	margin: 0px;
+	width: 100%;
+}
+.ig-fieldset {
+	float: left;
+	border: 0px solid #cccccc;
+	margin: 0px;
+	padding: 10px;
+	min-width: 70%;
+}
+.ig-legend {
+	float: left;
+	color: #000000;
+	background: #c6d3e7;
+	border: 1px solid #cccccc;
+	margin: 0px;
+	padding: 2px 6px
+}
+.ig-mandatory {
+	color: red;
+}
+.ig-label {
+	min-width: 120px;
+	max-width: 150px;
+	float: left;
+	text-align: left;
+	margin-right: 0.5em;
+	margin-top: 4px;
+	margin-bottom: 0px;
+	display: block;
+}
+.ig-label-nl {
+	/*aoverflow: hidden;*/
+	float: left;
+	text-align: left;
+	margin-right: 0.5em;
+	margin-top: 4px;
+	margin-bottom: 0px;
+	display: block;
+}
+.ig-narrowLabel {
+	width: 200px;
+	float: left;
+	text-align: left;
+	margin-right: 0.5em;
+	margin-top: 4px;
+	margin-bottom: 0px;
+	display: block;
+}
+.ig-select {
+	background: white;
+	border: 1px solid #cccccc;
+	font-family: Verdana, Arial, San serif;
+	font-size: 11px;
+	width: 200px;
+	padding: 0px;
+	margin-left: 0px;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	float: left;
+}
+.ig-textfield {
+	background: white;
+	border: 1px solid #cccccc;
+	font-family: Verdana, Arial, San serif;
+	font-size: 11px;
+	width: 200px;
+}
+.ig-righttextarea {
+	background: white;
+	border: 1px solid #cccccc;
+	font-family: Verdana, Arial, San serif;
+	font-size: 11px;
+	width: 500px;
+}
+.ig-row {
+	margin: 0px;
+	padding-top: 4px;
+	padding-bottom: 2px;
+	overflow: auto;
+}
+.ig-buttonRow {
+	margin: 0px;
+	padding-top: 14px;
+	padding-bottom: 2px;
+}
+
+.darkgreen {
+	background-color : #C7D1B3;
+	height 			 : 14px;
+}
+select.sitedropbox {
+	width            : 150px;
+	font-family      : verdana, arial, sans-serif;
+	font-size        : 11px;
+}
+img.scaledbordered {
+	border-style	 : solid;
+	border-width	 : 1px;
+	border-color     : #000000;
+}
+
+/* Classes concerned with dialogs */
+.dialogDivHandle {
+	margin:0px;
+	padding:0px;
+	width:100%;
+	color:#555;
+	height: 35px;
+	background-color:white;
+	background: url(../../images/v3/toolbarBackground.gif) repeat-x 0 0;
+	font-family:Tahoma, Verdana, Arial, sans-serif;
+	font-size:12px;
+	}
+.dialogDivLeftHandle {
+	padding: 8px 0px 0px 10px;
+	width: 250px; 
+	float: left;
+	color:#555;
+	text-align: left;
+	line-height: 18px;	
+	}
+.dialogDivRightHandle {
+	padding: 8px 8px 0px 0px;
+	color:#555;
+	text-align: right;
+	line-height: 14px;	
+	float: right;
+	}
+.dialogDivRightHandle a {
+	color:#555;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-size: 12px;
+	display: block;
+	text-indent: 20px;
+	line-height: 18px;	
+	background: url(../../images/v3/closeWindowIcon.gif) no-repeat 0 0;
+	}
+
+.dialogDivBody {
+    padding-top:2px;
+	padding-bottom:2px;
+	width:100%;
+	/*height:450px;*/
+	background-color: white;
+	font-family:verdana, sans-serif;
+	font-size:12px;
+	overflow: auto;
+	}
+
+.dialogDivBody fieldset {
+	border: 1px solid #781351;
+	width: 20em
+	}
+.formRow {
+	vertical-align: top;
+	margin-bottom: 10px;
+	}
+.dialogDivBody label {
+	width: 8em;
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block;
+	vertical-align: top;
+	}
+
+.dialogDivBody .submit, .dialogDivBody  input, .dialogDivBody  select {
+	/*margin-left: 4.5em;*/
+	margin-bottom: 5px;
+	vertical-align: top;
+	display: block;
+	float: left;
+	border: 1px solid #bbb;
+	}
+
+
+/* Button in IG */
+.igButton
+{
+	background-image: url("../../images/v3/igButtonBackground.png");
+	background-position: 100% -26px;
+	background-repeat: no-repeat;
+	line-height: 26px;
+	height: 26px;
+	padding-right: 20px;
+	color: #555;
+	display: block;
+	float: left;
+	margin: 4px;
+	margin-left: 0px;
+	margin-right: 10px;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.igButtonOuterSpan
+{
+	background-image: url("../../images/v3/igButtonBackground.png");
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-size: 14px;
+	padding-left: 20px;
+	line-height: 26px;
+	text-decoration: none;
+	height: 26px;
+	display: block;
+	float: left;
+}
+
+.igButtonOuterSpan span {
+	padding-left: 24px;
+	}
+
+.igButton:hover
+{
+	/*background-position: 100% -78px;*/
+	color: white;
+	text-decoration: none;
+}
+
+.igButtonOuterSpan:hover
+{
+	/*background-position: 0px -52px;*/
+}
+
+
+
+/* Toolbar Button in IG */
+.igToolbarButton
+{
+	/*background-color: red;*/
+	background-image: url("../../images/v3/igToolbarButtonBackground.png");
+	background-position: 100% -26px;
+	background-repeat: no-repeat;
+	line-height: 26px;
+	height: 26px;
+	padding-right: 10px;
+	color: #555;
+	display: block;
+	float: left;
+	margin: 4px;
+	margin-left: 0px;
+	margin-right: 4px;
+	margin-top: 2px;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.igToolbarButtonOuterSpan
+{
+	background-image: url("../../images/v3/igToolbarButtonBackground.png");
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	/*background-color: blue;*/
+	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-size: 14px;
+	padding-left: 6px;
+	line-height: 26px;
+	text-decoration: none;
+	height: 26px;
+	display: block;
+	float: left;
+}
+.igToolbarButtonOuterSpan span {
+	padding-left: 24px;
+	/*background-color: yellow;*/
+	display: block;
+	float: left;
+	line-height: 22px;
+	margin-top: 2px;
+	height: 22px;
+}
+
+.igToolbarHeaderButton
+{
+	background-image: none;
+}
+
+#initialButton {
+	display: block; 
+	float: left; 
+	background: transparent url(../../images/v3/menu-button-arrow.png) no-repeat; 
+	background-position: 4px 15px;
+	padding-left: 8px;
+	margin-left: 4px;
+}
+
+.igToolbarSubButton
+{
+	background-image: none;
+	padding-left: 8px;
+	margin-left: 4px;
+	width: 100%;
+}
+.igEmblaButtonGroup
+{
+	float: left;
+	display: block;
+	border-right: 1px solid #ccc;
+}
+.igEmblaLargeButton 
+{
+	float: left;
+	display: block;
+	padding-left: 8px;
+	margin-left: 4px;
+	height: 50px;
+	width: 100px;
+	border: 1px solid #ccc;
+}
+.igEmblaSmallButton 
+{
+	padding-left: 8px;
+	margin-left: 4px;
+	height: 20px;
+	width: 100px;
+}
+.igToolbarEmblaButtonOuterSpan
+{
+	background-image: url("../../images/v3/igToolbarButtonBackground.png");
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-size: 10px;
+	padding-left: 6px;
+	line-height: 20px;
+	text-decoration: none;
+	height: 20px;
+	display: block;
+	float: left;
+}
+.igToolbarSubButtonOuterSpan
+{
+	background-image: none;
+}
+
+.igToolbarButton:hover
+{
+	/*background-position: 100% -78px;*/
+	/*color: white;*/
+	text-decoration: underline;
+}
+
+.igToolbarButtonOuterSpan:hover
+{
+	/*background-position: 0px -52px;*/
+}
+
+.save { background:url(../../images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.saveAndExit {background:url(../../images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.cancel {background:url(../../images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 3px;}
+.close {background:url(../../images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
+.help {background:url(../../images/v3/helpIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.dropArrow {background:url(../../images/v3/dropArrowIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.publish {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.submitToPublish {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.create {background:url(../../images/v3/createBackgroundPenPaper.gif) no-repeat left center; background-position: 0px 2px;}
+.next {background:url(../../images/v3/nextBackground.gif) no-repeat left center; background-position: 0px 2px;}
+.add {background:url(../../images/v3/addIcon.png) no-repeat left center; background-position: 0px 2px;}
+.versionInfo {background:url(../../images/v3/versionInfo.png) no-repeat left center; background-position: 0px 2px;}
+.mySettings {background:url(../../images/v3/kuser.png) no-repeat left center; background-position: 0px 2px;}
+.properties { background:url(../../images/v3/metadataIcon.gif) no-repeat left center; background-position: 4px 2px;}
+.showHide { background:url(../../images/v3/showHideIcon.png) no-repeat left center; background-position: 4px 2px;}
+.move { background:url(../../images/v3/moveIcon.png) no-repeat left center; background-position: 6px 2px;}
+.moveUp { background:url(../../images/v3/moveUpIcon.png) no-repeat left center; background-position: 6px 2px;}
+.moveDown { background:url(../../images/v3/moveDownIcon.png) no-repeat left center; background-position: 6px 2px;}
+.movePage { background:url(../../images/v3/movePageIcon.gif) no-repeat left center; background-position: 6px 2px;}
+.moveContent { background:url(../../images/v3/moveContentIcon.png) no-repeat left center; background-position: 6px 2px;}
+.delete { background:url(../../images/v3/deleteIcon.gif) no-repeat left center; background-position: 4px 2px;}
+.deleteCross { background:url(../../images/v3/cross.png) no-repeat left center; background-position: 4px 2px;}
+.preview { background:url(../../images/v3/previewIcon.png) no-repeat left center; background-position: 4px 2px;}
+.publishPage {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.publishPages {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.denyPublication {background:url(../../images/v3/denyPublicationIcon.png) no-repeat left center; background-position: 0px 2px;}
+.pageCover {background:url(../../images/v3/pageCoverIcon.png) no-repeat left center; background-position: 0px 2px;}
+.pageDetails {background:url(../../images/v3/metadataIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.pageStructureSimple {background:url(../../images/v3/structureIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.logout {background:url(../../images/v3/exit.png) no-repeat left center; background-position: 0px 2px;}
+.trashcan {background:url(../../images/v3/trashcan.png) no-repeat left center; background-position: 0px 2px;}
+.clearTrashcan {background:url(../../images/v3/clearTrashcan.png) no-repeat left center; background-position: 0px 2px;}
+.accessRights {background:url(../../images/v3/file_locked.png) no-repeat left center; background-position: 0px 4px;}
+.deployContent {background:url(../../images/v3/up.png) no-repeat left center; background-position: 0px 4px;}
+.componentAccessRights {background:url(../../images/v3/locked.png) no-repeat left center; background-position: 0px 4px;}
+
+.unpublish {background:url(../../images/v3/unpublishIcon.png) no-repeat left center; background-position: 0px 2px;}
+.unpublishPage {background:url(../../images/v3/unpublishPageIcon.png) no-repeat left center; background-position: 0px 2px;}
+.unpublishPages {background:url(../../images/v3/unpublishPagesIcon.png) no-repeat left center; background-position: 0px 2px;}
+.syncTree {background:url(../../images/v3/syncTreeIcon.png) no-repeat left center; background-position: 0px 4px;}
+.runTask {background:url(../../images/v3/runTaskIcon.png) no-repeat left center; background-position: 0px 4px;}
+.changeContentType {background:url(../../images/v3/changeTypeIcon.png) no-repeat left center; background-position: 0px 4px;}
+.exportContent {background:url(../../images/v3/exportIcon.png) no-repeat left center; background-position: 0px 4px;}
+.importContent {background:url(../../images/v3/importIcon.png) no-repeat left center; background-position: 0px 4px;}
+.changeLanguage {background:url(../../images/v3/locale.png) no-repeat left center; background-position: 0px 2px;}
+.locale {background:url(../../images/v3/locale.png) no-repeat left center; background-position: 0px 2px;}
+.showDataAsXML {background:url(../../images/v3/xmlIcon.png) no-repeat left center; background-position: 0px 2px;}
+.compare {background:url(../../images/v3/compareIcon.png) no-repeat left center; background-position: 0px 2px;}
+
+li.content {background:url(../../images/v3/contentIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
+li.page {background:url(../../images/v3/pageIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
+
+.save, .saveAndExit, .cancelIcon, .close, .help {
+	padding-left:28px;
+}
+
+/******************
+ Controls input fields in content version editor
+******************/ 
+#contentVersionDiv select, #contentVersionDiv input {
+	font-family      : arial, sans-serif;
+	font-size        : 11px;
+	border			 : 1px solid #C2D0E2;
+}
+
+#contentVersionDiv .smalltextfield {
+	width            : 100px;
+}
+
+#contentVersionDiv .normaltextfield {
+	width            : 300px;
+}
+
+#contentVersionDiv .mediumtextfield {
+	width            : 400px;
+}
+
+#contentVersionDiv .longtextfield {
+	width            : 500px;
+}
+
+#contentVersionDiv .date {
+	width            : 115px;
+}
+
+#contentVersionDiv select.yesNoDropBox {
+	width            : 70px;
+}
+
+#contentVersionDiv textarea {
+	width            : 500px;
+	height			 : 100px;
+}
+
+#contentVersionDiv .smalltextarea {
+	width            : 500px;
+	height			 : 100px;
+}
+
+#contentVersionDiv .normaltextarea {
+	width            : 500px;
+	height			 : 200px;
+}
+
+#paletteContent .componentList {
+	width: 100%;
+	overflow: auto;
+	float: left;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+#paletteContent .componentList li {
+	background-color: white;
+	border: 1px solid #C2D0E2;
+	float: left;
+	width: 40px;
+	margin: 4px;
+	padding: 0;
+} 
+
+p.error {
+	color: red;
+}
+span.error {
+	color: red;
+}
+
+/* MY General button classes */
+.yui-skin-sam .yui-button {
+	border-width: 1px 0;
+	border-style: solid;
+	border-color: #808080;
+	background: url(../../script/yui/assets/skins/sam/sprite.png) repeat-x 0 0;
+	margin: auto .25em;
+}
+.yui-skin-sam .yui-button .first-child {
+	border-width: 0 1px;
+	border-style: solid;
+	border-color: #808080;
+	margin: 0 -1px;
+	position: relative;
+	left: -1px;
+}
+.yui-skin-sam .yui-button-hover {
+	border-color: #7D98B8;
+	background-position: 0 -1300px;
+}
+
+.yui-skin-sam .yui-button-hover .first-child {
+	border-color: #7D98B8;
+}
+
+#helpButton.yui-button button {
+    background: url(../../images/v3/helpIcon.gif) 2px 6px no-repeat;
+    text-indent: 20px;
+    padding: 6px;
+    min-width: 50px;
+    border: 0px solid red;
+    height: 28px;
+}
+#helpButton.yui-button {
+	border-width: 1px 0;
+	border-style: solid;
+	border-color: transparent;
+	background: transparent; 
+	_border-color:tomato; /*For IE6-*/  
+	_filter:chroma(color=tomato);/*For IE6-*/
+	margin: auto .25em;
+}
+#helpButton.yui-button .first-child {
+	border-width: 0 1px;
+	border-style: solid;
+	border-color: transparent;
+	_border-color:tomato; /*For IE6-*/  
+	_filter:chroma(color=tomato);/*For IE6-*/
+}
+
+#helpButton.yui-button-hover {
+	border-color: #808080;
+	background-position: 0 0;
+}
+
+#helpButton.yui-button-hover .first-child {
+	border-color: #808080;
+}
+
+#exitButton.yui-button button {
+    background: url(../../images/v3/closeWindowIcon.gif) 2px 6px no-repeat;
+    text-indent: 20px;
+    padding: 6px;
+    min-width: 50px;
+    border: 0px solid red;
+    height: 28px;
+}
+#exitButton.yui-button {
+	border-width: 1px 0;
+	border-style: solid;
+	border-color: transparent;
+	background: transparent; 
+	_border-color:tomato; /*For IE6-*/  
+	_filter:chroma(color=tomato);/*For IE6-*/
+	margin: auto .25em;
+}
+#exitButton.yui-button .first-child {
+	border-width: 0 1px;
+	border-style: solid;
+	border-color: transparent;
+	_border-color:tomato; /*For IE6-*/  
+	_filter:chroma(color=tomato);/*For IE6-*/
+}
+
+#exitButton.yui-button-hover {
+	border-color: #808080;
+	background-position: 0 0;
+}
+
+#exitButton.yui-button-hover .first-child {
+	border-color: #808080;
+}
+
+
+/* YAHOO classes */
+
+.yui-button {
+	display: -moz-inline-box;
+	display: inline-block;
+	vertical-align: text-bottom;
+}
+
+.yui-button .first-child {
+	display: block;
+	display: inline-block;
+}
+
+.yui-button button,.yui-button a {
+	display: block;
+	display: inline-block;
+	border: none;
+	margin: 0;
+}
+
+.yui-button button {
+	background-color: transparent;
+	overflow: visible;
+	cursor: pointer;
+}
+
+.yui-button a {
+	text-decoration: none;
+}
+
+.yui-skin-sam .yui-button button,.yui-skin-sam .yui-button a {
+	padding: 0 10px;
+	font-size: 93%;
+	line-height: 2;
+	line-height: 1.7;
+	min-height: 2em;
+	/*min-height: auto;*/
+	color: #000;
+}
+
+.yui-skin-sam .yui-button a {
+	line-height: 2;
+}
+
+.yui-skin-sam .yui-split-button button,.yui-skin-sam .yui-menu-button button
+	{
+	padding-right: 20px;
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+
+.yui-skin-sam .yui-menu-button button {
+	background-image: url(menu-button-arrow.png);
+}
+
+.yui-skin-sam .yui-split-button button {
+	background-image: url(split-button-arrow.png);
+}
+
+.yui-skin-sam .yui-button-focus {
+	border-color: #7D98B8;
+	background-position: 0 -1300px;
+}
+
+.yui-skin-sam .yui-button-focus .first-child {
+	border-color: #7D98B8;
+}
+
+.yui-skin-sam .yui-button-focus button,.yui-skin-sam .yui-button-focus a
+	{
+	color: #000;
+}
+
+.yui-skin-sam .yui-split-button-focus button {
+	background-image: url(split-button-arrow-focus.png);
+}
+
+.yui-skin-sam .yui-button-hover {
+	border-color: #7D98B8;
+	background-position: 0 -1300px;
+}
+
+.yui-skin-sam .yui-button-hover .first-child {
+	border-color: #7D98B8;
+}
+
+.yui-skin-sam .yui-button-hover button,.yui-skin-sam .yui-button-hover a
+	{
+	color: #000;
+}
+
+.yui-skin-sam .yui-split-button-hover button {
+	background-image: url(split-button-arrow-hover.png);
+}
+
+.yui-skin-sam .yui-button-active {
+	border-color: #7D98B8;
+	background-position: 0 -1700px;
+}
+
+.yui-skin-sam .yui-button-active .first-child {
+	border-color: #7D98B8;
+}
+
+.yui-skin-sam .yui-button-active button,.yui-skin-sam .yui-button-active a
+	{
+	color: #000;
+}
+
+.yui-skin-sam .yui-split-button-activeoption {
+	border-color: #808080;
+	background-position: 0 0;
+}
+
+.yui-skin-sam .yui-split-button-activeoption .first-child {
+	border-color: #808080;
+}
+
+.yui-skin-sam .yui-split-button-activeoption button {
+	background-image: url(split-button-arrow-active.png);
+}
+
+.yui-skin-sam .yui-radio-button-checked,.yui-skin-sam .yui-checkbox-button-checked
+	{
+	border-color: #304369;
+	background-position: 0 -1400px;
+}
+
+.yui-skin-sam .yui-radio-button-checked .first-child,.yui-skin-sam .yui-checkbox-button-checked .first-child
+	{
+	border-color: #304369;
+}
+
+.yui-skin-sam .yui-radio-button-checked button,.yui-skin-sam .yui-checkbox-button-checked button
+	{
+	color: #fff;
+}
+
+.yui-skin-sam .yui-button-disabled {
+	border-color: #ccc;
+	background-position: 0 -1500px;
+}
+
+.yui-skin-sam .yui-button-disabled .first-child {
+	border-color: #ccc;
+}
+
+.yui-skin-sam .yui-button-disabled button,.yui-skin-sam .yui-button-disabled a
+	{
+	color: #A6A6A6;
+	cursor: default;
+}
+
+.yui-skin-sam .yui-menu-button-disabled button {
+	background-image: url(menu-button-arrow-disabled.png);
+}
+
+.yui-skin-sam .yui-split-button-disabled button {
+	background-image: url(split-button-arrow-disabled.png);
+}

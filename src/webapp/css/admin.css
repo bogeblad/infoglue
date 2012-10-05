@@ -46,7 +46,7 @@ html, body {
     position:absolute;
     text-align:left;
 	display: none;
-	z-index: 1;
+	z-index: 1015;
 }
 #contextMenuDiv ul
 {
@@ -125,11 +125,8 @@ html, body {
 .subButtons {
 	position: absolute; 
 	display: none; 
-	background-color: #B2B2B2; 
 	border: 1px solid #9CAABD; 
 	border-top: 0px;
-	/*background-image:url("images/menuSubButtonsShadow.png");
-	background-position: bottom left;*/
 	background-color: rgba(176, 176, 176, 0.9);
 }
 .menutab {
@@ -171,7 +168,7 @@ html, body {
 #menutoolbarLeft {
 	padding: 0px;
 	margin: 0px;
-	width: 90%; 
+	width: 90%;
 }
 /*
 .igToolbarButton
@@ -184,10 +181,7 @@ html, body {
 	float: left;
 	width: 250px; 
 	margin: 0px 0px 0px 0px;
-	padding-right: 6px;
-	background-image: url(images/verticalDivider.png);
-	background-position: right;
-	background-repeat: repeat-y;
+	border-right: 6px solid rgb(220, 220, 220);
 }
 #repositoryChoiceDiv {
 	height: 30px;
@@ -196,7 +190,7 @@ html, body {
 	border-bottom: 1px solid #9caabb;
 }
 #repositorySelect {
-	width: 200px; 
+	width: 175px; 
 	float: left; 
 	margin-left: 6px; 
 	margin-top: 6px;
@@ -241,8 +235,6 @@ html, body {
 }	
 
 #paletteDiv {
-	float: left; 
-	aheight: 150px;
 	background-image: url(images/sectionBarBackground.png);
 	background-repeat: repeat-x;
 	background-color: #transparent;
@@ -262,15 +254,17 @@ html, body {
 	color: #333333;
 	float: left;
 }
-
+.mainTool {
+	min-width: 1024px;
+}
 .mainTool #work {
-	background-image: url("../../images/v3/toolBackgroundTheme.jpg");
+	background-image: url("images/v3/toolBackgroundTheme.jpg");
 	background-repeat: no-repeat;
 }
   
 #footer {
     height: 34px;
-    /*background-image: url(images/footerBackground.png); 
+    /*background-image: url(css/images/footerBackground.png); 
 	background-repeat: repeat-x; */
 	background-color: #a9a9a9;
 }
@@ -279,7 +273,7 @@ html, body {
 	display: block;
 	width: 37px;
 	height: 26px;
-    background-image: url(images/infoglueLogoSmall.png); 
+    background-image: url(css/images/infoglueLogoSmall.png); 
 	background-repeat: no-repeat;
 	border: 1px solid white;
 }

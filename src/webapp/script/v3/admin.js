@@ -221,7 +221,8 @@ function openUrlInWorkArea(url, tabLabel, targetTab, tabLabelPrefix, toolName)
 
 function refreshWorkArea(targetTab)
 {
-	$("#" + targetTab + "WorkIframe").get(0).contentDocument.location.reload();
+	//$("#" + targetTab + "WorkIframe").get(0).contentDocument.location.reload();
+	$("#" + targetTab + "WorkIframe").get(0).contentWindow.refreshWorkSurface();
 }
 
 var currentMenutoolbarLeftUrl = "";

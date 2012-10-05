@@ -2,6 +2,7 @@
 
 <project name="infoglue" default="clean-deploy" basedir=".">
 	<!-- Use local.build.properties to set your own path to override the build.properties -->
+	<property file="${local.buildfile}" />
 	<property file="local.build.properties" />
 	<property file="build.properties"/>
 	<property name="project.fullname" value="InfoGlue content management system"/>
@@ -31,8 +32,9 @@
 	<!--
 	* The master filterset, created from build.properties
 	-->
-	<filterset id="project.filters">
+	<filterset id="project.filters" onmissingfiltersfile="warn">
 		<filter token="database.validationQuery" value="select 1 from cmInfoGlueProperties"/>
+		<filtersfile file="${local.buildfile}"/>
 		<filtersfile file="build.properties"/>
 	</filterset>
 
@@ -176,7 +178,27 @@
 		<delete file="Infoglue.zip"/>
 		<copyfile src="infogluebuild.properties" dest="build.properties" forceoverwrite="true"/>
 	</target>
-			    
+
+	<target name="debug" depends="init">
+		<echoproperties/>
+		
+		<copy todir="build">
+			<fileset dir="${conf}">
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+				<include name="*.dtd"/>
+				<include name="LICENSE.HTML"/>
+				<exclude name="*web.xml"/>
+			</fileset>
+			<filterset refid="project.filters"/>
+			<filterset>
+				<filter token="context.root.deliver" value="${context.root.working}"/>
+				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
+			</filterset>
+		</copy>
+		
+	</target>
+				    
 	<!--
 	* Compiles Java source files and copies resources to the build output directory
 	* that need to be on the classpath.  Also copies the Velocity templates required by
@@ -337,7 +359,7 @@
                         includes="**/*"/>
 			<zipfileset dir="${conf}"
                         prefix="WEB-INF"
-                        includes="server-config.wsdd"/>
+                        includes="server-config.wsdd,web-app_2_3.dtd"/>
 			<zipfileset dir="${conf}"
 			prefix="META-INF" 
 			includes="context.xml"/>
@@ -390,7 +412,7 @@
                         includes="**/*"/>
 			<zipfileset dir="${conf}"
                         prefix="WEB-INF"
-                        includes="server-config.wsdd"/>
+                        includes="server-config.wsdd,web-app_2_3.dtd"/>
 			<zipfileset dir="${conf}"
 			prefix="META-INF" 
 			includes="context.xml"/>
@@ -430,12 +452,15 @@
 			<zipfileset dir="${conf}/tld"
                         prefix="WEB-INF/tld"
                         includes="**/*"/>
-            		<zipfileset dir="${conf}/config"
+            <zipfileset dir="${conf}/config"
                         prefix="WEB-INF/config"
                         includes="**/*"/>
 			<zipfileset dir="${conf}"
-			prefix="META-INF"
-			includes="context.xml"/>
+                        prefix="WEB-INF"
+						includes="web-app_2_3.dtd"/>
+			<zipfileset dir="${conf}"
+						prefix="META-INF"
+						includes="context.xml"/>
 		</war>
 	</target>
 
@@ -1013,6 +1038,10 @@
 		<copy todir="${deploy.dir.cms}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${conf}/cms" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
 			<fileset dir="${conf}/cms" includes="webwork.properties,actions.xml,jobs.xml"/>
+		</copy>
+
+		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.cms}/WEB-INF/web-app_2_3.dtd" overwrite="true">
+			<filterset refid="project.filters"/>
 		</copy>
 
 		<copy file="${conf}/cms-web.xml" tofile="${deploy.dir.cms}/WEB-INF/web.xml" overwrite="true">

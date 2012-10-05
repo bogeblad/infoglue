@@ -49,12 +49,12 @@
 </script>
 <script type="text/javascript" src="${contextName}/script/ajaxComponentEditor.js"></script>
 
-<script type="text/javascript" src="${contextName}/script/jquery/jquery-1.4.4.min.js"></script>
-<link type="text/css" href="${contextName}/script/jqueryplugins/ui/jquery-ui-1.8.7.custom/css/smoothness/jquery-ui-1.8.7.custom.css" rel="stylesheet" />	
-<script type="text/javascript" src="${contextName}/script/jqueryplugins/ui/jquery-ui-1.8.7.custom/js/jquery-ui-1.8.7.custom.min.js"></script>
+<link type="text/css" href="script/jqueryplugins-latest/ui/css/jquery-ui.css" rel="stylesheet" />	
+<script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
+<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui.min.js"></script>
 
-<script type="text/javascript" src="${contextName}/script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-<style type="text/css" media="all">@import "${contextName}/script/jqueryplugins/thickbox/thickbox.css";</style>
+<script type="text/javascript" src="${contextName}/script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+<style type="text/css" media="all">@import "${contextName}/script/jqueryplugins-latest/thickbox/thickbox.css";</style>
 
 <script type="text/javascript" src="${contextName}/applications/${WYSIWYGEditorJS}"></script>
 #set($userPreferredWYSIWYG = "${userPrefferredWYSIWYG}")

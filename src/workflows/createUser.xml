@@ -16,14 +16,14 @@
 
   <global-actions>
 	<action id="200" name="Restart Workflow">
-		<meta name="icon">images/mydesktop/restart.gif</meta>
+		<meta name="icon">css/images/mydesktop/restart.gif</meta>
 		<meta name="altKey">Restart</meta>
 		<results>
 			<unconditional-result step="1" old-status="Restarted" status="Underway"/>
 		</results>
 	</action>
 	<action id="201" name="Finish Workflow">
-		<meta name="icon">images/mydesktop/stop.gif</meta>
+		<meta name="icon">css/images/mydesktop/stop.gif</meta>
 		<meta name="altKey">Finish</meta>
 		<results>
 			<unconditional-result step="4" old-status="Finished" status="Finished"/>

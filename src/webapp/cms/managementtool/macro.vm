@@ -558,7 +558,7 @@
 	<script type="text/javascript" src="script/embla/infoglueWidgets.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="css/main.css" media="screen"/>
-	<link rel="stylesheet" type="text/css" href="css/widgets.css" media="screen"/> 
+	<link rel="stylesheet" type="text/css" href="css/infoglueWidgets.css" media="screen"/> 
 	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen" />
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" media="screen"/>
 

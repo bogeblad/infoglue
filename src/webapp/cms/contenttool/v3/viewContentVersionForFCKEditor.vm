@@ -626,6 +626,7 @@
 			//alert("value:" + value);
 			return value;
 		}
+
 	//]]>
 	 </script>
 	    					
@@ -967,8 +968,14 @@
     	#end
     	
     	</div><!-- End double pane --> 
-    	
+
     </div>	
+    
+    #if("$!oldModifiedDateTime" != "-1")
+		<script type="text/javascript">
+			top.displayNotification("$ui.getString("tool.contenttool.contentVersionUpdated")", "resultOk");
+		</script>
+	#end
     
     #lightFooterToolbar($footerButtons)
     

@@ -117,7 +117,7 @@ public class ExportContentAction extends InfoGlueAbstractAction
 			}
 			
 			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
-			List categories = CategoryController.getController().findAllActiveCategories();
+			List categories = CategoryController.getController().getAllActiveCategories();
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
 			

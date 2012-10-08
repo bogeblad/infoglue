@@ -345,7 +345,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 			allRepositoryProperties.putAll(ExportRepositoryAction.getRepositoryProperties(ps, repositoryId));
 			
 			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
-			List categories = CategoryController.getController().findAllActiveCategories();
+			List categories = CategoryController.getController().getAllActiveCategories();
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
 			

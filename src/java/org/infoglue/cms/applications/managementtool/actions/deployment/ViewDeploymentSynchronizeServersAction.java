@@ -615,7 +615,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 		    Collections.sort(remoteCategoryVOList, new ReflectionComparator("name"));
 		    //logger.info("remoteCategoryVOList:" + remoteCategoryVOList.size());
 	    	
-		    List<CategoryVO> allLocalCategories = CategoryController.getController().findAllActiveCategories();
+		    List<CategoryVO> allLocalCategories = CategoryController.getController().getAllActiveCategories();
 		    //logger.info("allLocalCategories:" + allLocalCategories.size());
 	    	
 		    Map handledRemoteCategoryPaths = new HashMap();
@@ -631,7 +631,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 
 	    	Map requestMap = HttpUtilities.requestToHashtable(getRequest());
 	    	
-		    List<CategoryVO> allLocalCategories = CategoryController.getController().findAllActiveCategories();
+		    List<CategoryVO> allLocalCategories = CategoryController.getController().getAllActiveCategories();
 	    	input.put("categoryVOList", allLocalCategories);
 	    	input.put("requestMap", requestMap);
 	    	

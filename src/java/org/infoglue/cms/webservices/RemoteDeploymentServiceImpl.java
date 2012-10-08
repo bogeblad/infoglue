@@ -303,7 +303,7 @@ public class RemoteDeploymentServiceImpl extends RemoteInfoGlueService
 		        logger.info("principalName:" + principalName);
 	        }
 						
-		    List<CategoryVO> allLocalCategories = CategoryController.getController().findAllActiveCategories();
+		    List<CategoryVO> allLocalCategories = CategoryController.getController().getAllActiveCategories();
 		    //logger.info("allLocalCategories:" + allLocalCategories.size());
 	    	
 		    Map handledRemoteCategoryPaths = new HashMap();

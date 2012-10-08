@@ -196,8 +196,8 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
 		this.subscriptionVOList = subscriptionsController.getSubscriptionVOList(null, null, new Boolean(true), null, null, this.getInfoGluePrincipal().getName(), null);
 		this.detailedSubscriptionVOList = subscriptionsController.getSubscriptionVOList(null, null, new Boolean(false), null, null, this.getInfoGluePrincipal().getName(), null);
 		this.contentTypeDefintionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
-		this.categoryVOList = CategoryController.getController().findAllActiveCategories();
-
+		this.categoryVOList = CategoryController.getController().getAllActiveCategories();
+		
 		this.interceptionPointVOList = new ArrayList();
 		List allInterceptionPointVOList = InterceptionPointController.getController().getInterceptionPointVOList();
 		Iterator allInterceptionPointVOListIterator = allInterceptionPointVOList.iterator();
@@ -362,7 +362,7 @@ public class SubscriptionsAction extends InfoGlueAbstractAction
     	sb.append("	<h4 style=\"border-bottom: 1px solid #bbb;\">" + getLocalizedString(getLocale(), "tool.common.subscriptionsFilters.label") + "</h4>");
 
     	this.contentTypeDefintionVOList = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList();
-		this.categoryVOList = CategoryController.getController().findAllActiveCategories();
+		this.categoryVOList = CategoryController.getController().getAllActiveCategories();
 		
     	int i = 0;
     	int size = subscriptionVO.getSubscriptionFilterVOList().size();

@@ -958,7 +958,7 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 	 */
 	public List getAllCategories() throws SystemException
 	{
-		return getCategoryController().findAllActiveCategories();
+		return getCategoryController().getAllActiveCategories();
 	}
 
 	//-------------------------------------------------------------------------------------

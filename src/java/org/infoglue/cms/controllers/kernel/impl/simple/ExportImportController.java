@@ -88,7 +88,7 @@ public class ExportImportController extends BaseController
 			
 			List categories = new ArrayList();
 			if(includeCategories)
-				categories = CategoryController.getController().findAllActiveCategories();
+				categories = CategoryController.getController().getAllActiveCategories();
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
 			
@@ -175,7 +175,7 @@ public class ExportImportController extends BaseController
 			}
 			
 			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
-			List categories = CategoryController.getController().findAllActiveCategories();
+			List categories = CategoryController.getController().getAllActiveCategories();
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
 			

@@ -1904,11 +1904,16 @@ public class ComponentLogic
 					{				    	
 				    	usedRepositoryIds.add(parentSiteNodeVO.getRepositoryId());
 				    	property = getInheritedComponentProperty(this.templateController, parentSiteNodeVO.getId(), this.templateController.getLanguageId(), this.templateController.getContentId(), this.infoGlueComponent.getId(), propertyName, contentVersionIdList);
+				    	if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+				    		this.templateController.getDeliveryContext().addDebugInformation("property:" + property + " taken from " + parentSiteNodeVO.getId());
+				    	
 				    	if(!useStructureInheritance)
 				    		break;
 				    	
 					    SiteNodeVO newParentSiteNodeVO = nodeDeliveryController.getParentSiteNode(templateController.getDatabase(), parentSiteNodeVO.getId());
-					
+					    if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+					    	this.templateController.getDeliveryContext().addDebugInformation("newParentSiteNodeVO:" + newParentSiteNodeVO);
+				    	
 					    if(newParentSiteNodeVO == null && useRepositoryInheritance)
 						{
 						    Integer parentRepositoryId = this.templateController.getParentRepositoryId(parentSiteNodeVO.getRepositoryId());
@@ -1921,7 +1926,10 @@ public class ComponentLogic
 						    if(parentRepositoryId != null && !usedRepositoryIds.contains(parentRepositoryId))
 						    {
 						        newParentSiteNodeVO = this.templateController.getRepositoryRootSiteNode(parentRepositoryId);
-						        if(newParentSiteNodeVO != null)
+							    if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+							    	this.templateController.getDeliveryContext().addDebugInformation("newParentSiteNodeVO from parent repo:" + newParentSiteNodeVO);
+
+							    if(newParentSiteNodeVO != null)
 						        	usedRepositoryIds.add(newParentSiteNodeVO.getRepositoryId());
 							}
 						}
@@ -2005,6 +2013,9 @@ public class ComponentLogic
 	private Map getInheritedComponentProperty(TemplateController templateController, Integer siteNodeId, Integer languageId, Integer contentId, Integer componentId, String propertyName, Set contentVersionIdList) throws Exception
 	{
 	    StringBuilder key = new StringBuilder("inherited_").append(siteNodeId).append("_").append(languageId).append("_").append(componentId).append("_").append(propertyName);
+	    if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+	    	this.templateController.getDeliveryContext().addDebugInformation("key:" + key);
+	    
 	    //StringBuilder key = new StringBuilder("inherited_").append(templateController.getSiteNodeId()).append("_").append(siteNodeId).append("_").append(languageId).append("_").append(componentId).append("_").append(propertyName);
 	    String versionKey = key.toString() + "_contentVersionIds";
 		Object propertyCandidate = CacheController.getCachedObjectFromAdvancedCache("componentPropertyCache", key.toString());
@@ -2021,6 +2032,8 @@ public class ComponentLogic
 			else
 				property = (Map)propertyCandidate;
 				
+			if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+				this.templateController.getDeliveryContext().addDebugInformation("propertyCandidateVersions:" + propertyCandidateVersions);
 			if(propertyCandidateVersions != null)
 			{
 				try
@@ -2044,7 +2057,7 @@ public class ComponentLogic
 		else
 		{
 			String inheritedPageComponentsXML = getPageComponentsString(templateController, siteNodeId, languageId, contentId, contentVersionIdList);
-			if((siteNodeId == 100081 && propertyName.equals("GUFlashImages")) || propertyName.equals("MiniArticleShortcuts"))
+			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
 			{
 				String xmlRep = "";
 				if(inheritedPageComponentsXML == null) 
@@ -2067,14 +2080,11 @@ public class ComponentLogic
 				property = parseProperties(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
 			}
 			
-			if(siteNodeId == 100081 && propertyName.equals("GUFlashImages"))
-				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO parsed property: " + property + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
-
 			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
-				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO parsed property: " + property + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO parsed property: " + property + "/" + contentVersionIdList + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
 
-			if(contentVersionIdList.size() == 0)
-				contentVersionIdList.add("selectiveCacheUpdateNonApplicable");
+			//if(contentVersionIdList.size() == 0)
+			//	contentVersionIdList.add("selectiveCacheUpdateNonApplicable");
 
 			if(property != null && contentVersionIdList.size() > 0)
 	        {
@@ -2103,12 +2113,16 @@ public class ComponentLogic
 			    groups.add("siteNode_" + templateController.getSiteNodeId());
 			    groups.add("siteNode_" + siteNodeId);
 
+			    if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+					logger.warn("contentVersionIdList BEFORE STORING: " + contentVersionIdList.size());
+				
 			    //TODO - TEST - NOT SAFE
 			    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
 			    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
 		    }
 			else
 			{
+				this.templateController.getDeliveryContext().addDebugInformation("contentVersionIdList: " + contentVersionIdList + ":" + contentVersionIdList.size());
 				if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
 					logger.warn("DEBUG: Going to store a NullObject in componentPropertyCache for " + propertyName + ". Why: \n" + this.templateController.getDeliveryContext().getDebugInformation());
 								
@@ -2141,19 +2155,23 @@ public class ComponentLogic
 
 //				  	TODO - TEST - NOT SAFE
 				    if(key.indexOf("MiniArticleShortcuts") > -1 || key.indexOf("MiniArticleShortcuts") > -1)
+				    	logger.warn("Storing NULL 1 with key: " + key);
+				    
+				    if(key.indexOf("MiniArticleShortcuts") > -1 || key.indexOf("MiniArticleShortcuts") > -1)
 				    	logger.warn("Storing NULL:" + templateController.getDeliveryContext().getDebugInformation());
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key.toString(), new NullObject(), groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
 				}
-				/*
+				
 				else
 				{
 //					TODO - TEST - NOT SAFE
 				    if(key.indexOf("MiniArticleShortcuts") > -1 || key.indexOf("MiniArticleShortcuts") > -1)
-				    	logger.warn("Storing NULL:" + templateController.getDeliveryContext().getDebugInformation());
+				    	logger.warn("Storing NULL 2 with key: " + key);
+				    	//logger.warn("Storing NULL:" + templateController.getDeliveryContext().getDebugInformation());
 					CacheController.cacheObjectInAdvancedCache("componentPropertyCache", key.toString(), new NullObject(), new String[]{}, false);
 				}
-				*/
+				
 			}
 		}
 				
@@ -3056,7 +3074,9 @@ public class ComponentLogic
 		String cacheName 	= "componentEditorCache";
 		String cacheKey		= "pageComponentString_" + siteNodeId + "_" + languageId + "_" + contentId;
 		String versionKey 	= cacheKey + "_contentVersionId";
-		
+
+		this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO cacheKey: " + cacheKey + " (Thread" + Thread.currentThread().getId() + ").\n");
+
 		String cachedPageComponentsString = (String)CacheController.getCachedObjectFromAdvancedCache(cacheName, cacheKey);
 		Set contentVersionIds = (Set)CacheController.getCachedObjectFromAdvancedCache("componentEditorVersionIdCache", versionKey);
 		if(cachedPageComponentsString != null)

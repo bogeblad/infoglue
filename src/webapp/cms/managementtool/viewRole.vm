@@ -1,10 +1,10 @@
 #define($headerMarkup)
 	
-	<script type="text/javascript" src="script/jqueryplugins/thickbox/thickbox-compressed.js"></script>
-	<link rel="stylesheet" type="text/css" href="script/jqueryplugins/thickbox/thickbox-ig.css" media="all" />
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" media="all" />
 	
 	<style type="text/css">
-		@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
 		
 		#TB_ajaxContent {
 			padding: 0px !important;
@@ -16,7 +16,7 @@
 		}
 
 	</style>
-	<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 
 	<script type="text/javascript">
 	<!-- 	

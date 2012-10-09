@@ -139,14 +139,10 @@
 	-->
 	</script>
 	
-<<<<<<< HEAD
 	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
 	<link rel="stylesheet" type="text/css" href="css/menu.css" />
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
-=======
-	<link rel="stylesheet" type="text/css" href="css/v3/infoglue.css" />
-	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/menu.css" />
->>>>>>> Fixed some UMU issues
+
 </head>
 
 <body class="generaltooledit">

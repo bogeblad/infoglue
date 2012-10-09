@@ -298,16 +298,16 @@ background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 	bottom: 34px;
 	right: 100px;
 	height: 45px;
+	left: 50%;
+	margin-left: -125px;
 } 
 #popupAlertMessageDiv 
 {
 	margin-top: 45px;
 	background-color: darkgray;
-	height: 35px;
+	height: 45px;
 	border-radius: 10px;
-	
-	padding: 15px 30px;
-	text-indent: 20px;
+	padding: 10px;
 	border: 1px solid rgb(100, 100, 100);
 	border-bottom: none;
 
@@ -315,12 +315,31 @@ background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 	-webkit-transition: margin-top 1s;  
 	-ms-transition: margin-top 1s;  
 	-o-transition: margin-top 1s;  
-	transition: margin-top 1s;  
+	transition: margin-top 1s; 
+	width: 250px; 
+}
+#popupAlertMessageDiv p
+{
+	margin: 0px;
+	padding: 0 20px;
+	text-align: center;
+}
+
+.closeAlertMessageButton
+{
+	display: block;
+	width: 12px;
+	height: 12px;
+	background-image:url("images/v3/cross.png");
+	background-repeat: no-repeat;
+	background-position: center;
+	float: right;
+	cursor: pointer;
 }
 
 .resultOk
 {
 	background-image: url("images/v3/check.png");
 	background-repeat: no-repeat;
-	background-position: 20px 14px;
+	background-position: 10px 9px;
 }

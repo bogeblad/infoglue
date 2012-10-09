@@ -302,6 +302,8 @@
 	
 	<div id="popupAlertMessageDivContainer">
 		<div id="popupAlertMessageDiv">
+			<div class="closeAlertMessageButton" onclick="top.hideNotification()"></div>
+			<p></p>
 	    </div>
 	</div>
 </body>

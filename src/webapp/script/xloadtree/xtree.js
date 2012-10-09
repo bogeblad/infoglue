@@ -67,11 +67,8 @@ var webFXTreeConfig = {
 	openFolderIcon  : 'css/images/openfoldericon.png',
 	hiddenFolderIcon      : 'css/images/hiddenFoldericon.png',
 	hiddenOpenFolderIcon  : 'css/images/hiddenOpenfoldericon.png',
-<<<<<<< HEAD
 	hiddenProtectedFolderIcon      : 'css/images/hiddenProtectedFoldericon.png',
 	hiddenProtectedOpenFolderIcon  : 'css/images/hiddenProtectedOpenfoldericon.png',
-=======
->>>>>>> Fixat bilder.
 	protectedFolderIcon   	: 'css/images/protectedFolder.png',
 	protectedOpenFolderIcon : 'css/images/protectedOpenFolder.png',
 	fileIcon        : 'css/images/file.png',

@@ -842,9 +842,7 @@ span.error {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-color: #A9A9A9;
-	width: 10px;
+	width: 8px;
 	cursor: move;
-	border-left: 1px solid rgb(130, 130, 130);
-	border-right: 1px solid rgb(130, 130, 130);
-	right: -10px;
+	right: -8px;
 }

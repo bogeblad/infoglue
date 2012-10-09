@@ -344,12 +344,14 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCache("groupListCache");
 				CacheController.clearCache("groupVOListCache");
 				CacheController.clearCache("componentContentsCache");
+			    CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(RoleImpl.class.getName()))
 			{
 				CacheController.clearCache("roleListCache");
 				CacheController.clearCache("roleVOListCache");
 				CacheController.clearCache("componentContentsCache");
+			    CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(SystemUserGroupImpl.class.getName()))
 			{
@@ -551,16 +553,19 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("componentContentsCache");
+			    CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(GroupImpl.class.getName()))
 			{
 				CacheController.clearCache("groupListCache");
 				CacheController.clearCache("componentContentsCache");
+			    CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(RoleImpl.class.getName()))
 			{
 				CacheController.clearCache("roleListCache");
 				CacheController.clearCache("componentContentsCache");
+			    CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(SystemUserGroupImpl.class.getName()))
 			{
@@ -805,16 +810,19 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("componentContentsCache");
+			    CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(GroupImpl.class.getName()))
 			{
 				CacheController.clearCache("groupListCache");
 				CacheController.clearCache("componentContentsCache");
+			    CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(RoleImpl.class.getName()))
 			{
 				CacheController.clearCache("roleListCache");
 				CacheController.clearCache("componentContentsCache");
+			    CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(SystemUserGroupImpl.class.getName()))
 			{

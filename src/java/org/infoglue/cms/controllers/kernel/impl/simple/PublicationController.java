@@ -518,7 +518,7 @@ public class PublicationController extends BaseController
 	            Map hashMap = new HashMap();
 	        	hashMap.put("publicationId", publicationVO.getId());
 	        	
-	    		intercept(hashMap, "Publication.Written", infoGluePrincipal);
+	    		intercept(hashMap, "Publication.Written", infoGluePrincipal, true, true);
 			}
 			catch (Exception e)
 			{

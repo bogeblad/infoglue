@@ -111,16 +111,21 @@ public abstract class BaseController
      */
     protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
 	{
-    	intercept(hashMap, InterceptionPointName, infogluePrincipal, true);
+    	intercept(hashMap, InterceptionPointName, infogluePrincipal, true, false);
 	}
-	
-    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws ConstraintException, SystemException, Bug, Exception
+
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess, boolean ignoreMissingInterceptionPoint) throws ConstraintException, SystemException, Bug, Exception
 	{
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
     	
 		if(interceptionPointVO == null)
-			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
-
+		{
+			if(ignoreMissingInterceptionPoint)
+				return;
+			else
+				throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
+		}
+		
 		List interceptors = InterceptorController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId());
 		Iterator interceptorsIterator = interceptors.iterator();
 		while(interceptorsIterator.hasNext())

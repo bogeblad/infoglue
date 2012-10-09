@@ -213,7 +213,7 @@ public class ContentControllerProxy extends ContentController
 		    	
 		    	try
 		    	{
-		    	    intercept(hashMap, "Content.Read", infoGluePrincipal, false);
+		    	    intercept(hashMap, "Content.Read", infoGluePrincipal, false, false);
 		    	}
 		    	catch(Exception e)
 		    	{

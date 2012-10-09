@@ -1549,6 +1549,11 @@ public class CmsPropertyHandler
 	    return getServerNodeProperty("statistics.enabled", true, "false");
 	}
 
+	public static String getPublicationListLogPath()
+	{
+	    return getServerNodeProperty("publicationListLogPath", true, "" + contextRootPath + "logs");
+	}
+
 	public static String getStatisticsLogPath()
 	{
 	    return getServerNodeProperty("statisticsLogPath", true, "" + contextRootPath + "logs");

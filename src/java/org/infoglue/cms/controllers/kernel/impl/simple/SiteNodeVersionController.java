@@ -1413,41 +1413,55 @@ public class SiteNodeVersionController extends BaseController
         List languages = LanguageController.getController().getLanguageList(siteNodeVersion.getOwningSiteNode().getRepository().getId(), db);
 		Language masterLanguage = LanguageController.getController().getMasterLanguage(db, siteNodeVersion.getOwningSiteNode().getRepository().getId());
 		
-		Integer metaInfoAvailableServiceBindingId = null;
-		Integer serviceBindingId = null;
-		AvailableServiceBindingVO availableServiceBindingVO = AvailableServiceBindingController.getController().getAvailableServiceBindingVOWithName("Meta information", db);
-		if(availableServiceBindingVO != null)
-			metaInfoAvailableServiceBindingId = availableServiceBindingVO.getAvailableServiceBindingId();
-		
-		Collection serviceBindings = siteNodeVersion.getServiceBindings();
-		Iterator serviceBindingIterator = serviceBindings.iterator();
-		while(serviceBindingIterator.hasNext())
+		if(siteNodeVersion.getOwningSiteNode().getMetaInfoContentId() != null)
 		{
-			ServiceBinding serviceBinding = (ServiceBinding)serviceBindingIterator.next();
-			if(serviceBinding.getAvailableServiceBinding().getId().intValue() == metaInfoAvailableServiceBindingId.intValue())
-			{
-				serviceBindingId = serviceBinding.getId();
-				break;
-			}
-		}
-
-		if(serviceBindingId != null)
-		{
-			List boundContents = ContentController.getBoundContents(serviceBindingId); 
-			if(boundContents.size() > 0)
-		{
-				ContentVO contentVO = (ContentVO)boundContents.get(0);
-			
 			Iterator languageIterator = languages.iterator();
 			while(languageIterator.hasNext())
 			{
 				Language language = (Language)languageIterator.next();
-				ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVO.getId(), language.getId(), db);
-				
+				ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(siteNodeVersion.getOwningSiteNode().getMetaInfoContentId(), language.getId(), db);
 				if(contentVersion != null)
 				    contentVersions.add(contentVersion);
 			}
 		}
+		else
+		{
+			Integer metaInfoAvailableServiceBindingId = null;
+			Integer serviceBindingId = null;
+			AvailableServiceBindingVO availableServiceBindingVO = AvailableServiceBindingController.getController().getAvailableServiceBindingVOWithName("Meta information", db);
+			if(availableServiceBindingVO != null)
+				metaInfoAvailableServiceBindingId = availableServiceBindingVO.getAvailableServiceBindingId();
+			
+			Collection serviceBindings = siteNodeVersion.getServiceBindings();
+			Iterator serviceBindingIterator = serviceBindings.iterator();
+			while(serviceBindingIterator.hasNext())
+			{
+				ServiceBinding serviceBinding = (ServiceBinding)serviceBindingIterator.next();
+				if(serviceBinding.getAvailableServiceBinding().getId().intValue() == metaInfoAvailableServiceBindingId.intValue())
+				{
+					serviceBindingId = serviceBinding.getId();
+					break;
+				}
+			}
+	
+			if(serviceBindingId != null)
+			{
+				List boundContents = ContentController.getBoundContents(serviceBindingId); 
+				if(boundContents.size() > 0)
+				{
+					ContentVO contentVO = (ContentVO)boundContents.get(0);
+					
+					Iterator languageIterator = languages.iterator();
+					while(languageIterator.hasNext())
+					{
+						Language language = (Language)languageIterator.next();
+						ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVO.getId(), language.getId(), db);
+						
+						if(contentVersion != null)
+						    contentVersions.add(contentVersion);
+					}
+				}
+			}
 		}
 		
 		return contentVersions;

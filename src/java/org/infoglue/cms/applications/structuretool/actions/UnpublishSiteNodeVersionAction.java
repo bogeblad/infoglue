@@ -84,6 +84,13 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 		    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
 		    this.repositoryId = siteNodeVO.getRepositoryId();
 		    
+			if(this.siteNodeVersionId == null)
+			{
+			    SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getACLatestActiveSiteNodeVersionVO(this.getInfoGluePrincipal(), siteNodeId);
+			    if(siteNodeVersionVO != null)
+			        this.siteNodeVersionId = siteNodeVersionVO.getId();
+			}
+
 			AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 			Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
@@ -105,9 +112,18 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 		{
 		    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId);
 		    this.repositoryId = siteNodeVO.getRepositoryId();
-		    
+
+			if(this.siteNodeVersionId == null)
+			{
+			    SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getACLatestActiveSiteNodeVersionVO(this.getInfoGluePrincipal(), siteNodeId);
+			    if(siteNodeVersionVO != null)
+			        this.siteNodeVersionId = siteNodeVersionVO.getId();
+			}
+
 			AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
-		
+			
+			System.out.println("this.siteNodeId:" + this.siteNodeId);
+			System.out.println("this.siteNodeVersionId:" + this.siteNodeVersionId);
 			Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
 			if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.SubmitToPublish", protectedSiteNodeVersionId.toString()))
 				ceb.add(new AccessConstraintException("SiteNodeVersion.siteNodeId", "1005"));

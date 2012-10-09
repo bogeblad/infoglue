@@ -240,6 +240,12 @@ public class CacheController extends Thread
 
 	public static synchronized void preCacheCMSEntities() throws Exception 
 	{
+		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 10000);
+		logger.error("snVOList:" + snVOList.size() + " fetched and precached");
+
+		List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 30000);
+		logger.error("cList:" + cList.size() + " fetched and precached");
+
 		/*
 		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 10000);
 		logger.info("snVOList:" + snVOList.size() + " fetched and precached");
@@ -257,10 +263,10 @@ public class CacheController extends Thread
 
 	public static synchronized void preCacheDeliverEntities() throws Exception 
 	{
-		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 100000);
+		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 10000);
 		logger.error("snVOList:" + snVOList.size() + " fetched and precached");
 
-		List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 300000);
+		List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 30000);
 		logger.error("cList:" + cList.size() + " fetched and precached");
 		
 		/*
@@ -419,7 +425,13 @@ public class CacheController extends Thread
 	{
 		if(cacheName == null || key == null || value == null || key.toString().length() == 0)
 			return;
-
+/*
+		if(key.toString().equals("inherited_2245_3_10_MiniArticleShortcuts"))
+			Thread.dumpStack();
+		
+		if(key.toString().equals("11420_3_UMU footer Component_Footer Area_1245_10_false_MiniArticleShortcuts_true_true_true_true"))
+			Thread.dumpStack();
+*/		
 		if(logger.isInfoEnabled() && cacheName.equalsIgnoreCase("pageCacheExtra"))
 		{			
 			logger.info("cacheName: " + cacheName);

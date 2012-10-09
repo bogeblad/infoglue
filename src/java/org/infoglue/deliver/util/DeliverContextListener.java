@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.RollingFileAppender;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.extensions.ExtensionLoader;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
@@ -131,7 +132,7 @@ public final class DeliverContextListener implements ServletContextListener
 			
 			InfoGlueAuthenticationFilter.initializeProperties();
 						
-			CacheController.preCacheDeliverEntities();
+			new Thread(new Runnable() { public void run() {try {CacheController.preCacheDeliverEntities();} catch (Exception e) {}}}).start();
 			
 			CmsPropertyHandler.setStartupTime(new Date()); 
 			

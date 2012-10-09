@@ -486,10 +486,15 @@ function displayNotification(aMessage)
 
 function displayNotification(aMessage, aClassName)
 {
-	$("#popupAlertMessageDiv").html(aMessage);
+	$("#popupAlertMessageDiv p").html(aMessage);
 	$("#popupAlertMessageDiv").attr("class", aClassName);
 	$("#popupAlertMessageDiv").css("margin-top", "0");
 	setTimeout(function() {
 		$("#popupAlertMessageDiv").css("margin-top", "45px");
-	}, 3000);
+	}, 4000);
+}
+
+function hideNotification()
+{
+	$("#popupAlertMessageDiv").css("margin-top", "45px");
 }

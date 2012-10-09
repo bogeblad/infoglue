@@ -337,6 +337,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("componentContentsCache");
+				CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(GroupImpl.class.getName()))
 			{
@@ -357,6 +358,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCache("groupListCache");
 				CacheController.clearCache("groupVOListCache");
 				CacheController.clearCache("componentContentsCache");
+
+				CacheController.clearCache("principalPropertyValueCache");
+				CacheController.clearCache("rolePropertiesCache");
+				CacheController.clearCache("groupPropertiesCache");
 			}
 			else if(object.getClass().getName().equals(SystemUserRoleImpl.class.getName()))
 			{
@@ -365,6 +370,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCache("roleListCache");
 				CacheController.clearCache("roleVOListCache");
 				CacheController.clearCache("componentContentsCache");
+
+				CacheController.clearCache("principalPropertyValueCache");
+				CacheController.clearCache("rolePropertiesCache");
+				CacheController.clearCache("groupPropertiesCache");
 			}
 			else if(object.getClass().getName().equals(UserPropertiesImpl.class.getName()))
 			{
@@ -560,6 +569,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("groupListCache");
 				CacheController.clearCache("componentContentsCache");
+				
+				CacheController.clearCache("principalPropertyValueCache");
+				CacheController.clearCache("rolePropertiesCache");
+				CacheController.clearCache("groupPropertiesCache");
 			}
 			else if(object.getClass().getName().equals(SystemUserRoleImpl.class.getName()))
 			{
@@ -568,6 +581,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("groupListCache");
 				CacheController.clearCache("componentContentsCache");
+
+				CacheController.clearCache("principalPropertyValueCache");
+				CacheController.clearCache("rolePropertiesCache");
+				CacheController.clearCache("groupPropertiesCache");
 			}
 			else if(object.getClass().getName().equals(UserPropertiesImpl.class.getName()))
 			{
@@ -798,6 +815,18 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 				CacheController.clearCache("roleListCache");
 				CacheController.clearCache("componentContentsCache");
+			}
+			else if(object.getClass().getName().equals(SystemUserGroupImpl.class.getName()))
+			{
+				CacheController.clearCache("principalPropertyValueCache");
+				CacheController.clearCache("rolePropertiesCache");
+				CacheController.clearCache("groupPropertiesCache");
+			}
+			else if(object.getClass().getName().equals(SystemUserRoleImpl.class.getName()))
+			{
+				CacheController.clearCache("principalPropertyValueCache");
+				CacheController.clearCache("rolePropertiesCache");
+				CacheController.clearCache("groupPropertiesCache");
 			}
 			else if(object.getClass().getName().equals(UserPropertiesImpl.class.getName()))
 			{

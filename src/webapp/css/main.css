@@ -2,10 +2,11 @@
 
 body.generaltooledit {
 	color            : #000000;
-	background-color : #f6f6f6;
+
 	padding			 : 0px;
 	margin			 : 0px;
-	width			 : 100%;
+	width			 : 100%; 
+
 	float			 : left;
 	font-family      : verdana, arial, sans-serif;
 	font-size        : 11px;
@@ -826,7 +827,6 @@ span.error {
 .yui-skin-sam .yui-split-button-disabled button {
 	background-image: url(split-button-arrow-disabled.png);
 }
-
 #menuOverlayDiv {
 	display: none;
 	background-color: rgba(255, 255, 255, 0.5);
@@ -841,9 +841,7 @@ span.error {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-color: #A9A9A9;
-	width: 10px;
+	width: 8px;
 	cursor: move;
-	border-left: 1px solid rgb(130, 130, 130);
-	border-right: 1px solid rgb(130, 130, 130);
-	right: -10px;
+	right: -8px;
 }

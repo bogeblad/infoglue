@@ -507,6 +507,7 @@ function CheckUncheck(row,chkbox)
 //This function opens up a new location in a 
 //restriced popup 
 //-----------------------------------------------
+
 function openPopup(url, name, details)
 {
 	newWin=window.open(url, name, details);
@@ -517,6 +518,7 @@ function openPopup(url, name, details)
 //This function opens up a new location in a 
 //restriced popup 
 //-----------------------------------------------
+
 function openPopupWithOptionalParameter(url, name, details, question, parameter)
 {
 	if(confirm(question))

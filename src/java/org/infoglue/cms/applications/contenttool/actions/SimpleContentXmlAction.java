@@ -308,7 +308,7 @@ public class SimpleContentXmlAction extends SimpleXmlServiceAction
 	{
         Document doc = DocumentHelper.createDocument();
         Element root = doc.addElement("contentVersions");
-        Collection availableLanguages = ContentController.getContentController().getRepositoryLanguages(parent);
+        Collection availableLanguages = ContentController.getContentController().getRepositoryLanguagesEx(parent);
         for(Iterator i=availableLanguages.iterator();i.hasNext();)
         {
         	LanguageVO lvo = (LanguageVO) i.next();

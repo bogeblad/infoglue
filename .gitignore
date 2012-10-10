@@ -1,2 +1,4 @@
 /build
 .svn
+.settings
+*.launch

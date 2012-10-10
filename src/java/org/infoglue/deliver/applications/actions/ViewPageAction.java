@@ -819,7 +819,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				    try
 				    {
 				        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
-				        pageInvoker = pageInvoker.getDecoratedPageInvoker(templateController);
+				        pageInvoker = pageInvoker.getDecoratedPageInvoker(templateController, deliveryContext);
 				        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);
 				        pageInvoker.deliverPage();
 				    }

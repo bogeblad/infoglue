@@ -229,7 +229,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	{
 		if(this.siteNodeVersionVO != null && this.siteNodeVersionVO.getIsProtected().intValue() == 1)
 		{
-			System.out.println("Let's check access rights so they are not null...");
 			InterceptionPointVO ipReadVO = InterceptionPointController.getController().getInterceptionPointVOWithName("SiteNodeVersion.Read", db);
 			InterceptionPointVO ipWriteVO = InterceptionPointController.getController().getInterceptionPointVOWithName("SiteNodeVersion.Write", db);
 			if(ipReadVO != null && ipWriteVO != null)
@@ -238,7 +237,6 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 				List accessRightListWrite = AccessRightController.getController().getAccessRightListOnlyReadOnly(ipWriteVO.getId(), "" + this.siteNodeVersionVO.getId(), db);
 				if((accessRightListRead == null || accessRightListRead.size() == 0) && (accessRightListWrite == null || accessRightListWrite.size() == 0))
 				{
-					System.out.println("Removing isProtected as there are no access rights");
 					SiteNodeVersion sn = SiteNodeVersionController.getController().getSiteNodeVersionWithId(this.siteNodeVersionVO.getId(), db);
 					if(sn != null)
 						sn.setIsProtected(SiteNodeVersionVO.INHERITED);

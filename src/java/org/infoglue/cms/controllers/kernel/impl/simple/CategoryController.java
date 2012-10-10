@@ -302,7 +302,7 @@ public class CategoryController extends BaseController
 		List<CategoryVO> categories = (List<CategoryVO>)CacheController.getCachedObjectFromAdvancedCache("categoriesCache", categoriesKey);
 		if(categories != null)
 		{
-			System.out.println("There was an cached categories:" + categories);
+			logger.info("There was an cached categories:" + categories);
 		}
 		else
 		{
@@ -341,7 +341,7 @@ public class CategoryController extends BaseController
 		List categories = (List)CacheController.getCachedObjectFromAdvancedCache("categoriesCache", categoriesKey);
 		if(categories != null)
 		{
-			System.out.println("There was an cached categories:" + categories);
+			logger.info("There was an cached categories:" + categories);
 		}
 		else
 		{
@@ -378,7 +378,7 @@ public class CategoryController extends BaseController
 		List categories = (List)CacheController.getCachedObjectFromAdvancedCache("categoriesCache", categoriesKey);
 		if(categories != null)
 		{
-			System.out.println("There was an cached categories:" + categories);
+			logger.info("There was an cached categories:" + categories);
 		}
 		else
 		{

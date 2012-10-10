@@ -118,7 +118,7 @@ public abstract class PageInvoker
 	 * Makes it possible to have an alternative to the ordinary delivery optimized class.
 	 */
 	
-	public abstract PageInvoker getDecoratedPageInvoker(TemplateController templateController) throws SystemException;
+	public abstract PageInvoker getDecoratedPageInvoker(TemplateController templateController, DeliveryContext deliveryContext) throws SystemException;
 	
 	/**
 	 * The default initializer for PageInvokers. 

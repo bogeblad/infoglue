@@ -106,19 +106,15 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 			    
 		    Integer contentId = new Integer(extraParameters);
 			ContentVO contentVO = ContentControllerProxy.getController().getContentVOWithId(contentId);
-			t.printElapsedTime("Access 1");
 			
 			if(!contentVO.getCreatorName().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 			{
 				if(ContentControllerProxy.getController().getIsContentProtected(contentId) && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.ChangeAccessRights", contentId.toString()))
 				{
-					t.printElapsedTime("Access 2");
 					InterceptionPointVO changeInterceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.ChangeAccessRights");
 					InterceptionPointVO readInterceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.Read");
-					t.printElapsedTime("Access 3");
 					List changeAccessRightVOList = AccessRightController.getController().getAccessRightVOListOnly(changeInterceptionPointVO.getId(), "" + contentId);
 					List readAccessRightVOList = AccessRightController.getController().getAccessRightVOListOnly(readInterceptionPointVO.getId(), "" + contentId);
-					t.printElapsedTime("Access 4");
 					logger.info("changeAccessRightVOList:" + changeAccessRightVOList.size());
 					logger.info("readAccessRightVOList:" + readAccessRightVOList.size());
 					if(changeAccessRightVOList.size() > 0 && readAccessRightVOList.size() > 0)
@@ -136,7 +132,6 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 			if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 			{
 				boolean isSiteNodeVersionProtected = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getIsSiteNodeVersionProtected(siteNodeVersionVO.getId());
-				logger.info("isSiteNodeVersionProtected:" + isSiteNodeVersionProtected);
 				Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
 				if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.ChangeAccessRights", siteNodeVersionId.toString()))
 				{
@@ -154,17 +149,11 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 		
 		ceb.throwIfNotEmpty();
 		
-		//t.printElapsedTime("Access 5");
-
 		this.interceptionPointVOList = InterceptionPointController.getController().getInterceptionPointVOList(interceptionPointCategory);
-		//t.printElapsedTime("Access 6");
 		this.roleList = RoleControllerProxy.getController().getAllRoles();
-		//t.printElapsedTime("Access 7");
 		this.groupList = GroupControllerProxy.getController().getAllGroups();
-		//t.printElapsedTime("Access 8");
 		
 		this.accessRightsUserRows = AccessRightController.getController().getAccessRightsUserRows(interceptionPointCategory, extraParameters);
-		//t.printElapsedTime("Access 9");
 		
 		Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);
@@ -178,14 +167,12 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
     			Integer accessRightId = getAccessRightId(interceptionPointVO.getId(), getExtraParameters(), db);
     			//Integer[] accessRightIds = getAccessRightIds(interceptionPointVO.getId(), getExtraParameters(), db);
     			
-    			//System.out.println("Adding:" + "" + interceptionPointVO.getId() + "_" + getExtraParameters() + "=" + accessRightId );
     			accessRightHasAccessMap.put("" + interceptionPointVO.getId() + "_" + getExtraParameters(), accessRightId);
     			
     			for(InfoGlueRole role : (List<InfoGlueRole>)this.roleList)
     			{
         			Boolean hasAccess = getHasAccessRight(interceptionPointVO.getId(), getExtraParameters(), role.getName(), db);
         			accessRightHasAccessMap.put("" + interceptionPointVO.getId() + "_" + getExtraParameters() + "_" + role.getName(), hasAccess);
-        			//System.out.println("" + interceptionPointVO.getId() + "_" + getExtraParameters() + "_" + role.getName() + "=" + hasAccess);
     			}
     			
     			/*

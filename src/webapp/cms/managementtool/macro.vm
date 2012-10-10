@@ -3415,7 +3415,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 						    <tr>
 						    	<td colspan="2" bgcolor="white" valign="top">
 						    		#if($contentVersionId > -1)
-									$ui.getString("tool.contenttool.relatedContents") (<a href="javascript:if(top.openInlineDiv) top.openInlineDiv('ViewContentRelationEditor!V3.action?updateAction=ViewContentRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}', 600, 800, true, true, 'Relation editor'); else openRelationEditor();"><strong>Edit relations</strong></a>)
+										$ui.getString("tool.contenttool.relatedContents") (<a href="javascript:if(top.openInlineDiv) top.openInlineDiv('ViewContentRelationEditor!V3.action?updateAction=ViewContentRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}', 600, 800, true, true, 'Relation editor'); else openRelationEditor();"><strong>Edit relations</strong></a>)
 									<hr noshade size="1">
 									#set($qualifyers = $this.getContentRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
 									<table border="0" id="${attribute.name}RelationTable">
@@ -3477,7 +3477,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 						    <tr>
 						    	<td colspan="2" bgcolor="white" valign="top">
 									#if($contentVersionId > -1)
-									$ui.getString("tool.contenttool.relatedPages") (<a href="javascript:if(top.openInlineDiv) top.openInlineDiv('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}', 600, 800, true, true, 'Relation editor'); else openRelationEditor('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
+										$ui.getString("tool.contenttool.relatedPages") (<a href="javascript:if(top.openInlineDiv) top.openInlineDiv('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}', 600, 800, true, true, 'Relation editor'); else openRelationEditor('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerV3.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
 									<hr noshade size="1">
 									#set($qualifyers = $this.getSiteNodeRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
 									<table border="0" id="${attribute.name}RelationTable">

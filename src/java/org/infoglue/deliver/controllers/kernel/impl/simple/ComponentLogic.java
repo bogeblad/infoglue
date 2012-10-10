@@ -2122,9 +2122,10 @@ public class ComponentLogic
 		    }
 			else
 			{
-				this.templateController.getDeliveryContext().addDebugInformation("contentVersionIdList: " + contentVersionIdList + ":" + contentVersionIdList.size());
 				if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
-					logger.warn("DEBUG: Going to store a NullObject in componentPropertyCache for " + propertyName + ". Why: \n" + this.templateController.getDeliveryContext().getDebugInformation());
+					this.templateController.getDeliveryContext().addDebugInformation("contentVersionIdList: " + contentVersionIdList + " / property: " + property);
+				if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
+					this.templateController.getDeliveryContext().addDebugInformation("DEBUG: Going to store a NullObject in componentPropertyCache for " + propertyName + ". key:" + key);
 								
 				if(property == null && contentVersionIdList.size() > 0)
 				{
@@ -2154,11 +2155,6 @@ public class ComponentLogic
 				    groups.add("siteNode_" + siteNodeId);
 
 //				  	TODO - TEST - NOT SAFE
-				    if(key.indexOf("MiniArticleShortcuts") > -1 || key.indexOf("MiniArticleShortcuts") > -1)
-				    	logger.warn("Storing NULL 1 with key: " + key);
-				    
-				    if(key.indexOf("MiniArticleShortcuts") > -1 || key.indexOf("MiniArticleShortcuts") > -1)
-				    	logger.warn("Storing NULL:" + templateController.getDeliveryContext().getDebugInformation());
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key.toString(), new NullObject(), groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
 				}
@@ -2166,9 +2162,6 @@ public class ComponentLogic
 				else
 				{
 //					TODO - TEST - NOT SAFE
-				    if(key.indexOf("MiniArticleShortcuts") > -1 || key.indexOf("MiniArticleShortcuts") > -1)
-				    	logger.warn("Storing NULL 2 with key: " + key);
-				    	//logger.warn("Storing NULL:" + templateController.getDeliveryContext().getDebugInformation());
 					CacheController.cacheObjectInAdvancedCache("componentPropertyCache", key.toString(), new NullObject(), new String[]{}, false);
 				}
 				

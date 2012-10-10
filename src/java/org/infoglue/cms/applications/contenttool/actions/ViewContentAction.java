@@ -98,7 +98,7 @@ public class ViewContentAction extends InfoGlueAbstractAction
 	public void repairBrokenProtection() throws SystemException, Bug 
 	{
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(getContentId());
-		System.out.println("repairBrokenProtection...");
+		logger.info("repairBrokenProtection...");
 		if(contentVO != null && contentVO.getIsProtected().intValue() == 1)
 		{
 			Database db = CastorDatabaseService.getDatabase();
@@ -107,7 +107,7 @@ public class ViewContentAction extends InfoGlueAbstractAction
 			{
 				beginTransaction(db);
 
-				System.out.println("Let's check access rights so they are not null CONTENT...");
+				logger.info("Let's check access rights so they are not null CONTENT...");
 				InterceptionPointVO ipReadVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.Read", db);
 				InterceptionPointVO ipWriteVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Content.Write", db);
 				if(ipReadVO != null && ipWriteVO != null)
@@ -116,7 +116,7 @@ public class ViewContentAction extends InfoGlueAbstractAction
 					List accessRightListWrite = AccessRightController.getController().getAccessRightListOnlyReadOnly(ipWriteVO.getId(), "" + contentVO.getId(), db);
 					if((accessRightListRead == null || accessRightListRead.size() == 0) && (accessRightListWrite == null || accessRightListWrite.size() == 0))
 					{
-						System.out.println("Removing isProtected as there are no access rights");
+						logger.info("Removing isProtected as there are no access rights");
 						Content c = ContentController.getContentController().getContentWithId(contentVO.getId(), db);
 						if(c != null)
 							c.setIsProtected(ContentVO.INHERITED);
@@ -212,9 +212,7 @@ public class ViewContentAction extends InfoGlueAbstractAction
 	{
 		try
         {
-			System.out.println("1");
 	        ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());
-			System.out.println("2");
 	        
 	        if(contentVO.getRepositoryId() != null && !hasAccessTo("Repository.Read", "" + contentVO.getRepositoryId()))
 	        {
@@ -240,18 +238,15 @@ public class ViewContentAction extends InfoGlueAbstractAction
         }
         catch(ConstraintException ce)
         {
-			System.out.println("3");
     		repairBrokenProtection();
             throw ce;
         }
         catch(Exception e) 
         {
-			System.out.println("4");
             e.printStackTrace();
         }
         catch(Throwable e) 
         {
-			System.out.println("5");
             e.printStackTrace();
         }
         

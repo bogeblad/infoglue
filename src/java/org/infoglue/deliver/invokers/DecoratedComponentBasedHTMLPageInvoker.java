@@ -1563,7 +1563,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 						}
 						
 						String exactMatchOptionName = getExactMatch(componentProperty, options);
-						//System.out.println("exactMatchOptionName:" + exactMatchOptionName);
 						
 						//Now let's check for smaller matches
 						while(optionsIterator.hasNext())

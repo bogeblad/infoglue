@@ -402,9 +402,7 @@ public abstract class ViewRelationEditorAction extends InfoGlueAbstractAction
 	
 	public void updateAttributeValue() throws Exception
 	{
-		ContentVersionController.getContentVersionController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML, this.getInfoGluePrincipal());		
+		ContentVersionController.getContentVersionController().updateAttributeValue(getEntityId(), getAttributeName(), this.qualifyerXML, this.getInfoGluePrincipal(), true);
 	}
-
-
 
 }

@@ -175,7 +175,7 @@ public class InfoGluePrincipalControllerProxy extends BaseController
 		if(infoGluePrincipal == null || propertyName == null)
 			return null;
 	
-	    Collection userPropertiesList = UserPropertiesController.getController().getUserPropertiesList(infoGluePrincipal.getName(), languageId, db, true);
+		Collection userPropertiesList = UserPropertiesController.getController().getUserPropertiesList(infoGluePrincipal.getName(), languageId, db, true);
 		Iterator userPropertiesListIterator = userPropertiesList.iterator();
 		while(userPropertiesListIterator.hasNext())
 		{

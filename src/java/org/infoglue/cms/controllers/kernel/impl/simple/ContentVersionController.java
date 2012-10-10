@@ -797,12 +797,10 @@ public class ContentVersionController extends BaseController
     
 	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Integer languageId, Database db) throws SystemException, Bug, Exception
 	{
-		//Thread.dumpStack();
 		String contentVersionKey = "contentVersionVO_" + contentId + "_" + languageId + "_active";
 		ContentVersionVO contentVersionVO = (ContentVersionVO)CacheController.getCachedObjectFromAdvancedCache("contentVersionCache", contentVersionKey);
 		if(contentVersionVO != null)
 		{
-			//System.out.println("There was an cached contentVersionVO:" + contentVersionVO.getContentVersionId());
 			//logger.info("There was an cached contentVersionVO:" + contentVersionVO.getContentVersionId());
 		}
 		else
@@ -1488,8 +1486,13 @@ public class ContentVersionController extends BaseController
     {
     	return update(contentId, languageId, contentVersionVO, null);
     }        
-	
+
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal) throws ConstraintException, SystemException
+    {
+    	return update(contentId, languageId, contentVersionVO, principal, false);
+    }
+    
+    public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal, boolean skipValidate) throws ConstraintException, SystemException
     {
         ContentVersionVO updatedContentVersionVO;
 		
@@ -1502,7 +1505,9 @@ public class ContentVersionController extends BaseController
         	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
         	ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
         	ConstraintExceptionBuffer ceb = contentVersionVO.validateAdvanced(contentTypeDefinitionVO);
-            ceb.throwIfNotEmpty();
+            logger.info("Skipping validate:" + skipValidate);
+        	if(!skipValidate)
+            	ceb.throwIfNotEmpty();
             
             ContentVersion contentVersion = null;
             
@@ -2098,6 +2103,16 @@ public class ContentVersionController extends BaseController
 	 
 	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal) throws SystemException, Bug
 	{
+		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, false);
+	}
+
+	/**
+	 * This method fetches a value from the xml that is the contentVersions Value. If the 
+	 * contentVersioVO is null the contentVersion has not been created yet and no values are present.
+	 */
+	 
+	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, boolean skipValidate) throws SystemException, Bug
+	{
 		ContentVersionVO contentVersionVO = getContentVersionVOWithId(contentVersionId);
 		
 		if(contentVersionVO != null)
@@ -2159,7 +2174,7 @@ public class ContentVersionController extends BaseController
 				logger.info("sb:" + sb);
 				contentVersionVO.setVersionValue(sb.toString());
 				contentVersionVO.setVersionModifier(infogluePrincipal.getName());
-				update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infogluePrincipal);
+				update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infogluePrincipal, skipValidate);
 			}
 			catch(Exception e)
 			{

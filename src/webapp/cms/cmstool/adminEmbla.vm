@@ -299,6 +299,12 @@
 		<div id="messages" style="border: 1px solid #ccc; height: 400px; overflow: auto;"></div>
 		<div id="messageInput" style="margin-top: 4px; padding: 2px; border: 1px solid #ccc; background-color: #dff0fc;"><input type="text" style="width: 80%;" id="chatMessage" name="chatMessage"/> <input type="button" onclick="sendMessage();" value="Send"/></div>
 	</div>
-
+	
+	<div id="popupAlertMessageDivContainer">
+		<div id="popupAlertMessageDiv">
+			<div class="closeAlertMessageButton" onclick="top.hideNotification()"></div>
+			<p></p>
+	    </div>
+	</div>
 </body>
 </html> 

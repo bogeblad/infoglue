@@ -88,7 +88,6 @@
 	<classpathentry kind="lib" path="lib/build/jakarta-oro-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/build/jakarta-regexp-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/build/jtf-0.1.jar"/>
-	<classpathentry kind="lib" path="lib/build/lucene-core-2.3.2.jar"/>
 	<classpathentry kind="lib" path="lib/build/org-netbeans-lib-cvsclient.jar"/>
 	<classpathentry kind="lib" path="lib/build/oro-2.0.8.jar"/>
 	<classpathentry kind="lib" path="lib/build/rome-1.0.jar"/>
@@ -121,5 +120,7 @@
 	<classpathentry kind="lib" path="lib/jdbc/commons-pool-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/jdbc/ojdbc14.jar"/>
 	<classpathentry kind="lib" path="lib/build/imgscalr-lib-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/build/lucene-core-3.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/core/gson-1.7.1.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

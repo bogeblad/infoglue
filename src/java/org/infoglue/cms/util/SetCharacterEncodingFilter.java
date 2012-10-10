@@ -100,13 +100,14 @@ public class SetCharacterEncodingFilter implements Filter
         {
             try
             {
-	            int startIndex = referer.indexOf("&languageId=");
-	            if(startIndex > -1)
+	            int startIndexLanguageId = referer.indexOf("&languageId=");
+	            int startIndexPortletLanguageId = referer.indexOf("_ig_languageId/");
+	            if(startIndexLanguageId > -1)
 	            {
-	                int endIndex = referer.indexOf("&", startIndex + 12);
-	                String languageId = referer.substring(startIndex + 12);
+	                int endIndex = referer.indexOf("&", startIndexLanguageId + 12);
+	                String languageId = referer.substring(startIndexLanguageId + 12);
 	                if(endIndex != -1)
-	                	languageId = referer.substring(startIndex + 12, endIndex);
+	                	languageId = referer.substring(startIndexLanguageId + 12, endIndex);
 		            
 	                if(languageId != null && !languageId.equals(""))
 	                {
@@ -114,7 +115,24 @@ public class SetCharacterEncodingFilter implements Filter
 	
 			            if(logger.isInfoEnabled())
 			            	logger.info("encoding decorated:" + languageVO.getCharset());
+
+			            request.setCharacterEncoding(languageVO.getCharset());
+	                }
+	            }
+	            else if(startIndexPortletLanguageId > -1)
+	            {
+	                int endIndex = referer.indexOf("/", startIndexPortletLanguageId + 15);
+	                String languageId = referer.substring(startIndexPortletLanguageId + 15);
+	                if(endIndex != -1)
+	                	languageId = referer.substring(startIndexPortletLanguageId + 15, endIndex);
+		            
+	                if(languageId != null && !languageId.equals(""))
+	                {
+		                LanguageVO languageVO = LanguageController.getController().getLanguageVOWithId(new Integer(languageId));
 	
+			            if(logger.isInfoEnabled())
+			            	logger.info("encoding decorated:" + languageVO.getCharset());
+			            
 			            request.setCharacterEncoding(languageVO.getCharset());
 	                }
 	            }
@@ -158,7 +176,7 @@ public class SetCharacterEncodingFilter implements Filter
         	else
         		this.encoding = "UTF-8";
         	
-            System.out.println("Defaulting to standard.");
+            System.out.println("Defaulting to standard: " + this.encoding);
         }
         
         defaultEncoding = this.encoding;

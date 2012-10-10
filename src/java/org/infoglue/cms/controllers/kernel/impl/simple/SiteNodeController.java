@@ -1311,7 +1311,7 @@ public class SiteNodeController extends BaseController
     		if(siteNodeVO != null)
     			CacheController.cacheObject("repositoryRootNodesCache", key, siteNodeVO);
     		else
-    			System.out.println("repositoryId:" + repositoryId + " had no root");
+    			logger.error("repositoryId:" + repositoryId + " had no root");
     		
 			commitTransaction(db);
         }

@@ -251,7 +251,7 @@ public class CacheController extends Thread
 		logger.info("snVOList:" + snVOList.size() + " fetched and precached");
 
 		List<SiteNodeVersionVO> snvVOList = SiteNodeController.getController().getSiteNodeVersionVOList(false, 0, 10000);
-		logger.infoSystem.out.println("snvVOList:" + snvVOList.size() + " fetched and precached");
+		logger.info("snvVOList:" + snvVOList.size() + " fetched and precached");
 
 		List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 10000);
 		logger.info("cList:" + cList.size() + " fetched and precached");

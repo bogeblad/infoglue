@@ -57,6 +57,7 @@ import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.ComponentBinding;
 import org.infoglue.deliver.applications.databeans.ComponentRestriction;
+import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.applications.databeans.Slot;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ComponentLogic;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
@@ -93,8 +94,11 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	 * Makes it possible to have an alternative to the ordinary delivery optimized class.
 	 */
 	
-    public PageInvoker getDecoratedPageInvoker(TemplateController templateController) throws SystemException
+    public PageInvoker getDecoratedPageInvoker(TemplateController templateController, DeliveryContext deliveryContext) throws SystemException
 	{
+    	if(templateController.getIsEditOnSightDisabled() && !deliveryContext.getShowSimple())
+    		return this;
+    	
     	String repositoryDecoratedPageInvoker = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(templateController.getSiteNode().getRepositoryId(), "decoratedPageInvoker");
     	if(repositoryDecoratedPageInvoker != null && !repositoryDecoratedPageInvoker.equals(""))
     	{

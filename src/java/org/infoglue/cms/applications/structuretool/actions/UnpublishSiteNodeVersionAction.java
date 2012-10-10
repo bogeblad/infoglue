@@ -122,8 +122,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 
 			AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 			
-			System.out.println("this.siteNodeId:" + this.siteNodeId);
-			System.out.println("this.siteNodeVersionId:" + this.siteNodeVersionId);
 			Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
 			if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.SubmitToPublish", protectedSiteNodeVersionId.toString()))
 				ceb.add(new AccessConstraintException("SiteNodeVersion.siteNodeId", "1005"));

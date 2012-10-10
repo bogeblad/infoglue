@@ -2338,8 +2338,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 		   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 	    	}
 
-	    	//System.out.println("SQL:" + SQL);
-	    	//System.out.println("siteNodeId:" + siteNodeId);
 	    	//logger.info("SQL:" + SQL);
 	    	//logger.info("siteNodeId:" + siteNodeId);
 	    	OQLQuery oql = db.getOQLQuery(SQL.toString());

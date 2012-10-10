@@ -62,9 +62,6 @@ public class ComponentDeliveryContext implements UsageListener
 	    //this.deliveryContext = deliveryContext;
 	    //this.infoGlueComponent = infoGlueComponent;
  		this.componentKey = pageKey + "_" + infoGlueComponent.getId();
-		//System.out.println("ComponentDeliveryContext:" + componentKey + ":" + Thread.currentThread().getId());
-		//if(componentKey.indexOf("13471_7") > -1)
-		//	Thread.dumpStack();
 	}
 	
     public void addUsedContent(String usedContent)

@@ -118,6 +118,9 @@ public class ViewPageFilter implements Filter
         long end, start = System.currentTimeMillis();
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
+
+        if(httpRequest.getParameter("igEncodingTest") != null && !httpRequest.getParameter("igEncodingTest").equals(""))
+        	logger.warn("httpRequest:" + httpRequest.getParameter("name"));
         
 		if(!CmsPropertyHandler.getIsValidSetup() && (httpRequest.getRequestURI().indexOf("Install") == -1 && httpRequest.getRequestURI().indexOf("/script") == -1 && httpRequest.getRequestURI().indexOf("/css") == -1 && httpRequest.getRequestURI().indexOf("/images") == -1))
 			httpResponse.sendRedirect("" + httpRequest.getContextPath() + "/Install!input.action");

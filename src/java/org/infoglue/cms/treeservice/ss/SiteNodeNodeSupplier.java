@@ -261,29 +261,13 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 				String useAccessRightsOnStructureTreeString = CmsPropertyHandler.getUseAccessRightsOnStructureTree();
 				if(useAccessRightsOnStructureTreeString != null && useAccessRightsOnStructureTreeString.equalsIgnoreCase("true"))
 					hasUserPageAccess = getHasUserPageAccess(this.infogluePrincipal, vo.getId());
-				/*
-				System.out.println("vo:" + vo.getName());
-				System.out.println("vo:" + vo.getIsHidden());
-				System.out.println("vo:" + vo.getStateId());
-				System.out.println("vo:" + vo.getIsProtected());
-				//Object isHiddenObject = vo.getExtraProperties().get("isHidden");
-				System.out.println("vo.getExtraProperties():" + vo.getExtraProperties());
-				System.out.println("vo.getExtraProperties():" + vo.getExtraProperties().get("isHidden"));
-				*/
 				
 				if(hasUserPageAccess)
 				{
 					BaseNode node =  new SiteNodeNodeImpl();
 					node.setId(vo.getId());
 					node.setTitle(vo.getName());
-					/*
-					if(isHiddenObject == null)
-						node.getParameters().put("isHidden", "false");
-					else
-						node.getParameters().put("isHidden", "" + isHiddenObject);
-					*/
 					
-					//logger.info("latestSiteNodeVO.getIsHidden(): " + vo.getIsHidden() + " on " + vo.getId());
 					if(vo.getIsHidden() != null)
 						node.getParameters().put("isHidden", "" + vo.getIsHidden());
 
@@ -293,17 +277,6 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 					if(vo.getIsProtected() != null && vo.getIsProtected().intValue() == SiteNodeVersionVO.YES.intValue())
 						node.getParameters().put("isProtected", "true");
 
-					/*
-					SiteNodeVersionVO latestSiteNodeVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, vo.getId());
-					if(latestSiteNodeVO != null)
-					{
-						if(latestSiteNodeVO.getIsProtected().intValue() == SiteNodeVersionVO.YES.intValue())
-							node.getParameters().put("isProtected", "true");
-	
-						if(!latestSiteNodeVO.getStateId().equals(SiteNodeVersionVO.PUBLISHED_STATE))
-							node.getParameters().put("stateId", "" + latestSiteNodeVO.getStateId());							
-					}
-					*/
 					if (vo.getIsBranch().booleanValue())
 					{
 						node.setContainer(true);
@@ -316,39 +289,7 @@ public class SiteNodeNodeSupplier extends BaseNodeSupplier
 						cacheLeafs.add(node);				
 					}
 				}	
-				
-				//Checks if the current node has the correct sortOrder
-				//logger.info("vo.getSortOrder():" + vo.getSortOrder() + "=" + expectedSortOrder);
-				/*
-				if(!vo.getSortOrder().equals(expectedSortOrder))
-				{
-					//logger.info("Changing sortOrder from:" + vo.getSortOrder() + " to " + expectedSortOrder);
-					SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionReadOnly(db, vo.getId());
-		        	if(logger.isInfoEnabled())
-		        		timer.printElapsedTime("getLatestActiveSiteNodeVersion took");
-					if(latestSiteNodeVersion != null)
-					{
-						latestSiteNodeVersion.setSortOrder(expectedSortOrder);
-						if(isHiddenObject != null)
-						{
-							//logger.info("Setting hidden:" + isHiddenObject + " on " + latestSiteNodeVersion.getId());
-							latestSiteNodeVersion.setIsHidden(new Boolean("" + isHiddenObject));
-						}
-					}
-				}
-				else if(vo.getIsHidden() == null && isHiddenObject != null)
-				{
-					SiteNodeVersion latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionReadOnly(db, vo.getId());
-					if(logger.isInfoEnabled())
-			        	timer.printElapsedTime("getLatestActiveSiteNodeVersion 2 took");
-					if(latestSiteNodeVersion != null)
-					{
-						//logger.info("Setting hidden:" + isHiddenObject + " on " + latestSiteNodeVersion.getId());
-						latestSiteNodeVersion.setIsHidden(new Boolean("" + isHiddenObject));
-					}
-				}
-				*/
-				
+								
 				expectedSortOrder++;
 			}
 			

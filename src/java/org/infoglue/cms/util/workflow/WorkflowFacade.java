@@ -592,7 +592,7 @@ public class WorkflowFacade
 		List<WorkflowVO> workflowVOs = new ArrayList<WorkflowVO>();
 
 		List<WorkflowVO> activeWorkflows = findActiveWorkflows();
-		//System.out.println("activeWorkflows:" + activeWorkflows.size());
+		//logger.info("activeWorkflows:" + activeWorkflows.size());
 		if(maxNumberOfWorkflows != null && activeWorkflows.size() > maxNumberOfWorkflows)
 			activeWorkflows = activeWorkflows.subList(0, maxNumberOfWorkflows);
 		Iterator activeWorkflowsIterator = activeWorkflows.iterator();

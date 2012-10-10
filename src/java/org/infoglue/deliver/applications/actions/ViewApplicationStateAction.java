@@ -1032,9 +1032,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
 		{
 			logger.info("Going to search all");
 			this.docs = LuceneController.getController().queryDocuments(searchField, searchString, maxHits);
-			System.out.println("Docs:" + this.docs.size());
-			//this.docs.addAll(LuceneController.getController().queryDocuments(new Term(searchField, searchString), maxHits));
-			//System.out.println("Docs2:" + this.docs.size());
 			logger.info("Searched docs in ViewApplicationState:" + docs.size());
     		
 	    	statusMessage = "Reindex complete.";

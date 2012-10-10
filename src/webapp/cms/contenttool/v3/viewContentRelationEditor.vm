@@ -94,6 +94,21 @@
 		{
 		   	qualifyerXML = createXML();
 
+	  		if(window.opener && window.opener.$callbackMethod)
+	  		{
+	  			//alert("Method existed");
+	  			window.opener.$callbackMethod(qualifyerXML, paths);
+	  			window.close();
+	  		}
+	  		else
+	  		{
+	  			if(top.getDataListenerWindow && top.getDataListenerWindow().$callbackMethod)
+		  			top.getDataListenerWindow().$callbackMethod(qualifyerXML, paths);
+		  		
+		  		if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+	  		}
+
+			/*
 		    var url = "$updateAction?updateAction=$updateAction&repositoryId=$repositoryId&entityName=$entityName&entityId=$entityId&attributeName=$attributeName&qualifyerXML=" + escape(qualifyerXML);
 
 			jQuery.get(url, function(data, status, request) {
@@ -116,6 +131,7 @@
 			  		}
 			  	}
 			});
+			*/
 			
 			//alert("Make sure to refresh the content view afterwards - otherwise it can render inconsistent.");
 			//document.location.href = url;

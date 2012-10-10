@@ -703,7 +703,8 @@ public class SearchController extends BaseController
 				if(digitalAssetIdString != null)
 				{
 					DigitalAssetVO digitalAssetVO = DigitalAssetController.getController().getSmallDigitalAssetVOWithId(Integer.parseInt(digitalAssetIdString), db);
-					System.out.println("document:" + document);
+					if(logger.isInfoEnabled())
+						logger.info("document:" + document);
 					digitalAssetVO.setContentPath(document.get("path"));
 					matchingAssets.add(digitalAssetVO);
 				}

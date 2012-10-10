@@ -233,7 +233,8 @@ public class AccessRightController extends BaseController
 				*/
 				//accessRightVOList.add(aru.getValueObject());
 			}
-
+			//t.printElapsedTime("accessRightsMap:" + accessRightsMap.size());
+			
 			List<AccessRightVO> duplicateAccessRightVOList = new ArrayList<AccessRightVO>();
 			List<AccessRightVO> duplicateNonHarmfulAccessRightVOList = new ArrayList<AccessRightVO>();
 			List<AccessRightVO> duplicateAutoMergableAccessRightVOList = new ArrayList<AccessRightVO>();

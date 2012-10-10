@@ -172,13 +172,6 @@ function openUrlInWorkArea(url, tabLabel, targetTab, tabLabelPrefix, toolName)
 	{
 		$("#structureWorkIframe").load(function() {
 
-			//alert("Doc:" + $("#structureWorkIframe").get(0).contentDocument.location.href);
-			$($("#structureWorkIframe").get(0).contentDocument).mouseup(function(){
-				//alert("Dropped component maybe");
-				//emptyDragHTML();
-				$("#menuOverlayDiv").hide();
-			});
-
 			//alert("Just loaded:" + $("#structureWorkIframe").get(0).contentDocument.location.href);
 			try
 			{

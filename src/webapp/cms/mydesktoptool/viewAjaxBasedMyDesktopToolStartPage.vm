@@ -21,7 +21,7 @@
 #set( $lvColor = "yellow")
 
 <script type="text/javascript" src="script/jquery-latest/jquery.min.js"></script>
-<script type="text/javascript" src="script/jqueryplugins/ui-latest/js/jquery-ui-latest.js"></script>
+<script type="text/javascript" src="script/jqueryplugins-latest/ui/js/jquery-ui-latest.js"></script>
 <script>
   $(document).ready(function(){
     //$("#example").accordion({fillSpace: true});

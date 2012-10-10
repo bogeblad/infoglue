@@ -2036,6 +2036,47 @@ public class ContentController extends BaseController
         return languages;
     }        
 
+    public List getRepositoryLanguagesEx(Integer contentId) throws ConstraintException, SystemException
+    {
+        Database db = CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        List languages = null;
+        
+        beginTransaction(db);
+
+        try
+        {
+        	Content content = getContentWithId(contentId, db);
+    		if(content != null)
+    		{
+    			Repository repository = content.getRepository();
+    			if(repository != null)
+    			{
+    				 languages = LanguageController.getController().getLanguageVOList(repository.getId(), db);
+            
+    				 //If any of the validations or setMethods reported an error, we throw them up now before create.
+    				 ceb.throwIfNotEmpty();
+            
+    				 commitTransaction(db);
+    			}
+    		}
+        }
+        catch(ConstraintException ce)
+        {
+            logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+            rollbackTransaction(db);
+            throw ce;
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return languages;
+    }       
     
 	/**
 	 * This method returns the bound contents based on a servicebinding.

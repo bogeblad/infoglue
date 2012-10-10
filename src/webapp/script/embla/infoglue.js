@@ -451,6 +451,7 @@ function CheckUncheck(row,chkbox)
 //This function opens up a new location in a 
 //restriced popup 
 //-----------------------------------------------
+
 function openPopup(url, name, details)
 {
 	newWin=window.open(url, name, details);
@@ -461,6 +462,7 @@ function openPopup(url, name, details)
 //This function opens up a new location in a 
 //restriced popup 
 //-----------------------------------------------
+
 function openPopupWithOptionalParameter(url, name, details, question, parameter)
 {
 	if(confirm(question))
@@ -469,4 +471,30 @@ function openPopupWithOptionalParameter(url, name, details, question, parameter)
 		newWin=window.open(url, name, details);
 	
 	newWin.focus();
+}
+
+//--------------------------------------------------------
+//Display a notification div when something has happened
+//i.e. a content has been saved or something else has 
+//happened that the user needs to be notified about.
+//--------------------------------------------------------
+
+function displayNotification(aMessage)
+{
+	displayNotification(aMessage, "");
+}
+
+function displayNotification(aMessage, aClassName)
+{
+	$("#popupAlertMessageDiv p").html(aMessage);
+	$("#popupAlertMessageDiv").attr("class", aClassName);
+	$("#popupAlertMessageDiv").css("margin-top", "0");
+	setTimeout(function() {
+		$("#popupAlertMessageDiv").css("margin-top", "45px");
+	}, 4000);
+}
+
+function hideNotification()
+{
+	$("#popupAlertMessageDiv").css("margin-top", "45px");
 }

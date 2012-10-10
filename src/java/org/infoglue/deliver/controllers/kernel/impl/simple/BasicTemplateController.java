@@ -2151,6 +2151,7 @@ public class BasicTemplateController implements TemplateController
 			{
 				String unparsedAttributeValue = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, languageId, attributeName, this.siteNodeId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal, false);
 				logger.info("Found unparsedAttributeValue:" + unparsedAttributeValue);
+				getDeliveryContext().addDebugInformation("DEBUG Found unparsedAttributeValue:" + unparsedAttributeValue);
 				
 				templateLogicContext.put("inlineContentId", contentId);
 				

@@ -736,7 +736,7 @@ WebFXTreeItem.prototype.toString = function (nItem, nItemCount) {
 		classInfo = "finishedTreeItem";
 		stateInfo = " (finished)";
 		if(languageCode == "sv")
-			stateInfo = " (slutförd)";
+			stateInfo = " (slutfï¿½rd)";
 	}
 	else if(this.stateId == "2"){ 
 		classInfo = "publishTreeItem";

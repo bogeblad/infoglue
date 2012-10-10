@@ -148,4 +148,9 @@ public class ComponentPropertyValueTag extends ComponentLogicTag
         this.parseToMap = parseToMap;
     }
 
+    public void setUseLanguageFallback(boolean useLanguageFallback)
+    {
+    	this.useLanguageFallback = useLanguageFallback;
+    }
+
 }

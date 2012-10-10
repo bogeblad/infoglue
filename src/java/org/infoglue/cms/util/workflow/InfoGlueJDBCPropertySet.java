@@ -76,10 +76,10 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 {
     private final static Logger logger = Logger.getLogger(InfoGlueJDBCPropertySet.class.getName());
 
-    private static GenericObjectPool connectionPool;
-    private static ConnectionFactory connectionFactory;
-    private static PoolableConnectionFactory poolableConnectionFactory;
-    private static PoolingDriver driver;
+    private static GenericObjectPool connectionPool = null;
+    private static ConnectionFactory connectionFactory = null;
+    private static PoolableConnectionFactory poolableConnectionFactory = null;
+    private static PoolingDriver driver = null;
 
     String colData;
     String colDate;
@@ -121,6 +121,8 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
     public Collection getKeys(String prefix, int type) throws PropertyException 
     {
+    	Timer t = new Timer();
+    	
     	//logger.info("isRecacheCall:" + isRecacheCall);
     	Map currentTypeMap = typeMap;
     	Map currentValueMap = valueMap;
@@ -134,12 +136,33 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
         try 
         {
-        	logger.info("Getting keys with prefix:" + prefix + " and type: " + type);
+        	//System.out.println("Getting keys with prefix:" + prefix + " and type: " + type);
+            logger.info("Getting keys with prefix:" + prefix + " and type: " + type);
             conn = getConnection();
-
+            //t.printElapsedTime("Connection took..");
+        	if(conn == null)
+        	{
+        		System.out.println("braking as connection was not yet ready");
+        		throw new PropertyException("Problem getting connection"); 
+        	}
+        	
             PreparedStatement ps = null;
-            String sql = "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName + " WHERE " + colItemKey + " LIKE ? AND " + colGlobalKey + " = ?";
+            //String sql = "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName + " WHERE " + colItemKey + " LIKE ? AND " + colGlobalKey + " = ?";
             
+            String sql =  "SELECT " + colItemKey + "," + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName;
+            sql += " WHERE ";
+            sql += "((" + colItemKey + " NOT LIKE 'content_%' AND ";
+        	sql += "" + colItemKey + " NOT LIKE 'principal_%' AND  ";
+        	sql += "" + colItemKey + " NOT LIKE 'repository_%_WYSIWYGConfig' AND  ";
+        	sql += "" + colItemKey + " NOT LIKE 'repository_%_StylesXML' AND  ";
+    		sql += "" + colItemKey + " NOT LIKE 'repository_%_defaultFolderContentTypeName' AND  ";
+    		sql += "" + colItemKey + " NOT LIKE 'repository_%_defaultTemplateRepository' AND  ";
+    		sql += "" + colItemKey + " NOT LIKE 'siteNode_%_enabledLanguages' AND  ";
+    		sql += "" + colItemKey + " NOT LIKE 'siteNode_%_disabledLanguages') OR  ";
+    		sql += "(" + colItemKey + " LIKE 'siteNode_%_enabledLanguages' AND string_val <> '') OR ";
+    		sql += "(" + colItemKey + " LIKE 'siteNode_%_disabledLanguages' AND string_val <> ''))  AND  ";
+    		sql += "" + colGlobalKey + " = ? ";
+			
             if(logger.isInfoEnabled())
             {
             	logger.info("app:" + CmsPropertyHandler.getApplicationName());
@@ -169,12 +192,18 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             
             if(logger.isInfoEnabled())
             	logger.info("sql:" + sql);
+            //System.out.println("sql:" + sql);
             
             if (type == 0) 
             {
+            	//System.out.println("conn:" + conn);
+            	//System.out.println("sql:" + sql);
                 ps = conn.prepareStatement(sql);
-                ps.setString(1, prefix + "%");
-                ps.setString(2, globalKey);
+                //ps.setString(1, prefix + "%");
+                //ps.setString(2, globalKey);
+                ps.setString(1, globalKey);
+            	//System.out.println("arg1:" + prefix + "%");
+                //System.out.println("arg2:" + globalKey);
             } 
             else 
             {
@@ -183,12 +212,15 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
                 ps.setString(1, prefix + "%");
                 ps.setString(2, globalKey);
                 ps.setInt(3, type);
+                //System.out.println("arg1:" + prefix + "%");
+                //System.out.println("arg2:" + globalKey);
+                //System.out.println("arg3:" + type);
             }
-
-            Timer t = new Timer();
             
             ArrayList list = new ArrayList();
             ResultSet rs = ps.executeQuery();
+            
+            //t.printElapsedTime("Executing SQL i getKeys took");
             
             int rows = 0;
             while (rs.next()) 
@@ -298,10 +330,16 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         	logger.error("Problem getting keys due to an SQL exception:" + e.getCause().getMessage(), e);
             throw new PropertyException(e.getMessage());
         } 
+        catch (Throwable tr) 
+        {
+        	tr.printStackTrace();
+        	throw new PropertyException(tr.getMessage());
+        } 
         finally 
         {
             closeConnection(conn);
             isRecacheCall = false;
+            //t.printElapsedTime("getKeys took");
         }
     }
     
@@ -323,7 +361,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     	
         try 
         {
-            conn = getConnection();
+        	conn = getConnection();
 
             String sql = "SELECT " + colItemType + " FROM " + tableName + " WHERE " + colGlobalKey + " = ? AND " + colItemKey + " = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -408,7 +446,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     
     public void remove(String key) throws PropertyException 
     {
-        Connection conn = null;
+    	Connection conn = null;
 
         try 
         {
@@ -499,9 +537,18 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
     protected Object get(int type, String key) throws PropertyException 
     {	    	
+    	if(key.indexOf("allowedAdminIP") == -1 && key.indexOf("_") == -1 && globalKey.equals("infoglue"))
+    	{
+    		//System.out.println("Returning null for key:" + key);
+    		return null;
+    	}
+ 
+    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("get key: " + key, 1);
+    	//System.out.println("valueMap:" + valueMap);
     	if(enableCache && valueMap == null && !allKeysCached)
     	{
     		//logger.info("Caching...");
+            //System.out.println("Caching keys...");
     		this.getKeys();
     	}
     	
@@ -521,8 +568,10 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 			    		return value;
 			    	else if(value instanceof NullObject)
 			    		return null;
+			    	/*
 			    	else if(allKeysCached)
 			    		return null;
+	    			*/
 	    		}
 		    }
 	    }
@@ -533,16 +582,19 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     	Timer t = new Timer();
     	
         String sql = "SELECT " + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName + " WHERE " + colItemKey + " = ? AND " + colGlobalKey + " = ?";
-        System.out.println("sql:" + sql);
-        System.out.println("key:" + key);
-        System.out.println("globalKey:" + globalKey);
+        //System.out.println("sql:" + sql);
+        //System.out.println("key:" + key);
+        //System.out.println("globalKey:" + globalKey);
         
         Object o = null;
         Connection conn = null;
 
         try 
         {
-            conn = getConnection();
+        	//t.printElapsedTime("SQL creation took..");
+
+        	conn = getConnection();
+        	//t.printElapsedTime("Connection took..");
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, key);
@@ -622,7 +674,9 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
             closeConnection(conn);
         }
         
-        RequestAnalyser.getRequestAnalyser().registerComponentStatistics("InfoGlueJDBCPropertySet.get()", t.getElapsedTime());
+        //long elapsedTime = t.getElapsedTime();
+        //System.out.println("get took:" + elapsedTime);
+        //RequestAnalyser.getRequestAnalyser().registerComponentStatistics("InfoGlueJDBCPropertySet.get()", elapsedTime);
 		if(valueMap == null)
 			valueMap = new HashMap();
 
@@ -639,6 +693,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
     private void setValues(PreparedStatement ps, int type, String key, Object value) throws SQLException, PropertyException 
     {
+    	//Timer t = new Timer();
         // Patched by Edson Richter for MS SQL Server JDBC Support!
         String driverName;
 
@@ -730,17 +785,24 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         
         valueMap.put(key, value);
         typeMap.put(key, new Integer(type));
+        
+        //t.printElapsedTime("setValues");
     }
 
-    private static long lastErrorCheck = System.currentTimeMillis();
+    private static long lastErrorCheck = -1;
     private static boolean wasDatabaseFaulty = false;
     	
     protected Connection getConnection() throws SQLException 
     {
         Connection conn = null;
-        if((wasDatabaseFaulty || !CmsPropertyHandler.getIsValidSetup()) && (System.currentTimeMillis() - lastErrorCheck < 10000))
-        	return conn;
-
+        if(lastErrorCheck > -1)
+        {
+	        if((wasDatabaseFaulty || !CmsPropertyHandler.getIsValidSetup()) && (System.currentTimeMillis() - lastErrorCheck < 10000))
+	        	return conn;
+        }
+        else
+        	lastErrorCheck = System.currentTimeMillis();
+        
         wasDatabaseFaulty = false;
         
         boolean reloadingConfiguration = false;
@@ -764,7 +826,8 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 		{
 	        if(connectionPool == null || reloadingConfiguration)
 	        {
-	            logger.info("Establishing connection to database '" + this.url + "'");
+	        	//System.out.println("Establishing connection to database '" + this.url + "'");
+		        logger.info("Establishing connection to database '" + this.url + "'");
 		        
 		        try 
 	            {
@@ -777,8 +840,8 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 	            }
 	            logger.info("Done.");
 	        }
-
-	        conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:infoGlueJDBCPropertySet");
+	        
+        	conn = DriverManager.getConnection("jdbc:apache:commons:dbcp:infoGlueJDBCPropertySet");
 	        
 	        if(logger.isDebugEnabled())
 	        {
@@ -840,10 +903,16 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         logger.info("dbcpMaxActiveInt:" + dbcpMaxActiveInt);
 
         connectionPool = new GenericObjectPool(null, dbcpMaxActiveInt);
-        connectionPool.setTestOnBorrow(true);
+        connectionPool.setTestOnBorrow(false);
+        connectionPool.setTestWhileIdle(true);
+        connectionPool.setTimeBetweenEvictionRunsMillis(10000);
+        
         connectionFactory = new DriverManagerConnectionFactory(connectURI, userName, password);
         poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory,connectionPool,null,validationQuery,false,true);
-        
+
+        poolableConnectionFactory.getPool().addObject();
+        poolableConnectionFactory.getPool().addObject();
+
         Class.forName("org.apache.commons.dbcp.PoolingDriver");
         driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
         
@@ -854,7 +923,10 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     {
         PoolingDriver driver = (PoolingDriver) DriverManager.getDriver("jdbc:apache:commons:dbcp:");
         ObjectPool connectionPool = driver.getConnectionPool("infoGlueJDBCPropertySet");
-        
+
+        //System.out.println("NumActive: " + connectionPool.getNumActive());
+        //System.out.println("NumIdle: " + connectionPool.getNumIdle());
+
         if(logger.isInfoEnabled())
         {
 	        logger.info("NumActive: " + connectionPool.getNumActive());

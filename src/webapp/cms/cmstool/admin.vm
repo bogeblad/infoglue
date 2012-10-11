@@ -91,10 +91,7 @@
 				}
 			});
 			
-			$(document).mouseup(function(e) {
-			
-				alert("Vad händer nu???");
-							
+			$(document).mouseup(function(e) {							
 				if(isDragActive)
 				{
 					isDragActive = false;

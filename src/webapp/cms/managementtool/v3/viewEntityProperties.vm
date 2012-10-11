@@ -283,7 +283,7 @@
 					    	<td colspan="2" bgcolor="white" valign="top">
 					    		<p style="margin-top:5px; margin-left:5px;">
 					    		#if($entityId > -1)
-									Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor!V3.action?updateAction=ViewContentRelationEditor!updateQualifyerInEntityProperties.action&amp;entityName=$!entityName&amp;entityId=$!entityId&amp;attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor!V3.action?updateAction=ViewContentRelationEditor!updateQualifyerInEntityProperties.action&amp;entityName=$!entityName&amp;entityId=$!entityId&amp;attributeName=$!attribute.name&amp;callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
 									<hr noshade size="1">
 									#set($qualifyers = $this.getContentRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
 									<table border="0">
@@ -332,7 +332,7 @@
 					    	<td colspan="2" bgcolor="white" valign="top">
 								<p style="margin-top:5px; margin-left:5px;">
 								#if($entityId > -1)
-									Related SiteNodes (<a href="javascript:openRelationEditor('ViewStructureRelationEditor.action?updateAction=ViewStructureRelationEditor!updateQualifyerInEntityProperties.action&amp;entityName=$!entityName&amp;entityId=$!entityId&amp;attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									Related SiteNodes (<a href="javascript:openRelationEditor('ViewStructureRelationEditor.action?updateAction=ViewStructureRelationEditor!updateQualifyerInEntityProperties.action&amp;entityName=$!entityName&amp;entityId=$!entityId&amp;attributeName=$!attribute.name&amp;callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
 									<hr noshade size="1">
 									#set($qualifyers = $this.getSiteNodeRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
 									<table border="0">

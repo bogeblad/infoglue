@@ -30,7 +30,11 @@
 		<property name="dbcp.ps.maxIdle">100</property>
 
 		<!-- query to validate pooled connections -->
-		<property name="dbcp.validationQuery">@database.validationQuery@</property>
+		<!--  <property name="dbcp.validationQuery">@database.validationQuery@</property>-->
+		<property name="dbcp.validationQuery">select 2 from cmInfoGlueProperties</property>
+		<property name="dbcp.testOnBorrow">false</property>
+		<property name="dbcp.testWhileIdle">true</property>
+		<property name="dbcp.timeBetweenEvictionRunsMillis">20000</property>
 
 		<!-- OS Workflow mappings -->
 		<mapping resource="com/opensymphony/workflow/spi/hibernate/HibernateCurrentStep.hbm.xml"/>

@@ -87,6 +87,12 @@ CREATE INDEX accessRightIDIndex ON cmAccessRightUser(accessRightId);
 CREATE INDEX accessRightIDIndex ON cmAccessRightRole(accessRightId);
 CREATE INDEX accessRightIDIndex ON cmAccessRightGroup(accessRightId);
 
+CREATE INDEX cvVersionModifierIndex ON cmContentVersion(versionModifier(30));
+CREATE INDEX cExpireDateTimeIndex ON cmContent(expireDateTime);
+CREATE INDEX cPublishDateTimeIndex ON cmContent(publishDateTime);
+CREATE INDEX snExpireDateTimeIndex ON cmSiteNode(expireDateTime);
+CREATE INDEX snPublishDateTimeIndex ON cmSiteNode(publishDateTime);
+
 ALTER TABLE cmAccessRight CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 ALTER TABLE cmAccessRightGroup CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 ALTER TABLE cmAccessRightRole CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;

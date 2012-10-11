@@ -9,7 +9,7 @@
 	<!-- 		
 		$(document).ready(function(){
 			
-			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ]')
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null, null ]')
 			#initDataTableImpl("dataTable" $extraParameter)
 			#initDeleteLink()
 		});

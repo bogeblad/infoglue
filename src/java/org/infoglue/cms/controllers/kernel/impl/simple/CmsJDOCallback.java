@@ -190,6 +190,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 				CacheController.clearCache("categoriesCache");
 			}
+			else if(object.getClass().getName().equals(CategoryImpl.class.getName()) || object.getClass().getName().equals(ContentTypeDefinitionImpl.class.getName()))
+			{
+				CacheController.clearCache("contentTypeCategoryKeysCache");
+			}
 			else if(object.getClass().getName().equals(InterceptionPointImpl.class.getName()))
 			{
 				CacheController.clearCache("interceptionPointCache");

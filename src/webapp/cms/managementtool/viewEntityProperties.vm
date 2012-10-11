@@ -334,6 +334,21 @@
 							
 							#if($enableContentRelationEditor == "true" && $readonly == "")
 								<!-- Here comes the Content Relation editor layer -->
+								<script type="text/javascript">
+									function updateAttribute${attribute.name}(data, paths)
+									{
+										//alert("Updating ${attribute.name} with:" + data);
+										$("#${attribute.name}Hidden").val(data);
+										
+										$("#${attribute.name}RelationTable").empty();
+										for (i=0;i<paths.length;i++)
+										{
+											var path = paths[i];
+											$("#${attribute.name}RelationTable").append('<tr><td valign="middle"><img src="css/images/tree/xp/item.png"></td><td valign="middle">' + path + '</td></tr>');
+										}
+										allowSave = true;
+									}
+								</script>
 								<input type="hidden" id="${attribute.name}EditorType4IsActive" name="${attribute.name}EditorType4IsActive" value="false">
 								<div id="${attribute.name}EditorType4" name="${attribute.name}EditorType4" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
 								    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
@@ -341,10 +356,10 @@
 								    	<td colspan="2" bgcolor="white" valign="top">
 								    		<p style="margin-top:5px; margin-left:5px;">
 								    		#if($entityId > -1)
-												Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor.action?updateAction=ViewContentRelationEditor!updateQualifyerInEntityProperties.action&entityName=$!entityName&entityId=$!entityId&attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+												Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor!V3.action?updateAction=ViewContentRelationEditor!updateQualifyerInEntityProperties.action&entityName=$!entityName&entityId=$!entityId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
 												<hr noshade size="1">
 												#set($qualifyers = $this.getContentRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
-												<table border="0">
+												<table border="0" id="${attribute.name}RelationTable">
 												#foreach($qualifyer in $qualifyers)
 													<tr>
 														<td valign="middle">
@@ -381,6 +396,22 @@
 							
 							#if($enableStructureRelationEditor == "true" && $readonly == "")
 								<!-- Here comes the Structure Relation editor layer -->
+								<script type="text/javascript">
+									function updateAttribute${attribute.name}(data, paths)
+									{
+										//alert("Updating ${attribute.name} with:" + data);
+										$("#${attribute.name}Hidden").val(data);
+										
+										$("#${attribute.name}RelationTable").empty();
+										for (i=0;i<paths.length;i++)
+										{
+											var path = paths[i];
+											$("#${attribute.name}RelationTable").append('<tr><td valign="middle"><img src="css/images/tree/xp/item.png"></td><td valign="middle">' + path + '</td></tr>');
+										}
+										allowSave = true;
+									}
+								</script>
+										
 								<input type="hidden" id="${attribute.name}EditorType5IsActive" name="${attribute.name}EditorType5IsActive" value="false">
 								<div id="${attribute.name}EditorType5" name="${attribute.name}EditorType5" style="display:none; width:${width}px; height:${height}px; z-index:1; border: 1px solid #C2D0E2; overflow: auto;">
 								    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
@@ -388,10 +419,10 @@
 								    	<td colspan="2" bgcolor="white" valign="top">
 											<p style="margin-top:5px; margin-left:5px;">
 											#if($entityId > -1)
-												Related SiteNodes (<a href="javascript:openRelationEditor('ViewStructureRelationEditor.action?updateAction=ViewStructureRelationEditor!updateQualifyerInEntityProperties.action&entityName=$!entityName&entityId=$!entityId&attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+												Related SiteNodes (<a href="javascript:openRelationEditor('ViewStructureRelationEditor!V3.action?updateAction=ViewStructureRelationEditor!updateQualifyerInEntityProperties.action&entityName=$!entityName&entityId=$!entityId&attributeName=$!attribute.name&callbackMethod=updateAttribute${attribute.name}');"><strong>Edit relations</strong></a>)
 												<hr noshade size="1">
 												#set($qualifyers = $this.getSiteNodeRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
-												<table border="0">
+												<table border="0" id="${attribute.name}RelationTable">
 												#foreach($qualifyer in $qualifyers)
 													<tr>
 														<td valign="middle">

@@ -94,7 +94,7 @@
 		{
 		   	qualifyerXML = createXML();
 
-	  		if(window.opener && window.opener.$callbackMethod)
+			if(window.opener && window.opener.$callbackMethod)
 	  		{
 	  			//alert("Method existed");
 	  			window.opener.$callbackMethod(qualifyerXML, paths);

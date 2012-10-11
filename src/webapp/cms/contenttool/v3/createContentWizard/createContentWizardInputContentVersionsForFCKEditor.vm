@@ -525,7 +525,7 @@
 						    	<td colspan="2" bgcolor="white" valign="top">
 						    		<p style="margin-top:5px; margin-left:5px;">
 									#if($contentVersionId > -1)
-									Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor.action?updateAction=ViewContentRelationEditor!updateQualifyer.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
+									Related Contents (<a href="javascript:openRelationEditor('ViewContentRelationEditor!V3.action?updateAction=ViewContentRelationEditor!updateQualifyer.action&entityName=ContentVersion&entityId=$!contentVersionId&attributeName=$!attribute.name');"><strong>Edit relations</strong></a>)
 									<hr noshade size="1">
 									#set($qualifyers = $this.getContentRelationQualifyers($this.getUnescapedAttributeValue($attribute.name)))
 									<table border="0">

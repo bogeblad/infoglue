@@ -107,22 +107,6 @@
 			});
 			
 			$("#workIframe").load(function() {
-
-				try
-				{
-					//alert("Doc1:" + document.getElementById("workIframe").src);
-					//alert("Doc2:" + $("#workIframe").get(0).contentDocument.location.href);
-					$($("#workIframe").get(0).contentDocument).mouseup(function(){
-						//alert("Dropped component maybe");
-						//emptyDragHTML();
-						$("#menuOverlayDiv").hide();
-					});
-				}
-				catch(e)
-				{
-					//alert("Error:" + e);
-				}
-				
 				//alert("Just loaded:" + $("#workIframe").get(0).contentDocument.location.href);
 				try
 				{

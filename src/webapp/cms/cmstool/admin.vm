@@ -92,6 +92,9 @@
 			});
 			
 			$(document).mouseup(function(e) {
+			
+				alert("Vad händer nu???");
+							
 				if(isDragActive)
 				{
 					isDragActive = false;

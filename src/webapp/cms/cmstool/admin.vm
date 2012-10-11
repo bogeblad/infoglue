@@ -91,7 +91,7 @@
 				}
 			});
 			
-			$(document).mouseup(function(e) {
+			$(document).mouseup(function(e) {							
 				if(isDragActive)
 				{
 					isDragActive = false;

@@ -321,7 +321,7 @@
 									#if($accessRightId > -1)
 									<br/><a href="javascript:showDiv('groups$accessRightId');" title="Not limited by groups at the moment"><img src="css/images/groupsInactive.gif" border="0" alt=""/></a>
 									#else
-										<br/><a href="javascript:alert('You must state at least one role first');" title="Not limited by groups at the moment"><img src="images/groupsInactive.gif" border="0" alt=""/></a>
+										<br/><a href="javascript:alert('You must state at least one role first');" title="Not limited by groups at the moment"><img src="css/images/groupsInactive.gif" border="0" alt=""/></a>
 									#end
 								#end
 							##end

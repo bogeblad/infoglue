@@ -276,10 +276,10 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     	}   
 
         this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
-
-        if(this.contentVO.getRepositoryId() != null && checkPermission && !hasAccessTo("Repository.Read", "" + this.contentVO.getRepositoryId()))
+        
+        if(this.contentVO.getRepositoryId() != null && checkPermission && !hasAccessTo("Repository.Read", "" + this.contentVO.getRepositoryId())  && !hasAccessTo("Repository.Write", "" + this.contentVO.getRepositoryId()))
         {
-    		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
+    		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer(); 
     		ceb.add(new AccessConstraintException("Content.contentId", "1000"));
     		ceb.throwIfNotEmpty();
         }

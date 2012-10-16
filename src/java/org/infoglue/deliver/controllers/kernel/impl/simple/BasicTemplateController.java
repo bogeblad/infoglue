@@ -81,6 +81,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.RolePropertiesController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SearchController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
 import org.infoglue.cms.entities.content.Content;
@@ -1634,7 +1635,7 @@ public class BasicTemplateController implements TemplateController
     {
 		List assignedCategories = new ArrayList();
 		
-		this.deliveryContext.addUsedContent("content_" + contentId);
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 		
 		try
 		{
@@ -1809,7 +1810,7 @@ public class BasicTemplateController implements TemplateController
 	{
 		String attributeValue = "";
 		
-		this.deliveryContext.addUsedContent("content_" + contentId);
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 		
 		try
 		{
@@ -1860,7 +1861,7 @@ public class BasicTemplateController implements TemplateController
 	{
 		String attributeValue = "";
 		
-		this.deliveryContext.addUsedContent("content_" + contentId);
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 		
 		try
 		{
@@ -1887,7 +1888,7 @@ public class BasicTemplateController implements TemplateController
 	{
 		String attributeValue = "";
 		
-		this.deliveryContext.addUsedContent("content_" + contentId);
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 
 		try
 		{
@@ -1913,7 +1914,7 @@ public class BasicTemplateController implements TemplateController
 	{
 		String attributeValue = "";
 		
-		this.deliveryContext.addUsedContent("content_" + contentId);
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 
 		try
 		{
@@ -1941,7 +1942,7 @@ public class BasicTemplateController implements TemplateController
 	{
 		String attributeValue = "";
 		
-		this.deliveryContext.addUsedContent("content_" + contentId);
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 		
 		try
 		{
@@ -3331,8 +3332,9 @@ public class BasicTemplateController implements TemplateController
 					
 					try
 					{
-						SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNode(getDatabase(), new Integer(id)).getValueObject();
-						if(this.nodeDeliveryController.isValidSiteNode(getDatabase(), siteNodeVO.getId()))
+						//SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), new Integer(id));
+						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(id), getDatabase());
+						if(this.nodeDeliveryController.isValidSiteNode(siteNodeVO, getDatabase()))
 						{
 							WebPage webPage = new WebPage();						
 							webPage.setSiteNodeId(siteNodeVO.getSiteNodeId());
@@ -6052,7 +6054,7 @@ public class BasicTemplateController implements TemplateController
 		{
 			SiteNodeVO siteNodeVO = (SiteNodeVO)i.next();
 			
-			this.getDeliveryContext().addUsedSiteNode("siteNode_" + siteNodeVO.getId());
+			this.getDeliveryContext().addUsedSiteNode(CacheController.getPooledString(3, siteNodeVO.getId()));
 
 			if((!hideUnauthorizedPages || getHasUserPageAccess(siteNodeVO.getId())) && (showHidden || !siteNodeVO.getIsHidden()))
 			{

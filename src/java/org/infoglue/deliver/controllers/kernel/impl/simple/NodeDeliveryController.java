@@ -376,7 +376,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		siteNode = (SiteNode)getObjectWithId(SiteNodeImpl.class, siteNodeId, db);
 		
 		if(siteNode != null && deliveryContext != null)
-			deliveryContext.addUsedSiteNode("siteNode_" + siteNode.getId());
+			deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNode.getId()));
 			
 		return siteNode;
 	}
@@ -391,22 +391,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 			return null;
 		
 		if(deliveryContext != null)
-			deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 		
-		//String key = "" + siteNodeId;
-		//SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
-		//if(siteNodeVO != null)
-		//{
-			//logger.info("There was an cached siteNodeVO:" + siteNodeVO);
-		//}
-		//else
-		//{
 		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
-			//siteNodeVO = (SiteNodeVO)getVOWithId(SmallSiteNodeImpl.class, siteNodeId, db);
-			//if(siteNodeVO != null)
-			//	CacheController.cacheObjectInAdvancedCache("siteNodeCache", key, siteNodeVO);
-		//}
-		
+
 		return siteNodeVO;
 	}
 
@@ -435,10 +423,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 			
 			if(siteNodeVersionVO != null)
 			{
-	        	StringBuilder groupKey1 = new StringBuilder("siteNodeVersion_").append(siteNodeVersionVO.getId());
-	        	StringBuilder groupKey2 = new StringBuilder("siteNode_").append(siteNodeId);
+	        	String groupKey1 = CacheController.getPooledString(4, siteNodeVersionVO.getId());
+	        	String groupKey2 = CacheController.getPooledString(3, siteNodeId);
 	
-	        	CacheController.cacheObjectInAdvancedCache("latestSiteNodeVersionCache", key, siteNodeVersionVO, new String[]{groupKey1.toString(), groupKey2.toString()}, true);
+	        	CacheController.cacheObjectInAdvancedCache("latestSiteNodeVersionCache", key, siteNodeVersionVO, new String[]{groupKey1, groupKey2}, true);
 			}
 		}
 				
@@ -540,10 +528,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 		    {
 		    	siteNodeVersion = (SiteNodeVersion)results.next();
 			    //CacheController.cacheObject("latestSiteNodeVersionCache", versionKey, siteNodeVersion.getId());
-	        	StringBuilder groupKey1 = new StringBuilder("siteNodeVersion_").append(siteNodeVersion.getId());
-	        	StringBuilder groupKey2 = new StringBuilder("siteNode_").append(siteNodeId);
+	        	String groupKey1 = CacheController.getPooledString(4, siteNodeVersion.getId());
+	        	String groupKey2 = CacheController.getPooledString(3, siteNodeId);
 
-	        	CacheController.cacheObjectInAdvancedCache("latestSiteNodeVersionCache", versionKey, siteNodeVersion.getId(), new String[]{groupKey1.toString(), groupKey2.toString()}, true);
+	        	CacheController.cacheObjectInAdvancedCache("latestSiteNodeVersionCache", versionKey, siteNodeVersion.getId(), new String[]{groupKey1, groupKey2}, true);
 	        }	
 		
 			results.close();
@@ -551,7 +539,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		}
 		
 		//if(contentVersion != null)
-		//    deliveryContext.addUsedContentVersion("contentVersion_" + contentVersion.getId());
+		//    deliveryContext.addUsedContentVersion(CacheController.getPooledString(2, contentVersion.getId()));
 	
 		return siteNodeVersion;
 	}
@@ -586,10 +574,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 		    	siteNodeVersionVO = siteNodeVersion.getValueObject();
 		    	
 			    //CacheController.cacheObject("latestSiteNodeVersionCache", versionKey, siteNodeVersionVO);
-	        	StringBuilder groupKey1 = new StringBuilder("siteNodeVersion_").append(siteNodeVersion.getId());
-	        	StringBuilder groupKey2 = new StringBuilder("siteNode_").append(siteNodeId);
+	        	String groupKey1 = CacheController.getPooledString(4, siteNodeVersion.getId());
+	        	String groupKey2 = CacheController.getPooledString(3, siteNodeId);
 
-	        	CacheController.cacheObjectInAdvancedCache("latestSiteNodeVersionCache", versionKey, siteNodeVersionVO, new String[]{groupKey1.toString(), groupKey2.toString()}, true);
+	        	CacheController.cacheObjectInAdvancedCache("latestSiteNodeVersionCache", versionKey, siteNodeVersionVO, new String[]{groupKey1, groupKey2}, true);
 	        }
 		
 			results.close();
@@ -597,7 +585,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		}
 		
 		//if(contentVersion != null)
-		//    deliveryContext.addUsedContentVersion("contentVersion_" + contentVersion.getId());
+		//    deliveryContext.addUsedContentVersion(CacheController.getPooledString(2, contentVersion.getId()));
 	
 		return siteNodeVersionVO;
 	}
@@ -612,7 +600,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		String key = "" + siteNodeId;
 		
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 		
 		Object object = CacheController.getCachedObject("parentSiteNodeCache", key);
 		SiteNodeVO parentSiteNodeVO = null;
@@ -649,10 +637,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns the SiteNodeVO that is the parent to the one sent in.
 	 */
 	
-	public SiteNodeVO getParentSiteNodeForPageCache(Database db, Integer siteNodeId) throws SystemException
+	public SiteNodeVO getParentSiteNodeForPageCache(Database db, Integer siteNodeId) throws SystemException, Exception
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		String key = "" + siteNodeId;
 		logger.info("key getParentSiteNode:" + key);
@@ -669,11 +657,11 @@ public class NodeDeliveryController extends BaseDeliveryController
 		}
 		else
 		{
-			SiteNode siteNode = (SiteNode)getObjectWithId(SmallSiteNodeImpl.class, siteNodeId, db);
-            SiteNode parentSiteNode = siteNode.getParentSiteNode();
-            if(parentSiteNode != null)		
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+            //SiteNode parentSiteNode = siteNode.getParentSiteNode();
+            if(siteNodeVO.getParentSiteNodeId() != null)		
             {
-                parentSiteNodeVO = parentSiteNode.getValueObject();
+            	parentSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
             	CacheController.cacheObject("pageCacheParentSiteNodeCache", key, parentSiteNodeVO);
             }
             else
@@ -694,7 +682,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public boolean getIsPageCacheDisabled(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		boolean isPageCacheDisabled = false;
 		
@@ -740,7 +728,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public String getPageCacheKey(Database db, HttpSession session, HttpServletRequest request, Integer siteNodeId, Integer languageId, Integer contentId, String userAgent, String queryString, String extra, boolean includeOriginalRequestURL)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 	    String pageKey = CacheController.getPageCacheKey(session, request, siteNodeId, languageId, contentId, userAgent, queryString, extra);
 	    try
@@ -833,7 +821,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public boolean getIsEditOnSightDisabled(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		boolean isEditOnSightDisabled = false;
 		
@@ -873,7 +861,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public boolean getIsPageProtected(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		boolean isPageProtected = false;
 		
@@ -911,7 +899,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public Integer getInheritedPageCacheTimeout(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		Integer pageCacheTimeout = null;
 		
@@ -951,7 +939,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public Integer getProtectedSiteNodeVersionId(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		Integer protectedSiteNodeVersionId = null;
 		
@@ -991,7 +979,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public Integer getProtectedSiteNodeVersionIdForPageCache(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		Integer protectedSiteNodeVersionId = null;
 		
@@ -1030,7 +1018,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public Integer getForceProtocolChangeSettingForPageCache(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		Integer forceProtocolChangeSetting = SiteNodeVersionVO.NORMAL_SECURE;
 		
@@ -1072,7 +1060,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public Integer getDisabledLanguagesSiteNodeVersionId(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		Integer disabledLanguagesSiteNodeVersionId = null;
 		
@@ -1111,7 +1099,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public Integer getDisableForceIdentityCheckSiteNodeVersionId(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		Integer disableForceIdentityCheckSiteNodeVersionId = null;
 		
@@ -1150,7 +1138,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public boolean getIsForcedIdentityCheckDisabled(Database db, Integer siteNodeId)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		boolean isForcedIdentityCheckDisabled = false;
 		
@@ -1250,7 +1238,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public List getBoundContents(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, boolean useLanguageFallback, String availableServiceBindingName, boolean inheritParentBindings, boolean includeFolders, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		List boundContentVOList = new ArrayList();
 		
@@ -1341,7 +1329,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 							
 							if(ContentDeliveryController.getContentDeliveryController().isValidContent(infoGluePrincipal, candidateContent, languageId, useLanguageFallback, includeFolders, db, deliveryContext))
 							{
-								deliveryContext.addUsedContent("content_" + candidate.getId());
+								deliveryContext.addUsedContent(CacheController.getPooledString(1, candidate.getId()));
 							    boundContentVOList.add(candidate);    
 							}
 						}
@@ -1425,7 +1413,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public List getBoundSiteNodes(Database db, Integer siteNodeId, String availableServiceBindingName) throws SystemException, Exception
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
-			this.deliveryContext.addUsedSiteNode("siteNode_" + siteNodeId);
+			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
 		String boundSiteNodesKey = "" + siteNodeId + "_" + availableServiceBindingName + "_" + USE_INHERITANCE;
 		logger.info("boundSiteNodesKey:" + boundSiteNodesKey);
@@ -1842,7 +1830,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         return path.toString();
     }
 
-
+/*
     public static Integer getSiteNodeIdFromPath(Database db, InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
         Integer siteNodeId = null;
@@ -1935,174 +1923,18 @@ public class NodeDeliveryController extends BaseDeliveryController
 
         return siteNodeId;
     }
+    */
     
     public static Integer getSiteNodeIdFromPath(InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, DeliveryContext deliveryContext, HttpSession session, Integer languageId) throws SystemException, Exception
     {
         Integer siteNodeId = null;
-
         Database db = CastorDatabaseService.getDatabase();
 		
 		beginTransaction(db);
 
 		try
 		{
-	        URIMapperCache uriCache = URIMapperCache.getInstance();
-	
-	        int numberOfPaths = path.length;
-	        while (numberOfPaths >= 0) 
-	        {
-	        	//logger.info("Looking for cached nodeName at index "+idx);
-	            siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, numberOfPaths);
-
-	            if (siteNodeId != null)
-	                break;
-
-	            numberOfPaths = numberOfPaths - 1;
-	        }
-	        
-	        String repositoryPath = null;
-	    	
-	    	if(!CmsPropertyHandler.getOperatingMode().equals("3"))
-	    	{
-		    	int workingPathStartIndex = repositoryVO.getDnsName().indexOf("workingPath=");
-		    	if(workingPathStartIndex != -1)
-		    	{
-		    		int workingPathEndIndex = repositoryVO.getDnsName().indexOf(",", workingPathStartIndex);
-		    		if(workingPathEndIndex > -1)
-			    		repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12, workingPathEndIndex);
-		    		else
-		    			repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12);
-		    	}
-	    	}
-
-	    	if(repositoryPath == null)
-	    	{
-	        	int pathStartIndex = repositoryVO.getDnsName().indexOf("path=");
-	        	if(pathStartIndex != -1)
-	        	{
-	        		int pathEndIndex = repositoryVO.getDnsName().indexOf(",", pathStartIndex);
-		    		if(pathEndIndex > -1)
-			    		repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5, pathEndIndex);
-		    		else
-		    			repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5);
-	        	}
-	    	}
-	    	
-			if(logger.isInfoEnabled())
-			{
-		    	logger.info("repositoryPath:" + repositoryPath);    	
-		    	logger.info("path:" + path.length);    	
-			}
-			
-	    	if(repositoryPath != null && path.length <= 0)
-	    	{
-	    		if(logger.isInfoEnabled())
-	    			logger.info("There was a repository path:" + repositoryPath + " but the path.length was " + path.length + " so this repository should be excluded.");
-	    		return null;
-	    	}
-
-	    	if(repositoryPath != null && path.length > 0)
-	    	{
-	    		String[] repositoryPaths = repositoryPath.split("/");
-	    		for(int i=0; i<repositoryPaths.length; i++)
-	    		{
-	    			String repositoryPathPart = repositoryPaths[i];
-	    			String pathPart = path[i];
-	    			if(logger.isInfoEnabled())
-	    			{
-	    				logger.info("repositoryPathPart:" + repositoryPathPart);
-	    				logger.info("pathPart:" + pathPart);
-	    			}
-	    			
-	    			if(!repositoryPathPart.equalsIgnoreCase(pathPart))
-	    			{
-	    				if(logger.isInfoEnabled())
-	    	    			logger.info("Could not match the repository paths so this repository should be excluded.");
-	    				return null;
-	    			}
-	    		}
-	    	}
-	    	
-	    	if(repositoryPath != null && path.length > 0)
-	    	{
-	    		String[] repositoryPaths = repositoryPath.split("/");
-	    		String[] newPath = path;
-	    		
-	    		if(logger.isInfoEnabled())
-	    		{
-	    			logger.info("repositoryPaths:" + repositoryPaths.length); 
-		    		logger.info("newPath:" + newPath.length); 
-	    		}
-	    		
-	    		for(int repPathIndex = 0; repPathIndex < repositoryPaths.length; repPathIndex++)
-	    		{
-	    			String repPath = repositoryPaths[repPathIndex];
-    	    		if(logger.isInfoEnabled())
-    	    			logger.info("repPath:" + repPath);
-	    	    	if(path.length > repPathIndex)
-	    	    	{
-	    	    		if(logger.isInfoEnabled())
-	    	    			logger.info("path:" + path[repPathIndex]);
-	    		    	if(path[repPathIndex].equals(repPath))
-	    		    	{
-	    		    		String[] tempNewPath = new String[newPath.length - 1];
-	    		    		for(int i=1; i<newPath.length; i++)
-	    		    			tempNewPath[i-1] = newPath[i];
-	    		    		
-	    		    		newPath = tempNewPath;
-	    		    	}    	    		
-	    	    	}
-	    		}
-	    		path = newPath;
-	    	}
-	    	
-	    	if(logger.isInfoEnabled())
-	    	{
-			   	logger.info("new path:" + path.length);
-		        logger.info("numberOfPaths = "+numberOfPaths);
-	    	}
-	    
-            String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
-        	//logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
-            //logger.info("numberOfPaths:" + numberOfPaths);
-        	if(enableNiceURIForLanguage.equalsIgnoreCase("true") && path.length > 0)
-        	{
-            	//logger.info("path[numberOfPaths]:" + path[numberOfPaths]);
-        		//logger.info("path[0]:" + path[0]);
-        		LanguageVO language = LanguageDeliveryController.getLanguageDeliveryController().getLanguageWithCode(db, path[0].toLowerCase());
-        		//logger.info("language:" + language);
-            	if(language != null)
-            	{
-            		//logger.info("YES - we should consider the first node as a language:" + language);
-                    session.setAttribute(FilterConstants.LANGUAGE_ID, language.getId());
-                    deliveryContext.setLanguageId(language.getId());
-                    languageId = language.getId();
-                    
-            		String[] tempNewPath = new String[path.length - 1];
-		    		for(int i=1; i<path.length; i++)
-		    			tempNewPath[i-1] = path[i];
-            		path = tempNewPath;
-            	}
-        	}
-	        for (int i = numberOfPaths;i < path.length; i++) 
-	        {
-	        	if (i < 0) 
-	            {
-	  	    		if(logger.isInfoEnabled())
-		    	        logger.info("Getting root node");
-	                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
-	            } 
-	            else 
-	            {
-	  	    		if(logger.isInfoEnabled())
-		    	        logger.info("Getting normal");
-	                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
-	            }
-
-	            if (siteNodeId != null)
-	                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId);
-	        }
-
+			siteNodeId = getSiteNodeIdFromPath(db, infogluePrincipal, repositoryVO, path, attributeName, deliveryContext, session, languageId);
 	        commitTransaction(db);
 	    }
 		catch(Exception e)
@@ -2116,6 +1948,170 @@ public class NodeDeliveryController extends BaseDeliveryController
 			rollbackTransaction(db);
 			closeDatabase(db);
 		}
+		
+	    return siteNodeId;
+    }
+
+    public static Integer getSiteNodeIdFromPath(Database db, InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, DeliveryContext deliveryContext, HttpSession session, Integer languageId) throws SystemException, Exception
+    {
+        Integer siteNodeId = null;
+
+        URIMapperCache uriCache = URIMapperCache.getInstance();
+	
+        int numberOfPaths = path.length;
+        while (numberOfPaths >= 0) 
+        {
+        	//logger.info("Looking for cached nodeName at index "+idx);
+            siteNodeId = uriCache.getCachedSiteNodeId(repositoryVO.getId(), path, numberOfPaths);
+
+            if (siteNodeId != null)
+                break;
+
+            numberOfPaths = numberOfPaths - 1;
+        }
+        
+        String repositoryPath = null;
+    	
+    	if(!CmsPropertyHandler.getOperatingMode().equals("3"))
+    	{
+	    	int workingPathStartIndex = repositoryVO.getDnsName().indexOf("workingPath=");
+	    	if(workingPathStartIndex != -1)
+	    	{
+	    		int workingPathEndIndex = repositoryVO.getDnsName().indexOf(",", workingPathStartIndex);
+	    		if(workingPathEndIndex > -1)
+		    		repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12, workingPathEndIndex);
+	    		else
+	    			repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12);
+	    	}
+    	}
+
+    	if(repositoryPath == null)
+    	{
+        	int pathStartIndex = repositoryVO.getDnsName().indexOf("path=");
+        	if(pathStartIndex != -1)
+        	{
+        		int pathEndIndex = repositoryVO.getDnsName().indexOf(",", pathStartIndex);
+	    		if(pathEndIndex > -1)
+		    		repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5, pathEndIndex);
+	    		else
+	    			repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5);
+        	}
+    	}
+    	
+		if(logger.isInfoEnabled())
+		{
+	    	logger.info("repositoryPath:" + repositoryPath);    	
+	    	logger.info("path:" + path.length);    	
+		}
+		
+    	if(repositoryPath != null && path.length <= 0)
+    	{
+    		if(logger.isInfoEnabled())
+    			logger.info("There was a repository path:" + repositoryPath + " but the path.length was " + path.length + " so this repository should be excluded.");
+    		return null;
+    	}
+
+    	if(repositoryPath != null && path.length > 0)
+    	{
+    		String[] repositoryPaths = repositoryPath.split("/");
+    		for(int i=0; i<repositoryPaths.length; i++)
+    		{
+    			String repositoryPathPart = repositoryPaths[i];
+    			String pathPart = path[i];
+    			if(logger.isInfoEnabled())
+    			{
+    				logger.info("repositoryPathPart:" + repositoryPathPart);
+    				logger.info("pathPart:" + pathPart);
+    			}
+    			
+    			if(!repositoryPathPart.equalsIgnoreCase(pathPart))
+    			{
+    				if(logger.isInfoEnabled())
+    	    			logger.info("Could not match the repository paths so this repository should be excluded.");
+    				return null;
+    			}
+    		}
+    	}
+    	
+    	if(repositoryPath != null && path.length > 0)
+    	{
+    		String[] repositoryPaths = repositoryPath.split("/");
+    		String[] newPath = path;
+    		
+    		if(logger.isInfoEnabled())
+    		{
+    			logger.info("repositoryPaths:" + repositoryPaths.length); 
+	    		logger.info("newPath:" + newPath.length); 
+    		}
+    		
+    		for(int repPathIndex = 0; repPathIndex < repositoryPaths.length; repPathIndex++)
+    		{
+    			String repPath = repositoryPaths[repPathIndex];
+	    		if(logger.isInfoEnabled())
+	    			logger.info("repPath:" + repPath);
+    	    	if(path.length > repPathIndex)
+    	    	{
+    	    		if(logger.isInfoEnabled())
+    	    			logger.info("path:" + path[repPathIndex]);
+    		    	if(path[repPathIndex].equals(repPath))
+    		    	{
+    		    		String[] tempNewPath = new String[newPath.length - 1];
+    		    		for(int i=1; i<newPath.length; i++)
+    		    			tempNewPath[i-1] = newPath[i];
+    		    		
+    		    		newPath = tempNewPath;
+    		    	}    	    		
+    	    	}
+    		}
+    		path = newPath;
+    	}
+    	
+    	if(logger.isInfoEnabled())
+    	{
+		   	logger.info("new path:" + path.length);
+	        logger.info("numberOfPaths = "+numberOfPaths);
+    	}
+    
+        String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
+    	//logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
+        //logger.info("numberOfPaths:" + numberOfPaths);
+    	if(enableNiceURIForLanguage.equalsIgnoreCase("true") && path.length > 0)
+    	{
+        	//logger.info("path[numberOfPaths]:" + path[numberOfPaths]);
+    		//logger.info("path[0]:" + path[0]);
+    		LanguageVO language = LanguageDeliveryController.getLanguageDeliveryController().getLanguageWithCode(db, path[0].toLowerCase());
+    		//logger.info("language:" + language);
+        	if(language != null)
+        	{
+        		//logger.info("YES - we should consider the first node as a language:" + language);
+                session.setAttribute(FilterConstants.LANGUAGE_ID, language.getId());
+                deliveryContext.setLanguageId(language.getId());
+                languageId = language.getId();
+                
+        		String[] tempNewPath = new String[path.length - 1];
+	    		for(int i=1; i<path.length; i++)
+	    			tempNewPath[i-1] = path[i];
+        		path = tempNewPath;
+        	}
+    	}
+        for (int i = numberOfPaths;i < path.length; i++) 
+        {
+        	if (i < 0) 
+            {
+  	    		if(logger.isInfoEnabled())
+	    	        logger.info("Getting root node");
+                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), null, attributeName, null, languageId, deliveryContext);
+            } 
+            else 
+            {
+  	    		if(logger.isInfoEnabled())
+	    	        logger.info("Getting normal");
+                siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, repositoryVO.getId(), path[i], attributeName, siteNodeId, languageId, deliveryContext);
+            }
+
+            if (siteNodeId != null)
+                uriCache.addCachedSiteNodeId(repositoryVO.getId(), path, i+1, siteNodeId);
+        }
 		
         return siteNodeId;
     }
@@ -2281,13 +2277,14 @@ public class NodeDeliveryController extends BaseDeliveryController
 		}
     	
         String key = "" + siteNodeId + "_" + false;
+        System.out.println("VCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
 		logger.info("key in getChildSiteNodes:" + key);
 		List siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
 
 		if(siteNodeVOList == null)
 		{
 			SiteNodeVO parentSiteNodeVO = getSiteNodeVO(db, siteNodeId);
-			if(parentSiteNodeVO.getChildCount() != null && parentSiteNodeVO.getChildCount() == 0)
+			if(parentSiteNodeVO != null && parentSiteNodeVO.getChildCount() != null && parentSiteNodeVO.getChildCount() == 0)
 			{
 				//logger.info("Skipping node as it has no children...");
 				return new ArrayList();
@@ -2378,7 +2375,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			}
 	        */
 	        
-			CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeVOList, new String[] {"siteNode_" + siteNodeId}, true);
+			CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeVOList, new String[] {CacheController.getPooledString(3, siteNodeId)}, true);
 		}
 				
 		return siteNodeVOList;	
@@ -2452,6 +2449,41 @@ public class NodeDeliveryController extends BaseDeliveryController
 		if(isValidOnDates(siteNode.getPublishDateTime(), siteNode.getExpireDateTime()))
 		{
 			//if(this.getLatestActiveSiteNodeVersion(siteNode.getId(), db) != null)
+		    if(this.getLatestActiveSiteNodeVersionVO(siteNode.getId(), db) != null)
+		        isValidContent = true;
+		}
+		
+		if(isValidContent && !siteNode.getExpireDateTime().before(new Date()))
+		{
+		    Date expireDateTimeCandidate = siteNode.getExpireDateTime();
+		    if(CacheController.expireDateTime == null || expireDateTimeCandidate.before(CacheController.expireDateTime))
+			{
+			    CacheController.expireDateTime = expireDateTimeCandidate;
+			}
+		}
+		else if(siteNode.getPublishDateTime().after(new Date())) //If it's a publish date to come we consider it
+		{
+		    Date publishDateTimeCandidate = siteNode.getPublishDateTime();
+		    if(CacheController.publishDateTime == null || publishDateTimeCandidate.after(CacheController.publishDateTime))
+			{
+			    CacheController.publishDateTime = publishDateTimeCandidate;
+			}
+		}    	
+		
+		return isValidContent;					
+	}
+	
+	/**
+	 * Returns if a siteNode is between dates and has a SiteNode version suitable for this delivery mode.
+	 * @throws Exception
+	 */
+
+	public boolean isValidSiteNode(SiteNodeVO siteNode, Database db) throws Exception
+	{
+		boolean isValidContent = false;
+		
+		if(isValidOnDates(siteNode.getPublishDateTime(), siteNode.getExpireDateTime()))
+		{
 		    if(this.getLatestActiveSiteNodeVersionVO(siteNode.getId(), db) != null)
 		        isValidContent = true;
 		}

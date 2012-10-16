@@ -104,6 +104,14 @@
     <td>Statistics</td>
     <td>Actions <a href="ViewApplicationState!clearCaches.action">Clear All</a></td>
   </tr>
+  
+  <tr>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">String pool</td>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">$stringPoolSize</td>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top">$stringPoolHits hits</td>
+    <td style="border-bottom: 1px solid #999999;" class="text" valign="top"><a href="ViewApplicationState!clearStringPool.action">Clear</a></td>
+  </tr>
+  
   #foreach($cacheName in $caches.keySet())
       #set($cache = $caches.get($cacheName))
 	  <tr>

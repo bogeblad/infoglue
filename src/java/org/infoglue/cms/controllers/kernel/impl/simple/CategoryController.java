@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Category;
 import org.infoglue.cms.entities.management.CategoryVO;
@@ -39,7 +38,6 @@ import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.Timer;
 
 
@@ -282,7 +280,7 @@ public class CategoryController extends BaseController
 	 * @return	A list of CategoryVOs that have the provided parentId
 	 * @throws	SystemException If an error happens
 	 */
-	public List findByParent(Integer parentId, Database db) throws SystemException
+	public List<CategoryVO> findByParent(Integer parentId, Database db) throws SystemException
 	{
 		List params = new ArrayList();
 		params.add(parentId);
@@ -426,7 +424,7 @@ public class CategoryController extends BaseController
 	public CategoryVO findWithChildren(Integer id, Database db) throws SystemException
 	{
 		Category c = findById(id, db);
-		c.getValueObject().setChildren(toVOList(findByParent(c.getId(), db)));
+		c.getValueObject().setChildren(findByParent(c.getId(), db));
 		return c.getValueObject();
 	}
 
@@ -656,21 +654,17 @@ public class CategoryController extends BaseController
 		Timer t = new Timer();
 
 		List<CategoryVO> children = getActiveCategoryVOListByParent(parentId, db);
-		t.printElapsedTime("getActiveCategoryVOListByParent");
 		for (Iterator iter = children.iterator(); iter.hasNext();)
 		{
 			CategoryVO child = (CategoryVO) iter.next();
 			child.setChildren(getActiveChildrenCategoryVOList(child.getId(), db));
-			t.printElapsedTime("getActiveChildrenCategoryVOList");
 		}
 		/*
 		List children = findActiveByParent(parentId);
-		t.printElapsedTime("findActiveByParent");
 		for (Iterator iter = children.iterator(); iter.hasNext();)
 		{
 			CategoryVO child = (CategoryVO) iter.next();
 			child.setChildren(findAllActiveChildren(child.getId()));
-			t.printElapsedTime("findAllActiveChildren");
 		}
 		*/
 		return children;
@@ -687,12 +681,10 @@ public class CategoryController extends BaseController
 	{
 		Timer t = new Timer();
 		List children = findActiveByParent(parentId);
-		t.printElapsedTime("findActiveByParent");
 		for (Iterator iter = children.iterator(); iter.hasNext();)
 		{
 			CategoryVO child = (CategoryVO) iter.next();
 			child.setChildren(findAllActiveChildren(child.getId()));
-			t.printElapsedTime("findAllActiveChildren");
 		}
 		return children;
 	}
@@ -706,12 +698,10 @@ public class CategoryController extends BaseController
 	{
 		Timer t = new Timer();
 		List<CategoryVO> children = getActiveCategoryVOListByParent(parentId, db);
-		t.printElapsedTime("getActiveCategoryVOListByParent");
 		for (Iterator iter = children.iterator(); iter.hasNext();)
 		{
 			CategoryVO child = (CategoryVO) iter.next();
 			child.setChildren(getAllActiveChildren(child.getId(), db));
-			t.printElapsedTime("getAllActiveChildren");
 		}
 		return children;
 	}

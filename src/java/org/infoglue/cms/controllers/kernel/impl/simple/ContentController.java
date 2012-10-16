@@ -135,7 +135,7 @@ public class ContentController extends BaseController
 			return null;
 
 		if(deliveryContext != null)
-			deliveryContext.addUsedContent("content_" + contentId);
+			deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 
 		String key = "" + contentId;
 		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
@@ -147,7 +147,7 @@ public class ContentController extends BaseController
 		{
 			contentVO = getSmallContentVOWithIdDirectly(contentId, db);
 			if(contentVO != null)
-				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
 		}
 		
 		return contentVO;
@@ -1300,7 +1300,7 @@ public class ContentController extends BaseController
 			childrenVOList.add(content.getValueObject());
 			
 			String key = "" + content.getValueObject().getId();
-			CacheController.cacheObjectInAdvancedCache("contentCache", key, content.getValueObject());
+			CacheController.cacheObjectInAdvancedCache("contentCache", key, content.getValueObject(), new String[]{CacheController.getPooledString(1, content.getValueObject().getId())}, true);
 		}
 		
 		results.close();
@@ -1865,7 +1865,7 @@ public class ContentController extends BaseController
 		}
 		
 		if(childrenVOList != null)
-			CacheController.cacheObjectInAdvancedCache("childContentCache", key, childrenVOList, new String[]{"content_" + parentContentId}, true);
+			CacheController.cacheObjectInAdvancedCache("childContentCache", key, childrenVOList, new String[]{CacheController.getPooledString(1, parentContentId)}, true);
 
 		results.close();
 		oql.close();
@@ -1940,7 +1940,7 @@ public class ContentController extends BaseController
 		}
 		
 		if(childrenVOList != null)
-			CacheController.cacheObjectInAdvancedCache("childContentCache", key, childrenVOList, new String[]{"content_" + parentContentId}, true);
+			CacheController.cacheObjectInAdvancedCache("childContentCache", key, childrenVOList, new String[]{CacheController.getPooledString(1, parentContentId)}, true);
 
 		results.close();
 		oql.close();

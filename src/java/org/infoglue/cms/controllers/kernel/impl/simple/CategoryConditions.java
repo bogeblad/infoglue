@@ -14,8 +14,6 @@ import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
-import com.sun.star.beans.GetDirectPropertyTolerantResult;
-
 // TODO: cleanup
 
 /**

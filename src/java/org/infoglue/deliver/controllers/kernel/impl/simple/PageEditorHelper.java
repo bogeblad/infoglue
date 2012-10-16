@@ -2135,7 +2135,7 @@ public class PageEditorHelper extends BaseDeliveryController
 				    //logger.info("contentVO for current component:" + contentVO.getName());
 				    //logger.info("slotName:" + slotName + " should get connected with content_" + contentVO.getId());
 				    
-				    groups = new String[]{"content_" + contentVO.getId()};
+				    groups = new String[]{CacheController.getPooledString(1, contentVO.getId())};
 				    
 					InfoGlueComponent component = new InfoGlueComponent();
 					component.setPositionInSlot(new Integer(slotPosition));
@@ -2373,7 +2373,7 @@ public class PageEditorHelper extends BaseDeliveryController
 
 							Element componentsElement = (Element)componentElement.selectSingleNode("components");
 							
-							//groups = new String[]{"content_" + contentVO.getId()};
+							//groups = new String[]{CacheController.getPooledString(1, contentVO.getId())};
 							
 							List subComponents = getPageComponents(db, componentXML, componentsElement, slotId, slot, component, siteNodeId, languageId, principal);
 							//logger.info("subComponents:" + subComponents);

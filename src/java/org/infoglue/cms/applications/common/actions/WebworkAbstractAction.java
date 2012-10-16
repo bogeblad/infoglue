@@ -424,7 +424,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 			} 
 			catch(Bug e) 
 			{
-				logger.error("Bug " + e);
+				logger.error("Bug " + e.getMessage(), e);
 				setError(e, e.getCause());
 				result = ERROR;
 			} 

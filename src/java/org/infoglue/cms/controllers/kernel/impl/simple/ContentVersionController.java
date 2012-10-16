@@ -354,8 +354,8 @@ public class ContentVersionController extends BaseController
 			contentVersionVOList.add(contentVersion.getValueObject());
 
 			//String versionKey = "" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId() + "_" + stateId + "_contentVersionVO";
-        	//CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersion.getValueObject(), new String[]{"contentVersion_" + contentVersion.getValueObject().getId(), "content_" + contentVersion.getValueObject().getContentId()}, true);
-			//CacheController.cacheObjectInAdvancedCache("contentVersionCache", "" + contentVersion.getId(), contentVersion.getValueObject(), new String[]{"contentVersion_" + contentVersion.getValueObject().getId(), "content_" + contentVersion.getValueObject().getContentId()}, true);
+        	//CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersion.getValueObject(), new String[]{CacheController.getPooledString(2, contentVersion.getValueObject().getId()), CacheController.getPooledString(1, contentVersion.getValueObject().getContentId())}, true);
+			//CacheController.cacheObjectInAdvancedCache("contentVersionCache", "" + contentVersion.getId(), contentVersion.getValueObject(), new String[]{CacheController.getPooledString(2, contentVersion.getValueObject().getId()), CacheController.getPooledString(1,  contentVersion.getValueObject().getContentId())}, true);
 		}
 
 		results.close();
@@ -824,7 +824,7 @@ public class ContentVersionController extends BaseController
 				
 				if(contentVersionVO != null)
 				{
-					CacheController.cacheObjectInAdvancedCache("contentVersionCache", contentVersionKey, contentVersionVO, new String[]{"contentVersion_" + contentVersionVO.getId(), "content_" + contentVersionVO.getContentId()}, true);
+					CacheController.cacheObjectInAdvancedCache("contentVersionCache", contentVersionKey, contentVersionVO, new String[]{CacheController.getPooledString(2, contentVersionVO.getId()), CacheController.getPooledString(1, contentVersionVO.getContentId())}, true);
 				}
 	        }
 			
@@ -1059,7 +1059,7 @@ public class ContentVersionController extends BaseController
 				
 				if(contentVersionVO != null)
 				{
-					CacheController.cacheObjectInAdvancedCache("contentVersionCache", contentVersionKey, contentVersionVO, new String[]{"contentVersion_" + contentVersionVO.getId(), "content_" + contentVersionVO.getContentId()}, true);
+					CacheController.cacheObjectInAdvancedCache("contentVersionCache", contentVersionKey, contentVersionVO, new String[]{CacheController.getPooledString(2, contentVersionVO.getId()), CacheController.getPooledString(1, contentVersionVO.getContentId())}, true);
 				}
 	        }
 			

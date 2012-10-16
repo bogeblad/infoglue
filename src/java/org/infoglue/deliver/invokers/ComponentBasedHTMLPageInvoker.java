@@ -458,7 +458,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 					Integer currentContentVersionId = (Integer)contentVersionIdIterator.next();
 					if(currentContentVersionId != null)
 					{
-						templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
+						templateController.getDeliveryContext().addUsedContentVersion(CacheController.getPooledString(2, currentContentVersionId));
 				    	//logger.info("\nThere was a cached page string and the meta info content version was " + contentVersionId);
 				    	templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().add(currentContentVersionId);
 				    	templateController.getDeliveryContext().getUsedPageComponentsMetaInfoContentVersionIdSet().add(currentContentVersionId);
@@ -488,8 +488,8 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		if(templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().size() > 0)
 		{
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId((Integer)templateController.getDeliveryContext().getUsedPageMetaInfoContentVersionIdSet().toArray()[0], templateController.getDatabase());
-			groups.add("contentVersion_" + contentVersionVO.getId());
-			groups.add("content_" + contentVersionVO.getContentId());
+			groups.add(CacheController.getPooledString(2, contentVersionVO.getId()));
+			groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 		}
 		
 		if(groups.size() > 0)
@@ -2328,7 +2328,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				    
 				    //logger.info("slotName:" + slotName + " should get connected with content_" + contentVO.getId());
 				    
-				    groups = new String[]{"content_" + contentVO.getId()};
+				    groups = new String[]{CacheController.getPooledString(1, contentVO.getId())};
 				    
 					InfoGlueComponent component = new InfoGlueComponent();
 					component.setPositionInSlot(new Integer(slotPosition));
@@ -2562,7 +2562,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 							//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("DOM4J componentsElement:" + componentsElement, t.getElapsedTime());
 							//logger.info("componentsElement:" + componentsElement);
 
-							//groups = new String[]{"content_" + contentVO.getId()};
+							//groups = new String[]{CacheController.getPooledString(1, contentVO.getId())};
 							
 							List tempChildComponents = new ArrayList();
 							List subComponents = getPageComponentsWithDOM4j(db, componentXML, componentsElement, slotId, templateController, component, childComponents);
@@ -2686,7 +2686,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				    ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(db, contentId, templateController.getDeliveryContext());
 				    //logger.info("slotName:" + slotName + " should get connected with content_" + contentVO.getId());
 				    
-				    groups = new String[]{"content_" + contentVO.getId()};
+				    groups = new String[]{CacheController.getPooledString(1, contentVO.getId())};
 				    
 					InfoGlueComponent component = new InfoGlueComponent();
 					component.setPositionInSlot(new Integer(slotPosition));
@@ -2950,7 +2950,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 							//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("XPP3 componentsElement:" + componentsElement, t.getElapsedTime());
 							//logger.info("componentsElement:" + componentsElement);
 
-							//groups = new String[]{"content_" + contentVO.getId()};
+							//groups = new String[]{CacheController.getPooledString(1, contentVO.getId())};
 							
 							List tempChildComponents = new ArrayList();
 							List subComponents = getPageComponentsWithXPP3(db, componentXML, componentsElement, slotId, templateController, component, childComponents);

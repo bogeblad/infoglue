@@ -172,38 +172,6 @@ public class AccessRightController extends BaseController
 			}
 			sb.append("))) group by ar.accessRightId AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl");
 			
-			/*
-			StringBuilder sb = new StringBuilder();
-			sb.append("CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar, cmAccessRightRole arr where "); 
-			sb.append("ar.accessRightId = arr.accessRightId AND ");
-			sb.append("roleName in (");
-			int index = 0;
-			for(InfoGlueRole role : principal.getRoles())
-			{
-				if(index > 0)
-					sb.append(",");
-				sb.append("'" + role.getName() + "'");
-				index++;
-			}
-			sb.append(") AND ");
-			sb.append("(");
-			sb.append("  ar.accessRightId NOT IN (select accessRightId from cmAccessRightGroup where ar.accessRightId = accessRightId) ");
-			if(principal.getGroups().size() > 0)
-			{
-				sb.append("  OR ar.accessRightId IN (select accessRightId from cmAccessRightGroup where ar.accessRightId = accessRightId AND groupName IN (");
-				index = 0;
-				for(InfoGlueGroup group : principal.getGroups())
-				{
-					if(index > 0)
-						sb.append(",");
-					sb.append("'" + group.getName() + "'");
-					index++;
-				}
-				sb.append(")) ");
-			}
-			sb.append(") group by ar.accessRightId AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl");
-			*/
-			
 			//System.out.println("SQL::::::::::" + sb.toString());
 			
 			OQLQuery oql = db.getOQLQuery(sb.toString());
@@ -276,7 +244,6 @@ public class AccessRightController extends BaseController
 	}
 	
 	
-
 	public List getAccessRightVOList(String interceptionPointName, String parameters, Database db) throws SystemException, Bug
 	{
 		String key = "" + interceptionPointName + "_" + parameters;
@@ -548,7 +515,6 @@ public class AccessRightController extends BaseController
 			while (results.hasMore()) 
 			{
 				AccessRight accessRight = (AccessRight)results.next();
-				logger.info("In delete accessRight:" + accessRight.getId());
 				accessRightList.add(accessRight);
 			}
 			
@@ -1863,7 +1829,7 @@ public class AccessRightController extends BaseController
 			}
 		}
 		
-		System.out.println("Reading the hard way");
+		logger.info("Reading the hard way");
 		
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), extraParameters, db);
 		if(logger.isInfoEnabled())
@@ -2235,10 +2201,7 @@ public class AccessRightController extends BaseController
 		{
 			beginTransaction(db);
 			
-			//Timer t = new Timer();
 			isPrincipalAuthorized = getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined, returnFailureIfInterceptionPointNotDefined, true);
-			//isPrincipalAuthorized = getIsPrincipalAuthorizedNew(db, infoGluePrincipal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined, returnFailureIfInterceptionPointNotDefined, true);
-			//t.printElapsedTime("New A took");
 			
 		    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(isPrincipalAuthorized), new String[]{infoGluePrincipal.getName()}, true);
 			
@@ -2284,10 +2247,7 @@ public class AccessRightController extends BaseController
 		{
 			beginTransaction(db);
 			
-			//Timer t = new Timer();
 			isPrincipalAuthorized = getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined, false, true);
-			//isPrincipalAuthorized = getIsPrincipalAuthorizedNew(db, infoGluePrincipal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined, false, true);
-			//t.printElapsedTime("New BBBB took");
 			
 			//CacheController.cacheObject("authorizationCache", key, new Boolean(isPrincipalAuthorized));
 		    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(isPrincipalAuthorized), new String[]{infoGluePrincipal.getName()}, true);
@@ -2310,11 +2270,7 @@ public class AccessRightController extends BaseController
 
 	public boolean getIsPrincipalAuthorized(Database db, InfoGluePrincipal infoGluePrincipal, String interceptionPointName) throws SystemException
 	{		
-		//Timer t = new Timer();
-
 		boolean isAuthorized = getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, false, false, true);
-		//boolean isAuthorized = getIsPrincipalAuthorizedNew(db, infoGluePrincipal, interceptionPointName, false, false, true);
-		//t.printElapsedTime("New CCCC took");
 		
 		return isAuthorized;
 	}
@@ -2388,7 +2344,7 @@ public class AccessRightController extends BaseController
 			}
 		}
 		
-		System.out.println("Reading the hard way");
+		logger.info("Reading the hard way");
 
 		//List accessRightList = this.getAccessRightList(interceptionPointVO.getId(), db);
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), db);

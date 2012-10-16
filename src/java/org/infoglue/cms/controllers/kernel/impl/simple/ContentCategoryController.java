@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.PersistenceException;
@@ -46,6 +45,7 @@ import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.Timer;
 
 /**
@@ -143,13 +143,30 @@ public class ContentCategoryController extends BaseController
 		
 		return contentCategoryVOList;
 	}
-	
-	public List findSmallByContentVersionAttributeReadOnly(String attribute, Integer versionId, Database db) throws SystemException
+
+	public List<ContentCategoryVO> findSmallByContentVersionAttributeReadOnly(String attribute, Integer versionId, Database db) throws SystemException
 	{	    
-	    List params = new ArrayList();
-		params.add(attribute);
-		params.add(versionId);
-		return executeQueryReadOnly(findByContentVersionAttributeSmall, params, db);
+		String key = "" + attribute + "_" + versionId;
+
+		List<ContentCategoryVO> contentCategories = (List<ContentCategoryVO>)CacheController.getCachedObjectFromAdvancedCache("contentCategoryCache", key);
+		if(contentCategories != null)
+		{
+			//logger.info("There was an cached contentVersionVO:" + contentVersionVO.getContentVersionId());
+		}
+		else
+		{
+		    List params = new ArrayList();
+			params.add(attribute);
+			params.add(versionId);
+			List contentCategoryList = executeQueryReadOnly(findByContentVersionAttributeSmall, params, db);
+			if(contentCategoryList != null)
+			{
+				contentCategories = toVOList(contentCategoryList);
+				CacheController.cacheObjectInAdvancedCache("contentCategoryCache", key, contentCategories);
+			}
+		}
+
+		return contentCategories;
 	}
 	
 
@@ -165,13 +182,8 @@ public class ContentCategoryController extends BaseController
 	    List contentCategoryList = new ArrayList();
 	    Timer t = new Timer();
 	    
-	    //getCastorCategory().setLevel(Level.DEBUG);
-	    //getCastorJDOCategory().setLevel(Level.DEBUG);
 	    //TODO - kan optimeras mycket
-	    		
 	    List contentCategories = findByContentVersionReadOnly(versionId, db);
-	    //getCastorCategory().setLevel(Level.WARN);
-	    //getCastorJDOCategory().setLevel(Level.WARN);
 	    
 	    //t.printElapsedTime("contentCategories");
 		if(contentCategories != null)
@@ -223,7 +235,7 @@ public class ContentCategoryController extends BaseController
 	 * @return	A list of ContentCategoryVO that have the provided content version and attribute
 	 * @throws	SystemException If an error happens
 	 */
-	public List findByContentVersionAttribute(String attribute, ContentVersion contentVersion, Database db, boolean readOnly) throws SystemException
+	public List findByContentVersionAttribute(String attribute, ContentVersion contentVersion, Database db) throws SystemException
 	{
 	    List contentCategoryList = new ArrayList();
 	    

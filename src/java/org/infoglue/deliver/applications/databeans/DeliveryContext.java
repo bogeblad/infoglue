@@ -468,10 +468,10 @@ public class DeliveryContext implements UsageListener
 		this.evaluateFullPage = evaluateFullPage;
 	}
 
-    public void setDefeatCaches(boolean defeatCaches)
+    public void setDefeatCaches(boolean defeatCaches, Map<Class, List<Object>> entities)
     {
         this.defeatCaches = defeatCaches;
-        CacheController.setDefeatCaches(defeatCaches);
+        CacheController.setDefeatCaches(defeatCaches, entities);
     }
 
     public boolean getDefeatCaches()

@@ -94,7 +94,7 @@ public class ComponentLogic
  		this.templateController = templateController;
  		this.infoGlueComponent 	= infoGlueComponent;
  		this.componentDeliveryContext = ComponentDeliveryContext.getComponentDeliveryContext(templateController.getDeliveryContext(), infoGlueComponent);
- 		this.componentDeliveryContext.addUsedContent("content_" + infoGlueComponent.getContentId());
+ 		this.componentDeliveryContext.addUsedContent(CacheController.getPooledString(1, infoGlueComponent.getContentId()));
  	}
  	
  	/*
@@ -1509,13 +1509,13 @@ public class ComponentLogic
 					if(contentVersionId != null)
 					{
 						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-					    groups.add("contentVersion_" + contentVersionId);
-					    groups.add("content_" + contentVersionVO.getContentId());
+					    groups.add(CacheController.getPooledString(2, contentVersionId));
+					    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 					}
 				}
 
 			    //logger.info("Adding group: " + "siteNode_" + templateController.getSiteNodeId());
-			    groups.add("siteNode_" + templateController.getSiteNodeId());
+			    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
 			    
 			    if(groups.size() < 26)
 			    {
@@ -1533,7 +1533,7 @@ public class ComponentLogic
 		while(contentVersionIdListIterator.hasNext())
 		{
 			Integer currentContentVersionId = (Integer)contentVersionIdListIterator.next();
-			templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
+			templateController.getDeliveryContext().addUsedContentVersion(CacheController.getPooledString(2, currentContentVersionId));
 		}
 
 		return property;
@@ -1777,8 +1777,8 @@ public class ComponentLogic
 								if(contentVersionId != null)
 								{
 									ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-								    groups.add("contentVersion_" + contentVersionId);
-								    groups.add("content_" + contentVersionVO.getContentId());
+								    groups.add(CacheController.getPooledString(2, contentVersionId));
+								    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 								}
 							}
 							catch (Exception e) 
@@ -1787,7 +1787,7 @@ public class ComponentLogic
 							}
 					    }
 					    
-					    groups.add("siteNode_" + templateController.getSiteNodeId());
+					    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
 					    
 					    if(groups.size() < 20)
 					    {
@@ -1809,8 +1809,8 @@ public class ComponentLogic
 								//if(contentVersionId != null)
 								//{
 									ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-								    groups.add("contentVersion_" + contentVersionId);
-								    groups.add("content_" + contentVersionVO.getContentId());
+								    groups.add(CacheController.getPooledString(2, contentVersionId));
+								    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 								//}
 							}
 						    
@@ -1840,7 +1840,7 @@ public class ComponentLogic
 		while(contentVersionIdListIterator.hasNext())
 		{
 			Integer currentContentVersionId = (Integer)contentVersionIdListIterator.next();
-			templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
+			templateController.getDeliveryContext().addUsedContentVersion(CacheController.getPooledString(2, currentContentVersionId));
 		}
 
 		return property;
@@ -1999,7 +1999,7 @@ public class ComponentLogic
 		while(contentVersionIdListIterator.hasNext())
 		{
 			Integer currentContentVersionId = (Integer)contentVersionIdListIterator.next();
-			templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
+			templateController.getDeliveryContext().addUsedContentVersion(CacheController.getPooledString(2, currentContentVersionId));
 		}
 
 		return property;
@@ -2044,7 +2044,7 @@ public class ComponentLogic
 					while(propertyCandidateVersionsIterator.hasNext())
 					{
 						Integer currentContentVersionId = (Integer)propertyCandidateVersionsIterator.next();
-						templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
+						templateController.getDeliveryContext().addUsedContentVersion(CacheController.getPooledString(2, currentContentVersionId));
 					}
 				}
 				catch(Exception e)
@@ -2098,20 +2098,20 @@ public class ComponentLogic
 						if(contentVersionId != null)
 						{
 					        ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-						    groups.add("contentVersion_" + contentVersionId);
-						    groups.add("content_" + contentVersionVO.getContentId());
+						    groups.add(CacheController.getPooledString(2, contentVersionId));
+						    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 						}
 					}
 					catch (Exception e) 
 					{
 					    if(contentVersionId != null)
-					    	groups.add("contentVersion_" + contentVersionId);
+					    	groups.add(CacheController.getPooledString(2, contentVersionId));
 						logger.warn("Could not fetch contentVersionVO to set correct groups:" + e.getMessage());
 					}
 				}
 			    			    
-			    groups.add("siteNode_" + templateController.getSiteNodeId());
-			    groups.add("siteNode_" + siteNodeId);
+			    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
+			    groups.add(CacheController.getPooledString(3, siteNodeId));
 
 			    if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
 					logger.warn("contentVersionIdList BEFORE STORING: " + contentVersionIdList.size());
@@ -2139,20 +2139,20 @@ public class ComponentLogic
 							if(contentVersionId != null)
 							{
 								ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-							    groups.add("contentVersion_" + contentVersionId);
-							    groups.add("content_" + contentVersionVO.getContentId());
+							    groups.add(CacheController.getPooledString(2, contentVersionId));
+							    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 							}
 						}
 						catch (Exception e) 
 						{
 						    if(contentVersionId != null)
-						    	groups.add("contentVersion_" + contentVersionId);
+						    	groups.add(CacheController.getPooledString(2, contentVersionId));
 							logger.warn("Could not fetch contentVersionVO to set correct groups:" + e.getMessage());
 						}
 					}
 				    
-				    groups.add("siteNode_" + templateController.getSiteNodeId());
-				    groups.add("siteNode_" + siteNodeId);
+				    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
+				    groups.add(CacheController.getPooledString(3, siteNodeId));
 
 //				  	TODO - TEST - NOT SAFE
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key.toString(), new NullObject(), groups, true);
@@ -2748,12 +2748,12 @@ public class ComponentLogic
 					if(contentVersionId != null)
 					{
 						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-					    groups.add("contentVersion_" + contentVersionId);
-					    groups.add("content_" + contentVersionVO.getContentId());
+					    groups.add(CacheController.getPooledString(2, contentVersionId));
+					    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 					}
 				}
 				
-			    groups.add("siteNode_" + templateController.getSiteNodeId());
+			    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
 
 			    if(groups.size() < 20)
 			    {
@@ -2767,7 +2767,7 @@ public class ComponentLogic
 		while(contentVersionIdListIterator.hasNext())
 		{
 			Integer currentContentVersionId = (Integer)contentVersionIdListIterator.next();
-			templateController.getDeliveryContext().addUsedContentVersion("contentVersion_" + currentContentVersionId);
+			templateController.getDeliveryContext().addUsedContentVersion(CacheController.getPooledString(2, currentContentVersionId));
 		}
 
 		return properties;
@@ -3113,8 +3113,8 @@ public class ComponentLogic
 			    if(contentVersionId != null)
 			    {
 			    	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-				    groups.add("contentVersion_" + contentVersionId);
-				    groups.add("content_" + contentVersionVO.getContentId());
+				    groups.add(CacheController.getPooledString(2, contentVersionId));
+				    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 			    }
 			}
 

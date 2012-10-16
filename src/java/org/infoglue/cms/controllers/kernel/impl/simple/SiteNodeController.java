@@ -131,7 +131,7 @@ public class SiteNodeController extends BaseController
 	 * This method returns a list of the children a siteNode has.
 	 */
    	
-	public SiteNodeVO getSiteNodeVOWithId(Integer siteNodeId, Database db) throws Exception
+	public SiteNodeVO getSiteNodeVOWithId(Integer siteNodeId, Database db) throws Exception 
 	{
 		String key = "" + siteNodeId;
 		SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeCache", key);
@@ -853,7 +853,7 @@ public class SiteNodeController extends BaseController
    		String key = "" + parentSiteNodeId;
 		if(logger.isInfoEnabled())
 			logger.info("key:" + key);
-		
+
 		List<SiteNodeVO> childrenVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
 		if(childrenVOList != null)
 		{
@@ -878,7 +878,7 @@ public class SiteNodeController extends BaseController
 		results.close();
 		oql.close();
         
-		CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, childrenVOList, new String[]{"siteNode_" + parentSiteNodeId}, true);
+		CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, childrenVOList, new String[]{CacheController.getPooledString(3, parentSiteNodeId)}, true);
         
 		return childrenVOList;
 	} 
@@ -968,8 +968,8 @@ public class SiteNodeController extends BaseController
 			childrenVOList.add(siteNodeVersion.getValueObject());
 		
 			String key = "" + siteNodeVersion.getValueObject().getSiteNodeId();
-			String groupKey1 = "siteNodeVersion_" + siteNodeVersion.getId();
-			String groupKey2 = "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId();
+			String groupKey1 = CacheController.getPooledString(4, siteNodeVersion.getId());
+			String groupKey2 = CacheController.getPooledString(3, siteNodeVersion.getValueObject().getSiteNodeId());
 
 			CacheController.cacheObjectInAdvancedCache("latestSiteNodeVersionCache", key, siteNodeVersion.getValueObject(), new String[]{groupKey1.toString(), groupKey2.toString()}, true);
 		}
@@ -1001,6 +1001,7 @@ public class SiteNodeController extends BaseController
         }
         catch(Exception e)
         {
+        	e.printStackTrace();
             logger.error("An error occurred so we should not complete the transaction:" + e);
             logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
@@ -1018,7 +1019,7 @@ public class SiteNodeController extends BaseController
 	public List<SiteNodeVO> getSiteNodeVOList(boolean showDeletedItems, Integer stateId, Integer limit, Database db) throws Exception
 	{
 		List<SiteNodeVO> childrenVOList = new ArrayList<SiteNodeVO>();
-		
+
    		Timer t = new Timer();
 
    		StringBuffer SQL = new StringBuffer();
@@ -1034,7 +1035,7 @@ public class SiteNodeController extends BaseController
 	   		SQL.append("	snv2.siNoId = snv.siNoId AND ");
 	   		SQL.append("	snv2.isActive = $2 AND snv2.stateId >= $3 ");
 	   		SQL.append("	) ");
-	   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siNoId DESC LIMIT $4 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");
+	   		SQL.append("order by sn.parentSiNoId, snv.sortOrder ASC, sn.name ASC, sn.siNoId DESC LIMIT $4 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");
     	}
     	else
     	{
@@ -1048,10 +1049,10 @@ public class SiteNodeController extends BaseController
 	   		SQL.append("	snv2.siteNodeId = snv.siteNodeId AND ");
 	   		SQL.append("	snv2.isActive = $2 AND snv2.stateId >= $3 ");
 	   		SQL.append("	) ");
-	   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC LIMIT $4 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
+	   		SQL.append("order by sn.parentSiteNodeId, snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC LIMIT $4 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
     	}
 
-    	//logger.info("SQL:" + SQL);
+    	//System.out.println("SQL:" + SQL);
     	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
     	//logger.info("showDeletedItems:" + showDeletedItems);
     	OQLQuery oql = db.getOQLQuery(SQL.toString());
@@ -1061,24 +1062,32 @@ public class SiteNodeController extends BaseController
 		oql.bind(limit);
 
 		QueryResults results = oql.execute(Database.ReadOnly);
-		t.printElapsedTime("Executed query.....");
+		//t.printElapsedTime("Executed query.....");
+		
+		int lastBegunParentSiteNodeId = -1;
 		while (results.hasMore()) 
 		{
 			SiteNode siteNode = (SiteNode)results.next();
 			childrenVOList.add(siteNode.getValueObject());
+			
+			if(siteNode.getValueObject().getParentSiteNodeId() !=null && lastBegunParentSiteNodeId != siteNode.getValueObject().getParentSiteNodeId())
+				lastBegunParentSiteNodeId = siteNode.getValueObject().getParentSiteNodeId();
 			
 			String key = "" + siteNode.getValueObject().getParentSiteNodeId() + "_" + showDeletedItems;
 			List<SiteNodeVO> siteNodeChildrenVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
 	   		if(siteNodeChildrenVOList == null)
 			{
 		   		siteNodeChildrenVOList = new ArrayList<SiteNodeVO>();
-				CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeChildrenVOList, new String[] {"siteNode_" + siteNode.getValueObject().getParentSiteNodeId()}, true);
+				CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeChildrenVOList, new String[] {CacheController.getPooledString(3, siteNode.getValueObject().getParentSiteNodeId())}, true);
 			}
 			siteNodeChildrenVOList.add(siteNode.getValueObject());
 
 			String siteNodeCacheKey = "" + siteNode.getValueObject().getId();
 			CacheController.cacheObjectInAdvancedCache("siteNodeCache", siteNodeCacheKey, siteNode.getValueObject());
 		}
+		
+		logger.info("Clearing last node as we are probably not done with all it's children");
+		CacheController.clearCacheForGroup("siteNodeCache", CacheController.getPooledString(3, lastBegunParentSiteNodeId));
 		
 		results.close();
 		oql.close();
@@ -1204,7 +1213,7 @@ public class SiteNodeController extends BaseController
 		results.close();
 		oql.close();
         
-		CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, childrenVOList, new String[]{"siteNode_" + parentSiteNodeId}, true);
+		CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, childrenVOList, new String[]{CacheController.getPooledString(3, parentSiteNodeId)}, true);
         
 		return childrenVOList;
 	} 

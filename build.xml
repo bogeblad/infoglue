@@ -1012,6 +1012,10 @@
 			<fileset dir="${conf}/deliver" includes="mapping.xml,oracle_mapping.xml,jobs.xml"/>
 			<fileset dir="${conf}/deliver" includes="webwork.properties,actions.xml,jobs.xml"/>
 		</copy>
+		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.working}/WEB-INF/web-app_2_3.dtd" overwrite="true">
+			<filterset refid="project.filters"/>
+		</copy>
+
 		<copy file="${conf}/deliver-web.xml" tofile="${deploy.dir.working}/WEB-INF/web.xml" overwrite="true">
 			<filterset refid="project.filters"/>
 			<filterset>
@@ -1019,6 +1023,10 @@
 				<filter token="operatingMode.deliver" value="${operatingMode.working}"/>
 			</filterset>
 		</copy>
+		<copy todir="${deploy.dir.working}/WEB-INF" overwrite="true">
+			<fileset dir="${conf}" includes="server-config.wsdd,web-app_2_3.dtd"/>
+		</copy>
+
 		<copy todir="${deploy.dir.working}/WEB-INF/classes" overwrite="true">
 			<fileset dir="${src}" includes="workflows/*.xml"/>
 		</copy>

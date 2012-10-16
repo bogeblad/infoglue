@@ -142,8 +142,8 @@ public class ViewContentAction extends InfoGlueAbstractAction
         t.printElapsedTime("ViwContent 1");
         if(this.repositoryId == null)
             this.repositoryId = this.contentVO.getRepositoryId();
-        
-        if(this.contentVO.getRepositoryId() != null && !hasAccessTo("Repository.Read", "" + this.contentVO.getRepositoryId()))
+                
+        if(this.contentVO.getRepositoryId() != null && !hasAccessTo("Repository.Read", "" + this.contentVO.getRepositoryId()) && !hasAccessTo("Repository.Write", "" + this.contentVO.getRepositoryId()))
         {
     		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
     		ceb.add(new AccessConstraintException("Content.contentId", "1000"));
@@ -164,9 +164,9 @@ public class ViewContentAction extends InfoGlueAbstractAction
         {
 	        ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());
 	        
-	        if(contentVO.getRepositoryId() != null && !hasAccessTo("Repository.Read", "" + contentVO.getRepositoryId()))
+	        if(contentVO.getRepositoryId() != null && !hasAccessTo("Repository.Read", "" + contentVO.getRepositoryId()) && !hasAccessTo("Repository.Write", "" + this.contentVO.getRepositoryId()))
 	        {
-	        	logger.error("The user " + this.getInfoGluePrincipal().getName() + " had no access to Repository.Read and " + this.contentVO.getRepositoryId() + ". Could be an hacker attempt.");
+	        	logger.error("The user " + this.getInfoGluePrincipal().getName() + " had no access to Repository.Read or Repository.write and " + this.contentVO.getRepositoryId() + ". Could be an hacker attempt.");
 	    		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 	    		ceb.add(new AccessConstraintException("Content.contentId", "1000"));
 	    		ceb.throwIfNotEmpty();
@@ -214,9 +214,9 @@ public class ViewContentAction extends InfoGlueAbstractAction
         {
 	        ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());
 	        
-	        if(contentVO.getRepositoryId() != null && !hasAccessTo("Repository.Read", "" + contentVO.getRepositoryId()))
+	        if(contentVO.getRepositoryId() != null && !hasAccessTo("Repository.Read", "" + contentVO.getRepositoryId())  && !hasAccessTo("Repository.Write", "" + this.contentVO.getRepositoryId()))
 	        {
-	        	logger.error("The user " + this.getInfoGluePrincipal().getName() + " had no access to Repository.Read and " + this.contentVO.getRepositoryId() + ". Could be an hacker attempt.");
+	        	logger.error("The user " + this.getInfoGluePrincipal().getName() + " had no access to Repository.Read or Repository.write and " + this.contentVO.getRepositoryId() + ". Could be an hacker attempt.");
 	    		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 	    		ceb.add(new AccessConstraintException("Content.contentId", "1000"));
 	    		ceb.throwIfNotEmpty();

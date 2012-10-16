@@ -66,7 +66,7 @@
 				activateTool("mydesktopMarkup", "$ui.getString('tool.common.myDesktopTool.name')", "$ui.getString("tool.common.adminTool.header")", false, '$ui.getString("tool.common.mydesktopTabLabelPrefix")');
 				openUrlInWorkArea("ViewMyDesktop.action", "$ui.getString('tool.common.myDesktopTool.name')", "mydesktop", "$ui.getString('tool.common.mydesktopTabLabelPrefix')");
 			#end
-
+ 
 			var i = 0;
 		    $(document).mouseover(function(e) {
 		    	$("#debug").text("mouseover: " + isDragActive + ":"/* + getDragHTML()*/);
@@ -91,7 +91,7 @@
 				}
 			});
 			
-			$(document).mouseup(function(e) {
+			$(document).mouseup(function(e) {							
 				if(isDragActive)
 				{
 					isDragActive = false;

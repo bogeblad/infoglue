@@ -110,9 +110,9 @@
 			});
 
 			openUrlInWorkArea("ViewContentToolStartPage!V3.action");
-			
+						
 			$("#menuOverlayDiv").mouseout(function () {
-				$("#structureToolDiv").mouseup();
+				$("#contentToolDiv").mouseup();
 			});
 		});
 		
@@ -175,9 +175,16 @@
  
 #beginLightCommonToolV3Impl("tool.common.adminTool.header" "" "" false true true $!headerMarkup false "")
 
-<div style="float: left; width: 100%; height: 100%; overflow: hidden;">
+<div id="contentToolDiv" style="float: left; width: 100%; height: 100%; overflow: hidden;">
 	<div id="menutoolbar" class="$toolbarVariant">
 		<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+		</div>
+		<div id="menuToolbarRight">
+			<a class="igToolbarButton igToolbarHeaderButton" href="#" onclick="refreshWorkSurface();" id="reloadButton" title="">
+				<span class="igToolbarButtonOuterSpan igToolbarHeaderButton">
+					<span class="reloadSitenode" title="">$ui.getString("tool.structuretool.toolbarV3.reloadPageTitle")</span>
+				</span>
+			</a>
 		</div>
 	</div>
 	<div style="clear: both"></div>

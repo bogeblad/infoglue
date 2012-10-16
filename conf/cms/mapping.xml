@@ -1647,6 +1647,25 @@
 		</field>
 	</class>
 
+    <!--  Mapping for SmallContentCategory  -->
+	<class name="org.infoglue.cms.entities.content.impl.simple.SmallContentCategoryImpl" identity="contentCategoryId" key-generator="IDENTITY">
+		<description>SmallContentCategory</description>
+		<cache-type type="unlimited" capacity="10000"/>
+		<map-to table="cmContentCategory"/>
+		<field name="contentCategoryId" type="java.lang.Integer">
+			<sql name="contentCategoryId" type="integer" dirty="check" />
+		</field>
+		<field name="attributeName" type="java.lang.String">
+			<sql name="attributeName" type="varchar" dirty="check" />
+		</field>
+		<field name="contentVersionId" type="java.lang.Integer">
+			<sql name="contentVersionId" type="integer" dirty="check" />
+		</field>
+		<field name="categoryId" type="java.lang.Integer">
+		  <sql name="categoryId" type="integer" dirty="check"/>
+		</field>
+	</class>
+
     <!--  Mapping for PropertiesCategory  -->
 	<class name="org.infoglue.cms.entities.management.impl.simple.PropertiesCategoryImpl" identity="propertiesCategoryId" key-generator="IDENTITY">
 		<description>PropertiesCategory</description>

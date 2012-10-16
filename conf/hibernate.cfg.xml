@@ -31,11 +31,8 @@
 
 		<!-- query to validate pooled connections -->
 		<!--  <property name="dbcp.validationQuery">@database.validationQuery@</property>-->
-		<property name="dbcp.validationQuery">select 2 from cmInfoGlueProperties</property>
-		<property name="dbcp.testOnBorrow">false</property>
-		<property name="dbcp.testWhileIdle">true</property>
-		<property name="dbcp.timeBetweenEvictionRunsMillis">20000</property>
-
+		<property name="dbcp.validationQuery">select 1 from cmInfoGlueProperties</property>
+		
 		<!-- OS Workflow mappings -->
 		<mapping resource="com/opensymphony/workflow/spi/hibernate/HibernateCurrentStep.hbm.xml"/>
 		<mapping resource="com/opensymphony/workflow/spi/hibernate/HibernateHistoryStep.hbm.xml"/>

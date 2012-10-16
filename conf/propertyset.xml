@@ -16,6 +16,9 @@
 		<arg name="dbcp.validationQuery" value="select 1 from cmSystemUser"/>		
 		-->
 		<arg name="dbcp.validationQuery" value="@database.validationQuery@"/>		
+		<arg name="dbcp.testOnBorrow" value="false"/>		
+		<arg name="dbcp.testWhileIdle" value="true"/>		
+		<arg name="dbcp.timeBetweenEvictionRunsMillis" value="10000"/>
 
         <!--<arg name="datasource" value="jdbc/DefaultDS"/>-->
         <arg name="table.name" value="OS_PROPERTYENTRY"/>

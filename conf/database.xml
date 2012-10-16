@@ -9,6 +9,9 @@
 		  	<param name="url" value="@database.url@"/>
 		  	<param name="validation-query" value="@database.validationQuery@"/>
 		  	<param name="max-active" value="@database.maxConnections@"/>
+		  	<param name="testOnBorrow" value="false"/>
+		  	<param name="testWhileIdle" value="true"/>
+		  	<param name="timeBetweenEvictionRunsMillis" value="10000"/>
 		</data-source>
 		<mapping href="classes/@database.mapping@"/>
 	</database>

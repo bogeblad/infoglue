@@ -190,41 +190,35 @@ public class CacheController extends Thread
     }
     
 	//Force defeatCaches-mode 
-    private static class ThreadLocalDefeatCacheMode extends ThreadLocal 
+    private static class ThreadLocalDefeatCacheMode extends ThreadLocal<DefeatCacheParameters> 
     {
-    	public Object initialValue() 
+    	public DefeatCacheParameters initialValue() 
         {
-        	return false;
+        	return new DefeatCacheParameters();
         }
     }
 
     private static ThreadLocalDefeatCacheMode defeatCaches = new ThreadLocalDefeatCacheMode();
 
-    public static Boolean getDefeatCaches() 
+    public static DefeatCacheParameters getDefeatCaches() 
     {
-    	try
-    	{
-    		if(defeatCaches != null)
-    			return (Boolean) defeatCaches.get();
-    		else
-    			return false;
-    	}
-    	catch (Exception e) 
-    	{
-    		return false;
-		}
+        return (DefeatCacheParameters) defeatCaches.get();
     }
-
-    public static void setDefeatCaches(Boolean defeatCachesValue) 
+    
+    public static void setDefeatCaches(boolean defeatCache, Map<Class, List<Object>> entities) 
     {
+    	DefeatCacheParameters defeatCachesValue = new DefeatCacheParameters();
+    	defeatCachesValue.setDefeatCache(defeatCache);
+    	defeatCachesValue.getEntities().putAll(entities);
+    	
     	if(logger.isInfoEnabled())
     		logger.info("Forcing defeatCaches...");
     	defeatCaches.set(defeatCachesValue);
-    	if(defeatCachesValue == true)
+    	if(defeatCache)
     	{
     		try 
-    		{ 
-				clearCastorCaches(); 
+    		{
+				clearCastorCaches(defeatCaches.get());
 			} 
     		catch (Exception e) 
     		{
@@ -232,6 +226,32 @@ public class CacheController extends Thread
 			}
     	}
     }
+    
+	private static StringPool stringPool = new StringPool(); 
+	public static String getPooledString(Integer type, Object id)
+	{
+		if(type == null || id == null)
+		{
+			logger.warn("Broken was returned from pool:" + type + ":" + id);
+			if(logger.isInfoEnabled())
+				Thread.dumpStack();
+			return "broken";
+		}
+		
+		return stringPool.getCanonicalVersion(type, id.toString());
+	}
+	public static Integer getPooledStringSize()
+	{
+		return stringPool.getPoolSize();
+	}
+	public static Integer getPooledStringHits()
+	{
+		return stringPool.getHits();
+	}
+	public static void clearPooledString()
+	{
+		stringPool.clearPool();
+	}
     
 	public CacheController()
 	{
@@ -361,7 +381,7 @@ public class CacheController extends Thread
 		if(cacheName == null || key == null)
 			return null;
 		
-		if(getDefeatCaches())
+		if(getDefeatCaches().getDefeatCache())
 			return null;
 		
 		//synchronized(caches)
@@ -394,15 +414,18 @@ public class CacheController extends Thread
         return null;
     }
 
-	public static void cacheObjectInAdvancedCacheWithGroupsAsSet(String cacheName, Object key, Object value, Set groupsAsList, boolean useGroups)
+	public static void cacheObjectInAdvancedCacheWithGroupsAsSet(String cacheName, Object key, Object value, Set<String> groupsAsList, boolean useGroups)
 	{
+		String[] groups = groupsAsList.toArray(new String[0]);
+		//System.out.println(groupsAsList.size() + " became " + groups.length);
+		/*
 		Object[] o = groupsAsList.toArray();
 		String[] groups = new String[o.length];
 		for (int i=0; i<groups.length;i++)
 		{
 			groups[i] = o[i].toString();
 		}
-		
+		*/
 		cacheObjectInAdvancedCache(cacheName, key, value, groups, useGroups);
 	}
 
@@ -425,13 +448,7 @@ public class CacheController extends Thread
 	{
 		if(cacheName == null || key == null || value == null || key.toString().length() == 0)
 			return;
-/*
-		if(key.toString().equals("inherited_2245_3_10_MiniArticleShortcuts"))
-			Thread.dumpStack();
-		
-		if(key.toString().equals("11420_3_UMU footer Component_Footer Area_1245_10_false_MiniArticleShortcuts_true_true_true_true"))
-			Thread.dumpStack();
-*/		
+
 		if(logger.isInfoEnabled() && cacheName.equalsIgnoreCase("pageCacheExtra"))
 		{			
 			logger.info("cacheName: " + cacheName);
@@ -675,7 +692,7 @@ public class CacheController extends Thread
 		if(cacheName == null || key == null || key.length() == 0)
 			return null;
 		
-		if(getDefeatCaches())
+		if(getDefeatCaches().getDefeatCache())
 			return null;
 		
 	    Object value = null;
@@ -960,7 +977,7 @@ public class CacheController extends Thread
 		if(cacheName == null || key == null)
 			return null;
 		
-		if(getDefeatCaches())
+		if(getDefeatCaches().getDefeatCache())
 			return null;
 
 	    //logger.info("getCachedObjectFromAdvancedCache start:" + cacheName + ":" + key + ":" + updateInterval);
@@ -1498,15 +1515,18 @@ public class CacheController extends Thread
 					}
 					if(cacheName.equalsIgnoreCase("rootSiteNodeCache") && entity.indexOf("SiteNode") > 0)
 					{
-						clear = true;
+						if(CmsPropertyHandler.getOperatingMode().equals("0"))
+							clear = true;
 					}
 					if(cacheName.equalsIgnoreCase("siteNodeCache") && entity.indexOf("SiteNode") > 0)
 					{
 						clear = true;
+						selectiveCacheUpdate = true;
 					}
 					if(cacheName.equalsIgnoreCase("contentCache") && entity.indexOf("Content") > 0)
 					{
 						clear = true;
+						selectiveCacheUpdate = true;
 					}
 					if(cacheName.equalsIgnoreCase("childSiteNodesCache") && entity.indexOf("SiteNode") > 0)
 					{
@@ -1540,6 +1560,15 @@ public class CacheController extends Thread
 					if(cacheName.equalsIgnoreCase("relatedCategoriesCache") && (entity.indexOf("Group") > 0 || entity.indexOf("Role") > 0 || entity.indexOf("User") > 0))
 					{
 						clear = true;
+					}
+					if(cacheName.equalsIgnoreCase("categoryCache") && entity.indexOf("Category") > 0)
+					{
+						clear = true;
+					}
+					if(cacheName.equalsIgnoreCase("contentCategoryCache") && entity.indexOf("ContentVersion") > 0)
+					{
+						clear = true;
+						selectiveCacheUpdate = true;
 					}
 					if(cacheName.equalsIgnoreCase("redirectCache") && entity.indexOf("Redirect") > 0)
 					{
@@ -1709,6 +1738,7 @@ public class CacheController extends Thread
 							    	}
 							    	else
 							    	{
+								    	cacheInstance.flushGroup("" + entityId);
 								    	cacheInstance.flushGroup("siteNode_" + entityId);
 								    	cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
 							    	}
@@ -1763,6 +1793,7 @@ public class CacheController extends Thread
 							    	}
 							    	else
 							    	{
+								    	cacheInstance.flushGroup("" + entityId);
 								    	cacheInstance.flushGroup("content_" + entityId);
 								    	cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
 							    	}
@@ -1785,7 +1816,7 @@ public class CacheController extends Thread
 											Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
 
 									    	cacheInstance.flushGroup("content_" + contentId);
-									    	cacheInstance.flushGroup("contentVersion_" + publicationDetailVO.getEntityId().toString());
+									    	cacheInstance.flushGroup(CacheController.getPooledString(2, publicationDetailVO.getEntityId().toString()));
 									    	cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
 									    	logger.info("clearing " + e.getKey() + " with group " + "content_" + contentId);
 									    	logger.info("clearing " + e.getKey() + " with group " + "content_" + contentId);
@@ -1870,6 +1901,67 @@ public class CacheController extends Thread
 		       	}
         	}
         }  
+	}
+
+	public static synchronized void clearCastorCaches(DefeatCacheParameters dcp) throws Exception
+	{
+	    logger.info("Emptying the Castor Caches");
+	    
+		long wait = 0;
+		
+		while(!getForcedCacheEvictionMode() && RequestAnalyser.getRequestAnalyser().getApproximateNumberOfDatabaseQueries() > 0)
+		//while(!getForcedCacheEvictionMode() && RequestAnalyser.getRequestAnalyser().getNumberOfActiveRequests() > 0)
+		{
+	    	if(wait > 1000)
+			{
+				logger.warn("The clearCastorCaches method waited over " + ((wait * 10) / 1000) + " seconds but there seems to be " + RequestAnalyser.getRequestAnalyser().getApproximateNumberOfDatabaseQueries() + " queries blocking all the time. Continuing anyway.");
+				break;
+			}
+
+	        if(wait > 100)
+				setForcedCacheEvictionMode(true);
+
+			Thread.sleep(10);
+			wait++;
+	    }
+	    
+		Database db = CastorDatabaseService.getDatabase();
+		//CastorDatabaseService.setBlock(true);
+		
+		try
+		{		
+		    //db.getCacheManager().expireCache();
+			Map<Class,List<Object>> entities = dcp.getEntities();
+			Iterator<Class> keyIterator = entities.keySet().iterator();
+			while(keyIterator.hasNext())
+			{
+				Class clazz = keyIterator.next();
+				List<Object> ids = entities.get(clazz);
+				if(ids.size() > 0)
+				{
+					clearCache(clazz, ids.toArray(), true, db);
+					logger.info("Emptied clazz:" + clazz + " with ids:" + ids);
+				}
+				else
+				{
+					clearCache(db, clazz);
+					logger.info("Emptied clazz:" + clazz);
+				}
+			}
+		    //commitTransaction(db);
+
+			logger.info("Emptied the Castor Caches");
+		}
+		catch(Exception e)
+		{
+		    logger.error("Exception when tried empty the Castor Caches");
+		    rollbackTransaction(db);
+		}
+		finally
+		{
+			db.close();
+			//CastorDatabaseService.setBlock(false);
+		}
 	}
 
 	public static synchronized void clearCastorCaches() throws Exception
@@ -2080,6 +2172,9 @@ public class CacheController extends Thread
 				break;
 			}
 
+	        if(wait > 100)
+				setForcedCacheEvictionMode(true);
+
 	        Thread.sleep(10);
 	        wait++;
 	    }
@@ -2103,6 +2198,23 @@ public class CacheController extends Thread
 
 	public static synchronized void clearCache(Database db, Class c) throws Exception
 	{
+		long wait = 0;
+		while(!getForcedCacheEvictionMode() && RequestAnalyser.getRequestAnalyser().getApproximateNumberOfDatabaseQueries() > 0)
+		{
+	        if(wait > 1000)
+			{
+				logger.warn("The clearCache method waited over " + ((wait * 10) / 1000) + " seconds but there seems to be " + RequestAnalyser.getRequestAnalyser().getNumberOfCurrentRequests() + " requests blocking all the time. Continuing anyway.");
+				//printThreads();
+				break;
+			}
+
+	        if(wait > 100)
+				setForcedCacheEvictionMode(true);
+
+	        Thread.sleep(10);
+	        wait++;
+	    }
+
 		Class[] types = {c};
 		CacheManager manager = db.getCacheManager();
 		manager.expireCache(types);

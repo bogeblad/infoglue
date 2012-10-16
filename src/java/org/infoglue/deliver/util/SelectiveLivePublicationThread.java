@@ -52,7 +52,10 @@ import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
 import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl;
+import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
+import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
+import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
@@ -570,6 +573,22 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						        CacheController.clearCache(type, ids);
 						        CacheController.clearCache(type);
 						    	CacheController.clearCaches(className, objectId, null);
+						    	
+						    	System.out.println("Clearing content types and repos");
+						    	Class ctdClass = ContentTypeDefinitionImpl.class;
+						    	CacheController.clearCache("contentTypeDefinitionCache");
+								CacheController.clearCache(ctdClass);
+								CacheController.clearCaches(ctdClass.getName(), null, null);
+
+								Class repoClass = RepositoryImpl.class;
+								CacheController.clearCache("repositoryCache");
+								CacheController.clearCache(repoClass);
+								CacheController.clearCaches(repoClass.getName(), null, null);
+
+								Class categoryClass = CategoryImpl.class;
+								CacheController.clearCache("categoryCache");
+								CacheController.clearCache(categoryClass);
+								CacheController.clearCaches(categoryClass.getName(), null, null);
 							}
 						}
 				    }

@@ -2277,8 +2277,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		}
     	
         String key = "" + siteNodeId + "_" + false;
-        System.out.println("VCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
-		logger.info("key in getChildSiteNodes:" + key);
+        logger.info("key in getChildSiteNodes:" + key);
 		List siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
 
 		if(siteNodeVOList == null)

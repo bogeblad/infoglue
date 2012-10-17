@@ -100,7 +100,8 @@ public class UserControllerProxy extends BaseController
 					}
 					catch (Exception e) 
 					{
-						logger.error("Problem loading synchronizer:" + e.getMessage(), e);
+						logger.error("Problem loading synchronizer:" + e.getMessage());
+						logger.info("Problem loading synchronizer:" + e.getMessage(), e);
 					}
 				}
 				else 

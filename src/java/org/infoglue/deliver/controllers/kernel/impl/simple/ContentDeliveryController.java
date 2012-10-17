@@ -2961,40 +2961,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 		}
 		catch (Exception e) 
 		{
+			e.printStackTrace();
 			logger.error("An error occurred trying to validate access to a content. Resetting datalayer and disabling page cache but allowing for now. Reson: " + e.getMessage());
 			logger.warn("An error occurred trying to validate access to a content. Resetting datalayer and disabling page cache but allowing for now. Reson: " + e.getMessage(), e);
-			
-			deliveryContext.setDisablePageCache(true);
-			
-			try
-			{
-				logger.warn("Clearing caches...");
-				CacheController.clearCastorCaches();
-		        CacheController.clearCaches(null, null, null);
-		        CacheController.clearFileCaches("pageCache");
-		        /*
-		        CacheController.clearCache(db, AccessRightImpl.class);
-				CacheController.clearCache(db, AccessRightRoleImpl.class);
-				CacheController.clearCache(db, AccessRightGroupImpl.class);
-				CacheController.clearCache(db, AccessRightUserImpl.class);
-				CacheController.clearCache("authorizationCache");
-				CacheController.clearCache("personalAuthorizationCache");
-				CacheController.clearCache("componentContentsCache");
-				*/
-		        
-				logger.warn("Giving lookup one more chance...");
-				Integer protectedContentId = getProtectedContentId(db, content);
-				if(logger.isInfoEnabled())
-					logger.info("content:" + content.getName() + ":" + protectedContentId);
-				if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Read", protectedContentId.toString()))
-				{
-				    return false;
-				}
-			}
-			catch (Exception e2) 
-			{
-				logger.warn("Error second try as well. Reson: " + e2.getMessage(), e2);
-			}
 		}
 		
 		//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart protectedContentId", t.getElapsedTimeNanos() / 1000000);

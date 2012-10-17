@@ -534,6 +534,7 @@ public class RepositoryController extends BaseController
 		List accessableRepositories = new ArrayList();
     	
 		List allRepositories = this.getRepositoryVOListNotMarkedForDeletion();
+		System.out.println("allRepositories:" + allRepositories.size());
 		Iterator i = allRepositories.iterator();
 		while(i.hasNext())
 		{

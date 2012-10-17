@@ -256,7 +256,8 @@ public class InfoGlueAuthenticationFilter implements Filter
 			//logger.info("User:" + session.getAttribute(INFOGLUE_FILTER_USER));
 			if (session != null && session.getAttribute(INFOGLUE_FILTER_USER) != null) 
 			{
-			    //logger.info("Found user in session:" + session.getAttribute(INFOGLUE_FILTER_USER));
+			    //System.out.println("session:" + session + ":" + ((InfoGluePrincipal)session.getAttribute(INFOGLUE_FILTER_USER)).hashCode());
+				//System.out.println("Found user in session:" + ((InfoGluePrincipal)session.getAttribute(INFOGLUE_FILTER_USER)).getGroups().size());
 			    //if(successLoginBaseUrl != null && !URL.startsWith(successLoginBaseUrl))
 			    //{
 			    //    checkSuccessRedirect(request, response, URL);

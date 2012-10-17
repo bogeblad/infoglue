@@ -578,7 +578,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 		    }
 	    }
 
-		System.out.println("Getting value for key:" + key + ":" + type);
+		//System.out.println("Getting value for key:" + key + ":" + type);
 
     	if(logger.isInfoEnabled())
     		logger.info("Getting value for key:" + key + ":" + type);

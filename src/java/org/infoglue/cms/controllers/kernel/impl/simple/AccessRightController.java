@@ -241,6 +241,7 @@ public class AccessRightController extends BaseController
 		    logger.error("An error occurred so we should not precache the access rights:" + e);
 			rollbackTransaction(db);
 		}
+		t.printElapsedTime("Recaching access rights...");
 	}
 	
 	
@@ -1718,7 +1719,6 @@ public class AccessRightController extends BaseController
 			t.setActive(false);
 		
 		Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
-		//logger.info("principalAccessRights:" + cachedPrincipalAuthorizationMap.size());
 		if(!infoGluePrincipal.getIsAdministrator() && cachedPrincipalAuthorizationMap == null)
 		{
 			logger.info("Precaching all access rights for this user");
@@ -1817,10 +1817,12 @@ public class AccessRightController extends BaseController
 			Integer hasAccess = userAccessRightsMap.get(acKey);
 			if(hasAccess == null)
 			{
+			    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
 				return false;
 			}
 			else if(hasAccess == 1)
 			{
+			    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
 				return true;
 			}
 			else if(hasAccess == -1)
@@ -1997,7 +1999,6 @@ public class AccessRightController extends BaseController
 			logger.info("Principal " + infoGluePrincipal.getName() + " was not allowed to " + interceptionPointName + " on " + extraParameters);
 		}
 				
-	    //CacheController.cacheObject("authorizationCache", key, new Boolean(isPrincipalAuthorized));
 	    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(isPrincipalAuthorized), new String[]{infoGluePrincipal.getName()}, true);
 
 		return isPrincipalAuthorized;

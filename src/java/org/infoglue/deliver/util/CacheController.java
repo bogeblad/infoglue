@@ -1079,6 +1079,7 @@ public class CacheController extends Thread
 	public static void clearCache(String cacheName)
 	{
 		logger.info("Clearing the cache called " + cacheName);
+		//System.out.println("Clearing the cache called " + cacheName);
 		synchronized(caches) 
 		{
 			if(caches.containsKey(cacheName))

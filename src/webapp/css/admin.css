@@ -337,9 +337,16 @@ background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 	cursor: pointer;
 }
 
-.resultOk
+.notificationResultOk
 {
 	background-image: url("images/v3/check.png");
 	background-repeat: no-repeat;
 	background-position: 10px 9px;
+}
+
+.notificationLoading
+{
+	background-image: url("images/v3/loadingAnimation.gif");
+	background-repeat: no-repeat;
+	background-position: 85px 12px;
 }

@@ -973,7 +973,7 @@
     
     #if("$!oldModifiedDateTime" != "-1" && !$errors.hasErrors() && !$concurrentModification)
 		<script type="text/javascript">
-			top.displayNotification("$ui.getString("tool.contenttool.contentVersionUpdated")", "resultOk");
+			top.displayNotification("$ui.getString("tool.contenttool.contentVersionUpdated")", true, "notificationResultOk");
 		</script>
 	#end
     

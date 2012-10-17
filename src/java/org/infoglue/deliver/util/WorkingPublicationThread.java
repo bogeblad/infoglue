@@ -48,6 +48,7 @@ import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
 import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl;
 import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
+import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
@@ -63,6 +64,7 @@ import org.infoglue.cms.services.CacheEvictionBeanListenerService;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
+import org.infoglue.deliver.applications.filters.URIMapperCache;
 import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
 
 /**
@@ -210,6 +212,22 @@ public class WorkingPublicationThread extends Thread
 							    Class typesExtra = SmallSiteNodeVersionImpl.class;
 								Object[] idsExtra = {new Integer(objectId)};
 								CacheController.clearCache(typesExtra, idsExtra);
+							}
+							else if(Class.forName(className).getName().equals(RepositoryImpl.class.getName()))
+							{
+								Class repoClass = RepositoryImpl.class;
+								CacheController.clearCache(repoClass);
+								CacheController.clearCaches(repoClass.getName(), null, null);
+
+								CacheController.clearCache("repositoryCache");
+								CacheController.clearCache("masterRepository");
+						        CacheController.clearFileCaches("pageCache");
+						        CacheController.clearCache("pageCache");
+								CacheController.clearCache("pageCacheExtra");
+								CacheController.clearCache("componentCache");
+								CacheController.clearCache("NavigationCache");
+								CacheController.clearCache("pagePathCache");
+						    	URIMapperCache.getInstance().clear();
 							}
 							else if(Class.forName(className).getName().equals(DigitalAssetImpl.class.getName()))
 							{

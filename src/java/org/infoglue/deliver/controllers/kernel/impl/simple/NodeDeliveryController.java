@@ -2127,6 +2127,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 
 		try
 		{
+			siteNodeId = getSiteNodeIdFromBaseSiteNodeIdAndPath(db, infogluePrincipal, path, attributeName, deliveryContext, session, languageId, siteNodeIdString, remainingURI);
+			/*
 			SiteNodeVO sitenodeVO = getNodeDeliveryController(deliveryContext).getSiteNodeVO(db, new Integer(siteNodeIdString));
 	        for (int i = 0; i < path.length; i++) 
 	        {
@@ -2134,6 +2136,7 @@ public class NodeDeliveryController extends BaseDeliveryController
     			if(siteNodeId != null)
     				parentSiteNodeId = siteNodeId;
 	        }
+	        */
 
 	        commitTransaction(db);
 	    }
@@ -2151,7 +2154,23 @@ public class NodeDeliveryController extends BaseDeliveryController
 		
         return siteNodeId;
     }
-	
+
+    public static Integer getSiteNodeIdFromBaseSiteNodeIdAndPath(Database db, InfoGluePrincipal infogluePrincipal, String[] path, String attributeName, DeliveryContext deliveryContext, HttpSession session, Integer languageId, String siteNodeIdString, String remainingURI) throws SystemException, Exception
+    {
+    	Integer siteNodeId = null;
+    	Integer parentSiteNodeId = new Integer(siteNodeIdString);
+    	
+		SiteNodeVO sitenodeVO = getNodeDeliveryController(deliveryContext).getSiteNodeVO(db, new Integer(siteNodeIdString));
+        for (int i = 0; i < path.length; i++) 
+        {
+        	siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, sitenodeVO.getRepositoryId(), path[i], attributeName, parentSiteNodeId, languageId, deliveryContext);
+			if(siteNodeId != null)
+				parentSiteNodeId = siteNodeId;
+        }
+
+        return siteNodeId;
+    }
+
 	/**
 	 * This method returns the contentId of the bound metainfo-content to the given page. 
 	 */

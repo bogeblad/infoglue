@@ -574,7 +574,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						        CacheController.clearCache(type);
 						    	CacheController.clearCaches(className, objectId, null);
 						    	
-						    	System.out.println("Clearing content types and repos");
+						    	logger.info("Clearing content types and repos");
 						    	Class ctdClass = ContentTypeDefinitionImpl.class;
 						    	CacheController.clearCache("contentTypeDefinitionCache");
 								CacheController.clearCache(ctdClass);
@@ -582,6 +582,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 
 								Class repoClass = RepositoryImpl.class;
 								CacheController.clearCache("repositoryCache");
+								CacheController.clearCache("masterRepository");
 								CacheController.clearCache(repoClass);
 								CacheController.clearCaches(repoClass.getName(), null, null);
 

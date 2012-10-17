@@ -267,7 +267,7 @@ public class ViewPageFilter implements Filter
 		            		nodeNames = nodeNameList.toArray(nodeNames);
 		            		
 		                    DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext();
-		                    siteNodeId = NodeDeliveryController.getSiteNodeIdFromBaseSiteNodeIdAndPath(infoGluePrincipal, nodeNames, attributeName, deliveryContext, httpSession, languageId, siteNodeIdString, remainingURI);
+		                    siteNodeId = NodeDeliveryController.getSiteNodeIdFromBaseSiteNodeIdAndPath(db, infoGluePrincipal, nodeNames, attributeName, deliveryContext, httpSession, languageId, siteNodeIdString, remainingURI);
 		                }
 		                else
 		                {
@@ -279,7 +279,7 @@ public class ViewPageFilter implements Filter
 			                    
 			                    //TODO
 			                    DeliveryContext deliveryContext = DeliveryContext.getDeliveryContext();
-		                    	siteNodeId = NodeDeliveryController.getSiteNodeIdFromPath(infoGluePrincipal, repositoryVO, nodeNames, attributeName, deliveryContext, httpSession, languageId);
+		                    	siteNodeId = NodeDeliveryController.getSiteNodeIdFromPath(db, infoGluePrincipal, repositoryVO, nodeNames, attributeName, deliveryContext, httpSession, languageId);
 			                    
 			                    if(deliveryContext.getLanguageId() != null && !deliveryContext.getLanguageId().equals(languageId))
 			                    {

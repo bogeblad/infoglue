@@ -136,7 +136,7 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
 
         try 
         {
-        	System.out.println("Getting keys with prefix:" + prefix + " and type: " + type + " and globalKey:" + globalKey);
+        	//System.out.println("Getting keys with prefix:" + prefix + " and type: " + type + " and globalKey:" + globalKey);
             logger.info("Getting keys with prefix:" + prefix + " and type: " + type + " and globalKey:" + globalKey);
             conn = getConnection();
             //t.printElapsedTime("Connection took..");

@@ -65,7 +65,7 @@
 		{
 			//alert("openUrlInWorkArea:" + url);
 			
-			top.displayNotification("$ui.getString("tool.structuretool.toolbarV3.loadingPage")", false, "notificationLoading");
+			top.displayLoadingIndicator(); 
 			
 			if(parent.openUrlInWorkArea)
 				parent.openUrlInWorkArea(url, titel, 'structure', "$ui.getString("tool.common.pageTabLabelPrefix")");

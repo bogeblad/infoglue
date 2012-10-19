@@ -490,25 +490,36 @@ function displayNotification(aMessage, aAutoHide, aClassName)
 {
 	notificationIsHot = true;
 	
-	setTimeout(function() {
-		if (notificationIsHot)
+	if (notificationIsHot)
+	{
+		$("#popupAlertMessageDiv p").html(aMessage); 
+		$("#popupAlertMessageDiv").attr("class", aClassName);
+		$("#popupAlertMessageDiv").css("margin-top", "0");
+		if (aAutoHide)
 		{
-			$("#popupAlertMessageDiv p").html(aMessage); 
-			$("#popupAlertMessageDiv").attr("class", aClassName);
-			$("#popupAlertMessageDiv").css("margin-top", "0");
-			if (aAutoHide)
-			{
-				setTimeout(function() {
-					hideNotification();
-				}, 4000);
-			}
+			setTimeout(function() {
+				hideNotification();
+			}, 4000);
 		}
-	},
-	1000);
+	}
 }
 
 function hideNotification()
 {
-	notificationIsHot = false;
-	$("#popupAlertMessageDiv").css("margin-top", "45px");
+	notificationIsHot = false; 
+	$("#popupAlertMessageDiv").css("margin-top", "35px");
+}
+
+//-------------------------------------------------------
+// Display a loading indicator when something is loading
+//-------------------------------------------------------
+
+function displayLoadingIndicator()
+{ 
+	$("#loadingIndicator").show();
+}
+
+function hideLoadingIndicator()
+{
+	$("#loadingIndicator").hide();
 }

@@ -297,15 +297,15 @@ background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 	position: absolute;
 	bottom: 34px;
 	right: 100px;
-	height: 45px;
+	height: 35px;
 	left: 50%;
 	margin-left: -125px;
 } 
 #popupAlertMessageDiv 
 {
-	margin-top: 45px;
+	margin-top: 35px;
 	background-color: darkgray;
-	height: 45px;
+	height: 35px;
 	border-radius: 10px;
 	padding: 10px;
 	border: 1px solid rgb(100, 100, 100);
@@ -344,9 +344,13 @@ background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 	background-position: 10px 9px;
 }
 
-.notificationLoading
+#loadingIndicator
 {
+	width: 64px;
+	height: 32px;
+	position: absolute;
+	right: 30px;
+	top: 100px;
 	background-image: url("images/v3/loadingAnimation.gif");
 	background-repeat: no-repeat;
-	background-position: 85px 12px;
 }

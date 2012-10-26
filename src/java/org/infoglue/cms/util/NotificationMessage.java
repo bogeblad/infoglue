@@ -23,6 +23,9 @@
 
 package org.infoglue.cms.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This bean contains all information about what kind of notification message to send to
  * the deliver instaces.
@@ -72,8 +75,14 @@ public class NotificationMessage
 	private String className;
 	private Object objectId;
 	private String objectName;
-	
+	private Map<String,String> extraInformation = new HashMap<String,String>();
+
 	public NotificationMessage(String name, String className, String systemUserName, int type, Object objectId, String objectName)
+	{
+		this(name, className, systemUserName, type, objectId, objectName, new HashMap());
+	}
+	
+	public NotificationMessage(String name, String className, String systemUserName, int type, Object objectId, String objectName, Map extraInformation)
 	{
 		this.name = name;
 		this.className = className;
@@ -81,6 +90,7 @@ public class NotificationMessage
 		this.type = type;
 		this.objectId = objectId;
 		this.objectName = objectName;	
+		this.extraInformation = extraInformation;
 	}
 	
 
@@ -117,6 +127,11 @@ public class NotificationMessage
 	public long getTimestamp()
 	{
 		return this.timeStamp;
+	}
+
+	public Map<String, String> getExtraInformation() 
+	{
+		return extraInformation;
 	}
 
 	public static String getTransactionTypeName(Integer transactionType)

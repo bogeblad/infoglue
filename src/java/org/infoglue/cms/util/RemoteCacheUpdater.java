@@ -166,6 +166,8 @@ public class RemoteCacheUpdater implements NotificationListener
 	{		
 		if(internalMessage != null && internalMessage.size() > 0)
 		{
+			//System.out.println("internalMessage:" + internalMessage);
+			//Thread.dumpStack();
 			List internalUrls = CmsPropertyHandler.getInternalDeliveryUrls();
 		
 			Iterator urlsIterator = internalUrls.iterator();
@@ -210,6 +212,7 @@ public class RemoteCacheUpdater implements NotificationListener
 				{
 					try
 					{
+						//logger.info("Calling " + address + " with " + publicMessage);
 						String response = postToUrl(address, publicMessage);
 					}
 					catch(Exception e)

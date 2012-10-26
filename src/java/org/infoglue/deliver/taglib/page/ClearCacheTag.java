@@ -52,7 +52,7 @@ public class ClearCacheTag extends TemplateControllerTag
 		try
 		{	
 			CacheController.clearCache(Class.forName(entity), new Object[]{entityId}, true);
-		    CacheController.clearCaches(entity, entityId, null, true);
+		    CacheController.clearCaches(entity, entityId, null, null, true);
 		    //CacheController.clearCaches(null, null, null, true);
 
 			//CacheUpdateThread cacheUpdateThread = new CacheUpdateThread();
@@ -85,7 +85,7 @@ public class ClearCacheTag extends TemplateControllerTag
 			{
 				sleep(50);
 				CacheController.clearCache(Class.forName(entity), new Object[]{entityId}, true);
-			    CacheController.clearCaches(entity, entityId, null, true);
+			    CacheController.clearCaches(entity, entityId, null, null, true);
 			} 
 			catch (Exception e)
 			{

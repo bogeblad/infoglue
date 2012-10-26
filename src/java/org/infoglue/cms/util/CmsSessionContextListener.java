@@ -156,7 +156,7 @@ public class CmsSessionContextListener implements HttpSessionListener
 			Thread.sleep(5000);
 			try
 			{
-				System.out.println("reCacheSessionPrincipal......");
+				logger.info("reCacheSessionPrincipal......");
 				//A little strange solution to solve the fact that we get a lot of ConcurrentModificationExceptions - possible due to many session death.
 				int numberOfIterations = 0;
 				boolean isOk = false;
@@ -165,7 +165,7 @@ public class CmsSessionContextListener implements HttpSessionListener
 					Thread.sleep(50);
 					try
 					{
-						System.out.println("Sessions:" + sessions.size());
+						logger.info("Sessions:" + sessions.size());
 						synchronized(sessions)
 						{
 							Iterator iter = sessions.keySet().iterator();

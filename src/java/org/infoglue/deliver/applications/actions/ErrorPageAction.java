@@ -25,6 +25,7 @@
 package org.infoglue.deliver.applications.actions;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -74,20 +75,20 @@ public class ErrorPageAction extends InfoGlueAbstractAction
   	}
 	
     
-    private List getRepositoryId(HttpServletRequest request) throws ServletException, SystemException, Exception 
+    private Set<RepositoryVO> getRepositoryId(HttpServletRequest request) throws ServletException, SystemException, Exception 
     {
         String serverName = request.getServerName();
         String portNumber = new Integer(request.getServerPort()).toString();
         String repositoryName = request.getParameter("repositoryName");
         
         String repCacheKey = "" + serverName + "_" + portNumber + "_" + repositoryName;
-        List repositoryVOList = (List)CacheController.getCachedObject("NavigationCache", repCacheKey);
+        Set<RepositoryVO> repositoryVOList = (Set<RepositoryVO>)CacheController.getCachedObject("NavigationCache", repCacheKey);
         if (repositoryVOList != null) 
         {
             return repositoryVOList;
         }
         
-        List repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(serverName, portNumber, repositoryName);
+        Set<RepositoryVO> repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(serverName, portNumber, repositoryName);
         
         CacheController.cacheObject("NavigationCache", repCacheKey, repositories);
 
@@ -134,10 +135,10 @@ public class ErrorPageAction extends InfoGlueAbstractAction
 	        	errorUrl = errorUrlParameter;
 	        }
 
-	        List repositoryVOList = getRepositoryId(this.getRequest());
+	        Set<RepositoryVO> repositoryVOList = getRepositoryId(this.getRequest());
 	        if(repositoryVOList != null && repositoryVOList.size() > 0)
 	        {
-	        	RepositoryVO repositoryVO = (RepositoryVO)repositoryVOList.get(0);
+	        	RepositoryVO repositoryVO = (RepositoryVO)repositoryVOList.toArray()[0];
 	        	String localErrorUrl = getErrorUrl(repositoryVO.getId());
 	        	if(localErrorUrl != null)
 	        		errorUrl = localErrorUrl;

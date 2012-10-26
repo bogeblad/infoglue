@@ -146,9 +146,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 				}
 			}
 		}
-		
-		ceb.throwIfNotEmpty();
-		
+				
 		this.interceptionPointVOList = InterceptionPointController.getController().getInterceptionPointVOList(interceptionPointCategory);
 		this.roleList = RoleControllerProxy.getController().getAllRoles();
 		this.groupList = GroupControllerProxy.getController().getAllGroups();
@@ -205,6 +203,8 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
         }
         //t.printElapsedTime("Access 10");
 		
+		ceb.throwIfNotEmpty();
+
     	return "success";
     }
 

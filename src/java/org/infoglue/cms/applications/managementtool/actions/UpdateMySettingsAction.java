@@ -68,7 +68,7 @@ public class UpdateMySettingsAction extends InfoGlueAbstractAction
 	    ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_theme", theme);
 	    ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant", toolbarVariant);
 	    
-		NotificationMessage notificationMessage = new NotificationMessage("UpdateMySettingsAction.doExecute():", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
+		NotificationMessage notificationMessage = new NotificationMessage("UpdateMySettingsAction.doExecute():", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "MySettings");
 		ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 		
         return "success";

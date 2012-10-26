@@ -269,6 +269,9 @@ public class ViewMyDesktopToolStartPageAction extends InfoGlueAbstractAction
 	private void populateLists() throws SystemException
 	{
 		availableWorkflowVOList = controller.getAvailableWorkflowVOList(getInfoGluePrincipal());
+		ReflectionComparator workflowComparator = new ReflectionComparator("name");
+		Collections.sort(availableWorkflowVOList, workflowComparator);
+		
 		final String showAllWorkflows = CmsPropertyHandler.getShowAllWorkflows();
 		if(showAllWorkflows == null || showAllWorkflows.equalsIgnoreCase("true"))
 		{

@@ -44,6 +44,8 @@ public class ChildPagesTag extends ComponentLogicTag
 	private boolean escapeHTML = false;
 	private boolean hideUnauthorizedPages = false;
 	private boolean includeHidden = true;
+	private boolean populateNavigationTitle = true;
+	private boolean populatePageUrl = true;
 		
 	public int doEndTag() throws JspException
     {
@@ -51,15 +53,15 @@ public class ChildPagesTag extends ComponentLogicTag
 		
 	    if(this.siteNodeId != null)
 	    {
-	        setResultAttribute(this.getController().getChildPages(this.siteNodeId, this.escapeHTML, this.hideUnauthorizedPages, this.includeHidden));
+	        setResultAttribute(this.getController().getChildPages(this.siteNodeId, this.escapeHTML, this.hideUnauthorizedPages, this.includeHidden, this.populateNavigationTitle, this.populatePageUrl));
 		    //if(logger.isInfoEnabled())
-		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 1 tag", t.getElapsedTimeNanos() / 1000);	    	
+		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 1 tag", t.getElapsedTime());	    	
 	    }
         else if(this.propertyName != null)
         {
-            setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, this.includeHidden, useRepositoryInheritance, useStructureInheritance));
+            setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, this.includeHidden, useRepositoryInheritance, useStructureInheritance, this.populateNavigationTitle, this.populatePageUrl));
 		    //if(logger.isInfoEnabled())
-		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 2 tag", t.getElapsedTimeNanos() / 1000);
+		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 2 tag", t.getElapsedTime());
         }
         else
             throw new JspException("You must state either propertyName or siteNodeId");
@@ -72,6 +74,8 @@ public class ChildPagesTag extends ComponentLogicTag
 	    this.escapeHTML = false;
 	    this.hideUnauthorizedPages = false;
 	    this.includeHidden = true;
+	    this.populateNavigationTitle = true;
+	    this.populatePageUrl = true;
 	    
 	    return EVAL_PAGE;
     }
@@ -116,4 +120,13 @@ public class ChildPagesTag extends ComponentLogicTag
 		this.includeHidden = includeHidden;
 	}
 
+	public void setPopulateNavigationTitle(boolean populateNavigationTitle) 
+	{
+		this.populateNavigationTitle = populateNavigationTitle;
+	}
+
+	public void setPopulatePageUrl(boolean populatePageUrl) 
+	{
+		this.populatePageUrl = populatePageUrl;
+	}
 }

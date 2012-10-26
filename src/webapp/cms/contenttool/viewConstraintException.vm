@@ -12,12 +12,12 @@
 	#beginContentTool("tool.contenttool.accessDenied" "Access Denied" "null" "null" "null" "null")
 #end
 
-    <table>
+    <table width="100%">
       <tr>
         <td>
-          <table>
+          <table width="100%">
             <tr>
-              <td class="smalllabel">
+              <td class="smalllabel">AAA
               	#foreach($errorList in $errors.allErrors)
               		#foreach($error in $errorList)
 			      		<font color="red">
@@ -26,8 +26,15 @@
 			    	#end
 			    #end
 			    #if($returnAddress && $returnAddress != "")
-			    <br><br>
-			    <a href="$returnAddress">Ok</a>
+				    <br><br>
+				    #if("!$extraAccessRightInfo" != "")
+				    <div id="debug" style="font-size: 8px; font-weight: normal; overflow: auto; display: none; height: 500px; width: 90%; border: 1px solid #ccc; background-color: #fff;">
+				   	 	<pre>$extraAccessRightInfo</pre>
+				    </div>
+				    <a href="javascript:$('#debug').toggle();">Show/Hide debug</a>
+				    <br><br>
+			    	 #end
+			    	<a href="$returnAddress">Ok</a>
 			    #end
   			  </td>
             </tr>

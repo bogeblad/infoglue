@@ -121,7 +121,9 @@
 	    	#if($cache.class.name == "com.opensymphony.oscache.general.GeneralCacheAdministrator") 
 	    		<span style="font-size: 8pt; font-style: italic;">$eventListeners.get("${cacheName}_cacheEntryEventListener").toString()
 		        <br/>
-		        $eventListeners.get("${cacheName}_cacheMapAccessEventListener").toString()</span>
+		        $eventListeners.get("${cacheName}_cacheMapAccessEventListener").toString()<br>
+		        $this.getExtraStatistics($cacheName)
+		        </span>
 	    	#else 
 	    		No additional statistics
 	    	#end

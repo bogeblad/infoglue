@@ -16,7 +16,7 @@
     <table>
       <tr>
         <td>
-          <table aclass="structuretool">
+          <table>
             <tr>
               <td class="smalllabel">
               	#foreach($errorList in $errors.allErrors)
@@ -25,10 +25,17 @@
 			      			Error: $error
 			      		</font>
 			    	#end
+			    #end 
+			   	 <br><br>
+				#if("$!extraAccessRightInfo" != "")
+				    <div id="debug" style="font-size: 8px; font-weight: normal; overflow: auto; display: none; height: 500px; width: 90%; border: 1px solid #ccc; background-color: #fff;">
+				   	 	<pre>$extraAccessRightInfo</pre>
+				    </div>
+				    <a href="javascript:$('#debug').toggle();">Show/Hide debug</a>
 			    #end
 			    #if($returnAddress && $returnAddress != "")
-			    <br><br>
-			    <a href="$returnAddress">Ok</a>
+				    <br><br>
+			    	<a href="$returnAddress">Ok</a>
 			    #end
   			  </td>
             </tr>

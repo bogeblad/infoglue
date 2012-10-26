@@ -2013,10 +2013,18 @@ public class NodeDeliveryController extends BaseDeliveryController
 
     	if(repositoryPath != null && path.length > 0)
     	{
+    		//System.out.println("repositoryPath:" + repositoryPath);
     		String[] repositoryPaths = repositoryPath.split("/");
+    		//System.out.println("repositoryPaths:" + repositoryPaths.length);
     		for(int i=0; i<repositoryPaths.length; i++)
     		{
     			String repositoryPathPart = repositoryPaths[i];
+    			if(path.length <= i)
+    			{
+    				logger.error("Could not match the repository paths so this repository should be excluded.");
+    				return null;
+    			}
+    			
     			String pathPart = path[i];
     			if(logger.isInfoEnabled())
     			{
@@ -2312,7 +2320,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		
 		if(siteNodeVOList != null)
 		{
-		    logger.info("There was a cached list of child sitenodes:" + siteNodeVOList.size());
+			logger.info("There was a cached list of child sitenodes:" + siteNodeVOList.size());
 		}
 		else
 		{
@@ -2362,16 +2370,17 @@ public class NodeDeliveryController extends BaseDeliveryController
 			oql.bind(getOperatingMode());
 	    	
 	    	QueryResults results = oql.execute(Database.ReadOnly);
-	    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
+	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
 	    	
 			while (results.hasMore()) 
 	        {
 	        	SiteNode siteNode = (SiteNode)results.next();
-				
-	        	if(isValidSiteNode(siteNode, db))
-	        	    siteNodeVOList.add(siteNode.getValueObject());
-			}
-	    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 2", t.getElapsedTime());
+				if(isValidSiteNode(siteNode, db))
+	        	{
+	        		siteNodeVOList.add(siteNode.getValueObject());
+				}
+	    	}
+	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 2", t.getElapsedTime());
 
 			results.close();
 			oql.close();

@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -70,6 +71,7 @@ import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
@@ -226,6 +228,85 @@ public class ContentVersionController extends BaseController
         
         return contentVersionVOList;
 	}
+	
+	/**
+	 * This method precaches a number of meta info content versions to get the site up to speed faster.
+	 */
+   	
+	public List<ContentVersionVO> getContentVersionVOList(Integer languageId, Integer stateId, Integer limit, Database db) throws Exception
+	{
+		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
+		
+   		StringBuffer SQL = new StringBuffer();
+    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    	{
+    		SQL.append("CALL SQL select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier, cv.verValue, (select count(*) from cmContVerDigitalAsset cvda where cvda.contVerId = cv.contVerId) AS assetCount ");
+        	SQL.append(", -1 as siteNodeId, '' as siteNodeName ");
+    		SQL.append(" from cmContVer cv, cmCont c ");
+    		SQL.append("WHERE "); 
+			SQL.append("c.contTypeDefId >= $1 AND ");
+			SQL.append("cv.languageId >= $2 AND ");
+			SQL.append("cv.stateId >= $3 AND ");
+			SQL.append("cv.isActive = $4 AND ");
+			SQL.append("cv.contId = c.contId AND ");
+			SQL.append("cv.contVerId = (  ");
+			SQL.append("	select max(contVerId) from cmContVer cv2  ");
+			SQL.append("	WHERE  ");
+			SQL.append("	cv2.contId = cv.contId AND  ");
+			SQL.append("  	cv2.languageId = cv.languageId AND ");
+			SQL.append("	cv2.isActive = cv.isActive AND ");
+			SQL.append("	cv2.stateId >= $5 ");
+			SQL.append("	)  ");
+			
+    		SQL.append(" order by cv.contVerId limit $6 AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
+	   	}
+    	else
+    	{
+    		SQL.append("CALL SQL select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier, cv.versionValue, (select count(*) from cmContentVersionDigitalAsset cvda where cvda.contentVersionId = cv.contentVersionId) AS assetCount ");
+       		SQL.append(", -1 as siteNodeId, '' as siteNodeName ");
+    		SQL.append(" from cmContent c, cmContentVersion cv ");
+    		SQL.append("WHERE "); 
+			SQL.append("c.contentTypeDefinitionId >= $1 AND ");
+			SQL.append("cv.languageId >= $2 AND ");
+			SQL.append("cv.stateId >= $3 AND ");
+			SQL.append("cv.isActive = $4 AND ");
+			SQL.append("cv.contentId = c.contentId AND ");
+			SQL.append("cv.contentVersionId = (  ");
+			SQL.append("	select max(contentVersionId) from cmContentVersion cv2  ");
+			SQL.append("	WHERE  ");
+			SQL.append("	cv2.contentId = cv.contentId AND  ");
+			SQL.append("  	cv2.languageId = cv.languageId AND ");
+			SQL.append("	cv2.isActive = cv.isActive AND ");
+			SQL.append("	cv2.stateId >= $5 ");
+			SQL.append("	)  ");
+			
+    		SQL.append(" order by cv.contentVersionId limit $6 AS org.infoglue.cms.entities.content.impl.simple.IndexFriendlyContentVersionImpl");
+       	}
+
+    	//logger.info("SQL:" + SQL);
+    	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
+    	//logger.info("showDeletedItems:" + showDeletedItems);
+    	OQLQuery oql = db.getOQLQuery(SQL.toString());
+		oql.bind(2);
+		oql.bind(3);
+		oql.bind(stateId);
+		oql.bind(true);
+		oql.bind(stateId);
+		oql.bind(limit);
+		
+		QueryResults results = oql.execute(Database.ReadOnly);
+		while (results.hasMore()) 
+		{
+			IndexFriendlyContentVersionImpl contentVersion = (IndexFriendlyContentVersionImpl)results.next();
+			contentVersionVOList.add(contentVersion.getValueObject());
+		}
+
+		results.close();
+		oql.close();
+        
+		return contentVersionVOList;
+	} 
+
 	
 	/**
 	 * This method returns a list of the children a siteNode has.
@@ -1494,7 +1575,8 @@ public class ContentVersionController extends BaseController
     
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal, boolean skipValidate) throws ConstraintException, SystemException
     {
-        ContentVersionVO updatedContentVersionVO;
+    	Timer t = new Timer();
+    	ContentVersionVO updatedContentVersionVO;
 		
         Database db = CastorDatabaseService.getDatabase();
 
@@ -1528,6 +1610,12 @@ public class ContentVersionController extends BaseController
 				}
 				else
 				{
+		    	    List<String> changedAttributes = getChangedAttributeNames(oldContentVersionVO, contentVersionVO);
+		    	    Map extraInfoMap = new HashMap();
+		    	    String csList = StringUtils.join(changedAttributes.toArray(), ",");
+		    	    //logger.info("csList:" + csList);
+		    	    extraInfoMap.put("changedAttributeNames", csList);
+		    		CacheController.setExtraInfo(ContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), extraInfoMap);
 					contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(contentVersionVO.getId(), db);
 					//contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 					contentVersion.setValueObject(contentVersionVO);
@@ -1536,7 +1624,7 @@ public class ContentVersionController extends BaseController
 
 		    if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
 		    {
-		    	SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentId);
+	    	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentId);
 		    	//SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithMetaInfoContentId(db, contentId);
 				if(siteNodeVO.getMetaInfoContentId() != null && siteNodeVO.getMetaInfoContentId().equals(contentId))
 				{
@@ -1544,13 +1632,17 @@ public class ContentVersionController extends BaseController
 			    	latestSiteNodeVersionVO.setVersionModifier(contentVersionVO.getVersionModifier());
 			    	latestSiteNodeVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 					SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersionVO, db);
+
+					Map extraInfoMap = new HashMap();
+				    extraInfoMap.put("skipSiteNodeVersionUpdate", true);
+					CacheController.setExtraInfo(SiteNodeVersionImpl.class.getName(), latestSiteNodeVersionVO.getId().toString(), extraInfoMap);
 				}
 			}
 
 	    	registryController.updateContentVersion(contentVersion, db);
 
 	    	updatedContentVersionVO = contentVersion.getValueObject();
-	    	
+	    	//logger.info("UPPPPPDDDDDAAAATTED:" + updatedContentVersionVO.getModifiedDateTime().getTime());
 	    	commitTransaction(db);  
         }
         catch(ConstraintException ce)
@@ -1566,6 +1658,7 @@ public class ContentVersionController extends BaseController
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
+        t.printElapsedTime("Updating cv took");
         
     	return updatedContentVersionVO; //(ContentVersionVO) updateEntity(ContentVersionImpl.class, realContentVersionVO);
     }        
@@ -2095,6 +2188,52 @@ public class ContentVersionController extends BaseController
 		return value;
 	}
 
+	
+	/**
+	 * Returns an attribute value from the ContentVersionVO
+	 *
+	 * @param contentVersionVO The version on which to find the value
+	 * @param attributeName THe name of the attribute whose value is wanted
+	 * @param escapeHTML A boolean indicating if the result should be escaped
+	 * @return The String vlaue of the attribute, or blank if it doe snot exist.
+	 */
+	public List<String> getChangedAttributeNames(ContentVersionVO contentVersionVO1, ContentVersionVO contentVersionVO2)
+	{
+		List<String> changes = new ArrayList<String>();
+		try{
+		String xml = contentVersionVO1.getVersionValue();
+
+		int attributesStartTagIndex = xml.indexOf("<attributes>");
+		int attributesStopTagIndex = xml.indexOf("</attributes>");
+		
+		String attributes = xml.substring(attributesStartTagIndex+12, attributesStopTagIndex);
+		
+		//logger.info("attributes1:" + attributes);
+		
+		int startTagIndex = attributes.indexOf("<");
+		while(startTagIndex > -1)
+		{
+			String attributeName = attributes.substring(startTagIndex + 1, attributes.indexOf(">",startTagIndex+1));
+			int endTagEndIndex = attributes.indexOf("</" + attributeName + ">", startTagIndex);
+			
+			//logger.info("attributeName:" + attributeName);
+			
+			String value1 = getAttributeValue(contentVersionVO1, attributeName, false);
+			String value2 = getAttributeValue(contentVersionVO2, attributeName, false);
+			
+			//logger.info("value1:" + value1);
+			//logger.info("value2:" + value2);
+			if(!value1.equals(value2))
+				changes.add(attributeName);
+			
+			startTagIndex = attributes.indexOf("<", endTagEndIndex + 1);
+		}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return changes;
+	}
 
 	/**
 	 * This method fetches a value from the xml that is the contentVersions Value. If the 

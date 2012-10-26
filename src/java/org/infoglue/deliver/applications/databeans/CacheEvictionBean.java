@@ -60,8 +60,9 @@ public class CacheEvictionBean
 	private String objectId = null;
 	private String objectName = null;
 	private String typeId = null;
-
-	public CacheEvictionBean(Integer publicationId, String userName, String timestamp, String className, String typeId, String objectId, String objectName)
+	private String changedAttributeNames = null;
+	
+	public CacheEvictionBean(Integer publicationId, String userName, String timestamp, String className, String typeId, String objectId, String objectName, String changedAttributeNames)
 	{
 		this.publicationId = publicationId;
 		if(userName != null)
@@ -72,6 +73,7 @@ public class CacheEvictionBean
 		this.typeId = typeId;
 		this.objectId = objectId;
 		this.objectName = objectName;	
+		this.changedAttributeNames = changedAttributeNames;
 	}
 
 	public CacheEvictionBean(Integer publicationId, String userName, String timestamp, String className, String typeId, String objectId, String objectName, String receivedTimestamp, String processedTimestamp)
@@ -139,6 +141,11 @@ public class CacheEvictionBean
         return processedTimestamp;
     }
 
+	public String getChangedAttributeNames()
+    {
+        return changedAttributeNames;
+    }
+
 	public static String getTransactionTypeName(Integer transactionType)
 	{
 		switch (transactionType.intValue())
@@ -176,6 +183,7 @@ public class CacheEvictionBean
 		map.put("className", this.getClassName());
 		map.put("objectId", this.getObjectId());
 		map.put("objectName", this.getObjectName());
+		map.put("changedAttributeNames", this.getChangedAttributeNames());
 		map.put("typeId", this.getTypeId());
 		map.put("receivedTimestamp", "" + this.getReceivedTimestamp());
 		map.put("processedTimestamp", "" + this.getProcessedTimestamp());

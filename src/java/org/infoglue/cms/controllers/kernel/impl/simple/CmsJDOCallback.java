@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
  
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.CacheManager;
 import org.exolab.castor.jdo.Database;
@@ -151,14 +153,19 @@ public class CmsJDOCallback implements CallbackInterceptor
 
     public void storing(Object object, boolean modified) throws Exception
     {
-		//logger.error("storing...:" + object + ":" + modified);
         // ( (Persistent) object ).jdoStore( modified );
 
    		//logger.info("Should we store -------------->" + object + ":" + modified);
-    	if (TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
+    	if (AccessRightGroupImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+			AccessRightRoleImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+			AccessRightUserImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+    		TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1 && modified)
 	    {
+    		logger.error("storing...:" + object + ":" + modified);
+    		//Thread.dumpStack();
+    		
 	    	if(logger.isInfoEnabled())
 	    		logger.info("Actually stored it:" + object + ":" + modified);
 	    	
@@ -170,9 +177,17 @@ public class CmsJDOCallback implements CallbackInterceptor
 					userName = principal.getName();				
 			} 
 			catch (NoClassDefFoundError e){}
-			
-			NotificationMessage notificationMessage = new NotificationMessage("CmsJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_UPDATE, getObjectIdentity(object), getObjectName(object));
-			ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
+
+    		Map extraInfo = CacheController.getExtraInfo(SiteNodeVersionImpl.class.getName(), getObjectIdentity(object).toString());
+    		//System.out.println("extraInfo in jdo callback:" + extraInfo);
+    		boolean skipRemoteUpdate = false;	
+    		if(extraInfo != null && object.getClass().getName().indexOf("SiteNodeVersion") > -1 && extraInfo.containsKey("skipSiteNodeVersionUpdate"))
+    			skipRemoteUpdate = true;
+    		//System.out.println("skipRemoteUpdate:" + skipRemoteUpdate);
+			//This uses a hook and adds extra info to the notification if it exists
+			NotificationMessage notificationMessage = new NotificationMessage("CmsJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_UPDATE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(object.getClass().getName(), getObjectIdentity(object).toString()));
+			if(!skipRemoteUpdate)
+				ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 			
 			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") == -1)
 			{
@@ -180,8 +195,13 @@ public class CmsJDOCallback implements CallbackInterceptor
 				//LuceneController.getController().notify(notificationMessage);
 	    	}
     	
-			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && !object.getClass().getName().equals(RegistryImpl.class.getName()))
-			    RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
+			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
+					!object.getClass().getName().equals(RegistryImpl.class.getName()) && 
+					object.getClass().getName().indexOf("AccessRight") == -1)
+			{
+				//System.out.println("object.getClass():" + object.getClass());
+				RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
+			}
 			
 			if(object.getClass().getName().equals(RepositoryImpl.class.getName()))
 			{
@@ -470,7 +490,10 @@ public class CmsJDOCallback implements CallbackInterceptor
     	if(logger.isInfoEnabled())
     		logger.info("created..........................." + object + ":" + object.getClass().getName());
     	
-    	if (TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
+    	if (AccessRightGroupImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+			AccessRightRoleImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+			AccessRightUserImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+			TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1)
 	    {
@@ -483,7 +506,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 		    } 
 			catch (NoClassDefFoundError e){}
 			
-    	    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_CREATE, getObjectIdentity(object), getObjectName(object));
+    	    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_CREATE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(object.getClass().getName(), getObjectIdentity(object).toString()));
     	    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 			
 			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") == -1)
@@ -491,7 +514,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 				new Thread(new SearchIndexHelper(notificationMessage, 2000L)).start();
 			}
 			
-    	    if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && !object.getClass().getName().equals(RegistryImpl.class.getName()))
+    	    if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
+    	    		!object.getClass().getName().equals(RegistryImpl.class.getName()) &&
+    	    		object.getClass().getName().indexOf("AccessRight") == -1)
 			    RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
 
 			if(object.getClass().getName().equals(RepositoryImpl.class.getName()))
@@ -674,7 +699,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 		//logger.error("removed...:" + object);
         // ( (Persistent) object ).jdoAfterRemove();
         
-       	if (TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
+       	if (AccessRightGroupImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+			AccessRightRoleImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+			AccessRightUserImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+			TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
        		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1)
 	    {
@@ -687,7 +715,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			} 
 			catch (NoClassDefFoundError e){}
 
-		    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), getObjectName(object));
+		    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(object.getClass().getName(), getObjectIdentity(object).toString()));
 		    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 		    
 			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") == -1)
@@ -697,7 +725,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			
 			if(object.getClass().getName().indexOf("SystemUser") == -1)
 			{
-				NotificationMessage deleteNotificationMessage = new NotificationMessage("Object deleted:", object.getClass().getName(), userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), getObjectName(object));
+				NotificationMessage deleteNotificationMessage = new NotificationMessage("Object deleted:", object.getClass().getName(), userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(object.getClass().getName(), getObjectIdentity(object).toString()));
 				TransactionHistoryController.getController().create(deleteNotificationMessage);
 
 				if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") == -1)
@@ -706,7 +734,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 				}
 			}
 			
-			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && !object.getClass().getName().equals(RegistryImpl.class.getName()))
+			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
+					!object.getClass().getName().equals(RegistryImpl.class.getName()) && 
+					object.getClass().getName().indexOf("AccessRight") == -1
+					)
 			    RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
 
 			if(object.getClass().getName().equals(RepositoryImpl.class.getName()))

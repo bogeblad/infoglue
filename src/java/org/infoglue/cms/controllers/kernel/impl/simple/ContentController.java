@@ -1839,8 +1839,8 @@ public class ContentController extends BaseController
     	}
     	
     	String SQL = sb.toString();
-    	//System.out.println(SQL);
-    	//System.out.println(parentContentId);
+    	//logger.info(SQL);
+    	//logger.info(parentContentId);
     	
     	//String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY content.contentId";
     	//logger.info("SQL:" + SQL);

@@ -1137,7 +1137,7 @@ public class SearchController extends BaseController
 							//ContentVersionVO cvvo = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(contentVersionId), db);
 							//t.printElapsedTime("Start fetching cvVO from lucene index");
 							//logger.info("cvvo:" + cvvo.getContentName() + "(" + cvvo.getContentId() + ")");
-							//System.out.println("doc:" + doc);
+							//logger.info("doc:" + doc);
 							
 							ContentVersionVO cvvo = new ContentVersionVO();
 							cvvo.setContentId(new Integer(contentId));

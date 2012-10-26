@@ -114,7 +114,18 @@ public class ContentTypeDefinitionController extends BaseController
 
     public ContentTypeDefinitionVO getContentTypeDefinitionVOWithId(Integer contentTypeDefinitionId, Database db) throws SystemException, Bug
     {
-		return (ContentTypeDefinitionVO) getVOWithId(ContentTypeDefinitionImpl.class, contentTypeDefinitionId, db);
+		String key = "" + contentTypeDefinitionId;
+		ContentTypeDefinitionVO cachedContentTypeDefinitionVO = (ContentTypeDefinitionVO)CacheController.getCachedObject("contentTypeDefinitionCache", key);
+		if(cachedContentTypeDefinitionVO != null)
+		{
+			return cachedContentTypeDefinitionVO;
+		}
+
+		cachedContentTypeDefinitionVO = (ContentTypeDefinitionVO) getVOWithId(ContentTypeDefinitionImpl.class, contentTypeDefinitionId, db);
+
+		CacheController.cacheObject("contentTypeDefinitionCache", key, cachedContentTypeDefinitionVO);
+
+		return cachedContentTypeDefinitionVO;
     }
 
 	/*
@@ -417,13 +428,9 @@ public class ContentTypeDefinitionController extends BaseController
 
 	public ContentTypeDefinitionVO getContentTypeDefinitionVOWithName(String name, Database db) throws SystemException, Bug
 	{
-		Timer t = new Timer();
-		
 		String key = "" + name;
-		//System.out.println("key:" + key);
 		logger.info("key:" + key);
 		ContentTypeDefinitionVO contentTypeDefinitionVO = (ContentTypeDefinitionVO)CacheController.getCachedObject("contentTypeDefinitionCache", key);
-		//t.printElapsedTime("1");
 		if(contentTypeDefinitionVO != null)
 		{
 			logger.info("There was an cached contentTypeDefinitionVO:" + contentTypeDefinitionVO);
@@ -431,7 +438,6 @@ public class ContentTypeDefinitionController extends BaseController
 		else
 		{
 			logger.info("Refetching contentTypeDefinitionVO:" + name);
-			//System.out.println("Refetching contentTypeDefinitionVO:" + name);
 			try
 			{
 				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl f WHERE f.name = $1");
@@ -443,7 +449,6 @@ public class ContentTypeDefinitionController extends BaseController
 				    ContentTypeDefinition contentTypeDefinition = (ContentTypeDefinition)results.next();
 				    contentTypeDefinitionVO = contentTypeDefinition.getValueObject();
 				    
-				    //System.out.println("Caching " + contentTypeDefinitionVO.getName());
 				    CacheController.cacheObject("contentTypeDefinitionCache", key, contentTypeDefinitionVO);
 				}
 				

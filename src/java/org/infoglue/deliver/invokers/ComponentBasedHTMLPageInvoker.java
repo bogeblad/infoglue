@@ -285,12 +285,21 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
    			logger.info("\n\nEvaluateFull:" + this.getDeliveryContext().getEvaluateFullPage());
 		if(this.getDeliveryContext().getEvaluateFullPage())
 		{
-			Map context = getDefaultContext();
-			StringWriter cacheString = new StringWriter();
-			PrintWriter cachedStream = new PrintWriter(cacheString);
-			new VelocityTemplateProcessor().renderTemplate(context, cachedStream, pageContent, false, baseComponent);
+			try
+			{
+				Map context = getDefaultContext();
+				StringWriter cacheString = new StringWriter();
+				PrintWriter cachedStream = new PrintWriter(cacheString);
+				//System.out.println("pageContent:" + pageContent);
+				new VelocityTemplateProcessor().renderTemplate(context, cachedStream, pageContent, false, baseComponent);
 			
-			pageString = cacheString.toString();
+				pageString = cacheString.toString();
+			}
+			catch (Exception e) 
+			{
+				pageString = pageContent;
+				logger.error("Could not evaluate full page: " + e.getMessage(), e);
+			}
 		}
 
 		//pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
@@ -432,6 +441,9 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	        contentVO = templateController.getContent(siteNodeVO.getMetaInfoContentId());
 	    else
 		    contentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getBoundContent(db, templateController.getPrincipal(), siteNodeId, languageId, true, "Meta information", this.getDeliveryContext());		
+
+	    templateController.getDeliveryContext().addUsedContent(CacheController.getPooledString(1, templateController.getMetaInformationContentId()) + "_ComponentStructure");
+	    templateController.getDeliveryContext().addUsedContent(CacheController.getPooledString(1, templateController.getMetaInformationContentId()) + "_ComponentStructureDependency");
 
 		if(contentVO == null)
 			throw new SystemException("There was no Meta Information bound to this page which makes it impossible to render.");	
@@ -1256,7 +1268,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	}
 	*/
 	
-	protected Map getComponentWithXPP3(Database db, XmlElement element, String componentName, TemplateController templateController, InfoGlueComponent parentComponent) throws Exception
+	protected Map getComponentWithXPP3(Database db, XmlInfosetBuilder builder, XmlElement element, String componentName, TemplateController templateController, InfoGlueComponent parentComponent) throws Exception
 	{
 		InfoGlueComponent component = null;
 
@@ -1274,11 +1286,19 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
         	cachedXPathObjects.put(componentXPath, xpathObject);
         }
 
+        //This keeps track of the cached inherited components.
+        StringBuilder sb = new StringBuilder();
+        
         List componentNodeList = xpathObject.selectNodes( element );
 		Iterator componentNodeListIterator = componentNodeList.iterator();
 		while(componentNodeListIterator.hasNext())
 		{
 			XmlElement child 	= (XmlElement)componentNodeListIterator.next();
+			
+			String componentString = builder.serializeToString(child).trim();
+			sb.append(componentString);
+			//System.out.println("AAAAAAAAA" + componentString);
+			
 			Integer id 			= new Integer(child.getAttributeValue(child.getNamespaceName(), "id"));
 			Integer contentId 	= new Integer(child.getAttributeValue(child.getNamespaceName(), "contentId"));
 			String name 	  	= child.getAttributeValue(child.getNamespaceName(), "name");
@@ -1438,6 +1458,11 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			
 			components.put(name, componentList);
 		}
+		
+		int componentsHash = sb.toString().hashCode();
+		//System.out.println(componentsHash + " for " + componentName);
+		components.put(componentName + "_hashCode", componentsHash);
+		components.put(componentName + "_xpath", componentXPath);
 		
 		return components;
 	}
@@ -1973,9 +1998,15 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	   			//XPP3
 		        XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
 		        XmlDocument doc = builder.parseReader(new StringReader( componentXML ) );
-				components = getComponentWithXPP3(db, doc.getDocumentElement(), id, templateController, component);
+				components = getComponentWithXPP3(db, builder, doc.getDocumentElement(), id, templateController, component);
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("INHERITING COMPONENTS WITH XPP3", t.getElapsedTime());
 				
+				//System.out.println("components:" + components);
+				String hashCode = "" + components.get(id + "_hashCode");
+				String path = "" + components.get(id + "_xpath");
+				templateController.getDeliveryContext().addUsedContent("content_" + parentSiteNodeVO.getMetaInfoContentId() + "_ComponentStructureDependency");
+				templateController.getDeliveryContext().addUsedContent("content_" + parentSiteNodeVO.getMetaInfoContentId() + "_ComponentStructure:" + path + "=" + hashCode);
+
 				//logger.info("components:" + components);
 
 				if(components != null)
@@ -2088,7 +2119,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
         XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
         XmlDocument doc = builder.parseReader(new StringReader( componentXML ) );
 			
-		Map components = getComponentWithXPP3(db, doc.getDocumentElement(), id, templateController, component);
+		Map components = getComponentWithXPP3(db, builder, doc.getDocumentElement(), id, templateController, component);
 		
 		InfoGlueComponent infoGlueComponent = (InfoGlueComponent)components.get(id);
 		//logger.info("infoGlueComponent:" + infoGlueComponent);
@@ -2104,7 +2135,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	        builder = XmlInfosetBuilder.newInstance();
 	        doc = builder.parseReader(new StringReader( componentXML ) );
 						
-			components = getComponentWithXPP3(db, doc.getDocumentElement(), id, templateController, component);
+			components = getComponentWithXPP3(db, builder, doc.getDocumentElement(), id, templateController, component);
 			
 			infoGlueComponent = (InfoGlueComponent)components.get(id);
 			//logger.info("infoGlueComponent:" + infoGlueComponent);
@@ -2200,7 +2231,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 	        XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
 	        XmlDocument doc = builder.parseReader(new StringReader( componentStructureXML ) );
 	
-			Map components = getComponentWithXPP3(db, doc.getDocumentElement(), id, templateController, component);
+			Map components = getComponentWithXPP3(db, builder, doc.getDocumentElement(), id, templateController, component);
 			
 			if(components.containsKey(id))
 				subComponents = (List)components.get(id);
@@ -2218,7 +2249,7 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		        builder = XmlInfosetBuilder.newInstance();
 		        doc = builder.parseReader(new StringReader( componentStructureXML ) );
 							
-				components = getComponentWithXPP3(db, doc.getDocumentElement(), id, templateController, component);
+				components = getComponentWithXPP3(db, builder, doc.getDocumentElement(), id, templateController, component);
 				
 				if(components.containsKey(id))
 					subComponents = (List)components.get(id);

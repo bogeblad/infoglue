@@ -26,8 +26,10 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -38,6 +40,7 @@ import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
@@ -1027,7 +1030,30 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersionVO;
     }
 
+	public SiteNodeVersionVO getPreviousActiveSiteNodeVersionVO(Integer siteNodeId, Integer siteNodeVersionId) throws SystemException, Bug
+    {
+    	Database db = CastorDatabaseService.getDatabase();
 
+    	SiteNodeVersionVO siteNodeVersionVO = null;
+
+        beginTransaction(db);
+
+        try
+        {           
+        	siteNodeVersionVO = getPreviousActiveSiteNodeVersionVO(siteNodeId, siteNodeVersionId, db);
+
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    	
+		return siteNodeVersionVO;
+    }
+	
 	/**
 	 * This method returns the version previous to the one sent in.
 	 */
@@ -1056,6 +1082,60 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersionVO;
     }
 
+	
+	public SiteNodeVersionVO getPreviousActiveSiteNodeVersionVO(Integer siteNodeId, Integer siteNodeVersionId, Integer stateId) throws SystemException, Bug
+    {
+    	Database db = CastorDatabaseService.getDatabase();
+
+    	SiteNodeVersionVO siteNodeVersionVO = null;
+
+        beginTransaction(db);
+
+        try
+        {           
+        	siteNodeVersionVO = getPreviousActiveSiteNodeVersionVO(siteNodeId, siteNodeVersionId, stateId, db);
+
+			commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    	
+		return siteNodeVersionVO;
+    }
+	
+	/**
+	 * This method returns the version previous to the one sent in.
+	 */
+	
+	public SiteNodeVersionVO getPreviousActiveSiteNodeVersionVO(Integer siteNodeId, Integer siteNodeVersionId, Integer stateId, Database db) throws SystemException, Bug, Exception
+    {
+    	SiteNodeVersionVO siteNodeVersionVO = null;
+
+    	OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl cv WHERE cv.siteNodeId = $1 AND cv.isActive = $2 AND cv.stateId >= $3 AND cv.siteNodeVersionId < $4 ORDER BY cv.siteNodeVersionId desc");
+    	oql.bind(siteNodeId);
+    	oql.bind(new Boolean(true));
+    	oql.bind(stateId);
+    	oql.bind(siteNodeVersionId);
+
+    	QueryResults results = oql.execute(Database.ReadOnly);
+		
+		if (results.hasMore()) 
+        {
+        	SiteNodeVersion siteNodeVersion = (SiteNodeVersion)results.next();
+        	logger.info("found one:" + siteNodeVersion.getValueObject());
+        	siteNodeVersionVO = siteNodeVersion.getValueObject();
+        }
+    	
+		results.close();
+		oql.close();
+
+		return siteNodeVersionVO;
+    }
+	
 	/**
 	 * This method returns the version previous to the one sent in.
 	 */

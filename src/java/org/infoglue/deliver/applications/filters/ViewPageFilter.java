@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.servlet.Filter;
@@ -184,7 +185,7 @@ public class ViewPageFilter implements Filter
 
 	            HttpSession httpSession = httpRequest.getSession(true);
 	
-	            List repositoryVOList = null;
+	            Set<RepositoryVO> repositoryVOList = null;
 	            Integer languageId = null;
 	
 	            Database db = CastorDatabaseService.getDatabase();
@@ -343,7 +344,7 @@ public class ViewPageFilter implements Filter
 	            {
 	                BaseDeliveryController.rollbackTransaction(db);
 	                
-	                logger.error("Failed to resolve siteNodeId: " + e.getMessage());
+	                logger.error("Failed to resolve siteNodeId: " + e.getMessage(), e);
 	                if(logger.isInfoEnabled())
 	                	logger.info("Failed to resolve siteNodeId: " + e.getMessage(), e);
 	                String systemRedirectUrl = RedirectController.getController().getSystemRedirectUrl(httpRequest);
@@ -430,7 +431,7 @@ public class ViewPageFilter implements Filter
         }
     }
 
-    private List getRepositoryId(HttpServletRequest request, Database db) throws ServletException, SystemException, Exception 
+    private Set<RepositoryVO> getRepositoryId(HttpServletRequest request, Database db) throws ServletException, SystemException, Exception 
     {
         /*
         if (session.getAttribute(FilterConstants.REPOSITORY_ID) != null) 
@@ -452,14 +453,14 @@ public class ViewPageFilter implements Filter
 	    }
         
         String repCacheKey = "" + serverName + "_" + portNumber + "_" + repositoryName;
-        List repositoryVOList = (List)CacheController.getCachedObject(uriCache.CACHE_NAME, repCacheKey);
+        Set<RepositoryVO> repositoryVOList = (Set<RepositoryVO>)CacheController.getCachedObject(uriCache.CACHE_NAME, repCacheKey);
         if (repositoryVOList != null) 
         {
             logger.info("Using cached repositoryVOList");
             return repositoryVOList;
         }
 
-        List repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName);
+        Set<RepositoryVO> repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName);
         if(logger.isInfoEnabled())
         	logger.info("repositories:" + repositories);
         
@@ -494,7 +495,7 @@ public class ViewPageFilter implements Filter
         return repositories;
     }
 
-    private Integer getLanguageId(HttpServletRequest request, HttpSession session, List repositoryVOList, String requestURI, Database db) throws ServletException, Exception 
+    private Integer getLanguageId(HttpServletRequest request, HttpSession session, Set<RepositoryVO> repositoryVOList, String requestURI, Database db) throws ServletException, Exception 
     {
     	Integer languageId = null;
         if(request.getParameter("languageId") != null) 
@@ -556,7 +557,7 @@ public class ViewPageFilter implements Filter
 
         Integer repositoryId = null;
         if(repositoryVOList != null && repositoryVOList.size() > 0)
-            repositoryId = ((RepositoryVO)repositoryVOList.get(0)).getId();
+            repositoryId = ((RepositoryVO)repositoryVOList.toArray()[0]).getId();
         
         logger.info("Looking for languageId for repository " + repositoryId);
         Locale requestLocale = request.getLocale();

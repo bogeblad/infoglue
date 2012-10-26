@@ -42,7 +42,8 @@
 				</tr>
 			</thead>
 			<tbody>
-			
+				
+				#set($publishingTabLabelPrefix = "$ui.getString('tool.common.publishingTabLabelPrefix')")
 				#foreach ($repositoryVO in $repositories)
 					#set($events = $this.getPublicationEvents($repositoryVO.getId(), "all"))
 					#if($events.size() > 0)

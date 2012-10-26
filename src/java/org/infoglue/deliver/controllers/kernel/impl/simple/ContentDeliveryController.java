@@ -245,22 +245,32 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 */
 	private ContentVO getChildWithName(Integer parentContentId, String name, Database db) throws Exception
 	{
-		ContentVO contentVO = null;
-		
-		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.parentContentId = $1 AND c.name = $2");
-    	oql.bind(parentContentId);
-    	oql.bind(name);
-    	
-    	QueryResults results = oql.execute(Database.ReadOnly);
-		
-		if(results.hasMore()) 
-        {
-			contentVO = ((Content)results.next()).getValueObject();
-        }
+		String key = "childContents" + parentContentId + "_" + name;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.parentContentId = $1 AND c.name = $2");
+	    	oql.bind(parentContentId);
+	    	oql.bind(name);
+	    	
+	    	QueryResults results = oql.execute(Database.ReadOnly);
+			
+			if(results.hasMore()) 
+	        {
+				contentVO = ((Content)results.next()).getValueObject();
+	        }
 
-		results.close();
-		oql.close();
-		
+			results.close();
+			oql.close();
+
+			if(contentVO != null)
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentVO.getId()),CacheController.getPooledString(1, parentContentId)}, true);
+		}
+
 		return contentVO;
 	}
 
@@ -448,6 +458,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		//ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
 		ContentVO content = getContentVO(db, contentId, deliveryContext);
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO 1", t.getElapsedTimeNanos() / 1000);
+		
 		boolean isValidContent = isValidContent(infoGluePrincipal, content, languageId, useLanguageFallback, false, db, deliveryContext);
 		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO 2", t.getElapsedTimeNanos() / 1000);
 
@@ -609,12 +620,12 @@ public class ContentDeliveryController extends BaseDeliveryController
 				CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersionVO, new String[]{CacheController.getPooledString(2, contentVersionVO.getId()), CacheController.getPooledString(1, contentVersionVO.getContentId())}, true);
 			}
 			else
+			{
 				contentVersionVO = (ContentVersionVO)object;
+			}
 		}
 		else
 		{
-			Timer t = new Timer();
-
 			String smallVersionKey = "" + contentId + "_" + languageId + "_" + operatingMode + "_smallestContentVersionVO";
 			Object smallestContentVersionVOCandidate = CacheController.getCachedObjectFromAdvancedCache("contentVersionCache", smallVersionKey);
 			if(smallestContentVersionVOCandidate instanceof NullObject)
@@ -623,11 +634,14 @@ public class ContentDeliveryController extends BaseDeliveryController
 			}
 			else if(smallestContentVersionVOCandidate != null)
 			{
+				Timer t = new Timer();
 				contentVersionVO = (ContentVersionVO)getVOWithId(SmallContentVersionImpl.class, ((SmallestContentVersionVO)smallestContentVersionVOCandidate).getId(), db);
 				CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersionVO, new String[]{CacheController.getPooledString(2, contentVersionVO.getId()), CacheController.getPooledString(1, contentVersionVO.getContentId())}, true);
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting SmallContentVersionImpl", t.getElapsedTime());
 			}
 			else
 			{
+				Timer t = new Timer();
 				//logger.info("Querying for verson: " + versionKey); 
 				OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.contentId = $1 AND cv.languageId = $2 AND cv.stateId >= $3 AND cv.isActive = $4 ORDER BY cv.contentVersionId desc");
 		    	oql.bind(contentId);
@@ -648,14 +662,14 @@ public class ContentDeliveryController extends BaseDeliveryController
 				{
 					CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, new NullObject(), new String[]{CacheController.getPooledString(1, contentId)}, true);
 				}
-				
+
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Querying for contentVersionVO", t.getElapsedTime());
+
 				results.close();
 				oql.close();
 
 				//t.printElapsedTimeMicro("Querying one took");
 			}
-
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO(Integer contentId, Integer languageId, Integer operatingMode, DeliveryContext deliveryContext, Database db)", t.getElapsedTimeNanos() / 1000);
 		}
 		
 		if(contentVersionVO != null)
@@ -1034,6 +1048,11 @@ public class ContentDeliveryController extends BaseDeliveryController
 					deliveryContext.getUsedPageMetaInfoContentVersionIdSet().add(contentVersionId);
 				if(attributeName.equals("ComponentStructure") && contentVersionId != null)
 					deliveryContext.getUsedPageComponentsMetaInfoContentVersionIdSet().add(contentVersionId);
+				
+				//We don't want to add meta info relations without more data
+				if(!attributeName.equals("ComponentStructure"))
+					deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId) + "_" + attributeName);
+
 			}
 	
 			if(usedContentVersionId != null && contentVersionId != null)
@@ -2761,7 +2780,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 		}
 		*/
 		
-		deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
+		if(searchRecursive)
+			deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
 		
 		Timer t = new Timer();
 		
@@ -2799,7 +2819,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 	
 	private void getChildContents(InfoGluePrincipal infoGluePrincipal, List contents, Integer contentId, Integer languageId, boolean useLanguageFallback, int currentLevel, boolean searchRecursive, boolean includeFolders, int maximumNumberOfLevels, Database db, DeliveryContext deliveryContext) throws SystemException, Exception
 	{
-		deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
+		if(searchRecursive)
+			deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
 
 		Timer t = new Timer();
 
@@ -2966,7 +2987,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			logger.warn("An error occurred trying to validate access to a content. Resetting datalayer and disabling page cache but allowing for now. Reson: " + e.getMessage(), e);
 		}
 		
-		//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart protectedContentId", t.getElapsedTimeNanos() / 1000000);
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart protectedContentId", t.getElapsedTimeNanos() / 1000);
 
 		if(includeFolders && content.getIsBranch().booleanValue() && isValidOnDates(content.getPublishDateTime(), content.getExpireDateTime(), validateOnDates))
 		{
@@ -2978,14 +2999,17 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 			//ContentVersion contentVersion = getContentVersion(content, languageId, getOperatingMode(), deliveryContext, db);
 			//TODO
-		    ContentVersionVO contentVersion = getContentVersionVO(content.getId(), languageId, getOperatingMode(deliveryContext), deliveryContext, db);
+			ContentVersionVO contentVersion = getContentVersionVO(content.getId(), languageId, getOperatingMode(deliveryContext), deliveryContext, db);
 		    //SmallestContentVersionVO contentVersion = getSmallestContentVersionVO(content.getId(), languageId, getOperatingMode(deliveryContext), deliveryContext, db);
 		    
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO in isValid", t.getElapsedTimeNanos() / 1000);
+
 		    //RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart4.1", t.getElapsedTimeNanos() / 1000000);
 
 		    Integer repositoryId = content.getRepositoryId();
 		    if(contentVersion == null && useLanguageFallBack && repositoryId != null)
 			{
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Before LanguageFallBack", t.getElapsedTimeNanos() / 1000);
 				LanguageVO masterLanguage = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(repositoryId, db);
 				//TODO
 				if(masterLanguage != null && !masterLanguage.getId().equals(languageId))
@@ -2994,6 +3018,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					contentVersion = getContentVersionVO(content.getId(), masterLanguage.getId(), getOperatingMode(deliveryContext), deliveryContext, db);
 					//contentVersion = getSmallestContentVersionVO(content.getId(), masterLanguage.getId(), getOperatingMode(deliveryContext), deliveryContext, db);
 				}
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("LanguageFallBack", t.getElapsedTimeNanos() / 1000);
 			}
 
 			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart5", t.getElapsedTimeNanos() / 1000);

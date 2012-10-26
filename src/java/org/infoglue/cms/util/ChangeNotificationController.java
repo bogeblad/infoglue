@@ -66,8 +66,6 @@ public class ChangeNotificationController
 	
 	public void put(NotificationMessage notificationMessage) 
 	{
-	
-		//logger.info("Adding notificationMessage:" + notificationMessage);
 	    list.getList().add(notificationMessage);
 	}
 	
@@ -102,7 +100,7 @@ public class ChangeNotificationController
 		
 		Hashtable internalMessage = null;
 		Hashtable publicMessage = null;
-		
+		//System.out.println("internalMessageList:" + internalMessageList.size());
 		if(internalMessageList.size() > 0)
 		{
 			internalMessage = new Hashtable();
@@ -117,6 +115,13 @@ public class ChangeNotificationController
 				internalMessage.put(i + ".objectId", notificationMessage.getObjectId());
 				internalMessage.put(i + ".objectName", notificationMessage.getObjectName());
 				internalMessage.put(i + ".typeId", "" + notificationMessage.getType());
+				if(notificationMessage.getExtraInformation() != null)
+				{
+					for(String key : notificationMessage.getExtraInformation().keySet())
+					{
+						internalMessage.put(i + "." + key, notificationMessage.getExtraInformation().get(key));
+					}
+				}
 				i++;
 			}
 		}

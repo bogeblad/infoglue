@@ -210,6 +210,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 			this.getHttpSession().removeAttribute("CreateContentWizardInfoBean");
 		
 			logger.info("this.getSiteNodeId():" + this.getSiteNodeId());
+			/*
 			if(this.getSiteNodeId() == null)
 			{
 				logger.info("this.contentId: " + this.contentId + ":" + this.getContentId() + ":" + this.contentVersionVO);
@@ -217,14 +218,18 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 				if(metaInfoSiteNodeVO != null)
 					this.setSiteNodeId(metaInfoSiteNodeVO.getId());
 			}
+			*/
 			
 			if(this.getSiteNodeId() != null && this.contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
 			{
 				SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(this.getSiteNodeId());
-				logger.info("siteNodeVersionVO: " + siteNodeVersionVO.getId());
-				SiteNodeVersion newSiteNodeVersion = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "New version", false, null, this.getInfoGluePrincipal(), null, new ArrayList());
-				logger.info("newSiteNodeVersion: " + newSiteNodeVersion.getId());
-				logger.info("Created new site node version:" + newSiteNodeVersion);
+				if(siteNodeVersionVO == null || siteNodeVersionVO.getStateId().intValue() > SiteNodeVersionVO.WORKING_STATE)
+				{
+					logger.info("siteNodeVersionVO: " + siteNodeVersionVO.getId());
+					SiteNodeVersion newSiteNodeVersion = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "New version", false, null, this.getInfoGluePrincipal(), null, new ArrayList());
+					logger.info("newSiteNodeVersion: " + newSiteNodeVersion.getId());
+					logger.info("Created new site node version:" + newSiteNodeVersion);
+				}
 			}
 		}
 		catch(ConstraintException ce)

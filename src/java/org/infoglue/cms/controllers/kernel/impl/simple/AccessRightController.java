@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -127,121 +129,128 @@ public class AccessRightController extends BaseController
 		return this.getAllVOObjects(AccessRightGroupImpl.class, "accessRightGroupId", db);
 	}
 	    
-	public void preCacheUserAccessRightVOList(InfoGluePrincipal principal) throws Exception
+	public void preCacheUserAccessRightVOList(InfoGluePrincipal principal, Database db) throws Exception
 	{
 		Timer t = new Timer();
 		
-		//List<AccessRightVO> accessRightVOList = new ArrayList<AccessRightVO>();
+		//Ifšr detta sen ocksŒ - cachear alla sidor som Šr skyddade..
+		/*
+		select accessRightId from cmAccessRight ar INNER JOIN
+		(  
+		select max(siteNodeVersionId) as siteNodeVersionId from cmSiteNodeVersion snv 
+		WHERE  
+		snv.isActive = 1 AND 
+		snv.stateId >= 0 AND
+		snv.isProtected = 1 group by siteNodeId) snv
+		ON ar.parameters = snv.siteNodeVersionId WHERE ar.interceptionPointId = 8
+		*/
 		
-		Database db = CastorDatabaseService.getDatabase();
-
-		try 
+		StringBuilder sb = new StringBuilder();
+		sb.append("CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar where ");
+		sb.append("ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like 'ComponentEditor.%' OR name = 'Component.Select' OR name = 'ComponentPropertyEditor.EditProperty' OR name like '%.Read' AND name NOT LIKE 'SiteNodeVersion.Read') AND ");
+		sb.append("(ar.accessRightId IN (select accessRightId from cmAccessRightUser where userName = '" + principal.getName() + "') OR ");
+		sb.append("(ar.accessRightId NOT IN (select accessRightId from cmAccessRightRole where ar.accessRightId = accessRightId) OR ");
+		sb.append("(  ar.accessRightId IN ");
+		sb.append("(select accessRightId from cmAccessRightRole where ar.accessRightId = accessRightId AND roleName in ( ");
+		int index = 0;
+		for(InfoGlueRole role : (Collection<InfoGlueRole>)principal.getRoles())
 		{
-			beginTransaction(db);
-
-			StringBuilder sb = new StringBuilder();
-			sb.append("CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar where ");
-			sb.append("(ar.accessRightId IN (select accessRightId from cmAccessRightUser where userName = '" + principal.getName() + "') OR ");
-			sb.append("(ar.accessRightId NOT IN (select accessRightId from cmAccessRightRole where ar.accessRightId = accessRightId) OR ");
-			sb.append("(  ar.accessRightId IN ");
-			sb.append("(select accessRightId from cmAccessRightRole where ar.accessRightId = accessRightId AND roleName in ( ");
-			int index = 0;
-			for(InfoGlueRole role : principal.getRoles())
+			if(index > 0)
+				sb.append(",");
+			sb.append("'" + role.getName() + "'");
+			index++;
+		}
+		sb.append(")) ) ");
+		sb.append("AND ");
+		sb.append("(  ar.accessRightId NOT IN (select accessRightId from cmAccessRightGroup where ar.accessRightId = accessRightId) ");
+		if(principal.getGroups().size() > 0)
+		{
+			sb.append("OR ar.accessRightId IN  ");
+			sb.append("(select accessRightId from cmAccessRightGroup where ar.accessRightId = accessRightId AND groupName in ( ");
+			index = 0;
+			for(InfoGlueGroup group : (Collection<InfoGlueGroup>)principal.getGroups())
 			{
 				if(index > 0)
 					sb.append(",");
-				sb.append("'" + role.getName() + "'");
+				sb.append("'" + group.getName() + "'");
 				index++;
 			}
-			sb.append(")) ) ");
-			sb.append("AND ");
-			sb.append("(  ar.accessRightId NOT IN (select accessRightId from cmAccessRightGroup where ar.accessRightId = accessRightId) ");
-			if(principal.getGroups().size() > 0)
-			{
-				sb.append("OR ar.accessRightId IN  ");
-				sb.append("(select accessRightId from cmAccessRightGroup where ar.accessRightId = accessRightId AND groupName in ( ");
-				index = 0;
-				for(InfoGlueGroup group : principal.getGroups())
-				{
-					if(index > 0)
-						sb.append(",");
-					sb.append("'" + group.getName() + "'");
-					index++;
-				}
-				sb.append(")) ");
-			}
-			sb.append("))) group by ar.accessRightId AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl");
-			
-			//System.out.println("SQL::::::::::" + sb.toString());
-			
-			OQLQuery oql = db.getOQLQuery(sb.toString());
-			//t.printElapsedTime("Eecuted took");
-			
-			int duplicates = 0;
-			Map<String,Integer> accessRightsMap = new HashMap<String,Integer>();
-			QueryResults results = oql.execute(Database.ReadOnly);
-			while(results.hasMore()) 
-		    {
-				AccessRightImpl aru = (SmallAccessRightImpl)results.next();
-				String key = "" + aru.getValueObject().getInterceptionPointId();
-				if(aru.getValueObject().getParameters() != null && !aru.getValueObject().getParameters().equals(""))
-					key = "" + aru.getValueObject().getInterceptionPointId() + "_" + aru.getValueObject().getParameters();
-				
-				if(accessRightsMap.get(key) == null)
-				{
-					accessRightsMap.put(key, 1);
-				}
-				/*
-				else
-				{
-					accessRightsMap.put(key, -1);
-					duplicates++;
-					System.out.println("Was a duplicate on " + key);
-				}
-				*/
-				//accessRightVOList.add(aru.getValueObject());
-			}
-			//t.printElapsedTime("accessRightsMap:" + accessRightsMap.size());
-			
-			List<AccessRightVO> duplicateAccessRightVOList = new ArrayList<AccessRightVO>();
-			List<AccessRightVO> duplicateNonHarmfulAccessRightVOList = new ArrayList<AccessRightVO>();
-			List<AccessRightVO> duplicateAutoMergableAccessRightVOList = new ArrayList<AccessRightVO>();
-			getAllDuplicates(false, true, duplicateAccessRightVOList, duplicateNonHarmfulAccessRightVOList, duplicateAutoMergableAccessRightVOList);
-			
-			logger.info("duplicateAccessRightVOList:" + duplicateAccessRightVOList.size());
-			for(AccessRightVO accessRightVO : duplicateAccessRightVOList)
-			{
-				if(!duplicateNonHarmfulAccessRightVOList.contains(accessRightVO))
-				{
-					String key = "" + accessRightVO.getInterceptionPointId() + "_" + accessRightVO.getParameters();
-					logger.info("Was a duplicate accessRightVO " + accessRightVO.getId() + ": " + key);
-					accessRightsMap.put(key, -1);
-					//AAAAA Kommentera fram igen
-				}
-				else
-				{
-					logger.info("Was a duplicate accessRightVO but not harmful" + accessRightVO.getId());
-				}
-			}
-			
-			CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", "authorizationMap_" + principal.getName(), accessRightsMap);
-
-			//principalAccessRights.put("" + principal.getName(), accessRightsMap);
-			logger.info("accessRightsMap:" + accessRightsMap.size());
-			logger.info("duplicates:" + duplicates);
-			//t.printElapsedTime("Read took:" + accessRightVOList.size());
-			
-			results.close();
-			oql.close();
-			
-			commitTransaction(db);
-		} 
-		catch (Exception e) 
-		{
-		    logger.error("An error occurred so we should not precache the access rights:" + e);
-			rollbackTransaction(db);
+			sb.append(")) ");
 		}
-		t.printElapsedTime("Recaching access rights...");
+		sb.append("))) AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl");
+		
+		//logger.info("SQL::::::::::" + sb.toString());
+		
+		OQLQuery oql = db.getOQLQuery(sb.toString());
+		//t.printElapsedTime("Executed took");
+		
+		int duplicates = 0;
+		Map<String,Integer> accessRightsMap = new ConcurrentHashMap<String,Integer>();
+		QueryResults results = oql.execute(Database.ReadOnly);
+		int i=0;
+		while(results.hasMore()) 
+	    {
+			i++;
+			//System.out.print(".");
+			AccessRightImpl aru = (SmallAccessRightImpl)results.next();
+			//if(aru.getParameters().equals("995"))
+			//	logger.info("YES::::" + aru.getAccessRightId() + ":" + aru.getValueObject().getInterceptionPointId() + ":" + aru.getParameters());
+			
+			String key = "" + aru.getValueObject().getInterceptionPointId();
+			if(aru.getValueObject().getParameters() != null && !aru.getValueObject().getParameters().equals(""))
+				key = "" + aru.getValueObject().getInterceptionPointId() + "_" + aru.getValueObject().getParameters();
+			
+			if(accessRightsMap.get(key) == null)
+			{
+				accessRightsMap.put(key, 1);
+			}
+			/*
+			else
+			{
+				accessRightsMap.put(key, -1);
+				duplicates++;
+				logger.info("Was a duplicate on " + key);
+			}
+			*/
+			//accessRightVOList.add(aru.getValueObject());
+		}
+		t.printElapsedTime("accessRightsMap:" + accessRightsMap.size());
+		
+		List<AccessRightVO> duplicateAccessRightVOList = new ArrayList<AccessRightVO>();
+		List<AccessRightVO> duplicateNonHarmfulAccessRightVOList = new ArrayList<AccessRightVO>();
+		List<AccessRightVO> duplicateAutoMergableAccessRightVOList = new ArrayList<AccessRightVO>();
+		getAllDuplicates(false, true, duplicateAccessRightVOList, duplicateNonHarmfulAccessRightVOList, duplicateAutoMergableAccessRightVOList, db);
+		
+		logger.info("duplicateAccessRightVOList:" + duplicateAccessRightVOList.size());
+		for(AccessRightVO accessRightVO : duplicateAccessRightVOList)
+		{
+			if(!duplicateNonHarmfulAccessRightVOList.contains(accessRightVO))
+			{
+				String key = "" + accessRightVO.getInterceptionPointId() + "_" + accessRightVO.getParameters();
+				logger.info("Was a duplicate accessRightVO " + accessRightVO.getId() + ": " + key);
+				accessRightsMap.put(key, -1);
+				//AAAAA Kommentera fram igen
+			}
+			else
+			{
+				logger.info("Was a duplicate accessRightVO but not harmful" + accessRightVO.getId());
+			}
+		}
+		
+		//CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", "authorizationMap_" + principal.getName(), accessRightsMap);
+		CacheController.cacheObject("userAccessCache", "authorizationMap_" + principal.getName(), accessRightsMap);
+
+		//logger.info("accessRightsMap:" + accessRightsMap.size());
+		//logger.info("duplicates:" + duplicates);
+		//principalAccessRights.put("" + principal.getName(), accessRightsMap);
+		logger.warn("accessRightsMap:" + accessRightsMap.size());
+		logger.warn("duplicates:" + duplicates);
+		//t.printElapsedTime("Read took:" + accessRightVOList.size());
+		
+		results.close();
+		oql.close();
+
+		t.printElapsedTime("Recaching access rights in " + CmsPropertyHandler.getContextRootPath());
 	}
 	
 	
@@ -265,6 +274,7 @@ public class AccessRightController extends BaseController
 			logger.info("interceptionPointName:" + interceptionPointName + " not found");
 			return new ArrayList();
 		}
+		logger.error("Reading the hard way 1");
 		
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), parameters, db);
 		
@@ -1625,6 +1635,14 @@ public class AccessRightController extends BaseController
 	 */
 	public boolean getIsPrincipalAuthorized(InfoGluePrincipal infoGluePrincipal, String interceptionPointName, String parameters, boolean returnTrueIfNoAccessRightsDefined) throws SystemException
 	{
+		return getIsPrincipalAuthorized(infoGluePrincipal, interceptionPointName, parameters, returnTrueIfNoAccessRightsDefined, false);
+	}
+	
+	/**
+	 * This method checks if a role has access to an entity. It takes name and id of the entity. 
+	 */
+	public boolean getIsPrincipalAuthorized(InfoGluePrincipal infoGluePrincipal, String interceptionPointName, String parameters, boolean returnTrueIfNoAccessRightsDefined, boolean defeatCaches) throws SystemException
+	{
 	    if(infoGluePrincipal == null)
 	        return false;
 	        
@@ -1640,7 +1658,7 @@ public class AccessRightController extends BaseController
 			beginTransaction(db);
 			
 			//Timer t = new Timer();
-			isPrincipalAuthorized = getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, parameters, returnTrueIfNoAccessRightsDefined);
+			isPrincipalAuthorized = getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, parameters, returnTrueIfNoAccessRightsDefined, defeatCaches);
 			//isPrincipalAuthorized = getIsPrincipalAuthorizedNew(db, infoGluePrincipal, interceptionPointName, parameters, returnTrueIfNoAccessRightsDefined);
 			//t.printElapsedTime("New took");
 			
@@ -1707,30 +1725,42 @@ public class AccessRightController extends BaseController
 		
 		return isAuthorized;
 	}
+
+	private static List<String> preCacheInProcessForUsers = new ArrayList<String>();
 	
 	/**
 	 * This method checks if a role has access to an entity. It takes name and id of the entity. 
 	 */
-	//private static Map<String,Map<String,Integer>> principalAccessRights = new HashMap<String,Map<String,Integer>>();
 	public boolean getIsPrincipalAuthorized(Database db, InfoGluePrincipal infoGluePrincipal, String interceptionPointName, String extraParameters, boolean returnTrueIfNoAccessRightsDefined) throws SystemException
+	{		
+		return getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, extraParameters, returnTrueIfNoAccessRightsDefined, false);
+	}
+	
+	public boolean getIsPrincipalAuthorized(Database db, InfoGluePrincipal infoGluePrincipal, String interceptionPointName, String extraParameters, boolean returnTrueIfNoAccessRightsDefined, boolean defeatCaches) throws SystemException
 	{		
 		Timer t = new Timer();
 		if(!logger.isInfoEnabled())
 			t.setActive(false);
 		
-		Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
-		if(!infoGluePrincipal.getIsAdministrator() && cachedPrincipalAuthorizationMap == null)
+		//Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
+		Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObject("userAccessCache", "authorizationMap_" + infoGluePrincipal.getName());
+		if(!infoGluePrincipal.getIsAdministrator() && cachedPrincipalAuthorizationMap == null && !preCacheInProcessForUsers.contains(infoGluePrincipal.getName()))
 		{
+			preCacheInProcessForUsers.add(infoGluePrincipal.getName());
 			logger.info("Precaching all access rights for this user");
 			try 
 			{
-				preCacheUserAccessRightVOList(infoGluePrincipal);
+				preCacheUserAccessRightVOList(infoGluePrincipal, db);
 				logger.info("Done precaching all access rights for this user");
 				t.printElapsedTime("Done precaching all access rights for this user");
 			} 
 			catch (Exception e) 
 			{
-				e.printStackTrace();
+				logger.error("Error precaching all access rights for this user: " + e.getMessage(), e);
+			}
+			finally
+			{
+				preCacheInProcessForUsers.remove(infoGluePrincipal.getName());
 			}
 		}
 		
@@ -1744,7 +1774,7 @@ public class AccessRightController extends BaseController
 				extraParameters.equalsIgnoreCase("11268") ||
 				extraParameters.equalsIgnoreCase("6902")))
 		{
-			System.out.println("Was a content we want to check...");
+			logger.info("Was a content we want to check...");
 			enableDebug = true;
 		}
 		*/
@@ -1758,7 +1788,7 @@ public class AccessRightController extends BaseController
 		if(enableDebug)
 			debugInfo += "\n	getIsPrincipalAuthorized with: " + infoGluePrincipal + ", " + interceptionPointName + ", " + extraParameters;
 		
-		//System.out.println("infoGluePrincipal:" + infoGluePrincipal);
+		//logger.info("infoGluePrincipal:" + infoGluePrincipal);
 		
 		if(infoGluePrincipal == null)
 	      return false;
@@ -1769,6 +1799,7 @@ public class AccessRightController extends BaseController
 	    //TODO
 		
 	    String key = "" + infoGluePrincipal.getName() + "_" + interceptionPointName + "_" + extraParameters + "_" + returnTrueIfNoAccessRightsDefined;
+	    //logger.info("key:" + key);
 
 	    if(enableDebug)
 			debugInfo += "\n	key: " + key;
@@ -1780,12 +1811,15 @@ public class AccessRightController extends BaseController
 		}
 
 		//Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObject("authorizationCache", key);
+	    //logger.info("personalAuthorizationCache:" + CacheController.getCacheSize("personalAuthorizationCache"));
 		Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", key);
 		if(cachedIsPrincipalAuthorized != null)
 		{
 			if(enableDebug)
-				debugInfo += "\n	Principal " + infoGluePrincipal.getName() + " was not allowed to " + interceptionPointName + " on " + extraParameters + " (Cached value)";
-
+				debugInfo += "\n	Principal " + infoGluePrincipal.getName() + " was " + (!cachedIsPrincipalAuthorized ? " NOT " : "") + " allowed to " + interceptionPointName + " on " + extraParameters + " (Cached value)";
+			
+			//logger.info("\n	Principal " + infoGluePrincipal.getName() + " was " + (!cachedIsPrincipalAuthorized ? " NOT " : "") + " allowed to " + interceptionPointName + " on " + extraParameters + " (Cached value)");
+				
 			if(logger.isInfoEnabled() && !cachedIsPrincipalAuthorized.booleanValue())
 				logger.info("Principal " + infoGluePrincipal.getName() + " was not allowed to " + interceptionPointName + " on " + extraParameters + " (Cached value)");
 		    return cachedIsPrincipalAuthorized.booleanValue();
@@ -1806,32 +1840,43 @@ public class AccessRightController extends BaseController
 		
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(interceptionPointName, db);
 		if(interceptionPointVO == null)
-			return true;
-		
-		Map<String,Integer> userAccessRightsMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
-		//Map<String,Integer> userAccessRightsMap = principalAccessRights.get("" + infoGluePrincipal.getName());
-		if(userAccessRightsMap != null)
 		{
-			String acKey = "" + interceptionPointVO.getId() + "_" + extraParameters;
-			//logger.info("Checking access on: " + acKey);
-			Integer hasAccess = userAccessRightsMap.get(acKey);
-			if(hasAccess == null)
+			//logger.info("interceptionPointVO null");
+			return true;
+		}
+		
+		//ComponentEditor.%' OR name = 'Component.Select' OR name = 'ComponentPropertyEditor.EditProperty' OR name like '%.Read' AND name NOT LIKE 'SiteNodeVersion.Read
+		if((interceptionPointName.indexOf("ComponentEditor.") > -1 || interceptionPointName.indexOf("Component.Select") > -1 || interceptionPointName.indexOf("ComponentPropertyEditor.EditProperty") > -1 || interceptionPointName.indexOf(".Read") > -1) && interceptionPointName.indexOf("SiteNodeVersion.Read") == -1)
+		{
+			//Map<String,Integer> userAccessRightsMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
+			Map<String,Integer> userAccessRightsMap = (Map<String,Integer>)CacheController.getCachedObject("userAccessCache", "authorizationMap_" + infoGluePrincipal.getName());
+			//Map<String,Integer> userAccessRightsMap = principalAccessRights.get("" + infoGluePrincipal.getName());
+			if(userAccessRightsMap != null)
 			{
-			    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
-				return false;
-			}
-			else if(hasAccess == 1)
-			{
-			    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
-				return true;
-			}
-			else if(hasAccess == -1)
-			{
-				logger.info("Unknown access to " + acKey + " - probably a duplicate access right on it:" + acKey);
+				String acKey = "" + interceptionPointVO.getId() + "_" + extraParameters;
+				//logger.info("Checking access on: " + acKey);
+				
+				Integer hasAccess = userAccessRightsMap.get(acKey);
+				//if(acKey.indexOf("RightColumnOne") > -1)
+				//	logger.info("hasAccess:" + hasAccess + " on " + acKey);
+				if(hasAccess == null)
+				{
+				    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
+					return false;
+				}
+				else if(hasAccess == 1)
+				{
+				    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
+					return true;
+				}
+				else if(hasAccess == -1)
+				{
+					logger.info("Unknown access to " + acKey + " - probably a duplicate access right on it:" + acKey);
+				}
 			}
 		}
 		
-		logger.info("Reading the hard way");
+		logger.error("Reading the hard way:" + interceptionPointVO.getId() + ":" + extraParameters);
 		
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), extraParameters, db);
 		if(logger.isInfoEnabled())
@@ -1840,6 +1885,7 @@ public class AccessRightController extends BaseController
 		if(returnTrueIfNoAccessRightsDefined && accessRightList == null || accessRightList.size() == 0)
 		{
 			logger.warn("Returned true as there was no access rights defined which means it's not correctly protected.");
+		    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
 			return true;
 		}
 		
@@ -1850,6 +1896,7 @@ public class AccessRightController extends BaseController
 		   interceptionPointName.equalsIgnoreCase("ContentVersion.Publish") || returnTrueIfNoAccessRightsDefined) && 
 		   (accessRightList == null || accessRightList.size() == 0))
 		{
+		    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
 			return true;
 		}
 
@@ -1998,6 +2045,7 @@ public class AccessRightController extends BaseController
 		{
 			logger.info("Principal " + infoGluePrincipal.getName() + " was not allowed to " + interceptionPointName + " on " + extraParameters);
 		}
+		logger.info("Caching " + isPrincipalAuthorized + " on " + interceptionPointName + " on " + extraParameters);
 				
 	    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(isPrincipalAuthorized), new String[]{infoGluePrincipal.getName()}, true);
 
@@ -2284,28 +2332,45 @@ public class AccessRightController extends BaseController
 	{		
 		Timer t = new Timer();
 
-		//System.out.println("getIsPrincipalAuthorized 2:" + interceptionPointName);
+		//logger.info("getIsPrincipalAuthorized 2:" + interceptionPointName);
 		//Thread.dumpStack();
 		
-		Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
-		if(!infoGluePrincipal.getIsAdministrator() && cachedPrincipalAuthorizationMap == null)
+		Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObject("userAccessCache", "authorizationMap_" + infoGluePrincipal.getName());
+		//Map<String,Integer> cachedPrincipalAuthorizationMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
+		if(!infoGluePrincipal.getIsAdministrator() && cachedPrincipalAuthorizationMap == null && !preCacheInProcessForUsers.contains(infoGluePrincipal.getName()))
 		{
+			preCacheInProcessForUsers.add(infoGluePrincipal.getName());
+			
 			logger.info("Precaching all access rights for this user");
 			try 
 			{
-				preCacheUserAccessRightVOList(infoGluePrincipal);
+				preCacheUserAccessRightVOList(infoGluePrincipal, db);
 				logger.info("Done precaching all access rights for this user");
 				t.printElapsedTime("Done precaching all access rights for this user");
 			} 
 			catch (Exception e) 
 			{
-				e.printStackTrace();
+				logger.error("Error precaching all access rights for this user: " + e.getMessage(), e);
+			}
+			finally
+			{
+				preCacheInProcessForUsers.remove(infoGluePrincipal.getName());
 			}
 		}
 		
 		
 	    if(infoGluePrincipal.getIsAdministrator())
 			return true;
+
+	    String key = "" + infoGluePrincipal.getName() + "_" + interceptionPointName + "_" + returnTrueIfNoAccessRightsDefined;
+
+		Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", key);
+		if(cachedIsPrincipalAuthorized != null)
+		{
+			if(logger.isInfoEnabled() && !cachedIsPrincipalAuthorized.booleanValue())
+				logger.info("Principal " + infoGluePrincipal.getName() + " was not allowed to " + interceptionPointName + " (Cached value)");
+		    return cachedIsPrincipalAuthorized.booleanValue();
+		}
 
 		boolean isPrincipalAuthorized = false;
 		boolean limitOnGroups = false;
@@ -2316,36 +2381,48 @@ public class AccessRightController extends BaseController
 		Collection groups = infoGluePrincipal.getGroups();
 		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(interceptionPointName, db);
 		if(interceptionPointVO == null && returnSuccessIfInterceptionPointNotDefined)
-			return true;
+		{
+		    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
+		    return true;
+		}
 		
 		if(interceptionPointVO == null && returnFailureIfInterceptionPointNotDefined)
+		{
+		    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
 			return false;
+		}
 		
 		if(interceptionPointVO == null)
 			return true;
 			
-		Map<String,Integer> userAccessRightsMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
-		//Map<String,Integer> userAccessRightsMap = principalAccessRights.get("" + infoGluePrincipal.getName());
-		if(userAccessRightsMap != null)
+		//if(interceptionPointName.indexOf(".Read") > -1 && interceptionPointName.indexOf("SiteNodeVersion.Read") == -1)
+		if((interceptionPointName.indexOf("ComponentEditor.") > -1 || interceptionPointName.indexOf("Component.Select") > -1 || interceptionPointName.indexOf("ComponentPropertyEditor.EditProperty") > -1 || interceptionPointName.indexOf(".Read") > -1) && interceptionPointName.indexOf("SiteNodeVersion.Read") == -1)
 		{
-			String acKey = "" + interceptionPointVO.getId();
-			//logger.info("Checking access on: " + acKey);
-			Integer hasAccess = userAccessRightsMap.get(acKey);
-			if(hasAccess == null)
+			Map<String,Integer> userAccessRightsMap = (Map<String,Integer>)CacheController.getCachedObject("userAccessCache", "authorizationMap_" + infoGluePrincipal.getName());
+			//Map<String,Integer> userAccessRightsMap = (Map<String,Integer>)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", "authorizationMap_" + infoGluePrincipal.getName());
+			if(userAccessRightsMap != null)
 			{
-				return false;
-			}
-			else if(hasAccess == 1)
-			{
-				return true;
-			}
-			else if(hasAccess == -1)
-			{
-				logger.info("Unknown access to " + acKey + " - probably a duplicate access right on it:" + acKey);
+				String acKey = "" + interceptionPointVO.getId();
+				//logger.info("Checking access on: " + acKey);
+				Integer hasAccess = userAccessRightsMap.get(acKey);
+				if(hasAccess == null)
+				{
+					CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
+					return false;
+				}
+				else if(hasAccess == 1)
+				{
+					CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
+					return true;
+				}
+				else if(hasAccess == -1)
+				{
+					logger.info("Unknown access to " + acKey + " - probably a duplicate access right on it:" + acKey);
+				}
 			}
 		}
 		
-		logger.info("Reading the hard way");
+		logger.error("Reading the hard way: " + interceptionPointVO.getName());
 
 		//List accessRightList = this.getAccessRightList(interceptionPointVO.getId(), db);
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), db);
@@ -2358,6 +2435,7 @@ public class AccessRightController extends BaseController
 		   interceptionPointName.equalsIgnoreCase("ContentVersion.Publish") || returnTrueIfNoAccessRightsDefined) && 
 		   (accessRightList == null || accessRightList.size() == 0))
 		{
+			CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(true), new String[]{infoGluePrincipal.getName()}, true);
 			return true;
 		}
 
@@ -2442,7 +2520,9 @@ public class AccessRightController extends BaseController
 		
 		if(logger.isInfoEnabled())
 			logger.info("isPrincipalAuthorized:" + isPrincipalAuthorized);
-	    
+
+		CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(isPrincipalAuthorized), new String[]{infoGluePrincipal.getName()}, true);
+
 		return isPrincipalAuthorized;
 	}
 
@@ -3108,19 +3188,19 @@ public class AccessRightController extends BaseController
 		while (results.hasMore() && itemsRemoved < 1000) 
 		{
 			AccessRight accessRight = (AccessRight)results.next();
-			//System.out.println("Checking if siteNodeVersion really is missing");
+			//logger.info("Checking if siteNodeVersion really is missing");
 			try
 			{
 				SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(accessRight.getParameters()), db);
-				System.out.println("OBS::::::::::: snvVO was not missing");
+				logger.info("OBS::::::::::: snvVO was not missing");
 			}
 			catch (Exception e) 
 			{
-				//System.out.println("snvVO was missing - ok to remove:" + accessRight.getId());
+				//logger.info("snvVO was missing - ok to remove:" + accessRight.getId());
 				delete(accessRight.getValueObject().getInterceptionPointId(), accessRight.getParameters(), true, db);
 				itemsRemoved++;
 			}
-			System.out.println("itemsRemoved:" + itemsRemoved);
+			logger.info("itemsRemoved:" + itemsRemoved);
 		}
 		accessRightsStatusText += "" + itemsRemoved + " AccessRights were removed as the siteNodeVersion it pointed to was removed\n";  
 
@@ -3237,7 +3317,7 @@ public class AccessRightController extends BaseController
 					db.remove(ar);
 					entityAccessRightsIterator.remove();
 					duplicateAutoMergableAccessRightVOListIterator.remove();
-					System.out.println("Deleted the item with only users...:" + ar.getId());
+					logger.info("Deleted the item with only users...:" + ar.getId());
 				}
 			}
 
@@ -3247,7 +3327,7 @@ public class AccessRightController extends BaseController
 				AccessRight ar = (AccessRight)entityAccessRightsIterator.next();
 				if(users.size() > 0)
 				{
-					System.out.println("Adding users " + users.size() + " to " + ar.getId());
+					logger.info("Adding users " + users.size() + " to " + ar.getId());
 					ar.getUsers().addAll(users);
 					for(AccessRightUser user : users)
 					{
@@ -3300,7 +3380,7 @@ public class AccessRightController extends BaseController
 				//db.remove(ar);
 				delete(ar, db);
 				entityAccessRightsIterator.remove();
-				System.out.println("Deleted the duplicates:" + ar.getId());
+				logger.info("Deleted the duplicates:" + ar.getId());
 			}
 			else
 				keeperAR = ar;
@@ -3324,7 +3404,7 @@ public class AccessRightController extends BaseController
 				
 				if(add)
 				{
-					System.out.println("roleName:" + roleName);
+					logger.info("roleName:" + roleName);
 				    AccessRightRoleVO accessRightRoleVO = new AccessRightRoleVO();
 				    accessRightRoleVO.setRoleName(roleName);
 				    AccessRightRole accessRightRole = createAccessRightRole(db, accessRightRoleVO, keeperAR);
@@ -3342,7 +3422,7 @@ public class AccessRightController extends BaseController
 				
 				if(add)
 				{
-					System.out.println("groupName:" + groupName);
+					logger.info("groupName:" + groupName);
 				    AccessRightGroupVO accessRightGroupVO = new AccessRightGroupVO();
 				    accessRightGroupVO.setGroupName(groupName);
 				    AccessRightGroup accessRightGroup = createAccessRightGroup(db, accessRightGroupVO, keeperAR);
@@ -3360,7 +3440,7 @@ public class AccessRightController extends BaseController
 				
 				if(add)
 				{
-					System.out.println("userName:" + userName);
+					logger.info("userName:" + userName);
 				    AccessRightUserVO accessRightUserVO = new AccessRightUserVO();
 				    accessRightUserVO.setUserName(userName);
 				    AccessRightUser accessRightUser = createAccessRightUser(db, accessRightUserVO, keeperAR);

@@ -160,22 +160,29 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 					ContentVO contentVO = (ContentVO) iterator.next();
 					if(contentVO.getContentTypeDefinitionId() != null && !contentVO.getIsBranch().booleanValue())
 					{
-						ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
-						boolean exists = false;
-						for(int i=0; i<allowedContentTypeIds.length; i++)
+						try
 						{
-						    String allowedId = allowedContentTypeIds[i];
-						    
-						    if(allowedId.equalsIgnoreCase(contentTypeDefinitionVO.getId().toString()))
+							ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+							boolean exists = false;
+							for(int i=0; i<allowedContentTypeIds.length; i++)
 							{
-						        exists = true;
-						        break;
+							    String allowedId = allowedContentTypeIds[i];
+							    
+							    if(allowedId.equalsIgnoreCase(contentTypeDefinitionVO.getId().toString()))
+								{
+							        exists = true;
+							        break;
+								}
+							}
+	
+							if(exists)
+							{
+							    filteredList.add(contentVO);
 							}
 						}
-
-						if(exists)
+						catch (Exception e) 
 						{
-						    filteredList.add(contentVO);
+							logger.warn("The content " + contentVO.getName() + " (" + contentVO.getId() + " ) points to a removed content type perhaps: " + e.getMessage());
 						}
 					}
 					else

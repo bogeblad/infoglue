@@ -211,6 +211,12 @@ public abstract class PageInvoker
 					
 					this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), true, "utf-8", true, this, this.getClass().getMethod("invokeAndDecoratePage", argsClasses), args, this);
 				    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey());
+				    /*
+				    String[] cachedEntities = (String[])CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey() + "_entities");
+				    for(String s : cachedEntities)
+					{
+						System.out.println("l:" + s);
+					}*/
 				}
 				else
 				{

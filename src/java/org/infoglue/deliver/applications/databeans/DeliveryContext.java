@@ -333,7 +333,7 @@ public class DeliveryContext implements UsageListener
     public void addUsedContent(String usedContent)
     {
         this.usedContents.add(usedContent);
-
+        	
         Iterator iterator = this.getUsageListeners().iterator();
         while(iterator.hasNext())
         {
@@ -391,6 +391,17 @@ public class DeliveryContext implements UsageListener
             groups[i] = array[i].toString();
         
         return groups;
+    }
+    
+    public Set<String> getAllUsedEntitiesAsSet()
+    {
+    	Set<String> set = new HashSet<String>();
+    	set.addAll(this.usedContents);
+    	set.addAll(this.usedContentVersions);
+    	set.addAll(this.usedSiteNodes);
+    	set.addAll(this.usedSiteNodeVersions);
+        
+        return set;
     }
     
     public List getUsageListeners()

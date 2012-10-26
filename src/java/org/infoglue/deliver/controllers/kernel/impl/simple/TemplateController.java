@@ -448,7 +448,7 @@ public interface TemplateController
      */
 
 	public String getContentAttributeWithReturningId(Integer contentId, 
-	        Integer languageId, String attributeName, boolean clean, Set contentVersionId);
+	        Integer languageId, String attributeName, boolean clean, Set contentVersionId, Set<String> usedContentEntities);
 
     /**
      * This method deliveres a String with the content-attribute asked for if it exists in the content
@@ -1275,6 +1275,12 @@ public interface TemplateController
      * siteNode. The method is great for navigation-purposes on a structured site. 
      */
     public abstract List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden);
+
+    /**
+     * The method returns a list of WebPage-objects that is the children of the given 
+     * siteNode. The method is great for navigation-purposes on a structured site. 
+     */
+    public abstract List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden, boolean populateNavigationTitle, boolean populatePageUrl);
 
     /**
      * The method returns a list of WebPage-objects that is the children of the given 

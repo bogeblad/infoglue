@@ -1745,9 +1745,9 @@ public class BasicTemplateController implements TemplateController
 	 * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
 	 */
 	 
-	public String getContentAttributeWithReturningId(Integer contentId, Integer languageId, String attributeName, boolean clean, Set contentVersionId) 
+	public String getContentAttributeWithReturningId(Integer contentId, Integer languageId, String attributeName, boolean clean, Set contentVersionId, Set<String> usedContentEntities) 
 	{
-	    return getContentAttribute(contentId, languageId, attributeName, contentVersionId);
+	    return getContentAttribute(contentId, languageId, attributeName, contentVersionId, usedContentEntities);
 	}
 
 	/**
@@ -1887,8 +1887,11 @@ public class BasicTemplateController implements TemplateController
 	public String getContentAttribute(Integer contentId, Integer languageId, String attributeName) 
 	{
 		String attributeValue = "";
-		
+		//System.out.println("contentId:" + contentId);
+		//System.out.println("languageId:" + languageId);
+		//System.out.println("attributeName:" + attributeName);
 		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
+		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId) + "_" + attributeName);
 
 		try
 		{
@@ -1915,7 +1918,6 @@ public class BasicTemplateController implements TemplateController
 		String attributeValue = "";
 		
 		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
-
 		try
 		{
 		    attributeValue = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, languageId, attributeName, this.siteNodeId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal, false, true);
@@ -1938,11 +1940,13 @@ public class BasicTemplateController implements TemplateController
 	 * parameter requires a bindingName which refers to the AvailableServiceBinding.name-attribute. 
 	 */
 	 
-	public String getContentAttribute(Integer contentId, Integer languageId, String attributeName, Set contentVersionId) 
+	public String getContentAttribute(Integer contentId, Integer languageId, String attributeName, Set contentVersionId, Set<String> usedContentEntities) 
 	{
 		String attributeValue = "";
 		
 		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
+		if(!attributeName.equals("ComponentStructure") || contentId == getMetaInformationContentId())
+			this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId) + "_" + attributeName);
 		
 		try
 		{
@@ -4911,7 +4915,24 @@ public class BasicTemplateController implements TemplateController
 	{
 		Timer t = new Timer();
 		
-		deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
+		try
+		{
+			logger.info("contentTypeDefinitionNamesString:" + contentTypeDefinitionNamesString);
+			String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
+			for(String contentTypeDefinitionName : contentTypeDefinitionNames)
+			{
+		        ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, getDatabase());
+		        if(contentTypeDefinitionVO != null)
+		        {
+		        	logger.info("Do not throw page cache on this if it's not a content of type:" + contentTypeDefinitionVO.getName());
+					deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + contentTypeDefinitionVO.getId());
+		        }
+		    }
+		}
+		catch (Exception e) 
+		{
+			logger.error("Could not set correct selectiveCacheUpdateNonApplicable-type: " + e.getMessage());
+		}
 		
 		if((freeText != null && !freeText.equals("")) || (freeTextAttributeNames != null && freeTextAttributeNames.size() > 0) || fromDate != null || toDate != null || expireFromDate != null || expireToDate != null || (versionModifier != null && !versionModifier.equals("")) || !deliveryContext.getOperatingMode().equals(CmsPropertyHandler.getOperatingMode()))
 			cacheResult = false;
@@ -6035,6 +6056,11 @@ public class BasicTemplateController implements TemplateController
 	{
 		return getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, true);
 	}
+
+	private List getPages(List childNodeVOList, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden) throws Exception
+	{
+		return getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden, true, true);
+	}
 	
 	/**
 	 * This method takes a list of sitenodes and converts it to a page list instead.
@@ -6045,17 +6071,17 @@ public class BasicTemplateController implements TemplateController
 	 * @return
 	 * @throws Exception
 	 */
-	private List getPages(List childNodeVOList, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden) throws Exception
+	private List getPages(List childNodeVOList, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden, boolean populateNavigationTitle, boolean populatePageUrl) throws Exception
 	{
+		Timer t = new Timer();
 		List childPages = new ArrayList();
 
 		Iterator i = childNodeVOList.iterator();
 		while(i.hasNext())
 		{
 			SiteNodeVO siteNodeVO = (SiteNodeVO)i.next();
-			
 			this.getDeliveryContext().addUsedSiteNode(CacheController.getPooledString(3, siteNodeVO.getId()));
-
+			
 			if((!hideUnauthorizedPages || getHasUserPageAccess(siteNodeVO.getId())) && (showHidden || !siteNodeVO.getIsHidden()))
 			{
 				try
@@ -6064,17 +6090,35 @@ public class BasicTemplateController implements TemplateController
 					webPage.setSiteNodeId(siteNodeVO.getSiteNodeId());
 					webPage.setLanguageId(this.languageId);
 					webPage.setContentId(null);
-					webPage.setNavigationTitle(this.nodeDeliveryController.getPageNavigationTitle(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, siteNodeVO.getMetaInfoContentId(), META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, USE_LANGUAGE_FALLBACK, this.deliveryContext, escapeHTML));
-					webPage.setMetaInfoContentId(this.nodeDeliveryController.getMetaInfoContentId(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), META_INFO_BINDING_NAME, USE_INHERITANCE, this.deliveryContext));
-					SiteNodeVersionVO siteNodeVersionVO = this.nodeDeliveryController.getLatestActiveSiteNodeVersionVO(getDatabase(), siteNodeVO.getSiteNodeId());
-					webPage.setSortOrder(siteNodeVersionVO.getSortOrder());
-					webPage.setIsHidden(siteNodeVersionVO.getIsHidden());
-					webPage.setUrl(this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, null, this.deliveryContext));
+					if(populateNavigationTitle)
+						webPage.setNavigationTitle(this.nodeDeliveryController.getPageNavigationTitle(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, siteNodeVO.getMetaInfoContentId(), META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, USE_LANGUAGE_FALLBACK, this.deliveryContext, escapeHTML));
+					
+					if(siteNodeVO.getMetaInfoContentId() != null)
+					{
+						if(deliveryContext != null)
+							deliveryContext.addUsedContent(CacheController.getPooledString(1, siteNodeVO.getMetaInfoContentId()));
+						webPage.setMetaInfoContentId(siteNodeVO.getMetaInfoContentId());
+					}
+					else
+					{
+						System.out.println("IT CAN REALLY HAPPEN.....");
+						webPage.setMetaInfoContentId(this.nodeDeliveryController.getMetaInfoContentId(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), META_INFO_BINDING_NAME, USE_INHERITANCE, this.deliveryContext));
+					}
+					
+					if(siteNodeVO.getSortOrder() == null)
+					{
+						SiteNodeVersionVO siteNodeVersionVO = this.nodeDeliveryController.getLatestActiveSiteNodeVersionVO(getDatabase(), siteNodeVO.getSiteNodeId());
+						webPage.setSortOrder(siteNodeVersionVO.getSortOrder());
+						webPage.setIsHidden(siteNodeVersionVO.getIsHidden());
+					}
+					if(populatePageUrl)
+						webPage.setUrl(this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, null, this.deliveryContext));
+					
 					childPages.add(webPage);
 				}
 				catch(Exception e)
 				{
-				    logger.info("An error occurred when looking up one of the childPages:" + e.getMessage(), e);
+				    logger.error("An error occurred when looking up one of the childPages:" + e.getMessage(), e);
 				}
 			}
 		}
@@ -6119,6 +6163,16 @@ public class BasicTemplateController implements TemplateController
 	
 	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden)
 	{
+		return getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, showHidden, true, true);
+	}
+	
+	/**
+	 * The method returns a list of WebPage-objects that is the children of the given 
+	 * siteNode. The method is great for navigation-purposes on a structured site. 
+	 */
+	
+	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden, boolean populateNavigationTitle, boolean populatePageUrl)
+	{
 		Timer t = new Timer();
 		List childPages = new ArrayList();
 		try
@@ -6126,7 +6180,7 @@ public class BasicTemplateController implements TemplateController
 			List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId);
 			if(logger.isInfoEnabled())
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes", t.getElapsedTimeNanos() / 1000);
-			childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden);
+			childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden, populateNavigationTitle, populatePageUrl);
 			if(logger.isInfoEnabled())
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getPages", t.getElapsedTimeNanos() / 1000);
 		}

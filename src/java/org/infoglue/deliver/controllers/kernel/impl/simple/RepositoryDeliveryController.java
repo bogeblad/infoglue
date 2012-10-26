@@ -26,10 +26,12 @@ package org.infoglue.deliver.controllers.kernel.impl.simple;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
@@ -100,9 +102,9 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         return repositoryVO;	
 	}
 
-	public List getRepositoryVOListFromServerName(String serverName, String portNumber, String repositoryName) throws SystemException, Exception
+	public Set<RepositoryVO> getRepositoryVOListFromServerName(String serverName, String portNumber, String repositoryName) throws SystemException, Exception
     {
-	    List repositories = new ArrayList();
+	    Set<RepositoryVO> repositories = new HashSet<RepositoryVO>();
 	    
 	    Database db = CastorDatabaseService.getDatabase();
 	    
@@ -133,9 +135,9 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    return repositories;
     }
 	
-	public List getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws SystemException, Exception
+	public Set<RepositoryVO> getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws SystemException, Exception
     {
-	    List repositories = new ArrayList();
+	    Set<RepositoryVO> repositories = new HashSet<RepositoryVO>();
 	    
 	    List cachedRepositories = (List)CacheController.getCachedObject("masterRepository", "allDNSRepositories");
 		if(cachedRepositories == null)
@@ -162,20 +164,20 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         while (repositoriesIterator.hasNext()) 
         {
             RepositoryVO repositoryVO = (RepositoryVO) repositoriesIterator.next();
-            if(logger.isInfoEnabled())
-            	logger.info("\n\nrepository:" + repositoryVO.getDnsName());
-            if(logger.isInfoEnabled())
-            	logger.info("repository:" + repositoryVO.getDnsName());
+
             String[] dnsNames = splitStrings(repositoryVO.getDnsName().replaceAll("\\[.*?\\]", ""));
+
             if(logger.isInfoEnabled())
             	logger.info("dnsNames:" + dnsNames);
-            if(logger.isInfoEnabled())
-            	logger.info("dnsNames:" + dnsNames);
+            
             for (int i=0;i<dnsNames.length;i++) 
             {
             	if(logger.isInfoEnabled())
                 	logger.info("dnsNames[i]:" + dnsNames[i]);
                 String dnsName = dnsNames[i];
+                
+                if(dnsName.indexOf("undefined") > -1)
+                	continue;
                 
                 int index = dnsName.indexOf("working=,");
                 int indexMode = dnsName.indexOf("working=");
@@ -194,9 +196,9 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 
                 if(logger.isInfoEnabled())
                 	logger.info("" + index + ":" + indexMode + ":" + noHostName + ":" + dnsName + " for operationMode:" + CmsPropertyHandler.getOperatingMode());
-            	if(!noHostName && index == -1 && indexMode == -1 && dnsName.indexOf("=") > -1)
+            	if(/*!noHostName && */index == -1 && indexMode == -1 && dnsName.indexOf("=") > -1)
             	{
-            		if(logger.isInfoEnabled())
+        			if(logger.isInfoEnabled())
             			logger.info("Skipping this name [" + dnsName + "] as it was not a dnsName targeted toward this mode.");
             		continue;
             	}
@@ -233,6 +235,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                         {
                         	if(logger.isInfoEnabled())
                             	logger.info("Adding " + repositoryVO.getName());
+           
             	            repositories.add(repositoryVO);
                         }
                     }

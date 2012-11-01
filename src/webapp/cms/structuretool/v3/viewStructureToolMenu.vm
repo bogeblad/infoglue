@@ -64,6 +64,9 @@
 		function openUrlInWorkArea(url, titel)
 		{
 			//alert("openUrlInWorkArea:" + url);
+			
+			top.displayLoadingIndicator(); 
+			
 			if(parent.openUrlInWorkArea)
 				parent.openUrlInWorkArea(url, titel, 'structure', "$ui.getString("tool.common.pageTabLabelPrefix")");
 		}

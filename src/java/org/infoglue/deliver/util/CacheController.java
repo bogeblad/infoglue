@@ -303,10 +303,10 @@ public class CacheController extends Thread
 
 	public static synchronized void preCacheCMSEntities() throws Exception 
 	{
-		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 10000);
+		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 5000);
 		logger.error("snVOList:" + snVOList.size() + " fetched and precached");
 
-		List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 30000);
+		List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 10000);
 		logger.error("cList:" + cList.size() + " fetched and precached");
 
 		/*
@@ -326,12 +326,15 @@ public class CacheController extends Thread
 
 	public static synchronized void preCacheDeliverEntities() throws Exception 
 	{
-		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, new Integer(CmsPropertyHandler.getOperatingMode()), 30000);
-		logger.error("snVOList:" + snVOList.size() + " fetched and precached");
-
-		List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 10000);
-		logger.error("cList:" + cList.size() + " fetched and precached");
-
+		if(CmsPropertyHandler.getOperatingMode().equals("0") || CmsPropertyHandler.getOperatingMode().equals("3"))
+		{
+			List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, new Integer(CmsPropertyHandler.getOperatingMode()), 5000);
+			logger.error("snVOList:" + snVOList.size() + " fetched and precached");
+	
+			List<ContentVO> cList = ContentController.getContentController().getContentVOList(false, 10000);
+			logger.error("cList:" + cList.size() + " fetched and precached");
+		}
+		
 		/*
 		FileInputStream fis = new FileInputStream(CmsPropertyHandler.getDigitalAssetPath() + File.separator + "startupCache.txt");
         ObjectInputStream ois = new ObjectInputStream(fis);

@@ -1855,8 +1855,6 @@ public class CacheController extends Thread
 								    }
 							    }
 
-								System.out.println("cacheName:" + cacheName);
-								System.out.println("entity:" + entity);
 								if(selectiveCacheUpdate && entity.indexOf("Repository") > 0 && useSelectivePageCacheUpdate)
 							    {
 							    	logger.info("clearing " + e.getKey() + " with group " + "repository_" + entityId);
@@ -1879,7 +1877,8 @@ public class CacheController extends Thread
 							    	
 							    	if(CmsPropertyHandler.getOperatingMode().equalsIgnoreCase("0"))
 							    	{
-								    	logger.info("Getting eventListeners...");
+							    		/*
+							    		logger.info("Getting eventListeners...");
 								        Object cacheEntryEventListener = eventListeners.get(e.getKey() + "_cacheEntryEventListener");
 							    		Object cacheMapAccessEventListener = eventListeners.get(e.getKey() + "_cacheMapAccessEventListener");
 	
@@ -1894,7 +1893,7 @@ public class CacheController extends Thread
 								    		cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
 								    	}
 								    	logger.info("clearing " + e.getKey() + " with group " + "siteNodeVersion_" + entityId);
-								    	
+								    	*/
 								    	try
 								    	{
 									    	logger.info("BeforesiteNodeVersionVO...");
@@ -1905,10 +1904,12 @@ public class CacheController extends Thread
 										    	logger.info("Before flushGroup2...");
 								    			if(cacheName.equals("pageCacheExtra"))
 										    		clearFileCacheForGroup(cacheInstance, "siteNode_" + siteNodeId);
-								    			else
+								    			else if(cacheName.equals("pageCache"))
 								    				cacheInstance.flushGroup("siteNode_" + siteNodeId);
+								    			//else
+								    				//	cacheInstance.flushGroup("siteNode_" + siteNodeId);
 	
-								    			if(cacheName.equals("childSiteNodesCache"))
+								    			else if(cacheName.equals("childSiteNodesCache"))
 								    			{
 											    	SiteNodeVO snVO = SiteNodeController.getController().getSiteNodeVOWithId(snvVO.getSiteNodeId());
 											    	if(snVO.getParentSiteNodeId() != null)
@@ -1942,7 +1943,14 @@ public class CacheController extends Thread
 								    	cacheInstance.flushGroup("siteNode_" + entityId);
 								    	cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
 							    	}
-
+							    	
+							    	if(cacheName.equals("childSiteNodesCache"))
+							    	{
+							    		SiteNodeVO snVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(entityId));
+								    	if(snVO.getParentSiteNodeId() != null)
+								    		cacheInstance.flushGroup("siteNode_" + snVO.getParentSiteNodeId());
+							    	}
+							    	
 							    	logger.info("clearing " + e.getKey() + " with group " + "siteNode_" + entityId);
 								}
 							    else if(selectiveCacheUpdate && entity.indexOf("ContentVersion") > 0 && useSelectivePageCacheUpdate)

@@ -208,6 +208,7 @@ public class SiteNodeVersionController extends BaseController
 
 		try
 		{
+			int maxSortOrder = siteNode.getParentSiteNode().getChildSiteNodes().size()-1;
 			//SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, db);
             
 			siteNodeVersion = new SiteNodeVersionImpl();
@@ -218,6 +219,7 @@ public class SiteNodeVersionController extends BaseController
 			siteNodeVersion.setVersionComment("Initial version");
 			siteNodeVersion.setVersionModifier(infoGluePrincipal.getName());
 			siteNodeVersion.setVersionNumber(new Integer(1));
+			siteNodeVersion.setSortOrder(maxSortOrder);
         	
 			db.create((SiteNodeVersion)siteNodeVersion);
 			

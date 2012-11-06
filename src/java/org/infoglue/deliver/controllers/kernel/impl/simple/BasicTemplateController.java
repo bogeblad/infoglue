@@ -6136,7 +6136,7 @@ public class BasicTemplateController implements TemplateController
 					if(populatePageUrl)
 						webPage.setUrl(this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, null, this.deliveryContext));
 					
-					System.out.println("Adding webpage:" + webPage.getNavigationTitle() + ":" + webPage.getSortOrder());
+					//System.out.println("Adding webpage:" + webPage.getNavigationTitle() + ":" + webPage.getSortOrder());
 					childPages.add(webPage);
 				}
 				catch(Exception e)

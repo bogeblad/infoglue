@@ -1102,7 +1102,7 @@ public class SiteNodeController extends BaseController
 	   		SQL.append("order by sn.parentSiteNodeId, snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC LIMIT $4 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
     	}
 
-    	System.out.println("SQL:" + SQL);
+    	//System.out.println("SQL:" + SQL);
     	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
     	//logger.info("showDeletedItems:" + showDeletedItems);
     	OQLQuery oql = db.getOQLQuery(SQL.toString());
@@ -1559,7 +1559,47 @@ public class SiteNodeController extends BaseController
 	
     public void changeSiteNodeSortOrder(Integer siteNodeId, Integer beforeSiteNodeId, String direction, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException
     {
-	    Database db = CastorDatabaseService.getDatabase();
+    	Database db = CastorDatabaseService.getDatabase();
+
+        beginTransaction(db);
+
+        try
+        {
+        	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId, db);
+			//Fixes a nice ordered list
+			List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
+			Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
+			int index = 0;
+			while(childrenVOListIterator.hasNext())
+			{
+				SiteNodeVO childSiteNodeVO = childrenVOListIterator.next();
+				SiteNodeVersion latestChildSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, childSiteNodeVO.getId());
+				System.out.println("latestChildSiteNodeVersion.getSortOrder():" + latestChildSiteNodeVersion.getSortOrder() + "=" + index);
+				if(latestChildSiteNodeVersion.getSortOrder() != index)
+				{
+					latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
+	
+					//Integer currentSortOrder = latestChildSiteNodeVersion.getSortOrder();
+					//logger.info("currentSortOrder:" + currentSortOrder + " on " + childSiteNodeVO.getName());
+					//if(currentSortOrder != 100)
+					//{
+					System.out.println("Setting sort order to:" + index + " on " + latestChildSiteNodeVersion.getId());
+						latestChildSiteNodeVersion.setSortOrder(index);
+					//}
+				}
+				index++;
+			}
+            
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+        
+	    db = CastorDatabaseService.getDatabase();
 
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
@@ -1597,14 +1637,17 @@ public class SiteNodeController extends BaseController
 						newSortOrder = oldSortOrder + 1;
 				}
 				
+            	System.out.println("OldSortOrder:" + oldSortOrder);
 				List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
 				Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
 				while(childrenVOListIterator.hasNext())
 				{
 					SiteNodeVO childSiteNodeVO = childrenVOListIterator.next();
+					System.out.println("childSiteNodeVO:" + childSiteNodeVO.getId() + ":" + childSiteNodeVO.getSortOrder());
 					SiteNodeVersion latestChildSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, childSiteNodeVO.getId());
 					//logger.info("latestChildSiteNodeVersion:" + latestChildSiteNodeVersion.getId());
 					Integer currentSortOrder = latestChildSiteNodeVersion.getSortOrder();
+					System.out.println("currentSortOrder:" + currentSortOrder);
 					if(currentSortOrder.equals(oldSortOrder))
 					{
 						latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
@@ -1633,39 +1676,7 @@ public class SiteNodeController extends BaseController
         }
         
         
-	    db = CastorDatabaseService.getDatabase();
-
-        beginTransaction(db);
-
-        try
-        {
-        	SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId, db);
-			//Fixes a nice ordered list
-			List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
-			Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
-			int index = 0;
-			while(childrenVOListIterator.hasNext())
-			{
-				SiteNodeVO childSiteNodeVO = childrenVOListIterator.next();
-				SiteNodeVersion latestChildSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, childSiteNodeVO.getId());
-
-				Integer currentSortOrder = latestChildSiteNodeVersion.getSortOrder();
-				logger.info("currentSortOrder:" + currentSortOrder + " on " + childSiteNodeVO.getName());
-				if(currentSortOrder != 100)
-				{
-					latestChildSiteNodeVersion.setSortOrder(index);
-					index++;
-				}
-			}
-            
-            commitTransaction(db);
-        }
-        catch(Exception e)
-        {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
+	    
     }       
 
     

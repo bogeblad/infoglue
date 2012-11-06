@@ -459,8 +459,8 @@ function openPopup(url, name, details)
 }
 
 //-----------------------------------------------
-//This function opens up a new location in a 
-//restriced popup 
+// This function opens up a new location in a 
+// restriced popup 
 //-----------------------------------------------
 
 function openPopupWithOptionalParameter(url, name, details, question, parameter)
@@ -474,27 +474,52 @@ function openPopupWithOptionalParameter(url, name, details, question, parameter)
 }
 
 //--------------------------------------------------------
-//Display a notification div when something has happened
-//i.e. a content has been saved or something else has 
-//happened that the user needs to be notified about.
+// Display a notification div when something has happened
+// i.e. a content has been saved or something else has 
+// happened that the user needs to be notified about.
 //--------------------------------------------------------
 
 function displayNotification(aMessage)
 {
-	displayNotification(aMessage, "");
+	displayNotification(aMessage, true, ""); 
 }
 
-function displayNotification(aMessage, aClassName)
+var notificationIsHot = false;
+
+function displayNotification(aMessage, aAutoHide, aClassName)
 {
-	$("#popupAlertMessageDiv p").html(aMessage);
-	$("#popupAlertMessageDiv").attr("class", aClassName);
-	$("#popupAlertMessageDiv").css("margin-top", "0");
-	setTimeout(function() {
-		$("#popupAlertMessageDiv").css("margin-top", "45px");
-	}, 4000);
+	notificationIsHot = true;
+	
+	if (notificationIsHot)
+	{
+		$("#popupAlertMessageDiv p").html(aMessage); 
+		$("#popupAlertMessageDiv").attr("class", aClassName);
+		$("#popupAlertMessageDiv").css("margin-top", "0");
+		if (aAutoHide)
+		{
+			setTimeout(function() {
+				hideNotification();
+			}, 4000);
+		}
+	}
 }
 
 function hideNotification()
 {
-	$("#popupAlertMessageDiv").css("margin-top", "45px");
+	notificationIsHot = false; 
+	$("#popupAlertMessageDiv").css("margin-top", "35px");
+}
+
+//-------------------------------------------------------
+// Display a loading indicator when something is loading
+//-------------------------------------------------------
+
+function displayLoadingIndicator()
+{ 
+	$("#loadingIndicator").show();
+}
+
+function hideLoadingIndicator()
+{
+	$("#loadingIndicator").hide();
 }

@@ -1773,11 +1773,11 @@ public class ContentController extends BaseController
 
     	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
     	{
-	    	sb.append("CALL SQL select c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, ");
+	    	sb.append("CALL SQL select c.contId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, ");
 	    	sb.append("c.creator, c.contentTypeDefId, c.repositoryId, c.parentContId, ");
 	    	sb.append("(");
-	    	sb.append("  select stateId from cmContVer cv2 where  ");
-			sb.append("  cv2.contentId = c.contentId ");
+	    	sb.append("  select min(stateId) from cmContVer cv2 where  ");
+			sb.append("  cv2.contId = c.contId ");
 			if(languageVOList.size() > 0)
 			{
 				sb.append("AND  (    ");
@@ -1789,20 +1789,19 @@ public class ContentController extends BaseController
 		        		sb.append(" OR ");
 		    			
 		    		sb.append("  cv2.ContVerId in ");
-		        	sb.append("  (select max(ContVerId) from cmContVer where contentId = c.contentId AND isActive = 1 AND languageId = " + language.getLanguageId() + ")");
+		        	sb.append("  (select max(ContVerId) from cmContVer where contId = c.contId AND isActive = 1 AND languageId = " + language.getLanguageId() + ")");
 		        	index++;
 		    	}
 		
 				sb.append(" )");
 			}
 			
-			sb.append("  group by cv2.contentId order by cv2.ContVerId desc");
 			sb.append(") ");
 			sb.append("AS stateId, ");
-	    	sb.append("(select count(contentId) from cmCont where parentContentId = c.contentId) AS childCount ");
+	    	sb.append("(select count(contId) from cmCont where parentContId = c.contId) AS childCount ");
 	    	sb.append("from ");
 	    	sb.append("cmCont c ");
-	    	sb.append("WHERE parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " group by c.contentId ORDER BY c.contentId asc AS org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl ");
+	    	sb.append("WHERE parentContId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY c.contId asc AS org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl ");
     	}
     	else
     	{

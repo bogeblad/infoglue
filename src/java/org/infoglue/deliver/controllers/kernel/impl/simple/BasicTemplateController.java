@@ -1887,9 +1887,6 @@ public class BasicTemplateController implements TemplateController
 	public String getContentAttribute(Integer contentId, Integer languageId, String attributeName) 
 	{
 		String attributeValue = "";
-		//System.out.println("contentId:" + contentId);
-		//System.out.println("languageId:" + languageId);
-		//System.out.println("attributeName:" + attributeName);
 		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 		this.deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId) + "_" + attributeName);
 
@@ -2156,7 +2153,6 @@ public class BasicTemplateController implements TemplateController
 			{
 				String unparsedAttributeValue = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, languageId, attributeName, this.siteNodeId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal, false);
 				logger.info("Found unparsedAttributeValue:" + unparsedAttributeValue);
-				getDeliveryContext().addDebugInformation("DEBUG Found unparsedAttributeValue:" + unparsedAttributeValue);
 				
 				templateLogicContext.put("inlineContentId", contentId);
 				
@@ -4760,6 +4756,25 @@ public class BasicTemplateController implements TemplateController
 		return this.getContentId(siteNodeId, META_INFO_BINDING_NAME);
 	}
 	
+	/**
+	 * This method gets the children of a content.
+	 */
+	
+	public Collection getChildContents(Integer contentId, boolean includeFolders)
+	{
+		List childContents = null;
+		
+		try
+		{
+			childContents = ContentDeliveryController.getContentDeliveryController().getChildContents(getDatabase(), this.getPrincipal(), contentId, this.languageId, USE_LANGUAGE_FALLBACK, includeFolders, this.deliveryContext);
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred trying to get childContents for contentId " + contentId + ":" + e.getMessage(), e);
+		}
+				
+		return childContents;
+	}
 
 	/**
 	 * Getter for bound contentId for a binding on a special siteNode
@@ -4915,24 +4930,29 @@ public class BasicTemplateController implements TemplateController
 	{
 		Timer t = new Timer();
 		
-		try
+		if(contentTypeDefinitionNamesString != null && !contentTypeDefinitionNamesString.equals(""))
 		{
-			logger.info("contentTypeDefinitionNamesString:" + contentTypeDefinitionNamesString);
-			String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
-			for(String contentTypeDefinitionName : contentTypeDefinitionNames)
+			try
 			{
-		        ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, getDatabase());
-		        if(contentTypeDefinitionVO != null)
-		        {
-		        	logger.info("Do not throw page cache on this if it's not a content of type:" + contentTypeDefinitionVO.getName());
-					deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + contentTypeDefinitionVO.getId());
-		        }
-		    }
+				logger.info("contentTypeDefinitionNamesString:" + contentTypeDefinitionNamesString);
+				String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
+				for(String contentTypeDefinitionName : contentTypeDefinitionNames)
+				{
+					ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, getDatabase());
+					if(contentTypeDefinitionVO != null)
+					{
+						logger.info("Do not throw page cache on this if it's not a content of type:" + contentTypeDefinitionVO.getName());
+						deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + contentTypeDefinitionVO.getId());
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.error("Could not set correct selectiveCacheUpdateNonApplicable-type: " + e.getMessage());
+			}
 		}
-		catch (Exception e) 
-		{
-			logger.error("Could not set correct selectiveCacheUpdateNonApplicable-type: " + e.getMessage());
-		}
+		else
+			deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
 		
 		if((freeText != null && !freeText.equals("")) || (freeTextAttributeNames != null && freeTextAttributeNames.size() > 0) || fromDate != null || toDate != null || expireFromDate != null || expireToDate != null || (versionModifier != null && !versionModifier.equals("")) || !deliveryContext.getOperatingMode().equals(CmsPropertyHandler.getOperatingMode()))
 			cacheResult = false;
@@ -5033,10 +5053,7 @@ public class BasicTemplateController implements TemplateController
 				        	contentTypeDefinitionVOList.add(contentTypeDefinitionVO);
 				    }
 	
-				    //t.printElapsedTime("MC 2.01");
-
 				    final CategoryConditions categoryConditions = CategoryConditions.parse(categoryConditionString, getDatabase());
-				    //t.printElapsedTime("MC 2.1");
 	
 					final ExtendedSearchCriterias criterias = new ExtendedSearchCriterias(this.getOperatingMode().intValue());
 					criterias.setCategoryConditions(categoryConditions);
@@ -5045,7 +5062,6 @@ public class BasicTemplateController implements TemplateController
 						criterias.setSkipLanguageCheck(skipLanguageCheck);
 					if(freeText != null && freeTextAttributeNames != null)
 						criterias.setFreetext(freeText, freeTextAttributeNames);
-					//t.printElapsedTime("MC 2.2");
 					criterias.setContentTypeDefinitions(contentTypeDefinitionVOList);
 					criterias.setDates(fromDate, toDate);
 					criterias.setExpireDates(expireFromDate, expireToDate);
@@ -6453,28 +6469,6 @@ public class BasicTemplateController implements TemplateController
 		}
 		
 		return boundContents;
-	}
-
-	/**
-	 * This method gets the children of a content.
-	 */
-	
-	public Collection getChildContents(Integer contentId, boolean includeFolders)
-	{
-		List childContents = null;
-		
-		try
-		{
-			//Timer t = new Timer();
-			childContents = ContentDeliveryController.getContentDeliveryController().getChildContents(getDatabase(), this.getPrincipal(), contentId, this.languageId, USE_LANGUAGE_FALLBACK, includeFolders, this.deliveryContext);
-			//t.printElapsedTime("getChildContents took");
-		}
-		catch(Exception e)
-		{
-			logger.error("An error occurred trying to get childContents for contentId " + contentId + ":" + e.getMessage(), e);
-		}
-				
-		return childContents;
 	}
 
 	/**

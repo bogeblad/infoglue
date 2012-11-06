@@ -39,6 +39,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RoleControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -78,6 +79,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	private String colorScheme;
 	private String saved = "false";
 	private Boolean closeOnLoad = false;
+	private Boolean stateChanged = false;
 
 	private List interceptionPointVOList = new ArrayList();
 	private List roleList = null;
@@ -129,6 +131,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 
 			Integer siteNodeVersionId = new Integer(extraParameters);
 			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
+				
 			if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 			{
 				boolean isSiteNodeVersionProtected = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getIsSiteNodeVersionProtected(siteNodeVersionVO.getId());
@@ -478,6 +481,16 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	public Boolean getCloseOnLoad()
 	{
 		return closeOnLoad;
+	}
+
+	public Boolean getStateChanged()
+	{
+		return this.stateChanged;
+	}
+
+	public void setStateChanged(Boolean stateChanged)
+	{
+		this.stateChanged = stateChanged;
 	}
 
 	public void setCloseOnLoad(Boolean closeOnLoad)

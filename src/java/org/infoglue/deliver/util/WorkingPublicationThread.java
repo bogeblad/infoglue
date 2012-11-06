@@ -364,45 +364,6 @@ public class WorkingPublicationThread extends Thread
 								//Removing all scriptExtensionBundles to make sure
 								CacheController.removeScriptExtensionBundles();							    	
 							}
-							/*
-							else if(Class.forName(className).getName().equals(PublicationImpl.class.getName()))
-							{
-								logger.error("**************************************");
-								logger.error("*    HERE THE MAGIC SHOULD HAPPEN IN WORKING    * " + objectId);
-								logger.error("**************************************");
-								
-								PublicationVO publicationVO = PublicationController.getController().getPublicationVO(new Integer(objectId));
-								if(publicationVO != null)
-								{
-									List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(new Integer(objectId));
-									Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
-									while(publicationDetailVOListIterator.hasNext())
-									{
-										PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
-										logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
-										logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
-										
-										logger.info("Going to index:" + publicationDetailVO.getClass() + ":" + publicationDetailVO.getEntityId() + ":" + publicationDetailVO.getTypeId());
-										//Fixa sŒ detta funkar och att delete av version ocksŒ slŒr
-										NotificationMessage notificationMessage2 = new NotificationMessage("LuceneController", publicationDetailVO.getEntityClass(), "SYSTEM", publicationDetailVO.getTypeId(), publicationDetailVO.getEntityId(), "" + publicationDetailVO.getName());
-										new Thread(new SearchIndexHelper(notificationMessage2)).start();
-										logger.info("------------------------------------------->Done indexing in working thread");
-										
-										if(publicationDetailVO.getEntityClass().indexOf("pageCache") > -1)
-										{
-									    	if(publicationDetailVO.getEntityClass().equals("pageCacheExtra"))
-									    	{
-									    		CacheController.clearCacheForGroup("pageCacheExtra", "selectiveCacheUpdateNonApplicable");
-									    	}
-									    	else
-									    	{
-									    		CacheController.clearCacheForGroup("pageCache", "selectiveCacheUpdateNonApplicable");							    		
-									    	}
-										}
-									}
-								}
-							}
-							*/
 							
 						    logger.info("4");
 						}	
@@ -429,11 +390,10 @@ public class WorkingPublicationThread extends Thread
 								NotificationMessage notificationMessage = new NotificationMessage("LuceneController", className, "SYSTEM", Integer.parseInt(typeId), Integer.parseInt(objectId), "" + objectName);
 								new Thread(new SearchIndexHelper(notificationMessage)).start();
 								LuceneController.getController().notify(notificationMessage);
-								logger.info("------------------------------------------->Done indexing in working thread");
-					 		
-								CacheEvictionBeanListenerService.getService().notifyListeners(cacheEvictionBean);
+								logger.info("------------------------------------------->Done indexing in working thread");					 		
 						 	}
 					    }
+						CacheEvictionBeanListenerService.getService().notifyListeners(cacheEvictionBean);
 					}
 					catch (Exception e) 
 					{

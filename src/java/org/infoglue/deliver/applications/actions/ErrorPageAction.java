@@ -88,7 +88,7 @@ public class ErrorPageAction extends InfoGlueAbstractAction
             return repositoryVOList;
         }
         
-        Set<RepositoryVO> repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(serverName, portNumber, repositoryName);
+        Set<RepositoryVO> repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(serverName, portNumber, repositoryName, request.getRequestURI());
         
         CacheController.cacheObject("NavigationCache", repCacheKey, repositories);
 

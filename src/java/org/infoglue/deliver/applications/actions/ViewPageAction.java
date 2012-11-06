@@ -1241,6 +1241,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			{
 				Principal anonymousPrincipal = getAnonymousPrincipal();
 				boolean isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+				System.out.println("Is anonymous authorized:" + isAuthorized);
 				if(isAuthorized)
 				{	
 					principal = anonymousPrincipal;
@@ -1337,6 +1338,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						if(logger.isInfoEnabled())
 							logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 						
+						System.out.println("Is anonymous authorized:" + isAuthorized);
 						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
 						
 						if(logger.isInfoEnabled())
@@ -1344,6 +1346,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						
 						if(!isAuthorized)
 						{
+							System.out.println("Is principal authorized:" + principal.getName() + "=" + isAuthorized);
 							isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
 						
 							if(logger.isInfoEnabled())

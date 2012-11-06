@@ -73,8 +73,6 @@ import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
-import com.sun.star.beans.GetDirectPropertyTolerantResult;
-
 /**
  * This class is a helper class for the use case handle Accesss
  *
@@ -179,7 +177,7 @@ public class AccessRightController extends BaseController
 		}
 		sb.append("))) AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl");
 		
-		//logger.info("SQL::::::::::" + sb.toString());
+		logger.info("SQL::::::::::" + sb.toString());
 		
 		OQLQuery oql = db.getOQLQuery(sb.toString());
 		//t.printElapsedTime("Executed took");
@@ -192,10 +190,7 @@ public class AccessRightController extends BaseController
 	    {
 			i++;
 			//System.out.print(".");
-			AccessRightImpl aru = (SmallAccessRightImpl)results.next();
-			//if(aru.getParameters().equals("995"))
-			//	logger.info("YES::::" + aru.getAccessRightId() + ":" + aru.getValueObject().getInterceptionPointId() + ":" + aru.getParameters());
-			
+			AccessRightImpl aru = (SmallAccessRightImpl)results.next();			
 			String key = "" + aru.getValueObject().getInterceptionPointId();
 			if(aru.getValueObject().getParameters() != null && !aru.getValueObject().getParameters().equals(""))
 				key = "" + aru.getValueObject().getInterceptionPointId() + "_" + aru.getValueObject().getParameters();
@@ -310,12 +305,6 @@ public class AccessRightController extends BaseController
 		try 
 		{
 			beginTransaction(db);
-			
-			/*
-			AccessRight accessRight = this.getAccessRightWithId(accessRightId, db);
-			if(accessRight != null)
-			    accessRightGroupVOList = toVOList(accessRight.getGroups());
-			*/
 			
 			OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl f WHERE f.accessRight = $1 ORDER BY f.accessRightGroupId");
 			oql.bind(accessRightId);
@@ -1657,10 +1646,7 @@ public class AccessRightController extends BaseController
 		{
 			beginTransaction(db);
 			
-			//Timer t = new Timer();
 			isPrincipalAuthorized = getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, parameters, returnTrueIfNoAccessRightsDefined, defeatCaches);
-			//isPrincipalAuthorized = getIsPrincipalAuthorizedNew(db, infoGluePrincipal, interceptionPointName, parameters, returnTrueIfNoAccessRightsDefined);
-			//t.printElapsedTime("New took");
 			
 			commitTransaction(db);
 		} 
@@ -1813,6 +1799,7 @@ public class AccessRightController extends BaseController
 		//Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObject("authorizationCache", key);
 	    //logger.info("personalAuthorizationCache:" + CacheController.getCacheSize("personalAuthorizationCache"));
 		Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", key);
+
 		if(cachedIsPrincipalAuthorized != null)
 		{
 			if(enableDebug)
@@ -1853,12 +1840,15 @@ public class AccessRightController extends BaseController
 			//Map<String,Integer> userAccessRightsMap = principalAccessRights.get("" + infoGluePrincipal.getName());
 			if(userAccessRightsMap != null)
 			{
-				String acKey = "" + interceptionPointVO.getId() + "_" + extraParameters;
+				String acKey = "" + interceptionPointVO.getId();
+				if(extraParameters != null && !extraParameters.equals(""))
+					acKey = "" + interceptionPointVO.getId() + "_" + extraParameters;
 				//logger.info("Checking access on: " + acKey);
 				
 				Integer hasAccess = userAccessRightsMap.get(acKey);
 				//if(acKey.indexOf("RightColumnOne") > -1)
 				//	logger.info("hasAccess:" + hasAccess + " on " + acKey);
+
 				if(hasAccess == null)
 				{
 				    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
@@ -3474,9 +3464,9 @@ public class AccessRightController extends BaseController
 
 	public void getAllDuplicates(boolean populateRelated, boolean includeAllDuplicates, List<AccessRightVO> duplicates, List<AccessRightVO> duplicatesEasyToDelete, List<AccessRightVO> duplicatesEasyToMerge, Database db) throws SystemException, Bug, Exception
 	{
-		String SQL = "CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar GROUP BY ar.parameters, ar.interceptionPointId HAVING count(*) > 1 ORDER BY ar.interceptionPointId, ar.parameters, ar.accessRightId AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl";
+		String SQL = "CALL SQL select max(ar.accessRightId) as accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar where ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like '%.Read' AND name not like 'SiteNodeVersion.Read') GROUP BY ar.parameters, ar.interceptionPointId HAVING count(*) > 1 ORDER BY ar.interceptionPointId, ar.parameters AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl";
 		if(includeAllDuplicates)
-			SQL = "CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar INNER JOIN (select ar2.parameters, ar2.interceptionPointId from cmAccessRight ar2 GROUP BY ar2.parameters, ar2.interceptionPointId HAVING count(*) > 1 ORDER BY ar2.interceptionPointId, ar2.parameters, ar2.accessRightId) derived_ar ON derived_ar.parameters = ar.parameters AND derived_ar.interceptionPointId = ar.interceptionPointId order by parameters; AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl";
+			SQL = "CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar INNER JOIN (select ar2.parameters, ar2.interceptionPointId from cmAccessRight ar2 GROUP BY ar2.parameters, ar2.interceptionPointId HAVING count(*) > 1 ORDER BY ar2.interceptionPointId, ar2.parameters, ar2.accessRightId) derived_ar ON derived_ar.parameters = ar.parameters AND derived_ar.interceptionPointId = ar.interceptionPointId AND derived_ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like '%.Read' AND name not like 'SiteNodeVersion.Read') order by parameters AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl";
 			
 		OQLQuery oql = db.getOQLQuery(SQL);
 		

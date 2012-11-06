@@ -94,9 +94,18 @@ public class PageEditorHelper extends BaseDeliveryController
 	private final static VisualFormatter formatter = new VisualFormatter();
 	private final static HttpHelper httpHelper = new HttpHelper();
 	//protected NodeDeliveryController nodeDeliveryController = NodeDeliveryController.getNodeDeliveryController();
+	protected TemplateController templateController = null;
 
     private final static Logger logger = Logger.getLogger(PageEditorHelper.class.getName());
 
+    /**
+	 * @param templateController the templateController to set
+	 */
+	public void setTemplateController(TemplateController templateController) 
+	{
+		this.templateController = templateController;
+	}
+    
 
 	public String getComponentPropertiesDiv(Database db, 
 											 InfoGluePrincipal principal, 

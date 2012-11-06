@@ -167,7 +167,7 @@ public class RequestAndMetaInfoCentricCachePopulator
 		
 		RepositoryVO repository = RepositoryDeliveryController.getRepositoryDeliveryController().getMasterRepository(dbWrapper.getDatabase());
 		
-		RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(dbWrapper.getDatabase(), "localhost", "8080", repository.getName());
+		RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(dbWrapper.getDatabase(), "localhost", "8080", repository.getName(), "");
 		
         logger.info("recache stopped..");
 	}

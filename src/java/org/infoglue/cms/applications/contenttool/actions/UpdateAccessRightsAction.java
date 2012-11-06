@@ -23,9 +23,13 @@
 
 package org.infoglue.cms.applications.contenttool.actions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -50,6 +54,8 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	private Integer interceptionPointId;
 	private Integer accessRightId;
 	private String parameters = "";
+	private String oldParameters = null;
+	private String newParameters = null;
 	private String[] extraMultiParameter;
 	private String roleName;
 	private Boolean closeOnLoad = false;
@@ -81,6 +87,21 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			{	
 				Integer siteNodeVersionId = new Integer(parameters);
 				SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
+				
+				//If in published state we must first make it working state so it can later be published
+				if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
+				{
+					this.oldParameters = "" + siteNodeVersionId;
+					System.out.println("We better state change....");
+					List events = new ArrayList();
+					System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events).getValueObject();
+					System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					this.newParameters = "" + siteNodeVersionVO.getId();
+					this.parameters = "" + siteNodeVersionVO.getId();
+					siteNodeVersionId = siteNodeVersionVO.getId();
+				}
+
 				if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 				{
 					Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
@@ -107,7 +128,16 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 	
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		if(this.url.indexOf("ViewAccessRights.action") > -1)
+		System.out.println("this.url:" + this.url);
+		if(newParameters != null)
+		{
+			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
+			if(this.url.indexOf("ViewAccessRights") > -1)
+				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
+		}
+		System.out.println("this.url:" + this.url);
+		
+		if(this.url.indexOf("ViewAccessRights") > -1)
 			this.url = this.url + "&saved=true";
 		if(this.closeOnLoad)
 		{
@@ -142,6 +172,21 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		{	
 			Integer siteNodeVersionId = new Integer(parameters);
 			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
+			
+			//If in published state we must first make it working state so it can later be published
+			if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
+			{
+				this.oldParameters = "" + siteNodeVersionId;
+				System.out.println("We better state change....");
+				List events = new ArrayList();
+				System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
+				siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events).getValueObject();
+				System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
+				this.newParameters = "" + siteNodeVersionVO.getId();
+				this.parameters = "" + siteNodeVersionVO.getId();
+				siteNodeVersionId = siteNodeVersionVO.getId();
+			}
+
 			if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 			{
 				Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
@@ -156,7 +201,15 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		AccessRightController.getController().updateGroups(this.accessRightId, this.parameters, groupNames);
 
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		
+		System.out.println("this.url:" + this.url);
+		if(newParameters != null)
+		{
+			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
+			if(this.url.indexOf("ViewAccessRights") > -1)
+				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
+		}
+		System.out.println("this.url:" + this.url);
+
 		if(this.returnAddress.indexOf("http") == 0)
 		{
 			getResponse().sendRedirect(url);
@@ -187,6 +240,21 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			{	
 				Integer siteNodeVersionId = new Integer(parameters);
 				SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
+				
+				//If in published state we must first make it working state so it can later be published
+				if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
+				{
+					this.oldParameters = "" + siteNodeVersionId;
+					System.out.println("We better state change....");
+					List events = new ArrayList();
+					System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events).getValueObject();
+					System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					this.newParameters = "" + siteNodeVersionVO.getId();
+					this.parameters = "" + siteNodeVersionVO.getId();
+					siteNodeVersionId = siteNodeVersionVO.getId();
+				}
+
 				if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 				{
 					Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
@@ -210,7 +278,15 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 		
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		
+		System.out.println("this.url:" + this.url);
+		if(newParameters != null)
+		{
+			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
+			if(this.url.indexOf("ViewAccessRights") > -1)
+				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
+		}
+		System.out.println("this.url:" + this.url);
+
 		if(this.returnAddress.indexOf("http") == 0)
 		{
 			getResponse().sendRedirect(url);
@@ -246,6 +322,21 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			{	
 				Integer siteNodeVersionId = new Integer(parameters);
 				SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId);
+				
+				//If in published state we must first make it working state so it can later be published
+				if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
+				{
+					this.oldParameters = "" + siteNodeVersionId;
+					System.out.println("We better state change....");
+					List events = new ArrayList();
+					System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events).getValueObject();
+					System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					this.newParameters = "" + siteNodeVersionVO.getId();
+					this.parameters = "" + siteNodeVersionVO.getId();
+					siteNodeVersionId = siteNodeVersionVO.getId();
+				}
+
 				if(!siteNodeVersionVO.getVersionModifier().equalsIgnoreCase(this.getInfoGluePrincipal().getName()))
 				{
 					Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
@@ -269,7 +360,15 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 		
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		
+		System.out.println("this.url:" + this.url);
+		if(newParameters != null)
+		{
+			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
+			if(this.url.indexOf("ViewAccessRights") > -1)
+				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
+		}
+		System.out.println("this.url:" + this.url);
+
 		if(this.returnAddress.indexOf("http") == 0)
 		{
 			getResponse().sendRedirect(url);
@@ -284,7 +383,15 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		doDeleteUser();
 		
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		
+		System.out.println("this.url:" + this.url);
+		if(newParameters != null)
+		{
+			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
+			if(this.url.indexOf("ViewAccessRights") > -1)
+				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
+		}
+		System.out.println("this.url:" + this.url);
+
 		if(this.returnAddress.indexOf("http") == 0)
 		{
 			getResponse().sendRedirect(url);

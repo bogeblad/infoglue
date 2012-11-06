@@ -2013,9 +2013,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 
     	if(repositoryPath != null && path.length > 0)
     	{
-    		//System.out.println("repositoryPath:" + repositoryPath);
     		String[] repositoryPaths = repositoryPath.split("/");
-    		//System.out.println("repositoryPaths:" + repositoryPaths.length);
     		for(int i=0; i<repositoryPaths.length; i++)
     		{
     			String repositoryPathPart = repositoryPaths[i];

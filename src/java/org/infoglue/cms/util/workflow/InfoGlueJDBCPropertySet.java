@@ -583,8 +583,6 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
     	if(logger.isInfoEnabled())
     		logger.info("Getting value for key:" + key + ":" + type);
     	
-    	Timer t = new Timer();
-    	
         String sql = "SELECT " + colItemType + ", " + colString + ", " + colDate + ", " + colData + ", " + colFloat + ", " + colNumber + " FROM " + tableName + " WHERE " + colItemKey + " = ? AND " + colGlobalKey + " = ?";
         //System.out.println("sql:" + sql);
         //System.out.println("key:" + key);
@@ -598,7 +596,6 @@ public class InfoGlueJDBCPropertySet extends JDBCPropertySet
         	//t.printElapsedTime("SQL creation took..");
 
         	conn = getConnection();
-        	//t.printElapsedTime("Connection took..");
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, key);

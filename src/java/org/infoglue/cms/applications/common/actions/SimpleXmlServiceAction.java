@@ -476,19 +476,25 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 			        }
 		        }
 		        
+		        System.out.println("Parameters:" + theNode.getParameters());
 		        //TODO - this was a quickfix only
 		        if(!useTemplate && sup.getClass().getName().indexOf("Content") > -1)
 		        {
-		        	try
+		        	if(theNode.getParameters().containsKey("contentTypeDefinitionId"))
+			        	elm.addAttribute("contentTypeId", "" + theNode.getParameters().get("contentTypeDefinitionId"));
+		        	else
 		        	{
-			            ContentTypeDefinitionVO contentTypeDefinitionVO = contentController.getContentTypeDefinition(theNode.getId());
-			        	if(contentTypeDefinitionVO != null)
-			        	    elm.addAttribute("contentTypeId","" + contentTypeDefinitionVO.getContentTypeDefinitionId());
+			        	try
+			        	{
+				            ContentTypeDefinitionVO contentTypeDefinitionVO = contentController.getContentTypeDefinition(theNode.getId());
+				        	if(contentTypeDefinitionVO != null)
+				        	    elm.addAttribute("contentTypeId","" + contentTypeDefinitionVO.getContentTypeDefinitionId());
+			        	}
+			        	catch (Exception e) 
+			        	{
+							logger.error("The content " + theNode.getTitle() + " (" + theNode.getId() + " ) points to a removed content type perhaps: " + e.getMessage());
+						}
 		        	}
-		        	catch (Exception e) 
-		        	{
-						logger.error("The content " + theNode.getTitle() + " (" + theNode.getId() + " ) points to a removed content type perhaps: " + e.getMessage());
-					}
 		        }
 		    }
 			

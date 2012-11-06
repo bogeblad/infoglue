@@ -186,16 +186,8 @@ public class CmsSessionContextListener implements HttpSessionListener
 										CacheController.clearCache("authorizationCache");
 										CacheController.clearCache("personalAuthorizationCache");
 
-										//System.out.println("principal:" + principal.getGroups().size());
-										//System.out.println("session:" + sess + ":" + principal.hashCode());
 										InfoGluePrincipal newUser = UserControllerProxy.getController().getUser(principal.getName());
-										//System.out.println("newUser:" + newUser.getGroups().size());
-										//System.out.println("newUser:" + newUser.hashCode());
 										sess.setAttribute(InfoGlueAuthenticationFilter.INFOGLUE_FILTER_USER, newUser);
-										//sess.removeAttribute(InfoGlueAuthenticationFilter.INFOGLUE_FILTER_USER);
-										//System.out.println("sess:" + sess.getAttribute(InfoGlueAuthenticationFilter.INFOGLUE_FILTER_USER));
-										//sess.setAttribute(InfoGlueAuthenticationFilter.INFOGLUE_FILTER_USER, newUser);
-										//System.out.println("sess:" + sess.getAttribute(InfoGlueAuthenticationFilter.INFOGLUE_FILTER_USER));
 									}
 								}
 								catch (Exception e) 

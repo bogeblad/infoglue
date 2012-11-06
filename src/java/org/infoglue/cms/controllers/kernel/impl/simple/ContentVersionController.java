@@ -1642,7 +1642,7 @@ public class ContentVersionController extends BaseController
 	    	registryController.updateContentVersion(contentVersion, db);
 
 	    	updatedContentVersionVO = contentVersion.getValueObject();
-	    	//logger.info("UPPPPPDDDDDAAAATTED:" + updatedContentVersionVO.getModifiedDateTime().getTime());
+
 	    	commitTransaction(db);  
         }
         catch(ConstraintException ce)
@@ -2242,7 +2242,7 @@ public class ContentVersionController extends BaseController
 	 
 	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal) throws SystemException, Bug
 	{
-		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, false);
+		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, true);
 	}
 
 	/**
@@ -2534,8 +2534,7 @@ public class ContentVersionController extends BaseController
 
 	    //	  Get the children of this content and do the recursion
 		//Collection childContentList = content.getChildren();
-		List<ContentVO> childContentList = ContentController.getContentController().getContentChildrenVOList(contentVO.getId(), null, false);
-		//List<ContentVO> childContentList = ContentController.getContentController().getContentChildrenVOList(contentVO.getId(), null, db);
+		List<ContentVO> childContentList = ContentController.getContentController().getContentChildrenVOList(contentVO.getId(), null, false, db);
 		Iterator cit = childContentList.iterator();
 		while (cit.hasNext())
 		{

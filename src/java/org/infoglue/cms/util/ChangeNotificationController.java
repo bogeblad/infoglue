@@ -100,7 +100,6 @@ public class ChangeNotificationController
 		
 		Hashtable internalMessage = null;
 		Hashtable publicMessage = null;
-		//System.out.println("internalMessageList:" + internalMessageList.size());
 		if(internalMessageList.size() > 0)
 		{
 			internalMessage = new Hashtable();

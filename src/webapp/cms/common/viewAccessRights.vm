@@ -245,6 +245,7 @@
 	<h3>
 		$ui.getString("tool.contenttool.accessRights.header")
 		#if($errorMessage && $errorMessage != "")<span style="color:red">$errorMessage</span>#end
+		#if($stateChanged)<span style="color:red">You must publish the page for these access rights to be active live</span>#end
 	</h3>
 	#end
 	

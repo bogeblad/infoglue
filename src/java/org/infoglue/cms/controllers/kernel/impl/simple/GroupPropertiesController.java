@@ -39,6 +39,7 @@ import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
@@ -52,6 +53,7 @@ import org.infoglue.cms.entities.management.impl.simple.GroupContentTypeDefiniti
 import org.infoglue.cms.entities.management.impl.simple.GroupPropertiesImpl;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
@@ -845,6 +847,28 @@ public class GroupPropertiesController extends BaseController
 		return relatedContentList;
 	}
 
+	public List<ContentVO> getReadOnlyRelatedContentVOList(String groupName, Integer languageId, String attributeName, Database db) throws SystemException, Exception
+	{
+		List<ContentVO> relatedContentList = new ArrayList<ContentVO>();
+
+		List groupPropertiesVO = this.getGroupPropertiesVOList(groupName, languageId, db);
+	    Iterator iterator = groupPropertiesVO.iterator();
+	    GroupPropertiesVO groupPropertyVO = null;
+	    while(iterator.hasNext())
+	    {
+	        groupPropertyVO = (GroupPropertiesVO)iterator.next();
+	        break;
+	    }
+
+		if(groupPropertyVO != null)
+		{
+			String xml = this.getAttributeValue(groupPropertyVO.getValue(), attributeName, false);
+			relatedContentList = this.getRelatedContentVOListFromXML(db, xml);
+		}
+		
+		return relatedContentList;
+	}
+
 	/**
 	 * Returns the related Contents
 	 * @param groupPropertiesId
@@ -962,6 +986,28 @@ public class GroupPropertiesController extends BaseController
 		return relatedSiteNodeList;
 	}
 
+	public List<SiteNodeVO> getReadOnlyRelatedSiteNodeVOList(String groupName, Integer languageId, String attributeName, Database db) throws SystemException, Exception
+	{
+		List<SiteNodeVO> relatedSiteNodeList = new ArrayList<SiteNodeVO>();
+
+		List groupProperties = this.getGroupPropertiesVOList(groupName, languageId, db);
+	    Iterator iterator = groupProperties.iterator();
+	    GroupPropertiesVO groupPropertyVO = null;
+	    while(iterator.hasNext())
+	    {
+	        groupPropertyVO = (GroupPropertiesVO)iterator.next();
+	        break;
+	    }
+	    
+		if(groupPropertyVO != null)
+		{
+			String xml = this.getAttributeValue(groupPropertyVO.getValue(), attributeName, false);
+			relatedSiteNodeList = this.getReadOnlyRelatedSiteNodeVOListFromXML(db, xml);
+		}
+
+		return relatedSiteNodeList;
+	}
+
 	/**
 	 * Parses contents from an XML within a transaction
 	 * @param qualifyerXML
@@ -1000,6 +1046,37 @@ public class GroupPropertiesController extends BaseController
 		return contents;
 	}
 
+	private List<ContentVO> getRelatedContentVOListFromXML(Database db, String qualifyerXML)
+	{
+		List<ContentVO> contents = new ArrayList<ContentVO>(); 
+    	
+		if(qualifyerXML == null || qualifyerXML.length() == 0)
+			return contents;
+		
+		try
+		{
+			org.dom4j.Document document = new DOMBuilder().getDocument(qualifyerXML);
+			
+			String entity = document.getRootElement().attributeValue("entity");
+			
+			List children = document.getRootElement().elements();
+			Iterator i = children.iterator();
+			while(i.hasNext())
+			{
+				Element child = (Element)i.next();
+				String id = child.getStringValue();
+				
+				ContentVO content = ContentController.getContentController().getContentVOWithId(new Integer(id), db);
+				contents.add(content);     	
+			}		        	
+		}
+		catch(Exception e)
+		{
+			logger.warn("An error getting related contents:" + e.getMessage(), e);
+		}
+		
+		return contents;
+	}
 
 	/**
 	 * Parses contents from an XML within a transaction
@@ -1117,6 +1194,39 @@ public class GroupPropertiesController extends BaseController
 		return siteNodes;
 	}
 	
+	private List<SiteNodeVO> getReadOnlyRelatedSiteNodeVOListFromXML(Database db, String qualifyerXML)
+	{
+		List<SiteNodeVO> siteNodes = new ArrayList<SiteNodeVO>(); 
+    	
+		if(qualifyerXML == null || qualifyerXML.length() == 0)
+			return siteNodes;
+		
+		try
+		{
+			org.dom4j.Document document = new DOMBuilder().getDocument(qualifyerXML);
+			
+			String entity = document.getRootElement().attributeValue("entity");
+			
+			List children = document.getRootElement().elements();
+			Iterator i = children.iterator();
+			while(i.hasNext())
+			{
+				Element child = (Element)i.next();
+				String id = child.getStringValue();
+				
+				SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(id), db);
+				siteNodes.add(siteNode);     	
+			}		        	
+		}
+		catch(Exception e)
+		{
+			logger.warn("An error getting related pages:" + e.getMessage());
+			logger.info("An error getting related pages:" + e.getMessage(), e);
+		}
+		
+		return siteNodes;
+	}
+
 	/**
 	 * Returns all current Category relationships for th specified attribute name
 	 * @param attribute
@@ -1167,7 +1277,6 @@ public class GroupPropertiesController extends BaseController
 	public List getRelatedCategoriesVOList(String groupName, Integer languageId, String attribute, Database db) throws SystemException, Exception
 	{
 	    List relatedCategoriesVOList = new ArrayList();
-	    
 	    
 		String cacheKey = "" + groupName + "_" + languageId + "_" + attribute;
 		logger.info("cacheKey:" + cacheKey);

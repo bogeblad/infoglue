@@ -368,7 +368,20 @@ public class RepositoryController extends BaseController
 	
     public RepositoryVO getRepositoryVOWithId(Integer repositoryId, Database db) throws ConstraintException, SystemException, Bug
     {
-		return  (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db);        
+		String key = "" + repositoryId;
+		RepositoryVO repositoryVO = (RepositoryVO)CacheController.getCachedObject("repositoryCache", key);
+		if(repositoryVO != null)
+		{
+			//logger.info("There was an cached authorization:" + repositoryVO);
+		}
+		else
+		{
+			repositoryVO = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db);        
+		
+			CacheController.cacheObject("repositoryCache", key, repositoryVO);
+		}
+    
+		return repositoryVO;
     }
     
 	/**
@@ -530,7 +543,7 @@ public class RepositoryController extends BaseController
 	
 	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog) throws ConstraintException, SystemException, Bug
 	{
-		return getAuthorizedRepositoryVOList(infoGluePrincipal, isBindingDialog, true);
+		return getAuthorizedRepositoryVOList(infoGluePrincipal, isBindingDialog, false);
 	}
 	
 	/**

@@ -471,7 +471,6 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 		    
 		    //synchronized(this)
 		    //{
-		    	//logger.info("newNotificationList:" + newNotificationList);
 			    synchronized(CacheController.notifications)
 		        {
 			    	CacheController.notifications.addAll(newNotificationList);

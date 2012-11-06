@@ -157,7 +157,6 @@ public class ViewPageFilter implements Filter
         {
         	logger.warn("Error checking for unicode chars:" + e.getMessage());
 		}
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("IndexOf in uri-change", t2.getElapsedTime());
         
         if(logger.isInfoEnabled())
         	logger.info("requestURI after encoding check:" + requestURI);
@@ -170,11 +169,9 @@ public class ViewPageFilter implements Filter
         	}
         	
         	String remainingURI = httpRequest.getParameter("remainingURI");
-	        if (enableNiceURI.equalsIgnoreCase("true") && (!uriMatcher.matches(requestURI) || remainingURI != null)) 
+        	if (enableNiceURI.equalsIgnoreCase("true") && (!uriMatcher.matches(requestURI) || remainingURI != null)) 
 	        {
-	        	if(logger.isInfoEnabled())
-            		logger.info("Entering niceURI logic with:" + remainingURI);
-	            while(/*!CmsPropertyHandler.getOperatingMode().equals("3") &&*/ CmsPropertyHandler.getActuallyBlockOnBlockRequests() && RequestAnalyser.getRequestAnalyser().getBlockRequests())
+	            while(CmsPropertyHandler.getActuallyBlockOnBlockRequests() && RequestAnalyser.getRequestAnalyser().getBlockRequests())
 	            {
 	            	if(logger.isInfoEnabled())
 	            		logger.info("Queing up requests as cache eviction are taking place..");
@@ -460,7 +457,7 @@ public class ViewPageFilter implements Filter
             return repositoryVOList;
         }
 
-        Set<RepositoryVO> repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName);
+        Set<RepositoryVO> repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName, request.getRequestURI());
         if(logger.isInfoEnabled())
         	logger.info("repositories:" + repositories);
         

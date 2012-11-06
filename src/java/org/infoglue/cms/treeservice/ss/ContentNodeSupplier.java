@@ -133,8 +133,6 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 			//children = ContentController.getContentController().getContentChildrenVOList(parentNode);
 			children = ContentController.getContentController().getContentChildrenVOList(parentNode, this.languageVOList, allowedContentTypeIds, false);
 			t.printElapsedTime("Getting children the new way took");
-			//children = ContentController.getContentController().getContentChildrenVOListOld(parentNode, allowedContentTypeIds, false);
-			//t.printElapsedTime("Getting children the old way took");
 		}
 		catch (ConstraintException e)
 		{
@@ -237,8 +235,8 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 				node.setId(vo.getId());
 				node.setTitle(vo.getName());
 				
-				String disableCustomIcons = CmsPropertyHandler.getDisableCustomIcons();
-				if(disableCustomIcons == null || !disableCustomIcons.equals("true"))
+				//String disableCustomIcons = CmsPropertyHandler.getDisableCustomIcons();
+				//if(disableCustomIcons == null || !disableCustomIcons.equals("true"))
 					node.getParameters().put("contentTypeDefinitionId", vo.getContentTypeDefinitionId());
 				
 				if(vo.getIsProtected().intValue() == ContentVO.YES.intValue())
@@ -263,7 +261,6 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 							break;
 						}
 					}
-					//t.printElapsedTime("Getting state took");
 				}
 				catch (Exception e) 
 				{

@@ -190,6 +190,7 @@ public class DeliveryContext implements UsageListener
 			this.usedPageMetaInfoContentVersionIdSet = null;
 			this.usedSiteNodes = null;
 			this.usedSiteNodeVersions = null;
+			this.debugInformation = "";
 		}
 		catch (Exception e) 
 		{

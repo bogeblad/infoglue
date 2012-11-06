@@ -24,6 +24,7 @@
 package org.infoglue.deliver.controllers.kernel.impl.simple;
 
 import java.io.ByteArrayInputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +34,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -102,7 +105,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         return repositoryVO;	
 	}
 
-	public Set<RepositoryVO> getRepositoryVOListFromServerName(String serverName, String portNumber, String repositoryName) throws SystemException, Exception
+	public Set<RepositoryVO> getRepositoryVOListFromServerName(String serverName, String portNumber, String repositoryName, String URI) throws SystemException, Exception
     {
 	    Set<RepositoryVO> repositories = new HashSet<RepositoryVO>();
 	    
@@ -112,7 +115,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    {
 	    	db.begin();
 	    	
-	    	repositories = getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName);
+	    	repositories = getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName, URI);
 	    	
 	    	db.commit();
 	    }
@@ -135,10 +138,14 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    return repositories;
     }
 	
-	public Set<RepositoryVO> getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws SystemException, Exception
+	public Set<RepositoryVO> getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName, String url) throws SystemException, Exception
     {
 	    Set<RepositoryVO> repositories = new HashSet<RepositoryVO>();
 	    
+	    String niceURIEncoding = CmsPropertyHandler.getNiceURIEncoding();
+        if(niceURIEncoding == null || niceURIEncoding.length() == 0)
+            niceURIEncoding = "UTF-8";
+        
 	    List cachedRepositories = (List)CacheController.getCachedObject("masterRepository", "allDNSRepositories");
 		if(cachedRepositories == null)
 		{
@@ -164,8 +171,62 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         while (repositoriesIterator.hasNext()) 
         {
             RepositoryVO repositoryVO = (RepositoryVO) repositoriesIterator.next();
+            String fullDnsNames = repositoryVO.getDnsName();
 
-            String[] dnsNames = splitStrings(repositoryVO.getDnsName().replaceAll("\\[.*?\\]", ""));
+            String workingPath = null;
+            int workingPathIndex = fullDnsNames.indexOf("workingPath=");
+            if(workingPathIndex > -1)
+            {
+	            workingPath = fullDnsNames.substring(workingPathIndex + 12);
+	            int workingPathEndIndex = workingPath.indexOf(",");
+	            if(workingPathEndIndex > -1)
+	            	workingPath = workingPath.substring(0, workingPathEndIndex);
+            }
+            String livePath = null;
+            int livePathIndex = fullDnsNames.indexOf("path=");
+            if(livePathIndex > -1)
+            {
+            	livePath = fullDnsNames.substring(livePathIndex + 5);
+	            int livePathEndIndex = livePath.indexOf(",");
+	            if(livePathEndIndex > -1)
+	            	livePath = livePath.substring(0, livePathEndIndex);
+            }
+
+            if(CmsPropertyHandler.getOperatingMode().equals("0"))
+            {
+	            String workingPathAlternative1 = workingPath;
+	            if(workingPathAlternative1 != null)
+	            	workingPathAlternative1 = URLEncoder.encode(workingPathAlternative1, niceURIEncoding);
+	            String workingPathAlternative2 = workingPath;
+	            if(workingPathAlternative2 != null)
+	            	workingPathAlternative2 = URLEncoder.encode(workingPathAlternative2, (niceURIEncoding.indexOf("8859") > -1 ? "utf-8" : "iso-8859-1")).replaceAll("\\+", "%20");
+ 
+	            if(workingPath != null && url.indexOf(workingPath) == -1 && url.indexOf(workingPathAlternative1) == -1 && url.indexOf(workingPathAlternative2) == -1)
+	            {
+	            	//System.out.println("This repo had a working path but the url did not include any sign of it - let's skip it");
+	            	continue;
+	            }
+	        }
+            else if(CmsPropertyHandler.getOperatingMode().equals("3"))
+            {
+	            if(livePath != null)
+	            	livePath = URLEncoder.encode(livePath, niceURIEncoding);
+
+	            String livePathAlternative1 = livePath;
+	            if(livePathAlternative1 != null)
+	            	livePathAlternative1 = URLEncoder.encode(livePathAlternative1, niceURIEncoding);
+	            String livePathAlternative2 = livePath;
+	            if(livePathAlternative2 != null)
+	            	livePathAlternative2 = URLEncoder.encode(livePathAlternative2, (niceURIEncoding.indexOf("8859") > -1 ? "utf-8" : "iso-8859-1")).replaceAll("\\+", "%20");
+
+	            if(livePath != null && url.indexOf(livePath) == -1 && url.indexOf(livePathAlternative1) == -1 && url.indexOf(livePathAlternative2) == -1)
+	            {
+	            	//System.out.println("This repo had a live path but the url did not include any sign of it - let's skip it");
+	            	continue;
+	            }
+	        }
+            
+            String[] dnsNames = splitStrings(fullDnsNames.replaceAll("\\[.*?\\]", ""));
 
             if(logger.isInfoEnabled())
             	logger.info("dnsNames:" + dnsNames);
@@ -233,6 +294,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                         	logger.info("Has to check repositoryName also:" + repositoryName);
                         if(repositoryVO.getName().equalsIgnoreCase(repositoryName))
                         {
+                        	System.out.println("Adding " + repositoryVO.getName() + ":" + dnsName);
                         	if(logger.isInfoEnabled())
                             	logger.info("Adding " + repositoryVO.getName());
            
@@ -241,6 +303,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                     }
             	    else
             	    {
+                    	System.out.println("Adding " + repositoryVO.getName() + ":" + dnsName);
             	    	if(logger.isInfoEnabled())
                         	logger.info("Adding " + repositoryVO.getName());
             	        repositories.add(repositoryVO);

@@ -1674,7 +1674,9 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 			}
 			catch(Exception e)
 			{		
-			    logger.warn("An component with either an empty template or with no template in the sitelanguages was found:" + e.getMessage(), e);	
+				templateController.getDeliveryContext().setDisablePageCache(true);
+				logger.error("The component rendering threw an exception. Lets not cache the page. Please fix your template (contentID: " + component.getContentId() + " (" + component.getName() + "). \nReason" + e.getMessage() + "\nSource URL:" + templateController.getOriginalFullURL());
+				logger.warn("The component rendering threw an exception. Lets not cache the page. Please fix your template (contentID: " + component.getContentId() + " (" + component.getName() + "). \nReason" + e.getMessage() + "\nSource URL:" + templateController.getOriginalFullURL(), e);	
 			}    	
 
 		}
@@ -1871,7 +1873,19 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		    }
 		    else
 		    {
-		    	template = templateController.getContentAttribute(contentId, templateController.getTemplateAttributeName(), true);
+				templateController.getDeliveryContext().addUsedContent(CacheController.getPooledString(1, contentId));
+				
+				try
+				{
+					template = ContentDeliveryController.getContentDeliveryController().getContentAttribute(getDatabase(), contentId, templateController.getLanguageId(), templateController.getTemplateAttributeName(), templateController.getSiteNodeId(), true, templateController.getDeliveryContext(), templateController.getPrincipal(), false);				
+		    	}
+		    	catch(Exception e)
+				{
+					if(templateController.getComponentLogic() != null && templateController.getComponentLogic().getInfoGlueComponent() != null)
+						logger.warn("\nError on url: " + templateController.getOriginalFullURL() + "\n    ComponentName=[ " + templateController.getComponentLogic().getInfoGlueComponent().getName() + " ]\nAn error occurred trying to get attributeName=" + templateController.getTemplateAttributeName() + " on content " + contentId + "\nReason:" + e.getMessage());
+					else
+						logger.warn("\nError on url: " + templateController.getOriginalFullURL() + "\n    ComponentName=[ null - how? ]\nAn error occurred trying to get attributeName=" + templateController.getTemplateAttributeName() + " on content " + contentId + "\nReason:" + e.getMessage());
+				}
 		    }
 		    
 			if(template == null)

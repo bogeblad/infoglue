@@ -1599,7 +1599,8 @@ public class ComponentLogic
 			if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO ERROR: " + propertyName + " (Thread" + Thread.currentThread().getId() + ")" + e.getMessage() + "\n");
 
-			logger.error("Error getting propertyValue on + " + propertyName + ":" + e.getMessage(), e);
+			logger.error("Error getting propertyValue on + " + siteNodeId + ":" + propertyName + ":" + e.getMessage());
+			logger.warn("Error getting propertyValue on + " + siteNodeId + ":" + propertyName + ":" + e.getMessage(), e);
 		}
 		
 		return null;
@@ -2174,9 +2175,6 @@ public class ComponentLogic
 			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
 				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO parsed property: " + property + "/" + contentVersionIdList + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
 
-			//if(contentVersionIdList.size() == 0)
-			//	contentVersionIdList.add("selectiveCacheUpdateNonApplicable");
-
 			if(property != null && contentVersionIdList.size() > 0)
 	        {
 			    Set groups = new HashSet();
@@ -2255,7 +2253,7 @@ public class ComponentLogic
 				else
 				{
 //					TODO - TEST - NOT SAFE
-					CacheController.cacheObjectInAdvancedCache("componentPropertyCache", key.toString(), new NullObject(), new String[]{}, false);
+					//CacheController.cacheObjectInAdvancedCache("componentPropertyCache", key.toString(), new NullObject(), new String[]{}, false);
 				}
 				
 			}
@@ -3734,7 +3732,7 @@ public class ComponentLogic
 
 		try
 		{
-			//pageEditorHelper.setTemplateController(this.templateController);
+			pageEditorHelper.setTemplateController(this.templateController);
 			org.dom4j.Document document = pageEditorHelper.getComponentPropertiesDOM4JDocument(siteNodeId, languageId, componentContentId, db, principal);
 			if(document != null)
 			{

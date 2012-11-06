@@ -1067,7 +1067,7 @@
   </class>
 
 <!--  Mapping for SmallishContent  -->
-  <class name="org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl" identity="contentId" key-generator="IDENTITY">
+  <class name="org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl" identity="contentId" key-generator="SEQUENCE">
     <description>SmallStateContent</description>
     <cache-type type="none"/>
     <map-to table="cmCont"/>

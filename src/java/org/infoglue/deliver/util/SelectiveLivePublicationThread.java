@@ -63,6 +63,7 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
+import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl;
 import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
@@ -135,7 +136,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 			e1.printStackTrace();
 		}
 
-    	//logger.info("before cacheEvictionBeans:" + cacheEvictionBeans.size());
+    	logger.info("before cacheEvictionBeans:" + cacheEvictionBeans.size());
 	    synchronized(notifications)
         {
 	    	cacheEvictionBeans.addAll(notifications);
@@ -201,7 +202,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						        CacheController.clearCache(AccessRightImpl.class);
 						        CacheController.clearCache(AccessRightRoleImpl.class);
 						        CacheController.clearCache(AccessRightGroupImpl.class);
-						        CacheController.clearCache(AccessRightGroupImpl.class);
+						        CacheController.clearCache(AccessRightUserImpl.class);
 
 					    		CacheController.clearCache("personalAuthorizationCache");
 					    		accessRightsFlushed = true;
@@ -488,6 +489,11 @@ public class SelectiveLivePublicationThread extends PublicationThread
 											SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(publicationDetailVO.getEntityId());
 											//logger.info("siteNodeVersionVO:" + siteNodeVersionVO.getId());
 											Integer siteNodeId = siteNodeVersionVO.getSiteNodeId();
+											
+											CacheController.clearCache("pageCacheLatestSiteNodeVersions", "" + siteNodeId);
+											String versionKey = "" + siteNodeId + "_" + CmsPropertyHandler.getOperatingMode() + "_siteNodeVersionVO";		
+										    CacheController.clearCache("latestSiteNodeVersionCache", versionKey);
+											
 										    logger.info("We also clear the meta info content..");
 
 										    SiteNodeVO previousSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
@@ -507,7 +513,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 										    logger.info("We clear all small siteNodes as well " + siteNodeId);
 											CacheController.clearCache(SiteNodeImpl.class, new Integer[]{siteNodeId});
 											CacheController.clearCache(SmallSiteNodeImpl.class, new Integer[]{siteNodeId});
-											CacheController.clearCache(SmallSiteNodeVersionImpl.class, new Integer[]{new Integer(objectId)});		
+											CacheController.clearCache(SmallSiteNodeVersionImpl.class, new Integer[]{new Integer(publicationDetailVO.getEntityId())});		
 											
 											logger.info("We clear all contents as well " + previousSiteNodeVO.getMetaInfoContentId());
 											Class metaInfoContentExtra = ContentImpl.class;
@@ -582,6 +588,18 @@ public class SelectiveLivePublicationThread extends PublicationThread
 													//logger.info("We'll skip it and assume that this was just a meta info update...");
 												}
 											}
+											
+											//Handling access rights...
+											if(siteNodeVersionVO.getIsProtected().intValue() != SiteNodeVersionVO.INHERITED || (previousSiteNodeVersionVO != null && previousSiteNodeVersionVO.getIsProtected().intValue() != SiteNodeVersionVO.INHERITED))
+											{
+										        CacheController.clearCache(AccessRightImpl.class);
+										        CacheController.clearCache(AccessRightRoleImpl.class);
+										        CacheController.clearCache(AccessRightGroupImpl.class);
+										        CacheController.clearCache(AccessRightUserImpl.class);
+
+									    		CacheController.clearCache("personalAuthorizationCache");
+											}
+
 
 											logger.info("Handling parents....");
 											

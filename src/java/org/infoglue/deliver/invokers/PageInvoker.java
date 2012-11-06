@@ -481,6 +481,37 @@ public abstract class PageInvoker
 		{
 			logger.error("There was an IllegalStateException when trying to write output for URL: " + this.getTemplateController().getOriginalFullURL() + "\nMessage: " + e.getMessage());
 		}
+		
+				//New solution which enables us to defeat individual page caches in flow.
+		try
+		{
+			String pageKey = this.getDeliveryContext().getPageKey();
+			if(logger.isInfoEnabled())
+				logger.info("pageKey:" + pageKey);
+			if(refresh != null && refresh.equalsIgnoreCase("true"))
+			{
+				String originalQueryString = this.getDeliveryContext().getOriginalQueryString();
+				logger.info("originalQueryString:" + originalQueryString);
+				logger.info("Clearing page cache....");
+				if(originalQueryString.equalsIgnoreCase("refresh=true"))
+					pageKey = pageKey.replaceFirst("refresh=true","null");
+				else if(originalQueryString.indexOf("&refresh=true") > -1)
+					pageKey = pageKey.replaceFirst("&refresh=true","");
+				else if(originalQueryString.indexOf("refresh=true&") == 0)
+					pageKey = pageKey.replaceFirst("refresh=true&","");
+				logger.info("pageKey:" + pageKey);
+				//Timer t = new Timer();
+				CacheController.clearPageCache(pageKey);
+				//t.printElapsedTime("Clearing page cache took...");
+				
+				//CacheController.clearCaches(SiteNodeImpl.class.getName(), "" + this.getTemplateController().getSiteNodeId(), null);
+				//t.printElapsedTime("Clearing caches took...");
+			}
+		}
+		catch (Exception e) 
+		{
+			logger.error("Could not clear the pagecache:" + e.getMessage());
+		}
 	}
 
 	public String invokeAndDecoratePage(String pageCacheName, String pageCacheExtraName) throws SystemException, Exception, Bug 

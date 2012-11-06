@@ -109,10 +109,7 @@ public class CmsJDOCallback implements CallbackInterceptor
     	//System.out.println("Loaded 1" + object.getClass().getName());
     	//System.out.print(".");
     	//if(accessMode == AccessMode.Shared.getId())
-    	//logger.error("Loaded 1" + object.getClass().getName() + " accessMode:" + accessMode);
-		if(accessMode == AccessMode.Shared.getId() && object.getClass().getName().indexOf(".CategoryImpl") > -1)
-    		Thread.dumpStack();
-		
+    	//	logger.error("Loaded 2" + object.getClass().getName() + " in write mode");
 		// return ( (Persistent) object ).jdoLoad(accessMode);
         return null;
     }
@@ -122,31 +119,8 @@ public class CmsJDOCallback implements CallbackInterceptor
     	//System.out.println("Loaded 2" + arg0.getClass().getName());
 		//System.out.println("Loaded 2" + arg0.getClass().getName());
 		
-		if(arg0.getClass().getName().indexOf(".RepositoryImpl") > -1 || arg0.getClass().getName().indexOf(".AvailableServiceBindingImpl") > -1
-    			 || arg0.getClass().getName().indexOf(".SystemUserImpl") > -1
-    			 || arg0.getClass().getName().indexOf(".LanguageImpl") > -1)
-		{
-			//System.out.println("Loaded 2" + arg0.getClass().getName());
-			//Thread.dumpStack();
-		}
-		
-		/*
-			Thread.dumpStack();
-		*/
-		/*
-    	if(logger.isDebugEnabled())
-		{			
-			if(arg0.getClass().getName().indexOf(".SmallContentImpl") > -1)
-				Thread.dumpStack();
-		}
-		*/
-		//	System.out.println("Loaded 2" + arg0.getClass().getName());
-    	
-    	//System.out.print(".");
-		//if(arg1.getId() == AccessMode.Shared.getId())
-		//logger.error("Loaded 2" + arg0.getClass().getName() + " accessMode:" + arg1);
-		if(arg1.getId() == AccessMode.Shared.getId() && arg0.getClass().getName().indexOf(".CategoryImpl") > -1)
-			Thread.dumpStack();
+		//if(arg1.getId() == AccessMode.Shared.getId() && arg0.getClass().getName().indexOf(".CategoryImpl") > -1)
+		//	logger.error("Loaded 2" + arg0.getClass().getName() + " in write mode");
 		
 		return null;
 	}
@@ -163,11 +137,7 @@ public class CmsJDOCallback implements CallbackInterceptor
     		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1 && modified)
 	    {
-    		logger.error("storing...:" + object + ":" + modified);
-    		//Thread.dumpStack();
-    		
-	    	if(logger.isInfoEnabled())
-	    		logger.info("Actually stored it:" + object + ":" + modified);
+	   		logger.info("Actually stored it:" + object + ":" + modified);
 	    	
 			String userName = "SYSTEM";
 			try
@@ -251,6 +221,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 					{
 						CacheController.clearCache("componentContentsCache");		
 					}
+					CacheController.clearCacheForGroup("contentCache", "" + content.getId());
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + content.getId());
 					CacheController.clearCacheForGroup("childContentCache", "content_" + content.getId());
 					if(content.getParentContent() != null)
@@ -317,6 +288,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 				try
 				{
 					SiteNodeImpl siteNode = (SiteNodeImpl)object;
+					CacheController.clearCache("siteNodeCache", "" + siteNode.getId());
 					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getId());
 					if(siteNode.getParentSiteNode() != null)
 						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getParentSiteNode().getId());					
@@ -780,6 +752,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 				try
 				{
 					ContentImpl content = (ContentImpl)object;
+					CacheController.clearCacheForGroup("contentCache", "" + content.getId());
 					CacheController.clearCacheForGroup("childContentCache", "content_" + content.getId());
 					if(content.getParentContent() != null)
 						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getParentContent().getId());					
@@ -799,6 +772,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			}
 			else if(object.getClass().getName().equals(ContentVersionImpl.class.getName()))
 			{
+				CacheController.clearCacheForGroup("contentCategoryCache", "contentVersion_" + getObjectIdentity(object).toString());
 				CacheController.clearCache("componentContentsCache");
 				clearCache(SmallContentVersionImpl.class);
 				clearCache(SmallestContentVersionImpl.class);
@@ -828,6 +802,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 				try
 				{
 					SiteNodeImpl siteNode = (SiteNodeImpl)object;
+					CacheController.clearCache("siteNodeCache", "" + siteNode.getId());
 					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getId());
 					if(siteNode.getParentSiteNode() != null)
 						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getParentSiteNode().getId());					

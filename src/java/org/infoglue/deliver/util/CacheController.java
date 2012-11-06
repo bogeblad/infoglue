@@ -24,7 +24,9 @@
 package org.infoglue.deliver.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -136,6 +138,7 @@ import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
 import org.infoglue.deliver.applications.filters.URIMapperCache;
+import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
 import org.infoglue.deliver.invokers.PageInvoker;
 import org.infoglue.deliver.portal.ServletConfigContainer;
 import org.xmlpull.v1.builder.XmlDocument;
@@ -330,6 +333,13 @@ public class CacheController extends Thread
 		logger.error("cList:" + cList.size() + " fetched and precached");
 
 		/*
+		FileInputStream fis = new FileInputStream(CmsPropertyHandler.getDigitalAssetPath() + File.separator + "startupCache.txt");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        Map<Integer,Integer> mostUsedContentId = (Map<Integer,Integer>) ois.readObject();
+        ois.close();
+        */
+		
+		/*
 		List<SiteNodeVO> snVOList = SiteNodeController.getController().getSiteNodeVOList(false, 0, 100000);
 		logger.info("snVOList:" + snVOList.size() + " fetched and precached");
 
@@ -522,9 +532,9 @@ public class CacheController extends Thread
 		    	//else if(cacheName != null && cacheName.startsWith("contentAttributeCache"))
 		    	//	cacheCapacity = "1000";
 		    	if(cacheName != null && cacheName.startsWith("pageCache"))
-		    		cacheCapacity = "2000";
+		    		cacheCapacity = "5000";
 		    	if(cacheName != null && cacheName.startsWith("pageCacheExtra"))
-		    		cacheCapacity = "4000";
+		    		cacheCapacity = "10000";
 				if(cacheName != null && cacheName.equalsIgnoreCase("encodedStringsCache"))
 					cacheCapacity = "2000";
 				if(cacheName != null && cacheName.equalsIgnoreCase("importTagResultCache"))
@@ -999,6 +1009,17 @@ public class CacheController extends Thread
 
 					cacheAdministrator.putInCache(pageKey, compressedData, allUsedEntitiesCopy);
 					isCached = true;
+
+					if(pageInvoker.getTemplateController().getHttpServletRequest().getParameter("listMostUsed") != null)
+					{
+						System.out.println("These contents were used before:" + ContentDeliveryController.mostUsedContentIds.size());
+						Map<Integer,Integer> contentIds = ContentDeliveryController.mostUsedContentIds;
+						for(Integer contentId : contentIds.keySet())
+						{
+							if(contentIds.get(contentId) > 3)
+								System.out.println("" + contentId + ":" + contentIds.get(contentId));
+						}
+					}
 					
 					if(pageInvoker.getTemplateController().getHttpServletRequest().getParameter("listEntities") != null)
 					{
@@ -1778,7 +1799,7 @@ public class CacheController extends Thread
 						    {
 						    	if(!(cacheName.equals("userAccessCache") && cacheInstance.size() < 100))
 						    	{
-						    		logger.error("clearing ordinary map:" + e.getKey() + " (" + cacheInstance.size() + ")");
+						    		logger.warn("clearing ordinary map:" + e.getKey() + " (" + cacheInstance.size() + ")");
 						    		cacheInstance.clear();
 						    	}
 						    	else
@@ -2224,7 +2245,7 @@ public class CacheController extends Thread
 							    		ex.printStackTrace();
 							    	}
 							    }
-							    else if(selectiveCacheUpdate && (entity.indexOf("Content") > 0 && entity.indexOf("ContentTypeDefinition") == -1) && useSelectivePageCacheUpdate)
+							    else if(selectiveCacheUpdate && (entity.indexOf("Content") > 0 && entity.indexOf("ContentTypeDefinition") == -1 && entity.indexOf("ContentCategory") == -1) && useSelectivePageCacheUpdate)
 							    {
 							    	//System.out.println("Content entity was called and needs to be fixed:" + entity);
 							    	
@@ -2233,13 +2254,6 @@ public class CacheController extends Thread
 							    	
 							    	if(cacheName.equals("pageCacheExtra"))
 							    	{
-							    		/*
-							    		for(String s : changedAttributes)
-							    		{
-							    			clearFileCacheForGroup(cacheInstance, "content_" + entityId + "_" + s);
-							    			//System.out.println("Cleared for " + "content_" + entityId + "_" + s);
-							    		}
-							    		*/	
 							    		clearFileCacheForGroup(cacheInstance, "content_" + entityId);
 							    		//clearFileCacheForGroup(cacheInstance, "selectiveCacheUpdateNonApplicable");
 							    		try
@@ -2254,14 +2268,6 @@ public class CacheController extends Thread
 							    	}
 							    	else if(cacheName.equals("pageCache"))
 							    	{
-							    		/*
-							    		for(String s : changedAttributes)
-							    		{
-							    			clearFileCacheForGroup(cacheInstance, "content_" + entityId + "_" + s);
-									    	cacheInstance.flushGroup("content_" + entityId + "_" + s);
-							    			//System.out.println("Cleared for " + "content_" + entityId + "_" + s);
-							    		}
-							    		*/	
 								    	cacheInstance.flushGroup("" + entityId);
 								    	cacheInstance.flushGroup("content_" + entityId);
 							    		try
@@ -2275,13 +2281,6 @@ public class CacheController extends Thread
 							    	}
 							    	else
 							    	{
-							    		/*
-							    		for(String s : changedAttributes)
-							    		{
-							    			clearFileCacheForGroup(cacheInstance, "content_" + entityId + "_" + s);
-							    			//System.out.println("Cleared for " + "content_" + entityId + "_" + s);
-							    		}
-							    		*/	
 								    	cacheInstance.flushGroup("" + entityId);
 								    	cacheInstance.flushGroup("content_" + entityId);
 								    	logger.error("clearing " + e.getKey() + " with selectiveCacheUpdateNonApplicable");
@@ -2951,7 +2950,6 @@ public class CacheController extends Thread
 	       	RequestAnalyser.getRequestAnalyser().setBlockRequests(true);
 		}
 
-	    //System.out.println("evictWaitingCache starting:" + notifications);
 	    logger.info("evictWaitingCache starting");
     	logger.info("blocking");
 
@@ -3834,5 +3832,5 @@ public class CacheController extends Thread
 		
 		return sb.toString().hashCode();
 	}
+	
 }
-

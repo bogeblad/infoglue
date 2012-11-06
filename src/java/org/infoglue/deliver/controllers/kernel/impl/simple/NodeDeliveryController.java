@@ -2376,6 +2376,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 				if(isValidSiteNode(siteNode, db))
 	        	{
 	        		siteNodeVOList.add(siteNode.getValueObject());
+	        		System.out.println("Adding:" + siteNode.getValueObject().getName());
 				}
 	    	}
 	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 2", t.getElapsedTime());

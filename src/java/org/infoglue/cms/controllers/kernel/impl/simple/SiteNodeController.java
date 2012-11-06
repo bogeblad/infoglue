@@ -1102,7 +1102,7 @@ public class SiteNodeController extends BaseController
 	   		SQL.append("order by sn.parentSiteNodeId, snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC LIMIT $4 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
     	}
 
-    	//logger.info("SQL:" + SQL);
+    	System.out.println("SQL:" + SQL);
     	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
     	//logger.info("showDeletedItems:" + showDeletedItems);
     	OQLQuery oql = db.getOQLQuery(SQL.toString());
@@ -1130,10 +1130,21 @@ public class SiteNodeController extends BaseController
 		   		siteNodeChildrenVOList = new ArrayList<SiteNodeVO>();
 				CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeChildrenVOList, new String[] {CacheController.getPooledString(3, siteNode.getValueObject().getParentSiteNodeId())}, true);
 			}
-			siteNodeChildrenVOList.add(siteNode.getValueObject());
-
-			String siteNodeCacheKey = "" + siteNode.getValueObject().getId();
-			CacheController.cacheObjectInAdvancedCache("siteNodeCache", siteNodeCacheKey, siteNode.getValueObject());
+	   		boolean contains = false;
+	   		for(SiteNodeVO existingSiteNodeVO : siteNodeChildrenVOList)
+	   		{
+	   			if(existingSiteNodeVO.getId().equals(siteNode.getValueObject().getId()))
+	   			{
+	   				contains = true;
+	   				break;
+	   			}
+	   		}
+	   		if(!contains)
+	   		{
+	   			siteNodeChildrenVOList.add(siteNode.getValueObject());
+				String siteNodeCacheKey = "" + siteNode.getValueObject().getId();
+				CacheController.cacheObjectInAdvancedCache("siteNodeCache", siteNodeCacheKey, siteNode.getValueObject());
+	   		}
 		}
 		
 		logger.info("Clearing last node as we are probably not done with all it's children");

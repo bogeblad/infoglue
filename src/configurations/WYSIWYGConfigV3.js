@@ -1,56 +1,54 @@
-if(typeof CKEDITOR != "undefined")
-{
-	CKEDITOR.editorConfig = function( config )
-	{
+if(typeof CKEDITOR != "undefined") {
+	CKEDITOR.editorConfig = function( config ) {
 		config.toolbar_Mini =
-	    [
-	        ['Bold','Italic','Link','Unlink','Image']
-	    ];
+		[
+			['Bold','Italic','Link','Unlink','Image']
+		];
 	
 		config.toolbar_Basic =
-	    [
-	        ['Bold','Italic','NumberedList','BulletedList','Link','Unlink','Image','Flash','Maximize','Format']
-	    ];
+		[
+			['Bold','Italic','NumberedList','BulletedList','Link','Unlink','Image','Flash','Maximize','Format']
+		];
 	
-	    config.toolbar_Default =
-	    [
-	        ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Scayt'],
-	        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-	        ['Image'],
-	        '/',
-	        ['Format'],
-	        ['Bold','Italic','Strike'],
-	        ['NumberedList','BulletedList'],
-	        ['Link','Unlink'],
-	        ['Maximize','-','About']
-	    ];
-	    
-	    config.toolbar_Full =
-    	[
-    	    ['Source','-','Save','NewPage','Preview','-','Templates'],
-    	    ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],
-    	    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-    	    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
-    	    ['BidiLtr', 'BidiRtl'],
-    	    '/',
-    	    ['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-    	    ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
-    	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-    	    ['Link','Unlink','Anchor'],
-    	    ['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'],
-    	    '/',
-    	    ['Styles','Format','Font','FontSize'],
-    	    ['TextColor','BGColor'],
-    	    ['Maximize', 'ShowBlocks','-','About']
-    	];
+		config.toolbar_Default =
+		[
+			['Cut','Copy','Paste','PasteText','PasteFromWord','-','Scayt'],
+			['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+			['Image'],
+			'/',
+			['Format'],
+			['Bold','Italic','Strike'],
+			['NumberedList','BulletedList'],
+			['Link','Unlink'],
+			['Maximize','-','About']
+		];
 
-	    config.skin = 'office2003';
-	    config.contentsCss = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
-	    	
-	    config.filebrowserBrowseUrl = '$request.contextPath/ViewLinkDialog!viewLinkDialogForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")';
-	    config.filebrowserImageBrowseUrl = '$request.contextPath/ViewContentVersion!viewAssetBrowserForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")&assetTypeFilter=*';
-	    config.filebrowserImageUploadUrl = '$request.contextPath/CreateDigitalAsset.action?contentVersionId=$!contentVersionId&useFckUploadMessages=true';
-	    config.filebrowserUploadUrl = '$request.contextPath/CreateDigitalAsset.action?contentVersionId=$!contentVersionId&useFckUploadMessages=true';
+		config.toolbar_Full =
+		[
+			['Source','-','Save','NewPage','Preview','-','Templates'],
+			['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],
+			['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+			['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
+			['BidiLtr', 'BidiRtl'],
+			'/',
+			['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
+			['NumberedList','BulletedList','-','Outdent','Indent','Blockquote','CreateDiv'],
+			['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+			['Link','Unlink','Anchor'],
+			['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'],
+			'/',
+			['Styles','Format','Font','FontSize'],
+			['TextColor','BGColor'],
+			['Maximize', 'ShowBlocks','-','About']
+		];
+		/* office2003 skin does not exist for CKEditor v4*/
+		//config.skin = 'office2003';
+		//config.contentsCss = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
+		
+		config.filebrowserBrowseUrl = '$request.contextPath/ViewLinkDialog!viewLinkDialogForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")';
+		config.filebrowserImageBrowseUrl = '$request.contextPath/ViewContentVersion!viewAssetBrowserForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")&assetTypeFilter=*';
+		config.filebrowserImageUploadUrl = '$request.contextPath/CreateDigitalAsset.action?contentVersionId=$!contentVersionId&useFckUploadMessages=true';
+		config.filebrowserUploadUrl = '$request.contextPath/CreateDigitalAsset.action?contentVersionId=$!contentVersionId&useFckUploadMessages=true';
 	};
 }
 else if(typeof FCKConfig != "undefined")
@@ -73,7 +71,7 @@ else if(typeof FCKConfig != "undefined")
 	FCKConfig.EnableXHTML		= true ;
 	FCKConfig.EnableSourceXHTML	= true ;
 	FCKConfig.FillEmptyBlocks	= true ;
-	FCKConfig.FormatSource		= true ;
+	FCKConfig.FormatSource		= true ;	
 	FCKConfig.FormatOutput		= true ;
 	FCKConfig.FormatIndentator	= '    ' ;
 	FCKConfig.GeckoUseSPAN	= true ;
@@ -117,7 +115,7 @@ else if(typeof FCKConfig != "undefined")
 		['OrderedList','UnorderedList'],
 		['Link','Unlink','Anchor'],
 		['Image','Rule','SpellCheck'],
-	    ['Style','FontFormat']
+		['Style','FontFormat']
 	] ;
 	
 	
@@ -151,16 +149,16 @@ else if(typeof FCKConfig != "undefined")
 			FCKLang.DlgBtnBrowseServer = "Välj från InfoGlue...";
 			FCKLang.DlgImgBtnUpload = "Ladda upp till InfoGlue";
 			FCKLang.DlgLnkBtnUpload = "Ladda upp till InfoGlue";
-		    FCKLang.DlgImgURL = "URL (glöm ej http:// om du anger extern URL)";
-		    FCKLang.DlgLnkURL = "URL (glöm ej http:// om du anger extern URL)";
+			FCKLang.DlgImgURL = "URL (glöm ej http:// om du anger extern URL)";
+			FCKLang.DlgLnkURL = "URL (glöm ej http:// om du anger extern URL)";
 		}
 		else
 		{
 			FCKLang.DlgBtnBrowseServer = "Choose from InfoGlue...";
 			FCKLang.DlgImgBtnUpload = "Send to InfoGlue";
 			FCKLang.DlgLnkBtnUpload = "Send to InfoGlue";
-		    FCKLang.DlgImgURL = "URL (don't forget http:// if you state an external url)";
-		    FCKLang.DlgLnkURL = "URL (glöm ej http:// om du anger extern URL)";
+			FCKLang.DlgImgURL = "URL (don't forget http:// if you state an external url)";
+			FCKLang.DlgLnkURL = "URL (glöm ej http:// om du anger extern URL)";
 		}
 	}
 	

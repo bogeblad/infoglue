@@ -3353,7 +3353,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 						<script type="text/javascript">
 							plainEditors["${attribute.name}"] = "${attribute.name}";
 							plainEditorsToolbars["${attribute.name}"] = "${WYSIWYGToolbar}";
-							#if($prefferedWYSIWYG != "ckeditor3")
+							#if($prefferedWYSIWYG != "ckeditor4")
 							plainEditorsExtraConfig["${attribute.name}"] = "${WYSIWYGExtraConfig}";
 							#end
 							

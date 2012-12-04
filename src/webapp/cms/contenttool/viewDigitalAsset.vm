@@ -16,7 +16,7 @@
 			return value;
 		}
 		
-		#if($prefferedWYSIWYG == "ckeditor3")	
+		#if($prefferedWYSIWYG == "ckeditor4")	
 			var instanceName = getRequestParameter(window.location.href, "CKEditor");
 			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
 			var fileUrl = 'DownloadAsset.action?contentId=$!contentVersionVO.contentId&languageId=$!contentVersionVO.languageId&assetKey=$!digitalAssetKey';
@@ -127,7 +127,7 @@
 				button_placeholder_id: "spanButtonPlaceHolder",
 				button_width: "180",
 				button_height: "18",
-				button_text : '<span class="button">Select Images <span class="buttonSmall">(Max $formatter.formatFileSize($this.userUploadMaxSize))</span></span>',
+				button_text : '<span class="button">Select files <span class="buttonSmall">(Max $formatter.formatFileSize($this.userUploadMaxSize))</span></span>',
 				button_text_style : '.button { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; } .buttonSmall { font-size: 10pt; }',
 				button_text_top_padding: "0",
 				button_text_left_padding: "18",

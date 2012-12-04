@@ -8,7 +8,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 	<title>User Interface Globalization &mdash; CKEditor Sample</title>
 	<meta charset="utf-8">
 	<script src="../ckeditor.js"></script>
-	<script src="../lang/_languages.js"></script>
+	<script src="assets/uilanguages/languages.js"></script>
 	<link rel="stylesheet" href="sample.css">
 </head>
 <body>
@@ -27,8 +27,8 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 		<p>
 			By default, CKEditor automatically localizes the editor to the language of the user.
 			The UI language can be controlled with two configuration options:
-			<code><a class="samples" href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.language">language</a></code> and
-			<code><a class="samples" href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.defaultLanguage">
+			<code><a class="samples" href="http://docs.ckeditor.com/#!/api/CKEDITOR.config-cfg-language">language</a></code> and
+			<code><a class="samples" href="http://docs.ckeditor.com/#!/api/CKEDITOR.config-cfg-defaultLanguage">
 			defaultLanguage</a></code>. The <code>defaultLanguage</code> setting specifies the
 			default CKEditor language to be used when a localization suitable for user's settings is not available.
 		</p>
@@ -85,10 +85,10 @@ CKEDITOR.replace( '<em>textarea_id</em>', {
 					// Replace the <textarea id="editor"> with an CKEditor
 					// instance, using default configurations.
 					editor = CKEDITOR.replace( 'editor1', {
-						language : languageCode,
+						language: languageCode,
 
-						on : {
-							instanceReady : function() {
+						on: {
+							instanceReady: function() {
 								// Wait for the editor to be ready to set
 								// the language combo.
 								var languages = document.getElementById( 'languages' );

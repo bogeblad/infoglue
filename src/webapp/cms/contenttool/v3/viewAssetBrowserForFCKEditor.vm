@@ -160,7 +160,7 @@
 	
 			if(window.top.opener)
 		    {
-				#if($prefferedWYSIWYG == "ckeditor3")
+				#if($prefferedWYSIWYG == "ckeditor4")
 					window.top.opener.CKEDITOR.tools.callFunction( '$CKEditorFuncNum', url, '');
 				#else
 					window.top.opener.SetUrl( url );
@@ -170,7 +170,7 @@
 			}
 			else if(parent)
 			{
-				#if($prefferedWYSIWYG == "ckeditor3")
+				#if($prefferedWYSIWYG == "ckeditor4")
 					parent.CKEDITOR.tools.callFunction( '$CKEditorFuncNum', url, '');
 				#else
 					parent.SetUrl( url );
@@ -189,7 +189,7 @@
 	
 			if(window.top.opener)
 		    {
-				#if($prefferedWYSIWYG == "ckeditor3")
+				#if($prefferedWYSIWYG == "ckeditor4")
 					window.top.opener.CKEDITOR.tools.callFunction( '$CKEditorFuncNum', url, '');
 				#else
 					window.top.opener.SetUrl( url );
@@ -199,7 +199,7 @@
 			}
 			else if(parent)
 			{
-				#if($prefferedWYSIWYG == "ckeditor3")
+				#if($prefferedWYSIWYG == "ckeditor4")
 					parent.CKEDITOR.tools.callFunction( '$CKEditorFuncNum', url, '');
 				#else
 					parent.SetUrl( url );

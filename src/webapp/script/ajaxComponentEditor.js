@@ -1654,7 +1654,7 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 			try
 			{
 				$(targetDiv).find(".wysiwygeditor").each(function(){
-			 		if(userPrefferredWYSIWYG  == "ckeditor3" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+			 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 			 		{
 						var toolbarName = $(this).attr("toolbarName");
 						if(!toolbarName || toolbarName == "")
@@ -1712,7 +1712,7 @@ function showComponentPropertiesInDiv(targetDivId, parameterString, skipFloat, e
 			try
 			{
 				$(targetDiv).find(".wysiwygeditor").each(function(){
-			 		if(userPrefferredWYSIWYG  == "ckeditor3" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+			 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 			 		{
 						var toolbarName = $(this).attr("toolbarName");
 						if(!toolbarName || toolbarName == "")

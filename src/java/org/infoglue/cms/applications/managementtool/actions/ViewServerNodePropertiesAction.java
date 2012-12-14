@@ -270,6 +270,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "prefferedWYSIWYG");
 	    
 	    populate(ps, "defaultNumberOfYearsBeforeExpire");
+	    populate(ps, "defaultNumberOfMonthsBeforeRedirectExpire");
 	    populate(ps, "enableDateTimeDirectEditing");
 	    populate(ps, "showContentVersionFirst");
 	    populate(ps, "tree");

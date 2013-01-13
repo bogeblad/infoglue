@@ -199,14 +199,6 @@
           	$("#tempDraggable").remove();
         });
 	});
-	
-	//-----------------------------------------------------
-	// Hide the loading animation when the page has loaded 
-	//----------------------------------------------------- 
-
-	$(document).ready(function() {
-		top.hideLoadingIndicator();
-	});
 -->
 </script>
 

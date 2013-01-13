@@ -323,12 +323,13 @@ iframe.inactiveTool {
 	background-repeat: no-repeat;
 	background-position: 10px 9px;
 }
-#loadingIndicator {
+
+.loadingIndicator {
 	width: 64px;
 	height: 32px;
 	position: absolute;
 	right: 30px;
-	top: 100px;
+	top: 62px;
 	background-image: url("images/v3/loadingAnimation.gif");
 	background-repeat: no-repeat;
 }

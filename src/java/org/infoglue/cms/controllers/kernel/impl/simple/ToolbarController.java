@@ -1226,6 +1226,42 @@ public class ToolbarController implements ToolbarProvider
 
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
 		
+		//JD START
+		
+		String contentIdParameter 	= "" + request.getAttribute("contentId");
+		String languageIdParameter 	= "" + request.getAttribute("languageId");
+		Integer contentId 			= 0;
+		Integer languageId 			= 0;
+		
+		try
+		{
+			contentId = new Integer(contentIdParameter);
+			languageId = new Integer(languageIdParameter);
+		}
+		catch (NumberFormatException nfe)
+		{
+			logger.error("Error parsing contentId or languageId. contentId: " + contentIdParameter + ", languageId: " + languageIdParameter);
+		}
+		
+		Integer contentVersionId = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentId, languageId).getContentVersionId();
+		
+		buttons.add(new ToolbarButton("uploadAsset", 
+				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+				  "ViewDigitalAsset.action?contentVersionId=" + contentVersionId, 
+				  "", 
+				  "", 
+				  "attachAsset", 
+				  false, 
+				  false, 
+				  "", 
+				  "", 
+				  "inlineDiv",
+				  500,
+				  550));
+		
+		//JD END
+		
 		/*
 		buttons.add(new ToolbarButton("",
 									  getLocalizedString(locale, "tool.contenttool.publish.label"), 
@@ -1237,8 +1273,8 @@ public class ToolbarController implements ToolbarProvider
 		String cancelJS = "document.location.reload(true);";
 		if(request.getRequestURI().indexOf("UpdateContentVersion") > -1)
 		{
-			String contentIdParameter = request.getParameter("contentId");
-			String languageIdParameter = request.getParameter("languageId");
+			contentIdParameter = request.getParameter("contentId");
+			languageIdParameter = request.getParameter("languageId");
 			String repositoryIdParameter = request.getParameter("repositoryId");
 			String contentVersionIdParameter = request.getParameter("contentVersionId");
 

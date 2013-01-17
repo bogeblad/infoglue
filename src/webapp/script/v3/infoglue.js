@@ -324,7 +324,11 @@ function resizeInlineTabDivsWithAmount(height, width)
 
 function closeInlineDiv()
 {
+	$('#TB_window,#TB_overlay,#TB_HideSelect').unbind().remove();
+	/*
 	tb_remove();
+	//$('#TB_window,#TB_overlay,#TB_HideSelect').trigger("unload").unbind().remove();
+	*/
 }
 
 function resizeScrollArea()

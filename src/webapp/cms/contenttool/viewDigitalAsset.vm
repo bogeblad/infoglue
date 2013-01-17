@@ -279,7 +279,18 @@
 				}
 			}
 						
-			if(parent && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.closeDialog) parent.closeDialog(); else window.close();
+			if(parent && parent.closeInlineDiv)
+			{
+				parent.closeInlineDiv();
+			}
+			else if(parent && parent.closeDialog) 
+			{
+				parent.closeDialog(); 
+			}
+			else 
+			{
+				window.close();
+			}
 		}
 	
 		function ddClick()

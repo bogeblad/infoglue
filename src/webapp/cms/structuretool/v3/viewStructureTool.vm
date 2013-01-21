@@ -11,6 +11,7 @@
 	<script type="text/javascript">
 		var currentSiteNodeId;
 		var currentRepositoryId;
+		var indicator;
 		
 		function setPageContext(siteNodeId, repositoryId)
 		{
@@ -27,12 +28,20 @@
 		function openUrlInWorkArea(url)
 		{
 			//alert("url:" + url);
+			if (indicator)
+			{
+				indicator.display();
+			}
 			document.getElementById("workIframe").src = url;
 		}
 	
 		function refreshWorkSurface()
 		{
 			//alert("refreshWorkSurface");
+			if (indicator)
+			{
+				indicator.display();
+			}
 			$("#workIframe").get(0).contentDocument.location.reload();
 		}
 		
@@ -92,7 +101,9 @@
 	   		window.onresize = function() {
 	   			resize(false);
    			}
-			
+
+			indicator = LoadingIndicator("#loadingIndicator", "#workIframe");
+
 			$("#toolsColumn").resizable({ 
 				handles: 'e',
 				maxWidth: 460,
@@ -303,6 +314,8 @@
 <div id="contextMenuDiv"></div>
 
 <div id="menuOverlayDiv"></div>
+
+<div id="loadingIndicator"></div>
 
 </body>
 </html>

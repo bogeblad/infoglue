@@ -1225,9 +1225,7 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
 
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
-		
-		//JD START
-		
+				
 		String contentIdParameter 	= "" + request.getAttribute("contentId");
 		String languageIdParameter 	= "" + request.getAttribute("languageId");
 		Integer contentId 			= 0;
@@ -1243,24 +1241,26 @@ public class ToolbarController implements ToolbarProvider
 			logger.error("Error parsing contentId or languageId. contentId: " + contentIdParameter + ", languageId: " + languageIdParameter);
 		}
 		
-		Integer contentVersionId = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentId, languageId).getContentVersionId();
-		
-		buttons.add(new ToolbarButton("uploadAsset", 
-				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  "ViewDigitalAsset.action?contentVersionId=" + contentVersionId, 
-				  "", 
-				  "", 
-				  "attachAsset", 
-				  false, 
-				  false, 
-				  "", 
-				  "", 
-				  "inlineDiv",
-				  500,
-				  550));
-		
-		//JD END
+		ContentVersionVO cvvo = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentId, languageId);
+		if (cvvo != null)
+		{
+			Integer contentVersionId = cvvo.getContentVersionId();
+			
+			buttons.add(new ToolbarButton("uploadAsset", 
+					  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+					  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+					  "ViewDigitalAsset.action?contentVersionId=" + contentVersionId, 
+					  "", 
+					  "", 
+					  "attachAsset", 
+					  false, 
+					  false, 
+					  "", 
+					  "", 
+					  "inlineDiv",
+					  500,
+					  550));
+		}
 		
 		/*
 		buttons.add(new ToolbarButton("",

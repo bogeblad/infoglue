@@ -128,14 +128,13 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 	
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		System.out.println("this.url:" + this.url);
+
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
 			if(this.url.indexOf("ViewAccessRights") > -1)
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
-		System.out.println("this.url:" + this.url);
 		
 		if(this.url.indexOf("ViewAccessRights") > -1)
 			this.url = this.url + "&saved=true";
@@ -201,14 +200,13 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		AccessRightController.getController().updateGroups(this.accessRightId, this.parameters, groupNames);
 
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		System.out.println("this.url:" + this.url);
+
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
 			if(this.url.indexOf("ViewAccessRights") > -1)
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
-		System.out.println("this.url:" + this.url);
 
 		if(this.returnAddress.indexOf("http") == 0)
 		{
@@ -278,14 +276,17 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 		
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		System.out.println("this.url:" + this.url);
+
+		//this.url = this.url + "&saved=true";
+		
+		System.out.println("----------> APA: this.url: " + this.url);
+		
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
 			if(this.url.indexOf("ViewAccessRights") > -1)
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
-		System.out.println("this.url:" + this.url);
 
 		if(this.returnAddress.indexOf("http") == 0)
 		{

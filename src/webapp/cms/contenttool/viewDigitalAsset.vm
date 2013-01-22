@@ -146,6 +146,7 @@
 				queue_complete_handler : queueComplete	// Queue plugin event
 			};
 	
+			ddListClick();
 			swfu = new SWFUpload(settings);
 	     };
 	</script>	
@@ -312,8 +313,16 @@
 			// Show / hide list
 			var tt = document.getElementById("tt");
 			var list = document.getElementById("dd");
-			var val = list.options[list.selectedIndex].value
-			tt.value=val;
+			var val = "";
+			if (list.options[list.selectedIndex])
+			{
+				val = list.options[list.selectedIndex].value;
+			}
+			else
+			{
+				val = list.options[0].value;
+			}
+			tt.value = val;
 			list.style.visibility = "hidden";
 			// alert(val);
 			//alert("New assetKey:" + val + ":" + assetSizeArray["" + val + ""]);
@@ -408,7 +417,9 @@
 							$ui.getString("tool.contenttool.fileUpload.fileUploadedSoFarLabel"): $uploadedFilesCounter
 						#end
 						</strong>
-						<span id="maxSize">(Max $formatter.formatFileSize($this.userUploadMaxSize))</span>
+						<span id="maxSize">
+							$ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))
+						</span>
 					</td>
 					<td rowspan="2" width="100" style="border: 1px solid black; background-color: white;" align="center" valign="middle">
 						#if($uploadedFilesCounter != 0)
@@ -451,7 +462,8 @@
 							 		maxSize = "$formatter.formatFileSize($assetKeyDefinition.maximumSize)";
 						 		#end
 						  	#end
-							document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
+							//document.getElementById("maxSize").innerHTML = "(Max " + maxSize + ")";
+							document.getElementById("maxSize").innerHTML = "$ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))";
 						  -->
 						  </script>
 						</div>
@@ -473,7 +485,7 @@
 			#else
 			<form>
 				<div id="intro">
-					<strong>$ui.getString("tool.contenttool.fileUpload.fileUploadHeader") <span id="maxSize"> (Max $formatter.formatFileSize($this.userUploadMaxSize))</span></strong> - <span id="divStatus">0 Files Uploaded</span><br/><br/>
+					<strong>$ui.getString("tool.contenttool.fileUpload.fileUploadHeader") <span id="maxSize"> $ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))</span></strong> - <span id="divStatus">0 Files Uploaded</span><br/><br/>
 					<div style="display: inline; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-bottom: 2px;">
 						<span id="spanButtonPlaceHolder"></span>
 					</div>

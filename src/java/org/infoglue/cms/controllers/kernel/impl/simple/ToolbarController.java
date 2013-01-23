@@ -410,7 +410,7 @@ public class ToolbarController implements ToolbarProvider
 				return getCommonFooterSaveOrCancelByRefreshButton(toolbarKey, principal, locale, request, disableCloseButton);
 
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.repositoryLanguages.header"))
-				return getCommonFooterSaveOrCancelByJavascriptButton(toolbarKey, principal, locale, request, disableCloseButton, "cancel();");
+				return getCommonFooterSaveOrSaveAndExitOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "RepositoryLanguage!saveAndExit.action");
 			
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewContentTypeDefinitionSimple.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);

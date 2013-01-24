@@ -374,7 +374,7 @@ public class ToolbarController implements ToolbarProvider
 
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.mysettings.header"))
 				return getMySettingsFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
-			
+
 			if(toolbarKey.equalsIgnoreCase("tool.common.trashcan.title"))
 				return getTrashcanFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
 			
@@ -415,6 +415,8 @@ public class ToolbarController implements ToolbarProvider
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewContentTypeDefinitionSimple.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			
+			if(toolbarKey.equalsIgnoreCase("tool.managementtool.renameSystemUser.header"))
+				return getCommonFooterSaveOrSaveAndExitOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "UpdateSystemUser!renameUserAndExit.action", "cancel()");
 			
 			/*
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewLanguageList.header"))
@@ -2426,6 +2428,14 @@ public class ToolbarController implements ToolbarProvider
 					  "css/images/v3/createBackgroundPenPaper.gif",
 					  "create",
 					  "workIframe"));
+			
+			buttons.add(new ToolbarButton("",
+					  getLocalizedString(locale, "tool.managementtool.renameSystemUser.header"), 
+					  getLocalizedString(locale, "tool.managementtool.renameSystemUser.header"),
+					  "UpdateSystemUser!inputRename.action?userName=" + formatter.encodeBase64(userName),
+					  "css/images/v3/createBackgroundPenPaper.gif",
+					  "changeContentType",
+					  "workIframe"));
 		}
 
 		return buttons;				
@@ -3872,6 +3882,17 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
 		buttons.add(getCommonFooterSaveAndExitButton(toolbarKey, principal, locale, request, disableCloseButton, exitUrl));
 		buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+				
+		return buttons;		
+	}
+	
+	private List<ToolbarButton> getCommonFooterSaveOrSaveAndExitOrCancelButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String exitUrl, String cancelUrl)
+	{
+		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
+
+		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
+		buttons.add(getCommonFooterSaveAndExitButton(toolbarKey, principal, locale, request, disableCloseButton, exitUrl));
+		buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton, cancelUrl));
 				
 		return buttons;		
 	}

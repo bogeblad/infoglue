@@ -479,8 +479,7 @@ ul.assignedEntities li
 .inlineTabDiv input[type="button"]
 { 
 	border: 1px solid #555; 
-	padding: 4px;
-	padding-left: 28px; 
+	padding: 4px 10px 4px 30px;
 	font-size: 13px; 
 	font-family: Arial,sans-serif;
 	color: #555555;
@@ -962,15 +961,9 @@ background-image:url("images/v3/footerBackground.gif");
 background-repeat:repeat-x;
 border-top:0 solid #9CAABD;
 border-width:0px 0 0;
-bottom:0;
-float:left;
 height:43px;
 margin:0;
-padding: 0px;
-padding-left: 10px;
-position:absolute;
-width:100%;
-text-align:left;
+padding: 0;
 }
 .ui-widget-content {
 /*background:url("images/ui-bg_inset-hard_100_fcfdfd_1x100.png") repeat-x scroll 50% bottom #FCFDFD;*/

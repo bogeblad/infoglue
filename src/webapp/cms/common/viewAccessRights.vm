@@ -207,12 +207,20 @@
 			#if($closeOnLoad)
 				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 			#else
-				$("#tabsContainer").tabs( { 
+				$("#tabsContainer").tabs( {
+					#if($anchor)
+						selected: $anchor,
+					#end
 					show:function() { resizeScrollArea(); }
 				});
 			#end
+
+			$('#tabsContainer').bind('tabsselect', function(event, ui) 
+			{
+			    $("#anchor").val(ui.index);
+			    console.log("Selected tab: " + $("#anchor").val());
+			});
 		});
-			
 	-->
 	</script>
 	
@@ -268,6 +276,7 @@
 				<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl"/>
 				<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 				<input type="hidden" name="closeOnLoad" value="false"/>
+				<input type="hidden" name="anchor" id="anchor" value="$anchor"/>
 				
 				#set($interceptionPointIndex = 0)
 				#foreach($interceptionPointVO in $interceptionPointVOList)
@@ -279,7 +288,6 @@
 						#set($accessRightGroupIndex = $accessRightGroupIndex + 1)
 					#end
 				#end
-				
 				
 				<script type="text/javascript">var useAnonymousWarningCheck = false;</script>
 				

@@ -61,13 +61,14 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	private Boolean closeOnLoad = false;
 	private String returnAddress;
 	private String url;
+	private String anchor = null;
 	
 	private String interceptionPointCategory;
 	
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 	
 	public String doExecute() throws Exception
-    {   
+    {   		
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)
@@ -137,10 +138,20 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 		
 		if(this.url.indexOf("ViewAccessRights") > -1)
+		{
+			this.url = this.url.replaceAll("&saved=true", "");
 			this.url = this.url + "&saved=true";
+		}
+		
 		if(this.closeOnLoad)
 		{
 			this.url = this.url.replaceAll("&KeepThis=true","&closeOnLoad=true&KeepThis=true");
+		}
+		
+		if(this.url.indexOf("ViewAccessRights") > -1)
+		{
+			this.url = this.url.replaceAll("&anchor=[0-9]{1,2}", "");
+			this.url = this.url + "&anchor=" + this.anchor;
 		}
 		
 		if(this.returnAddress.indexOf("http") == 0)
@@ -499,5 +510,14 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	{
 		return url;
 	}
+	
+	public void setAnchor(String anchor)
+	{
+		this.anchor = anchor;
+	}
 
+	public String getAnchor()
+	{
+		return this.anchor;
+	}
 }

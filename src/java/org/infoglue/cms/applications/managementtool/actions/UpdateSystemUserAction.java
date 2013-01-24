@@ -25,6 +25,7 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserPropertiesController;
 import org.infoglue.cms.entities.management.RoleVO;
@@ -100,6 +101,28 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 		
 		return "passwordSentSuccess";
 	}
+	
+	public String doRenameUser() throws Exception
+	{
+		// Do something
+		
+		String newUserName = getRequest().getParameter("newUserName");
+		
+		System.out.println("------------> Här ska det hända något 111... " + newUserName);
+				
+		return "renameSuccess";
+	}
+	
+	public String doRenameUserAndExit() throws Exception
+	{
+		// Do something
+		
+		String newUserName = getRequest().getParameter("newUserName");
+		
+		System.out.println("------------> Här ska det hända något 222... " + newUserName);
+				
+		return "renameSuccessAndExit";
+	}
 
 	public String doV3() throws Exception
     {
@@ -121,6 +144,11 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 		doChangePassword();
 		
 		return "passwordSentSuccessV3";
+	}
+	
+	public String doInputRename() throws Exception
+	{
+		return "inputRename";
 	}
 
 	private String[] getRoller()
@@ -153,9 +181,41 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
     	return this.systemUserVO.getUserName();
     }
     
-    public void setUserName(String userName)
-    {
-    	this.systemUserVO.setUserName(userName);
+	public void setUserName(String userName) throws Exception
+	{
+		if(userName != null)
+		{
+			byte[] bytes = Base64.decodeBase64(userName);
+			String decodedUserName = new String(bytes, "utf-8");
+			boolean userExists = false;
+			try
+			{
+				userExists = UserControllerProxy.getController().userExists(decodedUserName);
+			}
+			catch (Exception e) 
+			{
+			}
+			
+			if(userExists)
+			{
+				userName = decodedUserName;
+			}
+			else
+			{
+				if(!UserControllerProxy.getController().userExists(userName))
+				{
+					String fromEncoding = CmsPropertyHandler.getURIEncoding();
+					String toEncoding = "utf-8";
+					
+					String testUserName = new String(userName.getBytes(fromEncoding), toEncoding);
+					
+					if(testUserName.indexOf((char)65533) == -1)
+						userName = testUserName;
+				}
+			}
+		}
+		
+		this.systemUserVO.setUserName(userName);		
 	}
 
     public java.lang.String getEmail()

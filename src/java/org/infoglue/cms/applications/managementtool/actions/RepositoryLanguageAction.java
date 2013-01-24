@@ -95,6 +95,12 @@ public class RepositoryLanguageAction extends InfoGlueAbstractAction
 		return SUCCESS;	
 	}
 	
+	public String doSaveAndExit() throws Exception
+	{
+    	doUpdate();
+		return "saveAndExit";	
+	}
+	
 	public void setRepositoryLanguageId(Integer repositoryLanguageId) throws SystemException
 	{
 		this.repositoryLanguageVO.setRepositoryLanguageId(repositoryLanguageId);	

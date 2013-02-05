@@ -19,6 +19,9 @@
       	<bind-xml node="element"/>
     </field>
     -->
+    <field name="languages" type="org.infoglue.cms.entities.management.impl.simple.LanguageImpl" collection="collection">
+      	<bind-xml node="element"/>
+    </field>
     <field name="contentTypeDefinitions" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl" collection="collection">
       	<bind-xml node="element"/>
     </field>
@@ -256,8 +259,8 @@
       <bind-xml name="owningContent" node="element"/>
     </field>
     -->
-    <field name="language" type="org.infoglue.cms.entities.management.impl.simple.LanguageImpl">
-      <bind-xml name="language" node="element"/>
+    <field name="languageId" type="java.lang.Integer">
+      <bind-xml name="languageId" node="element"/>
     </field>
     <field name="versionModifier" type="java.lang.String">
       <bind-xml name="versionModifier" node="element"/>

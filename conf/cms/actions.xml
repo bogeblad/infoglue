@@ -934,8 +934,8 @@
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.contenttool.actions.CopyContentAction" alias="CopyContent">
-		<view name="input">/cms/contenttool/v3/viewContentTreeForCopy.vm</view>
-		<view name="success">ViewInlineOperationMessages</view>
+		<view name="input">/cms/contenttool/viewCopyContentChooseDestination.vm</view>
+		<view name="success">ViewInlineOperationMessages.action</view>
 		<view name="error">/cms/contenttool/error.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>
@@ -1231,7 +1231,15 @@
 		<view name="error">/cms/structuretool/error.vm</view>
 		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
 	</action>
-		<action name="org.infoglue.cms.applications.structuretool.actions.ChangeSiteNodeSortOrderAction" alias="ChangeSiteNodeSortOrder">
+	<action name="org.infoglue.cms.applications.structuretool.actions.CopyMultipleSiteNodeAction" alias="CopyMultipleSiteNodes">
+		<view name="input">/cms/structuretool/viewCopyMultipleSiteNodesChooseSiteNodes.vm</view>
+		<view name="chooseDestination">/cms/structuretool/viewCopyMultipleSiteNodesChooseDestination.vm</view>
+		<!--<view name="success">/cms/structuretool/viewCopyMultipleSiteNodesFinished.vm</view>-->
+		<view name="success">ViewInlineOperationMessages.action</view>
+		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>
+	</action>
+	<action name="org.infoglue.cms.applications.structuretool.actions.ChangeSiteNodeSortOrderAction" alias="ChangeSiteNodeSortOrder">
 		<view name="success">/cms/structuretool/error.vm</view>
 		<view name="error">/cms/structuretool/error.vm</view>
 		<view name="accessDenied">/cms/structuretool/viewConstraintException.vm</view>

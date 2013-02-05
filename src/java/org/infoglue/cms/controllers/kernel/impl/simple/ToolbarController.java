@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.infoglue.cms.applications.common.ImageButton;
 import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.ContentVO;
@@ -483,11 +482,19 @@ public class ToolbarController implements ToolbarProvider
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.moveMultipleSiteNode.finished"))
 				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
-			
+
+			if(toolbarKey.equalsIgnoreCase("tool.structuretool.copyMultiplSiteNodes.header"))
+				return getCommonAddNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			if(toolbarKey.equalsIgnoreCase("tool.structuretool.copyMultiplSiteNodes.finished"))
+				return asButtons(getDialogCloseButton(toolbarKey, principal, locale, request, disableCloseButton));
+
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.moveContent.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, null, getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentLabel"), getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentLabel"));
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.moveMultipleContent.header"))
 				return getCommonAddNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+
+			if(toolbarKey.equalsIgnoreCase("tool.contenttool.copyContent.header"))
+				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, null, getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentLabel"), getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentLabel"));
 			
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.uploadTheme.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
@@ -672,6 +679,14 @@ public class ToolbarController implements ToolbarProvider
 		createButton.getSubButtons().add(createFolderButton);
 		buttons.add(createButton);
 
+		ToolbarButton copyContentButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentTitle"),
+				  "CopyContent!input.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "",
+				  "copy");
+		buttons.add(copyContentButton);
+
 		ToolbarButton moveButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentTitle"),
@@ -809,13 +824,6 @@ public class ToolbarController implements ToolbarProvider
 				  "",
 				  "exportContent");
 
-		ToolbarButton copyContentButton = new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentLabel"), 
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentTitle"),
-				  "CopyContent!input.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId(),
-				  "",
-				  "copyContent");
-
 		ToolbarButton importContentButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.importContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.importContentTitle"),
@@ -832,7 +840,6 @@ public class ToolbarController implements ToolbarProvider
 
 		syncTreeButton.getSubButtons().add(runTaskButton);
 		syncTreeButton.getSubButtons().add(changeContentTypeButton);
-		syncTreeButton.getSubButtons().add(copyContentButton);
 		syncTreeButton.getSubButtons().add(exportContentButton);
 		syncTreeButton.getSubButtons().add(importContentButton);
 		syncTreeButton.getSubButtons().add(createContentsFromUploadButton);
@@ -984,6 +991,14 @@ public class ToolbarController implements ToolbarProvider
 			contentVersionId = new Integer(contentVersionIdString);
 		}
 		
+		ToolbarButton copyContentButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentTitle"),
+				  "CopyContent!input.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "",
+				  "copy");
+		buttons.add(copyContentButton);
+
 		ToolbarButton moveButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentTitle"),
@@ -1001,19 +1016,6 @@ public class ToolbarController implements ToolbarProvider
 		moveButton.getSubButtons().add(moveMultipleButton);
 		buttons.add(moveButton);
 		
-        //if(!isReadOnly(contentVersionId))
-		//{
-			if(contentVersionId != null)
-			{
-				buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.contenttool.uploadDigitalAsset.label"), 
-					  getLocalizedString(locale, "tool.contenttool.uploadDigitalAsset.label"),
-					  "ViewDigitalAsset.action?contentVersionId=" + contentVersionId + "",
-					  "",
-					  "attachAsset"));
-			}
-		//}
-        		
         ToolbarButton deleteButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentTitle"),
@@ -1046,6 +1048,19 @@ public class ToolbarController implements ToolbarProvider
 		}
 		
 		buttons.add(deleteButton);
+
+        //if(!isReadOnly(contentVersionId))
+		//{
+			if(contentVersionId != null)
+			{
+				buttons.add(new ToolbarButton("",
+					  getLocalizedString(locale, "tool.contenttool.uploadDigitalAsset.label"), 
+					  getLocalizedString(locale, "tool.contenttool.uploadDigitalAsset.label"),
+					  "ViewDigitalAsset.action?contentVersionId=" + contentVersionId + "",
+					  "",
+					  "attachAsset"));
+			}
+		//}
 
 		if(contentVO.getIsBranch())
 		{
@@ -1687,6 +1702,14 @@ public class ToolbarController implements ToolbarProvider
 				  "CreateSiteNode!inputV3.action?isBranch=true&repositoryId=" + siteNodeVO.getRepositoryId() + "&parentSiteNodeId=" + siteNodeId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 				  "",
 				  "create"));
+		
+		ToolbarButton copyPageButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.copyPageLabel"), 
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.copyPageLabel"),
+				  "CopyMultipleSiteNodes!input.action?siteNodeId=" + new Integer(siteNodeId) + "&repositoryId=" + siteNodeVO.getRepositoryId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "",
+				  "copy");
+		buttons.add(copyPageButton);
 
 		ToolbarButton moveSiteNodeButton = new ToolbarButton("moveSiteNode",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.movePageLabel"), 

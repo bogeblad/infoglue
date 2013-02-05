@@ -42,6 +42,7 @@ public class SiteNodeVersionVO implements BaseEntityVO
 	public static final Integer NO 			= new Integer(0);
 	public static final Integer YES 		= new Integer(1);
 	public static final Integer INHERITED 	= new Integer(2);
+	public static final Integer YES_WITH_INHERIT_FALLBACK = new Integer(3);
 
 	public static final Integer INHERIT_SECURE 	= new Integer(0);
 	public static final Integer NORMAL_SECURE 	= new Integer(1);

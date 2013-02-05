@@ -1,5 +1,6 @@
 <ul>
     <li><a id="create" href="javascript:void(0);" class="create">$ui.getString("tool.structuretool.toolbarV3.createPageLabel")</a></li>
+    <li><a id="copy" href="javascript:void(0);" class="copy">$ui.getString("tool.structuretool.toolbarV3.copyPageLabel")</a></li>
     <li><a id="delete" href="javascript:void(0);" class="delete">$ui.getString("tool.structuretool.toolbarV3.deletePageLabel")</a></li>
     <li><a id="move" href="javascript:void(0);" class="move">$ui.getString("tool.structuretool.toolbarV3.movePageLabel")</a></li>
     <li><a id="moveUp" href="javascript:void(0);" class="moveUp">$ui.getString("tool.structuretool.toolbarV3.movePageUpLabel")</a></li>
@@ -23,6 +24,11 @@
 	//Event listener for create option
 	$("#contextMenuDiv #create").click(function () { 
     	openInlineDiv("CreateSiteNode!inputV3.action?isBranch=true&repositoryId=$repositoryId&parentSiteNodeId=$siteNodeId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New page"); 
+		});
+
+	//Event listener for copy option
+	$("#contextMenuDiv #copy").click(function () { 
+    	openInlineDiv("CopyMultipleSiteNodes!input.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Copy page"); 
 		});
 
 	//Event listener for properties option

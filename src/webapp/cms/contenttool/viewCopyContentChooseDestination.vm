@@ -1,0 +1,120 @@
+#define( $headerMarkup )
+	<script type="text/javascript">
+	<!-- 
+		var exp;
+		
+		/**
+		 * This is just a hook for the tree to notify us about whats expanded.
+		 */
+		 
+		function notifyExp(v)
+	    {
+	    	exp=v;
+	    }
+	    
+	    function save()
+	    {
+		    finish();
+	    }
+	    
+		function htmlTreeItemClick(itemId, repoId)
+		{
+		    document.inputForm.newParentContentId.value = itemId;
+		}
+	
+		function loadMainArea(contentId, repositoryId, path)
+		{
+		    document.inputForm.newParentContentId.value = contentId;
+		}
+	    
+		/**
+		 * This method changes to another repository.
+		 */
+		 
+		function changeRepository(selectBox)
+		{
+			//qualifyerXML = createXML();
+			var repositoryId = selectBox.value;
+			submitQualifyerWhenRepositoryChanges(repositoryId);
+			//var url = "${changeRepositoryAction}?updateAction=$updateAction&repositoryId=" + repositoryId + "&entityName=$entityName&entityId=$entityId&attributeName=$attributeName&entityName=${currentEntity}&tree=$tree&qualifyerXML=" + escape(qualifyerXML);
+			//document.location.href = url;
+		}
+		
+		/**
+		 * This submits the qalifyers.
+		 */
+		 
+		function finish()
+		{
+		    document.inputForm.submit();
+		}
+	
+		/**
+		 * This submits the qalifyers.
+		 */
+		
+		function submitQualifyerWhenRepositoryChanges(repositoryId)
+		{
+		   	document.inputForm.repositoryId.value = repositoryId;
+			
+			document.inputForm.action = 'MoveMultipleContent!V3.action';
+			document.inputForm.submit();
+		}
+			
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.copyContent.header" "" "" false true $!disableCloseButton $headerMarkup false "")
+	
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+
+	<h3>$ui.getString("tool.contenttool.copyContent.introduction")</h3>
+		
+	<div style="margin: 16px;">	
+	
+  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+		    <option value="">$ui.getString("tool.contenttool.chooseRepositoryLabel")</option>
+		    #foreach ($repositoryVO in $repositories)
+		    <option value="$repositoryVO.getRepositoryId()">$repositoryVO.getName()</option>
+		    #end
+		</select>
+		<p>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?showLeafs=no&repositoryId=${repositoryId}" width="90%" height="350" ></iframe>
+		</p>
+
+		<p>
+			$ui.getString("tool.contenttool.exportContent.assetMaxSizeLabel"):
+	 		<select name="assetMaxSizeSelect">
+	 			<option value="50000">50 KB</option>
+	 			<option value="100000" >100 KB</option>
+	 			<option value="300000">300 KB</option>
+	 			<option value="500000">500 KB</option>
+	 			<option value="1000000">1 MB</option>
+	 			<option value="5000000" selected="1">5 MB</option>
+	 			<option value="10000000">10 MB</option>
+	 			<option value="20000000">20 MB</option>
+	 		</select>
+		</p>
+		<p>
+			$ui.getString("tool.contenttool.importContent.onlyLatestVersionsLabel")
+			<input type="checkbox" name="onlyLatestVersionsCheckbox" value="true" checked="1">
+			
+			$contentId
+			$returnAddress
+		</p>
+						
+		<form name="inputForm" action="CopyContent.action" method="post">
+			<input type="hidden" name="contentId" value="$contentId"/>
+			<input type="hidden" name="newParentContentId" value=""/>
+			<input type="hidden" name="changeTypeId" value="3">
+			<input type="hidden" name="returnAddress" value="$returnAddress">
+			<input type="hidden" name="originalAddress" value="$originalAddress">
+		</form>
+		
+	</div>
+
+	#lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()

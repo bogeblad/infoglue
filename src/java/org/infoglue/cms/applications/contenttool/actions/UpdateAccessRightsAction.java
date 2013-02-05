@@ -267,14 +267,37 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 		
 		String userName = this.getRequest().getParameter("userName");
-		if(this.extraMultiParameter != null && this.extraMultiParameter.length > 0)
+		if(userName != null && !userName.equals(""))
 		{
-			for(int i=0; i<this.extraMultiParameter.length; i++)
-				AccessRightController.getController().addUser(interceptionPointCategory, this.extraMultiParameter[i], userName, this.getRequest());
+			if(this.extraMultiParameter != null && this.extraMultiParameter.length > 0)
+			{
+				for(int i=0; i<this.extraMultiParameter.length; i++)
+					AccessRightController.getController().addUser(interceptionPointCategory, this.extraMultiParameter[i], userName, null, this.getRequest());
+			}
+			else
+			{
+				AccessRightController.getController().addUser(interceptionPointCategory, this.parameters, userName, null, this.getRequest());
+			}
 		}
 		else
 		{
-			AccessRightController.getController().addUser(interceptionPointCategory, this.parameters, userName, this.getRequest());
+			int i = 0;
+			userName = this.getRequest().getParameter(i + "_userName");
+			while(userName != null && !userName.equals(""))
+			{
+				if(this.extraMultiParameter != null && this.extraMultiParameter.length > 0)
+				{
+					for(int j=0; j<this.extraMultiParameter.length; j++)
+						AccessRightController.getController().addUser(interceptionPointCategory, this.extraMultiParameter[j], userName, i, this.getRequest());
+				}
+				else
+				{
+					AccessRightController.getController().addUser(interceptionPointCategory, this.parameters, userName, i, this.getRequest());
+				}
+				
+				i++;
+				userName = this.getRequest().getParameter(i + "_userName");
+			}
 		}
 		
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);

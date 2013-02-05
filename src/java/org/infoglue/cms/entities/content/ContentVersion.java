@@ -71,6 +71,10 @@ public interface ContentVersion extends IBaseEntity
     
     public void setLanguage(org.infoglue.cms.entities.management.impl.simple.LanguageImpl language);
     
+    public Integer getLanguageId();
+
+    public void setLanguageId(Integer languageId);
+
     public String getVersionModifier();
     
     public void setVersionModifier(String versionModifier);

@@ -25,6 +25,8 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
@@ -568,6 +570,16 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 	public void setSaveAndExitURL(String saveAndExitURL)
 	{
 		this.saveAndExitURL = saveAndExitURL;
+		if(this.saveAndExitURL != null && this.saveAndExitURL.indexOf("%3D") == -1)
+		{
+			try 
+			{
+				this.saveAndExitURL = URLEncoder.encode(saveAndExitURL, "UTF-8");
+			} 
+			catch (UnsupportedEncodingException e) 
+			{
+			}
+		}
 	}
 
 	public Boolean getStateChanged()

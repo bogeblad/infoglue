@@ -192,6 +192,21 @@ public class ContentVersionImpl implements ContentVersion
         }
     }
       
+    public Integer getLanguageId()
+    {
+    	if(this.language != null)
+    		return this.language.getId();
+    	else if(this.getValueObject().getLanguageId() != null)
+    		return this.getValueObject().getLanguageId();
+    	else
+    		return null;
+    }
+
+    public void setLanguageId(Integer languageId)
+    {
+    	this.getValueObject().setLanguageId(languageId);
+    }
+    
     public String getVersionModifier()
     {
         return this.valueObject.getVersionModifier();

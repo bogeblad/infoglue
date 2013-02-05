@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>SiteNodes moved</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	<script type="text/javascript" src="script/vector.js"></script>
+	<script type="text/javascript" src="script/qualifyer.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+
+	<script type="text/javascript">
+	
+		function finish()
+		{
+			siteNodeId = "$siteNodeId";
+		    newParentSiteNodeId = "$topSiteNodeId";
+		    //newParentSiteNodeId = "$newParentSiteNodeId";
+			changeTypeId = 3; //3 = Move...
+						
+			url = 'ViewSiteNode.action?stay=true&repositoryId=$!repositoryId&siteNodeId=' + siteNodeId + '&unrefreshedSiteNodeId=' + newParentSiteNodeId + "&changeTypeId=" + changeTypeId;
+			
+			//alert(newParentSiteNodeId);    
+			//if(newParentSiteNodeId != "")
+			//{
+			//    if (confirm('Are you sure you want to move the sitenode to the folder you have just selected?'))
+			//	{
+					//alert('Calling:' + url);
+				    self.opener.parent.frames["menu"].location.reload();
+				    self.opener.parent.frames["main"].location.href = url;
+				    window.close();
+			//	}
+			//}
+		    //else
+		    //{
+			//	alert("You must select a target folder for the siteNode.");
+			//}
+		}
+	</script>
+		
+	<script language="JavaScript"> 
+		window.resizeTo(370,640);
+	</script> 
+
+</head>
+
+<body class="structuretooledit">
+
+<table class="structuretooledit" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td valign="top">
+		
+		<table cellpadding="0" cellspacing="0" border="0">
+		<tr class="darkapricot">
+			<td class="smalllabel">Finished moving sitenodes</td>
+		</tr>
+		<tr>
+			<td bgcolor="#FEF8D0" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td bgcolor="#F0E1B4" colspan="4" height="1"><img src="images/trans.gif" width="1" height="1"></td>
+		</tr>
+		<tr>
+			<td height="1"><img src="images/trans.gif" width="1" height="5"></td>
+		</tr>		
+		<tr>
+			<td class="menu">   
+				<p>
+					The sitenodes you choosed to copy are now located in the new destination.
+				</p>
+				#if($errorsOccurred)
+				<p>
+					Some items could not be moved as there was constraints prohibiting this.
+				</p>
+				#end
+			</td>
+		</tr>	
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:finish();"><img src="$ui.getString("images.contenttool.buttons.close")" border="0"></a></td>
+		</tr>
+		</table>
+	</td>	
+</tr>
+</table>
+
+</body>
+</html>

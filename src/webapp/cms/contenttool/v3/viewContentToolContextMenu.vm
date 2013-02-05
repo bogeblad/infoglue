@@ -3,6 +3,7 @@
     <li><a id="create" href="javascript:void(0);" class="create">$ui.getString("tool.contenttool.toolbarV3.createContentLabel")</a></li>
     <li><a id="createFolder" href="javascript:void(0);" class="create">$ui.getString("tool.contenttool.toolbarV3.createContentFolderLabel")</a></li>
 	#end
+    <li><a id="copy" href="javascript:void(0);" class="copy">$ui.getString("tool.contenttool.toolbarV3.copyContentLabel")</a></li>
     <li><a id="delete" href="javascript:void(0);" class="delete">$ui.getString("tool.contenttool.toolbarV3.deleteContentLabel")</a></li>
     <li><a id="move" href="javascript:void(0);" class="moveContent">$ui.getString("tool.contenttool.toolbarV3.moveContentLabel")</a></li>
     <li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.contenttool.toolbarV3.editContentMetaInfoLabel")</a></li>
@@ -32,6 +33,11 @@
 	$("#contextMenuDiv #createFolder").click(function () { 
     	openInlineDiv("CreateContent!inputV3.action?isBranch=true&repositoryId=$repositoryId&parentContentId=$contentId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "New content"); 
 		});
+
+	//Event listener for copy option
+	$("#contextMenuDiv #copy").click(function () { 
+    	openInlineDiv("CopyContent!input.action?contentId=$contentId&repositoryId=$repositoryId&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 600, 800, true, true, "Copy content"); 
+	});
 
 	//Event listener for properties option
 	$("#contextMenuDiv #move").click(function () { 

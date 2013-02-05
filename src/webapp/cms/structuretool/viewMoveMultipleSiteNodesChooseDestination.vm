@@ -90,7 +90,7 @@
 			<input type="hidden" name="siteNodeId" value="$siteNodeId"/>
 			<input type="hidden" name="entityId" value="">
 			<input type="hidden" name="path" value="">
-			<input type="text" name="newParentSiteNodeId" value=""/>
+			<input type="hidden" name="newParentSiteNodeId" value=""/>
 			<input type="hidden" name="qualifyerXML" value="$qualifyerXML">
 			<input type="hidden" name="changeTypeId" value="3">
 			<input type="hidden" name="returnAddress" value="$returnAddress">

@@ -39,6 +39,7 @@ public class InfoGlueExportImpl
 	//private SiteNodeImpl rootSiteNode;
 	private Collection contentTypeDefinitions = new ArrayList();
 	private Collection categories = new ArrayList();
+	private Collection languages = new ArrayList();
 	private Hashtable<String,String> repositoryProperties = new Hashtable<String,String>();
 	private Hashtable<String,String> contentProperties = new Hashtable<String,String>();
 	private Hashtable<String,String> siteNodeProperties = new Hashtable<String,String>();
@@ -94,6 +95,16 @@ public class InfoGlueExportImpl
 	public void setContentTypeDefinitions(Collection contentTypeDefinitions)
 	{
 		this.contentTypeDefinitions = contentTypeDefinitions;
+	}
+
+	public Collection getLanguages()
+	{
+		return languages;
+	}
+
+	public void setLanguages(Collection languages)
+	{
+		this.languages = languages;
 	}
 
 	public Collection getCategories()

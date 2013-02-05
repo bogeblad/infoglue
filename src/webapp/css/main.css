@@ -464,6 +464,7 @@ img.scaledbordered {
 .mySettings {background:url(images/v3/kuser.png) no-repeat left center; background-position: 0px 2px;}
 .properties { background:url(images/v3/metadataIcon.gif) no-repeat left center; background-position: 4px 2px;}
 .showHide { background:url(images/v3/showHideIcon.png) no-repeat left center; background-position: 4px 2px;}
+.copy { background:url(images/v3/copyIcon.png) no-repeat left center; background-position: 6px 2px;}
 .move { background:url(images/v3/moveIcon.png) no-repeat left center; background-position: 6px 2px;}
 .moveUp { background:url(images/v3/moveUpIcon.png) no-repeat left center; background-position: 6px 2px;}
 .moveDown { background:url(images/v3/moveDownIcon.png) no-repeat left center; background-position: 6px 2px;}

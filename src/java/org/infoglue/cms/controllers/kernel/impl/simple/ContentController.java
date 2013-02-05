@@ -1755,7 +1755,7 @@ public class ContentController extends BaseController
     	String contentTypeINClause = "";
     	if(allowedContentTypeIds != null && allowedContentTypeIds.length > 0)
     	{
-        	contentTypeINClause = " AND (isBranch = true OR " + (shortTables ? "contentTypeDefId" : "contentTypeDefinitionId") + " IN (";
+        	contentTypeINClause = " AND (isBranch = 1 OR " + (shortTables ? "contentTypeDefId" : "contentTypeDefinitionId") + " IN (";
         	for(int i=0; i < allowedContentTypeIds.length; i++)
         	{
         		if(i > 0)
@@ -1904,7 +1904,7 @@ public class ContentController extends BaseController
     	String contentTypeINClause = "";
     	if(allowedContentTypeIds != null && allowedContentTypeIds.length > 0)
     	{
-        	contentTypeINClause = " AND (content.isBranch = true OR content.contentTypeDefinitionId IN LIST (";
+        	contentTypeINClause = " AND (content.isBranch = 1 OR content.contentTypeDefinitionId IN LIST (";
         	for(int i=0; i < allowedContentTypeIds.length; i++)
         	{
         		if(i > 0)
@@ -2658,6 +2658,42 @@ public class ContentController extends BaseController
 		if (includeRepositoryName)
 		{
 			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(contentVO.getRepositoryId());
+			if(repositoryVO != null)
+				sb.insert(0, repositoryVO.getName() + " - /");
+		}
+		
+		return sb.toString();
+	}
+
+	/**
+	 * Returns the path to, and including, the supplied content.
+	 * 
+	 * @param contentId the content to 
+	 * 
+	 * @return String the path to, and including, this content "library/library/..."
+	 * 
+	 */
+	public String getContentPath(Integer contentId, boolean includeRootContent, boolean includeRepositoryName, Database db) throws ConstraintException, SystemException, Bug, Exception
+	{
+		StringBuffer sb = new StringBuffer();
+
+		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
+
+		sb.insert(0, contentVO.getName());
+
+		while (contentVO.getParentContentId() != null)
+		{
+			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
+
+			if (includeRootContent || contentVO.getParentContentId() != null)
+			{
+				sb.insert(0, contentVO.getName() + "/");
+			}
+		}
+
+		if (includeRepositoryName)
+		{
+			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(contentVO.getRepositoryId(), db);
 			if(repositoryVO != null)
 				sb.insert(0, repositoryVO.getName() + " - /");
 		}

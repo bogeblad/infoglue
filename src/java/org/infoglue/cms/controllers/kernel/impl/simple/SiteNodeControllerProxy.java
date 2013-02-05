@@ -54,6 +54,15 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		return new SiteNodeControllerProxy();
 	}
 		
+	public void testAc(InfoGluePrincipal infogluePrincipal, Integer id, String interceptionPointName) throws ConstraintException, SystemException, Bug, Exception
+	{
+		Map hashMap = new HashMap();
+		hashMap.put("siteNodeId", id);
+		hashMap.put("siteNodeVersionId", id);
+    	
+		intercept(hashMap, interceptionPointName, infogluePrincipal);
+	}   
+
 	/**
 	 * This method creates a siteNode after first checking that the user has rights to create it.
 	 */
@@ -65,9 +74,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
     	
 		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal);
 		
-		SiteNodeVO sn = SiteNodeController.getController().create(parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
-	
-		return sn;
+		return SiteNodeController.getController().create(parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
 	}   
 
 	/**
@@ -81,9 +88,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
     	
 		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal, db);
 
-		SiteNode sn = SiteNodeController.getController().create(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
-
-		return sn;
+		return SiteNodeController.getController().create(db, parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
 	}   
     
 	/**
@@ -181,6 +186,22 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		intercept(hashMap, "SiteNodeVersion.MoveSiteNode", infoGluePrincipal);
 		
 		toggleSiteNodeHidden(siteNodeId, infoGluePrincipal);
+	}   
+
+	/**
+	 * This method moves a content after first checking that the user has rights to edit it.
+	 */
+
+	public void acCopySiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId) throws ConstraintException, SystemException, Bug, Exception
+	{
+		Map hashMap = new HashMap();
+		
+		hashMap = new HashMap();
+		hashMap.put("siteNodeId", newParentSiteNodeId);
+
+		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal);
+
+		copySiteNode(siteNodeVO, newParentSiteNodeId, infogluePrincipal);
 	}   
 
 }

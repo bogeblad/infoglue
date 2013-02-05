@@ -181,6 +181,8 @@ public class OwnerFactory
 	{
 		final List owners = new ArrayList();
 		owners.add(OwnerFactory.create(principal));
+		//We disable this feature... was not a good way to work in OS_WORKFLOW.
+		/*
 		for(final Iterator roleIterator = principal.getRoles().iterator(); roleIterator.hasNext(); )
 		{
 			final InfoGlueRole role = (InfoGlueRole) roleIterator.next();
@@ -191,6 +193,7 @@ public class OwnerFactory
 				owners.add(create(role, group));
 			}
 		}
+		*/
 		return owners;
 	}
 	

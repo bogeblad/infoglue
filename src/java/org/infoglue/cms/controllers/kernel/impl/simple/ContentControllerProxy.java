@@ -438,6 +438,21 @@ public class ContentControllerProxy extends ContentController
 		return isContentProtected;
 	}
 	
+	public void acCopyContent(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer newParentContentId, Integer maxAssetSize, String onlyLatestVersions) throws ConstraintException, SystemException, Bug, Exception 
+	{
+		Map hashMap = new HashMap();
+		hashMap.put("contentId", contentId);
+    	
+		intercept(hashMap, "Content.Read", infogluePrincipal);
+		
+		hashMap = new HashMap();
+		hashMap.put("contentId", newParentContentId);
+
+		intercept(hashMap, "Content.Create", infogluePrincipal);
+
+		copyContent(contentId, newParentContentId, maxAssetSize, onlyLatestVersions);
+	}
+
 	/*
     public static Content getContentWithId(Integer contentId, Database db) throws SystemException, Bug
     {

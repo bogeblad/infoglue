@@ -44,8 +44,16 @@
 			{
 			    if (confirm('Are you sure you want to move the content to the folder you have just selected?'))
 				{
+					if ( (typeof self.opener.parent.frames["main"].location) === "string" )
+					{
+						self.opener.parent.frames["main"].contentWindow.location.href = url;
+					}
+					else
+					{
+						self.opener.parent.frames["main"].location.href = url;
+					}
 					//alert('Calling:' + url);
-				    self.opener.parent.frames["main"].location.href = url;
+				   	//self.opener.parent.frames["main"].location.href = url;
 				    window.close();
 				    //document.inputForm.submit();
 				}

@@ -184,7 +184,7 @@ public class ContentCategoryController extends BaseController
 	    
 	    //TODO - kan optimeras mycket
 	    List contentCategories = findByContentVersionReadOnly(versionId, db);
-	    
+
 	    //t.printElapsedTime("contentCategories");
 		if(contentCategories != null)
 		{

@@ -24,11 +24,14 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +61,7 @@ import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.Timer;
 
 
 /**
@@ -195,12 +199,13 @@ public class RegistryController extends BaseController
 	    
 	    ContentVersion oldContentVersion = contentVersion; //ContentVersionController.getContentVersionController().getContentVersionWithId(contentVersionVO.getContentVersionId(), db);
 	    Content oldContent = oldContentVersion.getOwningContent();
-	    
 	    if(oldContent!= null && oldContent.getContentTypeDefinition() != null && oldContent.getContentTypeDefinition().getName().equalsIgnoreCase("Meta info"))
 	    {
 	        logger.info("It was a meta info so lets check it for other stuff as well");
 		    
-	        SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersionWhichUsesContentVersionAsMetaInfo(oldContentVersion, db);
+	        SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, oldContent.getContentId());
+	        SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, siteNodeVO.getId());
+	        //SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersionWhichUsesContentVersionAsMetaInfo(oldContentVersion, db);
 		    if(siteNodeVersion != null)
 		    {
 		        logger.info("Going to use " + siteNodeVersion.getId() + " as reference");
@@ -370,8 +375,6 @@ public class RegistryController extends BaseController
 				        }
 			            else if(name.equalsIgnoreCase("siteNodeId"))
 				        {
-			                SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithId(new Integer(value), db);
-			                
 			                registryVO.setEntityId(value);
 				            registryVO.setEntityName(SiteNode.class.getName());
 				            
@@ -523,6 +526,42 @@ public class RegistryController extends BaseController
 	 * This method fetches all inline links from any text.
 	 */
 	
+	public void getInlineSiteNodes(String versionValue, Set<Integer> boundSiteNodeIds, Set<Integer> boundContentIds) throws ConstraintException, SystemException, Exception
+	{
+	    Pattern pattern = Pattern.compile("\\$templateLogic\\.getPageUrl\\(.*?\\)");
+	    Matcher matcher = pattern.matcher(versionValue);
+	    while ( matcher.find() ) 
+	    { 
+	        String match = matcher.group();
+	        logger.info("Adding match to registry after some processing: " + match);
+	        Integer siteNodeId;
+	        
+	        int siteNodeStartIndex = match.indexOf("(");
+	        int siteNodeEndIndex = match.indexOf(",");
+	        if(siteNodeStartIndex > 0 && siteNodeEndIndex > 0 && siteNodeEndIndex > siteNodeStartIndex)
+	        {
+	            String siteNodeIdString = match.substring(siteNodeStartIndex + 1, siteNodeEndIndex); 
+	            try
+	            {
+		            if(siteNodeIdString.indexOf("templateLogic.siteNodeId") == -1)
+		            {
+		            	siteNodeId = new Integer(siteNodeIdString);
+			            logger.info("siteNodeId:" + siteNodeId);
+			            boundSiteNodeIds.add(siteNodeId);
+		            }
+	            }
+	            catch(Exception e)
+	            {
+	                logger.warn("Tried to register inline sitenodes with exception as result:" + e.getMessage(), e);
+	            }
+	        }
+	    }
+	}
+
+	/**
+	 * This method fetches all inline links from any text.
+	 */
+	
 	public void getInlineContents(ContentVersion contentVersion, String versionValue, Database db) throws ConstraintException, SystemException, Exception
 	{
 	    Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(.*?\\)");
@@ -537,23 +576,55 @@ public class RegistryController extends BaseController
 	        int contentEndIndex = match.indexOf(",");
 	        if(contentStartIndex > 0 && contentEndIndex > 0 && contentEndIndex > contentStartIndex)
 	        {
-	            contentId = new Integer(match.substring(contentStartIndex + 1, contentEndIndex));
-	            logger.info("contentId:" + contentId);
+	        	String contentIdString = match.substring(contentStartIndex + 1, contentEndIndex);
+	            if(contentIdString != null && !contentIdString.equals(""))
+	            {
+		        	contentId = new Integer(contentIdString);
+		        	logger.info("contentId:" + contentId);
 	            
-	            RegistryVO registryVO = new RegistryVO();
-	            registryVO.setEntityId(contentId.toString());
-	            registryVO.setEntityName(Content.class.getName());
-	            registryVO.setReferenceType(RegistryVO.INLINE_ASSET);
-	            registryVO.setReferencingEntityId(contentVersion.getContentVersionId().toString());
-	            registryVO.setReferencingEntityName(ContentVersion.class.getName());
-	            registryVO.setReferencingEntityCompletingId(contentVersion.getOwningContent().getContentId().toString());
-	            registryVO.setReferencingEntityCompletingName(Content.class.getName());
+		        	RegistryVO registryVO = new RegistryVO();
+		        	registryVO.setEntityId(contentId.toString());
+		        	registryVO.setEntityName(Content.class.getName());
+		        	registryVO.setReferenceType(RegistryVO.INLINE_ASSET);
+		        	registryVO.setReferencingEntityId(contentVersion.getContentVersionId().toString());
+		        	registryVO.setReferencingEntityName(ContentVersion.class.getName());
+		        	registryVO.setReferencingEntityCompletingId(contentVersion.getOwningContent().getContentId().toString());
+		        	registryVO.setReferencingEntityCompletingName(Content.class.getName());
 	            
-	            this.create(registryVO, db);
+		        	this.create(registryVO, db);
+	            }
 	        }
 	    }
 	}
 	
+	/**
+	 * This method fetches all inline links from any text.
+	 */
+	
+	public void getInlineContents(String versionValue, Set<Integer> boundSiteNodeIds, Set<Integer> boundContentIds) throws ConstraintException, SystemException, Exception
+	{
+	    Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(.*?\\)");
+	    Matcher matcher = pattern.matcher(versionValue);
+	    while ( matcher.find() ) 
+	    { 
+	        String match = matcher.group();
+	        logger.info("Adding match to registry after some processing: " + match);
+	        Integer contentId;
+	        
+	        int contentStartIndex = match.indexOf("(");
+	        int contentEndIndex = match.indexOf(",");
+	        if(contentStartIndex > 0 && contentEndIndex > 0 && contentEndIndex > contentStartIndex)
+	        {
+	        	String contentIdString = match.substring(contentStartIndex + 1, contentEndIndex);
+	            if(contentIdString != null && !contentIdString.equals(""))
+	            {
+		        	contentId = new Integer(contentIdString);
+		            logger.info("contentId:" + contentId);
+		            boundContentIds.add(contentId);
+	            }
+	        }
+	    }
+	}	
 
 	/**
 	 * This method fetches all inline links from any text.
@@ -677,11 +748,41 @@ public class RegistryController extends BaseController
 	 * This method fetches all components and adds entries to the registry.
 	 */
 
+	public Set<Integer> getComponents(String versionValue) throws Exception
+	{
+	    Set foundComponents = new HashSet();
+	    
+	    Pattern pattern = Pattern.compile("contentId=\".*?\"");
+	    Matcher matcher = pattern.matcher(versionValue);
+	    while ( matcher.find() ) 
+	    { 
+	        String match = matcher.group();
+	        logger.info("Adding match to registry after some processing: " + match);
+	        Integer contentId;
+	        
+	        int contentStartIndex = match.indexOf("\"");
+	        int contentEndIndex = match.lastIndexOf("\"");
+	        if(contentStartIndex > 0 && contentEndIndex > 0 && contentEndIndex > contentStartIndex)
+	        {
+	            contentId = new Integer(match.substring(contentStartIndex + 1, contentEndIndex));
+	            logger.info("contentId:" + contentId);
+	            
+	            foundComponents.add(contentId);
+	        }
+	    }
+	    
+	    return foundComponents;
+	}
+
+	/**
+	 * This method fetches all components and adds entries to the registry.
+	 */
+
 	public void getComponentBindings(SiteNodeVersion siteNodeVersion, String versionValue, Database db) throws ConstraintException, SystemException, Exception
 	{
 	    List foundComponents = new ArrayList();
 
-	    Pattern pattern = Pattern.compile("<binding entity=\".*?\" entityId=\".*?\">");
+	    Pattern pattern = Pattern.compile("<binding.*?entity=\".*?\" entityId=\".*?\">");
 	    Matcher matcher = pattern.matcher(versionValue);
 	    while ( matcher.find() ) 
 	    { 
@@ -690,22 +791,22 @@ public class RegistryController extends BaseController
 	        String entityName;
 	        String entityId;
 	        
-	        int entityNameStartIndex = match.indexOf("\"");
-	        int entityNameEndIndex = match.indexOf("\"", entityNameStartIndex + 1);
+	        int entityNameStartIndex = match.indexOf("entity=\"");
+	        int entityNameEndIndex = match.indexOf("\"", entityNameStartIndex + 8);
 	        logger.info("entityNameStartIndex:" + entityNameStartIndex);
 	        logger.info("entityNameEndIndex:" + entityNameEndIndex);
 	        if(entityNameStartIndex > 0 && entityNameEndIndex > 0 && entityNameEndIndex > entityNameStartIndex)
 	        {
-	            entityName = match.substring(entityNameStartIndex + 1, entityNameEndIndex);
+	            entityName = match.substring(entityNameStartIndex + 8, entityNameEndIndex);
 	            logger.info("entityName:" + entityName);
 
-		        int entityIdStartIndex = match.indexOf("\"", entityNameEndIndex + 1);
-		        int entityIdEndIndex = match.indexOf("\"", entityIdStartIndex + 1);
+		        int entityIdStartIndex = match.indexOf("entityId=\"", entityNameEndIndex + 1);
+		        int entityIdEndIndex = match.indexOf("\"", entityIdStartIndex + 10);
 		        logger.info("entityIdStartIndex:" + entityIdStartIndex);
 		        logger.info("entityIdEndIndex:" + entityIdEndIndex);
 		        if(entityIdStartIndex > 0 && entityIdEndIndex > 0 && entityIdEndIndex > entityIdStartIndex)
 		        {
-		            entityId = match.substring(entityIdStartIndex + 1, entityIdEndIndex);
+		            entityId = match.substring(entityIdStartIndex + 10, entityIdEndIndex);
 		            logger.info("entityId:" + entityId);
 
 		            String key = entityName + ":" + entityId;
@@ -728,6 +829,48 @@ public class RegistryController extends BaseController
 
 			            foundComponents.add(key);
 		            }
+		        }
+	        }
+	    }
+	}
+
+	/**
+	 * This method fetches all components and adds entries to the registry.
+	 */
+
+	public void getComponentBindings(String versionValue, Set<Integer> boundSiteNodeIds, Set<Integer> boundContentIds) throws Exception
+	{
+	    Pattern pattern = Pattern.compile("<binding.*?entity=\".*?\" entityId=\".*?\">");
+	    Matcher matcher = pattern.matcher(versionValue);
+	    while ( matcher.find() ) 
+	    { 
+	        String match = matcher.group();
+	        logger.info("Adding match to registry after some processing: " + match);
+	        String entityName;
+	        String entityId;
+	        
+	        int entityNameStartIndex = match.indexOf("entity=\"");
+	        int entityNameEndIndex = match.indexOf("\"", entityNameStartIndex + 8);
+	        logger.info("entityNameStartIndex:" + entityNameStartIndex);
+	        logger.info("entityNameEndIndex:" + entityNameEndIndex);
+	        if(entityNameStartIndex > 0 && entityNameEndIndex > 0 && entityNameEndIndex > entityNameStartIndex)
+	        {
+	            entityName = match.substring(entityNameStartIndex + 8, entityNameEndIndex);
+	            logger.info("entityName:" + entityName);
+
+		        int entityIdStartIndex = match.indexOf("entityId=\"", entityNameEndIndex + 1);
+		        int entityIdEndIndex = match.indexOf("\"", entityIdStartIndex + 10);
+		        logger.info("entityIdStartIndex:" + entityIdStartIndex);
+		        logger.info("entityIdEndIndex:" + entityIdEndIndex);
+		        if(entityIdStartIndex > 0 && entityIdEndIndex > 0 && entityIdEndIndex > entityIdStartIndex)
+		        {
+		            entityId = match.substring(entityIdStartIndex + 10, entityIdEndIndex);
+		            logger.info("entityId:" + entityId);
+
+		            if(entityName.indexOf("Content") > -1)
+		            	boundContentIds.add(new Integer(entityId));
+		            else
+		            	boundSiteNodeIds.add(new Integer(entityId));
 		        }
 	        }
 	    }
@@ -841,6 +984,41 @@ public class RegistryController extends BaseController
 			//throw new SystemException("An error occurred when we tried to fetch a list of roles in the repository. Reason:" + e.getMessage(), e);			
 		}
 		
+		logger.info("referenceBeanList:" + referenceBeanList.size());
+		
+        return referenceBeanList;
+    }
+
+	public Set<SiteNodeVO> getReferencingSiteNodesForContent(Integer contentId, int maxRows, Database db) throws SystemException, Exception
+    {
+		Timer t = new Timer();
+        Set<SiteNodeVO> referenceBeanList = new HashSet<SiteNodeVO>();
+
+        List registryEntires = getMatchingRegistryVOList(Content.class.getName(), contentId.toString(), maxRows, db);
+        //t.printElapsedTime("registryEntires:" + registryEntires.size());
+        logger.info("registryEntires:" + registryEntires.size());
+        Iterator registryEntiresIterator = registryEntires.iterator();
+        while(registryEntiresIterator.hasNext())
+        {
+        	RegistryVO registryVO = (RegistryVO)registryEntiresIterator.next();
+        	if(registryVO.getReferencingEntityName().indexOf("Content") > -1)
+        		continue;
+        	
+        	logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
+
+            ReferenceVersionBean referenceVersionBean = new ReferenceVersionBean();
+            try
+            {
+                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+                //t.printElapsedTime("siteNodeVersion 1");
+	    		referenceBeanList.add(siteNodeVO);
+            }
+            catch(Exception e)
+            {
+                logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
+            }
+        } 
+	    
 		logger.info("referenceBeanList:" + referenceBeanList.size());
 		
         return referenceBeanList;
@@ -1142,7 +1320,6 @@ public class RegistryController extends BaseController
                     ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId(), db);
                     existingReferenceBean.setName(contentVO.getName());
                     existingReferenceBean.setReferencingCompletingObject(contentVO);
-                    
 		    		
 		    		referenceVersionBean.setReferencingObject(contentVersionVO);
 		    		referenceVersionBean.getRegistryVOList().add(registryVO);
@@ -1234,6 +1411,114 @@ public class RegistryController extends BaseController
 		oql.close();
 
 		return matchingRegistryVOList;		
+	}
+	
+	/**
+	 * Gets matching references
+	 */
+	
+	public Map<String,Set<SiteNodeVO>> getContentSiteNodeVOListMap(String entityName, String[] entityIds, int maxRows, Database db) throws SystemException, Exception
+	{
+	    //Timer t = new Timer();
+	    Map<String,Set<SiteNodeVO>> contentSiteNodeVOListMap = new HashMap<String,Set<SiteNodeVO>>();
+	    Map<String,Set<Integer>> contentSiteNodeIdListMap = new HashMap<String,Set<Integer>>();
+	    
+		Set<Integer> siteNodeIds = new HashSet<Integer>();
+
+		int startIndex = 0;
+		int endIndex = (entityIds.length > 100 ? 100 : entityIds.length);
+		
+		String[] partOfEntityIds = Arrays.copyOfRange(entityIds, 0, endIndex);
+		
+		while(partOfEntityIds != null && partOfEntityIds.length > 0)
+		{
+		    StringBuilder variables = new StringBuilder();
+		    for(int i=0; i<partOfEntityIds.length; i++)
+		    	variables.append("$" + (i+2) + (i+1!=partOfEntityIds.length ? "," : ""));
+			
+		    //System.out.println("partOfEntityIds:" + partOfEntityIds.length);
+		    //System.out.println("variables:" + variables);
+
+			String SQL = "CALL SQL select registryid, entityname, entityid, referencetype, referencingentityname, referencingentityid, referencingentitycomplname, referencingentitycomplid from cmregistry r where r.entityName = $1 AND entityid IN (" + variables + ") AND r.registryid = (select max(registryId) from cmregistry where entityName = r.entityName AND entityid = r.entityId) ORDER BY r.registryId AS org.infoglue.cms.entities.management.impl.simple.RegistryImpl";
+			//System.out.println("SQL:" + SQL);
+			OQLQuery oql = db.getOQLQuery(SQL);
+			//OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RegistryImpl r WHERE r.entityName = $1 AND r.entityId IN LIST(" + variables + ") ORDER BY r.registryId");
+			oql.bind(entityName);
+			for(String entityId : partOfEntityIds)
+			{
+				//System.out.print("'" + entityId + "',");
+				oql.bind(entityId);
+			}
+			//t.printElapsedTime("bindings done");
+			
+			
+			QueryResults results = oql.execute(Database.ReadOnly);
+			//t.printElapsedTime("results");
+	
+			int i = 0;
+			while (results.hasMore() && (maxRows == -1 || i < maxRows)) 
+	        {
+	            Registry registry = (Registry)results.next();
+	            RegistryVO registryVO = registry.getValueObject();
+	            
+	            if(registryVO.getReferencingEntityCompletingName().indexOf("SiteNode") > -1)
+	            {
+	            	try
+	            	{
+	            		Set<Integer> existingSiteNodeIds = contentSiteNodeIdListMap.get("" + registryVO.getEntityId());
+	            		if(existingSiteNodeIds == null)
+	            		{
+	            			existingSiteNodeIds = new HashSet<Integer>();
+	            			contentSiteNodeIdListMap.put("" + registryVO.getEntityId(), existingSiteNodeIds);
+	            		}
+	            		siteNodeIds.add(new Integer(registryVO.getReferencingEntityCompletingId()));
+	            		//SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+	            		existingSiteNodeIds.add(new Integer(registryVO.getReferencingEntityCompletingId()));
+	            	}
+	            	catch (Exception e) 
+	            	{
+	            		logger.error("Error getting related sitenode:" + e.getMessage());
+					}
+	            }
+	
+	            i++;
+	        }           
+			results.close();
+			oql.close();
+			
+			startIndex = endIndex+1;
+			endIndex = (entityIds.length > startIndex+100 ? startIndex + 100 : entityIds.length - 1);
+			if(startIndex >= endIndex)
+				partOfEntityIds = null;
+			else
+				partOfEntityIds = Arrays.copyOfRange(entityIds, startIndex, endIndex);
+		}
+		
+		//t.printElapsedTime("after registry pullout:" + siteNodeIds.size());
+
+		Map<Integer,SiteNodeVO> siteNodeVOMap = SiteNodeController.getController().getSiteNodeVOMap(siteNodeIds.toArray(new Integer[siteNodeIds.size()]), db);
+		
+		//t.printElapsedTime("siteNodeVOMap:" + siteNodeVOMap.size());
+		
+		for(String contentId : contentSiteNodeIdListMap.keySet())
+		{
+			Set<Integer> contentSiteNodeIds = contentSiteNodeIdListMap.get(contentId);
+			for(Integer siteNodeId : contentSiteNodeIds)
+			{
+				SiteNodeVO sn = siteNodeVOMap.get(siteNodeId);
+        		Set<SiteNodeVO> existingSiteNodeVOList = contentSiteNodeVOListMap.get("" + siteNodeId);
+        		if(existingSiteNodeVOList == null)
+        		{
+        			existingSiteNodeVOList = new HashSet<SiteNodeVO>();
+        			contentSiteNodeVOListMap.put("" + contentId, existingSiteNodeVOList);
+        		}
+        		existingSiteNodeVOList.add(sn);
+			}
+		}
+		
+		//t.printElapsedTime("contentSiteNodeVOListMap:" + contentSiteNodeVOListMap.size());
+		
+		return contentSiteNodeVOListMap;		
 	}
 	
 	

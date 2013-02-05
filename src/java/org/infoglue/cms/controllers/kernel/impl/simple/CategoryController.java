@@ -31,6 +31,8 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Category;
 import org.infoglue.cms.entities.management.CategoryVO;
@@ -107,6 +109,18 @@ public class CategoryController extends BaseController
 	public Category findById(Integer id, Database db) throws SystemException
 	{
 		return (Category)getObjectWithId(CategoryImpl.class, id, db);
+	}
+
+	/**
+	 * Find a Category by it's identifier.
+	 *
+	 * @param	id The id of the Category to find
+	 * @return	The Category identified by the provided id
+	 * @throws	SystemException If an error happens
+	 */
+	public CategoryVO findVOById(Integer id, Database db) throws SystemException
+	{
+		return (CategoryVO) getVOWithId(CategoryImpl.class, id);
 	}
 
 	/**

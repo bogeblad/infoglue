@@ -130,7 +130,7 @@ public class AccessRightController extends BaseController
 	public void preCacheUserAccessRightVOList(InfoGluePrincipal principal, Database db) throws Exception
 	{
 		Timer t = new Timer();
-		
+
 		//Iför detta sen också - cachear alla sidor som är skyddade..
 		/*
 		select accessRightId from cmAccessRight ar INNER JOIN
@@ -1158,7 +1158,7 @@ public class AccessRightController extends BaseController
 	 * @throws SystemException
 	 */
 	
-	public void addUser(String interceptionPointCategory, String parameters, String userName, HttpServletRequest request) throws ConstraintException, SystemException
+	public void addUser(String interceptionPointCategory, String parameters, String userName, Integer index, HttpServletRequest request) throws ConstraintException, SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 		
@@ -1192,7 +1192,7 @@ public class AccessRightController extends BaseController
 		    }
 		    
 			int interceptionPointIndex = 0;
-			String interceptionPointIdString = request.getParameter(interceptionPointIndex + "_InterceptionPointId");
+			String interceptionPointIdString = request.getParameter((index != null ? index + "_" : "") + interceptionPointIndex + "_InterceptionPointId");
 			while(interceptionPointIdString != null)
 			{
 			    String hasAccess = request.getParameter(interceptionPointIdString + "_hasAccess");
@@ -1225,7 +1225,7 @@ public class AccessRightController extends BaseController
 				}
 				
 				interceptionPointIndex++;
-				interceptionPointIdString = request.getParameter(interceptionPointIndex + "_InterceptionPointId");
+				interceptionPointIdString = request.getParameter((index != null ? index + "_" : "") + interceptionPointIndex + "_InterceptionPointId");
 			}
 			
 			if(interceptionPointCategory.equalsIgnoreCase("Content"))

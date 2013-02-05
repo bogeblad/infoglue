@@ -20,7 +20,7 @@ public class ReflectionComparator implements Comparator
     private Collator collation = Collator.getInstance();
     
 	public ReflectionComparator(String prop)
-	{
+	{ 
 		sortProperty = prop;
 	}
 

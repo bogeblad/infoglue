@@ -1871,7 +1871,7 @@ public class CacheController extends Thread
 							    }
 							    else if(selectiveCacheUpdate && entity.indexOf("SiteNodeVersion") > 0)
 							    {
-							    	System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+							    	//System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 							    	//Thread.dumpStack();
 							    	//Hur lšser vi detta bra?
 							    	

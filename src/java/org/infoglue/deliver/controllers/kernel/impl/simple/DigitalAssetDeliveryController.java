@@ -49,6 +49,7 @@ import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -890,11 +891,11 @@ public class DigitalAssetDeliveryController extends BaseDeliveryController
 			logger.info("folderName:" + folderName);
 			if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
 			{
-				List<ContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(digitalAssetId);	
-	    		Iterator<ContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();
+				List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(digitalAssetId);	
+	    		Iterator<SmallestContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();
 	    		while(contentVersionVOListIterator.hasNext())
 	    		{
-	    			ContentVersionVO contentVersionVO = contentVersionVOListIterator.next();
+	    			SmallestContentVersionVO contentVersionVO = contentVersionVOListIterator.next();
 	    			DigitalAssetVO assetVO = DigitalAssetController.getSmallDigitalAssetVOWithId(digitalAssetId);
 	    			Integer contentId = contentVersionVO.getContentId();
 	    			Integer languageId = contentVersionVO.getLanguageId();

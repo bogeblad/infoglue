@@ -57,9 +57,11 @@ import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.LanguageVO;
@@ -118,9 +120,9 @@ public class DigitalAssetController extends BaseController
 		return (DigitalAsset) getObjectWithId(DigitalAssetImpl.class, digitalAssetId, db);
     }
 
-    public static List<ContentVersionVO> getContentVersionVOListConnectedToAssetWithId(Integer digitalAssetId) throws SystemException, Bug
+    public static List<SmallestContentVersionVO> getContentVersionVOListConnectedToAssetWithId(Integer digitalAssetId) throws SystemException, Bug
     {
-    	List<ContentVersionVO> versions = new ArrayList<ContentVersionVO>();
+    	List<SmallestContentVersionVO> versions = new ArrayList<SmallestContentVersionVO>();
     	
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -128,15 +130,35 @@ public class DigitalAssetController extends BaseController
 
         try
         {
+        	//Timer t = new Timer();
+        	OQLQuery oql = db.getOQLQuery("CALL SQL select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier as versionValue FROM cmContentVersion cv, cmContentVersionDigitalAsset cvda where cvda.contentVersionId = cv.contentVersionId AND cvda.digitalAssetId = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+        	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+        		oql = db.getOQLQuery("CALL SQL select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier as verValue FROM cmContVer cv, cmContVerDigAsset cvda where cvda.ContVerId = cv.ContVerId AND cvda.DigAssetId = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+
+        	oql.bind(digitalAssetId);
+        	
+        	QueryResults results = oql.execute(Database.ReadOnly);
+    		
+    		while(results.hasMore()) 
+            {
+            	SmallestContentVersionImpl cv = (SmallestContentVersionImpl)results.next();
+            	versions.add(cv.getValueObject());
+            }
+    		//t.printElapsedTime("getContentVersionVOListConnectedToAssetWithId:" + versions.size());
+    		
+    		results.close();
+    		oql.close();
+    		/*
         	DigitalAsset da = getMediumDigitalAssetWithId(digitalAssetId, db);
         	Iterator digitalAssetIterator = da.getContentVersions().iterator();
     		while(digitalAssetIterator.hasNext())
     		{
     			ContentVersion contentVersion = (ContentVersion)digitalAssetIterator.next();
-    			versions.add(contentVersion.getValueObject());
     		}
+    		t.printElapsedTime("getContentVersionVOListConnectedToAssetWithId OLD:" + versions.size());
+    		*/
     		
-            commitTransaction(db);
+            rollbackTransaction(db);
         }
         catch(Exception e)
         {
@@ -147,6 +169,7 @@ public class DigitalAssetController extends BaseController
         
         return versions;
     }
+
     
     public static DigitalAsset getMediumDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
     {
@@ -404,6 +427,85 @@ public class DigitalAssetController extends BaseController
 		
 		return digitalAsset.getValueObject();
 	}
+
+	
+   	/**
+   	 * This method creates a new digital asset in the database and connects it to the contentVersion it belongs to.
+   	 * The asset is send in as an InputStream which castor inserts automatically.
+   	 */
+
+	public void createByCopy(Integer originalContentVersionId, Integer newContentVersionId, Map<Integer,Integer> assetIdMap, Database db) throws ConstraintException, SystemException
+	{
+		logger.info("Creating by copying....");
+		logger.info("originalContentVersionId:" + originalContentVersionId);
+		logger.info("newContentVersionId:" + newContentVersionId);
+		ContentVersion oldContentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(originalContentVersionId, db);
+		
+		Collection<DigitalAsset> assets = oldContentVersion.getDigitalAssets();
+		logger.info("assets:" + assets);
+		for(DigitalAsset oldDigitalAsset : assets)
+		{
+			ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(newContentVersionId, db);
+
+			if(assetIdMap.containsKey(oldDigitalAsset.getId()))
+			{
+				logger.info("The asset was allready copied by another version - let's just connect the new one");
+				DigitalAsset newDigitalAsset = getDigitalAssetWithId(assetIdMap.get(oldDigitalAsset.getId()), db);
+				newDigitalAsset.getContentVersions().add(contentVersion);
+			}
+			else
+			{
+				Collection contentVersions = new ArrayList();
+				contentVersions.add(contentVersion);
+				logger.info("Added contentVersion:" + contentVersion.getId());
+				try
+				{
+					String filePath = getDigitalAssetFilePath(oldDigitalAsset.getValueObject(), db);
+					File oldAssetFile = new File(filePath);
+					
+					logger.info("Creating asset for:" + oldDigitalAsset.getAssetKey() + ":" + oldContentVersion.getId() + "/" + contentVersion.getId());
+					DigitalAssetVO digitalAssetVO = new DigitalAssetVO();
+					digitalAssetVO.setAssetContentType(oldDigitalAsset.getAssetContentType());
+					digitalAssetVO.setAssetFileName(oldDigitalAsset.getAssetFileName());
+					digitalAssetVO.setAssetFilePath(oldDigitalAsset.getAssetFilePath());
+					digitalAssetVO.setAssetFileSize(oldDigitalAsset.getAssetFileSize());
+					digitalAssetVO.setAssetKey(oldDigitalAsset.getAssetKey());
+					
+					DigitalAsset digitalAsset = new DigitalAssetImpl();
+					digitalAsset.setValueObject(digitalAssetVO);
+	
+					if(oldAssetFile.exists())
+					{
+						InputStream is = new FileInputStream(oldAssetFile);
+		
+						if(is != null)
+						{
+							digitalAsset.setAssetBlob(is);
+						}
+						else
+							digitalAsset.setAssetBlob(null);
+						//digitalAsset.setAssetBlob(oldDigitalAsset.getAssetBlob());
+					}
+					else
+					{
+						logger.warn("No asset file found:" + oldAssetFile.getPath());
+						digitalAsset.setAssetBlob(null);
+					}
+					
+					db.create(digitalAsset);
+					
+					assetIdMap.put(oldDigitalAsset.getId(), digitalAsset.getId());
+					digitalAsset.setContentVersions(contentVersions);
+				}
+				catch(Exception e)
+				{
+					logger.error("An error occurred when we tried to copy asset:" + e.getMessage());
+					logger.warn("An error occurred when we tried to copy asset:" + e.getMessage(), e);
+				}
+			}
+		}
+	}
+
 
 	/**
 	 * This method gets a asset with a special key inside the given transaction.
@@ -1865,6 +1967,31 @@ public class DigitalAssetController extends BaseController
 		return digitalAssetVO;
 	}
 
+	
+	public static DigitalAssetVO getLatestDigitalAssetVO(Integer contentVersionId, String assetKey) throws Exception
+	{
+    	Database db = CastorDatabaseService.getDatabase();
+
+    	DigitalAssetVO assetVO = null;
+
+        beginTransaction(db);
+
+        try
+        {
+        	assetVO = getLatestDigitalAssetVO(contentVersionId, assetKey, db);
+			            
+			rollbackTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.info("An error occurred when we tried to cache and show the digital asset:" + e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    	
+		return assetVO;
+	}
+	
 	/**
 	 * Returns the latest digital asset for a contentversion.
 	 */

@@ -287,6 +287,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populateData(ps, "deploymentServers");
 	    populateData(ps, "vcServers");
 	    populate(ps, "decoratedPageInvoker");
+	    populate(ps, "defaultRepositoryAccessRoles");
 	    
 	    populate(ps, "edition.pageSize");
 	    populate(ps, "content.tree.sort");

@@ -46,10 +46,10 @@ public class ViewContentToolMenuAction extends InfoGlueAbstractAction
 			this.showVersions = (String)getRequest().getSession().getAttribute("htmlTreeShowVersions");
 		else 
 			getRequest().getSession().setAttribute("htmlTreeShowVersions", this.showVersions);
-		
+
     	if(repositoryId != null)
 		{
-	   		getHttpSession().setAttribute("repositoryId", repositoryId);
+	   		getHttpSession().setAttribute("contentRepositoryId", repositoryId);
 		}
 		
     	this.repositoryId = repositoryId;
@@ -57,7 +57,10 @@ public class ViewContentToolMenuAction extends InfoGlueAbstractAction
 
     public Integer getRepositoryId()
     {
-    	return this.repositoryId;
+    	//if(this.repositoryId != null)
+    	//	return this.repositoryId;
+    	//else
+    		return getContentRepositoryId();
     }
     
     public String doExecute() throws Exception

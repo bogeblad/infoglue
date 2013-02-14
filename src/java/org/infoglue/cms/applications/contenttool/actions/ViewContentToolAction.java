@@ -39,5 +39,17 @@ public class ViewContentToolAction extends ViewCMSAbstractToolAction
     {
         return "success";
     }
+    
+    public Integer getRepositoryId()
+    {
+    	return getContentRepositoryId();
+    }
 
+    public void setRepositoryId(Integer repositoryId)
+    {
+		if(repositoryId != null)
+		{
+	   		getHttpSession().setAttribute("contentRepositoryId", repositoryId);
+		}
+    }
 }

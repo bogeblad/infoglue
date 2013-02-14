@@ -29,7 +29,7 @@
 <body>
 
 <div id="menutoolbar">
-	<div style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 10px;" id="menutoolbarLeft">
+	<div style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 10px;" id="menutoolbarLeft">
 		<b>$ui.getString("tool.contenttool.fixReferencesOnPage.header")<b>
 	</div>
 	<div style="float: right;" id="menutoolbarRight" class="buttonPane">

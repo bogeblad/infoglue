@@ -384,12 +384,12 @@ public class CreatePageTemplateAction extends InfoGlueAbstractAction implements 
 		{
 			if(this.repositoryId == null)
 			{	
-				this.repositoryId = (Integer)getHttpSession().getAttribute("repositoryId");
+				this.repositoryId = getStructureRepositoryId();
 					
 				if(this.repositoryId == null)
 				{
 					this.repositoryId = getTopRepositoryId();
-					getHttpSession().setAttribute("repositoryId", this.repositoryId);		
+					getHttpSession().setAttribute("structureRepositoryId", this.repositoryId);		
 				}
 			}
 		}

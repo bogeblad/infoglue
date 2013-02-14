@@ -20,7 +20,6 @@
 				url = "ViewSiteNodePageComponents!addComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&componentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple";
 				//alert("url" + url);
 				parent.document.location.href = url;
-				isClicked = false;
 			}
 		}
 	

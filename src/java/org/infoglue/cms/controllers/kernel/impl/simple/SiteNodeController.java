@@ -2876,25 +2876,11 @@ public class SiteNodeController extends BaseController
             	throw new ConstraintException("SiteNode.parentSiteNodeId", "3403");
             }
 
-            if(siteNodeVO.getId().intValue() == newParentSiteNodeId.intValue())
-            {
-            	logger.warn("You cannot have the siteNode as it's own parent......");
-            	throw new ConstraintException("SiteNode.parentSiteNodeId", "3401");
-            }
-            
             siteNode          = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
             oldParentSiteNode = siteNode.getParentSiteNode();
             newParentSiteNode = getSiteNodeWithId(newParentSiteNodeId, db);
             
-            //System.out.println("newParentSiteNodeId:" + newParentSiteNodeId);
-            //System.out.println("oldParentSiteNode:" + oldParentSiteNode);
-            if(oldParentSiteNode != null && oldParentSiteNode.getId().intValue() == newParentSiteNodeId.intValue())
-            {
-            	logger.warn("You cannot specify the same node as it originally was located in......");
-            	throw new ConstraintException("SiteNode.parentSiteNodeId", "3404");
-            }
-
-			SiteNode tempSiteNode = newParentSiteNode.getParentSiteNode();
+        	SiteNode tempSiteNode = newParentSiteNode.getParentSiteNode();
 			while(tempSiteNode != null)
 			{
 				if(tempSiteNode.getId().intValue() == siteNode.getId().intValue())

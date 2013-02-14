@@ -120,12 +120,12 @@ public class CreateContentWizardChooseParentAction extends CreateContentWizardAb
 		{
 			if(this.repositoryId == null)
 			{	
-				this.repositoryId = (Integer)getHttpSession().getAttribute("repositoryId");
+				this.repositoryId = getContentRepositoryId();
 					
 				if(this.repositoryId == null)
 				{
 					this.repositoryId = getTopRepositoryId();
-					getHttpSession().setAttribute("repositoryId", this.repositoryId);		
+					getHttpSession().setAttribute("contentRepositoryId", this.repositoryId);		
 				}
 			}
 		}

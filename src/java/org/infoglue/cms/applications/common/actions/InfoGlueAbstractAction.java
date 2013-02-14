@@ -295,7 +295,38 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
 	}
 	
-	public Integer getRepositoryId()
+	/**
+	 * This method gets the repositoryId used in structure tool and if it'n not available we check a default for all tools.
+	 */
+	
+    public Integer getStructureRepositoryId()
+    {
+    	Integer repositoryId = (Integer)getHttpSession().getAttribute("structureRepositoryId");
+    	if(repositoryId == null)
+    		repositoryId = getRepositoryIdImpl();
+    	
+    	return repositoryId;
+    }
+
+	/**
+	 * This method gets the repositoryId used in content tool and if it'n not available we check a default for all tools.
+	 */
+	
+    public Integer getContentRepositoryId()
+    {
+    	Integer repositoryId = (Integer)getHttpSession().getAttribute("contentRepositoryId");
+    	if(repositoryId == null)
+    		repositoryId = getRepositoryIdImpl();
+    	
+    	return repositoryId;
+    }
+
+    public Integer getRepositoryId()
+    {
+    	return getRepositoryIdImpl();
+    }
+
+	public Integer getRepositoryIdImpl()
 	{
 		Integer repositoryId = (Integer)this.getHttpSession().getAttribute("repositoryId");
 		try
@@ -1351,7 +1382,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 
 	public String getRepositoryName() throws Exception
 	{
-		return RepositoryController.getController().getRepositoryVOWithId(getRepositoryId()).getName();
+		return RepositoryController.getController().getRepositoryVOWithId(getRepositoryIdImpl()).getName();
 	}
 	
 	public void logMessage(String message)

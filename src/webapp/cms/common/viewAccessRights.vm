@@ -255,12 +255,9 @@
 				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 			#else
 				$("#tabsContainer").tabs( {
-<<<<<<< HEAD
-=======
 					#if($anchor)
 						selected: $anchor,
 					#end
->>>>>>> 0a0eda821fe194db304f094c083114e5a16d478b
 					show:function() { resizeScrollArea(); }
 				});
 			#end
@@ -326,12 +323,9 @@
 				<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl"/>
 				<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 				<input type="hidden" name="closeOnLoad" value="false"/>
-<<<<<<< HEAD
 				<input type="hidden" id="currentUserRowIndex" name="currentUserRowIndex" value="0"/>
 				<input type="hidden" id="selectedUserRowIndex" name="selectedUserRowIndex" value="0"/>
-=======
 				<input type="hidden" name="anchor" id="anchor" value="$anchor"/>
->>>>>>> 0a0eda821fe194db304f094c083114e5a16d478b
 				
 				#set($interceptionPointIndex = 0)
 				#foreach($interceptionPointVO in $interceptionPointVOList)
@@ -667,10 +661,10 @@
 						<input type="hidden" name="returnAddress" value="$returnAddress">
 
 						<div id="menutoolbar">
-							<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+							<div id="menutoolbarLeft" style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 2px;">
 								<div style="float: left; padding-top: 8px; padding-left: 10px;">$ui.getString("tool.managementtool.assignedGroups.label")</div>
 							</div>
-							<div id="menutoolbarRight" style="float:right">
+							<div id="menutoolbarRight" style="float:right; z-index: 10005;">
 								<a class='igToolbarButton igToolbarHeaderButton' href="#" onclick="hideDiv('groups$accessRightId');" title="$ui.getString("tool.common.closeWindowButton.title")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='close' title="$ui.getString("tool.common.closeWindowButton.title")">$ui.getString("tool.common.closeWindowButton.label")</span></span></a>
 							</div>
 						</div>

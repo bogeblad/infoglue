@@ -71,8 +71,6 @@ public class ViewExecuteTaskAction extends InfoGlueAbstractAction
 	{
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.getTaskContentId());
 		
-		logger.info("Language:" + LanguageController.getController().getMasterLanguage((Integer)getHttpSession().getAttribute("repositoryId")).getId());
-		
 		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getId(), LanguageController.getController().getMasterLanguage((Integer)getHttpSession().getAttribute("repositoryId")).getId());
 
 		//TODO - should not do this but find one available version probably

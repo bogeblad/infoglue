@@ -46,7 +46,7 @@ public class ViewStructureToolMenuAction extends InfoGlueAbstractAction
     {
     	if(repositoryId != null)
 		{
-	   		getHttpSession().setAttribute("repositoryId", repositoryId);
+	   		getHttpSession().setAttribute("structureRepositoryId", repositoryId);
 	   	}
 		
     	this.repositoryId = repositoryId;

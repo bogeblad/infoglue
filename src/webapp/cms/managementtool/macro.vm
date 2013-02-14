@@ -2061,7 +2061,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 ##***********************************************************
 #macro(lightMenuToolbarImpl $headline $buttons $rightButtons $rightExtraMarkup)
 <div id="menutoolbar">
-	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 2px;">
 		#if($headline != "")
 			<div style="float: left; padding-top: 8px; padding-left: 10px;">$headline | </div>
 		#end
@@ -2159,7 +2159,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 ## A macro to add a toolbar to a page
 ##***********************************************************
 #macro(lightLeftMenuToolbar $headline $buttons)
-	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 2px;">
 		#if($headline != "")
 			<div style="float: left; padding-top: 8px; padding-left: 10px;">$headline | </div>
 		#end
@@ -2429,7 +2429,7 @@ $ui.getString("entity.${fieldNameKey}.label")
 ## A macro for the embla compact toolbar
 ##***********************************************************
 #macro(compactEmblaLeftMenuToolbar $buttons)
-	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 2px;">
 		#foreach($button in $buttons)
 			#set($parentCount = $velocityCount)
 			#if($button.subButtons.size() == 0)

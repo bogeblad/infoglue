@@ -62,7 +62,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 
 		if(this.repositoryId == null)
 		{
-			this.repositoryId = (Integer)getHttpSession().getAttribute("repositoryId");
+			this.repositoryId = getContentRepositoryId();
 			if(this.repositoryId == null)
 				this.repositoryId = RepositoryController.getController().getFirstRepositoryVO().getRepositoryId();		
 		}
@@ -76,7 +76,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 
 		if(this.repositoryId == null)
 		{
-			this.repositoryId = (Integer)getHttpSession().getAttribute("repositoryId");
+			this.repositoryId = getContentRepositoryId();
 			if(this.repositoryId == null)
 				this.repositoryId = RepositoryController.getController().getFirstRepositoryVO().getRepositoryId();		
 		}
@@ -90,7 +90,7 @@ public class ViewLinkDialogAction extends InfoGlueAbstractAction
 
 		if(this.repositoryId == null)
 		{
-			this.repositoryId = (Integer)getHttpSession().getAttribute("repositoryId");
+			this.repositoryId = getContentRepositoryId();
 			if(this.repositoryId == null)
 				this.repositoryId = RepositoryController.getController().getFirstRepositoryVO().getRepositoryId();		
 		}

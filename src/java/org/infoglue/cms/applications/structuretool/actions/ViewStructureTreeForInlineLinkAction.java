@@ -89,7 +89,7 @@ public class ViewStructureTreeForInlineLinkAction extends InfoGlueAbstractAction
 
 		if(this.repositoryId == null)
 		{
-			this.repositoryId = (Integer)getHttpSession().getAttribute("repositoryId");
+			this.repositoryId = getStructureRepositoryId();
 			if(this.repositoryId == null)
 				this.repositoryId = RepositoryController.getController().getFirstRepositoryVO().getRepositoryId();		
 		}

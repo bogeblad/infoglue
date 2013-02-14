@@ -143,36 +143,10 @@ public class ViewContentToolHeaderAction extends InfoGlueAbstractAction
 	 * Returns the repositoryId.
 	 * @return Integer
 	 */
+	
 	public Integer getRepositoryId() 
 	{
-		try
-    	{
-	    	if(this.repositoryId == null)
-	    	{	
-	    		this.repositoryId = (Integer)getHttpSession().getAttribute("repositoryId");
-				
-	    		if(this.repositoryId == null)
-	    		{
-		    		String prefferedRepositoryId = CmsPropertyHandler.getPreferredRepositoryId(this.getInfoGluePrincipal().getName());
-		    		if(prefferedRepositoryId != null && prefferedRepositoryId.length() > 0)
-		    		{
-		    			this.repositoryId = new Integer(prefferedRepositoryId);
-		    			getHttpSession().setAttribute("repositoryId", this.repositoryId);		
-		    		}
-		    	}
-
-	    		if(this.repositoryId == null)
-	    		{
-		    		this.repositoryId = getTopRepositoryId();
-		    		getHttpSession().setAttribute("repositoryId", this.repositoryId);		
-		    	}
-	    	}
-    	}
-    	catch(Exception e)
-    	{
-    	}
-    	
-		return repositoryId;
+		return getContentRepositoryId();
 	}
 	
 	/**

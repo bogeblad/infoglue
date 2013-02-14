@@ -2,7 +2,7 @@
 ## A macro for the embla compact toolbar
 ##***********************************************************
 #macro(compactEmblaLeftMenuToolbar $buttons)
-	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 2px;">
 		#foreach($button in $buttons)
 			#set($parentCount = $velocityCount)
 			#if($button.subButtons.size() == 0)
@@ -247,7 +247,7 @@
 ## A macro for the embla default toolbar
 ##***********************************************************
 #macro(defaultEmblaLeftMenuToolbarOld $buttons)
-	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 2px;">
 		#foreach($button in $buttons)
 			#set($parentCount = $velocityCount)
 			#if($button.subButtons.size() == 0)
@@ -468,7 +468,7 @@
 ## A macro for the embla default toolbar
 ##***********************************************************
 #macro(defaultEmblaLeftMenuToolbar $groups)
-	<div id="menutoolbarLeft" style="position: absolute; z-index: 5; padding-left: 4px; padding-top: 2px;">
+	<div id="menutoolbarLeft" style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 2px;">
 		#foreach($group in $groups)
 			<div id="$group.id" class="buttonGroup" style="float: left; border-right: 1px solid #ccc;">
 				$group.title<br/>

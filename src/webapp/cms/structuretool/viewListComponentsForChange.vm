@@ -7,7 +7,8 @@
 
 	<script type="text/javascript">
 	<!-- 
-	   	function changeComponent(componentId)
+		var isClicked = false;
+		function changeComponent(componentId)
 	    {
 	    	//alert("siteNodeId: $siteNodeId");
 	    	//alert("languageId: $languageId");
@@ -15,10 +16,12 @@
 	    	//alert("contentId: $!contentId");
 	    	//alert("$slotId: $slotId");
 	    	//alert("componentId:" + componentId);
-	    		
-	    	url = "ViewSiteNodePageComponents!changeComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$!componentId&newComponentContentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple";
-		    //alert("url" + url);
-	    	parent.location.href = url;
+			if(!isClicked){
+				isClicked = true;
+		    	url = "ViewSiteNodePageComponents!changeComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$!componentId&newComponentContentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple";
+			    //alert("url" + url);
+		    	parent.location.href = url;
+		    }
 	    }
 	
 		function changeRepository(selectBox)

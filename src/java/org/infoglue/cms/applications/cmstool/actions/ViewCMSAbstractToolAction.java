@@ -47,7 +47,6 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
         return "successV3";
     }
 
-
     private Integer repositoryId = null;
     
     public void setRepositoryId(Integer repositoryId)
@@ -55,6 +54,7 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
     	this.repositoryId = repositoryId;
     }
 
+    
 	/**
 	 * This method gets the repositoryId and if it'n not available we check first id it's located in the
 	 * Session. If not we take the master repositoryId and also defaults it to that in the session.
@@ -99,7 +99,6 @@ public abstract class ViewCMSAbstractToolAction extends InfoGlueAbstractAction
 		    		else
 		    		{
 		    		    this.repositoryId = new Integer(-1);
-			    		//getHttpSession().setAttribute("repositoryId", this.repositoryId);		
 		    		    logger.info("We set the defaultRepositoryId in the users session to " + this.repositoryId);
 		    		}
 		    	}

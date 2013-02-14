@@ -263,3 +263,37 @@ function syncWithTree(path, repositoryId, targetFrame)
 {
 	document.getElementById(targetFrame).contentWindow.syncWithTree(path, repositoryId);
 }
+
+/**
+ * Constructs a loading indicator from the given DOM element (preferably a DIV).
+ */
+var LoadingIndicator = function(indicator, workarea) {
+	var $indicator = $(indicator);
+
+	if ($indicator.length === 0) {
+		throw "No indicator container found";
+	}
+
+	$indicator.hide();
+	$indicator.addClass("loadingIndicator");
+
+	if (workarea) {
+		$(workarea).load(function() {
+			hide();
+		});
+	}
+
+	/** Displays the loading indicator.
+	 *  If a workarea was provided to the loading indicator the indicator
+	 *  will be hidden automatically the next time the workarea trigger
+	 *  its load-event.
+	 *  */
+	this.display = function(timeoutTime) {
+		$indicator.show();
+	};
+	/** Hides the loading indicator. */
+	this.hide = function() {
+		$indicator.hide();
+	}
+	return this;
+};

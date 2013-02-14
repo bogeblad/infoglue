@@ -509,17 +509,3 @@ function hideNotification()
 	notificationIsHot = false; 
 	$("#popupAlertMessageDiv").css("margin-top", "35px");
 }
-
-//-------------------------------------------------------
-// Display a loading indicator when something is loading
-//-------------------------------------------------------
-
-function displayLoadingIndicator()
-{ 
-	$("#loadingIndicator").show();
-}
-
-function hideLoadingIndicator()
-{
-	$("#loadingIndicator").hide();
-}

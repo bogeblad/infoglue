@@ -218,4 +218,75 @@ public class CmsSessionContextListener implements HttpSessionListener
 		
 	}
 
+	/**
+	 * Invalidates a user's session.
+	 * @param userName
+	 * @throws Exception
+	 * @throws NullPointerException Thrown if the given <em>userName</em> is null.
+	 */
+	static public void invalidateSession(String userName) throws Exception, NullPointerException
+	{
+		if(running.compareAndSet(false, true))
+		{
+			Thread.sleep(5000);
+			try
+			{
+				logger.info("reCacheSessionPrincipal......");
+				//A little strange solution to solve the fact that we get a lot of ConcurrentModificationExceptions - possible due to many session death.
+				int numberOfIterations = 0;
+				boolean isOk = false;
+				while(!isOk && numberOfIterations < 20)
+				{
+					Thread.sleep(50);
+					try
+					{
+						logger.info("Sessions:" + sessions.size());
+						synchronized(sessions)
+						{
+							Iterator iter = sessions.keySet().iterator();
+							while (iter.hasNext())
+							{
+								String s = (String) iter.next();
+								HttpSession sess = (HttpSession) sessions.get(s);
+
+								try
+								{
+									InfoGluePrincipal principal = (InfoGluePrincipal)sess.getAttribute(InfoGlueAuthenticationFilter.INFOGLUE_FILTER_USER);
+									if(principal == null)
+										principal = (InfoGluePrincipal)sess.getAttribute("infogluePrincipal");
+
+									if (userName.equals(principal.getName()))
+									{
+										logger.debug("Found user to invalidate");
+										sess.invalidate();
+									}
+								}
+								catch (Exception e) 
+								{
+									logger.info("A session was invalid already:" + e.getMessage(), e);
+								}
+							}
+						}
+						isOk = true;
+					}
+					catch (ConcurrentModificationException e) 
+					{
+						if(logger.isInfoEnabled())
+							logger.info("Concurrency problem rereading session principal:" + e.getMessage(), e);
+					}
+					numberOfIterations++;
+				}
+
+				if(!isOk && numberOfIterations == 20)
+					logger.warn("We could not finish the operation as to many concurrency errors occurred.");
+			}
+			finally
+			{
+				running.set(false);
+			}
+
+		}
+
+	}
+
 }

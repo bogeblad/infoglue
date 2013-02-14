@@ -33,23 +33,37 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
-import org.exolab.castor.mapping.AccessMode;
+import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
-import org.infoglue.cms.entities.management.Group;
-import org.infoglue.cms.entities.management.Role;
+import org.infoglue.cms.entities.management.AccessRight;
+import org.infoglue.cms.entities.management.AccessRightUser;
+import org.infoglue.cms.entities.management.AccessRightUserVO;
+import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.management.SystemUserVO;
 import org.infoglue.cms.entities.management.TableCount;
+import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
+import org.infoglue.cms.entities.management.impl.simple.FormEntryImpl;
+import org.infoglue.cms.entities.management.impl.simple.RedirectImpl;
+import org.infoglue.cms.entities.management.impl.simple.SubscriptionImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl;
+import org.infoglue.cms.entities.management.impl.simple.UserContentTypeDefinitionImpl;
+import org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl;
+import org.infoglue.cms.entities.publishing.impl.simple.PublicationDetailImpl;
+import org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl;
+import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
+import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
+import org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl;
+import org.infoglue.cms.entities.workflow.impl.simple.EventImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
@@ -57,9 +71,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.PasswordGenerator;
 import org.infoglue.cms.util.mail.MailServiceFactory;
-import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.RequestAnalyser;
-import org.infoglue.deliver.util.Timer;
 
 /**
  * SystemUserController.java
@@ -1593,9 +1604,400 @@ public class SystemUserController extends BaseController
             throw new ConstraintException("SystemUser.oldPassword", "310");
             
         systemUser.setPassword(newPassword);		
-    }        
+    }
 
-  
+    private void updateVersionModifierOnContentVersions(String currentModifier, String newModifier, Database db) throws PersistenceException
+	{
+    	OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl cv WHERE cv.versionModifier = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing version modifier from '" + currentModifier + "' to '" + newModifier + "' for number of ContentVerison: " + results.size());
+    	}
+		while (results.hasMore()) 
+        {
+			SmallestContentVersionImpl cv = (SmallestContentVersionImpl)results.nextElement();
+			cv.setVersionModifier(newModifier);
+			if (logger.isDebugEnabled())
+	    	{
+	    		logger.debug("Changing version modifier from '" + currentModifier + "' to '" + newModifier + "' for ContentVerison with ID: " + cv.getContentVersionId());
+	    	}
+		}
+
+		results.close();
+		oql.close();
+	}
+
+    private void updateVersionModifierOnSiteNodeVersions(String currentModifier, String newModifier, Database db) throws PersistenceException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT snv FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl snv WHERE snv.versionModifier = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing version modifier from '" + currentModifier + "' to '" + newModifier + "' for number of SiteNodeVersions: " + results.size());
+    	}
+		while (results.hasMore()) 
+        {
+			SmallSiteNodeVersionImpl snv = (SmallSiteNodeVersionImpl)results.nextElement();
+			snv.setVersionModifier(newModifier);
+			if (logger.isDebugEnabled())
+	    	{
+	    		logger.debug("Changing version modifier from '" + currentModifier + "' to '" + newModifier + "' for SiteNodeVersion with ID: " + snv.getSiteNodeVersionId());
+	    	}
+		}
+
+		results.close();
+		oql.close();
+    }
+
+    private void updateCreatorOnSiteNodes(String currentModifier, String newModifier, Database db) throws PersistenceException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT sn FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl sn WHERE sn.creator = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing creator from '" + currentModifier + "' to '" + newModifier + "' for number of SiteNodes: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		SmallSiteNodeImpl sn = (SmallSiteNodeImpl)results.nextElement();
+    		sn.setCreator(newModifier);
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing creator from '" + currentModifier + "' to '" + newModifier + "' for SiteNode with ID: " + sn.getSiteNodeId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    private void updateCreatorOnContents(String currentModifier, String newModifier, Database db) throws PersistenceException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.creator = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing creator from '" + currentModifier + "' to '" + newModifier + "' for number of Contents: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		ContentImpl c = (ContentImpl)results.nextElement();
+    		c.setCreator(newModifier);
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing creator from '" + currentModifier + "' to '" + newModifier + "' for Content with ID: " + c.getContentId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    private void updateCreatorOnWorkflowEvents(String currentModifier, String newModifier, Database db) throws PersistenceException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE e.creator = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing creator from '" + currentModifier + "' to '" + newModifier + "' for number of Events: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		EventImpl e = (EventImpl)results.nextElement();
+    		e.setCreator(newModifier);
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing creator from '" + currentModifier + "' to '" + newModifier + "' for Event with ID: " + e.getEventId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    /**
+
+     * @throws NullPointerException Thrown if currentModifier is null
+     */
+    private void updateCreatorOnPublications(String currentModifier, String newModifier, Database db) throws PersistenceException, NullPointerException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT p FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl p WHERE p.publisher = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing creator from '" + currentModifier + "' to '" + newModifier + "' for number of Publications: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		PublicationImpl p = (PublicationImpl)results.nextElement();
+    		p.setPublisher(newModifier);
+    		for (PublicationDetailImpl pd : (Collection<PublicationDetailImpl>)p.getPublicationDetails())
+    		{
+    			if (currentModifier.equals(pd.getCreator()))
+    			{
+    				pd.setCreator(newModifier);
+    			}
+    		}
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing creator from '" + currentModifier + "' to '" + newModifier + "' for Publication with ID: " + p.getPublicationId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    private void updateModifierOnRedirects(String currentModifier, String newModifier, Database db) throws PersistenceException, ConstraintException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RedirectImpl r WHERE r.modifier = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing modifier from '" + currentModifier + "' to '" + newModifier + "' for number of Redirects: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		RedirectImpl r = (RedirectImpl)results.nextElement();
+    		r.setModifier(newModifier);
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing modifier from '" + currentModifier + "' to '" + newModifier + "' for Redirect with ID: " + r.getRedirectId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    private void updateUserNameOnUserProperties(String currentModifier, String newModifier, Database db) throws PersistenceException, ConstraintException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT x FROM org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl x WHERE x.userName = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing userName from '" + currentModifier + "' to '" + newModifier + "' for number of UserProperties: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		UserPropertiesImpl up = (UserPropertiesImpl)results.nextElement();
+    		up.setUserName(newModifier);
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing userName from '" + currentModifier + "' to '" + newModifier + "' for UserProperty with ID: " + up.getUserPropertiesId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    private void updateUserNameOnUserPropertyDefinitions(String currentModifier, String newModifier, Database db) throws PersistenceException, ConstraintException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT x FROM org.infoglue.cms.entities.management.impl.simple.UserContentTypeDefinitionImpl x WHERE x.userName = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing userName from '" + currentModifier + "' to '" + newModifier + "' for number of UserContentTypeDefinitions: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		UserContentTypeDefinitionImpl uctd = (UserContentTypeDefinitionImpl)results.nextElement();
+    		uctd.setUserName(newModifier);
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing userName from '" + currentModifier + "' to '" + newModifier + "' for UserContentTypeDefinition with ID: " + uctd.getUserContentTypeDefinitionId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    private void updateUserNameOnFormEntries(String currentModifier, String newModifier, Database db) throws PersistenceException, ConstraintException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT x FROM org.infoglue.cms.entities.management.impl.simple.FormEntryImpl x WHERE x.userName = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing userName from '" + currentModifier + "' to '" + newModifier + "' for number of FormEntries: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		FormEntryImpl fe = (FormEntryImpl)results.nextElement();
+    		fe.setUserName(newModifier);
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing userName from '" + currentModifier + "' to '" + newModifier + "' for FormEntry with ID: " + fe.getId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    private void updateUserNameOnSubscriptions(String currentModifier, String newModifier, Database db) throws PersistenceException, ConstraintException
+    {
+    	OQLQuery oql = db.getOQLQuery( "SELECT x FROM org.infoglue.cms.entities.management.impl.simple.SubscriptionImpl x WHERE x.userName = $1");
+    	oql.bind(currentModifier);
+
+    	QueryResults results = oql.execute();
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Changing userName from '" + currentModifier + "' to '" + newModifier + "' for number of Subscriptions: " + results.size());
+    	}
+    	while (results.hasMore()) 
+    	{
+    		SubscriptionImpl fe = (SubscriptionImpl)results.nextElement();
+    		fe.setUserName(newModifier);
+    		if (logger.isDebugEnabled())
+    		{
+    			logger.debug("Changing userName from '" + currentModifier + "' to '" + newModifier + "' for Subscription with ID: " + fe.getId());
+    		}
+    	}
+
+    	results.close();
+    	oql.close();
+    }
+
+    public void changeUserName(String userName, String newUserName) throws ConstraintException, SystemException
+    {
+        Database db = null;//CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        try
+        {
+        	db = CastorDatabaseService.getDatabase();
+        	beginTransaction(db);
+            //If any of the validations or setMethods reported an error, we throw them up now before create.
+            ceb.throwIfNotEmpty();
+
+            changeUserName(userName, newUserName, db);
+
+            commitTransaction(db);
+        }
+        catch(ConstraintException ce)
+        {
+            rollbackTransaction(db);
+            throw ce;
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    }
+
+    public void changeUserName(String userName, String newUserName, Database db) throws ConstraintException, SystemException, Exception
+    {
+    	if (getReadOnlySystemUserWithName(newUserName, db) != null)
+    	{
+    		throw new SystemException("Cannot change user name to '" + newUserName + "'. The user already exists.");
+    	}
+
+    	SystemUser user = getSystemUserWithName(userName, db);
+
+    	if (user == null)
+    	{
+    		throw new SystemException("Cannot change user name for '" + userName + "'. The user does not exist.");
+    	}
+    	else
+    	{
+	        logger.info("Changing user name for user: '" + userName + "' to '" + newUserName + "'");
+
+	        SystemUserVO newSystemUserVO = user.getValueObject();
+	        newSystemUserVO.setUserName(newUserName);
+	        SystemUser newSystemUser = new SystemUserImpl();
+	        newSystemUser.setValueObject(newSystemUserVO);
+	        newSystemUser = (SystemUser) createEntity(newSystemUser, db);
+
+	        // Add roles
+	        List<RoleVO> roleVOs = RoleController.getController().getRoleVOList(userName, db);
+	        logger.info("Adding roles in user name change. Number of roles: " + roleVOs.size());
+	        for (RoleVO roleVO : roleVOs)
+	        {
+	        	if (logger.isDebugEnabled())
+	        	{
+	        		logger.debug("Handling role (" + roleVO.getRoleName() + ") in user name change. User name, from: '" + userName + "', to '" + newUserName + "'");
+	        	}
+	        	RoleController.getController().addUser(roleVO.getRoleName(), newSystemUser.getUserName(), db);
+	        	RoleController.getController().removeUser(roleVO.getRoleName(), userName, db);
+	        }
+
+	        // Add groups
+	        List<GroupVO> groupVOs = GroupController.getController().getGroupVOList(userName, db);
+	        logger.info("Adding groups in user name change. Number of groups: " + groupVOs.size());
+	        for (GroupVO groupVO : groupVOs)
+	        {
+	        	if (logger.isDebugEnabled())
+	        	{
+	        		logger.debug("Handling group (" + groupVO.getGroupName() + ") in user name change. User name, from: '" + userName + "', to '" + newUserName + "'");
+	        	}
+	        	GroupController.getController().addUser(groupVO.getGroupName(), newSystemUser.getUserName(), db);
+	        	GroupController.getController().removeUser(groupVO.getGroupName(), userName, db);
+	        }
+
+	        // Add access rights
+	        @SuppressWarnings("unchecked")
+			List<AccessRightUser> accessRightUserList = AccessRightController.getController().getAccessRightUserList(userName, db);
+
+	        logger.debug("Updating access rights for user name change. Number of access rights: " + accessRightUserList.size());
+	        Iterator<AccessRightUser> i = accessRightUserList.iterator();
+	    	while(i.hasNext())
+	        {
+	            AccessRightUser accessRightUser = i.next();
+	            //accessRightUser.setUserName(newUserName);
+	            AccessRight accessRight = accessRightUser.getAccessRight();
+
+			    AccessRightUserVO accessRightUserVO = new AccessRightUserVO();
+			    accessRightUserVO.setUserName(newSystemUser.getUserName());
+			    AccessRightUser newAccessRightUser = AccessRightController.getController().createAccessRightUser(db, accessRightUserVO, accessRight);
+			    accessRight.getUsers().add(newAccessRightUser);
+
+			    deleteEntity(AccessRightUserImpl.class, accessRightUser.getAccessRightUserId(), db);
+	        }
+
+	    	// Update String references on entities
+	    	updateVersionModifierOnContentVersions(userName, newUserName, db);
+	    	updateVersionModifierOnSiteNodeVersions(userName, newUserName, db);
+	    	updateCreatorOnContents(userName, newUserName, db);
+	    	updateCreatorOnSiteNodes(userName, newUserName, db);
+	    	updateCreatorOnWorkflowEvents(userName, newUserName, db);
+	    	updateCreatorOnPublications(userName, newUserName, db);
+	    	updateModifierOnRedirects(userName, newUserName, db);
+	    	updateUserNameOnUserProperties(userName, newUserName, db);
+	    	updateUserNameOnUserPropertyDefinitions(userName, newUserName, db);
+	    	updateUserNameOnFormEntries(userName, newUserName, db);
+	        updateUserNameOnSubscriptions(userName, newUserName, db);
+
+			// Remove old SystemUser
+	    	deleteEntity(SystemUserImpl.class, userName, db);
+    	}
+    }
+
+
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller
 	 * is handling.

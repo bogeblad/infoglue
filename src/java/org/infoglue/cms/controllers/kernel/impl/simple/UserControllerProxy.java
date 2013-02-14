@@ -296,6 +296,15 @@ public class UserControllerProxy extends BaseController
 	}
 
 	/**
+	 * This method makes a new password and sends it to the user
+	 */
+
+	public void changeUserName(String userName, String newUserName) throws ConstraintException, SystemException, Exception
+	{
+		getAuthorizationModule().changeInfoGluePrincipalUserName(userName, newUserName);
+	}
+
+	/**
 	 * This method deletes an existing user
 	 */
 	

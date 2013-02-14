@@ -7,19 +7,22 @@
 
 	<script type="text/javascript">
 	<!-- 
-	    function addComponent(componentId)
-	    {
-	    	//alert("siteNodeId: $siteNodeId");
-	    	//alert("languageId: $languageId");
-	    	//alert("parentComponentId: $!parentComponentId");
-	    	//alert("contentId: $!contentId");
-	    	//alert("$slotId: $slotId");
-	    	//alert("componentId:" + componentId);
-	    	url = "ViewSiteNodePageComponents!addComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&componentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple";
-		    //alert("url" + url);
-		    
-		    parent.document.location.href = url;
-	    }
+		var isClicked = false;
+		function addComponent(componentId) {
+			//alert("siteNodeId: $siteNodeId");
+			//alert("languageId: $languageId");
+			//alert("parentComponentId: $!parentComponentId");
+			//alert("contentId: $!contentId");
+			//alert("$slotId: $slotId");
+			//alert("componentId:" + componentId);
+			url = "ViewSiteNodePageComponents!addComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&componentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple";
+			//alert("url" + url);
+			if(!isClicked) {
+				isClicked = true;
+				parent.document.location.href = url;
+				isClicked = false;
+			}
+		}
 	
 		function changeRepository(selectBox)
 		{

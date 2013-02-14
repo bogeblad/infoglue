@@ -1,76 +1,70 @@
-html, body {
+html,body {
 	height: 100%; margin:0;
 }
-  
 #header {
 	height: 54px;
-    background-image: url(images/headerBackground.png); 
-	background-repeat: repeat-x; 
+	background-image: url(images/headerBackground.png);
+	background-repeat: repeat-x;
 }
 #searchForm {
-	float: left; 
-	clear: none; 
+	float: left;
+	clear: none;
 	margin-top: 5px;
 }
 #searchField {
-	float: left; 
-	display: block; 
-	border: 0px solid #ccc; 
-	font-family: Tahoma, Verdana, Arial, sans-serif; 
+	float: left;
+	display: block;
+	border: 0px solid #ccc;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
 	font-size: 14px;
 	text-indent: 10px;
 	color: #ccc;
-	background-image: url(images/searchFieldBackground.png); 
-	background-repeat: no-repeat; 
+	background-image: url(images/searchFieldBackground.png);
+	background-repeat: no-repeat;
 	height: 28px;
 	width: 160px;
 }
 #searchButton {
 	height: 30px;
 	width: 40px;
-	float: left; 
+	float: left;
 	display: block;
-	background-image: url(images/searchButton.png); 
-	background-repeat: no-repeat; 
+	background-image: url(images/searchButton.png);
+	background-repeat: no-repeat;
 }
-#contextMenuDiv 
-{
-    background-color: #F9F8F7;
-    background-image: url(images/tileGradient.gif);
-    background-position: left center;
-    background-repeat: repeat-y;
-    border: 1px solid #6593cf;
-    font-family: Tahoma, Verdana, Arial, sans-serif;
-    font-size: 14px;
-    cursor:pointer;
-    position:absolute;
-    text-align:left;
+#contextMenuDiv {
+	background-color: #F9F8F7;
+	background-image: url(images/tileGradient.gif);
+	background-position: left center;
+	background-repeat: repeat-y;
+	border: 1px solid #6593cf;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
+	font-size: 14px;
+	cursor:pointer;
+	position:absolute;
+	text-align:left;
 	display: none;
 	z-index: 1015;
 }
-#contextMenuDiv ul
-{
-    margin: 0px;
+#contextMenuDiv ul {
+	margin: 0px;
 	margin-right: 20px;
 	padding: 0px;
 	list-style-image: none;
 	list-style-type: none;
 }
-#contextMenuDiv ul li a
-{
-    text-indent: 32px;
+#contextMenuDiv ul li a {
+	text-indent: 32px;
 	line-height: 24px;
 	display: block;
 	color: black;
 	background-position: 4px 2px;
 	text-decoration: none;
 }
-#contextMenuDiv ul li a.movePage
-{
+#contextMenuDiv ul li a.movePage {
 	background-position: 6px 2px;
 }
-#contextMenuDiv ul li a:hover
-{
+#contextMenuDiv ul li a:hover {
 	text-decoration: underline;
 }
 #menucontent {
@@ -81,51 +75,50 @@ html, body {
 	margin-left: 10px;
 	margin-top: 10px;
 	float: left;
-	background-image: url(images/toolTabMiddle.png); 
-	background-repeat: repeat-x; 
+	background-image: url(images/toolTabMiddle.png);
+	background-repeat: repeat-x;
 }
 .leftTabPart {
 	float: left;
-	background-image: url(images/toolTabLeft.png); 
-	background-repeat: no-repeat; 
+	background-image: url(images/toolTabLeft.png);
+	background-repeat: no-repeat;
 }
 .rightTabPart {
 	float: left;
-	background-image: url(images/toolTabRight.png); 
-	background-repeat: no-repeat; 
+	background-image: url(images/toolTabRight.png);
+	background-repeat: no-repeat;
 	background-position: right top;
 }
 .middleTabPartSelected {
 	margin-left: 10px;
 	margin-top: 0px;
 	float: left;
-	background-image: url(images/toolTabMiddleSelected.png); 
-	background-repeat: repeat-x; 
+	background-image: url(images/toolTabMiddleSelected.png);
+	background-repeat: repeat-x;
 }
 .leftTabPartSelected {
 	float: left;
-	background-image: url(images/toolTabLeftSelected.png); 
-	background-repeat: no-repeat; 
+	background-image: url(images/toolTabLeftSelected.png);
+	background-repeat: no-repeat;
 }
 .rightTabPartSelected {
 	float: left;
-	background-image: url(images/toolTabRightSelected.png); 
-	background-repeat: no-repeat; 
+	background-image: url(images/toolTabRightSelected.png);
+	background-repeat: no-repeat;
 	background-position: right top;
 }
-
 #initialButton {
-	display: block; 
-	float: left; 
-	background: transparent url(images/menu-button-arrow.png) no-repeat; 
+	display: block;
+	float: left;
+	background: transparent url(images/menu-button-arrow.png) no-repeat;
 	background-position: 4px 15px;
 	padding-left: 8px;
 	margin-left: 4px;
 }
 .subButtons {
-	position: absolute; 
-	display: none; 
-	border: 1px solid #9CAABD; 
+	position: absolute;
+	display: none;
+	border: 1px solid #9CAABD;
 	border-top: 0px;
 	background-color: rgba(176, 176, 176, 0.9);
 }
@@ -134,7 +127,7 @@ html, body {
 	display: block;
 	height: 25px;
 	padding: 0px 20px 0px 20px;
-	font-family: Tahoma, Verdana, Arial, sans-serif; 
+	font-family: Tahoma, Verdana, Arial, sans-serif;
 	font-size: 13px;
 	text-decoration: none;
 	color: #333;
@@ -143,8 +136,8 @@ html, body {
 	margin-top: 15px;
 	display: block;
 	height: 35px;
-	padding: 0px 20px 0px 20px;
-	font-family: Tahoma, Verdana, Arial, sans-serif; 
+	padding: 0px 20px;
+	font-family: Tahoma, Verdana, Arial, sans-serif;
 	font-size: 13px;
 	text-decoration: none;
 	color: #111;
@@ -179,7 +172,7 @@ html, body {
 */
 #toolsColumn {
 	float: left;
-	width: 250px; 
+	width: 250px;
 	margin: 0px 0px 0px 0px;
 	border-right: 6px solid rgb(220, 220, 220);
 }
@@ -190,21 +183,20 @@ html, body {
 	border-bottom: 1px solid #9caabb;
 }
 #repositorySelect {
-	width: 175px; 
-	float: left; 
-	margin-left: 6px; 
+	width: 175px;
+	float: left;
+	margin-left: 6px;
 	margin-top: 6px;
 }
-
 #repositoriesDiv {
 	float: left;
-	width: 100%; 
+	width: 100%;
 	margin: 0px;
 	padding: 0px;
 	padding-top: 4px;
 }
 #repositoriesDivHandle {
-	color: #333; 
+	color: #333;
 	background-color: #deecff;
 }
 #repositoriesDiv {
@@ -212,7 +204,7 @@ html, body {
 }
 .shadow {
 	background-image: url(images/bottomShadow.png);
-	background-repeat: repeat-x;			
+	background-repeat: repeat-x;
 }
 #structureRepositoriesDiv ul, #contentRepositoriesDiv ul {
 	background-color: white;
@@ -231,24 +223,22 @@ html, body {
 	color: #d27600;
 	background-image: url(images/rightarrow.png);
 	background-position: 0px 5px;
-	background-repeat: no-repeat;			
-}	
+	background-repeat: no-repeat;
+}
 
 #paletteDiv {
 	background-image: url(images/sectionBarBackground.png);
 	background-repeat: repeat-x;
 	background-color: #transparent;
 }
-#componentPaletteHeader
-{
+#componentPaletteHeader {
 	float: left;
-	width: 100%; 
+	width: 100%;
 	height: 22px;
 }
-#componentPaletteHeader h3
-{
+#componentPaletteHeader h3 {
 	margin: 4px 2px 2px 6px;
-	font-family: Arial, sans-serif; 
+	font-family: Arial, sans-serif;
 	font-size: 13px;
 	font-weight: bold;
 	color: #333333;
@@ -261,10 +251,9 @@ html, body {
 	background-image: url("images/v3/toolBackgroundTheme.jpg");
 	background-repeat: no-repeat;
 }
-  
 #footer {
-    height: 34px;
-    /*background-image: url(css/images/footerBackground.png); 
+	height: 34px;
+	/*background-image: url(css/images/footerBackground.png);
 	background-repeat: repeat-x; */
 	background-color: #a9a9a9;
 }
@@ -273,7 +262,7 @@ html, body {
 	display: block;
 	width: 37px;
 	height: 26px;
-    background-image: url(css/images/infoglueLogoSmall.png); 
+	background-image: url(css/images/infoglueLogoSmall.png);
 	background-repeat: no-repeat;
 	border: 1px solid white;
 }
@@ -284,15 +273,13 @@ iframe.inactiveTool {
 	display: none;
 }
 
-
 /* Styles for manipulating jquery-ui-elements */
 .ui-widget-overlay {
-opacity:0.9;
-background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
+	opacity:0.9;
+	background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 }
 
-#popupAlertMessageDivContainer
-{
+#popupAlertMessageDivContainer {
 	overflow: hidden;
 	position: absolute;
 	bottom: 34px;
@@ -300,9 +287,8 @@ background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 	height: 35px;
 	left: 50%;
 	margin-left: -125px;
-} 
-#popupAlertMessageDiv 
-{
+}
+#popupAlertMessageDiv {
 	margin-top: 35px;
 	background-color: darkgray;
 	height: 35px;
@@ -310,23 +296,19 @@ background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 	padding: 10px;
 	border: 1px solid rgb(100, 100, 100);
 	border-bottom: none;
-
-	-moz-transition: margin-top 1s; 
-	-webkit-transition: margin-top 1s;  
-	-ms-transition: margin-top 1s;  
-	-o-transition: margin-top 1s;  
-	transition: margin-top 1s; 
-	width: 250px; 
+	-moz-transition: margin-top 1s;
+	-webkit-transition: margin-top 1s;
+	-ms-transition: margin-top 1s;
+	-o-transition: margin-top 1s;
+	transition: margin-top 1s;
+	width: 250px;
 }
-#popupAlertMessageDiv p
-{
+#popupAlertMessageDiv p {
 	margin: 0px;
 	padding: 0 20px;
 	text-align: center;
 }
-
-.closeAlertMessageButton
-{
+.closeAlertMessageButton {
 	display: block;
 	width: 12px;
 	height: 12px;
@@ -336,16 +318,12 @@ background:url("images/macFFBgHack.png") repeat scroll 50% 50% #AAAAAA;
 	float: right;
 	cursor: pointer;
 }
-
-.notificationResultOk
-{
+.notificationResultOk {
 	background-image: url("images/v3/check.png");
 	background-repeat: no-repeat;
 	background-position: 10px 9px;
 }
-
-#loadingIndicator
-{
+#loadingIndicator {
 	width: 64px;
 	height: 32px;
 	position: absolute;

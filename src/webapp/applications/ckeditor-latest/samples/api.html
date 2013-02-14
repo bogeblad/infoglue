@@ -13,8 +13,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 
 // The instanceReady event is fired, when an instance of CKEditor has finished
 // its initialization.
-CKEDITOR.on( 'instanceReady', function( ev )
-{
+CKEDITOR.on( 'instanceReady', function( ev ) {
 	// Show the editor name and description in the browser status bar.
 	document.getElementById( 'eMessage' ).innerHTML = 'Instance <code>' + ev.editor.name + '<\/code> loaded.';
 
@@ -22,8 +21,7 @@ CKEDITOR.on( 'instanceReady', function( ev )
 	document.getElementById( 'eButtons' ).style.display = 'block';
 });
 
-function InsertHTML()
-{
+function InsertHTML() {
 	// Get the editor instance that we want to interact with.
 	var editor = CKEDITOR.instances.editor1;
 	var value = document.getElementById( 'htmlArea' ).value;
@@ -32,15 +30,14 @@ function InsertHTML()
 	if ( editor.mode == 'wysiwyg' )
 	{
 		// Insert HTML code.
-		// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#insertHtml
+		// http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-insertHtml
 		editor.insertHtml( value );
 	}
 	else
 		alert( 'You must be in WYSIWYG mode!' );
 }
 
-function InsertText()
-{
+function InsertText() {
 	// Get the editor instance that we want to interact with.
 	var editor = CKEDITOR.instances.editor1;
 	var value = document.getElementById( 'txtArea' ).value;
@@ -49,36 +46,33 @@ function InsertText()
 	if ( editor.mode == 'wysiwyg' )
 	{
 		// Insert as plain text.
-		// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#insertText
+		// http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-insertText
 		editor.insertText( value );
 	}
 	else
 		alert( 'You must be in WYSIWYG mode!' );
 }
 
-function SetContents()
-{
+function SetContents() {
 	// Get the editor instance that we want to interact with.
 	var editor = CKEDITOR.instances.editor1;
 	var value = document.getElementById( 'htmlArea' ).value;
 
 	// Set editor contents (replace current contents).
-	// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#setData
+	// http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-setData
 	editor.setData( value );
 }
 
-function GetContents()
-{
+function GetContents() {
 	// Get the editor instance that you want to interact with.
 	var editor = CKEDITOR.instances.editor1;
 
 	// Get editor contents
-	// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#getData
+	// http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-getData
 	alert( editor.getData() );
 }
 
-function ExecuteCommand( commandName )
-{
+function ExecuteCommand( commandName ) {
 	// Get the editor instance that we want to interact with.
 	var editor = CKEDITOR.instances.editor1;
 
@@ -86,45 +80,40 @@ function ExecuteCommand( commandName )
 	if ( editor.mode == 'wysiwyg' )
 	{
 		// Execute the command.
-		// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#execCommand
+		// http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-execCommand
 		editor.execCommand( commandName );
 	}
 	else
 		alert( 'You must be in WYSIWYG mode!' );
 }
 
-function CheckDirty()
-{
+function CheckDirty() {
 	// Get the editor instance that we want to interact with.
 	var editor = CKEDITOR.instances.editor1;
 	// Checks whether the current editor contents present changes when compared
 	// to the contents loaded into the editor at startup
-	// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#checkDirty
+	// http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-checkDirty
 	alert( editor.checkDirty() );
 }
 
-function ResetDirty()
-{
+function ResetDirty() {
 	// Get the editor instance that we want to interact with.
 	var editor = CKEDITOR.instances.editor1;
 	// Resets the "dirty state" of the editor (see CheckDirty())
-	// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#resetDirty
+	// http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-resetDirty
 	editor.resetDirty();
 	alert( 'The "IsDirty" status has been reset' );
 }
 
-function Focus()
-{
+function Focus() {
 	CKEDITOR.instances.editor1.focus();
 }
 
-function onFocus()
-{
+function onFocus() {
 	document.getElementById( 'eMessage' ).innerHTML = '<b>' + this.name + ' is focused </b>';
 }
 
-function onBlur()
-{
+function onBlur() {
 	document.getElementById( 'eMessage' ).innerHTML = this.name + ' lost focus';
 }
 
@@ -138,7 +127,7 @@ function onBlur()
 	<div class="description">
 	<p>
 		This sample shows how to use the
-		<a class="samples" href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html">CKEditor JavaScript API</a>
+		<a class="samples" href="http://docs.ckeditor.com/#!/api/CKEDITOR.editor">CKEditor JavaScript API</a>
 		to interact with the editor at runtime.
 	</p>
 	<p>
@@ -162,20 +151,28 @@ function onBlur()
 		<script>
 			// Replace the <textarea id="editor1"> with an CKEditor instance.
 			CKEDITOR.replace( 'editor1', {
-					on :
-					{
-						focus : onFocus,
-						blur : onBlur
+				on: {
+					focus: onFocus,
+					blur: onBlur,
+
+					// Check for availability of corresponding plugins.
+					pluginsLoaded: function( evt ) {
+						var doc = CKEDITOR.document, ed = evt.editor;
+						if ( !ed.getCommand( 'bold' ) )
+							doc.getById( 'exec-bold' ).hide();
+						if ( !ed.getCommand( 'link' ) )
+							doc.getById( 'exec-link' ).hide();
 					}
-				});
+				}
+			});
 		</script>
 
 		<p id="eMessage">
 		</p>
 
 		<div id="eButtons" style="display: none">
-			<input onclick="ExecuteCommand('bold');" type="button" value="Execute &quot;bold&quot; Command">
-			<input onclick="ExecuteCommand('link');" type="button" value="Execute &quot;link&quot; Command">
+			<input id="exec-bold" onclick="ExecuteCommand('bold');" type="button" value="Execute &quot;bold&quot; Command">
+			<input id="exec-link" onclick="ExecuteCommand('link');" type="button" value="Execute &quot;link&quot; Command">
 			<input onclick="Focus();" type="button" value="Focus">
 			<br><br>
 			<input onclick="InsertHTML();" type="button" value="Insert HTML">

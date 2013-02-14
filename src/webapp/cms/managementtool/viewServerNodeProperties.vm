@@ -341,7 +341,8 @@
 				#editPropertyFieldCSS("ServerNode.property.maxNumberOfAssetInSearches" "maxNumberOfAssetInSearches" "$this.getPropertyValue('maxNumberOfAssetInSearches')" "51" "$!serverNodeId" "$!cmsPH.maxNumberOfAssetInSearches")
 	
 				#set($option1 = ["fckeditor2", "FCKEditor 2.x"])
-				#set($option2 = ["ckeditor3", "CKEditor 3.x"])
+				#set($option2 = ["ckeditor4", "CKEditor 4.x"])
+	
 				#set($editorOptions = [$option1, $option2]) 
 				#selectFieldCSS("ServerNode.property.prefferedWYSIWYG" "prefferedWYSIWYG" $this.getPropertyValue('prefferedWYSIWYG') $editorOptions "$!cmsPH.prefferedWYSIWYG")
 	
@@ -410,6 +411,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowCrossSiteSubmitToPublish" "allowCrossSiteSubmitToPublish" "$this.getPropertyValue('allowCrossSiteSubmitToPublish')" "$!cmsPH.allowCrossSiteSubmitToPublish")
 	
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfYearsBeforeExpire" "defaultNumberOfYearsBeforeExpire" "$this.getPropertyValue('defaultNumberOfYearsBeforeExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfYearsBeforeExpire")
+				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeRedirectExpire" "defaultNumberOfMonthsBeforeRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeRedirectExpire")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enableDateTimeDirectEditing" "enableDateTimeDirectEditing" "$this.getPropertyValue('enableDateTimeDirectEditing')" "$!cmsPH.enableDateTimeDirectEditing")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.showContentVersionFirst" "showContentVersionFirst" "$this.getPropertyValue('showContentVersionFirst')" "$!cmsPH.showContentVersionFirst")
 				#editPropertyFieldCSS("ServerNode.property.tree" "tree" "$this.getPropertyValue('tree')" "51" "$!serverNodeId" "$!cmsPH.tree")

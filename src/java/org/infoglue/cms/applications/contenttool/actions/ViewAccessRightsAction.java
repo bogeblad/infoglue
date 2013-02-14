@@ -80,6 +80,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	private String saved = "false";
 	private Boolean closeOnLoad = false;
 	private Boolean stateChanged = false;
+	private String anchor = null;
 
 	private List interceptionPointVOList = new ArrayList();
 	private List roleList = null;
@@ -502,5 +503,14 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	{
 		return extraAccessRightInfo;
 	}
+	
+	public void setAnchor(String anchor)
+	{
+		this.anchor = anchor;
+	}
 
+	public String getAnchor()
+	{
+		return this.anchor;
+	}
 }

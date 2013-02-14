@@ -451,7 +451,8 @@ img.scaledbordered {
 
 .save { background:url(images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .saveAndExit {background:url(images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
-.cancel {background:url(images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 3px;}
+.ok {background: url(images/v3/check.png) no-repeat 5px center !important;  background-position: 0px 3px;}
+.cancel {background:url(images/v3/cancelIcon.gif) no-repeat left center !important; background-position: 8px 5px !important;}
 .close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
 .help {background:url(images/v3/helpIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .dropArrow {background:url(images/v3/dropArrowIcon.gif) no-repeat left center; background-position: 0px 2px;}
@@ -849,4 +850,22 @@ span.error {
 	width: 8px;
 	cursor: move;
 	right: -8px;
+}
+
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset
+{
+	float: left;
+	margin-left: 10px;
+}
+
+.ui-dialog .ui-dialog-buttonpane button 
+{
+	padding-top: 2px;
+	padding-bottom: 2px;
+	background-position: 10px 7px;
+}
+
+.ui-button-text-only .ui-button-text
+{
+	padding: 4px 0;
 }

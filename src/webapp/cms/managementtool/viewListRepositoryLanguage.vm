@@ -9,7 +9,7 @@
 	<!-- 		
 		$(document).ready(function(){
 			
-			#set($extraParameter = '"bSort": false, "aoColumns": [ { "sWidth": "50%" }, null, null ]')
+			#set($extraParameter = '"bSort": false, "aoColumns": [ { "sWidth": "120px" }, null, null ]')
 			#initDataTableImpl("dataTable" $extraParameter)
 			#initDeleteLink()
 		});
@@ -18,6 +18,13 @@
 		{
 			document.editForm.submit(); 
 		}
+		
+		function saveAndExit(action)
+		{
+			document.editForm.action = action;
+			save(document.editForm);
+		}
+
 		
 		function cancel()
 		{

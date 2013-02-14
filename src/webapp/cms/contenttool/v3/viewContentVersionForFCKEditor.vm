@@ -371,14 +371,37 @@
 			    	$("#tabsContainer").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
 			    	loadFrame(2);
 			    #else 
-		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
+						if(ui.index == 2) 
+						{
+							$(".attachAsset").show();
+						}
+						else
+						{
+							$(".attachAsset").hide();
+						} 
+						resizeScrollArea(); 
+					}, 
+					select: function(e, ui) { loadFrame(ui.index); }}  );
+					
 			    	##alert("Anchor: $anchor");
 		  		#end
 		  	#else
 		  		$("#tabsContainer").tabs(
 		  			{ 
 		  				cache: false, 
-		  				show:function(event, ui) { resizeScrollArea(); },
+		  				show:function(event, ui) {
+							if(ui.index == 2) 
+							{
+								console.log($(".attachAsset"));
+								$(".attachAsset").show();
+							}
+							else
+							{
+								$(".attachAsset").hide();
+							}
+							resizeScrollArea(); 
+						},
 		  				select: function(e, ui) { loadFrame(ui.index); }
 		  			} 
 		  		);
@@ -729,7 +752,13 @@
 					<script type="text/javascript">
 					<!--
 						$(document).ready(function(){
-							$("#attributeTabsContainer").tabs({ show:function() { resizeScrollArea(); }, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
+							$("#attributeTabsContainer").tabs({ show:function(e, ui) { 
+								resizeScrollArea(); 
+								if(ui.index == 2) 
+									$(".attachAsset").hide();
+								else
+									$(".attachAsset").show();
+							}, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
 						});
 					-->
 					</script>

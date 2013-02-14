@@ -1011,6 +1011,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 			objectName = ((ContentVersion)entity).getOwningContent().getName() + " (" + ((ContentVersion)entity).getLanguage().getName() + " version)";
 		else if(entity instanceof SiteNodeImpl)
 			objectName = ((SiteNode)entity).getName();
+		else if(entity instanceof SmallSiteNodeVersionImpl)
+			objectName = ((SmallSiteNodeVersionImpl)entity).getSiteNodeVersionId() + "";
 		else if(entity instanceof SiteNodeVersionImpl)
 			objectName = ((SiteNodeVersion)entity).getOwningSiteNode().getName();
 		else

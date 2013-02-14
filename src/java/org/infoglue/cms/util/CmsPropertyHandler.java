@@ -2320,6 +2320,11 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "301");
 	}
 
+	public static String getDefaultRepositoryAccessRoles()
+	{
+		return getServerNodeProperty("defaultRepositoryAccessRoles", true, null);
+	}
+
 	public static String getLoginUrl()
 	{
 		return getServerNodeProperty("loginUrl", true, "");

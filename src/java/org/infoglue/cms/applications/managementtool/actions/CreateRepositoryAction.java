@@ -25,15 +25,21 @@ package org.infoglue.cms.applications.managementtool.actions;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.entities.management.RepositoryVO;
+import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
 public class CreateRepositoryAction extends InfoGlueAbstractAction
 {
+	private static final Logger logger = Logger.getLogger(CreateRedirectAction.class);
+
 	private RepositoryVO repositoryVO;
 	private ConstraintExceptionBuffer ceb;
    	private String userSessionKey;
@@ -109,20 +115,43 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
 	{
 		this.userSessionKey = userSessionKey;
 	}
+	
+	protected void addRoleAccessRightsToRepository()
+	{
+		String accessRoles = CmsPropertyHandler.getDefaultRepositoryAccessRoles();
+		if (accessRoles != null && !"".equals(accessRoles))
+		{
+			String[] roles = accessRoles.split(",");
+			for (String role : roles)
+			{
+				role = role.trim();
+				try
+				{
+					AccessRightController.getController().addRoleRights("Repository", "" + this.repositoryVO.getRepositoryId(), role);
+				}
+				catch (SystemException ex)
+				{
+					logger.warn("Exception when trying to add role access rights to repository. Failing silently. Repository: " + repositoryVO.getName() + ". Message: " + ex.getMessage());
+				}
+			}
+		}
+	}
 
     public String doExecute() throws Exception
     {
 		ceb.add(this.repositoryVO.validate());
-    	ceb.throwIfNotEmpty();				
-    	
+		ceb.throwIfNotEmpty();
+
 		this.repositoryVO = RepositoryController.getController().create(repositoryVO);
-		
+
     	String[] values = getRequest().getParameterValues("languageId");
     	if(values != null && values.length > 0)
     	{
     		RepositoryLanguageController.getController().updateRepositoryLanguages(this.repositoryVO.getId(),values);
     	}
-    	
+
+    	addRoleAccessRightsToRepository();
+
 	    ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 
         return "success";
@@ -137,7 +166,7 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
     {
 		ceb.add(this.repositoryVO.validate());
     	ceb.throwIfNotEmpty();				
-    	
+
 		this.repositoryVO = RepositoryController.getController().create(repositoryVO);
 
 		String[] values = getRequest().getParameterValues("languageId");
@@ -145,6 +174,8 @@ public class CreateRepositoryAction extends InfoGlueAbstractAction
     	{
     		RepositoryLanguageController.getController().updateRepositoryLanguages(this.repositoryVO.getId(),values);
     	}
+
+    	addRoleAccessRightsToRepository();
 
 	    ViewMessageCenterAction.addSystemMessage(this.getInfoGluePrincipal().getName(), ViewMessageCenterAction.SYSTEM_MESSAGE_TYPE, "refreshRepositoryList();");
 

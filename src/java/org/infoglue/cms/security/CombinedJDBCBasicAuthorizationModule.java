@@ -30,6 +30,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.controllers.kernel.impl.simple.SystemUserController;
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
@@ -341,6 +342,11 @@ public class CombinedJDBCBasicAuthorizationModule extends BasicAuthorizationModu
 		InfoGluePrincipal principal = getAuthorizedInfoGluePrincipal(userName);
 		
 		principal.getAutorizationModule().updateInfoGluePrincipalPassword(userName, oldPassword, newPassword);
+	}
+	
+	public void changeInfoGluePrincipalUserName(String userName, String newUserName) throws Exception
+	{
+		throw new SystemException("This AuthorizationModule does not support changing user name of a principal");
 	}
 	
 	public void deleteInfoGluePrincipal(String userName) throws Exception

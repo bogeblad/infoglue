@@ -405,7 +405,12 @@ public class TestAuthorizationModule extends BasicIndexedAuthorizationModule imp
 	{
 		throw new SystemException("The Test Authorization module does not support updates of user password yet...");
 	}
-	
+
+	public void changeInfoGluePrincipalUserName(String userName, String newUserName) throws Exception
+	{
+		throw new SystemException("This AuthorizationModule does not support changing user name of a principal");
+	}
+
 	public void deleteInfoGluePrincipal(String userName) throws Exception
 	{
 		throw new SystemException("The Test Authorization module does not support deletion of users yet...");

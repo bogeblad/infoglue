@@ -59,7 +59,9 @@ import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
+import org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
+import org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl;
 import org.infoglue.cms.entities.publishing.PublicationDetailVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationDetailImpl;
@@ -255,9 +257,11 @@ public class WorkingPublicationThread extends Thread
 						    Class type = Class.forName(className);
 			
 						    if(!isDependsClass && 
-						    		className.equalsIgnoreCase(SystemUserImpl.class.getName()) || 
-						    		className.equalsIgnoreCase(RoleImpl.class.getName()) || 
-						    		className.equalsIgnoreCase(GroupImpl.class.getName()))
+									className.equalsIgnoreCase(SystemUserImpl.class.getName()) || 
+									className.equalsIgnoreCase(RoleImpl.class.getName()) || 
+									className.equalsIgnoreCase(GroupImpl.class.getName()) ||
+									className.equalsIgnoreCase(SystemUserRoleImpl.class.getName()) ||
+									className.equalsIgnoreCase(SystemUserGroupImpl.class.getName()))
 						    {
 						        Object[] ids = {objectId};
 						        CacheController.clearCache(type, ids);
@@ -383,11 +387,13 @@ public class WorkingPublicationThread extends Thread
 						    t.printElapsedTime("Clearing all caches took");
 	
 						    if(!className.equals(SystemUserImpl.class.getName()) &&
-						       !className.equals(RoleImpl.class.getName()) &&
-						       !className.equals(GroupImpl.class.getName()))
+								!className.equals(RoleImpl.class.getName()) &&
+								!className.equals(GroupImpl.class.getName()) &&
+								!className.equals(SystemUserRoleImpl.class.getName()) &&
+								!className.equals(SystemUserGroupImpl.class.getName()))
 						 	{
 					    		logger.info("Going to index:" + className + ":" + objectId + ":" + typeId);
-								//Fixa så detta funkar och att delete av version också slår
+								// TODO: Fix so that it works and that delete of versions also applies
 								NotificationMessage notificationMessage = new NotificationMessage("LuceneController", className, "SYSTEM", Integer.parseInt(typeId), Integer.parseInt(objectId), "" + objectName);
 								new Thread(new SearchIndexHelper(notificationMessage)).start();
 								LuceneController.getController().notify(notificationMessage);

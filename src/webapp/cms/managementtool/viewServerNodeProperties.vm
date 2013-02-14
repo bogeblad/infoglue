@@ -450,6 +450,7 @@
 				#editPropertyFieldCSS("ServerNode.property.exportFormat" "exportFormat" "$this.getPropertyValue('exportFormat')" "51" "$!serverNodeId" "$!cmsPH.exportFormat")
 				#editPropertyFieldCSS("ServerNode.property.digitalAssetUploadPath" "digitalAssetUploadPath" "$this.getPropertyValue('digitalAssetUploadPath')" "51" "$!serverNodeId" "$!cmsPH.digitalAssetUploadPath")
 				#editPropertyFieldCSS("ServerNode.property.decoratedPageInvoker" "decoratedPageInvoker" "$this.getPropertyValue('decoratedPageInvoker')" "51" "$!serverNodeId" "$!cmsPH.decoratedPageInvoker")
+				#editPropertyFieldCSS("ServerNode.property.defaultRepositoryAccessRoles" "defaultRepositoryAccessRoles" "$this.getPropertyValue('defaultRepositoryAccessRoles')" "51" "$!serverNodeId" "$!cmsPH.defaultRepositoryAccessRoles")
 			</div>
 		
 			<div class="inlineTabDiv" id="specialSettings">

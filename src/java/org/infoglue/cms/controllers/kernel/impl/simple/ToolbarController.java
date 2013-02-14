@@ -2400,8 +2400,19 @@ public class ToolbarController implements ToolbarProvider
 						  "css/images/v3/passwordIcon.gif",
 						  "accessRights",
 						  "workIframe"));
-
 				//buttons.add(new ToolbarButton("UpdateSystemUserPassword!input.action?userName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding), URIEncoding), getLocalizedString(locale, "images.managementtool.buttons.updateSystemUserPassword"), "Update user password"));
+
+				if (principal.getIsAdministrator())
+				{
+					buttons.add(new ToolbarButton("",
+							getLocalizedString(locale, "tool.managementtool.viewSystemUserUserNameDialog.header"), 
+							getLocalizedString(locale, "tool.managementtool.viewSystemUserUserNameDialog.header"),
+							"UpdateSystemUserUserName!input.action?userName=" + formatter.encodeBase64(userName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
+							"css/images/v3/group.png",
+							"transferUser",
+							"workIframe"));
+				}
+				
 			}
 		}
 		

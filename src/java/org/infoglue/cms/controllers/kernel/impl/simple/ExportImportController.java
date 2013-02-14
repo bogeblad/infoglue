@@ -139,14 +139,14 @@ public class ExportImportController extends BaseController
 	{
 		Timer t = new Timer();
 		logger.info("onlyLatestVersions:" + onlyLatestVersions);
-		File file = exportContents(contentId, assetMaxSize);
+		File file = exportContents(contentId, assetMaxSize, false);
 		t.printElapsedTime("Exporting file of " + (file != null ? file.length() / 1000 + " KB" : " error size ") + " took:");
 		if(file != null)
 			importContent(file, newParentContentId, onlyLatestVersions);
 		t.printElapsedTime("Importing file of " + (file != null ? file.length() / 1000 + " KB" : " error size ") + " took:");
 	}
 	
-	private File exportContents(Integer contentId, Integer assetMaxSize) throws SystemException, Bug, TransactionNotInProgressException, PersistenceException 
+	private File exportContents(Integer contentId, Integer assetMaxSize, boolean includeSystemTypes) throws SystemException, Bug, TransactionNotInProgressException, PersistenceException 
 	{
 		File file = null;
 		
@@ -176,6 +176,7 @@ public class ExportImportController extends BaseController
 			
 			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
 			List categories = CategoryController.getController().getAllActiveCategories();
+			List languages = LanguageController.getController().getLanguageList(db);
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
 			
@@ -191,16 +192,17 @@ public class ExportImportController extends BaseController
 		    Marshaller marshaller = new Marshaller(osw);
 		    marshaller.setMapping(map);
 			marshaller.setEncoding(encoding);
+			marshaller.setValidation(false);
 			DigitalAssetBytesHandler.setMaxSize(assetMaxSize);
 		
 			infoGlueExportImpl.getRootContent().addAll(contents);
-			//infoGlueExportImpl.getRootSiteNode().addAll(siteNodes);
-			
-			//infoGlueExportImpl.getRootContents().add((ContentImpl)content);
-			//infoGlueExportImpl.getRootSiteNodes().add((SiteNodeImpl)siteNode);
-			
-			infoGlueExportImpl.setContentTypeDefinitions(contentTypeDefinitions);
-			infoGlueExportImpl.setCategories(categories);
+		
+			if(includeSystemTypes)
+			{
+				infoGlueExportImpl.setLanguages(languages);
+				infoGlueExportImpl.setContentTypeDefinitions(contentTypeDefinitions);
+				infoGlueExportImpl.setCategories(categories);
+			}
 			
 			marshaller.marshal(infoGlueExportImpl);
 			
@@ -435,37 +437,46 @@ public class ExportImportController extends BaseController
 		{
 			if(contentTypeDefinitionIdMap.containsKey(contentTypeDefinitionId))
 				contentTypeDefinitionId = (Integer)contentTypeDefinitionIdMap.get(contentTypeDefinitionId);
-				
-	    	ContentTypeDefinition originalContentTypeDefinition = null;
-	    	Iterator contentTypeDefinitionsIterator = contentTypeDefinitions.iterator();
-	    	while(contentTypeDefinitionsIterator.hasNext())
-	    	{
-	    		ContentTypeDefinition contentTypeDefinitionCandidate = (ContentTypeDefinition)contentTypeDefinitionsIterator.next();		    		
-	    		if(contentTypeDefinitionCandidate.getId().intValue() == contentTypeDefinitionId.intValue())
-	    		{
-	    			originalContentTypeDefinition = contentTypeDefinitionCandidate;
-	    			break;
-	    		}
-	    	}
-
-	    	if(originalContentTypeDefinition != null)
-	    	{
-		    	contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithName(originalContentTypeDefinition.getName(), db);
-
-		    	if(contentTypeDefinition == null)
-				{
-		    		Integer before = originalContentTypeDefinition.getId();
-		    		db.create(originalContentTypeDefinition);
-		    		contentTypeDefinition = originalContentTypeDefinition;
-		    		Integer after = originalContentTypeDefinition.getId();
-		    		contentTypeDefinitionIdMap.put(before, after);
+			
+			if(contentTypeDefinitions == null || contentTypeDefinitions.size() == 0)
+			{
+				contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
+				content.setContentTypeDefinition((ContentTypeDefinitionImpl)contentTypeDefinition);
+			}				
+			else
+			{
+		    	ContentTypeDefinition originalContentTypeDefinition = null;
+		    	Iterator contentTypeDefinitionsIterator = contentTypeDefinitions.iterator();
+		    	while(contentTypeDefinitionsIterator.hasNext())
+		    	{
+		    		ContentTypeDefinition contentTypeDefinitionCandidate = (ContentTypeDefinition)contentTypeDefinitionsIterator.next();		    		
+		    		if(contentTypeDefinitionCandidate.getId().intValue() == contentTypeDefinitionId.intValue())
+		    		{
+		    			originalContentTypeDefinition = contentTypeDefinitionCandidate;
+		    			break;
+		    		}
 		    	}
 			
-	    		content.setContentTypeDefinition((ContentTypeDefinitionImpl)contentTypeDefinition);
-
-	    	}
-		    else
-		    	logger.error("The content " + content.getName() + " had a content type not found amongst the listed ones:" + contentTypeDefinitionId);
+		    	if(originalContentTypeDefinition != null)
+		    	{
+			    	contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithName(originalContentTypeDefinition.getName(), db);
+	
+			    	if(contentTypeDefinition == null)
+					{
+			    		Integer before = originalContentTypeDefinition.getId();
+			    		db.create(originalContentTypeDefinition);
+			    		contentTypeDefinition = originalContentTypeDefinition;
+			    		Integer after = originalContentTypeDefinition.getId();
+			    		contentTypeDefinitionIdMap.put(before, after);
+			    	}
+				
+		    		content.setContentTypeDefinition((ContentTypeDefinitionImpl)contentTypeDefinition);
+	
+		    	}
+			    else
+			    	logger.error("The content " + content.getName() + " had a content type not found amongst the listed ones:" + contentTypeDefinitionId);
+			}
+			
 		}
 	    else
 	    	logger.error("The content " + content.getName() + " had no content type at all");
@@ -550,8 +561,13 @@ public class ExportImportController extends BaseController
 		while(contentVersionsIterator.hasNext())
 		{
 			ContentVersion contentVersion = (ContentVersion)contentVersionsIterator.next();
-			Language language = LanguageController.getController().getLanguageWithCode(contentVersion.getLanguage().getLanguageCode(), db);
-			logger.info("Creating contentVersion for language:" + contentVersion.getLanguage().getLanguageCode() + " on content " + content.getName());
+			Language language = null;
+			if(contentVersion.getLanguage() != null)
+				language = LanguageController.getController().getLanguageWithCode(contentVersion.getLanguage().getLanguageCode(), db);
+			else
+				language = LanguageController.getController().getLanguageWithId(contentVersion.getLanguageId(), db);
+				
+			logger.info("Creating contentVersion for language:" + language.getLanguageCode() + " on content " + content.getName());
 
 			contentVersion.setOwningContent((ContentImpl)content);
 			contentVersion.setLanguage((LanguageImpl)language);

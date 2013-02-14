@@ -9,7 +9,51 @@
 	
 	<script type="text/javascript">
 	<!--
-	
+		function addUserRow()
+		{
+			var currentUserRowIndex = $("#currentUserRowIndex").val();
+			var previousRow 		= $("#" + currentUserRowIndex + "_userRow");
+				
+			var newRowId 			= parseInt(currentUserRowIndex) + 1;
+			var newRow 				= previousRow.clone(true);
+			
+			var inputFields 		= newRow.find("input");
+			
+			inputFields.each(function(index) {
+				var oldName = $(this).attr("name");
+				var newName = newRowId + oldName.substring(oldName.indexOf("_"));
+				$(this).attr("name", newName);
+				$(this).prop("checked", false);
+			});
+			
+			newRow.find("#" + currentUserRowIndex + "_userName").attr("id", newRowId + "_userName");
+			newRow.attr("id", newRowId + "_userRow");
+			previousRow.find(".addButton").remove();
+			newRow.find(".showUsers").attr("href", "javascript: setSelectedUserRow(" + newRowId + "); showUsers(" + newRowId + ")");
+			newRow.find(".selectMyself").attr("href", "javascript: selectMyself(" + newRowId + ")");
+			
+			$("#usersTable").append(newRow);
+			
+			$("#" + newRowId + "_userName").val("");
+			$("#" + newRowId + "_userName").focus();
+			$("#currentUserRowIndex").val(newRowId);
+		}
+		
+		function setSelectedUserRow(aRowId)
+		{
+			$("#selectedUserRowIndex").val(aRowId);
+		}
+		
+		function checkForEnter(evt)
+		{
+			evt = evt || window.event;
+		    var charCode = evt.keyCode || evt.which;
+		    if (charCode == 13) 
+		    {
+		        addUserRow();
+		    }
+		}
+		
 		function showDiv(id)
 		{
 			document.getElementById(id).style.visibility = 'visible';
@@ -27,12 +71,15 @@
 		
 		function selectUser(userName)
 		{
-			document.getElementById("userName").value = userName;
+			var selectedUserRowIndex = $("#selectedUserRowIndex").val();
+			$("#" + selectedUserRowIndex + "_userName").val(userName);
+			addUserRow();
 		}
 	
-		function selectMyself()
+		function selectMyself(aRowIndex)
 		{
-			document.getElementById("userName").value = "$infoGluePrincipal.name";
+			document.getElementById(aRowIndex + "_userName").value = "$infoGluePrincipal.name";
+			addUserRow();
 		}
 		
 		function toggleRole(roleName)
@@ -207,12 +254,11 @@
 			#if($closeOnLoad)
 				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 			#else
-				$("#tabsContainer").tabs( { 
+				$("#tabsContainer").tabs( {
 					show:function() { resizeScrollArea(); }
 				});
 			#end
 		});
-			
 	-->
 	</script>
 	
@@ -268,6 +314,8 @@
 				<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl"/>
 				<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 				<input type="hidden" name="closeOnLoad" value="false"/>
+				<input type="hidden" id="currentUserRowIndex" name="currentUserRowIndex" value="0"/>
+				<input type="hidden" id="selectedUserRowIndex" name="selectedUserRowIndex" value="0"/>
 				
 				#set($interceptionPointIndex = 0)
 				#foreach($interceptionPointVO in $interceptionPointVOList)
@@ -279,7 +327,6 @@
 						#set($accessRightGroupIndex = $accessRightGroupIndex + 1)
 					#end
 				#end
-				
 				
 				<script type="text/javascript">var useAnonymousWarningCheck = false;</script>
 				
@@ -469,37 +516,47 @@
 				<tr>
 					<th colspan="$colspan">$ui.getString("tool.common.accessRights.addUserText")</th>
 				</tr>
-				<tr>
-					<td style="border-bottom: 0px; padding-top: 4px; white-space: nowrap;">
-						<input type="textfield" id="userName" name="userName" value="" style="display: block; float: left; width: 80px;"/>
-						<a href="javascript:showUsers();" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
-						<a href="javascript:selectMyself();" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/user18.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
-						<div style="clear:both;"></div>
-						<a href="javascript:document.addUserForm.submit();" style="display: block; float: left; border: 1px solid #ccc; height: 14px; background: url(css/images/v3/footerBackground.gif) repeat-x 0px -10px; white-space: nowrap; padding: 2px 10px 2px 10px; margin-left: 4px;">$ui.getString("tool.common.accessRights.addUserButtonLabel")</a>
+				<tr id="0_userRow">
+					<td style="padding-top: 4px; white-space: nowrap;">
+						<input type="textfield" id="0_userName" name="0_userName" value="" style="display: block; float: left; width: 80px;" onkeydown="checkForEnter();" />
+						<a class="showUsers" href="javascript: setSelectedUserRow(0); showUsers(0);" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+						<a class="selectMyself" href="javascript:selectMyself(0);" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/user18.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
 					</td>
-					<td style="border-bottom: 0px; text-align: center;">&nbsp;</td>
+					<td>&nbsp;</td>
 					#set($interceptionPointIndex = 0)
 					#foreach($interceptionPointVO in $interceptionPointVOList)
 						##if(($interceptionPointVO.getUsesExtraDataForAccessControl() && $extraParameters && $extraParameters != "") || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "")))
 						#if(($interceptionPointVO.getUsesExtraDataForAccessControl() && (($extraParameters && $extraParameters != "") || $extraMultiParameters)) || (!$interceptionPointVO.getUsesExtraDataForAccessControl() && (!$extraParameters || $extraParameters == "") && !$extraMultiParameters))
-							<td style="border-bottom: 0px; text-align: center; padding-top: 2px;" valign="top">
+							<td style="text-align: center; padding-top: 2px;" valign="top">
 								#set($checked = "")
 								##if($this.getHasAccessRight($interceptionPointVO.id, $extraParameters, $role.name))
 									##set($checked = "checked")
 									##set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
 								##end 
 								
-								<input type="hidden" name="${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id"/>
-								<input type="hidden" name="interceptionPointId" value="$interceptionPointVO.id"/>
-								<input type="checkbox" name="${interceptionPointVO.id}_hasAccess" value="true" $checked/>
+								<input type="hidden" name="0_${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id"/>
+								<input type="hidden" name="0_interceptionPointId" value="$interceptionPointVO.id"/>
+								<input type="checkbox" name="0_${interceptionPointVO.id}_hasAccess" value="true" $checked/>
 							</td>
-							<td style="border-bottom: 0px;">&nbsp;</td>
+							<td>&nbsp;</td>
 							#set($interceptionPointIndex = $interceptionPointIndex + 1)
 						#end
 					#end
+					<td>
+						<!--
+						<a class="addButton" href="javascript: addUserRow();" style="display: block; float: left; border: 1px solid #ccc; height: 14px; background: url(css/images/v3/footerBackground.gif) repeat-x 0px -10px; white-space: nowrap; padding: 2px 10px 2px 10px; margin-left: 4px;">$ui.getString("tool.common.accessRights.addUserButtonLabel")</a>
+						-->
+					</td>
 				</tr>
 				</table>
-			</form>		
+			</form>
+			<p>
+				<!--
+				$ui.getString("tool.common.accessRights.addMoreUsers.label")
+				<div style="clear:both;"></div>
+				-->
+				<a href="javascript:document.addUserForm.submit();" style="display: block; float: left; border: 1px solid #ccc; height: 14px; background: url(css/images/v3/footerBackground.gif) repeat-x 0px -10px; white-space: nowrap; padding: 2px 10px 2px 10px; margin-left: 4px;">$ui.getString("tool.common.accessRights.addUserButtonLabel")</a>
+			</p>	
 		</div>
 
 		<div id="debugTab" class="inlineTabDiv">

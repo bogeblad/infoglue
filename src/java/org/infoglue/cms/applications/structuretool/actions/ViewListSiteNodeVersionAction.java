@@ -46,6 +46,8 @@ import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 /**
  *
@@ -79,6 +81,8 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
+		Timer t = new Timer();
+		
 		Set<ContentVersionVO> contentVersionVOList = new HashSet<ContentVersionVO>();
 		Set<SiteNodeVersionVO> siteNodeVersionVOList = new HashSet<SiteNodeVersionVO>();
 
@@ -90,6 +94,8 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 		    if(siteNodeVersionVO != null)
 		        this.siteNodeVersionId = siteNodeVersionVO.getId();
 		}
+		
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListSiteNodeVersion 1", t.getElapsedTime());
 		
 		if(this.siteNodeVersionId != null)
 		{
@@ -121,13 +127,19 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 				}
 			}
 			
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListSiteNodeVersion 2", t.getElapsedTime());
+			
 			SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(this.siteNodeId, SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, recurseSiteNodes, this.getInfoGluePrincipal());
 
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListSiteNodeVersion 3", t.getElapsedTime());
+			
 			this.siteNodeVersionVOList = new ArrayList<SiteNodeVersionVO>(siteNodeVersionVOList);
 			this.contentVersionVOList = new ArrayList<ContentVersionVO>(contentVersionVOList);
 			
 			Collections.sort(this.siteNodeVersionVOList, Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
 			Collections.sort(this.contentVersionVOList, Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
+			
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListSiteNodeVersion 4", t.getElapsedTime());
 		}
 
 	    return "success";

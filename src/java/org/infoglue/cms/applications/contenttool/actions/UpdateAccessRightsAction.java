@@ -26,6 +26,7 @@ package org.infoglue.cms.applications.contenttool.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
@@ -50,7 +51,9 @@ import webwork.action.Action;
 public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = 1L;
-	
+
+	private final static Logger logger = Logger.getLogger(UpdateAccessRightsAction.class.getName());
+
 	private Integer interceptionPointId;
 	private Integer accessRightId;
 	private String parameters = "";
@@ -265,7 +268,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			
 			ceb.throwIfNotEmpty();
 		}
-		
+
 		String userName = this.getRequest().getParameter("userName");
 		if(userName != null && !userName.equals(""))
 		{

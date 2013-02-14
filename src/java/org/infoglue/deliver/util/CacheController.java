@@ -633,7 +633,6 @@ public class CacheController extends Thread
 				String[] newGroups = new String[groupCandidateListSpecial.size()];
 				groups = groupCandidateListSpecial.toArray(newGroups);
 			}
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("groupStuff", t.getElapsedTimeNanos() / 1000);
 			
 			if(logger.isInfoEnabled() && cacheName.equalsIgnoreCase("pageCacheExtra"))
 			{

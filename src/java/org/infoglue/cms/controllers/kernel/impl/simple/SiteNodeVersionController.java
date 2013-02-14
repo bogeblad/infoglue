@@ -62,6 +62,8 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.DateHelper;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 public class SiteNodeVersionController extends BaseController 
 {
@@ -1286,6 +1288,8 @@ public class SiteNodeVersionController extends BaseController
 	
 	private void getSiteNodeAndAffectedItemsRecursive(SiteNodeVO siteNodeVO, Integer stateId, List checkedSiteNodes, List checkedContents, Database db, Set<SiteNodeVersionVO> siteNodeVersionVOList, Set<ContentVersionVO> contentVersionVOList, boolean includeMetaInfo, boolean recurseSiteNodes, InfoGluePrincipal principal) throws ConstraintException, SystemException, Exception
 	{
+		Timer t = new Timer();
+		
 	    checkedSiteNodes.add(siteNodeVO.getId());
         
 	    logger.info("Checking siteNode:" + siteNodeVO.getName() + ":" + stateId + " EXISTING:" + siteNodeVersionVOList.size());
@@ -1293,6 +1297,8 @@ public class SiteNodeVersionController extends BaseController
 		//SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersionIfInState(siteNode, stateId, db);
 		SiteNodeVersionVO siteNodeVersionVO = getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
 		//SiteNodeVersion siteNodeVersion = getLatestActiveSiteNodeVersion(db, siteNodeVO.getId());
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getSiteNodeAndAffectedItemsRecursive.getLatestActiveSiteNodeVersionVO", t.getElapsedTime());
+		
 		if(siteNodeVersionVO != null && siteNodeVersionVO.getStateId().intValue() == stateId.intValue() && !siteNodeVO.getIsDeleted())
 		{			
 		    siteNodeVersionVOList.add(siteNodeVersionVO);
@@ -1301,8 +1307,9 @@ public class SiteNodeVersionController extends BaseController
 		if(siteNodeVersionVO != null && !siteNodeVO.getIsDeleted())
 		{			
 			List relatedEntities = RegistryController.getController().getMatchingRegistryVOListForReferencingEntity(SiteNodeVersion.class.getName(), siteNodeVersionVO.getId().toString(), db);
-	        Iterator relatedEntitiesIterator = relatedEntities.iterator();
-	        
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getSiteNodeAndAffectedItemsRecursive.getMatchingRegistryVOListForReferencingEntity", t.getElapsedTime());
+
+			Iterator relatedEntitiesIterator = relatedEntities.iterator();
 	        while(relatedEntitiesIterator.hasNext())
 	        {
 	            RegistryVO registryVO = (RegistryVO)relatedEntitiesIterator.next();
@@ -1391,6 +1398,7 @@ public class SiteNodeVersionController extends BaseController
 	    		    checkedContents.add(new Integer(registryVO.getEntityId()));
 	            }
 	        //}	    
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getSiteNodeAndAffectedItemsRecursive.loop", t.getElapsedTime());
 			}
 		}
 		
@@ -1398,6 +1406,7 @@ public class SiteNodeVersionController extends BaseController
         {
 			// Get the children of this siteNode and do the recursion
         	List childSiteNodeList = SiteNodeController.getController().getSiteNodeChildrenVOList(siteNodeVO.getId(), db);
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getSiteNodeAndAffectedItemsRecursive.getSiteNodeChildrenVOList", t.getElapsedTime());
 			//Collection childSiteNodeList = siteNode.getChildSiteNodes();
 			Iterator cit = childSiteNodeList.iterator();
 			while (cit.hasNext())

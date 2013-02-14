@@ -255,9 +255,21 @@
 				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 			#else
 				$("#tabsContainer").tabs( {
+<<<<<<< HEAD
+=======
+					#if($anchor)
+						selected: $anchor,
+					#end
+>>>>>>> 0a0eda821fe194db304f094c083114e5a16d478b
 					show:function() { resizeScrollArea(); }
 				});
 			#end
+
+			$('#tabsContainer').bind('tabsselect', function(event, ui) 
+			{
+			    $("#anchor").val(ui.index);
+			    console.log("Selected tab: " + $("#anchor").val());
+			});
 		});
 	-->
 	</script>
@@ -314,8 +326,12 @@
 				<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl"/>
 				<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 				<input type="hidden" name="closeOnLoad" value="false"/>
+<<<<<<< HEAD
 				<input type="hidden" id="currentUserRowIndex" name="currentUserRowIndex" value="0"/>
 				<input type="hidden" id="selectedUserRowIndex" name="selectedUserRowIndex" value="0"/>
+=======
+				<input type="hidden" name="anchor" id="anchor" value="$anchor"/>
+>>>>>>> 0a0eda821fe194db304f094c083114e5a16d478b
 				
 				#set($interceptionPointIndex = 0)
 				#foreach($interceptionPointVO in $interceptionPointVOList)

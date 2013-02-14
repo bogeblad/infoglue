@@ -628,6 +628,11 @@
 		<view name="successV3">ViewSystemUser!v3.action</view>
 		<view name="error">/cms/managementtool/error.vm</view>
 	</action>
+	<action name="org.infoglue.cms.applications.managementtool.actions.UpdateSystemUserUserNameAction" alias="UpdateSystemUserUserName">
+		<view name="input">/cms/managementtool/viewSystemUserUserNameDialog.vm</view>
+		<view name="success">ViewSystemUser.action?userName=${newUserName}</view>
+		<view name="error">/cms/managementtool/error.vm</view>
+	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.DeleteSystemUserAction" alias="DeleteSystemUser">
 		<view name="success">ViewListSystemUser.action</view>
 		<view name="successV3">ViewListSystemUser!v3.action</view>

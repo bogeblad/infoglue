@@ -26,6 +26,8 @@ package org.infoglue.cms.security;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.jsp.JspException;
+
 import org.infoglue.cms.entities.management.GroupVO;
 import org.infoglue.cms.entities.management.RoleVO;
 import org.infoglue.cms.entities.management.SystemUserVO;
@@ -229,6 +231,14 @@ public interface AuthorizationModule
 	 */
 
 	public void updateInfoGluePrincipalPassword(String userName, String oldPassword, String newPassword) throws Exception;
+
+	/**
+	 * This method changes the name of the given <em>userName</em> to <em>newUserName</em>.
+	 * @throws SystemException If the {@link AuthorizationModule} does not support changing user name of a user. The exception may be thrown 
+	 * for other reasons as well.
+	 */
+
+	public void changeInfoGluePrincipalUserName(String userName, String newUserName) throws Exception, SystemException;
 
 	/**
 	 * This method is used to delete an existing user.  

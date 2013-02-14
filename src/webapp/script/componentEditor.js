@@ -1229,7 +1229,7 @@ function editInline(selectedRepositoryId, selectedContentId, selectedLanguageId,
 						 
 						 	if(enableWYSIWYG == "true")
 						 	{
-						 		if(userPrefferredWYSIWYG  == "ckeditor3" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+						 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 						 		{
 						 			var usedWidth = totalWidth;
 						 			if(totalWidth < 100)
@@ -1447,7 +1447,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		var value = "";
 		if(enableWYSIWYG == "true")
 		{
-	 		if(userPrefferredWYSIWYG  == "ckeditor3" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+	 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 	 		{
 	 			var value = CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].getData();
 	 		}
@@ -1485,7 +1485,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 				//alert( "Data Saved: " + msg );
 		     	if(enableWYSIWYG == "true")
 		     	{	
-		     		if(userPrefferredWYSIWYG  == "ckeditor3" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+		     		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 		     		{
 		     			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].destroy();
 		     			$("#attribute" + selectedContentId + selectedAttributeName).html(msg);
@@ -1580,7 +1580,7 @@ function cancelSaveAttribute(selectedContentId, selectedLanguageId, selectedAttr
 		   	success: function(msg){
 		   		if(enableWYSIWYG == "true")
 				{
-		     		if(userPrefferredWYSIWYG  == "ckeditor3" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+		     		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 		     		{
 		     			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].destroy();
 		     		}
@@ -1805,7 +1805,7 @@ function showComponentProperties(id, event)
 			//alert("Found:" + $(this).attr("id"));
 			var parameterString = "repositoryId=" + repositoryId + "&contentId=" + metaInfoContentId + "&languageId=" + languageId;
 			//alert("parameterString:" + parameterString);
-	 		if(userPrefferredWYSIWYG  == "ckeditor3" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+	 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 	 		{
 				var toolbarName = $(this).attr("toolbarName");
 				if(!toolbarName || toolbarName == "")

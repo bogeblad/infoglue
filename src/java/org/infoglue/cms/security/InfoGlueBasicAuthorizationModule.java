@@ -872,6 +872,23 @@ public class InfoGlueBasicAuthorizationModule extends BaseController implements 
 			SystemUserController.getController().updatePassword(userName, oldPassword, newPassword, transactionObject);
 	    }
 	}
+
+	/**
+	 * This method is used to change the user name of a user. All references to the old <em>userName</em> are changed
+	 * to the <em>newUserName</em>.
+	 */
+	
+	public void changeInfoGluePrincipalUserName(String userName, String newUserName) throws Exception
+	{
+		if(transactionObject == null)
+		{
+			SystemUserController.getController().changeUserName(userName, newUserName);
+		}
+		else
+		{
+			SystemUserController.getController().changeUserName(userName, newUserName, transactionObject);
+		}
+	}
 	
 	public void deleteInfoGluePrincipal(String userName) throws Exception
 	{

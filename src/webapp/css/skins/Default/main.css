@@ -445,6 +445,7 @@ img.scaledbordered {
 
 .save { background:url(../../images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .saveAndExit {background:url(../../images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.ok {background: url(../../images/v3/check.png) no-repeat left center;  background-position: 0px 3px;}
 .cancel {background:url(../../images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 3px;}
 .close {background:url(../../images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
 .help {background:url(../../images/v3/helpIcon.gif) no-repeat left center; background-position: 0px 2px;}
@@ -477,6 +478,7 @@ img.scaledbordered {
 .trashcan {background:url(../../images/v3/trashcan.png) no-repeat left center; background-position: 0px 2px;}
 .clearTrashcan {background:url(../../images/v3/clearTrashcan.png) no-repeat left center; background-position: 0px 2px;}
 .accessRights {background:url(../../images/v3/file_locked.png) no-repeat left center; background-position: 0px 4px;}
+.transferUser {background:url(../../images/v3/group.png) no-repeat left center; background-position: 0px 4px;}
 .deployContent {background:url(../../images/v3/up.png) no-repeat left center; background-position: 0px 4px;}
 .componentAccessRights {background:url(../../images/v3/locked.png) no-repeat left center; background-position: 0px 4px;}
 

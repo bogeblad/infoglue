@@ -210,7 +210,15 @@ public class SiteNodeVersionController extends BaseController
 
 		try
 		{
-			int maxSortOrder = siteNode.getParentSiteNode().getChildSiteNodes().size()-1;
+			int maxSortOrder;
+			if (siteNode.getParentSiteNode() != null)
+			{
+				maxSortOrder = siteNode.getParentSiteNode().getChildSiteNodes().size()-1;
+			}
+			else
+			{
+				maxSortOrder = 0;
+			}
 			//SiteNode siteNode = SiteNodeController.getSiteNodeWithId(siteNodeId, db);
             
 			siteNodeVersion = new SiteNodeVersionImpl();

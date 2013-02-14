@@ -3,7 +3,7 @@
 	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
 	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
- 	#if($prefferedWYSIWYG == "ckeditor3")
+ 	#if($prefferedWYSIWYG == "ckeditor4")
 
  		<script type="text/javascript" src="${root}/applications/ckeditor-latest/ckeditor.js"></script>
 		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
@@ -96,7 +96,7 @@
 			{
 				var plainTextAreaName = plainEditors[i];
 
-				#if($prefferedWYSIWYG == "ckeditor3")
+				#if($prefferedWYSIWYG == "ckeditor4")
 					oEditor = CKEDITOR.instances["FullText"];
 					oEditor = CKEDITOR.instances[plainTextAreaName];
 					if(oEditor.checkDirty())
@@ -191,7 +191,7 @@
 		{
 			#if($readonly == "")
 				
-				#if($prefferedWYSIWYG == "ckeditor3")
+				#if($prefferedWYSIWYG == "ckeditor4")
 
 					for(var i in plainEditors)
 					{
@@ -371,14 +371,37 @@
 			    	$("#tabsContainer").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
 			    	loadFrame(2);
 			    #else 
-		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
+						if(ui.index == 2) 
+						{
+							$(".attachAsset").show();
+						}
+						else
+						{
+							$(".attachAsset").hide();
+						} 
+						resizeScrollArea(); 
+					}, 
+					select: function(e, ui) { loadFrame(ui.index); }}  );
+					
 			    	##alert("Anchor: $anchor");
 		  		#end
 		  	#else
 		  		$("#tabsContainer").tabs(
 		  			{ 
 		  				cache: false, 
-		  				show:function(event, ui) { resizeScrollArea(); },
+		  				show:function(event, ui) {
+							if(ui.index == 2) 
+							{
+								console.log($(".attachAsset"));
+								$(".attachAsset").show();
+							}
+							else
+							{
+								$(".attachAsset").hide();
+							}
+							resizeScrollArea(); 
+						},
 		  				select: function(e, ui) { loadFrame(ui.index); }
 		  			} 
 		  		);
@@ -491,7 +514,7 @@
 	   				//alert("currentEditorId:" + currentEditorId);
 					if(currentEditorId == 1)
 					{
-						#if($prefferedWYSIWYG == "ckeditor3")
+						#if($prefferedWYSIWYG == "ckeditor4")
 							var editor_data = CKEDITOR.instances.${attribute.name}.getData();
 							document.getElementById("$attribute.name").value = untransformAttribute(editor_data);
 						#else
@@ -729,7 +752,13 @@
 					<script type="text/javascript">
 					<!--
 						$(document).ready(function(){
-							$("#attributeTabsContainer").tabs({ show:function() { resizeScrollArea(); }, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
+							$("#attributeTabsContainer").tabs({ show:function(e, ui) { 
+								resizeScrollArea(); 
+								if(ui.index == 2) 
+									$(".attachAsset").hide();
+								else
+									$(".attachAsset").show();
+							}, select: function(event, ui) { resizeScrollArea(); $("#activeDivId").val(ui.panel.id); $("#deleteActiveDivId").val(ui.panel.id) } });
 						});
 					-->
 					</script>

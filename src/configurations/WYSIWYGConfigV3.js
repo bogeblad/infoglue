@@ -11,9 +11,20 @@ if(typeof CKEDITOR != "undefined")
 	    [
 	        ['Bold','Italic','NumberedList','BulletedList','Link','Unlink','Image','Flash','Maximize','Format']
 	    ];
-	
-	    config.toolbar_Default =
-	    [
+		config.toolbar_Default =
+		[
+			['Source','-','Save','Preview','Print','Template'],
+			['Cut','Copy','PasteText','Undo','Redo'],
+			['Find','SelectAll','SpellChecker','Scayt'],
+			['Bold','Italic','Subscript','Superscript','RemoveFormat'],
+			['NumberedList','BulletedList'],
+			['Link','Unlink','Anchor'],
+			['Image','Flash','SpecialChar','Iframe'],
+			['Format','FontSize'],
+			['Maximize','ShowBlocks']
+		];
+
+	    /*[
 	        ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Scayt'],
 	        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	        ['Image'],
@@ -23,7 +34,7 @@ if(typeof CKEDITOR != "undefined")
 	        ['NumberedList','BulletedList'],
 	        ['Link','Unlink'],
 	        ['Maximize','-','About']
-	    ];
+	    ];*/
 	    
 	    config.toolbar_Full =
     	[
@@ -43,9 +54,9 @@ if(typeof CKEDITOR != "undefined")
     	    ['TextColor','BGColor'],
     	    ['Maximize', 'ShowBlocks','-','About']
     	];
-
-	    config.skin = 'office2003';
-	    config.contentsCss = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
+	    config.skin = 'kama';
+	   // config.skin = 'office2003';
+	   // config.contentsCss = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
 	    	
 	    config.filebrowserBrowseUrl = '$request.contextPath/ViewLinkDialog!viewLinkDialogForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")';
 	    config.filebrowserImageBrowseUrl = '$request.contextPath/ViewContentVersion!viewAssetBrowserForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")&assetTypeFilter=*';

@@ -130,8 +130,7 @@ public class AccessRightController extends BaseController
 	public void preCacheUserAccessRightVOList(InfoGluePrincipal principal, Database db) throws Exception
 	{
 		Timer t = new Timer();
-
-		//Iför detta sen också - cachear alla sidor som är skyddade..
+		//Ifor detta sen ocksa - cachear alla sidor som ar skyddade..
 		/*
 		select accessRightId from cmAccessRight ar INNER JOIN
 		(  
@@ -1103,7 +1102,7 @@ public class AccessRightController extends BaseController
 			throw new SystemException(e.getMessage());
 		}
 	}			
-	
+
 	
 	public void updateGroups(Integer accessRightId, String parameters, String[] groupNames) throws ConstraintException, SystemException
 	{
@@ -1299,6 +1298,81 @@ public class AccessRightController extends BaseController
 		catch (Exception e) 
 		{
 			logger.info("An error occurred so we should not complete the transaction:" + e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Adds access for the role with the given <em>roleName</em>. The role is given access to all interception points in the given <em>interceptionPointCategory</em>.
+	 * If the given category does not match any category in the system will not do anything.
+	 * 
+	 * All current access rights to the <em>parameters</em> for the given roleName are removed before applying the new access rights.
+	 * 
+	 * @param interceptionPointCategory
+	 * @param parameters
+	 * @param roleName
+	 * @throws ConstraintException
+	 * @throws SystemException Thrown if a database error occurs or if the given roleName does not match a role in the system.
+	 */
+	@SuppressWarnings("unchecked")
+	public void addRoleRights(String interceptionPointCategory, String parameters, String roleName) throws SystemException
+	{
+		Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+			beginTransaction(db);
+
+			// Verify that the role exists in the system.
+			try
+			{
+			    InfoGlueRole role = RoleControllerProxy.getController(db).getRole(roleName);
+			    if(role == null)
+			        throw new SystemException("The role named " + roleName + " does not exist in the system.");
+			}
+			catch(Exception e)
+			{
+		        throw new SystemException("The role named " + roleName + " does not exist in the system.");
+			}
+
+			// Delete all existing access right for this role on this parameter and category group
+			List<AccessRightRole> accessRightsRole = getAccessRightsRole(interceptionPointCategory, roleName, parameters, db, false);
+		    Iterator<AccessRightRole> accessRightsRoleIterator = accessRightsRole.iterator();
+		    while(accessRightsRoleIterator.hasNext())
+		    {
+				AccessRightRole accessRightRole = (AccessRightRole)accessRightsRoleIterator.next();
+
+		        db.remove(accessRightRole.getAccessRight());
+
+		        accessRightsRoleIterator.remove();
+		        db.remove(accessRightRole);
+		    }
+
+		    // Add acces rights for each interception point in the category
+			List<InterceptionPoint> interceptionPointList = InterceptionPointController.getController().getInterceptionPointList(interceptionPointCategory, db);
+			for(InterceptionPoint interceptionPoint : interceptionPointList)
+			{
+				AccessRightVO accessRightVO = new AccessRightVO();
+				accessRightVO.setParameters(parameters);
+
+				AccessRight accessRight = create(accessRightVO, interceptionPoint, db);
+
+				if(roleName != null && accessRight != null)
+				{
+					AccessRightRoleVO accessRightRoleVO = new AccessRightRoleVO();
+					accessRightRoleVO.setRoleName(roleName);
+					AccessRightRole accessRightRole = createAccessRightRole(db, accessRightRoleVO, accessRight);
+					accessRight.getRoles().add(accessRightRole);
+				}
+			}
+
+			commitTransaction(db);
+		}
+		catch (Exception e)
+		{
+			logger.error("An error occurred so we should not complete the transaction when add role access rights to Interception point category: '" + interceptionPointCategory + "'. Message: " + e.getMessage() + ". Type: " + e.getClass());
+			logger.warn("An error occurred so we should not complete the transaction when add role access rights to Interception point category: '" + interceptionPointCategory, e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
@@ -2926,7 +3000,54 @@ public class AccessRightController extends BaseController
 		
 		return accessRightsRoles;		
 	}
-	
+
+	public List<AccessRightRole> getAccessRightsRole(String interceptionPointCategory, String roleName, String parameters, Database db, boolean readOnly) throws SystemException, Bug
+	{
+		List<AccessRightRole> accessRightsRoles = new ArrayList<AccessRightRole>();
+
+		try
+		{
+			OQLQuery oql = null;
+
+			if(parameters == null || parameters.length() == 0)
+			{
+				oql = db.getOQLQuery("SELECT aru FROM org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl aru WHERE aru.accessRight.interceptionPoint.category = $1 AND aru.roleName = $2 AND (is_undefined(aru.accessRight.parameters) OR aru.accessRight.parameters = $3)");
+				oql.bind(interceptionPointCategory);
+				oql.bind(roleName);
+				oql.bind(parameters);
+			}
+			else
+			{
+				oql = db.getOQLQuery("SELECT aru FROM org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl aru WHERE aru.accessRight.interceptionPoint.category = $1 AND aru.roleName = $2 AND aru.accessRight.parameters = $3");
+				oql.bind(interceptionPointCategory);
+				oql.bind(roleName);
+				oql.bind(parameters);
+			}
+
+			QueryResults results = null;
+
+			if(readOnly)
+				results = oql.execute(Database.READONLY);
+			else
+				results = oql.execute();
+
+			while (results.hasMore())
+			{
+				AccessRightRole accessRightRole = (AccessRightRole)results.next();
+				accessRightsRoles.add(accessRightRole);
+			}
+
+			results.close();
+			oql.close();
+		}
+		catch(Exception e)
+		{
+			throw new SystemException("An error occurred when we tried to fetch a list of Access rights for role <" + roleName + ">. Reason:" + e.getMessage(), e);
+		}
+
+		return accessRightsRoles;
+	}
+
 	public List getAccessRightsGroups(String interceptionPointCategory, String parameters, Database db, boolean readOnly) throws SystemException, Bug
 	{
 	    List accessRightsGroups = new ArrayList();

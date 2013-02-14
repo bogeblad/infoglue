@@ -58,7 +58,7 @@
 
 <script type="text/javascript" src="${contextName}/applications/${WYSIWYGEditorJS}"></script>
 #set($userPreferredWYSIWYG = "${userPrefferredWYSIWYG}")
-#if($userPreferredWYSIWYG == "ckeditor3")
+#if($userPreferredWYSIWYG == "ckeditor4")
 <script type="text/javascript" src="${contextName}/script/ckeditorplugins/autogrow/ckeditor_autogrow.js"></script>
 <script type="text/javascript">
 <!--
@@ -198,14 +198,6 @@
 			
           	$("#tempDraggable").remove();
         });
-	});
-	
-	//-----------------------------------------------------
-	// Hide the loading animation when the page has loaded 
-	//----------------------------------------------------- 
-
-	$(document).ready(function() {
-		top.hideLoadingIndicator();
 	});
 -->
 </script>

@@ -373,7 +373,7 @@ public class ToolbarController implements ToolbarProvider
 
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.mysettings.header"))
 				return getMySettingsFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
-			
+
 			if(toolbarKey.equalsIgnoreCase("tool.common.trashcan.title"))
 				return getTrashcanFooterButtons(toolbarKey, principal, locale, request, disableCloseButton);
 			
@@ -409,11 +409,13 @@ public class ToolbarController implements ToolbarProvider
 				return getCommonFooterSaveOrCancelByRefreshButton(toolbarKey, principal, locale, request, disableCloseButton);
 
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.repositoryLanguages.header"))
-				return getCommonFooterSaveOrCancelByJavascriptButton(toolbarKey, principal, locale, request, disableCloseButton, "cancel();");
+				return getCommonFooterSaveOrSaveAndExitOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "RepositoryLanguage!saveAndExit.action");
 			
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewContentTypeDefinitionSimple.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			
+			if(toolbarKey.equalsIgnoreCase("tool.managementtool.renameSystemUser.header"))
+				return getCommonFooterSaveOrSaveAndExitOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "UpdateSystemUser!renameUserAndExit.action", "cancel()");
 			
 			/*
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewLanguageList.header"))
@@ -1240,6 +1242,42 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
 
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
+				
+		String contentIdParameter 	= "" + request.getAttribute("contentId");
+		String languageIdParameter 	= "" + request.getAttribute("languageId");
+		Integer contentId 			= 0;
+		Integer languageId 			= 0;
+		
+		try
+		{
+			contentId = new Integer(contentIdParameter);
+			languageId = new Integer(languageIdParameter);
+		}
+		catch (NumberFormatException nfe)
+		{
+			logger.error("Error parsing contentId or languageId. contentId: " + contentIdParameter + ", languageId: " + languageIdParameter);
+		}
+		
+		ContentVersionVO cvvo = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentId, languageId);
+		if (cvvo != null)
+		{
+			Integer contentVersionId = cvvo.getContentVersionId();
+			
+			buttons.add(new ToolbarButton("uploadAsset", 
+					  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+					  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
+					  "ViewDigitalAsset.action?contentVersionId=" + contentVersionId, 
+					  "", 
+					  "", 
+					  "attachAsset", 
+					  false, 
+					  false, 
+					  "", 
+					  "", 
+					  "inlineDiv",
+					  500,
+					  550));
+		}
 		
 		/*
 		buttons.add(new ToolbarButton("",
@@ -1252,8 +1290,8 @@ public class ToolbarController implements ToolbarProvider
 		String cancelJS = "document.location.reload(true);";
 		if(request.getRequestURI().indexOf("UpdateContentVersion") > -1)
 		{
-			String contentIdParameter = request.getParameter("contentId");
-			String languageIdParameter = request.getParameter("languageId");
+			contentIdParameter = request.getParameter("contentId");
+			languageIdParameter = request.getParameter("languageId");
 			String repositoryIdParameter = request.getParameter("repositoryId");
 			String contentVersionIdParameter = request.getParameter("contentVersionId");
 
@@ -2385,8 +2423,19 @@ public class ToolbarController implements ToolbarProvider
 						  "css/images/v3/passwordIcon.gif",
 						  "accessRights",
 						  "workIframe"));
-
 				//buttons.add(new ToolbarButton("UpdateSystemUserPassword!input.action?userName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding), URIEncoding), getLocalizedString(locale, "images.managementtool.buttons.updateSystemUserPassword"), "Update user password"));
+
+				if (principal.getIsAdministrator())
+				{
+					buttons.add(new ToolbarButton("",
+							getLocalizedString(locale, "tool.managementtool.viewSystemUserUserNameDialog.header"), 
+							getLocalizedString(locale, "tool.managementtool.viewSystemUserUserNameDialog.header"),
+							"UpdateSystemUserUserName!input.action?userName=" + formatter.encodeBase64(userName) + "&igSecurityCode=" + request.getSession().getAttribute("securityCode"),
+							"css/images/v3/group.png",
+							"transferUser",
+							"workIframe"));
+				}
+				
 			}
 		}
 		
@@ -2412,6 +2461,14 @@ public class ToolbarController implements ToolbarProvider
 					  "AuthorizationSwitchManagement!inputUser.action?userName=" + formatter.encodeBase64(userName),
 					  "css/images/v3/createBackgroundPenPaper.gif",
 					  "create",
+					  "workIframe"));
+			
+			buttons.add(new ToolbarButton("",
+					  getLocalizedString(locale, "tool.managementtool.renameSystemUser.header"), 
+					  getLocalizedString(locale, "tool.managementtool.renameSystemUser.header"),
+					  "UpdateSystemUser!inputRename.action?userName=" + formatter.encodeBase64(userName),
+					  "css/images/v3/createBackgroundPenPaper.gif",
+					  "changeContentType",
 					  "workIframe"));
 		}
 
@@ -3859,6 +3916,17 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
 		buttons.add(getCommonFooterSaveAndExitButton(toolbarKey, principal, locale, request, disableCloseButton, exitUrl));
 		buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton));
+				
+		return buttons;		
+	}
+	
+	private List<ToolbarButton> getCommonFooterSaveOrSaveAndExitOrCancelButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton, String exitUrl, String cancelUrl)
+	{
+		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
+
+		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
+		buttons.add(getCommonFooterSaveAndExitButton(toolbarKey, principal, locale, request, disableCloseButton, exitUrl));
+		buttons.add(getDialogCancelButton(toolbarKey, principal, locale, request, disableCloseButton, cancelUrl));
 				
 		return buttons;		
 	}

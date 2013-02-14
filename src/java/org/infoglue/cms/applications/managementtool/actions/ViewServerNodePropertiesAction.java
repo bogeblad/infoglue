@@ -270,6 +270,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "prefferedWYSIWYG");
 	    
 	    populate(ps, "defaultNumberOfYearsBeforeExpire");
+	    populate(ps, "defaultNumberOfMonthsBeforeRedirectExpire");
 	    populate(ps, "enableDateTimeDirectEditing");
 	    populate(ps, "showContentVersionFirst");
 	    populate(ps, "tree");
@@ -286,6 +287,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populateData(ps, "deploymentServers");
 	    populateData(ps, "vcServers");
 	    populate(ps, "decoratedPageInvoker");
+	    populate(ps, "defaultRepositoryAccessRoles");
 	    
 	    populate(ps, "edition.pageSize");
 	    populate(ps, "content.tree.sort");

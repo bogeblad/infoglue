@@ -90,18 +90,19 @@ public class CmsPropertyHandler
 	private static String servletContext 			= null;
 	
 	//Variables which are caches very hard but must be cleared roughly
-	private static String inputCharacterEncoding 			= null;
-	private static String enforceRigidContentAccess 		= null;
-	private static String niceURIEncoding					= null;
-	private static String defaultNumberOfYearsBeforeExpire 	= null;
-	private static String setDerivedLastModifiedInLive 		= null;
-	private static String digitalAssetPath0					= null;
-	private static String enableNiceURI						= null;
-	private static String useImprovedContentCategorySearch	= null;
-	private static String enablePortal						= null;
-	private static String useAccessBasedProtocolRedirects	= null;
-	private static Boolean useHashCodeInCaches 				= null;
-	private static Boolean useSynchronizationOnCaches 		= null;
+	private static String inputCharacterEncoding 					= null;
+	private static String enforceRigidContentAccess 				= null;
+	private static String niceURIEncoding							= null;
+	private static String defaultNumberOfYearsBeforeExpire			= null;
+	private static String defaultNumberOfMonthsBeforeRedirectExpire	= null;
+	private static String setDerivedLastModifiedInLive				= null;
+	private static String digitalAssetPath0							= null;
+	private static String enableNiceURI								= null;
+	private static String useImprovedContentCategorySearch			= null;
+	private static String enablePortal								= null;
+	private static String useAccessBasedProtocolRedirects			= null;
+	private static Boolean useHashCodeInCaches						= null;
+	private static Boolean useSynchronizationOnCaches				= null;
 	   
 	public static String getDigitalAssetPortletRegistryId()
 	{
@@ -252,6 +253,7 @@ public class CmsPropertyHandler
 		String newEnforceRigidContentAccess = getEnforceRigidContentAccess(true);
 		String newNiceURIEncodingg = getNiceURIEncoding(true);
 		String newDefaultNumberOfYearsBeforeExpire = getDefaultNumberOfYearsBeforeExpire(true);
+		String newDefaultNumberOfMonthsBeforeRedirectExpire = getDefaultNumberOfMonthsBeforeRedirectExpire(true);
 		String newSetDerivedLastModifiedInLive = getSetDerivedLastModifiedInLive(true);
 		String newDigitalAssetPath0 = getDigitalAssetPath0(true);
 		String newEnableNiceURI = getEnableNiceURI(true);
@@ -262,19 +264,20 @@ public class CmsPropertyHandler
 		Boolean newUseSynchronizationOnCaches = getUseSynchronizationOnCaches(true);
 		String newOperatingMode = getOperatingMode(true);
 		
-		inputCharacterEncoding 				= newInputCharacterEncoding;
-		enforceRigidContentAccess 			= newEnforceRigidContentAccess;
-		niceURIEncoding						= newNiceURIEncodingg;
-		defaultNumberOfYearsBeforeExpire 	= newDefaultNumberOfYearsBeforeExpire;
-		setDerivedLastModifiedInLive 		= newSetDerivedLastModifiedInLive;
-		digitalAssetPath0					= newDigitalAssetPath0;
-		enableNiceURI						= newEnableNiceURI;
-		useImprovedContentCategorySearch	= newUseImprovedContentCategorySearch;
-		enablePortal						= newEnablePortal;
-		useAccessBasedProtocolRedirects 	= newUseAccessBasedProtocolRedirects;
-		useHashCodeInCaches 				= newUseHashCodeInCaches;
-		useSynchronizationOnCaches 			= newUseSynchronizationOnCaches;
-		operatingMode 						= newOperatingMode;
+		inputCharacterEncoding 						= newInputCharacterEncoding;
+		enforceRigidContentAccess 					= newEnforceRigidContentAccess;
+		niceURIEncoding								= newNiceURIEncodingg;
+		defaultNumberOfYearsBeforeExpire 			= newDefaultNumberOfYearsBeforeExpire;
+		defaultNumberOfMonthsBeforeRedirectExpire	= newDefaultNumberOfMonthsBeforeRedirectExpire;
+		setDerivedLastModifiedInLive 				= newSetDerivedLastModifiedInLive;
+		digitalAssetPath0							= newDigitalAssetPath0;
+		enableNiceURI								= newEnableNiceURI;
+		useImprovedContentCategorySearch			= newUseImprovedContentCategorySearch;
+		enablePortal								= newEnablePortal;
+		useAccessBasedProtocolRedirects 			= newUseAccessBasedProtocolRedirects;
+		useHashCodeInCaches 						= newUseHashCodeInCaches;
+		useSynchronizationOnCaches					= newUseSynchronizationOnCaches;
+		operatingMode 								= newOperatingMode;
 		
 		logger.info("Done resetting hard cached settings...");
 	}
@@ -594,7 +597,7 @@ public class CmsPropertyHandler
 	    if(value == null && defaultValue != null)
 	    	value = defaultValue;
 	    
-	    //HŠr skall smartare lšsning in sen fšr att lšsa fallback.
+	    //Hï¿½r skall smartare lï¿½sning in sen fï¿½r att lï¿½sa fallback.
 	    if(!skipCache)
 	    	CacheController.cacheObject(cacheName, cacheKey, value);
 	    
@@ -988,10 +991,10 @@ public class CmsPropertyHandler
 	{
 		return getServerNodeProperty("useDNSNameInURI", true, "false");
 	}
-    
+
 	public static String getWysiwygEditor()
 	{
-		return getServerNodeProperty("wysiwygEditor", true, "ckeditor3");
+		return getServerNodeProperty("wysiwygEditor", true, "ckeditor4");
 	}
 
 	public static String getDisableImageEditor()
@@ -1074,7 +1077,15 @@ public class CmsPropertyHandler
 		
 		return defaultNumberOfYearsBeforeExpire;
 	}
-
+	public static String getDefaultNumberOfMonthsBeforeRedirectExpire(){
+		return getDefaultNumberOfMonthsBeforeRedirectExpire(false);
+	}
+	public static String getDefaultNumberOfMonthsBeforeRedirectExpire(boolean skipHardCache){
+		if(defaultNumberOfMonthsBeforeRedirectExpire == null || skipHardCache){
+			defaultNumberOfMonthsBeforeRedirectExpire = getServerNodeProperty("defaultNumberOfMonthsBeforeRedirectExpire", true,"3");
+		}
+		return defaultNumberOfMonthsBeforeRedirectExpire;
+	}
 	public static String getEnableDateTimeDirectEditing()
 	{
 		return getServerNodeProperty("enableDateTimeDirectEditing", true, "false");
@@ -2236,12 +2247,12 @@ public class CmsPropertyHandler
 		}
 	    if(properties.size() == 0)
 	    {
-	    	properties.put("å", "a");
-	    	properties.put("ä", "a");
-	    	properties.put("ö", "o");
-	    	properties.put("Å", "A");
-	    	properties.put("Ä", "A");
-	    	properties.put("Ö", "O");
+	    	properties.put("ï¿½", "a");
+	    	properties.put("ï¿½", "a");
+	    	properties.put("ï¿½", "o");
+	    	properties.put("ï¿½", "A");
+	    	properties.put("ï¿½", "A");
+	    	properties.put("ï¿½", "O");
 	    }
 	    
 	    return properties;
@@ -2307,6 +2318,11 @@ public class CmsPropertyHandler
 	public static String getAccessBasedProtocolRedirectHTTPCode()
 	{
 		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "301");
+	}
+
+	public static String getDefaultRepositoryAccessRoles()
+	{
+		return getServerNodeProperty("defaultRepositoryAccessRoles", true, null);
 	}
 
 	public static String getLoginUrl()

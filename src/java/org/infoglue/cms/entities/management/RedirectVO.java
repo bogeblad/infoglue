@@ -25,6 +25,7 @@ package org.infoglue.cms.entities.management;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.SimpleTimeZone;
 import java.util.regex.Pattern;
 
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
@@ -36,45 +37,59 @@ import org.infoglue.cms.util.validators.ValidatorFactory;
 
 public class RedirectVO implements BaseEntityVO
 {
-    private java.lang.Integer redirectId;
-    private java.lang.String url;
-    private java.lang.String redirectUrl;
-    
-    private java.lang.String modifier;
-    private java.util.Date createdDateTime = new Date();
-    private java.util.Date publishDateTime = new Date();
-    private java.util.Date expireDateTime = new Date();
-    private Boolean isUserManaged = true;
-    
-    private Pattern urlCompiledPattern;
-    
-    public RedirectVO()
-  	{
-  		//Initilizing the expireDateTime... 
-    	Calendar cal = Calendar.getInstance();
-    	cal.add(Calendar.MONTH, 3);
-  		expireDateTime = cal.getTime();
-  	}
-    
+	private java.lang.Integer redirectId;
+	private java.lang.String url;
+	private java.lang.String redirectUrl;
+
+	private java.lang.String modifier;
+	private java.util.Date createdDateTime = new Date();
+	private java.util.Date publishDateTime = new Date();
+	private java.util.Date expireDateTime = new Date();
+	private Boolean isUserManaged = true;
+
+	private Pattern urlCompiledPattern;
+
+	private static SimpleTimeZone stmz = new SimpleTimeZone(-8 * 60 * 60 * 1000, "GMT");
+
+	public RedirectVO()
+	{
+		//Initilizing the expireDateTime... 
+		Calendar calendar = Calendar.getInstance(stmz);
+
+		int months = 3;
+		try
+		{
+			String numberOfMonths = CmsPropertyHandler.getDefaultNumberOfMonthsBeforeRedirectExpire();
+			if(numberOfMonths != null && !numberOfMonths.equals("")){
+				months = new Integer(numberOfMonths).intValue();
+			}
+		}
+		catch (Throwable t) 
+		{}
+	
+		calendar.add(Calendar.MONTH, months);
+		expireDateTime = calendar.getTime();
+	}
+
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntityVO#getId()
 	 */
 	
-    public Integer getId() 
+	public Integer getId() 
 	{
 		return getRedirectId();
 	}
 
 	public String toString()
-	{  
+	{
 		return getUrl();
 	}
-  
-    public java.lang.Integer getRedirectId()
-    {
-        return this.redirectId;
-    }
-                
+
+	public java.lang.Integer getRedirectId()
+	{
+		return this.redirectId;
+	}
+
     public void setRedirectId(java.lang.Integer redirectId)
     {
         this.redirectId = redirectId;
@@ -165,6 +180,6 @@ public class RedirectVO implements BaseEntityVO
     	
     	return ceb;
 	}
-        
+
 }
-        
+

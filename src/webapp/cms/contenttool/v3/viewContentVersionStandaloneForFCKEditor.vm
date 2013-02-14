@@ -69,7 +69,7 @@
 	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
 	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
 
- 	#if($prefferedWYSIWYG == "ckeditor3")
+ 	#if($prefferedWYSIWYG == "ckeditor4")
 
  		<script type="text/javascript" src="${root}/applications/ckeditor-latest/ckeditor.js"></script>
 		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
@@ -166,7 +166,7 @@
 			{
 				var plainTextAreaName = plainEditors[i];
 	
-				#if($prefferedWYSIWYG == "ckeditor3")
+				#if($prefferedWYSIWYG == "ckeditor4")
 					oEditor = CKEDITOR.instances["FullText"];
 					oEditor = CKEDITOR.instances[plainTextAreaName];
 					if(oEditor.checkDirty())
@@ -252,7 +252,7 @@
 		{
 			#if($readonly == "")
 	
-				#if($prefferedWYSIWYG == "ckeditor3")
+				#if($prefferedWYSIWYG == "ckeditor4")
 	
 					for(var i in plainEditors)
 					{
@@ -534,7 +534,7 @@
 	   				//alert("currentEditorId:" + currentEditorId);
 					if(currentEditorId == 1)
 					{
-						#if($prefferedWYSIWYG == "ckeditor3")
+						#if($prefferedWYSIWYG == "ckeditor4")
 							var editor_data = CKEDITOR.instances.${attribute.name}.getData();
 							document.getElementById("$attribute.name").value = untransformAttribute(editor_data);
 						#else

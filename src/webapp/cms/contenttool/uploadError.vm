@@ -35,7 +35,7 @@
 			return value;
 		}
 
-		#if($prefferedWYSIWYG == "ckeditor3")	
+		#if($prefferedWYSIWYG == "ckeditor4")	
 			var instanceName = getRequestParameter(window.location.href, "CKEditor");
 			var CKEditorFuncNum = getRequestParameter(window.location.href, "CKEditorFuncNum");
 			var message = "$ui.getString($reasonKey)";

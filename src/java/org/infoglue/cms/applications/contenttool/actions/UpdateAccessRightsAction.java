@@ -61,13 +61,14 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	private Boolean closeOnLoad = false;
 	private String returnAddress;
 	private String url;
+	private String anchor = null;
 	
 	private String interceptionPointCategory;
 	
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 	
 	public String doExecute() throws Exception
-    {   
+    {   		
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)
@@ -128,20 +129,29 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 	
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		System.out.println("this.url:" + this.url);
+
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
 			if(this.url.indexOf("ViewAccessRights") > -1)
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
-		System.out.println("this.url:" + this.url);
 		
 		if(this.url.indexOf("ViewAccessRights") > -1)
+		{
+			this.url = this.url.replaceAll("&saved=true", "");
 			this.url = this.url + "&saved=true";
+		}
+		
 		if(this.closeOnLoad)
 		{
 			this.url = this.url.replaceAll("&KeepThis=true","&closeOnLoad=true&KeepThis=true");
+		}
+		
+		if(this.url.indexOf("ViewAccessRights") > -1)
+		{
+			this.url = this.url.replaceAll("&anchor=[0-9]{1,2}", "");
+			this.url = this.url + "&anchor=" + this.anchor;
 		}
 		
 		if(this.returnAddress.indexOf("http") == 0)
@@ -201,14 +211,13 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		AccessRightController.getController().updateGroups(this.accessRightId, this.parameters, groupNames);
 
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		System.out.println("this.url:" + this.url);
+
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
 			if(this.url.indexOf("ViewAccessRights") > -1)
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
-		System.out.println("this.url:" + this.url);
 
 		if(this.returnAddress.indexOf("http") == 0)
 		{
@@ -278,14 +287,17 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 		
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		System.out.println("this.url:" + this.url);
+
+		//this.url = this.url + "&saved=true";
+		
+		System.out.println("----------> APA: this.url: " + this.url);
+		
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
 			if(this.url.indexOf("ViewAccessRights") > -1)
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
-		System.out.println("this.url:" + this.url);
 
 		if(this.returnAddress.indexOf("http") == 0)
 		{
@@ -498,5 +510,14 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	{
 		return url;
 	}
+	
+	public void setAnchor(String anchor)
+	{
+		this.anchor = anchor;
+	}
 
+	public String getAnchor()
+	{
+		return this.anchor;
+	}
 }

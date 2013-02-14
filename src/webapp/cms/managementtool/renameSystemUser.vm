@@ -1,0 +1,96 @@
+#define($headerMarkup)
+	
+	<script type="text/javascript">
+	<!-- 		
+		function save()
+		{
+			confirmRename("save", null);
+		}
+		
+		function saveAndExit(action)
+		{
+			confirmRename("saveAndExit", action);
+		}
+
+		function cancel()
+		{
+			document.location.href = "ViewSystemUser.action?userName=$userName"; 
+		}
+		
+		function confirmRename(aMethod, aAction) 
+		{
+			$("#genericDialog").dialog("destroy");
+			$("#genericDialog").attr("title", "$ui.getString("tool.managementtool.renameSystemUser.header")");
+			$("#genericDialog h3").html("$ui.getString("tool.managementtool.renameSystemUser.header")");
+			$("#genericDialog p").html("$ui.getString("tool.managementtool.renameSystemUserConfirmText")");
+			$("#genericDialog").dialog({
+				autoOpen: false,
+				resizable: false,
+				width: 500,
+				minHeight: 400,
+				modal: true,
+				overlay: {
+					backgroundColor: '#000',
+					opacity: 0.8
+				},
+				buttons: {
+					"$ui.getString("tool.managementtool.renameSystemUserConfirmButtonText")": function() {
+						$(this).dialog("close");
+
+						if (aMethod == "saveAndExit")
+						{
+							document.editForm.action = aAction;
+							document.editForm.submit();
+						}
+						else
+						{
+							document.editForm.submit();
+						}
+					},
+					Cancel: function() {
+						$(this).dialog("close");
+					}
+				},
+				open: function(event, ui) {
+					$(this).parent().find(".ui-dialog-buttonpane button:first").addClass("ok"); 
+					$(this).parent().find(".ui-dialog-buttonpane button:last").addClass("cancel");
+				}
+			});
+			$("#genericDialog").dialog("open");
+		}
+	-->
+	</script>
+#end
+
+################################
+##BEGIN REAL CODE
+################################
+
+#beginLightCommonToolV3Impl("tool.managementtool.renameSystemUser.header" "" "" false true $!disableCloseButton $headerMarkup true "")
+
+<div class="fullymarginalized">
+
+	<h3>$ui.getString("tool.managementtool.renameSystemUser.header") "$!userName"</h3>
+
+	<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+		<form name="editForm" action="UpdateSystemUser!renameUser.action">
+			<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
+			<input type="hidden" name="userName" value="$!userName">
+			<table style="margin: 10px 10px 10px 16px">
+				<tbody>
+					<tr>
+						<td>
+							$ui.getString("tool.managementtool.renameSystemUserNewName")
+							<br/>
+							<input type="text" name="newUserName" value="" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		<form>
+	</div>
+</div>
+
+#lightFooterToolbar($footerButtons)
+		
+#endLightCommonToolV3()

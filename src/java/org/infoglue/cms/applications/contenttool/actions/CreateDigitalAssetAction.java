@@ -192,13 +192,52 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
     	if(this.principal == null)
     		this.principal = getInfoGluePrincipal();
     	
+    	Integer uploadMaxSize = getUploadMaxSize();
+    	Integer myFileUploadSizeLimit = 0;
+		
+		String fileUploadMaximumSize = getPrincipalPropertyValue("fileUploadMaximumSize", false, true);
+		try
+		{
+			myFileUploadSizeLimit = new Integer(fileUploadMaximumSize);
+			logger.info("fileUploadMaximumSize:" + myFileUploadSizeLimit);
+		}
+		catch (NumberFormatException nfe)
+		{
+			logger.error("Bad filesize in principal properties: " + fileUploadMaximumSize);
+		}
+    	
         try
         {
             MultiPartRequestWrapper mpr = ActionContext.getMultiPartRequest();
             if(mpr == null)
             {
                 this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
-                this.uploadMaxSize = "(Max " + formatter.formatFileSize(getUploadMaxSize()) + " - system wide)";
+                
+                //------------------------------------------------------------------
+                // If we fail because the file is bigger than the system maximum 
+                // we might still want to print the local maximum file size because 
+                // it makes more sense to the user.
+                //------------------------------------------------------------------
+                
+                if (uploadMaxSize > myFileUploadSizeLimit && myFileUploadSizeLimit > -1)
+                {
+                	this.uploadMaxSize = getLocalizedString(getLocale(), "tool.contenttool.myFileUploadLimit", formatter.formatFileSize(myFileUploadSizeLimit));
+                }
+                else if (digitalAssetKey == null)
+                {
+                	this.uploadMaxSize = getLocalizedString(getLocale(), "tool.contenttool.systemWideFileUploadLimit", formatter.formatFileSize(uploadMaxSize));                	
+                }
+                else if(this.contentTypeDefinitionId != null && digitalAssetKey != null)
+				{
+					this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(this.contentTypeDefinitionId);
+					AssetKeyDefinition assetKeyDefinition = ContentTypeDefinitionController.getController().getDefinedAssetKey(contentTypeDefinitionVO, true, digitalAssetKey);
+					
+					if(assetKeyDefinition != null)
+					{
+						this.uploadMaxSize = getLocalizedString(getLocale(), "tool.contenttool.myFileUploadLimit", formatter.formatFileSize(assetKeyDefinition.getMaximumSize()));
+					}
+                }
+                
                 return "uploadFailed";
             }
             
@@ -338,14 +377,13 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 		            		}
 		            	}
 
-						String fileUploadMaximumSize = getPrincipalPropertyValue(this.principal, "fileUploadMaximumSize", false, true);
 						logger.info("fileUploadMaximumSize in create:" + fileUploadMaximumSize);
 						if(!fileUploadMaximumSize.equalsIgnoreCase("-1") && new Integer(fileUploadMaximumSize).intValue() < new Long(file.length()).intValue())
 						{
 						    file.delete();
 						    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
-			                this.uploadMaxSize = "(Max " + formatter.formatFileSize(fileUploadMaximumSize) + ")";
-		                	return "uploadFailed";
+						    this.uploadMaxSize = getLocalizedString(getLocale(), "tool.contenttool.myFileUploadLimit", formatter.formatFileSize(myFileUploadSizeLimit));
+			                return "uploadFailed";
 						}
 						
 						if(this.contentTypeDefinitionId != null && digitalAssetKey != null)
@@ -359,7 +397,7 @@ public class CreateDigitalAssetAction extends ViewDigitalAssetAction
 								{   
 								    file.delete();
 								    this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
-								    this.uploadMaxSize = "(Max " + formatter.formatFileSize(assetKeyDefinition.getMaximumSize()) + ")";
+								    this.uploadMaxSize = getLocalizedString(getLocale(), "tool.contenttool.myFileUploadLimit", formatter.formatFileSize(assetKeyDefinition.getMaximumSize()));
 				                	return "uploadFailed";
 								}
 								if(assetKeyDefinition.getAllowedContentTypes().startsWith("image"))

@@ -156,7 +156,7 @@ public class CreateContentAndAssetFromUploadAction extends InfoGlueAbstractActio
             if(mpr == null)
             {
                 this.reasonKey = "tool.contenttool.fileUpload.fileUploadFailedOnSizeText";
-                this.uploadMaxSize = "(Max " + formatter.formatFileSize(getUploadMaxSize()) + " - system wide)";
+                this.uploadMaxSize = getLocalizedString(getLocale(), "tool.contenttool.systemWideFileUploadLimit", formatter.formatFileSize(getUploadMaxSize()));
                 return "uploadFailed";
             }
             

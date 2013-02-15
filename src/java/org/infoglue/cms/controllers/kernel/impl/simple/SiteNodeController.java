@@ -1275,6 +1275,7 @@ public class SiteNodeController extends BaseController
 		logger.info("Clearing last node as we are probably not done with all it's children");
 		CacheController.clearCacheForGroup("childSiteNodesCache", CacheController.getPooledString(3, lastBegunParentSiteNodeId));
 		CacheController.clearCache("siteNodeCache", CacheController.getPooledString(3, lastBegunParentSiteNodeId));
+		CacheController.clearCache("siteNodeVOCache", CacheController.getPooledString(3, lastBegunParentSiteNodeId));
 		
 		results.close();
 		oql.close();
@@ -2879,7 +2880,7 @@ public class SiteNodeController extends BaseController
             siteNode          = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
             oldParentSiteNode = siteNode.getParentSiteNode();
             newParentSiteNode = getSiteNodeWithId(newParentSiteNodeId, db);
-            
+            			
         	SiteNode tempSiteNode = newParentSiteNode.getParentSiteNode();
 			while(tempSiteNode != null)
 			{
@@ -2944,7 +2945,11 @@ public class SiteNodeController extends BaseController
         ContentVO oldMetaInfoContentVO = ContentController.getContentController().getContentVOWithId(oldSiteNodeVO.getMetaInfoContentId(), db);
 
         Language masterLanguage = LanguageController.getController().getMasterLanguage(db, siteNode.getRepository().getId());
-        ContentVersionVO oldCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(oldMetaInfoContentVO.getId(), masterLanguage.getId(), db);
+        System.out.println("oldMetaInfoContentVO:" + oldMetaInfoContentVO);
+        System.out.println("masterLanguage:" + masterLanguage);
+        ContentVersionVO oldCVVO = null;
+        if(oldMetaInfoContentVO != null)
+        	oldCVVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(oldMetaInfoContentVO.getId(), masterLanguage.getId(), db);
 
 		SiteNodeVO newSiteNodeVO = new SiteNodeVO();
 		newSiteNodeVO.setName(oldSiteNodeVO.getName());
@@ -3002,11 +3007,14 @@ public class SiteNodeController extends BaseController
         logger.info("Mapping siteNode " + oldSiteNodeVO.getId() + " to " + newSiteNode.getId());
         siteNodesIdsMapping.put(oldSiteNodeVO.getId(), newSiteNode.getId());
         
-        String versionValue = oldCVVO.getVersionValue();
-        logger.info("A newCV:" + newCV.getVersionValue());
-        newCV.getValueObject().setVersionValue(versionValue);
-        logger.info("A newCV:" + newCV.getVersionValue());
-
+        if(oldMetaInfoContentVO != null)
+        {
+	        String versionValue = oldCVVO.getVersionValue();
+	        logger.info("A newCV:" + newCV.getVersionValue());
+	        newCV.getValueObject().setVersionValue(versionValue);
+	        logger.info("A newCV:" + newCV.getVersionValue());
+        }
+        
         for(SiteNode childNode : (Collection<SiteNode>)siteNode.getChildSiteNodes())
         {
         	copySiteNodeRecursive(childNode, newSiteNode, principal, siteNodesIdsMapping, contentIdsMapping, contentIdsToCopy, newCreatedContentVersions, db);

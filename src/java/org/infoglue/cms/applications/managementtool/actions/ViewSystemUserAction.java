@@ -26,16 +26,23 @@ package org.infoglue.cms.applications.managementtool.actions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserPropertiesController;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.security.InfoGlueGroup;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
 public class ViewSystemUserAction extends InfoGlueAbstractAction
@@ -48,13 +55,15 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 	private boolean supportsUpdate = true;
 	private InfoGluePrincipal infoGluePrincipal;
 	private List roles = new ArrayList();
-	private List assignedRoleVOList;
+	private List<InfoGlueRole> assignedRoleVOList;
 	private List groups = new ArrayList();
-	private List assignedGroupVOList;
-	private List contentTypeDefinitionVOList;   
-	private List assignedContentTypeDefinitionVOList; 	
+	private List<InfoGlueGroup> assignedGroupVOList;
+	private List contentTypeDefinitionVOList;
+	private List assignedContentTypeDefinitionVOList;
+	private List<RepositoryVO> authorizedRepositoryVOList;
 	
-    protected void initialize(String userName) throws Exception
+    @SuppressWarnings("unchecked")
+	protected void initialize(String userName) throws Exception
     {
 		//this.supportsUpdate					= UserControllerProxy.getController().getSupportUpdate();
 		this.infoGluePrincipal				= UserControllerProxy.getController().getUser(userName);
@@ -67,13 +76,15 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 		this.assignedRoleVOList 			= infoGluePrincipal.getRoles();
 		if(this.supportsUpdate) //Only fetch if the user can edit.
 			this.roles 						= this.infoGluePrincipal.getAutorizationModule().getRoles();
-		
+
 		this.assignedGroupVOList 			= infoGluePrincipal.getGroups();
 		if(this.supportsUpdate) //Only fetch if the user can edit.
 			this.groups 					= this.infoGluePrincipal.getAutorizationModule().getGroups();
-		
+
 		this.contentTypeDefinitionVOList 			= ContentTypeDefinitionController.getController().getContentTypeDefinitionVOList(ContentTypeDefinitionVO.EXTRANET_USER_PROPERTIES);
-		this.assignedContentTypeDefinitionVOList 	= UserPropertiesController.getController().getContentTypeDefinitionVOList(userName);  
+		this.assignedContentTypeDefinitionVOList 	= UserPropertiesController.getController().getContentTypeDefinitionVOList(userName);
+		
+		this.authorizedRepositoryVOList = RepositoryController.getController().getAuthorizedRepositoryVOList(this.infoGluePrincipal, true);;
     } 
 
     public String doExecute() throws Exception
@@ -90,7 +101,12 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
         return "successV3";
     }
 
-	public List getAssignedRoles() throws Exception
+    public List<RepositoryVO> getRepositoryAccessRights()
+	{
+    	return this.authorizedRepositoryVOList;
+	}
+
+	public List<InfoGlueRole> getAssignedRoles() throws Exception
 	{
 		return this.assignedRoleVOList;
 	}        
@@ -100,7 +116,7 @@ public class ViewSystemUserAction extends InfoGlueAbstractAction
 		return this.roles;
 	}        
 
-	public List getAssignedGroups() throws Exception
+	public List<InfoGlueGroup> getAssignedGroups() throws Exception
 	{
 		return this.assignedGroupVOList;
 	}        

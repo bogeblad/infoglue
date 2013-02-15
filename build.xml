@@ -601,6 +601,11 @@
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.cms}/WEB-INF/web-app_2_3.dtd" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
+		<unzip dest="${deploy.dir.cms}/applications/">
+		    <fileset dir="${deploy.dir.cms}/applications/">
+		        <include name="*.zip"/>
+		    </fileset>
+		</unzip>
 	</target>
 
 	<!--
@@ -627,6 +632,11 @@
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.working}/WEB-INF/web-app_2_3.dtd" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
+		<unzip dest="${deploy.dir.working}/applications/">
+		    <fileset dir="${deploy.dir.working}/applications/">
+		        <include name="*.zip"/>
+		    </fileset>
+		</unzip>
 	</target>
 
 	<!--
@@ -652,6 +662,11 @@
 		<copy file="${conf}/web-app_2_3.dtd" tofile="${deploy.dir.preview}/WEB-INF/web-app_2_3.dtd" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
+		<unzip dest="${deploy.dir.preview}/applications/">
+		    <fileset dir="${deploy.dir.preview}/applications/">
+		        <include name="*.zip"/>
+		    </fileset>
+		</unzip>
 	</target>
 
 	<!--
@@ -680,6 +695,11 @@
 			<copy file="${conf}/robots-live.txt" tofile="${deploy.dir.live}/robots.txt" overwrite="true">
 			<filterset refid="project.filters"/>
 		</copy>
+		<unzip dest="${deploy.dir.live}/applications/">
+		    <fileset dir="${deploy.dir.live}/applications/">
+		        <include name="*.zip"/>
+		    </fileset>
+		</unzip>
 	</target>
 
 	<!--
@@ -1091,6 +1111,17 @@
 		<copy todir="${deploy.dir.cms}/META-INF" overwrite="true">
 			<fileset dir="${conf}" includes="context.xml"/>
 		</copy>					
+
+		<unzip dest="${deploy.dir.cms}/applications/">
+		    <fileset dir="${deploy.dir.cms}/applications/">
+		        <include name="*.zip"/>
+		    </fileset>
+		</unzip>
+		<unzip dest="${deploy.dir.working}/applications/">
+		    <fileset dir="${deploy.dir.working}/applications/">
+		        <include name="*.zip"/>
+		    </fileset>
+		</unzip>
 
 	</target>
 

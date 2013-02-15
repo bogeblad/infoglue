@@ -73,13 +73,26 @@
 		form.submit();
 	}
 
+	$(document).ready(function(){
+		$("#tabsContainer").tabs({ show:function() { resizeScrollArea(); } });
+		#if($tabToActivate > -1)
+			$("#tabsContainer").tabs("select", $tabToActivate);
+		#end
+	});
+
 </script>
 #if($supportsUpdate == false)
 	#set($readonly = "disabled")
 #else
 	#set($readonly = "")
 #end
-<div class="fullymarginalized">
+
+<div id="tabsContainer" class="flora ui-tabs">
+	<ul class="ui-tabs-nav">
+        <li><a href="#basicInfoTab">Information</a></li>
+        <li><a href="#rightsTab">Access Rights</a></li>
+    </ul>
+	<div id="basicInfoTab" class="fullymarginalized ui-tabs-hide">
 	<form method="post" name="editForm" action="UpdateSystemUser.action">
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 		<input type="hidden" name="userName" value="$!userName">
@@ -87,13 +100,13 @@
 			<tr>
 				<td>#editReadOnlyField("SystemUser.firstName" "firstName" $!firstName "51" $readonly)</td>
 				<td>#editReadOnlyField("SystemUser.lastName" "lastName" $!lastName "51" $readonly)</td>
-			</tr>	
-			
+			</tr>
+
 			<tr>
 				<td>#editReadOnlyField("SystemUser.userName" "newUserName" $!userName "51" "disabled")</td>
 				<td>#editReadOnlyPasswordField("SystemUser.password" "password" "********" "20" "disabled")<img src="css/images/trans.gif" width="10" height="1"><a href="UpdateSystemUser!changePassword.action?userName=$formatter.encodeURI($userName)&igSecurityCode=$!securityCode">Send me a new password<a></td>
 			</tr>
-		
+
 			<tr>
 				<td>#editReadOnlyField("SystemUser.email" "email" $!email "51" $readonly)</td>
 				<td>&nbsp;</td>
@@ -114,13 +127,13 @@
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-			
+
 			<tr>
 				<td colspan="2" class="biglabel">Manage the roles this user should be part of below</td>
 			</tr>
 			<tr>
 			  <td colspan="2">
-				<table width="100%" border="0">
+					<table width="50%" border="0">
 				  <tr>
 				    <td>State a name or choose from list:<br>
 				        <input type="text" id="roleSearchField" name="roleSearchField" style="font-size: 10px; width:300px; border: solid 1px #C2D0E2;"/ onkeypress="javascript:markNearestOption('roleSearchField', 'unassignedRoleNameList');" onchange="javascript:markNearestOption('roleSearchField', 'unassignedRoleNameList');">
@@ -140,7 +153,7 @@
 										#set($checked = "checked")
 									#end 
 								#end
-								
+
 								#if($checked == "")
 									<option value="$roleVO.name" title="$roleVO.name" #if(!$hasAccessToManageUsersInRole)disabled="1" style="color:#999; background:white;"#end>$roleVO.name</option>
 								#end
@@ -171,7 +184,6 @@
 			<tr>
 				<td>&nbsp;</td>
 			</tr>
-			
 			<tr>
 				<td colspan="2" class="biglabel">Manage the groups this user should be part of below</td>
 			</tr>
@@ -251,8 +263,75 @@
 			
 		</table>
 	</form>
-	
+	</div>
+	<div id="rightsTab" class="fullymarginalized ui-tabs-hide">
+		<div id="repositoryRights" class="access_right_list">
+
+				<style type="text/css">
+					@import "script/jqueryplugins/dataTables/media/css/ig_table.css";
+				</style>
+				<!--
+				<script type="text/javascript" language="javascript" src="script/jqueryplugins/dataTables/media/js/jquery.dataTables.min.js"></script>-->
+				<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
+
+				<script type="text/javascript">
+				<!--
+					$(document).ready(function(){
+
+						#set($extraParameter = '"aoColumns": [ null ]')
+						#initDataTableImpl("dataTable" $extraParameter)
+						#initDeleteLink()
+					});
+				-->
+				</script>
+
+				<div style="clear: both;"></div>
+
+				<h3>Repository Access Rights</h3>
+
+				<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+
+					<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+						<thead>
+							<tr>
+								<th>$ui.getString("entity.Repository.name.label")</th>
+							</tr>
+						</thead>
+						<tbody>
+							#foreach ($repositoryVO in $repositoryAccessRights)
+								<tr>
+									<td>
+										<a href="ViewRepository.action?repositoryId=$repositoryVO.id" class="group">$repositoryVO.name</a>
+									</td>
+								</tr>
+							#end
+
+						</tbody>
+					</table>
+				</div>
+
+		</div>
+	</div>
 </div>
+
+<style>
+	.access_right_list {
+		width: 50%;
+		margin: 10px 10px 10px 16px;
+	}
+	#tabsContainer {
+		background: none;
+	}
+	#basicInfoTab tr td {
+		border: none;
+	}
+	#dataTable_length label {
+		text-align: left;
+	}
+	#dataTable_filter label {
+		text-align: right;
+	}
+</style>
 
 #if($supportsUpdate)
 <div onfocus="this.blur();" id="footertoolbar">

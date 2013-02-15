@@ -661,10 +661,10 @@
 						<input type="hidden" name="returnAddress" value="$returnAddress">
 
 						<div id="menutoolbar">
-							<div id="menutoolbarLeft" style="position: absolute; z-index: 10005; padding-left: 4px; padding-top: 2px;">
+							<div id="menutoolbarLeft" style="position: absolute; z-index: 1005; padding-left: 4px; padding-top: 2px;">
 								<div style="float: left; padding-top: 8px; padding-left: 10px;">$ui.getString("tool.managementtool.assignedGroups.label")</div>
 							</div>
-							<div id="menutoolbarRight" style="float:right; z-index: 10005;">
+							<div id="menutoolbarRight" style="float:right; z-index: 1005;">
 								<a class='igToolbarButton igToolbarHeaderButton' href="#" onclick="hideDiv('groups$accessRightId');" title="$ui.getString("tool.common.closeWindowButton.title")"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='close' title="$ui.getString("tool.common.closeWindowButton.title")">$ui.getString("tool.common.closeWindowButton.label")</span></span></a>
 							</div>
 						</div>

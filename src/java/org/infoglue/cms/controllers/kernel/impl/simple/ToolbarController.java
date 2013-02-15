@@ -303,7 +303,7 @@ public class ToolbarController implements ToolbarProvider
 				return getCommonFooterSaveOrCloseButton(toolbarKey, principal, locale, request, disableCloseButton);
 
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.chooseContentsLabel"))
-				return getCommonFooterSaveOrCloseButton(toolbarKey, principal, locale, request, disableCloseButton);
+				return getCommonAddSaveCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.componentPropertiesEditorLabel"))
 				return getCommonAddSaveCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
@@ -2461,15 +2461,7 @@ public class ToolbarController implements ToolbarProvider
 					  "AuthorizationSwitchManagement!inputUser.action?userName=" + formatter.encodeBase64(userName),
 					  "css/images/v3/createBackgroundPenPaper.gif",
 					  "create",
-					  "workIframe"));
-			
-			buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.managementtool.renameSystemUser.header"), 
-					  getLocalizedString(locale, "tool.managementtool.renameSystemUser.header"),
-					  "UpdateSystemUser!inputRename.action?userName=" + formatter.encodeBase64(userName),
-					  "css/images/v3/createBackgroundPenPaper.gif",
-					  "changeContentType",
-					  "workIframe"));
+					  "workIframe"));		
 		}
 
 		return buttons;				

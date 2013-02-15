@@ -1697,7 +1697,7 @@ public class CacheController extends Thread
 						if(CmsPropertyHandler.getOperatingMode().equals("0"))
 							clear = true;
 					}
-					if(cacheName.equalsIgnoreCase("siteNodeCache") && entity.indexOf("SiteNode") > 0)
+					if((cacheName.equalsIgnoreCase("siteNodeCache") || cacheName.equalsIgnoreCase("siteNodeVOCache")) && entity.indexOf("SiteNode") > 0)
 					{
 						clear = true;
 						selectiveCacheUpdate = true;
@@ -1938,6 +1938,7 @@ public class CacheController extends Thread
 							    	}
 							    	else
 							    	{
+							    		cacheInstance.flushEntry("" + entityId);
 								    	cacheInstance.flushGroup("" + entityId);
 								    	cacheInstance.flushGroup("siteNode_" + entityId);
 								    	cacheInstance.flushGroup("selectiveCacheUpdateNonApplicable");
@@ -1946,7 +1947,7 @@ public class CacheController extends Thread
 							    	if(cacheName.equals("childSiteNodesCache"))
 							    	{
 							    		SiteNodeVO snVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(entityId));
-								    	if(snVO.getParentSiteNodeId() != null)
+								    	if(snVO != null && snVO.getParentSiteNodeId() != null)
 								    		cacheInstance.flushGroup("siteNode_" + snVO.getParentSiteNodeId());
 							    	}
 							    	

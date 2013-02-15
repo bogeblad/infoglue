@@ -5,7 +5,7 @@
 
  	#if($prefferedWYSIWYG == "ckeditor4")
 
- 		<script type="text/javascript" src="${root}/applications/ckeditor-latest/ckeditor.js"></script>
+ 		<script type="text/javascript" src="${root}/applications/ckeditor/ckeditor.js"></script>
 		<script type="text/javascript" src="${root}/script/editorForFCKEditor.js"></script>
 
 	#else
@@ -200,7 +200,7 @@
 						var WYSIWYGExtraConfig = plainEditorsExtraConfig[plainTextAreaName];
 						//alert("Creating a textarea for " + plainTextAreaName + " = " + i);
 						document.getElementById(plainTextAreaName).value = transformAttribute(document.getElementById(plainTextAreaName).value);
-
+						
 						var configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "'}";
 			 			if(WYSIWYGExtraConfig && WYSIWYGExtraConfig != '')
 			 				configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "'," + WYSIWYGExtraConfig + "}";

@@ -337,7 +337,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			
 			String parameters = "repositoryId=" + templateController.getSiteNode().getRepositoryId() + "&siteNodeId=" + templateController.getSiteNodeId() + "&languageId=" + templateController.getLanguageId() + "&contentId=" + templateController.getContentId() + "&componentId=" + this.getRequest().getParameter("activatedComponentId") + "&componentContentId=" + this.getRequest().getParameter("componentContentId") + "&showSimple=false&showLegend=false&originalUrl=" + URLEncoder.encode(this.getTemplateController().getCurrentPageUrl(), "UTF-8");
 
-			String WYSIWYGEditorFile = "ckeditor-latest/ckeditor.js";
+			String WYSIWYGEditorFile = "ckeditor/ckeditor.js";
 			if(!CmsPropertyHandler.getPrefferedWYSIWYG().equals("ckeditor4"))
 				WYSIWYGEditorFile = "FCKEditor/fckeditor.js";
 			

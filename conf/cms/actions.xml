@@ -401,6 +401,7 @@
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.RepositoryLanguageAction" alias="RepositoryLanguage">
 		<view name="success">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=ViewListRepositoryLanguage.action#repositoryId</view>
+		<view name="saveAndExit">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=ViewRepository.action#repositoryId</view>
 		<view name="error">/cms/managementtool/error.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.managementtool.actions.ExportRepositoryAction" alias="ExportRepository">

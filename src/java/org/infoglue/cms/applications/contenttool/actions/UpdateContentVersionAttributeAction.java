@@ -25,6 +25,7 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -194,50 +195,65 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 			for(int i=0; i<attributeValue.length(); i++)
 				logger.info("c:" + (int)attributeValue.charAt(i) + "-" + Integer.toHexString((int)attributeValue.charAt(i)));
 			*/
-			
+
 			if(attributeValue != null)
 			{
-				boolean isUTF8 = false;
-				boolean hasUnicodeChars = false;
-				if(attributeValue.indexOf((char)65533) > -1)
-					isUTF8 = true;
-								
-				for(int i=0; i<attributeValue.length(); i++)
+				boolean enableCustomCharactersParsing = CmsPropertyHandler.getEnableCustomCharactersParsing();
+				logger.info("enableCustomCharactersParsing: " + enableCustomCharactersParsing);
+				if (enableCustomCharactersParsing)
 				{
-					int c = (int)attributeValue.charAt(i);
-					//logger.info("c2:" + c + "-" + Integer.toHexString(c));
-					if(c > 255 && c < 65533)
-						hasUnicodeChars = true;
-				}
-				
-				//logger.info("isUTF8:" + isUTF8);
-				//logger.info("hasUnicodeChars:" + hasUnicodeChars);
+					boolean isUTF8 = false;
+					boolean hasUnicodeChars = false;
+					if(attributeValue.indexOf((char)65533) > -1)
+						isUTF8 = true;
 
-				if(!isUTF8 && !hasUnicodeChars)
-				{
-					String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
-					if(fromEncoding == null)
-						fromEncoding = "iso-8859-1";
-					
-					String toEncoding = CmsPropertyHandler.getUploadToEncoding();
-					if(toEncoding == null)
-						toEncoding = "utf-8";
-					
-					String[] controlChars = new String[]{"å","ä","ö","Å","Ä","Ö","Â","‰","ˆ","≈","ƒ","÷"};
-					boolean convert = true;
-					for(String charToTest : controlChars)
+					for(int i=0; i<attributeValue.length(); i++)
 					{
-						if(logger.isInfoEnabled())
-							logger.info("Index for " + charToTest + ":"  + attributeValue.indexOf(charToTest));
-						if(attributeValue.indexOf(charToTest) > -1)
-							convert = false;
-					}
-						
-					if(convert)
-					{
-						attributeValue = new String(attributeValue.getBytes(fromEncoding), toEncoding);
+						int c = (int)attributeValue.charAt(i);
+						//logger.error("c2:" + c + "-" + Integer.toHexString(c));
+						if(c > 255 && c < 65533)
+							hasUnicodeChars = true;
 					}
 
+					logger.debug("isUTF8:" + isUTF8);
+					logger.debug("hasUnicodeChars:" + hasUnicodeChars);
+
+					if(!isUTF8 && !hasUnicodeChars)
+					{
+						String fromEncoding = CmsPropertyHandler.getUploadFromEncoding();
+						if(fromEncoding == null)
+							fromEncoding = "iso-8859-1";
+
+						String toEncoding = CmsPropertyHandler.getUploadToEncoding();
+						if(toEncoding == null)
+							toEncoding = "utf-8";
+
+						String[] controlChars = CmsPropertyHandler.getCustomCharactersForConversionParsed();
+						if (logger.isInfoEnabled())
+						{
+							logger.info("controlChars: " + Arrays.toString(controlChars));
+						}
+
+						boolean convert = true;
+						for(String charToTest : controlChars)
+						{
+							if(logger.isInfoEnabled())
+							{
+								logger.info("Index for " + charToTest + ":"  + attributeValue.indexOf(charToTest));
+							}
+							if(attributeValue.indexOf(charToTest) > -1)
+							{
+								convert = false;
+								break;
+							}
+						}
+
+						if(convert)
+						{
+							attributeValue = new String(attributeValue.getBytes(fromEncoding), toEncoding);
+						}
+
+					}
 				}
 				
 				logger.info("\n\nattributeValue original:" + attributeValue);

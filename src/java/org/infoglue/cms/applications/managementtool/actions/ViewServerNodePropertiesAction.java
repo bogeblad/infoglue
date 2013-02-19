@@ -190,6 +190,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "uploadToEncoding");
 	    populate(ps, "assetKeyFromEncoding");
 	    populate(ps, "assetKeyToEncoding");
+	    populate(ps, "enableCustomCharactersParsing");
+	    populate(ps, "customCharactersForConversion");
 	    populate(ps, "useShortTableNames");
 	    populate(ps, "useImprovedContentCategorySearch");
 	    populate(ps, "logDatabaseMessages");
@@ -353,6 +355,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "unprotectedProtocolPort");
 	    populate(ps, "protectedProtocolPort");
 	    populate(ps, "accessBasedProtocolRedirectHTTPCode");
+	    populate(ps, "redirectStatusCode");
 
 	    populate(ps, "allowedDirectLoginNames");
 

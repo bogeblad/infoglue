@@ -273,7 +273,10 @@
 				#editPropertyFieldCSS("ServerNode.property.uploadFromEncoding" "uploadFromEncoding" "$this.getPropertyValue('uploadFromEncoding')" "51" "$!serverNodeId" "$!cmsPH.uploadFromEncoding")
 				#editPropertyFieldCSS("ServerNode.property.uploadToEncoding" "uploadToEncoding" "$this.getPropertyValue('uploadToEncoding')" "51" "$!serverNodeId" "$!cmsPH.uploadToEncoding")
 				#editPropertyFieldCSS("ServerNode.property.assetKeyFromEncoding" "assetKeyFromEncoding" "$this.getPropertyValue('assetKeyFromEncoding')" "51" "$!serverNodeId" "$!cmsPH.assetKeyFromEncoding")
-				#editPropertyFieldCSS("ServerNode.property.assetKeyToEncoding" "assetKeyToEncoding" "$this.getPropertyValue('assetKeyToEncoding')" "51" "$!serverNodeId" "$!cmsPH.assetKeyToEncoding")		
+				#editPropertyFieldCSS("ServerNode.property.assetKeyToEncoding" "assetKeyToEncoding" "$this.getPropertyValue('assetKeyToEncoding')" "51" "$!serverNodeId" "$!cmsPH.assetKeyToEncoding")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableCustomCharactersParsing" "enableCustomCharactersParsing" "$this.getPropertyValue('enableCustomCharactersParsing')" $!cmsPH.enableCustomCharactersParsing)
+				#editPropertyFieldCSS("ServerNode.property.customCharactersForConversion" "customCharactersForConversion" "$this.getPropertyValue('customCharactersForConversion')" "51" "$!serverNodeId" "$!cmsPH.customCharactersForConversion")
+				##editPropertyFieldCSS("ServerNode.property.enableCustomCharactersParsing" "enableCustomCharactersParsing" "$this.getPropertyValue('enableCustomCharactersParsing')" "51" "$!serverNodeId" "$!cmsPH.enableCustomCharactersParsing")
 			</div>
 		
 			<div class="inlineTabDiv" id="mailSettings">

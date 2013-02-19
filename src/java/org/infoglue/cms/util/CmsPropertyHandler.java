@@ -2397,7 +2397,20 @@ public class CmsPropertyHandler
 
 	public static String getAccessBasedProtocolRedirectHTTPCode()
 	{
-		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "301");
+		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "307");
+	}
+
+	public static int getRedirectStatusCode()
+	{
+		try
+		{
+			return Integer.parseInt(getServerNodeProperty("redirectStatusCode", true, "301"));
+		}
+		catch (NumberFormatException nfe)
+		{
+			logger.warn("Failed to parse redirectStatusCode. Will return default value. Message: " + nfe.getMessage());
+			return 301;
+		}
 	}
 
 	public static String getDefaultRepositoryAccessRoles()

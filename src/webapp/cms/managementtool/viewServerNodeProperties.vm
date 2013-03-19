@@ -273,7 +273,10 @@
 				#editPropertyFieldCSS("ServerNode.property.uploadFromEncoding" "uploadFromEncoding" "$this.getPropertyValue('uploadFromEncoding')" "51" "$!serverNodeId" "$!cmsPH.uploadFromEncoding")
 				#editPropertyFieldCSS("ServerNode.property.uploadToEncoding" "uploadToEncoding" "$this.getPropertyValue('uploadToEncoding')" "51" "$!serverNodeId" "$!cmsPH.uploadToEncoding")
 				#editPropertyFieldCSS("ServerNode.property.assetKeyFromEncoding" "assetKeyFromEncoding" "$this.getPropertyValue('assetKeyFromEncoding')" "51" "$!serverNodeId" "$!cmsPH.assetKeyFromEncoding")
-				#editPropertyFieldCSS("ServerNode.property.assetKeyToEncoding" "assetKeyToEncoding" "$this.getPropertyValue('assetKeyToEncoding')" "51" "$!serverNodeId" "$!cmsPH.assetKeyToEncoding")		
+				#editPropertyFieldCSS("ServerNode.property.assetKeyToEncoding" "assetKeyToEncoding" "$this.getPropertyValue('assetKeyToEncoding')" "51" "$!serverNodeId" "$!cmsPH.assetKeyToEncoding")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.enableCustomCharactersParsing" "enableCustomCharactersParsing" "$this.getPropertyValue('enableCustomCharactersParsing')" $!cmsPH.enableCustomCharactersParsing)
+				#editPropertyFieldCSS("ServerNode.property.customCharactersForConversion" "customCharactersForConversion" "$this.getPropertyValue('customCharactersForConversion')" "51" "$!serverNodeId" "$!cmsPH.customCharactersForConversion")
+				##editPropertyFieldCSS("ServerNode.property.enableCustomCharactersParsing" "enableCustomCharactersParsing" "$this.getPropertyValue('enableCustomCharactersParsing')" "51" "$!serverNodeId" "$!cmsPH.enableCustomCharactersParsing")
 			</div>
 		
 			<div class="inlineTabDiv" id="mailSettings">
@@ -386,7 +389,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowPublicationEventFilter" "allowPublicationEventFilter" "$this.getPropertyValue('allowPublicationEventFilter')" "$!cmsPH.allowPublicationEventFilter")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideProtectedProperties" "hideProtectedProperties" "$this.getPropertyValue('hideProtectedProperties')" "$!cmsPH.hideProtectedProperties")
 					
-				#set($option1 = ["$ui.getString('tool.common.inherit')", "$ui.getString('tool.common.inherit')"])
+				#set($option1 = ["inherit", "$ui.getString('tool.common.inherit')"])
 				#set($option2 = ["$ui.getString('entity.ServerNode.property.allPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.allPublicationEventFilter.label')"])
 				#set($option3 = ["$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.value')", "$ui.getString('entity.ServerNode.property.groupBasedPublicationEventFilter.label')"])
 				#set($publicationEventFilterOptions = [$option1, $option2, $option3]) 
@@ -402,6 +405,13 @@
 				#editPropertyFieldCSS("ServerNode.property.unprotectedProtocolPort" "unprotectedProtocolPort" "$this.getPropertyValue('unprotectedProtocolPort')" "51" "$!serverNodeId" "$!cmsPH.unprotectedProtocolPort")
 				#editPropertyFieldCSS("ServerNode.property.protectedProtocolPort" "protectedProtocolPort" "$this.getPropertyValue('protectedProtocolPort')" "51" "$!serverNodeId" "$!cmsPH.protectedProtocolPort")
 				#editPropertyFieldCSS("ServerNode.property.accessBasedProtocolRedirectHTTPCode" "accessBasedProtocolRedirectHTTPCode" "$this.getPropertyValue('accessBasedProtocolRedirectHTTPCode')" "51" "$!serverNodeId" "$!cmsPH.accessBasedProtocolRedirectHTTPCode")
+
+				#set($redirectStatusCodeInherit = ["inherit", "$ui.getString('tool.common.inherit')"])
+				#set($redirectStatusCode301 = ["301", "$ui.getString('entity.ServerNode.property.redirectStatusCode301.label')"])
+				#set($redirectStatusCode302 = ["302", "$ui.getString('entity.ServerNode.property.redirectStatusCode302.label')"])
+				#set($redirectStatusCode307 = ["307", "$ui.getString('entity.ServerNode.property.redirectStatusCode307.label')"])
+				#set($redirectStatusCodeOptions = [$redirectStatusCodeInherit, $redirectStatusCode301, $redirectStatusCode302, $redirectStatusCode307])
+				#selectFieldCSS("ServerNode.property.redirectStatusCode" "redirectStatusCode" $this.getPropertyValue('redirectStatusCode') $redirectStatusCodeOptions "$!cmsPH.redirectStatusCode")
 
 				#editPropertyFieldCSS("ServerNode.property.allowedDirectLoginNames" "allowedDirectLoginNames" "$this.getPropertyValue('allowedDirectLoginNames')" "51" "$!serverNodeId" "$!cmsPH.allowedDirectLoginNames")
 				

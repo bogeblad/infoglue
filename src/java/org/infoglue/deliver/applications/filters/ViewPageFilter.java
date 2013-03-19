@@ -300,8 +300,11 @@ public class ViewPageFilter implements Filter
 	                    String redirectUrl = RedirectController.getController().getRedirectUrl(httpRequest);
 	                    if(redirectUrl != null && redirectUrl.length() > 0)
 	                    {
-		                    httpResponse.sendRedirect(redirectUrl);
-		                    return;
+							int redirectStatusCode = CmsPropertyHandler.getRedirectStatusCode();
+							String encodedRedirectUrl = httpResponse.encodeRedirectURL(redirectUrl);
+							httpResponse.setStatus(redirectStatusCode);
+							httpResponse.setHeader("Location", encodedRedirectUrl);
+							return;
 	                    }
 	                    
 	        			String extraInformation = "Referer: " + httpRequest.getHeader("Referer") + "\n";

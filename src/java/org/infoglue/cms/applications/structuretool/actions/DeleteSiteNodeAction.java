@@ -152,10 +152,11 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
         	
         	if(ce.getErrorCode().equalsIgnoreCase("3400"))
         	{
-        		String unpublishSiteNodesInlineOperationLinkText = getLocalizedString(getLocale(), "tool.structuretool.unpublishSiteNodesInlineOperationLinkText");
-        		String unpublishSiteNodesInlineOperationTitleText = getLocalizedString(getLocale(), "tool.structuretool.unpublishSiteNodesInlineOperationTitleText");
+        		ce.setResult("showRelations");
+        		//String unpublishSiteNodesInlineOperationLinkText = getLocalizedString(getLocale(), "tool.structuretool.unpublishSiteNodesInlineOperationLinkText");
+        		//String unpublishSiteNodesInlineOperationTitleText = getLocalizedString(getLocale(), "tool.structuretool.unpublishSiteNodesInlineOperationTitleText");
         	
-        		ce.getLinkBeans().add(new LinkBean("unpublishPageUrl", unpublishSiteNodesInlineOperationLinkText, unpublishSiteNodesInlineOperationTitleText, unpublishSiteNodesInlineOperationTitleText, StructureToolbarController.getUnpublishButtonLink(this.siteNodeVO.getSiteNodeId(), true), false, "", "", "inline"));
+        		//ce.getLinkBeans().add(new LinkBean("unpublishPageUrl", unpublishSiteNodesInlineOperationLinkText, unpublishSiteNodesInlineOperationTitleText, unpublishSiteNodesInlineOperationTitleText, StructureToolbarController.getUnpublishButtonLink(this.siteNodeVO.getSiteNodeId(), true), false, "", "", "inline"));
         	}
         	
 			ce.setResult(INPUT + "V3");

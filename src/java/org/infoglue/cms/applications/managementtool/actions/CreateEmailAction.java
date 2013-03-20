@@ -99,7 +99,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
    
     public String doInputChooseRecipients() throws Exception
     {    	
-    	users 	= UserControllerProxy.getController().getAllUsers();
+    	//users 	= UserControllerProxy.getController().getAllUsers();
     	roles 	= RoleControllerProxy.getController().getAllRoles();
     	groups 	= GroupControllerProxy.getController().getAllGroups();
     	
@@ -108,7 +108,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
 
     public String doInputCreateEmail() throws Exception
     {
-    	userNames 	= getRequest().getParameterValues("userName");
+    	//userNames 	= getRequest().getParameterValues("userName");
     	roleNames 	= getRequest().getParameterValues("roleName");
     	groupNames 	= getRequest().getParameterValues("groupName");
 
@@ -239,7 +239,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     public String doInputChooseRecipientsV3() throws Exception
     {
     	extraText 	= getRequest().getParameter("extraText");    	
-    	users 		= UserControllerProxy.getController().getAllUsers();
+    	//users 		= UserControllerProxy.getController().getAllUsers();
     	roles 		= RoleControllerProxy.getController().getAllRoles();
     	groups 		= GroupControllerProxy.getController().getAllGroups();
     	
@@ -253,7 +253,7 @@ public class CreateEmailAction extends InfoGlueAbstractAction
     public String doInputCreateEmailV3() throws Exception
     {
     	extraText 	= getRequest().getParameter("extraText");
-    	userNames 	= getRequest().getParameterValues("userName");
+    	//userNames 	= getRequest().getParameterValues("userName");
     	roleNames 	= getRequest().getParameterValues("roleName");
     	groupNames 	= getRequest().getParameterValues("groupName");
     	

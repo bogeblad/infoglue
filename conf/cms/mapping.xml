@@ -1012,9 +1012,11 @@
     <field name="parentContentId" type="java.lang.Integer">
       <sql name="parentContentId" type="integer"/>
     </field>
+    <!--
     <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
       <sql name="contentTypeDefinitionId"/>
     </field>
+    -->
   </class>
 
 <!--  Mapping for SmallishContent  -->
@@ -1321,6 +1323,26 @@
     </field>
   </class>
 
+<!--  
+  <class name="org.infoglue.cms.entities.content.impl.simple.ContentVersionAttributeImpl" identity="contentVersionAttributeId" key-generator="IDENTITY">
+    <description>ContentVersionAttribute</description>
+    <cache-type type="none"/>
+    <map-to table="cmContentVersionAttribute"/>
+    <field name="contentVersionAttributeId" type="java.lang.Integer">
+      <sql name="contentVersionAttributeId" type="integer" dirty="check" />
+    </field>
+    <field name="contentVersionId" type="java.lang.Integer">
+      <sql name="contentVersionId" type="integer" dirty="check" />
+    </field>
+    <field name="attributeName" type="java.lang.String">
+      <sql name="attributeName" type="varchar" dirty="check" />
+    </field>
+    <field name="attributeValue" type="java.lang.String">
+      <sql name="attributeValue" type="varchar" dirty="check" />
+    </field>
+  </class>
+-->
+  
 <!--  Mapping for ContentRelation  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.ContentRelationImpl" identity="contentRelationId" key-generator="IDENTITY">
     <description>ContentRelation</description>

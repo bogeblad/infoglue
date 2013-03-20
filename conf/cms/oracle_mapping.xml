@@ -1014,10 +1014,11 @@
     <field name="parentContentId" type="java.lang.Integer">
       <sql name="parentContId" type="integer"/>
     </field>
+    <!--  
     <field name="contentTypeDefinition" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl">
       <sql name="contentTypeDefId"/>
     </field>
-    
+    -->
   </class>
 
 <!--  Mapping for SmallishContent  -->

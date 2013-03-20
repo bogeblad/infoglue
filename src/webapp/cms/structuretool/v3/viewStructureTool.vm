@@ -172,6 +172,7 @@
 					});
 			#else
 				openUrlInWorkArea("ViewSiteNode!V3.action?siteNodeId=$rootSiteNode.id&repositoryId=$repositoryId");
+				//setTimeout(function(){syncWithTree($rootSiteNode.id, $repositoryId, "treeIframe"); alert("1:" + $rootSiteNode.id);}, 2000);
 			#end
 			
 			$("#menuOverlayDiv").mouseout(function () {

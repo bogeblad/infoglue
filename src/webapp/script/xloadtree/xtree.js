@@ -328,7 +328,8 @@ WebFXTreeAbstractNode.prototype.doExpand = function() {
 	}
 	else
 	{ 
-		ig_expanded_nodes = "" + this.parentNode.myId + "," + this.myId + ",";
+		if(this.parentNode)
+			ig_expanded_nodes = "" + this.parentNode.myId + "," + this.myId + ",";
 	}
 	  
 	//alert("ig_expanded_nodes:" + ig_expanded_nodes);

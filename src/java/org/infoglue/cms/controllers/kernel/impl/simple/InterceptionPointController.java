@@ -95,7 +95,7 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ContentVersion.Write", new InterceptionPointVO("ContentVersion", "ContentVersion.Write", "Intercepts the editing of a contentversion", true));
 	    systemInterceptionPoints.put("ContentVersion.Read", new InterceptionPointVO("ContentVersion", "ContentVersion.Read", "Intercepts the read of a contentversion", true));
 	    systemInterceptionPoints.put("ContentVersion.Publish", new InterceptionPointVO("ContentVersion", "ContentVersion.Publish", "Intercepts the direct publishing of a content version", true));
-	    
+
 	    systemInterceptionPoints.put("Repository.Read", new InterceptionPointVO("Repository", "Repository.Read", "Gives a user access to look at a repository", true));
 	    systemInterceptionPoints.put("Repository.Write", new InterceptionPointVO("Repository", "Repository.Write", "Gives a user possible access to write in the repository", true));
 	    systemInterceptionPoints.put("Repository.ReadForBinding", new InterceptionPointVO("Repository", "Repository.ReadForBinding", "This point intercepts when a user tries to read the repository in a binding dialog", true));
@@ -126,6 +126,7 @@ public class InterceptionPointController extends BaseController
 		systemInterceptionPoints.put("ComponentEditor.ViewSource", new InterceptionPointVO("ComponentEditor", "ComponentEditor.ViewSource", "This interception point limits who can see the view source menu in edit on sight", false));
 		systemInterceptionPoints.put("ComponentEditor.CreateSubpage", new InterceptionPointVO("ComponentEditor", "ComponentEditor.CreateSubpage", "This interception point limits who can see the create subpage menu in edit on sight", false));
 		systemInterceptionPoints.put("ComponentEditor.EditPageMetadata", new InterceptionPointVO("ComponentEditor", "ComponentEditor.EditPageMetadata", "This interception point limits who can see the edit page meta info menu in edit on sight", false));
+		systemInterceptionPoints.put("ComponentEditor.SavePageTemplate", new InterceptionPointVO("ComponentEditor", "ComponentEditor.SavePageTemplate", "This interception point limits who can see the save page template menu in edit on sight", false));
 		
 		systemInterceptionPoints.put("ComponentEditor.NotifyUserOfPage", new InterceptionPointVO("ComponentEditor", "ComponentEditor.NotifyUserOfPage", "This interception point limits who can see the notify user menu in edit on sight", false));
 		systemInterceptionPoints.put("ComponentEditor.ContentNotifications", new InterceptionPointVO("ComponentEditor", "ComponentEditor.ContentNotifications", "This interception point limits who can see the content notification info menu in edit on sight", false));
@@ -181,6 +182,14 @@ public class InterceptionPointController extends BaseController
 
 	    systemInterceptionPoints.put("WebDAV.Read", new InterceptionPointVO("WebDav", "WebDAV.Read", "Intercepts the WebDAV feature", false));
 	    systemInterceptionPoints.put("ViewApplicationState.Read", new InterceptionPointVO("ViewApplicationState", "ViewApplicationState.Read", "Intercepts access to the View application state screens", false));
+
+	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentAccessRightsTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentAccessRightsTab", "Intercepts the content access rights tab on content version", false));
+	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentVersionAccessRightsTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentVersionAccessRightsTab", "Intercepts the content version access rights tab on content version", false));
+	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentVersionCategoriesTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentVersionCategoriesTab", "Intercepts the content version categorires tab on content version", false));
+
+	    systemInterceptionPoints.put("ToolTabsAndButtons.MySettingsExtendedGUIFields", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.MySettingsExtendedGUIFields", "Intercepts the GUI-version, GUI-theme and Toolbar style fields on my settings", false));
+	    systemInterceptionPoints.put("ToolTabsAndButtons.MySettingsSubcriptionsTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.MySettingsSubcriptionsTab", "Intercepts the Subscriptions-tab on my settings", false));
+	    systemInterceptionPoints.put("ToolTabsAndButtons.MySettingsChangePasswordTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.MySettingsChangePasswordTab", "Intercepts the Change password-tab on my settings", false));
 	}
     
 	/**

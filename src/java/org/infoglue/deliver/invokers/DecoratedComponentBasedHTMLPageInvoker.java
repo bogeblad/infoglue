@@ -446,6 +446,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    extraBody = extraBody.replaceAll("\\$pageStructureJavascript", "var hasPageStructureAccess = " + hasPageStructureAccess + ";");
 		    extraBody = extraBody.replaceAll("\\$openInNewWindowJavascript", "var hasOpenInNewWindowAccess = " + hasOpenInNewWindowAccess + ";");
 		    extraBody = extraBody.replaceAll("\\$allowViewSourceJavascript", "var hasAccessToViewSource = " + hasViewSourceAccess + ";");
+		    extraBody = extraBody.replaceAll("\\$allowSavePageTemplateJavascript", "var hasAccessToSavePageTemplate = " + hasSaveTemplateAccess + ";");
 
 		    extraBody = extraBody.replaceAll("\\$submitToNotifyJavascript", "var hasAccessToNotifyUserOfPage = " + showNotifyUserOfPage + ";");
 		    extraBody = extraBody.replaceAll("\\$contentNotificationsJavascript", "var hasAccessToContentNotifications = " + showContentNotifications + ";");

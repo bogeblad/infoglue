@@ -614,6 +614,21 @@ function showComponentMenu(event, element, compId, anInsertUrl, anDeleteUrl, anC
 	if(window.parent.name == "PageComponents" && componentEditorInNewWindowDivCompElement)
 		componentEditorInNewWindowDivCompElement.style.display = "none";
 	
+	if(hasAccessToPageNotifications) 
+    	$(".linkTakePage").css("display","block");
+	else
+    	$(".linkTakePage").css("display","none");
+
+    if(hasAccessToContentNotifications) 
+    	$(".linkTakeContent").css("display","block");
+	else
+    	$(".linkTakeContent").css("display","none");
+
+    if(hasAccessToSavePageTemplate) 
+    	$(".linkCreatePageTemplate").css("display","block");
+	else
+    	$(".linkCreatePageTemplate").css("display","none");
+
 	if (rightedge < menuDiv.offsetWidth)
 		clientX = (clientX - menuDiv.offsetWidth + 5);
 	
@@ -738,7 +753,41 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 	
 	try
 	{
-	    //alert("aaaa");
+	    if(hasAccessToPageNotifications) 
+	    	$(".linkTakePage").css("display","block");
+		else
+	    	$(".linkTakePage").css("display","none");
+
+	    if(hasAccessToContentNotifications) 
+	    	$(".linkTakeContent").css("display","block");
+		else
+	    	$(".linkTakeContent").css("display","none");
+
+	    if(hasAccessToSavePageTemplate) 
+	    	$(".linkCreatePageTemplate").css("display","block");
+		else
+	    	$(".linkCreatePageTemplate").css("display","none");
+
+
+	    var hasPageStructureAccess = eval("hasPageStructureAccess"); 
+	    if(hasPageStructureAccess) 
+	    	$(".linkPageComponents").css("display", "block");
+		else
+	    	$(".linkPageComponents").css("display", "none");
+
+		var hasAccessToOpenInNewWindow = eval("hasOpenInNewWindowAccess"); 
+	    if(hasAccessToOpenInNewWindow) 
+	    	$(".linkOpenInNewWindow").css("display","block");
+		else
+	    	$(".linkOpenInNewWindow").css("display","none");
+
+		var hasAccessToViewSource = eval("hasAccessToViewSource"); 
+	    if(hasAccessToViewSource) 
+	    	$(".linkViewSource").css("display","block");
+		else
+	    	$(".linkViewSource").css("display","none");
+	    
+	    
 	    var access = eval("hasAccessToAddComponent" + convertName(compId)); 
 	    //alert("hasAccessToAddComponent" + convertName(compId) + "=" + access);
 	    //alert("access:" + access);
@@ -787,34 +836,6 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 		else
 	    	document.getElementById("submitToPublishMenuItem").style.display = "none";
 		*/
-		
-		var hasAccessToSubmitToPageComponents = eval("hasPageStructureAccess"); 
-	    //alert("hasAccessToPageComponents:" + hasAccessToSubmitToPageComponents);
-	    if(hasAccessToSubmitToPageComponents) 
-	    	$(".linkPageComponents").css("display", "block");
-	    	//document.getElementById("pageComponentsMenuItem").style.display = "block";
-		else
-	    	$(".linkPageComponents").css("display", "none");
-	    //document.getElementById("pageComponentsMenuItem").style.display = "none";
-
-		var hasAccessToOpenInNewWindow = eval("hasOpenInNewWindowAccess"); 
-	    //alert("hasAccessToOpenInNewWindow:" + hasAccessToOpenInNewWindow);
-	    if(hasAccessToOpenInNewWindow) 
-	    	$(".linkOpenInNewWindow").css("display","block");
-	    	//document.getElementById("openInNewWindowMenuItem").style.display = "block";
-		else
-	    	$(".linkOpenInNewWindow").css("display","none");
-	    	//document.getElementById("openInNewWindowMenuItem").style.display = "none";
-
-		var hasAccessToViewSource = eval("hasAccessToViewSource"); 
-	    //alert("hasAccessToViewSource:" + hasAccessToViewSource);
-	    if(hasAccessToViewSource) 
-	    	$(".linkViewSource").css("display","block");
-	    	//document.getElementById("viewSourceMenuItem").style.display = "block";
-		else
-	    	$(".linkViewSource").css("display","none");
-	    	//document.getElementById("viewSourceMenuItem").style.display = "none";
-
 	}
 	catch(e)
 	{
@@ -1855,7 +1876,12 @@ function showComponentProperties(id, event)
 	
 	var newTop = $(window).height()/2-element.height()/2 + scrollTop;
 	var newLeft = $(window).width()/2-element.width()/2 + scrollLeft;
-
+	
+	if(newTop < 0)
+		newTop = 10;
+	if(newLeft < 0)
+		newLeft = 10;
+	
 	element.css('top', newTop + "px");
 	element.css('left', newLeft + "px");
 	

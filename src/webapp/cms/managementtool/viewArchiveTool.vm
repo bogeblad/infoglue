@@ -13,6 +13,7 @@
 	<p>
 		<a href="ViewArchiveTool!inputRestoreAssetArchive.action">$ui.getString("tool.managementtool.restoreAssetArchive.title") - $ui.getString("tool.managementtool.restoreAssetArchive.leadin")</a>
 	</p>
+
 	#if($numberOfCleanedContentVersions)
 	<p style="color:red;">
 		#if($deleteVersions)

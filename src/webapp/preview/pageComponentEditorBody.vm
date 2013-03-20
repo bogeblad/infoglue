@@ -50,6 +50,7 @@ $submitToPublishJavascript
 $pageStructureJavascript
 $openInNewWindowJavascript
 $allowViewSourceJavascript
+$allowSavePageTemplateJavascript
 
 $submitToNotifyJavascript
 $contentNotificationsJavascript

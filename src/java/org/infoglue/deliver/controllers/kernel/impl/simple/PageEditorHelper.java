@@ -914,8 +914,8 @@ public class PageEditorHelper extends BaseDeliveryController
 
 		    boolean showNotifyUserOfPage 		= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.NotifyUserOfPage", "");
 		    boolean showContentNotifications 	= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.ContentNotifications", "");
-		    boolean showPageNotifications 		= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.PageNotifications", "");
-
+		    boolean showPageNotifications 		= AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "ComponentEditor.PageNotifications", "");		    
+		    
 		    boolean hasMaxComponents = false;
 			if(component.getParentComponent() != null && component.getParentComponent().getSlotList() != null)
 			{

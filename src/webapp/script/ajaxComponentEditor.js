@@ -1602,6 +1602,11 @@ function showComponentProperties(id, event)
 	var newTop = $(window).height()/2-element.height()/2 + scrollTop;
 	var newLeft = $(window).width()/2-element.width()/2 + scrollLeft;
 
+	if(newTop < 0)
+		newTop = 10;
+	if(newLeft < 0)
+		newLeft = 10;
+
 	element.css('top', newTop + "px");
 	element.css('left', newLeft + "px");
 	

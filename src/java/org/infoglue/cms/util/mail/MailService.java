@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.jsoup.Jsoup;
 
 public class MailService 
 {
@@ -304,8 +305,8 @@ public class MailService
 		    email.setSubject(subject);
 		    
 		    email.setHtmlMsg(content);
-	
-		    email.setTextMsg("Your email client does not support HTML messages");
+		    
+		    //email.setTextMsg(Jsoup.parse(content).text());
 	
 		    email.send();
 

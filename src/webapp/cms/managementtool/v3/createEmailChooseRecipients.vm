@@ -142,11 +142,14 @@
 
 		function selectAll(aElementName)
 		{
-			var size = document.editForm.elements[aElementName].options.length;
-
-			for (i = 0; i < size; i ++)
+			if(document.editForm.elements[aElementName])
 			{
-				document.editForm.elements[aElementName].options[i].selected = true;
+				var size = document.editForm.elements[aElementName].options.length;
+	
+				for (i = 0; i < size; i ++)
+				{
+					document.editForm.elements[aElementName].options[i].selected = true;
+				}
 			}
 		}
 		
@@ -194,11 +197,11 @@
 			
 			<div id="tabsContainer" class="flora">      
 				<ul>
-			        <li><a href="#usersTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.usersTabLabel")</span></a></li>
+			        <!--<li><a href="#usersTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.usersTabLabel")</span></a></li>-->
 			        <li><a href="#rolesTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.rolesTabLabel")</span></a></li>
 			        <li><a href="#groupsTab"><span>$ui.getString("tool.managementtool.createEmailChooseRecipients.groupsTabLabel")</span></a></li>
 			    </ul>
-	
+				<!--
 				<div id="usersTab" class="recipientTab inlineTabDiv">	
 					<table>
 						<tr>
@@ -233,14 +236,15 @@
 						</tr>
 					</table>				
 				</div>
+				-->
 				
-				<div id="rolesTab" class="recipientTab inlineTabDiv" style="display: none;"> 				
+				<div id="rolesTab" class="recipientTab inlineTabDiv" style="padding: 10px"> 				
 					#foreach ($roleVO in $roles)
 						<input type="checkbox" name="roleName" value="$roleVO.name"/> $roleVO.name<br/>
 					#end
 				</div>
 				
-				<div id="groupsTab" class="recipientTab inlineTabDiv" style="display: none;"> 				
+				<div id="groupsTab" class="recipientTab inlineTabDiv" style="padding: 10px"> 				
 					#foreach ($groupVO in $groups)
 						<input type="checkbox" name="groupName" value="$groupVO.name"/> $groupVO.name<br/>
 					#end

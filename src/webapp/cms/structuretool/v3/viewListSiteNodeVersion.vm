@@ -251,7 +251,7 @@
 			#set($displayName = "$cv.versionModifier")
 		#end
 		
-		#set( $row = ["<img src='css/images/v3/contentIcon.gif'> $this.getContentPath($cv.contentId).replaceAll(' ', '&nbsp;') ($cv.getId())", $ui.getString("tool.common.publishing.typeContentLabel"), "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
+		#set( $row = ["<img src='css/images/v3/contentIcon.gif'> $this.getContentPath($cv.contentId).replaceAll(' ', '&nbsp;') ($this.getLanguageVO($cv.languageId).name - $cv.getId())", $ui.getString("tool.common.publishing.typeContentLabel"), "$formatter.formatDate($cv.modifiedDateTime, 'yyyy-MM-dd')", "$displayName"] )
 		#set($cnt = $cnt + 1)
 		
 		#lvAddRowV3($row $cnt $cv.id false)

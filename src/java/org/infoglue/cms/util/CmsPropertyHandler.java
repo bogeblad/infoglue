@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -50,6 +51,7 @@ import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.Timer;
+import org.netbeans.lib.cvsclient.commandLine.command.log;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -695,7 +697,85 @@ public class CmsPropertyHandler
 		//return newInputCharacterEncoding;
 		return inputCharacterEncoding;
 	}
+
+	/**
+	 * @param input The input to parse. The method assumes the format is '&#x5c;uXXXX'.
+	 * @param failSafetly If true the method returns an empty String if an exception occurs, otherwise the exception is thrown from the method.
+	 * @return A parsed String
+	 * @throws Throwable If <em>failSafetly</em> is false any exception that occurs during parsing is thrown from the method, otherwise no exception is thrown.
+	 */
+	protected static String parseUnicodeString(String input, boolean failSafetly)
+	{
+		if (failSafetly)
+		{
+			try
+			{
+				return new String(Character.toString((char)Integer.parseInt(input.substring(2), 16)));
+			}
+			catch (Throwable tr)
+			{
+				logger.warn("Failed to parse character in CustomCharactersForConversion. Will add an empty String to the array instead. Value: " + input, tr);
+				return "";
+			}
+		}
+		else
+		{
+			return new String(Character.toString((char)Integer.parseInt(input.substring(2), 16)));
+		}
+	}
+
+	/**
+	 * Returns a comma-seperated list that can be used to verify if a String needs to be encoding-converted.
+	 * 
+	 * This value can be defined by users of the system and can therefore contain any type of values, however the expected format
+	 * is a comma-seperated String with one character in each entity. If no value is provided by the user a default set of Swedish
+	 * characters will be used.
+	 */
+	public static String getCustomCharactersForConversion()
+	{
+		return getServerNodeProperty("customCharactersForConversion", true, "\u00E5,\u00E4,\u00F6");
+	}
 	
+	/**
+	 * Returns an array of Strings that can be used to verify if a String needs to be encoding-converted.
+	 * 
+	 * This value can be defined by users of the system and can therefore contain any type of values, however the expected format
+	 * is one character per entity in the array. If no value is provided by the user a default set of Swedish characters will be used.
+	 * 
+	 */
+	public static String[] getCustomCharactersForConversionParsed()
+	{
+		String characterString = getCustomCharactersForConversion();
+
+		String[] result = null;
+		if (characterString.indexOf("\\u") == -1)
+		{
+			logger.info("Returning simple value for custom characters for conversion.");
+			result = characterString.split(",");
+		}
+		else
+		{
+			logger.info("Parsing value for custom characters for conversion.");
+			String[] values = characterString.split(",");
+			result = new String[values.length];
+			for (int i = 0; i < result.length; i++)
+			{
+				result[i] = parseUnicodeString(values[i], true);
+			}
+		}
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("CustomCharactersForConversion: " + Arrays.toString(result));
+		}
+		return result;
+	}
+
+	public static boolean getEnableCustomCharactersParsing()
+	{
+		String value = getServerNodeProperty("enableCustomCharactersParsing", true, "true");
+		return new Boolean(value);
+	}
+
 	public static String getUp2dateUrl()
 	{
 	    return getProperty("up2dateUrl");
@@ -2317,7 +2397,20 @@ public class CmsPropertyHandler
 
 	public static String getAccessBasedProtocolRedirectHTTPCode()
 	{
-		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "301");
+		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "307");
+	}
+
+	public static int getRedirectStatusCode()
+	{
+		try
+		{
+			return Integer.parseInt(getServerNodeProperty("redirectStatusCode", true, "301"));
+		}
+		catch (NumberFormatException nfe)
+		{
+			logger.warn("Failed to parse redirectStatusCode. Will return default value. Message: " + nfe.getMessage());
+			return 301;
+		}
 	}
 
 	public static String getDefaultRepositoryAccessRoles()

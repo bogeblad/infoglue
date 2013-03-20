@@ -52,10 +52,10 @@ public class CleanOldVersionsJob implements Job
     	logger.info("* Starting version cleanup job which should run with nice intervals *");
     	logger.info("* Purpose is to keep the database size at a minimum 				 *");
     	logger.info("*********************************************************************");
-
-    	if(!running.compareAndSet(false, true))
-    	{
     	
+    	if(running.compareAndSet(false, true))
+    	{
+    		System.out.println("STARTAR");
 	    	try
 			{
 	    		Boolean deleteVersions = (Boolean)context.get("deleteVersions");
@@ -94,13 +94,15 @@ public class CleanOldVersionsJob implements Job
 			finally
 			{
 				running.set(false);
+	    		System.out.println("STOPPAR");
+
 			}
 			
 		   	logger.info("Cleanup-job finished");
 		}
 		else
 		{
-			logger.info("CleanOldVersionsJob allready running... skipping.");
+			System.out.println("CleanOldVersionsJob allready running... skipping.");
 		}
     }	    
 }

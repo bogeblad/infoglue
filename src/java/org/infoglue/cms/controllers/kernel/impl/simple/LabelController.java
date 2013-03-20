@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -144,8 +145,13 @@ public class LabelController extends BaseController implements StringManager
     
 	private static Map<String,Object> cachedBundles = new HashMap<String,Object>();
 	private static Map<String,String> cachedLabels = new HashMap<String,String>();
-	
+
 	public String getLocalizedString(Locale locale, String key)
+	{
+		return getLocalizedString(locale, key, false);
+	}
+	
+	public String getLocalizedString(Locale locale, String key, boolean forceSystemBundle)
 	{
 		Timer t = new Timer();
 		
@@ -206,7 +212,19 @@ public class LabelController extends BaseController implements StringManager
 		
 		if(resourceBundle != null)
 		{
-			value = resourceBundle.getString(key);
+			try
+			{
+				if(resourceBundle.containsKey(key))	
+					value = resourceBundle.getString(key);
+				else
+					value = getLocalizedSystemString(locale, key, true);
+			}
+			catch (MissingResourceException e) 
+			{
+				logger.error("Missing key: " + e.getMessage());
+				//value = getLocalizedSystemString(locale, key, true);
+				value = "MISSING LABEL: " + key;
+			}
 		}
 		
 		//t.printElapsedTime("3");
@@ -223,6 +241,11 @@ public class LabelController extends BaseController implements StringManager
 	}
 
 	public String getLocalizedString(Locale locale, String key, Object[] args)
+	{
+		return getLocalizedString(locale, key, args, false);
+	}
+	
+	public String getLocalizedString(Locale locale, String key, Object[] args, boolean forceSystemBundle)
 	{
 		Timer t = new Timer();
 		
@@ -271,7 +294,15 @@ public class LabelController extends BaseController implements StringManager
 		//logger.info("\n\n:args:" + args[0]);
 		if(resourceBundle != null)
 		{
-			value = MessageFormat.format(resourceBundle.getString(key), args);
+			try
+			{
+				value = MessageFormat.format(resourceBundle.getString(key), args);
+			}
+			catch (MissingResourceException e) 
+			{
+				System.out.println("AAAAA: " + e.getMessage());
+				value = getLocalizedSystemString(locale, key, args, true);
+			}
 		}
 		
 		//t.printElapsedTime("3");

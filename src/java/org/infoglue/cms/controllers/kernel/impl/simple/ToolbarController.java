@@ -927,6 +927,7 @@ public class ToolbarController implements ToolbarProvider
 			currentLanguageVO = LanguageController.getController().getLanguageVOWithId(languageId);
 		}
 		
+		/*
 		ToolbarButton languageDropButton = new ToolbarButton("",
 															 StringUtils.capitalize(currentLanguageVO.getDisplayLanguage()), 
 															 StringUtils.capitalize(currentLanguageVO.getDisplayLanguage()),
@@ -952,6 +953,7 @@ public class ToolbarController implements ToolbarProvider
 		}
 		
 		buttons.add(languageDropButton);
+		*/
 		
 		return buttons;
 	}

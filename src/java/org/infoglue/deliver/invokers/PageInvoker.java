@@ -223,6 +223,20 @@ public abstract class PageInvoker
 				    //cachedCompressedData = (byte[])CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
 					this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue(), true, "utf-8", false);
 				    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
+				
+				    if(this.pageString == null)
+				    {
+				    	invokePage();
+						this.pageString = getPageString();
+						
+						//TEST
+						getLastModifiedDateTime();
+						//END TEST
+
+						pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
+
+						this.getDeliveryContext().setPagePath(this.templateController.getCurrentPagePath());
+				    }
 				}
 				
 			    if(cachedExtraData != null)

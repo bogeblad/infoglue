@@ -148,6 +148,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			} 
 			catch (NoClassDefFoundError e){}
 
+			Timer t = new Timer();
     		Map extraInfo = CacheController.getExtraInfo(SiteNodeVersionImpl.class.getName(), getObjectIdentity(object).toString());
     		//System.out.println("extraInfo in jdo callback:" + extraInfo);
     		boolean skipRemoteUpdate = false;	

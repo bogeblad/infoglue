@@ -129,6 +129,7 @@ public class SmallContentImpl extends ContentImpl
 		this.valueObject.setIsBranch(isBranch);
 	}
   
+    /*
     public org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl getContentTypeDefinition()
     {
         return this.contentTypeDefinition;
@@ -138,6 +139,7 @@ public class SmallContentImpl extends ContentImpl
     {
         this.contentTypeDefinition = contentTypeDefinition;
     }
+    */
       
     /*  
     public java.util.Collection getChildren()
@@ -195,7 +197,7 @@ public class SmallContentImpl extends ContentImpl
     {
         this.valueObject.setCreatorName(creator);
     }
-      
+    /*  
     public org.infoglue.cms.entities.management.impl.simple.RepositoryImpl getRepository()
     {
         return this.repository;
@@ -206,7 +208,7 @@ public class SmallContentImpl extends ContentImpl
         this.repository = repository;
         this.valueObject.setRepositoryId(repository.getRepositoryId());
     }
-      
+    */  
     /*  
     public java.util.Collection getRelatedContents()
     {

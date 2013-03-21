@@ -70,6 +70,8 @@
 					#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
 						#if($isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
 							<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
+						#elseif(!$isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
+							## DO NOTHING
 						#else
 							#if($defaultContentTypeName == $contentTypeDefinitionVO.getName())
 								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>

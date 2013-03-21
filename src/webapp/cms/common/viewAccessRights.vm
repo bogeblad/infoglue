@@ -323,9 +323,9 @@
 				<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl"/>
 				<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 				<input type="hidden" name="closeOnLoad" value="false"/>
+				<input type="hidden" name="anchor" id="anchor" value="$anchor"/>
 				<input type="hidden" id="currentUserRowIndex" name="currentUserRowIndex" value="0"/>
 				<input type="hidden" id="selectedUserRowIndex" name="selectedUserRowIndex" value="0"/>
-				<input type="hidden" name="anchor" id="anchor" value="$anchor"/>
 				
 				#set($interceptionPointIndex = 0)
 				#foreach($interceptionPointVO in $interceptionPointVOList)

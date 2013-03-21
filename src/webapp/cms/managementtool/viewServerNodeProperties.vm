@@ -330,6 +330,8 @@
 			<div class="inlineTabDiv" id="cmsGUI">
 				#editPropertyFieldCSS("ServerNode.property.helpUrl" "helpUrl" "$this.getPropertyValue('helpUrl')" "51" "$!serverNodeId" "$!cmsPH.helpUrl")
 				
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useSimpleComponentDialog" "useSimpleComponentDialog" "$this.getPropertyValue('useSimpleComponentDialog')" "$!cmsPH.useSimpleComponentDialog")
+				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyAllowFolderType" "onlyAllowFolderType" "$this.getPropertyValue('onlyAllowFolderType')" "$!cmsPH.onlyAllowFolderType")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.skipResultDialogIfPossible" "skipResultDialogIfPossible" "$this.getPropertyValue('skipResultDialogIfPossible')" "$!cmsPH.skipResultDialogIfPossible")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowOverrideModifyer" "allowOverrideModifyer" "$this.getPropertyValue('allowOverrideModifyer')" "$!cmsPH.allowOverrideModifyer")

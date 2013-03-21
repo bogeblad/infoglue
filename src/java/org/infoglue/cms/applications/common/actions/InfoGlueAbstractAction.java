@@ -814,6 +814,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return CmsPropertyHandler.getPrefferedWYSIWYG();
 	}
 
+	public Boolean getUseSimpleComponentDialog()
+	{
+		return CmsPropertyHandler.getUseSimpleComponentDialog();
+	}
+	
 	public Boolean getOnlyAllowFolderType()
 	{
 		return CmsPropertyHandler.getOnlyAllowFolderType();

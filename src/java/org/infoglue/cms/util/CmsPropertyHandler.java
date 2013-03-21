@@ -1241,6 +1241,21 @@ public class CmsPropertyHandler
 		return killLiveRequestWhichTimedout;
 	}
 
+	public static Boolean getUseSimpleComponentDialog()
+	{
+		boolean useSimpleComponentDialog = false;
+		try
+		{
+			useSimpleComponentDialog = Boolean.parseBoolean(getServerNodeProperty("useSimpleComponentDialog", true, "false"));
+		}
+		catch(Exception e)
+		{
+			logger.warn("Error parsing useSimpleComponentDialog:" + e.getMessage());
+		}
+		
+		return useSimpleComponentDialog;
+	}
+	
 	public static Boolean getOnlyAllowFolderType()
 	{
 		boolean onlyAllowFolderType = true;

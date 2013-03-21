@@ -1379,6 +1379,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	{
 		return SiteNodeController.getController().getRootSiteNodeVO(repositoryId);
 	}
+	
+	public ContentVO getRepositoryRootContent(Integer repositoryId) throws Exception
+	{
+		return ContentControllerProxy.getController().getRootContentVO(repositoryId, getRequest().getRemoteUser());
+	}
 
 	public String getRepositoryName() throws Exception
 	{

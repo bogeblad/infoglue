@@ -312,17 +312,14 @@ public class CreateContentAction extends InfoGlueAbstractAction
 	    args.put("globalKey", "infoglue");
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 
-		if(this.getIsBranch().booleanValue())
-		{
-		    this.defaultFolderContentTypeName = ps.getString("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName");
-		    if(this.defaultFolderContentTypeName == null || this.defaultFolderContentTypeName.equals(""))
-		    	this.defaultFolderContentTypeName = "Folder";
-		}
-		else
-		{
-		    this.defaultContentTypeName = ps.getString("content_" + this.parentContentId + "_defaultContentTypeName");
-		}
-
+	    this.defaultFolderContentTypeName = ps.getString("repository_" + this.getRepositoryId() + "_defaultFolderContentTypeName");
+	    if(this.defaultFolderContentTypeName == null || this.defaultFolderContentTypeName.equals(""))
+	    {
+	    	this.defaultFolderContentTypeName = "Folder";
+	    }
+	    
+		this.defaultContentTypeName = ps.getString("content_" + this.parentContentId + "_defaultContentTypeName");
+		
 		if (ps.exists("content_" + this.parentContentId + "_allowedContentTypeNames"))
         {
             this.allowedContentTypeNames = ps.getString("content_" + this.parentContentId + "_allowedContentTypeNames");

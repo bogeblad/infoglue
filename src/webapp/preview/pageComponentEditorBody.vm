@@ -15,7 +15,7 @@
 <div id="componentMenu" class="skin0">
 <div class="igmenuitems linkEditArticle" onclick="edit();"><a href='#'>$editHTML</a></div>
 <div class="igmenuitems linkAddComponent" onclick="insertComponent();"><a href='#'>$addComponentHTML</a></div>
-<div id="deleteComponentMenuItem" class="igmenuitems linkDeleteComponent" onclick="deleteComponent();"><a href='#'>$deleteComponentHTML</a></div>
+<div id="deleteComponentMenuItem" class="igmenuitems linkDeleteComponent" onclick="deleteComponent('$confirmDeleteLabel');"><a href='#'>$deleteComponentHTML</a></div>
 <div id="changeComponentMenuItem" class="igmenuitems linkChangeComponent" onclick="changeComponent();"><a href='#'>$changeComponentHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$savePartTemplateUrl"><a href='#'>$savePagePartTemplateHTML</a></div>
@@ -28,7 +28,7 @@
 </div>
 
 <div id="componentInTreeMenu" class="skin0">
-<div id="deleteComponentInTreeMenuItem" class="igmenuitems linkDeleteComponent" onclick="deleteComponent();"><a href='#'>$deleteComponentHTML</a></div>
+<div id="deleteComponentInTreeMenuItem" class="igmenuitems linkDeleteComponent" onclick="deleteComponent('$confirmDeleteLabel');"><a href='#'>$deleteComponentHTML</a></div>
 <div id="changeComponentInTreeMenuItem" class="igmenuitems linkChangeComponent" onclick="changeComponent();"><a href='#'>$changeComponentHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$savePartTemplateUrl"><a href='#'>$savePagePartTemplateHTML</a></div>

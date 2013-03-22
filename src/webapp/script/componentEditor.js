@@ -1,9 +1,9 @@
-var isDragged = false;
-
-var ns = (navigator.appName.indexOf("Netscape") != -1);
-var d = document;
-var px = document.layers ? "" : "px";
-var elementArray = new Array();
+var isDragged 			= false;
+var ns 					= (navigator.appName.indexOf("Netscape") != -1);
+var d 					= document;
+var px 					= document.layers ? "" : "px";
+var elementArray 		= new Array();
+var activeComponentName = "";
 
 function enableComponentSort(componentId, slotName, parentComponentId)
 {
@@ -647,12 +647,13 @@ function showComponentMenu(event, element, compId, anInsertUrl, anDeleteUrl, anC
 }
 
 
-function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUrl, anChangeUrl, slotId, slotContentIdVar) 
+function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUrl, anChangeUrl, slotId, slotContentIdVar, aActiveComponentName) 
 {
-	activeMenuId = "componentInTreeMenu";
-
-	slotName = slotId;
-	slotContentId = slotContentIdVar;
+	activeMenuId 		= "componentInTreeMenu";
+	slotName 			= slotId;
+	slotContentId 		= slotContentIdVar;
+	activeComponentName = aActiveComponentName;
+	
 	//alert("slotId:" + slotId);
 	//alert("compId:" + compId);
 	
@@ -1245,6 +1246,7 @@ function editInline(selectedRepositoryId, selectedContentId, selectedLanguageId,
 					   	type: "GET",
 					   	url: "" + componentEditorUrl + "UpdateContentVersionAttribute!getAttributeValue.action",
 					   	data: data,
+					   	cache: false,
 					   	success: function(msg, textStatus){
 							plainAttribute = msg;
 						 
@@ -1780,10 +1782,14 @@ function setAccessRights(slotId, slotContentId)
 	openInlineDiv(componentEditorUrl + "ViewAccessRights!V3.action?interceptionPointCategory=ComponentEditor&extraParameters=" + slotContentId + "_" + slotId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 800, 600, true);
 }
 
-function deleteComponent() 
+function deleteComponent(aConfirmText) 
 {
 	//alert("deleteUrl in deleteComponent:" +  + deleteUrl.substring(0, 50) + '\n' + deleteUrl.substring(50));
-	document.location.href = deleteUrl;
+		
+	if (confirm(aConfirmText.replace("COMPONENT_NAME", activeComponentName)))
+	{
+		document.location.href = deleteUrl;
+	}
 }
 
 function changeComponent() 
@@ -2269,17 +2275,17 @@ function viewSource()
 		}
 	}
 	
-	function initializeComponentInTreeEventHandler(id, compId, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar)
+	function initializeComponentInTreeEventHandler(id, compId, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar, componentName)
 	{
 		insertUrl = insertUrl.replace(/\&amp;/g,'&');
 		deleteUrl = deleteUrl.replace(/\&amp;/g,'&');
 		changeUrl = changeUrl.replace(/\&amp;/g,'&');
 
 		//alert("initializeComponentInTreeEventHandler" + id + " " + deleteUrl + " " + slotId);
-		var object = new componentInTreeEventHandler(id, id, compId, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar);
+		var object = new componentInTreeEventHandler(id, id, compId, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar, componentName);
 	}
 		
-	function componentInTreeEventHandler(eleId, objName, objId, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar)
+	function componentInTreeEventHandler(eleId, objName, objId, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar, componentName)
 	{
 		this.objName = objName;           // objName is a property of myObject4
 		this.objId = objId;
@@ -2318,7 +2324,7 @@ function viewSource()
 		this.onContextMenu = function(evt, ele) // onContextMenu is a method of myObject4
 		{
 			//alert('componentEventHandler.oncontextmenu()\nthis.objName = ' + this.objName + '\nele = ' + xName(ele));
-		    showComponentInTreeMenu(evt, ele.id, this.objId, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar);
+		    showComponentInTreeMenu(evt, ele.id, this.objId, insertUrl, deleteUrl, changeUrl, slotId, slotContentIdVar, componentName);
 		    // cancel event bubbling
 		    if (evt && evt.stopPropagation) {evt.stopPropagation();}
 		    else if (window.event) {window.event.cancelBubble = true;}

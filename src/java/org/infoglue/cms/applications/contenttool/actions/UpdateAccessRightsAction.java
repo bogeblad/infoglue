@@ -315,9 +315,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
 
 		//this.url = this.url + "&saved=true";
-		
-		System.out.println("----------> APA: this.url: " + this.url);
-		
+			
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);

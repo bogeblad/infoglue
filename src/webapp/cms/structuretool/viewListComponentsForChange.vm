@@ -45,6 +45,9 @@
 		$(document).ready(function(){
 
 			#set($extraParameter = '')
+			#if($useSimpleComponentDialog)
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ]')
+			#end
 			#initDataTableImpl("dataTable" $extraParameter)
 			
 		});
@@ -59,6 +62,7 @@
 <div style="clear: both;"></div>
 
 <h3>$ui.getString("tool.structuretool.clickComponentToAddLabel")</h3>
+#if(!$useSimpleComponentDialog)
 <p>
 	#set($allRepositories = $repositories)
     	
@@ -70,6 +74,7 @@
 	    #end
 	</select>
 </p>
+#end
 
 <div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
 
@@ -78,8 +83,10 @@
 			<tr>
 				<th>&nbsp;</th>
 				<th>$ui.getString("tool.structuretool.componentNameLabel")</th>
+				#if(!$useSimpleComponentDialog)
 				<th>$ui.getString("tool.structuretool.repositoryLabel")</th>
 				<th>$ui.getString("tool.structuretool.groupNameLabel")</th>
+				#end
 			</tr>
 		</thead>
 		<tbody>
@@ -123,6 +130,7 @@
 						</span>
 						#end
 					</td>
+					#if(!$useSimpleComponentDialog)
 					<td>
 						#foreach ($repositoryVO in $allRepositories)
 					    	#if($repositoryVO.id == $content.repositoryId)
@@ -131,6 +139,7 @@
 					    #end
 					</td>
 					<td>$content.extraProperties.get("GroupName").replaceAll(",","<br/>")</td>
+					#end
 				</tr>
 				#set($imageUrl = "")
 			#end

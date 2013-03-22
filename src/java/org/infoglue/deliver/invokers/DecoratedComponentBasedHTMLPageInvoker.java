@@ -295,7 +295,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 
 
 	/**
-	 * This method adds the neccessairy html to a template to make it right-clickable.
+	 * This method adds the necessary html to a template to make it right-clickable.
 	 */	
 
 	private String decorateTemplate(TemplateController templateController, String template, DeliveryContext deliveryContext, InfoGlueComponent component)
@@ -394,6 +394,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    	String subscribeToContentLabel 			= getLocalizedString(locale, "deliver.editOnSight.subscribeToContentLabel");
 	    	String subscribeToPageLabel 			= getLocalizedString(locale, "deliver.editOnSight.subscribeToPageLabel");
 	    	String translateContentLabel 			= getLocalizedString(locale, "deliver.editOnSight.translateContentLabel");
+	    	
+	    	String confirmDeleteLabel				= getLocalizedString(locale, "deliver.editOnSight.confirmDeleteLabel");
 
 			String saveTemplateUrl = "saveComponentStructure('" + componentEditorUrl + "CreatePageTemplate!input.action?contentId=" + templateController.getSiteNode(deliveryContext.getSiteNodeId()).getMetaInfoContentId() + "');";
 			String savePartTemplateUrl = "savePartComponentStructure('" + componentEditorUrl + "CreatePageTemplate!input.action?contentId=" + templateController.getSiteNode(deliveryContext.getSiteNodeId()).getMetaInfoContentId() + "');";
@@ -417,6 +419,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			
 			extraBody = extraBody.replaceAll("\\$editHTML", editHTML);
 			extraBody = extraBody.replaceAll("\\$submitToPublishHTML", submitToPublishHTML);
+			
+			extraBody = extraBody.replaceAll("\\$confirmDeleteLabel", confirmDeleteLabel);
 			
 			extraBody = extraBody.replaceAll("\\$notifyHTML", notifyLabel);
 			extraBody = extraBody.replaceAll("\\$subscribeToContentHTML", subscribeToContentLabel);
@@ -1964,15 +1968,16 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
     	String subscribeToContentLabel 			= getLocalizedString(locale, "deliver.editOnSight.subscribeToContentLabel");
     	String subscribeToPageLabel 			= getLocalizedString(locale, "deliver.editOnSight.subscribeToPageLabel");
     	String translateContentLabel 			= getLocalizedString(locale, "deliver.editOnSight.translateContentLabel");
+    	String confirmDeleteLabel				= getLocalizedString(locale, "deliver.editOnSight.confirmDeleteLabel").replaceAll("COMPONENT_NAME", component.getName());
     	
-		String returnAddress = "" + componentEditorUrl + "ViewInlineOperationMessages.action";
+		String returnAddress 					= "" + componentEditorUrl + "ViewInlineOperationMessages.action";
 		
-		String metaDataUrl 			= componentEditorUrl + "ViewAndCreateContentForServiceBinding.action?siteNodeId=" + siteNodeId + "&amp;repositoryId=" + repositoryId + "&amp;changeStateToWorking=true";
-    	String createSiteNodeUrl 	= componentEditorUrl + "CreateSiteNode!inputV3.action?isBranch=true&repositoryId=" + repositoryId + "&amp;parentSiteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;originalAddress=" + URLEncoder.encode(templateController.getCurrentPageUrl(), "utf-8");
-    	String mySettingsUrl 		= componentEditorUrl + "ViewMySettings.action"; 
+		String metaDataUrl 						= componentEditorUrl + "ViewAndCreateContentForServiceBinding.action?siteNodeId=" + siteNodeId + "&amp;repositoryId=" + repositoryId + "&amp;changeStateToWorking=true";
+    	String createSiteNodeUrl 				= componentEditorUrl + "CreateSiteNode!inputV3.action?isBranch=true&repositoryId=" + repositoryId + "&amp;parentSiteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;originalAddress=" + URLEncoder.encode(templateController.getCurrentPageUrl(), "utf-8");
+    	String mySettingsUrl 					= componentEditorUrl + "ViewMySettings.action"; 
 
-    	String notifyUrl 			= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?originalUrl=" + URLEncoder.encode(templateController.getOriginalFullURL().replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
-    	String pageSubscriptionUrl 	= componentEditorUrl + "Subscriptions!input.action?interceptionPointCategory=SiteNodeVersion&amp;entityName=" + SiteNode.class.getName() + "&amp;entityId=" + siteNodeId + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8");
+    	String notifyUrl 						= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?originalUrl=" + URLEncoder.encode(templateController.getOriginalFullURL().replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
+    	String pageSubscriptionUrl 				= componentEditorUrl + "Subscriptions!input.action?interceptionPointCategory=SiteNodeVersion&amp;entityName=" + SiteNode.class.getName() + "&amp;entityId=" + siteNodeId + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8");
 
 	    sb.append("<div id=\"editInlineDiv" + component.getId() + "\" class=\"igmenuitems linkEditArticle\"><a href='#'>" + editInlineHTML + "</a></div>");
 		sb.append("<div id=\"editDiv" + component.getId() + "\" class=\"igmenuitems linkEditArticle\"><a href='#'>" + editHTML + "</a></div>");
@@ -1995,7 +2000,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    if(hasAccessToAddComponent)
 			sb.append("<div class=\"igmenuitems linkAddComponent\" onclick=\"insertComponent();\"><a href='#'>" + addComponentHTML + "</a></div>");
 		if(hasAccessToDeleteComponent)
-		    sb.append("<div class=\"igmenuitems linkDeleteComponent\" onclick=\"deleteComponent();\"><a href='#'>" + deleteComponentHTML + "</a></div>");
+		    sb.append("<div class=\"igmenuitems linkDeleteComponent\" onclick=\"deleteComponent('" + confirmDeleteLabel + "');\"><a href='#'>" + deleteComponentHTML + "</a></div>");
 		if(hasAccessToChangeComponent)
 		    sb.append("<div class=\"igmenuitems linkChangeComponent\" onclick=\"changeComponent();\"><a href='#'>" + changeComponentHTML + "</a></div>");
 		if(hasSaveTemplateAccess)
@@ -2117,7 +2122,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    }
 
 		String changeUrl = componentEditorUrl + "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;slotId=" + component.getId() + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((changeAllowedComponentNamesAsEncodedString != null) ? "&amp;" + changeAllowedComponentNamesAsEncodedString : "")  + ((changeDisallowedComponentNamesAsEncodedString != null) ? "&amp;" + changeDisallowedComponentNamesAsEncodedString : "") + ((changeAllowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + changeAllowedComponentGroupNamesAsEncodedString : "");
-		sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/></td><td class=\"igtd\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/componentIcon.gif\" width=\"16\" height=\"16\" alt=\"Cross\"/></td><td class=\"igtd\" colspan=\"" + (colspan - 2) + "\"><span id=\"Comp" + component.getId() + "\" class=\"igLabel\">" + componentContentVO.getName() + "</span><script type=\"text/javascript\">$(function() { initializeComponentInTreeEventHandler('Comp" + component.getId() + "', '" + component.getId() + "', '', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;slotId=" + component.getId() + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '" + changeUrl + "', '" + component.getSlotName() + "', 'APA'); });</script>");
+		sb.append("<td class=\"igtd\" width=\"19\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/tcross.png\" width=\"19\" height=\"16\" alt=\"Cross\"/></td><td class=\"igtd\"><img src=\"" + this.getRequest().getContextPath() + "/css/images/componentIcon.gif\" width=\"16\" height=\"16\" alt=\"Cross\"/></td><td class=\"igtd\" colspan=\"" + (colspan - 2) + "\"><span id=\"Comp" + component.getId() + "\" class=\"igLabel\">" + componentContentVO.getName() + "</span><script type=\"text/javascript\">$(function() { initializeComponentInTreeEventHandler('Comp" + component.getId() + "', '" + component.getId() + "', '', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;slotId=" + component.getId() + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "', '" + changeUrl + "', '" + component.getSlotName() + "', 'APA', '" + component.getName() + "'); });</script>");
 		
 		String upUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;direction=0&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
 		String downUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&amp;languageId=" + templateController.getLanguageId() + "&amp;contentId=" + templateController.getContentId() + "&amp;componentId=" + component.getId() + "&amp;direction=1&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";

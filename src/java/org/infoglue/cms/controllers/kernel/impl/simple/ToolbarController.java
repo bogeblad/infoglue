@@ -34,6 +34,8 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.security.InfoGlueRole;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.RemoteCacheUpdater;
+import org.infoglue.cms.util.StringManager;
+import org.infoglue.cms.util.StringManagerFactory;
 import org.infoglue.deliver.util.Timer;
 
 public class ToolbarController implements ToolbarProvider
@@ -718,6 +720,16 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentConfirmationLabel", new String[]{contentVO.getName()}),
 				  "inlineDiv");
+
+		if(ContentController.getContentController().hasPublishedVersion(contentId) && !contentVO.getIsBranch())
+		{
+			deleteButton = new ToolbarButton("",
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"), 
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"),
+					  "javascript:alert('" + formatter.escapeForJavascripts(getLocalizedErrorMessage(locale, "3300")) + "');",
+					  "",
+					  "delete");
+		}
 		
 		if(contentVO.getIsBranch())
 		{
@@ -1033,6 +1045,16 @@ public class ToolbarController implements ToolbarProvider
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentConfirmationLabel", new String[]{contentVO.getName()}),
 				  "inlineDiv");
 		
+		if(ContentController.getContentController().hasPublishedVersion(contentId) && !contentVO.getIsBranch())
+		{
+			deleteButton = new ToolbarButton("",
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"), 
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"),
+					  "javascript:alert('" + formatter.escapeForJavascripts(getLocalizedErrorMessage(locale, "3300")) + "');",
+					  "",
+					  "delete");
+		}
+
 		if(contentVO.getIsBranch())
 		{
 			ToolbarButton deleteChildrenButton = new ToolbarButton("",
@@ -4187,4 +4209,14 @@ public class ToolbarController implements ToolbarProvider
   	{
 		return LabelController.getController(locale).getLocalizedString(locale, key, args);
    	}
+	
+	/**
+	 * <todo>Move to a ConstraintExceptionHelper class?</todo>
+	 */
+	private String getLocalizedErrorMessage(Locale locale, String errorCode) 
+	{
+		final StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.entities", locale);
+		return stringManager.getString(errorCode);
+	}
+
 }

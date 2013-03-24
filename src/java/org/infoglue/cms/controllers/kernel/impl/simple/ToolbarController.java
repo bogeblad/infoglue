@@ -4218,5 +4218,5 @@ public class ToolbarController implements ToolbarProvider
 		final StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.entities", locale);
 		return stringManager.getString(errorCode);
 	}
-
+    
 }

@@ -1382,6 +1382,7 @@ public class SearchController extends BaseController
 				
 				for(org.apache.lucene.document.Document doc : documents)
 				{
+					logger.info("doc:" + doc);
 					String contentVersionId = doc.get("contentVersionId");
 					String contentId = doc.get("contentId");
 					String siteNodeId = doc.get("siteNodeId");
@@ -1391,15 +1392,24 @@ public class SearchController extends BaseController
 					{
 						SiteNodeVersionVO snvo = new SiteNodeVersionVO();
 						snvo.setSiteNodeId(new Integer(siteNodeId));
-						snvo.setSiteNodeVersionId(new Integer(siteNodeVersionId));
+						if(siteNodeVersionId == null)
+						{
+							//
+						}
+						//snvo.setSiteNodeVersionId(new Integer(siteNodeVersionId));
 						snvo.setSiteNodeName(doc.get("path"));
-						snvo.setModifiedDateTime(new Date(new Long(doc.get("modificationDateTime"))));
-						snvo.setStateId(new Integer(doc.get("stateId")));
+						if(doc.get("modificationDateTime") != null)
+							snvo.setModifiedDateTime(new Date(new Long(doc.get("modificationDateTime"))));
+						else
+							snvo.setModifiedDateTime(new Date(new Long(doc.get("modified"))));
+						if(doc.get("stateId") != null)
+							snvo.setStateId(new Integer(doc.get("stateId")));
 
 						siteNodeVersionVOList.add(snvo);
 					}
 					catch (Exception e) 
 					{
+						e.printStackTrace();
 						logger.error("ContentVersion with id:" + contentVersionId + " was not valid - skipping but how did the index become corrupt?");
 						//deleteVersionFromIndex(contentVersionId);
 					}

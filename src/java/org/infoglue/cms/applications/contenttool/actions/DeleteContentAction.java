@@ -118,6 +118,11 @@ public class DeleteContentAction extends InfoGlueAbstractAction
         try
         {
         	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.contentVO.getContentId());
+        	if(ContentController.getContentController().hasPublishedVersion(this.contentVO.getContentId()))
+        	{
+        		throw new ConstraintException("ContentVersion.stateId", "3300", contentVO.getName());
+        	}
+        	
         	String contentName = contentVO.getName();
         	parentContentId = new Integer(contentVO.getId());
         	
@@ -141,7 +146,6 @@ public class DeleteContentAction extends InfoGlueAbstractAction
         }
         catch(ConstraintException ce)
         {
-        	ce.printStackTrace();
         	logger.warn("An error occurred so we should not complete the transaction:" + ce);
 			ce.setResult(INPUT + "V3");
 			throw ce;

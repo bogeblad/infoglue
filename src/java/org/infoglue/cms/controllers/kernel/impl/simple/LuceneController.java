@@ -243,7 +243,7 @@ public class LuceneController extends BaseController implements NotificationList
 			{
 				LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
 			    info.put("indexAllLastCommittedContentVersionId_" + languageVO.getId(), getIndexAllLastCommittedContentVersionId(languageVO.getId()));
-			    info.put("indexAllLastCommittedSiteNodeVersionId_" + languageVO.getId(), getIndexAllLastCommittedSiteNodeVersionId(languageVO.getId()));
+			    info.put("indexAllLastCommittedMetaContentVersionId_" + languageVO.getId(), getIndexAllLastCommittedMetaContentVersionId(languageVO.getId()));
 			}
 			
 		    //reader.close();
@@ -276,14 +276,14 @@ public class LuceneController extends BaseController implements NotificationList
 	    return indexAllLastCommittedContentVersionId;
 	}
 
-	public Integer getIndexAllLastCommittedSiteNodeVersionId(Integer languageId) throws Exception
+	public Integer getIndexAllLastCommittedMetaContentVersionId(Integer languageId) throws Exception
 	{
 		Integer indexAllLastCommittedSiteNodeVersionId = null;
 		try 
 	    {
 			Document indexAllDocumentMetaData = getIndexAllStatusDocument();
-			if(indexAllDocumentMetaData != null && indexAllDocumentMetaData.get("lastCommitedSiteNodeVersionId_" + languageId) != null && !indexAllDocumentMetaData.get("lastCommitedSiteNodeVersionId_" + languageId).equals("null"))
- 				indexAllLastCommittedSiteNodeVersionId = new Integer(indexAllDocumentMetaData.get("lastCommitedSiteNodeVersionId_" + languageId));
+			if(indexAllDocumentMetaData != null && indexAllDocumentMetaData.get("lastCommitedMetaContentVersionId_" + languageId) != null && !indexAllDocumentMetaData.get("lastCommitedMetaContentVersionId_" + languageId).equals("null"))
+ 				indexAllLastCommittedSiteNodeVersionId = new Integer(indexAllDocumentMetaData.get("lastCommitedMetaContentVersionId_" + languageId));
 	    } 
 	    catch (Exception e) 
 	    {
@@ -409,8 +409,8 @@ public class LuceneController extends BaseController implements NotificationList
 				
 				if(lastCommitedSiteNodeVersionId != null && lastCommitedSiteNodeVersionId != -1)
 				{
-					docExisting.removeFields("lastCommitedSiteNodeVersionId_" + languageId);
-					docExisting.add(new Field("lastCommitedSiteNodeVersionId_" + languageId, "" + lastCommitedSiteNodeVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
+					docExisting.removeFields("lastCommitedMetaContentVersionId_" + languageId);
+					docExisting.add(new Field("lastCommitedMetaContentVersionId_" + languageId, "" + lastCommitedSiteNodeVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
 				}
 
 				docExisting.removeFields("lastCommitedModifiedDate");
@@ -434,7 +434,7 @@ public class LuceneController extends BaseController implements NotificationList
 			if(lastCommitedContentVersionId != null)
 				docExisting.add(new Field("lastCommitedContentVersionId_" + languageId, "" + lastCommitedContentVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
 			if(lastCommitedSiteNodeVersionId != null)
-				docExisting.add(new Field("lastCommitedSiteNodeVersionId_" + languageId, "" + lastCommitedSiteNodeVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
+				docExisting.add(new Field("lastCommitedMetaContentVersionId_" + languageId, "" + lastCommitedSiteNodeVersionId, Field.Store.YES, Field.Index.NOT_ANALYZED));
 			docExisting.add(new Field("lastCommitedModifiedDate", "" + new Date().getTime(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 			//docExisting.add(new Field("meta", new StringReader("indexAllRunning")));
 			docExisting.add(new Field("meta", "indexAllRunning", Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -529,6 +529,7 @@ public class LuceneController extends BaseController implements NotificationList
 	{
 		IndexSearcher searcher = getIndexSearcher();
 		Query query = new QueryParser(Version.LUCENE_34, field, getStandardAnalyzer()).parse(text);
+		logger.info("query:" + query);
 		TopDocs hits = searcher.search(query, numberOfHits);
 		logger.info(hits.totalHits + " total matching documents for '" + field + ":" + text + "'");
 		List<Document> docs = new ArrayList<Document>();
@@ -558,8 +559,6 @@ public class LuceneController extends BaseController implements NotificationList
 		IndexSearcher searcher = getIndexSearcher();
 		Query query = MultiFieldQueryParser.parse(Version.LUCENE_34, queries, fields, flags, getStandardAnalyzer());
 		logger.info("query:" + query);
-		
-		//System.out.println("query:" + query);
 		
 		//Query query = new QueryParser(Version.LUCENE_34, "contents", getStandardAnalyzer()).parse(text);
 		TopDocs hits = searcher.search(query, numberOfHits);
@@ -614,6 +613,7 @@ public class LuceneController extends BaseController implements NotificationList
 				logger.info("Indexing all normal contents....");
 				List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList();
 				Iterator<LanguageVO> languageVOListIterator = languageVOList.iterator();
+				
 				outer:while(languageVOListIterator.hasNext())
 				{
 					LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
@@ -624,9 +624,9 @@ public class LuceneController extends BaseController implements NotificationList
 					if(previousIndexAllLastContentVersionId != null)
 						startID = previousIndexAllLastContentVersionId;
 					
-					System.out.println("Starting from " + startID);
+					logger.info("Starting from " + startID);
 					int newLastContentVersionId = getContentNotificationMessages(languageVO, startID);
-					System.out.println("newLastContentVersionId: " + newLastContentVersionId + " on " + languageVO.getName());
+					logger.info("newLastContentVersionId: " + newLastContentVersionId + " on " + languageVO.getName());
 					
 					registerIndexAllProcessOngoing(newLastContentVersionId, null, languageVO.getId());
 					//previousIndexAllLastContentVersionId = newLastContentVersionId;
@@ -639,7 +639,7 @@ public class LuceneController extends BaseController implements NotificationList
 						
 						Thread.sleep(5000);
 						newLastContentVersionId = getContentNotificationMessages(languageVO, newLastContentVersionId);
-						System.out.println("newLastContentVersionId: " + newLastContentVersionId + " on " + languageVO.getName());
+						logger.info("newLastContentVersionId: " + newLastContentVersionId + " on " + languageVO.getName());
 						registerIndexAllProcessOngoing(newLastContentVersionId, null, languageVO.getId());
 						//previousIndexAllLastContentVersionId = newLastContentVersionId;
 						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessages 2", t.getElapsedTime());
@@ -652,33 +652,37 @@ public class LuceneController extends BaseController implements NotificationList
 				outer:while(languageVOListIterator.hasNext())
 				{
 					LanguageVO languageVO = (LanguageVO)languageVOListIterator.next();
+					logger.info("languageVO from " + languageVO);
 					
 					List<NotificationMessage> notificationMessages = new ArrayList<NotificationMessage>();
 					
-					Integer previousIndexAllLastSiteNodeVersionId = getIndexAllLastCommittedSiteNodeVersionId(languageVO.getId());
+					Integer previousIndexAllLastMetaContentVersionId = getIndexAllLastCommittedMetaContentVersionId(languageVO.getId());
+					logger.info("previousIndexAllLastMetaContentVersionId: " + previousIndexAllLastMetaContentVersionId);
 					int startID = 0;
-					if(previousIndexAllLastSiteNodeVersionId != null)
-						startID = previousIndexAllLastSiteNodeVersionId;
+					if(previousIndexAllLastMetaContentVersionId != null)
+						startID = previousIndexAllLastMetaContentVersionId;
 
-					System.out.println("Starting from " + startID);
-					int newLastSiteNodeVersionId = getPageNotificationMessages(notificationMessages, languageVO, startID);
-					System.out.println("newLastSiteNodeVersionId " + newLastSiteNodeVersionId + " on " + languageVO.getName());
-					registerIndexAllProcessOngoing(null, newLastSiteNodeVersionId, languageVO.getId());
-					//previousIndexAllLastSiteNodeVersionId = newLastSiteNodeVersionId;
+					logger.info("Starting from " + startID);
+					int newLastMetaContentVersionId = getPageNotificationMessages(notificationMessages, languageVO, startID);
+					logger.info("newLastSiteNodeVersionId " + newLastMetaContentVersionId + " on " + languageVO.getName());
+					logger.info("notificationMessages: " + notificationMessages.size());
+					registerIndexAllProcessOngoing(null, newLastMetaContentVersionId, languageVO.getId());
+					//previousIndexAllLastMetaContentVersionId = newLastMetaContentVersionId;
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessagesForStructure", t.getElapsedTime());
-					logger.info("newLastSiteNodeVersionId " + newLastSiteNodeVersionId);
-					while(newLastSiteNodeVersionId != -1)
+					logger.info("newLastMetaContentVersionId " + newLastMetaContentVersionId);
+					while(newLastMetaContentVersionId != -1)
 					{
 						if(stopIndexing.get())
 							break outer;
 
 						Thread.sleep(5000);
-						newLastSiteNodeVersionId = getPageNotificationMessages(notificationMessages, languageVO, newLastSiteNodeVersionId);
-						System.out.println("newLastSiteNodeVersionId " + newLastSiteNodeVersionId + " on " + languageVO.getName());
-						registerIndexAllProcessOngoing(null, newLastSiteNodeVersionId, languageVO.getId());
-						//previousIndexAllLastSiteNodeVersionId = newLastSiteNodeVersionId;
+						newLastMetaContentVersionId = getPageNotificationMessages(notificationMessages, languageVO, newLastMetaContentVersionId);
+						logger.info("newLastMetaContentVersionId " + newLastMetaContentVersionId + " on " + languageVO.getName());
+						logger.info("notificationMessages: " + notificationMessages.size());
+						registerIndexAllProcessOngoing(null, newLastMetaContentVersionId, languageVO.getId());
+						//previousIndexAllLastMetaContentVersionId = newLastMetaContentVersionId;
 						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getNotificationMessages 2", t.getElapsedTime());
-						logger.info("newLastSiteNodeVersionId " + newLastSiteNodeVersionId);
+						logger.info("newLastMetaContentVersionId " + newLastMetaContentVersionId);
 					}
 				}
 				
@@ -1116,7 +1120,7 @@ public class LuceneController extends BaseController implements NotificationList
 			return;
 		
 		stopIndexing.set(false);
-		logger.warn("################# starting index");
+		logger.error("################# starting index");
 		//if (indexStarted.compareAndSet(false, true)) 
 		//{
 			IndexReader indexReader = null;
@@ -1125,7 +1129,8 @@ public class LuceneController extends BaseController implements NotificationList
 				Integer lastCommitedContentVersionId = getLastCommitedContentVersionId();
 				Document indexAllDocumentMetaData = getIndexAllStatusDocument();
 				//Integer previousIndexAllLastContentVersionId = getIndexAllLastCommittedContentVersionId();
-
+				logger.info("lastCommitedContentVersionId:" + lastCommitedContentVersionId);
+				
 				Date lastCommitedModifiedDate = getLastCommitedModifiedDate();
 				
 				Calendar yesterday = Calendar.getInstance();
@@ -1137,7 +1142,7 @@ public class LuceneController extends BaseController implements NotificationList
 				boolean didIndex = false;
 				if(lastCommitedContentVersionId == -1 || indexAllDocumentMetaData != null || indexReader.numDocs() < 100)
 				{
-					System.out.println("indexAll as it seemed to be not ready.....");
+					logger.info("indexAll as it seemed to be not ready.....");
 					logger.info("###########################IndexAll");
 					didIndex = indexAll();
 				}
@@ -1309,7 +1314,8 @@ public class LuceneController extends BaseController implements NotificationList
 			{
 				Document document = getDocumentFromContentVersion(version, db);
 				String uid = document.get("uid");
-
+				logger.info("document: " + document);
+				
 	    		writer.deleteDocuments(new Term("uid", "" + uid));
 	    		
 	    		if(logger.isInfoEnabled())
@@ -1397,6 +1403,7 @@ public class LuceneController extends BaseController implements NotificationList
 				versions = ContentVersionController.getContentVersionController().getContentVersionVOList(contentTypeDefinitionVO.getId(), null, languageVO.getId(), false, Integer.parseInt(CmsPropertyHandler.getOperatingMode()), lastContentVersionId, numberOfVersionToIndexInBatch, true, db, true);				
 			}
 			
+			logger.info("versions:" + versions.size());
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Index all : getContentVersionVOList", t.getElapsedTime());
 
 			logger.info("versions in getContentNotificationMessages:" + versions.size());
@@ -1406,7 +1413,7 @@ public class LuceneController extends BaseController implements NotificationList
 			{
 				Document documents = getSiteNodeDocument(version, writer, db);
 	    		String uid = documents.get("uid");
-	    		
+	    		logger.info("Regging doc: " + documents);
 	    		writer.deleteDocuments(new Term("uid", "" + uid));
 	    		
 	    		if(logger.isInfoEnabled())
@@ -1857,6 +1864,9 @@ public class LuceneController extends BaseController implements NotificationList
 		doc.add(new Field("isSiteNode", "true", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		//doc.add(new Field("contentTypeDefinitionId", "" + ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db).getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
+		doc.add(new NumericField("modificationDateTime", Field.Store.YES, true).setLongValue(contentVersionVO.getModifiedDateTime().getTime()));
+		doc.add(new Field("stateId", "" + contentVersionVO.getStateId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+
 		doc.add(new Field("path", "" + getSiteNodePath(contentVersionVO.getSiteNodeId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
 
 		// Add the uid as a field, so that index can be incrementally
@@ -1868,11 +1878,23 @@ public class LuceneController extends BaseController implements NotificationList
 		// Add the tag-stripped contents as a Reader-valued Text field so it
 		// will
 		// get tokenized and indexed.
-		if(contentVersionVO.getSiteNodeName() != null)
-			doc.add(new Field("contents", new StringReader(contentVersionVO.getSiteNodeName())));
-		if(contentVersionVO.getVersionValue() != null)
-			doc.add(new Field("contents", new StringReader(contentVersionVO.getVersionValue())));
-
+		String pageName = contentVersionVO.getSiteNodeName();
+		if(pageName == null)
+		{
+			logger.info("Have to read again...");
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(contentVersionVO.getSiteNodeId(), db);
+			pageName = siteNodeVO.getName();
+		}
+		String versionValue = contentVersionVO.getVersionValue();
+		if(versionValue == null)
+		{
+			logger.info("Have to read version again...");
+			ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionVO.getContentVersionId(), db);
+			versionValue = cvVO.getVersionValue();
+		}
+			
+		doc.add(new Field("contents", new StringReader(versionValue)));
+		doc.add(new Field("contents", new StringReader(pageName)));
 
 		// return the document
 		return doc;

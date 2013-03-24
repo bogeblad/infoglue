@@ -41,8 +41,10 @@
 		}
 		
 		$(document).ready(function(){
-
 			#set($extraParameter = '')
+			#if($useSimpleComponentDialog)
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ]')
+			#end
 			#initDataTableImpl("dataTable" $extraParameter)
 			
 		});
@@ -57,9 +59,11 @@
 <div style="clear: both;"></div>
 
 <h3>$ui.getString("tool.structuretool.clickComponentToAddLabel")</h3>
+
+#if(!$useSimpleComponentDialog)
 <p>
 	#set($allRepositories = $repositories)
-    	
+    
 	$ui.getString("tool.structuretool.addComponentChangeRepositoryLabel")<br/>
 	<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
 	    <option value="-1" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$ui.getString("tool.structuretool.allRepostoriesLabel")</option>
@@ -68,6 +72,7 @@
 	    #end
 	</select>
 </p>
+#end
 
 <div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
 
@@ -76,8 +81,10 @@
 			<tr>
 				<th>&nbsp;</th>
 				<th>$ui.getString("tool.structuretool.componentNameLabel")</th>
+				#if(!$useSimpleComponentDialog)
 				<th>$ui.getString("tool.structuretool.repositoryLabel")</th>
 				<th>$ui.getString("tool.structuretool.groupNameLabel")</th>
+				#end
 			</tr>
 		</thead>
 		<tbody>
@@ -113,6 +120,7 @@
 					#end
 					<td align="center"><a href="javascript:addComponent('$content.id');"><img src="$imageUrl" border="0" width="$width"></a>&nbsp;</td>
 					<td>
+						$content.extraProperties.get("Description")
 						<a href="javascript:addComponent('$content.id');">$content.getName()</a><br/><br/>
 						#if($content.extraProperties.get("Description") != "Unknown" && $content.extraProperties.get("Description") != "")
 						<span id="descLayer$content.id" style="margin-top: 4px;"><b>$ui.getString("tool.structuretool.descriptionLabel"):</b><br/>
@@ -124,6 +132,7 @@
 						</span>
 						#end
 					</td>
+					#if(!$useSimpleComponentDialog)
 					<td>
 						#foreach ($repositoryVO in $allRepositories)
 					    	#if($repositoryVO.id == $content.repositoryId)
@@ -132,6 +141,7 @@
 					    #end
 					</td>
 					<td>$content.extraProperties.get("GroupName").replaceAll(",","<br/>")</td>
+					#end
 				</tr>
 				#set($imageUrl = "")
 			#end

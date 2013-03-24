@@ -508,14 +508,12 @@ function showComponentMenu(event, element, compId, anInsertUrl, anDeleteUrl, anC
 }
 
 
-function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUrl, anChangeUrl, slotId, slotContentIdVar) 
+function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUrl, anChangeUrl, slotId, slotContentIdVar, aActiveComponentName) 
 {
-	activeMenuId = "componentInTreeMenu";
-
-	slotName = slotId;
-	slotContentId = slotContentIdVar;
-	//alert("slotId:" + slotId);
-	//alert("compId:" + compId);
+	activeMenuId 		= "componentInTreeMenu";
+	slotName 			= slotId;
+	slotContentId 		= slotContentIdVar;
+	activeComponentName = aActiveComponentName;
 	
 	try
 	{
@@ -1526,11 +1524,14 @@ function setAccessRights(slotId, slotContentId)
 	openInlineDiv(componentEditorUrl + "ViewAccessRights!V3.action?interceptionPointCategory=ComponentEditor&extraParameters=" + slotContentId + "_" + slotId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent", 800, 600, true);
 }
 
-function deleteComponent() 
+function deleteComponent(aConfirmText) 
 {
 	isDirty = false;
 	//alert("deleteUrl in deleteComponent:" +  + deleteUrl.substring(0, 50) + '\n' + deleteUrl.substring(50));
-	document.location.href = deleteUrl;
+	if (confirm(aConfirmText.replace("COMPONENT_NAME", activeComponentName)))
+	{
+		document.location.href = deleteUrl;
+	}
 }
 
 function deleteComponentByUrl(url) 

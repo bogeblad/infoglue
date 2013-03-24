@@ -814,6 +814,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return CmsPropertyHandler.getPrefferedWYSIWYG();
 	}
 
+	public Boolean getUseSimpleComponentDialog()
+	{
+		return CmsPropertyHandler.getUseSimpleComponentDialog();
+	}
+	
 	public Boolean getOnlyAllowFolderType()
 	{
 		return CmsPropertyHandler.getOnlyAllowFolderType();
@@ -1378,6 +1383,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	public SiteNodeVO getRepositoryRootSiteNode(Integer repositoryId) throws Exception
 	{
 		return SiteNodeController.getController().getRootSiteNodeVO(repositoryId);
+	}
+	
+	public ContentVO getRepositoryRootContent(Integer repositoryId) throws Exception
+	{
+		return ContentControllerProxy.getController().getRootContentVO(repositoryId, getRequest().getRemoteUser());
 	}
 
 	public String getRepositoryName() throws Exception

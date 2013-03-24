@@ -262,6 +262,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "internalSearchEngine");
 	    populate(ps, "allowOverrideModifyer");
 
+	    populate(ps, "useSimpleComponentDialog");
 	    populate(ps, "onlyAllowFolderType");
 	    populate(ps, "skipResultDialogIfPossible");
 

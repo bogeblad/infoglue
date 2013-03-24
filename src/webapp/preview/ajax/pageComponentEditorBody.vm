@@ -12,7 +12,7 @@
 <div id="componentMenu" class="skin0">
 <div class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="edit();">Edit</div>
 <div id="addComponentMenuItem" class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="insertComponent();">$addComponentHTML</div>
-<div id="deleteComponentMenuItem" class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="deleteComponent();">$deleteComponentHTML</div>
+<div id="deleteComponentMenuItem" class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="deleteComponent('$confirmDeleteLabel');">$deleteComponentHTML</div>
 <div id="changeComponentMenuItem" class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="changeComponent();">$changeComponentHTML</div>
 <div class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="$saveTemplateUrl">$savePageTemplateHTML</div>
 <div class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="$savePartTemplateUrl">$savePagePartTemplateHTML</div>
@@ -25,7 +25,7 @@
 </div>
 
 <div id="componentInTreeMenu" class="skin0">
-<div id="deleteComponentInTreeMenuItem" class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="deleteComponent();">$deleteComponentHTML</div>
+<div id="deleteComponentInTreeMenuItem" class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="deleteComponent('$confirmDeleteLabel');">$deleteComponentHTML</div>
 <div id="changeComponentInTreeMenuItem" class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="changeComponent();">$changeComponentHTML</div>
 <div class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="$saveTemplateUrl">$savePageTemplateHTML</div>
 <div class="igmenuitems" onmouseover="javascript:highlightie5(event);" onmouseout="javascript:lowlightie5(event);" onclick="$savePartTemplateUrl">$savePagePartTemplateHTML</div>

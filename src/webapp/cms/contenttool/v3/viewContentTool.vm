@@ -112,7 +112,9 @@
 				} 
 			});
 
-			openUrlInWorkArea("ViewContentToolStartPage!V3.action");
+			//openUrlInWorkArea("ViewContentToolStartPage!V3.action");
+			
+			openUrlInWorkArea("ViewContent!V3.action?contentId=$this.getRepositoryRootContent($repositoryId).contentId&repositoryId=$repositoryId");
 						
 			$("#menuOverlayDiv").mouseout(function () {
 				$("#contentToolDiv").mouseup();

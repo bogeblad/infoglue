@@ -300,8 +300,9 @@ public class LabelController extends BaseController implements StringManager
 			}
 			catch (MissingResourceException e) 
 			{
-				System.out.println("AAAAA: " + e.getMessage());
-				value = getLocalizedSystemString(locale, key, args, true);
+				logger.info("Missing label: " + e.getMessage());
+				if(!forceSystemBundle)
+					value = getLocalizedString(locale, key, args, true);
 			}
 		}
 		
@@ -311,7 +312,8 @@ public class LabelController extends BaseController implements StringManager
 			value = getLocalizedSystemString(locale, key, args);
 			
 		//t.printElapsedTime("Getting getLocalizedString...");
-		
+		//System.out.println("value: " + value);
+
 		return value;
 	}
 
@@ -352,7 +354,7 @@ public class LabelController extends BaseController implements StringManager
 		*/
   	}
 
-	private String getLocalizedSystemString(Locale locale, String key, Object arg1, Object arg2) 
+	private String getLocalizedVariabledSystemString(Locale locale, String key, Object arg1, Object arg2) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
 

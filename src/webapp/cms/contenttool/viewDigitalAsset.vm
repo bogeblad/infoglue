@@ -489,7 +489,7 @@
 			<form>
 				<div id="intro">
 					<strong>$ui.getString("tool.contenttool.fileUpload.fileUploadHeader") <span id="maxSize"> $ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))</span></strong> - <span id="divStatus">0 Files Uploaded</span><br/><br/>
-					<div style="display: inline; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-bottom: 2px;">
+					<div style="display: inline-block; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-bottom: 2px;">
 						<span id="spanButtonPlaceHolder"></span>
 					</div>
 					<!-- 

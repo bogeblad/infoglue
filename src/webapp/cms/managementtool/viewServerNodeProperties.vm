@@ -263,6 +263,8 @@
 				#set($option8 = ["1000", "1000"])
 				#set($maxNumberOfVersionsForDerivedLastModifiedInLiveOptions = [$option1, $option2, $option3, $option4, $option5, $option6, $option7, $option8]) 
 				#selectFieldCSS("ServerNode.property.maxNumberOfVersionsForDerivedLastModifiedInLive" "maxNumberOfVersionsForDerivedLastModifiedInLive" $this.getPropertyValue('maxNumberOfVersionsForDerivedLastModifiedInLive') $maxNumberOfVersionsForDerivedLastModifiedInLiveOptions "$!cmsPH.setDerivedLastModifiedInLive")
+
+				#editPropertyFieldCSS("ServerNode.property.standardResponseHeaders" "standardResponseHeaders" "$this.getPropertyValue('standardResponseHeaders')" "51" "$!serverNodeId" "$!cmsPH.standardResponseHeaders")
 			</div>
 		
 			<div class="inlineTabDiv" id="urlEncoding">

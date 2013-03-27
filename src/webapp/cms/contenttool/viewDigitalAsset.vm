@@ -314,13 +314,16 @@
 			var tt = document.getElementById("tt");
 			var list = document.getElementById("dd");
 			var val = "";
-			if (list.options[list.selectedIndex])
+			if (list.selectedIndex > -1 && list.options[list.selectedIndex])
 			{
 				val = list.options[list.selectedIndex].value;
 			}
 			else
 			{
-				val = list.options[0].value;
+				var firstItem = list.options[0];
+				if (firstItem) {
+					val = list.options[0].value;
+				}
 			}
 			tt.value = val;
 			list.style.visibility = "hidden";

@@ -344,6 +344,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populateData(ps, "assetUploadTransformationsSettings");
 
 	    populate(ps, "setDerivedLastModifiedInLive");
+	    populate(ps, "standardResponseHeaders");
 	    populate(ps, "maxNumberOfVersionsForDerivedLastModifiedInLive");
 	    populate(ps, "allowInternalCallsBasedOnIP");
 	    

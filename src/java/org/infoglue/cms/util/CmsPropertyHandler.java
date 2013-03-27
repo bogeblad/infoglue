@@ -49,6 +49,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.Timer;
 import org.netbeans.lib.cvsclient.commandLine.command.log;
@@ -72,6 +73,8 @@ import com.opensymphony.module.propertyset.PropertySetManager;
 public class CmsPropertyHandler
 {
     private final static Logger logger = Logger.getLogger(CmsPropertyHandler.class.getName());
+
+    private final static HttpHelper httpHelper = new HttpHelper();
 
 	private static Properties cachedProperties 		= null;
 	private static PropertySet propertySet			= null; 
@@ -2626,11 +2629,31 @@ public class CmsPropertyHandler
 	{
 		return CmsPropertyHandler.isValidSetup;
 	}
+  
+  @SuppressWarnings("unchecked")
+	public static Map<String, String> getStandardResponseHeaders()
+	{
+		String standardResponseHeadersString = getServerNodeProperty("standardResponseHeaders", true, null);
+		if (standardResponseHeadersString == null)
+		{
+			return new HashMap<String, String>();
+		}
 
-	public static boolean getIndexDigitalAssetContent()
+		try
+		{
+			return httpHelper.toMap(standardResponseHeadersString, "utf-8");
+		}
+		catch (Exception ex)
+		{
+			logger.warn("Failed to parse standard response headers. String: " + standardResponseHeadersString + ". Message: " + ex.getMessage());
+			return new HashMap<String, String>();
+		}
+  }
+  
+  public static boolean getIndexDigitalAssetContent()
 	{
 		String value = getServerNodeProperty("indexDigitalAssetContent", true, "false");
 
 		return Boolean.parseBoolean(value);
-	}
+  }
 }

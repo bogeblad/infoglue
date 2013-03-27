@@ -1169,6 +1169,24 @@ public class CmsPropertyHandler
 		}
 		return defaultNumberOfMonthsBeforeRedirectExpire;
 	}
+
+	public static int getDefaultNumberOfMonthsBeforeSystemRedirectExpire()
+	{
+		int expireMonths = 3;
+		String expireMonthsString = getServerNodeProperty("defaultNumberOfMonthsBeforeSystemRedirectExpire", true, "3");
+
+		try
+		{
+			expireMonths = Integer.parseInt(expireMonthsString);
+		}
+		catch (NumberFormatException ex)
+		{
+			logger.warn("Failed to parse number of months for system redirect expiration. Value " + expireMonthsString + ". Message: " + ex.getMessage());
+		}
+
+		return expireMonths;
+	}
+
 	public static String getEnableDateTimeDirectEditing()
 	{
 		return getServerNodeProperty("enableDateTimeDirectEditing", true, "false");

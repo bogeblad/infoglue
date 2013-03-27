@@ -537,7 +537,12 @@ public class RedirectController extends BaseController
             	redirectVO.setModifier(principal.getName());
             	redirectVO.setUrl(url);
             	redirectVO.setRedirectUrl(redirectUrl);
-            	
+
+            	Calendar calendar = Calendar.getInstance();
+        		int months = CmsPropertyHandler.getDefaultNumberOfMonthsBeforeSystemRedirectExpire();
+         		calendar.add(Calendar.MONTH, months);
+        		redirectVO.setExpireDateTime(calendar.getTime());
+
             	List<RedirectVO> redirectVOList = RedirectController.getController().getSystemManagedRedirectVOList(url, db);
             	if(redirectVOList.isEmpty())
             		RedirectController.getController().create(redirectVO);

@@ -1702,23 +1702,19 @@ public class ToolbarController implements ToolbarProvider
 				  "", 
 				  ""));
 
-		/*
 		buttons.add(new ToolbarButton("uploadAsset", 
 				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
 				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  "openPopup('ViewDigitalAsset.action?contentVersionId=" + contentVersionId + "', 'DigitalAsset', 'width=400,height=200,resizable=no');", 
-				  "", 
-				  "", 
-				  "attachAsset", 
-				  true, 
-				  false, 
-				  "", 
-				  "", 
+				  "uploadAsset();",
 				  "",
-				  300,
-				  200));
-		*/
-		
+				  "", 
+				  "attachAsset",
+				  true,
+				  false,
+				  "",
+				  "",
+				  ""));
+
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "onCancel();", true));
 
 		return buttons;

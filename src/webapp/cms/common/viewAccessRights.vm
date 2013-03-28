@@ -346,7 +346,7 @@
 					</p>
 				#end
 			
-				<table id="rolesTable" border="0" width="100%" cellpadding="0" cellspacing="0">
+				<table id="rolesTable" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<th>$ui.getString("tool.common.accessRights.roleNameLabel")</th>
 					<th>&nbsp;</th>
@@ -464,8 +464,8 @@
 				<input type="hidden" name="extraMultiParameter" value="$extraMultiParameter"/>
 				#end
 				<input type="hidden" name="returnAddress" value="$returnAddress"/>
-				
-				<table id="usersTable" border="0" width="100%" cellpadding="0" cellspacing="0">
+
+				<table id="usersTable" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<th style="white-space:nowrap;">$ui.getString("tool.common.accessRights.usersWithAccessLabel")</th>
 					<th><img src="css/images/trans.gif" width="10" height="1" alt=""/></th>

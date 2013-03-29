@@ -579,7 +579,9 @@ public class ImportController extends BaseController
 			Iterator<CategoryVO> existingCategoriesIterator = existingCategories.iterator();
 			while(existingCategoriesIterator.hasNext())
 			{
-				CategoryVO existingCategory = existingCategoriesIterator.next();
+				Object candidate = existingCategoriesIterator.next();
+				System.out.println("candidate:" + candidate.getClass().getName() + ":" + candidate);
+				CategoryVO existingCategory = (CategoryVO)candidate; //existingCategoriesIterator.next();
 				logger.info("existingCategory:" + existingCategory.getName());
 				if(existingCategory.getName().equals(categoryVO.getName()))
 				{

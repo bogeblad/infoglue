@@ -565,11 +565,17 @@ public class ImportController extends BaseController
 			
 			List<CategoryVO> existingCategories = null;
 			if(parentCategory != null)
+			{
 				existingCategories = CategoryController.getController().getActiveByParent(parentCategory.getCategoryId(), db);
 				//existingCategories = CategoryController.getController().findByParent(parentCategory.getCategoryId(), db);
+				System.out.println("existingCategories 1:" + existingCategories);
+			}
 			else
+			{
 				existingCategories = CategoryController.getController().findRootCategoryVOList(db);
-				
+				System.out.println("existingCategories 2:" + existingCategories);
+			}
+			
 			Iterator<CategoryVO> existingCategoriesIterator = existingCategories.iterator();
 			while(existingCategoriesIterator.hasNext())
 			{

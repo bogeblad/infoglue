@@ -31,8 +31,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.infoglue.cms.entities.content.ContentVO;
-import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.Category;
 import org.infoglue.cms.entities.management.CategoryVO;
@@ -58,6 +56,7 @@ public class CategoryController extends BaseController
 
 	private static final CategoryController instance = new CategoryController();
 	private static final ContentCategoryController contentCategoryStore = ContentCategoryController.getController();
+	private static final PropertiesCategoryController propertiesCategoryStore = PropertiesCategoryController.getController();
 
 	private static final String findByParent = new StringBuffer("SELECT c ")
 			.append("FROM org.infoglue.cms.entities.management.impl.simple.CategoryImpl c ")
@@ -120,7 +119,7 @@ public class CategoryController extends BaseController
 	 */
 	public CategoryVO findVOById(Integer id, Database db) throws SystemException
 	{
-		return (CategoryVO) getVOWithId(CategoryImpl.class, id);
+		return (CategoryVO) getVOWithId(CategoryImpl.class, id, db);
 	}
 
 	/**
@@ -172,22 +171,33 @@ public class CategoryController extends BaseController
 	 */
 	public CategoryVO findByPath(String path, Database db) throws SystemException
 	{
-	    CategoryVO categoryVO = null;
-	    
-	    String[] nodes = path.substring(1).split("/");
-        
-	    if(nodes.length > 0)
-	    {
-	        List rootCategories = findRootCategoryVOList(db);
-	        String name = nodes[0];
-	        categoryVO = getCategoryVOWithNameInList(rootCategories, name);
+		String key = "" + path;
+		
+		CategoryVO categoryVO = (CategoryVO)CacheController.getCachedObjectFromAdvancedCache("categoryCache", key);
+		if(categoryVO != null)
+		{
+			logger.info("There was an cached categoryVO:" + categoryVO);
+		}
+		else
+		{
+		    String[] nodes = path.substring(1).split("/");
 	        
-	        for(int i = 1; i < nodes.length; i++)
-	        {
-	            categoryVO = getCategoryVOWithNameInList(findByParent(categoryVO.getId(), db), nodes[i]);
+		    if(nodes.length > 0)
+		    {
+		        List rootCategories = findRootCategoryVOList(db);
+		        String name = nodes[0];
+		        categoryVO = getCategoryVOWithNameInList(rootCategories, name);
+		        
+		        for(int i = 1; i < nodes.length; i++)
+		        {
+		            categoryVO = getCategoryVOWithNameInList(findByParent(categoryVO.getId(), db), nodes[i]);
+			    }
 		    }
-	    }
-	    
+		    
+		    if(categoryVO != null)
+		    	CacheController.cacheObjectInAdvancedCache("categoryCache", key, categoryVO);
+		}
+		
 	    return categoryVO;
 	}
 
@@ -470,10 +480,30 @@ public class CategoryController extends BaseController
 	 * @return	A list of CategoryVOs that are at the root of the category tree
 	 * @throws	SystemException If an error happens
 	 */
-	public List findRootCategoryVOList(Database db) throws SystemException
+	public List<CategoryVO> findRootCategoryVOList(Database db) throws SystemException
 	{
-	    List categories = executeQueryReadOnly(findRootCategories, db);
-		return (categories != null) ? toVOList(categories) : null;
+		String categoriesKey = "rootCategories";
+		List<CategoryVO> categories = (List)CacheController.getCachedObjectFromAdvancedCache("categoriesCache", categoriesKey);
+		if(categories != null)
+		{
+			logger.info("There was an cached categories:" + categories);
+		}
+		else
+		{
+			if(logger.isInfoEnabled())
+				logger.info("Querying for categories:" + categoriesKey);
+		
+			List categoryImpls = executeQueryReadOnly(findRootCategories, db);
+			if(categoryImpls != null)
+			{
+				categories = toVOList(categoryImpls);
+				CacheController.cacheObjectInAdvancedCache("categoriesCache", categoriesKey, categories);
+			}
+		}
+		return categories;
+
+	    //List categories = executeQueryReadOnly(findRootCategories, db);
+		//return (categories != null) ? toVOList(categories) : null;
 	}
 
 	/**
@@ -693,6 +723,8 @@ public class CategoryController extends BaseController
 	 */
 	public List findAllActiveChildren(Integer parentId) throws SystemException
 	{
+		return getActiveChildrenCategoryVOList(parentId);
+		/*
 		Timer t = new Timer();
 		List children = findActiveByParent(parentId);
 		for (Iterator iter = children.iterator(); iter.hasNext();)
@@ -701,6 +733,7 @@ public class CategoryController extends BaseController
 			child.setChildren(findAllActiveChildren(child.getId()));
 		}
 		return children;
+		*/
 	}
 
 	/**
@@ -836,6 +869,7 @@ public class CategoryController extends BaseController
 	public void delete(Integer id) throws SystemException
 	{
 		contentCategoryStore.deleteByCategory(id);
+		propertiesCategoryStore.deleteByCategory(id);
 		deleteEntity(CategoryImpl.class, id);
 		deleteChildren(id);
 	}

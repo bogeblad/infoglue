@@ -410,7 +410,7 @@ public class CategoryController extends BaseController
 			List params = new ArrayList();
 			params.add(parentId);
 			params.add(Boolean.TRUE);
-			categories = executeQueryReadOnly(findActiveByParent, params, db);
+			categories = toVOList(executeQueryReadOnly(findActiveByParent, params, db));
 			
 			if(categories != null && categories.size() > 0)
 			{

@@ -566,7 +566,7 @@ public class ImportController extends BaseController
 			List<CategoryVO> existingCategories = null;
 			if(parentCategory != null)
 			{
-				existingCategories = CategoryController.getController().getActiveByParent(parentCategory.getCategoryId(), db);
+				existingCategories = CategoryController.getController().getActiveCategoryVOListByParent(parentCategory.getCategoryId(), db);//.getActiveByParent(parentCategory.getCategoryId(), db);
 				//existingCategories = CategoryController.getController().findByParent(parentCategory.getCategoryId(), db);
 				System.out.println("existingCategories 1:" + existingCategories);
 			}

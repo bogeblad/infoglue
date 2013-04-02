@@ -269,6 +269,22 @@
 			if(parent.resizeTreeIframe)
 				parent.resizeTreeIframe($("#treeDiv").height() + 10, $("#treeDiv").width() + 20);
 		}
+		
+		function onloadFn()
+		{
+			if (parent)
+			{
+				if (parent.notifyIsLoaded)
+				{
+					parent.notifyIsLoaded();
+				}
+				if (parent.notifyExp)
+				{
+					parent.notifyExp('${exp}');
+				}
+			}
+			loaded();
+		}
 
 		// -->
 	</script>
@@ -293,7 +309,7 @@
 	<link rel="stylesheet" type="text/css" href="css/skins/${theme}/main.css" />
 
 </head>
-<body class="generaltooledit" onload="parent.notifyIsLoaded();parent.notifyExp('${exp}');loaded();" style="margin:0px">
+<body class="generaltooledit" onload="onloadFn()" style="margin:0px">
 	
 	<div id="treeDiv">
 	

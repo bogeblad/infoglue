@@ -190,15 +190,18 @@ public class LuceneController extends BaseController implements NotificationList
 		{
 			indexReader = IndexReader.open(getDirectory(), true);
 		}
-		if(!indexReader.isCurrent())
+		synchronized (indexReader)
 		{
-			reopened++;
-			indexReader.close();
-			indexReader = IndexReader.open(getDirectory(), true);
-			//indexReader = IndexReader.openIfChanged(indexReader, true);
-			logger.info("reopened:" + reopened);
+			if(!indexReader.isCurrent())
+			{
+				reopened++;
+				indexReader.close();
+				indexReader = IndexReader.open(getDirectory(), true);
+				//indexReader = IndexReader.openIfChanged(indexReader, true);
+				logger.info("reopened:" + reopened);
+			}
 		}
-		
+
 		return indexReader;
 	}
 
@@ -374,7 +377,7 @@ public class LuceneController extends BaseController implements NotificationList
 
 	private void registerIndexAllProcessOngoing(Integer lastCommitedContentVersionId, Integer lastCommitedSiteNodeVersionId, Integer languageId) throws Exception
 	{
-		//MŒste skrivas om fšr att uppdatera bŠttre....
+		//Mï¿½ste skrivas om fï¿½r att uppdatera bï¿½ttre....
 		
 		//Document doc = new Document();
 		IndexWriter writer = getIndexWriter();
@@ -562,7 +565,7 @@ public class LuceneController extends BaseController implements NotificationList
 		
 		//Query query = new QueryParser(Version.LUCENE_34, "contents", getStandardAnalyzer()).parse(text);
 		TopDocs hits = searcher.search(query, numberOfHits);
-		logger.info(hits.totalHits + " total matching documents for '" + queries + "'");
+		logger.info(hits.totalHits + " total matching documents for '" + query + "'");
 		//System.out.println(hits.totalHits + " total matching documents for '" + queries + "'");
 		List<Document> docs = new ArrayList<Document>();
 		for(ScoreDoc scoreDoc : hits.scoreDocs)
@@ -840,17 +843,26 @@ public class LuceneController extends BaseController implements NotificationList
 			
 			List<String> existingSignatures = new ArrayList<String>();
 			logger.info("Before AAAAA:" + internalMessageList.size() + ":" + existingSignatures.size());
-			Iterator cleanupInternalMessageListIterator = internalMessageList.iterator();
+			Iterator<NotificationMessage> cleanupInternalMessageListIterator = internalMessageList.iterator();
 			while(cleanupInternalMessageListIterator.hasNext())
 			{
-				NotificationMessage notificationMessage = (NotificationMessage)cleanupInternalMessageListIterator.next();
+				NotificationMessage notificationMessage = cleanupInternalMessageListIterator.next();
 				logger.info("Indexing........:" + notificationMessage.getClassName());
 
 				if(notificationMessage.getClassName().equals(ContentImpl.class.getName()) || notificationMessage.getClassName().equals(Content.class.getName()))
 				{
 					ContentVO contentVO = ContentController.getContentController().getContentVOWithId((Integer)notificationMessage.getObjectId());
 
-					ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+					ContentTypeDefinitionVO ctdVO = null;
+					try
+					{
+						ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+					}
+					catch (SystemException sex)
+					{
+						logger.warn("Failed to get the content type definition for content with Id: " + contentVO.getContentId() + ". The content will not be indexed. Message: " + sex.getMessage());
+						logger.info("Failed to get the content type definition for content with Id: " + contentVO.getContentId(), sex);
+					}
 					if(ctdVO != null && ctdVO.getName().equals("Meta info"))
 					{
 						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVO.getContentId());
@@ -888,26 +900,42 @@ public class LuceneController extends BaseController implements NotificationList
 					logger.info("++++++++++++++Got an ContentVersion notification - focus on content: " + notificationMessage.getObjectId());
 					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId((Integer)notificationMessage.getObjectId());
 					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersionVO.getContentId());
-					
+
 					if(contentVO.getContentTypeDefinitionId() != null)
 					{
-						ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+						ContentTypeDefinitionVO ctdVO = null;
+						try
+						{
+							ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+						}
+						catch (SystemException sex)
+						{
+							logger.warn("Failed to get the content type definition for content with Id: " + contentVO.getContentId() + ". The content version will not be indexed. Message: " + sex.getMessage());
+							logger.info("Failed to get the content type definition for content with Id: " + contentVO.getContentId(), sex);
+						}
 						if(ctdVO != null && ctdVO.getName().equals("Meta info"))
 						{
 							SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(contentVO.getContentId());
-							NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
-							String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + newNotificationMessage.getType();
-							if(!existingSignatures.contains(key))
+
+							if (siteNodeVO == null)
 							{
-								logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());
-								baseEntitiesToIndexMessageList.add(newNotificationMessage);
-								existingSignatures.add(key);
+								logger.warn("Got meta info notification but could not find a page for the Content-id. Content.id: " + contentVO.getContentId());
 							}
 							else
 							{
-								logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
+								NotificationMessage newNotificationMessage = new NotificationMessage("" + siteNodeVO.getName(), SiteNodeImpl.class.getName(), "SYSTEM", notificationMessage.getType(), siteNodeVO.getId(), "" + siteNodeVO.getName());
+								String key = "" + newNotificationMessage.getClassName() + "_" + newNotificationMessage.getObjectId() + "_"  + newNotificationMessage.getType();
+								if(!existingSignatures.contains(key))
+								{
+									logger.info("++++++++++++++Got an META PAGE notification - just adding it AS A PAGE instead: " + newNotificationMessage.getObjectId());
+									baseEntitiesToIndexMessageList.add(newNotificationMessage);
+									existingSignatures.add(key);
+								}
+								else
+								{
+									logger.info("++++++++++++++Skipping Content notification - duplicate existed: " + notificationMessage.getObjectId());
+								}
 							}
-	
 						}
 						else
 						{
@@ -1318,37 +1346,40 @@ public class LuceneController extends BaseController implements NotificationList
 				
 	    		writer.deleteDocuments(new Term("uid", "" + uid));
 	    		
-	    		if(logger.isInfoEnabled())
-					logger.info("Adding document with uid:" + uid + " - " + document);
+	    		if(logger.isDebugEnabled())
+					logger.debug("Adding document with uid:" + uid + " - " + document);
 		    	if(document != null)
 			    	writer.addDocument(document);
 
-				logger.info("version assetCount:" + version.getAssetCount());
-				if(version.getAssetCount() == null || version.getAssetCount() > 0)
-				{
-					List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(version.getId(), db);
-					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDigitalAssetVOList", (t.getElapsedTimeNanos() / 1000));
-	
-					if(digitalAssetVOList.size() > 0)
+		    	if (CmsPropertyHandler.getIndexDigitalAssetContent())
+		    	{
+					logger.info("version assetCount:" + version.getAssetCount());
+					if(version.getAssetCount() == null || version.getAssetCount() > 0)
 					{
-						logger.info("digitalAssetVOList:" + digitalAssetVOList.size());
-						Iterator digitalAssetVOListIterator = digitalAssetVOList.iterator();
-						while(digitalAssetVOListIterator.hasNext())
-						{
-							DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
-							
-							Document assetDocument = getDocumentFromDigitalAsset(assetVO, version, db);
-							String assetUid = assetDocument.get("uid");
-							
-				    		writer.deleteDocuments(new Term("uid", "" + assetUid));
+						List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(version.getId(), db);
+						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDigitalAssetVOList", (t.getElapsedTimeNanos() / 1000));
 
-				    		if(logger.isInfoEnabled())
-								logger.info("Adding document with assetUid:" + assetUid + " - " + assetDocument);
-					    	if(assetDocument != null)
-						    	writer.addDocument(assetDocument);
+						if(digitalAssetVOList.size() > 0)
+						{
+							logger.info("digitalAssetVOList:" + digitalAssetVOList.size());
+							Iterator digitalAssetVOListIterator = digitalAssetVOList.iterator();
+							while(digitalAssetVOListIterator.hasNext())
+							{
+								DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
+
+								Document assetDocument = getDocumentFromDigitalAsset(assetVO, version, db);
+								String assetUid = assetDocument.get("uid");
+
+					    		writer.deleteDocuments(new Term("uid", "" + assetUid));
+
+					    		if(logger.isDebugEnabled())
+									logger.debug("Adding document with assetUid:" + assetUid + " - " + assetDocument);
+						    	if(assetDocument != null)
+							    	writer.addDocument(assetDocument);
+							}
 						}
 					}
-				}
+		    	}
 				
 				newLastContentVersionId = version.getId().intValue();
 			}
@@ -1412,15 +1443,21 @@ public class LuceneController extends BaseController implements NotificationList
 			for(ContentVersionVO version : versions)
 			{
 				Document documents = getSiteNodeDocument(version, writer, db);
-	    		String uid = documents.get("uid");
-	    		logger.info("Regging doc: " + documents);
-	    		writer.deleteDocuments(new Term("uid", "" + uid));
-	    		
-	    		if(logger.isInfoEnabled())
-					logger.info("Adding document with uid:" + uid + " - " + documents);
-	    		
-		    	if(documents != null)
+				if (documents != null)
+				{
+		    		String uid = documents.get("uid");
+		    		logger.debug("Regging doc: " + documents);
+		    		writer.deleteDocuments(new Term("uid", "" + uid));
+
+		    		if(logger.isDebugEnabled())
+						logger.debug("Adding document with uid:" + uid + " - " + documents);
+
 			    	writer.addDocument(documents);
+				}
+				else if(logger.isInfoEnabled())
+				{
+					logger.info("Failed to get document for SiteNode. Meta info content.id: " + version.getContentVersionId());
+				}
 	    		/*
 				logger.info("version assetCount:" + version.getAssetCount());
 				if(version.getAssetCount() == null || version.getAssetCount() > 0)
@@ -1494,22 +1531,25 @@ public class LuceneController extends BaseController implements NotificationList
 				SmallestContentVersionImpl smallestContentVersionImpl = (SmallestContentVersionImpl)results.next();
 				if(previousContentId == null || !previousContentId.equals(smallestContentVersionImpl.getContentId()))
 				{
-					List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(smallestContentVersionImpl.getId(), db);
-					if(digitalAssetVOList.size() > 0)
+					if (CmsPropertyHandler.getIndexDigitalAssetContent())
 					{
-						logger.info("digitalAssetVOList:" + digitalAssetVOList.size());
-						Iterator digitalAssetVOListIterator = digitalAssetVOList.iterator();
-						while(digitalAssetVOListIterator.hasNext())
+						List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(smallestContentVersionImpl.getId(), db);
+						if(digitalAssetVOList.size() > 0)
 						{
-							DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
-							if(assetVO.getAssetFileSize() < 10000000) //Do not index large files
+							logger.info("digitalAssetVOList:" + digitalAssetVOList.size());
+							Iterator digitalAssetVOListIterator = digitalAssetVOList.iterator();
+							while(digitalAssetVOListIterator.hasNext())
 							{
-								NotificationMessage assetNotificationMessage = new NotificationMessage("LuceneController", DigitalAssetImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, assetVO.getId(), "dummy");
-								notificationMessages.add(assetNotificationMessage);
+								DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
+								if(assetVO.getAssetFileSize() < 10000000) //Do not index large files
+								{
+									NotificationMessage assetNotificationMessage = new NotificationMessage("LuceneController", DigitalAssetImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, assetVO.getId(), "dummy");
+									notificationMessages.add(assetNotificationMessage);
+								}
 							}
 						}
 					}
-					
+
 					NotificationMessage notificationMessage = new NotificationMessage("LuceneController", ContentVersionImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, smallestContentVersionImpl.getId(), "dummy");
 					notificationMessages.add(notificationMessage);
 					previousContentId = smallestContentVersionImpl.getContentId();
@@ -1555,8 +1595,8 @@ public class LuceneController extends BaseController implements NotificationList
 		    	{
 		    		Document indexingDocument = documentsIterator.next();
 		    		String uid = indexingDocument.get("uid");
-		    		if(logger.isInfoEnabled())
-						logger.info("Adding document with uid:" + uid + " - " + indexingDocument);
+		    		if(logger.isDebugEnabled())
+						logger.debug("Adding document with uid:" + uid + " - " + indexingDocument);
 					//logger.error("Adding document with uid:" + uid + " - " + indexingDocument);
 			    	if(indexingDocument != null)
 				    	writer.addDocument(indexingDocument);
@@ -1614,44 +1654,54 @@ public class LuceneController extends BaseController implements NotificationList
 		else if(notificationMessage.getClassName().equals(DigitalAssetImpl.class.getName()) || notificationMessage.getClassName().equals(DigitalAsset.class.getName()))
 		{
 			logger.info("++++++++++++++Got an DigitalAssetImpl notification: " + notificationMessage.getObjectId());
-			Database db2 = CastorDatabaseService.getDatabase();
-
-			beginTransaction(db2);
-			
-			try
-			{			
-				//////////ANTAGLIGEN ONÂ…DIGT MED MEDIUM hÂŠr
-				MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
-				Collection contentVersions = asset.getContentVersions();
-				if(logger.isInfoEnabled())
-					logger.info("contentVersions:" + contentVersions.size());
-				Iterator contentVersionsIterator = contentVersions.iterator();
-				while(contentVersionsIterator.hasNext())
-				{
-					ContentVersion version = (ContentVersion)contentVersionsIterator.next();
-					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentVersionsIterator", t.getElapsedTime());
-
-					Document document = getDocumentFromDigitalAsset(asset.getValueObject(), version.getValueObject(), db);
-					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDocumentFromDigitalAsset", t.getElapsedTime());
-					logger.info("00000000000000000: Adding asset document:" + document);
-					if(document != null)
-						returnDocuments.add(document);
-				}
-				
-				commitTransaction(db2);
-			}
-			catch(Exception e)
+			if (CmsPropertyHandler.getIndexDigitalAssetContent())
 			{
-				logger.error("An error occurred so we should not complete the transaction:" + e, e);
-				rollbackTransaction(db2);
-				throw new SystemException(e.getMessage());
-			}		
+				Database db2 = CastorDatabaseService.getDatabase();
+
+				beginTransaction(db2);
+
+				try
+				{
+					//////////ANTAGLIGEN ONÂ…DIGT MED MEDIUM hÂŠr
+					MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
+					Collection contentVersions = asset.getContentVersions();
+					if(logger.isInfoEnabled())
+						logger.info("contentVersions:" + contentVersions.size());
+					Iterator contentVersionsIterator = contentVersions.iterator();
+					while(contentVersionsIterator.hasNext())
+					{
+						ContentVersion version = (ContentVersion)contentVersionsIterator.next();
+						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentVersionsIterator", t.getElapsedTime());
+
+						Document document = getDocumentFromDigitalAsset(asset.getValueObject(), version.getValueObject(), db);
+						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDocumentFromDigitalAsset", t.getElapsedTime());
+						logger.info("00000000000000000: Adding asset document:" + document);
+						if(document != null)
+							returnDocuments.add(document);
+					}
+
+					commitTransaction(db2);
+				}
+				catch(Exception e)
+				{
+					logger.error("An error occurred so we should not complete the transaction:" + e, e);
+					rollbackTransaction(db2);
+					throw new SystemException(e.getMessage());
+				}
+			}
 		}
 		else if(notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) || notificationMessage.getClassName().equals(SiteNode.class.getName()))
 		{
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId((Integer)notificationMessage.getObjectId(), db);
-			siteNodeIdsToIndex.add(siteNodeVO.getId());
+			if (siteNodeVO == null)
+			{
+				logger.warn("Could not find SiteNode with id: " + notificationMessage.getObjectId());
+			}
+			else
+			{
+				siteNodeIdsToIndex.add(siteNodeVO.getId());
+			}
 		}
 		
 		logger.info("Indexing:" + siteNodeIdsToIndex.size());
@@ -1849,6 +1899,12 @@ public class LuceneController extends BaseController implements NotificationList
 		if(contentVO.getIsDeleted())
 			return null;
 
+		if (contentVersionVO.getSiteNodeId() == null || contentVersionVO.getSiteNodeName() == null)
+		{
+			logger.warn("Content version does not have a SiteNode connected. Will not index content version. ContentVersion.id: " + contentVersionVO.getContentVersionId());
+			return null;
+		}
+
 		// make a new, empty document
 		Document doc = new Document();
 
@@ -1995,22 +2051,34 @@ public class LuceneController extends BaseController implements NotificationList
 		{
 			if(contentVO.getContentTypeDefinitionId() != null)
 			{
-				ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentTypeDefinitionVOWithId", (t.getElapsedTimeNanos() / 1000));
-				List<CategoryAttribute> categoryKeys = ContentTypeDefinitionController.getController().getDefinedCategoryKeys(ctdVO, true);
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDefinedCategoryKeys", (t.getElapsedTimeNanos() / 1000));
-				for(CategoryAttribute categoryKey : categoryKeys)
+				ContentTypeDefinitionVO ctdVO = null;
+				try
 				{
-					logger.info("categoryKey:" + categoryKey.getValue() + " for content:" + contentVO.getName());
-					//List<ContentCategoryVO> contentCategoryVOList = ContentCategoryController.getController().findByContentVersionAttribute(categoryKey.getValue(), contentVersionVO.getId());
-					List<ContentCategory> contentCategoryVOList = ContentCategoryController.getController().findByContentVersionAttribute(categoryKey.getValue(), contentVersionVO.getId(), db, true);
-					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Indexing categories", (t.getElapsedTimeNanos() / 1000));
-					logger.info("contentCategoryVOList:" + contentCategoryVOList.size());
-					for(ContentCategory contentCategory : contentCategoryVOList)
+					ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
+				}
+				catch (SystemException sex)
+				{
+					logger.warn("Failed to get the content type definition for content with Id: " + contentVO.getContentId() + ". The categories for the content will not be indexed. Message: " + sex.getMessage());
+					logger.info("Failed to get the content type definition for content with Id: " + contentVO.getContentId(), sex);
+				}
+				if (ctdVO != null)
+				{
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentTypeDefinitionVOWithId", (t.getElapsedTimeNanos() / 1000));
+					List<CategoryAttribute> categoryKeys = ContentTypeDefinitionController.getController().getDefinedCategoryKeys(ctdVO, true);
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDefinedCategoryKeys", (t.getElapsedTimeNanos() / 1000));
+					for(CategoryAttribute categoryKey : categoryKeys)
 					{
-						doc.add(new Field("categories", "" + contentCategory.getAttributeName().replaceAll(" ", "_").toLowerCase() + "eq" + contentCategory.getCategory().getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-						doc.add(new Field("categories", "" + contentCategory.getAttributeName() + "=" + contentCategory.getCategory().getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-						doc.add(new Field("" + contentCategory.getAttributeName() + "_categoryId", "" + contentCategory.getCategory().getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+						logger.info("categoryKey:" + categoryKey.getValue() + " for content:" + contentVO.getName());
+						//List<ContentCategoryVO> contentCategoryVOList = ContentCategoryController.getController().findByContentVersionAttribute(categoryKey.getValue(), contentVersionVO.getId());
+						List<ContentCategory> contentCategoryVOList = ContentCategoryController.getController().findByContentVersionAttribute(categoryKey.getValue(), contentVersionVO.getId(), db, true);
+						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Indexing categories", (t.getElapsedTimeNanos() / 1000));
+						logger.info("contentCategoryVOList:" + contentCategoryVOList.size());
+						for(ContentCategory contentCategory : contentCategoryVOList)
+						{
+							doc.add(new Field("categories", "" + contentCategory.getAttributeName().replaceAll(" ", "_").toLowerCase() + "eq" + contentCategory.getCategory().getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+							doc.add(new Field("categories", "" + contentCategory.getAttributeName() + "=" + contentCategory.getCategory().getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+							doc.add(new Field("" + contentCategory.getAttributeName() + "_categoryId", "" + contentCategory.getCategory().getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+						}
 					}
 				}
 			}

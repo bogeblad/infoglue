@@ -358,6 +358,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "accessBasedProtocolRedirectHTTPCode");
 	    populate(ps, "redirectStatusCode");
 
+	    populate(ps, "indexDigitalAssetContent");
+
 	    populate(ps, "allowedDirectLoginNames");
 
 	    try

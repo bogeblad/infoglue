@@ -31,8 +31,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
+import org.exolab.castor.jdo.PersistenceException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.entities.content.Content;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.impl.simple.AvailableServiceBindingImpl;
 import org.infoglue.cms.entities.management.impl.simple.ServiceDefinitionImpl;
@@ -41,8 +43,10 @@ import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
+import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
+import org.infoglue.cms.entities.structure.impl.simple.SmallServiceBindingImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
@@ -118,9 +122,67 @@ public class ServiceBindingController extends BaseController
 		oql.close();
 		
 		return serviceBindings;
-	}       
+	}
 
-    
+	/**
+	 * Returns a list of ServiceBindings that are bound to the given SiteNodeVersion.
+	 * 
+	 * @param siteNodeVersionId
+	 * @return
+	 * @throws SystemException If something goes wrong in the operation (most likely a database related error).
+	 */
+	public List<SmallServiceBindingImpl> getSmallServiceBindingsListForSiteNodeVersion(Integer siteNodeVersionId) throws SystemException
+	{
+		Database db = null;
+		List<SmallServiceBindingImpl> serviceBindings = new ArrayList<SmallServiceBindingImpl>();
+		try
+		{
+			db = CastorDatabaseService.getDatabase();
+			beginTransaction(db);
+
+			serviceBindings = getSmallServiceBindingsListForSiteNodeVersion(siteNodeVersionId, db);
+
+            rollbackTransaction(db);
+        }
+        catch(Exception ex)
+        {
+            logger.error("An error occurred so we should not complete the transaction when getting service bindings for SiteNodeVersion. Message: " + ex.getMessage() + ". Type: " + ex.getClass());
+            logger.warn("An error occurred so we should not complete the transaction when getting service bindings for SiteNodeVersion", ex);
+            rollbackTransaction(db);
+            throw new SystemException(ex.getMessage());
+        }
+
+		return serviceBindings;
+	}
+
+	public List<SmallServiceBindingImpl> getSmallServiceBindingsListForSiteNodeVersion(Integer siteNodeVersionId, Database db) throws PersistenceException
+	{
+		List<SmallServiceBindingImpl> serviceBindings = new ArrayList<SmallServiceBindingImpl>();
+
+		OQLQuery oql = db.getOQLQuery( "SELECT sb FROM org.infoglue.cms.entities.structure.impl.simple.SmallServiceBindingImpl sb WHERE sb.siteNodeVersionId = $1 ORDER BY sb.serviceBindingId");
+		oql.bind(siteNodeVersionId);
+
+		QueryResults results = oql.execute();
+		//logger.info("Fetching entity in read/write mode");
+
+		while(results.hasMore())
+		{
+			SmallServiceBindingImpl serviceBinding = (SmallServiceBindingImpl)results.next();
+
+			serviceBindings.add(serviceBinding);
+		}
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Lookup of Service bindings for SiteNodeVersion: " + siteNodeVersionId + " got results: " + results.size());
+		}
+
+		results.close();
+		oql.close();
+
+		return serviceBindings;
+	}
+
     public static ServiceBindingVO create(ServiceBindingVO serviceBindingVO, String qualifyerXML, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId) throws ConstraintException, SystemException
     {
     	logger.info("Creating a serviceBinding with the following...");
@@ -156,7 +218,7 @@ public class ServiceBindingController extends BaseController
             
 			siteNodeVersion.getServiceBindings().add(serviceBinding);
 
-            RegistryController.getController().updateSiteNodeVersion(siteNodeVersion, db);
+            RegistryController.getController().updateSiteNodeVersionThreaded(siteNodeVersion.getValueObject());
 
             commitTransaction(db);
         }
@@ -207,7 +269,7 @@ public class ServiceBindingController extends BaseController
 			
 			siteNodeVersion.getServiceBindings().add(serviceBinding);
 			
-            RegistryController.getController().updateSiteNodeVersion(siteNodeVersion, db);
+            RegistryController.getController().updateSiteNodeVersionThreaded(siteNodeVersion.getValueObject());
 		}
 		catch(Exception e)
 		{
@@ -220,6 +282,33 @@ public class ServiceBindingController extends BaseController
 	}      
 
 
+    protected static SmallServiceBindingImpl create(ServiceBindingVO serviceBindingVO, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId, Database db) throws ConstraintException, SystemException, Exception
+    {
+    	logger.info("Creating a serviceBinding with the following...");
+
+    	logger.info("name:" + serviceBindingVO.getName());
+    	logger.info("bindingTypeId:" + serviceBindingVO.getBindingTypeId());
+    	logger.info("availableServiceBindingId:" + availableServiceBindingId);
+    	logger.info("siteNodeVersionId:" + siteNodeVersionId);
+    	logger.info("serviceDefinitionId:" + serviceDefinitionId);
+
+    	SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(siteNodeVersionId, db);
+    	
+    	SmallServiceBindingImpl serviceBinding = new SmallServiceBindingImpl();
+        serviceBinding.setValueObject(serviceBindingVO);
+        serviceBinding.setAvailableServiceBinding((AvailableServiceBindingImpl)AvailableServiceBindingController.getController().getAvailableServiceBindingWithId(availableServiceBindingId, db));
+        serviceBinding.setServiceDefinition((ServiceDefinitionImpl)ServiceDefinitionController.getController().getServiceDefinitionWithId(serviceDefinitionId, db));
+        //serviceBinding.setSiteNodeVersion((SiteNodeVersionImpl)siteNodeVersion);
+        serviceBinding.setSiteNodeVersionId(siteNodeVersionId);
+
+        db.create(serviceBinding);
+            
+        RegistryController.getController().updateSiteNodeVersionThreaded(siteNodeVersionVO);
+
+        return serviceBinding;
+    }      
+
+    /*
     protected static ServiceBinding create(ServiceBindingVO serviceBindingVO, Integer availableServiceBindingId, Integer siteNodeVersionId, Integer serviceDefinitionId, Database db) throws ConstraintException, SystemException, Exception
     {
     	logger.info("Creating a serviceBinding with the following...");
@@ -232,25 +321,23 @@ public class ServiceBindingController extends BaseController
 
     	SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(siteNodeVersionId, db);
     	
-		ServiceBinding serviceBinding = null;
-		
-        serviceBinding = new ServiceBindingImpl();
+    	ServiceBinding serviceBinding = new ServiceBindingImpl();
         serviceBinding.setValueObject(serviceBindingVO);
         serviceBinding.setAvailableServiceBinding((AvailableServiceBindingImpl)AvailableServiceBindingController.getController().getAvailableServiceBindingWithId(availableServiceBindingId, db));
         serviceBinding.setServiceDefinition((ServiceDefinitionImpl)ServiceDefinitionController.getController().getServiceDefinitionWithId(serviceDefinitionId, db));
         serviceBinding.setSiteNodeVersion((SiteNodeVersionImpl)siteNodeVersion);
+        serviceBinding.setSiteNodeVersion(siteNodeVersionId);
 
         logger.info("createEntity: " + serviceBinding.getSiteNodeVersion().getSiteNodeVersionId());
         
         db.create(serviceBinding);
             
-        RegistryController.getController().updateSiteNodeVersion(siteNodeVersion, db);
+        RegistryController.getController().updateSiteNodeVersion(siteNodeVersion.getValueObject(), db);
 
         return serviceBinding;
     }      
-
-
-
+	*/
+    
     public static ServiceBindingVO update(ServiceBindingVO serviceBindingVO, String qualifyerXML) throws ConstraintException, SystemException
     {
     	logger.info("Updating a serviceBinding with the following...");
@@ -273,7 +360,7 @@ public class ServiceBindingController extends BaseController
 	        Collection newQualifyers = QualifyerController.createQualifyers(qualifyerXML, serviceBinding);
             serviceBinding.setBindingQualifyers(newQualifyers);
             
-            RegistryController.getController().updateSiteNodeVersion(serviceBinding.getSiteNodeVersion(), db);
+            RegistryController.getController().updateSiteNodeVersionThreaded(serviceBinding.getSiteNodeVersion().getValueObject());
 
             commitTransaction(db);
         }
@@ -432,7 +519,7 @@ public class ServiceBindingController extends BaseController
         	
         	siteNodeVersion.getServiceBindings().remove(serviceBinding);
         	
-            RegistryController.getController().updateSiteNodeVersion(siteNodeVersion, db);
+            RegistryController.getController().updateSiteNodeVersionThreaded(siteNodeVersion.getValueObject());
 
         	commitTransaction(db);
         }
@@ -454,7 +541,7 @@ public class ServiceBindingController extends BaseController
 		
 		db.remove(serviceBinding);
 	
-        RegistryController.getController().updateSiteNodeVersion(serviceBinding.getSiteNodeVersion(), db);
+        RegistryController.getController().updateSiteNodeVersionThreaded(serviceBinding.getSiteNodeVersion().getValueObject());
 	}        
 
 	

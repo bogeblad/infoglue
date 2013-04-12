@@ -364,6 +364,8 @@ public class CategoryConditions implements ICategoryContainerCondition {
 	private static final String LEFT   = "(";
 	private static final String RIGHT  = ")";
 	private static final String SPACE  = " ";
+	private static final String AND    = "AND";
+	private static final String OR     = "OR";
 
 	/**
 	 * 
@@ -632,6 +634,7 @@ class ConditionsParser {
 			throw new IllegalArgumentException("ConditionsParser.createContainer() - no trailing container delimiter.");
 
 		final String startToken = (String) tokens.get(0);
+		final String endToken   = (String) tokens.get(tokens.size() - 1);
 
 		if(AND_START.equals(startToken))
 			return CategoryConditions.createAndConditions();

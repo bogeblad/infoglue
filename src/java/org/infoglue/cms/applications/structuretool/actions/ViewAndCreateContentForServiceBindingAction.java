@@ -40,14 +40,16 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
-import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 
@@ -204,41 +206,91 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 
         try
         {
-            Language masterLanguage = LanguageController.getController().getMasterLanguage(db, this.repositoryId);
+            LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(this.repositoryId, db);
     		this.languageId = masterLanguage.getLanguageId();
 
-    		ContentTypeDefinition metaInfoContentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithName("Meta info", db);
-    		this.metaInfoContentTypeDefinitionId = metaInfoContentTypeDefinition.getId();
+    		ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithName("Meta info", db);
+    		this.metaInfoContentTypeDefinitionId = contentTypeDefinition.getId();
     		
-    		SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithId(this.siteNodeId, db);
+    		SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeId, db);
 
     		if(this.changeStateToWorking != null && this.changeStateToWorking.equalsIgnoreCase("true"))
     		{
-    			SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, this.siteNodeId);
-    			if(!siteNodeVersion.getStateId().equals(SiteNodeVersionVO.WORKING_STATE))
+    			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, this.siteNodeId);
+    			if(!siteNodeVersionVO.getStateId().equals(SiteNodeVersionVO.WORKING_STATE))
     			{
-	    			List events = new ArrayList();
-		    		SiteNodeStateController.getController().changeState(siteNodeVersion.getId(), SiteNodeVersionVO.WORKING_STATE, "Auto", true, this.getInfoGluePrincipal(), this.siteNodeId, db, events);
+	    			List<EventVO> events = new ArrayList<EventVO>();
+		    		SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), siteNode, SiteNodeVersionVO.WORKING_STATE, "Auto", true, this.getInfoGluePrincipal(), db, this.siteNodeId, events);
     			}
     		}
     		
-    		Content metaInfoContent = null;
+    		ContentVO metaInfoContent = null;
     		if(siteNode.getMetaInfoContentId() != null && siteNode.getMetaInfoContentId().intValue() > -1)
-    		    metaInfoContent = ContentController.getContentController().getContentWithId(siteNode.getMetaInfoContentId(), db);
+    		    metaInfoContent = ContentController.getContentController().getContentVOWithId(siteNode.getMetaInfoContentId(), db);
             
             if(metaInfoContent == null)
             {
             	siteNode.setMetaInfoContentId(null);
-    		    this.contentVO = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, this.repositoryId, this.getInfoGluePrincipal(), null).getValueObject();
+    		    this.contentVO = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, this.repositoryId, this.getInfoGluePrincipal(), null, new ArrayList<ContentVersion>()).getValueObject();
             	siteNode.setMetaInfoContentId(this.contentVO.getId());
                 logger.error("The site node must have a meta information bound. We tried to recreate it. Old info was lost.");
             } 
             else
             {
-                if(!metaInfoContent.getValueObject().getContentTypeDefinitionId().equals(metaInfoContentTypeDefinition.getId()))
-                	metaInfoContent.setContentTypeDefinition((ContentTypeDefinitionImpl)metaInfoContentTypeDefinition);
+                this.contentVO = metaInfoContent; //.getValueObject();
+            }
+
+	    		/*
+                boolean hadMetaInfo = false;
+	    		if(this.serviceBindingVO.getId() == null)
+	    		{
+	    			AvailableServiceBinding availableServiceBinding = AvailableServiceBindingController.getController().getAvailableServiceBindingWithName("Meta information", db, false);
+	    			
+	    			Collection serviceBindings = SiteNodeVersionController.getServiceBindningList(this.siteNodeVersionId, db);
+	    			Iterator serviceBindingIterator = serviceBindings.iterator();
+	    			while(serviceBindingIterator.hasNext())
+	    			{
+	    				ServiceBinding serviceBinding = (ServiceBinding)serviceBindingIterator.next();
+	    				if(serviceBinding.getValueObject().getAvailableServiceBindingId().intValue() == availableServiceBinding.getAvailableServiceBindingId().intValue())
+	    				{
+	    					List boundContents = ContentController.getBoundContents(db, serviceBinding.getServiceBindingId()); 			
+	    					if(boundContents.size() > 0)
+	    					{
+	    						this.contentVO = (ContentVO)boundContents.get(0);		
+	    						hadMetaInfo = true;
+	    						if(siteNode.getMetaInfoContentId() == null || siteNode.getMetaInfoContentId().intValue() == -1)
+	    						    siteNode.setMetaInfoContentId(this.contentVO.getId());
+	    						
+	    						break;
+	    					}						
+	    				}
+	    			}
+	
+	        		if(!hadMetaInfo)
+	        		    this.contentVO = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, this.repositoryId, this.getInfoGluePrincipal(), null).getValueObject();
+	        	}
+	    		else
+	    		{
+	    			List boundContents = ContentController.getBoundContents(this.serviceBindingVO.getId()); 			
+	    			
+	    			if(boundContents.size() > 0)
+	    			{
+	    				this.contentVO = (ContentVO)boundContents.get(0);		 	
+	    				if(siteNode.getMetaInfoContentId() == null || siteNode.getMetaInfoContentId().intValue() == -1)
+						    siteNode.setMetaInfoContentId(this.contentVO.getId());
+	    			}
+	    			else
+	    			{
+	    			    //Something is broken.... lets try to patch it up by assigning what it should be.
+	    			    this.contentVO = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, this.repositoryId, this.getInfoGluePrincipal(), null).getValueObject();
+	    			}
+	    		}
+            }
+            else
+            {
                 this.contentVO = metaInfoContent.getValueObject();
             }
+            */
             
             this.languageId = getInitialLanguageVO(this.contentVO.getId(), db).getId();
             
@@ -254,31 +306,20 @@ public class ViewAndCreateContentForServiceBindingAction extends InfoGlueAbstrac
 		return "success";
     }
        
-	/**
-	 * We first checks if there is a bound content linked - if not one is created in a special folder and
-	 * a new service binding is created to it. The content is then shown to the user for editing. Most of this method should 
-	 * be moved to an controller.
-	 */
-	
-    public String doInline() throws Exception
-    {		
-    	doExecute();
-    	
-    	return "successInline";
-    }
-    
 	public LanguageVO getInitialLanguageVO(Integer contentId, Database db) throws Exception
 	{
 		Map args = new HashMap();
 	    args.put("globalKey", "infoglue");
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 
+	    ContentVO contentVO = ContentController.getContentController().getSmallContentVOWithId(contentId, db, null); 
+
 	    String initialLanguageId = ps.getString("content_" + contentId + "_initialLanguageId");
-	    ContentVO parentContentVO = ContentController.getContentController().getParentContent(contentId, db); 
+	    ContentVO parentContentVO = ContentController.getContentController().getSmallParentContent(contentVO, db); 
 	    while((initialLanguageId == null || initialLanguageId.equalsIgnoreCase("-1")) && parentContentVO != null)
 	    {
 	    	initialLanguageId = ps.getString("content_" + parentContentVO.getId() + "_initialLanguageId");
-		    parentContentVO = ContentController.getContentController().getParentContent(parentContentVO.getId(), db); 
+		    parentContentVO = ContentController.getContentController().getSmallParentContent(parentContentVO, db); 
 	    }
 	    
 	    if(initialLanguageId != null && !initialLanguageId.equals("") && !initialLanguageId.equals("-1"))

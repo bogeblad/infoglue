@@ -33,6 +33,7 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
+import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.validators.ValidatorFactory;
 
 public class SiteNodeVO implements BaseEntityVO
@@ -47,15 +48,22 @@ public class SiteNodeVO implements BaseEntityVO
     private Integer repositoryId 	= null;    
   	private Integer siteNodeTypeDefinitionId = null;  
   	private Integer childCount		= null;
+  	private Integer siteNodeVersionId= null;
   	private Integer sortOrder;
   	private Boolean isHidden 		= new Boolean(false);
   	private Integer stateId			= null;
   	private Integer isProtected 	= null;
+  	private Date modifiedDateTime 	= null;
   	
   	private String creatorName;
+  	private String versionModifier;
 	private Integer metaInfoContentId 	= new Integer(-1);
 	
 	private Integer parentSiteNodeId 	= null;
+
+	private Integer languageId		 	= null;
+	private Integer contentVersionId	= null;
+	private String attributes 			= null;
 
   	//Used if an application wants to add more properties to this item... used for performance reasons.
   	private Map extraProperties = new Hashtable();
@@ -255,6 +263,7 @@ public class SiteNodeVO implements BaseEntityVO
 		this.parentSiteNodeId = parentSiteNodeId;
 	}
 
+
 	public Integer getSortOrder()
 	{
 		return sortOrder;
@@ -264,6 +273,16 @@ public class SiteNodeVO implements BaseEntityVO
 	{
 		this.sortOrder = sortOrder;
 	}
+
+    public Integer getSiteNodeVersionId()
+    {
+        return siteNodeVersionId;
+    }
+            
+    public void setSiteNodeVersionId(Integer siteNodeVersionId)
+    {
+        this.siteNodeVersionId = siteNodeVersionId;
+    }
 
     public Integer getStateId()
     {
@@ -285,5 +304,69 @@ public class SiteNodeVO implements BaseEntityVO
         this.isProtected = isProtected;
     }
 
+    public String getVersionModifier()
+    {
+        return versionModifier;
+    }
+            
+    public void setVersionModifier(String versionModifier)
+    {
+        this.versionModifier = versionModifier;
+    }
+
+    public Date getModifiedDateTime()
+    {
+        return this.modifiedDateTime;
+    }
+                
+    public void setModifiedDateTime(Date modifiedDateTime)
+    {
+        this.modifiedDateTime = modifiedDateTime;
+    }
+    
+	public Integer getLanguageId()
+	{
+		return languageId;
+	}
+
+	public void setLanguageId(Integer languageId)
+	{
+		//if(this.attributes != null)
+		//	addAttributes(languageId, this.attributes);
+		this.languageId = languageId;
+	}
+
+	public Integer getContentVersionId()
+	{
+		return contentVersionId;
+	}
+
+	public void setContentVersionId(Integer contentVersionId)
+	{
+		this.contentVersionId = contentVersionId;
+	}
+
+	public String getAttributes()
+	{
+		return this.attributes;
+	}
+
+	public void setAttributes(String attributes)
+	{
+		//if(this.languageId != null)
+		//	addAttributes(languageId, attributes);
+		this.attributes = attributes;
+	}
+/*
+	public void addAttributes(Integer languageId, String attributes)
+	{
+		//this.extraProperties.put("attributes_" + languageId, attributes);
+	}
+
+	public String getAttributes(Integer languageId)
+	{
+		//return (String)this.extraProperties.get("attributes_" + languageId);
+	}
+*/
 }
         

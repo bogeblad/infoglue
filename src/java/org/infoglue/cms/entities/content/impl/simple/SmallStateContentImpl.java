@@ -307,4 +307,14 @@ public class SmallStateContentImpl extends ContentImpl
     	this.valueObject.setStateId(stateId);
 	}
 
+	public void setContentVersionId(Integer contentVersionId)
+	{
+		this.valueObject.setContentVersionId(contentVersionId);
+	}
+
+    public Integer getContentVersionId()
+    {
+    	return this.valueObject.getContentVersionId();
+	}
+
 }        

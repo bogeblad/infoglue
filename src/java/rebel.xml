@@ -2,8 +2,44 @@
 <application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
 
 	<classpath>
-		<dir name="/Applications/InfoGlue/eclipse/workspace/infoglue31/build/classes">
+		<dir name="/Volumes/SSD/InfoGlue/eclipse/workspace/infoglue31/build/classes">
 		</dir>
 	</classpath>
 
+	<web>
+		<link target="/">
+			<dir name="/Volumes/SSD/InfoGlue/eclipse/workspace/infoglue31/src/webapp">
+			</dir>
+		</link>
+	</web>
+
 </application>
+
+<!--  
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+
+	<classpath>
+		<dir name="/Applications/InfoGlue/eclipse/workspace/infoglue31/build/classes"></dir>
+	</classpath>
+
+	<web>
+		<link target="/">
+			<dir name="/Applications/InfoGlue/eclipse/workspace/infoglue31/src/webapp">
+			</dir>
+		</link>
+	</web>
+
+	<classpath>
+		<dir name="/Applications/InfoGlue/eclipse/workspace/infoglue31/build/classes"></dir>
+	</classpath>
+
+	<web>
+		<link target="/">
+			<dir name="/Applications/InfoGlue/eclipse/workspace/infoglue31/src/webapp">
+			</dir>
+		</link>
+	</web>
+
+</application>
+-->

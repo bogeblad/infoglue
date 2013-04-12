@@ -34,7 +34,8 @@ import org.infoglue.deliver.util.CompressionHelper;
 
 public class ContentVersionVO implements BaseEntityVO
 {
-
+	private static CompressionHelper ch = new CompressionHelper();
+	
 	public static final Integer WORKING_STATE   = new Integer(0);
 	public static final Integer FINAL_STATE     = new Integer(1);
 	public static final Integer PUBLISH_STATE   = new Integer(2);
@@ -61,6 +62,11 @@ public class ContentVersionVO implements BaseEntityVO
 	private String siteNodeName					= null;
 	private Integer siteNodeId					= null;
 	
+	//Fields only here for performance - not allways populated, only in some views
+   	private Integer repositoryId				= null;
+    private String versionModifierDisplayName 	= null;
+	private String path = null;
+
 	public java.lang.Integer getContentVersionId()
     {
         return this.contentVersionId;
@@ -105,7 +111,7 @@ public class ContentVersionVO implements BaseEntityVO
     {
     	if(compressedVersionValue != null && compressedVersionValue.length > 0)
     	{
-    		return CompressionHelper.decompress(compressedVersionValue);
+    		return ch.decompress(compressedVersionValue);
     	}
     	else 
     		return this.versionValue;
@@ -113,10 +119,7 @@ public class ContentVersionVO implements BaseEntityVO
                 
     public void setVersionValue(String versionValue)
     {
-    	if(versionValue != null && versionValue.length() > 0)
-    	{
-    		compressedVersionValue = CompressionHelper.compress(versionValue);
-    	}
+    	this.versionValue = versionValue;
     }
     
     public Date getModifiedDateTime()
@@ -207,6 +210,50 @@ public class ContentVersionVO implements BaseEntityVO
 		this.versionModifier = versionModifier;
 	}
 
+    /**
+	 * @return the versionModifierDisplayName if set by the view. Not allways populated so do not depend on it.
+	 */
+	public String getVersionModifierDisplayName() 
+	{
+		return (versionModifierDisplayName != null ? versionModifierDisplayName : versionModifier);
+	}
+
+	/**
+	 * @param versionModifierDisplayName the versionModifierDisplayName to set
+	 */
+	public void setVersionModifierDisplayName(String versionModifierDisplayName) 
+	{
+		this.versionModifierDisplayName = versionModifierDisplayName;
+	}
+
+	/**
+	 * @return the path
+	 */
+	public String getPath() 
+	{
+		return path;
+	}
+
+	 /**
+	 * @return the stateId if set by the view. Not allways populated so do not depend on it.
+	 */
+	public Integer getRepositoryId()
+    {
+        return this.repositoryId;
+    }
+
+    public void setRepositoryId(Integer repositoryId)
+    {
+        this.repositoryId = repositoryId;
+    }
+    
+	/**
+	 * @param path the path to set
+	 */
+	public void setPath(String path) 
+	{
+		this.path = path;
+	}
 
 	public ContentVersionVO copy()
 	{

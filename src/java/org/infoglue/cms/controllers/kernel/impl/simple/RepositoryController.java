@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -165,6 +164,7 @@ public class RepositoryController extends BaseController
 		}
     } 
 
+
 	/**
 	 * This method sets a Repository in markedForDelete mode.
 	 */
@@ -217,7 +217,7 @@ public class RepositoryController extends BaseController
 			throw new SystemException(e.getMessage());
 		}
     } 
-
+    
 	/**
 	 * This method removes a Repository from the system and also cleans out all depending repositoryLanguages.
 	 */
@@ -298,6 +298,7 @@ public class RepositoryController extends BaseController
     } 
     
     
+    
     public RepositoryVO update(RepositoryVO vo) throws ConstraintException, SystemException
     {
     	return (RepositoryVO) updateEntity(RepositoryImpl.class, (BaseEntityVO) vo);
@@ -363,7 +364,19 @@ public class RepositoryController extends BaseController
 
     public RepositoryVO getRepositoryVOWithId(Integer repositoryId) throws ConstraintException, SystemException, Bug
     {
-		return  (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId);        
+		String key = "" + repositoryId;
+		RepositoryVO repositoryVO = (RepositoryVO)CacheController.getCachedObject("repositoryCache", key);
+		if(repositoryVO != null)
+		{
+			return repositoryVO;
+		}
+
+		RepositoryVO rep = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId);
+		
+		if(rep != null)
+			CacheController.cacheObject("repositoryCache", key, rep);
+		
+		return rep;
     }
 	
     public RepositoryVO getRepositoryVOWithId(Integer repositoryId, Database db) throws ConstraintException, SystemException, Bug
@@ -376,11 +389,38 @@ public class RepositoryController extends BaseController
 		}
 		else
 		{
-			repositoryVO = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db);        
-		
+			try
+			{
+				repositoryVO = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db);        
+			}
+			catch (SystemException e) 
+			{
+				if(e.getMessage().indexOf("No lock to release") > -1 || e.getMessage().indexOf("lock without first acquiring the lock") > -1)
+				{
+					logger.warn("An sync issue arose on: " + repositoryId + ":" + e.getMessage());
+					for(int i=0; i<5; i++)
+					{
+						try
+						{
+							Thread.sleep(10);
+							repositoryVO = (RepositoryVO) getVOWithId(RepositoryImpl.class, repositoryId, db); 
+							logger.warn("It worked out: " + repositoryId);
+							break;
+						}
+						catch (Exception e2) 
+						{
+							logger.warn("Still an issue with loading the repo " + repositoryId + ":" + e2.getMessage());
+						}
+					}
+					if(repositoryVO == null)
+						throw e;
+				}
+				else
+					throw e;
+			}
 			CacheController.cacheObject("repositoryCache", key, repositoryVO);
 		}
-    
+		
 		return repositoryVO;
     }
     
@@ -446,11 +486,10 @@ public class RepositoryController extends BaseController
 		{
 			try
 			{
-				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl f WHERE f.name = $1 AND f.isDeleted = $2");
+				OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl f WHERE f.name = $1");
 				oql.bind(name);
-				oql.bind(false);
 				
-				QueryResults results = oql.execute(Database.READONLY);
+				QueryResults results = oql.execute(Database.ReadOnly);
 	
 				if (results.hasMore()) 
 				{
@@ -475,6 +514,7 @@ public class RepositoryController extends BaseController
 		return repositoryVO;		
 	}
 
+
 	/**
 	 * Returns the Repository with the given name fetched within a given transaction.
 	 * 
@@ -488,7 +528,7 @@ public class RepositoryController extends BaseController
 	public Repository getRepositoryWithName(String name, Database db) throws SystemException, Bug
 	{
 		Repository repository = null;
-
+		
 		try
 		{
 			OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl f WHERE f.name = $1");
@@ -536,13 +576,14 @@ public class RepositoryController extends BaseController
 		return repositoryVOList;
     }
 
+
 	/**
 	 * This method can be used by actions and use-case-controllers that only need to have simple access to the
 	 * functionality. They don't get the transaction-safety but probably just wants to show the info.
 	 */	
 	
 	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog) throws ConstraintException, SystemException, Bug
-	{
+	{    	
 		return getAuthorizedRepositoryVOList(infoGluePrincipal, isBindingDialog, false);
 	}
 	
@@ -554,24 +595,96 @@ public class RepositoryController extends BaseController
 	public List getAuthorizedRepositoryVOList(InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog, boolean allowIfWriteAccess) throws ConstraintException, SystemException, Bug
 	{    	
 		List accessableRepositories = new ArrayList();
+		//Timer t = new Timer();
     	
-		List allRepositories = this.getRepositoryVOListNotMarkedForDeletion();
-		Iterator i = allRepositories.iterator();
-		while(i.hasNext())
+		Database db = CastorDatabaseService.getDatabase();
+		
+		try 
 		{
-			RepositoryVO repositoryVO = (RepositoryVO)i.next();
-			if(getIsAccessApproved(repositoryVO.getRepositoryId(), infoGluePrincipal, isBindingDialog, allowIfWriteAccess))
+			beginTransaction(db);
+		
+			List allRepositories = this.getRepositoryVOList();
+			//t.printElapsedTime("allRepositories took");
+			
+			Iterator i = allRepositories.iterator();
+			while(i.hasNext())
 			{
-				accessableRepositories.add(repositoryVO);
+				RepositoryVO repositoryVO = (RepositoryVO)i.next();
+				if(getIsAccessApproved(db, repositoryVO.getRepositoryId(), infoGluePrincipal, isBindingDialog, allowIfWriteAccess))
+				{
+					//t.printElapsedTime("getIsAccessApproved took");
+					accessableRepositories.add(repositoryVO);
+				}
 			}
-		}
-    	
-		Collections.sort(accessableRepositories, new ReflectionComparator("name"));
+	    	
+			Collections.sort(accessableRepositories, new ReflectionComparator("name"));
 
-		return accessableRepositories;
+			commitTransaction(db);
+		}
+		catch ( Exception e)		
+		{
+			throw new SystemException("An error occurred when we tried to fetch a list of roles in the repository. Reason:" + e.getMessage(), e);			
+		}
+		
+		return accessableRepositories;	
 	}
 
 
+
+	
+	/**
+	 * Return the first of all repositories.
+	 */
+	
+	public RepositoryVO getFirstRepositoryVO()  throws SystemException, Bug
+	{
+		Database db = CastorDatabaseService.getDatabase();
+		RepositoryVO repositoryVO = null;
+		
+		try 
+		{
+			beginTransaction(db);
+		
+			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r ORDER BY r.repositoryId");
+        	QueryResults results = oql.execute();
+			this.logger.info("Fetching entity in read/write mode");
+
+			if (results.hasMore()) 
+            {
+                Repository repository = (Repository)results.next();
+                repositoryVO = repository.getValueObject();
+            }
+            
+			results.close();
+			oql.close();
+
+			commitTransaction(db);
+		}
+		catch ( Exception e)		
+		{
+			throw new SystemException("An error occurred when we tried to fetch a list of roles in the repository. Reason:" + e.getMessage(), e);			
+		}
+		return repositoryVO;		
+	}
+	
+
+
+	/**
+	 * This method deletes the Repository sent in from the system.
+	 */	
+	public void delete(Integer repositoryId, Database db) throws SystemException, Bug
+	{
+		try
+		{
+			db.remove(getRepositoryWithId(repositoryId, db));
+		}
+		catch(Exception e)
+		{
+			throw new SystemException("An error occurred when we tried to delete Repository in the database. Reason: " + e.getMessage(), e);
+		}	
+	} 
+
+    
 	/**
 	 * Returns a repository list marked for deletion.
 	 */
@@ -658,98 +771,28 @@ public class RepositoryController extends BaseController
 		return repositoryVOListMarkedForDeletion;		
 	}
 
-	
-	/**
-	 * Return the first of all repositories.
-	 */
-	
-	public RepositoryVO getFirstRepositoryVO()  throws SystemException, Bug
-	{
-		Database db = CastorDatabaseService.getDatabase();
-		RepositoryVO repositoryVO = null;
-		
-		try 
-		{
-			beginTransaction(db);
-		
-			OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RepositoryImpl r ORDER BY r.repositoryId");
-        	QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode");
-
-			if (results.hasMore()) 
-            {
-                Repository repository = (Repository)results.next();
-                repositoryVO = repository.getValueObject();
-            }
-            
-			results.close();
-			oql.close();
-
-			commitTransaction(db);
-		}
-		catch ( Exception e)		
-		{
-			throw new SystemException("An error occurred when we tried to fetch a list of roles in the repository. Reason:" + e.getMessage(), e);			
-		}
-		return repositoryVO;		
-	}
-	
-
-
-	/**
-	 * This method deletes the Repository sent in from the system.
-	 */	
-	public void delete(Integer repositoryId, Database db) throws SystemException, Bug
-	{
-		try
-		{
-			db.remove(getRepositoryWithId(repositoryId, db));
-		}
-		catch(Exception e)
-		{
-			throw new SystemException("An error occurred when we tried to delete Repository in the database. Reason: " + e.getMessage(), e);
-		}	
-	} 
-
 
 	/**
 	 * This method returns true if the user should have access to the repository sent in.
 	 */
     
-	public boolean getIsAccessApproved(Integer repositoryId, InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog, boolean allowIfWriteAccess) throws SystemException
+	public boolean getIsAccessApproved(Database db, Integer repositoryId, InfoGluePrincipal infoGluePrincipal, boolean isBindingDialog, boolean allowIfWriteAccess) throws SystemException
 	{
 		Timer t = new Timer();
 		
 		logger.info("getIsAccessApproved for " + repositoryId + " AND " + infoGluePrincipal + " AND " + isBindingDialog);
 		boolean hasAccess = false;
     	
-		Database db = CastorDatabaseService.getDatabase();
-       
-		beginTransaction(db);
+	    if(isBindingDialog)
+	        hasAccess = (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) || AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.ReadForBinding", repositoryId.toString()));
+	    else if(allowIfWriteAccess)
+	        hasAccess = (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) || AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", repositoryId.toString())); 
+	    else
+	        hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()); 
 
-		try
-		{ 
-		    if(isBindingDialog)
-		        hasAccess = (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) || AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.ReadForBinding", repositoryId.toString()));
-		    else if(allowIfWriteAccess)
-		        hasAccess = (AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()) || AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Write", repositoryId.toString())); 
-		    else
-		        hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Repository.Read", repositoryId.toString()); 
-
-			commitTransaction(db);
-		}
-		catch(Exception e)
-		{
-			logger.error("An error occurred so we should not complete the transaction:" + e, e);
-			rollbackTransaction(db);
-			throw new SystemException(e.getMessage());
-		}
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Reading access rights for Repository.Read", t.getElapsedTime());
-		//t.printElapsedTime("Reading access rights for:" + repositoryId);
-
-		return hasAccess;
+	    return hasAccess;
 	}	
-    
+	
 	
 	/**
 	 * This is a method that gives the user back an newly initialized ValueObject for this entity that the controller

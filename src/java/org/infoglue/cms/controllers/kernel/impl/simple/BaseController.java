@@ -134,9 +134,7 @@ public abstract class BaseController
 			logger.info("Adding interceptorVO:" + interceptorVO.getName());
 			try
 			{
-				InfoGlueInterceptor infoGlueInterceptor = InterceptionService.getService().getInterceptor(interceptorVO.getName());
-				if(infoGlueInterceptor == null)
-					infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap, allowCreatorAccess);
 			}
 			catch(ClassNotFoundException e)
@@ -144,6 +142,39 @@ public abstract class BaseController
 				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
 			}
 		}
+	}
+    
+    Map<String,InfoGlueInterceptor> cachedInterceptors = new HashMap<String,InfoGlueInterceptor>();
+    protected void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, boolean allowCreatorAccess) throws ConstraintException, SystemException, Bug, Exception
+	{
+		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
+    	
+		if(interceptionPointVO == null)
+			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
+
+		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId());
+		
+		Iterator interceptorsIterator = interceptors.iterator();
+		while(interceptorsIterator.hasNext())
+		{
+			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
+			logger.info("Adding interceptorVO:" + interceptorVO.getName());
+			try
+			{
+				InfoGlueInterceptor infoGlueInterceptor = cachedInterceptors.get(interceptorVO.getClassName());
+				if(infoGlueInterceptor == null)
+				{
+					infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+					cachedInterceptors.put(interceptorVO.getClassName(), infoGlueInterceptor);
+				}
+				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap, allowCreatorAccess);
+			}
+			catch(ClassNotFoundException e)
+			{
+				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
+			}
+		}
+
 	}
 
     
@@ -166,7 +197,7 @@ public abstract class BaseController
 		if(interceptionPointVO == null)
 			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
 
-		List interceptors = InterceptorController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId(), db);
+		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId(), db);
 		Iterator interceptorsIterator = interceptors.iterator();
 		while(interceptorsIterator.hasNext())
 		{
@@ -174,9 +205,13 @@ public abstract class BaseController
 			logger.info("Adding interceptorVO:" + interceptorVO.getName());
 			try
 			{
-				InfoGlueInterceptor infoGlueInterceptor = InterceptionService.getService().getInterceptor(interceptorVO.getName());
+				InfoGlueInterceptor infoGlueInterceptor = cachedInterceptors.get(interceptorVO.getClassName());
 				if(infoGlueInterceptor == null)
+				{
 					infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+					cachedInterceptors.put(interceptorVO.getClassName(), infoGlueInterceptor);
+				}
+				//InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap, db);
 			}
 			catch(ClassNotFoundException e)
@@ -194,7 +229,7 @@ public abstract class BaseController
 		if(interceptionPointVO == null)
 			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
 
-		List interceptors = InterceptorController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId(), db);
+		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId(), db);
 		Iterator interceptorsIterator = interceptors.iterator();
 		while(interceptorsIterator.hasNext())
 		{
@@ -202,9 +237,13 @@ public abstract class BaseController
 			logger.info("Adding interceptorVO:" + interceptorVO.getName());
 			try
 			{
-				InfoGlueInterceptor infoGlueInterceptor = InterceptionService.getService().getInterceptor(interceptorVO.getName());
+				InfoGlueInterceptor infoGlueInterceptor = cachedInterceptors.get(interceptorVO.getClassName());
 				if(infoGlueInterceptor == null)
+				{
 					infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+					cachedInterceptors.put(interceptorVO.getClassName(), infoGlueInterceptor);
+				}
+				//InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap, allowCreatorAccess, db);
 			}
 			catch(ClassNotFoundException e)
@@ -269,8 +308,8 @@ public abstract class BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e);
-            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction: " + e.getMessage());
+            logger.warn("An error occurred so we should not complete the transaction: " + e.getMessage(), e);
             //CmsSystem.log(entity,"Failed to create object", CmsSystem.DBG_LOW);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
@@ -312,8 +351,8 @@ public abstract class BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e);
-            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction: " + e.getMessage());
+            logger.warn("An error occurred so we should not complete the transaction: " + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -346,8 +385,8 @@ public abstract class BaseController
         }
 		catch(Exception e)
 		{
-            logger.error("An error occurred so we should not complete the transaction:" + e);
-            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+            logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
@@ -382,8 +421,8 @@ public abstract class BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e);
-            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+            logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             throw new SystemException(e.getMessage());
         }
     }        
@@ -406,8 +445,8 @@ public abstract class BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e);
-            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction: " + e.getMessage());
+            logger.warn("An error occurred so we should not complete the transaction: " + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -474,14 +513,14 @@ public abstract class BaseController
         }
         catch(ConstraintException ce)
         {
-            logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+            logger.warn("An error occurred so we should not complete the transaction:" + ce.getMessage(), ce);
             rollbackTransaction(db);
             throw ce;
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e);
-            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+            logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
@@ -572,15 +611,6 @@ public abstract class BaseController
 	
     protected static Object getObjectWithIdAsReadOnly(Class arg, Integer id, Database db) throws SystemException, Bug
     {
-        return getObjectWithIdAsReadOnly(arg, id, db, true);
-    }
-
-	/**
-	 * This method fetches one object / entity within a transaction.
-	 **/
-	
-    protected static Object getObjectWithIdAsReadOnly(Class arg, Integer id, Database db, boolean retry) throws SystemException, Bug
-    {
         Object object = null;
         try
         {
@@ -589,23 +619,8 @@ public abstract class BaseController
         }
         catch(Exception e)
         {
-			try
-			{
-				if(retry)
-				{
-					logger.warn("Error getting object. Message: " + e.getMessage() + ". Retrying...");
-					object = getObjectWithIdAsReadOnly(arg, id, db, false);
-				}
-				else
-				{
-					logger.warn("Error getting object. Message: " + e.getMessage() + ". No retrying again.");
-					throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
-				}
-			}
-			catch(Exception e2)
-			{
-	            throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
-			}
+			logger.warn("Error getting object. Message: " + e.getMessage() + ". No retrying again.");
+			throw new SystemException("An error occurred when we tried to fetch the object " + arg.getName() + ". Reason:" + e.getMessage(), e);    
         }
 		finally
 		{
@@ -1265,6 +1280,8 @@ public abstract class BaseController
 
             db.commit();
 		    db.close();
+
+		    //RegistryController.notifyTransactionCommitted();
         }
         catch(TransactionAbortedException tae)
         {
@@ -1283,6 +1300,37 @@ public abstract class BaseController
         }
     }
  
+    /**
+     * Ends a transaction on the named database
+     */
+     
+    protected static void commitRegistryAwareTransaction(Database db) throws SystemException
+    {
+        try
+        {
+            //logger.info("Closing a transaction in cms...");
+
+            db.commit();
+		    db.close();
+
+		    RegistryController.notifyTransactionCommitted();
+        }
+        catch(TransactionAbortedException tae)
+        {
+        	if(tae.getCause() instanceof LockNotGrantedException)
+                throw new SystemException("The resource you tried to modify have just been updated by another user. Please try again later. System message: " + tae.getCause().getMessage());
+        	else
+               	throw new SystemException("An error occurred when we tried to commit an transaction. Reason:" + tae.getMessage(), tae);
+        }
+        catch(LockNotGrantedException lnge)
+        {
+            throw new SystemException("The resource you tried to modify have just been updated by another user. Please try again later. System message: " + lnge.getMessage());
+        }
+        catch(Exception e)
+        {
+           	throw new SystemException("An error occurred when we tried to commit an transaction. Reason:" + e.getMessage(), e);    
+        }
+    }
  
     /**
      * Rollbacks a transaction on the named database
@@ -1437,8 +1485,8 @@ public abstract class BaseController
         }
         catch(Exception e)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + e);
-            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            logger.error("An error occurred so we should not complete the transaction: " + e.getMessage());
+            logger.warn("An error occurred so we should not complete the transaction: " + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }

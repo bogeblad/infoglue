@@ -328,9 +328,10 @@ Rights saved...
 	</tr>
 </form>
 	
-<form method="POST" name="addUserForm" action="UpdateAccessRights!addUser.action">
+<form method="POST" id="addUserForm" name="addUserForm" action="UpdateAccessRights!addUser.action">
 <input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory">
 <input type="hidden" name="parameters" value="$extraParameters">
+<input type="hidden" id="userName" name="userName" value=""/>
 #foreach($extraMultiParameter in $extraMultiParameters)
 <input type="hidden" name="extraMultiParameter" value="$extraMultiParameter">
 #end
@@ -391,7 +392,7 @@ Rights saved...
 
 	<tr>
 		<td nowrap>
-			<input astyle="border: 1px solid #666; width: 110px;" type="textfield" id="userName" name="userName" value=""/>
+			<input type="textfield" id="userName" name="userName" value=""/>
 			<a href="javascript:showUsers();"><img src="css/images/spyglassIcon.gif" width="16" height="16" border="0"/></a>
 			<a href="javascript:selectMyself();"><img src="css/images/user18.gif" width="16" height="16" border="0"/></a>
 		</td>

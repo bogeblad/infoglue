@@ -33,6 +33,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
+import org.infoglue.cms.entities.workflow.EventVO;
 
 import com.opensymphony.workflow.WorkflowException;
 
@@ -77,7 +78,7 @@ public class ContentPublisher extends ContentFunction
 		{
 			if(getContentVersionVO().getStateId().equals(ContentVersionVO.WORKING_STATE)) 
 			{
-				final List events = new ArrayList();
+				final List<EventVO> events = new ArrayList<EventVO>();
 				ContentStateController.changeState(getContentVersionVO().getContentVersionId(), ContentVersionVO.PUBLISH_STATE, "Auto", false, getPrincipal(), getContentVO().getId(), getDatabase(), events);
 				PublicationController.getController().createAndPublish(createPublicationVO(), events, true, getPrincipal(), getDatabase());
 				

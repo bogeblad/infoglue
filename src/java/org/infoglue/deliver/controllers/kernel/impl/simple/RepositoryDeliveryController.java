@@ -137,7 +137,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    
 	    return repositories;
     }
-	
+
 	public Set<RepositoryVO> getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName, String url) throws SystemException, Exception
     {
 	    Set<RepositoryVO> repositories = new HashSet<RepositoryVO>();
@@ -315,8 +315,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         return repositories;
     }
 
-/*
-	public List getRepositoriesFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws SystemException, Exception
+	public List getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws SystemException, Exception
     {
 	    List repositories = new ArrayList();
 	    
@@ -356,7 +355,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         
         return repositories;
     }
-*/
+
 	
     private String[] splitStrings(String str)
     {

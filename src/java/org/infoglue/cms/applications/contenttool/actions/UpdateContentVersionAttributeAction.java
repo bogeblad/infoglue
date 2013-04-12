@@ -180,9 +180,9 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 			}
 			else if(!this.contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 			{
-			    ContentVersion contentVersion = ContentStateController.changeState(this.contentVersionVO.getContentVersionId(), ContentVersionVO.WORKING_STATE, "Edit on sight", false, null, this.getInfoGluePrincipal(), this.contentVersionVO.getContentId(), new ArrayList());
+			    ContentVersionVO contentVersion = ContentStateController.changeState(this.contentVersionVO.getContentVersionId(), ContentVersionVO.WORKING_STATE, "Edit on sight", false, null, this.getInfoGluePrincipal(), this.contentVersionVO.getContentId(), new ArrayList());
 			    this.contentVersionId = contentVersion.getContentVersionId();
-			    this.contentVersionVO = contentVersion.getValueObject();
+			    this.contentVersionVO = contentVersion;
 			}
 			
 			String attributeValue = getRequest().getParameter(this.attributeName);

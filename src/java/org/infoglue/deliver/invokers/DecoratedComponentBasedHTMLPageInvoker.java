@@ -40,6 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -109,6 +110,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	
 	public void invokePage() throws SystemException, Exception
 	{
+		System.out.println("1");
 		Timer timer = new Timer();
 		timer.setActive(false);
 		
@@ -118,14 +120,16 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		
 		timer.printElapsedTime("Initialized controllers");
 		
-		Integer repositoryId = nodeDeliveryController.getSiteNode(getDatabase(), this.getDeliveryContext().getSiteNodeId()).getRepository().getId();
+		Integer repositoryId = nodeDeliveryController.getSiteNodeVO(getDatabase(), this.getDeliveryContext().getSiteNodeId()).getRepositoryId();
 		String componentXML = getPageComponentsString(getDatabase(), this.getTemplateController(), this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), this.getDeliveryContext().getContentId());
 		//logger.info("componentXML:" + componentXML);
+		System.out.println("componentXML:" + componentXML);
 		
 		componentXML = appendPagePartTemplates(componentXML, this.getDeliveryContext().getSiteNodeId());
 		
 		timer.printElapsedTime("After getPageComponentsString");
-		
+		System.out.println("componentXML:" + componentXML);
+
 		Timer decoratorTimer = new Timer();
 		decoratorTimer.setActive(false);
 
@@ -141,22 +145,18 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 
    			try
 		    {
-		    	//DOM4J
-   				/*
-   				Document document = domBuilder.getDocument(componentXML);
-		    	List pageComponents = getPageComponentsWithDOM4j(getDatabase(), componentXML, document.getRootElement(), "base", this.getTemplateController(), null, unsortedPageComponents);
-				*/
-   				
-	   			//XPP3
 		        XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
 		        XmlDocument doc = builder.parseReader(new StringReader( componentXML ) );
 				List pageComponents = getPageComponentsWithXPP3(getDatabase(), componentXML, doc.getDocumentElement(), "base", this.getTemplateController(), null, unsortedPageComponents);
+				System.out.println("pageComponents:" + pageComponents);
 	
 				preProcessComponents(nodeDeliveryController, repositoryId, unsortedPageComponents, pageComponents);
+				System.out.println("after preProcessComponents:" + pageComponents.size());
 				
 				if(pageComponents.size() > 0)
 				{
 					baseComponent = (InfoGlueComponent)pageComponents.get(0);
+					System.out.println("baseComponent:" + baseComponent);
 				}
 		    }
 		    catch(Exception e)
@@ -178,11 +178,13 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			    //{
 				    ContentVO metaInfoContentVO = nodeDeliveryController.getBoundContent(getDatabase(), this.getTemplateController().getPrincipal(), this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), true, "Meta information", this.getDeliveryContext());
 					decoratePageTemplate = decorateComponent(baseComponent, this.getTemplateController(), repositoryId, this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), this.getDeliveryContext().getContentId()/*, metaInfoContentVO.getId()*/, 15, 0);
+					//System.out.println("decoratePageTemplate:" + decoratePageTemplate);
 					decoratePageTemplate = decorateTemplate(this.getTemplateController(), decoratePageTemplate, this.getDeliveryContext(), baseComponent);
 				//}
 			}
 		}
-		
+		//System.out.println("After main decoration:" + decoratePageTemplate);
+
 		timer.printElapsedTime("After main decoration");
 
 		if(logger.isInfoEnabled())
@@ -190,7 +192,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		if(this.getDeliveryContext().getEvaluateFullPage() || !CmsPropertyHandler.getDisableDecoratedFinalRendering())
 		{	
 			if(decoratePageTemplate.length() > 300000)
-				logger.warn("The page at " + this.getTemplateController().getOriginalFullURL() + " was huge and the extra rendering of decorated pages takes some time and memory. If possible please make sure the components handles all rendering they need themselves and disable this step.");
+				logger.error("The page at " + this.getTemplateController().getOriginalFullURL() + " was huge and the extra rendering of decorated pages takes some time and memory. If possible please make sure the components handles all rendering they need themselves and disable this step.");
 			logger.info("Running extra decoration");
 			Map context = getDefaultContext();
 			String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
@@ -206,7 +208,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			new VelocityTemplateProcessor().renderTemplate(context, cachedStream, decoratePageTemplate, false, baseComponent);
 			decoratePageTemplate = cacheString.toString();
 		}
-		
+		//System.out.println("After extra decoration");
+
 		//TODO - TEST
 		//decoratePageTemplate += propertiesDivs + tasksDivs;
 		int bodyEnd = decoratePageTemplate.indexOf("</body>");
@@ -312,8 +315,12 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			InfoGluePrincipal principal = templateController.getPrincipal();
 		    String cmsUserName = (String)templateController.getHttpServletRequest().getSession().getAttribute("cmsUserName");
 		    if(cmsUserName != null && !CmsPropertyHandler.getAnonymousUser().equalsIgnoreCase(cmsUserName))
-			    principal = templateController.getPrincipal(cmsUserName);
-
+		    {
+		    	InfoGluePrincipal newPrincipal = templateController.getPrincipal(cmsUserName);
+			    if(newPrincipal != null)
+			    	principal = newPrincipal;
+		    }
+		    
 		    boolean hasAccessToAccessRights = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
 			boolean hasAccessToAddComponent = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + component.getSlotName());
 			boolean hasAccessToDeleteComponent = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.DeleteComponent", "" + component.getContentId() + "_" + component.getSlotName());
@@ -329,10 +336,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    boolean showContentNotifications 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ContentNotifications", "");
 		    boolean showPageNotifications 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageNotifications", "");
 
-		    String extraHeader 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "preview/pageComponentEditorHeader.vm"), "iso-8859-1");
-		    String extraBody 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "preview/pageComponentEditorBody.vm"), "iso-8859-1");
-		    
-			boolean oldUseFullUrl = this.getTemplateController().getDeliveryContext().getUseFullUrl();
+		    String extraHeader 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextDiskPath() + "preview/pageComponentEditorHeader.vm"), "iso-8859-1");
+		    String extraBody 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextDiskPath() + "preview/pageComponentEditorBody.vm"), "iso-8859-1");
+		    boolean oldUseFullUrl = this.getTemplateController().getDeliveryContext().getUseFullUrl();
 			this.getTemplateController().getDeliveryContext().setUseFullUrl(true);
 			
 			String parameters = "repositoryId=" + templateController.getSiteNode().getRepositoryId() + "&siteNodeId=" + templateController.getSiteNodeId() + "&languageId=" + templateController.getLanguageId() + "&contentId=" + templateController.getContentId() + "&componentId=" + this.getRequest().getParameter("activatedComponentId") + "&componentContentId=" + this.getRequest().getParameter("componentContentId") + "&showSimple=false&showLegend=false&originalUrl=" + URLEncoder.encode(this.getTemplateController().getCurrentPageUrl(), "UTF-8");
@@ -529,6 +535,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			logger.warn("An error occurred when deliver tried to decorate your template to enable onSiteEditing. Reason " + e.getMessage(), e);
 		}
 		
@@ -574,7 +581,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		try
 		{
 			String componentString = getComponentString(templateController, component.getContentId(), component); 
-
+			//System.out.println("componentString:" + componentString);
+			
 			if(component.getParentComponent() == null && templateController.getDeliveryContext().getShowSimple())
 			{
 			    templateController.getDeliveryContext().setContentType("text/html");
@@ -730,8 +738,12 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			    InfoGluePrincipal principal = templateController.getPrincipal();
 			    String cmsUserName = (String)templateController.getHttpServletRequest().getSession().getAttribute("cmsUserName");
 			    if(cmsUserName != null)
-				    principal = templateController.getPrincipal(cmsUserName);
-
+			    {
+			    	InfoGluePrincipal newPrincipal = templateController.getPrincipal(cmsUserName);
+			    	if(newPrincipal != null)
+			    		principal = newPrincipal;
+			    }
+			    
 				String clickToAddHTML = "";
 				boolean hasAccessToAddComponent = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + component.getContentId() + "_" + id);
 				if(slotBean.getDisableAccessControl())
@@ -953,6 +965,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		}
 		catch(Exception e)
 		{		
+			e.printStackTrace();
 			logger.warn("An component with either an empty template or with no template in the sitelanguages was found:" + e.getMessage(), e);	
 		}
 		
@@ -974,9 +987,15 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		timer.setActive(false);
 
 		InfoGluePrincipal principal = templateController.getPrincipal();
+		System.out.println("principal:" + principal);
 	    String cmsUserName = (String)templateController.getHttpServletRequest().getSession().getAttribute("cmsUserName");
 	    if(cmsUserName != null && !CmsPropertyHandler.getAnonymousUser().equalsIgnoreCase(cmsUserName))
-		    principal = templateController.getPrincipal(cmsUserName);
+	    {
+	    	InfoGluePrincipal newPrincipal = templateController.getPrincipal(cmsUserName);
+	    	if(newPrincipal != null)
+	    		principal = newPrincipal;
+	    }
+		System.out.println("principal:" + principal);
 
 		//Locale locale = templateController.getLocale();
 	    Locale locale = templateController.getLocaleAvailableInTool(principal);
@@ -1076,7 +1095,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		{
 			ComponentProperty componentProperty = (ComponentProperty)componentPropertiesIterator.next();
 		
-			boolean hasAccessToProperty = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentPropertyEditor.EditProperty", "" + componentContentId + "_" + componentProperty.getName());
+			boolean hasAccessToProperty = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentPropertyEditor.EditProperty", "" + componentContentId + "_" + componentProperty.getName(), false);
 			boolean isFirstAdvancedProperty = false;
 			if(componentProperty.getName().equalsIgnoreCase("CacheResult"))
 			{
@@ -1291,7 +1310,17 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 						sb.append("<a title=\"" + title + "\" class=\"componentEditorLink\" href=\"#\" onclick=\"if(checkDirty('" + warningText + "')){openInlineDivImpl('" + assignUrl + "', 900, 850, true, true);} return false;\">");
 					}
 	
-					sb.append("" + (componentProperty.getValue() == null || componentProperty.getValue().equalsIgnoreCase("") ? "Undefined" : componentProperty.getValue()) + (componentProperty.getIsAssetBinding() ? " (" + componentProperty.getAssetKey() + ")" : ""));
+					String additionalInformation = "";
+					if(componentProperty.getIsAssetBinding())
+					{
+						additionalInformation += " (" + componentProperty.getAssetKey() + ")";
+					}
+					if(componentProperty.getIsSupplementingEntity())
+					{
+						additionalInformation += " (" + "*" + ")";
+					}
+	
+					sb.append("" + (componentProperty.getValue() == null || componentProperty.getValue().equalsIgnoreCase("") ? "Undefined" : componentProperty.getValue()) + additionalInformation);
 					
 					if(hasAccessToProperty)
 						sb.append("</a>");
@@ -1364,6 +1393,42 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					if(hasAccessToProperty)
 					    accessablePropertyIndex++;
 				}
+				else if(componentProperty.getType().equalsIgnoreCase(ComponentProperty.EXTERNALBINDING))
+				{
+					String dividerClass = "igpropertyDivider";
+					sb.append("	<tr class=\"igtr\">");
+
+					sb.append("		<td class=\"igpropertylabel igpropertyDivider\" valign=\"top\" align=\"left\">" + componentProperty.getDisplayName() + "</td>");
+
+					sb.append("			<td class=\"igpropertyvalue " + dividerClass + "\" align=\"left\">");
+					if(hasAccessToProperty)
+					{
+						String warningText = getLocalizedString(locale, "deliver.editOnSight.dirtyWarning");
+						String assignUrl = componentEditorUrl + "ViewSiteNodePageComponents!showExternalBinding.action?repositoryId=" + repositoryId + "&siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&componentId=" + componentId + "&propertyName=" + componentProperty.getName() + "&showSimple=" + getTemplateController().getDeliveryContext().getShowSimple() + "&externalBindingAction=" + URIUtil.encodeWithinQuery(componentProperty.getExternalBindingConfig()) + "&supplementingEntityType=" + componentProperty.getSupplementingEntityType();
+						sb.append("<a title=\"" + title + "\" class=\"componentEditorLink\" href=\"#\" onclick=\"if(checkDirty('" + warningText + "')){window.open('" + assignUrl + "','Assign','toolbar=no,status=yes,scrollbars=yes,location=no,menubar=no,directories=no,resizable=no,width=800,height=600,left=5,top=5');} return false;\">"); //openInlineDivImpl('" + assignUrl + "', 900, 850, true, true);
+					}
+
+					sb.append("" + (componentProperty.getValue() == null || componentProperty.getValue().equalsIgnoreCase("") ? "Undefined" : componentProperty.getValue()) + (componentProperty.getIsAssetBinding() ? " (" + componentProperty.getAssetKey() + ")" : ""));
+
+					if(hasAccessToProperty)
+						sb.append("</a>");
+
+					sb.append("</td>");
+
+					if(hasAccessToProperty)
+						sb.append("			<td class=\"igtd igpropertyDivider\" width=\"16\"><a class=\"componentEditorLink\" href=\"" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponentPropertyValue.action?siteNodeId=" + siteNodeId + "&languageId=" + languageId + "&contentId=" + contentId + "&componentId=" + componentId + "&propertyName=" + componentProperty.getName() + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "\"><img src=\"" + componentEditorUrl + "/images/delete.gif\" border=\"0\" style='padding-top: 2px;' alt=\"delete\"/></a></td>");
+					else
+						sb.append("			<td class=\"igtd igpropertyDivider\" width=\"16\"></td>");
+
+					sb.append("			<td class=\"igtd igpropertyDivider\" width=\"16\"><img class=\"questionMark\" src=\"" + componentEditorUrl + "/images/questionMarkGrad.gif\" onmouseover=\"showDiv('helpLayer" + componentProperty.getComponentId() + "_" + formatter.replaceNonAscii(componentProperty.getName(), "_") + "');\" onmouseout=\"javascript:hideDiv('helpLayer" + componentProperty.getComponentId() + "_" + formatter.replaceNonAscii(componentProperty.getName(), "_") + "');\" alt=\"question\"/>" + helpSB + "</td>");
+					sb.append("	</tr>");
+
+					if(hasAccessToProperty)
+					{
+					    //propertyIndex++;
+					    accessablePropertyIndex++;
+					}
+				}				
 				else if(componentProperty.getType().equalsIgnoreCase(ComponentProperty.TEXTFIELD))
 				{
 					if(isAdvancedProperties)
@@ -1844,7 +1909,11 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	    InfoGluePrincipal principal = templateController.getPrincipal();
 	    String cmsUserName = (String)templateController.getHttpServletRequest().getSession().getAttribute("cmsUserName");
 	    if(cmsUserName != null)
-		    principal = templateController.getPrincipal(cmsUserName);
+	    {
+	    	InfoGluePrincipal newPrincipal = templateController.getPrincipal(cmsUserName);
+	    	if(newPrincipal != null)
+	    		principal = newPrincipal;
+	    }
 	    
 		boolean hasAccessToAccessRights 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ChangeSlotAccess", "");
 		boolean hasAccessToAddComponent 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.AddComponent", "" + (component.getParentComponent() == null ? component.getContentId() : component.getParentComponent().getContentId()) + "_" + component.getSlotName());
@@ -2203,8 +2272,12 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		InfoGluePrincipal principal = templateController.getPrincipal();
 	    String cmsUserName = (String)templateController.getHttpServletRequest().getSession().getAttribute("cmsUserName");
 	    if(cmsUserName != null)
-		    principal = templateController.getPrincipal(cmsUserName);
-
+	    {
+	    	InfoGluePrincipal newPrincipal = templateController.getPrincipal(cmsUserName);
+	    	if(newPrincipal != null)
+	    		principal = newPrincipal;
+	    }
+	    
 		//if(!templateController.getDeliveryContext().getShowSimple())
 	    //{
 		    boolean hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "StructureTool.Palette", false, true, false);
@@ -2467,6 +2540,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			//logger.info("xml: " + xml);
 			if(xml != null && xml.length() > 0)
 			{
+				xml = xml.replaceAll("<!--igescaped-->", "");
+				
 				componentPropertiesDocument = domBuilder.getDocument(xml);
 				
 				CacheController.cacheObjectInAdvancedCache(cacheName, cacheKey, componentPropertiesDocument);
@@ -2650,6 +2725,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					if(type.equalsIgnoreCase(ComponentProperty.BINDING))
 					{
 						String entity 	= binding.attributeValue("entity");
+						String supplementingEntityType	= binding.attributeValue("supplementingEntityType");
 						boolean isMultipleBinding 		= new Boolean(binding.attributeValue("multiple")).booleanValue();
 						boolean isAssetBinding 	  		= new Boolean(binding.attributeValue("assetBinding")).booleanValue();
 						String assetMask				= binding.attributeValue("assetMask");
@@ -2658,6 +2734,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 						property.setEntityClass(entity);
 						String value = getComponentPropertyValue(componentId, name, false);
 						timer.printElapsedTime("Set property1");
+
+						property.setSupplementingEntityType(supplementingEntityType);
 
 						property.setValue(value);
 						property.setIsMultipleBinding(isMultipleBinding);
@@ -2672,6 +2750,19 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 							if(detailSiteNodeId != null && !detailSiteNodeId.equals("") && !detailSiteNodeId.equals("Undefined"))
 								property.setDetailSiteNodeId(new Integer(detailSiteNodeId));
 						}
+					}
+					else if(type.equalsIgnoreCase(ComponentProperty.EXTERNALBINDING))	
+					{
+						String entity 	= binding.attributeValue("entity");
+						String supplementingEntityType	= binding.attributeValue("supplementingEntityType");
+						property.setEntityClass(entity);
+						property.setSupplementingEntityType(supplementingEntityType);
+						String externalBindingConfig = binding.attributeValue("externalBindingConfig");
+						property.setExternalBindingConfig(externalBindingConfig);
+						String value = getComponentPropertyValue(componentId, name, false);
+						property.setValue(value);
+						List<ComponentBinding> bindings = getComponentPropertyBindings(componentId, name, this.getTemplateController());
+						property.setBindings(bindings);
 					}
 					else if(type.equalsIgnoreCase(ComponentProperty.TEXTFIELD))	
 					{		
@@ -2938,6 +3029,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					if(type.equalsIgnoreCase(ComponentProperty.BINDING))
 					{
 						String entity 	= binding.attributeValue("entity");
+						String supplementingEntityType	= binding.attributeValue("supplementingEntityType");
 						boolean isMultipleBinding 		= new Boolean(binding.attributeValue("multiple")).booleanValue();
 						boolean isAssetBinding 			= new Boolean(binding.attributeValue("assetBinding")).booleanValue();
 						String assetMask				= binding.attributeValue("assetMask");
@@ -2945,6 +3037,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 
 						property.setEntityClass(entity);
 						String value = getComponentPropertyValue(componentId, name, templateController, property.getAllowLanguageVariations());
+
+						property.setSupplementingEntityType(supplementingEntityType);
 
 						property.setValue(value);
 						property.setIsMultipleBinding(isMultipleBinding);
@@ -3366,7 +3460,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			
 			if(entityClass.equalsIgnoreCase("Content"))
 			{
-				ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(getDatabase(), new Integer(entityId), null);
+				ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(getDatabase(), new Integer(entityId), getDeliveryContext());
 				ComponentBinding componentBinding = new ComponentBinding();
 				componentBinding.setId(new Integer(id));
 				componentBinding.setComponentId(componentId);
@@ -3382,6 +3476,33 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		return contentBindings;
 	}
 
+	 
+	private void printComponentHierarchy(List pageComponents, int level)
+	{
+		Iterator pageComponentIterator = pageComponents.iterator();
+		while(pageComponentIterator.hasNext())
+		{
+			InfoGlueComponent tempComponent = (InfoGlueComponent)pageComponentIterator.next();
+			
+			for(int i=0; i<level; i++)
+			    logger.info(" ");
+			
+			logger.info("  component:" + tempComponent.getName());
+			
+			Iterator slotIterator = tempComponent.getSlotList().iterator();
+			while(slotIterator.hasNext())
+			{
+				Slot slot = (Slot)slotIterator.next();
+				
+				for(int i=0; i<level; i++)
+					logger.info(" ");
+					
+				logger.info(" slot for " + tempComponent.getName() + ":" + slot.getId());
+				printComponentHierarchy(slot.getComponents(), level + 1);
+			}
+		}			
+	}
+	
 	public String getLocalizedString(Locale locale, String key) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);

@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.entities.structure.impl.simple;
 
+import java.util.Date;
+
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 
@@ -169,6 +171,17 @@ public class SmallestSiteNodeImpl extends SiteNodeImpl
         this.valueObject.setChildCount(childCount);
     }
 
+    public Integer getSiteNodeVersionId()
+    {
+        return this.valueObject.getSiteNodeVersionId();
+    }
+            
+    public void setSiteNodeVersionId(Integer siteNodeVersionId)
+    {
+    	if(siteNodeVersionId != null)
+    		this.valueObject.setSiteNodeVersionId(siteNodeVersionId);
+    }
+
     public Integer getSortOrder()
     {
         return this.valueObject.getSortOrder();
@@ -220,6 +233,56 @@ public class SmallestSiteNodeImpl extends SiteNodeImpl
     {
     	if(isProtected != null && isProtected > -1)
     		this.valueObject.setIsProtected(isProtected);
+    }
+
+    public String getVersionModifier()
+    {
+        return this.valueObject.getVersionModifier();
+    }
+            
+    public void setVersionModifier(String versionModifier)
+    {
+        this.valueObject.setVersionModifier(versionModifier);
+    }
+
+    public Date getModifiedDateTime()
+    {
+        return this.valueObject.getModifiedDateTime();
+    }
+            
+    public void setModifiedDateTime(Date modifiedDateTime)
+    {
+        this.valueObject.setModifiedDateTime(modifiedDateTime);
+    }
+
+    public Integer getContentVersionId()
+    {
+        return this.valueObject.getContentVersionId();
+    }
+            
+    public void setContentVersionId(Integer contentVersionId)
+    {
+        this.valueObject.setContentVersionId(contentVersionId);
+    }
+
+    public Integer getLanguageId()
+    {
+        return this.valueObject.getLanguageId();
+    }
+            
+    public void setLanguageId(Integer languageId)
+    {
+        this.valueObject.setLanguageId(languageId);
+    }
+
+    public String getAttributes()
+    {
+        return this.valueObject.getAttributes();
+    }
+            
+    public void setAttributes(String attributes)
+    {
+    	this.valueObject.setAttributes(attributes);
     }
 
 }        

@@ -105,7 +105,7 @@ public class MatchingSiteNodesTag extends ComponentLogicTag
 			logger.warn("Problem setting maximumNumberOfItemsInMatchingContentsSearch:" + e.getMessage());
 		}
 		
-	    List<ContentVO> contents = getController().getMatchingContents(contentTypeDefinitionNames, categoryCondition, freeText, freeTextAttributeNamesList, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, true, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, this.languageId, skipLanguageCheck, null, this.useLucene);
+	    List<ContentVO> contents = getController().getMatchingContents(contentTypeDefinitionNames, categoryCondition, freeText, freeTextAttributeNamesList, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, true, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, this.languageId, skipLanguageCheck, null);
 	    
 	    List<SiteNodeVO> siteNodes = new ArrayList<SiteNodeVO>();
 	    for(ContentVO content : contents)

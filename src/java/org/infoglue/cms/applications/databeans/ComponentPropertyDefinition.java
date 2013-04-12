@@ -62,12 +62,14 @@ public class ComponentPropertyDefinition
 	private String autoCreateContentMethod	= "";
 	private String autoCreateContentPath	= "";
 	private String customMarkup 			= "";
+	private String externalBindingConfig	= "";
 	private Boolean allowMultipleSelections	= new Boolean(false);
+	private String supplementingEntityType	= "";
 	
     private List options = new ArrayList();
 
     
-    public ComponentPropertyDefinition(String name, String displayName, String type, String entity, Boolean multiple, Boolean assetBinding, String assetMask, Boolean isPuffContentForPage, String allowedContentTypeNames, String description, String defaultValue, Boolean allowLanguageVariations, Boolean WYSIWYGEnabled, String WYSIWYGToolbar, String dataProvider, String dataProviderParameters, Boolean autoCreateContent, String autoCreateContentMethod, String autoCreateContentPath, String customMarkup, boolean allowMultipleSelections)
+    public ComponentPropertyDefinition(String name, String displayName, String type, String entity, Boolean multiple, Boolean assetBinding, String assetMask, Boolean isPuffContentForPage, String allowedContentTypeNames, String description, String defaultValue, Boolean allowLanguageVariations, Boolean WYSIWYGEnabled, String WYSIWYGToolbar, String dataProvider, String dataProviderParameters, Boolean autoCreateContent, String autoCreateContentMethod, String autoCreateContentPath, String customMarkup, boolean allowMultipleSelections, String supplementingEntityType, String externalBindingConfig)
     {
         this.name 						= name;
         this.displayName				= displayName;
@@ -89,7 +91,9 @@ public class ComponentPropertyDefinition
         this.autoCreateContentMethod 	= autoCreateContentMethod;
         this.autoCreateContentPath		= autoCreateContentPath;
         this.customMarkup 				= customMarkup;
+        this.externalBindingConfig 		= externalBindingConfig;
         this.allowMultipleSelections 	= allowMultipleSelections;
+        this.supplementingEntityType 	= supplementingEntityType;
     }
         
     public String getEntity()
@@ -212,4 +216,13 @@ public class ComponentPropertyDefinition
 		return allowMultipleSelections;
 	}
 
+	public String getSupplementingEntityType()
+	{
+		return supplementingEntityType;
+	}
+
+	public String getExternalBindingConfig()
+	{
+		return externalBindingConfig;
+	}
 }

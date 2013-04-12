@@ -96,11 +96,8 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 				if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
 				{
 					this.oldParameters = "" + siteNodeVersionId;
-					System.out.println("We better state change....");
 					List events = new ArrayList();
-					System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
-					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events).getValueObject();
-					System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events);
 					this.newParameters = "" + siteNodeVersionVO.getId();
 					this.parameters = "" + siteNodeVersionVO.getId();
 					siteNodeVersionId = siteNodeVersionVO.getId();
@@ -190,11 +187,8 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 			if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
 			{
 				this.oldParameters = "" + siteNodeVersionId;
-				System.out.println("We better state change....");
 				List events = new ArrayList();
-				System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
-				siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events).getValueObject();
-				System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
+				siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events);
 				this.newParameters = "" + siteNodeVersionVO.getId();
 				this.parameters = "" + siteNodeVersionVO.getId();
 				siteNodeVersionId = siteNodeVersionVO.getId();
@@ -257,11 +251,11 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 				if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
 				{
 					this.oldParameters = "" + siteNodeVersionId;
-					System.out.println("We better state change....");
+					//System.out.println("We better state change....");
 					List events = new ArrayList();
-					System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
-					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events).getValueObject();
-					System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					//System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events);
+					//System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
 					this.newParameters = "" + siteNodeVersionVO.getId();
 					this.parameters = "" + siteNodeVersionVO.getId();
 					siteNodeVersionId = siteNodeVersionVO.getId();
@@ -363,11 +357,11 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 				if(siteNodeVersionVO.getStateId().intValue() != SiteNodeVersionVO.WORKING_STATE)
 				{
 					this.oldParameters = "" + siteNodeVersionId;
-					System.out.println("We better state change....");
+					//System.out.println("We better state change....");
 					List events = new ArrayList();
-					System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
-					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events).getValueObject();
-					System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					//System.out.println("OLd siteNodeVersionVO:" + siteNodeVersionVO.getId());
+					siteNodeVersionVO = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "Access right changes", true, this.getInfoGluePrincipal(), siteNodeVersionVO.getSiteNodeId(), events);
+					//System.out.println("New siteNodeVersionVO:" + siteNodeVersionVO.getId());
 					this.newParameters = "" + siteNodeVersionVO.getId();
 					this.parameters = "" + siteNodeVersionVO.getId();
 					siteNodeVersionId = siteNodeVersionVO.getId();
@@ -396,14 +390,13 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		}
 		
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		System.out.println("this.url:" + this.url);
+
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
 			if(this.url.indexOf("ViewAccessRights") > -1)
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
-		System.out.println("this.url:" + this.url);
 
 		if(this.returnAddress.indexOf("http") == 0)
 		{
@@ -419,14 +412,12 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 		doDeleteUser();
 		
 		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		System.out.println("this.url:" + this.url);
 		if(newParameters != null)
 		{
 			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
 			if(this.url.indexOf("ViewAccessRights") > -1)
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
-		System.out.println("this.url:" + this.url);
 
 		if(this.returnAddress.indexOf("http") == 0)
 		{

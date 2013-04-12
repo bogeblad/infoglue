@@ -23,6 +23,10 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -39,7 +43,7 @@ import org.infoglue.cms.security.InfoGluePrincipal;
  * This controller is made for cleaning old versions.
  */
 
-@SuppressWarnings({"unchecked", "static-access"})
+@SuppressWarnings({"unused", "unchecked", "static-access"})
 public class ContentCleanerController  extends BaseController
 {
     private final static Logger logger                                     = Logger.getLogger(ContentCleanerController.class);

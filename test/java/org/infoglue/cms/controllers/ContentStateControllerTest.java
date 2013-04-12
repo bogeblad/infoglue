@@ -128,8 +128,8 @@ public class ContentStateControllerTest extends InfoGlueTestCase
 		assertTrue("testContentCategory data not returned", found.contains(testContentCategory));
 
 		List events = new ArrayList();
-		ContentVersion newVersion = ContentStateController.changeState(testContentVersion.getId(), stateId, getName(), false, getAdminPrincipal(), null, events);
-		testEventContentVersion = newVersion.getValueObject();
+		ContentVersionVO newVersion = ContentStateController.changeState(testContentVersion.getId(), stateId, getName(), false, getAdminPrincipal(), null, events);
+		testEventContentVersion = newVersion;
 
 		List newFound = contentCategoryStore.findByContentVersion(newVersion.getId());
 		assertEquals("Wrong number of new ContentCategories returned", found.size(), newFound.size());

@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
@@ -40,13 +41,16 @@ import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
+import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.GroupContentTypeDefinition;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.GroupPropertiesVO;
 import org.infoglue.cms.entities.management.Language;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.PropertiesCategory;
 import org.infoglue.cms.entities.management.PropertiesCategoryVO;
 import org.infoglue.cms.entities.management.impl.simple.GroupContentTypeDefinitionImpl;
@@ -58,11 +62,14 @@ import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGlueGroup;
+import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.dom.DOMBuilder;
 import org.infoglue.deliver.util.CacheController;
+import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -239,13 +246,85 @@ public class GroupPropertiesController extends BaseController
 	 * This method gets a list of groupProperties for a group
 	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
 	 */
-
+	public static AtomicBoolean inCacheProgress = new AtomicBoolean(false);
 	public List getGroupPropertiesVOList(String groupName, Integer languageId, Database db) throws ConstraintException, Exception
 	{
 	    List groupPropertiesVOList = new ArrayList();
 	    
 		String cacheKey = "" + groupName + "_" + languageId;
 		logger.info("cacheKey:" + cacheKey);
+		
+		Object groupPropertiesVOListCandidate = CacheController.getCachedObject("groupPropertiesCache", cacheKey);
+		Boolean cached = (Boolean)CacheController.getCachedObject("groupPropertiesCache", "preCacheDone");
+		if(groupPropertiesVOListCandidate != null && groupPropertiesVOListCandidate instanceof NullObject)
+		{
+			logger.info("NullObject found:" + cacheKey);
+			return groupPropertiesVOList;
+		}
+		else if(groupPropertiesVOListCandidate != null)
+		{
+			logger.info("groupPropertiesVOListCandidate found:" + cacheKey);
+			groupPropertiesVOList =  (List)groupPropertiesVOListCandidate;
+		}
+		else if(cached != null && cached.booleanValue() == true)
+		{
+			return groupPropertiesVOList;
+		}
+		else
+		{
+			class PreCacheGroupPropertiesTask implements Runnable 
+			{
+				PreCacheGroupPropertiesTask() { }
+		        
+		        public void run() 
+		        {
+					try
+					{
+						Database db = CastorDatabaseService.getDatabase();
+						try 
+						{
+							beginTransaction(db);
+
+							preCacheAllGroupProperties(db);
+							commitTransaction(db);
+						} 
+						catch (Exception e) 
+						{
+							logger.error("Error precaching all group properties: " + e.getMessage(), e);
+							rollbackTransaction(db);
+						}
+					}
+					catch (Exception e) 
+					{
+						logger.error("Could not start PreCacheTask:" + e.getMessage(), e);
+					}
+					finally
+					{
+						inCacheProgress.set(false);
+					}
+		        }
+		    }
+			if(inCacheProgress.compareAndSet(false, true))
+			{
+				Thread thread = new Thread(new PreCacheGroupPropertiesTask());
+			    thread.start();
+			}
+
+			logger.info("No groupPropertiesVOListCandidate found:" + cacheKey);
+			List groupPropertiesList = getGroupPropertiesList(groupName, languageId, db, true);
+			if(groupPropertiesList != null)
+			{
+			    groupPropertiesVOList = toVOList(groupPropertiesList);
+			    logger.info("Caching:" + cacheKey + "=" + groupPropertiesVOList);
+		    	CacheController.cacheObject("groupPropertiesCache", cacheKey, groupPropertiesVOList);
+			}
+			else
+			{
+				logger.info("Caching nullobject:" + cacheKey);
+				CacheController.cacheObject("groupPropertiesCache", cacheKey, new NullObject());
+			}
+		}
+		/*
 		groupPropertiesVOList = (List)CacheController.getCachedObject("groupPropertiesCache", cacheKey);
 		if(groupPropertiesVOList != null)
 		{
@@ -253,6 +332,7 @@ public class GroupPropertiesController extends BaseController
 		}
 		else
 		{
+			//System.out.println("Reading hard group properties...");
 			List groupPropertiesList = getGroupPropertiesList(groupName, languageId, db, true);
 			if(groupPropertiesList != null)
 			{
@@ -261,9 +341,11 @@ public class GroupPropertiesController extends BaseController
 			}
 
 		}
+		*/
 		
 		return groupPropertiesVOList;
 	}
+
 
 	/**
 	 * This method gets a list of groupProperties for a group
@@ -272,18 +354,8 @@ public class GroupPropertiesController extends BaseController
 
 	public List getGroupPropertiesList(String groupName, Integer languageId, Database db, boolean readOnly) throws ConstraintException, SystemException, Exception
 	{
-		return getGroupPropertiesList(groupName, languageId, db, readOnly, true);
-	}
-	
-	
-	/**
-	 * This method gets a list of groupProperties for a group
-	 * The result is a list of propertiesblobs - each propertyblob is a list of actual properties.
-	 */
-
-	public List getGroupPropertiesList(String groupName, Integer languageId, Database db, boolean readOnly, boolean retry) throws ConstraintException, SystemException, Exception
-	{
 		List groupPropertiesList = new ArrayList();
+
 		try
 		{
 			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
@@ -324,23 +396,8 @@ public class GroupPropertiesController extends BaseController
 		}
 		catch(Exception e)
         {
-			try
-			{
-				if(retry)
-				{
-					logger.warn("Error getting groupPropertiesList. Message: " + e.getMessage() + ". Retrying...");
-					groupPropertiesList = getGroupPropertiesList(groupName, languageId, db, readOnly, false);
-				}
-				else
-				{
-					logger.warn("Error getting groupPropertiesList. Message: " + e.getMessage() + ". Not retrying...");
-					throw e;
-				}
-			}
-			catch(Exception e2)
-			{
-	            throw e2;    
-			}
+			logger.warn("Error getting groupPropertiesList. Message: " + e.getMessage() + ". Not retrying...");
+			throw e;
         }
 		finally
 		{
@@ -349,7 +406,6 @@ public class GroupPropertiesController extends BaseController
 		
 		return groupPropertiesList;
 	}
-
 
 	public Set<InfoGlueGroup> getGroupsByMatchingProperty(String propertyName, String value, Integer languageId, boolean useLanguageFallback, Database db) throws ConstraintException, SystemException, Exception
 	{
@@ -749,7 +805,16 @@ public class GroupPropertiesController extends BaseController
 	public String getAttributeValue(String xml, String attributeName, boolean escapeHTML) throws SystemException, Bug
 	{
 		String value = "";
-		
+		int startTagIndex = xml.indexOf("<" + attributeName + ">");
+		int endTagIndex   = xml.indexOf("]]></" + attributeName + ">");
+
+		if(startTagIndex > 0 && startTagIndex < xml.length() && endTagIndex > startTagIndex && endTagIndex <  xml.length())
+		{
+			value = xml.substring(startTagIndex + attributeName.length() + 11, endTagIndex);
+			if(escapeHTML)
+				value = new VisualFormatter().escapeHTML(value);
+		}
+		/*
 		try
 		{
 			InputSource inputSource = new InputSource(new StringReader(xml));
@@ -782,6 +847,32 @@ public class GroupPropertiesController extends BaseController
 		{
 			e.printStackTrace();
 		}
+		*/
+		return value;
+	}
+
+	/**
+	 * Returns an attribute value from the ContentVersionVO
+	 *
+	 * @param contentVersionVO The version on which to find the value
+	 * @param attributeName THe name of the attribute whose value is wanted
+	 * @param escapeHTML A boolean indicating if the result should be escaped
+	 * @return The String vlaue of the attribute, or blank if it doe snot exist.
+	 */
+	public String getAttributeValue(ContentVersionVO contentVersionVO, String attributeName, boolean escapeHTML)
+	{
+		String xml = contentVersionVO.getVersionValue();
+
+		String value = "";
+		int startTagIndex = xml.indexOf("<" + attributeName + ">");
+		int endTagIndex   = xml.indexOf("]]></" + attributeName + ">");
+
+		if(startTagIndex > 0 && startTagIndex < xml.length() && endTagIndex > startTagIndex && endTagIndex <  xml.length())
+		{
+			value = xml.substring(startTagIndex + attributeName.length() + 11, endTagIndex);
+			if(escapeHTML)
+				value = new VisualFormatter().escapeHTML(value);
+		}		
 
 		return value;
 	}
@@ -986,6 +1077,58 @@ public class GroupPropertiesController extends BaseController
 		return relatedSiteNodeList;
 	}
 
+	public void preCacheAllGroupProperties(Database db) throws SystemException, Exception
+	{
+		Boolean cached = (Boolean)CacheController.getCachedObject("groupPropertiesCache", "preCacheDone");
+		if(cached != null && cached)
+		{
+			return;
+		}
+		
+		Timer t = new Timer();
+		
+		logger.warn("Starting preCache");
+		List<LanguageVO> languageVOList = LanguageController.getController().getLanguageVOList(db);
+		for(LanguageVO languageVO : languageVOList)
+		{
+			OQLQuery oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.GroupPropertiesImpl f WHERE f.language = $1 ORDER BY f.groupName");
+			oql.bind(languageVO.getId());
+	
+			QueryResults results;
+		    results = oql.execute(Database.ReadOnly);
+	
+		    String groupName = "";
+		    List groupPropertyValues = new ArrayList();
+			while (results.hasMore()) 
+			{
+				GroupProperties groupProperties = (GroupProperties)results.next();
+				if(!groupProperties.getGroupName().equals(groupName))
+				{
+					String cacheKey = "" + groupName + "_" + languageVO.getId();
+					
+					logger.info("Caching for " + cacheKey + ":" + groupPropertyValues.size());
+					CacheController.cacheObject("groupPropertiesCache", cacheKey, groupPropertyValues);
+					
+					groupPropertyValues = new ArrayList();
+					groupName = groupProperties.getGroupName();
+				}
+				groupPropertyValues.add(groupProperties.getValueObject());
+			}
+			if(groupName != null)
+			{
+				String cacheKey = "" + groupName + "_" + languageVO.getId();
+				CacheController.cacheObject("groupPropertiesCache", cacheKey, groupPropertyValues);
+			}
+			
+			results.close();
+			oql.close();
+		}
+
+		CacheController.cacheObject("groupPropertiesCache", "preCacheDone", new Boolean(true));
+		logger.warn("Precaching done in " + t.getElapsedTime());
+	}
+
+	
 	public List<SiteNodeVO> getReadOnlyRelatedSiteNodeVOList(String groupName, Integer languageId, String attributeName, Database db) throws SystemException, Exception
 	{
 		List<SiteNodeVO> relatedSiteNodeList = new ArrayList<SiteNodeVO>();
@@ -1072,7 +1215,7 @@ public class GroupPropertiesController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.warn("An error getting related contents:" + e.getMessage(), e);
+			logger.warn("An error getting related contents:" + e.getMessage());
 		}
 		
 		return contents;
@@ -1274,25 +1417,31 @@ public class GroupPropertiesController extends BaseController
 	 * @return
 	 */
 	
-	public List getRelatedCategoriesVOList(String groupName, Integer languageId, String attribute, Database db) throws SystemException, Exception
+	public List<CategoryVO> getRelatedCategoriesVOList(String groupName, Integer languageId, String attribute, Database db) throws SystemException, Exception
 	{
-	    List relatedCategoriesVOList = new ArrayList();
+	    List<CategoryVO> relatedCategoriesVOList = new ArrayList<CategoryVO>();
+	    
 	    
 		String cacheKey = "" + groupName + "_" + languageId + "_" + attribute;
 		logger.info("cacheKey:" + cacheKey);
-		relatedCategoriesVOList = (List)CacheController.getCachedObject("relatedCategoriesCache", cacheKey);
+		relatedCategoriesVOList = (List<CategoryVO>)CacheController.getCachedObject("relatedCategoriesCache", cacheKey);
 		if(relatedCategoriesVOList != null)
 		{
 			logger.info("There was an cached groupPropertiesVOList:" + relatedCategoriesVOList.size());
 		}
 		else
 		{
+			relatedCategoriesVOList = getRelatedCategoryVOList(groupName, languageId, attribute, db);
+	    	if(relatedCategoriesVOList != null)
+	    		CacheController.cacheObject("relatedCategoriesCache", cacheKey, relatedCategoriesVOList);
+			/*
 			List relatedCategories = getRelatedCategoriesReadOnly(groupName, languageId, attribute, db);
 			if(relatedCategories != null)
 			{
 			    relatedCategoriesVOList = toVOList(relatedCategories);
 		    	CacheController.cacheObject("relatedCategoriesCache", cacheKey, relatedCategoriesVOList);
 			}
+			*/
 		}
 
 		return relatedCategoriesVOList;
@@ -1370,6 +1519,81 @@ public class GroupPropertiesController extends BaseController
 		    	    PropertiesCategory propertiesCategory = (PropertiesCategory)propertiesCategoryListIterator.next();
 		    	    relatedCategories.add(propertiesCategory.getCategory());
 		    	}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.warn("We could not fetch the list of defined category keys: " + e.getMessage(), e);
+		}
+
+		return relatedCategories;
+	}
+
+	/**
+	 * Returns all current Category relationships for th specified attribute name
+	 * @param attribute
+	 * @return
+	 */
+	public static AtomicBoolean preCacheInProgress = new AtomicBoolean(false);
+	
+	public List<CategoryVO> getRelatedCategoryVOList(String groupName, Integer languageId, String attribute, Database db)
+	{
+		Timer t = new Timer();
+	    List<CategoryVO> relatedCategories = new ArrayList<CategoryVO>();
+	    
+		try
+		{
+		    List groupPropertiesVOList = this.getGroupPropertiesVOList(groupName, languageId, db);
+		    Iterator iterator = groupPropertiesVOList.iterator();
+		    GroupPropertiesVO groupPropertyVO = null;
+		    while(iterator.hasNext())
+		    {
+		        groupPropertyVO = (GroupPropertiesVO)iterator.next();
+		        break;
+		    }
+		  
+			if(groupPropertyVO != null && groupPropertyVO.getId() != null)
+			{
+				if(CacheController.getCacheSize("propertiesCategoryCache") == 0 && preCacheInProgress.compareAndSet(false, true))
+				{
+					try
+					{
+						PropertiesCategoryController.getController().preCacheAllPropertiesCategoryVOList();
+					}
+					finally
+					{
+						preCacheInProgress.set(false);
+					}
+					logger.warn("preCacheAllPropertiesCategoryVOList took: " + t.getElapsedTime());
+				}
+
+				String key = "categoryVOList_" + attribute + "_" + GroupProperties.class.getName() + "_" + groupPropertyVO.getId();
+				List<CategoryVO> categoryVOList = (List<CategoryVO>)CacheController.getCachedObject("propertiesCategoryCache", key);
+				if(categoryVOList != null)
+				{
+					//System.out.println("Returning cached result:" + categoryVOList.size());
+					relatedCategories = categoryVOList;
+				}
+				else
+				{
+					if(CacheController.getCachedObject("propertiesCategoryCache", "allValuesCached") != null)
+					{
+						//System.out.println("Skipping as there is no such property in the full precache..");
+					}
+					else
+					{
+						logger.warn("Reading the hard way for:" + key);
+	
+				    	List propertiesCategoryList = PropertiesCategoryController.getController().findByPropertiesAttributeReadOnly(attribute, GroupProperties.class.getName(), groupPropertyVO.getId(), db);
+					
+				    	Iterator propertiesCategoryListIterator = propertiesCategoryList.iterator();
+				    	while(propertiesCategoryListIterator.hasNext())
+				    	{
+				    	    PropertiesCategory propertiesCategory = (PropertiesCategory)propertiesCategoryListIterator.next();
+				    	    relatedCategories.add(propertiesCategory.getCategory().getValueObject());
+				    	}
+					}
+				}
 			}
 		}
 		catch(Exception e)

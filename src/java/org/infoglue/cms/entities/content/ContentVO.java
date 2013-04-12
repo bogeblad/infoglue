@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.entities.content;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
@@ -35,7 +36,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.validators.ValidatorFactory;
 
-public class ContentVO implements BaseEntityVO
+public class ContentVO implements BaseEntityVO, Serializable
 { 
 	public static final Integer NO 			= new Integer(0);
 	public static final Integer YES 		= new Integer(1);
@@ -58,6 +59,7 @@ public class ContentVO implements BaseEntityVO
   	private String[] versions = new String[0]; //Can well be null... used in some views only
   	private ContentVersionVO contentVersionVO; //= new ArrayList(); //Can well be null... used in some views only and must be manually populated
   	private Integer stateId = null; //Can well be null... used in some views only - reflects only the lowest state in each language if most current.
+	private Integer contentVersionId; //Can well be null... used in some views only - reflects only the lowest state in each language if most current.
   
 	private static SimpleTimeZone stmz = new SimpleTimeZone(-8 * 60 * 60 * 1000, "GMT");
     
@@ -199,6 +201,16 @@ public class ContentVO implements BaseEntityVO
 		this.childCount = childCount;
 	}
 
+	public Integer getContentVersionId()
+	{
+		return contentVersionId;
+	}
+
+	public void setContentVersionId(Integer contentVersionId)
+	{
+		this.contentVersionId = contentVersionId;
+	}
+	
 	/**
 	 * Returns the creatorName.
 	 * @return String

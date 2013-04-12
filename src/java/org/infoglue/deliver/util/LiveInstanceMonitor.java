@@ -78,12 +78,17 @@ public class LiveInstanceMonitor implements Runnable
 
 	public synchronized void run()
 	{
-		logger.warn("Starting LiveInstanceMonitor....");
+		try {
+			Thread.sleep(60000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("Starting LiveInstanceMonitor....");
 		while(true)
 		{
 			try
 			{
-				Thread.sleep(60000);
+				Thread.sleep(30000);
 				logger.info("Validating instances");
 				
 				validateInstances();
@@ -94,12 +99,13 @@ public class LiveInstanceMonitor implements Runnable
 			}
 		}
 	}
-	
+
 	/**
 	 * This works by calling the status action on each registered deliver instance. 
 	 */
 	private void validateInstances()
     {
+		//System.out.println("validateInstances");
 		Map<String,Boolean> newInstanceStatus = new HashMap<String,Boolean>();
 	    Map<String,Integer> newInstanceErrorInformation = new HashMap<String,Integer>();
 	    newInstanceErrorInformation.putAll(instanceErrorInformation);
@@ -130,7 +136,9 @@ public class LiveInstanceMonitor implements Runnable
     			}
     		}
 			catch(Exception e)
-			{
+			{		
+				logger.error("Error in instance monitor: " + serverBase + ", Message: " + e.getMessage());
+
 				try
 				{
 					String cause = "" + e.getMessage();
@@ -139,7 +147,7 @@ public class LiveInstanceMonitor implements Runnable
 					else if(e instanceof SocketTimeoutException)
 						cause = "" + e.getMessage();
 					
-					NotificationMessage serverErrorMessage = new NotificationMessage("Server down: " + cause, serverBase, "SYSTEM", NotificationMessage.SERVER_UNAVAILABLE, "n/a", serverBase);
+					NotificationMessage serverErrorMessage = new NotificationMessage("Server down!: " + cause, serverBase, "SYSTEM", NotificationMessage.SERVER_UNAVAILABLE, "n/a", serverBase);
 					TransactionHistoryController.getController().create(serverErrorMessage);
 				}
 				catch (Exception e2) 
@@ -198,6 +206,7 @@ public class LiveInstanceMonitor implements Runnable
 			}
 			catch(Exception e)
 			{
+				logger.error("Error in instance monitor: " + serverBase + ", Message: " + e.getMessage());
 				try
 				{
 					String cause = "" + e.getMessage();
@@ -206,14 +215,14 @@ public class LiveInstanceMonitor implements Runnable
 					else if(e instanceof SocketTimeoutException)
 						cause = "" + e.getMessage();
 					
-					NotificationMessage serverErrorMessage = new NotificationMessage("Server down: " + cause, serverBase, "SYSTEM", NotificationMessage.SERVER_UNAVAILABLE, "n/a", serverBase);
+					NotificationMessage serverErrorMessage = new NotificationMessage("Server down!: " + cause, serverBase, "SYSTEM", NotificationMessage.SERVER_UNAVAILABLE, "n/a", serverBase);
 					TransactionHistoryController.getController().create(serverErrorMessage);
 				}
 				catch (Exception e2) 
 				{
 					logger.error("Error adding transaction history log for error: " + e2.getMessage(), e);
 				}
-				
+								
 				newInstanceStatus.put(serverBase, false);
 				Integer retries = newInstanceErrorInformation.get(serverBase);
 				if(retries == null)

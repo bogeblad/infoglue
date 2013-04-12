@@ -23,32 +23,32 @@
 package org.infoglue.deliver.util;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
-import org.infoglue.cms.controllers.kernel.impl.simple.InterceptorController;
-import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
-import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
-import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
-import org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl;
 import org.infoglue.cms.entities.management.AccessRightVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
@@ -60,14 +60,13 @@ import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallSystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl;
-import org.infoglue.cms.entities.publishing.PublicationDetailVO;
-import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationDetailImpl;
-import org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl;
-import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
@@ -77,6 +76,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.applications.filters.URIMapperCache;
+import org.infoglue.deliver.cache.PageCacheHelper;
 import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
 
 /**
@@ -106,11 +106,12 @@ public class WorkingPublicationThread extends Thread
 		work();
 	}
 	
-	
+
 	public void work()
 	{
 		//synchronized (cacheEvictionBeans) 
-		//{		
+		//{
+
 		logger.info("cacheEvictionBeans.size:" + cacheEvictionBeans.size() + ":" + RequestAnalyser.getRequestAnalyser().getBlockRequests());
         if(cacheEvictionBeans.size() > 0)
 		{
@@ -129,6 +130,7 @@ public class WorkingPublicationThread extends Thread
 			    //sleep(publicationDelay);
 			
 				Timer t = new Timer();
+				Timer tTotal = new Timer();
 
 		        boolean accessRightsFlushed = false;
 		        List<String> processedEntities = new ArrayList<String>();
@@ -145,7 +147,8 @@ public class WorkingPublicationThread extends Thread
 				    String objectId = cacheEvictionBean.getObjectId();
 				    String objectName = cacheEvictionBean.getObjectName();
 					String typeId = cacheEvictionBean.getTypeId();
-					String changedAttributeNames = cacheEvictionBean.getChangedAttributeNames();
+					Map<String,String> extraInformation = cacheEvictionBean.getExtraInformation();
+					String changedAttributeNames = extraInformation.get("changedAttributeNames");
 				    logger.info("className:" + className);
 					logger.info("objectId:" + objectId);
 					logger.info("objectName:" + objectName);
@@ -156,7 +159,7 @@ public class WorkingPublicationThread extends Thread
 
 					List<Map<String,String>> allIGCacheCalls = new ArrayList<Map<String,String>>();
 
-				    logger.warn("className:" + className + " objectId:" + objectId + " objectName: " + objectName + " typeId: " + typeId);
+				    logger.info("className:" + className + " objectId:" + objectId + " objectName: " + objectName + " typeId: " + typeId + ":" + extraInformation);
 				    if(className.indexOf("AccessRight") > -1)
 				    {
 				    	logger.info("Special handling of access rights..");
@@ -225,7 +228,7 @@ public class WorkingPublicationThread extends Thread
 					    }
 				    	catch(Exception e2)
 				    	{
-				    		logger.error("Error handling access right update: " + e2.getMessage());
+				    		logger.warn("Error handling access right update: " + e2.getMessage());
 				    	}
 				    	
 				    	if(!accessRightsFlushed)
@@ -233,24 +236,27 @@ public class WorkingPublicationThread extends Thread
 					     	CacheController.clearCache("personalAuthorizationCache");
 				    		accessRightsFlushed = true;
 				    	}
-
+				    	//t.printElapsedTime("Access rights");
 				    	//continue;
 				    }
+				    //t.printElapsedTime("First part in working thread done...");
 					//logger.info("changedAttributeNames in working thread:" + changedAttributeNames);
 					
 					//logger.info("className:" + className);
 					//logger.info("objectId:" + objectId);
 					//logger.info("objectName:" + objectName);
 					//logger.info("typeId:" + typeId);
-					
+
 					try
-					{						
+					{
 				        boolean isDependsClass = false;
 					    if(className != null && className.equalsIgnoreCase(PublicationDetailImpl.class.getName()))
 					        isDependsClass = true;
-							
+				
 					    if(!skipOriginalEntity)
 					    	addCacheUpdateDirective(className, objectId, allIGCacheCalls);
+					    
+					    //t.printElapsedTime("1.1");
 
 					    logger.info("Updating className with id:" + className + ":" + objectId);
 					    if(className != null && !typeId.equalsIgnoreCase("" + NotificationMessage.SYSTEM) && !skipOriginalEntity)
@@ -258,21 +264,35 @@ public class WorkingPublicationThread extends Thread
 						    Class type = Class.forName(className);
 			
 						    if(!isDependsClass && 
-									className.equalsIgnoreCase(SystemUserImpl.class.getName()) || 
-									className.equalsIgnoreCase(RoleImpl.class.getName()) || 
-									className.equalsIgnoreCase(GroupImpl.class.getName()) ||
-									className.equalsIgnoreCase(SystemUserRoleImpl.class.getName()) ||
-									className.equalsIgnoreCase(SystemUserGroupImpl.class.getName()))
+						    		className.equalsIgnoreCase(SystemUserImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(RoleImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(GroupImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SmallSystemUserImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SmallRoleImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SmallGroupImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SystemUserRoleImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SystemUserGroupImpl.class.getName()))
 						    {
 						        Object[] ids = {objectId};
 						        CacheController.clearCache(type, ids);
+						        //t.printElapsedTime("1.2");
 							}
 						    else if(!isDependsClass)
 						    {
-						        Object[] ids = {new Integer(objectId)};
-							    CacheController.clearCache(type, ids);
+						    	try
+						    	{
+							        Object[] ids = {new Integer(objectId)};
+								    CacheController.clearCache(type, ids);
+								    //t.printElapsedTime("1.3");
+						    	}
+						    	catch (Exception e) 
+						    	{
+						    		logger.warn("Problem clearing cache for type:" + type + " AND ID:" + objectId);
+								}
 						    }
 			
+						    //t.printElapsedTime("2");
+
 							//If it's an contentVersion we should delete all images it might have generated from attributes.
 							if(Class.forName(className).getName().equals(ContentImpl.class.getName()))
 							{
@@ -302,9 +322,7 @@ public class WorkingPublicationThread extends Thread
 								Class typesExtraSmallest = SmallestContentVersionImpl.class;
 								Object[] idsExtraSmallest = {new Integer(objectId)};
 								CacheController.clearCache(typesExtraSmallest, idsExtraSmallest);
-
-								//Removing all scriptExtensionBundles to make sure
-								CacheController.removeScriptExtensionBundles();							    	
+								//t.printElapsedTime("ContentVersionImpl...");
 							}
 							else if(Class.forName(className).getName().equals(AvailableServiceBindingImpl.class.getName()))
 							{
@@ -326,13 +344,19 @@ public class WorkingPublicationThread extends Thread
 							}
 							else if(Class.forName(className).getName().equals(RepositoryImpl.class.getName()))
 							{
+								CacheController.clearServerNodeProperty(true);
+
 								Class repoClass = RepositoryImpl.class;
 								CacheController.clearCache(repoClass);
 								CacheController.clearCaches(repoClass.getName(), null, null);
 
 								CacheController.clearCache("repositoryCache");
 								CacheController.clearCache("masterRepository");
-						        CacheController.clearFileCaches("pageCache");
+								CacheController.clearCache("parentRepository");
+								CacheController.clearCache("componentPropertyCache");
+						        //CacheController.clearFileCaches("pageCache");
+								PageCacheHelper.getInstance().clearPageCache();
+
 						        CacheController.clearCache("pageCache");
 								CacheController.clearCache("pageCacheExtra");
 								CacheController.clearCache("componentCache");
@@ -358,54 +382,118 @@ public class WorkingPublicationThread extends Thread
 									DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
 								}
 								
+								Set<String> handledVersions = new HashSet<String>();
 								List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(new Integer(objectId));	
 					    		Iterator<SmallestContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();
 					    		while(contentVersionVOListIterator.hasNext())
 					    		{
 					    			SmallestContentVersionVO contentVersionVO = contentVersionVOListIterator.next();
 					    			logger.info("Invoking clearCaches for ContentVersionImpl with id:" + contentVersionVO.getId());
-						    		CacheController.clearCaches(ContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);					    			
+					    			String key = contentVersionVO.getContentId() + "_" + contentVersionVO.getLanguageId();
+					    			//System.out.println("Invoking clearCaches for ContentVersionImpl with id:" + key + " " + contentVersionVO.getId());
+					    			if(!handledVersions.contains(key))
+					    			{
+							    		CacheController.clearCaches(ContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);		    			
+							    		CacheController.clearCaches(SmallContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);					    			
+							    		CacheController.clearCaches(SmallestContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);
+							    		handledVersions.add(key);
+					    			}
 					    		}
-
-								//Removing all scriptExtensionBundles to make sure
-								CacheController.removeScriptExtensionBundles();							    	
 							}
-							
-						    logger.info("4");
+							else if(Class.forName(className).getName().equals(MediumDigitalAssetImpl.class.getName()))
+							{
+								CacheController.clearCache("digitalAssetCache");
+								Class typesExtra = SmallDigitalAssetImpl.class;
+								Object[] idsExtra = {new Integer(objectId)};
+								CacheController.clearCache(typesExtra, idsExtra);
+	
+								Class typesExtraMedium = DigitalAssetImpl.class;
+								Object[] idsExtraMedium = {new Integer(objectId)};
+								CacheController.clearCache(typesExtraMedium, idsExtraMedium);
+	
+								String disableAssetDeletionInWorkThread = CmsPropertyHandler.getDisableAssetDeletionInWorkThread();
+								if(disableAssetDeletionInWorkThread != null && !disableAssetDeletionInWorkThread.equals("true"))
+								{
+									logger.info("We should delete all images with digitalAssetId " + objectId);
+									DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
+								}
+								
+								Set<String> handledVersions = new HashSet<String>();
+								List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId(new Integer(objectId));	
+					    		Iterator<SmallestContentVersionVO> contentVersionVOListIterator = contentVersionVOList.iterator();
+					    		while(contentVersionVOListIterator.hasNext())
+					    		{
+					    			SmallestContentVersionVO contentVersionVO = contentVersionVOListIterator.next();
+					    			String key = contentVersionVO.getContentId() + "_" + contentVersionVO.getLanguageId();
+					    			//System.out.println("Invoking clearCaches for ContentVersionImpl with id:" + key + " " + contentVersionVO.getId());
+					    			if(!handledVersions.contains(key))
+					    			{
+							    		CacheController.clearCaches(ContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);		    			
+							    		CacheController.clearCaches(SmallContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);					    			
+							    		CacheController.clearCaches(SmallestContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), null);	
+							    		handledVersions.add(key);
+					    			}
+					    		}
+							}
+							else if(Class.forName(className).getName().equals(SystemUserImpl.class.getName()))
+							{
+							    Class typesExtra = SmallSystemUserImpl.class;
+								Object[] idsExtra = {objectId};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
+							else if(Class.forName(className).getName().equals(RoleImpl.class.getName()))
+							{
+							    Class typesExtra = SmallRoleImpl.class;
+								Object[] idsExtra = {objectId};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
+							else if(Class.forName(className).getName().equals(GroupImpl.class.getName()))
+							{
+							    Class typesExtra = SmallGroupImpl.class;
+								Object[] idsExtra = {objectId};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
 						}	
-					    t.printElapsedTime("Clearing all castor caches for " + className + " took");
-
+					    
+					    // t.printElapsedTime("3");
+					    long elapsedTime = t.getElapsedTime();
+					    if(elapsedTime > 50)
+					    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Clearing all castor caches in working publication thread took", elapsedTime);
+						
+					    
 					    for(Map<String,String> igCacheCall : allIGCacheCalls)
 						{
-							logger.info("Calling clear caches with:" + igCacheCall.get("className") + ":" + igCacheCall.get("objectId"));
-							CacheController.clearCaches(igCacheCall.get("className"), igCacheCall.get("objectId"), null);
+							logger.info("Calling clear caches with:" + igCacheCall.get("className") + ":" + igCacheCall.get("objectId") + ":" + extraInformation);
+							CacheController.clearCaches(igCacheCall.get("className"), igCacheCall.get("objectId"), extraInformation, null);
+							handledCacheCalls.put("" + igCacheCall.get("className") + "_" + igCacheCall.get("objectId") + "_" + extraInformation, new Boolean(true));
+							
+						    elapsedTime = t.getElapsedTime();
+						    if(elapsedTime > 10)
+						    	logger.warn("Clearing all caches for " + igCacheCall.get("className") + ":" + igCacheCall.get("objectId"));
 						}
 					    
-					    if(!skipOriginalEntity)
+					    String key = "" + className + "_" + objectId + "_" + extraInformation;
+					    if(!skipOriginalEntity && handledCacheCalls.get(key) == null)
 					    {
-						    CacheController.clearCaches(className, objectId, changedAttributeNames, null);
+					    	logger.info("" + className + ":" + objectId + ":" + extraInformation);
+						    CacheController.clearCaches(className, objectId, extraInformation, null);
 							CacheController.setForcedCacheEvictionMode(true);
-						    t.printElapsedTime("Clearing all caches took");
-	
-						    if(!className.equals(SystemUserImpl.class.getName()) &&
-								!className.equals(RoleImpl.class.getName()) &&
-								!className.equals(GroupImpl.class.getName()) &&
-								!className.equals(SystemUserRoleImpl.class.getName()) &&
-								!className.equals(SystemUserGroupImpl.class.getName()))
-						 	{
-					    		logger.info("Going to index:" + className + ":" + objectId + ":" + typeId);
-								// TODO: Fix so that it works and that delete of versions also applies
-								NotificationMessage notificationMessage = new NotificationMessage("LuceneController", className, "SYSTEM", Integer.parseInt(typeId), Integer.parseInt(objectId), "" + objectName);
-								new Thread(new SearchIndexHelper(notificationMessage)).start();
-								LuceneController.getController().notify(notificationMessage);
-								logger.info("------------------------------------------->Done indexing in working thread");					 		
-						 	}
+						   
+							if(elapsedTime > 100)
+						    	logger.warn("Clearing all caches for " + className + ":" + objectId + ":" + changedAttributeNames);
 					    }
+					    else
+					    	logger.info("Skipping cache clear for the same entity..");
+					    
+					    //System.out.println("Adding:" + cacheEvictionBean.getObjectName() + ":" + cacheEvictionBean.getObjectId());
 						CacheEvictionBeanListenerService.getService().notifyListeners(cacheEvictionBean);
 					}
 					catch (Exception e) 
 					{
-						logger.error("Error handling cache update message:" + className + ":" + objectId, e);
+						if(e.getMessage().indexOf("was not found") > -1 || (e.getCause() != null && e.getCause().getMessage().indexOf("was not found") > -1))
+							logger.warn("A delete operation probably gave us trouble clearing the correct caches");
+						else
+							logger.warn("Error handling cache update message:" + className + ":" + objectId, e);
 					}
 					
 				    RequestAnalyser.getRequestAnalyser().removeOngoingPublications(cacheEvictionBean);
@@ -432,6 +520,9 @@ public class WorkingPublicationThread extends Thread
 		    		CacheController.clearCache("pageCache");
 		    		CacheController.clearCache("pageCacheExtra");
 				}
+				
+				//tTotal.printElapsedTime("Working publication thread took");
+		        RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Working publication thread took", tTotal.getElapsedTime());
 			} 
 			catch (Exception e)
 			{
@@ -452,10 +543,12 @@ public class WorkingPublicationThread extends Thread
 			}
 			*/
 		}
-
+        
         RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
 		logger.info("released block");
 	}
+	
+	private Map<String,Boolean> handledCacheCalls = new HashMap<String,Boolean>();
 	
 	public void addCacheUpdateDirective(String className, String objectId, List<Map<String, String>> allIGCacheCalls) 
 	{

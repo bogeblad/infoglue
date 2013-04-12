@@ -51,6 +51,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.content.Content;
@@ -70,6 +71,7 @@ import org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
@@ -430,59 +432,38 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * This method returns that contentVersion which matches the parameters sent in and which 
 	 * also has the correct state for this delivery-instance.
 	 */
-	public static Map<Integer,Integer> mostUsedContentIds = new HashMap<Integer,Integer>();
 	
 	private ContentVersionVO getContentVersionVO(Integer siteNodeId, Integer contentId, Integer languageId, Database db, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
 	{
 		if(contentId == null || contentId.intValue() < 1)
 			return null;
 		
-		ContentVersionVO contentVersion = null;
-		
 		Timer t = new Timer();
 		
+		ContentVersionVO contentVersion = null;
+		
 		//MediumContentImpl content = (MediumContentImpl)getObjectWithId(MediumContentImpl.class, contentId, db);
-		//ContentVO content = ContentController.getContentController().getSmallContentVOWithId(contentId, db);
 		ContentVO content = getContentVO(db, contentId, deliveryContext);
-		
-		if(content.getContentTypeDefinitionId() == 2)
-		{
-			Integer oldValue = mostUsedContentIds.get(contentId);
-			if(oldValue == null)
-				oldValue = 0;
-			oldValue = oldValue + 1;
-			mostUsedContentIds.put(contentId, oldValue);
-			if(mostUsedContentIds.size() == 1000)
-			{
-				FileOutputStream fos = new FileOutputStream(CmsPropertyHandler.getDigitalAssetPath() + File.separator + "startupCache.txt");
-		        ObjectOutputStream oos = new ObjectOutputStream(fos);
-		        oos.writeObject(mostUsedContentIds);
-		        oos.close();
-			}
-		}
-		
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO 1", t.getElapsedTimeNanos() / 1000);
-		
 		boolean isValidContent = isValidContent(infoGluePrincipal, content, languageId, useLanguageFallback, false, db, deliveryContext);
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO 2", t.getElapsedTimeNanos() / 1000);
-
+		//deliveryContext.addDebugInformation("isValidContent:" + isValidContent);
 		if(isValidContent)
 		{
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO rest", t.getElapsedTimeNanos() / 1000);
 			contentVersion = getContentVersionVO(contentId, languageId, getOperatingMode(deliveryContext), deliveryContext, db);
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO 3", t.getElapsedTimeNanos() / 1000);
+			//deliveryContext.addDebugInformation("contentVersion:" + contentVersion);
 			if(contentVersion == null && useLanguageFallback)
 			{
 				Integer masterLanguageId = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(db, siteNodeId).getLanguageId();
+				//deliveryContext.addDebugInformation("masterLanguageId:" + masterLanguageId);
 				if(languageId != null && !languageId.equals(masterLanguageId))
 				{
 					contentVersion = getContentVersionVO(contentId, masterLanguageId, getOperatingMode(deliveryContext), deliveryContext, db);
 				}
-		
+				
 				//Added fallback to the content repository master language... useful for mixing components between sites
 				if(languageId != null && contentVersion == null && useLanguageFallback)
 				{
 					Integer contentMasterLanguageId = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(db, content.getRepositoryId()).getLanguageId();
+					//deliveryContext.addDebugInformation("contentMasterLanguageId:" + contentMasterLanguageId);
 					if(languageId != null && !languageId.equals(contentMasterLanguageId) && !masterLanguageId.equals(contentMasterLanguageId))
 					{
 						contentVersion = getContentVersionVO(contentId, contentMasterLanguageId, getOperatingMode(deliveryContext), deliveryContext, db);
@@ -491,8 +472,18 @@ public class ContentDeliveryController extends BaseDeliveryController
 			}
 		}
 		
+		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO in delivery took (micro)", t.getElapsedTimeNanos() / 1000);
+		/*
+		if(content.getContentTypeDefinitionId().intValue() == 2 || content.getContentTypeDefinitionId().intValue() == 100000)
+		{
+			logger.error("Investigate...");
+			Thread.dumpStack();
+		}
+		*/
+		
 		return contentVersion;
 	}
+
 
 	/**
 	 * This method returns that contentVersion which matches the parameters sent in and which 
@@ -630,6 +621,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 		}
 		else
 		{
+			Timer t = new Timer();
+
 			String smallVersionKey = "" + contentId + "_" + languageId + "_" + operatingMode + "_smallestContentVersionVO";
 			Object smallestContentVersionVOCandidate = CacheController.getCachedObjectFromAdvancedCache("contentVersionCache", smallVersionKey);
 			if(smallestContentVersionVOCandidate instanceof NullObject)
@@ -640,7 +633,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 			{
 				if(smallestContentVersionVOCandidate instanceof SmallestContentVersionVO)
 				{
-					Timer t = new Timer();
 					contentVersionVO = (ContentVersionVO)getVOWithId(SmallContentVersionImpl.class, ((SmallestContentVersionVO)smallestContentVersionVOCandidate).getId(), db);
 					CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, contentVersionVO, new String[]{CacheController.getPooledString(2, contentVersionVO.getId()), CacheController.getPooledString(1, contentVersionVO.getContentId())}, true);
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting SmallContentVersionImpl", t.getElapsedTime());
@@ -655,7 +647,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 			}
 			else
 			{
-				Timer t = new Timer();
 				//logger.info("Querying for verson: " + versionKey); 
 				OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.contentId = $1 AND cv.languageId = $2 AND cv.stateId >= $3 AND cv.isActive = $4 ORDER BY cv.contentVersionId desc");
 		    	oql.bind(contentId);
@@ -677,13 +668,12 @@ public class ContentDeliveryController extends BaseDeliveryController
 					CacheController.cacheObjectInAdvancedCache("contentVersionCache", versionKey, new NullObject(), new String[]{CacheController.getPooledString(1, contentId)}, true);
 				}
 
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Querying for contentVersionVO", t.getElapsedTime());
-
 				results.close();
 				oql.close();
-
-				//t.printElapsedTimeMicro("Querying one took");
 			}
+			
+			if(logger.isInfoEnabled())
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO(Integer contentId, Integer languageId, Integer operatingMode, DeliveryContext deliveryContext, Database db)", t.getElapsedTimeNanos() / 1000);
 		}
 		
 		if(contentVersionVO != null)
@@ -930,17 +920,32 @@ public class ContentDeliveryController extends BaseDeliveryController
 	{	
 		if(contentId == null || contentId.intValue() < 1)
 			return "";
-		
+				
 		boolean isTemplateQuery = false;
 		if(attributeName.equalsIgnoreCase("Template") || attributeName.equalsIgnoreCase("PreTemplate") || attributeName.equalsIgnoreCase("ComponentLabels"))
 			isTemplateQuery = true;
+
+		if(attributeName.equalsIgnoreCase("ComponentStructure"))
+			isMetaInfoQuery = true;
+
+		deliveryContext.addDebugInformation("getContentAttribute with params:");
+		deliveryContext.addDebugInformation("	contentId: " + contentId);
+		deliveryContext.addDebugInformation("	languageId: " + languageId);
+		deliveryContext.addDebugInformation("	attributeName: " + attributeName);
+		deliveryContext.addDebugInformation("	siteNodeId: " + siteNodeId);
+		deliveryContext.addDebugInformation("	useLanguageFallback: " + useLanguageFallback);
+		deliveryContext.addDebugInformation("	infogluePrincipal: " + infogluePrincipal);
 		
 		//logger.info("usedContentVersionId:" + usedContentVersionId);
-		String enforceRigidContentAccess = CmsPropertyHandler.getEnforceRigidContentAccess();
-		if(enforceRigidContentAccess != null && enforceRigidContentAccess.equalsIgnoreCase("true") && !isMetaInfoQuery)
+		//String enforceRigidContentAccess = CmsPropertyHandler.getEnforceRigidContentAccess();
+		//if(enforceRigidContentAccess != null && enforceRigidContentAccess.equalsIgnoreCase("true") && !isMetaInfoQuery)
+		//Added this check as mandatory - otherwise we could have situations where values got caches for users not authorized to see them or cached empty.
+		if(!isMetaInfoQuery && !isTemplateQuery)
 		{
 			//logger.info("Enforcing getHasUserContentAccess for attributeName:" + contentId + ":" + languageId + ":" + attributeName);
 			boolean hasUserContentAccess = getHasUserContentAccess(db, infogluePrincipal, contentId);
+			
+			deliveryContext.addDebugInformation("hasUserContentAccess: " + hasUserContentAccess);
 			if(!hasUserContentAccess)
 			{
 				return "";
@@ -980,14 +985,21 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 		String attributeKey = attributeKeySB.toString();
 		String versionKey = versionKeySB.append("_contentVersionId").toString();
-		
+
+		deliveryContext.addDebugInformation("attributeKey: " + attributeKey);
+
 		String matcher = "";
 		String cacheName = "contentAttributeCache" + matcher;
 		String contentVersionIdCacheName = "contentVersionIdCache" + matcher;
 		
 		String attribute = (String)CacheController.getCachedObjectFromAdvancedCache(cacheName, attributeKey);
+		if(attribute != null)
+			deliveryContext.addDebugInformation("cachedAttribute: " + attribute.length());
+		else
+			deliveryContext.addDebugInformation("cachedAttribute: null");
+			
 		Integer contentVersionId = null;
-
+		
 	    try
 	    {
 			if(attribute != null)
@@ -998,9 +1010,13 @@ public class ContentDeliveryController extends BaseDeliveryController
 			else
 			{
 				ContentVersionVO contentVersionVO = getContentVersionVO(db, siteNodeId, contentId, languageId, useLanguageFallback, deliveryContext, infogluePrincipal);
+				System.out.println("contentVersionVO:" + contentVersionVO.getId());
 				
-				if (contentVersionVO != null) 
+				deliveryContext.addDebugInformation("contentVersionVO:" + contentVersionVO);
+				if(contentVersionVO != null) 
 				{
+					deliveryContext.addDebugInformation("contentVersionVO.versionValue:" + contentVersionVO.getVersionValue().length());
+
 				    attribute = getAttributeValue(db, contentVersionVO, attributeName, escapeHTML);	
 					contentVersionId = contentVersionVO.getId();
 				}
@@ -1009,40 +1025,16 @@ public class ContentDeliveryController extends BaseDeliveryController
 					attribute = "";
 				}
 	        	
-				//Orginal
-				//String groupKey1 = CacheController.getPooledString(2, contentVersionId);
-				//StringBuilder groupKey2 = new StringBuilder("content_").append(contentId);
 	        	String groupKey1 = CacheController.getPooledString(2, contentVersionId);
 	        	String groupKey2 = CacheController.getPooledString(1, contentId);
 	        	
-	        	/*
-	        	//System.out.println("TESTCASE - adding superlong string...");
-	        	Integer nr = 1000;
-        		System.out.println("TESTCASE - adding many string...");
-				String[] groups = new String[nr + 2];
-				groups[0] = groupKey1.toString();
-				groups[1] = groupKey2.toString();
-				for(Integer i=2; i<nr+2; i++)
-				{
-					groups[i] = "contentVersion_99" + i;
-					//groups[i] = CacheController.getPooledString(2, i.toString());
-					//System.out.println("groups[i]:" + groups[i]);
-				}
-				
-	        	CacheController.cacheObjectInAdvancedCache(cacheName, attributeKey, attribute, groups, true);
-	    		if(contentVersionId != null)
-				{
-    				CacheController.cacheObjectInAdvancedCache(contentVersionIdCacheName, versionKey, contentVersionId, groups, true);
-				}
-				*/
-
 	        	CacheController.cacheObjectInAdvancedCache(cacheName, attributeKey, attribute, new String[]{groupKey1, groupKey2}, true);
 	    		if(contentVersionId != null)
 				{
     				CacheController.cacheObjectInAdvancedCache(contentVersionIdCacheName, versionKey, contentVersionId, new String[]{groupKey1, groupKey2}, true);
 				}
 			}
-			
+
 			if(deliveryContext != null)
 			{
 				if(contentVersionId != null)
@@ -1054,8 +1046,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 				
 				//We don't want to add meta info relations without more data
 				if(!attributeName.equals("ComponentStructure"))
+				{
 					deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId) + "_" + attributeName);
-
+				}
 			}
 	
 			if(usedContentVersionId != null && contentVersionId != null)
@@ -1065,7 +1058,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    {
 	        throw e;
 	    }
-
+	    
 		return (attribute == null) ? "" : attribute;
 	}
 
@@ -1377,6 +1370,12 @@ public class ContentDeliveryController extends BaseDeliveryController
         	}
         }
 		
+		if(digitalAssetVO == null && useLanguageFallback)
+		{
+			digitalAssetVO = getLanguageIndependentAssetVO(contentId, languageId, siteNodeId, db, assetKey, deliveryContext, infoGluePrincipal);
+		}
+		
+		
 		return digitalAssetVO;
 	}
 
@@ -1486,6 +1485,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 		// addition ss - 030422
 		// Search digital asset among language versions.
 		List langs = LanguageDeliveryController.getLanguageDeliveryController().getAvailableLanguages(db, siteNodeId);
+		List<Integer> checkedLanguages = new ArrayList<Integer>();
 		Iterator lit = langs.iterator();
 		while (lit.hasNext())
 		{
@@ -1503,6 +1503,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 						break;
 					}
 				}									
+				checkedLanguages.add(langVO.getLanguageId());
 			}
 		}
 
@@ -1520,6 +1521,11 @@ public class ContentDeliveryController extends BaseDeliveryController
 					LanguageVO langVO = (LanguageVO) contentRepositoryLangsIterator.next();
 					if (langVO.getLanguageId().compareTo(languageId)!=0)
 					{
+						if(checkedLanguages.contains(langVO.getLanguageId()))
+						{
+							continue;
+						}
+
 						SmallestContentVersionVO contentVersion = getSmallestContentVersionVO(siteNodeId, contentId, langVO.getLanguageId(), db, false, deliveryContext, infoGluePrincipal);
 						if (contentVersion != null) 
 						{
@@ -1579,10 +1585,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 			//String filePath = CmsPropertyHandler.getDigitalAssetPath();
 			//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(digitalAsset, fileName, filePath);
 		
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
+			*/
 				
 			//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName;
 			if(deliveryContext.getUseDownloadAction())
@@ -1640,10 +1656,14 @@ public class ContentDeliveryController extends BaseDeliveryController
 			//String filePath = CmsPropertyHandler.getDigitalAssetPath();
 			//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAssetThumbnail(digitalAsset, fileName, thumbnailFileName, filePath, width, height);
 			
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
-			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-				dnsName = siteNode.getRepository().getDnsName();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
 				
 			//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + thumbnailFileName;
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, thumbnailFileName, deliveryContext); 
@@ -1698,8 +1718,8 @@ public class ContentDeliveryController extends BaseDeliveryController
 		SmallestContentVersionVO contentVersion = getSmallestContentVersionVO(siteNodeId, contentId, languageId, db, useLanguageFallback, deliveryContext, infoGluePrincipal);
 		if (contentVersion != null) 
         {
-        	DigitalAssetVO digitalAsset = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), db);
-			
+    		DigitalAssetVO digitalAsset = DigitalAssetController.getLatestDigitalAssetVO(contentVersion.getId(), db);
+    		
 			if(digitalAsset != null)
 			{
 				//String fileName = digitalAsset.getDigitalAssetId() + "_" + digitalAsset.getAssetFileName();
@@ -1733,21 +1753,34 @@ public class ContentDeliveryController extends BaseDeliveryController
 				//String filePath = CmsPropertyHandler.getDigitalAssetPath();
 				//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(digitalAsset, fileName, filePath);
 				
+				SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
+				String dnsName = CmsPropertyHandler.getWebServerAddress();
+				if(siteNodeVO != null)
+				{
+					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+						dnsName = repositoryVO.getDnsName();
+				}
+				/*
 				SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 					dnsName = siteNode.getRepository().getDnsName();
+				*/
 
 				//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName;
 				assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
 			}
 			else
 			{
+				System.out.println("AAAAAAA");
 				assetUrl = getLanguageIndependentAssetUrl(contentId, languageId, siteNodeId, db, null, deliveryContext, infoGluePrincipal);
 			}
         }
             		
         CacheController.cacheObject(cacheName, assetCacheKey, assetUrl);
+		//System.out.println("Group:" + "content_" + contentId);
+        //CacheController.cacheObjectInAdvancedCache(cacheName, assetCacheKey, assetUrl, new String[]{"content_" + contentId}, true);
         
 		return assetUrl;
 	}
@@ -1803,11 +1836,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 			    	filePath += File.separator + folderName;
 			}
 
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeVO(db, siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNode(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
-
+			*/
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName, deliveryContext); 
 		}
             		
@@ -1828,6 +1870,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(contentId == null || contentId.intValue() < 1)
 			return "";
 
+		Timer t = new Timer();
+		
+		//System.out.println("Adding:" + "content_" + contentId);
 		deliveryContext.addUsedContent(CacheController.getPooledString(1, contentId));
 
 	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
@@ -1839,8 +1884,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 	    
 	    assetKey = URLDecoder.decode(assetKey, "utf-8");
 	    
-		String cacheName = "assetUrlCache";
-		String cachedAssetUrl = (String)CacheController.getCachedObject(cacheName, assetCacheKey);
+		String cacheName = "assetUrlCacheWithGroups";
+		//String cachedAssetUrl = (String)CacheController.getCachedObject(cacheName, assetCacheKey);
+		String cachedAssetUrl = (String)CacheController.getCachedObjectFromAdvancedCache(cacheName, assetCacheKey);
 		if(cachedAssetUrl != null)
 		{
 			if(logger.isInfoEnabled())
@@ -1876,10 +1922,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		if(!isUnprotectedAsset)
 		{
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
+			//SiteNodeVO siteNodeVO = getSiteNodeVO(db, siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
+			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
+			*/
 
 			return urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
 		}
@@ -1917,10 +1973,21 @@ public class ContentDeliveryController extends BaseDeliveryController
 				    	filePath += File.separator + folderName;
 				}
 
+				//SiteNodeVO siteNodeVO = getSiteNodeVO(db, siteNodeId);
+				String dnsName = CmsPropertyHandler.getWebServerAddress();
+				if(siteNodeVO != null)
+				{
+					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+						dnsName = repositoryVO.getDnsName();
+				}
+
+				/*
 				SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 					dnsName = siteNode.getRepository().getDnsName();
+				*/
 					
 				if(deliveryContext.getUseDownloadAction())
 					assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
@@ -1971,10 +2038,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 			    			filePath += File.separator + folderName;
 					}
 
+					//SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
+					String dnsName = CmsPropertyHandler.getWebServerAddress();
+					if(siteNodeVO != null)
+					{
+						RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+						if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+							dnsName = repositoryVO.getDnsName();
+					}
+					/*
 					SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
 					String dnsName = CmsPropertyHandler.getWebServerAddress();
 					if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 						dnsName = siteNode.getRepository().getDnsName();
+					*/
 						
 					if(deliveryContext.getUseDownloadAction())
 						assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, siteNodeId, contentId, languageId, assetKey, deliveryContext, db);
@@ -1988,7 +2065,11 @@ public class ContentDeliveryController extends BaseDeliveryController
 			}
 		}
 			
-        CacheController.cacheObject(cacheName, assetCacheKey, assetUrl);
+		if(assetUrl == null || assetUrl.equals(""))
+		{
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Missed as assetURL was empty", t.getElapsedTime());
+			logger.info("Missed as assetURL was empty:" + assetKey);
+		}
         
         return assetUrl;
 	}
@@ -2111,10 +2192,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 				    	filePath += File.separator + folderName;
 				}
 
+				SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
+				String dnsName = CmsPropertyHandler.getWebServerAddress();
+				if(siteNodeVO != null)
+				{
+					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+						dnsName = repositoryVO.getDnsName();
+				}
+				/*
 				SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 					dnsName = siteNode.getRepository().getDnsName();
+				*/
 
 				assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, thumbnailFileName, deliveryContext); 
 			}
@@ -2190,10 +2281,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 			    	filePath += File.separator + folderName;
 			}
 			
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeVO(db, siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNode(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
+			*/
 
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, thumbnailFileName, deliveryContext); 
 		}
@@ -2272,10 +2373,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 				//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAsset(digitalAsset, fileName, filePath);
 				//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpDigitalAssetThumbnail(digitalAsset, fileName, thumbnailFileName, filePath, width, height);
 				
+				SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeVO(db, siteNodeId);
+				String dnsName = CmsPropertyHandler.getWebServerAddress();
+				if(siteNodeVO != null)
+				{
+					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+						dnsName = repositoryVO.getDnsName();
+				}
+				/*
 				SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 					dnsName = siteNode.getRepository().getDnsName();
+				*/
 				
 				//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + thumbnailFileName;
 				assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, thumbnailFileName, deliveryContext); 
@@ -2367,10 +2478,14 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 				//logger.info("filePath (Should be base url):" + filePath);
 				
-				SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
+				SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
-				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-					dnsName = siteNode.getRepository().getDnsName();
+				if(siteNodeVO != null)
+				{
+					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+						dnsName = repositoryVO.getDnsName();
+				}
 					
 				String archiveBaseUrl = urlComposer.composeDigitalAssetUrl(dnsName, "extensions" + File.separator + fileName.substring(0, fileName.lastIndexOf(".")), deliveryContext); 
 			
@@ -2480,11 +2595,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 				//unzipDirectory.mkdirs();
 				//DigitalAssetDeliveryController.getDigitalAssetDeliveryController().dumpAndUnzipDigitalAsset(digitalAsset, fileName, filePath, unzipDirectory);
 				
+				SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(db, siteNodeId);
+				String dnsName = CmsPropertyHandler.getWebServerAddress();
+				if(siteNodeVO != null)
+				{
+					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+						dnsName = repositoryVO.getDnsName();
+				}
+				/*
 				SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(db, siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 					dnsName = siteNode.getRepository().getDnsName();
-					
+				*/	
 				//archiveBaseUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName.substring(0, fileName.lastIndexOf("."));
 				archiveBaseUrl = urlComposer.composeDigitalAssetUrl(dnsName, folderName, fileName.substring(0, fileName.lastIndexOf(".")), deliveryContext); 
 			}
@@ -2524,10 +2648,20 @@ public class ContentDeliveryController extends BaseDeliveryController
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 			}
 
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeVO(db, siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNode(db, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
+			*/	
 				
 			archiveBaseUrl = urlComposer.composeDigitalAssetUrl(dnsName, null, fileName.substring(0, fileName.lastIndexOf(".")), deliveryContext); 
 		}
@@ -2658,7 +2792,36 @@ public class ContentDeliveryController extends BaseDeliveryController
 
 		return value;
 	}
-	
+
+	/**
+	 * This method fetches a value from the xml that is the contentVersions Value. If the 
+	 * contentVersioVO is null the contentVersion has not been created yet and no values are present.
+	 */
+	public String getAttributeValue(String versionValue, String key, boolean escapeHTML)
+	{
+		String value = "";
+		try
+        {
+        	String xml = versionValue;
+        	
+        	int startTagIndex = xml.indexOf("<" + key + ">");
+        	int endTagIndex   = xml.indexOf("]]></" + key + ">");
+        	
+        	if(startTagIndex > 0 && startTagIndex < xml.length() && endTagIndex > startTagIndex && endTagIndex <  xml.length())
+        		value = xml.substring(startTagIndex + key.length() + 11, endTagIndex);
+
+    		if(escapeHTML)
+        	    value = formatter.escapeHTML(value);
+        } 
+        catch(Exception e)
+        {
+        	logger.error("An error occurred so we should not return the attribute value:" + e, e);
+        }
+
+		return value;
+	}
+
+
 
 	/**
 	 * This method returns a sorted list of childContents to a content ordered by the given attribute in the direction given.
@@ -2720,8 +2883,10 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		if(contentId != null && contentId.intValue() > 0)
 		{
-			SmallContentImpl smallContent = (SmallContentImpl)getObjectWithId(SmallContentImpl.class, contentId, db);
-			contentTypeDefinitionVO = (ContentTypeDefinitionVO) getVOWithId(ContentTypeDefinitionImpl.class, smallContent.getContentTypeDefinitionId(), db);
+			ContentVO contentVO = getContentVO(db, contentId, null);
+			contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
+			//SmallContentImpl smallContent = (SmallContentImpl)getObjectWithId(SmallContentImpl.class, contentId, db);
+			//contentTypeDefinitionVO = (ContentTypeDefinitionVO) getVOWithId(ContentTypeDefinitionImpl.class, smallContent.getContentTypeDefinitionId(), db);
 			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentTypeDefinitionVO 1", t.getElapsedTimeNanos() / 1000);
 			/*
 			Content content = (Content)getObjectWithId(ContentImpl.class, contentId, db);
@@ -2782,33 +2947,29 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(searchRecursive)
 			deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
 		
-		Timer t = new Timer();
-		
 		OQLQuery oql = db.getOQLQuery("SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl content WHERE content.parentContentId = $1 ORDER BY content.contentId");
 		//OQLQuery oql = db.getOQLQuery("SELECT content FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl content WHERE content.parentContent.contentId = $1 ORDER BY content.contentId");
     	oql.bind(contentId);
     	
     	QueryResults results = oql.execute(Database.ReadOnly);
-    	//t.printElapsedTime("Querying for content took");
 		
 		while (results.hasMore()) 
         {
         	Content content = (Content)results.next();
-        	//t.printElapsedTime("Getting next took");
         	
         	if(searchRecursive && currentLevel < maximumNumberOfLevels)
         		getChildContents(infoGluePrincipal, contents, content.getContentId(), languageId, useLanguageFallback, currentLevel + 1, searchRecursive, maximumNumberOfLevels, db, includeFolders, deliveryContext);
-        	//t.printElapsedTime("getChildContents took");
 
     		if(isValidContent(infoGluePrincipal, content.getValueObject(), languageId, useLanguageFallback, includeFolders, db, deliveryContext))
     		{
    				contents.add(content);
     		}
-    		//t.printElapsedTime("Validating took");
         }
 		
 		results.close();
 		oql.close();
+		
+		//t.printElapsedTime("getChildContents took");
 	}
 
 	
@@ -2821,13 +2982,10 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(searchRecursive)
 			deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
 
-		Timer t = new Timer();
-
 		OQLQuery oql = db.getOQLQuery( "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl content WHERE content.parentContent.contentId = $1 ORDER BY content.contentId");
 		oql.bind(contentId);
     	
 		QueryResults results = oql.execute(Database.ReadOnly);
-		t.printElapsedTime("Querying for content took");
 		
 		while (results.hasMore()) 
 		{
@@ -2907,6 +3065,16 @@ public class ContentDeliveryController extends BaseDeliveryController
 		
 		return isValidContent;					
 	}
+
+	/**
+	 * Returns if a content is between dates and has a content version suitable for this delivery mode.
+	 * @throws Exception
+	 */
+
+	public boolean isValidContent(Database db, Content content, Integer languageId, boolean useLanguageFallback, boolean includeFolders, InfoGluePrincipal infoGluePrincipal, DeliveryContext deliveryContext, boolean checkIfVersionExists, boolean checkAuthorization) throws Exception
+	{
+		return isValidContent(db, content.getValueObject(), languageId, useLanguageFallback, includeFolders, infoGluePrincipal, deliveryContext, checkIfVersionExists, checkAuthorization);
+	}
 	
 	/**
 	 * Returns if a content is between dates and has a content version suitable for this delivery mode.
@@ -2947,6 +3115,43 @@ public class ContentDeliveryController extends BaseDeliveryController
 		if(infoGluePrincipal == null)
 		    throw new SystemException("There was no anonymous user found in the system. There must be - add the user anonymous/anonymous and try again.");
 		
+		if(metaInfoContentTypeId == null)
+		{
+			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db);
+			if(ctdVO != null)
+				metaInfoContentTypeId = ctdVO.getId();
+		}
+
+		if(HTMLTemplateContentTypeId == null)
+		{
+			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate", db);
+			if(ctdVO != null)
+				HTMLTemplateContentTypeId = ctdVO.getId();
+		}
+
+		if(PagePartTemplateContentTypeId == null)
+		{
+			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("PagePartTemplate", db);
+			if(ctdVO != null)
+				PagePartTemplateContentTypeId = ctdVO.getId();
+		}
+
+		if(PageTemplateContentTypeId == null)
+		{
+			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("PageTemplate", db);
+			if(ctdVO != null)
+				PageTemplateContentTypeId = ctdVO.getId();
+		}
+
+		if(content.getContentTypeDefinitionId() != null && (content.getContentTypeDefinitionId().equals(metaInfoContentTypeId) ||
+															content.getContentTypeDefinitionId().equals(HTMLTemplateContentTypeId) ||
+															content.getContentTypeDefinitionId().equals(PagePartTemplateContentTypeId) ||
+															content.getContentTypeDefinitionId().equals(PageTemplateContentTypeId)))
+		{
+			return true;
+		}
+
+		/*
 		if(content.getContentTypeDefinitionId() != null)
 		{
 			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(content.getContentTypeDefinitionId(), db);
@@ -2956,6 +3161,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 					ctdVO.getName().equalsIgnoreCase("PageTemplate"))
 				return true;
 		}
+		*/
 
 		if(content.getIsDeleted().booleanValue())
 			return false;
@@ -2969,16 +3175,17 @@ public class ContentDeliveryController extends BaseDeliveryController
 		{
 			validateOnDates = deliveryContext.getValidateOnDates();
 		}
-
-		//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart1", t.getElapsedTimeNanos() / 1000000);
+		//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart1", t.getElapsedTimeNanos() / 1000);
 
 		try
 		{
 			Integer protectedContentId = getProtectedContentId(db, content);
+			deliveryContext.addDebugInformation("content:" + content.getName() + ":" + protectedContentId);
 			if(logger.isInfoEnabled())
 				logger.info("content:" + content.getName() + ":" + protectedContentId);
 			if(protectedContentId != null && !AccessRightController.getController().getIsPrincipalAuthorized(db, infoGluePrincipal, "Content.Read", protectedContentId.toString()))
 			{
+				deliveryContext.addDebugInformation("No access to Content.READ for " + infoGluePrincipal);
 			    return false;
 			}
 		}
@@ -2988,7 +3195,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			logger.warn("An error occurred trying to validate access to a content. Resetting datalayer and disabling page cache but allowing for now. Reson: " + e.getMessage(), e);
 		}
 		
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart protectedContentId", t.getElapsedTimeNanos() / 1000);
+		//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart protectedContentId", t.getElapsedTimeNanos() / 1000);
 
 		if(includeFolders && content.getIsBranch().booleanValue() && isValidOnDates(content.getPublishDateTime(), content.getExpireDateTime(), validateOnDates))
 		{
@@ -3002,6 +3209,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 			//TODO
 			ContentVersionVO contentVersion = getContentVersionVO(content.getId(), languageId, getOperatingMode(deliveryContext), deliveryContext, db);
 		    //SmallestContentVersionVO contentVersion = getSmallestContentVersionVO(content.getId(), languageId, getOperatingMode(deliveryContext), deliveryContext, db);
+			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart4", t.getElapsedTimeNanos() / 1000);
 		    
 			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVO in isValid", t.getElapsedTimeNanos() / 1000);
 
@@ -3015,11 +3223,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 				//TODO
 				if(masterLanguage != null && !masterLanguage.getId().equals(languageId))
 				{
-					//contentVersion = getContentVersion(content, masterLanguage.getId(), getOperatingMode(), deliveryContext, db);
 					contentVersion = getContentVersionVO(content.getId(), masterLanguage.getId(), getOperatingMode(deliveryContext), deliveryContext, db);
 					//contentVersion = getSmallestContentVersionVO(content.getId(), masterLanguage.getId(), getOperatingMode(deliveryContext), deliveryContext, db);
 				}
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("LanguageFallBack", t.getElapsedTimeNanos() / 1000);
 			}
 
 			//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart5", t.getElapsedTimeNanos() / 1000);
@@ -3045,13 +3251,15 @@ public class ContentDeliveryController extends BaseDeliveryController
 			}
 		}
 	    
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContent took", t.getElapsedTimeNanos() / 1000000);
+		//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("isValidContentPart end", t.getElapsedTimeNanos() / 1000);
 		
 		return isValidContent;					
 	}
 
 	private static Integer metaInfoContentTypeId = null;
 	private static Integer HTMLTemplateContentTypeId = null;
+	private static Integer PagePartTemplateContentTypeId = null;
+	private static Integer PageTemplateContentTypeId = null;
 	
 	public boolean isValidContent(InfoGluePrincipal infoGluePrincipal, ContentVO content, Integer languageId, boolean useLanguageFallBack, boolean includeFolders, Database db, DeliveryContext deliveryContext, boolean checkVersionExists, boolean checkAccessRights) throws Exception
 	{
@@ -3075,9 +3283,27 @@ public class ContentDeliveryController extends BaseDeliveryController
 				HTMLTemplateContentTypeId = ctdVO.getId();
 		}
 		
+		if(PagePartTemplateContentTypeId == null)
+		{
+			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("PagePartTemplate", db);
+			if(ctdVO != null)
+				PagePartTemplateContentTypeId = ctdVO.getId();
+		}
+
+		if(PageTemplateContentTypeId == null)
+		{
+			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("PageTemplate", db);
+			if(ctdVO != null)
+				PageTemplateContentTypeId = ctdVO.getId();
+		}
+
 		if(content.getContentTypeDefinitionId() != null && (content.getContentTypeDefinitionId().equals(metaInfoContentTypeId) ||
-															content.getContentTypeDefinitionId().equals(HTMLTemplateContentTypeId)))
+				content.getContentTypeDefinitionId().equals(HTMLTemplateContentTypeId) ||
+				content.getContentTypeDefinitionId().equals(PagePartTemplateContentTypeId) ||
+				content.getContentTypeDefinitionId().equals(PageTemplateContentTypeId)))
+		{
 			return true;
+		}
 
 		if(content.getIsDeleted().booleanValue())
 			return false;
@@ -3179,7 +3405,7 @@ public class ContentDeliveryController extends BaseDeliveryController
     	protectedContentId = getProtectedContentId(db, content);
 
     	//totalLoadTime = totalLoadTime + t.getElapsedTimeNanos();
-    	//logger.info("totalLoadTime:" + totalLoadTime / 1000000);
+    	//System.out.println("totalLoadTime:" + totalLoadTime / 1000000);
 		
 		return protectedContentId;
 	}

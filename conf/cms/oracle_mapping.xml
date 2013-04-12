@@ -1160,6 +1160,51 @@
   </class>
 
 <!--  Mapping for ContentVersion  -->
+  <class name="org.infoglue.cms.entities.content.impl.simple.ExportContentVersionImpl" identity="contentVersionId" key-generator="SEQUENCE">
+    <description>ContentVersion</description>
+    <cache-type type="none"/>
+    <map-to table="cmContVer"/>
+    <field name="contentVersionId" type="java.lang.Integer">
+      <sql name="ContVerId" type="integer" dirty="check" />
+    </field>
+    <field name="stateId" type="java.lang.Integer">
+      <sql name="stateId" type="integer" dirty="ignore" />
+    </field>
+    <field name="modifiedDateTime" type="java.util.Date">
+      <sql name="modifiedDateTime" type="timestamp" dirty="ignore" />
+    </field>
+    <field name="versionComment" type="java.lang.String">
+      <sql name="VerComment" type="varchar" dirty="ignore" />
+    </field>
+    <field name="isCheckedOut" type="java.lang.Boolean">
+      <sql name="isCheckedOut" type="integer" dirty="ignore" />
+    </field>
+    <field name="isActive" type="java.lang.Boolean">
+      <sql name="isActive" type="integer" dirty="ignore" />
+    </field>
+    <field name="owningContent" type="org.infoglue.cms.entities.content.impl.simple.SmallContentImpl">
+      <sql name="ContId"/>
+    </field>
+    <field name="languageId" type="java.lang.Integer">
+      <sql name="languageId"/>
+    </field>
+    <field name="versionModifier" type="java.lang.String">
+      <sql name="versionModifier" type="varchar" dirty="check" />
+    </field>
+    <field name="smallDigitalAssets" type="org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl" collection="collection">
+      <sql many-key="ContVerId" many-table="cmContVerDigAsset"/>
+    </field>
+
+    <field name="contentCategories" type="org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl" collection="collection">
+      <sql many-key="contVerId" many-table="cmContentCategory"/>
+    </field>
+
+    <field name="versionValue" type="java.lang.String">
+      <sql name="VerValue" type="clob" dirty="ignore" />
+    </field>
+  </class>
+
+<!--  Mapping for ContentVersion  -->
   <class name="org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl" identity="contentVersionId" key-generator="SEQUENCE">
     <description>ContentVersion</description>
     <cache-type type="count-limited" capacity="20000"/>

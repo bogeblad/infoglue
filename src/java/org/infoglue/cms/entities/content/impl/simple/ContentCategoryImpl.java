@@ -24,6 +24,7 @@ package org.infoglue.cms.entities.content.impl.simple;
 
 import org.infoglue.cms.entities.content.ContentCategory;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
+import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.impl.simple.CategoryImpl;
 
@@ -34,7 +35,7 @@ public class ContentCategoryImpl implements ContentCategory
 {
     private ContentCategoryVO valueObject = new ContentCategoryVO();
     private CategoryImpl category;
-    private ContentVersionImpl contentVersion;
+    private ContentVersion contentVersion;
 
 	public ContentCategoryImpl()
 	{}
@@ -92,12 +93,12 @@ public class ContentCategoryImpl implements ContentCategory
 		valueObject.setCategory(c.getValueObject());
 	}
 
-    public ContentVersionImpl getContentVersion()
+    public ContentVersion getContentVersion()
     {
         return contentVersion;
     }
     
-    public void setContentVersion(ContentVersionImpl contentVersion)
+    public void setContentVersion(ContentVersion contentVersion)
     {
         this.contentVersion = contentVersion;
         valueObject.setContentVersionId(contentVersion.getContentVersionId());

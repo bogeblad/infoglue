@@ -23,6 +23,8 @@
 
 package org.infoglue.deliver.taglib.structure;
 
+import java.util.List;
+
 import javax.servlet.jsp.JspException;
 
 import org.apache.log4j.Logger;
@@ -43,9 +45,9 @@ public class ChildPagesTag extends ComponentLogicTag
     private boolean useStructureInheritance = true;
 	private boolean escapeHTML = false;
 	private boolean hideUnauthorizedPages = false;
-	private boolean includeHidden = true;
-	private boolean populateNavigationTitle = true;
-	private boolean populatePageUrl = true;
+	private boolean includeHidden = false;
+	private Integer levelsToPopulate = 0;
+	private String nameFilter = null;
 		
 	public int doEndTag() throws JspException
     {
@@ -53,13 +55,12 @@ public class ChildPagesTag extends ComponentLogicTag
 		
 	    if(this.siteNodeId != null)
 	    {
-	        setResultAttribute(this.getController().getChildPages(this.siteNodeId, this.escapeHTML, this.hideUnauthorizedPages, this.includeHidden, this.populateNavigationTitle, this.populatePageUrl));
-		    //if(logger.isInfoEnabled())
-		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 1 tag", t.getElapsedTime());	    	
+	        setResultAttribute(this.getController().getChildPages(this.siteNodeId, this.escapeHTML, this.hideUnauthorizedPages, this.levelsToPopulate, this.nameFilter, this.includeHidden));
+	    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 1 tag", t.getElapsedTime());	    	
 	    }
         else if(this.propertyName != null)
         {
-            setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, this.includeHidden, useRepositoryInheritance, useStructureInheritance, this.populateNavigationTitle, this.populatePageUrl));
+            setResultAttribute(getComponentLogic().getChildPages(propertyName, useInheritance, this.escapeHTML, this.hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, this.levelsToPopulate, this.nameFilter));
 		    //if(logger.isInfoEnabled())
 		    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ChildPages 2 tag", t.getElapsedTime());
         }
@@ -73,16 +74,16 @@ public class ChildPagesTag extends ComponentLogicTag
 	    this.useStructureInheritance = true;
 	    this.escapeHTML = false;
 	    this.hideUnauthorizedPages = false;
-	    this.includeHidden = true;
-	    this.populateNavigationTitle = true;
-	    this.populatePageUrl = true;
+	    this.includeHidden = false;
+	    this.levelsToPopulate = 0;
+	    this.nameFilter = null;
 	    
 	    return EVAL_PAGE;
     }
 
     public void setPropertyName(String propertyName) throws JspException
     {
-        this.propertyName = evaluateString("childPages", "propertyName", propertyName);
+        this.propertyName = evaluateString("ChildPagesTag", "propertyName", propertyName);
     }
 	
     public void setSiteNodeId(String siteNodeId) throws JspException
@@ -120,13 +121,13 @@ public class ChildPagesTag extends ComponentLogicTag
 		this.includeHidden = includeHidden;
 	}
 
-	public void setPopulateNavigationTitle(boolean populateNavigationTitle) 
-	{
-		this.populateNavigationTitle = populateNavigationTitle;
-	}
+    public void setLevelsToPopulate(String levelsToPopulate) throws JspException
+    {
+        this.levelsToPopulate = evaluateInteger("ChildPagesTag", "levelsToPopulate", levelsToPopulate);
+    }
 
-	public void setPopulatePageUrl(boolean populatePageUrl) 
-	{
-		this.populatePageUrl = populatePageUrl;
-	}
+    public void setNameFilter(String nameFilter) throws JspException
+    {
+        this.nameFilter = evaluateString("ChildPagesTag", "nameFilter", nameFilter);
+    }
 }

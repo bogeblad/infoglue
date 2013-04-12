@@ -23,7 +23,10 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.TreeViewAbstractAction;
+import org.infoglue.cms.applications.contenttool.actions.CreateContentAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.treeservice.ss.SiteNodeNodeSupplier;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -34,6 +37,8 @@ import com.frovi.ss.Tree.INodeSupplier;
 public class ViewStructureToolMenuHtmlAction extends TreeViewAbstractAction
 {
 	private static final long serialVersionUID = 1L;
+
+    private final static Logger logger = Logger.getLogger(ViewStructureToolMenuHtmlAction.class.getName());
 
 	private Integer repositoryId;
 	private Integer select = -1;

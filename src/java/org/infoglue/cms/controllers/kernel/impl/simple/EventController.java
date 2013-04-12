@@ -24,8 +24,11 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -92,12 +95,9 @@ public class EventController extends BaseController
 	
 	public static EventVO create(EventVO eventVO, Integer repositoryId, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException
     {
-        //Fetch related entities here if they should be referenced        
-     	Repository repository = RepositoryController.getController().getRepositoryWithId(repositoryId, db);
-     	
         Event event = new EventImpl();
         event.setValueObject(eventVO);				
-        event.setRepository((RepositoryImpl)repository);
+        event.setRepositoryId(repositoryId);
         event.setCreator(infoGluePrincipal.getName());
         
         try
@@ -126,12 +126,9 @@ public class EventController extends BaseController
 		beginTransaction(db);
 		try
         {
-	        //Fetch related entities here if they should be referenced        
-	     	Repository repository = RepositoryController.getController().getRepositoryWithId(repositoryId, db);
-	     	
 	        event = new EventImpl();
 	        event.setValueObject(eventVO);				
-	        event.setRepository((RepositoryImpl)repository);
+	        event.setRepositoryId(repositoryId);
             event.setCreator(infoGluePrincipal.getName());
             db.create(event);
     
@@ -240,6 +237,65 @@ public class EventController extends BaseController
 	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
 	 */
 	
+	public static Map<Integer,List<EventVO>> getPublicationRepositoryEvents() throws SystemException, Bug
+	{
+		Map<Integer,List<EventVO>> repoEvents = new HashMap<Integer,List<EventVO>>();
+		
+		boolean hasBrokenItems = false;
+		
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.MONTH, -12);
+			
+            OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.creationDateTime > $3 ORDER BY e.eventId desc LIMIT $4");
+        	oql.bind(EventVO.PUBLISH);
+        	oql.bind(EventVO.UNPUBLISH_LATEST);
+        	oql.bind(cal.getTime());
+        	oql.bind(1000);
+        	
+        	//logger.info("Fetching entity in read/write mode" + repositoryId);
+        	QueryResults results = oql.execute(Database.ReadOnly);
+        	
+			while (results.hasMore()) 
+            {
+            	Event event = (Event)results.next();
+            	if(event.getRepositoryId() != null)
+            	{
+	             	List<EventVO> events = repoEvents.get(event.getRepositoryId());
+	             	if(events == null)
+	             	{
+	             		events = new ArrayList<EventVO>();
+	             		repoEvents.put(event.getRepositoryId(), events);
+	             	}
+	             	events.add(event.getValueObject());
+            	}
+            	else
+            		System.out.println("Skipping event as it does not belong to a repo...:" + event.getId());
+            }
+            
+			results.close();
+			oql.close();
+
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+        	logger.error("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return repoEvents;	
+	}
+
+	
+	/**
+	 * Returns a list of events with either publish or unpublish-state currently available for the repository stated.
+	 */
+	
 	public static List getPublicationEventVOListForRepository(Integer repositoryId, InfoGluePrincipal principal, String filter, boolean validate) throws SystemException, Bug
 	{
 		List events = new ArrayList();
@@ -251,7 +307,7 @@ public class EventController extends BaseController
 		
 		try
         {
-            OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.repository.repositoryId = $3 ORDER BY e.eventId desc");
+            OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.repositoryId = $3 ORDER BY e.eventId desc");
         	oql.bind(EventVO.PUBLISH);
         	oql.bind(EventVO.UNPUBLISH_LATEST);
         	oql.bind(repositoryId);
@@ -467,7 +523,7 @@ public class EventController extends BaseController
 
         try
         {
-            OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.repository.repositoryId = $3 ORDER BY e.eventId desc");
+            OQLQuery oql = db.getOQLQuery( "SELECT e FROM org.infoglue.cms.entities.workflow.impl.simple.EventImpl e WHERE (e.typeId = $1 OR e.typeId = $2) AND e.repositoryId = $3 ORDER BY e.eventId desc");
         	oql.bind(EventVO.PUBLISH);
         	oql.bind(EventVO.UNPUBLISH_LATEST);
         	oql.bind(repositoryId);
@@ -569,11 +625,14 @@ public class EventController extends BaseController
 	            	}
 					else if(event.getEntityClass().equalsIgnoreCase(SiteNodeVersion.class.getName()))
 					{
-						SiteNodeVersion siteNodeVersion = null;
+						SiteNodeVersionVO siteNodeVersion = null;
+						SiteNodeVO siteNode = null;
 						
 						try
 	            		{
-							siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(event.getEntityId(), db);
+							siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId(), db);
+							if(siteNodeVersion != null && siteNodeVersion.getSiteNodeId() != null)
+								siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
 	            		}
 	            		catch(SystemException e)
 	            		{
@@ -581,11 +640,11 @@ public class EventController extends BaseController
 	            			throw e;
 	            		}
 
-	    				if(siteNodeVersion == null || siteNodeVersion.getOwningSiteNode() == null)
+						if(siteNodeVersion == null || siteNode == null)
 						{
 						    isBroken = true;
 						    isValid = false;
-						    SiteNodeVersionController.getController().delete(siteNodeVersion, db);
+						    SiteNodeVersionController.getController().delete(siteNodeVersion.getId(), db);
 						}
 						else
 	            		{

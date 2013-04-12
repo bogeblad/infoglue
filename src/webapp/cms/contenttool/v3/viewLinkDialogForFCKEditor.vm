@@ -13,8 +13,16 @@
 		
 	  	if(dimensionsWidth != 0)
 	  	{
+	  		/*
+	  		alert($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4);
+	  		alert($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 6);
+	  		alert(dimensionsHeight - 220);
+	  		$(".inlineTabDiv").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4);
+			$(".inlineTabDiv > iframe").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 6);
+			$(".inlineSubTabDiv").height(dimensionsHeight - 220);
+			*/
 			$(".inlineTabDiv").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
-			$(".inlineTabDiv > iframe").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 4).width($("#tabsContainer").width());
+			$(".inlineTabDiv > iframe").height($("#tabsContainer").height() - $("#tabsContainer > ul").height() - 6).width($("#tabsContainer").width());
 
 	  		$(".inlineSubTabDiv").height(dimensionsHeight - 220);
 			$(".inlineSubTabDiv").width(dimensionsHeight - 40);
@@ -302,7 +310,7 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3 style="text-indent: 16px;">$ui.getString("tool.contenttool.linkDialog.linkDialogHeader")</h3>
+	<h3>$ui.getString("tool.contenttool.linkDialog.linkDialogHeader")</h3>
 
 	<div id="tabsContainer" class="flora">      
 
@@ -312,7 +320,7 @@
 	    </ul>
 	
 		<div id="internalLinkTab" class="inlineTabDiv">
-			<iframe frameborder="0" marginwidth="0" marginheight="0" scrolling="no" name="internalLinkFrame" id="internalLinkFrame" src="" width="690" height="450" ></iframe>
+			<iframe frameborder="0" marginwidth="0" marginheight="0" ascrolling="no" name="internalLinkFrame" id="internalLinkFrame" src="" width="690" height="450" ></iframe>
 		</div>
 
 		<div id="internalAssetTab" class="inlineTabDiv">

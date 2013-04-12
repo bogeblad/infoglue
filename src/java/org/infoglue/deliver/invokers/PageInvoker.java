@@ -46,9 +46,12 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNode;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.NoBaseTemplateFoundException;
 import org.infoglue.cms.exception.SystemException;
@@ -56,6 +59,7 @@ import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
+import org.infoglue.deliver.cache.PageCacheHelper;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
@@ -198,151 +202,48 @@ public abstract class PageInvoker
 			if(pageCacheTimeout == null)
 				pageCacheTimeout = this.getTemplateController().getPageCacheTimeout();
 			
-			//if(compressPageCache != null && compressPageCache.equalsIgnoreCase("true"))
-			//{
-				if(pageCacheTimeout == null)
-				{
-				    //cachedCompressedData = (byte[])CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey());
-					Class[] argsClasses = new Class[2];
-					argsClasses[0] = String.class;
-					argsClasses[1] = String.class;
-					
-					Object[] args = new Object[]{pageCacheName, pageCacheExtraName};
-					
-					this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), true, "utf-8", true, this, this.getClass().getMethod("invokeAndDecoratePage", argsClasses), args, this);
-				    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey());
-				    /*
-				    String[] cachedEntities = (String[])CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey() + "_entities");
-				    for(String s : cachedEntities)
-					{
-						System.out.println("l:" + s);
-					}*/
-				}
-				else
-				{
-				    //cachedCompressedData = (byte[])CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
-					this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue(), true, "utf-8", false);
-				    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
-				
-				    if(this.pageString == null)
-				    {
-				    	invokePage();
-						this.pageString = getPageString();
-						
-						//TEST
-						getLastModifiedDateTime();
-						//END TEST
-
-						pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
-
-						this.getDeliveryContext().setPagePath(this.templateController.getCurrentPagePath());
-				    }
-				}
-				
-			    if(cachedExtraData != null)
-			    	this.getDeliveryContext().populateExtraData(cachedExtraData);
-			//}
-			/*
-			else
-			/
+			System.out.println("pageCacheTimeout:" + pageCacheTimeout);
+			if(pageCacheTimeout == null)
 			{
-				if(pageCacheTimeout == null)
-				{
-					//this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey());
-					this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), true, "utf-8", false);
-					cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey());
-				}
-				else
-				{
-					//this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
-					this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue(), true, "utf-8", false);
-					cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
-				}
-			    if(cachedExtraData != null)
-			    	this.getDeliveryContext().populateExtraData(cachedExtraData);					
+			    //cachedCompressedData = (byte[])CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey());
+				Class[] argsClasses = new Class[2];
+				argsClasses[0] = String.class;
+				argsClasses[1] = String.class;
+				
+				Object[] args = new Object[]{pageCacheName, pageCacheExtraName};
+				
+				this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), true, "utf-8", true, this, this.getClass().getMethod("invokeAndDecoratePage", argsClasses), args, this);
+			    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey());
 			}
-			*/
-
-			//String invokeAndDecoratePage();
-			/*
-			if(this.pageString == null)
+			else
 			{
-			invokePage();
-			this.pageString = getPageString();
-
-			//TEST
-			getLastModifiedDateTime();
-			//END TEST
-			
-			pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
-
-			if(!this.getTemplateController().getIsPageCacheDisabled() && !this.getDeliveryContext().getDisablePageCache()) //Caching page if not disabled
-			{
-				Integer newPageCacheTimeout = getDeliveryContext().getPageCacheTimeout();
-				if(newPageCacheTimeout == null)
-					newPageCacheTimeout = this.getTemplateController().getPageCacheTimeout();
-				
-				String pageKey = this.getDeliveryContext().getPageKey();
-				String[] allUsedEntitiesCopy = this.getDeliveryContext().getAllUsedEntities().clone();
-				Object extraData = this.getDeliveryContext().getExtraData();
-				
-				String compressPageCache = CmsPropertyHandler.getCompressPageCache();
-				//logger.info("compressPageCache:" + compressPageCache);
-			    if(compressPageCache != null && compressPageCache.equalsIgnoreCase("true"))
-				{
-					long startCompression = System.currentTimeMillis();
-					byte[] compressedData = compressionHelper.compress(this.pageString);		
-				    //logger.info("Compressing page for pageCache took " + (System.currentTimeMillis() - startCompression) + " with a compressionFactor of " + (this.pageString.length() / compressedData.length));
-					if(this.getTemplateController().getOperatingMode().intValue() == 3 && !CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
-					{
-						//CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, compressedData, allUsedEntitiesCopy, false);
-					    CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, compressedData, allUsedEntitiesCopy, false, true, false, "utf-8");
-					    //CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_usedEntities", allUsedEntitiesCopy, allUsedEntitiesCopy, true);
-						CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, false);
-			    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, false);    
-					}
-					else
-					{
-					    //CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, compressedData, allUsedEntitiesCopy, true);
-					    CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, compressedData, allUsedEntitiesCopy, false, true, false, "utf-8");
-					    //CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_usedEntities", allUsedEntitiesCopy, allUsedEntitiesCopy, true);
-					    CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, true);
-			    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, true);    
-					}
-				}
+			    //cachedCompressedData = (byte[])CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
+				//this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue(), true, "utf-8", false);
+				Object pageCacheFileName = CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue(), true, "utf-8", false);
+			    if(pageCacheFileName != null && !pageCacheFileName.equals(""))
+			    	 this.pageString = PageCacheHelper.getInstance().getCachedPageString(this.getDeliveryContext().getPageKey(), new File(pageCacheFileName.toString()));
 			    else
+			    	logger.info("No page file name in memory cache:" + this.getDeliveryContext().getPageKey());
+			    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
+
+			    if(this.pageString == null)
 			    {
-			        if(this.getTemplateController().getOperatingMode().intValue() == 3 && !CmsPropertyHandler.getLivePublicationThreadClass().equalsIgnoreCase("org.infoglue.deliver.util.SelectiveLivePublicationThread"))
-			        {
-			        	//CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, pageString, allUsedEntitiesCopy, false);
-			        	CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, pageString, allUsedEntitiesCopy, false, true, false, "utf-8");
-			        	//CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_usedEntities", allUsedEntitiesCopy, allUsedEntitiesCopy, true);
-			    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, false);
-			    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, false);    
-			        }
-			    	else
-			    	{
-			    		//CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, pageString, allUsedEntitiesCopy, true);    
-					    CacheController.cacheObjectInAdvancedCache(pageCacheName, pageKey, pageString, allUsedEntitiesCopy, false, true, false, "utf-8");
-					    //CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_usedEntities", allUsedEntitiesCopy, allUsedEntitiesCopy, true);
-			    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey, extraData, allUsedEntitiesCopy, true);
-			    		CacheController.cacheObjectInAdvancedCache(pageCacheExtraName, pageKey + "_pageCacheTimeout", newPageCacheTimeout, allUsedEntitiesCopy, true);    
-			    	}
+			    	invokePage();
+					this.pageString = getPageString();
+					
+					//TEST
+					getLastModifiedDateTime();
+					//END TEST
+
+					pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
+
+					this.getDeliveryContext().setPagePath(this.templateController.getCurrentPagePath());
 			    }
 			}
-			else
-			{
-				if(logger.isInfoEnabled())
-					logger.info("Page caching was disabled for the page " + this.getDeliveryContext().getSiteNodeId() + " with pageKey " + this.getDeliveryContext().getPageKey() + " - modifying the logic to enable page caching would boast performance.");
-			}
-		}
-		else
-		{
-			if(logger.isInfoEnabled())
-				logger.info("There was a cached copy..."); // + pageString);
-		}
-		*/
 			
+		    if(cachedExtraData != null)
+		    	this.getDeliveryContext().populateExtraData(cachedExtraData);
+		    
 			//Caching the pagePath
 			this.getDeliveryContext().setPagePath((String)CacheController.getCachedObject("pagePathCache", this.getDeliveryContext().getPageKey()));
 			if(this.getDeliveryContext().getPagePath() == null)
@@ -474,10 +375,13 @@ public abstract class PageInvoker
 			    {
 			    	out = this.getResponse().getOutputStream();
 			    }
-			   
-			    out.write(pageString.getBytes(charSet));
-			    //out.write(pageString.getBytes(languageVO.getCharset()));
-				out.flush();
+			    
+			    if(pageString != null)
+			    	out.write(pageString.getBytes(charSet));
+			    else
+			    	out.write("Error: got null pagestring".getBytes(charSet));
+			    	
+			    out.flush();
 				out.close();
 			}
 			else
@@ -532,7 +436,9 @@ public abstract class PageInvoker
 	{
 		if(this.pageString == null)
 		{
+			System.out.println("A");
 			invokePage();
+			System.out.println("B");
 			this.pageString = getPageString();
 
 			//TEST
@@ -843,10 +749,14 @@ public abstract class PageInvoker
 				}
 				try
 				{
-					SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(deliveryContext).getSiteNode(getDatabase(), getTemplateController().getSiteNodeId());
+					SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(deliveryContext).getSiteNodeVO(getDatabase(), getTemplateController().getSiteNodeId());
 					String dnsName = CmsPropertyHandler.getWebServerAddress();
-					if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-						dnsName = siteNode.getRepository().getDnsName();
+					if(siteNodeVO != null)
+					{
+						RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
+						if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+							dnsName = repositoryVO.getDnsName();
+					}
 
 					String bundleUrl = "";
 					String bundleUrlTag = "";

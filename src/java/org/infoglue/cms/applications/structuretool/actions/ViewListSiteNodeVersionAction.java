@@ -31,9 +31,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
+import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
@@ -44,6 +47,8 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.AccessConstraintException;
+import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.AccessConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.RequestAnalyser;
@@ -64,8 +69,8 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	private static final long serialVersionUID = 1L;
 
-	private List<SiteNodeVersionVO> siteNodeVersionVOList = null;
-	private List<ContentVersionVO> contentVersionVOList = null;
+	private List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
+	private List<SiteNodeVersionVO> siteNodeVersionVOList = new ArrayList<SiteNodeVersionVO>();
 	
 	private Integer siteNodeVersionId;
 	private Integer siteNodeId;
@@ -81,67 +86,137 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 
 	protected String doExecute() throws Exception 
 	{
-		Timer t = new Timer();
-		
-		Set<ContentVersionVO> contentVersionVOList = new HashSet<ContentVersionVO>();
-		Set<SiteNodeVersionVO> siteNodeVersionVOList = new HashSet<SiteNodeVersionVO>();
+		ProcessBean processBean = ProcessBean.createProcessBean(ViewListSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
+		processBean.setStatus(ProcessBean.RUNNING);
 
-		logger.info("siteNodeId:" + this.siteNodeId);
-		logger.info("siteNodeVersionId:" + this.siteNodeVersionId);
-		if(this.siteNodeVersionId == null)
+		try
 		{
-		    SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getACLatestActiveSiteNodeVersionVO(this.getInfoGluePrincipal(), siteNodeId);
-		    if(siteNodeVersionVO != null)
-		        this.siteNodeVersionId = siteNodeVersionVO.getId();
-		}
-		
-		RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListSiteNodeVersion 1", t.getElapsedTime());
-		
-		if(this.siteNodeVersionId != null)
-		{
-			AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
-		
-			Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
-			if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.SubmitToPublish", protectedSiteNodeVersionId.toString()))
-				ceb.add(new AccessConstraintException("SiteNodeVersion.siteNodeVersionId", "1005"));
-		
-			ceb.throwIfNotEmpty();
-
-			if(contentId != null && contentId > -1)
+			Timer t = new Timer();
+			
+			logger.info("siteNodeId:" + this.siteNodeId);
+			logger.info("siteNodeVersionId:" + this.siteNodeVersionId);
+			if(this.siteNodeVersionId == null)
 			{
-				Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(contentId);
-				if(protectedContentId == null || AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.SubmitToPublish", protectedContentId.toString()))
+			    SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getACLatestActiveSiteNodeVersionVO(this.getInfoGluePrincipal(), siteNodeId);
+			    if(siteNodeVersionVO != null)
+			        this.siteNodeVersionId = siteNodeVersionVO.getId();
+			}
+			
+			if(this.siteNodeVersionId != null)
+			{
+				AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
+			
+				Integer protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionId);
+				if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.SubmitToPublish", protectedSiteNodeVersionId.toString()))
+					ceb.add(new AccessConstraintException("SiteNodeVersion.siteNodeVersionId", "1005"));
+		
+				ceb.throwIfNotEmpty();
+	
+				if(contentId != null && contentId > -1)
 				{
-					ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(getInfoGluePrincipal(), contentId);
-					List languageVOList = LanguageController.getController().getLanguageVOList(contentVO.getRepositoryId());
-					Iterator languageVOListIterator = languageVOList.iterator();
-					while(languageVOListIterator.hasNext())
+					Integer protectedContentId = ContentControllerProxy.getController().getProtectedContentId(contentId);
+					if(protectedContentId == null || AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "Content.SubmitToPublish", protectedContentId.toString()))
 					{
-						LanguageVO language = (LanguageVO)languageVOListIterator.next();
-						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, language.getId());
-						if(contentVersionVO != null && contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+						ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(getInfoGluePrincipal(), contentId);
+						List languageVOList = LanguageController.getController().getLanguageVOList(contentVO.getRepositoryId());
+						Iterator languageVOListIterator = languageVOList.iterator();
+						while(languageVOListIterator.hasNext())
 						{
-							contentVersionVOList.add(contentVersionVO);
+							LanguageVO language = (LanguageVO)languageVOListIterator.next();
+							ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, language.getId());
+							if(contentVersionVO != null && contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+							{
+								this.contentVersionVOList.add(contentVersionVO);
+							}
 						}
 					}
 				}
+	
+				processBean.updateProcess(getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.gettingItems"));
+				
+				Set<SiteNodeVersionVO> siteNodeVersionVOList = new HashSet<SiteNodeVersionVO>();
+				Set<ContentVersionVO> contentVersionVOList = new HashSet<ContentVersionVO>();
+				
+				SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(this.siteNodeId, SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, recurseSiteNodes, this.getInfoGluePrincipal(), processBean, getLocale());
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListContentVersion.getSiteNodeAndAffectedItemsRecursive", t.getElapsedTime());
+				
+				processBean.updateProcess(getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.found", siteNodeVersionVOList.size() + "/" + contentVersionVOList.size()));
+				processBean.updateProcess(getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.gettingMetaData"));
+				
+				Database db = CastorDatabaseService.getDatabase();
+	
+		        beginTransaction(db);
+	
+		        try
+		        {
+		        	boolean skipDisplayName = false;
+					for(SiteNodeVersionVO snVO : siteNodeVersionVOList)
+					{
+						if(snVO.getStateId() == 0)
+						{
+							if(!skipDisplayName)
+							{
+								InfoGluePrincipal principal = (InfoGluePrincipal)getInfoGluePrincipal(snVO.getVersionModifier(), db);
+								if(principal != null)
+								{
+									if(principal.getName().equalsIgnoreCase(principal.getDisplayName()))
+										skipDisplayName = true;
+									
+									snVO.setVersionModifierDisplayName(principal.getDisplayName());
+								}
+							}
+							snVO.setPath(getSiteNodePath(snVO.getSiteNodeId(), db));
+						}
+						else
+							System.out.println("Not adding siteNodeVersion..");
+					}
+
+				    this.siteNodeVersionVOList.addAll(siteNodeVersionVOList);
+				    Collections.sort(this.siteNodeVersionVOList, Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
+	
+					processBean.updateProcess("Getting modifier and path to found contents.");
+	
+					for(ContentVersionVO contentVersionVO : contentVersionVOList)
+					{
+						if(contentVersionVO.getStateId() == 0)	
+						{
+							if(!skipDisplayName)
+							{
+								InfoGluePrincipal principal = (InfoGluePrincipal)getInfoGluePrincipal(contentVersionVO.getVersionModifier(), db);
+								if(principal != null)
+								{
+									if(principal.getName().equalsIgnoreCase(principal.getDisplayName()))
+										skipDisplayName = true;
+									
+									contentVersionVO.setVersionModifierDisplayName(principal.getDisplayName());
+								}
+							}
+							contentVersionVO.setPath(getContentPath(contentVersionVO.getContentId(), db));
+						}
+						else
+							System.out.println("Not adding contentVersion..");
+					}
+	
+				    this.contentVersionVOList.addAll(contentVersionVOList);
+				    Collections.sort(this.contentVersionVOList, Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
+					
+					commitTransaction(db);
+		        }
+		        catch(Exception e)
+		        {
+		            logger.error("An error occurred so we should not complete the transaction:" + e);
+		            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+		            rollbackTransaction(db);
+		            throw new SystemException(e.getMessage());
+		        }
 			}
-			
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListSiteNodeVersion 2", t.getElapsedTime());
-			
-			SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(this.siteNodeId, SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, recurseSiteNodes, this.getInfoGluePrincipal());
-
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListSiteNodeVersion 3", t.getElapsedTime());
-			
-			this.siteNodeVersionVOList = new ArrayList<SiteNodeVersionVO>(siteNodeVersionVOList);
-			this.contentVersionVOList = new ArrayList<ContentVersionVO>(contentVersionVOList);
-			
-			Collections.sort(this.siteNodeVersionVOList, Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
-			Collections.sort(this.contentVersionVOList, Collections.reverseOrder(new ReflectionComparator("modifiedDateTime")));
-			
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewListSiteNodeVersion 4", t.getElapsedTime());
 		}
-
+		finally
+		{
+			processBean.setStatus(ProcessBean.FINISHED);
+			processBean.removeProcess();
+		}
+		
 	    return "success";
 	}
 

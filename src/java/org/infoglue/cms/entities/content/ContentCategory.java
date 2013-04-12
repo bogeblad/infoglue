@@ -52,7 +52,7 @@ public interface ContentCategory extends IBaseEntity
 	public CategoryImpl getCategory();
 	public void setCategory(CategoryImpl c);
 	
-	public ContentVersionImpl getContentVersion();
-    public void setContentVersion(ContentVersionImpl contentVersion);
+	public ContentVersion getContentVersion();
+    public void setContentVersion(ContentVersion contentVersion);
 }
 

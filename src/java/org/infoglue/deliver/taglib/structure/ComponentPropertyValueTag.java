@@ -54,6 +54,7 @@ public class ComponentPropertyValueTag extends ComponentLogicTag
     {
 	    try
 	    {
+	    	System.out.println("AAAAAAA:" + propertyName);
 	    	String propertyValue = null;
 	    	
 	        if(siteNodeId == null)
@@ -102,7 +103,8 @@ public class ComponentPropertyValueTag extends ComponentLogicTag
 	    {
 	        e.printStackTrace();
 	    }
-	    
+    	System.out.println("BBBBBB");
+
 	    parseToMap = false;
 	    
 		return EVAL_PAGE;

@@ -36,6 +36,8 @@ public class DigitalAssetVO implements BaseEntityVO, Cloneable
     private java.lang.String assetContentType;
     private java.lang.Integer assetFileSize;
     
+    //Fields that may not be populated
+    private java.lang.Integer contentId;
     private String contentPath;
 
 	/**
@@ -130,6 +132,16 @@ public class DigitalAssetVO implements BaseEntityVO, Cloneable
 	{
 		return (DigitalAssetVO)this.clone();
 	}
+
+    public java.lang.Integer getContentId()
+    {
+        return this.contentId;
+    }
+                
+    public void setContentId(java.lang.Integer contentId)
+    {
+        this.contentId = contentId;
+    }
 
 }
         

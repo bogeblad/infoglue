@@ -95,7 +95,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 	    {
 			try
 			{
-				this.parentSiteNodeVO = SiteNodeController.getParentSiteNode(this.siteNodeVO.getSiteNodeId());
+				this.parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(this.siteNodeVO.getSiteNodeId());
 				this.parentSiteNodeId = this.parentSiteNodeVO.getSiteNodeId();
 			}
 			catch(Exception e)

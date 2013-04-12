@@ -1,3 +1,4 @@
+
 /* ===============================================================================
  *
  * Part of the InfoGlue Content Management Platform (www.infoglue.org)
@@ -23,6 +24,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
  
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -32,11 +34,13 @@ import org.exolab.castor.mapping.AccessMode;
 import org.exolab.castor.persist.spi.CallbackInterceptor;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.entities.content.Content;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl;
@@ -44,6 +48,7 @@ import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl;
 import org.infoglue.cms.entities.kernel.IBaseEntity;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
@@ -61,6 +66,9 @@ import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.RolePropertiesImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallSystemUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.SubscriptionFilterImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
@@ -68,11 +76,14 @@ import org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.TransactionHistoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.UserPropertiesImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
+import org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
+import org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl;
 import org.infoglue.cms.entities.workflow.impl.simple.WorkflowDefinitionImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -81,8 +92,6 @@ import org.infoglue.cms.util.CmsSessionContextListener;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.cms.util.RemoteCacheUpdater;
 import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.RequestAnalyser;
-import org.infoglue.deliver.util.SearchIndexHelper;
 import org.infoglue.deliver.util.Timer;
 
 
@@ -96,13 +105,12 @@ import org.infoglue.deliver.util.Timer;
 public class CmsJDOCallback implements CallbackInterceptor
 {
     private final static Logger logger = Logger.getLogger(CmsJDOCallback.class.getName());
-    
+
     public void using(Object object, Database db)
     {
     	//logger.error("Using " + object);
         // ( (Persistent) object ).jdoPersistent( db );
     }
-
 
     public Class loaded(Object object, short accessMode) throws Exception
     {
@@ -125,11 +133,22 @@ public class CmsJDOCallback implements CallbackInterceptor
 		return null;
 	}
 
+
     public void storing(Object object, boolean modified) throws Exception
     {
-        // ( (Persistent) object ).jdoStore( modified );
+    	/*
+    	if(object.getClass().getName().indexOf(".ContentVersionImpl") > -1 || object.getClass().getName().indexOf(".ContentImpl") > -1 || object.getClass().getName().indexOf(".SiteNodeVersionImpl") > -1 || object.getClass().getName().indexOf(".SiteNodeImpl") > -1)
+    	{
+    		logger.warn("storing " + object.getClass().getName());
+    		if(logger.isDebugEnabled())
+    			Thread.dumpStack();
+    	}
+    	*/
 
-   		//logger.info("Should we store -------------->" + object + ":" + modified);
+		//logger.error("storing...:" + object + ":" + modified);
+		// ( (Persistent) object ).jdoStore( modified );
+   		
+   		//logger.error("Should we store -------------->" + object.getClass().getName() + ":" + modified + ":" + ((IBaseEntity)object).getId());
     	if (AccessRightGroupImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
 			AccessRightRoleImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
 			AccessRightUserImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
@@ -137,8 +156,8 @@ public class CmsJDOCallback implements CallbackInterceptor
     		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1 && modified)
 	    {
-	   		logger.info("Actually stored it:" + object + ":" + modified);
-	    	
+	    	logger.info("Actually stored it:" + object + ":" + modified);
+    	    
 			String userName = "SYSTEM";
 			try
 			{
@@ -147,7 +166,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 					userName = principal.getName();				
 			} 
 			catch (NoClassDefFoundError e){}
-
+			
 			Timer t = new Timer();
     		Map extraInfo = CacheController.getExtraInfo(SiteNodeVersionImpl.class.getName(), getObjectIdentity(object).toString());
     		//System.out.println("extraInfo in jdo callback:" + extraInfo);
@@ -156,24 +175,20 @@ public class CmsJDOCallback implements CallbackInterceptor
     			skipRemoteUpdate = true;
     		//System.out.println("skipRemoteUpdate:" + skipRemoteUpdate);
 			//This uses a hook and adds extra info to the notification if it exists
-			NotificationMessage notificationMessage = new NotificationMessage("CmsJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_UPDATE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(object.getClass().getName(), getObjectIdentity(object).toString()));
+    		String storedClassName = getNotificationClassNameAndAddExtraInfo(object, false);
+			NotificationMessage notificationMessage = new NotificationMessage("CmsJDOCallback", storedClassName, userName, NotificationMessage.TRANS_UPDATE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(storedClassName, getObjectIdentity(object).toString()));
 			if(!skipRemoteUpdate)
 				ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-			
-			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") == -1)
-			{
-				new Thread(new SearchIndexHelper(notificationMessage, 2000L)).start();
-				//LuceneController.getController().notify(notificationMessage);
-	    	}
-    	
+	
 			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
 					!object.getClass().getName().equals(RegistryImpl.class.getName()) && 
-					object.getClass().getName().indexOf("AccessRight") == -1)
+					object.getClass().getName().indexOf("AccessRight") == -1 && 
+					object.getClass().getName().indexOf("ContentTypeDefinitionImpl") == -1)
 			{
 				//System.out.println("object.getClass():" + object.getClass());
 				RemoteCacheUpdater.getSystemNotificationMessages().add(notificationMessage);
 			}
-			
+			    
 			if(object.getClass().getName().equals(RepositoryImpl.class.getName()))
 			{
 				CacheController.clearCache("repositoryCache");
@@ -203,27 +218,34 @@ public class CmsJDOCallback implements CallbackInterceptor
 			}
 			else if(object.getClass().getName().equals(AccessRightImpl.class.getName()) || object.getClass().getName().equals(AccessRightRoleImpl.class.getName()) || object.getClass().getName().equals(AccessRightGroupImpl.class.getName()) || object.getClass().getName().equals(AccessRightUserImpl.class.getName()))
 			{
+				try
+				{
+					AccessRightImpl ar = (AccessRightImpl)object;
+					String acKey = "" + ar.getValueObject().getInterceptionPointId();
+					if(ar.getValueObject().getParameters() != null && !ar.getValueObject().getParameters().equals(""))
+						acKey = "" + ar.getValueObject().getInterceptionPointId() + "_" + ar.getValueObject().getParameters();
+					CacheController.clearUserAccessCache(acKey);						  
+				}
+				catch (Exception e) 
+				{
+					logger.error("Failed to clear user cache:" + e.getMessage());
+				}
 				CacheController.clearCache("interceptionPointCache");
 				CacheController.clearCache("interceptorsCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
-				CacheController.clearCache("componentContentsCache");
-			}
-			else if(object.getClass().getName().equals(ContentTypeDefinitionImpl.class.getName()))
-			{
-				CacheController.clearCache("contentTypeDefinitionCache");
 			}
 			else if(object.getClass().getName().equals(ContentImpl.class.getName()))
 			{
+				clearCache(SmallContentImpl.class);
+				clearCache(SmallishContentImpl.class);
+				clearCache(MediumContentImpl.class);
+
 				//CacheController.clearCache("childContentCache");
 				try
 				{
 					ContentImpl content = (ContentImpl)object;
-					if(content.getContentTypeDefinition() == null || !content.getContentTypeDefinition().getName().equalsIgnoreCase("Meta info"))
-					{
-						CacheController.clearCache("componentContentsCache");		
-					}
-					CacheController.clearCacheForGroup("contentCache", "" + content.getId());
+					CacheController.clearCacheForGroup("contentCache", "content_" + content.getId());
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + content.getId());
 					CacheController.clearCacheForGroup("childContentCache", "content_" + content.getId());
 					if(content.getParentContent() != null)
@@ -233,21 +255,44 @@ public class CmsJDOCallback implements CallbackInterceptor
 				{
 					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
 				}
-				
+			}
+			else if(object.getClass().getName().equals(MediumContentImpl.class.getName()))
+			{
 				clearCache(SmallContentImpl.class);
 				clearCache(SmallishContentImpl.class);
-				clearCache(MediumContentImpl.class);
+				clearCache(ContentImpl.class);
+
+				//CacheController.clearCache("childContentCache");
+				try
+				{
+					MediumContentImpl content = (MediumContentImpl)object;
+					CacheController.clearCacheForGroup("contentCache", "content_" + content.getId());
+					CacheController.clearCacheForGroup("contentVersionCache", "content_" + content.getId());
+					CacheController.clearCache("childContentCache");
+				}
+				catch (Exception e) 
+				{
+					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+				}
 			}
 			else if(object.getClass().getName().equals(ContentVersionImpl.class.getName()))
 			{
 				try
 				{
 					ContentVersionImpl contentVersion = (ContentVersionImpl)object;
-					if(contentVersion.getOwningContent().getContentTypeDefinition() == null || !contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("Meta info"))
+					if(contentVersion.getOwningContent().getContentTypeDefinition() == null || (
+					   contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("HTMLTemplate") ||
+					   contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("PagePartTemplate")))
 					{
-						CacheController.clearCache("componentContentsCache");						
+						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getOwningContent().getId());
 					}
+
 					CacheController.clearCacheForGroup("registryCache", "" + ("org.infoglue.cms.entities.content.ContentVersion_" + getObjectIdentity(object)).hashCode());						
+
+					//CacheController.clearCacheForGroup("childContentCache", "content_" + contentVersion.getOwningContent().getId());
+					CacheController.clearCacheForGroup("childContentCache", "content_" + contentVersion.getOwningContent().getId());
+					if(contentVersion.getOwningContent().getValueObject().getParentContentId() != null)
+						CacheController.clearCacheForGroup("childContentCache", "content_" + contentVersion.getOwningContent().getValueObject().getParentContentId());					
 
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getOwningContent().getId());
 					CacheController.clearCacheForGroup("contentVersionCache", "contentVersion_" + contentVersion.getId());
@@ -257,6 +302,40 @@ public class CmsJDOCallback implements CallbackInterceptor
 					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
 				}
 
+				clearCache(MediumContentVersionImpl.class);
+				clearCache(SmallContentVersionImpl.class);
+				clearCache(SmallestContentVersionImpl.class);
+			}
+			else if(object.getClass().getName().equals(MediumContentVersionImpl.class.getName()))
+			{
+				try
+				{
+					ContentTypeDefinitionVO htmlTemplateMetaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate");
+					ContentTypeDefinitionVO pagePartTemplateMetaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("PagePartTemplate");
+					MediumContentVersionImpl contentVersion = (MediumContentVersionImpl)object;
+					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), true);
+					if(contentVO.getContentTypeDefinitionId() == null || (
+					   contentVO.getContentTypeDefinitionId().equals(htmlTemplateMetaInfoCTDVO.getId()) ||
+					   contentVO.getContentTypeDefinitionId().equals(pagePartTemplateMetaInfoCTDVO.getId())))
+					{
+						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
+					}
+
+					CacheController.clearCacheForGroup("registryCache", "" + ("org.infoglue.cms.entities.content.ContentVersion_" + getObjectIdentity(object)).hashCode());						
+
+					CacheController.clearCacheForGroup("childContentCache", "content_" + contentVO.getId());
+					if(contentVO.getParentContentId() != null)
+						CacheController.clearCacheForGroup("childContentCache", "content_" + contentVO.getParentContentId());					
+
+					CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getContentId());
+					CacheController.clearCacheForGroup("contentVersionCache", "contentVersion_" + contentVersion.getId());
+				}
+				catch (Exception e) 
+				{
+					logger.warn("Error in JDOCallback:" + e.getMessage());
+				}
+
+				clearCache(ContentVersionImpl.class);
 				clearCache(SmallContentVersionImpl.class);
 				clearCache(SmallestContentVersionImpl.class);
 			}
@@ -286,15 +365,19 @@ public class CmsJDOCallback implements CallbackInterceptor
 			else if(object.getClass().getName().equals(SiteNodeImpl.class.getName()))
 			{
 				clearCache(SmallSiteNodeImpl.class);
+				clearCache(SmallestSiteNodeImpl.class);
 				
 				try
 				{
 					SiteNodeImpl siteNode = (SiteNodeImpl)object;
 					CacheController.clearCache("siteNodeCache", "" + siteNode.getId());
-					CacheController.clearCache("siteNodeVOCache", "" + siteNode.getId());
 					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getId());
+					CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getId());
 					if(siteNode.getParentSiteNode() != null)
+					{
 						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getParentSiteNode().getId());					
+						CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getParentSiteNode().getId());					
+					}
 				}
 				catch (Exception e) 
 				{
@@ -305,30 +388,71 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCache("parentSiteNodeCache");
 				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + (Integer)getObjectIdentity(object));
 				CacheController.clearCache("siteNodeCache","" + (Integer)getObjectIdentity(object));
-				CacheController.clearCache("siteNodeVOCache","" + (Integer)getObjectIdentity(object));
 			}
-			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()))
+			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()) || object.getClass().getName().equals(MediumSiteNodeVersionImpl.class.getName()))
 			{
 				CacheController.clearCacheForGroup("registryCache", "" + ("org.infoglue.cms.entities.structure.SiteNodeVersion_" + getObjectIdentity(object)).hashCode());						
-
+				
 				clearCache(SmallSiteNodeVersionImpl.class);
+				if(object.getClass().getName().equals(MediumSiteNodeVersionImpl.class.getName()))
+				{
+					clearCache(SiteNodeVersionImpl.class);
 
-				try
+					try
+					{
+						MediumSiteNodeVersionImpl siteNodeVersion = (MediumSiteNodeVersionImpl)object;
+						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getValueObject().getSiteNodeId(), true);
+						CacheController.clearCacheForGroup("siteNodeCacheWithLatestVersion", "siteNode_" + siteNodeVO.getId());
+						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVO.getId());
+						CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNodeVO.getId());
+						if(siteNodeVO.getParentSiteNodeId() != null)
+						{
+							CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());					
+							CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());
+						}
+						
+						CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVO.getId());
+					}
+					catch (Exception e) 
+					{
+						logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+					}
+				}
+				else
 				{
 					SiteNodeVersionImpl siteNodeVersion = (SiteNodeVersionImpl)object;
-					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getId());
-					if(siteNodeVersion.getOwningSiteNode().getParentSiteNode() != null)
-						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getParentSiteNode().getId());					
+					
+					clearCache(MediumSiteNodeVersionImpl.class, siteNodeVersion.getId());
+					try
+					{
+						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getValueObject().getSiteNodeId(), true);
+						if(siteNodeVO != null)
+						{	
+							CacheController.clearCacheForGroup("siteNodeCacheWithLatestVersion", "siteNode_" + siteNodeVO.getId());
+							CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVO.getId());
+							CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNodeVO.getId());
+							if(siteNodeVO.getParentSiteNodeId() != null)
+							{
+								CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());					
+								CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());					
+							}
+							
+							CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVO.getId());
+						}
+					}
+					catch (Exception e) 
+					{
+						logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+					}
+					
 				}
-				catch (Exception e) 
-				{
-					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
-				}
+				
 
 				//CacheController.clearCache("childSiteNodesCache");
 				CacheController.clearCache("parentSiteNodeCache");
-				SiteNodeVersionImpl siteNodeVersion = (SiteNodeVersionImpl)object;
-				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getId());
+				//SiteNodeVersionImpl siteNodeVersion = (SiteNodeVersionImpl)object;
+				//CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getId());
+				//CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getId());
 			}
 			else if(object.getClass().getName().equals(WorkflowDefinitionImpl.class.getName()))
 			{
@@ -336,25 +460,25 @@ public class CmsJDOCallback implements CallbackInterceptor
 			}
 			else if(object.getClass().getName().equals(SystemUserImpl.class.getName()))
 			{
+				clearCache(SmallSystemUserImpl.class);
 				CacheController.clearCache("principalCache");
-				CacheController.clearCache("componentContentsCache");
 				CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
 			}
 			else if(object.getClass().getName().equals(GroupImpl.class.getName()))
 			{
+				clearCache(SmallGroupImpl.class);
 				CacheController.clearCache("groupListCache");
 				CacheController.clearCache("groupVOListCache");
-				CacheController.clearCache("componentContentsCache");
-			    CacheController.clearCache("principalPropertyValueCache");
+				CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(RoleImpl.class.getName()))
 			{
+				clearCache(SmallRoleImpl.class);
 				CacheController.clearCache("roleListCache");
 				CacheController.clearCache("roleVOListCache");
-				CacheController.clearCache("componentContentsCache");
-			    CacheController.clearCache("principalPropertyValueCache");
+				CacheController.clearCache("principalPropertyValueCache");
 			}
 			else if(object.getClass().getName().equals(SystemUserGroupImpl.class.getName()))
 			{
@@ -362,15 +486,14 @@ public class CmsJDOCallback implements CallbackInterceptor
 				//clearCache(GroupImpl.class);
 				CacheController.clearCache("groupListCache");
 				CacheController.clearCache("groupVOListCache");
-				CacheController.clearCache("componentContentsCache");
-
+				
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("rolePropertiesCache");
 				CacheController.clearCache("groupPropertiesCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
-
+				
 				new Thread(new Runnable() { public void run() {try {CmsSessionContextListener.reCacheSessionPrincipal();} catch (Exception e) {}}}).start();
 			}
 			else if(object.getClass().getName().equals(SystemUserRoleImpl.class.getName()))
@@ -379,7 +502,6 @@ public class CmsJDOCallback implements CallbackInterceptor
 				//clearCache(RoleImpl.class);
 				CacheController.clearCache("roleListCache");
 				CacheController.clearCache("roleVOListCache");
-				CacheController.clearCache("componentContentsCache");
 
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("principalPropertyValueCache");
@@ -419,6 +541,62 @@ public class CmsJDOCallback implements CallbackInterceptor
     	}
     }
 
+	public String getNotificationClassNameAndAddExtraInfo(Object object, boolean addMetaData) 
+	{
+		String storedClassName = object.getClass().getName();
+
+		if(storedClassName.equals("org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl"))
+		{
+			try
+			{
+				SiteNodeImpl impl = ((SiteNodeImpl)object);
+			    Map<String,String> extraInfoMap = new HashMap<String,String>();
+				extraInfoMap.put("siteNodeId", ""+impl.getId());
+			    extraInfoMap.put("parentSiteNodeId", ""+impl.getValueObject().getParentSiteNodeId());
+			    extraInfoMap.put("repositoryId", ""+impl.getValueObject().getRepositoryId());
+			    CacheController.setExtraInfo(SiteNodeImpl.class.getName(), impl.getId().toString(), extraInfoMap);
+			}
+			catch (Exception e) 
+			{
+				logger.error("Error setting extra info:" + e.getMessage(), e);
+			}
+		}		
+		else if(storedClassName.equals("org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl"))
+		{
+			storedClassName = "org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl";
+		}
+		else if(storedClassName.equals("org.infoglue.cms.entities.content.impl.simple.MediumContentImpl"))
+		{
+			/*
+			try
+			{
+				MediumContentVersionImpl impl = ((MediumContentVersionImpl)object);
+				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(impl.getId());
+	    	    Map<String,String> extraInfoMap = new HashMap<String,String>();
+	 			extraInfoMap.put("contentId", ""+contentVO.getId());
+	    	    extraInfoMap.put("parentContentId", ""+contentVO.getParentContentId());
+	    	    extraInfoMap.put("repositoryId", ""+contentVO.getRepositoryId());
+	    	    CacheController.setExtraInfo(ContentVersionImpl.class.getName(), impl.getId().toString(), extraInfoMap);
+			}
+			catch (Exception e) 
+			{
+				logger.error("Error setting extra info:" + e.getMessage(), e);
+			}
+			*/
+			storedClassName = "org.infoglue.cms.entities.content.impl.simple.ContentImpl";
+		}
+		else if(storedClassName.equals("org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl"))
+		{
+			storedClassName = "org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl";
+		}
+		else if(storedClassName.equals("org.infoglue.cms.entities.structure.impl.simple.SmallQualifyerImpl"))
+		{
+			storedClassName = "org.infoglue.cms.entities.structure.impl.simple.QualifyerImpl";
+		}
+
+		return storedClassName;
+	}
+
 	private synchronized void clearCache(Class c) throws Exception
 	{
 		Database db = CastorDatabaseService.getDatabase();
@@ -441,6 +619,26 @@ public class CmsJDOCallback implements CallbackInterceptor
 		}
 	}
 
+	private synchronized void clearCache(Class c, Object id) throws Exception
+	{
+		Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+			CacheManager manager = db.getCacheManager();
+			manager.expireCache(c, id);
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			db.close();			
+		}
+	}
+	
     public void creating( Object object, Database db )
         throws Exception
     {
@@ -450,11 +648,15 @@ public class CmsJDOCallback implements CallbackInterceptor
 
     public void created(Object object) throws Exception
     {
-    	//if(object.getClass().getName().indexOf("SystemUserImpl") > -1)
-    	//	return;
-    	
-    	Timer t = new Timer();
-    	
+    	/*
+    	if(object.getClass().getName().indexOf(".ContentVersionImpl") > -1 || object.getClass().getName().indexOf(".ContentImpl") > -1 || object.getClass().getName().indexOf(".SiteNodeVersionImpl") > -1 || object.getClass().getName().indexOf(".SiteNodeImpl") > -1)
+    	{
+    		logger.warn("created " + object.getClass().getName());
+    		if(logger.isDebugEnabled())
+    			Thread.dumpStack();
+    	}
+    	*/
+
         // ( (Persistent) object ).jdoAfterCreate();
 
 		// Write to trans-log
@@ -465,7 +667,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 		//logger.error("created...:" + object + ":" + object.getClass().getName());
     	if(logger.isInfoEnabled())
     		logger.info("created..........................." + object + ":" + object.getClass().getName());
-    	
+ 
     	if (AccessRightGroupImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
 			AccessRightRoleImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
 			AccessRightUserImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
@@ -482,14 +684,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 		    } 
 			catch (NoClassDefFoundError e){}
 			
-    	    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_CREATE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(object.getClass().getName(), getObjectIdentity(object).toString()));
+    		String storedClassName = getNotificationClassNameAndAddExtraInfo(object, false);
+    	    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", storedClassName, userName, NotificationMessage.TRANS_CREATE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(storedClassName, getObjectIdentity(object).toString()));
     	    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-			
-			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") == -1)
-			{
-				new Thread(new SearchIndexHelper(notificationMessage, 2000L)).start();
-			}
-			
+
     	    if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
     	    		!object.getClass().getName().equals(RegistryImpl.class.getName()) &&
     	    		object.getClass().getName().indexOf("AccessRight") == -1)
@@ -499,8 +697,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 			{
 				CacheController.clearCache("repositoryCache");
 			}
-			else if(object.getClass().getName().equals(CategoryImpl.class.getName()))
+			else if(object.getClass().getName().equals(CategoryImpl.class.getName()) || object.getClass().getName().equals(ContentTypeDefinitionImpl.class.getName()))
 			{
+				CacheController.clearCache("contentTypeDefinitionCache");
 				CacheController.clearCache("categoriesCache");
 			}
 			else if(object.getClass().getName().equals(InterceptionPointImpl.class.getName()))
@@ -519,28 +718,77 @@ public class CmsJDOCallback implements CallbackInterceptor
 			}
 			else if(object.getClass().getName().equals(AccessRightImpl.class.getName()) || object.getClass().getName().equals(AccessRightRoleImpl.class.getName()) || object.getClass().getName().equals(AccessRightGroupImpl.class.getName()) || object.getClass().getName().equals(AccessRightUserImpl.class.getName()))
 			{
+				try
+				{
+					AccessRightImpl ar = (AccessRightImpl)object;
+					String acKey = "" + ar.getValueObject().getInterceptionPointId();
+					if(ar.getValueObject().getParameters() != null && !ar.getValueObject().getParameters().equals(""))
+						acKey = "" + ar.getValueObject().getInterceptionPointId() + "_" + ar.getValueObject().getParameters();
+					CacheController.clearUserAccessCache(acKey);						  
+				}
+				catch (Exception e) 
+				{
+					logger.error("Failed to clear user cache:" + e.getMessage());
+				}
+
 				CacheController.clearCache("interceptionPointCache");
 				CacheController.clearCache("interceptorsCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
-				CacheController.clearCache("componentContentsCache");
-			}
-			else if(object.getClass().getName().equals(ContentTypeDefinitionImpl.class.getName()))
-			{
-				CacheController.clearCache("contentTypeDefinitionCache");
 			}
 			else if(object.getClass().getName().equals(ContentImpl.class.getName()))
 			{
-				//CacheController.clearCache("childContentCache");
-
+				try
+				{
+					ContentImpl content = (ContentImpl)object;
+					CacheController.clearCacheForGroup("childContentCache", "content_" + content.getId());
+					if(content.getValueObject().getParentContentId() != null)
+						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getValueObject().getParentContentId());					
+				}
+				catch (Exception e) 
+				{
+					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+				}
+				
 				clearCache(SmallContentImpl.class);
 				clearCache(SmallishContentImpl.class);
 				clearCache(MediumContentImpl.class);
 			}
+			else if(object.getClass().getName().equals(MediumContentImpl.class.getName()))
+			{
+				try
+				{
+					MediumContentImpl content = (MediumContentImpl)object;
+					CacheController.clearCacheForGroup("childContentCache", "content_" + content.getId());
+					if(content.getValueObject().getParentContentId() != null)
+						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getValueObject().getParentContentId());					
+				}
+				catch (Exception e) 
+				{
+					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+				}
+				
+				clearCache(SmallContentImpl.class);
+				clearCache(SmallishContentImpl.class);
+				clearCache(ContentImpl.class);
+			}
 			else if(object.getClass().getName().equals(ContentVersionImpl.class.getName()))
 			{
-				CacheController.clearCache("componentContentsCache");
+				ContentVersionImpl contentVersion = (ContentVersionImpl)object;
+				
+				CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getContentId());
 
+				clearCache(MediumContentVersionImpl.class);
+				clearCache(SmallContentVersionImpl.class);
+				clearCache(SmallestContentVersionImpl.class);
+			}
+			else if(object.getClass().getName().equals(MediumContentVersionImpl.class.getName()))
+			{
+				MediumContentVersionImpl contentVersion = (MediumContentVersionImpl)object;
+
+				CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getContentId());
+
+				clearCache(ContentVersionImpl.class);
 				clearCache(SmallContentVersionImpl.class);
 				clearCache(SmallestContentVersionImpl.class);
 			}
@@ -550,14 +798,23 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCache("parentSiteNodeCache");
 				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + (Integer)getObjectIdentity(object));
 				CacheController.clearCache("siteNodeCache","" + (Integer)getObjectIdentity(object));
-				CacheController.clearCache("siteNodeVOCache","" + (Integer)getObjectIdentity(object));
 			}
-			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()))
+			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()) || object.getClass().getName().equals(MediumSiteNodeVersionImpl.class.getName()))
 			{
 				//CacheController.clearCache("childSiteNodesCache");
 				CacheController.clearCache("parentSiteNodeCache");
-				SiteNodeVersionImpl siteNodeVersion = (SiteNodeVersionImpl)object;
-				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getId());
+				if(object.getClass().getName().equals(MediumSiteNodeVersionImpl.class.getName()))
+				{
+					MediumSiteNodeVersionImpl siteNodeVersion = (MediumSiteNodeVersionImpl)object;
+					CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId());
+					CacheController.clearCacheForGroup("siteNodeCacheWithLatestVersion", "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId());
+				}
+				else
+				{
+					SiteNodeVersion siteNodeVersion = (SiteNodeVersion)object;
+					CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId());
+					CacheController.clearCacheForGroup("siteNodeCacheWithLatestVersion", "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId());
+				}
 			}
 			else if(object.getClass().getName().equals(RepositoryLanguageImpl.class.getName()))
 			{
@@ -570,24 +827,24 @@ public class CmsJDOCallback implements CallbackInterceptor
 			}
 			else if(object.getClass().getName().equals(SystemUserImpl.class.getName()))
 			{
+				clearCache(SmallSystemUserImpl.class);
 				CacheController.clearCache("principalCache");
-				CacheController.clearCache("componentContentsCache");
 			    CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
 			}
 			else if(object.getClass().getName().equals(GroupImpl.class.getName()))
 			{
+				clearCache(SmallGroupImpl.class);
 				CacheController.clearCache("groupListCache");
-				CacheController.clearCache("componentContentsCache");
 			    CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
 			}
 			else if(object.getClass().getName().equals(RoleImpl.class.getName()))
 			{
+				clearCache(SmallRoleImpl.class);
 				CacheController.clearCache("roleListCache");
-				CacheController.clearCache("componentContentsCache");
 			    CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
@@ -598,7 +855,6 @@ public class CmsJDOCallback implements CallbackInterceptor
 				//clearCache(GroupImpl.class);
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("groupListCache");
-				CacheController.clearCache("componentContentsCache");
 				
 				CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("rolePropertiesCache");
@@ -614,7 +870,6 @@ public class CmsJDOCallback implements CallbackInterceptor
 				//clearCache(RoleImpl.class);
 				CacheController.clearCache("principalCache");
 				CacheController.clearCache("groupListCache");
-				CacheController.clearCache("componentContentsCache");
 
 				CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("rolePropertiesCache");
@@ -657,11 +912,15 @@ public class CmsJDOCallback implements CallbackInterceptor
 				clearCache(SmallDigitalAssetImpl.class);
 				clearCache(MediumDigitalAssetImpl.class);
 			}
+			else if(object.getClass().getName().equals(MediumDigitalAssetImpl.class.getName()))
+			{
+				CacheController.clearCache("digitalAssetCache");
+				clearCache(SmallDigitalAssetImpl.class);
+				clearCache(DigitalAssetImpl.class);
+			}
 
 			//logger.error("created end...:" + object);
     	}
-    	
-    	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("CmsJDOCallback.created", t.getElapsedTime());
     }
 
 
@@ -692,25 +951,10 @@ public class CmsJDOCallback implements CallbackInterceptor
 			} 
 			catch (NoClassDefFoundError e){}
 
-		    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(object.getClass().getName(), getObjectIdentity(object).toString()));
+    		String storedClassName = getNotificationClassNameAndAddExtraInfo(object, true);
+		    NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback", storedClassName, userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(storedClassName, getObjectIdentity(object).toString()));
 		    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-		    
-			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") == -1)
-			{
-				new Thread(new SearchIndexHelper(notificationMessage, 2000L)).start();
-			}
-			
-			if(object.getClass().getName().indexOf("SystemUser") == -1)
-			{
-				NotificationMessage deleteNotificationMessage = new NotificationMessage("Object deleted:", object.getClass().getName(), userName, NotificationMessage.TRANS_DELETE, getObjectIdentity(object), getObjectName(object), CacheController.getExtraInfo(object.getClass().getName(), getObjectIdentity(object).toString()));
-				TransactionHistoryController.getController().create(deleteNotificationMessage);
 
-				if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") == -1)
-				{
-					new Thread(new SearchIndexHelper(deleteNotificationMessage, 2000L)).start();
-				}
-			}
-			
 			if(object.getClass().getName().indexOf("org.infoglue.cms.entities.management") > -1 && 
 					!object.getClass().getName().equals(RegistryImpl.class.getName()) && 
 					object.getClass().getName().indexOf("AccessRight") == -1
@@ -742,11 +986,23 @@ public class CmsJDOCallback implements CallbackInterceptor
 			}
 			else if(object.getClass().getName().equals(AccessRightImpl.class.getName()) || object.getClass().getName().equals(AccessRightRoleImpl.class.getName()) || object.getClass().getName().equals(AccessRightGroupImpl.class.getName()) || object.getClass().getName().equals(AccessRightUserImpl.class.getName()))
 			{
+				try
+				{
+					AccessRightImpl ar = (AccessRightImpl)object;
+					String acKey = "" + ar.getValueObject().getInterceptionPointId();
+					if(ar.getValueObject().getParameters() != null && !ar.getValueObject().getParameters().equals(""))
+						acKey = "" + ar.getValueObject().getInterceptionPointId() + "_" + ar.getValueObject().getParameters();
+					CacheController.clearUserAccessCache(acKey);						  
+				}
+				catch (Exception e) 
+				{
+					logger.error("Failed to clear user cache:" + e.getMessage());
+				}
+
 				CacheController.clearCache("interceptionPointCache");
 				CacheController.clearCache("interceptorsCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
-				CacheController.clearCache("componentContentsCache");
 			}
 			else if(object.getClass().getName().equals(ContentTypeDefinitionImpl.class.getName()))
 			{
@@ -757,7 +1013,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 				try
 				{
 					ContentImpl content = (ContentImpl)object;
-					CacheController.clearCacheForGroup("contentCache", "" + content.getId());
+					CacheController.clearCacheForGroup("contentCache", "content_" + content.getId());
 					CacheController.clearCacheForGroup("childContentCache", "content_" + content.getId());
 					if(content.getParentContent() != null)
 						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getParentContent().getId());					
@@ -767,7 +1023,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
 				}
 				//CacheController.clearCache("childContentCache");
-
+				
 				clearCache(SmallContentImpl.class);
 				clearCache(SmallishContentImpl.class);
 				clearCache(MediumContentImpl.class);
@@ -778,10 +1034,49 @@ public class CmsJDOCallback implements CallbackInterceptor
 			else if(object.getClass().getName().equals(ContentVersionImpl.class.getName()))
 			{
 				CacheController.clearCacheForGroup("contentCategoryCache", "contentVersion_" + getObjectIdentity(object).toString());
-				CacheController.clearCache("componentContentsCache");
+
+				ContentVersionImpl contentVersion = (ContentVersionImpl)object;
+				if(contentVersion.getOwningContent().getContentTypeDefinition() == null || (
+				   contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("HTMLTemplate") ||
+				   contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("PagePartTemplate")))
+				{
+					ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getOwningContent().getId());
+				}
+
+				clearCache(MediumContentVersionImpl.class);
 				clearCache(SmallContentVersionImpl.class);
 				clearCache(SmallestContentVersionImpl.class);
-				RegistryController.getController().clearRegistryForReferencingEntityName(ContentVersion.class.getName(), getObjectIdentity(object).toString());
+				
+				RegistryController.getController().clearRegistryForReferencingEntityNameThreaded(ContentVersion.class.getName(), getObjectIdentity(object).toString());
+				//RegistryController.getController().clearRegistryForReferencingEntityName(ContentVersion.class.getName(), getObjectIdentity(object).toString());
+			}
+			else if(object.getClass().getName().equals(MediumContentVersionImpl.class.getName()))
+			{
+				MediumContentVersionImpl contentVersion = (MediumContentVersionImpl)object;
+				try
+				{
+					ContentTypeDefinitionVO htmlTemplateMetaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate");
+					ContentTypeDefinitionVO pagePartTemplateMetaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("PagePartTemplate");
+					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), true);
+					if(contentVO.getContentTypeDefinitionId() == null || (
+					   contentVO.getContentTypeDefinitionId().equals(htmlTemplateMetaInfoCTDVO.getId()) ||
+					   contentVO.getContentTypeDefinitionId().equals(pagePartTemplateMetaInfoCTDVO.getId())))
+					{
+						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
+					}
+				}
+				catch (Exception e) 
+				{
+					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+				}
+
+				clearCache(ContentVersionImpl.class);
+				clearCache(SmallContentVersionImpl.class);
+				clearCache(SmallestContentVersionImpl.class);
+				clearCache(ContentImpl.class, contentVersion.getValueObject().getContentId());
+
+				RegistryController.getController().clearRegistryForReferencingEntityNameThreaded(ContentVersion.class.getName(), getObjectIdentity(object).toString());
+				//RegistryController.getController().clearRegistryForReferencingEntityName(ContentVersion.class.getName(), getObjectIdentity(object).toString());
 			}
 			else if(object.getClass().getName().equals(RepositoryLanguageImpl.class.getName()))
 			{
@@ -796,22 +1091,31 @@ public class CmsJDOCallback implements CallbackInterceptor
 				//logger.info("We should delete all images with digitalAssetId " + getObjectIdentity(object));
 				DigitalAssetController.deleteCachedDigitalAssets((Integer)getObjectIdentity(object));
 			}
-						
+			else if(object.getClass().getName().equals(MediumDigitalAssetImpl.class.getName()))
+			{
+				CacheController.clearCache("digitalAssetCache");
+				clearCache(SmallDigitalAssetImpl.class);
+				clearCache(DigitalAssetImpl.class);
+				//logger.info("We should delete all images with digitalAssetId " + getObjectIdentity(object));
+				DigitalAssetController.deleteCachedDigitalAssets((Integer)getObjectIdentity(object));
+			}
 			else if(object.getClass().getName().equals(SiteNodeImpl.class.getName()))
 			{
 			    RegistryController.getController().clearRegistryForReferencedEntity(SiteNode.class.getName(), getObjectIdentity(object).toString());
 				RegistryController.getController().clearRegistryForReferencingEntityCompletingName(SiteNode.class.getName(), getObjectIdentity(object).toString());
-				RedirectController.getController().deleteRelatedRedirects(Integer.parseInt(getObjectIdentity(object).toString()));
 				clearCache(SmallSiteNodeImpl.class);
 				
 				try
 				{
 					SiteNodeImpl siteNode = (SiteNodeImpl)object;
 					CacheController.clearCache("siteNodeCache", "" + siteNode.getId());
-					CacheController.clearCache("siteNodeVOCache", "" + siteNode.getId());
 					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getId());
+					CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getId());
 					if(siteNode.getParentSiteNode() != null)
+					{
 						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNode.getParentSiteNode().getId());					
+						CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNode.getParentSiteNode().getId());					
+					}
 				}
 				catch (Exception e) 
 				{
@@ -822,31 +1126,65 @@ public class CmsJDOCallback implements CallbackInterceptor
 				CacheController.clearCache("parentSiteNodeCache");
 				CacheController.clearCache("repositoryRootNodesCache");
 				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + (Integer)getObjectIdentity(object));
-				CacheController.clearCache("siteNodeCache","" + (Integer)getObjectIdentity(object));
-				CacheController.clearCache("siteNodeVOCache","" + (Integer)getObjectIdentity(object));
+				CacheController.clearCacheForGroup("siteNodeCache","" + (Integer)getObjectIdentity(object));
+
 			}
-			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()))
+			else if(object.getClass().getName().equals(SiteNodeVersionImpl.class.getName()) || object.getClass().getName().equals(MediumSiteNodeVersionImpl.class.getName()))
 			{
-				clearCache(SmallSiteNodeVersionImpl.class);
+				Timer t = new Timer();
 				
-				try
+				clearCache(SmallSiteNodeVersionImpl.class);
+				if(object.getClass().getName().equals(MediumSiteNodeVersionImpl.class.getName()))
 				{
-					SiteNodeVersionImpl siteNodeVersion = (SiteNodeVersionImpl)object;
-					CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getId());
-					if(siteNodeVersion.getOwningSiteNode().getParentSiteNode() != null)
-						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getParentSiteNode().getId());					
+					clearCache(SiteNodeVersionImpl.class);
+					try
+					{
+						MediumSiteNodeVersionImpl siteNodeVersion = (MediumSiteNodeVersionImpl)object;
+						CacheController.clearCacheForGroup("siteNodeCacheWithLatestVersion", "siteNode_" + (Integer)getObjectIdentity(object));
+						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId());
+						CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId());
+						CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId());
+						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getValueObject().getSiteNodeId(), true);
+						if(siteNodeVO.getParentSiteNodeId() != null)
+						{
+							CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());					
+							CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());					
+						}
+					}
+					catch (Exception e) 
+					{
+						logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+					}
 				}
-				catch (Exception e) 
+				else
 				{
-					logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+					clearCache(MediumSiteNodeVersionImpl.class);
+					try
+					{
+						SiteNodeVersionImpl siteNodeVersion = (SiteNodeVersionImpl)object;
+						CacheController.clearCacheForGroup("siteNodeCacheWithLatestVersion", "siteNode_" + siteNodeVersion.getSiteNodeId());
+						CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVersion.getSiteNodeId());
+						CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNodeVersion.getSiteNodeId());
+						CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getValueObject().getSiteNodeId());
+						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getValueObject().getSiteNodeId(), true);
+						if(siteNodeVO.getParentSiteNodeId() != null)
+						{
+							CacheController.clearCacheForGroup("childSiteNodesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());
+							CacheController.clearCacheForGroup("childPagesCache", "siteNode_" + siteNodeVO.getParentSiteNodeId());
+						}
+					}
+					catch (Exception e) 
+					{
+						logger.warn("Error in JDOCallback:" + e.getMessage(), e);
+					}
 				}
+				
 				
 				//CacheController.clearCache("childSiteNodesCache");
 				CacheController.clearCache("parentSiteNodeCache");
-				SiteNodeVersionImpl siteNodeVersion = (SiteNodeVersionImpl)object;
-				CacheController.clearCacheForGroup("latestSiteNodeVersionCache", "siteNode_" + siteNodeVersion.getOwningSiteNode().getId());
 
-				RegistryController.getController().clearRegistryForReferencingEntityName(SiteNodeVersion.class.getName(), getObjectIdentity(object).toString());
+				RegistryController.getController().clearRegistryForReferencingEntityNameThreaded(SiteNodeVersion.class.getName(), getObjectIdentity(object).toString());
+				//RegistryController.getController().clearRegistryForReferencingEntityName(SiteNodeVersion.class.getName(), getObjectIdentity(object).toString());
 			}
 			else if(object.getClass().getName().equals(WorkflowDefinitionImpl.class.getName()))
 			{
@@ -854,24 +1192,24 @@ public class CmsJDOCallback implements CallbackInterceptor
 			}
 			else if(object.getClass().getName().equals(SystemUserImpl.class.getName()))
 			{
+				clearCache(SmallSystemUserImpl.class);
 				CacheController.clearCache("principalCache");
-				CacheController.clearCache("componentContentsCache");
 			    CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
 			}
 			else if(object.getClass().getName().equals(GroupImpl.class.getName()))
 			{
+				clearCache(SmallGroupImpl.class);
 				CacheController.clearCache("groupListCache");
-				CacheController.clearCache("componentContentsCache");
 			    CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
 			}
 			else if(object.getClass().getName().equals(RoleImpl.class.getName()))
 			{
+				clearCache(SmallRoleImpl.class);
 				CacheController.clearCache("roleListCache");
-				CacheController.clearCache("componentContentsCache");
 			    CacheController.clearCache("principalPropertyValueCache");
 				CacheController.clearCache("authorizationCache");
 				CacheController.clearCache("personalAuthorizationCache");
@@ -941,7 +1279,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			if(principal != null && principal.getName() != null)
 				userName = principal.getName();
 
-	    	NotificationMessage notificationMessage = new NotificationMessage("CmsJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_UPDATE, getObjectIdentity(object), getObjectName(object));
+	    	NotificationMessage notificationMessage = new NotificationMessage("CmsJDOCallback", object.getClass().getName(), userName, NotificationMessage.TRANS_UPDATE, getObjectIdentity(object), object.toString());
 	    	ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 	    }
 	    */
@@ -967,7 +1305,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			if(principal != null && principal.getName() != null)
 				userName = principal.getName();
 
-	    	NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback:" + object.getClass().getName(), object.getClass().getName(), userName, CmsSystem.TRANS_UPDATE, getObjectIdentity(object), getObjectName(object));
+	    	NotificationMessage notificationMessage = new NotificationMessage("CMSJDOCallback:" + object.getClass().getName(), object.getClass().getName(), userName, CmsSystem.TRANS_UPDATE, getEntityId(object), object.toString());
 	    	ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
 	    }
 */
@@ -1012,21 +1350,25 @@ public class CmsJDOCallback implements CallbackInterceptor
 	{
 		String objectName = null;
 		
-		if(entity instanceof ContentImpl)
-			objectName = ((Content)entity).getName();
-		else if(entity instanceof ContentVersionImpl)
-			objectName = ((ContentVersion)entity).getOwningContent().getName() + " (" + ((ContentVersion)entity).getLanguage().getName() + " version)";
-		else if(entity instanceof SiteNodeImpl)
-			objectName = ((SiteNode)entity).getName();
-		else if(entity instanceof SmallSiteNodeVersionImpl)
-			objectName = ((SmallSiteNodeVersionImpl)entity).getSiteNodeVersionId() + "";
-		else if(entity instanceof SiteNodeVersionImpl)
-			objectName = ((SiteNodeVersion)entity).getOwningSiteNode().getName();
-		else
-			objectName = entity.toString();
+		try
+		{
+			if(entity instanceof ContentImpl)
+				objectName = ((Content)entity).getName();
+			else if(entity instanceof ContentVersionImpl)
+				objectName = ((ContentVersion)entity).getOwningContent().getName() + " (" + ((ContentVersion)entity).getLanguage().getName() + " version)";
+			else if(entity instanceof SiteNodeImpl)
+				objectName = ((SiteNode)entity).getName();
+			else if(entity instanceof SiteNodeVersionImpl)
+				objectName = ((SiteNodeVersion)entity).getOwningSiteNode().getName();
+			else
+				objectName = entity.toString();
+		}
+		catch (Exception e) 
+		{
+			objectName = ""+entity;
+		}
 		
 		return objectName;
 	}
-
 }
 

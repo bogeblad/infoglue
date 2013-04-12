@@ -67,7 +67,7 @@ public class PropertiesCategoryImpl implements PropertiesCategory
 	public void setEntityName(String s)	{ valueObject.setEntityName(s); }
 
 	public Integer getEntityId()		{ return valueObject.getEntityId(); }
-    public void setEntityId(Integer i)	{ valueObject.setEntityId(i); }
+	public void setEntityId(Integer entityId)		{ valueObject.setEntityId(entityId); }
 
     public Integer getCategoryId()
 	{
@@ -82,7 +82,8 @@ public class PropertiesCategoryImpl implements PropertiesCategory
 	public void setCategory(CategoryImpl c)
 	{
 		category = c;
-		valueObject.setCategory(c.getValueObject());
+		if(c != null)
+			valueObject.setCategory(c.getValueObject());
 	}
 
 }

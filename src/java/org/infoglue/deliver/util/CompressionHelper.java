@@ -24,10 +24,20 @@ package org.infoglue.deliver.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
 
@@ -40,7 +50,7 @@ public class CompressionHelper
 {
     private final static Logger logger = Logger.getLogger(CompressionHelper.class.getName());
 
-    public static byte[] compress(String string) 
+    public byte[] compress(String string) 
     {
         byte[] bytes = null;
         
@@ -75,7 +85,7 @@ public class CompressionHelper
         return bytes;
     }
     
-    public static String decompress(byte[] bytes)
+    public String decompress(byte[] bytes)
     {
         try
         {
@@ -95,4 +105,84 @@ public class CompressionHelper
         return "";
     }
 
+    public void zipFolder(String folderToZip, ZipOutputStream zos) 
+    { 
+        try 
+        { 
+            File zipDir = new File(folderToZip); 
+
+            String[] dirList = zipDir.list(); 
+            byte[] readBuffer = new byte[2156]; 
+            int bytesIn = 0; 
+
+            for(int i=0; i<dirList.length; i++) 
+            { 
+                File f = new File(zipDir, dirList[i]); 
+                //System.out.println("File1: " + dirList[i]);
+	            if(f.isDirectory()) 
+	            { 
+	                String filePath = f.getPath(); 
+	                zipFolder(filePath, zos); 
+	                continue; 
+	            } 
+                
+	            FileInputStream fis = new FileInputStream(f); 
+                ZipEntry anEntry = new ZipEntry(f.getName()); 
+                zos.putNextEntry(anEntry); 
+                while((bytesIn = fis.read(readBuffer)) != -1) 
+                { 
+                    zos.write(readBuffer, 0, bytesIn); 
+                } 
+                fis.close(); 
+            } 
+        } 
+	    catch(Exception e) 
+	    { 
+	        //handle exception 
+	    } 
+    }
+    
+    
+    public void unzip(File fileToUnzip, File extractDirectory) 
+    {
+        Enumeration enumEntries;
+        ZipFile zip;
+
+        try 
+        {
+        	zip = new ZipFile(fileToUnzip);
+        	enumEntries = zip.entries();
+        	while (enumEntries.hasMoreElements()) 
+        	{
+        		ZipEntry zipentry = (ZipEntry) enumEntries.nextElement();
+        		if (zipentry.isDirectory()) 
+        		{
+        			//System.out.println("Name of Extract directory : " + zipentry.getName());
+        			(new File(zipentry.getName())).mkdir();
+        			continue;
+        		}
+        		//System.out.println("Name of Extract fille : " + zipentry.getName());
+        		extractFile(zip.getInputStream(zipentry), new FileOutputStream(extractDirectory.getPath() + File.separator + zipentry.getName()));
+        	}
+        	zip.close();
+        } 
+        catch (IOException ioe)
+        {
+        	//System.out.println("There is an IoException Occured :" + ioe);
+        	ioe.printStackTrace();
+        	return;
+        }
+    }
+        
+    public static void extractFile(InputStream inStream, OutputStream outStream) throws IOException 
+    {
+	    byte[] buf = new byte[1024];
+	    int l;
+	    while ((l = inStream.read(buf)) >= 0) 
+	    {
+	    	outStream.write(buf, 0, l);
+	    }
+	    inStream.close();
+	    outStream.close();
+    }
 }

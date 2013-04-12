@@ -460,6 +460,7 @@
 			<form method="post" name="addUserForm" action="UpdateAccessRights!addUserV3.action">
 				<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory"/>
 				<input type="hidden" name="parameters" value="$extraParameters"/>
+				<input type="hidden" id="userName" name="userName" value=""/>
 				#foreach($extraMultiParameter in $extraMultiParameters)
 				<input type="hidden" name="extraMultiParameter" value="$extraMultiParameter"/>
 				#end

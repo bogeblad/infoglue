@@ -60,9 +60,9 @@ public class CacheEvictionBean
 	private String objectId = null;
 	private String objectName = null;
 	private String typeId = null;
-	private String changedAttributeNames = null;
-	
-	public CacheEvictionBean(Integer publicationId, String userName, String timestamp, String className, String typeId, String objectId, String objectName, String changedAttributeNames)
+	private Map<String,String> extraInfo = new HashMap<String,String>();
+
+	public CacheEvictionBean(Integer publicationId, String userName, String timestamp, String className, String typeId, String objectId, String objectName, Map<String,String> extraInfo)
 	{
 		this.publicationId = publicationId;
 		if(userName != null)
@@ -73,7 +73,7 @@ public class CacheEvictionBean
 		this.typeId = typeId;
 		this.objectId = objectId;
 		this.objectName = objectName;	
-		this.changedAttributeNames = changedAttributeNames;
+		this.extraInfo = extraInfo;
 	}
 
 	public CacheEvictionBean(Integer publicationId, String userName, String timestamp, String className, String typeId, String objectId, String objectName, String receivedTimestamp, String processedTimestamp)
@@ -90,7 +90,7 @@ public class CacheEvictionBean
 		this.receivedTimestamp = Long.parseLong(receivedTimestamp);
 		this.processedTimestamp = Long.parseLong(processedTimestamp);
 	}
-
+	
 	public Integer getPublicationId()
     {
         return publicationId;
@@ -141,9 +141,9 @@ public class CacheEvictionBean
         return processedTimestamp;
     }
 
-	public String getChangedAttributeNames()
+	public Map<String,String> getExtraInformation()
     {
-        return changedAttributeNames;
+        return this.extraInfo;
     }
 
 	public static String getTransactionTypeName(Integer transactionType)
@@ -180,11 +180,11 @@ public class CacheEvictionBean
 		map.put("publicationId", "" + this.getPublicationId());
 		map.put("userName", this.getUserName());
 		map.put("timestamp", "" + this.getTimestamp());
-		map.put("className", this.getClassName());
-		map.put("objectId", this.getObjectId());
-		map.put("objectName", this.getObjectName());
-		map.put("changedAttributeNames", this.getChangedAttributeNames());
-		map.put("typeId", this.getTypeId());
+		map.put("className", "" + this.getClassName());
+		map.put("objectId", "" + this.getObjectId());
+		map.put("objectName", "" + this.getObjectName());
+		map.put("extraInfo", "" + this.getExtraInformation());
+		map.put("typeId", "" + this.getTypeId());
 		map.put("receivedTimestamp", "" + this.getReceivedTimestamp());
 		map.put("processedTimestamp", "" + this.getProcessedTimestamp());
 		String status = "Received";

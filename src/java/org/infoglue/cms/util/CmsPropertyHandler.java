@@ -105,6 +105,7 @@ public class CmsPropertyHandler
 	private static String useAccessBasedProtocolRedirects			= null;
 	private static Boolean useHashCodeInCaches						= null;
 	private static Boolean useSynchronizationOnCaches				= null;
+	private static Map cacheSettings						= null;
 	   
 	public static String getDigitalAssetPortletRegistryId()
 	{
@@ -265,7 +266,8 @@ public class CmsPropertyHandler
 		Boolean newUseHashCodeInCaches = getUseHashCodeInCaches(true);
 		Boolean newUseSynchronizationOnCaches = getUseSynchronizationOnCaches(true);
 		String newOperatingMode = getOperatingMode(true);
-		
+		Map newCacheSettings = getCacheSettings(true);
+
 		inputCharacterEncoding 						= newInputCharacterEncoding;
 		enforceRigidContentAccess 					= newEnforceRigidContentAccess;
 		niceURIEncoding								= newNiceURIEncodingg;
@@ -280,7 +282,8 @@ public class CmsPropertyHandler
 		useHashCodeInCaches 						= newUseHashCodeInCaches;
 		useSynchronizationOnCaches					= newUseSynchronizationOnCaches;
 		operatingMode 								= newOperatingMode;
-		
+		cacheSettings 						= newCacheSettings;
+
 		logger.info("Done resetting hard cached settings...");
 	}
 	
@@ -649,6 +652,16 @@ public class CmsPropertyHandler
 	public static String getContextRootPath()
 	{
 	    return contextRootPath; //getProperty("contextRootPath"); Concurrency issues...
+	}
+
+	public static String getContextDiskPath()
+	{
+		String contextDiskPath = getProperty("contextDiskPath");
+		
+		if(contextDiskPath == null || contextDiskPath.equals(""))
+			return getContextRootPath();
+		else
+			return contextDiskPath;
 	}
 
 	public static String getOperatingMode()
@@ -1057,6 +1070,11 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("enableExtranetCookies", true, "false");
 	}
 	
+	public static String getUseBrowserLanguage()
+	{
+		return getServerNodeProperty("useBrowserLanguage", true, "true");
+	}
+
 	public static String getUseAlternativeBrowserLanguageCheck()
 	{
 		return getServerNodeProperty("useAlternativeBrowserLanguageCheck", true, "false");
@@ -1105,6 +1123,11 @@ public class CmsPropertyHandler
 	public static String getInternalSearchEngine()
 	{
 		return getServerNodeProperty("internalSearchEngine", true, "lucene");
+	}
+
+	public static String getFastSearchIncludedContentTypes()
+	{
+		return getServerNodeProperty("fastSearchIncludedContentTypes", true, "Article,Image");
 	}
 
 	public static String getGACode()
@@ -1437,6 +1460,11 @@ public class CmsPropertyHandler
 	public static String getComponentRendererUrl()
 	{
 	    return getServerNodeProperty("componentRendererUrl", true, "");
+	}
+
+	public static String getRecacheWorkingUrl()
+	{
+	    return getProperty("recacheWorkingUrl", "@recacheWorkingUrl@");
 	}
 
 	public static String getComponentRendererAction()
@@ -2221,26 +2249,36 @@ public class CmsPropertyHandler
 
 	public static Map getCacheSettings()
 	{
-		Map cacheSettings = new HashMap();
-		
-	    String cacheSettingsString = CmsPropertyHandler.getServerNodeDataProperty(null, "cacheSettings", true, null, true);
-	    if(cacheSettingsString != null && !cacheSettingsString.equals(""))
-		{
-	    	try
-			{
-	    		Properties properties = new Properties();
-				properties.load(new ByteArrayInputStream(cacheSettingsString.getBytes("UTF-8")));
-				cacheSettings = properties;
-			}	
-			catch(Exception e)
-			{
-			    logger.error("Error loading properties from string. Reason:" + e.getMessage());
-				e.printStackTrace();
-			}
-		}
-	    
-	    return cacheSettings;
+		return getCacheSettings(false);
 	}
+	
+	public static Map getCacheSettings(boolean skipCaches)
+	{
+		if(cacheSettings == null || skipCaches)
+		{
+			Map localCacheSettings = new HashMap();
+			
+		    String cacheSettingsString = CmsPropertyHandler.getServerNodeDataProperty(null, "cacheSettings", true, null, skipCaches);
+		    if(cacheSettingsString != null && !cacheSettingsString.equals(""))
+			{
+		    	try
+				{
+		    		Properties properties = new Properties();
+					properties.load(new ByteArrayInputStream(cacheSettingsString.getBytes("UTF-8")));
+					localCacheSettings = properties;
+					CacheController.pattern = null;
+				}	
+				catch(Exception e)
+				{
+				    logger.error("Error loading properties from string. Reason:" + e.getMessage(), e);
+				}
+			}
+		    cacheSettings = localCacheSettings;
+		}
+
+		return cacheSettings; 
+	}
+
 
 	
 	public static List<String> getExtraPublicationPersistentCacheNames() 
@@ -2342,12 +2380,12 @@ public class CmsPropertyHandler
 		}
 	    if(properties.size() == 0)
 	    {
-	    	properties.put("�", "a");
-	    	properties.put("�", "a");
-	    	properties.put("�", "o");
-	    	properties.put("�", "A");
-	    	properties.put("�", "A");
-	    	properties.put("�", "O");
+	    	properties.put("\u00E5", "a");
+	    	properties.put("\u00E4", "a");
+	    	properties.put("\u00F6", "o");
+	    	properties.put("\u00C5", "A");
+	    	properties.put("\u00C4", "A");
+	    	properties.put("\u00D6", "O");
 	    }
 	    
 	    return properties;
@@ -2412,7 +2450,7 @@ public class CmsPropertyHandler
 
 	public static String getAccessBasedProtocolRedirectHTTPCode()
 	{
-		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "307");
+		return getServerNodeProperty("accessBasedProtocolRedirectHTTPCode", true, "301");
 	}
 
 	public static int getRedirectStatusCode()
@@ -2556,6 +2594,20 @@ public class CmsPropertyHandler
 	public static String getIpAddressesToFallbackToBasicAuth()
 	{
 		return getServerNodeProperty("ipAddressesToFallbackToBasicAuth", true, "");
+	}
+
+	public static String getUserAgentsSkippingSSOCheck()
+	{
+		String userAgentsSkippingSSOCheckString = CmsPropertyHandler.getServerNodeDataProperty("deliver", "userAgentsSkippingSSOCheck", true, null);
+	    
+	    return userAgentsSkippingSSOCheckString;
+	}
+
+	public static String getIpNumbersSkippingSSOCheck()
+	{
+		String ipNumbersSkippingSSOCheckString = CmsPropertyHandler.getServerNodeDataProperty("deliver", "ipNumbersSkippingSSOCheck", true, null);
+		
+	    return ipNumbersSkippingSSOCheckString;
 	}
 
 	public static boolean getDisableDecoratedFinalRendering()

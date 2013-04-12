@@ -24,6 +24,7 @@ package org.infoglue.deliver.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.infoglue.deliver.invokers.ComponentBasedHTMLPageInvoker;
  *
  * This class contains a lot of statistics. Badly implemented now that Atomic operations are part of Java.
  */
+
 public class Counter
 {
     private final static Logger logger = Logger.getLogger(Counter.class.getName());
@@ -53,9 +55,10 @@ public class Counter
     private static Long maxElapsedTime = new Long(0);
     private static Map allComponentsStatistics = new HashMap();
     private static Map allPageStatistics = new HashMap();
+    private static LinkedBlockingQueue<String> latestPageStatistics = new LinkedBlockingQueue<String>(100);
     private static LinkedBlockingQueue<CacheEvictionBean> latestPublications = new LinkedBlockingQueue<CacheEvictionBean>(200);
     private static List<CacheEvictionBean> ongoingPublications = new ArrayList<CacheEvictionBean>();
-     private static Integer numberOfPublicationsSinceStart = new Integer(0);
+    private static Integer numberOfPublicationsSinceStart = new Integer(0);
     
     private Counter(){}
 
@@ -118,6 +121,20 @@ public class Counter
         return latestPublicationsList;
     }
 
+    static List<String> getLatestPageStatistics()
+    {
+    	List<String> latestPagesList = new ArrayList<String>();
+    	synchronized (latestPageStatistics)
+		{
+    		Iterator<String> latestPageStatisticsIterator = latestPageStatistics.iterator();
+    		while(latestPageStatisticsIterator.hasNext())
+    		{
+    			latestPagesList.add(latestPageStatisticsIterator.next());
+    		}
+		}
+        return latestPagesList;
+    }
+    
     static void resetLatestPublications()
     {
     	synchronized (latestPublications)
@@ -140,7 +157,7 @@ public class Counter
 		}
         return ongoingPublicationsList;
     }
-    
+
     static Integer getNumberOfPublicationsSinceStart()
     {
     	synchronized (latestPublications)
@@ -163,7 +180,7 @@ public class Counter
     		latestPublications.add(bean);
 		}
     }
-    
+
     synchronized static void addOngoingPublication(CacheEvictionBean bean)
     {
     	synchronized (ongoingPublications)
@@ -171,7 +188,7 @@ public class Counter
     		ongoingPublications.add(bean);
 		}
     }
-    
+
     synchronized static void removeOngoingPublication(CacheEvictionBean bean)
     {
     	synchronized (ongoingPublications)
@@ -204,7 +221,7 @@ public class Counter
 	    		maxElapsedTime = new Long(elapsedTime);
         }
     }
-
+    
     synchronized static Set getAllComponentNames()
     {
     	synchronized (allComponentsStatistics) 
@@ -278,6 +295,7 @@ public class Counter
         	Long oldTotalElapsedTime = (Long)pageStatistics.get("totalElapsedTime");
            	Long totalElapsedTime = new Long(oldTotalElapsedTime.longValue() + elapsedTime);			
         	pageStatistics.put("totalElapsedTime", totalElapsedTime);
+        	pageStatistics.put("lastEventDate", new Date());
 
         	Integer oldTotalNumberOfInvokations = (Integer)pageStatistics.get("totalNumberOfInvokations");
         	Integer totalNumberOfInvokations = new Integer(oldTotalNumberOfInvokations.intValue() + 1);			
@@ -286,6 +304,17 @@ public class Counter
     	catch (Exception e) 
     	{
     		logger.error("Error in registerPageStatistics: " + e.getMessage());
+		}
+    }
+
+    static void registerLatestPageStatistics(String pageUrl)
+    {
+    	synchronized (latestPageStatistics)
+		{
+    		if(latestPageStatistics.remainingCapacity() == 0)
+    			latestPageStatistics.poll();
+    		
+    		latestPageStatistics.add(pageUrl);
 		}
     }
 
@@ -321,6 +350,16 @@ public class Counter
         		return totalElapsedTime.longValue() / oldTotalNumberOfInvokations.intValue();		
         	else
         		return -1;
+		}
+    }
+
+    static Date getLastEventDate(String pageUrl)
+    {
+    	Map pageStatistics = getPageStatistics(pageUrl);
+    	synchronized (pageStatistics) 
+    	{
+        	Date lastEventDate = (Date)pageStatistics.get("lastEventDate");
+        	return lastEventDate;
 		}
     }
 

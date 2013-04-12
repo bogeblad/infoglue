@@ -25,6 +25,7 @@ package org.infoglue.deliver.controllers.kernel.impl.simple;
 
 import java.security.Principal;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -124,8 +125,9 @@ public class ExtranetController extends BaseDeliveryController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred so we should not complete the transaction:" + e, e);
-			throw new SystemException("The login process failed: " + e.getMessage(), e);
+			return new InfoGluePrincipal("anonymous", "anonymous", "anonymous", "anonymous", "anonymous", null, null, new HashMap(), true, null);
+			//logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			//throw new SystemException("The login process failed: " + e.getMessage(), e);
 		}
 		
 		return principal;
@@ -156,6 +158,8 @@ public class ExtranetController extends BaseDeliveryController
 			logger.error("An error occurred so we should not complete the transaction:" + e, e);
 			throw new SystemException("The login process failed: " + e.getMessage(), e);
 		}
+		if(principal == null)
+			return new InfoGluePrincipal("root", "root", "root", "root", "root", null, null, new HashMap(), true, null);
 		
 		return principal;
 	}

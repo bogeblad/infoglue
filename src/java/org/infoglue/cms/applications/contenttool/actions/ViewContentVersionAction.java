@@ -267,6 +267,9 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     
     protected void initialize(Integer contentVersionId, Integer contentId, Integer languageId, boolean fallBackToMasterLanguage, boolean checkPermission) throws ConstraintException, Exception
     {
+    	System.out.println("contentVersionId:" + contentVersionId);
+    	System.out.println("contentId:" + contentId);
+    	System.out.println("languageId:" + languageId);
     	if(contentVersionId != null && contentId == null)
     	{
     		this.contentVersionVO = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId);    		 	
@@ -303,6 +306,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         	}
 
         	this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
+        	System.out.println("this.contentVersionVO:" + this.contentVersionVO.getId());
 		    
         	if(this.contentVersionVO == null && fallBackToMasterLanguage)
 			{
@@ -323,6 +327,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         if(contentVersionId != null)	
 			this.contentVersionVO = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId);    		 	
     		//this.contentVersionVO = ContentVersionController.getContentVersionVOWithId(contentVersionId);    		 	
+
+    	System.out.println("this.contentVersionVO:" + this.contentVersionVO.getId());
 
         /*
 		if(this.forceWorkingChange && contentVersionVO != null && !contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))

@@ -24,6 +24,9 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,11 +36,14 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInfoBean;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.deliver.util.Timer;
 
 
 /**
@@ -53,12 +59,15 @@ public class ContentControllerProxy extends ContentController
 	protected static final Integer INHERITED 	= new Integer(2);
 
 	private static List interceptors = new ArrayList();
-
+	
+	private SearchController searchController = new SearchController();
+	
 	public static ContentControllerProxy getController()
 	{
 		return new ContentControllerProxy();
 	}
 	
+
 
 	/**
 	 * This method returns a specific content-object after checking that it is accessable by the given user
@@ -71,7 +80,7 @@ public class ContentControllerProxy extends ContentController
     	
 		intercept(hashMap, "Content.Read", infogluePrincipal);
 				
-		return getSmallContentVOWithId(contentId, db, null);
+		return getSmallContentVOWithId(contentId, db);
     } 
 
 	/**
@@ -92,7 +101,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method returns a list of content-objects after checking that it is accessable by the given user
 	 */
 		
-    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap, Database db) throws SystemException, Bug, Exception
+    public List<ContentVO> getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap, Database db) throws SystemException, Bug, Exception
     {
     	return getACContentVOList(infoGluePrincipal, argumentHashMap, "Content.Read", db);
     }
@@ -101,7 +110,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method returns a list of content-objects after checking that it is accessable by the given user
 	 */
 		
-    public List getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap, String interceptionPointName, Database db) throws SystemException, Bug, Exception
+    public List<ContentVO> getACContentVOList(InfoGluePrincipal infoGluePrincipal, HashMap argumentHashMap, String interceptionPointName, Database db) throws SystemException, Bug, Exception
     {
     	List contents = null;
     	
@@ -133,7 +142,7 @@ public class ContentControllerProxy extends ContentController
         else if(method.equalsIgnoreCase("selectListOnContentTypeName"))
     	{
 			List arguments = (List)argumentHashMap.get("arguments");
-			logger.info("Arguments:" + arguments.size());   		
+			logger.info("Arguments:" + arguments.size()); 
 			contents = getContentVOListByContentTypeNames(arguments, db);
 			Iterator contentIterator = contents.iterator();
 			while(contentIterator.hasNext())
@@ -161,6 +170,7 @@ public class ContentControllerProxy extends ContentController
 		    	}
 			}
     	}
+
         return contents;
     }
 
@@ -213,7 +223,7 @@ public class ContentControllerProxy extends ContentController
 		    	
 		    	try
 		    	{
-		    	    intercept(hashMap, "Content.Read", infoGluePrincipal, false, false);
+		    	    intercept(hashMap, "Content.Read", infoGluePrincipal, false);
 		    	}
 		    	catch(Exception e)
 		    	{
@@ -280,7 +290,7 @@ public class ContentControllerProxy extends ContentController
 
 	    delete(contentVO, infogluePrincipal);
 	}   
-
+	
 	/**
 	 * This method deletes a content after first checking that the user has rights to edit it.
 	 */
@@ -353,12 +363,10 @@ public class ContentControllerProxy extends ContentController
 					protectedContentId = contentVO.getId();
 				else if(contentVO.getIsProtected().intValue() == INHERITED.intValue())
 				{
-					if(contentVO.getParentContentId() != null)
-					{
-						ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
-						if(parentContentVO != null)
-							protectedContentId = getProtectedContentId(parentContentVO.getId()); 
-					}
+					//ContentVO parentContentVO = ContentController.getParentContent(contentId);
+					ContentVO parentContentVO = ContentController.getParentContent(contentVO);
+					if(parentContentVO != null)
+						protectedContentId = getProtectedContentId(parentContentVO.getId()); 
 				}
 			}
 		}
@@ -377,11 +385,10 @@ public class ContentControllerProxy extends ContentController
 	public Integer getProtectedContentId(Integer contentId, Database db)
 	{
 		Integer protectedContentId = null;
-		boolean isContentProtected = false;
 	
 		try
 		{
-			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
+			ContentVO contentVO = ContentController.getContentController().getSmallContentVOWithId(contentId, db, null);
 			if(contentVO.getIsProtected() != null)
 			{	
 				if(contentVO.getIsProtected().intValue() == NO.intValue())
@@ -390,7 +397,7 @@ public class ContentControllerProxy extends ContentController
 					protectedContentId = contentVO.getId();
 				else if(contentVO.getIsProtected().intValue() == INHERITED.intValue())
 				{
-					ContentVO parentContentVO = ContentController.getParentContent(contentId, db);
+					ContentVO parentContentVO = ContentController.getContentController().getSmallParentContent(contentVO, db);
 					if(parentContentVO != null)
 						protectedContentId = getProtectedContentId(parentContentVO.getId(), db); 
 				}
@@ -423,7 +430,8 @@ public class ContentControllerProxy extends ContentController
 					isContentProtected = true;
 				else if(contentVO.getIsProtected().intValue() == INHERITED.intValue())
 				{
-					ContentVO parentContentVO = ContentController.getParentContent(contentId);
+					//ContentVO parentContentVO = ContentController.getParentContent(contentId);
+					ContentVO parentContentVO = ContentController.getParentContent(contentVO);
 					if(parentContentVO != null)
 						isContentProtected = getIsContentProtected(parentContentVO.getId()); 
 				}
@@ -437,7 +445,7 @@ public class ContentControllerProxy extends ContentController
 			
 		return isContentProtected;
 	}
-	
+
 	public void acCopyContent(InfoGluePrincipal infogluePrincipal, Integer contentId, Integer newParentContentId, Integer maxAssetSize, String onlyLatestVersions) throws ConstraintException, SystemException, Bug, Exception 
 	{
 		Map hashMap = new HashMap();
@@ -452,7 +460,7 @@ public class ContentControllerProxy extends ContentController
 
 		copyContent(contentId, newParentContentId, maxAssetSize, onlyLatestVersions);
 	}
-
+	
 	/*
     public static Content getContentWithId(Integer contentId, Database db) throws SystemException, Bug
     {

@@ -30,12 +30,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.applications.common.actions.WebworkAbstractAction;
 import org.infoglue.cms.applications.managementtool.actions.deployment.DeploymentCompareBean;
 import org.infoglue.cms.applications.managementtool.actions.deployment.VersionControlServerBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.management.Repository;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
@@ -156,7 +159,7 @@ public class DeploymentController
 			if(repositoryVO != null)
 			{
 				localParentContent = ContentController.getContentController().getRootContent(db, repositoryVO.getId(), principal.getName(), false);
-				masterLanguageVO = LanguageController.getController().getMasterLanguage(db, localParentContent.getRepositoryId()).getValueObject();
+				masterLanguageVO = LanguageController.getController().getMasterLanguage(localParentContent.getRepositoryId(), db);
 			}
 			
 			newIsRepositoryLevel = true;
@@ -235,7 +238,7 @@ public class DeploymentController
 					Content newParentContent = null;
 					if(localParentContent != null)
 					{
-						List childContents = ContentController.getContentController().getContentChildrenVOList(localParentContent.getId(), new String[]{"HTMLTemplate"}, false);
+						List childContents = ContentController.getContentController().getContentChildrenVOList(localParentContent.getId(), new String[]{"HTMLTemplate"});
 						logger.info("Looking for children on " + localParentContent.getName() + " - matching " + childFile.getName());
 						Iterator childContentsIterator = childContents.iterator();
 						while(childContentsIterator.hasNext())

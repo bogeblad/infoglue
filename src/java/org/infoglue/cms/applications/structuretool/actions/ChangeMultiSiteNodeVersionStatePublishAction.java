@@ -28,19 +28,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
+import org.infoglue.cms.applications.databeans.ProcessBean;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeStateController;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
+import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * This class implements submit to publish on many sitenode versions at once.
@@ -74,38 +81,71 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 	   
     public String doExecute() throws Exception
     {      
-		setSiteNodeVersionId( getRequest().getParameterValues("selSiteNodeVersions") );
+		ProcessBean processBean = ProcessBean.createProcessBean(this.getClass().getName(), "" + getInfoGluePrincipal().getName());
+		processBean.setStatus(ProcessBean.RUNNING);
 		
-		//Interception point for publishing - allows for validation plugins etc
-		Iterator it = siteNodeVersionId.iterator();
-		while(it.hasNext())
+		try
 		{
-			Integer siteNodeVersionId = (Integer)it.next();
-			Map hashMap = new HashMap();
-			hashMap.put("siteNodeVersionId", siteNodeVersionId);
-			hashMap.put("siteNodeVersionIdList", getRequest().getParameterValues("selSiteNodeVersions"));
-			intercept(hashMap, "SiteNodeVersion.SubmitToPublish", this.getInfoGluePrincipal());
-		}
-		//End interception
-		
-		it = siteNodeVersionId.iterator();
-		List events = new ArrayList();
-		while(it.hasNext())
-		{
-			Integer siteNodeVersionId = (Integer)it.next();
-			logger.info("Publishing:" + siteNodeVersionId);
-			SiteNodeStateController.getController().changeState(siteNodeVersionId, SiteNodeVersionVO.PUBLISH_STATE, getVersionComment(), this.overrideVersionModifyer, this.recipientFilter, this.getInfoGluePrincipal(), null, events);
-		}
+	    	Timer t = new Timer();
+	    	
+			setSiteNodeVersionId( getRequest().getParameterValues("selSiteNodeVersions") );
+			//Iterator it = siteNodeVersionId.iterator();
+	
+			List events = new ArrayList();
+	
+			Map<Integer,SiteNodeVO> newsiteNodeMap = new HashMap<Integer,SiteNodeVO>();
+			Map<Integer,ContentVO> newContentMap = new HashMap<Integer,ContentVO>();
+	
+			Map<Integer,SiteNodeVO> siteNodeMap = SiteNodeController.getController().getSiteNodeVOMapWithNoStateCheck(siteNodeVersionId);
+			processBean.updateProcess("Read " + siteNodeMap.size() + " pages to change state on" /*getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.gettingItems")*/);
+			for(Entry<Integer,SiteNodeVO> entry : siteNodeMap.entrySet())
+			{
+				Integer siteNodeVersionId = entry.getKey();
+				logger.info("Publishing:" + siteNodeVersionId);
+				SiteNodeVersionVO siteNodeVersion = SiteNodeStateController.getController().changeState(siteNodeVersionId, entry.getValue(), SiteNodeVersionVO.PUBLISH_STATE, getVersionComment(), this.overrideVersionModifyer, this.recipientFilter, this.getInfoGluePrincipal(), events);
+				
+				if (events.size() % 50 == 0)
+					processBean.updateLastDescription("Processed " + events.size() /*getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.gettingItems")*/);
 
-		setContentVersionId( getRequest().getParameterValues("selContentVersions") );
-		Iterator contentVersionIdsIterator = contentVersionId.iterator();
+				newsiteNodeMap.put(siteNodeVersion.getId(), entry.getValue());
+			}
+	
+			/*
+			while(it.hasNext())
+			{
+				Integer siteNodeVersionId = (Integer)it.next();
+				logger.info("Publishing:" + siteNodeVersionId);
+				SiteNodeVersionVO siteNodeVersion = SiteNodeStateController.getController().changeState(siteNodeVersionId, SiteNodeVersionVO.PUBLISH_STATE, getVersionComment(), this.overrideVersionModifyer, this.recipientFilter, this.getInfoGluePrincipal(), null, events);
+			}
+			*/
+			
+			setContentVersionId( getRequest().getParameterValues("selContentVersions") );
+			
+			Map<Integer,ContentVO> contentMap = ContentController.getContentController().getContentVOMapWithNoStateCheck(contentVersionId);
+			processBean.updateProcess("Read " + contentMap.size() + " contents to change state on" /*getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.gettingItems")*/);
+			processBean.updateLastDescription("Processing pages");
 
-		while(contentVersionIdsIterator.hasNext())
-		{
-			Integer contentVersionId = (Integer)contentVersionIdsIterator.next();
-			logger.info("Publishing:" + contentVersionId);
-			ContentStateController.changeState(contentVersionId, ContentVersionVO.PUBLISH_STATE, getVersionComment(), this.overrideVersionModifyer, this.recipientFilter, this.getInfoGluePrincipal(), null, events);
-		}
+			for(Entry<Integer,ContentVO> entry : contentMap.entrySet())
+			{
+				Integer contentVersionId = entry.getKey();
+				logger.info("Publishing:" + siteNodeVersionId);
+				ContentVersionVO contentVersion = ContentStateController.changeState(contentVersionId, entry.getValue(), ContentVersionVO.PUBLISH_STATE, getVersionComment(), this.overrideVersionModifyer, this.recipientFilter, this.getInfoGluePrincipal(), null, events);
+				
+				if (events.size() % 50 == 0)
+					processBean.updateLastDescription("Processed " + events.size());
+
+				newContentMap.put(contentVersion.getId(), entry.getValue());
+			}
+			/*
+			Iterator contentVersionIdsIterator = contentVersionId.iterator();
+			while(contentVersionIdsIterator.hasNext())
+			{
+				Integer contentVersionId = (Integer)contentVersionIdsIterator.next();
+				logger.info("Publishing:" + contentVersionId);
+				ContentVersionVO contentVersion = ContentStateController.changeState(contentVersionId, ContentVersionVO.PUBLISH_STATE, getVersionComment(), this.overrideVersionModifyer, this.recipientFilter, this.getInfoGluePrincipal(), null, events);
+			}
+			*/
+
 
         RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
         String liveAddressBaseUrl = repositoryVO.getLiveBaseUrl() + "";
@@ -134,13 +174,16 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 		    publicationVO.setName("Direct publication by " + this.getInfoGluePrincipal().getName());
 		    publicationVO.setDescription(getVersionComment());
 		    publicationVO.setRepositoryId(repositoryId);
-		    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, overrideVersionModifyer, this.getInfoGluePrincipal());
+			publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, newsiteNodeMap, newContentMap, overrideVersionModifyer, this.getInfoGluePrincipal());
+	
+			processBean.updateProcess("Creating publication"/*getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.gettingItems")*/);
 		}
 		else
 		{
             setActionMessage(userSessionKey, getLocalizedString(getLocale(), "tool.common.publishing.submitToPublishingInlineOperationDoneHeader"));
 		}
 
+		System.out.println("this.returnAddress:" + this.returnAddress);
 		if(this.returnAddress != null && !this.returnAddress.equals(""))
         {
 	        String arguments 	= "userSessionKey=" + userSessionKey + "&attemptDirectPublishing=" + attemptDirectPublishing + "&isAutomaticRedirect=false";
@@ -166,6 +209,12 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
 	       	return "success";
 		}
 		*/
+    }
+		finally
+		{
+			processBean.setStatus(ProcessBean.FINISHED);
+			processBean.removeProcess();
+		}
     }
         
     public java.lang.Integer getSiteNodeId()

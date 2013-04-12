@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.applications.contenttool.actions.CopyContentAction;
 import org.infoglue.cms.applications.databeans.LinkBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
@@ -53,6 +54,7 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
    	//  Initial params
     private Integer originalSiteNodeId;
     private Integer repositoryId;
+    private Integer siteNodeId;
     private Integer parentSiteNodeId;
     private List qualifyers = new ArrayList();
     private boolean errorsOccurred = false;
@@ -69,10 +71,13 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
     private ConstraintExceptionBuffer ceb;
    	private SiteNodeVO siteNodeVO;
    	
+   	
    	private String userSessionKey;
     private String originalAddress;
     private String returnAddress;
 
+	private String processId = null;
+	private int processStatus = -1;
   
   	public CopyMultipleSiteNodeAction()
 	{
@@ -114,24 +119,14 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
         return "input";
     }
     
+   public String doCopyDone() throws Exception
+   {    	
+       return "success";
+   }
+    
     public String doExecute() throws Exception
     {
-        userSessionKey = "" + System.currentTimeMillis();
-
-        String copyContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationDoneHeader");
-		String copyContentInlineOperationBackToCurrentPageLinkText = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationBackToCurrentContentLinkText");
-		String copyContentInlineOperationBackToCurrentPageTitleText = getLocalizedString(getLocale(), "tool.contenttool.moveContentsInlineOperationBackToCurrentContentTitleText");
-		
-	    setActionMessage(userSessionKey, copyContentInlineOperationDoneHeader);
-	    addActionLink(userSessionKey, new LinkBean("currentPageUrl", copyContentInlineOperationBackToCurrentPageLinkText, copyContentInlineOperationBackToCurrentPageTitleText, copyContentInlineOperationBackToCurrentPageTitleText, this.originalAddress, false, ""));
-        setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
-        setActionExtraData(userSessionKey, "repositoryId", "" + this.repositoryId);
-        setActionExtraData(userSessionKey, "siteNodeId", "" + newParentSiteNodeId);
-        setActionExtraData(userSessionKey, "unrefreshedSiteNodeId", "" + newParentSiteNodeId);
-        setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + newParentSiteNodeId);
-        setActionExtraData(userSessionKey, "changeTypeId", "" + 3);
-
-        if(this.newParentSiteNodeId == null)
+    	if(this.newParentSiteNodeId == null)
         {
     		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), false);
             return "chooseDestination";
@@ -139,51 +134,51 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
         
         ceb.throwIfNotEmpty();
     	
-        try
+        
+		ProcessBean processBean = ProcessBean.createProcessBean(this.getClass().getName(), "" + getInfoGluePrincipal().getName());
+		processBean.setStatus(ProcessBean.RUNNING);
+
+		try
 		{
-        	logger.warn("newParentSiteNodeId:" + newParentSiteNodeId);
-        	logger.warn("qualifyerXML:" + qualifyerXML);
             if(this.qualifyerXML != null && this.qualifyerXML.length() != 0)
 		    {
 		        Document document = new DOMBuilder().getDocument(this.qualifyerXML);
 				List siteNodes = parseSiteNodesFromXML(this.qualifyerXML);
-				Iterator i = siteNodes.iterator();
-				while(i.hasNext())
+				Iterator iterator = siteNodes.iterator();
+				int i=0;
+				while(iterator.hasNext())
 				{
-				    SiteNodeVO siteNodeVO = (SiteNodeVO)i.next();
+				    SiteNodeVO siteNodeVO = (SiteNodeVO)iterator.next();
 				    try
-					{											
-			        	logger.warn("siteNodeVO:" + siteNodeVO.getSiteNodeId());
-				        SiteNodeControllerProxy.getSiteNodeControllerProxy().acCopySiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId);
+					{		
+				    	SiteNodeControllerProxy.getSiteNodeControllerProxy().acCopySiteNode(this.getInfoGluePrincipal(), siteNodeVO, this.newParentSiteNodeId, processBean);
 					}
 					catch(Exception e)
 					{
-						e.printStackTrace();
+						logger.error("Error in copy site nodes:" + e.getMessage(), e);
 					    this.errorsOccurred = true;
 					}
+					i++;
 		    	}
 		    }
+	    	processBean.updateProcess("Finished - cleaning up");
+            Thread.sleep(1000);
 		}
 		catch(Exception e)
 		{
-		    e.printStackTrace();
+			logger.error("Error in copy site nodes:" + e.getMessage(), e);
+		}
+		finally
+		{
+			processBean.setStatus(ProcessBean.FINISHED);
+			processBean.removeProcess();
 		}
 		
 		this.topSiteNodeId = SiteNodeController.getController().getRootSiteNodeVO(this.repositoryId).getId();
 		    
-        if(this.returnAddress != null && !this.returnAddress.equals(""))
-        {
-	        String arguments 	= "userSessionKey=" + userSessionKey + "&isAutomaticRedirect=false";
-	        String messageUrl 	= returnAddress + (returnAddress.indexOf("?") > -1 ? "&" : "?") + arguments;
-	        
-	        this.getResponse().sendRedirect(messageUrl);
-	        return NONE;
-        }
-        else
-        {
-        	return "success";
-        }
+        return "success";
     }
+
 
 	private List parseSiteNodesFromXML(String qualifyerXML)
 	{

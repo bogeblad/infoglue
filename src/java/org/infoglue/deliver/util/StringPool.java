@@ -36,7 +36,10 @@ public class StringPool
 {
 	//A simple record of how many hits we get...
 	int hits = 0;
-	
+	int hitsHashCode = 0;
+
+	private ConcurrentMap<Integer,String> hashCodeMap = new ConcurrentHashMap<Integer,String>(20000);
+
 	private ConcurrentMap<String,String> contentMap = new ConcurrentHashMap<String,String>(20000);
 	private ConcurrentMap<String,String> contentVersionMap = new ConcurrentHashMap<String,String>(20000);
 	private ConcurrentMap<String,String> siteNodeMap = new ConcurrentHashMap<String,String>(20000);
@@ -52,10 +55,10 @@ public class StringPool
 		else if(type == 4)
 			map = siteNodeVersionMap;
 		
-		if (map.size() == 100000) 
+		if (map.size() > 300000) 
 		{
-			System.out.println("Many strings in the pool:" + map.size());
-			//map.clear();
+			//logger.warn("Many strings in the pool:" + map.size());
+			map.clear();
 		}
 
 		String canon = map.get(id);
@@ -75,6 +78,26 @@ public class StringPool
 		}
 		else
 			hits++;
+		
+		return canon;
+	}
+
+	public String getCanonicalVersion(Integer hashCode) 
+	{
+		if (hashCodeMap.size() > 300000) 
+		{
+			//logger.warn("Many strings in the pool:" + map.size());
+			hashCodeMap.clear();
+		}
+
+		String canon = hashCodeMap.get(hashCode);
+		if(canon == null)
+		{
+			canon = hashCode.toString();
+			hashCodeMap.put(hashCode, canon);
+		}
+		else
+			hitsHashCode++;
 		
 		return canon;
 	}

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.exolab.castor.jdo.Database;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.Bug;
@@ -53,7 +54,63 @@ public class SiteNodeControllerProxy extends SiteNodeController
 	{
 		return new SiteNodeControllerProxy();
 	}
-		
+	
+	/*
+	private void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
+	{
+		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
+    	
+		if(interceptionPointVO == null)
+			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
+			
+		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId());
+		Iterator interceptorsIterator = interceptors.iterator();
+		while(interceptorsIterator.hasNext())
+		{
+			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
+			logger.info("Adding interceptorVO:" + interceptorVO.getName());
+			try
+			{
+				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap);
+			}
+			catch(ClassNotFoundException e)
+			{
+				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
+			}
+		}
+
+	}
+	*/
+	/*
+	private void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException, Bug, Exception
+	{
+		InterceptionPoint interceptionPoint = InterceptionPointController.getController().getInterceptionPointWithName(InterceptionPointName, db);
+    	
+		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPoint.getInterceptionPointId(), db);
+		Iterator interceptorsIterator = interceptors.iterator();
+		while(interceptorsIterator.hasNext())
+		{
+			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
+			logger.info("Adding interceptorVO:" + interceptorVO.getName());
+			try
+			{
+				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPoint.getValueObject(), hashMap, db);
+			}
+			catch(ClassNotFoundException e)
+			{
+				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
+			}
+		}
+
+	}
+	*/
+	
+	/**
+	 * This method creates a siteNode after first checking that the user has rights to create it.
+	 */
+
 	public void testAc(InfoGluePrincipal infogluePrincipal, Integer id, String interceptionPointName) throws ConstraintException, SystemException, Bug, Exception
 	{
 		Map hashMap = new HashMap();
@@ -73,7 +130,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		hashMap.put("siteNodeId", parentSiteNodeId);
     	
 		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal);
-		
+
 		return SiteNodeController.getController().create(parentSiteNodeId, siteNodeTypeDefinitionId, infogluePrincipal, repositoryId, siteNodeVO);
 	}   
 
@@ -131,9 +188,9 @@ public class SiteNodeControllerProxy extends SiteNodeController
     	
 		intercept(hashMap, "SiteNodeVersion.DeleteSiteNode", infogluePrincipal);
 
-		delete(siteNodeVO, infogluePrincipal, false);
+		delete(siteNodeVO, infogluePrincipal);
 	}   
-
+	
 	/**
 	 * This method deletes a sitenode after first checking that the user has rights to delete it.
 	 */
@@ -166,8 +223,8 @@ public class SiteNodeControllerProxy extends SiteNodeController
 		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal);
 
 		moveSiteNode(siteNodeVO, newParentSiteNodeId, infogluePrincipal);
-	}
-
+	}   
+	
 	public void acChangeSiteNodeSortOrder(InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer beforeSiteNodeId, String direction) throws Exception
 	{
 		Map hashMap = new HashMap();
@@ -192,7 +249,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 	 * This method moves a content after first checking that the user has rights to edit it.
 	 */
 
-	public void acCopySiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId) throws ConstraintException, SystemException, Bug, Exception
+	public void acCopySiteNode(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, Integer newParentSiteNodeId, ProcessBean processBean) throws ConstraintException, SystemException, Bug, Exception
 	{
 		Map hashMap = new HashMap();
 		
@@ -201,7 +258,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 
 		intercept(hashMap, "SiteNodeVersion.CreateSiteNode", infogluePrincipal);
 
-		copySiteNode(siteNodeVO, newParentSiteNodeId, infogluePrincipal);
+		copySiteNode(siteNodeVO, newParentSiteNodeId, infogluePrincipal, processBean);
 	}   
 
 }

@@ -161,6 +161,16 @@ public class SiteNodeVersionImpl implements SiteNodeVersion
         }
     }
     
+    public Integer getSiteNodeId()
+    {
+        return this.valueObject.getSiteNodeId();
+    }
+            
+    public void setSiteNodeId(Integer siteNodeId)
+    {
+        this.valueObject.setSiteNodeId(siteNodeId);
+    }
+
     public String getVersionModifier()
     {
         return this.valueObject.getVersionModifier();

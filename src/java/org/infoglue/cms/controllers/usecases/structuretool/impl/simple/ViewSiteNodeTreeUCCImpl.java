@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.usecases.structuretool.impl.simple;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -96,7 +97,7 @@ public class ViewSiteNodeTreeUCCImpl extends BaseUCCController implements ViewSi
 				SiteNodeVO newSiteNodeVO = siteNodeVO;
 				
             	//Also creates an initial meta info for the sitenode.
-				SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, repositoryId, infoGluePrincipal, null);
+				SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNodeVO, repositoryId, infoGluePrincipal, null, new ArrayList());
 			}
 			
 			results.close();

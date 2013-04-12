@@ -28,6 +28,7 @@ import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 
 import com.opensymphony.workflow.WorkflowException;
 
@@ -69,7 +70,7 @@ public abstract class ContentFunction extends InfoglueFunction
 	/**
 	 *
 	 */
-	private ContentVersion contentVersion;
+	private MediumContentVersionImpl contentVersion;
 	
 	/**
 	 *
@@ -122,13 +123,13 @@ public abstract class ContentFunction extends InfoglueFunction
 	/**
 	 * 
 	 */
-	protected ContentVersion getContentVersion() 
+	protected MediumContentVersionImpl getContentVersion() 
 	{
 		if(contentVersionVO != null && contentVersion == null)
 		{
 			try 
 			{
-				contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(contentVersionVO.getContentVersionId(), getDatabase());
+				contentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(contentVersionVO.getContentVersionId(), getDatabase());
 			}
 			catch(Exception e)
 			{

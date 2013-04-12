@@ -107,7 +107,38 @@ public class CategoryController extends BaseController
 	 */
 	public Category findById(Integer id, Database db) throws SystemException
 	{
-		return (Category)getObjectWithId(CategoryImpl.class, id, db);
+		Category category = null;
+		
+		try
+		{
+			category = (Category)getObjectWithId(CategoryImpl.class, id, db);
+		}
+		catch (Exception e) 
+		{
+			if(e.getMessage().indexOf("No lock to release") > -1 || e.getMessage().indexOf("lock without first acquiring the lock") > -1)
+			{
+				logger.warn("An sync issue arose on category: " + id + ":" + e.getMessage());
+				for(int i=0; i<5; i++)
+				{
+					try
+					{
+						Thread.sleep(10);
+						category = (Category)getObjectWithId(CategoryImpl.class, id, db);
+						logger.warn("It worked out for category: " + id);
+						break;
+					}
+					catch (Exception e2) 
+					{
+						logger.warn("Still an issue with loading the category " + id + ":" + e2.getMessage());
+					}
+				}
+				if(category == null)
+					throw new SystemException("An error occurred when we repeatably tried to fetch categories. Reason:" + e.getMessage(), e);    
+			}
+			else
+				throw new SystemException("An error occurred when we tried to fetch a list of categories. Reason:" + e.getMessage(), e);    
+		}
+		return category;
 	}
 
 	/**
@@ -306,11 +337,44 @@ public class CategoryController extends BaseController
 	 */
 	public List<CategoryVO> findByParent(Integer parentId, Database db) throws SystemException
 	{
+		List<CategoryVO> list = null;
+
 		List params = new ArrayList();
 		params.add(parentId);
-		return toVOList(executeQueryReadOnly(findByParent, params, db));
+		
+		try
+		{
+			list = toVOList(executeQueryReadOnly(findByParent, params, db));
+		}
+		catch (Exception e) 
+		{
+			if(e.getMessage().indexOf("No lock to release") > -1 || e.getMessage().indexOf("lock without first acquiring the lock") > -1)
+			{
+				logger.warn("An sync issue arose on: " + parentId + ":" + e.getMessage());
+				for(int i=0; i<5; i++)
+				{
+					try
+					{
+						Thread.sleep(10);
+						list = toVOList(executeQueryReadOnly(findByParent, params, db));
+						logger.warn("It worked out for category: " + parentId);
+						break;
+					}
+					catch (Exception e2) 
+					{
+						logger.warn("Still an issue with loading the category " + parentId + ":" + e2.getMessage());
+					}
+				}
+				if(list == null)
+					throw new SystemException("An error occurred when we repeatably tried to fetch categories. Reason:" + e.getMessage(), e);    
+			}
+			else
+				throw new SystemException("An error occurred when we tried to fetch a list of categories. Reason:" + e.getMessage(), e);    
+		}
+		
+		return list;
 	}
-
+	
 	/**
 	 * Find a List of active Categories by parent.
 	 *

@@ -304,7 +304,7 @@ public class RemoteSiteNodeServiceImpl extends RemoteInfoGlueService
 	            	if(newSiteNode != null)
 	            		statusBean.getCreatedBeans().add(new CreatedEntityBean(SiteNodeVO.class.getName(), new Long(newSiteNodeVO.getId())));
 	    	        
-		            Content newMetaInfoContent = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, siteNodeVO.getRepositoryId(), this.principal, pageTemplateContentId);
+		            Content newMetaInfoContent = SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, siteNodeVO.getRepositoryId(), this.principal, pageTemplateContentId, new ArrayList());
 	            	if(newMetaInfoContent != null)
 	            		statusBean.getCreatedBeans().add(new CreatedEntityBean(ContentVO.class.getName(), new Long(newMetaInfoContent.getId())));
 	                

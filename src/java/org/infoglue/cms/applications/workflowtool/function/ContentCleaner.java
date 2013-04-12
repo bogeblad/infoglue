@@ -24,8 +24,10 @@ package org.infoglue.cms.applications.workflowtool.function;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -46,13 +48,15 @@ public class ContentCleaner extends ContentFunction
 		{
 			if(getContentVO() != null)
 			{
-				Content content = ContentController.getContentController().getContentWithId(getContentVO().getId(), getDatabase());
-				Collection versions = content.getContentVersions();
+				//Content content = ContentController.getContentController().getMediumContentWithId(getContentVO().getId(), getDatabase());
+				//Collection versions = content.getContentVersions();
+				
+				List<ContentVersionVO> versions = ContentVersionController.getContentVersionController().getContentVersionVOList(getContentVO().getId(), getDatabase());
 				boolean hasPublishedVersion = false;
-				Iterator versionsIterator = versions.iterator();
+				Iterator<ContentVersionVO> versionsIterator = versions.iterator();
 				while(versionsIterator.hasNext())
 				{
-					ContentVersion cv = (ContentVersion)versionsIterator.next();
+					ContentVersionVO cv = versionsIterator.next();
 					if(cv.getStateId().intValue() == ContentVersionVO.PUBLISHED_STATE.intValue())
 						hasPublishedVersion = true;
 				}

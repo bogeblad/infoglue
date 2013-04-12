@@ -23,6 +23,8 @@
 
 package org.infoglue.cms.applications.structuretool.wizards.actions;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -86,7 +88,7 @@ public class CreateSiteNodeWizardFinishAction extends CreateSiteNodeWizardAbstra
 	        	createSiteNodeWizardInfoBean.getSiteNodeVO().setIsBranch(new Boolean(true));
 	            SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), createSiteNodeWizardInfoBean.getParentSiteNodeId(), createSiteNodeWizardInfoBean.getSiteNodeTypeDefinitionId(), repositoryId, createSiteNodeWizardInfoBean.getSiteNodeVO(), db);            
 	            newSiteNodeVO = newSiteNode.getValueObject();
-	            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, repositoryId, this.getInfoGluePrincipal(), createSiteNodeWizardInfoBean.getPageTemplateContentId());
+	            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, repositoryId, this.getInfoGluePrincipal(), createSiteNodeWizardInfoBean.getPageTemplateContentId(), new ArrayList());
 	            
 	            commitTransaction(db);
 	        }

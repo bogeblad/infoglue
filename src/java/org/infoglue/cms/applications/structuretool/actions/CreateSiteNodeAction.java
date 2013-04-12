@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -253,7 +254,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
             SiteNode newSiteNode = SiteNodeControllerProxy.getSiteNodeControllerProxy().acCreate(this.getInfoGluePrincipal(), this.parentSiteNodeId, this.siteNodeTypeDefinitionId, this.repositoryId, this.siteNodeVO, db);            
             newSiteNodeVO = newSiteNode.getValueObject();
             t.printElapsedTime("acCreate took");
-            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId);
+            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList());
             t.printElapsedTime("createSiteNodeMetaInfoContent took");
             
             commitTransaction(db);
@@ -309,7 +310,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
             newSiteNodeVO = newSiteNode.getValueObject();
             t.printElapsedTime("acCreate took");
             
-            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNode, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId);
+            SiteNodeController.getController().createSiteNodeMetaInfoContent(db, newSiteNodeVO, this.repositoryId, this.getInfoGluePrincipal(), this.pageTemplateContentId, new ArrayList());
             t.printElapsedTime("createSiteNodeMetaInfoContent took");
             
             commitTransaction(db);

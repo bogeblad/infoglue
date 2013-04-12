@@ -61,7 +61,7 @@ public class AssetUrlTag extends ComponentLogicTag
     {
     	boolean oldUseDownloadAction = this.getController().getDeliveryContext().getUseDownloadAction();
     	this.getController().getDeliveryContext().setUseDownloadAction(useDownloadAction);
-    	
+    	System.out.println("WWWWWWWWWWWWWWWWWWWWW:" + contentId);
         try
         {
 			if(digitalAssetId != null)

@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.workflowtool.condition.InfoglueCondition;
 import org.infoglue.cms.applications.workflowtool.function.email.Attachment;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.entities.content.DigitalAssetVO;

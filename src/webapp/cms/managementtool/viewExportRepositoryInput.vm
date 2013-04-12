@@ -115,6 +115,13 @@
 				#end		
 				</select>
 	 		</p>
+	 		<p>
+		 		<label for="exportFormat">Export format:</label>
+				<select name="exportFormat">
+					<option value="3">3 (optimized)</option>
+					<option value="2">2</option>
+				</select>
+	 		</p>
 			</fieldset><br/>
 		</td>
 	</tr>

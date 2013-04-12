@@ -58,6 +58,7 @@ import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.entities.structure.impl.simple.MediumSiteNodeVersionImpl;
 import org.infoglue.cms.entities.workflow.Event;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.ConstraintException;
@@ -75,7 +76,6 @@ import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.LiveInstanceMonitor;
 import org.infoglue.deliver.util.VelocityTemplateProcessor;
-import org.jfree.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -214,6 +214,7 @@ public class PublicationController extends BaseController
 
         return res;
 	}
+	
 	/**
 	 * This method returns a list of earlier editions for this site.
 	 */
@@ -225,12 +226,17 @@ public class PublicationController extends BaseController
         beginTransaction(db);
         try
         {
-            OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl c WHERE c.repositoryId = $1 order by publicationDateTime desc");
-			oql.bind(repositoryId);
+            OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.publishing.impl.simple.PublicationImpl c WHERE c.repositoryId = $1 AND c.publicationDateTime > $2 order by publicationDateTime desc");
+
+            oql.bind(repositoryId);
+			Calendar publicationDateTimeCalendar = Calendar.getInstance();
+			publicationDateTimeCalendar.add(Calendar.MONTH, -2);
+			oql.bind(publicationDateTimeCalendar.getTime());
+
         	QueryResults results = oql.execute(Database.ReadOnly);
 
 			List allEditions = Collections.list(results);
-			
+
 			List page = allEditions.subList(startIndex, Math.min(startIndex+pageSize, allEditions.size()));
 
 			EditionBrowser browser = new EditionBrowser(allEditions.size(), pageSize, startIndex);
@@ -410,7 +416,7 @@ public class PublicationController extends BaseController
 							if(previousSiteNodeVersion != null && event != null)
 								event.setEntityId(previousSiteNodeVersion.getId());
 							SiteNodeVersionController.getController().delete(siteNodeVersion, db);
-							SiteNodeStateController.getController().changeStateOnMetaInfo(db, previousSiteNodeVersion, previousSiteNodeVersion.getStateId(), "Denied publication", true, infoGluePrincipal, new ArrayList());
+							SiteNodeStateController.getController().changeStateOnMetaInfo(db, siteNode.getValueObject(), previousSiteNodeVersion.getValueObject(), previousSiteNodeVersion.getStateId(), "Denied publication", true, infoGluePrincipal, new ArrayList());
 							//db.remove(siteNodeVersion);
 						}
 					}
@@ -437,7 +443,7 @@ public class PublicationController extends BaseController
 				mailNotification(event, publisher.getName(), publisher.getEmail(), email, comment, referenceUrl);
 			}
 
-			commitTransaction(db);
+			commitRegistryAwareTransaction(db);
 		}
 		catch(Exception e)
 		{
@@ -492,15 +498,49 @@ public class PublicationController extends BaseController
 		}
 		catch(Exception e)
 		{
-			logger.error("The notification was not sent. Reason:" + e.getMessage(), e);
+			logger.error("The notification was not sent. Reason:" + e.getMessage());
+			logger.info("The notification was not sent. Reason:" + e.getMessage(), e);
 		}
 	}
-
 
 	/**
 	 * This method creates a new publication with the concerned events carried out.
 	 */
-	public PublicationVO createAndPublish(PublicationVO publicationVO, List events, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal) throws SystemException
+	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
+	{
+		return createAndPublish(publicationVO, events, overrideVersionModifyer, infoGluePrincipal, db, false);
+	}
+	/**
+	 * This method creates a new publication with the concerned events carried out.
+	 */
+	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db, boolean isDeleteOperation) throws SystemException, Exception
+    {
+        List<Integer> siteNodeVersionId = new ArrayList<Integer>();
+        List<Integer> contentVersionId = new ArrayList<Integer>();
+        
+        Iterator<EventVO> eventIterator = events.iterator();
+		while(eventIterator.hasNext())
+		{
+			EventVO event = eventIterator.next();
+			
+			if(event.getEntityClass().indexOf("SiteNodeVersion") > -1)
+				siteNodeVersionId.add(event.getEntityId());
+			else
+				contentVersionId.add(event.getEntityId());
+		}
+		
+		Map<Integer,SiteNodeVO> siteNodeMap = SiteNodeController.getController().getSiteNodeVOMapWithNoStateCheck(siteNodeVersionId);
+		Map<Integer,ContentVO> contentMap = ContentController.getContentController().getContentVOMapWithNoStateCheck(contentVersionId);
+
+        publicationVO = createAndPublish(publicationVO, events, siteNodeMap, contentMap, overrideVersionModifyer, infoGluePrincipal, db, isDeleteOperation);
+	        
+        return publicationVO;
+    }
+
+	/**
+	 * This method creates a new publication with the concerned events carried out.
+	 */
+	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal) throws SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
 
@@ -508,10 +548,27 @@ public class PublicationController extends BaseController
 		{
 	        beginTransaction(db);
 
-	        publicationVO = createAndPublish(publicationVO, events, overrideVersionModifyer, infoGluePrincipal, db);
+	        List<Integer> siteNodeVersionId = new ArrayList<Integer>();
+	        List<Integer> contentVersionId = new ArrayList<Integer>();
+	        
+	        Iterator<EventVO> eventIterator = events.iterator();
+			while(eventIterator.hasNext())
+			{
+				EventVO event = eventIterator.next();
+				
+				if(event.getEntityClass().indexOf("SiteNodeVersion") > -1)
+					siteNodeVersionId.add(event.getEntityId());
+				else
+					contentVersionId.add(event.getEntityId());
+			}
+			
+			Map<Integer,SiteNodeVO> siteNodeMap = SiteNodeController.getController().getSiteNodeVOMapWithNoStateCheck(siteNodeVersionId);
+			Map<Integer,ContentVO> contentMap = ContentController.getContentController().getContentVOMapWithNoStateCheck(contentVersionId);
+
+	        publicationVO = createAndPublish(publicationVO, events, siteNodeMap, contentMap, overrideVersionModifyer, infoGluePrincipal, db);
 	        
 	        commitTransaction(db);
-		
+	        
 	        // Notify the interceptors!!!
 	        try
 			{
@@ -534,10 +591,53 @@ public class PublicationController extends BaseController
         return publicationVO;
     }
 
+
 	/**
 	 * This method creates a new publication with the concerned events carried out.
 	 */
-	public PublicationVO createAndPublish(PublicationVO publicationVO, List events, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
+	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, Map<Integer,SiteNodeVO> newSiteNodeMap, Map<Integer,ContentVO> newContentMap, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal) throws SystemException
+    {
+    	Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+	        beginTransaction(db);
+
+	        publicationVO = createAndPublish(publicationVO, events, newSiteNodeMap, newContentMap, overrideVersionModifyer, infoGluePrincipal, db);
+	        
+	        commitTransaction(db);
+	        
+	        // Notify the interceptors!!!
+	        try
+			{
+	            Map hashMap = new HashMap();
+	        	hashMap.put("publicationId", publicationVO.getId());
+	        	
+	    		intercept(hashMap, "Publication.Written", infoGluePrincipal, true, true);
+			}
+			catch (Exception e)
+			{
+				logger.error("An error occurred when we tried to replicate the data:" + e.getMessage(), e);
+			}
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred when we tried to commit the publication: " + e.getMessage(), e);
+	    	rollbackTransaction(db);
+		}
+
+        return publicationVO;
+    }
+
+	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, Map<Integer,SiteNodeVO> newSiteNodeMap, Map<Integer,ContentVO> newContentMap, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
+    {
+		return createAndPublish(publicationVO, events, newSiteNodeMap, newContentMap, overrideVersionModifyer, infoGluePrincipal, db, false);
+    }
+	
+	/**
+	 * This method creates a new publication with the concerned events carried out.
+	 */
+	public PublicationVO createAndPublish(PublicationVO publicationVO, List<EventVO> events, Map<Integer,SiteNodeVO> newSiteNodeMap, Map<Integer,ContentVO> newContentMap, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db, boolean isDeleteOperation) throws SystemException, Exception
     {
 	   	logger.info("*********************************");
     	logger.info("Creating edition ");
@@ -548,11 +648,15 @@ public class PublicationController extends BaseController
         publication.setValueObject(publicationVO);
 		publication.setPublisher(infoGluePrincipal.getName());
 
-		Iterator eventIterator = events.iterator();
+		Iterator<EventVO> eventIterator = events.iterator();
 		while(eventIterator.hasNext())
 		{
-			EventVO event = (EventVO)eventIterator.next();
-			createPublicationInformation(publication, EventController.getEventWithId(event.getId(), db), overrideVersionModifyer, infoGluePrincipal, db);
+			EventVO event = eventIterator.next();
+			
+			SiteNodeVO siteNodeVO = newSiteNodeMap.get(event.getEntityId());
+			ContentVO contentVO = newContentMap.get(event.getEntityId());
+			
+			createPublicationInformation(publication, EventController.getEventWithId(event.getId(), db), siteNodeVO, contentVO, overrideVersionModifyer, infoGluePrincipal, db, isDeleteOperation);
 		}
 
 		db.create(publication);
@@ -691,12 +795,20 @@ public class PublicationController extends BaseController
 
         return publicationVO;
     }
-	
+
 	/**
 	 * Creates a connection between contentversion or siteNodeVersion and publication, ie adds a contentversion
 	 * to the publication.
 	 */
-	private static void createPublicationInformation(Publication publication, Event event, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db) throws Exception
+	private static void createPublicationInformation(Publication publication, Event event, SiteNodeVO siteNodeVO, ContentVO contentVO, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db) throws Exception
+	{
+		createPublicationInformation(publication, event, siteNodeVO, contentVO, overrideVersionModifyer, infoGluePrincipal, db, false);
+	}
+	/**
+	 * Creates a connection between contentversion or siteNodeVersion and publication, ie adds a contentversion
+	 * to the publication.
+	 */
+	private static void createPublicationInformation(Publication publication, Event event, SiteNodeVO siteNodeVO, ContentVO contentVO, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Database db, boolean isDeleteOperation) throws Exception
 	{
 		String entityClass = event.getEntityClass();
 		Integer entityId   = event.getEntityId();
@@ -709,8 +821,13 @@ public class PublicationController extends BaseController
         if(entityClass.equals(ContentVersion.class.getName()))
 		{
 			ContentVersion contentVersion = null;
-			ContentVersion oldContentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(entityId, db);
-			if(oldContentVersion != null && oldContentVersion.getOwningContent() != null && typeId.intValue() == EventVO.UNPUBLISH_LATEST.intValue())
+			ContentVersion oldContentVersion = null;
+			if(!isDeleteOperation)
+				oldContentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(entityId, db);
+			else
+				oldContentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(entityId, db);
+			
+			if(oldContentVersion != null && typeId.intValue() == EventVO.UNPUBLISH_LATEST.intValue())
 			{
 			    oldContentVersion.setIsActive(new Boolean(false));
 			    contentVersion = oldContentVersion;
@@ -730,12 +847,16 @@ public class PublicationController extends BaseController
 			    oldContentVersion.setIsActive(new Boolean(false));
 			}
 			*/
-			else if(oldContentVersion != null && oldContentVersion.getOwningContent() != null)
+			else if(oldContentVersion != null && oldContentVersion.getValueObject().getContentId() != null)
 			{
 			    List events = new ArrayList();
-				Integer contentId = oldContentVersion.getOwningContent().getContentId();
-	    		ContentVersion newContentVersion = ContentStateController.changeState(entityId, ContentVersionVO.PUBLISHED_STATE, "Published", overrideVersionModifyer, null, infoGluePrincipal, contentId, db, events);
-	    		contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(newContentVersion.getContentVersionId(), db);
+				Integer contentId = oldContentVersion.getValueObject().getContentId();
+	    		ContentVersion newContentVersion = ContentStateController.changeState(entityId, contentVO, ContentVersionVO.PUBLISHED_STATE, "Published", overrideVersionModifyer, null, infoGluePrincipal, contentId, db, events);
+	    		contentVersion = null;
+	    		if(!isDeleteOperation)
+	    			contentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(newContentVersion.getContentVersionId(), db);
+	    		else
+	    			contentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(newContentVersion.getContentVersionId(), db);
 			}
 
 			if(contentVersion != null)
@@ -763,20 +884,13 @@ public class PublicationController extends BaseController
 		// Publish sitenodeversions
         if(entityClass.equals(SiteNodeVersion.class.getName()))
 		{
-			SiteNodeVersion siteNodeVersion = null;
-			SiteNodeVersion oldSiteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(entityId, db);
-			if(oldSiteNodeVersion != null && oldSiteNodeVersion.getOwningSiteNode() != null && typeId.intValue() == EventVO.UNPUBLISH_LATEST.intValue())
+			MediumSiteNodeVersionImpl siteNodeVersion = null;
+			//SiteNodeVersion oldSiteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(entityId, db);
+			MediumSiteNodeVersionImpl oldSiteNodeVersion = SiteNodeVersionController.getController().getMediumSiteNodeVersionWithId(entityId, db);
+			if(oldSiteNodeVersion != null && oldSiteNodeVersion.getSiteNodeId() != null && typeId.intValue() == EventVO.UNPUBLISH_LATEST.intValue())
 			{
 			    oldSiteNodeVersion.setIsActive(new Boolean(false));
 			    siteNodeVersion = oldSiteNodeVersion;
-			    /*
-				siteNodeVersion = SiteNodeVersionController.getLatestPublishedSiteNodeVersion(oldSiteNodeVersion.getOwningSiteNode().getSiteNodeId(), db);
-				if(siteNodeVersion != null)
-				{
-					//We just set the published version to not active.
-					siteNodeVersion.setIsActive(new Boolean(false));
-				}
-				*/
 			}
 			/*
 			else if(oldSiteNodeVersion != null && oldSiteNodeVersion.getOwningSiteNode() != null && typeId.intValue() == EventVO.UNPUBLISH_ALL.intValue())
@@ -785,12 +899,12 @@ public class PublicationController extends BaseController
 			    siteNodeVersion.setIsActive(new Boolean(false));
 			}
 			*/
-			else if(oldSiteNodeVersion != null && oldSiteNodeVersion.getOwningSiteNode() != null)
+			else if(oldSiteNodeVersion != null && oldSiteNodeVersion.getSiteNodeId() != null)
 			{
 			    List events = new ArrayList();
-				Integer siteNodeId = oldSiteNodeVersion.getOwningSiteNode().getSiteNodeId();
-	    		SiteNodeVersion newSiteNodeVersion = SiteNodeStateController.getController().changeState(entityId, SiteNodeVersionVO.PUBLISHED_STATE, "Published", overrideVersionModifyer, infoGluePrincipal, siteNodeId, db, events);
-	    		siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(newSiteNodeVersion.getSiteNodeVersionId(), db);
+				//Integer siteNodeId = oldSiteNodeVersion.getOwningSiteNode().getSiteNodeId();
+				SiteNodeVersionVO newSiteNodeVersionVO = SiteNodeStateController.getController().changeState(entityId, siteNodeVO, SiteNodeVersionVO.PUBLISHED_STATE, "Published", overrideVersionModifyer, infoGluePrincipal, db, oldSiteNodeVersion.getSiteNodeId(), events);
+	    		siteNodeVersion = SiteNodeVersionController.getController().getMediumSiteNodeVersionWithId(newSiteNodeVersionVO.getId(), db);
 			}
 
 			if(siteNodeVersion != null)
@@ -883,7 +997,7 @@ public class PublicationController extends BaseController
         }
         catch(Exception e)
         {
-            logger.error("We could not find publication in database:" + e.getMessage(), e);
+            logger.warn("We could not find publication in database:" + e.getMessage(), e);
         }
 
         return publicationVO;
@@ -901,12 +1015,10 @@ public class PublicationController extends BaseController
 
         try
         {
-        	publicationDetails = getPublicationDetailVOList(publicationId, db);
-        	/*
         	Publication publication = getPublicationWithId(publicationId, db);
         	Collection<PublicationDetailVO> details = publication.getPublicationDetails();
             publicationDetails = toVOList(details);
-			*/
+
 			commitTransaction(db);
         }
         catch(Exception e)
@@ -945,6 +1057,7 @@ public class PublicationController extends BaseController
 		for(String deliverUrl : publicUrls)
 		{
 			String address = deliverUrl + "/UpdateCache!getPublicationState.action?publicationId=" + publicationId;
+			
 			if(address.indexOf("@") > -1)
 			{
 				publicationDetails.add(new String[]{"" + deliverUrl, "Error", "Not valid server url"});
@@ -999,6 +1112,7 @@ public class PublicationController extends BaseController
 					logger.error("Problem getting publication status:" + e.getMessage());
 					publicationDetails.add(new String[]{"" + deliverUrl, "Error", "" + e.getMessage()});
 				}
+
 			}
 		}
 		
@@ -1091,13 +1205,20 @@ public class PublicationController extends BaseController
 			for(PublicationVO publication : publicationsToCheck)
 			{
 				boolean found = false;
-				for(CacheEvictionBean bean : latestPublications)
+				if(publication.getName().equals("Infoglue Calendar publication"))
 				{
-					if(bean.getPublicationId().equals(publication.getId()))
-						found = true;
+					found = true;
 				}
-				if(!found)
-					failedPublications.add(publication);
+				else
+				{
+					for(CacheEvictionBean bean : latestPublications)
+					{
+						if(bean.getPublicationId().equals(publication.getId()))
+							found = true;
+					}
+					if(!found)
+						failedPublications.add(publication);
+				}
 			}
 		}
 		catch (Exception e) 
@@ -1134,7 +1255,7 @@ public class PublicationController extends BaseController
         return beans;
 	}
 
-
+	
 	/**
 	 * This method unpublishes all entities in an edition if they are not unpublish-events.
 	 */
@@ -1398,7 +1519,7 @@ public class PublicationController extends BaseController
 			logger.info("email:" + email);
 			logger.info("recipients:" + recipients);
 
-		    MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for publishing", email, "utf-8");
+			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for publishing", email, "utf-8");
 		}
 		catch(Exception e)
 		{
@@ -1414,11 +1535,14 @@ public class PublicationController extends BaseController
 		String recipients = "";
 	    
 		List users = new ArrayList();
+		
+		/*
 		if(recipientFilter.equalsIgnoreCase("all"))
     	{
     		users = UserControllerProxy.getController(db).getAllUsers();
     	}
-    	else if(recipientFilter.equalsIgnoreCase("groupBased"))
+    	else */
+		if(recipientFilter.equalsIgnoreCase("groupBased"))
     	{
     		Iterator groupsIterator = principal.getGroups().iterator();
     		

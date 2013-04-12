@@ -95,13 +95,13 @@ public class DeliveryContext implements UsageListener
 	//This section has control over what contents and sitenodes are used where so the pagecache can be selectively updated.
 	private List usageListeners = new ArrayList();
 	
-	private Set usedContents = new HashSet();
-	private Set usedContentVersions = new HashSet();
-	private Set usedSiteNodes = new HashSet();
-	private Set usedSiteNodeVersions = new HashSet();
+	private Set usedContents = Collections.synchronizedSet(new HashSet());
+	private Set usedContentVersions = Collections.synchronizedSet(new HashSet());
+	private Set usedSiteNodes = Collections.synchronizedSet(new HashSet());
+	private Set usedSiteNodeVersions = Collections.synchronizedSet(new HashSet());
 	
-	private Set usedPageMetaInfoContentVersionIdSet = new HashSet();
-	private Set usedPageComponentsMetaInfoContentVersionIdSet = new HashSet();
+	private Set usedPageMetaInfoContentVersionIdSet = Collections.synchronizedSet(new HashSet());
+	private Set usedPageComponentsMetaInfoContentVersionIdSet = Collections.synchronizedSet(new HashSet());
 	
 	private Date lastModifiedDateTime = null;
 	private boolean registerLastModifiedDate = false;
@@ -137,7 +137,7 @@ public class DeliveryContext implements UsageListener
 	private String operatingMode = null;
 	
 	private Map pageAttributes = new HashMap();
-	private Set<String> htmlHeadItems = new HashSet<String>();
+	private Set htmlHeadItems = new HashSet();
 	private Set<String> htmlBodyEndItems = new HashSet<String>();
 	private Map<String, Set<String>> scriptExtensionHeadBundles = new HashMap<String, Set<String>>();
 	private Map<String, Set<String>> scriptExtensionBodyBundles = new HashMap<String, Set<String>>();
@@ -334,12 +334,21 @@ public class DeliveryContext implements UsageListener
     public void addUsedContent(String usedContent)
     {
         this.usedContents.add(usedContent);
+        if(usedContent.indexOf("_", 8) > -1)
+        	this.usedContents.add(usedContent.substring(0, usedContent.indexOf("_", 8)));
         	
-        Iterator iterator = this.getUsageListeners().iterator();
-        while(iterator.hasNext())
+        try
         {
-            UsageListener usageListener = (UsageListener)iterator.next();
-            usageListener.addUsedContent(usedContent);
+	        Iterator iterator = this.getUsageListeners().iterator();
+	        while(iterator.hasNext())
+	        {
+	            UsageListener usageListener = (UsageListener)iterator.next();
+	            usageListener.addUsedContent(usedContent);
+	        }
+        }
+        catch(Exception e)
+        {
+        	logger.warn("Sync issue when adding usedContent:" + e.getMessage());
         }
     }
 
@@ -347,11 +356,18 @@ public class DeliveryContext implements UsageListener
     {
         this.usedSiteNodes.add(usedSiteNode);
         
-        Iterator iterator = this.getUsageListeners().iterator();
-        while(iterator.hasNext())
+        try
         {
-            UsageListener usageListener = (UsageListener)iterator.next();
-            usageListener.addUsedSiteNode(usedSiteNode);
+	        Iterator iterator = this.getUsageListeners().iterator();
+	        while(iterator.hasNext())
+	        {
+	            UsageListener usageListener = (UsageListener)iterator.next();
+	            usageListener.addUsedSiteNode(usedSiteNode);
+	        }
+        }
+        catch(Exception e)
+        {
+        	logger.warn("Sync issue when adding usedSiteNode:" + e.getMessage());
         }
     }
 
@@ -359,24 +375,38 @@ public class DeliveryContext implements UsageListener
     {
         this.usedContentVersions.add(usedContentVersion);
         
-        Iterator iterator = this.getUsageListeners().iterator();
-        while(iterator.hasNext())
+        try
         {
-            UsageListener usageListener = (UsageListener)iterator.next();
-            usageListener.addUsedContentVersion(usedContentVersion);
-        }
+	        Iterator iterator = this.getUsageListeners().iterator();
+	        while(iterator.hasNext())
+	        {
+	            UsageListener usageListener = (UsageListener)iterator.next();
+	            usageListener.addUsedContentVersion(usedContentVersion);
+	        }
+	    }
+	    catch(Exception e)
+	    {
+        	logger.warn("Sync issue when adding usedContentVersion:" + e.getMessage());
+	    }
     }
 
     public void addUsedSiteNodeVersion(String usedSiteNodeVersion)
     {
         this.usedSiteNodeVersions.add(usedSiteNodeVersion);
         
-        Iterator iterator = this.getUsageListeners().iterator();
-        while(iterator.hasNext())
+        try
         {
-            UsageListener usageListener = (UsageListener)iterator.next();
-            usageListener.addUsedSiteNodeVersion(usedSiteNodeVersion);
-        }
+	        Iterator iterator = this.getUsageListeners().iterator();
+	        while(iterator.hasNext())
+	        {
+	            UsageListener usageListener = (UsageListener)iterator.next();
+	            usageListener.addUsedSiteNodeVersion(usedSiteNodeVersion);
+	        }
+	    }
+	    catch(Exception e)
+	    {
+	    	logger.warn("Sync issue when adding usedSiteNodeVersion:" + e.getMessage());
+	    }
     }
 
     public String[] getAllUsedEntities()
@@ -394,9 +424,9 @@ public class DeliveryContext implements UsageListener
         return groups;
     }
     
-    public Set<String> getAllUsedEntitiesAsSet()
+    public List<String> getAllUsedEntitiesAsSet()
     {
-    	Set<String> set = new HashSet<String>();
+    	List<String> set = new ArrayList<String>();
     	set.addAll(this.usedContents);
     	set.addAll(this.usedContentVersions);
     	set.addAll(this.usedSiteNodes);
@@ -404,6 +434,7 @@ public class DeliveryContext implements UsageListener
         
         return set;
     }
+
     
     public List getUsageListeners()
     {

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>$ui.getString("tool.managementtool.importRepository.header")</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/infogluecommons.css" /> 
+	
+	<script type="text/javascript" src="script/jquery/jquery-1.2.6.min.js"></script>
+	<script language="JavaScript" src="script/listview.js"></script>
+	<script type="text/javascript" src="script/infogluecommons.js"></script>
+
+	<meta http-equiv="pragma" CONTENT="no-cache" />
+	<meta http-equiv="expires" CONTENT="-1" />
+	##<meta http-equiv="refresh" content="5">
+	
+	<style type="text/css">
+		.processDetails {
+		}
+		.processDetails .label {
+			font-weight: bold;
+			display: none; ## Overriden by script
+		}
+		.processDetails .label:after {
+			margin-right:5px;
+			content: ":";
+		}
+		p.errorMessage {
+			color: red;
+			font-weight: bold;
+		}
+		ul.actions {
+			list-style-type: none;
+		}
+		ul.actions li {
+			display: inline-block;
+		}
+		ul.actions li::after {
+			content: "|";
+			margin: 0 10px;
+		}
+		ul.actions li:last-child::after {
+			content: "";
+			margin: 0;
+		}
+
+		ol.processEvents {
+			display: none; ## Overriden by script
+		}
+
+		.container {
+			padding: 8px;
+			border: 1px solid #C3D0E1;
+			margin: 0 0 16px 0;
+		}
+		.container.error {
+			border-left-color: red;
+		}
+		#finishedMessageArea.error, .processError {
+			color:red;
+		}
+		.container h4 {
+			margin: 0;
+		}
+
+		.container .actions {
+			margin: 0;
+			padding: 0;
+		}
+
+		.container .processEvents {
+			margin-bottom: 0;
+		}
+
+		.activate::before {
+			content: " ";
+			background: transparent url("images/workinganim.gif") no-repeat center center;
+			width: 12px;
+			height: 12px;
+			display: block;
+			background-size: 10px 10px;
+			margin: 1px 0 0;
+		}
+
+		.template {display: none;}
+	</style>
+</head>
+
+<body class="managementtooledit">
+
+<div class="fullymarginalized">
+
+<h1>Import/Copy status</h1>
+
+<p id="memoryMessage></p>
+
+<p id="ongoingMessageArea"></p>
+<div id="ongoingList"></div>
+
+## Will be filled with content from JavaScript below
+<h3>Finished imports</h2>
+<p id="finishedMessageArea"></p>
+<div id="finishedList"></div>
+
+## The template below will be used by the JavaScript to create process objects. Both ongoing and finished import share the same template.
+## The classes will be used to select containers for process information. Therefore changes here needs to be reflected in the JavaSCript below.
+<div id="template" class="template container">
+	<h4></h4>
+	<div class="processDetails">
+		<p class="processInfo">
+			<span class="label labelStarted">$ui.getString("tool.managementtool.importRepository.status.label.started")</span><span class="valueStarted"></span>
+			<span class="label labelEnded">$ui.getString("tool.managementtool.importRepository.status.label.ended")</span><span class="valueEnded"></span>
+		</p>
+		<p class="processError"></p>
+		<ul class="actions">
+			<li class="deleteProcessAction"><a href="javascript:void(0)" onclick="deleteProcess(this)"><img src="images/delete.gif" width="12" height="12" border="0"> Remove</a></li>
+			<li class="toggleEventsAction"><a href="javascript:void(0)" onclick="toggleProcessEventList(this)">$ui.getString("tool.managementtool.importRepository.status.showProcessEvents")</a></li>
+		</ul>
+		<ol class="processEvents"></ol>
+	</div>
+</div>
+
+<p>
+	<a href="javascript:window.close();">Close</a>
+</p>
+
+</div>
+
+<script type="text/javascript">
+		var Updater = function() {
+			this.poller = null;
+
+			var megabyte = 1024 * 1024;
+			function formatFileSize(bytes) {
+				if (bytes) {
+					return (bytes / megabyte).toFixed(3);
+				} else {
+					return "";
+				}
+			}
+
+			this.updateView = function()
+			{
+				jQuery.getJSON('ImportRepository!showProcessesAsJSON.action', function(data) {
+					if (data)
+					{
+						if (data.error)
+						{
+							jQuery("#ongoingMessageArea").attr("class", "error").text(data.error.message + "(" + data.error.type + ")");
+							jQuery("#finishedMessageArea").attr("class", "error").text(data.error.message + "(" + data.error.type + ")");
+						}
+						else ## Assumes valid response
+						{
+							if (data.memoryMessage)
+							{
+								jQuery("#memoryMessage").text("$ui.getString("tool.managementtool.importRepository.status.showProcessEvents") " + data.memoryMessage);
+							}
+							else
+							{
+								jQuery("#memoryMessage").text("$ui.getString("tool.managementtool.importRepository.status.showProcessEvents")");
+							}
+							##
+							## Generate process list
+							var ongoingIds = new Array();
+							var finishedIds = new Array();
+							for (var processListId in data.processes) {
+								var process = data.processes[processListId];

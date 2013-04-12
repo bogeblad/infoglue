@@ -25,7 +25,9 @@
 package org.infoglue.deliver.applications.actions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,7 +62,7 @@ import com.google.gson.Gson;
 public class UpdateCacheAction extends InfoGlueAbstractAction 
 {
     private final static Logger logger = Logger.getLogger(UpdateCacheAction.class.getName());
-	
+
 	private static VisualFormatter formatter = new VisualFormatter();
 
 	private ThreadMonitor tk = null;
@@ -89,7 +91,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
      */
          
     public String doPassThroughPublication() throws Exception
-    {    	
+    {
     	String publisherName = getRequest().getParameter("publisherName");
     	if(publisherName == null || publisherName.equalsIgnoreCase(""))
     		publisherName = "SYSTEM";
@@ -146,7 +148,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 		publicationDetailVO.setDescription(objectDescription);
 		publicationDetailVO.setEntityClass(className);
 		publicationDetailVO.setEntityId(new Integer(objectId));
-		publicationDetailVO.setName("" + objectName);
+		publicationDetailVO.setName("" + objectName);	
 		publicationDetailVO.setTypeId(PublicationDetailVO.PUBLISH);
 		publicationDetailVO.setCreator(publisherName);
 
@@ -176,13 +178,13 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doTest() throws Exception
     {
-    	String operatingMode = CmsPropertyHandler.getOperatingMode();
+        String operatingMode = CmsPropertyHandler.getOperatingMode();
 		
         if(operatingMode != null && operatingMode.equalsIgnoreCase("3"))
         {
 	        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
 	        {
-	        	logger.error("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call doReCache.");
+	        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call UpdateCache!test.");
 
 	            this.getResponse().setContentType("text/plain");
 	            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -197,7 +199,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
         
         return NONE;
     }
-    
+
     /**
      * This method return status information about a certain publication. 
      * It should be able to inform us about if the publication was performed or if it's waiting or ongoing. 
@@ -211,7 +213,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
         {
 	        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
 	        {
-	        	logger.error("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call doReCache.");
+	        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call UpdateCache!getPublicationState.");
 
 	            this.getResponse().setContentType("text/plain");
 	            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -238,7 +240,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
         {
         	foundOngoingPublicationBean = ongoingPublication;
         }
-        
+
         if(foundPublishedBean != null)
         	sb.append("" + foundPublishedBean.toQueryString());
         else if(foundOngoingPublicationBean != null)
@@ -264,7 +266,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
         {
 	        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
 	        {
-	        	logger.error("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call doReCache.");
+	        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call UpdateCache!getOngoingPublications.");
 
 	            this.getResponse().setContentType("text/plain");
 	            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -297,7 +299,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
         {
 	        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
 	        {
-	        	logger.error("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call doReCache.");
+	        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call UpdateCache!getLatestPublications.");
 
 	            this.getResponse().setContentType("text/plain");
 	            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -317,7 +319,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
         
         return NONE;
     }
-    
+
     /**
      * This method will just reply to a testcall. 
      */
@@ -330,7 +332,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
         {
 	        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
 	        {
-	        	logger.error("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call doReCache.");
+	        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call UpdateCache!testV3.");
 
 	            this.getResponse().setContentType("text/plain");
 	            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -353,6 +355,8 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
+    	logger.info("A cache update was received");
+    	
     	if(!CmsPropertyHandler.getOperatingMode().equals("3"))
     		tk = new ThreadMonitor(2000, this.getRequest(), "Update cache took to long", false);
 
@@ -364,7 +368,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 	        long start = System.currentTimeMillis();
 	        if(!ServerNodeController.getController().getIsIPAllowed(this.getRequest()))
 	        {
-	        	logger.error("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call doReCache.");
+	        	logger.warn("A user from an IP(" + this.getRequest().getRemoteAddr() + ") which is not allowed tried to call UpdateCache.action.");
 
 	            this.getResponse().setContentType("text/plain");
 	            this.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -375,7 +379,7 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 	        
         }
         
-		try
+        try
 		{  
 			//Iterate through all registered listeners and call them... dont place logic here... have specialized handlers.			
 
@@ -392,27 +396,73 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 		    String objectId  	= this.getRequest().getParameter(i + ".objectId");
 		    String objectName 	= this.getRequest().getParameter(i + ".objectName");
 		    //A very special parameter only used in working environments. Notifies what has changes more precisly
-		    String changedAttributeNames = this.getRequest().getParameter(i + ".changedAttributeNames");
-		    //System.out.println("changedAttributeNames:" + changedAttributeNames);
+		    Map<String,String> extraInfo 	= new HashMap<String,String>();
+		    String changedAttributeNames 	= this.getRequest().getParameter(i + ".changedAttributeNames");
+ 		    String contentId 				= this.getRequest().getParameter(i + ".contentId");
+		    String parentContentId 			= this.getRequest().getParameter(i + ".parentContentId");
+		    String contentTypeDefinitionId	= this.getRequest().getParameter(i + ".contentTypeDefinitionId");
+		    String contentIsProtected 		= this.getRequest().getParameter(i + ".contentIsProtected");
+ 		    String siteNodeId 				= this.getRequest().getParameter(i + ".siteNodeId");
+		    String parentSiteNodeId		 	= this.getRequest().getParameter(i + ".parentSiteNodeId");
+		    String repositoryId 			= this.getRequest().getParameter(i + ".repositoryId");
+		    //System.out.println("contentId:" + contentId);
+		    //System.out.println("parentContentId:" + parentContentId);
+		    //System.out.println("siteNodeId:" + siteNodeId);
+		    //System.out.println("parentSiteNodeId:" + parentSiteNodeId);
+		    //System.out.println("repositoryId:" + repositoryId);
+		    if(changedAttributeNames != null)
+		    	extraInfo.put("changedAttributeNames", changedAttributeNames);
+		    if(contentId != null)
+		    	extraInfo.put("contentId", contentId);
+		    if(parentContentId != null)
+		    	extraInfo.put("parentContentId", parentContentId);
+		    if(contentTypeDefinitionId != null)
+		    	extraInfo.put("contentTypeDefinitionId", contentTypeDefinitionId);
+		    if(contentIsProtected != null)
+		    	extraInfo.put("contentIsProtected", contentIsProtected);
+		    if(siteNodeId != null)
+		    	extraInfo.put("siteNodeId", siteNodeId);
+		    if(parentSiteNodeId != null)
+		    	extraInfo.put("parentSiteNodeId", parentSiteNodeId);
+		    if(repositoryId != null)
+		    	extraInfo.put("repositoryId", repositoryId);
 		    
 		    while(className != null && !className.equals(""))
 		    {
-		    	logger.info("className:" + className);
-			    logger.info("objectId:" + objectId);
+		    	logger.info("Cache update info:" + className + "/" + objectId);
 			    Integer publicationId = -1;
 			    if(className.indexOf(PublicationImpl.class.getName()) > -1)
 			    	publicationId = Integer.parseInt(objectId);
-			    	
-		    	CacheEvictionBean cacheEvictionBean = new CacheEvictionBean(publicationId, userName, timestamp, className, typeId, objectId, objectName, changedAttributeNames);
-		    	newNotificationList.add(cacheEvictionBean);
-		    	/*
-		    	synchronized(CacheController.notifications)
-		        {
-				    CacheController.notifications.add(cacheEvictionBean);
-		        }
-		        */
-			    logger.info("Added a cacheEvictionBean " + cacheEvictionBean.getClassName() + ":" + cacheEvictionBean.getTypeId() + ":" + cacheEvictionBean.getObjectName() + ":" + cacheEvictionBean.getObjectId());
 			    
+			    boolean skip = false;
+			    if(timestamp != null && !timestamp.equals(""))
+			    {
+			    	try
+			    	{
+			    		long ts = Long.parseLong(timestamp);
+			    		if(ts < CmsPropertyHandler.getStartupTime().getTime())
+			    			skip = true;
+			    	}
+			    	catch (Exception e) 
+			    	{
+			    		logger.error("Could not read timestamp:" + timestamp);
+					}
+			    }
+			    if(!skip)
+			    {
+			    	CacheEvictionBean cacheEvictionBean = new CacheEvictionBean(publicationId, userName, timestamp, className, typeId, objectId, objectName, extraInfo);
+			    	newNotificationList.add(cacheEvictionBean);
+			    	/*
+			    	synchronized(CacheController.notifications)
+			        {
+					    CacheController.notifications.add(cacheEvictionBean);
+			        }
+			        */
+				    logger.info("Added a cacheEvictionBean " + cacheEvictionBean.getClassName() + ":" + cacheEvictionBean.getTypeId() + ":" + cacheEvictionBean.getObjectName() + ":" + cacheEvictionBean.getObjectId());
+			    }
+			    else
+				    logger.warn("Skipped a cacheEvictionBean as it's timestamp was earlier than the server start");
+			    	
 			    i++;
 			    userName 	= this.getRequest().getParameter(i + ".userName");
 			    timestamp 	= this.getRequest().getParameter(i + ".timestamp");
@@ -422,8 +472,37 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 			    objectName 	= this.getRequest().getParameter(i + ".objectName");
 
 			    //A very special parameter only used in working environments. Notifies what has changes more precisly
-			    changedAttributeNames = this.getRequest().getParameter(i + ".changedAttributeNames");
-			    //System.out.println("changedAttributeNames:" + changedAttributeNames);
+			    extraInfo 				= new HashMap<String,String>();
+			    changedAttributeNames 	= this.getRequest().getParameter(i + ".changedAttributeNames");
+	 		    contentId 				= this.getRequest().getParameter(i + ".contentId");
+			    parentContentId 		= this.getRequest().getParameter(i + ".parentContentId");
+			    contentTypeDefinitionId	= this.getRequest().getParameter(i + ".contentTypeDefinitionId");
+			    contentIsProtected 		= this.getRequest().getParameter(i + ".contentIsProtected");
+	 		    siteNodeId 				= this.getRequest().getParameter(i + ".siteNodeId");
+			    parentSiteNodeId		= this.getRequest().getParameter(i + ".parentSiteNodeId");
+			    repositoryId 			= this.getRequest().getParameter(i + ".repositoryId");
+//			    System.out.println("contentId:" + contentId);
+//			    System.out.println("parentContentId:" + parentContentId);
+//			    System.out.println("siteNodeId:" + siteNodeId);
+//			    System.out.println("parentSiteNodeId:" + parentSiteNodeId);
+//			    System.out.println("repositoryId:" + repositoryId);
+			    if(changedAttributeNames != null)
+			    	extraInfo.put("changedAttributeNames", changedAttributeNames);
+			    if(contentId != null)
+			    	extraInfo.put("contentId", contentId);
+			    if(parentContentId != null)
+			    	extraInfo.put("parentContentId", parentContentId);
+			    if(contentTypeDefinitionId != null)
+			    	extraInfo.put("contentTypeDefinitionId", contentTypeDefinitionId);
+			    if(contentIsProtected != null)
+			    	extraInfo.put("contentIsProtected", contentIsProtected);
+			    if(siteNodeId != null)
+			    	extraInfo.put("siteNodeId", siteNodeId);
+			    if(parentSiteNodeId != null)
+			    	extraInfo.put("parentSiteNodeId", parentSiteNodeId);
+			    if(repositoryId != null)
+			    	extraInfo.put("repositoryId", repositoryId);
+
 		    }
 		    
 		    if(i == 0)
@@ -434,25 +513,73 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 			    typeId 	 	= this.getRequest().getParameter("typeId");
 			    objectId  	= this.getRequest().getParameter("objectId");
 			    objectName 	= this.getRequest().getParameter("objectName");
-
+			 
 			    //A very special parameter only used in working environments. Notifies what has changes more precisly
-			    changedAttributeNames = this.getRequest().getParameter(i + ".changedAttributeNames");
-			    //System.out.println("changedAttributeNames:" + changedAttributeNames);
+			    extraInfo = new HashMap<String,String>();
+			    changedAttributeNames 	= this.getRequest().getParameter("changedAttributeNames");
+	 		    contentId 				= this.getRequest().getParameter("contentId");
+			    parentContentId 		= this.getRequest().getParameter("parentContentId");
+			    contentTypeDefinitionId	= this.getRequest().getParameter("contentTypeDefinitionId");
+			    contentIsProtected 		= this.getRequest().getParameter("contentIsProtected");
+	 		    siteNodeId 				= this.getRequest().getParameter("siteNodeId");
+			    parentSiteNodeId 		= this.getRequest().getParameter("parentSiteNodeId");
+			    repositoryId 			= this.getRequest().getParameter("repositoryId");
+//			    System.out.println("contentId:" + contentId);
+//			    System.out.println("parentContentId:" + parentContentId);
+//			    System.out.println("siteNodeId:" + siteNodeId);
+//			    System.out.println("parentSiteNodeId:" + parentSiteNodeId);
+//			    System.out.println("repositoryId:" + repositoryId);
+			    if(changedAttributeNames != null)
+			    	extraInfo.put("changedAttributeNames", changedAttributeNames);
+			    if(contentId != null)
+			    	extraInfo.put("contentId", contentId);
+			    if(parentContentId != null)
+			    	extraInfo.put("parentContentId", parentContentId);
+			    if(contentTypeDefinitionId != null)
+			    	extraInfo.put("contentTypeDefinitionId", contentTypeDefinitionId);
+			    if(contentIsProtected != null)
+			    	extraInfo.put("contentIsProtected", contentIsProtected);
+			    if(siteNodeId != null)
+			    	extraInfo.put("siteNodeId", siteNodeId);
+			    if(parentSiteNodeId != null)
+			    	extraInfo.put("parentSiteNodeId", parentSiteNodeId);
+			    if(repositoryId != null)
+			    	extraInfo.put("repositoryId", repositoryId);
 
 			    Integer publicationId = -1;
 			    if(className.indexOf(PublicationImpl.class.getName()) > -1)
 			    	publicationId = Integer.parseInt(objectId);
 
-			    CacheEvictionBean cacheEvictionBean = new CacheEvictionBean(publicationId, userName, timestamp, className, typeId, objectId, objectName, changedAttributeNames);
-			    newNotificationList.add(cacheEvictionBean);
-			    /*
-			    synchronized(CacheController.notifications)
-		        {
-			    	CacheController.notifications.add(cacheEvictionBean);
-		        }
-			    logger.warn("Added an oldSchool cacheEvictionBean " + cacheEvictionBean.getClassName() + ":" + cacheEvictionBean.getTypeId() + ":" + cacheEvictionBean.getObjectName() + ":" + cacheEvictionBean.getObjectId());
-		        */
-			    
+			    boolean skip = false;
+			    if(timestamp != null && !timestamp.equals(""))
+			    {
+			    	try
+			    	{
+			    		long ts = Long.parseLong(timestamp);
+			    		if(ts < CmsPropertyHandler.getStartupTime().getTime())
+			    			skip = true;
+			    	}
+			    	catch (Exception e) 
+			    	{
+			    		logger.error("Could not read timestamp:" + timestamp);
+					}
+			    }
+			    if(!skip)
+			    {
+				    CacheEvictionBean cacheEvictionBean = new CacheEvictionBean(publicationId, userName, timestamp, className, typeId, objectId, objectName, extraInfo);
+				    newNotificationList.add(cacheEvictionBean);
+				    /*
+				    synchronized(CacheController.notifications)
+			        {
+				    	CacheController.notifications.add(cacheEvictionBean);
+			        }
+				    logger.warn("Added an oldSchool cacheEvictionBean " + cacheEvictionBean.getClassName() + ":" + cacheEvictionBean.getTypeId() + ":" + cacheEvictionBean.getObjectName() + ":" + cacheEvictionBean.getObjectId());
+			        */
+				    logger.info("Added a cacheEvictionBean " + cacheEvictionBean.getClassName() + ":" + cacheEvictionBean.getTypeId() + ":" + cacheEvictionBean.getObjectName() + ":" + cacheEvictionBean.getObjectId());
+			    }
+			    else
+				    logger.warn("Skipped a cacheEvictionBean as it's timestamp was earlier than the server start");
+   
 		    }
 		    
 		    /*
@@ -476,16 +603,17 @@ public class UpdateCacheAction extends InfoGlueAbstractAction
 			    	CacheController.notifications.addAll(newNotificationList);
 		        }
 			//}
-		    
+			//new Thread(new Runnable() { public void run() {try {Thread.sleep(100); CacheController.evictWaitingCache(false);} catch (Exception e) {}}}).start();
+			    
 			logger.info("UpdateCache finished...");
 		}
 		catch(Exception e)
 		{
-			logger.error(e.getMessage(), e);
+			logger.error("Error in UpdateCache: " + e.getMessage(), e);
 		}
 		catch(Throwable t)
 		{
-		    logger.error(t.getMessage());
+		    logger.error("Error in UpdateCache: " + t.getMessage());
 		}
                 
 		//this.getHttpSession().invalidate();

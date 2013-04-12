@@ -205,8 +205,8 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 
     		if(!hadMetaInfo)
     		{
-    		    SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithId(this.siteNodeVO.getId(), db);
-    		    SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, siteNode.getRepository().getId(), this.getInfoGluePrincipal(), null).getValueObject();
+    		    SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(this.siteNodeVO.getId(), db);
+    		    SiteNodeController.getController().createSiteNodeMetaInfoContent(db, siteNode, siteNode.getRepositoryId(), this.getInfoGluePrincipal(), null, new ArrayList()).getValueObject();
     		}
 	    }
 
@@ -451,7 +451,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    			if(this.siteNodeVersionVO != null && this.siteNodeVersionVO.getStateId().equals(SiteNodeVersionVO.WORKING_STATE) && !isMetaInfoInWorkingState)
 	    			{
 	    				if(metaInfoContentVersionVO != null)
-	    					metaInfoContentVersionVO = ContentStateController.changeState(metaInfoContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Automatic", true, null, this.getInfoGluePrincipal(), null, db, new ArrayList()).getValueObject();
+	    					metaInfoContentVersionVO = ContentStateController.changeState(metaInfoContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Automatic", true, this.getInfoGluePrincipal(), null, db, new ArrayList());
 	    				
 	    				isMetaInfoInWorkingState = true;
 	    			}
@@ -571,7 +571,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    			if(this.siteNodeVersionVO != null && this.siteNodeVersionVO.getStateId().equals(SiteNodeVersionVO.WORKING_STATE) && !isMetaInfoInWorkingState)
 	    			{
 	    				if(metaInfoContentVersionVO != null)
-	    					metaInfoContentVersionVO = ContentStateController.changeState(metaInfoContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Automatic", true, null, this.getInfoGluePrincipal(), null, db, new ArrayList()).getValueObject();
+	    					metaInfoContentVersionVO = ContentStateController.changeState(metaInfoContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Automatic", true, this.getInfoGluePrincipal(), null, db, new ArrayList());
 	    				
 	    				isMetaInfoInWorkingState = true;
 	    			}

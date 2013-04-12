@@ -44,10 +44,17 @@ import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.management.AvailableServiceBinding;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
+import org.infoglue.cms.entities.management.ContentTypeAttribute;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.entities.management.InterceptionPointVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
@@ -360,12 +367,11 @@ public class NodeDeliveryController extends BaseDeliveryController
 			
 		return availableServiceBinding;
 	}	
-
-
+	
 	/**
 	 * This method returns the SiteNodeVO that is sent in.
 	 */
-	
+	/*
 	public SiteNode getSiteNode(Database db, Integer siteNodeId) throws SystemException
 	{
 		if(siteNodeId == null || siteNodeId.intValue() < 1)
@@ -377,10 +383,10 @@ public class NodeDeliveryController extends BaseDeliveryController
 		
 		if(siteNode != null && deliveryContext != null)
 			deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNode.getId()));
-			
+
 		return siteNode;
 	}
-	
+	*/
 	/**
 	 * This method returns the SiteNodeVO that is sent in.
 	 */
@@ -595,7 +601,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * @throws Exception 
 	 */
 	
-	public SiteNodeVO getParentSiteNode(Database db, Integer siteNodeId) throws Exception
+	public SiteNodeVO getParentSiteNode(Database db, Integer siteNodeId) throws SystemException, Exception
 	{
 		String key = "" + siteNodeId;
 		
@@ -616,7 +622,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		}
 		else
 		{
-			//SiteNode siteNode = (SiteNode)getObjectWithId(SmallSiteNodeImpl.class, siteNodeId, db);
+			//SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 			SiteNodeVO siteNode = getSiteNodeVO(db, siteNodeId);
 			//SiteNode parentSiteNode = siteNode.getParentSiteNode();
             if(siteNode.getParentSiteNodeId() != null)		
@@ -658,6 +664,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		else
 		{
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+			//SiteNode siteNode = (SiteNode)getObjectWithId(SmallSiteNodeImpl.class, siteNodeId, db);
             //SiteNode parentSiteNode = siteNode.getParentSiteNode();
             if(siteNodeVO.getParentSiteNodeId() != null)		
             {
@@ -870,11 +877,13 @@ public class NodeDeliveryController extends BaseDeliveryController
 			SiteNodeVersionVO latestSiteNodeVersionVO = getLatestActiveSiteNodeVersionVO(db, siteNodeId);
 			if(latestSiteNodeVersionVO != null && latestSiteNodeVersionVO.getIsProtected() != null)
 			{	
-				if(latestSiteNodeVersionVO.getIsProtected().intValue() == NO.intValue())
+				if(latestSiteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.NO.intValue())
 					isPageProtected = false;
-				else if(latestSiteNodeVersionVO.getIsProtected().intValue() == YES.intValue())
+				else if(latestSiteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES.intValue())
 					isPageProtected = true;
-				else if(latestSiteNodeVersionVO.getIsProtected().intValue() == INHERITED.intValue())
+				else if(latestSiteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+					isPageProtected = true;
+				else if(latestSiteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.INHERITED.intValue())
 				{
 					SiteNodeVO parentSiteNode = this.getParentSiteNode(db, siteNodeId);
 					if(parentSiteNode != null)
@@ -936,11 +945,29 @@ public class NodeDeliveryController extends BaseDeliveryController
 	 * This method returns the id of the siteNodeVersion that is protected if any.
 	 */
 	
-	public Integer getProtectedSiteNodeVersionId(Database db, Integer siteNodeId)
+	public Integer getProtectedSiteNodeVersionId(Database db, Integer siteNodeId, String interceptionPointName)
 	{
 		if(siteNodeId != null && this.deliveryContext != null)
 			this.deliveryContext.addUsedSiteNode(CacheController.getPooledString(3, siteNodeId));
 
+		Integer protectedSiteNodeVersionId = null;
+		try
+		{
+			Boolean honourInheritanceFallback = true;
+			if(interceptionPointName.equals("SiteNodeVersion.Read"))
+				honourInheritanceFallback = false;
+			
+			InterceptionPointVO ipVO = InterceptionPointController.getController().getInterceptionPointVOWithName(interceptionPointName, db);
+
+			SiteNodeVersionVO siteNodeVersionVO = getLatestActiveSiteNodeVersionVO(db, siteNodeId);
+			protectedSiteNodeVersionId = SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getProtectedSiteNodeVersionId(siteNodeVersionVO.getId(), ipVO.getId(), honourInheritanceFallback, db);
+		}
+		catch(Exception e)
+		{
+			logger.warn("An error occurred trying to get if the siteNodeVersion has disabled pageCache:" + e.getMessage(), e);
+		}
+		
+		/*
 		Integer protectedSiteNodeVersionId = null;
 		
 		try
@@ -953,6 +980,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 				if(siteNodeVersionVO.getIsProtected().intValue() == NO.intValue())
 					protectedSiteNodeVersionId = null;
 				else if(siteNodeVersionVO.getIsProtected().intValue() == YES.intValue())
+					protectedSiteNodeVersionId = siteNodeVersionVO.getId();
+				else if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
 					protectedSiteNodeVersionId = siteNodeVersionVO.getId();
 				else if(siteNodeVersionVO.getIsProtected().intValue() == INHERITED.intValue())
 				{
@@ -967,6 +996,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		{
 			logger.warn("An error occurred trying to get if the siteNodeVersion has disabled pageCache:" + e.getMessage(), e);
 		}
+		*/
 				
 		return protectedSiteNodeVersionId;
 	}
@@ -993,6 +1023,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 				if(siteNodeVersionVO.getIsProtected().intValue() == NO.intValue())
 					protectedSiteNodeVersionId = null;
 				else if(siteNodeVersionVO.getIsProtected().intValue() == YES.intValue())
+					protectedSiteNodeVersionId = siteNodeVersionVO.getId();
+				else if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
 					protectedSiteNodeVersionId = siteNodeVersionVO.getId();
 				else if(siteNodeVersionVO.getIsProtected().intValue() == INHERITED.intValue())
 				{
@@ -1320,6 +1352,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 							//Checking to see that now is between the contents publish and expire-date. 
 							//if(ContentDeliveryController.getContentDeliveryController().isValidContent(candidate.getId(), languageId, useLanguageFallback, infoGluePrincipal))
 							//	boundContentVOList.add(candidate);        		
+							//Content candidateContent = (Content)getObjectWithId(ContentImpl.class, candidate.getId(), db); 
 							
 							//Content candidateContent = (Content)getObjectWithId(ContentImpl.class, candidate.getId(), db); 
 							ContentVO candidateContent = ContentController.getContentController().getSmallContentVOWithId(candidate.getId(), db, deliveryContext);
@@ -1598,10 +1631,14 @@ public class NodeDeliveryController extends BaseDeliveryController
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 			}
 
-			SiteNode siteNode = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNode(database, siteNodeId);
+			SiteNodeVO siteNodeVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId).getSiteNodeVO(database, siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
-			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
-				dnsName = siteNode.getRepository().getDnsName();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), database);
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
 
 			pageAsDigitalAssetUrl = urlComposer.composeDigitalAssetUrl(dnsName, fileName, context);
 			
@@ -1650,14 +1687,25 @@ public class NodeDeliveryController extends BaseDeliveryController
 	/**
 	 * This method returns a url to the delivery engine
 	 */
-	public String getPageBaseUrl(Database db) throws SystemException
+	public String getPageBaseUrl(Database db) throws SystemException, Exception
 	{
 		String pageUrl = "";
 		
+		SiteNodeVO siteNodeVO = getSiteNodeVO(db, this.siteNodeId);
+		String dnsName = CmsPropertyHandler.getWebServerAddress();
+		if(siteNodeVO != null)
+		{
+			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
+			if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+				dnsName = repositoryVO.getDnsName();
+		}
+
+		/*
 		SiteNode siteNode = this.getSiteNode(db, this.siteNodeId);
 		String dnsName = CmsPropertyHandler.getWebServerAddress();
 		if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 			dnsName = siteNode.getRepository().getDnsName();
+		*/
 						
 		pageUrl = urlComposer.composePageBaseUrl(dnsName); 
 		
@@ -1688,8 +1736,61 @@ public class NodeDeliveryController extends BaseDeliveryController
 		return navTitle;
 	}
 	
+		/**
+	 * This method returns the navigation-title to the given page. 
+	 * The title is based on the content sent in firstly, secondly the siteNode. 
+	 * The actual text is fetched from either the content or the metacontent bound to the sitenode. 
+	 */
+
+	public String getPageNavigationTitle(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer repositoryId, Integer languageId, Integer contentId, String metaBindingName, String attributeName, boolean useLanguageFallback, DeliveryContext deliveryContext, boolean escapeHTML) throws SystemException, Exception
+	{
+		String navTitle = "";
+		
+		String attributeKey = "" + siteNodeId + "_" + languageId + "_" + attributeName;
+    	String candidate = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", attributeKey);
+    	if(candidate == null && useLanguageFallback)
+    	{
+			LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(db, repositoryId);
+			if(!masterLanguageVO.getId().equals(languageId))
+			{
+				attributeKey = "" + siteNodeId + "_" + masterLanguageVO.getId() + "_" + attributeName;
+				candidate = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", attributeKey);
+			}
+    	}
+    	
+    	if(candidate != null)
+    	{
+    		//System.out.println("candidate:" + candidate + " for " + attributeKey);
+    		navTitle = candidate;
+    	}
+    	else
+    	{
+    		//System.out.println("No candidate for " + attributeKey);
+			if(contentId == null || contentId.intValue() == -1)
+			{
+				ContentVO content = getBoundContent(db, infoGluePrincipal, siteNodeId, languageId, useLanguageFallback, metaBindingName, deliveryContext);
+				if(content != null)
+					navTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, content.getContentId(), languageId, attributeName, siteNodeId, useLanguageFallback, deliveryContext, infoGluePrincipal, escapeHTML, true);
+			}
+			else
+			{
+				navTitle = ContentDeliveryController.getContentDeliveryController().getContentAttribute(db, contentId, languageId, attributeName, siteNodeId, useLanguageFallback, deliveryContext, infoGluePrincipal, escapeHTML, true);
+			}
+
+        	//String groupKey1 = CacheController.getPooledString(2, contentVersionId);
+        	String groupKey2 = CacheController.getPooledString(1, contentId);
+
+			//String attributeKey = "" + siteNode.getId() + "_" + languageId + "_" + name;
+			//System.out.println("Caching " + attributeName + "=" + navTitle + " on " + attributeKey);
+        	CacheController.cacheObjectInAdvancedCache("metaInfoContentAttributeCache", attributeKey, navTitle, new String[]{"selectiveCacheUpdateNonApplicable", groupKey2}, true);
+    	}
+    	
+		return navTitle;
+	}
+	
     public Integer getSiteNodeId(Database db, InfoGluePrincipal infogluePrincipal, Integer repositoryId, String path, String attributeName, Integer parentSiteNodeId, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
+    	Timer t = new Timer();
         /*
         logger.info("repositoryId:" + repositoryId);
         logger.info("navigationTitle:" + navigationTitle);
@@ -1711,14 +1812,21 @@ public class NodeDeliveryController extends BaseDeliveryController
         
         if(parentSiteNodeId == null || parentSiteNodeId.intValue() == -1)
         {
-        	//logger.info("Checking for root node at " + repositoryId);
             SiteNodeVO rootSiteNodeVO = this.getRootSiteNode(db, repositoryId);
             if(rootSiteNodeVO != null)
             	siteNodes.add(rootSiteNodeVO);
         }
         else
         {
-            siteNodes = this.getChildSiteNodes(db, parentSiteNodeId);
+        	try
+        	{
+        		siteNodes = this.getChildSiteNodes(db, parentSiteNodeId);
+        		//NEW!!! siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 1);
+        	}
+        	catch (Exception e) 
+        	{
+        		logger.error("Error getting siteNode from nice uri: " + e.getMessage(), e);
+			}
         }
 
         Iterator siteNodeIterator = siteNodes.iterator();
@@ -1732,6 +1840,45 @@ public class NodeDeliveryController extends BaseDeliveryController
 	            return siteNodeVO.getId();
 	        }
 	        
+	        /*
+	        String pathCandidateFromMetaData = null;
+	        if(attributeName.equals("SiteNode.name"))
+	        {
+	        	pathCandidateFromMetaData = siteNodeVO.getName();
+            }
+	        else
+	        {
+	        	//System.out.println("languages:" + languages.size());
+	        	for (int i=0;i<languages.size();i++) 
+	            {
+	                LanguageVO language = (LanguageVO) languages.get(i);
+	                //System.out.println("language:" + language.getName());
+	                
+		        	String metaAttributeKey = "" + siteNodeVO.getId() + "_" + language.getId() + "_" + attributeName;
+		        	pathCandidateFromMetaData = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", metaAttributeKey);
+		        	//System.out.println("pathCandidateFromMetaData:" + pathCandidateFromMetaData + " on " + metaAttributeKey);
+		        	if((pathCandidateFromMetaData == null || pathCandidateFromMetaData.equals("")) && !attributeName.equals(NAV_TITLE_ATTRIBUTE_NAME))
+		        	{
+		    			metaAttributeKey = "" + siteNodeVO.getId() + "_" + language.getId() + "_" + NAV_TITLE_ATTRIBUTE_NAME;
+		    			pathCandidateFromMetaData = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", metaAttributeKey);
+		    			//System.out.println("pathCandidateFromMetaData2:" + pathCandidateFromMetaData + " on " + metaAttributeKey);
+		        	}
+		        	
+		        	if(pathCandidateFromMetaData != null)
+		        		break;
+	            }
+	        }
+	        
+	        //System.out.println(attributeName + " ["+pathCandidateFromMetaData.trim()+"]==[" + path + "]");
+	        logger.info(attributeName + " ["+pathCandidateFromMetaData.trim()+"]==[" + path + "]");
+            if (pathCandidateFromMetaData != null && pathCandidateFromMetaData.toLowerCase().trim().equals(path.toLowerCase())) 
+            {
+            	//System.out.println("Found cached meta data");
+            	return siteNodeVO.getSiteNodeId();
+            }
+	       	*/
+
+            
 	        logger.info("Continued with siteNode: " + siteNodeVO.getName());
 	        
 	        if(siteNodeVO.getMetaInfoContentId() == null)
@@ -1744,7 +1891,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 	        }
 	        catch (Exception e) 
 	        {
-				logger.error("The site node " + siteNodeVO.getName() + "(" + siteNodeVO.getId() + ") had no valid meta info. Fix this by editing the site node. Should never happen.");
+				logger.error("The site node " + siteNodeVO.getName() + "(" + siteNodeVO.getId() + ") had no valid meta info. Fix this by editing the site node. Should never happen. Message:" + e.getMessage());
+				logger.warn("The site node " + siteNodeVO.getName() + "(" + siteNodeVO.getId() + ") had no valid meta info. Fix this by editing the site node. Should never happen. Message:" + e.getMessage(), e);
 			}
 	        
 	        if(content != null) 
@@ -1778,6 +1926,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	            throw new SystemException("You must run validation service in the management tool against this db - it needs to become up2date with the new model.");
 	        }
 	    }
+        //t.printElapsedTime("getSiteNodeId took");
         
         return null;
     }
@@ -1801,6 +1950,8 @@ public class NodeDeliveryController extends BaseDeliveryController
             niceURIEncoding = "UTF-8";
         
         String attributeName = ViewPageFilter.attributeName;
+        if(attributeName == null)
+        	attributeName = CmsPropertyHandler.getNiceURIAttributeName();
         
         String pathPart;
         
@@ -1830,7 +1981,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         return path.toString();
     }
 
-/*
+    /*
     public static Integer getSiteNodeIdFromPath(Database db, InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
     {
         Integer siteNodeId = null;
@@ -1925,6 +2076,12 @@ public class NodeDeliveryController extends BaseDeliveryController
     }
     */
     
+    public static Integer getSiteNodeIdFromPath(InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, Integer languageId, DeliveryContext deliveryContext) throws SystemException, Exception
+    {
+    	return getSiteNodeIdFromPath(infogluePrincipal, repositoryVO, path, attributeName, deliveryContext, null, languageId);
+    }
+    
+    
     public static Integer getSiteNodeIdFromPath(InfoGluePrincipal infogluePrincipal, RepositoryVO repositoryVO, String[] path, String attributeName, DeliveryContext deliveryContext, HttpSession session, Integer languageId) throws SystemException, Exception
     {
         Integer siteNodeId = null;
@@ -1971,6 +2128,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         }
         
         String repositoryPath = null;
+    	boolean noHostStated = true;
     	
     	if(!CmsPropertyHandler.getOperatingMode().equals("3"))
     	{
@@ -1983,6 +2141,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 	    		else
 	    			repositoryPath = repositoryVO.getDnsName().substring(workingPathStartIndex + 12);
 	    	}
+	    	if(repositoryVO.getDnsName().indexOf("working=") > -1)
+	    		noHostStated = false;
     	}
 
     	if(repositoryPath == null)
@@ -1996,12 +2156,21 @@ public class NodeDeliveryController extends BaseDeliveryController
 	    		else
 	    			repositoryPath = repositoryVO.getDnsName().substring(pathStartIndex + 5);
         	}
+	    	if(repositoryVO.getDnsName().indexOf("live=") > -1 || repositoryVO.getDnsName().indexOf("preview=") > -1)
+	    		noHostStated = false;
     	}
     	
 		if(logger.isInfoEnabled())
 		{
 	    	logger.info("repositoryPath:" + repositoryPath);    	
 	    	logger.info("path:" + path.length);    	
+		}
+		
+		if(repositoryPath == null && noHostStated)
+		{
+			if(logger.isInfoEnabled())
+    			logger.info("The repo " + repositoryVO.getName() + " seems corrupt so this repository should be excluded.");
+    		return null;
 		}
 		
     	if(repositoryPath != null && path.length <= 0)
@@ -2079,6 +2248,13 @@ public class NodeDeliveryController extends BaseDeliveryController
     	}
     
         String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
+    	if((enableNiceURIForLanguage == null || !enableNiceURIForLanguage.equals("false")) && path.length > 0 && path[0].length() == 2)
+	    {
+	    	LanguageVO language = LanguageDeliveryController.getLanguageDeliveryController().getLanguageWithCode(db, path[0].toLowerCase());
+	    	if(language != null)
+	    		enableNiceURIForLanguage = "true";
+	    }
+
     	//logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
         //logger.info("numberOfPaths:" + numberOfPaths);
     	if(enableNiceURIForLanguage.equalsIgnoreCase("true") && path.length > 0)
@@ -2294,6 +2470,505 @@ public class NodeDeliveryController extends BaseDeliveryController
 	
 	public List getChildSiteNodes(Database db, Integer siteNodeId) throws SystemException, Exception
 	{
+		return getChildSiteNodes(db, siteNodeId, 0);
+	}
+	
+	/**
+	 * This method returns the list of siteNodeVO which is children to this one.
+	 */
+
+	public List getChildSiteNodes(Database db, Integer siteNodeId, Integer levelsToPopulate) throws SystemException, Exception
+	{
+		return getChildSiteNodes(db, siteNodeId, levelsToPopulate, false, null);
+	}
+	
+	public List getChildSiteNodes(Database db, Integer siteNodeId, Integer levelsToPopulate, boolean showHidden, String nameFilter) throws SystemException, Exception
+	{
+		return getChildSiteNodesOneLevel(db, siteNodeId, showHidden, nameFilter);
+		/*
+		//System.out.println("Query on siteNodeId:" + siteNodeId + "/" + levelsToPopulate);
+		if(levelsToPopulate > 0)
+			return getChildSiteNodesMultipleLevels(db, siteNodeId, levelsToPopulate);
+		else
+			return getChildSiteNodesOneLevel(db, siteNodeId);
+		*/
+	}
+
+	/**
+	 * This method returns the list of siteNodeVO which is children to this one.
+	 */
+	//private static Map<Integer,List<SiteNodeVO>> populatedSiteNodeVOList = new HashMap<Integer,List<SiteNodeVO>>();
+	
+	public List getChildSiteNodesMultipleLevels(Database db, Integer siteNodeId, Integer levelsToPopulate) throws SystemException, Exception
+	{
+		logger.info("getChildSiteNodes:" + siteNodeId);
+
+    	if(siteNodeId == null)
+		{
+			return null;
+		}
+    	
+    	SiteNodeVO cachedSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithIdIfInCache(siteNodeId, db);
+    	if(cachedSiteNodeVO != null && (cachedSiteNodeVO.getChildCount() != null && cachedSiteNodeVO.getChildCount() == 0))
+    	{
+    		//System.out.println("No children - lets skip..");
+    		return new ArrayList<SiteNodeVO>();
+    	}
+    	//else
+    	//	System.out.println("Was unknown " + "(" + (cachedSiteNodeVO != null ? cachedSiteNodeVO.getChildCount() : " null ") + ")");
+    	
+    	List<SiteNodeVO> siteNodeVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", "" + siteNodeId);
+    	//List<SiteNodeVO> siteNodeVOList = populatedSiteNodeVOList.get(siteNodeId);
+    	if(siteNodeVOList != null)
+    	{
+    		//System.out.println("Returning cached");
+    		return siteNodeVOList;
+    	}
+    	else
+    	{
+    		Timer t = new Timer();
+	   		
+    		ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db);
+    		List<ContentTypeAttribute> attributes = (List<ContentTypeAttribute>)ContentTypeDefinitionController.getController().getContentTypeAttributes(ctdVO.getSchemaValue());
+    		
+	        StringBuffer SQL = new StringBuffer();
+	    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+	    	{
+		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.parentsiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentsiNoId = sn.siNoId) AS childCount, snv.siNoVerId, snv.stateId, snv.isProtected, snv.versionModifier, snv.modifiedDateTime, cv.languageId, ");
+		   		//SQL.append("concat ");
+				//SQL.append("( ");
+				//SQL.append("  concat ");
+				//SQL.append("  ( ");
+		   		
+		   		/*
+				StringBuffer attributesSB = new StringBuffer();
+				int i = 0;
+				for(ContentTypeAttribute attribute : attributes)
+				{
+					if(!attribute.getName().equals("ComponentStructure"))
+					{
+						attributesSB.append("   \n '");
+						if(i > 0)
+							attributesSB.append("igcomma");
+					
+						attributesSB.append("" + attribute.getName() + "='||SUBSTR(verValue,INSTR(verValue,'<" + attribute.getName() + "><![CDATA[')+" + (attribute.getName().length() + 11) + ",INSTR(verValue,']]></" + attribute.getName() + ">') - (INSTR(verValue,'<" + attribute.getName() + "><![CDATA[') + " + (attribute.getName().length() + 11) + ")) ||");
+					}
+					i++;
+				}
+				attributesSB.deleteCharAt(attributesSB.length()-1).deleteCharAt(attributesSB.length()-1);
+				//System.out.println("attributesSB:" + attributesSB);
+				SQL.append(attributesSB.toString());
+				*/
+		   		SQL.append(" cv.verValue ");
+				//SQL.append("  ) ");
+				//SQL.append(") AS attributes ");
+				SQL.append(" AS attributes ");
+				SQL.append("from ");
+				SQL.append("(");
+				SQL.append("select sn1.siNoId, sn1.name, sn1.publishDateTime, sn1.expireDateTime, sn1.isBranch, sn1.parentsiNoId, sn1.metaInfoContentId, sn1.repositoryId, sn1.siNoTypeDefId, sn1.creator from cmSiNo sn1 where sn1.parentsiNoId = " + siteNodeId + " ");
+				if(levelsToPopulate > 1)
+				{
+					SQL.append("UNION ");
+					SQL.append("select sn2.siNoId, sn2.name, sn2.publishDateTime, sn2.expireDateTime, sn2.isBranch, sn2.parentsiNoId, sn2.metaInfoContentId, sn2.repositoryId, sn2.siNoTypeDefId, sn2.creator ");
+					SQL.append("from ");
+					SQL.append("(");
+					SQL.append("  select sn1.siNoId, sn1.name, sn1.publishDateTime, sn1.expireDateTime, sn1.isBranch, sn1.parentsiNoId, sn1.metaInfoContentId, sn1.repositoryId, sn1.siNoTypeDefId, sn1.creator from cmSiNo sn1 where sn1.parentsiNoId = " + siteNodeId + " ");
+					SQL.append(") sn1, cmSiNo sn2 where sn2.parentsiNoId = sn1.siNoId ");
+				}
+				if(levelsToPopulate > 2)
+				{
+					SQL.append("UNION ");
+					SQL.append("select sn3.siNoId, sn3.name, sn3.publishDateTime, sn3.expireDateTime, sn3.isBranch, sn3.parentsiNoId, sn3.metaInfoContentId, sn3.repositoryId, sn3.siNoTypeDefId, sn3.creator ");
+					SQL.append("from ");
+					SQL.append(" (");
+					SQL.append("  select sn2.siNoId, sn2.name, sn2.publishDateTime, sn2.expireDateTime, sn2.isBranch, sn2.parentsiNoId, sn2.metaInfoContentId, sn2.repositoryId, sn2.siNoTypeDefId, sn2.creator ");
+					SQL.append("  from ");
+					SQL.append("  (");
+					SQL.append("    select sn1.siNoId, sn1.name, sn1.publishDateTime, sn1.expireDateTime, sn1.isBranch, sn1.parentsiNoId, sn1.metaInfoContentId, sn1.repositoryId, sn1.siNoTypeDefId, sn1.creator from cmSiNo sn1 where sn1.parentsiNoId = " + siteNodeId + " ");
+					SQL.append("  ) sn1, cmSiNo sn2 where sn2.parentsiNoId = sn1.siNoId ");
+					SQL.append(") sn2, cmSiNo sn3 where sn3.parentsiNoId = sn2.siNoId ");
+				}
+				if(levelsToPopulate > 3)
+				{
+					SQL.append("UNION ");
+					SQL.append("select sn4.siNoId, sn4.name, sn4.publishDateTime, sn4.expireDateTime, sn4.isBranch, sn4.parentsiNoId, sn4.metaInfoContentId, sn4.repositoryId, sn4.siNoTypeDefId, sn4.creator ");
+					SQL.append("from ");
+					SQL.append("(");
+					SQL.append("  select sn3.siNoId, sn3.name, sn3.publishDateTime, sn3.expireDateTime, sn3.isBranch, sn3.parentsiNoId, sn3.metaInfoContentId, sn3.repositoryId, sn3.siNoTypeDefId, sn3.creator ");
+					SQL.append("  from ");
+					SQL.append("  (");
+					SQL.append("    select sn2.siNoId, sn2.name, sn2.publishDateTime, sn2.expireDateTime, sn2.isBranch, sn2.parentsiNoId, sn2.metaInfoContentId, sn2.repositoryId, sn2.siNoTypeDefId, sn2.creator ");
+					SQL.append("    from ");
+					SQL.append("   (");
+					SQL.append("     select sn1.siNoId, sn1.name, sn1.publishDateTime, sn1.expireDateTime, sn1.isBranch, sn1.parentsiNoId, sn1.metaInfoContentId, sn1.repositoryId, sn1.siNoTypeDefId, sn1.creator from cmSiNo sn1 where sn1.parentsiNoId = " + siteNodeId + " ");
+					SQL.append("   ) sn1, cmSiNo sn2 where sn2.parentsiNoId = sn1.siNoId ");
+					SQL.append(" ) sn2, cmSiNo sn3 where sn3.parentsiNoId = sn2.siNoId ");
+					SQL.append(" ) sn3, cmSiNo sn4 where sn4.parentsiNoId = sn3.siNoId ");
+				}
+				
+				SQL.append(") sn, cmSiNoVer snv, cmContVer cv ");
+				SQL.append("where ");
+				SQL.append("snv.siNoId = sn.siNoId AND ");
+				SQL.append("cv.contId = sn.metaInfoContentId AND ");
+				SQL.append("cv.contVerId in (select max(contVerId) from cmContVer cv2 where cv2.contId=cv.contId group by cv2.languageId) ");
+				SQL.append("AND snv.siNoVerId = ( ");
+				SQL.append("  select max(siNoVerId) from cmSiNoVer snv2 ");
+				SQL.append("  WHERE ");
+				SQL.append("  snv2.siNoId = snv.siNoId AND ");
+				SQL.append("  snv2.isActive = $1 AND snv2.stateId >= $2 ");
+				SQL.append(") ");
+				SQL.append("order by sn.parentSiNoId asc, sn.name ASC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");	    	
+			}
+	    	else
+	    	{
+		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.parentsiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentsiteNodeId = sn.siteNodeId) AS childCount, snv.siteNodeVersionId, snv.stateId, snv.isProtected, snv.versionModifier, snv.modifiedDateTime, cv.languageId, ");
+		   		/*
+		   		SQL.append("concat ");
+				SQL.append("( ");
+				SQL.append("  concat ");
+				SQL.append("  ( ");
+				
+				StringBuffer attributesSB = new StringBuffer();
+				int i = 0;
+				for(ContentTypeAttribute attribute : attributes)
+				{
+					if(!attribute.getName().equals("ComponentStructure"))
+					{
+						attributesSB.append("   \n '");
+						if(i > 0)
+							attributesSB.append("igcomma");
+					
+						attributesSB.append("" + attribute.getName() + "=',SUBSTR(versionValue,INSTR(versionValue,'<" + attribute.getName() + "><![CDATA[')+" + (attribute.getName().length() + 11) + ",INSTR(versionValue,']]></" + attribute.getName() + ">') - (INSTR(versionValue,'<" + attribute.getName() + "><![CDATA[') + " + (attribute.getName().length() + 11) + ")),");
+					}
+					i++;
+				}
+				attributesSB.deleteCharAt(attributesSB.length()-1);
+				//System.out.println("attributesSB:" + attributesSB);
+				SQL.append(attributesSB.toString());
+				
+				SQL.append("  ) ");
+				SQL.append(") AS attributes ");
+				*/
+		   		SQL.append(" cv.versionValue AS attributes ");
+		   		
+				SQL.append("from ");
+				SQL.append("(");
+				SQL.append("select sn1.siteNodeId, sn1.name, sn1.publishDateTime, sn1.expireDateTime, sn1.isBranch, sn1.parentsiteNodeId, sn1.metaInfoContentId, sn1.repositoryId, sn1.siteNodeTypeDefinitionId, sn1.creator from cmSiteNode sn1 where sn1.parentsiteNodeId = " + siteNodeId + " ");
+				if(levelsToPopulate > 1)
+				{
+					SQL.append("UNION ");
+					SQL.append("select sn2.siteNodeId, sn2.name, sn2.publishDateTime, sn2.expireDateTime, sn2.isBranch, sn2.parentsiteNodeId, sn2.metaInfoContentId, sn2.repositoryId, sn2.siteNodeTypeDefinitionId, sn2.creator ");
+					SQL.append("from ");
+					SQL.append("(");
+					SQL.append("  select sn1.siteNodeId, sn1.name, sn1.publishDateTime, sn1.expireDateTime, sn1.isBranch, sn1.parentsiteNodeId, sn1.metaInfoContentId, sn1.repositoryId, sn1.siteNodeTypeDefinitionId, sn1.creator from cmSiteNode sn1 where sn1.parentsiteNodeId = " + siteNodeId + " ");
+					SQL.append(") sn1, cmSiteNode sn2 where sn2.parentsiteNodeId = sn1.siteNodeId ");
+				}
+				if(levelsToPopulate > 2)
+				{
+					SQL.append("UNION ");
+					SQL.append("select sn3.siteNodeId, sn3.name, sn3.publishDateTime, sn3.expireDateTime, sn3.isBranch, sn3.parentsiteNodeId, sn3.metaInfoContentId, sn3.repositoryId, sn3.siteNodeTypeDefinitionId, sn3.creator ");
+					SQL.append("from ");
+					SQL.append(" (");
+					SQL.append("  select sn2.siteNodeId, sn2.name, sn2.publishDateTime, sn2.expireDateTime, sn2.isBranch, sn2.parentsiteNodeId, sn2.metaInfoContentId, sn2.repositoryId, sn2.siteNodeTypeDefinitionId, sn2.creator ");
+					SQL.append("  from ");
+					SQL.append("  (");
+					SQL.append("    select sn1.siteNodeId, sn1.name, sn1.publishDateTime, sn1.expireDateTime, sn1.isBranch, sn1.parentsiteNodeId, sn1.metaInfoContentId, sn1.repositoryId, sn1.siteNodeTypeDefinitionId, sn1.creator from cmSiteNode sn1 where sn1.parentsiteNodeId = " + siteNodeId + " ");
+					SQL.append("  ) sn1, cmSiteNode sn2 where sn2.parentsiteNodeId = sn1.siteNodeId ");
+					SQL.append(") sn2, cmSiteNode sn3 where sn3.parentsiteNodeId = sn2.siteNodeId ");
+				}
+				if(levelsToPopulate > 3)
+				{
+					SQL.append("UNION ");
+					SQL.append("select sn4.siteNodeId, sn4.name, sn4.publishDateTime, sn4.expireDateTime, sn4.isBranch, sn4.parentsiteNodeId, sn4.metaInfoContentId, sn4.repositoryId, sn4.siteNodeTypeDefinitionId, sn4.creator ");
+					SQL.append("from ");
+					SQL.append("(");
+					SQL.append("  select sn3.siteNodeId, sn3.name, sn3.publishDateTime, sn3.expireDateTime, sn3.isBranch, sn3.parentsiteNodeId, sn3.metaInfoContentId, sn3.repositoryId, sn3.siteNodeTypeDefinitionId, sn3.creator ");
+					SQL.append("  from ");
+					SQL.append("  (");
+					SQL.append("    select sn2.siteNodeId, sn2.name, sn2.publishDateTime, sn2.expireDateTime, sn2.isBranch, sn2.parentsiteNodeId, sn2.metaInfoContentId, sn2.repositoryId, sn2.siteNodeTypeDefinitionId, sn2.creator ");
+					SQL.append("    from ");
+					SQL.append("   (");
+					SQL.append("     select sn1.siteNodeId, sn1.name, sn1.publishDateTime, sn1.expireDateTime, sn1.isBranch, sn1.parentsiteNodeId, sn1.metaInfoContentId, sn1.repositoryId, sn1.siteNodeTypeDefinitionId, sn1.creator from cmSiteNode sn1 where sn1.parentsiteNodeId = " + siteNodeId + " ");
+					SQL.append("   ) sn1, cmSiteNode sn2 where sn2.parentsiteNodeId = sn1.siteNodeId ");
+					SQL.append(" ) sn2, cmSiteNode sn3 where sn3.parentsiteNodeId = sn2.siteNodeId ");
+					SQL.append(" ) sn3, cmSiteNode sn4 where sn4.parentsiteNodeId = sn3.siteNodeId ");
+				}
+				
+				SQL.append(") sn, cmSiteNodeVersion snv, cmContentVersion cv ");
+				SQL.append("where ");
+				SQL.append("snv.siteNodeId = sn.siteNodeId AND ");
+				SQL.append("cv.contentId = sn.metaInfoContentId AND ");
+				SQL.append("cv.contentVersionId in (select max(contentVersionId) from cmContentVersion cv2 where cv2.contentId=cv.contentId group by cv2.languageId) ");
+				SQL.append("AND snv.siteNodeVersionId = ( ");
+				SQL.append("  select max(siteNodeVersionId) from cmSiteNodeVersion snv2 ");
+				SQL.append("  WHERE ");
+				SQL.append("  snv2.siteNodeId = snv.siteNodeId AND ");
+				SQL.append("  snv2.isActive = $1 AND snv2.stateId >= $2 ");
+				SQL.append(") ");
+				SQL.append("order by sn.parentsiteNodeId asc, sn.name ASC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");
+	    	}
+	    	
+	    	System.out.println("\n\n" + SQL);
+	    	System.out.println("Running SQL QUERY for children to " + siteNodeId + " and possibly below");
+	    	Thread.dumpStack();
+	    	
+	    	//logger.info("SQL:" + SQL);
+	    	//logger.info("siteNodeId:" + siteNodeId);
+	    	OQLQuery oql = db.getOQLQuery(SQL.toString());
+			//oql.bind(siteNodeId);
+			oql.bind(true);
+			oql.bind(getOperatingMode());
+	    	
+	    	QueryResults results = oql.execute(Database.ReadOnly);
+	    	t.printElapsedTime("Query took");
+	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
+	    	
+	    	Map<Integer,SiteNodeVO> allSiteNodeVOMap = new HashMap<Integer,SiteNodeVO>();
+	    	
+	    	Integer parentSiteNodeId = null;
+	    	siteNodeVOList = new ArrayList<SiteNodeVO>();
+			CacheController.cacheObjectInAdvancedCache("childPagesCache", ""+siteNodeId, siteNodeVOList, new String[] {CacheController.getPooledString(3, siteNodeId)}, true);
+			//populatedSiteNodeVOList.put(siteNodeId, siteNodeVOList);
+
+			String groupKey1 = null;
+			String groupKey2 = null;
+			
+			while (results.hasMore()) 
+	        {
+	        	SiteNode siteNode = (SiteNode)results.next();
+	        	
+				String siteNodeCacheKey = "" + siteNode.getValueObject().getId();
+				CacheController.cacheObjectInAdvancedCache("siteNodeCache", siteNodeCacheKey, siteNode.getValueObject());
+
+        		String versionValue = siteNode.getValueObject().getAttributes();
+        		Integer contentId = siteNode.getValueObject().getMetaInfoContentId();
+        		Integer languageId = siteNode.getValueObject().getLanguageId();
+        		Integer contentVersionId = siteNode.getValueObject().getContentVersionId();
+        		if(versionValue == null)
+        		{
+        			System.out.println("Null version for " + siteNode.getSiteNodeId() + ":" + siteNode.getValueObject().getSiteNodeVersionId());
+        		}
+        		else
+        		{
+		        	groupKey1 = CacheController.getPooledString(2, contentVersionId);
+		        	groupKey2 = CacheController.getPooledString(1, contentId);
+		        	
+		        	for(ContentTypeAttribute attribute : attributes)
+					{
+		        		if(!attribute.getName().equals("ComponentStructure"))
+		        		{
+		        			String attributeKey = "" + siteNode.getId() + "_" + languageId + "_" + attribute.getName();
+		        			String attributeKeyContentId = "c_" + siteNode.getMetaInfoContentId() + "_" + languageId + "_" + attribute.getName();
+		        			//System.out.println("Caching empty on " + attributeKey);
+		    	        	CacheController.cacheObjectInAdvancedCache("metaInfoContentAttributeCache", attributeKey, "", new String[]{groupKey1, groupKey2}, true);
+		    	        	CacheController.cacheObjectInAdvancedCache("metaInfoContentAttributeCache", attributeKeyContentId, "", new String[]{groupKey1, groupKey2}, true);
+		    	        }
+					}
+					
+		        	for(ContentTypeAttribute attribute : attributes)
+	        		{
+		        		//if(!attribute.getName().equals("ComponentStructure"))
+		        		//{
+		        			String value = ContentDeliveryController.getContentDeliveryController().getAttributeValue(versionValue, attribute.getName(), false);
+		
+		        			String attributeKey = "" + siteNode.getId() + "_" + languageId + "_" + attribute.getName();
+		        			String attributeKeyContentId = "c_" + siteNode.getMetaInfoContentId() + "_" + languageId + "_" + attribute.getName();
+		        			//System.out.println("Caching " + value + " on " + attributeKey);
+		    	        	CacheController.cacheObjectInAdvancedCache("metaInfoContentAttributeCache", attributeKey, value, new String[]{groupKey1, groupKey2}, true);
+		    	        	CacheController.cacheObjectInAdvancedCache("metaInfoContentAttributeCache", attributeKeyContentId, value, new String[]{groupKey1, groupKey2}, true);
+		    	        	//}
+	        		}    
+        		}
+	        	/*
+	        	if(attributesString != null)
+	        	{
+	        		String[] attributesArray = attributesString.split("igcomma");
+	        		for(String attr : attributesArray)
+	        		{
+	        			if(attr != null && !attr.equals(""))
+	        			{
+		        			String name = attr.substring(0, attr.indexOf("="));
+		        			String value = attr.substring(attr.indexOf("=") + 1);
+		
+		        			String attributeKey = "" + siteNode.getId() + "_" + languageId + "_" + name;
+		        			String attributeKeyContentId = "c_" + siteNode.getMetaInfoContentId() + "_" + languageId + "_" + name;
+		        			//System.out.println("Caching " + name + "=" + value + " on " + attributeKey);
+		    	        	CacheController.cacheObjectInAdvancedCache("metaInfoContentAttributeCache", attributeKey, value, new String[]{groupKey1, groupKey2}, true);
+		    	        	CacheController.cacheObjectInAdvancedCache("metaInfoContentAttributeCache", attributeKeyContentId, value, new String[]{groupKey1, groupKey2}, true);
+	        			}
+	        		}        		
+	        	}
+	        	else
+	        		System.out.println("Error null on " + siteNode.getId());
+	        	*/
+	        	//if(allSiteNodeVOMap.get(siteNode.getId()) != null)
+        		//{
+	        	//	allSiteNodeVOMap.get(siteNode.getId()).addAttributes(siteNode.getValueObject().getLanguageId(), siteNode.getValueObject().getAttributes());
+        		//	continue;
+        		//}
+	        	
+	        	allSiteNodeVOMap.put(siteNode.getId(), siteNode.getValueObject());
+	        	//System.out.println("siteNode:" + siteNode.getName());
+				if(isValidSiteNode(siteNode, db))
+	        	{
+					//System.out.println("Caching empty list initially on " + siteNode.getId());
+					//CacheController.cacheObjectInAdvancedCache("childPagesCache", ""+siteNode.getId(), new ArrayList<SiteNodeVO>(), new String[] {groupKey1, groupKey2, CacheController.getPooledString(3, siteNode.getId())}, true);
+					//populatedSiteNodeVOList.put(siteNode.getId(), new ArrayList<SiteNodeVO>());
+					if(parentSiteNodeId != null && !siteNode.getValueObject().getParentSiteNodeId().equals(parentSiteNodeId))
+					{
+						//System.out.println("Caching list:" + siteNodeVOList + " on " + parentSiteNodeId);
+						CacheController.cacheObjectInAdvancedCache("childPagesCache", ""+parentSiteNodeId, siteNodeVOList, new String[] {groupKey1, groupKey2, CacheController.getPooledString(3, parentSiteNodeId)}, true);
+						//populatedSiteNodeVOList.put(parentSiteNodeId, siteNodeVOList);
+						siteNodeVOList = new ArrayList<SiteNodeVO>();
+					}
+					parentSiteNodeId = siteNode.getValueObject().getParentSiteNodeId();
+					siteNodeVOList.add(siteNode.getValueObject());
+				}
+	    	}
+			//System.out.println("Caching list:" + siteNodeVOList + " on " + parentSiteNodeId);
+			if(groupKey1 == null) groupKey1 = "";
+			if(groupKey2 == null) groupKey2 = "";
+			CacheController.cacheObjectInAdvancedCache("childPagesCache", ""+parentSiteNodeId, siteNodeVOList, new String[] {groupKey1, groupKey2, CacheController.getPooledString(3, parentSiteNodeId)}, true);
+			//populatedSiteNodeVOList.put(parentSiteNodeId, siteNodeVOList);
+	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 2", t.getElapsedTime());
+	    	t.printElapsedTime("Read took");
+
+			results.close();
+			oql.close();
+    	
+			//System.out.println("SIZE:" + populatedSiteNodeVOList.size());
+    	}
+    	
+    	return (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", "" + siteNodeId); //populatedSiteNodeVOList.get(siteNodeId);
+	}
+	
+	/**
+	 * This method returns the list of siteNodeVO which is children to this one.
+	 */
+	
+	public List getChildSiteNodesOneLevel(Database db, Integer siteNodeId, boolean showHidden, String nameFilter) throws SystemException, Exception
+	{
+		logger.info("getChildSiteNodes:" + siteNodeId);
+
+    	if(siteNodeId == null)
+		{
+			return null;
+		}
+    	
+    	List<SiteNodeVO> siteNodeVOList = (List<SiteNodeVO>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter)); //populatedSiteNodeVOList.get(siteNodeId);
+    	if(siteNodeVOList != null)
+    	{
+    		//System.out.println("Returning cached");
+    		return siteNodeVOList;
+    	}
+    	else
+    	{
+	        String key = "" + siteNodeId + "_" + showHidden + (nameFilter == null ? "" : "_" + nameFilter);
+	        logger.info("key in getChildSiteNodes:" + key);
+			siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
+	
+			if(siteNodeVOList == null)
+			{
+				SiteNodeVO parentSiteNodeVO = getSiteNodeVO(db, siteNodeId);
+				if(parentSiteNodeVO != null && parentSiteNodeVO.getChildCount() != null && parentSiteNodeVO.getChildCount() == 0)
+				{
+					logger.info("Skipping node as it has no children...");
+					return new ArrayList();
+				}
+			}
+	
+			
+			if(siteNodeVOList != null)
+			{
+				logger.info("There was a cached list of child sitenodes:" + siteNodeVOList.size());
+			}
+			else
+			{
+		   		//logger.info("Querying for children to siteNode " + siteNodeId);
+		   		Timer t = new Timer();
+		   		
+		        siteNodeVOList = new ArrayList();
+			    
+		        StringBuffer SQL = new StringBuffer();
+		    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+		    	{
+			   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.siNoVerId, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected, snv.versionModifier, snv.modifiedDateTime, 0 AS languageId, '' as attributes from cmSiNo sn, cmSiNoVer snv ");
+			   		SQL.append("where ");
+			   		SQL.append("sn.parentSiNoId = $1 ");
+			   		SQL.append("AND sn.isDeleted = $2 ");
+			   		SQL.append("AND snv.siNoId = sn.siNoId ");
+			   		SQL.append("AND snv.siNoVerId = ( ");
+			   		SQL.append("	select max(siNoVerId) from cmSiNoVer snv2 ");
+			   		SQL.append("	WHERE ");
+			   		SQL.append("	snv2.siNoId = snv.siNoId AND ");
+			   		SQL.append("	snv2.isActive = $3 AND snv2.stateId >= $4 ");
+			   		SQL.append("	) ");
+			   		if(nameFilter != null && !nameFilter.equals(""))
+			   			SQL.append(" AND sn.name LIKE $5 ");
+			   		//if(!showHidden)
+			   		//	SQL.append(" AND snv.isHidden = 0 ");
+			   		SQL.append("order by snv.sortOrder, sn.name ASC, sn.siNoId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");
+		    	}
+		    	else
+		    	{
+			   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.siteNodeVersionId, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected, snv.versionModifier, snv.modifiedDateTime, 0 AS languageId, '' as attributes from cmSiteNode sn, cmSiteNodeVersion snv ");
+			   		SQL.append("where ");
+			   		SQL.append("sn.parentSiteNodeId = $1 ");
+			   		SQL.append("AND sn.isDeleted = $2 ");
+			   		SQL.append("AND snv.siteNodeId = sn.siteNodeId ");
+			   		SQL.append("AND snv.siteNodeVersionId = ( ");
+			   		SQL.append("	select max(siteNodeVersionId) from cmSiteNodeVersion snv2 ");
+			   		SQL.append("	WHERE ");	
+			   		SQL.append("	snv2.siteNodeId = snv.siteNodeId AND ");
+			   		SQL.append("	snv2.isActive = $3 AND snv2.stateId >= $4 ");
+			   		SQL.append("	) ");
+			   		if(nameFilter != null && !nameFilter.equals(""))
+			   			SQL.append(" AND sn.name LIKE $5 ");
+			   		//if(!showHidden)
+			   		//	SQL.append(" AND snv.isHidden = 0 ");
+			   		SQL.append("order by snv.sortOrder, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
+		    	}
+	
+		    	System.out.println("SQL:" + SQL);
+		    	//logger.info("siteNodeId:" + siteNodeId);
+		    	OQLQuery oql = db.getOQLQuery(SQL.toString());
+				oql.bind(siteNodeId);
+				oql.bind(false);
+				oql.bind(true);
+				oql.bind(getOperatingMode());
+				if(nameFilter != null && !nameFilter.equals(""))
+					oql.bind(nameFilter);
+		    	
+		    	QueryResults results = oql.execute(Database.ReadOnly);
+		    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
+		    	
+				while (results.hasMore()) 
+		        {
+		        	SiteNode siteNode = (SiteNode)results.next();
+					if(isValidSiteNode(siteNode, db))
+		        	{
+						if(siteNode.getValueObject().getIsHidden() == null || (siteNode.getValueObject().getIsHidden().booleanValue() == false || showHidden))
+							siteNodeVOList.add(siteNode.getValueObject());
+					}
+		    	}
+		    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 2", t.getElapsedTime());
+	
+				results.close();
+				oql.close();
+		        
+				CacheController.cacheObjectInAdvancedCache("childSiteNodesCache", key, siteNodeVOList, new String[] {CacheController.getPooledString(3, siteNodeId)}, true);
+			}
+    	}
+    	
+		return siteNodeVOList;	
+	}
+	
+	/**
+	 * This method returns the list of siteNodeVO which is children to this one and has a given node name.
+	 */
+	
+	public List getChildSiteNodeWithName(Database db, Integer siteNodeId, String name) throws SystemException, Exception
+	{
 		//logger.warn("getChildSiteNodes:" + siteNodeId);
 
     	if(siteNodeId == null)
@@ -2301,7 +2976,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			return null;
 		}
     	
-        String key = "" + siteNodeId + "_" + false;
+        String key = "" + siteNodeId + "_" + name + "_" + false;
         logger.info("key in getChildSiteNodes:" + key);
 		List siteNodeVOList = (List)CacheController.getCachedObjectFromAdvancedCache("childSiteNodesCache", key);
 
@@ -2330,7 +3005,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 	        StringBuffer SQL = new StringBuffer();
 	    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
 	    	{
-		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiNo sn, cmSiNoVer snv ");
+		   		SQL.append("CALL SQL select sn.siNoId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiNoId, sn.metaInfoContentId, sn.repositoryId, sn.siNoTypeDefId, sn.creator, (select count(*) from cmSiNo sn2 where sn2.parentSiNoId = sn.siNoId) AS childCount, snv.siNoVerId, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected, snv.versionModifier, snv.modifiedDateTime from cmSiNo sn, cmSiNoVer snv ");
 		   		SQL.append("where ");
 		   		SQL.append("sn.parentSiNoId = $1 ");
 		   		SQL.append("AND sn.isDeleted = $2 ");
@@ -2341,11 +3016,12 @@ public class NodeDeliveryController extends BaseDeliveryController
 		   		SQL.append("	snv2.siNoId = snv.siNoId AND ");
 		   		SQL.append("	snv2.isActive = $3 AND snv2.stateId >= $4 ");
 		   		SQL.append("	) ");
+		   		SQL.append("AND sn.name = $5 ");
 		   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siNoId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");
 	    	}
 	    	else
 	    	{
-		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected from cmSiteNode sn, cmSiteNodeVersion snv ");
+		   		SQL.append("CALL SQL select sn.siteNodeId, sn.name, sn.publishDateTime, sn.expireDateTime, sn.isBranch, sn.isDeleted, sn.parentSiteNodeId, sn.metaInfoContentId, sn.repositoryId, sn.siteNodeTypeDefinitionId, sn.creator, (select count(*) from cmSiteNode sn2 where sn2.parentSiteNodeId = sn.siteNodeId) AS childCount, snv.siteNodeVersionId, snv.sortOrder, snv.isHidden, snv.stateId, snv.isProtected, snv.versionModifier, snv.modifiedDateTime from cmSiteNode sn, cmSiteNodeVersion snv ");
 		   		SQL.append("where ");
 		   		SQL.append("sn.parentSiteNodeId = $1 ");
 		   		SQL.append("AND sn.isDeleted = $2 ");
@@ -2355,6 +3031,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		   		SQL.append("	WHERE ");	
 		   		SQL.append("	snv2.siteNodeId = snv.siteNodeId AND ");
 		   		SQL.append("	snv2.isActive = $3 AND snv2.stateId >= $4 ");
+		   		SQL.append("AND sn.name = $5 ");
 		   		SQL.append("	) ");
 		   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 	    	}
@@ -2368,6 +3045,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			oql.bind(false);
 			oql.bind(true);
 			oql.bind(getOperatingMode());
+			oql.bind(name);
 	    	
 	    	QueryResults results = oql.execute(Database.ReadOnly);
 	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 1", t.getElapsedTime());
@@ -2378,7 +3056,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 				if(isValidSiteNode(siteNode, db))
 	        	{
 	        		siteNodeVOList.add(siteNode.getValueObject());
-	        		System.out.println("Adding:" + siteNode.getValueObject().getName());
 				}
 	    	}
 	    	//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes part 2", t.getElapsedTime());
@@ -2476,9 +3153,14 @@ public class NodeDeliveryController extends BaseDeliveryController
 		
 		if(isValidOnDates(siteNode.getPublishDateTime(), siteNode.getExpireDateTime()))
 		{
-			//if(this.getLatestActiveSiteNodeVersion(siteNode.getId(), db) != null)
 		    if(this.getLatestActiveSiteNodeVersionVO(siteNode.getId(), db) != null)
 		        isValidContent = true;
+		    /*
+		    if(siteNode.getValueObject().getSiteNodeVersionId() != null)
+				isValidContent = true;
+			else if(this.getLatestActiveSiteNodeVersionVO(siteNode.getId(), db) != null)
+		        isValidContent = true;
+			*/
 		}
 		
 		if(isValidContent && !siteNode.getExpireDateTime().before(new Date()))

@@ -30,7 +30,7 @@ import org.infoglue.cms.entities.workflow.EventVO;
 public class EventImpl implements Event
 {
     private EventVO valueObject = new EventVO();
-    private org.infoglue.cms.entities.management.impl.simple.RepositoryImpl repository;
+    //private org.infoglue.cms.entities.management.impl.simple.RepositoryImpl repository;
      
     public EventVO getValueObject()
     {
@@ -127,15 +127,15 @@ public class EventImpl implements Event
         this.valueObject.setCreator(creator);
     }
 
-    public org.infoglue.cms.entities.management.impl.simple.RepositoryImpl getRepository()
+    public Integer getRepositoryId()
     {
-        return this.repository;
+        return this.valueObject.getRepositoryId();
     }
             
-    public void setRepository (org.infoglue.cms.entities.management.impl.simple.RepositoryImpl repository)
+    public void setRepositoryId(Integer repositoryId)
     {
-        this.repository = repository;
-    }
+        this.valueObject.setRepositoryId(repositoryId);
+    } 
       
 
 

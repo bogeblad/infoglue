@@ -30,7 +30,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
-import org.infoglue.cms.entities.structure.SiteNode;
+import org.infoglue.cms.entities.management.AccessRight;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
@@ -38,6 +38,7 @@ import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.deliver.util.Timer;
 
 
 /**
@@ -62,11 +63,64 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 	
 	private List getInterceptors(Integer interceptorPointId) throws SystemException, Bug
 	{
-		interceptors = InterceptorController.getController().getInterceptorsVOList(interceptorPointId);
+		//if(interceptors == null)
+			interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptorPointId);
 		
 		return interceptors;
 	}
 	
+	/*
+	private void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Bug, Exception
+	{
+		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(InterceptionPointName);
+  
+		if(interceptionPointVO == null)
+			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
+
+		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPointVO.getInterceptionPointId());
+		Iterator interceptorsIterator = interceptors.iterator();
+		while(interceptorsIterator.hasNext())
+		{
+			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
+			logger.info("Adding interceptorVO:" + interceptorVO.getName());
+			try
+			{
+				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap);
+			}
+			catch(ClassNotFoundException e)
+			{
+				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
+			}
+		}		    
+	}
+	*/
+	/*
+	private void intercept(Map hashMap, String InterceptionPointName, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException, Bug, Exception
+	{
+		InterceptionPoint interceptionPoint = InterceptionPointController.getController().getInterceptionPointWithName(InterceptionPointName, db);
+    	
+		if(interceptionPoint == null)
+			throw new SystemException("The InterceptionPoint " + InterceptionPointName + " was not found. The system will not work unless you restore it.");
+
+		List interceptors = InterceptionPointController.getController().getInterceptorsVOList(interceptionPoint.getInterceptionPointId(), db);
+		Iterator interceptorsIterator = interceptors.iterator();
+		while(interceptorsIterator.hasNext())
+		{
+			InterceptorVO interceptorVO = (InterceptorVO)interceptorsIterator.next();
+			logger.info("Adding interceptorVO:" + interceptorVO.getName());
+			try
+			{
+				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPoint.getValueObject(), hashMap, db);
+			}
+			catch(ClassNotFoundException e)
+			{
+				logger.warn("The interceptor " + interceptorVO.getClassName() + "was not found: " + e.getMessage(), e);
+			}
+		}
+	}
+	*/
 	
 	/**
 	 * This method returns a specific siteNodeVersion-object
@@ -144,7 +198,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 		hashMap.put("siteNodeVersionId", siteNodeVersionVO.getId());
     	
 		intercept(hashMap, "SiteNodeVersion.Write", infogluePrincipal, db);
-
+		
 		return update(siteNodeVersionVO, db);
 	}   
 	
@@ -204,18 +258,15 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 						protectedSiteNodeVersionId = null;
 					else if(siteNodeVersionVO.getIsProtected().intValue() == YES.intValue())
 						protectedSiteNodeVersionId = siteNodeVersionVO.getId();
+					else if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+						protectedSiteNodeVersionId = siteNodeVersionVO.getId();
 					else if(siteNodeVersionVO.getIsProtected().intValue() == INHERITED.intValue())
 					{
-						SiteNodeVO currentSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersionVO.getSiteNodeId());
-						if(currentSiteNodeVO.getParentSiteNodeId() != null)
+						SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(siteNodeVersionVO.getSiteNodeId());
+						if(parentSiteNodeVO != null)
 						{
-							SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(currentSiteNodeVO.getParentSiteNodeId());
-							//SiteNodeVO parentSiteNodeVO = SiteNodeController.getParentSiteNode(siteNodeVersionVO.getSiteNodeId());
-							if(parentSiteNodeVO != null)
-							{
-								siteNodeVersionVO = getLatestSiteNodeVersionVO(parentSiteNodeVO.getSiteNodeId());
-								protectedSiteNodeVersionId = getProtectedSiteNodeVersionId(siteNodeVersionVO.getSiteNodeVersionId());
-							}
+							siteNodeVersionVO = getLatestSiteNodeVersionVO(parentSiteNodeVO.getSiteNodeId());
+							protectedSiteNodeVersionId = getProtectedSiteNodeVersionId(siteNodeVersionVO.getSiteNodeVersionId());
 						}
 					}
 				}
@@ -229,6 +280,50 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 		return protectedSiteNodeVersionId;
 	}
 	
+	/**
+	 * This method returns true if the if the siteNode in question is protected.
+	 */
+
+	public Integer getProtectedSiteNodeVersionId(Integer siteNodeVersionId, Integer interceptionPointId)
+	{
+		logger.info("siteNodeVersionId:" + siteNodeVersionId);
+		Integer protectedSiteNodeVersionId = null;
+		
+		try
+		{
+			SiteNodeVersionVO siteNodeVersionVO = getSiteNodeVersionVOWithId(siteNodeVersionId);
+			logger.info("Is Protected: " + siteNodeVersionVO.getIsProtected());
+			if(siteNodeVersionVO != null)
+			{	
+				if(siteNodeVersionVO.getIsProtected() != null)
+				{	
+					if(siteNodeVersionVO.getIsProtected().intValue() == NO.intValue())
+						protectedSiteNodeVersionId = null;
+					else if(siteNodeVersionVO.getIsProtected().intValue() == YES.intValue())
+						protectedSiteNodeVersionId = siteNodeVersionVO.getId();
+					else if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+						protectedSiteNodeVersionId = siteNodeVersionVO.getId();
+					else if(siteNodeVersionVO.getIsProtected().intValue() == INHERITED.intValue())
+					{
+						SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(siteNodeVersionVO.getSiteNodeId());
+						if(parentSiteNodeVO != null)
+						{
+							siteNodeVersionVO = getLatestSiteNodeVersionVO(parentSiteNodeVO.getSiteNodeId());
+							protectedSiteNodeVersionId = getProtectedSiteNodeVersionId(siteNodeVersionVO.getSiteNodeVersionId());
+						}
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.warn("An error occurred trying to get if the siteNodeVersion is protected:" + e.getMessage(), e);
+		}
+			
+		return protectedSiteNodeVersionId;
+	}
+	
+
 	/**
 	 * This method returns true if the if the siteNode in question is protected within a transaction.
 	 */
@@ -250,14 +345,16 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 						protectedSiteNodeVersionId = null;
 					else if(siteNodeVersion.getIsProtected().intValue() == YES.intValue())
 						protectedSiteNodeVersionId = siteNodeVersion.getId();
+					else if(siteNodeVersion.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+						protectedSiteNodeVersionId = siteNodeVersion.getId();
 					else if(siteNodeVersion.getIsProtected().intValue() == INHERITED.intValue())
 					{
-						SiteNode parentSiteNode = SiteNodeController.getParentSiteNode(siteNodeVersion.getSiteNodeId(), db);
+						SiteNodeVO parentSiteNode = SiteNodeController.getController().getParentSiteNodeVO(siteNodeVersion.getSiteNodeId(), db);
 						//SiteNode parentSiteNode = siteNodeVersion.getOwningSiteNode().getParentSiteNode();
 						if(parentSiteNode != null)
 						{
-							siteNodeVersion = getLatestSiteNodeVersionVO(db, parentSiteNode.getSiteNodeId());
-							//siteNodeVersion = getLatestSiteNodeVersion(db, parentSiteNode.getSiteNodeId(), false);
+							siteNodeVersion = getLatestActiveSiteNodeVersionVO(db, parentSiteNode.getSiteNodeId());
+							//siteNodeVersion = getLatestSiteNodeVersionVO(db, parentSiteNode.getSiteNodeId());
 							protectedSiteNodeVersionId = getProtectedSiteNodeVersionId(siteNodeVersion.getSiteNodeVersionId(), db);
 						}
 					}
@@ -271,7 +368,78 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 			
 		return protectedSiteNodeVersionId;
 	}
+
+
+	/**
+	 * This method returns true if the if the siteNode in question is protected within a transaction.
+	 */
+
+	public Integer getProtectedSiteNodeVersionId(Integer siteNodeVersionId, Integer interceptionPointId, Database db)
+	{
+		return getProtectedSiteNodeVersionId(siteNodeVersionId, interceptionPointId, true, db);
+	}
 	
+	/**
+	 * This method returns true if the if the siteNode in question is protected within a transaction.
+	 */
+
+	public Integer getProtectedSiteNodeVersionId(Integer siteNodeVersionId, Integer interceptionPointId, Boolean honourInheritanceFallback, Database db)
+	{
+		logger.info("siteNodeVersionId:" + siteNodeVersionId);
+		Integer protectedSiteNodeVersionId = null;
+		
+		try
+		{
+			SiteNodeVersionVO siteNodeVersion = getSiteNodeVersionVOWithId(siteNodeVersionId, db);
+			if(siteNodeVersion != null)
+			{	
+				if(siteNodeVersion.getIsProtected() != null)
+				{	
+					if(siteNodeVersion.getIsProtected().intValue() == NO.intValue())
+						protectedSiteNodeVersionId = null;
+					else if(siteNodeVersion.getIsProtected().intValue() == YES.intValue())
+						protectedSiteNodeVersionId = siteNodeVersion.getId();
+					else if(siteNodeVersion.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+					{
+						logger.info(honourInheritanceFallback);
+						if(honourInheritanceFallback)
+						{
+							List<AccessRight> accessRights = AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointId, siteNodeVersion.getId().toString(), db);
+							if(accessRights == null || accessRights.size() == 0)
+							{
+								SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
+								if(siteNodeVO != null && siteNodeVO.getParentSiteNodeId() != null)
+								{
+									SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, siteNodeVO.getParentSiteNodeId());
+									protectedSiteNodeVersionId = getProtectedSiteNodeVersionId(siteNodeVersionVO.getSiteNodeVersionId(), interceptionPointId, honourInheritanceFallback, db);		
+								}
+							}
+							else
+								protectedSiteNodeVersionId = siteNodeVersion.getId();
+						}
+						else
+							protectedSiteNodeVersionId = siteNodeVersion.getId();
+					}
+					else if(siteNodeVersion.getIsProtected().intValue() == INHERITED.intValue())
+					{
+						SiteNodeVO parentSiteNode = SiteNodeController.getController().getParentSiteNodeVO(siteNodeVersion.getSiteNodeId(), db);
+						//SiteNode parentSiteNode = siteNodeVersion.getOwningSiteNode().getParentSiteNode();
+						if(parentSiteNode != null)
+						{
+							siteNodeVersion = getLatestSiteNodeVersionVO(db, parentSiteNode.getSiteNodeId());
+							protectedSiteNodeVersionId = getProtectedSiteNodeVersionId(siteNodeVersion.getSiteNodeVersionId(), db);
+						}
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.warn("An error occurred trying to get if the siteNodeVersion is protected:" + e.getMessage(), e);
+		}
+
+		return protectedSiteNodeVersionId;
+	}
 	/**
 	 * This method returns true if the if the siteNode in question is protected.
 	 */
@@ -293,9 +461,11 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 						isSiteNodeVersionProtected = false;
 					else if(siteNodeVersionVO.getIsProtected().intValue() == YES.intValue())
 						isSiteNodeVersionProtected = true;
+					else if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+						isSiteNodeVersionProtected = true;
 					else if(siteNodeVersionVO.getIsProtected().intValue() == INHERITED.intValue())
 					{
-						SiteNodeVO parentSiteNodeVO = SiteNodeController.getParentSiteNode(siteNodeVersionVO.getSiteNodeId());
+						SiteNodeVO parentSiteNodeVO = SiteNodeController.getController().getParentSiteNode(siteNodeVersionVO.getSiteNodeId());
 						if(parentSiteNodeVO != null)
 						{
 							siteNodeVersionVO = getLatestSiteNodeVersionVO(parentSiteNodeVO.getSiteNodeId());
@@ -336,7 +506,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 						isSiteNodeVersionProtected = true;
 					else if(siteNodeVersion.getIsProtected().intValue() == INHERITED.intValue())
 					{
-						SiteNode parentSiteNode = SiteNodeController.getParentSiteNode(siteNodeVersion.getValueObject().getSiteNodeId(), db);
+						SiteNodeVO parentSiteNode = SiteNodeController.getController().getParentSiteNodeVO(siteNodeVersion.getValueObject().getSiteNodeId(), db);
 						if(parentSiteNode != null)
 						{
 							siteNodeVersion = getLatestSiteNodeVersion(db, parentSiteNode.getSiteNodeId(), false);
@@ -353,5 +523,6 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 			
 		return isSiteNodeVersionProtected;
 	}
+
 
 }

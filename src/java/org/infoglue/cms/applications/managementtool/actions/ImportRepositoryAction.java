@@ -31,6 +31,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,6 +48,7 @@ import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
@@ -53,6 +56,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ImportController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
+import org.infoglue.cms.controllers.kernel.impl.simple.OptimizedExportController;
+import org.infoglue.cms.controllers.kernel.impl.simple.OptimizedImportController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.Content;
@@ -69,6 +74,11 @@ import org.infoglue.cms.util.handlers.DigitalAssetBytesHandler;
 
 import webwork.action.ActionContext;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
 
@@ -82,13 +92,53 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 {
     public final static Logger logger = Logger.getLogger(ImportRepositoryAction.class.getName());
 
-	private String onlyLatestVersions = "true";
 	private Integer repositoryId = null;
 	
+	private String onlyLatestVersions = "true";
 	private String standardReplacement = null;
 	private String replacements = null;
 	private Boolean mergeExistingRepositories = false;
-	
+
+	private String processId = null;
+	private String exportFormat = "2";
+
+	private VisualFormatter visualFormatter = new VisualFormatter();
+
+
+	/**
+	 * This deletes a process info bean and related files etc.
+	 * @return
+	 * @throws Exception
+	 */	
+
+	public String doDeleteProcessBean() throws Exception
+	{
+		if(this.processId != null)
+		{
+			ProcessBean pb = ProcessBean.getProcessBean(ImportRepositoryAction.class.getName(), processId);
+			if(pb != null)
+				pb.removeProcess();
+		}
+		
+		return "successRedirectToProcesses";
+	}
+
+	/**
+	 * This refreshes the view.
+	 * @return
+	 * @throws Exception
+	 */	
+
+	public String doShowProcesses() throws Exception
+	{
+		return "successShowProcesses";
+	}
+
+	public String doShowProcessesAsJSON() throws Exception
+	{
+		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
+		return "successShowProcessesAsJSON";
+	}
 	/**
 	 * This shows the dialog before export.
 	 * @return
@@ -124,7 +174,19 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 			//now restore the value and list what we get
 			File file = FileUploadHelper.getUploadedFile(ActionContext.getContext().getMultiPartRequest());
 			if(file == null || !file.exists())
-				throw new SystemException("The file upload must have gone bad as no file reached the import utility.");
+			{
+				String filePath = ActionContext.getContext().getMultiPartRequest().getParameter("filePath");
+				logger.info("filePath:" + filePath);
+				if(filePath != null)
+				{
+					file = new File(filePath);
+				}
+				else
+					throw new SystemException("The file upload must have gone bad as no file reached the import utility.");
+			}
+			
+			if(file.getName().endsWith(".zip"))
+				return importV3(file);
 			
 			String encoding = "UTF-8";
 			int version = 1;
@@ -287,6 +349,20 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 		return "success";
 	}
 
+	/**
+	 * This handles the actual importing.
+	 */
+	
+	protected String importV3(File file) throws Exception 
+	{
+		String exportId = "Import_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+		ProcessBean processBean = ProcessBean.createProcessBean(ImportRepositoryAction.class.getName(), exportId);
+		
+		OptimizedImportController.importRepositories(file, this.onlyLatestVersions, this.standardReplacement, this.replacements, processBean);
+		
+		return "successRedirectToProcesses";
+	}
+
 	
 	/**
 	 * This handles copying of a repository.
@@ -302,6 +378,19 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 		{
 			Mapping map = new Mapping();
 			String exportFormat = CmsPropertyHandler.getExportFormat();
+			String requestExportFormat = ""+getRequest().getParameter("exportFormat");
+			
+			if(exportFormat.equalsIgnoreCase("3") || this.exportFormat.equals("3") || requestExportFormat.equals("3"))
+			{
+				String[] repositories = getRequest().getParameterValues("repositoryId");
+				
+				String exportId = "Copy_Import_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+				ProcessBean processBean = ProcessBean.createProcessBean(ImportRepositoryAction.class.getName(), exportId);
+				
+				OptimizedExportController.copy(repositories, -1, false, null, processBean, onlyLatestVersions, standardReplacement, replacements);
+
+				return "successRedirectToProcesses";
+			}
 
 			logger.info("MappingFile:" + CastorDatabaseService.class.getResource("/xml_mapping_site_2.5.xml").toString());
 			map.loadMapping(CastorDatabaseService.class.getResource("/xml_mapping_site_2.5.xml").toString());
@@ -332,6 +421,10 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 		    if(interceptionPointVO != null)
 		    	allAccessRights.addAll(AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), repository.getId().toString(), db));
 
+		    interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Repository.Write", db);
+		    if(interceptionPointVO != null)
+		    	allAccessRights.addAll(AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), repository.getId().toString(), db));
+
 		    interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Repository.ReadForBinding", db);
 		    if(interceptionPointVO != null)
 		    	allAccessRights.addAll(AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), repository.getId().toString(), db));
@@ -342,7 +435,7 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 			siteNodes.add(siteNode);
 			contents.add(content);
 			names = names + "_" + repository.getName();
-			allRepositoryProperties.putAll(ExportRepositoryAction.getRepositoryProperties(ps, repositoryId));
+			allRepositoryProperties.putAll(OptimizedExportController.getRepositoryProperties(ps, repositoryId));
 			
 			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
 			List categories = CategoryController.getController().getAllActiveCategories();
@@ -464,7 +557,8 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 		}
 		finally
 		{
-			file.delete();
+			if(file != null)
+				file.delete();
 		}
 		
 		return "success";
@@ -504,5 +598,50 @@ public class ImportRepositoryAction extends InfoGlueAbstractAction
 	{
 		this.mergeExistingRepositories = mergeExistingRepositories;
 	}
+	public String getExportFormat()
+	{
+		return exportFormat;
+	}
 
+	public void setExportFormat(String exportFormat)
+	{
+		this.exportFormat = exportFormat;
+	}
+
+	public void setProcessId(String processId) 
+	{
+		this.processId = processId;
+	}
+
+	public List<ProcessBean> getProcessBeans()
+	{
+		return ProcessBean.getProcessBeans(ImportRepositoryAction.class.getName());
+	}
+	
+	public String getStatusAsJSON()
+	{
+		Gson gson = new GsonBuilder()
+			.excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
+			.setDateFormat("dd MMM HH:mm:ss").create();
+		JsonObject object = new JsonObject();
+
+		try
+		{
+			List<ProcessBean> processes = getProcessBeans();
+			Type processBeanListType = new TypeToken<List<ProcessBean>>() {}.getType();
+			JsonElement list = gson.toJsonTree(processes, processBeanListType);
+			object.add("processes", list);
+			object.addProperty("memoryMessage", getMemoryUsageAsText());
+		}
+		catch (Throwable t)
+		{
+			logger.error("Error when generating repository export status report as JSON.", t);
+			JsonObject error = new JsonObject(); 
+			error.addProperty("message", t.getMessage());
+			error.addProperty("type", t.getClass().getSimpleName());
+			object.add("error", error);
+		}
+
+		return gson.toJson(object);
+	}
 }

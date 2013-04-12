@@ -108,7 +108,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 		
 		timer.printElapsedTime("Initialized controllers");
 		
-		Integer repositoryId = nodeDeliveryController.getSiteNode(getDatabase(), this.getDeliveryContext().getSiteNodeId()).getRepository().getId();
+		Integer repositoryId = nodeDeliveryController.getSiteNodeVO(getDatabase(), this.getDeliveryContext().getSiteNodeId()).getRepositoryId();
 		String componentXML = getPageComponentsString(getDatabase(), this.getTemplateController(), this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), this.getDeliveryContext().getContentId());
 		//logger.info("componentXML:" + componentXML);
 		
@@ -1479,7 +1479,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 	 
 	private List getComponentProperties(Integer componentId, Document document, TemplateController templateController) throws Exception
 	{
-		//TODO - hï¿½r kan vi sï¿½kert cache:a.
+		//TODO - här kan vi säkert cache:a.
 		
 		//logger.info("componentPropertiesXML:" + componentPropertiesXML);
 		List componentProperties = new ArrayList();
@@ -1924,7 +1924,7 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 			
 			if(entityClass.equalsIgnoreCase("Content"))
 			{
-				ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(getDatabase(), new Integer(entityId), null);
+				ContentVO contentVO = ContentDeliveryController.getContentDeliveryController().getContentVO(getDatabase(), new Integer(entityId), getDeliveryContext());
 				ComponentBinding componentBinding = new ComponentBinding();
 				componentBinding.setId(new Integer(id));
 				componentBinding.setComponentId(componentId);
@@ -1940,6 +1940,33 @@ public class AjaxDecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHT
 		return contentBindings;
 	}
 
+	 
+	private void printComponentHierarchy(List pageComponents, int level)
+	{
+		Iterator pageComponentIterator = pageComponents.iterator();
+		while(pageComponentIterator.hasNext())
+		{
+			InfoGlueComponent tempComponent = (InfoGlueComponent)pageComponentIterator.next();
+			
+			for(int i=0; i<level; i++)
+			    logger.info(" ");
+			
+			logger.info("  component:" + tempComponent.getName());
+			
+			Iterator slotIterator = tempComponent.getSlotList().iterator();
+			while(slotIterator.hasNext())
+			{
+				Slot slot = (Slot)slotIterator.next();
+				
+				for(int i=0; i<level; i++)
+					logger.info(" ");
+					
+				logger.info(" slot for " + tempComponent.getName() + ":" + slot.getId());
+				printComponentHierarchy(slot.getComponents(), level + 1);
+			}
+		}			
+	}
+	
   	public String getLocalizedString(Locale locale, String key) 
   	{
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);

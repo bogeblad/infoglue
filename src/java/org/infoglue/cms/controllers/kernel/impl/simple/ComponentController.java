@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -44,6 +46,7 @@ import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.sorters.ContentComparator;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
@@ -66,6 +69,9 @@ public class ComponentController extends BaseController
 {
     private final static Logger logger = Logger.getLogger(ComponentController.class.getName());
 
+	private static AtomicBoolean preCaching = new AtomicBoolean(false);
+	private static List<Integer> componentIdsToRecache = new ArrayList<Integer>();
+	
     /**
 	 * Factory method
 	 */
@@ -75,6 +81,267 @@ public class ComponentController extends BaseController
 		return new ComponentController();
 	}
 
+	public void preCacheComponentsDelayed() throws Exception
+	{
+		class PreCacheTask implements Runnable 
+		{
+	        public void run() 
+	        {
+	        	try
+	        	{
+		        	Timer t = new Timer();
+		        	preCacheComponents(2000);
+		        	t.printElapsedTime("Precached components took");
+	        	}
+	        	catch (Exception e) 
+	        	{
+					logger.warn("Failed to precache components: " + e.getMessage(), e);
+				}
+	        }
+	    }
+	    Thread thread = new Thread(new PreCacheTask());
+	    thread.start();
+	}
+	
+	public void preCacheComponents(long delay) throws Exception
+	{
+		Database db = CastorDatabaseService.getDatabase();
+       
+        beginTransaction(db);
+
+        try
+        {
+        	preCacheComponents(delay, db);
+        	
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+	}
+	
+	public void preCacheComponents(long delay, Database db) throws Exception
+	{
+		if(CmsPropertyHandler.getOperatingMode().equals("3"))
+			return;
+		
+		String cacheKey = "allTemplatesAndPagePartMap";
+		Map<String,List<ContentVO>> templatesAndPagePartMap = (Map<String,List<ContentVO>>)CacheController.getCachedObject("componentContentsCache", cacheKey);
+		logger.info("preCaching value:" + preCaching.get());
+		if((templatesAndPagePartMap == null || templatesAndPagePartMap.size() == 0) && preCaching.compareAndSet(false, true))
+		{
+			logger.info("preCaching sat value:" + preCaching.get());
+			if(delay > 0)
+			{
+				logger.warn("Sleeping before precache: " + delay);
+				Thread.sleep(delay);
+			}
+			
+			logger.warn("Precaching all HTMLTemplates and PagePartTemplates");
+			try
+			{
+				ContentTypeDefinitionVO htmlTemplateContentType = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("HTMLTemplate", db);
+				ContentTypeDefinitionVO pagePartTemplateContentType = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("PagePartTemplate", db);
+				
+				Timer t = new Timer();
+				List<ContentVersionVO> componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeId(new Integer[]{htmlTemplateContentType.getId(), pagePartTemplateContentType.getId()}, db);
+				
+				logger.warn("Getting componentContentVersionVOList " + componentContentVersionVOList.size() + " took: " + t.getElapsedTime());
+				
+				templatesAndPagePartMap = new HashMap<String,List<ContentVO>>();
+				
+			    for(ContentVersionVO contentVersionVO : componentContentVersionVOList)
+			    {
+		        	if(contentVersionVO != null)
+		        	{
+			        	ContentVO contentVO = ContentController.getContentController().getSmallContentVOWithId(contentVersionVO.getContentId(), db, null);
+			        	
+			        	String groupNameDefault = "Unknown";
+						String descriptionDefault = "Unknown";
+			        	String groupNameAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
+			        	String descriptionAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "Description", false);
+						contentVO.getExtraProperties().put("GroupName", (groupNameAttribute == null ? groupNameDefault : groupNameAttribute));
+						contentVO.getExtraProperties().put("Description", (descriptionAttribute == null ? descriptionDefault : descriptionAttribute));
+	
+			        	List<ContentVO> allComponents = templatesAndPagePartMap.get("all");
+			        	if(allComponents == null)
+			        	{
+			        		allComponents = new ArrayList<ContentVO>();
+			        		templatesAndPagePartMap.put("all", allComponents);
+			        	}
+			        	allComponents.add(contentVO);
+			        	logger.info("Adding " + contentVO.getName() + " to group " + contentVO.getName());
+			        	
+			        	List<ContentVO> nameComponents = templatesAndPagePartMap.get(contentVO.getName());
+			        	if(nameComponents == null)
+			        	{
+			        		nameComponents = new ArrayList<ContentVO>();
+			        		templatesAndPagePartMap.put(contentVO.getName(), nameComponents);
+			        	}
+			        	nameComponents.add(contentVO);
+	
+			        	logger.info("Adding " + contentVO.getName() + " to group " + contentVO.getName());
+			        	if(groupNameAttribute != null && !groupNameAttribute.equals(""))
+			        	{
+				        	String[] groupNames = groupNameAttribute.split(",");
+					        for(String groupName : groupNames)
+					        {
+					        	List<ContentVO> groupComponents = templatesAndPagePartMap.get(groupName.trim());
+					        	if(groupComponents == null)
+					        	{
+					        		groupComponents = new ArrayList<ContentVO>();
+					        		templatesAndPagePartMap.put(groupName.trim(), groupComponents);
+					        	}
+					        	groupComponents.add(contentVO);
+					        	logger.info("Adding " + contentVO.getName() + " to " + groupName.trim());
+					        }
+			        	}
+		        	}
+			    }
+			    
+			    logger.warn("Done indexing took in " + CmsPropertyHandler.getContextRootPath() + ":" + templatesAndPagePartMap.size() + " took: " + t.getElapsedTime());
+				
+				CacheController.cacheObject("componentContentsCache", cacheKey, templatesAndPagePartMap);
+				CacheController.cacheObject("componentContentsCache", cacheKey + "_preCacheDone", new Boolean(true));
+			}
+			catch (Exception e) 
+			{
+				logger.error("Error precaching components:" + e.getMessage(), e);
+			}
+			finally
+			{
+				preCaching.set(false);			
+			}
+		}
+	}
+
+	public void reIndexComponentContentsDelayed(Integer contentId) throws Exception
+	{
+		componentIdsToRecache.add(contentId);
+		class ReIndexComponentsTask implements Runnable 
+		{
+	        public void run() 
+	        {
+	        	try
+	        	{
+	        		Thread.sleep(1000);
+		        	Timer t = new Timer();
+		        	List<Integer> localComponentIdsList = new ArrayList<Integer>();
+		        	localComponentIdsList.addAll(componentIdsToRecache);
+		        	componentIdsToRecache.clear();
+		        	for(Integer localComponentContentId : localComponentIdsList)
+		        	{
+		        		reIndexComponentContent(localComponentContentId);
+		        	}
+		        	long time = t.getElapsedTime();
+		        	if(time > 100)
+		        		logger.warn("ReIndexComponentsTask took a bit to long:" + time);
+	        	}
+	        	catch (Exception e) 
+	        	{
+					logger.warn("Failed to precache components: " + e.getMessage(), e);
+				}
+	        }
+	    }
+	    Thread thread = new Thread(new ReIndexComponentsTask());
+	    thread.start();
+	}
+
+	private void reIndexComponentContent(Integer contentId) throws Exception
+	{
+		if(CmsPropertyHandler.getOperatingMode().equals("3"))
+			return;
+		
+		String cacheKey = "allTemplatesAndPagePartMap";
+		Map<String,List<ContentVO>> templatesAndPagePartMap = (Map<String,List<ContentVO>>)CacheController.getCachedObject("componentContentsCache", cacheKey);
+
+		if(templatesAndPagePartMap != null)
+		{
+	    	synchronized (templatesAndPagePartMap) 
+	    	{
+				for(String key : templatesAndPagePartMap.keySet())
+				{
+					List<ContentVO> groupList = templatesAndPagePartMap.get(key);
+					Iterator<ContentVO> groupListIterator = groupList.iterator();
+					while(groupListIterator.hasNext())
+					{
+						ContentVO cvVO = groupListIterator.next();
+						if(cvVO.getId().intValue() == contentId.intValue())
+						{
+							logger.info("Removing " + cvVO.getName() + " from group:" + key);
+							groupListIterator.remove();
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			templatesAndPagePartMap = new HashMap<String,List<ContentVO>>();
+			CacheController.cacheObject("componentContentsCache", cacheKey, templatesAndPagePartMap);
+		}
+		
+		try
+		{
+	    	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
+	    	if(contentVO != null)
+	    	{
+		    	LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
+		    	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId());
+		
+		    	String groupNameDefault = "Unknown";
+				String descriptionDefault = "Unknown";
+		    	String groupNameAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
+		    	logger.info("groupNameAttribute:" + groupNameAttribute);
+		    	String descriptionAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "Description", false);
+				contentVO.getExtraProperties().put("GroupName", (groupNameAttribute == null ? groupNameDefault : groupNameAttribute));
+				contentVO.getExtraProperties().put("Description", (descriptionAttribute == null ? descriptionDefault : descriptionAttribute));
+			
+		    	List<ContentVO> allComponents = templatesAndPagePartMap.get("all");
+		    	if(allComponents == null)
+		    	{
+		    		allComponents = new ArrayList<ContentVO>();
+		    		templatesAndPagePartMap.put("all", allComponents);
+		    	}
+		    	allComponents.add(contentVO);
+		    	logger.info("Adding " + contentVO.getName() + " to group " + contentVO.getName());
+		    	
+		    	List<ContentVO> nameComponents = templatesAndPagePartMap.get(contentVO.getName());
+		    	if(nameComponents == null)
+		    	{
+		    		nameComponents = new ArrayList<ContentVO>();
+		    		templatesAndPagePartMap.put(contentVO.getName(), nameComponents);
+		    	}
+		    	nameComponents.add(contentVO);
+		
+		    	logger.info("Adding " + contentVO.getName() + " to group " + contentVO.getName());
+		    	if(groupNameAttribute != null && !groupNameAttribute.equals(""))
+		    	{
+		        	String[] groupNames = groupNameAttribute.split(",");
+			        for(String groupName : groupNames)
+			        {
+			        	logger.info("groupName:" + groupName);
+			        	List<ContentVO> groupComponents = templatesAndPagePartMap.get(groupName.trim());
+			        	if(groupComponents == null)
+			        	{
+			        		groupComponents = new ArrayList<ContentVO>();
+			        		templatesAndPagePartMap.put(groupName.trim(), groupComponents);
+			        	}
+			        	groupComponents.add(contentVO);
+			        	logger.info("Adding " + contentVO.getName() + " to " + groupName.trim());
+			        }
+		    	}
+	    	}
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Component was deleted..");
+		}
+	}
+	
 	/**
 	 * This method returns a sorted list of components.
 	 * @param sortAttribute
@@ -147,7 +414,11 @@ public class ComponentController extends BaseController
 		}
 		else
 		{
+			Timer t = new Timer();
 		    components = getComponents(allowedComponentNames, disallowedComponentNames, allowedComponentGroupNames, principal, db);
+		    if(logger.isInfoEnabled())
+		    	t.printElapsedTime("getComponents");
+		    /*
 		    Iterator componentsIterator = components.iterator();
 			while(componentsIterator.hasNext())
 			{
@@ -176,8 +447,10 @@ public class ComponentController extends BaseController
 			    	componentsIterator.remove();
 			    }
 			}
+		    t.printElapsedTime("getComponents 2");
+			*/
 
-			CacheController.cacheObject("componentContentsCache", componentsKey, components);
+			//CacheController.cacheObject("componentContentsCache", componentsKey, components);
 		}
 		
 		ContentComparator comparator = new ContentComparator(sortAttribute, direction, null);
@@ -300,12 +573,11 @@ public class ComponentController extends BaseController
 	
 	public List getComponents(String[] allowedComponentNames, String[] disallowedComponentNames, String[] allowedComponentGroups/*, String[] disallowedComponentGroups*/, InfoGluePrincipal principal, Database db) throws Exception
 	{
-		Timer t = new Timer();
-		if(!logger.isDebugEnabled())
-			t.setActive(false);
-		
 		HashMap arguments = new HashMap();
 		arguments.put("method", "selectListOnContentTypeName");
+		//arguments.put("method", "selectListOnContentSearch");
+		//arguments.put("allowedComponentNames", allowedComponentNames);
+		//arguments.put("allowedComponentGroups", allowedComponentGroups);
 		
 		List argumentList = new ArrayList();
 		HashMap argument = new HashMap();
@@ -316,91 +588,158 @@ public class ComponentController extends BaseController
 		argumentList.add(argument2);
 		arguments.put("arguments", argumentList);
 		
-		t.printElapsedTime("comp 1");
+		preCacheComponents(-1, db);
 		
-		List results = ContentControllerProxy.getController().getACContentVOList(principal, arguments, "Component.Select", db);
-
-		t.printElapsedTime("comp 2");
+		String cacheKey = "allTemplatesAndPagePartMap";
+		Boolean templatesAndPagePartMapPreCached = (Boolean)CacheController.getCachedObject("componentContentsCache", cacheKey + "_preCacheDone");
 		
-	    Iterator resultsIterator = results.iterator();
-	    while(resultsIterator.hasNext())
-	    {
-			t.printElapsedTime("comp 3.1");
+		logger.info("templatesAndPagePartMapPreCached: " + templatesAndPagePartMapPreCached);
+		if(templatesAndPagePartMapPreCached != null && templatesAndPagePartMapPreCached)
+		{
+			Map<String,List<ContentVO>> templatesAndPagePartMap = (Map<String,List<ContentVO>>)CacheController.getCachedObject("componentContentsCache", cacheKey);
+			logger.info("templatesAndPagePartMap: " + templatesAndPagePartMap.size());
 
-	        ContentVO contentVO = (ContentVO)resultsIterator.next();
-
-			boolean isPartOfAllowedComponentNames = false;
-			if(allowedComponentNames != null && allowedComponentNames.length > 0)
-			{
-				for(int i=0; i<allowedComponentNames.length; i++)
-		        {
-		            if(contentVO.getName().equals(allowedComponentNames[i]))
-		            	isPartOfAllowedComponentNames = true;
-		        }
-			}
+			Timer t = new Timer();
+			logger.info("Returning from cache....:" + allowedComponentNames + ":" + allowedComponentGroups);
+			List<ContentVO> results = new ArrayList<ContentVO>();
 			
-			boolean isPartOfAllowedComponentGroupNames = false;
-			if(allowedComponentGroups != null && allowedComponentGroups.length > 0 && contentVO.getRepositoryId() != null)
+			if(allowedComponentNames == null && allowedComponentGroups == null)
 			{
-				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId(), db);
-				t.printElapsedTime("comp 3.2");
-				if(masterLanguageVO != null)
+				List<ContentVO> allComponents = templatesAndPagePartMap.get("all");
+				if(allComponents != null)
+					results.addAll(allComponents);
+			}
+			else
+			{
+				if(allowedComponentNames != null && allowedComponentNames.length > 0)
 				{
-					//logger.info("masterLanguageVO for " + contentVO.getRepositoryId() + " is " + masterLanguageVO);
-		        	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getContentId(), masterLanguageVO.getId(), db);
-					t.printElapsedTime("comp 3.3");
-		        	String groupName = null;
-		        	if(contentVersionVO != null)
-		        		groupName = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
-	
+					for(int i=0; i<allowedComponentNames.length; i++)
+			        {
+						logger.info("Adding all matching:" + allowedComponentNames[i]);
+						List<ContentVO> contents = templatesAndPagePartMap.get(allowedComponentNames[i]);
+						if(contents != null)
+							results.addAll(contents);
+			        }
+				}
+				
+				if(allowedComponentGroups != null && allowedComponentGroups.length > 0)
+				{
 			        for(int i=0; i<allowedComponentGroups.length; i++)
 			        {
 			        	String allowedComponentGroup = allowedComponentGroups[i];
-			        	if(groupName != null && groupName.indexOf(allowedComponentGroup) > -1)
-			        		isPartOfAllowedComponentGroupNames = true;
+			        	logger.info("Adding all mathcing:" + allowedComponentGroup);
+			        	List<ContentVO> contents = templatesAndPagePartMap.get(allowedComponentGroup);
+						if(contents != null)
+							results.addAll(contents);
 			        }
 				}
 			}
-
-			t.printElapsedTime("comp 3.2");
-
-			boolean isPartOfDisallowedComponentNames = false;
+			
 			if(disallowedComponentNames != null && disallowedComponentNames.length > 0)
 			{
 		        for(int i=0; i<disallowedComponentNames.length; i++)
 		        {
-		            if(contentVO.getName().equals(disallowedComponentNames[i]))
-		            	isPartOfDisallowedComponentNames = true;
+		            String disallowedComponentName = disallowedComponentNames[i];
+		            for(ContentVO contentVO : results)
+		            {
+		            	if(contentVO.getName().equals(disallowedComponentName))
+		            	{
+		            		logger.info("Removing disallowed:" + contentVO.getName());
+		            		results.remove(contentVO);
+		            		break;
+		            	}
+		            }
 		        }
 			}
-
-			if(disallowedComponentNames != null && disallowedComponentNames.length > 0 && isPartOfDisallowedComponentNames)
-			{
-				//logger.info("Was not ok as it was part of disallowedComponentNames");
-				resultsIterator.remove();
-			}
-			else if((allowedComponentNames == null || allowedComponentNames.length == 0) && (allowedComponentGroups == null || allowedComponentGroups.length == 0))
-			{
-				//logger.info("Was ok as no restrictions was defined");
-			}
-			else if(isPartOfAllowedComponentNames)
-			{
-				//logger.info("Was ok as it was part of allowedComponentNames");
-			}
-			else if(isPartOfAllowedComponentGroupNames)
-			{
-				//logger.info("Was ok as it was part of allowedComponentGroupNames");
-			}
-			else
-			{
-				//logger.info("Removing from results:" + contentVO.getName());
-				resultsIterator.remove();				
-			}
+			if(logger.isInfoEnabled())
+				t.printElapsedTime("Collecting from groups took");
 			
-			t.printElapsedTime("comp 4");
-	    }
+			List<ContentVO> authorizedComponents = new ArrayList<ContentVO>();
+			for(ContentVO contentVO : results)
+			{
+				boolean hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(db, principal, "Component.Select", "" + contentVO.getId(), false);
+				if(hasAccess)
+					authorizedComponents.add(contentVO);
+			}
+			if(logger.isInfoEnabled())
+				t.printElapsedTime("Checking access rights for components took");
+			return authorizedComponents;
+		}
+		else
+		{
+			List<ContentVO> results = ContentControllerProxy.getController().getACContentVOList(principal, arguments, "Component.Select", db);
+	
+		    Iterator resultsIterator = results.iterator();
+		    while(resultsIterator.hasNext())
+		    {
+		        ContentVO contentVO = (ContentVO)resultsIterator.next();
+	
+				boolean isPartOfAllowedComponentNames = false;
+				if(allowedComponentNames != null && allowedComponentNames.length > 0)
+				{
+					for(int i=0; i<allowedComponentNames.length; i++)
+			        {
+			            if(contentVO.getName().equals(allowedComponentNames[i]))
+			            	isPartOfAllowedComponentNames = true;
+			        }
+				}
+				
+				boolean isPartOfAllowedComponentGroupNames = false;
+				if(allowedComponentGroups != null && allowedComponentGroups.length > 0 && contentVO.getRepositoryId() != null)
+				{
+					LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId(), db);
+					if(masterLanguageVO != null)
+					{
+						//logger.info("masterLanguageVO for " + contentVO.getRepositoryId() + " is " + masterLanguageVO);
+			        	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVO.getContentId(), masterLanguageVO.getId(), db);
+			        	String groupName = null;
+			        	if(contentVersionVO != null)
+			        		groupName = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
 		
-		return results;	
+				        for(int i=0; i<allowedComponentGroups.length; i++)
+				        {
+				        	String allowedComponentGroup = allowedComponentGroups[i];
+				        	if(groupName != null && groupName.indexOf(allowedComponentGroup) > -1)
+				        		isPartOfAllowedComponentGroupNames = true;
+				        }
+					}
+				}
+	
+				boolean isPartOfDisallowedComponentNames = false;
+				if(disallowedComponentNames != null && disallowedComponentNames.length > 0)
+				{
+			        for(int i=0; i<disallowedComponentNames.length; i++)
+			        {
+			            if(contentVO.getName().equals(disallowedComponentNames[i]))
+			            	isPartOfDisallowedComponentNames = true;
+			        }
+				}
+	
+				if(disallowedComponentNames != null && disallowedComponentNames.length > 0 && isPartOfDisallowedComponentNames)
+				{
+					//logger.info("Was not ok as it was part of disallowedComponentNames");
+					resultsIterator.remove();
+				}
+				else if((allowedComponentNames == null || allowedComponentNames.length == 0) && (allowedComponentGroups == null || allowedComponentGroups.length == 0))
+				{
+					//logger.info("Was ok as no restrictions was defined");
+				}
+				else if(isPartOfAllowedComponentNames)
+				{
+					//logger.info("Was ok as it was part of allowedComponentNames");
+				}
+				else if(isPartOfAllowedComponentGroupNames)
+				{
+					//logger.info("Was ok as it was part of allowedComponentGroupNames");
+				}
+				else
+				{
+					//logger.info("Removing from results:" + contentVO.getName());
+					resultsIterator.remove();				
+				}
+		    }
+			return results;	
+		}
 	}
 
 	public void checkAndAutoCreateContents(Integer siteNodeId, Integer languageId, Integer masterLanguageId, String assetKey, Integer newComponentId, Document document, Integer componentContentId, InfoGluePrincipal principal) throws Exception, SystemException, Bug, ConstraintException

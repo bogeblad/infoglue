@@ -23,9 +23,9 @@
 
 package org.infoglue.deliver.util;
 
+import java.io.File;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -33,13 +33,11 @@ import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.RollingFileAppender;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
-import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
-import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.extensions.ExtensionLoader;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.cache.PageCacheHelper;
 import org.infoglue.deliver.invokers.ComponentBasedHTMLPageInvoker;
 
 import com.opensymphony.oscache.base.OSCacheUtility;
@@ -107,9 +105,11 @@ public final class DeliverContextListener implements ServletContextListener
 			if(intervalString != null)
 				cacheController.setCacheExpireInterval(Integer.parseInt(intervalString));
 			
-        	try 
+			//System.out.println("Clearing previous filebased page cache");
+			try 
         	{
-        		CacheController.clearFileCaches("pageCache");
+        		//CacheController.clearFileCaches("pageCache");
+				PageCacheHelper.getInstance().clearPageCache();
         	}
         	catch (Exception e) 
         	{
@@ -119,7 +119,7 @@ public final class DeliverContextListener implements ServletContextListener
 			//Starting the cache-expire-thread
 			if(cacheController.getExpireCacheAutomatically())
 				cacheController.start();
-
+			
 			boolean isValid = InstallationController.getController().validateSetup();
 			if(isValid)
 				CmsPropertyHandler.setIsValidSetup(true);
@@ -131,9 +131,12 @@ public final class DeliverContextListener implements ServletContextListener
 			OSCacheUtility.setServletCacheParams(event.getServletContext());
 			
 			InfoGlueAuthenticationFilter.initializeProperties();
-						
 			new Thread(new Runnable() { public void run() {try {CacheController.preCacheDeliverEntities();} catch (Exception e) {}}}).start();
-			
+			if(CmsPropertyHandler.getOperatingMode().equals("0"))
+			{
+				new Thread(new RecacheRepositoryRootPagesThread()).start();
+			}
+		
 			CmsPropertyHandler.setStartupTime(new Date()); 
 			
 			System.out.println("**************************************\n");

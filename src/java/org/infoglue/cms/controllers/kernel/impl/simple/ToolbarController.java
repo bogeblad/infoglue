@@ -2846,7 +2846,6 @@ public class ToolbarController implements ToolbarProvider
 				  "importContent",
 				  true));
 
-
 		return buttons;
 	}
 	

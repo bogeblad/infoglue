@@ -73,6 +73,10 @@ public class SiteNodeVersionVO implements BaseEntityVO
     private Integer siteNodeId			= null;
 	private String siteNodeName			= "";
   
+	//Fields only here for performance - not allways populated, only in some views
+    private String versionModifierDisplayName = null;
+	private String path = null;
+  
     public java.lang.Integer getSiteNodeVersionId()
     {
         return this.siteNodeVersionId;
@@ -120,7 +124,10 @@ public class SiteNodeVersionVO implements BaseEntityVO
                 
     public void setModifiedDateTime(Date modifiedDateTime)
     {
-        this.modifiedDateTime = modifiedDateTime;
+    	if(modifiedDateTime != null)
+    		this.modifiedDateTime = modifiedDateTime;
+    	else
+    		Thread.dumpStack();
     }
     
     public java.lang.String getVersionComment()
@@ -268,6 +275,48 @@ public class SiteNodeVersionVO implements BaseEntityVO
 		this.versionModifier = versionModifier;
 	}
 
+	public String getSiteNodeName()
+	{
+		return siteNodeName;
+	}
+
+	public void setSiteNodeName(String siteNodeName)
+	{
+		this.siteNodeName = siteNodeName;
+	}
+
+    /**
+	 * @return the versionModifierDisplayName if set by the view. Not allways populated so do not depend on it.
+	 */
+	public String getVersionModifierDisplayName() 
+	{
+		return (versionModifierDisplayName != null ? versionModifierDisplayName : versionModifier);
+	}
+
+	/**
+	 * @param versionModifierDisplayName the versionModifierDisplayName to set
+	 */
+	public void setVersionModifierDisplayName(String versionModifierDisplayName) 
+	{
+		this.versionModifierDisplayName = versionModifierDisplayName;
+	}
+
+	/**
+	 * @return the path
+	 */
+	public String getPath() 
+	{
+		return path;
+	}
+
+	/**
+	 * @param path the path to set
+	 */
+	public void setPath(String path) 
+	{
+		this.path = path;
+	}
+
     public Integer getSortOrder()
     {
         return this.sortOrder;
@@ -287,16 +336,6 @@ public class SiteNodeVersionVO implements BaseEntityVO
     {
     	this.isHidden = isHidden;
     }
-
-	public String getSiteNodeName()
-	{
-		return siteNodeName;
-	}
-
-	public void setSiteNodeName(String siteNodeName)
-	{
-		this.siteNodeName = siteNodeName;
-	}
 
 	public String toString()
 	{

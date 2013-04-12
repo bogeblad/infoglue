@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -48,6 +50,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
@@ -144,8 +147,6 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	private static Thread lastThread = null;
 	private static boolean memoryWarningSent = false;
 	
-	private ThreadMonitor tk = null;
-	
 	private static Random random = new Random();
 
 	
@@ -207,6 +208,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
         }
         
         HttpServletRequest request = getRequest();
+
+        ThreadMonitor tk = null;
     	if(!CmsPropertyHandler.getOperatingMode().equals("3"))
     		tk = new ThreadMonitor(new Long(CmsPropertyHandler.getDeliverRequestTimeout()).longValue(), request, "Page view took to long!", true);
     	else
@@ -221,6 +224,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 
     	long start 			= System.currentTimeMillis();
     	long elapsedTime 	= 0;
+    	float startTotalMemory 	= ((float)Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
     	    	
     	DatabaseWrapper dbWrapper = new DatabaseWrapper(CastorDatabaseService.getDatabase());
     	
@@ -235,7 +239,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				    	
 	    	boolean isUserRedirected = false;
 			Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionIdForPageCache(dbWrapper.getDatabase(), siteNodeId);
+			logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 			Integer forceProtocolChangeSetting = this.nodeDeliveryController.getForceProtocolChangeSettingForPageCache(dbWrapper.getDatabase(), siteNodeId);
+			//System.out.println("forceProtocolChangeSetting:" + forceProtocolChangeSetting);
 			
 			if(logger.isInfoEnabled())
 				logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
@@ -253,23 +259,43 @@ public class ViewPageAction extends InfoGlueAbstractAction
 
 			if(!isUserRedirected)
 			{
+				if(getRequest().getParameter("authenticateUser") != null && getRequest().getParameter("authenticateUser").equals("true"))
+				{
+					isUserRedirected = authenticateUser(dbWrapper.getDatabase());
+				}
+			}
+
+			if(!isUserRedirected)
+			{
 				if(logger.isInfoEnabled())
 					logger.info("RemoteAddress:" + getRequest().getRemoteAddr());
 				
 				if(CmsPropertyHandler.getAllowInternalCallsBasedOnIP())
 				{
-					if(getRequest().getRemoteAddr().equals("127.0.0.1") || getRequest().getRemoteAddr().equals("192.168.0.1"))
+					if(getRequest().getRemoteAddr().equals("127.0.0.1") || getRequest().getRemoteAddr().equals("192.168.0.1") || getRequest().getRemoteAddr().equals("0:0:0:0:0:0:0:1%0"))
 						protectDeliver = false;
 				}
 				
-				if(protectedSiteNodeVersionId != null || protectDeliver)
+				boolean isAnonymousAuthorized = true;
+				logger.info("protectedSiteNodeVersionId:" +protectedSiteNodeVersionId);
+				if(protectedSiteNodeVersionId != null)
 				{
+					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(protectedSiteNodeVersionId, dbWrapper.getDatabase());
+					if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+						isAnonymousAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(dbWrapper.getDatabase(), (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+					else
+						isAnonymousAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(dbWrapper.getDatabase(), (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+				}
+				logger.info("isAnonymousAuthorized:" + isAnonymousAuthorized);
+				logger.info("URI:" + getOriginalFullURL());
+				if((protectedSiteNodeVersionId != null && !isAnonymousAuthorized) || protectDeliver || getOriginalFullURL().indexOf("ticket=") > -1)
+				{
+					logger.info("Plain login routine which among others looks for ticket....");
 					if(logger.isInfoEnabled())
 					{
 						logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 						logger.info("protectDeliver:" + protectDeliver);
 					}
-					
 					isUserRedirected = handleExtranetLogic(dbWrapper.getDatabase(), this.repositoryId, protectedSiteNodeVersionId, protectDeliver, false);
 				}
 				else
@@ -277,19 +303,69 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					String forceIdentityCheck = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(this.repositoryId, "forceIdentityCheck");
 					if(logger.isInfoEnabled())
 						logger.info("forceIdentityCheck:" + forceIdentityCheck);
-					if(CmsPropertyHandler.getForceIdentityCheck().equalsIgnoreCase("true") || (forceIdentityCheck != null && forceIdentityCheck.equalsIgnoreCase("true")))
+					if(this.principal == null || CmsPropertyHandler.getAnonymousUser().equalsIgnoreCase(this.principal.getName()))
 					{
-						boolean isForcedIdentityCheckDisabled = this.nodeDeliveryController.getIsForcedIdentityCheckDisabled(dbWrapper.getDatabase(), this.siteNodeId);
-						if(logger.isInfoEnabled())
-							logger.info("isForcedIdentityCheckDisabled:" + isForcedIdentityCheckDisabled);
-						if(!isForcedIdentityCheckDisabled)
+						if(CmsPropertyHandler.getForceIdentityCheck().equalsIgnoreCase("true") || (forceIdentityCheck != null && forceIdentityCheck.equalsIgnoreCase("true")))
 						{
-							isUserRedirected = handleExtranetLogic(dbWrapper.getDatabase(), true);
+							boolean isForcedIdentityCheckDisabled = this.nodeDeliveryController.getIsForcedIdentityCheckDisabled(dbWrapper.getDatabase(), this.siteNodeId);
+							if(!isForcedIdentityCheckDisabled && getHttpSession().getAttribute("ssoChecked") == null && (getRequest().getParameter("skipSSOCheck") == null || !getRequest().getParameter("skipSSOCheck").equals("true")))
+							{
+								Timer t = new Timer();
+								logger.info("Let's check for IP:s and user agents to skip redirect for...");
+								String userAgentsRegexp = CmsPropertyHandler.getUserAgentsSkippingSSOCheck();
+								String ipAddressesRegexp = CmsPropertyHandler.getIpNumbersSkippingSSOCheck();
+								
+								logger.info("userAgentsRegexp:" + userAgentsRegexp);
+								if(userAgentsRegexp != null && !userAgentsRegexp.equals("") && getBrowserBean() != null && getBrowserBean().getUseragent() != null)
+								{
+									if(getBrowserBean().getUseragent().matches(userAgentsRegexp))
+							    	{
+										logger.info("Skipping SSO check for this useragent: " + getBrowserBean().getUseragent());
+										isForcedIdentityCheckDisabled = true;
+							    	}
+								}
+								
+								logger.info("isForcedIdentityCheckDisabled:" + isForcedIdentityCheckDisabled);
+								if(!isForcedIdentityCheckDisabled)
+								{
+									logger.info("ipAddressesRegexp:" + ipAddressesRegexp);
+									if(ipAddressesRegexp != null && !ipAddressesRegexp.equals("") && getRequest().getRemoteAddr() != null)
+									{
+										logger.info("IP:" + getRequest().getRemoteAddr());
+										if(getRequest().getRemoteAddr().matches(ipAddressesRegexp))
+								    	{
+											logger.info("Skipping SSO check for this ip address: " + getRequest().getRemoteAddr());
+											isForcedIdentityCheckDisabled = true;
+								    	}
+									}
+								}
+								if(logger.isInfoEnabled())
+									logger.info("Checking ip and useragent took: " + t.getElapsedTime());
+							}
+
+							if(logger.isInfoEnabled())
+							{
+								logger.info("isForcedIdentityCheckDisabled:" + isForcedIdentityCheckDisabled);
+								logger.info("isForcedIdentityCheckDisabled:" + isForcedIdentityCheckDisabled);
+								logger.info("getHttpSession().getAttribute(ssoChecked):" + getHttpSession().getAttribute("ssoChecked"));
+								logger.info("getRequest().getParameter(skipSSOCheck):" + getRequest().getParameter("skipSSOCheck"));
+							}
+							if(!isForcedIdentityCheckDisabled && getHttpSession().getAttribute("ssoChecked") == null && (getRequest().getParameter("skipSSOCheck") == null || !getRequest().getParameter("skipSSOCheck").equals("true")))
+							{
+								isUserRedirected = handleExtranetLogic(dbWrapper.getDatabase(), true);
+								logger.info("isUserRedirected:" + isUserRedirected);
+							}
+							else if(!isForcedIdentityCheckDisabled && getRequest().getParameter("skipSSOCheck") != null && getRequest().getParameter("skipSSOCheck").equals("true"))
+							{
+								getHttpSession().setAttribute("ssoChecked", "true");
+							}
 						}
 					}
 				}
 			}
-			
+						
+			logger.info("isUserRedirected:" + isUserRedirected);
+			logger.info("principal:" + this.principal);
 			if(!isUserRedirected)
 				isUserRedirected = rewriteUrl();
 			
@@ -427,21 +503,15 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		}
 		catch(Exception e)
 		{
+			logger.warn("Extra warn:" + e.getMessage(), e);
+			
 			String extraInformation = "Original URL: " + getOriginalFullURL() + "\n";
 			extraInformation += "Referer: " + getRequest().getHeader("Referer") + "\n";
 			extraInformation += "UserAgent: " + getRequest().getHeader("User-Agent") + "\n";
 			extraInformation += "User IP: " + getRequest().getRemoteAddr();
 
-			if(e instanceof java.net.SocketException || e.getCause() != null && e.getCause() instanceof java.net.SocketException)
-			{
-				logger.error("An error occurred (se warning log for further info):" + e.getMessage());
-				logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation, e);
-			}
-			else
-			{
-				logger.error("An error occurred (se warning log for further info):" + e.getMessage());
-				logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation, e);
-			}
+			logger.error("An error occurred (se warning log for further info):" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation, e);
 			
 			rollbackTransaction(dbWrapper.getDatabase());
 
@@ -485,6 +555,12 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			RequestAnalyser.getRequestAnalyser().decNumberOfCurrentRequests(elapsedTime);
 			lastRequestProcessingTime = elapsedTime;
 
+			//This only states how much memory in general has been allocated more than when the thread started. It can well be other threads allocating but a timeframe is nice.
+			float memoryDiff = (((float)Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) - startTotalMemory) / 1024f / 1024f;
+			logger.info("memoryDiff:" + memoryDiff + "(" + startTotalMemory + "-" + ((float)Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + ")");
+			if(memoryDiff > 100)
+				logger.warn("During the rendering of: " + this.getOriginalFullURL() + " a large amount (" + (int)memoryDiff + "MB) was allocated.");
+			
 		    //System.out.println("The page delivery took " + elapsedTime + "ms for request " + this.getRequest().getRequestURL() + "?" + this.getRequest().getQueryString());
 			if(!memoryWarningSent)
 			{
@@ -503,7 +579,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						try
 						{
 							logger.warn("Sending warning mail:" + (int)percentLeft + ":" + (int)memoryLeft + ":" + Runtime.getRuntime().maxMemory() / 1024 / 1024);
-							MailServiceFactory.getService().sendEmail("text/html", warningEmailReceiver, warningEmailReceiver, null, null, null, null, subject, mailBody, "utf-8");
+							MailServiceFactory.getService().sendEmail(CmsPropertyHandler.getMailContentType(), warningEmailReceiver, warningEmailReceiver, null, null, null, null, subject, mailBody, "utf-8");
 						} 
 						catch (Exception e)
 						{
@@ -514,8 +590,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			}
 
 			String originalFullUrl = getOriginalFullURL();
-			if(elapsedTime > 1000)
-				RequestAnalyser.getRequestAnalyser().registerPageStatistics("" + originalFullUrl, elapsedTime);
+			RequestAnalyser.getRequestAnalyser().registerLatestPageStatistics("" + originalFullUrl + " (" + browserBean.getUseragent() + ", IP: " + getRequest().getRemoteAddr() + ") - took " + elapsedTime + " ms.");
+			if(elapsedTime > 5000)
+				RequestAnalyser.getRequestAnalyser().registerPageStatistics("" + originalFullUrl + " (" + browserBean.getUseragent() + ")", elapsedTime);
 		    		    
 		    //System.out.println("The page delivery took " + elapsedTime + "ms");
 		    if(elapsedTime > 10000)
@@ -536,6 +613,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	    		tk.done();
 	    	else
 	    		logger.warn("Done had allready been run... skipping");
+		
+			killUnwantedSessions();
 		}
 		
         return NONE;
@@ -565,6 +644,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			if(logger.isInfoEnabled())
 				logger.info("queryString:" + queryString);
 			String remainingQueryString = HttpUtilities.removeParameter(queryString, "ticket");
+			if(remainingQueryString.indexOf("noAccess=true") == -1)
+				remainingQueryString = HttpUtilities.removeParameter(remainingQueryString, "referer");
+			
 			if(logger.isInfoEnabled())
 				logger.info("remainingQueryString:" + remainingQueryString);
 
@@ -615,12 +697,12 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			if(useAccessBasedProtocolRedirects || forceProtocolChangeSetting.equals(SiteNodeVersionVO.FORCE_SECURE))
 			{
 				String originalFullURL = getOriginalFullURL();
-				//logger.info("originalFullURL:" + originalFullURL);
+				//System.out.println("originalFullURL:" + originalFullURL);
 		    	boolean isAnonymousAccepted = true;
 		    	if(protectedSiteNodeVersionId != null)
 		    	{
 					Principal anonymousPrincipal = getAnonymousPrincipal();
-					isAnonymousAccepted = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+					isAnonymousAccepted = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
 		    	}
 		    	
 		    	if((protectedSiteNodeVersionId != null && !isAnonymousAccepted) || forceProtocolChangeSetting.equals(SiteNodeVersionVO.FORCE_SECURE))
@@ -666,14 +748,19 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	public String doRenderDecoratedPage() throws Exception
 	{
 		if(CmsPropertyHandler.getOperatingMode().equals("3"))
-			return doExecute();
-				
+		{
+			this.getResponse().setStatus(301);
+			this.getResponse().setHeader( "Location", getOriginalFullURL().replaceAll("\\!renderDecoratedPage", ""));
+			return NONE; //doExecute();
+		}
+		
+		Timer t = new Timer();
         while(CmsPropertyHandler.getActuallyBlockOnBlockRequests() && RequestAnalyser.getRequestAnalyser().getBlockRequests())
         {
-        	//logger.info("Queing up requests as cache eviction are taking place..");
+        	//System.out.println("Queing up requests as cache eviction are taking place..");
         	Thread.sleep(10);
         }
-		
+        t.printElapsedTime("Waited in render view on blocking threads - correct", 50);		
 		if(logger.isInfoEnabled())
 		{
 	        logger.info("************************************************");
@@ -683,6 +770,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		
         HttpServletRequest request = getRequest();
 
+        ThreadMonitor tk = null;
     	if(!CmsPropertyHandler.getOperatingMode().equals("3"))
     		tk = new ThreadMonitor(new Long(CmsPropertyHandler.getDeliverRequestTimeout()).longValue(), request, "Page view took to long!", true);
     	else
@@ -697,6 +785,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
     	
    		long start			= System.currentTimeMillis();
 		long elapsedTime 	= 0;
+		float startTotalMemory 	= ((float)Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
     			
 		DatabaseWrapper dbWrapper = new DatabaseWrapper(CastorDatabaseService.getDatabase());
     	//Database db = CastorDatabaseService.getDatabase();
@@ -711,7 +800,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			this.integrationDeliveryController	= IntegrationDeliveryController.getIntegrationDeliveryController(this.siteNodeId, this.languageId, this.contentId);
 
 			boolean isUserRedirected = false;
-			Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(dbWrapper.getDatabase(), siteNodeId);
+			Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(dbWrapper.getDatabase(), siteNodeId, "SiteNodeVersion.Read");
 			logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 
 			boolean protectDeliver = true;
@@ -801,14 +890,15 @@ public class ViewPageAction extends InfoGlueAbstractAction
 
 				//deliveryContext.setDisablePageCache(true);
 				
-				SiteNode siteNode = nodeDeliveryController.getSiteNode(dbWrapper.getDatabase(), this.siteNodeId);
+				SiteNodeVO siteNode = nodeDeliveryController.getSiteNodeVO(dbWrapper.getDatabase(), this.siteNodeId);
 				if(siteNode == null)
 				    throw new SystemException("There was no page with this id.");
 
-				if(siteNode.getSiteNodeTypeDefinition() == null)
+				if(siteNode.getSiteNodeTypeDefinitionId() == null)
 				    throw new SystemException("There was no SiteNodeTypeDefinition defined for the site node " + siteNode.getName() + "[" + siteNode.getId() + "].");
 
-				String invokerClassName = siteNode.getSiteNodeTypeDefinition().getInvokerClassName();
+				SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO = getSiteNodeTypeDefinition(this.siteNodeId, dbWrapper.getDatabase());
+				String invokerClassName = siteNodeTypeDefinitionVO.getInvokerClassName();
 				
 				if(invokerClassName == null || invokerClassName.equals(""))
 				{
@@ -818,6 +908,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				{
 				    try
 				    {
+				    	System.out.println("this.principal:" + this.principal);
+				    	System.out.println("getPrincipal:" + templateController.getPrincipal());
 				        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
 				        pageInvoker = pageInvoker.getDecoratedPageInvoker(templateController, deliveryContext);
 				        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);
@@ -876,7 +968,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			extraInformation += "UserAgent: " + getRequest().getHeader("User-Agent") + "\n";
 			extraInformation += "User IP: " + getRequest().getRemoteAddr();
 			
-			if(e instanceof java.net.SocketException || e.getCause() != null && e.getCause() instanceof java.net.SocketException)
+			if(e instanceof java.net.SocketException)
 				logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation);
 			else
 				logger.error("An error occurred so we should not complete the transaction:" + e.getMessage() + "\n" + extraInformation, e);
@@ -915,6 +1007,12 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		    	
 		    RequestAnalyser.getRequestAnalyser().decNumberOfCurrentRequests(elapsedTime);
 
+		    //This only states how much memory in general has been allocated more than when the thread started. It can well be other threads allocating but a timeframe is nice.
+			float memoryDiff = (((float)Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) - startTotalMemory) / 1024f / 1024f;
+			logger.info("memoryDiff:" + memoryDiff + "(" + startTotalMemory + "-" + ((float)Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) + ")");
+			if(memoryDiff > 100)
+				logger.warn("During the rendering of: " + this.getOriginalFullURL() + " a large amount (" + (int)memoryDiff + "MB) was allocated.");
+			
 			if(!memoryWarningSent)
 			{
 				float memoryLeft = ((float)Runtime.getRuntime().maxMemory() - (float)Runtime.getRuntime().totalMemory()) / 1024f / 1024f;
@@ -938,7 +1036,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						try
 						{
 							logger.warn("Sending warning mail:" + (int)percentLeft + ":" + (int)memoryLeft + ":" + Runtime.getRuntime().maxMemory() / 1024f / 1024f);
-							MailServiceFactory.getService().sendEmail("text/html", warningEmailReceiver, warningEmailReceiver, null, null, null, null, subject, mailBody, "utf-8");
+							MailServiceFactory.getService().sendEmail(CmsPropertyHandler.getMailContentType(), warningEmailReceiver, warningEmailReceiver, null, null, null, null, subject, mailBody, "utf-8");
 						} 
 						catch (Exception e)
 						{
@@ -1072,12 +1170,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		{
 			if(getSiteNodeId() != null)
 			{
-				SiteNodeVO siteNodeVO = (SiteNodeVO)CacheController.getCachedObjectFromAdvancedCache("siteNodeVOCache", "" + getSiteNodeId());
-				if(siteNodeVO == null)
-				{
-					siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId(), db);
-					CacheController.cacheObjectInAdvancedCache("siteNodeVOCache", "" + getSiteNodeId(), siteNodeVO);
-				}
+				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(getSiteNodeId(), db);
 				repositoryId = siteNodeVO.getRepositoryId();
 			}	
 		}
@@ -1090,14 +1183,19 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		{
 		    LanguageVO browserLanguageVO = null;
 
-		    String useAlternativeBrowserLanguageCheck = CmsPropertyHandler.getUseAlternativeBrowserLanguageCheck();
-		    if(useAlternativeBrowserLanguageCheck == null || !useAlternativeBrowserLanguageCheck.equalsIgnoreCase("true"))
-		        browserLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, browserBean.getLanguageCode(), getSiteNodeId(), (InfoGluePrincipal)this.principal);
-		    else
-		        browserLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfRepositorySupportsIt(db, browserBean.getLanguageCode(), getSiteNodeId());
+		    String useBrowserLanguage = CmsPropertyHandler.getUseBrowserLanguage();
+		    if(useBrowserLanguage != null && useBrowserLanguage.equals("true"))
+		    {
+			    String useAlternativeBrowserLanguageCheck = CmsPropertyHandler.getUseAlternativeBrowserLanguageCheck();
+			    if(useAlternativeBrowserLanguageCheck == null || !useAlternativeBrowserLanguageCheck.equalsIgnoreCase("true"))
+			        browserLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfSiteNodeSupportsIt(db, browserBean.getLanguageCode(), getSiteNodeId(), (InfoGluePrincipal)this.principal);
+			    else
+			        browserLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getLanguageIfRepositorySupportsIt(db, browserBean.getLanguageCode(), getSiteNodeId());
 
-			logger.debug("Checking browser language...");
-
+			    logger.debug("Checking browser language...");
+		    }
+		    
+		    logger.info("browserLanguageVO: " + browserLanguageVO);
 		    if(browserLanguageVO != null)
 			{
 			    logger.info("The system had browserLanguageVO available:" + browserLanguageVO.getName());
@@ -1106,12 +1204,12 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			else
 			{
 				LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(db, this.getSiteNodeId());
+			    logger.info("masterLanguageVO: " + masterLanguageVO);
 				if(masterLanguageVO == null)
 					throw new SystemException("There was no master language for the siteNode " + getSiteNodeId());
 
-				
 				NodeDeliveryController ndc = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
-				boolean isMasterLanguageValid = LanguageDeliveryController.getLanguageDeliveryController().getIsValidLanguage(db, ndc, ndc.getSiteNode(db, siteNodeId), masterLanguageVO.getId());
+				boolean isMasterLanguageValid = LanguageDeliveryController.getLanguageDeliveryController().getIsValidLanguage(db, ndc, siteNodeId, masterLanguageVO.getId());
 				if(!isMasterLanguageValid)
 				{
 				    logger.info("Master language was not allowed on this sitenode... let's take the next on in order");
@@ -1120,7 +1218,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				    while(languagesIterator.hasNext())
 				    {
 				        LanguageVO currentLanguage = (LanguageVO)languagesIterator.next();
-				        boolean isCurrentLanguageValid = LanguageDeliveryController.getLanguageDeliveryController().getIsValidLanguage(db, ndc, ndc.getSiteNode(db, siteNodeId), currentLanguage.getId());
+				        boolean isCurrentLanguageValid = LanguageDeliveryController.getLanguageDeliveryController().getIsValidLanguage(db, ndc, siteNodeId, currentLanguage.getId());
 					    logger.info("currentLanguage validity:" + isCurrentLanguageValid);
 				        if(isCurrentLanguageValid)
 				        {
@@ -1134,6 +1232,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				    logger.info("The system had no browserLanguageVO available - using master language instead:" + masterLanguageVO.getName());
 				    setLanguageId(masterLanguageVO.getLanguageId());				
 				}
+
 
 			}
 		}
@@ -1153,7 +1252,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					throw new SystemException("There was no master language for the siteNode " + getSiteNodeId());
 				
 				NodeDeliveryController ndc = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
-				boolean isMasterLanguageValid = LanguageDeliveryController.getLanguageDeliveryController().getIsValidLanguage(db, ndc, ndc.getSiteNode(db, siteNodeId), masterLanguageVO.getId());
+				boolean isMasterLanguageValid = LanguageDeliveryController.getLanguageDeliveryController().getIsValidLanguage(db, ndc, siteNodeId, masterLanguageVO.getId());
 				if(!isMasterLanguageValid)
 				{
 				    logger.info("Master language was not allowed on this sitenode... let's take the next on in order");
@@ -1162,7 +1261,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				    while(languagesIterator.hasNext())
 				    {
 				        LanguageVO currentLanguage = (LanguageVO)languagesIterator.next();
-				        boolean isCurrentLanguageValid = LanguageDeliveryController.getLanguageDeliveryController().getIsValidLanguage(db, ndc, ndc.getSiteNode(db, siteNodeId), currentLanguage.getId());
+				        boolean isCurrentLanguageValid = LanguageDeliveryController.getLanguageDeliveryController().getIsValidLanguage(db, ndc, siteNodeId, currentLanguage.getId());
 					    logger.info("currentLanguage validity:" + isCurrentLanguageValid);
 				        if(isCurrentLanguageValid)
 				        {
@@ -1188,6 +1287,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	
 	public boolean handleExtranetLogic(Database db, Integer repositoryId, Integer protectedSiteNodeVersionId, boolean protectDeliver, boolean forceCmsUser) throws SystemException, Exception
 	{
+		Timer t = new Timer();
+		
 		boolean isRedirected = false;
 		
 		try
@@ -1197,6 +1298,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			
 			if(referer == null || referer.indexOf("ViewStructureToolToolBar.action") != -1)
 				referer = "/"; 
+			
+			logger.info("referer after:" + referer);
 			
 			Principal principal = (Principal)this.getHttpSession().getAttribute("infogluePrincipal");
 			logger.info("principal:" + principal);
@@ -1240,8 +1343,20 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			if(principal == null && !protectDeliver)
 			{
 				Principal anonymousPrincipal = getAnonymousPrincipal();
-				boolean isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
-				System.out.println("Is anonymous authorized:" + isAuthorized);
+
+				boolean isAuthorized = true;
+				if(protectedSiteNodeVersionId != null)
+				{
+					isAuthorized = false;
+					SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(protectedSiteNodeVersionId, db);
+					if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+					else
+						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)anonymousPrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+				}				
+				
+				logger.info("isAuthorized:" + isAuthorized);
+				
 				if(isAuthorized)
 				{	
 					principal = anonymousPrincipal;
@@ -1297,14 +1412,14 @@ public class ViewPageAction extends InfoGlueAbstractAction
 								
 								boolean isAuthorized = false;
 								if(!protectDeliver)
-									isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+									isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
 								
 								if(!isAuthorized)
 								{	
 									this.getHttpSession().removeAttribute("infogluePrincipal");
 									logger.info("SiteNode is protected and anonymous user was not allowed - sending him to login page.");
 									String redirectUrl = getRedirectUrl(getRequest(), getResponse());								
-									//logger.info("redirectUrl:" + redirectUrl);
+									//System.out.println("redirectUrl:" + redirectUrl);
 									getResponse().sendRedirect(redirectUrl);
 									isRedirected = true;
 								}
@@ -1338,16 +1453,14 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						if(logger.isInfoEnabled())
 							logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 						
-						System.out.println("Is anonymous authorized:" + isAuthorized);
-						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
 						
 						if(logger.isInfoEnabled())
 							logger.info("Anonymous auth:" + isAuthorized);
 						
 						if(!isAuthorized)
 						{
-							System.out.println("Is principal authorized:" + principal.getName() + "=" + isAuthorized);
-							isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+							isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
 						
 							if(logger.isInfoEnabled())
 								logger.info("" + principal + " auth:" + isAuthorized);
@@ -1357,12 +1470,10 @@ public class ViewPageAction extends InfoGlueAbstractAction
 							logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 						
 					}
-					/*
 					else if(!protectDeliver)
 					{
-						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+						isAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
 					}
-					*/
 					
 					if(logger.isInfoEnabled())
 					{
@@ -1391,8 +1502,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						else
 						{
 							logger.info("SiteNode is protected and user has no access - sending him to no access page.");
-						    String url = "ExtranetLogin!noAccess.action?siteNodeId=" + this.getSiteNodeId() + "&referer=" + URLEncoder.encode(this.referer, "UTF-8") + "&date=" + System.currentTimeMillis();
-							getResponse().sendRedirect(url);
+						    String noAccessURL = getNoAccessURL();
+							getResponse().sendRedirect(noAccessURL);
 							isRedirected = true;
 						}
 					}
@@ -1416,11 +1527,73 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			    if(alternativePrincipal == null)
 			        alternativePrincipal = loginWithRequestArguments();
 
-			    if(protectedSiteNodeVersionId != null && alternativePrincipal != null && AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)alternativePrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()))
+			    SiteNodeVersionVO siteNodeVersionVO = null;
+			    boolean isAlternativePrincipalAuthorized = (alternativePrincipal == null);
+				boolean isPrincipalAuthorized = true;
+				boolean isAnonymousPrincipalAuthorized = true;
+				
+			    if(protectedSiteNodeVersionId != null)
+			    {
+			    	siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(protectedSiteNodeVersionId, db);
+				
+			    	isAlternativePrincipalAuthorized = false;
+			    	isPrincipalAuthorized = false;
+			    	isAnonymousPrincipalAuthorized = false;
+			    }
+			    
+			    if(siteNodeVersionVO != null && siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK.intValue())
+				{
+					if(alternativePrincipal != null)
+						isAlternativePrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)alternativePrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+					if(!isAlternativePrincipalAuthorized && !((InfoGluePrincipal)principal).getName().equals(((InfoGluePrincipal)this.getAnonymousPrincipal()).getName()))
+						isPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+					else if(!isAlternativePrincipalAuthorized)
+						isAnonymousPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+				}
+				else if(siteNodeVersionVO != null)
+				{
+				    if(alternativePrincipal != null)
+						isAlternativePrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)alternativePrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+					if(!isAlternativePrincipalAuthorized && !((InfoGluePrincipal)principal).getName().equals(((InfoGluePrincipal)this.getAnonymousPrincipal()).getName()))
+						isPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), true);
+					if(!isAlternativePrincipalAuthorized && !isPrincipalAuthorized)
+						isAnonymousPrincipalAuthorized = AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+				}
+				
+			    logger.info("isAlternativePrincipalAuthorized:" + isAlternativePrincipalAuthorized);
+			    logger.info("isPrincipalAuthorized:" + isPrincipalAuthorized);
+			    logger.info("isAnonymousPrincipalAuthorized:" + isAnonymousPrincipalAuthorized);
+			    logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
+			    logger.info("prinicpal:" + principal.getName());
+				
+			    logger.info("Session ssoChecked:" + getHttpSession().getAttribute("ssoChecked"));
+			    String ssoUserName = null;
+			    if(getHttpSession().getAttribute("ssoChecked") == null || getHttpSession().getAttribute("ssoChecked").equals(""))
+			    {
+					String forceIdentityCheck = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(this.repositoryId, "forceIdentityCheck");
+					if(this.principal == null || CmsPropertyHandler.getAnonymousUser().equalsIgnoreCase(this.principal.getName()))
+					{
+						if(CmsPropertyHandler.getForceIdentityCheck().equalsIgnoreCase("true") || (forceIdentityCheck != null && forceIdentityCheck.equalsIgnoreCase("true")))
+						{
+							boolean isForcedIdentityCheckDisabled = this.nodeDeliveryController.getIsForcedIdentityCheckDisabled(db, this.siteNodeId);
+							if(!isForcedIdentityCheckDisabled)
+							{
+							    ssoUserName = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), this.getRequest(), false).getSSOUserName(getRequest());
+								if(ssoUserName != null)
+									getHttpSession().setAttribute("ssoChecked", "true");
+							}
+						}
+					}
+					//t.printElapsedTime("ssoUserName took");
+			    }
+			    
+			    //if(protectedSiteNodeVersionId != null && alternativePrincipal != null && AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)alternativePrincipal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()))
+				if(protectedSiteNodeVersionId != null && isAlternativePrincipalAuthorized)
 			    {
 			        logger.info("The user " + alternativePrincipal.getName() + " was approved.");
 			    }
-				else if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()) &&  !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()))
+				//else if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()) &&  !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()))
+				else if(protectedSiteNodeVersionId != null && !isPrincipalAuthorized && !isAnonymousPrincipalAuthorized || (principal.getName().equals(CmsPropertyHandler.getAnonymousUser()) && ssoUserName != null))
 				{
 					if(logger.isInfoEnabled())
 					{
@@ -1428,9 +1601,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 						logger.info("protectedSiteNodeVersionId:" + protectedSiteNodeVersionId);
 						logger.info("this.getAnonymousPrincipal():" + this.getAnonymousPrincipal());
 						
-						logger.info("Principal access: " + !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
-						logger.info("Principal access: " + !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
-						logger.info("Anonymous access: " + !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
+						logger.info("Principal access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
+						logger.info("Principal access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
+						logger.info("Anonymous access: " + !AccessRightController.getController().getIsPrincipalAuthorized(db, (InfoGluePrincipal)this.getAnonymousPrincipal(), "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()));
 					}
 					
 					if(this.referer == null)
@@ -1441,11 +1614,12 @@ public class ViewPageAction extends InfoGlueAbstractAction
 
 					if(principal.getName().equals(CmsPropertyHandler.getAnonymousUser()))
 					{
-						String ssoUserName = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), getRequest(), false).getSSOUserName(getRequest());
-						//logger.info("ssoUserName:" + ssoUserName);
+						//String ssoUserName = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), this.getRequest(), false).getSSOUserName(getRequest());
 						if(ssoUserName != null)
 						{
 							principal = UserControllerProxy.getController().getUser(ssoUserName);
+						    //t.printElapsedTime("principal from ssoUserName took");
+
 							if(principal != null)
 							{
 								this.principal = principal;
@@ -1457,9 +1631,9 @@ public class ViewPageAction extends InfoGlueAbstractAction
 								// Check if the principal is authorized to view this page.
 								// If not, redirect him to the unauthorized.jsp page.
 								//---------------------------------------------------------
-								if (!AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()))
+								if (protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString()))
 								{
-									String url = "ExtranetLogin!noAccess.action?siteNodeId=" + this.getSiteNodeId() + "&referer=" + URLEncoder.encode(this.referer, "UTF-8") + "&date=" + System.currentTimeMillis();
+									String url = getNoAccessURL();
 									getResponse().sendRedirect(url);
 									isRedirected = true;
 								}
@@ -1480,8 +1654,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					else
 					{
 						logger.info("SiteNode is protected and neither " + principal + " or " + this.getAnonymousPrincipal() + " has access - sending him to no access page.");
-						String url = "ExtranetLogin!noAccess.action?siteNodeId=" + this.getSiteNodeId() + "&referer=" + URLEncoder.encode(this.referer, "UTF-8") + "&date=" + System.currentTimeMillis();
-
+						String url = getNoAccessURL();
 						getResponse().sendRedirect(url);
 						isRedirected = true;
 					}
@@ -1511,6 +1684,106 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		
 		return isRedirected;
 	}
+
+	/**
+	 * This method gets an no access url and has some logic about it. First it defaults to a standard url. If a different is stated in a repo property called noAccessURL 
+	 * it uses that and if the url there is $referer it uses the http referer header and just adds a parameter.
+	 * @return
+	 * @throws Exception
+	 */
+	public String getNoAccessURL() throws Exception
+	{
+		String noAccessURL = "ExtranetLogin!noAccess.action?referer=" + URLEncoder.encode(this.referer, "UTF-8") + "&date=" + System.currentTimeMillis();
+	    
+		try
+		{
+		    String repositoryNoAccessURL = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(this.repositoryId, "noAccessURL");
+		    logger.info("repositoryNoAccessURL:" + repositoryNoAccessURL);
+			if(repositoryNoAccessURL != null && !repositoryNoAccessURL.equals(""))
+			{
+				if(repositoryNoAccessURL.equalsIgnoreCase("$referer") && this.referer != null && !this.referer.equals(""))
+				{
+					if(this.referer.indexOf("?") > -1)
+						repositoryNoAccessURL = this.referer + "&noAccess=true&date=" + System.currentTimeMillis();
+					else
+						repositoryNoAccessURL = this.referer + "?noAccess=true&date=" + System.currentTimeMillis();
+					logger.info("this.referer:" + this.referer);
+					logger.info("repositoryNoAccessURL 2:" + repositoryNoAccessURL);
+				}
+				else
+				{
+					if(repositoryNoAccessURL.indexOf("?") > -1)
+						repositoryNoAccessURL = repositoryNoAccessURL + "&noAccess=true&referer=" + URLEncoder.encode(this.referer, "UTF-8") + "&date=" + System.currentTimeMillis();
+					else
+						repositoryNoAccessURL = repositoryNoAccessURL + "?noAccess=true&referer=" + URLEncoder.encode(this.referer, "UTF-8") + "&date=" + System.currentTimeMillis();
+					logger.info("2 this.referer:" + this.referer);
+					logger.info("2 repositoryNoAccessURL 2:" + repositoryNoAccessURL);
+				}
+				
+				noAccessURL = repositoryNoAccessURL;
+				logger.info("noAccessURL:" + noAccessURL);
+			}
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Problem reading repo specific noAccessURL: " + e.getMessage(), e);
+		}
+	
+		return noAccessURL;
+	}
+	
+	
+	private boolean authenticateUser(Database db) throws Exception
+	{
+		Map status = new HashMap();
+		status.put("redirected", new Boolean(false));
+		//getRequest().setAttribute("gateway", "" + true);
+		String originalFullURL = this.getOriginalFullURL();
+		
+		int index = originalFullURL.indexOf("authenticateUser=true&");
+		if(index > -1)
+			originalFullURL = originalFullURL.replaceAll("authenticateUser=true&","");
+		else
+		{
+			int index2 = originalFullURL.indexOf("authenticateUser=true");
+			if(index2 > -1)
+				originalFullURL = originalFullURL.replaceAll("authenticateUser=true","");
+		}
+		if(originalFullURL.endsWith("?"))
+			originalFullURL = originalFullURL.substring(0, originalFullURL.length() - 1);
+		
+		//System.out.println("originalFullURL:" + originalFullURL);
+		
+		principal = AuthenticationModule.getAuthenticationModule(db, originalFullURL, this.getRequest(), false).loginUser(getRequest(), getResponse(), status);
+		//System.out.println("principal in AAAAA:" + principal);
+		Boolean redirected = (Boolean)status.get("redirected");
+		//System.out.println("principal in AAAAA:" + principal);
+		if(redirected != null && redirected.booleanValue())
+		{
+			logger.info("Redirected....");
+			this.getHttpSession().removeAttribute("ssoChecked");
+			this.getHttpSession().removeAttribute("infogluePrincipal");
+		    this.principal = null;
+		    return true;
+		}
+		else if(principal != null)
+		{
+			logger.info("NOT Redirected....");
+		    this.getHttpSession().setAttribute("infogluePrincipal", principal);
+			this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
+			this.getHttpSession().setAttribute("cmsUserName", principal.getName());
+			
+		    this.principal = principal;
+		}
+		else
+		{
+			String redirectUrl = getRedirectUrl(getRequest(), getResponse());								
+			getResponse().sendRedirect(redirectUrl);
+			redirected = true;
+		}
+
+		return redirected;
+	}
 	
 	
 	/**
@@ -1525,21 +1798,28 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		
 		try
 		{
-			String skipSSOCheck = this.getRequest().getParameter("skipSSOCheck");
-			String ticket = this.getRequest().getParameter("ticket");
-			if((skipSSOCheck != null && !skipSSOCheck.equals("")) && (ticket == null || ticket.equals("")))
+			logger.info("principal: " + principal);
+			if(principal == null)
 			{
-				principal = getAnonymousPrincipal();
-				
-				if(principal != null)
+				String skipSSOCheck = this.getRequest().getParameter("skipSSOCheck");
+				String ticket = this.getRequest().getParameter("ticket");
+				if((skipSSOCheck != null && !skipSSOCheck.equals("")) && (ticket == null || ticket.equals("")))
 				{
-					this.getHttpSession().setAttribute("infogluePrincipal", principal);
-					this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
-					this.getHttpSession().setAttribute("cmsUserName", principal.getName());
+					logger.info("Setting user to anonymous....");
+					principal = getAnonymousPrincipal();
+					
+					if(principal != null)
+					{
+						this.getHttpSession().setAttribute("infogluePrincipal", principal);
+						this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
+						this.getHttpSession().setAttribute("cmsUserName", principal.getName());
+					}
+					
+					getHttpSession().setAttribute("ssoChecked", "true");
+					return isRedirected;
 				}
+			}			
 
-				return isRedirected;
-			}
 			
 		    String referer = this.getRequest().getHeader("Referer");
 			logger.info("referer:" + referer);
@@ -1550,6 +1830,37 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			Principal principal = (Principal)this.getHttpSession().getAttribute("infogluePrincipal");
 			logger.info("principal:" + principal);
 
+			if((principal == null || principal.getName().equals(CmsPropertyHandler.getAnonymousUser())) && getHttpSession().getAttribute("ssoChecked") == null && (getRequest().getParameter("skipSSOCheck") != null && !getRequest().getParameter("skipSSOCheck").equals("true")))	
+			{
+				logger.info("Nulling user as we want SSO check to be done..");
+			    if(this.getRequest().getUserPrincipal() != null && !(this.getRequest().getUserPrincipal() instanceof InfoGluePrincipal))
+			    {
+					Map status = new HashMap();
+					status.put("redirected", new Boolean(false));
+					getRequest().setAttribute("gateway", "" + gateway);
+					principal = AuthenticationModule.getAuthenticationModule(db, this.getOriginalFullURL(), this.getRequest(), false).loginUser(getRequest(), getResponse(), status);
+					logger.info("principal:" + principal + " after gateway test");
+					Boolean redirected = (Boolean)status.get("redirected");
+					logger.info("redirected:" + redirected);
+					if(redirected != null && redirected.booleanValue())
+					{
+					    this.getHttpSession().removeAttribute("infogluePrincipal");
+					    this.principal = null;
+					    return true;
+					}
+					else if(principal != null)
+					{
+					    this.getHttpSession().setAttribute("infogluePrincipal", principal);
+						this.getHttpSession().setAttribute("infoglueRemoteUser", principal.getName());
+						this.getHttpSession().setAttribute("cmsUserName", principal.getName());
+						
+					    this.principal = principal;
+					}
+			    }
+			    //getHttpSession().setAttribute("ssoChecked", "true");
+			}
+			
+
 			//First we check if the user is logged in to the container context
 			if(principal == null)
 			{
@@ -1558,7 +1869,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					Map status = new HashMap();
 					status.put("redirected", new Boolean(false));
 					getRequest().setAttribute("gateway", "" + gateway);
-					principal = AuthenticationModule.getAuthenticationModule(db, this.getOriginalFullURL(), getRequest(), false).loginUser(getRequest(), getResponse(), status);
+					principal = AuthenticationModule.getAuthenticationModule(db, this.getOriginalFullURL(), this.getRequest(), false).loginUser(getRequest(), getResponse(), status);
 					Boolean redirected = (Boolean)status.get("redirected");
 					if(redirected != null && redirected.booleanValue())
 					{
@@ -1582,7 +1893,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				Map status = new HashMap();
 				status.put("redirected", new Boolean(false));
 				getRequest().setAttribute("gateway", "" + gateway);
-				principal = AuthenticationModule.getAuthenticationModule(db, this.getOriginalFullURL(), getRequest(), false).loginUser(getRequest(), getResponse(), status);
+				principal = AuthenticationModule.getAuthenticationModule(db, this.getOriginalFullURL(), this.getRequest(), false).loginUser(getRequest(), getResponse(), status);
 				Boolean redirected = (Boolean)status.get("redirected");
 				if(redirected != null && redirected.booleanValue())
 				{
@@ -1703,12 +2014,6 @@ public class ViewPageAction extends InfoGlueAbstractAction
 		    
 		    if(userName != null && password != null)
 		    {
-		    	byte[] userNameBytes = Base64.decodeBase64(userName);
-		    	userName = new String(userNameBytes, "utf-8");
-
-		    	byte[] passwordBytes = Base64.decodeBase64(password);
-		    	password = new String(passwordBytes, "utf-8");
-
 		    	DesEncryptionHelper encHelper = new DesEncryptionHelper();
 		        userName = encHelper.decrypt(userName);
 		        password = encHelper.decrypt(password);
@@ -1747,16 +2052,14 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			*/
 			if(encodedUserNameCookie != null && !encodedUserNameCookie.equals(""))
 			{
-				byte[] bytes = Base64.decodeBase64(encodedUserNameCookie);
-				encodedUserNameCookie = new String(bytes, "utf-8");
-				//encodedUserNameCookie = encodedUserNameCookie.replaceAll("IGEQ", "=");
+				encodedUserNameCookie = encodedUserNameCookie.replaceAll("IGEQ", "=");
 			    logger.info("encodedUserNameCookie2:" + encodedUserNameCookie);
 				String servletContextUserName = (String)ActionContext.getServletContext().getAttribute(encodedUserNameCookie);
 				logger.info("servletContextUserName:" + servletContextUserName);
 				if(servletContextUserName != null && !servletContextUserName.equals(""))
 				{
 					principal = getAuthenticatedUser(servletContextUserName);
-					//logger.info("principal:" + principal);
+					//System.out.println("principal:" + principal);
 					if(principal != null)
 					{
 					    this.getHttpSession().setAttribute("infogluePrincipal", principal);
@@ -1784,10 +2087,13 @@ public class ViewPageAction extends InfoGlueAbstractAction
         String userName = this.getRequest().getParameter("j_username");
 	    String password = this.getRequest().getParameter("j_password");
 	    String ticket 	= null; //this.getRequest().getParameter("ticket");
+	    //System.out.println("userName:" + userName);
+	    //System.out.println("password:" + password);
+	    //System.out.println("ticket:" + ticket);
 	    
 		if(ticket != null)
 	    {
-			//logger.info("ticket used in loginWithRequestArguments:" + ticket);
+			//System.out.println("ticket used in loginWithRequestArguments:" + ticket);
 		    Map arguments = new HashMap();
 		    arguments.put("ticket", ticket);
 		    
@@ -1871,13 +2177,38 @@ public class ViewPageAction extends InfoGlueAbstractAction
 
   	private String getRedirectUrl(HttpServletRequest request, HttpServletResponse response) throws ServletException, Exception 
   	{
-		String url = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), request, false).getLoginDialogUrl(request, response);
+		String url = AuthenticationModule.getAuthenticationModule(null, this.getOriginalFullURL(), this.getRequest(), false).getLoginDialogUrl(request, response);
+
+		int index = url.indexOf("authenticateUser%3Dtrue%26");
+		if(index > -1)
+			url = url.replaceAll("authenticateUser%3Dtrue%26","");
+		else
+		{
+			int index2 = url.indexOf("authenticateUser%3Dtrue");
+			if(index2 > -1)
+				url = url.replaceAll("authenticateUser%3Dtrue","");
+		}
+		if(url.endsWith("%3F"))
+			url = url.substring(0, url.length() - 3);
 		
 		String repositoryLoginUrl = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(repositoryId, "loginUrl");
-		//logger.info("repositoryLoginUrl:" + repositoryLoginUrl);
+		//System.out.println("repositoryLoginUrl:" + repositoryLoginUrl);
 		if(repositoryLoginUrl != null && !repositoryLoginUrl.equals(""))
 		{
-			String returnAddress = this.getOriginalFullURL();
+			String originalFullURL = this.getOriginalFullURL();
+			int index2 = originalFullURL.indexOf("authenticateUser=true&");
+			if(index2 > -1)
+				originalFullURL = originalFullURL.replaceAll("authenticateUser=true&","");
+			else
+			{
+				int index3 = originalFullURL.indexOf("authenticateUser=true");
+				if(index3 > -1)
+					originalFullURL = originalFullURL.replaceAll("authenticateUser=true","");
+			}
+			if(originalFullURL.endsWith("?"))
+				originalFullURL = originalFullURL.substring(0, url.length() - 1);
+
+			String returnAddress = originalFullURL;
 			url = repositoryLoginUrl + (repositoryLoginUrl.indexOf("?") > -1 ? "&" : "?") + "returnAddress=" + URLEncoder.encode(returnAddress, "UTF-8");
 		}
 		
@@ -2076,4 +2407,53 @@ public class ViewPageAction extends InfoGlueAbstractAction
         this.getHttpSession().setAttribute("cmsUserName", userName);
     }
     
+	/**
+	 * This method removes sessions just created if it was a user agent (bot) matched that we don't think reuses sessions anyway. It would only hog memory.
+	 */
+	public void killUnwantedSessions() 
+	{
+		try
+		{
+			if(browserBean.getUseragent() != null)
+			{
+				Pattern pattern = null;
+				String userAgentsRegexp = null;
+				try
+				{
+					Map cacheSettings = CmsPropertyHandler.getCacheSettings();
+					//System.out.println("cacheSettings:" + cacheSettings);
+			    	if(cacheSettings != null)
+			    	{
+			    		userAgentsRegexp = (String)cacheSettings.get("KILL_SESSION_FOR_USERAGENTSMATCHING");
+				    	if(userAgentsRegexp != null && !userAgentsRegexp.equals(""))
+							pattern = Pattern.compile(userAgentsRegexp);
+				    }
+				}
+				catch (Exception e) 
+				{
+					logger.warn("cacheSettings was null:" + e.getMessage(), e);
+				}
+
+				if(logger.isInfoEnabled())
+				{
+					logger.info("userAgentsRegexp:" + userAgentsRegexp);
+				}
+				
+				if(pattern != null)
+				{
+			        Matcher matcher = pattern.matcher(browserBean.getUseragent());
+			        if(matcher.find())
+			    	{
+			        	logger.info("Killing session from:" + browserBean.getUseragent());
+			        	this.getHttpSession().invalidate();
+			    	}
+			    	matcher.reset();
+				}
+			}
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Problem with session validation check");
+		}
+	}
 }

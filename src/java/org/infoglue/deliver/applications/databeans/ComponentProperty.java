@@ -47,7 +47,7 @@ public class ComponentProperty
 	public static final String CHECKBOXFIELD					= "checkbox";
 	public static final String DATEFIELD						= "datefield";
 	public static final String CUSTOMFIELD						= "customfield";
-	public static final String TABFIELD							= "tab";
+	public static final String EXTERNALBINDING					= "externalbinding";
 	
 	private Integer id;
 	private String name;
@@ -60,6 +60,7 @@ public class ComponentProperty
 	private Integer componentId;
 	private String entityClass;
 	private Integer entityId;
+	private String assetKey;
 	private String value;
 	private boolean isMultipleBinding 		= false;
 	private boolean isAssetBinding 			= false;
@@ -73,6 +74,8 @@ public class ComponentProperty
 	private String dataProvider 			= null;
 	private String dataProviderParameters 	= null;
 	private String customMarkup				= "";
+	private String externalBindingConfig	= "";
+	private String supplementingEntityType	= null;
 	private boolean allowMultipleSelections = false;
 	
 	private List options = new ArrayList();
@@ -167,6 +170,11 @@ public class ComponentProperty
 		}
 		
 		return sb.toString();
+	}
+
+	public void setAssetKey(String assetKey)
+	{
+		this.assetKey = assetKey;
 	}
 
 	public void setId(Integer integer)
@@ -316,7 +324,8 @@ public class ComponentProperty
             }
 
             allowedContentTypeName = allowedContentTypeNamesArray[i];
-            ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(allowedContentTypeName, db);
+            ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController()
+                    .getContentTypeDefinitionVOWithName(allowedContentTypeName, db);
             if ( contentTypeDefinitionVO != null )
             {
                 sb.append("allowedContentTypeIds=" + contentTypeDefinitionVO.getId());
@@ -459,5 +468,47 @@ public class ComponentProperty
 	public void setAllowMultipleSelections(boolean allowMultipleSelections)
 	{
 		this.allowMultipleSelections = allowMultipleSelections;
+	}
+	
+	public void setSupplementingEntityType(String supplementingEntityType)
+	{
+		this.supplementingEntityType = supplementingEntityType;
+	}
+	
+	public String getSupplementingEntityType()
+	{
+		return this.supplementingEntityType;
+	}
+	
+	public SupplementedComponentBinding getSupplementingEntity()
+	{
+		if (getBindings().size() > 0)
+		{
+			ComponentBinding binding = getBindings().get(0);
+			if (binding instanceof SupplementedComponentBinding)
+			{
+				return ((SupplementedComponentBinding)binding);
+			}
+		}
+		return null;
+	}
+
+	public boolean getIsSupplementingEntity()
+	{
+		if (getBindings().size() > 0)
+		{
+			return getBindings().get(0) instanceof SupplementedComponentBinding;
+		}
+		return false;
+	}
+
+	public String getExternalBindingConfig()
+	{
+		return this.externalBindingConfig;
+	}
+
+	public void setExternalBindingConfig(String externalBindingConfig)
+	{
+		this.externalBindingConfig = externalBindingConfig;
 	}
 }

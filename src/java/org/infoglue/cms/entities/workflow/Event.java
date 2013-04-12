@@ -64,8 +64,8 @@ public interface Event extends IBaseEntity
             
     public void setCreator(String creator);
 
-    public void setRepository(org.infoglue.cms.entities.management.impl.simple.RepositoryImpl repository);
+    public void setRepositoryId(Integer repositoryId);
     
-    public org.infoglue.cms.entities.management.impl.simple.RepositoryImpl getRepository();
+    public Integer getRepositoryId();
     
 }

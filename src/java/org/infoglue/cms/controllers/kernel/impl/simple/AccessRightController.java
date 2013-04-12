@@ -53,9 +53,11 @@ import org.infoglue.cms.entities.management.AccessRightUserVO;
 import org.infoglue.cms.entities.management.AccessRightVO;
 import org.infoglue.cms.entities.management.InterceptionPoint;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.TableCount;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightImpl;
+import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightRoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
@@ -127,6 +129,42 @@ public class AccessRightController extends BaseController
 		return this.getAllVOObjects(AccessRightGroupImpl.class, "accessRightGroupId", db);
 	}
 	    
+	public void preCacheUserAccessRightVOList(InfoGluePrincipal principal) throws Exception
+	{
+		if(principal.getIsAdministrator() || preCacheInProcessForUsers.contains(principal.getName()))
+		{
+			logger.warn("No recaching user access rights now as it's in process allready");
+			return;
+		}
+		
+		try
+		{
+			preCacheInProcessForUsers.add(principal.getName());
+			
+			Database db = CastorDatabaseService.getDatabase();
+	
+			try 
+			{
+				beginTransaction(db);
+				
+				preCacheUserAccessRightVOList(principal, db);
+				
+				commitTransaction(db);
+			} 
+			catch (Exception e) 
+			{
+			    logger.info("An error occurred so we should not complete the transaction:" + e);
+				rollbackTransaction(db);
+				throw new SystemException(e.getMessage());					
+			}
+		}
+		finally
+		{
+			preCacheInProcessForUsers.remove(principal.getName());
+		}
+	}
+	
+	
 	public void preCacheUserAccessRightVOList(InfoGluePrincipal principal, Database db) throws Exception
 	{
 		Timer t = new Timer();
@@ -144,9 +182,9 @@ public class AccessRightController extends BaseController
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar where ");
-		sb.append("ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like 'ComponentEditor.%' OR name = 'Component.Select' OR name = 'ComponentPropertyEditor.EditProperty' OR name like '%.Read' AND name NOT LIKE 'SiteNodeVersion.Read') AND ");
+		sb.append("ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like 'ComponentEditor.%' OR name LIKE 'Component.%' OR name = 'ComponentPropertyEditor.EditProperty' OR name like '%.Read%' AND name NOT LIKE 'SiteNodeVersion.Read') AND ");
 		sb.append("(ar.accessRightId IN (select accessRightId from cmAccessRightUser where userName = '" + principal.getName() + "') OR ");
-		sb.append("(ar.accessRightId NOT IN (select accessRightId from cmAccessRightRole where ar.accessRightId = accessRightId) OR ");
+		sb.append("((ar.accessRightId NOT IN (select accessRightId from cmAccessRightRole where ar.accessRightId = accessRightId) AND ar.accessRightId NOT IN (select accessRightId from cmAccessRightUser where ar.accessRightId = accessRightId)) OR ");
 		sb.append("(  ar.accessRightId IN ");
 		sb.append("(select accessRightId from cmAccessRightRole where ar.accessRightId = accessRightId AND roleName in ( ");
 		int index = 0;
@@ -208,7 +246,7 @@ public class AccessRightController extends BaseController
 			*/
 			//accessRightVOList.add(aru.getValueObject());
 		}
-		t.printElapsedTime("accessRightsMap:" + accessRightsMap.size());
+		logger.warn("accessRightsMap:" + accessRightsMap.size() + " took " + t.getElapsedTime());
 		
 		List<AccessRightVO> duplicateAccessRightVOList = new ArrayList<AccessRightVO>();
 		List<AccessRightVO> duplicateNonHarmfulAccessRightVOList = new ArrayList<AccessRightVO>();
@@ -223,12 +261,20 @@ public class AccessRightController extends BaseController
 				String key = "" + accessRightVO.getInterceptionPointId() + "_" + accessRightVO.getParameters();
 				logger.info("Was a duplicate accessRightVO " + accessRightVO.getId() + ": " + key);
 				accessRightsMap.put(key, -1);
-				//AAAAA Kommentera fram igen
 			}
 			else
 			{
 				logger.info("Was a duplicate accessRightVO but not harmful" + accessRightVO.getId());
 			}
+		}
+		
+		List<AccessRightVO> undefinedAccessRights = getUndefinedAccessRights(db);
+		logger.info("undefinedAccessRights:" + undefinedAccessRights.size() + " took " + t.getElapsedTime());
+		for(AccessRightVO accessRightVO : undefinedAccessRights)
+		{
+			String key = "" + accessRightVO.getInterceptionPointId() + "_" + accessRightVO.getParameters();
+			logger.info("Was a empty accessRightVO " + accessRightVO.getId() + ": " + key);
+			accessRightsMap.put(key, -1);
 		}
 		
 		//CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", "authorizationMap_" + principal.getName(), accessRightsMap);
@@ -244,7 +290,7 @@ public class AccessRightController extends BaseController
 		results.close();
 		oql.close();
 
-		t.printElapsedTime("Recaching access rights in " + CmsPropertyHandler.getContextRootPath());
+		logger.warn("Recaching access rights in " + CmsPropertyHandler.getContextRootPath() + " for user " + principal.getName() + " took " + t.getElapsedTime());
 	}
 	
 	
@@ -262,13 +308,15 @@ public class AccessRightController extends BaseController
 			
 		accessRightVOList = new ArrayList();
 		
-		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(interceptionPointName);
+		InterceptionPointVO interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName(interceptionPointName, db);
 		if(interceptionPointVO == null)
 		{
 			logger.info("interceptionPointName:" + interceptionPointName + " not found");
 			return new ArrayList();
 		}
-		logger.error("Reading the hard way 1");
+		
+		//Thread.dumpStack();
+		logger.info("Reading the hard way from an unexpected place:" + interceptionPointName + ":" + parameters);
 		
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), parameters, db);
 		
@@ -604,6 +652,86 @@ public class AccessRightController extends BaseController
 		return accessRightList;		
 	}
 
+	public List<AccessRight> getContentAccessRightListOnlyReadOnly(Integer repositoryId, Database db) throws SystemException, Bug
+	{
+		List<AccessRight> accessRightList = new ArrayList<AccessRight>();
+		
+		try
+		{
+			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
+
+			String SQL = "CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar, cmContent c where ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like 'Content.%') AND ar.parameters = c.contentId AND c.repositoryId = $1 ORDER BY ar.interceptionPointId, ar.parameters AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl";
+			if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+				SQL = "CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar, cmCont c where ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like 'Content.%') AND ar.parameters = to_char(c.contId) AND c.repositoryId = $1 ORDER BY ar.interceptionPointId, ar.parameters AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl";
+			
+			OQLQuery oql = db.getOQLQuery(SQL);
+			oql.bind(repositoryId);
+			
+			QueryResults results = oql.execute(Database.ReadOnly);
+			while (results.hasMore()) 
+			{
+				SmallAccessRightImpl smallAccessRight = (SmallAccessRightImpl)results.next();
+				AccessRight accessRight = getAccessRightWithId(smallAccessRight.getAccessRightId(), db);
+				
+				accessRightList.add(accessRight);
+			}
+			
+			results.close();
+			oql.close();
+		}
+		catch(Exception e)
+		{
+			logger.warn("Error getting access rights. Message: " + e.getMessage() + ". Not retrying...");
+			throw new SystemException("An error occurred when we tried to fetch a list of Access rights. Reason:" + e.getMessage(), e);    
+		}
+		finally
+		{
+			RequestAnalyser.getRequestAnalyser().decApproximateNumberOfDatabaseQueries();
+		}
+
+		return accessRightList;		
+	}
+	
+	public List<AccessRight> getSiteNodeAccessRightListOnlyReadOnly(Integer repositoryId, Database db) throws SystemException, Bug
+	{
+		List<AccessRight> accessRightList = new ArrayList<AccessRight>();
+		
+		try
+		{
+			RequestAnalyser.getRequestAnalyser().incApproximateNumberOfDatabaseQueries();
+
+			String SQL = "CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar, cmSiteNode sn, cmSiteNodeVersion snv where ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like 'SiteNodeVersion.%') AND ar.parameters = snv.siteNodeVersionId AND snv.siteNodeId = sn.siteNodeId AND sn.repositoryId = $1 ORDER BY ar.interceptionPointId, ar.parameters AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl";
+			if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+				SQL = "CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar, cmSiNo sn, cmSiNoVer snv where ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like 'SiteNodeVersion.%') AND ar.parameters = to_char(snv.siNoVerId) AND snv.siNoId = sn.siNoId AND sn.repositoryId = $1 ORDER BY ar.interceptionPointId, ar.parameters AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl";
+				
+			OQLQuery oql = db.getOQLQuery(SQL);
+			oql.bind(repositoryId);
+			
+			QueryResults results = oql.execute(Database.ReadOnly);
+			while (results.hasMore()) 
+			{
+				SmallAccessRightImpl smallAccessRight = (SmallAccessRightImpl)results.next();
+				AccessRight accessRight = getAccessRightWithId(smallAccessRight.getAccessRightId(), db);
+				
+				accessRightList.add(accessRight);
+			}
+			
+			results.close();
+			oql.close();
+		}
+		catch(Exception e)
+		{
+			logger.warn("Error getting access rights. Message: " + e.getMessage() + ". Not retrying...");
+			throw new SystemException("An error occurred when we tried to fetch a list of Access rights. Reason:" + e.getMessage(), e);    
+		}
+		finally
+		{
+			RequestAnalyser.getRequestAnalyser().decApproximateNumberOfDatabaseQueries();
+		}
+
+		return accessRightList;		
+	}
+
 	public List<AccessRightRoleVO> getAccessRightRoleVOList(Integer interceptionPointId, String parameters, Database db) throws SystemException, Bug
 	{
 		List<AccessRightRoleVO> accessRightRoleList = new ArrayList<AccessRightRoleVO>();
@@ -789,6 +917,65 @@ public class AccessRightController extends BaseController
 		return accessRightList;		
 	}
 	
+	public List<AccessRight> getAccessRightListForEntity(List<InterceptionPoint> interceptionPointVOList, String parameters, Database db, boolean readOnly)  throws SystemException, Bug
+	{
+		List accessRightList = new ArrayList();
+		
+		try
+		{
+			OQLQuery oql = null;
+
+			int lastIndex = 0;;
+			StringBuilder variables = new StringBuilder();
+		    for(int i=0; i<interceptionPointVOList.size(); i++)
+		    {
+		    	variables.append("f.interceptionPoint = $" + (i+1) + (i+1!=interceptionPointVOList.size() ? " OR " : ""));
+		    	lastIndex++;
+		    }
+
+			if(parameters == null || parameters.length() == 0)
+			{
+				oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.AccessRightImpl f WHERE (" + variables + ") AND (is_undefined(f.parameters) OR f.parameters = $2) ORDER BY f.accessRightId");
+				for(InterceptionPoint ipVO : interceptionPointVOList)
+					oql.bind(ipVO.getId());
+				oql.bind(parameters);
+			}
+			else
+			{
+		    	oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.AccessRightImpl f WHERE (" + variables + ") AND f.parameters = $" + (lastIndex+1) + " ORDER BY f.accessRightId");
+		    	for(InterceptionPoint ipVO : interceptionPointVOList)
+		    	{
+		    		oql.bind(ipVO.getId());
+		    	}
+				oql.bind(parameters);
+			}
+						
+			QueryResults results;
+			if(readOnly)
+				results = oql.execute(Database.ReadOnly);
+			else
+				results = oql.execute();
+				
+			this.logger.info("Fetching entity in read/write mode");
+
+			while (results.hasMore()) 
+			{
+				AccessRight accessRight = (AccessRight)results.next();
+				//logger.info("accessRight:" + accessRight.getAccessRightId());
+				accessRightList.add(accessRight);
+			}
+			
+			results.close();
+			oql.close();
+		}
+		catch(Exception e)
+		{
+			throw new SystemException("An error occurred when we tried to fetch a list of Function. Reason:" + e.getMessage(), e);    
+		}
+		
+		return accessRightList;		
+	}
+
 	
 	public List getAccessRightList(Integer interceptionPointId, Database db)  throws SystemException, Bug
 	{
@@ -1057,7 +1244,7 @@ public class AccessRightController extends BaseController
 					SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(siteNodeVersionId, db);
 					if(logger.isDebugEnabled())
 						logger.debug("It was a siteNodeVersion and there are access rights - set it to true:" + accessRights);
-					if(!siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES))
+					if(!siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES) && !siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK))
 						siteNodeVersion.setIsProtected(SiteNodeVersionVO.YES);
 				}
 			}
@@ -1081,10 +1268,8 @@ public class AccessRightController extends BaseController
 						SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(siteNodeVersionId, db);
 						if(logger.isDebugEnabled())
 							logger.debug("It was a siteNodeVersion and there was no access rights - set it to false:" + accessRights + ":" + siteNodeVersion.getIsProtected());
-						if(siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES))
+						if(siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES) && !siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES_WITH_INHERIT_FALLBACK))
 						{
-							if(logger.isDebugEnabled())
-								logger.debug("YEPPPPPPP");
 							siteNodeVersion.setIsProtected(SiteNodeVersionVO.NO);
 							siteNodeVersion.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 						}
@@ -3635,6 +3820,34 @@ public class AccessRightController extends BaseController
 		oql.close();
 	}
 
+	public List<AccessRightVO> getUndefinedAccessRights(Database db) throws SystemException, Bug, Exception
+	{
+		List<AccessRightVO> undefinedAccessRights = new ArrayList<AccessRightVO>();
+		  
+		StringBuilder sb = new StringBuilder();
+		sb.append("CALL SQL select ar.accessRightId, ar.parameters, ar.interceptionPointId from cmAccessRight ar where ");
+		sb.append("ar.interceptionPointId in (select interceptionPointId from cmInterceptionPoint where name like 'ComponentEditor.%' OR name LIKE 'Component.%' OR name = 'ComponentPropertyEditor.EditProperty' OR name like '%.Read%' AND name NOT LIKE 'SiteNodeVersion.Read') AND ");
+		sb.append("ar.accessRightId NOT IN (select accessRightId from cmAccessRightUser where ar.accessRightId = accessRightId) AND ");
+		sb.append("ar.accessRightId NOT IN (select accessRightId from cmAccessRightRole where ar.accessRightId = accessRightId) AND ");
+		sb.append("ar.accessRightId NOT IN (select accessRightId from cmAccessRightGroup where ar.accessRightId = accessRightId)  AS org.infoglue.cms.entities.management.impl.simple.SmallAccessRightImpl");
+					
+		//System.out.println(sb.toString());
+		OQLQuery oql = db.getOQLQuery(sb.toString());
+		
+		QueryResults results = oql.execute(Database.ReadOnly);
+		while (results.hasMore()) 
+		{
+			AccessRight accessRight = (AccessRight)results.next();
+			AccessRightVO accessRightVO = accessRight.getValueObject();
+			undefinedAccessRights.add(accessRightVO);
+		}
+		
+		results.close();
+		oql.close();
+		
+		return undefinedAccessRights;
+	}
+	
 	public void populateDescription(Database db, AccessRightVO accessRightVO, AccessRight fullAccessRight) 
 	{
 		try

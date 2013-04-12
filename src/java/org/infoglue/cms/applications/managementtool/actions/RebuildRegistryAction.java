@@ -82,7 +82,7 @@ public class RebuildRegistryAction extends InfoGlueAbstractAction
 
 			
 			//Checks the relations from sitenodes
-			List siteNodes = SiteNodeController.getController().getRepositorySiteNodesReadOnly(this.repositoryId, db);
+			List siteNodes = SiteNodeController.getController().getRepositorySiteNodes(this.repositoryId, db);
 			
 			Iterator siteNodesIterator = siteNodes.iterator();
 			while(siteNodesIterator.hasNext())
@@ -94,13 +94,12 @@ public class RebuildRegistryAction extends InfoGlueAbstractAction
 				while(siteNodeVersionsIterator.hasNext())
 				{
 				    SiteNodeVersion siteNodeVersion = (SiteNodeVersion)siteNodeVersionsIterator.next();
-				    registryController.updateSiteNodeVersion(siteNodeVersion, db);
+				    registryController.updateSiteNodeVersion(siteNodeVersion.getValueObject(), db);
 				}
 			}
 
 			//Checks the relations from contents
-			List languages = LanguageController.getController().getLanguageList(this.repositoryId, db);
-			List contents = ContentController.getContentController().getRepositoryMediumContents(this.repositoryId, db);
+			List contents = ContentController.getContentController().getRepositoryContents(this.repositoryId, db);
 			
 			Iterator iterator = contents.iterator();
 			while(iterator.hasNext())
@@ -112,7 +111,7 @@ public class RebuildRegistryAction extends InfoGlueAbstractAction
 				while(versionsIterator.hasNext())
 				{
 				    ContentVersion contentVersion = (ContentVersion)versionsIterator.next();
-				    registryController.updateContentVersion(contentVersion, db);
+				    registryController.updateContentVersion(contentVersion.getValueObject(), db);
 				}
 			}
 						

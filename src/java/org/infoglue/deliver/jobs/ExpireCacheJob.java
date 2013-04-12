@@ -81,7 +81,7 @@ public class ExpireCacheJob implements Job
 			try
 	        {
 				logger.debug("Validating caches in " + CmsPropertyHandler.getApplicationName() + " - " + Thread.currentThread().getId());
-		    	CacheController.validateCaches();
+		    	//CacheController.validateCaches();
 				RequestAnalyser.shortenPageStatistics();
 		    	lastCacheCheck = System.currentTimeMillis();
 	        }

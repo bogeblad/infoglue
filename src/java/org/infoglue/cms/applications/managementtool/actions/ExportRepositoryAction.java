@@ -26,7 +26,10 @@ package org.infoglue.cms.applications.managementtool.actions;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -40,12 +43,14 @@ import org.exolab.castor.mapping.Mapping;
 import org.exolab.castor.xml.Marshaller;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
+import org.infoglue.cms.controllers.kernel.impl.simple.OptimizedExportController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
@@ -60,6 +65,11 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.handlers.DigitalAssetBytesHandler;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
 
@@ -74,14 +84,57 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 {
     private final static Logger logger = Logger.getLogger(ExportRepositoryAction.class.getName());
 
+	private VisualFormatter visualFormatter = new VisualFormatter();
+
 	private Integer repositoryId = null;
 	private List repositories = new ArrayList();
 	
 	private String fileUrl 	= "";
 	private String fileName = "";
 	private String exportFileName = null;
+	private String exportFormat = "2";
+	private Boolean onlyPublishedVersions = false;
 	private int assetMaxSize = -1;
 	
+	private String processId = null;
+	private int processStatus = -1;
+
+	/**
+	 * This deletes a process info bean and related files etc.
+	 * @return
+	 * @throws Exception
+	 */	
+
+	public String doDeleteProcessBean() throws Exception
+	{
+		if(this.processId != null)
+		{
+			ProcessBean pb = ProcessBean.getProcessBean(ExportRepositoryAction.class.getName(), processId);
+			if(pb != null)
+				pb.removeProcess();
+		}
+		
+		return "successRedirectToProcesses";
+	}
+
+	/**
+	 * This refreshes the view.
+	 * @return
+	 * @throws Exception
+	 */	
+
+	public String doShowProcesses() throws Exception
+	{
+		return "successShowProcesses";
+	}
+
+	
+	public String doShowProcessesAsJSON() throws Exception
+	{
+		// TODO it would be nice we could write JSON to the OutputStream but we get a content already transmitted exception then.
+		return "successShowProcessesAsJSON";
+	}
+
 	/**
 	 * This shows the dialog before export.
 	 * @return
@@ -99,14 +152,40 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 	 * This handles the actual exporting.
 	 */
 	
+	protected String doExecuteV3() throws Exception 
+	{
+		String[] repositories = getRequest().getParameterValues("repositoryId");
+
+		String exportId = "Export_" + visualFormatter.formatDate(new Date(), "yyyy-MM-dd_HHmm");
+		ProcessBean processBean = ProcessBean.createProcessBean(ExportRepositoryAction.class.getName(), exportId);
+		processBean.setStatus(ProcessBean.RUNNING);
+		
+		OptimizedExportController.export(repositories, assetMaxSize, onlyPublishedVersions, exportFileName, processBean);
+		
+		return "successRedirectToProcesses";
+	}
+
+	/**
+	 * This handles the actual exporting.
+	 */
+	
 	protected String doExecute() throws Exception 
 	{
+		String exportFormat = CmsPropertyHandler.getExportFormat();
+		System.out.println("exportFormat:" + exportFormat);
+		System.out.println("this.exportFormat:" + this.exportFormat);
+		if(exportFormat.equalsIgnoreCase("3") || this.exportFormat.equals("3"))
+		{
+			logger.info("exportFormat:" + exportFormat);
+			logger.info("this.exportFormat:" + this.exportFormat);
+			return doExecuteV3();
+		}
+
 		Database db = CastorDatabaseService.getDatabase();
 		
 		try 
 		{
 			Mapping map = new Mapping();
-			String exportFormat = CmsPropertyHandler.getExportFormat();
 
 			if(exportFormat.equalsIgnoreCase("2"))
 			{
@@ -149,6 +228,10 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 			    if(interceptionPointVO != null)
 			    	allAccessRights.addAll(AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), repository.getId().toString(), db));
 
+			    interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Repository.Write", db);
+			    if(interceptionPointVO != null)
+			    	allAccessRights.addAll(AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), repository.getId().toString(), db));
+
 			    interceptionPointVO = InterceptionPointController.getController().getInterceptionPointVOWithName("Repository.ReadForBinding", db);
 			    if(interceptionPointVO != null)
 			    	allAccessRights.addAll(AccessRightController.getController().getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), repository.getId().toString(), db));
@@ -161,7 +244,7 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 					siteNodes.add(siteNode);
 				contents.add(content);
 				names = names + "_" + repository.getName();
-				allRepositoryProperties.putAll(getRepositoryProperties(ps, repositoryId));
+				allRepositoryProperties.putAll(OptimizedExportController.getRepositoryProperties(ps, repositoryId));
 			}
 			
 			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
@@ -348,30 +431,52 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
         }
 	}
 
-	public static Hashtable<String,String> getRepositoryProperties(PropertySet ps, Integer repositoryId) throws Exception
+	
+	public static void getContentPropertiesAndAccessRights(PropertySet ps, Hashtable<String, String> allContentProperties, List<AccessRight> allAccessRights, Collection keys, Content content, Database db) throws SystemException
 	{
-		Hashtable<String,String> properties = new Hashtable<String,String>();
-			    
-	    byte[] WYSIWYGConfigBytes = ps.getData("repository_" + repositoryId + "_WYSIWYGConfig");
-	    if(WYSIWYGConfigBytes != null)
-	    	properties.put("repository_" + repositoryId + "_WYSIWYGConfig", new String(WYSIWYGConfigBytes, "utf-8"));
+		String allowedContentTypeNames = ps.getString("content_" + content.getId() + "_allowedContentTypeNames");
+		if ( allowedContentTypeNames != null && !allowedContentTypeNames.equals(""))
+	    {
+        	allContentProperties.put("content_" + content.getId() + "_allowedContentTypeNames", allowedContentTypeNames);
+	    }
 
-	    byte[] StylesXMLBytes = ps.getData("repository_" + repositoryId + "_StylesXML");
-	    if(StylesXMLBytes != null)
-	    	properties.put("repository_" + repositoryId + "_StylesXML", new String(StylesXMLBytes, "utf-8"));
+		//if(ps.exists("content_" + content.getId() + "_defaultContentTypeName"))
+		if(keys.contains("content_" + content.getId() + "_defaultContentTypeName"))
+			allContentProperties.put("content_" + content.getId() + "_defaultContentTypeName", "" + ps.getString("content_" + content.getId() + "_defaultContentTypeName"));
+	    //if(ps.exists("content_" + content.getId() + "_initialLanguageId"))
+	    if(keys.contains("content_" + content.getId() + "_initialLanguageId"))
+	    	allContentProperties.put("content_" + content.getId() + "_initialLanguageId", "" + ps.getString("content_" + content.getId() + "_initialLanguageId"));
 
-	    byte[] extraPropertiesBytes = ps.getData("repository_" + repositoryId + "_extraProperties");
-	    if(extraPropertiesBytes != null)
-	    	properties.put("repository_" + repositoryId + "_extraProperties", new String(extraPropertiesBytes, "utf-8"));
-	    
-	    if(ps.exists("repository_" + repositoryId + "_defaultFolderContentTypeName"))
-	    	properties.put("repository_" + repositoryId + "_defaultFolderContentTypeName", "" + ps.getString("repository_" + repositoryId + "_defaultFolderContentTypeName"));
-	    if(ps.exists("repository_" + repositoryId + "_defaultTemplateRepository"))
-		    properties.put("repository_" + repositoryId + "_defaultTemplateRepository", "" + ps.getString("repository_" + repositoryId + "_defaultTemplateRepository"));
-	    if(ps.exists("repository_" + repositoryId + "_parentRepository"))
-		    properties.put("repository_" + repositoryId + "_parentRepository", "" + ps.getString("repository_" + repositoryId + "_parentRepository"));
+        Iterator childContents = content.getChildren().iterator();
+        while(childContents.hasNext())
+        {
+        	Content childContent = (Content)childContents.next();
+        	getContentPropertiesAndAccessRights(ps, allContentProperties, allAccessRights, keys, childContent, db);
+        }
+	}
 
-		return properties;
+	public static void getSiteNodePropertiesAndAccessRights(PropertySet ps, Hashtable<String, String> allSiteNodeProperties, List<AccessRight> allAccessRights, Collection keys, SiteNode siteNode, Database db) throws SystemException, Exception
+	{
+		if(keys.contains("siteNode_" + siteNode.getId() + "_disabledLanguages"))
+		{
+		    String disabledLanguagesString = "" + ps.getString("siteNode_" + siteNode.getId() + "_disabledLanguages");
+			if(disabledLanguagesString != null && !disabledLanguagesString.equals("") && !disabledLanguagesString.equals("null"))
+		    	allSiteNodeProperties.put("siteNode_" + siteNode.getId() + "_disabledLanguages", disabledLanguagesString);
+		}   
+		
+		if(keys.contains("siteNode_" + siteNode.getId() + "_enabledLanguages"))
+		{
+			String enabledLanguagesString = "" + ps.getString("siteNode_" + siteNode.getId() + "_enabledLanguages");
+		    if(enabledLanguagesString != null && !enabledLanguagesString.equals("") && !enabledLanguagesString.equals("null"))
+			    allSiteNodeProperties.put("siteNode_" + siteNode.getId() + "_enabledLanguages", enabledLanguagesString);
+		}
+		
+        Iterator childSiteNodes = siteNode.getChildSiteNodes().iterator();
+        while(childSiteNodes.hasNext())
+        {
+        	SiteNode childSiteNode = (SiteNode)childSiteNodes.next();
+        	getSiteNodePropertiesAndAccessRights(ps, allSiteNodeProperties, allAccessRights, keys, childSiteNode, db);
+        }
 	}
 
 	public void setRepositoryId(Integer repositoryId)
@@ -417,6 +522,118 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 	public void setAssetMaxSize(int assetMaxSize)
 	{
 		this.assetMaxSize = assetMaxSize;
+	}
+
+	public String getExportFormat()
+	{
+		return exportFormat;
+	}
+
+	public void setExportFormat(String exportFormat)
+	{
+		this.exportFormat = exportFormat;
+	}
+
+	public Boolean getOnlyPublishedVersions()
+	{
+		return this.onlyPublishedVersions;
+	}
+
+	public void setOnlyPublishedVersions(Boolean onlyPublishedVersions)
+	{
+		this.onlyPublishedVersions = onlyPublishedVersions;
+	}
+	
+	public void setProcessId(String processId) 
+	{
+		this.processId = processId;
+	}
+
+	public void setProcessStatus(String processStatusString) 
+	{
+		if ("running".equals(processStatusString))
+		{
+			this.processStatus = ProcessBean.RUNNING;
+		}
+		else if ("finished".equals(processStatusString))
+		{
+			this.processStatus = ProcessBean.FINISHED;
+		}
+		else if ("error".equals(processStatusString))
+		{
+			this.processStatus = ProcessBean.ERROR;
+		}
+		else if ("notStarted".equals(processStatusString))
+		{
+			this.processStatus = ProcessBean.NOT_STARTED;
+		}
+		else
+		{
+			logger.warn("Got unknown process status parameter. Ignoring value. Parameter: " + processStatusString);
+			this.processStatus = -1;
+		}
+	}
+
+	public List<ProcessBean> getProcessBeans()
+	{
+		return ProcessBean.getProcessBeans(ExportRepositoryAction.class.getName());
+	}
+
+	public List<ProcessBean> getFilteredProcessBeans()
+	{
+		List<ProcessBean> processes = ProcessBean.getProcessBeans(ExportRepositoryAction.class.getName());
+
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Number of processes before filtering: " + processes.size());
+		}
+		if (this.processStatus != -1)
+		{
+			Iterator<ProcessBean> processIterator = processes.iterator();
+			ProcessBean process;
+			while (processIterator.hasNext())
+			{
+				process = processIterator.next();
+				if (process.getStatus() != this.processStatus)
+				{
+					logger.debug("Removing (filtering) process with Id: " + process.getProcessId());
+					processIterator.remove();
+				}
+			}
+		}
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Number of processes after filtering: " + processes.size());
+		}
+
+		return processes;
+	}
+
+	public String getStatusAsJSON()
+	{
+		Gson gson = new GsonBuilder()
+			.excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC)
+			.setDateFormat("dd MMM HH:mm:ss").create();
+		JsonObject object = new JsonObject();
+
+		try
+		{
+			List<ProcessBean> processes = getProcessBeans();
+			Type processBeanListType = new TypeToken<List<ProcessBean>>() {}.getType();
+			JsonElement list = gson.toJsonTree(processes, processBeanListType);
+			object.add("processes", list);
+			object.addProperty("memoryMessage", getMemoryUsageAsText());
+		}
+		catch (Throwable t)
+		{
+			logger.error("Error when generating repository export status report as JSON.", t);
+			JsonObject error = new JsonObject(); 
+			error.addProperty("message", t.getMessage());
+			error.addProperty("type", t.getClass().getSimpleName());
+			object.add("error", error);
+		}
+
+		return gson.toJson(object);
 	}
 
 }

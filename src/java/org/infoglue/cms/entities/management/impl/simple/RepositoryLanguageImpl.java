@@ -126,5 +126,15 @@ public class RepositoryLanguageImpl implements RepositoryLanguage
         this.language = language;
 		this.valueObject.setLanguageId(language.getId());
     }
-      
+
+    public Integer getLanguageId()
+    {
+        return this.getValueObject().getLanguageId();
+    }
+            
+    public void setLanguage (Integer languageId)
+    {
+		this.valueObject.setLanguageId(languageId);
+    }
+
 }        

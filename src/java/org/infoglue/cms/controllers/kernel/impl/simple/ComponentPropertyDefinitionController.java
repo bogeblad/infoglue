@@ -131,10 +131,12 @@ public class ComponentPropertyDefinitionController extends BaseController
 				    String autoCreateContentMethod	= propertyElement.getAttribute("autoCreateContentMethod");
 				    String autoCreateContentPath	= propertyElement.getAttribute("autoCreateContentPath");
 				    String customMarkup				= propertyElement.getAttribute("customMarkup");
+				    String supplementingEntityType	= propertyElement.getAttribute("supplementingEntityType");
+				    String externalBindingConfig	= propertyElement.getAttribute("externalBindingConfig");
 				    if(allowLanguageVariations == null || allowLanguageVariations.equals(""))
 				    	allowLanguageVariations = "true";
 				    	
-				    ComponentPropertyDefinition cpd = new ComponentPropertyDefinition(name, displayName, type, entity, new Boolean(multiple), new Boolean(assetBinding), assetMask, new Boolean(isPuffContentForPage), allowedContentTypeNames, description, defaultValue, new Boolean(allowLanguageVariations), new Boolean(WYSIWYGEnabled), WYSIWYGToolbar, dataProvider, dataProviderParameters, new Boolean(autoCreateContent), autoCreateContentMethod, autoCreateContentPath, customMarkup, new Boolean(allowMultipleSelections));
+				    ComponentPropertyDefinition cpd = new ComponentPropertyDefinition(name, displayName, type, entity, new Boolean(multiple), new Boolean(assetBinding), assetMask, new Boolean(isPuffContentForPage), allowedContentTypeNames, description, defaultValue, new Boolean(allowLanguageVariations), new Boolean(WYSIWYGEnabled), WYSIWYGToolbar, dataProvider, dataProviderParameters, new Boolean(autoCreateContent), autoCreateContentMethod, autoCreateContentPath, customMarkup, new Boolean(allowMultipleSelections), supplementingEntityType, externalBindingConfig);
 				    
 					NodeList optionsNodeList = propertyElement.getElementsByTagName("option");
 					for(int k=0; k<optionsNodeList.getLength(); k++)

@@ -353,6 +353,11 @@ public class BasicURLComposer extends URLComposer
         try
 		{
         	SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+        	if(siteNodeVO == null)
+        	{
+	        	logger.warn("composePageUrl was called with siteNodeId which does not exist:" + siteNodeId + " from the page with key: " + deliveryContext.getPageKey());
+	    		return "";
+        	}
 	
 	        String deriveProtocolWhenUsingProtocolRedirects = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNodeVO.getRepositoryId(), "deriveProtocolWhenUsingProtocolRedirects");
 			if(deriveProtocolWhenUsingProtocolRedirects == null || deriveProtocolWhenUsingProtocolRedirects.equals("") || !deriveProtocolWhenUsingProtocolRedirects.equals("true") || !deriveProtocolWhenUsingProtocolRedirects.equals("false"))
@@ -363,7 +368,7 @@ public class BasicURLComposer extends URLComposer
 			if(deriveProtocolWhenUsingProtocolRedirects.equalsIgnoreCase("true") && CmsPropertyHandler.getOperatingMode().equals("3") && !deliveryContext.getHttpServletRequest().getScheme().equalsIgnoreCase("https"))
 			{
 				NodeDeliveryController nodeDeliveryController = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
-		    	Integer protectedSiteNodeVersionId = nodeDeliveryController.getProtectedSiteNodeVersionId(db, siteNodeId);
+		    	Integer protectedSiteNodeVersionId = nodeDeliveryController.getProtectedSiteNodeVersionId(db, siteNodeId, "SiteNodeVersion.Read");
 		    	String originalFullURL = deliveryContext.getOriginalFullURL();
 
 		    	boolean isAnonymousAccepted = true;
@@ -399,15 +404,33 @@ public class BasicURLComposer extends URLComposer
 		}
 		catch (Exception e) 
 		{
-			logger.warn("Error checking up if we should switch protocol:" + e.getMessage());
+			logger.warn("Error checking up if we should switch protocol:" + e.getMessage(), e);
 		}
         
         if(enableNiceURI.equalsIgnoreCase("true") && deliveryContext.getHttpServletRequest().getRequestURI().indexOf("!renderDecoratedPage") == -1 && !deliveryContext.getDisableNiceUri())
         {
             String context = CmsPropertyHandler.getServletContext();
             
-            SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
-            SiteNodeVO currentSiteNode = SiteNodeController.getController().getSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
+            SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
+        	if(siteNode == null)
+        	{
+	        	logger.warn("composePageUrl was called with siteNodeId which does not exist:" + siteNodeId + " from the page with key: " + deliveryContext.getPageKey());
+	    		return "";
+        	}
+        	String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
+        	/*
+		    //logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
+		    if(enableNiceURIForLanguage == null || !enableNiceURIForLanguage.equals("true"))
+		    {
+		        String enableNiceURIForLanguageForRepo = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNode.getRepositoryId(), "enableNiceURIForLanguage");
+				if(enableNiceURIForLanguageForRepo != null && enableNiceURIForLanguageForRepo.equals("true"))
+					enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
+		    }
+		    
+		    if(enableNiceURIForLanguage.equalsIgnoreCase("true"))
+        		context = context + "/" + LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId).getLanguageCode();
+			*/
+            SiteNodeVO currentSiteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(deliveryContext.getSiteNodeId(), db);
 
     		if(!siteNode.getRepositoryId().equals(currentSiteNode.getRepositoryId()))
     		{
@@ -546,12 +569,7 @@ public class BasicURLComposer extends URLComposer
     		    	context = context + "/" + repositoryPath;
     		}
 
-		    String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
-        	//logger.info("enableNiceURIForLanguage:" + enableNiceURIForLanguage);
-        	if(enableNiceURIForLanguage.equalsIgnoreCase("true"))
-        		context = context + "/" + LanguageDeliveryController.getLanguageDeliveryController().getLanguageVO(db, languageId).getLanguageCode();
-
-            StringBuffer sb = new StringBuffer(256);
+    		StringBuilder sb = new StringBuilder(256);
 
             if((deliveryContext.getUseFullUrl() || makeAccessBasedProtocolAdjustments) && context.indexOf("://") == -1)
 	        {
@@ -832,6 +850,20 @@ public class BasicURLComposer extends URLComposer
         	enableNiceURI = "false";
         
 	    String enableNiceURIForLanguage = CmsPropertyHandler.getEnableNiceURIForLanguage();
+	    if(enableNiceURIForLanguage == null || !enableNiceURIForLanguage.equals("true"))
+	    {
+            SiteNodeVO siteNode = SiteNodeController.getController().getSmallSiteNodeVOWithId(siteNodeId, db);
+        	if(siteNode == null)
+        	{
+	        	logger.warn("composePageUrl was called with siteNodeId which does not exist:" + siteNodeId + " from the page with key: " + deliveryContext.getPageKey());
+	    		return "";
+        	}
+        	
+	        String enableNiceURIForLanguageForRepo = RepositoryDeliveryController.getRepositoryDeliveryController().getExtraPropertyValue(siteNode.getRepositoryId(), "enableNiceURIForLanguage");
+			if(enableNiceURIForLanguageForRepo != null && enableNiceURIForLanguageForRepo.equals("true"))
+				enableNiceURIForLanguage = enableNiceURIForLanguageForRepo;
+	    }
+
         if(enableNiceURI.equalsIgnoreCase("true") && !deliveryContext.getDisableNiceUri() && !enableNiceURIForLanguage.equalsIgnoreCase("true"))
         {
             if (pageUrl.indexOf("?") == -1) 

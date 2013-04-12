@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
@@ -742,6 +744,14 @@ public interface TemplateController
 	 * This is an ugly method right now. Later we should have xmlDefinitions that are fully qualified so it can be
 	 * used to access other systems than our own.
 	 */
+    public abstract List getRelatedContents(Integer contentId,
+            String attributeName, boolean checkHasVersion, boolean checkHasAccess);
+
+	/**
+	 * This method gets a List of related contents defined in an attribute as an xml-definition.
+	 * This is an ugly method right now. Later we should have xmlDefinitions that are fully qualified so it can be
+	 * used to access other systems than our own.
+	 */
 	
 	public List getRelatedContents(Integer contentId, String attributeName, boolean useAttributeLanguageFallBack);
 
@@ -1183,6 +1193,8 @@ public interface TemplateController
     public abstract String getPageNavTitle(String structureBindningName,
             int index);
 
+	public abstract String getPageMetaData(Integer siteNodeId, Integer languageId, String attributeName);
+	
     /**
      * This method returns true if the if the page in question (ie sitenode) has page-caching disabled.
      * This is essential to turn off when you have a dynamic page like an external application or searchresult.
@@ -1262,7 +1274,13 @@ public interface TemplateController
      * The method returns a list of WebPage-objects that is the children of the given 
      * siteNode. The method is great for navigation-purposes on a structured site. 
      */
-    public abstract List getChildPages(String structureBindingName);
+    public abstract List getChildPages(Integer siteNodeId);
+
+    /**
+     * The method returns a list of WebPage-objects that is the children of the given 
+     * siteNode. The method is great for navigation-purposes on a structured site. 
+     */
+    public abstract List getChildPages(Integer siteNodeId, Integer levelsToPopulate);
 
     /**
      * The method returns a list of WebPage-objects that is the children of the given 
@@ -1274,19 +1292,19 @@ public interface TemplateController
      * The method returns a list of WebPage-objects that is the children of the given 
      * siteNode. The method is great for navigation-purposes on a structured site. 
      */
-    public abstract List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden);
+    public abstract List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter);
 
     /**
      * The method returns a list of WebPage-objects that is the children of the given 
      * siteNode. The method is great for navigation-purposes on a structured site. 
      */
-    public abstract List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden, boolean populateNavigationTitle, boolean populatePageUrl);
-
+    public abstract List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter, boolean showHidden);
+    
     /**
      * The method returns a list of WebPage-objects that is the children of the given 
      * siteNode. The method is great for navigation-purposes on a structured site. 
      */
-    public abstract List getChildPages(Integer siteNodeId);
+    public abstract List getChildPages(String structureBindingName);
 
     
     public abstract List getBoundPages(String structureBindningName);
@@ -1442,8 +1460,14 @@ public interface TemplateController
 	 * This method searches for all contents matching
 	 */
 	
-	public List<ContentVO> getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck, Integer startNodeId, Boolean useLucene);
+	public List getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck, Integer startNodeId);
 
+	/**
+	 * This method searches for all contents matching
+	 */
+	
+	public List getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, boolean scheduleFetch, int scheduleInterval, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck, Integer startNodeId, String sortColumn, String sortOrder, boolean forceRefetch, boolean validateAccessRightsAsAnonymous, boolean returnOnlyCachedResult, boolean preventQueueBean);
+	
 	/**
 	 * This method returns which mode the delivery-engine is running in.
 	 * The mode is important to be able to show working, preview and published data separate.
@@ -1497,7 +1521,9 @@ public interface TemplateController
     /**
      * This method allows a user to get any string rendered as a template.
      */
-    public abstract String renderString(String template, Integer includedComponentContentId, boolean useSubContext, InfoGlueComponent component);
+    public abstract String renderString(String template, Integer includedComponentContentId, boolean useSubContext);
+
+	public abstract String renderString(String template, Integer includedComponentContentId, boolean useSubContext, String renderDescription); 
 
     /**
      * This method allows the current template to include another template which is also rendered 

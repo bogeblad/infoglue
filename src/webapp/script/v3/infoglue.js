@@ -358,13 +358,13 @@ function resizeScrollArea()
 	    else
 	    	var inlineDivHeight = windowHeight - offset - marginBottom;
 	    	
-	    //alert("Sätter höjden på " + $(this).attr("id") + " till: " + inlineDivHeight);
-	    
+	    //alert("inlineDivHeight:" + $(this).attr("id") + "="  + inlineDivHeight);
 		$(this).height(inlineDivHeight);
 		
 		$("#" + $(this).attr("id") + " > iframe").each(function(index) {
-			$(this).height(inlineDivHeight);
+			$(this).height(inlineDivHeight-5);
 		});
+	
 
 	});
 }
@@ -373,7 +373,6 @@ function resizeScrollArea()
  * This method will have to be the one handling all the one level inlineTabDivs
  */
 function resizeScrollAreaOld()
-
 {	
 	var dimensionsWidth = $(window).width();
 	var dimensionsHeight = $(window).height();

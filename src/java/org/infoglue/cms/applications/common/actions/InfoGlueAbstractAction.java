@@ -42,6 +42,7 @@ import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.databeans.InfoglueTool;
 import org.infoglue.cms.applications.databeans.LinkBean;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
@@ -51,6 +52,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.InfoGluePrincipalControll
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptorController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionControllerProxy;
@@ -302,7 +304,18 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
     public Integer getStructureRepositoryId()
     {
     	Integer repositoryId = (Integer)getHttpSession().getAttribute("structureRepositoryId");
-    	if(repositoryId == null)
+    	try
+		{
+			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+			repositoryId = repositoryVO.getId();
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Not a valid repository");
+			repositoryId = null;
+		}
+
+		if(repositoryId == null)
     		repositoryId = getRepositoryIdImpl();
     	
     	return repositoryId;
@@ -315,6 +328,17 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
     public Integer getContentRepositoryId()
     {
     	Integer repositoryId = (Integer)getHttpSession().getAttribute("contentRepositoryId");
+    	try
+		{
+			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+			repositoryId = repositoryVO.getId();
+		}
+		catch (Exception e) 
+		{
+			logger.warn("Not a valid repository");
+			repositoryId = null;
+		}
+		
     	if(repositoryId == null)
     		repositoryId = getRepositoryIdImpl();
     	
@@ -598,6 +622,29 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 			if(principal == null)
 			{
 				principal = UserControllerProxy.getController().getUser(userName);
+				
+				if(principal != null)
+					CacheController.cacheObject("userCache", userName, principal);
+			}			
+		}
+		catch(Exception e) 
+		{
+		    logger.warn("There was no anonymous user found in the system. There must be - add the user anonymous/anonymous and try again.", e);
+		    throw new SystemException("There was no anonymous user found in the system. There must be - add the user anonymous/anonymous and try again.", e);
+		}
+
+		return principal;
+	}
+	
+	public Principal getInfoGluePrincipal(String userName, Database db) throws SystemException
+	{
+		Principal principal = null;
+		try
+		{
+			principal = (Principal)CacheController.getCachedObject("userCache", userName);
+			if(principal == null)
+			{
+				principal = UserControllerProxy.getController(db).getUser(userName);
 				
 				if(principal != null)
 					CacheController.cacheObject("userCache", userName, principal);
@@ -1061,6 +1108,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		    if (db.isActive())
 		    {
 			    db.commit();
+			    RegistryController.notifyTransactionCommitted();
 			}
 		}
 		catch(Exception e)
@@ -1363,6 +1411,22 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().getSiteNodeVersionVOWithId(siteNodeVersionId);
 	}
 
+	public String getContentPath(Integer contentId, Database db) throws Exception
+	{
+		StringBuffer sb = new StringBuffer();
+		
+		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
+		sb.insert(0, contentVO.getName());
+		while(contentVO.getParentContentId() != null)
+		{
+			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
+			sb.insert(0, contentVO.getName() + "/");
+		}
+		sb.insert(0, "/");
+		
+		return sb.toString();
+	}
+
 	public String getSiteNodePath(Integer siteNodeId) throws Exception
 	{
 		StringBuffer sb = new StringBuffer();
@@ -1443,5 +1507,71 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 			}
 		}
 	}
+    
+	public String getSiteNodePath(Integer siteNodeId, Database db) throws Exception
+	{
+		StringBuffer sb = new StringBuffer();
+		
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+		while(siteNodeVO != null)
+		{
+			sb.insert(0, "/" + siteNodeVO.getName());
+			if(siteNodeVO.getParentSiteNodeId() != null)
+				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
+			else
+				siteNodeVO = null;
+		}
+		
+		return sb.toString();
+	}
+
+	public String getMemoryUsageAsText()
+	{
+		return "" + (((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024)) + " MB used of " + ((Runtime.getRuntime().maxMemory() / 1024 / 1024)) + " MB";
+	}
+	
+	public ProcessBean getProcessBean()
+	{
+		return ProcessBean.getProcessBean(this.getClass().getName(), ""+getInfoGluePrincipal().getName());
+	}
+	
+	public String getStatusAsJSON()
+	{
+		StringBuffer sb = new StringBuffer();
+		sb.append("<html><head><style>body {font-family: arial; font-size: 11px;}</style></head><body>");
+		
+		try
+		{
+			ProcessBean processBean = getProcessBean();
+			if(processBean != null && processBean.getStatus() != ProcessBean.FINISHED)
+			{
+				sb.append("<h2>" + getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.publicationProcessInfo") + "</h2>");
+
+				sb.append("<ol>");
+				for(String event : processBean.getProcessEvents())
+					sb.append("<li>" + event + "</li>");
+				sb.append("</ol>");
+				sb.append("<div style='position: absolute; top:10px; right: 10px;'><img src='images/v3/loadingAnimation.gif' /></div>");
+			}
+			else
+			{
+				sb.append("<script type='text/javascript'>hideProcessStatus();</script>");
+			}
+		}
+		catch (Throwable t)
+		{
+			logger.error("Error when generating repository export status report as JSON.", t);
+			sb.append(t.getMessage());
+		}
+		sb.append("</body></html>");
+				
+		return sb.toString();
+	}
+
+	public String doShowProcessesAsJSON() throws Exception
+	{
+		return "successShowProcessesAsJSON";
+	}
+
 }
 

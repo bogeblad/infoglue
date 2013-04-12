@@ -33,6 +33,7 @@ import java.net.URLEncoder;
 import java.security.Principal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -112,6 +113,8 @@ import org.infoglue.deliver.applications.databeans.ComponentProperty;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.applications.databeans.WebPage;
+import org.infoglue.deliver.cache.MatchingContentsQueue;
+import org.infoglue.deliver.cache.MatchingContentsQueueBean;
 import org.infoglue.deliver.controllers.kernel.URLComposer;
 import org.infoglue.deliver.invokers.DecoratedComponentBasedHTMLPageInvoker;
 import org.infoglue.deliver.util.BrowserBean;
@@ -688,7 +691,7 @@ public class BasicTemplateController implements TemplateController
 
 		try
 		{
-		    contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, getDatabase());
+		    contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId(contentVersionId, getDatabase());
 		}
 		catch(Exception e)
 		{
@@ -960,7 +963,8 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-			value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyValue(this.getDatabase(), infoGluePrincipal, propertyName, this.languageId, this.siteNodeId, USE_LANGUAGE_FALLBACK, escapeSpecialCharacters, findLargestValue);
+		    SiteNodeVO siteNodeVO = getSiteNode();
+			value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyValue(this.getDatabase(), infoGluePrincipal, propertyName, this.languageId, siteNodeVO.getRepositoryId(), USE_LANGUAGE_FALLBACK, escapeSpecialCharacters, findLargestValue);
 		}
 		catch(Exception e)
 		{
@@ -976,7 +980,8 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-			value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyValue(this.getDatabase(), infoGluePrincipal, propertyName, languageId, this.siteNodeId, USE_LANGUAGE_FALLBACK, escapeSpecialCharacters, findLargestValue);
+		    SiteNodeVO siteNodeVO = getSiteNode();
+			value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyValue(this.getDatabase(), infoGluePrincipal, propertyName, languageId, siteNodeVO.getRepositoryId(), USE_LANGUAGE_FALLBACK, escapeSpecialCharacters, findLargestValue);
 		}
 		catch(Exception e)
 		{
@@ -999,7 +1004,6 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-		    InfoGluePrincipal infoGluePrincipal = this.getPrincipal();
 		    value = getPrincipalPropertyValue(propertyName, escapeSpecialCharacters, false);
 		}
 		catch(Exception e)
@@ -1016,7 +1020,6 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-		    InfoGluePrincipal infoGluePrincipal = this.getPrincipal();
 		    value = getPrincipalPropertyValue(propertyName, escapeSpecialCharacters, false, languageId);
 		}
 		catch(Exception e)
@@ -1041,7 +1044,8 @@ public class BasicTemplateController implements TemplateController
 		try
 		{
 		    InfoGluePrincipal infoGluePrincipal = this.getPrincipal();
-		    value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyValue(this.getDatabase(), infoGluePrincipal, propertyName, this.languageId, this.siteNodeId, USE_LANGUAGE_FALLBACK, escapeSpecialCharacters, findLargestValue);
+		    SiteNodeVO siteNodeVO = getSiteNode();
+		    value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyValue(this.getDatabase(), infoGluePrincipal, propertyName, this.languageId, siteNodeVO.getRepositoryId(), USE_LANGUAGE_FALLBACK, escapeSpecialCharacters, findLargestValue);
 		}
 		catch(Exception e)
 		{
@@ -1058,7 +1062,8 @@ public class BasicTemplateController implements TemplateController
 		try
 		{
 		    InfoGluePrincipal infoGluePrincipal = this.getPrincipal();
-		    value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyValue(this.getDatabase(), infoGluePrincipal, propertyName, languageId, this.siteNodeId, USE_LANGUAGE_FALLBACK, escapeSpecialCharacters, findLargestValue);
+		    SiteNodeVO siteNodeVO = getSiteNode();
+		    value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyValue(this.getDatabase(), infoGluePrincipal, propertyName, languageId, siteNodeVO.getRepositoryId(), USE_LANGUAGE_FALLBACK, escapeSpecialCharacters, findLargestValue);
 		}
 		catch(Exception e)
 		{
@@ -1081,7 +1086,8 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-		    value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyHashValues(this.getDatabase(), infoGluePrincipal, propertyName, this.languageId, this.siteNodeId, USE_LANGUAGE_FALLBACK, escapeSpecialCharacters);
+		    SiteNodeVO siteNodeVO = getSiteNode();
+		    value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyHashValues(this.getDatabase(), infoGluePrincipal, propertyName, this.languageId, siteNodeVO.getRepositoryId(), USE_LANGUAGE_FALLBACK, escapeSpecialCharacters);
 		}
 		catch(Exception e)
 		{
@@ -1097,7 +1103,8 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-		    value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyHashValues(this.getDatabase(), infoGluePrincipal, propertyName, languageId, this.siteNodeId, USE_LANGUAGE_FALLBACK, escapeSpecialCharacters);
+			SiteNodeVO siteNodeVO = getSiteNode();
+		    value = InfoGluePrincipalControllerProxy.getController().getPrincipalPropertyHashValues(this.getDatabase(), infoGluePrincipal, propertyName, languageId, siteNodeVO.getRepositoryId(), USE_LANGUAGE_FALLBACK, escapeSpecialCharacters);
 		}
 		catch(Exception e)
 		{
@@ -1120,7 +1127,6 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-			InfoGluePrincipal infoGluePrincipal = this.getPrincipal();
 			value = getPrincipalPropertyHashValues(this.infoGluePrincipal, propertyName, escapeSpecialCharacters);
 		}
 		catch(Exception e)
@@ -1137,7 +1143,6 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-			InfoGluePrincipal infoGluePrincipal = this.getPrincipal();
 			value = getPrincipalPropertyHashValues(this.infoGluePrincipal, propertyName, escapeSpecialCharacters, languageId);
 		}
 		catch(Exception e)
@@ -2693,6 +2698,8 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
+			logger.error("An error occurred trying to get assetUrl on content with id: " + contentId + ":" + e.getMessage(), e);
 			logger.warn("An error occurred trying to get assetUrl on content with id: " + contentId + ":" + e.getMessage());
 		}
 				
@@ -3127,13 +3134,25 @@ public class BasicTemplateController implements TemplateController
 	
 	public List getRelatedContents(Integer contentId, String attributeName)
 	{
+		return getRelatedContents(contentId, attributeName, false, false);
+	}
+	
+	/**
+	 * This method gets a List of related contents defined in an attribute as an xml-definition.
+	 * This is an ugly method right now. Later we should have xmlDefinitions that are fully qualified so it can be
+	 * used to access other systems than our own.
+	 */
+	
+	public List getRelatedContents(Integer contentId, String attributeName, boolean checkHasVersion, boolean checkHasAccess)
+	{
 		List relatedContentVOList = new ArrayList();
 		
 		try
 		{
 			logger.info("contentId " + this.contentId + " with relationName " + attributeName);
 		    String qualifyerXML = this.getContentAttribute(contentId, attributeName, true);
-			relatedContentVOList = getRelatedContentsFromXML(qualifyerXML);
+
+			relatedContentVOList = getRelatedContentsFromXML(qualifyerXML, checkHasVersion, checkHasVersion);
 		}
 		catch(Exception e)
 		{
@@ -3208,10 +3227,13 @@ public class BasicTemplateController implements TemplateController
 	
 	private List getRelatedContentsFromXML(String qualifyerXML)
 	{
+		return getRelatedContentsFromXML(qualifyerXML, false, false);
+	}
+	
+	private List getRelatedContentsFromXML(String qualifyerXML, boolean checkHasVersion, boolean checkHasAccess)
+	{
 		if(logger.isInfoEnabled())
 			logger.info("qualifyerXML:" + qualifyerXML);
-		
-		Timer t = new Timer();
 		
 		List relatedContentVOList = new ArrayList();
 
@@ -3529,14 +3551,14 @@ public class BasicTemplateController implements TemplateController
 	 * This method gets a List of pages referencing the given content.
 	 */
 
-	public List getReferencingPages(Integer contentId, int maxRows, Boolean excludeCurrentPage)
+	public List<SiteNodeVO> getReferencingPages(Integer contentId, int maxRows, Boolean excludeCurrentPage)
 	{
 		String cacheKey = "content_" + contentId + "_" + maxRows + "_" + excludeCurrentPage;
 		
 		if(logger.isInfoEnabled())
 			logger.info("cacheKey:" + cacheKey);
 		
-		List referencingPages = (List)CacheController.getCachedObject("referencingPagesCache", cacheKey);
+		List<SiteNodeVO> referencingPages = (List<SiteNodeVO>)CacheController.getCachedObject("referencingPagesCache", cacheKey);
 		if(referencingPages != null)
 		{
 			if(logger.isInfoEnabled())
@@ -3544,21 +3566,17 @@ public class BasicTemplateController implements TemplateController
 		}
 		else
 		{
-			referencingPages = new ArrayList();
+			referencingPages = new ArrayList<SiteNodeVO>();
 			try
 			{
-				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, false, this.getDatabase());
+				Set<SiteNodeVO> referencingSiteNodeVOList = RegistryController.getController().getReferencingSiteNodesForContent(contentId, maxRows, this.getDatabase());
+				//List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, this.getDatabase());
+				//t.printElapsedTime("referencingObjects took");
 				
-				Iterator referencingObjectsIterator = referencingObjects.iterator();
-				while(referencingObjectsIterator.hasNext())
+				for(SiteNodeVO siteNode : referencingSiteNodeVOList)
 				{
-					ReferenceBean referenceBean = (ReferenceBean)referencingObjectsIterator.next();
-					Object pageCandidate = referenceBean.getReferencingCompletingObject();
-					if(pageCandidate instanceof SiteNodeVO)
-					{
-						if(!excludeCurrentPage || !((SiteNodeVO)pageCandidate).getId().equals(getSiteNodeId()))
-							referencingPages.add(pageCandidate);
-					}
+					if(!excludeCurrentPage || !(siteNode).getId().equals(getSiteNodeId()))
+						referencingPages.add(siteNode);
 				}
 				
 				if(referencingPages != null)
@@ -3738,10 +3756,20 @@ public class BasicTemplateController implements TemplateController
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 			}
 			
+			SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), this.siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = this.nodeDeliveryController.getSiteNode(getDatabase(), this.siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
+			*/
 
 			//pdfUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName;
 			pdfUrl = urlComposer.composeDigitalAssetUrl(dnsName, null, fileName, deliveryContext); 
@@ -3780,11 +3808,20 @@ public class BasicTemplateController implements TemplateController
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 			}
 			
+			SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), this.siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = this.nodeDeliveryController.getSiteNode(getDatabase(), this.siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
-
+			*/
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, null, uniqueFileName, deliveryContext); 
 		}
 		catch(Exception e)
@@ -3829,10 +3866,20 @@ public class BasicTemplateController implements TemplateController
 				filePath = CmsPropertyHandler.getProperty("digitalAssetPath." + i);
 			}
 			
+			SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), this.siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = this.nodeDeliveryController.getSiteNode(getDatabase(), this.siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
+			*/
 
 			//pdfUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName;
 			pdfUrl = urlComposer.composeDigitalAssetUrl(dnsName, null, fileName, deliveryContext); 
@@ -3974,7 +4021,7 @@ public class BasicTemplateController implements TemplateController
             
             Integer contentTypeDefinitionId = cdc.getContentVO(getDatabase(), contentId, deliveryContext ).getContentTypeDefinitionId();
           
-            ContentTypeDefinitionVO contentTypeDefinitionVO = ctdc.getContentTypeDefinitionVOWithId( contentTypeDefinitionId );
+            ContentTypeDefinitionVO contentTypeDefinitionVO = ctdc.getContentTypeDefinitionVOWithId( contentTypeDefinitionId, getDatabase());
             Iterator attrIterator = ctdc.getContentTypeAttributes(contentTypeDefinitionVO, true).iterator();
             
             String aText = text.replaceAll( "[^\\w]", "" );
@@ -4076,7 +4123,7 @@ public class BasicTemplateController implements TemplateController
      * @throws SystemException if something goes wrong
      * @author Per Jonsson - per.jonsson@it-huset.se
      */
-    private String writeRenderedImage( AdvancedImageRenderer imageRenderer, String fileName ) throws SystemException
+    private String writeRenderedImage( AdvancedImageRenderer imageRenderer, String fileName ) throws SystemException, Exception
     {
         // write the result
         int i = 0;
@@ -4092,13 +4139,20 @@ public class BasicTemplateController implements TemplateController
             filePath = CmsPropertyHandler.getProperty( "digitalAssetPath." + i );
         }
 
+		SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), this.siteNodeId);
+		String dnsName = CmsPropertyHandler.getWebServerAddress();
+		if(siteNodeVO != null)
+		{
+			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
+			if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+				dnsName = repositoryVO.getDnsName();
+		}
+		/*
         SiteNode siteNode = this.nodeDeliveryController.getSiteNode( getDatabase(), this.siteNodeId );
         String dnsName = CmsPropertyHandler.getWebServerAddress();
-        if ( siteNode != null && siteNode.getRepository().getDnsName() != null
-                && !siteNode.getRepository().getDnsName().equals( "" ) )
-        {
+        if ( siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals( "" ) )
             dnsName = siteNode.getRepository().getDnsName();
-        }
+		*/
 
         return urlComposer.composeDigitalAssetUrl( dnsName, null, fileName, deliveryContext );
     }
@@ -4179,11 +4233,20 @@ public class BasicTemplateController implements TemplateController
 			}
 			*/
 			
+			SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), this.siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = this.nodeDeliveryController.getSiteNode(getDatabase(), this.siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
-
+			*/
 			//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName;
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, null, fileName, deliveryContext); 
 		}
@@ -4339,11 +4402,21 @@ public class BasicTemplateController implements TemplateController
 			}
 			*/
 			
+			SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), this.siteNodeId);
+			String dnsName = CmsPropertyHandler.getWebServerAddress();
+			if(siteNodeVO != null)
+			{
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
+				if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+					dnsName = repositoryVO.getDnsName();
+			}
+			/*
 			SiteNode siteNode = this.nodeDeliveryController.getSiteNode(getDatabase(), this.siteNodeId);
 			String dnsName = CmsPropertyHandler.getWebServerAddress();
 			if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 				dnsName = siteNode.getRepository().getDnsName();
-				
+			*/
+							
 			//assetUrl = dnsName + "/" + CmsPropertyHandler.getDigitalAssetBaseUrl() + "/" + fileName;
 			assetUrl = urlComposer.composeDigitalAssetUrl(dnsName, null, fileName, deliveryContext); 
 		}
@@ -4424,11 +4497,17 @@ public class BasicTemplateController implements TemplateController
 	
         String context = CmsPropertyHandler.getServletContext();
 
-		SiteNode siteNode = this.nodeDeliveryController.getSiteNode(getDatabase(), this.siteNodeId);
+		SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), this.siteNodeId);
+		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
 		String dnsName = CmsPropertyHandler.getWebServerAddress();
-		if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
+		if(siteNodeVO != null && repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
 		{
-			dnsName = siteNode.getRepository().getDnsName();
+			dnsName = repositoryVO.getDnsName();
+		//SiteNode siteNode = this.nodeDeliveryController.getSiteNode(getDatabase(), this.siteNodeId);
+		//String dnsName = CmsPropertyHandler.getWebServerAddress();
+		//if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
+		//{
+		//	dnsName = siteNode.getRepository().getDnsName();
 
 	        String useDNSNameInUrls = CmsPropertyHandler.getUseDNSNameInURI();
 	 
@@ -4916,16 +4995,445 @@ public class BasicTemplateController implements TemplateController
 	/**
 	 * This method searches for all contents matching
 	 */
-	
+	/*
 	public List getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck)
 	{
 		return getMatchingContents(contentTypeDefinitionNamesString, categoryConditionString, freeText, freeTextAttributeNames, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, useLanguageFallback, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, languageId, skipLanguageCheck, null, false);
 	}
-	
+	*/
+
+	/**
+	 * This method searches for all contents matching
+	 */
+
+	private List getMatchingContentsFromDatabase(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String key, List<Integer> repositoryIdList, Integer localLanguageId, Boolean skipLanguageCheck, Integer startNodeId)
+	{
+		Timer t = new Timer();
+		
+		if(contentTypeDefinitionNamesString != null && !contentTypeDefinitionNamesString.equals(""))
+		{
+			try
+			{
+				logger.info("contentTypeDefinitionNamesString:" + contentTypeDefinitionNamesString);
+				String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
+				for(String contentTypeDefinitionName : contentTypeDefinitionNames)
+				{
+					ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, getDatabase());
+					if(contentTypeDefinitionVO != null)
+					{
+						logger.info("Do not throw page cache on this if it's not a content of type:" + contentTypeDefinitionVO.getName());
+						deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + contentTypeDefinitionVO.getId());
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.error("Could not set correct selectiveCacheUpdateNonApplicable-type: " + e.getMessage());
+			}
+		}
+		else
+			deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
+			
+		try
+		{
+		    List contentTypeDefinitionVOList = new ArrayList();
+		    String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
+		    for(int i=0; i<contentTypeDefinitionNames.length; i++)
+		    {
+		        ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNames[i], getDatabase());
+		        if(contentTypeDefinitionVO != null)
+		        	contentTypeDefinitionVOList.add(contentTypeDefinitionVO);
+		    }
+			
+			final CategoryConditions categoryConditions = CategoryConditions.parse(categoryConditionString, getDatabase());
+		    
+			final ExtendedSearchCriterias criterias = new ExtendedSearchCriterias(this.getOperatingMode().intValue());
+			criterias.setCategoryConditions(categoryConditions);
+			criterias.setLanguage(this.getLanguage(localLanguageId));
+			if(skipLanguageCheck != null)
+				criterias.setSkipLanguageCheck(skipLanguageCheck);
+			if(freeText != null && freeTextAttributeNames != null)
+				criterias.setFreetext(freeText, freeTextAttributeNames);
+			criterias.setContentTypeDefinitions(contentTypeDefinitionVOList);
+			criterias.setDates(fromDate, toDate);
+			criterias.setExpireDates(expireFromDate, expireToDate);
+			criterias.setMaximumNumberOfItems(maximumNumberOfItems);
+			if(versionModifier != null)
+				criterias.setVersionModifier(versionModifier);
+			if(repositoryIdList != null && repositoryIdList.size() > 0)
+				criterias.setRepositoryIdList(repositoryIdList);
+			criterias.setSortColumn("publicationDateTime");
+			criterias.setSortOrder("desc");
+			
+			final Set set;
+			
+			if(cacheName.equals("newsListCache"))
+			{
+				set = ExtendedSearchController.getController().searchOrderByDate(criterias, getDatabase());	
+			}
+			else
+			{
+				set = ExtendedSearchController.getController().search(criterias, getDatabase());
+			}
+			
+			final List result = new ArrayList();
+			for(Iterator i = set.iterator(); i.hasNext(); ) 
+			{
+				final Content content = (Content) i.next();
+				//if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), content.getId(), localLanguageId, USE_LANGUAGE_FALLBACK, true, getPrincipal(), this.deliveryContext))
+				if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), content, localLanguageId, USE_LANGUAGE_FALLBACK, true, getPrincipal(), this.deliveryContext, false, false))
+				{
+					if(startNodeId != null)
+					{
+						if(hasNodeIdAsParent(content.getContentId(), startNodeId))
+						{
+							result.add(content.getValueObject());
+						}
+					}
+					else
+					{
+						result.add(content.getValueObject());
+					}
+				}
+			}
+
+			if(cacheResult)
+				CacheController.cacheObjectInAdvancedCache(cacheName, key, result, null, false);
+			return result;
+		}
+		catch(Exception e)
+		{
+			logger.warn("An error occurred trying to get Matching Contents for contentTypeDefinitionNamesString: " + contentTypeDefinitionNamesString + ":" + e.getMessage(), e);
+		}
+		return Collections.EMPTY_LIST;
+	}
+
+	/**
+	 * This method searches for all contents matching
+	 */
+	/*
+	public List getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck, Integer startNodeId)
+	{
+		return getMatchingContents(contentTypeDefinitionNamesString, categoryConditionString, freeText, freeTextAttributeNames, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, useLanguageFallback, cacheResult, cacheInterval, cacheName, cacheKey, false, -1, repositoryIdList, languageId, skipLanguageCheck, startNodeId, null, null, false, true, false, false, false);
+	}
+	*/
+
 	/**
 	 * This method searches for all contents matching
 	 */
 	
+	public List getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, boolean scheduleFetch, int scheduleInterval, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck, Integer startNodeId, String sortColumn, String sortOrder, boolean forceRefetch, boolean validateAccessRightsAsAnonymous, boolean returnOnlyCachedResult, boolean preventQueueBean)
+	{
+		Timer t = new Timer();
+		
+		if(sortColumn == null || sortColumn.equals(""))
+		{
+			if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+				sortColumn = "contId";
+			else
+				sortColumn = "contentId";
+		}
+		if(sortOrder == null || sortOrder.equals(""))
+			sortOrder = "desc";
+		
+		if(contentTypeDefinitionNamesString != null && !contentTypeDefinitionNamesString.equals(""))
+		{
+			try
+			{
+				logger.info("contentTypeDefinitionNamesString:" + contentTypeDefinitionNamesString);
+				String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
+				for(String contentTypeDefinitionName : contentTypeDefinitionNames)
+				{
+					ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, getDatabase());
+					if(contentTypeDefinitionVO != null)
+					{
+						logger.info("Do not throw page cache on this if it's not a content of type:" + contentTypeDefinitionVO.getName());
+						if(deliveryContext != null)
+							deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + contentTypeDefinitionVO.getId());
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.error("Could not set correct selectiveCacheUpdateNonApplicable-type: " + e.getMessage(), e);
+			}
+		}
+		else
+		{
+			if(deliveryContext != null)
+				deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable");
+		}
+		
+		if(cacheResult == true && toDate != null)
+		{
+			Calendar toDateCalendar = Calendar.getInstance();
+			toDateCalendar.setTime(toDate);
+			toDateCalendar.set(Calendar.MINUTE, 30);
+			toDateCalendar.set(Calendar.SECOND, 30);
+			toDateCalendar.set(Calendar.MILLISECOND, 0);
+			toDate = toDateCalendar.getTime();
+		}
+		if(cacheResult == true && fromDate != null)
+		{
+			Calendar fromDateCalendar = Calendar.getInstance();
+			fromDateCalendar.setTime(fromDate);
+			fromDateCalendar.set(Calendar.MINUTE, 30);
+			fromDateCalendar.set(Calendar.SECOND, 30);
+			fromDateCalendar.set(Calendar.MILLISECOND, 0);
+			fromDate = fromDateCalendar.getTime();
+		}
+		logger.info("toDate:" + toDate);
+		logger.info("fromDate:" + fromDate);
+		
+		if((freeText != null && !freeText.equals("")) || (freeTextAttributeNames != null && freeTextAttributeNames.size() > 0) || expireFromDate != null || expireToDate != null || (versionModifier != null && !versionModifier.equals("")) || !deliveryContext.getOperatingMode().equals(CmsPropertyHandler.getOperatingMode()))
+			cacheResult = false;
+		
+		logger.info("cacheResult:" + cacheResult);
+		//TODO - add cache here
+		if(cacheName == null || cacheName.equals(""))
+			cacheName = "matchingContentsCache";
+
+		Integer localLanguageId = this.getLanguageId();
+		if(languageId != null)
+			localLanguageId = languageId;
+		
+		StringBuffer repositoryIdString = new StringBuffer();
+		if(repositoryIdList != null)
+		{
+			Iterator repositoryIdListIterator = repositoryIdList.iterator();
+			while(repositoryIdListIterator.hasNext())
+				repositoryIdString.append("," + repositoryIdListIterator.next());
+		}
+
+		StringBuffer attributeNamesString = new StringBuffer();
+		if(freeTextAttributeNames != null)
+		{
+			Iterator freeTextAttributeNamesIterator = freeTextAttributeNames.iterator();
+			while(freeTextAttributeNamesIterator.hasNext())
+				attributeNamesString.append("," + freeTextAttributeNamesIterator.next());
+		}
+
+		String userName = this.getPrincipal().getName();
+		if(!CmsPropertyHandler.getOperatingMode().equals("3") || validateAccessRightsAsAnonymous)
+			userName = CmsPropertyHandler.getAnonymousUser();
+		
+		String key = "sortedMatchingContents" + contentTypeDefinitionNamesString + "_" + categoryConditionString + "_publishDateTime_languageId_" + localLanguageId + "_" + useLanguageFallback + "_" + maximumNumberOfItems + "_" + repositoryIdString + "_" + skipLanguageCheck + "_" + sortColumn + "_" + sortOrder + "_" + userName + (fromDate != null ? "_" + fromDate.getTime() : "") + (toDate != null ? "_" + toDate.getTime() : "");
+		if(cacheKey != null && !cacheKey.equals(""))
+			key = cacheKey;
+		
+		if(scheduleFetch && !preventQueueBean)
+		{
+			MatchingContentsQueueBean bean = new MatchingContentsQueueBean();
+			bean.setCacheInterval(cacheInterval);
+			bean.setCacheKey(cacheKey);
+			bean.setCacheName(cacheName);
+			bean.setCacheResult(cacheResult);
+			bean.setCategoryCondition(categoryConditionString);
+			bean.setContentTypeDefinitionNames(contentTypeDefinitionNamesString);
+			bean.setExpireFromDate(expireFromDate);
+			bean.setExpireToDate(expireToDate);
+			bean.setFreeText(freeText);
+			bean.setFreeTextAttributeNames(attributeNamesString.toString());
+			bean.setFromDate(fromDate);
+			bean.setToDate(toDate);
+			bean.setLanguageId(languageId);
+			bean.setMaximumNumberOfItems(maximumNumberOfItems);
+			bean.setRepositoryIds(repositoryIdString.toString());
+			bean.setScheduleFetch(scheduleFetch);
+			bean.setScheduleInterval(scheduleInterval);
+			bean.setSkipLanguageCheck(skipLanguageCheck);
+			bean.setStartNodeId(startNodeId);
+			bean.setVersionModifier(versionModifier);
+			bean.setSortColumn(sortColumn);
+			bean.setSortOrder(sortOrder);
+			bean.setValidateAccessRightsAsAnonymous(validateAccessRightsAsAnonymous);
+			bean.setLastFetched(System.currentTimeMillis());
+			
+			//We cache on real username if in published mode - otherwise in anonymous mode
+			if(CmsPropertyHandler.getOperatingMode().equals("3"))
+				bean.setUserName(getPrincipal().getName());
+			else
+				bean.setUserName(CmsPropertyHandler.getAnonymousUser());
+			
+			MatchingContentsQueue.getMatchingContentsQueue().addMatchingContentsQueueBean(key, bean);
+		}
+
+		logger.info("key: " + key);
+		logger.info("forceRefetch:" + forceRefetch);
+
+		List cachedMatchingContents = (List)CacheController.getCachedObjectFromAdvancedCache(cacheName, key/*, cacheInterval*/);
+		//List cachedMatchingContents = (List)CacheController.getCachedObjectFromAdvancedCache(cacheName, ""+key.hashCode()/*, cacheInterval*/);
+
+		if(logger.isInfoEnabled())
+		{
+			logger.info("cacheInterval:" + cacheInterval);
+			logger.info("scheduleFetch:" + scheduleFetch);
+			logger.info("scheduleInterval:" + scheduleInterval);
+			logger.info("cachedMatchingContents:" + (cachedMatchingContents == null ? "null" : cachedMatchingContents.size()));
+			logger.info("cacheResult:" + cacheResult);
+			logger.info("forceRefetch:" + forceRefetch);
+			logger.info("key:" + key);
+			logger.info("key.hash:" + key.hashCode());
+			logger.info("returnOnlyCachedResult:" + returnOnlyCachedResult);
+		}
+
+		if((cachedMatchingContents == null || !cacheResult || forceRefetch) && !returnOnlyCachedResult)
+		{
+			/*
+			System.out.println("CacheSize:" + CacheController.getCacheSize("matchingContentsCache"));
+			System.out.println("Getting matching contents from db for key:" + key);
+			System.out.println("cachedMatchingContents:" + cachedMatchingContents);
+			System.out.println("cacheResult:" + cacheResult);
+			System.out.println("forceRefetch:" + forceRefetch);
+			System.out.println("returnOnlyCachedResult:" + returnOnlyCachedResult);
+			Thread.dumpStack();
+			*/
+			
+			try
+			{
+			    List contentTypeDefinitionVOList = new ArrayList();
+			    Set<String> groups = new HashSet<String>();
+			    String[] contentTypeDefinitionNames = contentTypeDefinitionNamesString.split(",");
+			    for(int i=0; i<contentTypeDefinitionNames.length; i++)
+			    {
+			        ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNames[i], getDatabase());
+			        if(contentTypeDefinitionVO != null)
+			        {
+			        	contentTypeDefinitionVOList.add(contentTypeDefinitionVO);
+			        	logger.info("Do not throw page cache on this if it's not a content of type:" + contentTypeDefinitionVO.getName());
+						if(deliveryContext != null)
+							deliveryContext.addUsedContent("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + contentTypeDefinitionVO.getId());
+						if(!scheduleFetch)
+						{
+							groups.add("selectiveCacheUpdateNonApplicable_contentTypeDefinitionId_" + contentTypeDefinitionVO.getId());
+						}
+						else
+							groups.add("none");
+					}
+			    }
+	
+			    final CategoryConditions categoryConditions = CategoryConditions.parse(categoryConditionString, getDatabase());
+
+				final ExtendedSearchCriterias criterias = new ExtendedSearchCriterias(this.getOperatingMode().intValue());
+				criterias.setCategoryConditions(categoryConditions);
+				criterias.setLanguage(this.getLanguage(localLanguageId));
+				if(skipLanguageCheck != null)
+					criterias.setSkipLanguageCheck(skipLanguageCheck);
+				if(freeText != null && freeTextAttributeNames != null)
+					criterias.setFreetext(freeText, freeTextAttributeNames);
+				criterias.setContentTypeDefinitions(contentTypeDefinitionVOList);
+				criterias.setDates(fromDate, toDate);
+				criterias.setExpireDates(expireFromDate, expireToDate);
+				criterias.setMaximumNumberOfItems(maximumNumberOfItems);
+				if(versionModifier != null)
+					criterias.setVersionModifier(versionModifier);
+				if(repositoryIdList != null && repositoryIdList.size() > 0)
+					criterias.setRepositoryIdList(repositoryIdList);
+				
+				criterias.setSortColumn(sortColumn);
+				criterias.setSortOrder(sortOrder);
+				
+				final Set set = ExtendedSearchController.getController().search(criterias, getDatabase());
+				t.printElapsedTime("AAAAAAAAAAAAAAAAAAAAAA search returning :" + set.size() + ":" + Thread.currentThread().getId());
+				final List result = new ArrayList();
+				for(Iterator i = set.iterator(); i.hasNext(); ) 
+				{
+					final Content content = (Content) i.next();
+					/*
+					String contentKey = "" + content.getValueObject().getId();
+					CacheController.cacheObjectInAdvancedCache("contentCache", contentKey, content.getValueObject(), new String[]{CacheController.getPooledString(1, content.getValueObject().getId())}, true);
+					*/
+					//if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), content.getId(), localLanguageId, USE_LANGUAGE_FALLBACK, true, getPrincipal(), this.deliveryContext))
+					InfoGluePrincipal principal = UserControllerProxy.getController(getDatabase()).getUser(userName);
+					if(ContentDeliveryController.getContentDeliveryController().isValidContent(this.getDatabase(), content.getValueObject(), localLanguageId, USE_LANGUAGE_FALLBACK, true, principal, this.deliveryContext, false, false))
+					{
+						if(startNodeId != null)
+						{
+							if(hasNodeIdAsParent(content.getContentId(), startNodeId))
+							{
+								result.add(content.getValueObject());
+							}
+						}
+						else
+						{
+							result.add(content.getValueObject());
+						}
+					}
+				}
+
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMatchingContents against db", t.getElapsedTime());
+				
+				if(cacheResult)
+				{
+					//CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheName, key, result, groups, true);
+					logger.info("Caching with file fallback:" + result.size());
+					CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheName, key, result, groups, true);
+					//CacheController.cacheObjectInAdvancedCache(cacheName, ""+key.hashCode(), result, groups.toArray(new String[0]), true, true, true, "utf-8", 200, false, false);
+				}				
+			}
+			catch(Exception e)
+			{
+				logger.error("An error occurred trying to get Matching Contents for contentTypeDefinitionNamesString: " + contentTypeDefinitionNamesString + ":" + e.getMessage(), e);
+				logger.warn("An error occurred trying to get Matching Contents for contentTypeDefinitionNamesString: " + contentTypeDefinitionNamesString + ":" + e.getMessage(), e);
+				MatchingContentsQueue.getMatchingContentsQueue().clearMatchingContentsQueueBean(key);
+			}
+		}
+		else if(cachedMatchingContents != null)
+		{
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMatchingContents cached", t.getElapsedTime());
+			logger.info("Getting cached contents for key:" + key);
+			return cachedMatchingContents;
+		}
+		else if(returnOnlyCachedResult)
+		{
+			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMatchingContents cached but empty", t.getElapsedTime());
+			return null;
+		}
+		
+		return Collections.EMPTY_LIST;
+	}
+
+	private boolean hasNodeIdAsParent(Integer currentNodeId, Integer parentId)
+	{
+		boolean hasParentWithId = false;
+		
+		try
+		{
+			if(currentNodeId != null && parentId != null && currentNodeId.intValue() == parentId.intValue())
+			{
+				hasParentWithId = true; 
+			}
+			else
+			{
+				ContentVO currentNodeVO = ContentDeliveryController.getContentDeliveryController().getContentVO(getDatabase(), currentNodeId, null);
+				if(currentNodeVO != null)
+				{
+					Integer parentNodeId = currentNodeVO.getParentContentId();
+					
+					if(parentNodeId == null)
+					{
+						hasParentWithId = false;
+					}
+					else if(parentNodeId == parentId.intValue())
+					{
+						hasParentWithId = true;
+					}
+					else
+					{
+						hasParentWithId = hasNodeIdAsParent(parentNodeId, parentId);
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred:" + e.getMessage(), e);
+		}
+		
+		return hasParentWithId;
+	}
+	
+	/*
 	public List<ContentVO> getMatchingContents(String contentTypeDefinitionNamesString, String categoryConditionString, String freeText, List freeTextAttributeNames, Date fromDate, Date toDate, Date expireFromDate, Date expireToDate, String versionModifier, Integer maximumNumberOfItems, boolean useLanguageFallback, boolean cacheResult, int cacheInterval, String cacheName, String cacheKey, List<Integer> repositoryIdList, Integer languageId, Boolean skipLanguageCheck, Integer startNodeId, Boolean useLucene)
 	{
 		Timer t = new Timer();
@@ -5164,6 +5672,7 @@ public class BasicTemplateController implements TemplateController
 		
 		return hasParentWithId;
 	}
+*/
 
 	/**
 	 * This method returns which mode the delivery-engine is running in.
@@ -5367,7 +5876,7 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.warn("An error occurred trying to get page url for siteNodeId[" + siteNodeId + "]:" + e.getMessage() + "\n" + "The page generating the error was:" + this.getOriginalFullURL());
+			logger.warn("An error occurred trying to get page url for siteNodeId[" + siteNodeId + "]:" + e.getMessage() + "\n" + "The page generating the error was:" + this.getOriginalFullURL(), e);
 		}
 				
 		return pageUrl;
@@ -5613,6 +6122,27 @@ public class BasicTemplateController implements TemplateController
 	    return getPageNavTitle(siteNodeId, false);
 	}
 	
+	/**
+	 * This method deliveres a String with the Navigation title the page asked for has.
+	 * The navigation-title is fetched from the meta-info-content bound to the site node.
+	 */
+
+	public String getPageMetaData(Integer siteNodeId, Integer languageId, String attributeName) 
+	{
+		String navTitle = "";
+		
+		try
+		{
+			navTitle = this.nodeDeliveryController.getPageNavigationTitle(getDatabase(), this.getPrincipal(), siteNodeId, languageId, null, META_INFO_BINDING_NAME, attributeName, USE_LANGUAGE_FALLBACK, this.deliveryContext, false);
+		}
+		catch(Exception e)
+		{
+			logger.warn("An error occurred trying to get the page navigationtitle on " + this.getCurrentPagePath() + ": " + e.getMessage(), e);
+		}
+				
+		return navTitle;
+	}
+	 
 	/**
 	 * This method deliveres a String with the Navigation title the page asked for has.
 	 * The navigation-title is fetched from the meta-info-content bound to the site node.
@@ -6096,8 +6626,8 @@ public class BasicTemplateController implements TemplateController
 		while(i.hasNext())
 		{
 			SiteNodeVO siteNodeVO = (SiteNodeVO)i.next();
+
 			this.getDeliveryContext().addUsedSiteNode(CacheController.getPooledString(3, siteNodeVO.getId()));
-			
 			if((!hideUnauthorizedPages || getHasUserPageAccess(siteNodeVO.getId())) && (showHidden || !siteNodeVO.getIsHidden()))
 			{
 				try
@@ -6106,9 +6636,10 @@ public class BasicTemplateController implements TemplateController
 					webPage.setSiteNodeId(siteNodeVO.getSiteNodeId());
 					webPage.setLanguageId(this.languageId);
 					webPage.setContentId(null);
-					if(populateNavigationTitle)
-						webPage.setNavigationTitle(this.nodeDeliveryController.getPageNavigationTitle(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, siteNodeVO.getMetaInfoContentId(), META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, USE_LANGUAGE_FALLBACK, this.deliveryContext, escapeHTML));
 					
+					LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(getDatabase(), siteNodeVO.getRepositoryId());
+					webPage.setNavigationTitle(this.nodeDeliveryController.getPageNavigationTitle(getDatabase(), this.getPrincipal(), siteNodeVO.getId(), siteNodeVO.getRepositoryId(), this.languageId, siteNodeVO.getMetaInfoContentId(), META_INFO_BINDING_NAME, NAV_TITLE_ATTRIBUTE_NAME, USE_LANGUAGE_FALLBACK, this.deliveryContext, escapeHTML));
+					//System.out.println("Populating nav title for " + siteNodeVO.getName());
 					if(siteNodeVO.getMetaInfoContentId() != null)
 					{
 						if(deliveryContext != null)
@@ -6133,15 +6664,12 @@ public class BasicTemplateController implements TemplateController
 						webPage.setIsHidden(siteNodeVO.getIsHidden());
 					}
 					
-					if(populatePageUrl)
-						webPage.setUrl(this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, null, this.deliveryContext));
-					
-					//System.out.println("Adding webpage:" + webPage.getNavigationTitle() + ":" + webPage.getSortOrder());
+					webPage.setUrl(this.nodeDeliveryController.getPageUrl(getDatabase(), this.getPrincipal(), siteNodeVO.getSiteNodeId(), this.languageId, null, this.deliveryContext));
 					childPages.add(webPage);
 				}
 				catch(Exception e)
 				{
-				    logger.error("An error occurred when looking up one of the childPages:" + e.getMessage(), e);
+				    logger.info("An error occurred when looking up one of the childPages:" + e.getMessage(), e);
 				}
 			}
 		}
@@ -6164,6 +6692,16 @@ public class BasicTemplateController implements TemplateController
 	 * siteNode. The method is great for navigation-purposes on a structured site. 
 	 */
 	
+	public List getChildPages(Integer siteNodeId, Integer levelsToPopulate)
+	{
+	    return getChildPages(siteNodeId, false, false, levelsToPopulate, null, false);
+	}
+
+	/**
+	 * The method returns a list of WebPage-objects that is the children of the given 
+	 * siteNode. The method is great for navigation-purposes on a structured site. 
+	 */
+	
 	public List getChildPages(Integer siteNodeId, boolean escapeHTML)
 	{
 	    return getChildPages(siteNodeId, escapeHTML, false);
@@ -6176,7 +6714,7 @@ public class BasicTemplateController implements TemplateController
 	
 	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages)
 	{
-		return getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, true);
+		return getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, 0, null, false);
 	}
 
 	/**
@@ -6184,9 +6722,9 @@ public class BasicTemplateController implements TemplateController
 	 * siteNode. The method is great for navigation-purposes on a structured site. 
 	 */
 	
-	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden)
+	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter)
 	{
-		return getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, showHidden, true, true);
+		return getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, levelsToPopulate, nameFilter, false);
 	}
 	
 	/**
@@ -6194,22 +6732,40 @@ public class BasicTemplateController implements TemplateController
 	 * siteNode. The method is great for navigation-purposes on a structured site. 
 	 */
 	
-	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden, boolean populateNavigationTitle, boolean populatePageUrl)
+	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter, boolean showHidden)
 	{
-		Timer t = new Timer();
-		List childPages = new ArrayList();
-		try
+        String key = "" + siteNodeId + "_" + escapeHTML + "_" + hideUnauthorizedPages + "_" + levelsToPopulate + "_" + showHidden + "_" + nameFilter;
+		logger.info("key in getChildSiteNodes:" + key);
+		List<WebPage> childPages = (List<WebPage>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", key);
+		
+		if(childPages == null)
 		{
-			List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId);
-			if(logger.isInfoEnabled())
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildSiteNodes", t.getElapsedTimeNanos() / 1000);
-			childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages, showHidden, populateNavigationTitle, populatePageUrl);
-			if(logger.isInfoEnabled())
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getPages", t.getElapsedTimeNanos() / 1000);
+			try
+			{
+				//Thread.dumpStack();
+				System.out.println("showHidden: " + showHidden);
+				Timer t = new Timer();
+				List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId, levelsToPopulate, showHidden, nameFilter);
+				//if(logger.isInfoEnabled())
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getChildSiteNodes(micro)", t.getElapsedTimeNanos() / 1000);
+				childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages);
+				//if(logger.isInfoEnabled())
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getPages(micro)", t.getElapsedTimeNanos() / 1000);
+
+				CacheController.cacheObjectInAdvancedCache("childPagesCache", key, childPages, new String[] {CacheController.getPooledString(3, siteNodeId)}, true);
+			}
+			catch(Exception e)
+			{
+				childPages = new ArrayList<WebPage>();
+				logger.error("An error occurred trying to get the page childPages:" + e.getMessage(), e);
+			}
 		}
-		catch(Exception e)
+		else
 		{
-			logger.error("An error occurred trying to get the page childPages:" + e.getMessage(), e);
+			//System.out.println("Found cached childPages:" + childPages.size());
+			for(WebPage page : childPages)
+				this.getDeliveryContext().addUsedSiteNode(CacheController.getPooledString(3, page.getSiteNodeId()));
+
 		}
 		
 		return childPages;
@@ -6597,7 +7153,8 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred trying to do an include:" + e.getMessage(), e);
+			logger.error("An error occurred trying to do an include:" + e.getMessage());
+			logger.warn("An error occurred trying to do an include:" + e.getMessage(), e);
 		}
 			
 		return result;
@@ -6634,7 +7191,8 @@ public class BasicTemplateController implements TemplateController
 		}
 		catch(Exception e)
 		{
-			logger.error("An error occurred trying to do an include:" + e.getMessage(), e);
+			logger.error("An error occurred trying to do an include:" + e.getMessage());
+			logger.warn("An error occurred trying to do an include:" + e.getMessage(), e);
 		}
 			
 		return result;
@@ -6644,7 +7202,16 @@ public class BasicTemplateController implements TemplateController
 	 * This method allows a user to get any string rendered as a template.
 	 */
 
-	public String renderString(String template, Integer contentId, boolean useSubContext, InfoGlueComponent component) 
+	public String renderString(String template, Integer contentId, boolean useSubContext) 
+	{
+		return renderString(template, contentId, useSubContext, null);
+	}
+
+	/**
+	 * This method allows a user to get any string rendered as a template.
+	 */
+
+	public String renderString(String template, Integer contentId, boolean useSubContext, String renderDescription) 
 	{
 		String result = "";
 		
@@ -6653,6 +7220,9 @@ public class BasicTemplateController implements TemplateController
 		try
 		{
 			Map context = new HashMap();
+			if(renderDescription != null)
+				context.put("renderDescription", renderDescription);
+			
 			if(!useSubContext)
 			{
 			    context.put("templateLogic", this);
@@ -6681,6 +7251,7 @@ public class BasicTemplateController implements TemplateController
 		catch(Exception e)
 		{
 			logger.error("An error occurred trying to do an include:" + e.getMessage());
+			logger.warn("An error occurred trying to do an include:" + e.getMessage(), e);
 			logger.error("Problem URL:" + getOriginalFullURL());
 		}
 		finally
@@ -6755,7 +7326,8 @@ public class BasicTemplateController implements TemplateController
 			}
 			catch(Exception e)
 			{
-				logger.error("An error occurred trying to do an include:" + e.getMessage(), e);
+				logger.error("An error occurred trying to do an include:" + e.getMessage());
+				logger.warn("An error occurred trying to do an include:" + e.getMessage(), e);
 			}
 		}
 		
@@ -7069,7 +7641,7 @@ public class BasicTemplateController implements TemplateController
 		
 		try
 		{
-		    Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(getDatabase(), siteNodeId);
+		    Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(getDatabase(), siteNodeId, interceptionPointName);
 			if(protectedSiteNodeVersionId == null)
 			{
 				logger.info("The page was not protected...");
@@ -7100,7 +7672,7 @@ public class BasicTemplateController implements TemplateController
 		
 		try 
 		{
-		    Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(getDatabase(), siteNodeId);
+		    Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(getDatabase(), siteNodeId, "SiteNodeVersion.Read");
 			if(protectedSiteNodeVersionId == null)
 			{
 				logger.info("The page was not protected...");
@@ -7114,6 +7686,9 @@ public class BasicTemplateController implements TemplateController
 				
 				if(principal != null)
 				{
+					if(principal.getName().equals(CmsPropertyHandler.getAnonymousUser()))
+						hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
+					else
 					hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
 					if(!hasUserPageAccess && getIsDecorated() && getDeliveryContext().getConsiderEditorInDecoratedMode())
 				    {
@@ -7123,7 +7698,7 @@ public class BasicTemplateController implements TemplateController
 						    InfoGluePrincipal cmsPrincipal = getPrincipal(cmsUserName);
 
 						    if(cmsPrincipal != null)
-						    	hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString());
+						    	hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, "SiteNodeVersion.Read", protectedSiteNodeVersionId.toString(), false);
 					    }
 					}		
 				}
@@ -7150,7 +7725,7 @@ public class BasicTemplateController implements TemplateController
 		
 		try 
 		{
-		    Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(getDatabase(), siteNodeId);
+			Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(getDatabase(), siteNodeId, interceptionPointName);
 			if(protectedSiteNodeVersionId == null)
 			{
 				logger.info("The page was not protected...");
@@ -7164,7 +7739,9 @@ public class BasicTemplateController implements TemplateController
 				
 				if(principal != null)
 				{
-					//SiteNodeVersionVO siteNodeVersionVO = this.nodeDeliveryController.getActiveSiteNodeVersionVO(siteNodeId);
+					if(principal.getName().equals(CmsPropertyHandler.getAnonymousUser()) && interceptionPointName.equals("SiteNodeVersion.Read"))
+						hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, interceptionPointName, protectedSiteNodeVersionId.toString(), false);
+					else
 					hasUserPageAccess = AccessRightController.getController().getIsPrincipalAuthorized((InfoGluePrincipal)principal, interceptionPointName, protectedSiteNodeVersionId.toString());
 				    if(!hasUserPageAccess && getIsDecorated() && getDeliveryContext().getConsiderEditorInDecoratedMode())
 				    {
@@ -7285,7 +7862,7 @@ public class BasicTemplateController implements TemplateController
 		
 		try 
 		{
-		    Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(getDatabase(), siteNodeId);
+		    Integer protectedSiteNodeVersionId = this.nodeDeliveryController.getProtectedSiteNodeVersionId(getDatabase(), siteNodeId, "SiteNodeVersion.Write");
 			if(protectedSiteNodeVersionId == null)
 			{
 				logger.info("The page was not protected...");
@@ -7327,17 +7904,19 @@ public class BasicTemplateController implements TemplateController
      */
     public boolean getHasUserAccess(String interceptionPointName, String extraParameters)
     {
+    	Timer t = new Timer();
 		boolean hasUserContentAccess = true;
 		
 		try 
 		{
-			if(!AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, interceptionPointName, extraParameters))
+			boolean hasAccess = AccessRightController.getController().getIsPrincipalAuthorized(infoGluePrincipal, interceptionPointName, extraParameters);
+			if(!hasAccess)
 			{
 			    hasUserContentAccess = false;
 				if(getIsDecorated() && getDeliveryContext().getConsiderEditorInDecoratedMode())
 			    {
 				    String cmsUserName = (String)getHttpServletRequest().getSession().getAttribute("cmsUserName");
-				    if(cmsUserName != null)
+				    if(cmsUserName != null && !cmsUserName.equals(infoGluePrincipal.getName()))
 				    {
 					    InfoGluePrincipal cmsPrincipal = getPrincipal(cmsUserName);
 					    
@@ -7859,10 +8438,20 @@ public class BasicTemplateController implements TemplateController
 			
 			if(fileName != null)
 			{
+				SiteNodeVO siteNodeVO = this.nodeDeliveryController.getSiteNodeVO(getDatabase(), this.siteNodeId);
+				String dnsName = CmsPropertyHandler.getWebServerAddress();
+				if(siteNodeVO != null)
+				{
+					RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), getDatabase());
+					if(repositoryVO.getDnsName() != null && !repositoryVO.getDnsName().equals(""))
+						dnsName = repositoryVO.getDnsName();
+				}
+				/*
 				SiteNode siteNode = this.nodeDeliveryController.getSiteNode(getDatabase(), this.siteNodeId);
 				String dnsName = CmsPropertyHandler.getWebServerAddress();
 				if(siteNode != null && siteNode.getRepository().getDnsName() != null && !siteNode.getRepository().getDnsName().equals(""))
 					dnsName = siteNode.getRepository().getDnsName();
+				*/
 		
 				url = urlComposer.composeDigitalAssetUrl(dnsName, null, fileName, deliveryContext); 
 			}
@@ -8140,4 +8729,31 @@ public class BasicTemplateController implements TemplateController
     {
         return ( this instanceof EditOnSiteBasicTemplateController );
     }
+
+	@Override
+	public List getMatchingContents(String contentTypeDefinitionNamesString,
+			String categoryConditionString, String freeText,
+			List freeTextAttributeNames, Date fromDate, Date toDate,
+			Date expireFromDate, Date expireToDate, String versionModifier,
+			Integer maximumNumberOfItems, boolean useLanguageFallback,
+			boolean cacheResult, int cacheInterval, String cacheName,
+			String cacheKey, List<Integer> repositoryIdList,
+			Integer languageId, Boolean skipLanguageCheck) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List getMatchingContents(String contentTypeDefinitionNamesString,
+			String categoryConditionString, String freeText,
+			List freeTextAttributeNames, Date fromDate, Date toDate,
+			Date expireFromDate, Date expireToDate, String versionModifier,
+			Integer maximumNumberOfItems, boolean useLanguageFallback,
+			boolean cacheResult, int cacheInterval, String cacheName,
+			String cacheKey, List<Integer> repositoryIdList,
+			Integer languageId, Boolean skipLanguageCheck, Integer startNodeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

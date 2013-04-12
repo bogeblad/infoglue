@@ -31,11 +31,14 @@ import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.PersistenceException;
 import org.infoglue.cms.entities.content.ContentCategory;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AccessRight;
 import org.infoglue.cms.entities.management.AccessRightVO;
+import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.InterceptionPoint;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.ConstraintException;
@@ -44,6 +47,7 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.DateHelper;
+import org.infoglue.deliver.util.Timer;
 
 public class ContentStateController extends BaseController 
 {
@@ -59,28 +63,70 @@ public class ContentStateController extends BaseController
 	 * Se inline documentation for further explainations.
 	 */
 	
-    public static ContentVersion changeState(Integer oldContentVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer contentId, List resultingEvents) throws ConstraintException, SystemException
+    public static ContentVersionVO changeState(Integer oldContentVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer contentId, List resultingEvents) throws ConstraintException, SystemException
     {
-    	return changeState(oldContentVersionId, stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, contentId, resultingEvents);
+    	ContentVO contentVO = (contentId == null ? null : ContentController.getContentController().getContentVOWithId(contentId));
+
+    	return changeState(oldContentVersionId, contentVO, stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, contentId, resultingEvents);
     }
-    
+
+	/**
+	 * This method handles versioning and state-control of content.
+	 * Se inline documentation for further explainations.
+	 */
+	
+    public static ContentVersionVO changeState(Integer oldContentVersionId, ContentVO contentVO, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer contentId, List resultingEvents) throws ConstraintException, SystemException
+    {
+    	return changeState(oldContentVersionId, contentVO, stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, contentId, resultingEvents);
+    }
+
     /**
 	 * This method handles versioning and state-control of content.
 	 * Se inline documentation for further explainations.
 	 */
 	
-    public static ContentVersion changeState(Integer oldContentVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, List resultingEvents) throws ConstraintException, SystemException
+    public static ContentVersionVO changeState(Integer oldContentVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, List resultingEvents) throws ConstraintException, SystemException
+    {
+    	ContentVO contentVO = (contentId == null ? null : ContentController.getContentController().getContentVOWithId(contentId));
+
+    	return changeState(oldContentVersionId, contentVO, stateId, versionComment, overrideVersionModifyer, recipientFilter, infoGluePrincipal, contentId, resultingEvents);
+    }
+
+    /**
+	 * This method handles versioning and state-control of content.
+	 * Se inline documentation for further explainations.
+	 */
+	
+    public static ContentVersionVO changeState(Integer oldContentVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents) throws ConstraintException, SystemException
+    {
+    	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
+		
+    	ContentVersion newContentVersion = changeState(oldContentVersionId, contentVO, stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, contentId, db, resultingEvents);
+    	
+    	return newContentVersion.getValueObject();
+    }   
+
+
+    /**
+	 * This method handles versioning and state-control of content.
+	 * Se inline documentation for further explainations.
+	 */
+	
+    public static ContentVersionVO changeState(Integer oldContentVersionId, ContentVO contentVO, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, List resultingEvents) throws ConstraintException, SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 		
-		ContentVersion newContentVersion = null; 
+		ContentVersionVO newContentVersionVO = null; 
 		
         beginTransaction(db);
 		try
 		{
-			newContentVersion = changeState(oldContentVersionId, stateId, versionComment, overrideVersionModifyer, recipientFilter, infoGluePrincipal, contentId, db, resultingEvents);
-        	commitTransaction(db);
+			ContentVersion newContentVersion = changeState(oldContentVersionId, contentVO, stateId, versionComment, overrideVersionModifyer, recipientFilter, infoGluePrincipal, contentId, db, resultingEvents);
+			if(newContentVersion != null)
+				newContentVersionVO = newContentVersion.getValueObject();
+			
+			commitRegistryAwareTransaction(db);
         }
         catch(ConstraintException ce)
         {
@@ -95,7 +141,7 @@ public class ContentStateController extends BaseController
             throw new SystemException(e.getMessage());
         }    	    	
     	
-    	return newContentVersion;
+    	return newContentVersionVO;
     }        
 
 
@@ -104,44 +150,44 @@ public class ContentStateController extends BaseController
 	 * Se inline documentation for further explainations.
 	 */
 	
-	public static ContentVersion changeState(Integer oldContentVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents) throws SystemException, ConstraintException
+	public static ContentVersion changeState(Integer oldContentVersionId, ContentVO contentVO, Integer stateId, String versionComment, boolean overrideVersionModifyer, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents) throws SystemException, ConstraintException
 	{
-		return changeState(oldContentVersionId, stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, contentId, db, resultingEvents);
+		return changeState(oldContentVersionId, contentVO, stateId, versionComment, overrideVersionModifyer, null, infoGluePrincipal, contentId, db, resultingEvents);
 	}
 	
 	/**
 	 * This method handles versioning and state-control of content.
 	 * Se inline documentation for further explainations.
 	 */
-	public static ContentVersion changeState(Integer oldContentVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents) throws SystemException, ConstraintException
+	public static MediumContentVersionImpl changeState(Integer oldContentVersionId, ContentVO contentVO, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents) throws SystemException, ConstraintException
 	{
-		return changeState(oldContentVersionId, stateId, versionComment, overrideVersionModifyer, recipientFilter, infoGluePrincipal, contentId, db, resultingEvents, null);
+		return changeState(oldContentVersionId, contentVO, stateId, versionComment, overrideVersionModifyer, recipientFilter, infoGluePrincipal, contentId, db, resultingEvents, null);
 	}
 	
-	public static ContentVersion changeState(Integer oldContentVersionId, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents, Integer excludedAssetId) throws SystemException, ConstraintException
+	public static MediumContentVersionImpl changeState(Integer oldContentVersionId, ContentVO contentVO, Integer stateId, String versionComment, boolean overrideVersionModifyer, String recipientFilter, InfoGluePrincipal infoGluePrincipal, Integer contentId, Database db, List resultingEvents, Integer excludedAssetId) throws SystemException, ConstraintException
 	{
-		ContentVersion newContentVersion = null;
+		Timer t = new Timer();
+		MediumContentVersionImpl newContentVersion = null;
 
 		try
 		{
-			ContentVersion oldContentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(oldContentVersionId, db);
+			MediumContentVersionImpl oldContentVersion = ContentVersionController.getContentVersionController().getReadOnlyMediumContentVersionWithId(oldContentVersionId, db);
 			logger.info("oldContentVersion:" + oldContentVersion.getId());
+			//t.printElapsedTime("oldContentVersion");
+			
+			if (contentId == null && contentVO != null)
+				contentId = contentVO.getContentId();
+			else if(contentId == null)
+				contentId = oldContentVersion.getValueObject().getContentId();
 				
-			if (contentId == null)
-				contentId = new Integer(oldContentVersion.getOwningContent().getContentId().intValue());
+			if(contentId != null && contentVO == null)
+		    	contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
 
 			boolean duplicateAssets = CmsPropertyHandler.getDuplicateAssetsBetweenVersions();
 			
 			//Here we create a new version if it was a state-change back to working, it's a copy of the publish-version
 			if (stateId.intValue() == ContentVersionVO.WORKING_STATE.intValue())
 			{
-				ContentVersion oldWorkingContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentId, oldContentVersion.getValueObject().getLanguageId(), db);
-				if(oldWorkingContentVersion.getId() > oldContentVersion.getId())
-				{
-					oldContentVersion = oldWorkingContentVersion;
-					logger.info("oldContentVersion set to latest working version - special fix for cases where user uploads asset in wysiwyg on published copy and then also saves text with new image:" + oldContentVersion.getId());
-				}
-				
 				logger.info("About to create a new working version");
 				ContentVersionVO newContentVersionVO = new ContentVersionVO();
 				newContentVersionVO.setStateId(stateId);
@@ -156,11 +202,13 @@ public class ContentStateController extends BaseController
 			        newContentVersionVO.setVersionModifier(oldContentVersion.getVersionModifier());
 
 				newContentVersionVO.setVersionValue(oldContentVersion.getVersionValue());
-				newContentVersion = ContentVersionController.getContentVersionController().create(contentId, oldContentVersion.getLanguage().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), true, duplicateAssets, excludedAssetId, db);
-				
+				newContentVersion = ContentVersionController.getContentVersionController().createMedium(oldContentVersion, contentId, oldContentVersion.getValueObject().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), (oldContentVersion.getDigitalAssets().size() > 0), true, duplicateAssets, excludedAssetId, db);
+				//newContentVersion = ContentVersionController.getContentVersionController().create(contentId, oldContentVersion.getLanguage().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), true, duplicateAssets, excludedAssetId, db);
+
 				//ContentVersionController.getContentVersionController().copyDigitalAssets(oldContentVersion, newContentVersion, db);
-				copyAccessRights(oldContentVersion, newContentVersion, db);
-				copyContentCategories(oldContentVersion, newContentVersion, db);
+				if(contentVO.getIsProtected().equals(ContentVO.YES))
+					copyAccessRights(oldContentVersion.getId(), newContentVersion.getId(), db);
+				copyContentCategories(oldContentVersion.getId(), newContentVersion.getId(), db);
 			}
 
 			//If the user changes the state to publish we create a copy and set that copy to publish.
@@ -170,7 +218,7 @@ public class ContentStateController extends BaseController
 
 				//First we update the old working-version so it gets a comment
 				logger.info("Setting comment " + versionComment + " on " + oldContentVersion.getId());
-				oldContentVersion.setVersionComment(versionComment);
+				//oldContentVersion.setVersionComment(versionComment);
 
 				//Now we create a new version which is basically just a copy of the working-version
 				ContentVersionVO newContentVersionVO = new ContentVersionVO();
@@ -182,35 +230,40 @@ public class ContentStateController extends BaseController
 			    else
 			        newContentVersionVO.setVersionModifier(oldContentVersion.getVersionModifier());
 				newContentVersionVO.setVersionValue(oldContentVersion.getVersionValue());
-				newContentVersion = ContentVersionController.getContentVersionController().create(contentId, oldContentVersion.getLanguage().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), false, duplicateAssets, db);
+				newContentVersion = ContentVersionController.getContentVersionController().createMedium(oldContentVersion, contentId, oldContentVersion.getValueObject().getLanguageId(), newContentVersionVO, oldContentVersion.getContentVersionId(), (oldContentVersion.getDigitalAssets().size() > 0), false, duplicateAssets, excludedAssetId, db);
 				logger.info("Creating " + newContentVersion.getId());
 				
 				//ContentVersionController.getContentVersionController().copyDigitalAssets(oldContentVersion, newContentVersion, db);
-				copyAccessRights(oldContentVersion, newContentVersion, db);
-				copyContentCategories(oldContentVersion, newContentVersion, db);
+				if(contentVO.getIsProtected().equals(ContentVO.YES))
+					copyAccessRights(oldContentVersion.getId(), newContentVersion.getId(), db);
+				copyContentCategories(oldContentVersion.getId(), newContentVersion.getId(), db);
 
 				//Creating the event that will notify the editor...
-				if(newContentVersion.getOwningContent().getContentTypeDefinition() != null && !newContentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("Meta info"))
+				
+				ContentTypeDefinitionVO metaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
+				if(contentVO.getContentTypeDefinitionId() != null && !contentVO.getContentTypeDefinitionId().equals(metaInfoCTDVO.getId()))
 				{
 					EventVO eventVO = new EventVO();
 					eventVO.setDescription(newContentVersion.getVersionComment());
 					eventVO.setEntityClass(ContentVersion.class.getName());
 					eventVO.setEntityId(new Integer(newContentVersion.getId().intValue()));
-					eventVO.setName(newContentVersion.getOwningContent().getName());
+					eventVO.setName(contentVO.getName());
 					eventVO.setTypeId(EventVO.PUBLISH);
-					eventVO = EventController.create(eventVO, newContentVersion.getOwningContent().getRepository().getId(), infoGluePrincipal, db);
+					eventVO = EventController.create(eventVO, contentVO.getRepositoryId(), infoGluePrincipal, db);
 
 					resultingEvents.add(eventVO);
 				}
 
 				if(recipientFilter != null && !recipientFilter.equals(""))
-					PublicationController.mailPublishNotification(resultingEvents, newContentVersion.getOwningContent().getRepository().getId(), infoGluePrincipal, recipientFilter, db);
+					PublicationController.mailPublishNotification(resultingEvents, contentVO.getRepositoryId(), infoGluePrincipal, recipientFilter, db);
 			}
 
 			//If the user in the publish-app publishes a publish-version we change state to published.
 			if (stateId.intValue() == ContentVersionVO.PUBLISHED_STATE.intValue())
 			{
-				logger.info("About to publish an existing version");
+				oldContentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(oldContentVersionId, db);
+
+				logger.info("About to publish an existing version:" + oldContentVersion.getId() + ":" + oldContentVersion.getStateId());
 				Integer oldContentVersionStateId = oldContentVersion.getStateId();
 				
 				oldContentVersion.setStateId(stateId);
@@ -225,15 +278,16 @@ public class ContentStateController extends BaseController
 				//Creating the event that will notify the editor...
 				if(oldContentVersionStateId.intValue() == ContentVersionVO.WORKING_STATE.intValue())
 				{
-					if(oldContentVersion.getOwningContent().getContentTypeDefinition() != null && !newContentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("Meta info"))
+					ContentTypeDefinitionVO metaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
+					if(contentVO.getContentTypeDefinitionId() != null && !contentVO.getContentTypeDefinitionId().equals(metaInfoCTDVO.getId()))
 					{
 						EventVO eventVO = new EventVO();
 						eventVO.setDescription(newContentVersion.getVersionComment());
 						eventVO.setEntityClass(ContentVersion.class.getName());
 						eventVO.setEntityId(new Integer(newContentVersion.getId().intValue()));
-						eventVO.setName(newContentVersion.getOwningContent().getName());
+						eventVO.setName(contentVO.getName());
 						eventVO.setTypeId(EventVO.PUBLISH);
-						eventVO = EventController.create(eventVO, newContentVersion.getOwningContent().getRepository().getId(), infoGluePrincipal, db);
+						eventVO = EventController.create(eventVO, contentVO.getRepositoryId(), infoGluePrincipal, db);
 	
 						resultingEvents.add(eventVO);
 					}
@@ -260,7 +314,7 @@ public class ContentStateController extends BaseController
 	 * This method assigns the same access rights as the old content-version has.
 	 */
 	
-	private static void copyAccessRights(ContentVersion originalContentVersion, ContentVersion newContentVersion, Database db) throws ConstraintException, SystemException, Exception
+	private static void copyAccessRights(Integer originalContentVersionId, Integer newContentVersionId, Database db) throws ConstraintException, SystemException, Exception
 	{
 		List interceptionPointList = InterceptionPointController.getController().getInterceptionPointList("ContentVersion", db);
 		logger.info("interceptionPointList:" + interceptionPointList.size());
@@ -268,7 +322,7 @@ public class ContentStateController extends BaseController
 		while(interceptionPointListIterator.hasNext())
 		{
 			InterceptionPoint interceptionPoint = (InterceptionPoint)interceptionPointListIterator.next();
-			List accessRightList = AccessRightController.getController().getAccessRightListForEntity(interceptionPoint.getId(), originalContentVersion.getId().toString(), db);
+			List accessRightList = AccessRightController.getController().getAccessRightListForEntity(interceptionPoint.getId(), originalContentVersionId.toString(), db);
 			logger.info("accessRightList:" + accessRightList.size());
 			Iterator accessRightListIterator = accessRightList.iterator();
 			while(accessRightListIterator.hasNext())
@@ -277,7 +331,7 @@ public class ContentStateController extends BaseController
 				logger.info("accessRight:" + accessRight.getId());
 				
 				AccessRightVO copiedAccessRight = accessRight.getValueObject().createCopy(); //.getValueObject();
-				copiedAccessRight.setParameters(newContentVersion.getId().toString());
+				copiedAccessRight.setParameters(newContentVersionId.toString());
 				AccessRightController.getController().create(copiedAccessRight, interceptionPoint, db);
 			}
 		}
@@ -292,19 +346,23 @@ public class ContentStateController extends BaseController
 	 * @param db The Database to use
 	 * @throws SystemException If an error happens
 	 */
-	private static void copyContentCategories(ContentVersion originalContentVersion, ContentVersion newContentVersion, Database db) throws SystemException, PersistenceException
+	private static void copyContentCategories(Integer originalContentVersion, Integer newContentVersionId, Database db) throws SystemException, PersistenceException
 	{
-		List orignals = contentCategoryController.findByContentVersion(originalContentVersion.getId(), db);
-		for (Iterator iter = orignals.iterator(); iter.hasNext();)
-		{
-			ContentCategory contentCategory = (ContentCategory)iter.next();
-			ContentCategoryVO vo = new ContentCategoryVO();
-			vo.setAttributeName(contentCategory.getAttributeName());
-			vo.setCategory(contentCategory.getCategory().getValueObject());
-			vo.setContentVersionId(newContentVersion.getId());
-			ContentCategory newContentCategory = contentCategoryController.createWithDatabase(vo, db);
-			//newContentCategory
-		}
+		//if(originalContentVersion.getContentCategories().size() > 0)
+		//{
+			List orignals = contentCategoryController.findByContentVersion(originalContentVersion, db);
+			logger.info("orignals:" + orignals.size() + " on " + originalContentVersion);
+			for (Iterator iter = orignals.iterator(); iter.hasNext();)
+			{
+				ContentCategory contentCategory = (ContentCategory)iter.next();
+				ContentCategoryVO vo = new ContentCategoryVO();
+				vo.setAttributeName(contentCategory.getAttributeName());
+				vo.setCategory(contentCategory.getCategory().getValueObject());
+				vo.setContentVersionId(newContentVersionId);
+				ContentCategory newContentCategory = contentCategoryController.createWithDatabase(vo, db);
+				//newContentCategory
+			}
+		//}
 	}
 
 	/**

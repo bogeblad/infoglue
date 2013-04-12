@@ -31,7 +31,8 @@ package org.infoglue.deliver.util;
 public class Blocker
 {
     private static boolean isBlocking = false;
-
+    private static long blockingStartTime = 0;
+    
     private Blocker(){}
    
     static boolean getIsBlocking()
@@ -42,5 +43,12 @@ public class Blocker
     synchronized static void setBlocking(boolean isBlocking)
     {
     	Blocker.isBlocking = isBlocking;
+    	Blocker.blockingStartTime = System.currentTimeMillis();
     }
+    
+    static long getBlockRequestTime()
+    {
+        return System.currentTimeMillis() - blockingStartTime;
+    }
+    
 }

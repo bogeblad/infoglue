@@ -23,6 +23,8 @@
 package org.infoglue.deliver.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +38,6 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
@@ -46,7 +47,7 @@ import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
-import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
@@ -71,7 +72,12 @@ import org.infoglue.cms.entities.management.impl.simple.GroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RoleImpl;
 import org.infoglue.cms.entities.management.impl.simple.SmallAvailableServiceBindingImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallGroupImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallRoleImpl;
+import org.infoglue.cms.entities.management.impl.simple.SmallSystemUserImpl;
+import org.infoglue.cms.entities.management.impl.simple.SystemUserGroupImpl;
 import org.infoglue.cms.entities.management.impl.simple.SystemUserImpl;
+import org.infoglue.cms.entities.management.impl.simple.SystemUserRoleImpl;
 import org.infoglue.cms.entities.publishing.PublicationDetailVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.publishing.impl.simple.PublicationDetailImpl;
@@ -91,7 +97,12 @@ import org.infoglue.cms.services.CacheEvictionBeanListenerService;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.NotificationMessage;
 import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
+import org.infoglue.deliver.applications.filters.URIMapperCache;
+import org.infoglue.deliver.cache.PageCacheHelper;
+import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 
 /**
  * @author mattias
@@ -115,7 +126,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 
 	public synchronized void run()
 	{
-		logger.info("Run in SelectiveLivePublicationThread....");
+		logger.warn("Run in SelectiveLivePublicationThread....");
 		
 		int publicationDelay = 5000;
 	    String publicationThreadDelay = CmsPropertyHandler.getPublicationThreadDelay();
@@ -136,7 +147,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 			e1.printStackTrace();
 		}
 
-    	logger.info("before cacheEvictionBeans:" + cacheEvictionBeans.size());
+    	logger.warn("before cacheEvictionBeans:" + cacheEvictionBeans.size());
 	    synchronized(notifications)
         {
 	    	cacheEvictionBeans.addAll(notifications);
@@ -144,31 +155,45 @@ public class SelectiveLivePublicationThread extends PublicationThread
 	    	this.notifications = null;
         }
 	    
-	    Iterator cacheEvictionBeansIterator = cacheEvictionBeans.iterator();
 	    boolean processedServerNodeProperties = false;
-	    while(cacheEvictionBeansIterator.hasNext())
+	    try
 	    {
-	    	CacheEvictionBean cacheEvictionBean = (CacheEvictionBean)cacheEvictionBeansIterator.next();
-		    String className = cacheEvictionBean.getClassName();
-		    if(className.equalsIgnoreCase("ServerNodeProperties"))
+		    Iterator cacheEvictionBeansIterator = cacheEvictionBeans.iterator();
+		    while(cacheEvictionBeansIterator.hasNext())
 		    {
-		    	if(processedServerNodeProperties || cacheEvictionBean.getObjectName().equals("MySettings"))
-		    	{
-		    		cacheEvictionBeansIterator.remove();
-		    		//logger.info("Removed one ServerNodeProperties update as it will be processed anyway in this eviction cycle");
-		    	}
-		    	else
-		    	{
-		    		processedServerNodeProperties = true;
-		    	}
+		    	CacheEvictionBean cacheEvictionBean = (CacheEvictionBean)cacheEvictionBeansIterator.next();
+			    String className = cacheEvictionBean.getClassName();
+			    if(className == null)
+			    	logger.error("No className in CacheEvictionBean");
+			    if(cacheEvictionBean.getObjectName() == null)
+			    	logger.error("No objectName in CacheEvictionBean");
+			    	
+			    if(className.equalsIgnoreCase("ServerNodeProperties"))
+			    {
+			    	if(processedServerNodeProperties || cacheEvictionBean.getObjectName().equals("MySettings"))
+			    	{
+			    		cacheEvictionBeansIterator.remove();
+			    		//logger.info("Removed one ServerNodeProperties update as it will be processed anyway in this eviction cycle");
+			    	}
+			    	else
+			    	{
+			    		processedServerNodeProperties = true;
+			    	}
+			    }
 		    }
 	    }
-
+	    catch (Exception e) 
+	    {
+	    	logger.error("Error in selective live publication thread. Could not process eviction beans part 1: " + e.getMessage(), e);
+		}
+		    
 		logger.info("cacheEvictionBeans.size:" + cacheEvictionBeans.size() + ":" + RequestAnalyser.getRequestAnalyser().getBlockRequests());
 		if(cacheEvictionBeans.size() > 0)
 		{
 			try
 			{		
+				Timer t = new Timer();
+
 				logger.info("setting block");
 		        RequestAnalyser.getRequestAnalyser().setBlockRequests(true);
 		        
@@ -178,7 +203,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 				Iterator i = cacheEvictionBeans.iterator();
 				while(i.hasNext())
 				{
-					CacheEvictionBean cacheEvictionBean = (CacheEvictionBean)i.next();
+				    CacheEvictionBean cacheEvictionBean = (CacheEvictionBean)i.next();
 				    
 				    boolean processedInterupted = false;
 				    boolean skipOriginalEntity = false;
@@ -193,7 +218,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						
 					    List<Map<String,String>> allIGCacheCalls = new ArrayList<Map<String,String>>();
 
-					    logger.info("className:" + className + " objectId:" + objectId + " objectName: " + objectName + " typeId: " + typeId);
+						logger.info("className:" + className + " objectId:" + objectId + " objectName: " + objectName + " typeId: " + typeId);
 					    if(className.indexOf("AccessRight") > -1)
 					    {
 					    	logger.info("Special handling of access rights..");
@@ -259,21 +284,10 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						    }
 					    	catch(Exception e2)
 					    	{
-					    		logger.error("Error handling access right update: " + e2.getMessage());
+					    		logger.warn("Error handling access right update: " + e2.getMessage());
 					    	}
-
-					    	//continue;
 					    }
 					    
-					    if(className != null && !className.equals(PublicationImpl.class.getName()) && className.indexOf("AccessRight") == -1)
-						{
-							//Fixa sŒ detta funkar och att delete av version ocksŒ slŒr
-					    	logger.info("Going to index:" + className + ":" + objectId + ":" + typeId);
-					    	NotificationMessage notificationMessage = new NotificationMessage("LuceneController", className, "SYSTEM", Integer.parseInt(typeId), Integer.parseInt(objectId), "" + objectName);
-							new Thread(new SearchIndexHelper(notificationMessage)).start();
-							logger.info("------------------------------------------->Done indexing in live thread");
-						}
-	
 				        boolean isDependsClass = false;
 					    if(className != null && className.equalsIgnoreCase(PublicationDetailImpl.class.getName()))
 					        isDependsClass = true;
@@ -283,7 +297,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 					    	//CacheController.clearCaches(className, objectId, null);
 							CacheController.setForcedCacheEvictionMode(true);
 					    }
-			
+								    
 					    if(!skipOriginalEntity)
 					    	addCacheUpdateDirective(className, objectId, allIGCacheCalls);
 
@@ -295,7 +309,12 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						    if(!isDependsClass && 
 						    		className.equalsIgnoreCase(SystemUserImpl.class.getName()) || 
 						    		className.equalsIgnoreCase(RoleImpl.class.getName()) || 
-						    		className.equalsIgnoreCase(GroupImpl.class.getName()))
+						    		className.equalsIgnoreCase(GroupImpl.class.getName()) ||
+						    		className.equalsIgnoreCase(SmallSystemUserImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SmallRoleImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SmallGroupImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SystemUserRoleImpl.class.getName()) || 
+						    		className.equalsIgnoreCase(SystemUserGroupImpl.class.getName()))
 						    {
 						        Object[] ids = {objectId};
 						        CacheController.clearCache(type, ids);
@@ -372,6 +391,42 @@ public class SelectiveLivePublicationThread extends PublicationThread
 									DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
 								}
 							}
+							else if(Class.forName(className).getName().equals(MediumDigitalAssetImpl.class.getName()))
+							{
+								CacheController.clearCache("digitalAssetCache");
+								Class typesExtra = SmallDigitalAssetImpl.class;
+								Object[] idsExtra = {new Integer(objectId)};
+								CacheController.clearCache(typesExtra, idsExtra);
+								
+								Class typesExtraMedium = DigitalAssetImpl.class;
+								Object[] idsExtraMedium = {new Integer(objectId)};
+								CacheController.clearCache(typesExtraMedium, idsExtraMedium);
+	
+								String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
+								if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
+								{
+									logger.info("We should delete all images with digitalAssetId " + objectId);
+									DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(new Integer(objectId));
+								}
+							}
+							else if(Class.forName(className).getName().equals(SystemUserImpl.class.getName()))
+							{
+							    Class typesExtra = SmallSystemUserImpl.class;
+								Object[] idsExtra = {objectId};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
+							else if(Class.forName(className).getName().equals(RoleImpl.class.getName()))
+							{
+							    Class typesExtra = SmallRoleImpl.class;
+								Object[] idsExtra = {objectId};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
+							else if(Class.forName(className).getName().equals(GroupImpl.class.getName()))
+							{
+							    Class typesExtra = SmallGroupImpl.class;
+								Object[] idsExtra = {objectId};
+								CacheController.clearCache(typesExtra, idsExtra);
+							}
 							else if(Class.forName(className).getName().equals(PublicationImpl.class.getName()))
 							{
 								logger.info("**************************************");
@@ -388,14 +443,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 										PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
 										logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
 										logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
-										
-										logger.info("Going to index:" + publicationDetailVO.getClass() + ":" + publicationDetailVO.getEntityId() + ":" + publicationDetailVO.getTypeId());
-										//Fixa sŒ detta funkar och att delete av version ocksŒ slŒr
-										NotificationMessage notificationMessage2 = new NotificationMessage("LuceneController", publicationDetailVO.getEntityClass(), "SYSTEM", publicationDetailVO.getTypeId(), publicationDetailVO.getEntityId(), "" + publicationDetailVO.getName());
-										new Thread(new SearchIndexHelper(notificationMessage2)).start();
-										logger.info("------------------------------------------->Done indexing in live thread");
-										
-										logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
+									
 										if(publicationDetailVO.getEntityClass().indexOf("pageCache") > -1)
 										{
 											logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
@@ -417,222 +465,232 @@ public class SelectiveLivePublicationThread extends PublicationThread
 										else if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(ContentVersion.class.getName()))
 										{
 											logger.info("We clear all caches having references to contentVersion: " + publicationDetailVO.getEntityId());
-											Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
-										    
-										    ContentVO previousContentVO = ContentController.getContentController().getContentVOWithId(contentId);
-										    Integer previousParentContentId = previousContentVO.getParentContentId();
-										    logger.info("previousParentContentId:" + previousParentContentId);
-
-										    addCacheUpdateDirective(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), allIGCacheCalls);
-										    //CacheController.clearCaches(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), null);
-										    
-											CacheController.clearCache(SmallContentVersionImpl.class, new Integer[]{new Integer(publicationDetailVO.getEntityId())});
-											CacheController.clearCache(SmallestContentVersionImpl.class, new Integer[]{new Integer(publicationDetailVO.getEntityId())});
-
-											logger.info("We clear all small contents as well " + contentId);
-											CacheController.clearCache(ContentImpl.class, new Integer[]{contentId});
-											CacheController.clearCache(SmallContentImpl.class, new Integer[]{contentId});
-											CacheController.clearCache(SmallishContentImpl.class, new Integer[]{contentId});
-											CacheController.clearCache(MediumContentImpl.class, new Integer[]{contentId});
-											CacheController.clearCache(SmallSiteNodeVersionImpl.class, new Integer[]{new Integer(objectId)});		
+											try
+											{
+												Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
+											    
+											    ContentVO previousContentVO = ContentController.getContentController().getContentVOWithId(contentId);
+											    Integer previousParentContentId = previousContentVO.getParentContentId();
+											    logger.info("previousParentContentId:" + previousParentContentId);
+	
+											    addCacheUpdateDirective(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), allIGCacheCalls);
+											    //CacheController.clearCaches(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), null);
+											    
+												CacheController.clearCache(SmallContentVersionImpl.class, new Integer[]{new Integer(publicationDetailVO.getEntityId())});
+												CacheController.clearCache(SmallestContentVersionImpl.class, new Integer[]{new Integer(publicationDetailVO.getEntityId())});
+	
+												logger.info("We clear all small contents as well " + contentId);
+												CacheController.clearCache(ContentImpl.class, new Integer[]{contentId});
+												CacheController.clearCache(SmallContentImpl.class, new Integer[]{contentId});
+												CacheController.clearCache(SmallishContentImpl.class, new Integer[]{contentId});
+												CacheController.clearCache(MediumContentImpl.class, new Integer[]{contentId});
+												CacheController.clearCache(SmallSiteNodeVersionImpl.class, new Integer[]{new Integer(objectId)});		
 												
-											logger.info("Handling parents....");
-											
-											ContentVO contentVOAfter = ContentController.getContentController().getContentVOWithId(contentId);
-										    Integer currentParentContentId = contentVOAfter.getParentContentId();
-										    logger.info("previousParentContentId:" + previousParentContentId);
-										    logger.info("currentParentContentId:" + currentParentContentId);
-
-										    logger.info("We should also clear the parents...");
-											if(currentParentContentId != null)
-											{
-												logger.info("contentVOAfter - clear the new:" + contentVOAfter.getName() + " / " + currentParentContentId);
-												//CacheController.clearCaches(Content.class.getName(), currentParentContentId.toString(), null);
-												addCacheUpdateDirective(Content.class.getName(), currentParentContentId.toString(), allIGCacheCalls);
-
-											    logger.info("We clear all small siteNodes as well " + currentParentContentId);
-												CacheController.clearCache(ContentImpl.class, new Integer[]{currentParentContentId});
-												CacheController.clearCache(SmallContentImpl.class, new Integer[]{currentParentContentId});
-												CacheController.clearCache(SmallishContentImpl.class, new Integer[]{currentParentContentId});
-												CacheController.clearCache(MediumContentImpl.class, new Integer[]{currentParentContentId});
+												logger.info("Handling parents....");
+												
+												ContentVO contentVOAfter = ContentController.getContentController().getContentVOWithId(contentId);
+											    Integer currentParentContentId = contentVOAfter.getParentContentId();
+											    logger.info("previousParentContentId:" + previousParentContentId);
+											    logger.info("currentParentContentId:" + currentParentContentId);
+	
+											    logger.info("We should also clear the parents...");
+												if(currentParentContentId != null)
+												{
+													logger.info("contentVOAfter - clear the new:" + contentVOAfter.getName() + " / " + currentParentContentId);
+													//CacheController.clearCaches(Content.class.getName(), currentParentContentId.toString(), null);
+													addCacheUpdateDirective(Content.class.getName(), currentParentContentId.toString(), allIGCacheCalls);
+													
+												    logger.info("We clear all small siteNodes as well " + currentParentContentId);
+													CacheController.clearCache(ContentImpl.class, new Integer[]{currentParentContentId});
+													CacheController.clearCache(SmallContentImpl.class, new Integer[]{currentParentContentId});
+													CacheController.clearCache(SmallishContentImpl.class, new Integer[]{currentParentContentId});
+													CacheController.clearCache(MediumContentImpl.class, new Integer[]{currentParentContentId});
+												}
+	
+												if(currentParentContentId != null && previousParentContentId != null && !previousParentContentId.equals(previousParentContentId))
+												{
+													logger.info("contentVOAfter - clear the new:" + contentVOAfter.getName() + " / " + currentParentContentId);
+													//CacheController.clearCaches(Content.class.getName(), previousParentContentId.toString(), null);
+													addCacheUpdateDirective(Content.class.getName(), previousParentContentId.toString(), allIGCacheCalls);
+													
+												    logger.info("We clear all small siteNodes as well " + previousParentContentId);
+													CacheController.clearCache(ContentImpl.class, new Integer[]{previousParentContentId});
+													CacheController.clearCache(SmallContentImpl.class, new Integer[]{previousParentContentId});
+													CacheController.clearCache(SmallishContentImpl.class, new Integer[]{previousParentContentId});
+													CacheController.clearCache(MediumContentImpl.class, new Integer[]{previousParentContentId});
+												}
 											}
-
-											if(currentParentContentId != null && previousParentContentId != null && !previousParentContentId.equals(previousParentContentId))
+											catch(Exception e)
 											{
-												logger.info("contentVOAfter - clear the new:" + contentVOAfter.getName() + " / " + currentParentContentId);
-												//CacheController.clearCaches(Content.class.getName(), previousParentContentId.toString(), null);
-												addCacheUpdateDirective(Content.class.getName(), previousParentContentId.toString(), allIGCacheCalls);
-
-											    logger.info("We clear all small siteNodes as well " + previousParentContentId);
-												CacheController.clearCache(ContentImpl.class, new Integer[]{previousParentContentId});
-												CacheController.clearCache(SmallContentImpl.class, new Integer[]{previousParentContentId});
-												CacheController.clearCache(SmallishContentImpl.class, new Integer[]{previousParentContentId});
-												CacheController.clearCache(MediumContentImpl.class, new Integer[]{previousParentContentId});
-											}
-
-											String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
-											logger.info("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
-											if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
-											{
-												List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(publicationDetailVO.getEntityId());
-												Iterator<DigitalAssetVO> digitalAssetVOListIterator = digitalAssetVOList.iterator();
-									    		while(digitalAssetVOListIterator.hasNext())
-									    		{
-									    			DigitalAssetVO digitalAssetVO = digitalAssetVOListIterator.next();
-													logger.info("We should delete all images with digitalAssetId " + objectId);
-													DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(digitalAssetVO.getId());
-									    		}
+												logger.warn("An error occurred handling content version from publication " + publicationVO.getId() + ":" + e.getMessage());
 											}
 										}
 										else if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(SiteNodeVersion.class.getName()))
 										{
-											SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(publicationDetailVO.getEntityId());
-											//logger.info("siteNodeVersionVO:" + siteNodeVersionVO.getId());
-											Integer siteNodeId = siteNodeVersionVO.getSiteNodeId();
-											
-											CacheController.clearCache("pageCacheLatestSiteNodeVersions", "" + siteNodeId);
-											String versionKey = "" + siteNodeId + "_" + CmsPropertyHandler.getOperatingMode() + "_siteNodeVersionVO";		
-										    CacheController.clearCache("latestSiteNodeVersionCache", versionKey);
-											
-										    logger.info("We also clear the meta info content..");
-
-										    SiteNodeVO previousSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
-
-										    Integer previousParentSiteNodeId = previousSiteNodeVO.getParentSiteNodeId();
-										    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
-										    Object previousParentSiteNodeIdCandidate = CacheController.getCachedObject("parentSiteNodeCache", "" + siteNodeId);
-										    logger.info("previousParentSiteNodeIdCandidate:" + previousParentSiteNodeIdCandidate);
-										    if(previousParentSiteNodeIdCandidate != null && !(previousParentSiteNodeIdCandidate instanceof NullObject))
-										    	previousParentSiteNodeId = ((SiteNodeVO)previousParentSiteNodeIdCandidate).getId();
-										    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
-										    
-										    //CacheController.clearCaches(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), null);
-											//if(siteNodeId != null)
-											//	CacheController.clearCaches(SiteNode.class.getName(), siteNodeId.toString(), null);
+											try
+											{
+												SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(publicationDetailVO.getEntityId());
+												//logger.info("siteNodeVersionVO:" + siteNodeVersionVO.getId());
+												Integer siteNodeId = siteNodeVersionVO.getSiteNodeId();
+												
+												CacheController.clearCache("pageCacheLatestSiteNodeVersions", "" + siteNodeId);
+												String versionKey = "" + siteNodeId + "_" + CmsPropertyHandler.getOperatingMode() + "_siteNodeVersionVO";		
+											    CacheController.clearCache("latestSiteNodeVersionCache", versionKey);
+												
+											    logger.info("We also clear the meta info content..");
+	
+											    SiteNodeVO previousSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+											    Integer previousParentSiteNodeId = previousSiteNodeVO.getParentSiteNodeId();
+											    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    Object previousParentSiteNodeIdCandidate = CacheController.getCachedObject("parentSiteNodeCache", "" + siteNodeId);
+											    logger.info("previousParentSiteNodeIdCandidate:" + previousParentSiteNodeIdCandidate);
+											    if(previousParentSiteNodeIdCandidate != null && !(previousParentSiteNodeIdCandidate instanceof NullObject))
+											    	previousParentSiteNodeId = ((SiteNodeVO)previousParentSiteNodeIdCandidate).getId();
+											    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    	
+											    //CacheController.clearCaches(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), null);
+												//if(siteNodeId != null)
+												//	CacheController.clearCaches(SiteNode.class.getName(), siteNodeId.toString(), null);
+											    
+											    logger.info("We clear all small siteNodes as well " + siteNodeId);
+												CacheController.clearCache(SiteNodeImpl.class, new Integer[]{siteNodeId});
+												CacheController.clearCache(SmallSiteNodeImpl.class, new Integer[]{siteNodeId});
+												CacheController.clearCache(SmallSiteNodeVersionImpl.class, new Integer[]{new Integer(publicationDetailVO.getEntityId())});		
+	
+												logger.info("We clear all contents as well " + previousSiteNodeVO.getMetaInfoContentId());
+												Class metaInfoContentExtra = ContentImpl.class;
+												Object[] idsMetaInfoContentExtra = {previousSiteNodeVO.getMetaInfoContentId()};
+												CacheController.clearCache(metaInfoContentExtra, idsMetaInfoContentExtra);
+												
+												logger.info("We clear all small contents as well " + previousSiteNodeVO.getMetaInfoContentId());
+												Class metaInfoContentExtraSmall = SmallContentImpl.class;
+												CacheController.clearCache(metaInfoContentExtraSmall, idsMetaInfoContentExtra);
+												
+												logger.info("We clear all smallish contents as well " + previousSiteNodeVO.getMetaInfoContentId());
+												Class metaInfoContentExtraSmallish = SmallishContentImpl.class;
+												CacheController.clearCache(metaInfoContentExtraSmallish, idsMetaInfoContentExtra);
+			
+												logger.info("We clear all medium contents as well " + previousSiteNodeVO.getMetaInfoContentId());
+												Class metaInfoContentExtraMedium = MediumContentImpl.class;
+												CacheController.clearCache(metaInfoContentExtraMedium, idsMetaInfoContentExtra);
+												
+												//CacheController.clearCaches(ContentImpl.class.getName(), previousSiteNodeVO.getMetaInfoContentId().toString(), null);
+												addCacheUpdateDirective(ContentImpl.class.getName(), previousSiteNodeVO.getMetaInfoContentId().toString(), allIGCacheCalls);
+			
+												Database db = CastorDatabaseService.getDatabase();
+												db.begin();
+												
+												LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(previousSiteNodeVO.getRepositoryId(), db);
+												ContentVersionVO metaInfoContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(previousSiteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+												addCacheUpdateDirective(ContentVersionImpl.class.getName(), metaInfoContentVersionVO.getId().toString(), allIGCacheCalls);
+												
+												List contentVersionIds = new ArrayList();
+												if(previousSiteNodeVO.getMetaInfoContentId() != null)
+												{
+													List<SmallestContentVersionVO> contentVersionVOList = ContentVersionController.getContentVersionController().getSmallestContentVersionVOList(previousSiteNodeVO.getMetaInfoContentId(), db);
+													for(SmallestContentVersionVO cvVO : contentVersionVOList)
+													{
+														contentVersionIds.add(cvVO.getId());
+														logger.info("We clear the meta info contentVersion " + cvVO.getId());
+													}
+												}
+												/*
+												Content content = ContentController.getContentController().getReadOnlyContentWithId(previousSiteNodeVO.getMetaInfoContentId(), db);
+												List contentVersionIds = new ArrayList();
+												Iterator contentVersionIterator = content.getContentVersions().iterator();
+												logger.info("Versions:" + content.getContentVersions().size());
+												while(contentVersionIterator.hasNext())
+												{
+													ContentVersion contentVersion = (ContentVersion)contentVersionIterator.next();
+													contentVersionIds.add(contentVersion.getId());
+													logger.info("We clear the meta info contentVersion " + contentVersion.getId());
+												}
+												*/
+			
+												db.rollback();
+			
+												db.close();
+												
+												Iterator contentVersionIdsIterator = contentVersionIds.iterator();
+												logger.info("Versions:" + contentVersionIds.size());
+												while(contentVersionIdsIterator.hasNext())
+												{
+													Integer contentVersionId = (Integer)contentVersionIdsIterator.next();
+													logger.info("We clear the meta info contentVersion " + contentVersionId);
+													Class metaInfoContentVersionExtra = ContentVersionImpl.class;
+													Object[] idsMetaInfoContentVersionExtra = {contentVersionId};
+													CacheController.clearCache(metaInfoContentVersionExtra, idsMetaInfoContentVersionExtra);
+													//CacheController.clearCaches(ContentVersionImpl.class.getName(), contentVersionId.toString(), null);
+													//addCacheUpdateDirective(ContentVersionImpl.class.getName(), contentVersionId.toString(), allIGCacheCalls);
+												}
+												
+												logger.info("After:" + contentVersionIds.size());
+			
+												SiteNodeVersionVO previousSiteNodeVersionVO = SiteNodeVersionController.getController().getPreviousActiveSiteNodeVersionVO(siteNodeVersionVO.getSiteNodeId(), siteNodeVersionVO.getId(), new Integer(CmsPropertyHandler.getOperatingMode()));
+												//logger.info("previousSiteNodeVersionVO:" + previousSiteNodeVersionVO.getId());
+	
+												addCacheUpdateDirective(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), allIGCacheCalls);
+												if(siteNodeId != null)
+												{
+													//logger.info("What really happened.... let's find out");
+													boolean anyRealDifferences = isThereAnyRealDifferencesBetweenSiteNodeVersions(siteNodeVersionVO, previousSiteNodeVersionVO);
+													//logger.info("anyRealDifferences:" + anyRealDifferences);
+													if(anyRealDifferences)
+														addCacheUpdateDirective(SiteNode.class.getName(), siteNodeId.toString(), allIGCacheCalls);
+													else
+													{
+														//logger.info("We'll skip it and assume that this was just a meta info update...");
+													}
+												}
+	
+												//Handling access rights...
+												if(siteNodeVersionVO.getIsProtected().intValue() != SiteNodeVersionVO.INHERITED || (previousSiteNodeVersionVO != null && previousSiteNodeVersionVO.getIsProtected().intValue() != SiteNodeVersionVO.INHERITED))
+												{
+											        CacheController.clearCache(AccessRightImpl.class);
+											        CacheController.clearCache(AccessRightRoleImpl.class);
+											        CacheController.clearCache(AccessRightGroupImpl.class);
+											        CacheController.clearCache(AccessRightUserImpl.class);
+	
+										    		CacheController.clearCache("personalAuthorizationCache");
+												}
+												
+												logger.info("Handling parents....");
+												
+												SiteNodeVO siteNodeVOAfter = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+											    Integer currentParentSiteNodeId = siteNodeVOAfter.getParentSiteNodeId();
+											    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    logger.info("currentParentSiteNodeId:" + currentParentSiteNodeId);
+	
+											    logger.info("We should also clear the parents...");
+												if(currentParentSiteNodeId != null)
+												{
+													if(previousSiteNodeVersionVO == null)
+													{
+														//logger.info("Looks to be first version - let's update parent as well");
+														logger.info("siteNodeVOAfter - clear the new:" + siteNodeVOAfter.getName() + " / " + currentParentSiteNodeId);
+														addCacheUpdateDirective(SiteNode.class.getName(), currentParentSiteNodeId.toString(), allIGCacheCalls);
+													}
 													
-										    logger.info("We clear all small siteNodes as well " + siteNodeId);
-											CacheController.clearCache(SiteNodeImpl.class, new Integer[]{siteNodeId});
-											CacheController.clearCache(SmallSiteNodeImpl.class, new Integer[]{siteNodeId});
-											CacheController.clearCache(SmallSiteNodeVersionImpl.class, new Integer[]{new Integer(publicationDetailVO.getEntityId())});		
-											
-											logger.info("We clear all contents as well " + previousSiteNodeVO.getMetaInfoContentId());
-											Class metaInfoContentExtra = ContentImpl.class;
-											Object[] idsMetaInfoContentExtra = {previousSiteNodeVO.getMetaInfoContentId()};
-											CacheController.clearCache(metaInfoContentExtra, idsMetaInfoContentExtra);
-											
-											logger.info("We clear all small contents as well " + previousSiteNodeVO.getMetaInfoContentId());
-											Class metaInfoContentExtraSmall = SmallContentImpl.class;
-											CacheController.clearCache(metaInfoContentExtraSmall, idsMetaInfoContentExtra);
-											
-											logger.info("We clear all smallish contents as well " + previousSiteNodeVO.getMetaInfoContentId());
-											Class metaInfoContentExtraSmallish = SmallishContentImpl.class;
-											CacheController.clearCache(metaInfoContentExtraSmallish, idsMetaInfoContentExtra);
-		
-											logger.info("We clear all medium contents as well " + previousSiteNodeVO.getMetaInfoContentId());
-											Class metaInfoContentExtraMedium = MediumContentImpl.class;
-											CacheController.clearCache(metaInfoContentExtraMedium, idsMetaInfoContentExtra);
-											
-											//CacheController.clearCaches(ContentImpl.class.getName(), previousSiteNodeVO.getMetaInfoContentId().toString(), null);
-											addCacheUpdateDirective(ContentImpl.class.getName(), previousSiteNodeVO.getMetaInfoContentId().toString(), allIGCacheCalls);
-
-											Database db = CastorDatabaseService.getDatabase();
-											db.begin();
-											
-											LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(previousSiteNodeVO.getRepositoryId(), db);
-											ContentVersionVO metaInfoContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(previousSiteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
-											addCacheUpdateDirective(ContentVersionImpl.class.getName(), metaInfoContentVersionVO.getId().toString(), allIGCacheCalls);
-											
-											Content content = ContentController.getContentController().getReadOnlyContentWithId(previousSiteNodeVO.getMetaInfoContentId(), db);
-											List contentVersionIds = new ArrayList();
-											Iterator contentVersionIterator = content.getContentVersions().iterator();
-											logger.info("Versions:" + content.getContentVersions().size());
-											while(contentVersionIterator.hasNext())
-											{
-												ContentVersion contentVersion = (ContentVersion)contentVersionIterator.next();
-												contentVersionIds.add(contentVersion.getId());
-												logger.info("We clear the meta info contentVersion " + contentVersion.getId());
-											}
-		
-											db.rollback();
-		
-											db.close();
-											
-											Iterator contentVersionIdsIterator = contentVersionIds.iterator();
-											logger.info("Versions:" + contentVersionIds.size());
-											while(contentVersionIdsIterator.hasNext())
-											{
-												Integer contentVersionId = (Integer)contentVersionIdsIterator.next();
-												logger.info("We clear the meta info contentVersion " + contentVersionId);
-												Class metaInfoContentVersionExtra = ContentVersionImpl.class;
-												Object[] idsMetaInfoContentVersionExtra = {contentVersionId};
-												CacheController.clearCache(metaInfoContentVersionExtra, idsMetaInfoContentVersionExtra);
-												//CacheController.clearCaches(ContentVersionImpl.class.getName(), contentVersionId.toString(), null);
-												//addCacheUpdateDirective(ContentVersionImpl.class.getName(), contentVersionId.toString(), allIGCacheCalls);
-											}
-											
-											logger.info("After:" + content.getContentVersions().size());
-		
-											SiteNodeVersionVO previousSiteNodeVersionVO = SiteNodeVersionController.getController().getPreviousActiveSiteNodeVersionVO(siteNodeVersionVO.getSiteNodeId(), siteNodeVersionVO.getId(), new Integer(CmsPropertyHandler.getOperatingMode()));
-											//logger.info("previousSiteNodeVersionVO:" + previousSiteNodeVersionVO.getId());
-
-											addCacheUpdateDirective(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), allIGCacheCalls);
-											if(siteNodeId != null)
-											{
-												//logger.info("What really happened.... let's find out");
-												boolean anyRealDifferences = isThereAnyRealDifferencesBetweenSiteNodeVersions(siteNodeVersionVO, previousSiteNodeVersionVO);
-												//logger.info("anyRealDifferences:" + anyRealDifferences);
-												if(anyRealDifferences)
-													addCacheUpdateDirective(SiteNode.class.getName(), siteNodeId.toString(), allIGCacheCalls);
-												else
-												{
-													//logger.info("We'll skip it and assume that this was just a meta info update...");
+												    logger.info("We clear all small siteNodes as well " + currentParentSiteNodeId);
+													CacheController.clearCache(SiteNodeImpl.class, new Integer[]{currentParentSiteNodeId});
+													CacheController.clearCache(SmallSiteNodeImpl.class, new Integer[]{currentParentSiteNodeId});
 												}
-											}
-											
-											//Handling access rights...
-											if(siteNodeVersionVO.getIsProtected().intValue() != SiteNodeVersionVO.INHERITED || (previousSiteNodeVersionVO != null && previousSiteNodeVersionVO.getIsProtected().intValue() != SiteNodeVersionVO.INHERITED))
-											{
-										        CacheController.clearCache(AccessRightImpl.class);
-										        CacheController.clearCache(AccessRightRoleImpl.class);
-										        CacheController.clearCache(AccessRightGroupImpl.class);
-										        CacheController.clearCache(AccessRightUserImpl.class);
-
-									    		CacheController.clearCache("personalAuthorizationCache");
-											}
-
-
-											logger.info("Handling parents....");
-											
-											SiteNodeVO siteNodeVOAfter = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
-										    Integer currentParentSiteNodeId = siteNodeVOAfter.getParentSiteNodeId();
-										    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
-										    logger.info("currentParentSiteNodeId:" + currentParentSiteNodeId);
-
-										    logger.info("We should also clear the parents...");
-											if(currentParentSiteNodeId != null)
-											{
-												if(previousSiteNodeVersionVO == null)
+	
+												if(currentParentSiteNodeId != null && previousParentSiteNodeId != null && !previousParentSiteNodeId.equals(currentParentSiteNodeId))
 												{
-													//logger.info("Looks to be first version - let's update parent as well");
-													logger.info("siteNodeVOAfter - clear the new:" + siteNodeVOAfter.getName() + " / " + currentParentSiteNodeId);
+													logger.info("siteNodeVOAfter was not the same - lets clear the old:" + siteNodeVOAfter.getName() + " / " + currentParentSiteNodeId);
+													//CacheController.clearCaches(SiteNode.class.getName(), previousParentSiteNodeId.toString(), null);
 													addCacheUpdateDirective(SiteNode.class.getName(), currentParentSiteNodeId.toString(), allIGCacheCalls);
+													addCacheUpdateDirective(SiteNode.class.getName(), previousParentSiteNodeId.toString(), allIGCacheCalls);
+													
+												    logger.info("We clear all small siteNodes as well " + previousParentSiteNodeId);
+													CacheController.clearCache(SiteNodeImpl.class, new Integer[]{previousParentSiteNodeId});
+													CacheController.clearCache(SmallSiteNodeImpl.class, new Integer[]{previousParentSiteNodeId});
 												}
-												
-											    logger.info("We clear all small siteNodes as well " + currentParentSiteNodeId);
-												CacheController.clearCache(SiteNodeImpl.class, new Integer[]{currentParentSiteNodeId});
-												CacheController.clearCache(SmallSiteNodeImpl.class, new Integer[]{currentParentSiteNodeId});
 											}
-
-											if(currentParentSiteNodeId != null && previousParentSiteNodeId != null && !previousParentSiteNodeId.equals(currentParentSiteNodeId))
+											catch (Exception e) 
 											{
-												logger.info("siteNodeVOAfter was not the same - lets clear the old:" + siteNodeVOAfter.getName() + " / " + currentParentSiteNodeId);
-												//CacheController.clearCaches(SiteNode.class.getName(), previousParentSiteNodeId.toString(), null);
-												addCacheUpdateDirective(SiteNode.class.getName(), currentParentSiteNodeId.toString(), allIGCacheCalls);
-												addCacheUpdateDirective(SiteNode.class.getName(), previousParentSiteNodeId.toString(), allIGCacheCalls);
-												
-											    logger.info("We clear all small siteNodes as well " + previousParentSiteNodeId);
-												CacheController.clearCache(SiteNodeImpl.class, new Integer[]{previousParentSiteNodeId});
-												CacheController.clearCache(SmallSiteNodeImpl.class, new Integer[]{previousParentSiteNodeId});
+												logger.warn("An error occurred handling sitenode version from publication " + publicationVO.getId() + ":" + e.getMessage());
 											}
 										}
 										
@@ -644,7 +702,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 									if(diff < 1000*60)
 									{
 										processedInterupted = true;
-										logger.error("Could not find publication in database. It may be a replication delay issue - lets try again.");
+										logger.warn("Could not find publication in database. It may be a replication delay issue - lets try again.");
 										synchronized(CacheController.notifications)
 								        {
 									    	CacheController.notifications.add(cacheEvictionBean);
@@ -652,15 +710,23 @@ public class SelectiveLivePublicationThread extends PublicationThread
 									}
 									else
 									{
-										logger.error("Could not find publication in database. It may be a replication delay issue but now it's been very long so we have to abort.");
+										logger.warn("Could not find publication in database. It may be a replication delay issue but now it's been very long so we have to abort.");
 									}
 								}
 							}
 							
+						    long elapsedTime = t.getElapsedTime();
+						    if(elapsedTime > 100)
+						    	logger.warn("Cleared all castor caches for " + className + ":" + objectId + " took");
+
 							for(Map<String,String> igCacheCall : allIGCacheCalls)
 							{
 								logger.info("Calling clear caches with:" + igCacheCall.get("className") + ":" + igCacheCall.get("objectId"));
 								CacheController.clearCaches(igCacheCall.get("className"), igCacheCall.get("objectId"), null);
+								
+							    elapsedTime = t.getElapsedTime();
+							    if(elapsedTime > 100)
+							    	logger.warn("Clearing all caches for " + igCacheCall.get("className") + ":" + igCacheCall.get("objectId") + " took");
 							}
 
 							if(CmsPropertyHandler.getServerNodeProperty("recacheEntities", true, "false").equals("true"))
@@ -687,10 +753,9 @@ public class SelectiveLivePublicationThread extends PublicationThread
 	
 							    logger.info("Updating all caches from SelectiveLivePublicationThread as this was a publishing-update\n\n\n");
 							    //CacheController.clearCastorCaches();
-	
+
 							    String[] excludedCaches = CacheController.getPublicationPersistentCacheNames();
 								logger.info("clearing all except " + excludedCaches + " as we are in publish mode..\n\n\n");											
-								//CacheController.clearCaches(null, null, new String[] {"ServerNodeProperties", "serverNodePropertiesCache", "pageCache", "pageCacheExtra", "componentCache", "NavigationCache", "pagePathCache", "userCache", "pageCacheParentSiteNodeCache", "pageCacheLatestSiteNodeVersions", "pageCacheSiteNodeTypeDefinition", "JNDIAuthorizationCache", "WebServiceAuthorizationCache", "importTagResultCache"});
 								CacheController.clearCaches(null, null, excludedCaches);
 							    
 								//logger.info("Recaching all caches as this was a publishing-update\n\n\n");
@@ -702,9 +767,12 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								logger.info("Finally clearing page cache and some other caches as this was a publishing-update\n\n\n");
 								//CacheController.clearCache("ServerNodeProperties");
 								//CacheController.clearCache("serverNodePropertiesCache");
+								
 							    CacheController.clearCache("boundContentCache");
-						        CacheController.clearFileCaches("pageCache");
-						        CacheController.clearCache("pageCache");
+						        //CacheController.clearFileCaches("pageCache");
+								PageCacheHelper.getInstance().clearPageCache();
+								
+								CacheController.clearCache("pageCache");
 								CacheController.clearCache("pageCacheExtra");
 								CacheController.clearCache("componentCache");
 								CacheController.clearCache("NavigationCache");
@@ -712,12 +780,37 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								CacheController.clearCache("pageCacheParentSiteNodeCache");
 								CacheController.clearCache("pageCacheLatestSiteNodeVersions");
 								CacheController.clearCache("pageCacheSiteNodeTypeDefinition");
+								
 							}
 							else if(className.equalsIgnoreCase("PortletRegistry"))
 						    {
 								logger.info("clearing portletRegistry");
 								CacheController.clearPortlets();
 								logger.info("cleared portletRegistry");
+						    }
+							else if(className.indexOf("RepositoryImpl") > -1)
+						    {
+								logger.info("clearing repo affecting stuff");
+								CacheController.clearServerNodeProperty(true);
+
+								Class repoClass = RepositoryImpl.class;
+								CacheController.clearCache(repoClass);
+								CacheController.clearCaches(repoClass.getName(), null, null);
+
+								CacheController.clearCache("repositoryCache");
+								CacheController.clearCache("masterRepository");
+								CacheController.clearCache("parentRepository");
+								CacheController.clearCache("componentPropertyCache");
+						        //CacheController.clearFileCaches("pageCache");
+								PageCacheHelper.getInstance().clearPageCache();
+
+						        CacheController.clearCache("pageCache");
+								CacheController.clearCache("pageCacheExtra");
+								CacheController.clearCache("componentCache");
+								CacheController.clearCache("NavigationCache");
+								CacheController.clearCache("pagePathCache");
+						    	URIMapperCache.getInstance().clear();
+								logger.info("cleared repo affecting stuff");
 						    }
 							else
 							{
@@ -745,11 +838,14 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								CacheController.clearCache(categoryClass);
 								CacheController.clearCaches(categoryClass.getName(), null, null);
 							}
-							
+								
 							for(Map<String,String> igCacheCall : allIGCacheCalls)
 							{
-								logger.info("Calling clear caches with:" + igCacheCall.get("className") + ":" + igCacheCall.get("objectId"));
-								CacheController.clearCaches(igCacheCall.get("className"), igCacheCall.get("objectId"), null);
+								if(igCacheCall.get("className") == null || !igCacheCall.get("className").equals("ServerNodeProperties"))
+								{
+									logger.info("Calling clear caches with:" + igCacheCall.get("className") + ":" + igCacheCall.get("objectId"));
+									CacheController.clearCaches(igCacheCall.get("className"), igCacheCall.get("objectId"), null);
+								}
 							}
 						}
 				    }
@@ -767,11 +863,11 @@ public class SelectiveLivePublicationThread extends PublicationThread
 					    if(!processedInterupted)
 					    {
 						    cacheEvictionBean.setProcessed();
-							if(cacheEvictionBean.getPublicationId() > -1 || cacheEvictionBean.getClassName().equals("ServerNodeProperties"))
+						    if(cacheEvictionBean.getPublicationId() > -1 || cacheEvictionBean.getClassName().equals("ServerNodeProperties"))
 						    	RequestAnalyser.getRequestAnalyser().addPublication(cacheEvictionBean);
-					    }
-					}
-				} 
+					    }				    	
+				    }
+				}
 			} 
 			catch (Exception e)
 			{
@@ -779,12 +875,12 @@ public class SelectiveLivePublicationThread extends PublicationThread
 			}
 			finally
 			{
-		        logger.info("released block \n\n DONE---");
+		        logger.warn("released block \n\n DONE---");
 				RequestAnalyser.getRequestAnalyser().setBlockRequests(false);
 			}
 		}
 	}
-
+	
 
 	private boolean isThereAnyRealDifferencesBetweenSiteNodeVersions(SiteNodeVersionVO siteNodeVersionVO, SiteNodeVersionVO previousSiteNodeVersionVO) 
 	{
@@ -796,12 +892,6 @@ public class SelectiveLivePublicationThread extends PublicationThread
 		
 		try
 		{
-			//logger.info("Comparing " + siteNodeVersionVO.getId() + " and " + previousSiteNodeVersionVO.getId());
-			if(!siteNodeVersionVO.getIsHidden().equals(previousSiteNodeVersionVO.getIsHidden()))
-			{
-				logger.info("Diffed in getIsHidden");
-				return true;
-			}
 			if(!siteNodeVersionVO.getContentType().equals(previousSiteNodeVersionVO.getContentType()))
 			{
 				logger.info("Diffed in getContentType");
@@ -848,11 +938,6 @@ public class SelectiveLivePublicationThread extends PublicationThread
 					!siteNodeVersionVO.getPageCacheTimeout().equals(previousSiteNodeVersionVO.getPageCacheTimeout())))
 			{
 				logger.info("Diffed in getPageCacheTimeout");
-				return true;
-			}
-			if(!siteNodeVersionVO.getSortOrder().equals(previousSiteNodeVersionVO.getSortOrder()))
-			{
-				logger.info("Diffed in getSortOrder");
 				return true;
 			}
 		}
@@ -938,6 +1023,11 @@ public class SelectiveLivePublicationThread extends PublicationThread
 				getObjectWithId(SmallDigitalAssetImpl.class, new Integer(objectId), db);
 				getObjectWithId(MediumDigitalAssetImpl.class, new Integer(objectId), db);
 			}
+			else if(Class.forName(className).getName().equals(MediumDigitalAssetImpl.class.getName()))
+			{
+				getObjectWithId(SmallDigitalAssetImpl.class, new Integer(objectId), db);
+				getObjectWithId(DigitalAssetImpl.class, new Integer(objectId), db);
+			}
 			else if(Class.forName(className).getName().equals(PublicationImpl.class.getName()))
 			{
 				List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(new Integer(objectId));
@@ -1010,11 +1100,12 @@ public class SelectiveLivePublicationThread extends PublicationThread
 						SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 						if(siteNodeVO.getMetaInfoContentId() != null)
 						{
+							/*
 							getObjectWithId(ContentImpl.class, new Integer(siteNodeVO.getMetaInfoContentId()), db);
 							getObjectWithId(SmallContentImpl.class, new Integer(siteNodeVO.getMetaInfoContentId()), db);
 							getObjectWithId(SmallishContentImpl.class, new Integer(siteNodeVO.getMetaInfoContentId()), db);
 							getObjectWithId(MediumContentImpl.class, new Integer(siteNodeVO.getMetaInfoContentId()), db);
-
+							
 							Content content = ContentController.getContentController().getReadOnlyContentWithId(siteNodeVO.getMetaInfoContentId(), db);
 							Iterator contentVersionIterator = content.getContentVersions().iterator();
 							logger.info("Versions:" + content.getContentVersions().size());
@@ -1025,6 +1116,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								getObjectWithId(SmallContentVersionImpl.class, new Integer(contentVersion.getId()), db);
 								getObjectWithId(SmallestContentVersionImpl.class, new Integer(contentVersion.getId()), db);
 							}
+							*/
 						}
 					}
 					

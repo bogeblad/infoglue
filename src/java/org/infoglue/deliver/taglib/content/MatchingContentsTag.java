@@ -52,15 +52,20 @@ public class MatchingContentsTag extends TemplateControllerTag
 	private Integer maximumNumberOfItems;
 	private Date expireFromDate = null;
 	private Date expireToDate = null;
+	private String repositoryIds = null;
+	private Integer languageId = null;
+	private Boolean skipLanguageCheck = false;
+	private Integer startNodeId;
+	private String sortColumn = null;
+	private String sortOrder = null;
 	
 	private boolean cacheResult = true;
 	private int cacheInterval = 1800;
 	private String cacheName = null;
 	private String cacheKey = null;
-	private String repositoryIds = null;
-	private Integer languageId = null;
-	private Boolean skipLanguageCheck = false;
-	private Integer startNodeId;
+	private Boolean validateAccessRightsAsAnonymous = false;
+	private Boolean scheduleFetch = false;
+	private Integer scheduleInterval = 900;
 
 	private Boolean useLucene = false;
 	
@@ -108,8 +113,16 @@ public class MatchingContentsTag extends TemplateControllerTag
 		{
 			logger.warn("Problem setting maximumNumberOfItemsInMatchingContentsSearch:" + e.getMessage());
 		}
+		if(scheduleFetch && scheduleInterval != null)
+		{
+			cacheInterval = -1;
+		}
 		
-	    setResultAttribute(getController().getMatchingContents(contentTypeDefinitionNames, categoryCondition, freeText, freeTextAttributeNamesList, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, true, cacheResult, cacheInterval, cacheName, cacheKey, repositoryIdList, this.languageId, skipLanguageCheck, startNodeId, this.useLucene));
+		logger.info("cacheInterval:" + cacheInterval);
+		
+		List result = getController().getMatchingContents(contentTypeDefinitionNames, categoryCondition, freeText, freeTextAttributeNamesList, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, true, cacheResult, cacheInterval, cacheName, cacheKey, scheduleFetch, scheduleInterval, repositoryIdList, this.languageId, skipLanguageCheck, startNodeId, sortColumn, sortOrder, false, validateAccessRightsAsAnonymous, false, false);
+	    System.out.println("result:" + result.size());
+		setResultAttribute(result);
 	    
 	    this.contentTypeDefinitionNames = null;
 	    this.categoryCondition = null;
@@ -131,12 +144,17 @@ public class MatchingContentsTag extends TemplateControllerTag
 		this.skipLanguageCheck = false;
 
 		this.startNodeId = null;
+		this.scheduleFetch = false;
+		this.scheduleInterval = 900;
+		this.validateAccessRightsAsAnonymous = false;
+		this.sortColumn = null;
+		this.sortOrder = null;
 		
 		this.useLucene = false;
 		
 	    long runningTime = t.getElapsedTime();
 	    if(runningTime > 500)
-	    	logger.warn("Running matching contents took:" + runningTime + " ms");
+	    	logger.info("Running matching contents took:" + runningTime + " ms");
 	    
 	    return EVAL_PAGE;
     }
@@ -216,6 +234,11 @@ public class MatchingContentsTag extends TemplateControllerTag
 		this.cacheKey = evaluateString("matchingContentsTag", "cacheKey", cacheKey);
 	}
 
+	public void setValidateAccessRightsAsAnonymous(boolean validateAccessRightsAsAnonymous)
+	{
+		this.validateAccessRightsAsAnonymous = validateAccessRightsAsAnonymous;
+	}
+
 	public void setCacheName(String cacheName) throws JspException
 	{
 		this.cacheName = evaluateString("matchingContentsTag", "cacheName", cacheName);;
@@ -226,9 +249,29 @@ public class MatchingContentsTag extends TemplateControllerTag
 		this.cacheResult = cacheResult;
 	}
 
+	public void setScheduleFetch(String scheduleFetch) throws JspException
+	{
+		this.scheduleFetch = (Boolean)evaluate("matchingContentsTag", "scheduleFetch", scheduleFetch, Boolean.class);;
+	}
+
+	public void setScheduleInterval(String scheduleInterval) throws JspException
+	{
+		this.scheduleInterval = evaluateInteger("matchingContentsTag", "scheduleInterval", scheduleInterval);;
+	}
+
 	public void setStartNodeId(String startNodeId) throws JspException
 	{
 		this.startNodeId = evaluateInteger("matchingContentsTag", "startNodeId", startNodeId);
+	}
+
+	public void setSortColumn(String sortColumn) throws JspException
+	{
+		this.sortColumn = evaluateString("matchingContentsTag", "sortColumn", sortColumn);
+	}
+
+	public void setSortOrder(String sortOrder) throws JspException
+	{
+		this.sortOrder = evaluateString("matchingContentsTag", "sortOrder", sortOrder);
 	}
 
     public void setUseLucene(String useLucene) throws JspException

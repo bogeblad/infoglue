@@ -23,6 +23,9 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -34,24 +37,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.contenttool.wizards.actions.CreateContentWizardInfoBean;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
+import org.infoglue.cms.entities.management.GeneralOQLResult;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.Repository;
+import org.infoglue.cms.entities.management.RepositoryLanguage;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.ServiceDefinition;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
@@ -59,6 +68,7 @@ import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.structure.Qualifyer;
 import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
@@ -68,7 +78,6 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.deliver.applications.databeans.DeliveryContext;
 import org.infoglue.deliver.util.CacheController;
-import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
 
 import com.opensymphony.module.propertyset.PropertySet;
@@ -100,25 +109,269 @@ public class ContentController extends BaseController
 		return new ContentController();
 	}
 
+   	/**
+	 * This method returns selected active content versions.
+	 */
+    
+	public List<Content> getContentList(Integer repositoryId, Integer minimumId, Integer limit, Database db) throws SystemException, Bug, Exception
+	{
+		List<Content> contentList = new ArrayList<Content>();
+
+        OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.repositoryId = $1 AND c.contentId > $2 ORDER BY c.contentId LIMIT $3");
+    	oql.bind(repositoryId);
+		oql.bind(minimumId);
+		oql.bind(limit);
+    	
+    	QueryResults results = oql.execute(Database.ReadOnly);
+		while (results.hasMore()) 
+        {
+			Content content = (Content)results.next();
+			contentList.add(content);
+        }
+		
+		results.close();
+		oql.close();
+
+		return contentList;
+	}
+
+	/**
+	 * This method gets the siteNodeVO with the given id
+	 */
+	 
+	public Map<Integer,ContentVO> getContentVOMapWithNoStateCheck(List<Integer> contentVersionIds) throws SystemException, Bug, Exception
+    {
+		Map<Integer,ContentVO> contentVOMap = null;
+    	
+		Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {	
+			contentVOMap = getContentVOMapWithNoStateCheck(contentVersionIds, db);
+			
+	    	commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }      
+        
+        return contentVOMap;
+    }        
+	
+	
+	public Map<Integer,ContentVO> getContentVOMapWithNoStateCheck(List<Integer> contentVersionIds, Database db) throws SystemException, Bug, Exception
+    {
+		Map<Integer,ContentVO> contentVOMap = new HashMap<Integer,ContentVO>();
+		if(contentVersionIds == null || contentVersionIds.size() == 0)
+			return contentVOMap;
+		
+		List contentVersionIdsSubList = new ArrayList();
+		contentVersionIdsSubList.addAll(contentVersionIds);
+	
+		int slotSize = 500;
+		if(contentVersionIdsSubList.size() > 0)
+		{
+			List<Integer> subList = new ArrayList(contentVersionIdsSubList);
+			if(contentVersionIdsSubList.size() > slotSize)
+				subList = contentVersionIdsSubList.subList(0, slotSize);
+	    	while(subList != null && subList.size() > 0)
+	    	{
+	    		contentVOMap.putAll(getContentVOMapWithNoStateCheckImpl(subList, db));
+	    		contentVersionIdsSubList = contentVersionIdsSubList.subList(subList.size(), contentVersionIdsSubList.size());
+	    	
+	    		subList = new ArrayList(contentVersionIdsSubList);
+	    		if(contentVersionIdsSubList.size() > slotSize)
+	    			subList = contentVersionIdsSubList.subList(0, slotSize);
+	    	}
+		}
+		
+		return contentVOMap;
+	}
+	
+	public Map<Integer,ContentVO> getContentVOMapWithNoStateCheckImpl(List<Integer> contentVersionIds, Database db) throws SystemException, Bug, Exception
+	{
+	    Timer t = new Timer();
+	    Map<Integer,ContentVO> siteNodeVOMap = new HashMap<Integer,ContentVO>();
+	    
+	    if(contentVersionIds == null || contentVersionIds.size() == 0)
+	    	return siteNodeVOMap;
+	    
+	    StringBuilder variables = new StringBuilder();
+	    for(int i=0; i<contentVersionIds.size(); i++)
+	    	variables.append("?" + (i+1!=contentVersionIds.size() ? "," : ""));
+//	    	variables.append("?" + (i+1) + (i+1!=contentVersionIds.size() ? "," : ""));
+	    
+		StringBuilder sql = new StringBuilder();
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+		{
+			sql.append("select cv.contVerId AS id, c.name as column1Value, c.isProtected as column2Value, c.contentTypeDefId as column3Value, c.repositoryId as column4Value, c.parentContId as column5Value, cv.stateId as column6Value, c.contId as column7Value FROM cmCont c, cmContVer cv where c.contId = cv.contId AND cv.contVerId IN (" + variables + ") ");
+		}
+		else
+		{
+			sql.append("select cv.contentVersionId AS id, c.name as column1Value, c.isProtected as column2Value, c.contentTypeDefinitionId as column3Value, c.repositoryId as column4Value, c.parentContentId as column5Value, cv.stateId as column6Value, c.contentId as column7Value FROM cmContent c, cmContentVersion cv WHERE c.contentId = cv.contentId AND cv.contentVersionId IN (" + variables + ") ");
+		}
+		//String SQL = "CALL SQL " + sql.toString() + " AS org.infoglue.cms.entities.management.GeneralOQLResult";
+		String SQL = "" + sql.toString() + "";
+		System.out.println("SQL:" + SQL);
+		
+		Connection conn = (Connection) db.getJdbcConnection();
+		
+		PreparedStatement psmt = conn.prepareStatement(SQL.toString());
+		int i=1;
+    	for(Integer entityId : contentVersionIds)
+    	{
+    		psmt.setInt(i, entityId);
+    		i++;
+    	}
+
+		ResultSet rs = psmt.executeQuery();
+		while(rs.next())
+		{
+			SmallStateContentImpl content = new SmallStateContentImpl();
+			content.setContentVersionId(new Integer(rs.getString(1)));
+			content.setContentId(new Integer(rs.getString(8)));
+			content.setName(rs.getString(2));
+			content.setIsProtected(new Integer(rs.getString(3)));
+			if(rs.getString(4) != null && !rs.getString(4).equals(""))
+				content.setContentTypeDefinitionId(new Integer(rs.getString(4)));
+			content.setRepositoryId(new Integer(rs.getString(5)));
+			content.setParentContentId(new Integer(rs.getString(6)));
+			content.setStateId(new Integer(rs.getString(7)));
+            siteNodeVOMap.put(content.getValueObject().getContentVersionId(), content.getValueObject());
+            System.out.println("Adding:" + content.getValueObject().getContentVersionId() + "=" + content.getValueObject());
+		}
+		rs.close();
+		psmt.close();
+
+		/*
+		OQLQuery oql = db.getOQLQuery(SQL);
+		for(Integer entityId : contentVersionIds)
+		{
+			oql.bind(entityId);
+		    System.out.println("entityId:" + entityId);
+		}
+
+		QueryResults results = oql.execute(Database.READONLY);
+		while (results.hasMore()) 
+        {
+			GeneralOQLResult resultBean = (GeneralOQLResult)results.next();
+			SmallStateContentImpl content = new SmallStateContentImpl();
+			content.setContentVersionId(resultBean.getId());
+			content.setContentId(new Integer(resultBean.getValue7()));
+			content.setName(resultBean.getValue1());
+			content.setIsProtected(new Integer(resultBean.getValue2()));
+			if(resultBean.getValue3() != null && !resultBean.getValue3().equals(""))
+				content.setContentTypeDefinitionId(new Integer(resultBean.getValue3()));
+			content.setRepositoryId(new Integer(resultBean.getValue4()));
+			content.setParentContentId(new Integer(resultBean.getValue5()));
+			content.setStateId(new Integer(resultBean.getValue6()));
+            siteNodeVOMap.put(content.getValueObject().getContentVersionId(), content.getValueObject());
+        }       
+		results.close();
+		oql.close();
+		*/
+				
+		return siteNodeVOMap;		
+	}
+	
+	
+	/**
+	 * Gets matching references
+	 */
+	public List<ContentVO> getContentVOList(Set<Integer> contentIds, Database db) throws SystemException, Exception
+	{
+		List<ContentVO> contentVOList = new ArrayList<ContentVO>();
+		   
+		StringBuilder variables = new StringBuilder();
+	    for(int i=0; i<contentIds.size(); i++)
+	    	variables.append("$" + (i+1) + (i+1!=contentIds.size() ? "," : ""));
+		
+	    OQLQuery oql = null;
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+			oql = db.getOQLQuery("CALL SQL SELECT c.contId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, c.creator, c.contentTypeDefId, c.repositoryId, c.parentContId FROM cmCont c where contId IN (" + variables + ") AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
+		else
+			oql = db.getOQLQuery("CALL SQL SELECT c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, c.creator, c.contentTypeDefinitionId, c.repositoryId, c.parentContentId FROM cmContent c WHERE contentId IN (" + variables + ") AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
+
+		for(Integer entityId : contentIds)
+			oql.bind(entityId.toString());
+		
+		QueryResults results = oql.execute(Database.ReadOnly);
+		
+		while (results.hasMore()) 
+        {
+            SmallContentImpl content = (SmallContentImpl)results.next();
+            contentVOList.add(content.getValueObject());
+        }       
+		
+		results.close();
+		oql.close();
+
+		return contentVOList;		
+	}
+
+	public ContentVO getContentVOWithId(Integer contentId, boolean skipCaching) throws SystemException, Bug
+    {
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO) getVOWithId(SmallContentImpl.class, contentId);
+
+			if(contentVO != null && !skipCaching)
+			{
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
+		}
+		
+		return contentVO;
+    } 
+
 	public ContentVO getContentVOWithId(Integer contentId) throws SystemException, Bug
     {
-    	return (ContentVO) getVOWithId(SmallContentImpl.class, contentId);
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO) getVOWithId(SmallContentImpl.class, contentId);
+
+			if(contentVO != null)
+			{
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
+		}
+		
+		return contentVO;
     } 
 
-	public ContentVO getContentVOWithIdDirectly(Integer contentId, Database db) throws SystemException, Bug
+	public ContentVO getContentVOWithId(Integer contentId, Database db) throws SystemException, Bug
     {
-    	return (ContentVO) getVOWithId(SmallContentImpl.class, contentId, db);
-    } 
-
-	public ContentVO getContentVOWithId(Integer contentId, Database db) throws SystemException, Bug, Exception
-    {
-    	return getSmallContentVOWithId(contentId, db, null);
-    } 
-
-	public ContentVO getSmallContentVOWithId(Integer contentId, Database db) throws SystemException, Bug, Exception
-    {
-    	return getSmallContentVOWithId(contentId, db, null);
-    } 
+		String key = "" + contentId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			//logger.info("There was an cached contentVO:" + contentVO);
+		}
+		else
+		{
+			contentVO = (ContentVO) getVOWithId(SmallContentImpl.class, contentId, db);
+			if(contentVO != null)
+			{
+				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
+		}
+		
+		return contentVO;    } 
 
 	public ContentVO getSmallContentVOWithIdDirectly(Integer contentId, Database db) throws SystemException, Bug
     {
@@ -147,11 +400,18 @@ public class ContentController extends BaseController
 		{
 			contentVO = getSmallContentVOWithIdDirectly(contentId, db);
 			if(contentVO != null)
+			{
 				CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO, new String[]{CacheController.getPooledString(1, contentId)}, true);
+			}
 		}
 		
 		return contentVO;
 	}
+	
+	public ContentVO getSmallContentVOWithId(Integer contentId, Database db) throws SystemException, Bug
+    {
+    	return (ContentVO) getVOWithId(SmallContentImpl.class, contentId, db);
+    } 
 
     public Content getContentWithId(Integer contentId, Database db) throws SystemException, Bug
     {
@@ -163,112 +423,22 @@ public class ContentController extends BaseController
 		return (Content) getObjectWithIdAsReadOnly(ContentImpl.class, contentId, db);
     }
 
+    public Content getMediumContentWithId(Integer contentId, Database db) throws SystemException, Bug
+    {
+		return (Content) getObjectWithId(MediumContentImpl.class, contentId, db);
+    }
+
     public Content getReadOnlyMediumContentWithId(Integer contentId, Database db) throws SystemException, Bug
     {
 		return (Content) getObjectWithIdAsReadOnly(MediumContentImpl.class, contentId, db);
     }
-    
+
     
     public List getContentVOList() throws SystemException, Bug
     {
         return getAllVOObjects(ContentImpl.class, "contentId");
     }
 	
-    
-	public List<ContentVO> getContentVOListMarkedForDeletion(Integer repositoryId) throws SystemException, Bug
-	{
-		Database db = CastorDatabaseService.getDatabase();
-		
-		List<ContentVO> contentVOListMarkedForDeletion = new ArrayList<ContentVO>();
-		
-		try 
-		{
-			beginTransaction(db);
-
-			String sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repository.name) ORDER BY c.contentId";
-			if(repositoryId != null && repositoryId != -1)
-				sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repository.name) AND c.repository = $2 ORDER BY c.contentId";
-			
-			OQLQuery oql = db.getOQLQuery(sql);
-			oql.bind(true);
-			if(repositoryId != null && repositoryId != -1)
-				oql.bind(repositoryId);
-			
-			QueryResults results = oql.execute(Database.READONLY);
-			while(results.hasMore()) 
-            {
-				Content content = (Content)results.next();
-				content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", content.getRepository().getIsDeleted());
-				contentVOListMarkedForDeletion.add(content.getValueObject());
-            }
-            
-			results.close();
-			oql.close();
-
-			commitTransaction(db);
-		}
-		catch ( Exception e)		
-		{
-			throw new SystemException("An error occurred when we tried to fetch a list of deleted pages. Reason:" + e.getMessage(), e);			
-		}
-		
-		return contentVOListMarkedForDeletion;		
-	}
-	
-
-	/**
-	 * Returns a repository list marked for deletion.
-	 */
-	
-	public Set<ContentVO> getContentVOListLastModifiedByPincipal(InfoGluePrincipal principal, String[] excludedContentTypes) throws SystemException, Bug
-	{
-		Database db = CastorDatabaseService.getDatabase();
-		
-		Set<ContentVO> contentVOList = new HashSet<ContentVO>();
-		
-		try 
-		{
-			beginTransaction(db);
-		
-			OQLQuery oql = db.getOQLQuery("SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl cv WHERE cv.versionModifier = $1 ORDER BY cv.modifiedDateTime DESC LIMIT $2");
-			oql.bind(principal.getName());
-			oql.bind(50);
-
-			QueryResults results = oql.execute(Database.READONLY);
-			while(results.hasMore()) 
-            {
-				SmallestContentVersionImpl contentVersion = (SmallestContentVersionImpl)results.next();
-				ContentVO contentVO = getContentVOWithId(contentVersion.getValueObject().getContentId(), db);
-				boolean isValid = true;
-				for(int i=0; i<excludedContentTypes.length; i++)
-				{
-					String contentTypeDefinitionNameToExclude = excludedContentTypes[i];
-					ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNameToExclude, db);
-					if(contentVO.getContentTypeDefinitionId().equals(ctdVO.getId()))
-					{
-						isValid = false;
-						break;
-					}
-				}
-				
-				if(isValid)
-					contentVOList.add(contentVO);
-            }
-            
-			results.close();
-			oql.close();
-
-			commitTransaction(db);
-		}
-		catch ( Exception e)		
-		{
-			e.printStackTrace();
-			throw new SystemException("An error occurred when we tried to fetch a list contents last modified by the user. Reason:" + e.getMessage(), e);			
-		}
-		
-		return contentVOList;		
-	}
-
 	/**
 	 * This method finishes what the create content wizard initiated and resulted in.
 	 */
@@ -292,7 +462,7 @@ public class ContentController extends BaseController
 				Integer languageId = (Integer)it.next();
 				logger.info("languageId:" + languageId);
 				ContentVersionVO contentVersionVO = (ContentVersionVO)createContentWizardInfoBean.getContentVersions().get(languageId);
-				contentVersionVO = ContentVersionController.getContentVersionController().create(content.getContentId(), languageId, contentVersionVO, null, db).getValueObject();
+				contentVersionVO = ContentVersionController.getContentVersionController().createMedium(content.getContentId(), languageId, contentVersionVO, db).getValueObject();
 			}
 			
 			//Bind if needed?
@@ -361,47 +531,51 @@ public class ContentController extends BaseController
 	 * As castor is lousy at this in my opinion we also add the new entity to the surrounding entities.
 	 */
 	    
-    public /*synchronized*/ Content create(Database db, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws ConstraintException, SystemException, Exception
+    public /*synchronized*/ MediumContentImpl create(Database db, Integer parentContentId, Integer contentTypeDefinitionId, Integer repositoryId, ContentVO contentVO) throws ConstraintException, SystemException, Exception
     {
-	    Content content = null;
+    	MediumContentImpl content = null;
 		
         try
         {            
-            Content parentContent = null;
-          	ContentTypeDefinition contentTypeDefinition = null;
+            ContentVO parentContentVO = null;
 
             if(parentContentId != null)
             {
-            	parentContent = getContentWithId(parentContentId, db);
+            	parentContentVO = getContentVOWithId(parentContentId, db);
             	
             	if(repositoryId == null)
-					repositoryId = parentContent.getRepository().getRepositoryId();	
+					repositoryId = parentContentVO.getRepositoryId();	
+            	
+            	if(parentContentVO.getIsBranch() == false)
+            	{
+            		Content parentContent = getMediumContentWithId(parentContentVO.getId(), db);
+            		parentContent.setIsBranch(new Boolean(true));
+            	}
             }
             
-            if(contentTypeDefinitionId != null)
-            	contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
-
-            Repository repository = RepositoryController.getController().getRepositoryWithId(repositoryId, db);
+            //RepositoryVO repository = RepositoryController.getController().getRepositoryVOWithId(repositoryId, db);
 
 			/*
         	synchronized (controller)
 			{
         		//db.lock(parentContent);
 			*/
-	            content = new ContentImpl();
+	            content = new MediumContentImpl();
 	            content.setValueObject(contentVO);
-	            content.setParentContent((ContentImpl)parentContent);
-	            content.setRepository((RepositoryImpl)repository);
-	            content.setContentTypeDefinition((ContentTypeDefinitionImpl)contentTypeDefinition);
+	            content.setParentContentId(parentContentId);
+	            content.setRepositoryId(repositoryId);
+	            content.setContentTypeDefinitionId(contentTypeDefinitionId);
 	            
 				db.create(content);
 				
 				//Now we add the content to the knowledge of the related entities.
+				/*
 				if(parentContent != null)
 				{
 					parentContent.getChildren().add(content);
 					parentContent.setIsBranch(new Boolean(true));
 				}
+				*/
         	//}
 
 			//repository.getContents().add(content);			
@@ -414,53 +588,7 @@ public class ContentController extends BaseController
         
         return content;
     }
-
-	/**
-	 * This method creates a new content-entity and references the entities it should know about.
-	 * As castor is lousy at this in my opinion we also add the new entity to the surrounding entities.
-	 */
-	    
-    public Content create(Database db, Integer parentContentId, Integer contentTypeDefinitionId, Repository repository, ContentVO contentVO) throws ConstraintException, SystemException, Exception
-    {
-	    Content content = null;
-		
-        try
-        {            
-            Content parentContent = null;
-          	ContentTypeDefinition contentTypeDefinition = null;
-
-            if(parentContentId != null)
-            {
-            	parentContent = getContentWithId(parentContentId, db);
-            }
-            
-            if(contentTypeDefinitionId != null)
-            	contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
-
-            content = new ContentImpl();
-            content.setValueObject(contentVO);
-            content.setParentContent((ContentImpl)parentContent);
-            content.setRepository((RepositoryImpl)repository);
-            content.setContentTypeDefinition((ContentTypeDefinitionImpl)contentTypeDefinition);
-            
-			db.create(content);
-				
-			//Now we add the content to the knowledge of the related entities.
-			if(parentContent != null)
-			{
-				parentContent.getChildren().add(content);
-				parentContent.setIsBranch(new Boolean(true));
-			}
-        }
-        catch(Exception e)
-        {
-        	//logger.error("An error occurred so we should not complete the transaction:" + e, e);
-            throw new SystemException(e.getMessage());    
-        }
-        
-        return content;
-    }
-
+       
 
 	/**
 	 * This method deletes a content and also erases all the children and all versions.
@@ -470,7 +598,7 @@ public class ContentController extends BaseController
     {
     	delete(contentVO, infogluePrincipal, false);
     }
-
+    
 	/**
 	 * This method deletes a content and also erases all the children and all versions.
 	 * @throws Exception 
@@ -576,8 +704,8 @@ public class ContentController extends BaseController
     {
         if(!skipRelationCheck)
         {
-	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, true, db);
-			if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
+	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, false, db);
+			if(referenceBeanList != null && referenceBeanList.size() > 0)
 				throw new ConstraintException("ContentVersion.stateId", "3305");
         }
         
@@ -652,171 +780,6 @@ public class ContentController extends BaseController
 	}
 
 	
-	/**
-	 * This method deletes a content and also erases all the children and all versions.
-	 */
-	    
-    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
-    {
-    	markForDeletion(contentVO, infogluePrincipal, false);
-    }
-    
-	/**
-	 * This method deletes a content and also erases all the children and all versions.
-	 */
-	    
-    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
-    {
-	    Database db = CastorDatabaseService.getDatabase();
-        beginTransaction(db);
-		try
-        {		
-			markForDeletion(contentVO, db, false, false, forceDelete, infogluePrincipal);
-	    	
-	    	commitTransaction(db);
-            
-        }
-        catch(ConstraintException ce)
-        {
-        	logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
-            rollbackTransaction(db);
-            throw ce;
-        }
-        catch(Exception e)
-        {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
-
-    }  
-    
-
-	/**
-	 * This method deletes a content and also erases all the children and all versions.
-	 */
-	    
-	public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException, Exception
-	{
-		markForDeletion(contentVO, db, false, false, false, infogluePrincipal);
-	}
-	
-	/**
-	 * This method deletes a content and also erases all the children and all versions.
-	 */
-	    
-	public void markForDeletion(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
-	{
-		Content content = null;
-		try
-		{
-			content = getContentWithId(contentVO.getContentId(), db);
-		}
-		catch(SystemException e)
-		{
-			return;
-		}
-		
-		Content parent = content.getParentContent();
-		if(parent != null)
-		{
-			Iterator childContentIterator = parent.getChildren().iterator();
-			while(childContentIterator.hasNext())
-			{
-			    Content candidate = (Content)childContentIterator.next();
-			    if(candidate.getId().equals(contentVO.getContentId()))
-			    {
-			    	markForDeletionRecursive(content, childContentIterator, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);
-			    }
-			}
-		}
-		else
-		{
-			markForDeletionRecursive(content, null, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);
-		}
-	}        
-
-	/**
-	 * Recursively deletes all contents and their versions. Also updates related entities about the change.
-	 */
-	
-    private static void markForDeletionRecursive(Content content, Iterator parentIterator, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
-    {
-        if(!skipRelationCheck)
-        {
-	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, true, db);
-			if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
-				throw new ConstraintException("ContentVersion.stateId", "3305", "<br/><br/>" + content.getName() + " (" + content.getId() + ")");
-        }
-        
-        Collection children = content.getChildren();
-		Iterator childrenIterator = children.iterator();
-		while(childrenIterator.hasNext())
-		{
-			Content childContent = (Content)childrenIterator.next();
-			markForDeletionRecursive(childContent, childrenIterator, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);   			
-   		}
-		
-		boolean isDeletable = getIsDeletable(content, infogluePrincipal, db);
-   		if(forceDelete || isDeletable)
-	    {
-			//ContentVersionController.getContentVersionController().deleteVersionsForContent(content, db, forceDelete, infogluePrincipal);    	
-			
-			//if(!skipServiceBindings)
-   			//    ServiceBindingController.deleteServiceBindingsReferencingContent(content, db);
-			
-   			//if(parentIterator != null) 
-			//    parentIterator.remove();
-	    	
-	    	content.setIsDeleted(true);
-	    }
-	    else
-    	{
-    		throw new ConstraintException("ContentVersion.stateId", "3300", content.getName());
-    	}			
-    }        
-
-    /**
-	 * This method restored a content.
-	 */
-	    
-    public void restoreContent(Integer contentId, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException
-    {
-		Content content = getContentWithId(contentId, db);
-		content.setIsDeleted(false);
-    }  
-
-    /**
-	 * This method restored a content.
-	 */
-	    
-    public void restoreContent(Integer contentId, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
-    {
-	    Database db = CastorDatabaseService.getDatabase();
-        
-	    beginTransaction(db);
-		
-        try
-        {
-			Content content = getContentWithId(contentId, db);
-			content.setIsDeleted(false);
-			
-			while(content.getParentContent() != null && content.getParentContent().getIsDeleted())
-			{
-				content = content.getParentContent();
-				content.setIsDeleted(false);
-			}
-	    	
-	    	commitTransaction(db);
-        }
-        catch(Exception e)
-        {
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
-    }  
-    
-    
     public ContentVO update(ContentVO contentVO) throws ConstraintException, SystemException
     {
         return update(contentVO, null);
@@ -855,29 +818,28 @@ public class ContentController extends BaseController
         return content.getValueObject();
     }        
 
-	public List<LanguageVO> getAvailableLanguagVOListForContentWithId(Integer contentId, Database db) throws ConstraintException, SystemException, Exception
+	public List<LanguageVO> getAvailableLanguagesForContentWithId(Integer contentId, Database db) throws ConstraintException, SystemException, Exception
 	{
-		//List<LanguageVO> availableLanguageVOList = new ArrayList<LanguageVO>();
+		List<LanguageVO> availableLanguageVOList = new ArrayList<LanguageVO>();
 		
-		Content content = getContentWithId(contentId, db);
-		List<LanguageVO> availableLanguageVOList = LanguageController.getController().getLanguageVOList(content.getRepositoryId(), db);
-		
-		/*
+		ContentVO content = getContentVOWithId(contentId, db);
 		if(content != null)
 		{
-			Repository repository = content.getRepository();
-			if(repository != null)
+			//Repository repository = content.getRepository();
+			if(content.getRepositoryId() != null)
 			{
-			    List availableRepositoryLanguageList = RepositoryLanguageController.getController().getRepositoryLanguageListWithRepositoryId(repository.getId(), db);
+				availableLanguageVOList = LanguageController.getController().getAvailableLanguageVOListForRepository(content.getRepositoryId(), db);
+			    /*
+				List availableRepositoryLanguageList = RepositoryLanguageController.getController().getRepositoryLanguageListWithRepositoryId(content.getRepositoryId(), db);
 				Iterator i = availableRepositoryLanguageList.iterator();
 				while(i.hasNext())
 				{
 					RepositoryLanguage repositoryLanguage = (RepositoryLanguage)i.next();
 					availableLanguageVOList.add(repositoryLanguage.getLanguage().getValueObject());
 				}
+				*/
 			}
 		}
-		*/
 		
 		return availableLanguageVOList;
 	}
@@ -922,6 +884,36 @@ public class ContentController extends BaseController
 	 * This method returns the value-object of the parent of a specific content. 
 	 */
 	
+    public static ContentVO getParentContent(ContentVO contentVO) throws SystemException, Bug
+    {
+    	if(contentVO.getParentContentId() == null)
+    		return null;
+
+        Database db = CastorDatabaseService.getDatabase();
+		ContentVO parentContentVO = null;
+		
+        beginTransaction(db);
+
+        try
+        {
+			parentContentVO = getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
+            
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return parentContentVO;    	
+    }
+	
+	/**
+	 * This method returns the value-object of the parent of a specific content. 
+	 */
     public static ContentVO getParentContent(Integer contentId) throws SystemException, Bug
     {
         Database db = CastorDatabaseService.getDatabase();
@@ -931,10 +923,13 @@ public class ContentController extends BaseController
 
         try
         {
-			Content content = (Content) getObjectWithId(ContentImpl.class, contentId, db);
-			Content parent = content.getParentContent();
-			if(parent != null)
-				parentContentVO = parent.getValueObject();
+        	//Content content = (Content) getObjectWithId(ContentImpl.class, contentId, db);
+			//Content parent = content.getParentContent();
+
+        	ContentVO content = getContentController().getContentVOWithId(contentId, db);
+
+			if(content != null && content.getParentContentId() != null)
+				parentContentVO = getContentController().getContentVOWithId(content.getParentContentId(), db);
             
             commitTransaction(db);
         }
@@ -952,17 +947,12 @@ public class ContentController extends BaseController
 	 * This method returns the value-object of the parent of a specific content. 
 	 */
 	
-    public static ContentVO getParentContent(Integer contentId, Database db) throws SystemException, Bug
+    public ContentVO getSmallParentContent(ContentVO contentVO, Database db) throws SystemException, Bug, Exception
     {
-		ContentVO parentContentVO = null;
-		
-		Content content = (Content) getObjectWithId(ContentImpl.class, contentId, db);
-		logger.info("CONTENT:" + content.getName());
-		Content parent = content.getParentContent();
-		if(parent != null)
-			parentContentVO = parent.getValueObject();
-
-		return parentContentVO;    	
+    	if(contentVO.getParentContentId() != null && contentVO.getParentContentId() > -1)
+    		return getSmallContentVOWithId(contentVO.getParentContentId(), db, null);
+    	else 
+    		return null;
     }
 
     
@@ -1056,7 +1046,7 @@ public class ContentController extends BaseController
         }
         catch(ConstraintException ce)
         {
-            logger.error("An error occurred so we should not complete the transaction:" + ce.getMessage());
+			logger.error("An error occurred so we should not complete the transaction:" + ce.getMessage());
 			logger.warn("An error occurred so we should not complete the transaction:" + ce.getMessage(), ce);
             rollbackTransaction(db);
             throw new SystemException(ce.getMessage());
@@ -1081,9 +1071,9 @@ public class ContentController extends BaseController
     {
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
-        Content content = null;
-		Content newParentContent = null;
-		Content oldParentContent = null;
+        //Content content = null;
+		//Content newParentContent = null;
+		//Content oldParentContent = null;
 
         //Validation that checks the entire object
         contentVO.validate();
@@ -1100,33 +1090,40 @@ public class ContentController extends BaseController
         	throw new ConstraintException("Content.parentContentId", "3301");
         }
 		
-		content          = getContentWithId(contentVO.getContentId(), db);
-        oldParentContent = content.getParentContent();
-        newParentContent = getContentWithId(newParentContentId, db);
+		Content content          = getMediumContentWithId(contentVO.getContentId(), db);
+        //oldParentContent = content.getParentContent();
+        //newParentContent = getContentWithId(newParentContentId, db);
                     
-        if(oldParentContent.getId().intValue() == newParentContentId.intValue())
+		System.out.println(""+content.getValueObject().getParentContentId());
+		System.out.println(""+content.getValueObject().getParentContentId().intValue());
+		System.out.println(""+newParentContentId.intValue());
+        if(content.getValueObject().getParentContentId() == null || content.getValueObject().getParentContentId().intValue() == newParentContentId.intValue())
         {
         	logger.warn("You cannot specify the same folder as it originally was located in......");
         	throw new ConstraintException("Content.parentContentId", "3304");
         }
 
-		Content tempContent = newParentContent.getParentContent();
-		while(tempContent != null)
+		//ContentVO tempContent = newParentContent.getParentContent();
+		ContentVO newParentContentVO = getContentVOWithId(newParentContentId, db);
+		
+		Integer parentContentId = newParentContentVO.getParentContentId();
+		while(parentContentId != null)
 		{
+			ContentVO tempContent = getContentVOWithId(parentContentId, db);
 			if(tempContent.getId().intValue() == content.getId().intValue())
 			{
 				logger.warn("You cannot move the content to a child under it......");
         		throw new ConstraintException("Content.parentContentId", "3302");
 			}
-			tempContent = tempContent.getParentContent();
+			parentContentId = tempContent.getParentContentId();
 		}				            
         
-        oldParentContent.getChildren().remove(content);
-        content.setParentContent((ContentImpl)newParentContent);
-        
-        changeRepositoryRecursive(content, newParentContent.getRepository());
+        //oldParentContent.getChildren().remove(content);
+        //content.setParentContent((ContentImpl)newParentContent);
+        content.getValueObject().setParentContentId(newParentContentId);
+        changeRepositoryRecursive(content, newParentContentVO.getRepositoryId());
         //content.setRepository(newParentContent.getRepository());
-        newParentContent.getChildren().add(content);
+        //newParentContent.getChildren().add(content);
         
         //If any of the validations or setMethods reported an error, we throw them up now before create.
         ceb.throwIfNotEmpty();
@@ -1148,16 +1145,16 @@ public class ContentController extends BaseController
 	 * @param newRepository
 	 */
 
-	private void changeRepositoryRecursive(Content content, Repository newRepository)
+	private void changeRepositoryRecursive(Content content, Integer newRepositoryId)
 	{
-	    if(content.getRepository().getId().intValue() != newRepository.getId().intValue())
+	    if(content.getValueObject().getRepositoryId().intValue() != newRepositoryId.intValue())
 	    {
-		    content.setRepository((RepositoryImpl)newRepository);
+		    content.getValueObject().setRepositoryId(newRepositoryId);
 		    Iterator childContentsIterator = content.getChildren().iterator();
 		    while(childContentsIterator.hasNext())
 		    {
 		        Content childContent = (Content)childContentsIterator.next();
-		        changeRepositoryRecursive(childContent, newRepository);
+		        changeRepositoryRecursive(childContent, newRepositoryId);
 		    }
 	    }
 	}
@@ -1257,7 +1254,7 @@ public class ContentController extends BaseController
 	 * This method returns a list of the children a siteNode has.
 	 */
    	
-	public List<ContentVO> getContentVOList(boolean showDeletedItems, Integer limit) throws Exception
+	public List<ContentVO> getContentVOList(Integer limit) throws Exception
 	{
 		List<ContentVO> childrenVOList = new ArrayList<ContentVO>();
         
@@ -1267,7 +1264,7 @@ public class ContentController extends BaseController
 
         try
         {
-        	childrenVOList = getContentVOList(showDeletedItems, limit, db);            
+        	childrenVOList = getContentVOList(limit, db);            
             commitTransaction(db);
         }
         catch(Exception e)
@@ -1285,12 +1282,11 @@ public class ContentController extends BaseController
 	 * This method returns a list of the children a siteNode has.
 	 */
    	
-	public List<ContentVO> getContentVOList(boolean showDeletedItems, Integer limit, Database db) throws Exception
+	public List<ContentVO> getContentVOList(Integer limit, Database db) throws Exception
 	{
 		List<ContentVO> childrenVOList = new ArrayList<ContentVO>();
 		
-		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.isDeleted = $1 ORDER BY c.contentId DESC LIMIT $2");
-		oql.bind(showDeletedItems);
+		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c ORDER BY c.contentId DESC LIMIT $1");
 		oql.bind(limit);
 
 		QueryResults results = oql.execute(Database.ReadOnly);
@@ -1332,7 +1328,7 @@ public class ContentController extends BaseController
 				HashMap argument = (HashMap)argumentIterator.next(); 
 				Integer contentId = new Integer((String)argument.get("contentId"));
 				logger.info("Getting the content with Id:" + contentId);
-				contents.add(getSmallContentVOWithId(contentId, db, null));
+				contents.add(getSmallContentVOWithId(contentId, db));
 			}
     	}
         else if(method.equalsIgnoreCase("selectListOnContentTypeName"))
@@ -1364,12 +1360,12 @@ public class ContentController extends BaseController
 	    	{
 		        HashMap argument = (HashMap)i.next();
 	    		String contentTypeDefinitionName = (String)argument.get("contentTypeDefinitionName");
+	    		ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, db);
 	    		
 				//OQLQuery oql = db.getOQLQuery("CALL SQL SELECT c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.creator, ctd.contentTypeDefinitionId, r.repositoryId FROM cmContent c, cmContentTypeDefinition ctd, cmRepository r where c.repositoryId = r.repositoryId AND c.contentTypeDefinitionId = ctd.contentTypeDefinitionId AND ctd.name = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
 				//OQLQuery oql = db.getOQLQuery("CALL SQL SELECT contentId, name FROM cmContent c, cmContentTypeDefinition ctd WHERE c.contentTypeDefinitionId = ctd.contentTypeDefinitionId AND ctd.name = $1 AS org.infoglue.cms.entities.content.impl.simple.ContentImpl");
-	    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.contentTypeDefinition.name = $1 AND c.isDeleted = $2 ORDER BY c.contentId");
-	        	oql.bind(contentTypeDefinitionName);
-	        	oql.bind(false);
+	    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.contentTypeDefinitionId = $1 ORDER BY c.contentId");
+	        	oql.bind(ctdVO.getId());
 	        	
 	        	QueryResults results = oql.execute(Database.ReadOnly);
 				
@@ -1408,27 +1404,119 @@ public class ContentController extends BaseController
 		Iterator i = arguments.iterator();
     	while(i.hasNext())
     	{
-	        HashMap argument = (HashMap)i.next();
+    		Timer t = new Timer();
+    		HashMap argument = (HashMap)i.next();
     		String contentTypeDefinitionName = (String)argument.get("contentTypeDefinitionName");
-			//OQLQuery oql = db.getOQLQuery("CALL SQL SELECT c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.creator, ctd.contentTypeDefinitionId, r.repositoryId FROM cmContent c, cmContentTypeDefinition ctd, cmRepository r where c.repositoryId = r.repositoryId AND c.contentTypeDefinitionId = ctd.contentTypeDefinitionId AND ctd.name = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
-			//OQLQuery oql = db.getOQLQuery("CALL SQL SELECT contentId, name FROM cmContent c, cmContentTypeDefinition ctd WHERE c.contentTypeDefinitionId = ctd.contentTypeDefinitionId AND ctd.name = $1 AS org.infoglue.cms.entities.content.impl.simple.ContentImpl");
-    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.contentTypeDefinition.name = $1 AND c.isDeleted = $2 ORDER BY c.contentId");
-        	oql.bind(contentTypeDefinitionName);
-        	oql.bind(false);
+    		Integer ctdId = -1;
+    		if(contentTypeDefinitionName != null && !contentTypeDefinitionName.equals(""))
+    		{
+    			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, db);
+    			ctdId = ctdVO.getId();
+    		}
+    		OQLQuery oql = null;
+
+    		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+				oql = db.getOQLQuery("CALL SQL SELECT c.contId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, c.creator, c.contentTypeDefId, c.repositoryId, c.parentContId FROM cmCont c where c.contentTypeDefId = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
+			else
+				oql = db.getOQLQuery("CALL SQL SELECT c.contentId, c.name, c.publishDateTime, c.expireDateTime, c.isBranch, c.isProtected, c.isDeleted, c.creator, c.contentTypeDefinitionId, c.repositoryId, c.parentContentId FROM cmContent c where c.contentTypeDefinitionId = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallContentImpl");
+
+        	oql.bind(ctdId);
         	
         	QueryResults results = oql.execute(Database.ReadOnly);
+        	if(logger.isInfoEnabled())
+        		t.printElapsedTime("Query for " + contentTypeDefinitionName);
 			
 			while(results.hasMore()) 
             {
-            	MediumContentImpl content = (MediumContentImpl)results.next();
-				contents.add(content.getValueObject());
+            	//MediumContentImpl content = (MediumContentImpl)results.next();
+            	SmallContentImpl content = (SmallContentImpl)results.next();
+            	contents.add(content.getValueObject());
             }
+			if(logger.isInfoEnabled())
+				t.printElapsedTime("Getting all for " + contentTypeDefinitionName + ":" + contents.size());
 			
 			results.close();
 			oql.close();
 	   	}
     	
 		return contents;    	
+	}
+
+	protected List<ContentVersionVO> getLatestContentVersionVOListByContentTypeId(Integer[] contentTypeDefinitionIds, Database db) throws SystemException, Exception
+	{
+		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
+
+		StringBuilder sb = new StringBuilder();
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+		{
+			sb.append("select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.VerComment, cv.isCheckedOut, cv.isActive, cv.ContId, cv.languageId, cv.versionModifier, cv.VerValue from cmContVer cv where cv.contid IN ");
+			sb.append("( ");
+			sb.append("   select contId from cmCont c2 where ( "); 
+			for(int i=0; i<contentTypeDefinitionIds.length; i++)
+			{
+				if(i>0)
+					sb.append(" OR ");
+				sb.append("c2.contenttypedefid = " + contentTypeDefinitionIds[i]);
+			}
+			sb.append("		) ");
+			sb.append(") ");
+			sb.append("AND cv.contverid =  ");
+			sb.append("( ");
+			sb.append("    select max(ContVerId) from cmContVer cv2, cmCont c where cv2.contId = c.contId AND cv2.contId = cv.contId AND cv2.isActive = 1 AND cv2.languageId =  ");
+			sb.append("    ( ");
+			sb.append("      select languageId from  ");
+			sb.append("      ( ");
+			sb.append("        select repositoryid, languageId from cmrepositorylanguage order by repositoryid, sortorder ");
+			sb.append("      ) ");
+			sb.append("      where repositoryid = c.repositoryId and rownum = 1 ");
+			sb.append("    ) ");
+			sb.append(") ");
+			sb.append("ORDER BY cv.contverid ");
+		}
+		else
+		{
+			sb.append("select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier, cv.versionValue from cmContentVersion cv where cv.contentId IN  ");
+			sb.append("( ");
+			sb.append("   select contentId from cmContent c2 where ( "); 
+			for(int i=0; i<contentTypeDefinitionIds.length; i++)
+			{
+				if(i>0)
+					sb.append(" OR ");
+				sb.append("c2.contentTypeDefinitionId = " + contentTypeDefinitionIds[i]);
+			}
+			sb.append("		) ");
+			sb.append(") ");
+			sb.append("AND cv.contentVersionId =  ");
+			sb.append("( ");
+			sb.append("    select max(contentVersionId) from cmContentVersion cv2, cmContent c where cv2.contentId = c.contentId AND cv2.contentId = cv.contentId AND cv2.isActive = 1 AND cv2.languageId =  ");
+			sb.append("    ( ");
+			sb.append("      select languageId from  ");
+			sb.append("      ( ");
+			sb.append("        select repositoryId, languageId from cmRepositoryLanguage order by repositoryId, sortorder ");
+			sb.append("      ) langView ");
+			sb.append("      where langView.repositoryId = c.repositoryId LIMIT 1 ");
+			sb.append("    ) ");
+			sb.append(") ");
+			sb.append("ORDER BY cv.contentVersionId ");
+		}
+
+		Timer t = new Timer();
+		OQLQuery oql = db.getOQLQuery("CALL SQL " + sb.toString() + "AS org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl");
+		logger.warn("Query for component content versions took:" + t.getElapsedTime());
+
+    	QueryResults results = oql.execute(Database.ReadOnly);
+		while (results.hasMore()) 
+        {
+			ContentVersion contentVersion = (ContentVersion)results.next();
+			contentVersionVOList.add(contentVersion.getValueObject());
+	    }
+
+		logger.warn("Read of component content versions took:" + t.getElapsedTime());
+
+		results.close();
+		oql.close();
+    	
+		return contentVersionVOList;    	
 	}
 
    	
@@ -1442,10 +1530,15 @@ public class ContentController extends BaseController
    		if(repositoryId == null || repositoryId.intValue() < 1)
    			return null;
    		
+		String key = "root_" + repositoryId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			return contentVO;
+		}
+
         Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-
-        Content content = null;
 
         beginTransaction(db);
 
@@ -1459,7 +1552,8 @@ public class ContentController extends BaseController
         	QueryResults results = oql.execute(Database.ReadOnly);			
 			if (results.hasMore()) 
             {
-            	content = (Content)results.next();
+				Content content = (Content)results.next();
+				contentVO = content.getValueObject();
 	        }
             else
             {
@@ -1470,7 +1564,8 @@ public class ContentController extends BaseController
 				rootContentVO.setCreatorName(userName);
 				rootContentVO.setName(repositoryVO.getName());
 				rootContentVO.setIsBranch(new Boolean(true));
-            	content = create(db, null, null, repositoryId, rootContentVO);
+            	Content content = create(db, null, null, repositoryId, rootContentVO);
+            	contentVO = content.getValueObject();
             }
             
 			results.close();
@@ -1495,7 +1590,10 @@ public class ContentController extends BaseController
             throw new SystemException(e.getMessage());
         }
 
-        return (content == null) ? null : content.getValueObject();
+		if(contentVO != null)
+			CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+
+        return contentVO;
    	}
 
 
@@ -1507,17 +1605,22 @@ public class ContentController extends BaseController
 	        
 	public ContentVO getRootContentVO(Integer repositoryId, String userName, boolean createIfNonExisting) throws ConstraintException, SystemException
 	{
+		String key = "root_" + repositoryId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			return contentVO;
+		}
+
 		Database db = CastorDatabaseService.getDatabase();
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-
-		Content content = null;
 
 		beginTransaction(db);
 
 		try
 		{
-		    content = getRootContent(db, repositoryId, userName, createIfNonExisting);
-            
+			contentVO = getRootContentVO(db, repositoryId, userName, createIfNonExisting);
+			
 			//If any of the validations or setMethods reported an error, we throw them up now before create. 
 			ceb.throwIfNotEmpty();
 			commitTransaction(db);
@@ -1537,9 +1640,61 @@ public class ContentController extends BaseController
 			throw new SystemException(e.getMessage());
 		}
 
-		return (content == null) ? null : content.getValueObject();
+		if(contentVO != null)
+			CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+
+		return contentVO;
 	}
    	
+	
+	/**
+	 * This method fetches the root content for a particular repository within a transaction.
+	 * If there is no such content we create one as all repositories need one to work.
+	 */
+	        
+	public ContentVO getRootContentVO(Database db, Integer repositoryId, String userName, boolean createIfNonExisting) throws ConstraintException, SystemException, Exception
+	{
+		String key = "root_" + repositoryId;
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		if(contentVO != null)
+		{
+			return contentVO;
+		}
+
+		logger.info("Fetching the root content for the repository " + repositoryId);
+		OQLQuery oql = db.getOQLQuery( "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE is_undefined(c.parentContentId) AND c.repositoryId = $1");
+		oql.bind(repositoryId);
+			
+		QueryResults results = oql.execute(Database.ReadOnly);			
+		if (results.hasMore()) 
+		{
+			SmallContentImpl contentImpl = (SmallContentImpl)results.next();
+			contentVO = contentImpl.getValueObject();
+		}
+		else
+		{
+			if(createIfNonExisting)
+			{
+				//None found - we create it and give it the name of the repository.
+				logger.info("Found no rootContent so we create a new....");
+				ContentVO rootContentVO = new ContentVO();
+				RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+				rootContentVO.setCreatorName(userName);
+				rootContentVO.setName(repositoryVO.getName());
+				rootContentVO.setIsBranch(new Boolean(true));
+				contentVO = create(db, null, null, repositoryId, rootContentVO).getValueObject();
+			}
+		}
+		
+		if(contentVO != null)
+			CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+
+		results.close();
+		oql.close();
+		
+		return contentVO;
+	}
+
 	
 	/**
 	 * This method fetches the root content for a particular repository within a transaction.
@@ -1580,23 +1735,6 @@ public class ContentController extends BaseController
 		return content;
 	}
 
-	/**
-	 * This method fetches the root content for a particular repository within a transaction.
-	 * If there is no such content we create one as all repositories need one to work.
-	 */
-	        
-	public Content createRootContent(Database db, Repository repository, String userName) throws ConstraintException, SystemException, Exception
-	{
-		Content content = null;
-
-		ContentVO rootContentVO = new ContentVO();
-		rootContentVO.setCreatorName(userName);
-		rootContentVO.setName(repository.getName());
-		rootContentVO.setIsBranch(new Boolean(true));
-		content = create(db, null, null, repository, rootContentVO);
-		
-		return content;
-	}
    	
 	/**
 	 * This method fetches the root content for a particular repository.
@@ -1623,6 +1761,17 @@ public class ContentController extends BaseController
 
 		return content;
 	}
+	
+	
+	
+   	/**
+   	 * This method returns a list of the children a content has.
+   	 */
+   	
+   	public List<ContentVO> getContentChildrenVOList(Integer parentContentId) throws ConstraintException, SystemException
+    {
+   		return getContentChildrenVOList(parentContentId, null);
+    }
 
    	/**
    	 * This method returns a list of the children a content has.
@@ -1647,9 +1796,8 @@ public class ContentController extends BaseController
         beginTransaction(db);
         try
         {
-        	
         	childrenVOList = getContentChildrenVOList(parentContentId, languageVOList, allowedContentTypeIds, showDeletedItems, db);	
-
+            
         	//If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
             
@@ -1657,26 +1805,27 @@ public class ContentController extends BaseController
         }
         catch(ConstraintException ce)
         {
-            logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+        	logger.warn("An error occurred so we should not complete the transaction in getContentChildrenVOList:" + ce, ce);
             rollbackTransaction(db);
             throw ce;
         }
         catch(Exception e)
         {
-			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
-			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+        	e.printStackTrace();
+			logger.error("An error occurred so we should not complete the transaction in getContentChildrenVOList:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction in getContentChildrenVOList:" + e.getMessage(), e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
-   		        
+
         return childrenVOList;
     } 
-   	
+
    	/**
    	 * This method returns a list of the children a content has.
    	 */
    	
-   	public List<ContentVO> getContentChildrenVOListOld(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems) throws ConstraintException, SystemException
+   	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, String[] allowedContentTypeIds) throws ConstraintException, SystemException
     {
 		Database db = CastorDatabaseService.getDatabase();
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
@@ -1687,7 +1836,7 @@ public class ContentController extends BaseController
         try
         {
         	
-        	childrenVOList = getContentChildrenVOListOld(parentContentId, allowedContentTypeIds, showDeletedItems, db);	
+        	childrenVOList = getContentChildrenVOList(parentContentId, allowedContentTypeIds, db); //getContentChildrenVOList(parentContentId, allowedContentTypeIds, db);	
 
         	//If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
@@ -1710,11 +1859,7 @@ public class ContentController extends BaseController
    		        
         return childrenVOList;
     } 
-
-
-   	/**
-   	 * This method returns a list of the children a content has.
-   	 */
+	
    	
    	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems, Database db) throws ConstraintException, SystemException, Exception
     {
@@ -1766,8 +1911,6 @@ public class ContentController extends BaseController
     	}
     	
     	String showDeletedItemsClause = " AND isDeleted = $2";
-    		
-    	//List<LanguageVO> languages = LanguageController.getController().getLanguageVOList(repositoryId, db);
 
     	StringBuilder sb = new StringBuilder();
 
@@ -1798,9 +1941,9 @@ public class ContentController extends BaseController
 			
 			sb.append(") ");
 			sb.append("AS stateId, ");
-	    	sb.append("(select count(contId) from cmCont where parentContId = c.contId) AS childCount ");
+	    	sb.append("(select count(contId) from cmCont where parentContId = c.contId) AS childCount, cv.contVerId ");
 	    	sb.append("from ");
-	    	sb.append("cmCont c ");
+	    	sb.append("cmCont c LEFT OUTER JOIN cmContVer cv ON c.contId = cv.contId ");
 	    	sb.append("WHERE parentContId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY c.contId asc AS org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl ");
     	}
     	else
@@ -1831,15 +1974,14 @@ public class ContentController extends BaseController
 			sb.append("  group by cv2.contentId order by cv2.contentVersionId desc");
 			sb.append(") ");
 			sb.append("AS stateId, ");
-	    	sb.append("(select count(*) from cmContent where parentContentId = c.contentId) AS childCount ");
+	    	sb.append("(select count(*) from cmContent where parentContentId = c.contentId) AS childCount, cv.contentVersionId ");
 	    	sb.append("from ");
-	    	sb.append("cmContent c ");
+	    	sb.append("cmContent c LEFT OUTER JOIN cmContentVersion cv ON c.contentId = cv.contentId ");
 	    	sb.append("WHERE parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " group by c.contentId ORDER BY c.contentId asc AS org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl ");
     	}
     	
     	String SQL = sb.toString();
-    	//logger.info(SQL);
-    	//logger.info(parentContentId);
+    	System.out.println(SQL);
     	
     	//String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY content.contentId";
     	//logger.info("SQL:" + SQL);
@@ -1855,7 +1997,7 @@ public class ContentController extends BaseController
         		oql.bind(allowedContentTypeIds[i]);
         	}
 		}
-		
+
 		QueryResults results = oql.execute(Database.ReadOnly);
 		while (results.hasMore()) 
 		{
@@ -1868,15 +2010,15 @@ public class ContentController extends BaseController
 
 		results.close();
 		oql.close();
-    	   		        
+
         return childrenVOList;
     } 
-   	
+
    	/**
    	 * This method returns a list of the children a content has.
    	 */
    	
-   	public List<ContentVO> getContentChildrenVOListOld(Integer parentContentId, String[] allowedContentTypeIds, Boolean showDeletedItems, Database db) throws ConstraintException, SystemException, Exception
+   	public List<ContentVO> getContentChildrenVOList(Integer parentContentId, String[] allowedContentTypeIds, Database db) throws ConstraintException, SystemException, Exception
     {
    		String allowedContentTypeIdsString = "";
    		if(allowedContentTypeIds != null)
@@ -1885,7 +2027,7 @@ public class ContentController extends BaseController
 	   			allowedContentTypeIdsString += "_" + allowedContentTypeIds[i];
    		}
    		
-   		String key = "" + parentContentId + allowedContentTypeIdsString + "_" + showDeletedItems;
+   		String key = "" + parentContentId + allowedContentTypeIdsString;
 		if(logger.isInfoEnabled())
 			logger.info("key:" + key);
 		
@@ -1914,14 +2056,10 @@ public class ContentController extends BaseController
         	contentTypeINClause += "))";
     	}
     	
-    	String showDeletedItemsClause = " AND content.isDeleted = $2";
-    	
-    	String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY content.contentId";
-    	//logger.info("SQL:" + SQL);
+    	String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + contentTypeINClause + " ORDER BY content.contentId";
     	OQLQuery oql = db.getOQLQuery(SQL);
-		//OQLQuery oql = db.getOQLQuery( "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 ORDER BY content.contentId");
 		oql.bind(parentContentId);
-		oql.bind(showDeletedItems);
+
 		if(allowedContentTypeIds != null)
 		{
         	for(int i=0; i < allowedContentTypeIds.length; i++)
@@ -1943,11 +2081,11 @@ public class ContentController extends BaseController
 
 		results.close();
 		oql.close();
-    	   		        
+        	
+   		        
         return childrenVOList;
     } 
    	
-	
 	/**
 	 * This method returns the contentTypeDefinitionVO which is associated with this content.
 	 */
@@ -1963,16 +2101,9 @@ public class ContentController extends BaseController
 
         try
         {
-        	ContentVO smallContentVO = getSmallContentVOWithId(contentId, db, null);
-        	Timer t = new Timer();
+        	ContentVO smallContentVO = getSmallContentVOWithId(contentId, db);
         	if(smallContentVO != null && smallContentVO.getContentTypeDefinitionId() != null)
 	        	contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(smallContentVO.getContentTypeDefinitionId(), db);
-        	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentTypeDefinitionVOWithId", (t.getElapsedTimeNanos() / 1000));
-        	/*
-	        Content content = getReadOnlyMediumContentWithId(contentId, db);
-        	if(content != null && content.getContentTypeDefinition() != null)
-	        	contentTypeDefinitionVO = content.getContentTypeDefinition().getValueObject();
-    		*/
         	
             //If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
@@ -2011,7 +2142,7 @@ public class ContentController extends BaseController
 
         try
         {
-            languages = LanguageController.getController().getLanguageVOList(contentId, db);
+            languages = getAvailableLanguagesForContentWithId(contentId, db);
             
             //If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
@@ -2267,7 +2398,7 @@ public class ContentController extends BaseController
 	 * This method returns the contents belonging to a certain repository.
 	 */
 	
-	public List getRepositoryMediumContents(Integer repositoryId, Database db) throws SystemException, Exception
+	public List getRepositoryContents(Integer repositoryId, Database db) throws SystemException, Exception
 	{
 		List contents = new ArrayList();
 		
@@ -2279,31 +2410,6 @@ public class ContentController extends BaseController
 		while(results.hasMore()) 
         {
         	MediumContentImpl content = (MediumContentImpl)results.next();
-			contents.add(content);
-        }
-
-		results.close();
-		oql.close();
-
-		return contents;    	
-	}
-
-	/**
-	 * This method returns the contents belonging to a certain repository.
-	 */
-	
-	public List getRepositoryContents(Integer repositoryId, Database db) throws SystemException, Exception
-	{
-		List contents = new ArrayList();
-		
-		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.repository = $1 ORDER BY c.contentId");
-    	oql.bind(repositoryId);
-    	
-    	QueryResults results = oql.execute();
-		
-		while(results.hasMore()) 
-        {
-        	ContentImpl content = (ContentImpl)results.next();
 			contents.add(content);
         }
 
@@ -2387,7 +2493,7 @@ public class ContentController extends BaseController
 	 */
 	public ContentVO getContentVOWithPath(Integer repositoryId, String path, boolean forceFolders, InfoGluePrincipal creator, Database db) throws SystemException, Exception 
 	{
-		ContentVO content = getRootContent(repositoryId, db).getValueObject();
+		ContentVO content = getRootContentVO(db, repositoryId, creator.getName(), false);
 		final String paths[] = path.split("/");
 		if(path.equals(""))
 			return content;
@@ -2453,9 +2559,19 @@ public class ContentController extends BaseController
 	 */
 	private ContentVO getChildVOWithName(Integer parentContentId, String name, Database db) throws Exception
 	{
+   		String key = "" + parentContentId + name;
+
+		ContentVO cachedChildContentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("childContentCache", key);
+		if(cachedChildContentVO != null)
+		{
+			if(logger.isInfoEnabled())
+				logger.info("There was an cached cachedChildContentVO:" + cachedChildContentVO);
+			return cachedChildContentVO;
+		}
+
 		ContentVO contentVO = null;
 		
-		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE c.parentContentId = $1 AND c.name = $2");
+		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE c.parentContentId = $1 AND c.name = $2");
     	oql.bind(parentContentId);
     	oql.bind(name);
     	
@@ -2463,9 +2579,12 @@ public class ContentController extends BaseController
 		
 		if(results.hasMore()) 
         {
-        	MediumContentImpl content = (MediumContentImpl)results.next();
+			SmallContentImpl content = (SmallContentImpl)results.next();
         	contentVO = content.getValueObject();
         }
+
+		if(contentVO != null)
+			CacheController.cacheObjectInAdvancedCache("childContentCache", key, contentVO, new String[]{CacheController.getPooledString(1, parentContentId)}, true);
 
 		results.close();
 		oql.close();
@@ -2518,25 +2637,54 @@ public class ContentController extends BaseController
 	 * Recursive methods to get all contentVersions of a given state under the specified parent content.
 	 */ 
 	
-    public List getContentVOWithParentRecursive(Integer contentId, List<LanguageVO> languageVOList) throws ConstraintException, SystemException
+    public List getContentVOWithParentRecursive(Integer contentId, ProcessBean processBean) throws ConstraintException, SystemException
 	{
-		return getContentVOWithParentRecursive(contentId, languageVOList, new ArrayList());
+    	List<ContentVO> contentVOList = new ArrayList<ContentVO>();
+    	
+    	Database db = CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        beginTransaction(db);
+
+        try
+        {
+        	contentVOList = getContentVOWithParentRecursive(contentId, processBean, contentVOList, db);
+    		
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        } 
+
+        return contentVOList;
 	}
 	
-	private List getContentVOWithParentRecursive(Integer contentId, List<LanguageVO> languageVOList, List resultList) throws ConstraintException, SystemException
+	private List getContentVOWithParentRecursive(Integer contentId, ProcessBean processBean, List resultList, Database db) throws ConstraintException, SystemException, Exception
 	{
 		// Get the versions of this content.
-		resultList.add(getContentVOWithId(contentId));
+		resultList.add(getContentVOWithId(contentId, db));
+		
+		if (resultList.size() % 10 == 0)
+		{
+			if(resultList.size() > 10)
+				processBean.updateLastDescription("Found " + resultList.size() + " so far...");
+			else
+				processBean.updateProcess("Found " + resultList.size() + " so far...");
+		}
 		
 		// Get the children of this content and do the recursion
-		List childContentList = ContentController.getContentController().getContentChildrenVOList(contentId, languageVOList, null, false);
+		List childContentList = ContentController.getContentController().getContentChildrenVOList(contentId, null, db);
 		Iterator cit = childContentList.iterator();
 		while (cit.hasNext())
 		{
 			ContentVO contentVO = (ContentVO) cit.next();
-			getContentVOWithParentRecursive(contentVO.getId(), languageVOList, resultList);
+			getContentVOWithParentRecursive(contentVO.getId(), processBean, resultList, db);
 		}
-	
+
 		return resultList;
 	}
 
@@ -2664,7 +2812,7 @@ public class ContentController extends BaseController
 		
 		return sb.toString();
 	}
-
+	
 	/**
 	 * Returns the path to, and including, the supplied content.
 	 * 
@@ -2701,131 +2849,8 @@ public class ContentController extends BaseController
 		return sb.toString();
 	}
 
-	public List<ContentVO> getUpcomingExpiringContents(int numberOfWeeks) throws Exception
-	{
-		List<ContentVO> contentVOList = new ArrayList<ContentVO>();
 
-		Database db = CastorDatabaseService.getDatabase();
-        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
-        beginTransaction(db);
-
-        try
-        {
-    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE " +
-    				"c.expireDateTime > $1 AND c.expireDateTime < $2 AND c.publishDateTime < $3 ORDER BY c.contentId");
-
-        	Calendar now = Calendar.getInstance();
-        	Date currentDate = now.getTime();
-        	oql.bind(currentDate);
-        	now.add(Calendar.DAY_OF_YEAR, numberOfWeeks);
-        	Date futureDate = now.getTime();
-           	oql.bind(futureDate);
-           	oql.bind(currentDate);
-
-        	QueryResults results = oql.execute(Database.ReadOnly);
-    		while(results.hasMore()) 
-            {
-    			Content content = (ContentImpl)results.next();
-    			contentVOList.add(content.getValueObject());
-            }
-
-    		results.close();
-    		oql.close();
-        	
-            commitTransaction(db);
-        }
-        catch(Exception e)
-        {
-			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
-			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
-        
-        return contentVOList;
-	}
-
-	public List<ContentVO> getUpcomingExpiringContents(int numberOfDays, InfoGluePrincipal principal, String[] excludedContentTypes) throws Exception
-	{
-		List<ContentVO> contentVOList = new ArrayList<ContentVO>();
-
-		Database db = CastorDatabaseService.getDatabase();
-        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-
-        beginTransaction(db);
-
-        try
-        {
-    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE " +
-        			"c.expireDateTime > $1 AND c.expireDateTime < $2 AND c.publishDateTime < $3 AND c.contentVersions.versionModifier = $4 ORDER BY c.contentId");
-    		
-        	Calendar now = Calendar.getInstance();
-        	Date currentDate = now.getTime();
-        	oql.bind(currentDate);
-        	now.add(Calendar.DAY_OF_YEAR, numberOfDays);
-        	Date futureDate = now.getTime();
-        	oql.bind(futureDate);
-           	oql.bind(currentDate);
-           	oql.bind(principal.getName());
-
-        	QueryResults results = oql.execute(Database.ReadOnly);
-    		while(results.hasMore()) 
-            {
-    			Content content = (ContentImpl)results.next();
-    			
-				boolean isValid = true;
-				for(int i=0; i<excludedContentTypes.length; i++)
-				{
-					String contentTypeDefinitionNameToExclude = excludedContentTypes[i];
-					ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNameToExclude, db);
-					if(content.getContentTypeDefinitionId().equals(ctdVO.getId()))
-					{
-						isValid = false;
-						break;
-					}
-				}
-				
-				if(isValid)
-					contentVOList.add(content.getValueObject());
-            }
-
-    		results.close();
-    		oql.close();
-        	
-            commitTransaction(db);
-        }
-        catch(Exception e)
-        {
-            logger.error("An error occurred so we should not complete the transaction:" + e, e);
-            rollbackTransaction(db);
-            throw new SystemException(e.getMessage());
-        }
-
-        return contentVOList;
-	}
-
-	/**
-	 * This method checks if there are published versions available for the contentVersion.
-	 */
-	
-	public boolean hasPublishedVersion(Integer contentId)
-	{
-		boolean hasPublishedVersion = false;
-		
-		try
-		{
-			ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestPublishedContentVersion(contentId);
-			if(contentVersion != null)
-			{
-				hasPublishedVersion = true;
-			}
-		}
-		catch(Exception e){}
-				
-		return hasPublishedVersion;
-	}
-	
 	public List<ContentVO> getRelatedContents(Database db, Integer contentId, Integer languageId, String attributeName, boolean useLanguageFallback) throws Exception
 	{
 		String qualifyerXML = getContentAttribute(db, contentId, languageId, attributeName, useLanguageFallback);
@@ -2855,6 +2880,8 @@ public class ContentController extends BaseController
 	{
 		if(logger.isInfoEnabled())
 			logger.info("qualifyerXML:" + qualifyerXML);
+		
+		Timer t = new Timer();
 		
 		List<ContentVO> relatedContentVOList = new ArrayList<ContentVO>();
 
@@ -2975,5 +3002,387 @@ public class ContentController extends BaseController
 		}
 
 		return relatedPages;
+	}
+	
+	/**
+	 * This method checks if there are published versions available for the contentVersion.
+	 */
+	
+	public boolean hasPublishedVersion(Integer contentId)
+	{
+		boolean hasPublishedVersion = false;
+		
+		try
+		{
+			ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestPublishedContentVersion(contentId);
+			if(contentVersion != null)
+			{
+				hasPublishedVersion = true;
+			}
+		}
+		catch(Exception e){}
+				
+		return hasPublishedVersion;
+	}
+	
+	/**
+	 * This method deletes a content and also erases all the children and all versions.
+	 */
+	    
+    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
+    {
+    	markForDeletion(contentVO, infogluePrincipal, false);
+    }
+    
+	/**
+	 * This method deletes a content and also erases all the children and all versions.
+	 */
+	    
+    public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
+    {
+	    Database db = CastorDatabaseService.getDatabase();
+        beginTransaction(db);
+		try
+        {		
+			markForDeletion(contentVO, db, false, false, forceDelete, infogluePrincipal);
+	    	
+	    	commitTransaction(db);
+            
+        }
+        catch(ConstraintException ce)
+        {
+        	logger.warn("An error occurred so we should not complete the transaction:" + ce, ce);
+            rollbackTransaction(db);
+            throw ce;
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+    }  
+    
+
+	/**
+	 * This method deletes a content and also erases all the children and all versions.
+	 */
+	    
+	public void markForDeletion(ContentVO contentVO, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException, Exception
+	{
+		markForDeletion(contentVO, db, false, false, false, infogluePrincipal);
+	}
+	
+	/**
+	 * This method deletes a content and also erases all the children and all versions.
+	 */
+	    
+	public void markForDeletion(ContentVO contentVO, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
+	{
+		Content content = null;
+		try
+		{
+			content = getContentWithId(contentVO.getContentId(), db);
+		}
+		catch(SystemException e)
+		{
+			return;
+		}
+		
+		Content parent = content.getParentContent();
+		if(parent != null)
+		{
+			Iterator childContentIterator = parent.getChildren().iterator();
+			while(childContentIterator.hasNext())
+			{
+			    Content candidate = (Content)childContentIterator.next();
+			    if(candidate.getId().equals(contentVO.getContentId()))
+			    {
+			    	markForDeletionRecursive(content, childContentIterator, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);
+			    }
+			}
+		}
+		else
+		{
+			markForDeletionRecursive(content, null, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);
+		}
+	}        
+
+	/**
+	 * Recursively deletes all contents and their versions. Also updates related entities about the change.
+	 */
+	
+    private static void markForDeletionRecursive(Content content, Iterator parentIterator, Database db, boolean skipRelationCheck, boolean skipServiceBindings, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
+    {
+        if(!skipRelationCheck)
+        {
+	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, true, db);
+			if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
+				throw new ConstraintException("ContentVersion.stateId", "3305", "<br/><br/>" + content.getName() + " (" + content.getId() + ")");
+        }
+        
+        Collection children = content.getChildren();
+		Iterator childrenIterator = children.iterator();
+		while(childrenIterator.hasNext())
+		{
+			Content childContent = (Content)childrenIterator.next();
+			markForDeletionRecursive(childContent, childrenIterator, db, skipRelationCheck, skipServiceBindings, forceDelete, infogluePrincipal);   			
+   		}
+		
+		boolean isDeletable = getIsDeletable(content, infogluePrincipal, db);
+   		if(forceDelete || isDeletable)
+	    {
+			//ContentVersionController.getContentVersionController().deleteVersionsForContent(content, db, forceDelete, infogluePrincipal);    	
+			
+			//if(!skipServiceBindings)
+   			//    ServiceBindingController.deleteServiceBindingsReferencingContent(content, db);
+			
+   			//if(parentIterator != null) 
+			//    parentIterator.remove();
+	    	
+	    	content.setIsDeleted(true);
+	    }
+	    else
+    	{
+    		throw new ConstraintException("ContentVersion.stateId", "3300", content.getName());
+    	}			
+    }        
+
+    /**
+	 * This method restored a content.
+	 */
+	    
+    public void restoreContent(Integer contentId, InfoGluePrincipal infogluePrincipal, Database db) throws ConstraintException, SystemException
+    {
+		Content content = getContentWithId(contentId, db);
+		content.setIsDeleted(false);
+    }  
+
+    /**
+	 * This method restored a content.
+	 */
+	    
+    public void restoreContent(Integer contentId, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
+    {
+	    Database db = CastorDatabaseService.getDatabase();
+        
+	    beginTransaction(db);
+		
+        try
+        {
+			Content content = getContentWithId(contentId, db);
+			content.setIsDeleted(false);
+			
+			while(content.getParentContent() != null && content.getParentContent().getIsDeleted())
+			{
+				content = content.getParentContent();
+				content.setIsDeleted(false);
+			}
+	    	
+	    	commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    }  
+
+	public List<ContentVO> getContentVOListMarkedForDeletion(Integer repositoryId) throws SystemException, Bug
+	{
+		Database db = CastorDatabaseService.getDatabase();
+		
+		List<ContentVO> contentVOListMarkedForDeletion = new ArrayList<ContentVO>();
+		
+		try 
+		{
+			beginTransaction(db);
+
+			String sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repository.name) ORDER BY c.contentId";
+			if(repositoryId != null && repositoryId != -1)
+				sql = "SELECT c FROM org.infoglue.cms.entities.content.impl.simple.ContentImpl c WHERE c.isDeleted = $1 AND is_defined(c.repository.name) AND c.repository = $2 ORDER BY c.contentId";
+			
+			OQLQuery oql = db.getOQLQuery(sql);
+			oql.bind(true);
+			if(repositoryId != null && repositoryId != -1)
+				oql.bind(repositoryId);
+			
+			QueryResults results = oql.execute(Database.READONLY);
+			while(results.hasMore()) 
+            {
+				Content content = (Content)results.next();
+				content.getValueObject().getExtraProperties().put("repositoryMarkedForDeletion", content.getRepository().getIsDeleted());
+				contentVOListMarkedForDeletion.add(content.getValueObject());
+            }
+            
+			results.close();
+			oql.close();
+
+			commitTransaction(db);
+		}
+		catch ( Exception e)		
+		{
+			throw new SystemException("An error occurred when we tried to fetch a list of deleted pages. Reason:" + e.getMessage(), e);			
+		}
+		
+		return contentVOListMarkedForDeletion;		
+	}
+	
+	/**
+	 * Returns a repository list marked for deletion.
+	 */
+	
+	public Set<ContentVO> getContentVOListLastModifiedByPincipal(InfoGluePrincipal principal, String[] excludedContentTypes) throws SystemException, Bug
+	{
+		Database db = CastorDatabaseService.getDatabase();
+		
+		Set<ContentVO> contentVOList = new HashSet<ContentVO>();
+		
+		try 
+		{
+			beginTransaction(db);
+		
+			OQLQuery oql = db.getOQLQuery("SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl cv WHERE cv.versionModifier = $1 ORDER BY cv.modifiedDateTime DESC LIMIT $2");
+			oql.bind(principal.getName());
+			oql.bind(50);
+
+			QueryResults results = oql.execute(Database.READONLY);
+			while(results.hasMore()) 
+            {
+				SmallestContentVersionImpl contentVersion = (SmallestContentVersionImpl)results.next();
+				ContentVO contentVO = getContentVOWithId(contentVersion.getValueObject().getContentId(), db);
+				boolean isValid = true;
+				for(int i=0; i<excludedContentTypes.length; i++)
+				{
+					String contentTypeDefinitionNameToExclude = excludedContentTypes[i];
+					ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNameToExclude, db);
+					if(contentVO.getContentTypeDefinitionId().equals(ctdVO.getId()))
+					{
+						isValid = false;
+						break;
+					}
+				}
+				
+				if(isValid)
+					contentVOList.add(contentVO);
+            }
+            
+			results.close();
+			oql.close();
+
+			commitTransaction(db);
+		}
+		catch ( Exception e)		
+		{
+			e.printStackTrace();
+			throw new SystemException("An error occurred when we tried to fetch a list contents last modified by the user. Reason:" + e.getMessage(), e);			
+		}
+		
+		return contentVOList;		
+	}
+
+	public List<ContentVO> getUpcomingExpiringContents(int numberOfWeeks) throws Exception
+	{
+		List<ContentVO> contentVOList = new ArrayList<ContentVO>();
+
+		Database db = CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        beginTransaction(db);
+
+        try
+        {
+    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.SmallContentImpl c WHERE " +
+    				"c.expireDateTime > $1 AND c.expireDateTime < $2 AND c.publishDateTime < $3 ORDER BY c.contentId");
+
+        	Calendar now = Calendar.getInstance();
+        	Date currentDate = now.getTime();
+        	oql.bind(currentDate);
+        	now.add(Calendar.DAY_OF_YEAR, numberOfWeeks);
+        	Date futureDate = now.getTime();
+           	oql.bind(futureDate);
+           	oql.bind(currentDate);
+
+        	QueryResults results = oql.execute(Database.ReadOnly);
+    		while(results.hasMore()) 
+            {
+    			Content content = (ContentImpl)results.next();
+    			contentVOList.add(content.getValueObject());
+            }
+
+    		results.close();
+    		oql.close();
+        	
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+        
+        return contentVOList;
+	}
+
+	public List<ContentVO> getUpcomingExpiringContents(int numberOfDays, InfoGluePrincipal principal, String[] excludedContentTypes) throws Exception
+	{
+		List<ContentVO> contentVOList = new ArrayList<ContentVO>();
+
+		Database db = CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        beginTransaction(db);
+
+        try
+        {
+    		OQLQuery oql = db.getOQLQuery("SELECT c FROM org.infoglue.cms.entities.content.impl.simple.MediumContentImpl c WHERE " +
+        			"c.expireDateTime > $1 AND c.expireDateTime < $2 AND c.publishDateTime < $3 AND c.contentVersions.versionModifier = $4 ORDER BY c.contentId");
+    		
+        	Calendar now = Calendar.getInstance();
+        	Date currentDate = now.getTime();
+        	oql.bind(currentDate);
+        	now.add(Calendar.DAY_OF_YEAR, numberOfDays);
+        	Date futureDate = now.getTime();
+        	oql.bind(futureDate);
+           	oql.bind(currentDate);
+           	oql.bind(principal.getName());
+
+        	QueryResults results = oql.execute(Database.ReadOnly);
+    		while(results.hasMore()) 
+            {
+    			Content content = (ContentImpl)results.next();
+    			
+				boolean isValid = true;
+				for(int i=0; i<excludedContentTypes.length; i++)
+				{
+					String contentTypeDefinitionNameToExclude = excludedContentTypes[i];
+					ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionNameToExclude, db);
+					if(content.getContentTypeDefinitionId().equals(ctdVO.getId()))
+					{
+						isValid = false;
+						break;
+					}
+				}
+				
+				if(isValid)
+					contentVOList.add(content.getValueObject());
+            }
+
+    		results.close();
+    		oql.close();
+        	
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
+        return contentVOList;
 	}
 }

@@ -43,6 +43,8 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.EntityVOWithSupplementingEntityVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -55,9 +57,11 @@ import org.infoglue.deliver.applications.actions.InfoGlueComponent;
 import org.infoglue.deliver.applications.databeans.ComponentBinding;
 import org.infoglue.deliver.applications.databeans.ComponentDeliveryContext;
 import org.infoglue.deliver.applications.databeans.Slot;
+import org.infoglue.deliver.applications.databeans.SupplementedComponentBinding;
 import org.infoglue.deliver.applications.databeans.WebPage;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Support;
 import org.infoglue.deliver.util.Timer;
 import org.w3c.dom.Document;
@@ -481,7 +485,7 @@ public class ComponentLogic
 	{
 		String attributeValue = "";
 
-		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts"))
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 		{
 			templateController.getDeliveryContext().setDebugMode(true);
 		}
@@ -491,7 +495,7 @@ public class ComponentLogic
 		if(contentId != null)
 			attributeValue = templateController.getContentAttribute(contentId, languageId, attributeName, disableEditOnSight);
 		
-		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") && (attributeValue == null || attributeValue.equals("")))
+		if((propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages")) && (attributeValue == null || attributeValue.equals("")))
 		{
 			logger.warn(templateController.getDeliveryContext().getDebugInformation());
 		}
@@ -545,12 +549,10 @@ public class ComponentLogic
 	{
 		String attributeValue = "";
 		
-		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts"))
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 		{
 			templateController.getDeliveryContext().setDebugMode(true);
 		}
-		templateController.getDeliveryContext().addDebugInformation("DEBUG MiniArticleShortcuts");
-		templateController.getDeliveryContext().addDebugInformation("DEBUG propertyName:" + propertyName + " / languageId:" + languageId + " / attributeName:" + attributeName + " / disableEditOnSight: " + disableEditOnSight + " / useInheritance: " + useInheritance + " / useRepositoryInheritance: " + useRepositoryInheritance + " / useStructureInheritance: " + useStructureInheritance + " / escapeVelocityCode: " + escapeVelocityCode);
 		
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
 		templateController.getDeliveryContext().addDebugInformation("DEBUG property:" + property);
@@ -570,7 +572,7 @@ public class ComponentLogic
 			}
 		}
 		
-		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") && (attributeValue == null || attributeValue.equals("")))
+		if((propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages")) && (attributeValue == null || attributeValue.equals("")))
 		{
 			logger.warn(templateController.getDeliveryContext().getDebugInformation());
 		}
@@ -628,6 +630,7 @@ public class ComponentLogic
 		String propertyValue = "";
 		
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+		System.out.println("property:" + property);
 		if(property != null)
 		{	
 			try
@@ -637,10 +640,12 @@ public class ComponentLogic
 					propertyDefinition = getComponentPropertyDefinition(new Integer((String)property.get("componentContentId")), propertyName, templateController.getSiteNodeId(), templateController.getLanguageId(), templateController.getContentId(), templateController.getDatabase(), templateController.getPrincipal());
 				else
 					propertyDefinition = getComponentPropertyDefinition(this.infoGlueComponent.getContentId(), propertyName, templateController.getSiteNodeId(), templateController.getLanguageId(), templateController.getContentId(), templateController.getDatabase(), templateController.getPrincipal());
-						
+				
+				System.out.println("propertyDefinition:" + propertyDefinition);
 				if(propertyDefinition != null)
 			    {
 					boolean languageVariationAllowed = propertyDefinition.getAllowLanguageVariations();
+					System.out.println("languageVariationAllowed:" + languageVariationAllowed);
 					if(languageVariationAllowed)
 					{
 						propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage()); 
@@ -648,12 +653,10 @@ public class ComponentLogic
 							propertyValue = (String)property.get("path");
 					}
 					else
-						propertyValue = (String)property.get("path");
-					 	 
-					propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage());
-					if(propertyValue == null)
 					{
-						propertyValue = (String)property.get("path");
+						propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage()); 
+						if(propertyValue == null)
+							propertyValue = (String)property.get("path");
 					}
 			    }
 				else
@@ -662,6 +665,7 @@ public class ComponentLogic
 					if((propertyValue == null || propertyValue.equals("")) && useLanguageFallback)
 						propertyValue = (String)property.get("path");
 				}
+				System.out.println("propertyValue:" + propertyValue);
 			}
 			catch (Exception e) 
 			{
@@ -683,7 +687,8 @@ public class ComponentLogic
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error getting propertyValue on + " + propertyName + ":" + e.getMessage(), e);
+				logger.error("Error getting propertyValue on " + propertyName + ":" + e.getMessage());
+				logger.warn("Error getting propertyValue on " + propertyName + ":" + e.getMessage(), e);
 			}
 		}
 				
@@ -700,6 +705,7 @@ public class ComponentLogic
 		Locale locale = LanguageDeliveryController.getLanguageDeliveryController().getLocaleWithId(templateController.getDatabase(), templateController.getLanguageId());
 		
 		Map property = getInheritedComponentProperty(component, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance, useComponentInheritance);
+		System.out.println("property:" + property);
 		if(property != null)
 		{	
 			propertyValue = (String)property.get("path_" + locale.getLanguage());
@@ -722,7 +728,7 @@ public class ComponentLogic
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error getting propertyValue on + " + propertyName + ":" + e.getMessage(), e);
+				logger.error("Error getting propertyValue on " + propertyName + ":" + e.getMessage(), e);
 			}
 		}
 
@@ -767,7 +773,7 @@ public class ComponentLogic
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error getting propertyValue on + " + propertyName + ":" + e.getMessage(), e);
+				logger.error("Error getting propertyValue on " + propertyName + ":" + e.getMessage(), e);
 			}
 		}
 
@@ -784,6 +790,7 @@ public class ComponentLogic
 		Locale locale = LanguageDeliveryController.getLanguageDeliveryController().getLocaleWithId(templateController.getDatabase(), templateController.getLanguageId());
 
 		Map property = getInheritedComponentProperty(siteNodeId, component, propertyName, useInheritance);
+		System.out.println("property:" + property);
 		if(property != null)
 		{	
 			if(property != null)
@@ -813,7 +820,7 @@ public class ComponentLogic
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error getting propertyValue on + " + propertyName + ":" + e.getMessage(), e);
+				logger.error("Error getting propertyValue on " + propertyName + ":" + e.getMessage(), e);
 			}
 		}
 
@@ -899,9 +906,23 @@ public class ComponentLogic
 	{
 		List<ContentVO> contents = new ArrayList<ContentVO>();
 
-		Map property = getInheritedComponentProperty(siteNodeId, this.infoGlueComponent, propertyName, useInheritance);
-		contents = getBoundContents(property);
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+		{
+			this.templateController.getDeliveryContext().setDebugMode(true);
+			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO getBoundContents on flashImages (Thread" + Thread.currentThread().getId() + ")\n");
+		}
 		
+		Map property = getInheritedComponentProperty(siteNodeId, this.infoGlueComponent, propertyName, useInheritance);
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO property: " + property + " (Thread" + Thread.currentThread().getId() + ")\n");
+		
+		contents = getBoundContents(property);
+		if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
+			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO contents:" + (contents == null ? "null" : contents.size()) + " (Thread" + Thread.currentThread().getId() + ")\n");
+		
+		if(property == null || contents == null && this.templateController.getDeliveryContext().getDebugInformation() != null && !this.templateController.getDeliveryContext().getDebugInformation().equals(""))
+			logger.warn("DEBUGGING INFORMATION GUFlashImages:" + this.templateController.getDeliveryContext().getDebugInformation());
+					
 		return contents;
 	}
 
@@ -953,6 +974,34 @@ public class ComponentLogic
 		contents = getBoundContents(property);
 
 		return contents;
+	}
+	
+	protected List<Integer> getExternalBindings(Map property)
+	{
+	    List<Integer> bindingList = new ArrayList<Integer>();
+
+	    if(property != null)
+		{
+	    	List<ComponentBinding> bindings = (List<ComponentBinding>)property.get("bindings");
+			Iterator<ComponentBinding> bindingsIterator = bindings.iterator();
+			while(bindingsIterator.hasNext())
+			{
+				ComponentBinding componentBinding = bindingsIterator.next();
+				bindingList.add(componentBinding.getEntityId());
+			}
+		}
+
+		return bindingList;
+	}
+
+	public List<Integer> getExternalBindings(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	{
+		List<Integer> bindings = null;
+
+		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+		bindings = getExternalBindings(property);
+
+		return bindings;
 	}
 	
 	/**
@@ -1143,20 +1192,25 @@ public class ComponentLogic
 	 */
 	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages)
 	{
-		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, true, this.useRepositoryInheritance, this.useStructureInheritance);
+		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, this.useRepositoryInheritance, this.useStructureInheritance);
 	}
 
 	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance)
 	{
-		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, true, useRepositoryInheritance, this.useStructureInheritance);
-	}
-
-	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean includeHidden, boolean useRepositoryInheritance, boolean useStructureInheritance)
-	{
-		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, includeHidden, useRepositoryInheritance, useStructureInheritance, true, true);
+		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, useRepositoryInheritance, this.useStructureInheritance);
 	}
 	
-	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean includeHidden, boolean useRepositoryInheritance, boolean useStructureInheritance, boolean populateNavigationTitle, boolean populatePageUrl)
+	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	{
+		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, 0);
+	}
+
+	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance, Integer levelsToPopulate)
+	{
+		return getChildPages(propertyName, useInheritance, escapeHTML, hideUnauthorizedPages, useRepositoryInheritance, useStructureInheritance, levelsToPopulate, null);
+	}
+	
+	public List getChildPages(String propertyName, boolean useInheritance, boolean escapeHTML, boolean hideUnauthorizedPages, boolean useRepositoryInheritance, boolean useStructureInheritance, Integer levelsToPopulate, String nameFilter)
 	{
 	    List childPages = new ArrayList();
 	    
@@ -1168,7 +1222,8 @@ public class ComponentLogic
 			while(bindingsIterator.hasNext())
 			{
 				Integer siteNodeId = bindingsIterator.next().getEntityId();
-				childPages.addAll(getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, includeHidden, populateNavigationTitle, populatePageUrl));
+				System.out.println("propertyName:" + propertyName);
+				childPages.addAll(getChildPages(siteNodeId, levelsToPopulate, nameFilter));
 			}
 		}
 
@@ -1182,36 +1237,22 @@ public class ComponentLogic
 
 	public List getChildPages(Integer siteNodeId)
 	{
-		List pages = templateController.getChildPages(siteNodeId);
-
-		Iterator pagesIterator = pages.iterator();
-		while(pagesIterator.hasNext())
-		{
-			WebPage webPage = (WebPage)pagesIterator.next();
-			webPage.setUrl(getPageUrl(webPage.getSiteNodeId()));
-		}
-	
-		return pages;
+		return getChildPages(siteNodeId, 0);
 	}
-
+	
+	
 	/**
 	 * This method returns a list of childpages.
 	 */
-	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden)
-	{
-		return getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, showHidden, true, true);
-	}
-		
-	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, boolean showHidden, boolean populateNavigationTitle, boolean populatePageUrl)
-	{
-		List pages = templateController.getChildPages(siteNodeId, escapeHTML, hideUnauthorizedPages, showHidden, populateNavigationTitle, populatePageUrl);
 
-		Iterator pagesIterator = pages.iterator();
-		while(pagesIterator.hasNext())
-		{
-			WebPage webPage = (WebPage)pagesIterator.next();
-			webPage.setUrl(getPageUrl(webPage.getSiteNodeId()));
-		}
+	public List getChildPages(Integer siteNodeId, Integer levelsToPopulate)
+	{
+		return getChildPages(siteNodeId, levelsToPopulate, null);
+	}
+	
+	public List getChildPages(Integer siteNodeId, Integer levelsToPopulate, String nameFilter)
+	{
+		List pages = templateController.getChildPages(siteNodeId, levelsToPopulate);
 	
 		return pages;
 	}
@@ -1479,10 +1520,13 @@ public class ComponentLogic
 
 	public Map getInheritedComponentProperty(InfoGlueComponent component, String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance, boolean useComponentInheritance)
 	{
+		Timer t = new Timer();
+		
 		Map property = null;
 		
 	    Set contentVersionIdList = new HashSet();
 	    Set<String> usedContentEntities = new HashSet<String>();
+	    Set<String> relatedRepositoryIds = new HashSet<String>();
 	    if(templateController.getDeliveryContext().getUsedPageComponentsMetaInfoContentVersionIdSet().size() > 0)
 	    	contentVersionIdList.addAll(templateController.getDeliveryContext().getUsedPageComponentsMetaInfoContentVersionIdSet());
 	    	
@@ -1491,9 +1535,18 @@ public class ComponentLogic
 		    String key = "" + templateController.getSiteNodeId() + "_" + templateController.getLanguageId() + "_" + component.getName() + "_" + component.getSlotName() + "_" + component.getContentId() + "_" + component.getId() + "_" + component.getIsInherited() + "_" + propertyName + "_" + useInheritance + "_" + useRepositoryInheritance + "_" + useStructureInheritance + "_" + useComponentInheritance; 
 		    String versionKey = key + "_contentVersionIds";
 		    String entitiesKey = key + "_usedContentEntities";
+		    
+		    String cacheName = "componentPropertyCacheRepoGroups";
+		    String cacheNameID = "componentPropertyVersionIdCacheRepoGroups";
+		    
+			Object propertyCandidate = CacheController.getCachedObjectFromAdvancedCache(cacheName, key);
+			Set propertyCandidateVersions = (Set)CacheController.getCachedObjectFromAdvancedCache(cacheNameID, versionKey);
+			Set propertyUsedEntities = (Set)CacheController.getCachedObjectFromAdvancedCache(cacheNameID, entitiesKey);
+			/*
 			Object propertyCandidate = CacheController.getCachedObjectFromAdvancedCache("componentPropertyCache", key);
 			Set propertyCandidateVersions = (Set)CacheController.getCachedObjectFromAdvancedCache("componentPropertyVersionIdCache", versionKey);
 			Set propertyUsedEntities = (Set)CacheController.getCachedObjectFromAdvancedCache("componentPropertyVersionIdCache", entitiesKey);
+			*/
 			templateController.getDeliveryContext().addDebugInformation("DEBUG key:" + key + "=" + propertyCandidate);
 			
 			if(propertyCandidate != null)
@@ -1510,7 +1563,7 @@ public class ComponentLogic
 			}
 			else
 			{
-				property = getComponentProperty(propertyName, useInheritance, useStructureInheritance, contentVersionIdList, usedContentEntities, useRepositoryInheritance, useComponentInheritance);
+				property = getComponentProperty(propertyName, useInheritance, useStructureInheritance, contentVersionIdList, usedContentEntities, relatedRepositoryIds, useRepositoryInheritance, useComponentInheritance);
 				templateController.getDeliveryContext().addDebugInformation("DEBUG property 2:" + property);
 				if(property == null)
 				{	
@@ -1526,6 +1579,9 @@ public class ComponentLogic
 				templateController.getDeliveryContext().addDebugInformation("DEBUG property 3:" + property);
 				
 			    Set groups = new HashSet();
+				/*
+				Timer t = new Timer();
+				Set groups = new HashSet();
 				Iterator contentVersionIdListIterator = contentVersionIdList.iterator();
 			    while(contentVersionIdListIterator.hasNext())
 			    {
@@ -1533,20 +1589,36 @@ public class ComponentLogic
 					if(contentVersionId != null)
 					{
 						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-					    groups.add(CacheController.getPooledString(2, contentVersionId));
+						//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getContentVersionVOWithId", t.getElapsedTimeNanos());
+						//ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+						//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getSmallContentVersionVOWithId", t.getElapsedTimeNanos());
+						
+						groups.add(CacheController.getPooledString(2, contentVersionId));
 					    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 					}
 				}
-
+			    RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting groups for componentPropertyCache", t.getElapsedTimeNanos());
+			    
 			    //logger.info("Adding group: " + "siteNode_" + templateController.getSiteNodeId());
 			    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
+			    */
 			    
-			    if(groups.size() < 26)
-			    {
-			    	CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
+			    //if(groups.size() < 26)
+				//{
+				
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getInheritedComponentProperty with repo groups", t.getElapsedTime());
+
+				//System.out.println("relatedRepositoryIds:" + relatedRepositoryIds.size());
+				groups.addAll(relatedRepositoryIds);
+					CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheName, key, property, groups, true);
+				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheNameID, versionKey, contentVersionIdList, groups, true);
+				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet(cacheNameID, entitiesKey, usedContentEntities, groups, true);
+/*
+					CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", entitiesKey, usedContentEntities, groups, true);
-			    }
+*/
+				//}
 			}
 		}
 		catch(Exception e)
@@ -1599,8 +1671,8 @@ public class ComponentLogic
 			if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO ERROR: " + propertyName + " (Thread" + Thread.currentThread().getId() + ")" + e.getMessage() + "\n");
 
-			logger.error("Error getting propertyValue on + " + siteNodeId + ":" + propertyName + ":" + e.getMessage());
-			logger.warn("Error getting propertyValue on + " + siteNodeId + ":" + propertyName + ":" + e.getMessage(), e);
+			logger.error("Error getting propertyValue on " + siteNodeId + ":" + propertyName + ":" + e.getMessage());
+			logger.warn("Error getting propertyValue on " + siteNodeId + ":" + propertyName + ":" + e.getMessage(), e);
 		}
 		
 		return null;
@@ -1805,6 +1877,7 @@ public class ComponentLogic
 					if(property != null && contentVersionIdList.size() > 0)
 			        {
 					    Set groups = new HashSet();
+						/*
 						Iterator contentVersionIdListIterator = contentVersionIdList.iterator();
 					    while(contentVersionIdListIterator.hasNext())
 					    {
@@ -1813,7 +1886,8 @@ public class ComponentLogic
 							{
 								if(contentVersionId != null)
 								{
-									ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+									//ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+									ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
 								    groups.add(CacheController.getPooledString(2, contentVersionId));
 								    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 								}
@@ -1825,6 +1899,7 @@ public class ComponentLogic
 					    }
 					    
 					    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
+					    */
 					    
 					    if(groups.size() < 20)
 					    {
@@ -1915,18 +1990,31 @@ public class ComponentLogic
 	 * This method fetches the component named component property. If not available on the current page metainfo we go up recursive.
 	 */
 	
-	private Map getComponentProperty(String propertyName, boolean useInheritance, boolean useStructureInheritance, Set contentVersionIdList, Set<String> usedContentEntities, boolean useRepositoryInheritance, boolean useComponentInheritance) throws Exception
+	private Map getComponentProperty(String propertyName, boolean useInheritance, boolean useStructureInheritance, Set contentVersionIdList, Set<String> usedContentEntities, Set<String> relatedRepositoryIds, boolean useRepositoryInheritance, boolean useComponentInheritance) throws Exception
 	{
 		Map property = (Map)this.infoGlueComponent.getProperties().get(propertyName);
+		relatedRepositoryIds.add("" + this.templateController.getSiteNode().getRepositoryId());
+
 		if(property != null)
 		{
-			String pageComponentsXML = this.templateController.getContentAttribute(this.templateController.getMetaInformationContentId(), "ComponentStructure", true);
-			int propertyHashCode = getPropertyAsStringHashCode(pageComponentsXML, this.infoGlueComponent.getId(), propertyName, this.templateController.getSiteNodeId(), this.templateController.getLanguageId());
-			//logger.info("propertyHashCode:" + propertyHashCode);
-			this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + this.infoGlueComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
-			this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructureDependency");
-			usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + this.infoGlueComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
-			usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructureDependency");
+			if(property.get("isPagePartReference") != null)
+				relatedRepositoryIds.add("selectiveCacheUpdateNonApplicable");
+			try
+			{
+				LanguageVO languageVO = LanguageController.getController().getMasterLanguage(this.templateController.getSiteNode().getRepositoryId(), this.templateController.getDatabase());
+				String pageComponentsXML = this.templateController.getContentAttribute(this.templateController.getMetaInformationContentId(), languageVO.getId(), "ComponentStructure", true);
+				int propertyHashCode = getPropertyAsStringHashCode(pageComponentsXML, this.infoGlueComponent.getId(), propertyName, this.templateController.getSiteNodeId(), this.templateController.getLanguageId());
+				//logger.info("propertyHashCode:" + propertyHashCode);
+				this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + this.infoGlueComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
+				this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructureDependency");
+				usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + this.infoGlueComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
+				usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructureDependency");
+			}
+			catch (Exception e) 
+			{
+				logger.warn("Error setting relations for propertyName: " + propertyName + ":" + e.getMessage(), e);
+				usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "");
+			}
 		}
     	//Map property = getInheritedComponentProperty(this.templateController, templateController.getSiteNodeId(), this.templateController.getLanguageId(), this.templateController.getContentId(), this.infoGlueComponent.getId(), propertyName, contentVersionIdList);
 		
@@ -1947,13 +2035,25 @@ public class ComponentLogic
 
 				if(property != null)
 				{
-					String pageComponentsXML = this.templateController.getContentAttribute(this.templateController.getMetaInformationContentId(), "ComponentStructure", true);
-					int propertyHashCode = getPropertyAsStringHashCode(pageComponentsXML, parentComponent.getId(), propertyName, this.templateController.getSiteNodeId(), this.templateController.getLanguageId());
-					//System.out.println("propertyHashCode:" + propertyHashCode);
-					this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + parentComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
-					this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructureDependency");
-					usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + parentComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
-					usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructureDependency");
+					//System.out.println("property:" + property);
+					if(property.get("isPagePartReference") != null)
+						relatedRepositoryIds.add("selectiveCacheUpdateNonApplicable");
+					try
+					{
+						LanguageVO languageVO = LanguageController.getController().getMasterLanguage(this.templateController.getSiteNode().getRepositoryId(), this.templateController.getDatabase());
+						String pageComponentsXML = this.templateController.getContentAttribute(this.templateController.getMetaInformationContentId(), languageVO.getId(), "ComponentStructure", true);
+						int propertyHashCode = getPropertyAsStringHashCode(pageComponentsXML, parentComponent.getId(), propertyName, this.templateController.getSiteNodeId(), this.templateController.getLanguageId());
+						//System.out.println("propertyHashCode:" + propertyHashCode);
+						this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + parentComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
+						this.templateController.getDeliveryContext().addUsedContent("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructureDependency");
+						usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructure(" + parentComponent.getId() + "," + propertyName + "," + this.templateController.getSiteNodeId() + "," + this.templateController.getLanguageId() + ")=" + propertyHashCode);
+						usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "_ComponentStructureDependency");
+					}
+					catch (Exception e) 
+					{
+						logger.warn("Error setting relations for propertyName: " + propertyName + ":" + e.getMessage(), e);
+						usedContentEntities.add("content_" + this.templateController.getMetaInformationContentId() + "");
+					}
 				}
 			}
 			
@@ -1968,6 +2068,7 @@ public class ComponentLogic
 				    while(property == null && parentSiteNodeVO != null)
 					{				    	
 				    	usedRepositoryIds.add(parentSiteNodeVO.getRepositoryId());
+				    	relatedRepositoryIds.add("" + parentSiteNodeVO.getRepositoryId());
 				    	property = getInheritedComponentProperty(this.templateController, parentSiteNodeVO.getId(), this.templateController.getLanguageId(), this.templateController.getContentId(), this.infoGlueComponent.getId(), propertyName, contentVersionIdList, usedContentEntities);
 				    	if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 				    		this.templateController.getDeliveryContext().addDebugInformation("property:" + property + " taken from " + parentSiteNodeVO.getId());
@@ -1978,10 +2079,11 @@ public class ComponentLogic
 					    SiteNodeVO newParentSiteNodeVO = nodeDeliveryController.getParentSiteNode(templateController.getDatabase(), parentSiteNodeVO.getId());
 					    if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 					    	this.templateController.getDeliveryContext().addDebugInformation("newParentSiteNodeVO:" + newParentSiteNodeVO);
-				    	
+					
 					    if(newParentSiteNodeVO == null && useRepositoryInheritance)
 						{
 						    Integer parentRepositoryId = this.templateController.getParentRepositoryId(parentSiteNodeVO.getRepositoryId());
+					    	relatedRepositoryIds.add("" + parentRepositoryId);
 						    if(logger.isInfoEnabled())
 						    {
 							    logger.info("parentRepositoryId:" + parentRepositoryId);
@@ -1994,7 +2096,7 @@ public class ComponentLogic
 							    if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
 							    	this.templateController.getDeliveryContext().addDebugInformation("newParentSiteNodeVO from parent repo:" + newParentSiteNodeVO);
 
-							    if(newParentSiteNodeVO != null)
+						        if(newParentSiteNodeVO != null)
 						        	usedRepositoryIds.add(newParentSiteNodeVO.getRepositoryId());
 							}
 						}
@@ -2013,6 +2115,7 @@ public class ComponentLogic
 
 		return property;
 	}
+
 
 	/**
 	 * This method fetches the component named component property. If not available on the sent in page metainfo we go up recursive.
@@ -2079,9 +2182,6 @@ public class ComponentLogic
 	private Map getInheritedComponentProperty(TemplateController templateController, Integer siteNodeId, Integer languageId, Integer contentId, Integer componentId, String propertyName, Set contentVersionIdList, Set<String> usedContentEntities) throws Exception
 	{
 	    StringBuilder key = new StringBuilder("inherited_").append(siteNodeId).append("_").append(languageId).append("_").append(componentId).append("_").append(propertyName);
-	    if(propertyName.equalsIgnoreCase("MiniArticleShortcuts") || propertyName.equalsIgnoreCase("GUFlashImages"))
-	    	this.templateController.getDeliveryContext().addDebugInformation("key:" + key);
-	    
 	    //StringBuilder key = new StringBuilder("inherited_").append(templateController.getSiteNodeId()).append("_").append(siteNodeId).append("_").append(languageId).append("_").append(componentId).append("_").append(propertyName);
 	    String versionKey = key.toString() + "_contentVersionIds";
 	    String usedEntitiesKey = key.toString() + "_usedEntities";
@@ -2149,8 +2249,8 @@ public class ComponentLogic
 				else
 					xmlRep = inheritedPageComponentsXML;
 				
-				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO inheritedPageComponentsXML: " + inheritedPageComponentsXML.length() + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate);
-				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO xmlRep: " + xmlRep + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate);
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO inheritedPageComponentsXML: " + inheritedPageComponentsXML.length() + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
+				this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO xmlRep: " + xmlRep + " (Thread" + Thread.currentThread().getId() + "). Cached item:" + propertyCandidate + "\n");
 			}
 			
 			if(logger.isDebugEnabled())
@@ -2161,15 +2261,22 @@ public class ComponentLogic
 			
 			if(inheritedPageComponentsXML != null && inheritedPageComponentsXML.length() > 0)
 			{
-				property = parseProperties(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
-				
-				int propertyHashCode = getPropertyAsStringHashCode(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
-				//System.out.println("propertyHashCode:" + propertyHashCode);
-				SiteNodeVO siteNodeVO = templateController.getSiteNode(siteNodeId);
-				this.templateController.getDeliveryContext().addUsedContent("content_" + siteNodeVO.getMetaInfoContentId() + "_ComponentStructure(" + componentId + "," + propertyName + "," + siteNodeId + "," + languageId + ")=" + propertyHashCode);
-				this.templateController.getDeliveryContext().addUsedContent("content_" + siteNodeVO.getMetaInfoContentId() + "_ComponentStructureDependency");
-				usedContentEntities.add("content_" + siteNodeVO.getMetaInfoContentId() + "_ComponentStructure(" + componentId + "," + propertyName + "," + siteNodeId + "," + languageId + ")=" + propertyHashCode);
-				usedContentEntities.add("content_" + siteNodeVO.getMetaInfoContentId() + "_ComponentStructureDependency");
+				try
+				{
+					property = parseProperties(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
+					int propertyHashCode = getPropertyAsStringHashCode(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
+					//System.out.println("propertyHashCode:" + propertyHashCode);
+					SiteNodeVO siteNodeVO = templateController.getSiteNode(siteNodeId);
+					this.templateController.getDeliveryContext().addUsedContent("content_" + siteNodeVO.getMetaInfoContentId() + "_ComponentStructure(" + componentId + "," + propertyName + "," + siteNodeId + "," + languageId + ")=" + propertyHashCode);
+					this.templateController.getDeliveryContext().addUsedContent("content_" + siteNodeVO.getMetaInfoContentId() + "_ComponentStructureDependency");
+					usedContentEntities.add("content_" + siteNodeVO.getMetaInfoContentId() + "_ComponentStructure(" + componentId + "," + propertyName + "," + siteNodeId + "," + languageId + ")=" + propertyHashCode);
+					usedContentEntities.add("content_" + siteNodeVO.getMetaInfoContentId() + "_ComponentStructureDependency");
+				}
+				catch (Exception e) 
+				{
+					logger.warn("Error setting relations for propertyName: " + propertyName + ":" + e.getMessage(), e);
+					usedContentEntities.add("content_" + templateController.getSiteNode(siteNodeId).getMetaInfoContentId() + "");
+				}
 			}
 			
 			if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
@@ -2178,6 +2285,7 @@ public class ComponentLogic
 			if(property != null && contentVersionIdList.size() > 0)
 	        {
 			    Set groups = new HashSet();
+			    /*
 			    Iterator contentVersionIdListIterator = contentVersionIdList.iterator();
 			    while(contentVersionIdListIterator.hasNext())
 			    {
@@ -2186,9 +2294,10 @@ public class ComponentLogic
 					{
 						if(contentVersionId != null)
 						{
-					        ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-						    groups.add(CacheController.getPooledString(2, contentVersionId));
-						    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
+							//ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+							ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+							groups.add(CacheController.getPooledString(2, contentVersionId));
+							groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 						}
 					}
 					catch (Exception e) 
@@ -2201,10 +2310,7 @@ public class ComponentLogic
 			    			    
 			    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
 			    groups.add(CacheController.getPooledString(3, siteNodeId));
-
-			    if(propertyName.equals("GUFlashImages") || propertyName.equals("MiniArticleShortcuts"))
-					logger.warn("contentVersionIdList BEFORE STORING: " + contentVersionIdList.size());
-				
+				*/
 			    //TODO - TEST - NOT SAFE
 			    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key, property, groups, true);
 			    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
@@ -2220,6 +2326,7 @@ public class ComponentLogic
 				if(property == null && contentVersionIdList.size() > 0)
 				{
 				    Set groups = new HashSet();
+				    /*
 					Iterator contentVersionIdListIterator = contentVersionIdList.iterator();
 				    while(contentVersionIdListIterator.hasNext())
 				    {
@@ -2228,7 +2335,8 @@ public class ComponentLogic
 						{
 							if(contentVersionId != null)
 							{
-								ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+								//ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+								ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
 							    groups.add(CacheController.getPooledString(2, contentVersionId));
 							    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 							}
@@ -2243,19 +2351,24 @@ public class ComponentLogic
 				    
 				    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
 				    groups.add(CacheController.getPooledString(3, siteNodeId));
+					*/
 
 //				  	TODO - TEST - NOT SAFE
+				    //if(propertyName.equals("GUFlashImages") || key.indexOf("MiniArticleShortcuts") > -1)
+				    //	logger.warn("Storing NULL 1:" + templateController.getDeliveryContext().getDebugInformation());
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyCache", key.toString(), new NullObject(), groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", versionKey, contentVersionIdList, groups, true);
 				    CacheController.cacheObjectInAdvancedCacheWithGroupsAsSet("componentPropertyVersionIdCache", usedEntitiesKey, usedContentEntities, groups, true);
 				}
-				
+				/*
 				else
 				{
 //					TODO - TEST - NOT SAFE
-					//CacheController.cacheObjectInAdvancedCache("componentPropertyCache", key.toString(), new NullObject(), new String[]{}, false);
+				    if(propertyName.equals("GUFlashImages") || key.indexOf("MiniArticleShortcuts") > -1)
+				    	logger.warn("Storing NULL:" + templateController.getDeliveryContext().getDebugInformation());
+					CacheController.cacheObjectInAdvancedCache("componentPropertyCache", key.toString(), new NullObject(), new String[]{}, false);
 				}
-				
+				*/
 			}
 		}
 				
@@ -2266,17 +2379,21 @@ public class ComponentLogic
 	
 	private Map parseProperties(String inheritedPageComponentsXML, Integer componentId, String propertyName, Integer siteNodeId, Integer languageId) throws Exception
 	{
+		Map property = null;
+		
 		if(parser == null)
 		{
 			parser = CmsPropertyHandler.getPropertiesParser();
 		}
 		
 		if(parser != null && parser.equalsIgnoreCase("xalan"))
-			return parsePropertiesWithXalan(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
+			property = parsePropertiesWithXalan(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
 		else if(parser != null && parser.equalsIgnoreCase("dom4j"))
-			return parsePropertiesWithDOM4J(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
+			property = parsePropertiesWithDOM4J(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
 		else
-			return parsePropertiesWithXPP3(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
+			property = parsePropertiesWithXPP3(inheritedPageComponentsXML, componentId, propertyName, siteNodeId, languageId);
+
+		return property;
 	}
 
 	private Map parsePropertiesWithXalan(String inheritedPageComponentsXML, Integer componentId, String propertyName, Integer siteNodeId, Integer languageId) throws Exception
@@ -2518,6 +2635,9 @@ public class ComponentLogic
 	
 	private Map parsePropertiesWithXPP3(String inheritedPageComponentsXML, Integer componentId, String propertyName, Integer siteNodeId, Integer languageId) throws Exception
 	{
+		if(inheritedPageComponentsXML.indexOf(propertyName) == -1)
+			return null;
+		
 		Map property = null;
 		
         XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
@@ -2893,19 +3013,22 @@ public class ComponentLogic
 			if(properties != null && contentVersionIdList.size() > 0)
 	        {
 			    Set groups = new HashSet();
+			    /*
 				Iterator contentVersionIdListIterator = contentVersionIdList.iterator();
 			    while(contentVersionIdListIterator.hasNext())
 			    {
 					Integer contentVersionId = (Integer)contentVersionIdListIterator.next();
 					if(contentVersionId != null)
 					{
-						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
-					    groups.add(CacheController.getPooledString(2, contentVersionId));
-					    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
+						//ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+						groups.add(CacheController.getPooledString(2, contentVersionId));
+						groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 					}
 				}
 				
 			    groups.add(CacheController.getPooledString(3, templateController.getSiteNodeId()));
+				*/
 
 			    if(groups.size() < 20)
 			    {
@@ -2934,7 +3057,7 @@ public class ComponentLogic
 	/**
 	 * This method fetches the template-string.
 	 */
-    
+   /*
 	private String getComponentPropertiesString(TemplateController templateController, Integer siteNodeId, Integer languageId, Integer contentId) throws SystemException, Exception
 	{
 		String template = null;
@@ -2954,6 +3077,7 @@ public class ComponentLogic
 
 		return template;
 	}
+	*/
 	
 	/**
 	 * This method returns a value for a property if it's set. The value is collected in the
@@ -3248,21 +3372,27 @@ public class ComponentLogic
 		String pageComponentsString = null;
     	
 		NodeDeliveryController ndc = NodeDeliveryController.getNodeDeliveryController(siteNodeId, languageId, contentId);
-		ContentVO contentVO = ndc.getBoundContent(templateController.getDatabase(), templateController.getPrincipal(), siteNodeId, languageId, true, "Meta information", templateController.getDeliveryContext());
+		SiteNodeVO siteNodeVO = ndc.getSiteNodeVO(templateController.getDatabase(), siteNodeId);
+		logger.info("siteNodeVO:" + siteNodeVO.getName() + ":" + siteNodeVO.getMetaInfoContentId());
+
+		ContentVO contentVO = templateController.getContent(siteNodeVO.getMetaInfoContentId());
+		//ContentVO contentVO = ndc.getBoundContent(templateController.getDatabase(), templateController.getPrincipal(), siteNodeId, languageId, true, "Meta information", templateController.getDeliveryContext());
 		
-			this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO getting XML: " + contentVO + " (Thread" + Thread.currentThread().getId() + ").\n");
+		this.templateController.getDeliveryContext().addDebugInformation("DEBUG INFO getting XML: " + contentVO + " (Thread" + Thread.currentThread().getId() + ").\n");
+		logger.info("contentVO:" + contentVO);
 
 		if(contentVO == null)
 			throw new SystemException("There was no Meta Information bound to this page [" + siteNodeId + "] which makes it impossible to render.");	
 		
-		SiteNodeVO siteNodeVO = ndc.getSiteNodeVO(templateController.getDatabase(), siteNodeId);
+		//SiteNodeVO siteNodeVO = ndc.getSiteNodeVO(templateController.getDatabase(), siteNodeId);
 		Integer masterLanguageId = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(templateController.getDatabase(), siteNodeVO.getRepositoryId()).getId();
+		logger.info("masterLanguageId:" + masterLanguageId);
 		//Integer masterLanguageId = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForSiteNode(templateController.getDatabase(), siteNodeId).getId();
 		pageComponentsString = templateController.getContentAttributeWithReturningId(contentVO.getContentId(), masterLanguageId, "ComponentStructure", true, usedContentVersionId, usedContentEntities);
 		pageComponentsString = appendPagePartTemplates(pageComponentsString, templateController);
 
 		if(pageComponentsString == null)
-			throw new SystemException("There was no Meta Information bound to this page [" + siteNodeId + "] which makes it impossible to render.");	
+			throw new SystemException("There was no pageComponentsString on this page meta info [" + siteNodeId + "] which makes it impossible to render.");	
 	
 		CacheController.cacheObjectInAdvancedCache(cacheName, cacheKey, pageComponentsString, null, false);
 		
@@ -3275,7 +3405,8 @@ public class ComponentLogic
 				Integer contentVersionId = (Integer)contentVersionIdListIterator.next();
 			    if(contentVersionId != null)
 			    {
-			    	ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+					//ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
+					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallContentVersionVOWithId(contentVersionId, this.templateController.getDatabase());
 				    groups.add(CacheController.getPooledString(2, contentVersionId));
 				    groups.add(CacheController.getPooledString(1, contentVersionVO.getContentId()));
 			    }
@@ -3766,10 +3897,12 @@ public class ComponentLogic
 					String autoCreatContentMethod 	= element.attributeValue("autoCreatContentMethod");
 					String autoCreatContentPath		= element.attributeValue("autoCreatContentPath");
 					String customMarkup 			= element.attributeValue("customMarkup");
+					String externalBindingConfig 	= element.attributeValue("externalBindingConfig");
+					String supplementingEntityType	= element.attributeValue("supplementingEntityType");
 					if(allowLanguageVariations == null || allowLanguageVariations.equals(""))
 						allowLanguageVariations = "true";
 					
-					propertyDefinition = new ComponentPropertyDefinition(name, displayName, type, entity, new Boolean(multiple), new Boolean(assetBinding), assetMask, new Boolean(isPuffContentForPage), allowedContTypeDefNames, description, defaultValue, new Boolean(allowLanguageVariations), new Boolean(WYSIWYGEnabled), WYSIWYGToolbar, dataProvider, dataProviderParameters, new Boolean(autoCreatContent), autoCreatContentMethod, autoCreatContentPath, customMarkup, new Boolean(allowMultipleSelections));
+					propertyDefinition = new ComponentPropertyDefinition(name, displayName, type, entity, new Boolean(multiple), new Boolean(assetBinding), assetMask, new Boolean(isPuffContentForPage), allowedContTypeDefNames, description, defaultValue, new Boolean(allowLanguageVariations), new Boolean(WYSIWYGEnabled), WYSIWYGToolbar, dataProvider, dataProviderParameters, new Boolean(autoCreatContent), autoCreatContentMethod, autoCreatContentPath, customMarkup, new Boolean(allowMultipleSelections), supplementingEntityType, externalBindingConfig);
 				}
 			}
 		}
@@ -3847,4 +3980,116 @@ public class ComponentLogic
 
     	return resultComponentXML;
     }
+
+	public List<EntityVOWithSupplementingEntityVO> getBoundContentSupplementedWithAsset(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	{
+		List<EntityVOWithSupplementingEntityVO> result = new ArrayList<EntityVOWithSupplementingEntityVO>();
+
+		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+
+		if(property != null)
+		{
+			List<ComponentBinding> bindings = (List<ComponentBinding>)property.get("bindings");
+			Iterator<ComponentBinding> bindingsIterator = bindings.iterator();
+			EntityVOWithSupplementingEntityVO entity;
+			while(bindingsIterator.hasNext())
+			{
+				try
+				{
+					ComponentBinding componentBinding = bindingsIterator.next();
+					entity = new EntityVOWithSupplementingEntityVO();
+					Integer contentId = componentBinding.getEntityId();
+					entity.setEntity(this.templateController.getContent(contentId));
+					if (componentBinding instanceof SupplementedComponentBinding)
+					{
+						try
+						{
+							SupplementedComponentBinding supplementedComponentBinding = (SupplementedComponentBinding)componentBinding;
+							Integer supplementingEntityId = supplementedComponentBinding.getSupplementingEntityId();
+							String supplementingAssetKey = supplementedComponentBinding.getSupplementingAssetKey();
+							DigitalAssetVO asset = this.templateController.getAsset(supplementingEntityId, supplementingAssetKey);
+							entity.setSupplementingEntity(asset);
+						}
+						catch (Exception ex)
+						{
+							logger.warn("Error when getting asset for supplemented content.", ex);
+						}
+					}
+					result.add(entity);
+				}
+				catch (Exception ex)
+				{
+					logger.warn("Error when getting supplemented content. Message: " + ex.getMessage(), ex);
+				}
+			}
+		}
+
+		return result;
+	}
+	/**
+	 * Retrieves the entities bound to the given <em>propertyName</em>. What entity type is used is determined
+	 * by the content of {@link ComponentBinding#getEntityClass()}.
+	 * 
+	 * At the time of writing the method only supports Content and External for entity, and Asset for supplementing.
+	 * @param propertyName
+	 * @param useInheritance
+	 * @param useRepositoryInheritance
+	 * @param useStructureInheritance
+	 * @return
+	 */
+	public List<EntityVOWithSupplementingEntityVO> getBoundEntitiesSupplementedWithEntity(String propertyName, boolean useInheritance, boolean useRepositoryInheritance, boolean useStructureInheritance)
+	{
+		List<EntityVOWithSupplementingEntityVO> result = new ArrayList<EntityVOWithSupplementingEntityVO>();
+		
+		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
+		
+		if(property != null)
+		{
+			List<ComponentBinding> bindings = (List<ComponentBinding>)property.get("bindings");
+			Iterator<ComponentBinding> bindingsIterator = bindings.iterator();
+			EntityVOWithSupplementingEntityVO entity;
+			while(bindingsIterator.hasNext())
+			{
+				try
+				{
+					ComponentBinding componentBinding = bindingsIterator.next();
+					entity = new EntityVOWithSupplementingEntityVO();
+
+					if ("Content".equalsIgnoreCase(componentBinding.getEntityClass()))
+					{
+						Integer contentId = componentBinding.getEntityId();
+						entity.setEntity(this.templateController.getContent(contentId));
+					}
+					else if ("External".equalsIgnoreCase(componentBinding.getEntityClass()))
+					{
+						Integer entityId = componentBinding.getEntityId();
+						entity.setEntity(new EntityVOWithSupplementingEntityVO.IdOnlyBaseEntityVO(entityId));
+					}
+
+					if (componentBinding instanceof SupplementedComponentBinding)
+					{
+						try
+						{
+							SupplementedComponentBinding supplementedComponentBinding = (SupplementedComponentBinding)componentBinding;
+							Integer supplementingEntityId = supplementedComponentBinding.getSupplementingEntityId();
+							String supplementingAssetKey = supplementedComponentBinding.getSupplementingAssetKey();
+							DigitalAssetVO asset = this.templateController.getAsset(supplementingEntityId, supplementingAssetKey);
+							entity.setSupplementingEntity(asset);
+						}
+						catch (Exception ex)
+						{
+							logger.warn("Error when getting asset for supplemented content.", ex);
+						}
+					}
+					result.add(entity);
+				}
+				catch (Exception ex)
+				{
+					logger.warn("Error when getting supplemented content. Message: " + ex.getMessage(), ex);
+				}
+			}
+		}
+		
+		return result;
+	}
 }

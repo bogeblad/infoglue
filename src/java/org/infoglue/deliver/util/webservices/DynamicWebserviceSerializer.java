@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package org.infoglue.deliver.util.webservices;
 
 import java.util.ArrayList;
@@ -7,23 +10,41 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ */
 public class DynamicWebserviceSerializer 
 {
+	/**
+	 * 
+	 */
 	private static final Object MARKER = null;
 	
+	/**
+	 * 
+	 */
 	private Map legalTypes;
 	
+	/**
+	 * 
+	 */
 	public DynamicWebserviceSerializer() 
 	{
 		super();
 	}
 
+	/**
+	 * 
+	 */
 	public DynamicWebserviceSerializer(final Map legalTypes) 
 	{
 		super();
 		this.legalTypes = legalTypes;
 	}
 	
+	/**
+	 * 
+	 */
 	public List serializeCollection(final Collection collection) 
 	{
 		final Collection c = (collection == null) ? new ArrayList() : collection;
@@ -36,6 +57,9 @@ public class DynamicWebserviceSerializer
 		return result;
 	}
 	
+	/**
+	 * 
+	 */
 	public List serializeMap(final Map map) {
 		final Map m = (map == null) ? new HashMap() : map;
 		
@@ -50,6 +74,9 @@ public class DynamicWebserviceSerializer
 		return result;
 	}
 	
+	/**
+	 * 
+	 */
 	public List serializeDynamicWebserviceElement(final DynamicWebserviceElement element) {
 		final List arguments = element.serialize();
 		for(final Iterator i = arguments.iterator(); i.hasNext(); )
@@ -61,6 +88,9 @@ public class DynamicWebserviceSerializer
 		return result;
 	}
 	
+	/**
+	 * 
+	 */
 	private List serializeObject(final Object o) {
 		if(o instanceof Map) 
 		{
@@ -80,6 +110,9 @@ public class DynamicWebserviceSerializer
 		return dummy;
 	}
 
+	/**
+	 * 
+	 */
 	private List createResultList(final Class c, final int size)
 	{
 		final List list = new ArrayList();
@@ -88,7 +121,10 @@ public class DynamicWebserviceSerializer
 		list.add(new Integer(size).toString());
 		return list;
 	}
-
+	
+	/**
+	 * 
+	 */
 	private void checkType(final Object o)
 	{
 		if(o == null)
@@ -103,6 +139,9 @@ public class DynamicWebserviceSerializer
 		*/
 	}
 
+	/**
+	 * 
+	 */
 	public Object deserialize(final Object[] array) throws Throwable
 	{
 		final List list = new ArrayList();
@@ -113,6 +152,9 @@ public class DynamicWebserviceSerializer
 		return deserializeElement(list);
 	}
 	
+	/**
+	 * 
+	 */
 	private Object deserializeMap(final List c, final Map map, final int count) throws Throwable
 	{
 		for(int i=0; i<count; ++i)
@@ -124,6 +166,9 @@ public class DynamicWebserviceSerializer
 		return map;
 	}
 	
+	/**
+	 * 
+	 */
 	private Object deserializeCollection(final List c, final Collection collection, final int count) throws Throwable
 	{
 		for(int i=0; i<count; ++i)
@@ -134,6 +179,9 @@ public class DynamicWebserviceSerializer
 		return collection;
 	}
 	
+	/**
+	 * 
+	 */
 	private Object deserializeDynamicWebserviceElement(final List c, final DynamicWebserviceElement element, final int count) throws Throwable
 	{
 		final List arguments = new ArrayList();
@@ -145,6 +193,9 @@ public class DynamicWebserviceSerializer
 		return element;
 	}
 	
+	/**
+	 * 
+	 */
 	private Object deserializeElement(final List c) throws Throwable
 	{
 		Object o = c.remove(0);

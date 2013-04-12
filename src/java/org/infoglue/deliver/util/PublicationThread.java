@@ -22,20 +22,11 @@
 */
 package org.infoglue.deliver.util;
 
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
-import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
-import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
-import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
-import org.infoglue.cms.entities.content.ContentVersion;
-import org.infoglue.cms.entities.content.DigitalAssetVO;
-import org.infoglue.cms.entities.publishing.PublicationDetailVO;
-import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
-import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
+import org.infoglue.deliver.cache.PageCacheHelper;
 
 /**
  * @author mattias
@@ -45,8 +36,9 @@ import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryC
  */
 public class PublicationThread extends Thread
 {
+
     public final static Logger logger = Logger.getLogger(PublicationThread.class.getName());
-	
+
 	public synchronized void run() 
 	{
         logger.info("setting block");
@@ -59,52 +51,16 @@ public class PublicationThread extends Thread
 		    if(publicationThreadDelay != null && !publicationThreadDelay.equalsIgnoreCase("") && publicationThreadDelay.indexOf("publicationThreadDelay") == -1)
 		        publicationDelay = Integer.parseInt(publicationThreadDelay);
 		    
+		    Random r = new Random();
+		    int randint = (Math.abs(r.nextInt()) % 11) / 8 * 1000;
+		    publicationDelay = publicationDelay + randint;
+
 		    logger.info("\n\n\nSleeping " + publicationDelay + "ms.\n\n\n");
 			sleep(publicationDelay);
 		
 		    logger.info("\n\n\nUpdating all caches as this was a publishing-update\n\n\n");
 		    CacheController.clearCastorCaches();
 
-		    logger.info("**************************************");
-		    logger.info("*    HERE THE MAGIC SHOULD HAPPEN    *");
-		    logger.info("**************************************");
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(Calendar.HOUR, -1);
-			List<PublicationVO> publicationVOList = PublicationController.getController().getPublicationsSinceDate(calendar.getTime());
-			Iterator<PublicationVO> publicationVOListIterator = publicationVOList.iterator();
-			while(publicationVOListIterator.hasNext())
-			{
-				PublicationVO publicationVO = publicationVOListIterator.next();
-				
-				List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(publicationVO.getId());
-				Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
-				while(publicationDetailVOListIterator.hasNext())
-				{
-					PublicationDetailVO publicationDetailVO = (PublicationDetailVO)publicationDetailVOListIterator.next();
-					logger.info("publicationDetailVO.getEntityClass():" + publicationDetailVO.getEntityClass());
-					logger.info("publicationDetailVO.getEntityId():" + publicationDetailVO.getEntityId());
-					if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(ContentVersion.class.getName()))
-					{
-						logger.info("We clear all caches having references to contentVersion: " + publicationDetailVO.getEntityId());
-						Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
-						
-						String disableAssetDeletionInLiveThread = CmsPropertyHandler.getDisableAssetDeletionInLiveThread();
-						logger.info("disableAssetDeletionInLiveThread:" + disableAssetDeletionInLiveThread);
-						if(disableAssetDeletionInLiveThread != null && !disableAssetDeletionInLiveThread.equals("true"))
-						{
-							List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(publicationDetailVO.getEntityId());
-							Iterator<DigitalAssetVO> digitalAssetVOListIterator = digitalAssetVOList.iterator();
-				    		while(digitalAssetVOListIterator.hasNext())
-				    		{
-				    			DigitalAssetVO digitalAssetVO = digitalAssetVOListIterator.next();
-								logger.info("We should delete all images with digitalAssetId " + digitalAssetVO.getId());
-								DigitalAssetDeliveryController.getDigitalAssetDeliveryController().deleteDigitalAssets(digitalAssetVO.getId());
-				    		}
-						}
-					}				
-				}
-			}
-			
 		    String[] excludedCaches = CacheController.getPublicationPersistentCacheNames();
 			logger.info("\n\n\nclearing all except " + excludedCaches + " as we are in publish mode..\n\n\n");
 			//CacheController.clearCaches(null, null, new String[] {"ServerNodeProperties", "serverNodePropertiesCache", "pageCache", "pageCacheExtra", "componentCache", "NavigationCache", "pagePathCache", "userCache", "pageCacheParentSiteNodeCache", "pageCacheLatestSiteNodeVersions", "pageCacheSiteNodeTypeDefinition", "JNDIAuthorizationCache", "WebServiceAuthorizationCache", "importTagResultCache"});
@@ -116,7 +72,9 @@ public class PublicationThread extends Thread
 			logger.info("\n\n\nFinally clearing page cache and other caches as this was a publishing-update\n\n\n");
 			CacheController.clearCache("ServerNodeProperties");
 			CacheController.clearCache("serverNodePropertiesCache");
-		    CacheController.clearFileCaches("pageCache");
+		    //CacheController.clearFileCaches("pageCache");
+			PageCacheHelper.getInstance().clearPageCache();
+
 			CacheController.clearCache("pageCache");
 			CacheController.clearCache("pageCacheExtra");
 		    CacheController.clearCache("componentCache");

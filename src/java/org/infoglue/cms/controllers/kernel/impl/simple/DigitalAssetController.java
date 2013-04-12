@@ -59,10 +59,12 @@ import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
+import org.infoglue.cms.entities.management.GeneralOQLResult;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RoleProperties;
@@ -96,6 +98,69 @@ public class DigitalAssetController extends BaseController
     }
 
     
+	public List<DigitalAssetVO> dumpDigitalAssetList(Integer repositoryId, Integer minimumId, Integer limit, Integer assetFileSizeLimit, Boolean onlyPublishedVersions, String filePath) throws SystemException, Bug, Exception
+	{
+		List<DigitalAssetVO> digitalAssetList = new ArrayList<DigitalAssetVO>();
+   	
+    	Database db = CastorDatabaseService.getDatabase();
+
+	    beginTransaction(db);
+
+        try
+        {
+        	digitalAssetList = dumpDigitalAssetList(repositoryId, minimumId, limit, assetFileSizeLimit, onlyPublishedVersions, filePath, db);
+    		
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.info("An error occurred so we should not completes the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+        
+        return digitalAssetList;
+    }
+
+
+    
+   	/**
+	 * This method returns selected active content versions.
+	 */
+    
+	public List<DigitalAssetVO> dumpDigitalAssetList(Integer repositoryId, Integer minimumId, Integer limit, Integer assetFileSizeLimit, Boolean onlyPublishedVersions, String filePath, Database db) throws SystemException, Bug, Exception
+	{
+		List<DigitalAssetVO> digitalAssetList = new ArrayList<DigitalAssetVO>();
+
+    	OQLQuery oql = db.getOQLQuery("CALL SQL SELECT distinct(da.digitalAssetId), da.assetFileName, da.assetKey, da.assetFilePath, da.assetContentType, da.assetFileSize FROM cmDigitalAsset da, cmContentVersionDigitalAsset cvda, cmContentVersion cv, cmContent c where cvda.digitalAssetId = da.digitalAssetId AND cvda.contentVersionId = cv.contentVersionId " + (onlyPublishedVersions ? "AND cv.stateId = 3" : "") + " AND cv.contentId = c.contentId AND c.repositoryId = $1 AND da.digitalAssetId > $2 AND da.assetFileSize < $3 ORDER BY da.digitalAssetId LIMIT $4 AS org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl");
+    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    		oql = db.getOQLQuery("CALL SQL select * from (SELECT distinct(da.DigAssetId), da.assetFileName, da.assetKey, da.assetFilePath, da.assetContentType, da.assetFileSize FROM cmDigAsset da, cmContVerDigAsset cvda, cmContVer cv, cmCont c where cvda.DigAssetId = da.DigAssetId AND cvda.contVerId = cv.contVerId " + (onlyPublishedVersions ? "AND cv.stateId = 3" : "") + " AND cv.contId = c.contId AND c.repositoryId = $1 AND da.DigAssetId > $2 AND da.assetFileSize < $3 ORDER BY da.DigAssetId) where rownum < $4 AS org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl");
+
+    	oql.bind(repositoryId);
+    	oql.bind(minimumId);
+    	if(assetFileSizeLimit < 1)
+    		assetFileSizeLimit = 100000000;
+    	oql.bind(assetFileSizeLimit);
+    	oql.bind(limit);
+    	
+    	QueryResults results = oql.execute(Database.ReadOnly);
+		
+		while(results.hasMore()) 
+        {
+        	SmallDigitalAssetImpl smallDigitalAsset = (SmallDigitalAssetImpl)results.next();
+        	dumpDigitalAsset(smallDigitalAsset.getValueObject(), smallDigitalAsset.getDigitalAssetId() + ".file", filePath, db);
+        	//DigitalAsset digitalAsset = getDigitalAssetWithId(smallDigitalAsset.getId(), db);
+        	digitalAssetList.add(smallDigitalAsset.getValueObject());
+        }
+		//System.out.println("digitalAssetList:" + digitalAssetList.size());
+		
+		results.close();
+		oql.close();
+
+		return digitalAssetList;
+	}
+
+	
    	/**
    	 * returns the digital asset VO
    	 */
@@ -131,9 +196,9 @@ public class DigitalAssetController extends BaseController
         try
         {
         	//Timer t = new Timer();
-        	OQLQuery oql = db.getOQLQuery("CALL SQL select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier as versionValue FROM cmContentVersion cv, cmContentVersionDigitalAsset cvda where cvda.contentVersionId = cv.contentVersionId AND cvda.digitalAssetId = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+        	OQLQuery oql = db.getOQLQuery("CALL SQL select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion cv, cmContentVersionDigitalAsset cvda where cvda.contentVersionId = cv.contentVersionId AND cvda.digitalAssetId = $1 ORDER BY cv.contentVersionId DESC AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
         	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
-        		oql = db.getOQLQuery("CALL SQL select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier as verValue FROM cmContVer cv, cmContVerDigAsset cvda where cvda.ContVerId = cv.ContVerId AND cvda.DigAssetId = $1 AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+        		oql = db.getOQLQuery("CALL SQL select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier FROM cmContVer cv, cmContVerDigAsset cvda where cvda.ContVerId = cv.ContVerId AND cvda.DigAssetId = $1 ORDER BY cv.ContVerId DESC AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
 
         	oql.bind(digitalAssetId);
         	
@@ -171,9 +236,9 @@ public class DigitalAssetController extends BaseController
     }
 
     
-    public static DigitalAsset getMediumDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
+    public static MediumDigitalAssetImpl getMediumDigitalAssetWithId(Integer digitalAssetId, Database db) throws SystemException, Bug
     {
-		return (DigitalAsset) getObjectWithId(MediumDigitalAssetImpl.class, digitalAssetId, db);
+		return (MediumDigitalAssetImpl) getObjectWithId(MediumDigitalAssetImpl.class, digitalAssetId, db);
     }
 
     public static DigitalAsset getMediumDigitalAssetWithIdReadOnly(Integer digitalAssetId, Database db) throws SystemException, Bug
@@ -223,7 +288,7 @@ public class DigitalAssetController extends BaseController
 		
 		try
 		{			
-        	ContentVersion contentVersion = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionId, principal, db);
+        	MediumContentVersionImpl contentVersion = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionId, principal, db);
 			//ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(contentVersionId, db);
         	returningContentVersionId.add(contentVersion.getId());
         	
@@ -246,7 +311,7 @@ public class DigitalAssetController extends BaseController
    	 * The asset is send in as an InputStream which castor inserts automatically.
    	 */
 
-   	public static DigitalAssetVO create(DigitalAssetVO digitalAssetVO, InputStream is, ContentVersion contentVersion, Database db) throws SystemException, Exception
+   	public static DigitalAssetVO create(DigitalAssetVO digitalAssetVO, InputStream is, MediumContentVersionImpl contentVersion, Database db) throws SystemException, Exception
    	{
 		DigitalAsset digitalAsset = null;
 		
@@ -254,12 +319,12 @@ public class DigitalAssetController extends BaseController
 		contentVersions.add(contentVersion);
 		logger.info("Added contentVersion:" + contentVersion.getId());
 	
-		digitalAsset = new DigitalAssetImpl();
+		digitalAsset = new MediumDigitalAssetImpl();
 		digitalAsset.setValueObject(digitalAssetVO.createCopy());
 		if(CmsPropertyHandler.getEnableDiskAssets().equals("false"))
 			digitalAsset.setAssetBlob(is);
 		digitalAsset.setContentVersions(contentVersions);
-
+		
 		db.create(digitalAsset);
         
 		//if(contentVersion.getDigitalAssets() == null)
@@ -269,6 +334,7 @@ public class DigitalAssetController extends BaseController
 						
         return digitalAsset.getValueObject();
    	}
+
 
   	/**
    	 * This method creates a new digital asset in the database and connects it to the contentVersion it belongs to.
@@ -434,36 +500,36 @@ public class DigitalAssetController extends BaseController
    	 * The asset is send in as an InputStream which castor inserts automatically.
    	 */
 
-	public void createByCopy(Integer originalContentVersionId, Integer newContentVersionId, Map<Integer,Integer> assetIdMap, Database db) throws ConstraintException, SystemException
+	public void createByCopy(Integer originalContentVersionId, MediumContentVersionImpl cv, Map<Integer,Integer> assetIdMap, Database db) throws ConstraintException, SystemException
 	{
 		logger.info("Creating by copying....");
 		logger.info("originalContentVersionId:" + originalContentVersionId);
-		logger.info("newContentVersionId:" + newContentVersionId);
-		ContentVersion oldContentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(originalContentVersionId, db);
+		//logger.info("newContentVersionId:" + newContentVersionId);
+		ContentVersion oldContentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(originalContentVersionId, db);
 		
 		Collection<DigitalAsset> assets = oldContentVersion.getDigitalAssets();
 		logger.info("assets:" + assets);
 		for(DigitalAsset oldDigitalAsset : assets)
 		{
-			ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(newContentVersionId, db);
+			//ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(newContentVersionId, db);
 
 			if(assetIdMap.containsKey(oldDigitalAsset.getId()))
 			{
 				logger.info("The asset was allready copied by another version - let's just connect the new one");
-				DigitalAsset newDigitalAsset = getDigitalAssetWithId(assetIdMap.get(oldDigitalAsset.getId()), db);
-				newDigitalAsset.getContentVersions().add(contentVersion);
+				MediumDigitalAssetImpl newDigitalAsset = getMediumDigitalAssetWithId(assetIdMap.get(oldDigitalAsset.getId()), db);
+				newDigitalAsset.getContentVersions().add(cv);
 			}
 			else
 			{
 				Collection contentVersions = new ArrayList();
-				contentVersions.add(contentVersion);
-				logger.info("Added contentVersion:" + contentVersion.getId());
+				contentVersions.add(cv);
+
 				try
 				{
 					String filePath = getDigitalAssetFilePath(oldDigitalAsset.getValueObject(), db);
 					File oldAssetFile = new File(filePath);
 					
-					logger.info("Creating asset for:" + oldDigitalAsset.getAssetKey() + ":" + oldContentVersion.getId() + "/" + contentVersion.getId());
+					logger.info("Creating asset for:" + oldDigitalAsset.getAssetKey() + ":" + oldContentVersion.getId() + "/" + cv.getId());
 					DigitalAssetVO digitalAssetVO = new DigitalAssetVO();
 					digitalAssetVO.setAssetContentType(oldDigitalAsset.getAssetContentType());
 					digitalAssetVO.setAssetFileName(oldDigitalAsset.getAssetFileName());
@@ -471,7 +537,7 @@ public class DigitalAssetController extends BaseController
 					digitalAssetVO.setAssetFileSize(oldDigitalAsset.getAssetFileSize());
 					digitalAssetVO.setAssetKey(oldDigitalAsset.getAssetKey());
 					
-					DigitalAsset digitalAsset = new DigitalAssetImpl();
+					DigitalAsset digitalAsset = new MediumDigitalAssetImpl();
 					digitalAsset.setValueObject(digitalAssetVO);
 	
 					if(oldAssetFile.exists())
@@ -1256,9 +1322,9 @@ public class DigitalAssetController extends BaseController
 					File originalFile = new File(filePath + File.separator + fileName);
 					if(!originalFile.exists())
 					{
-						logger.info("No file there - let's try getting it again.");
+						logger.warn("No file there - let's try getting it again.");
 						String originalUrl = DigitalAssetController.getController().getDigitalAssetUrl(digitalAsset.getValueObject(), db);
-						logger.info("originalUrl:" + originalUrl);
+						logger.warn("originalUrl:" + originalUrl);
 						originalFile = new File(filePath + File.separator + fileName);
 					}
 					
@@ -1709,8 +1775,8 @@ public class DigitalAssetController extends BaseController
     {
     	DigitalAssetVO digitalAssetVO = null;
 
-    	Content content = ContentController.getContentController().getContentWithId(contentId, db);
-    	ContentVersion contentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentId, languageId, db);
+    	ContentVO content = ContentController.getContentController().getContentVOWithId(contentId, db);
+    	ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId, db);
 		if(contentVersion != null)
 		{
 			DigitalAssetVO digitalAsset;
@@ -1726,7 +1792,7 @@ public class DigitalAssetController extends BaseController
 			}
 			else
 			{
-				LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(content.getRepository().getRepositoryId(), db);
+				LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(content.getRepositoryId(), db);
 				if(useLanguageFallback && languageId.intValue() != masterLanguageVO.getId().intValue())
 					return getDigitalAssetVO(contentId, masterLanguageVO.getId(), assetKey, useLanguageFallback, db);
 			}
@@ -1837,6 +1903,71 @@ public class DigitalAssetController extends BaseController
     	
 		return assetUrl;
     }
+
+	public void appendContentId(List<DigitalAssetVO> matchingAssets) throws Exception 
+	{
+    	Database db = CastorDatabaseService.getDatabase();
+
+        beginTransaction(db);
+
+        try
+        {
+        	appendContentId(matchingAssets, db);          
+        	
+			rollbackTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.info("An error occurred when we tried append contentId:" + e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+	}
+
+	public void appendContentId(List<DigitalAssetVO> matchingAssets, Database db) throws Exception 
+	{
+		if(matchingAssets == null || matchingAssets.size() == 0)
+			return;
+		
+		StringBuilder variables = new StringBuilder();
+		for(int i=0; i<matchingAssets.size(); i++)
+			variables.append("$" + (i+1) + (i+1!=matchingAssets.size() ? "," : ""));
+		
+		StringBuilder sql = new StringBuilder();
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+		{
+			sql.append("select distinct(da.DigAssetId) AS id, cv.contId as column1Value, '' as column2Value, '' as column3Value, '' as column4Value, '' as column5Value, '' as column6Value, '' as column7Value FROM cmDigAsset da, cmContVerDigAsset cvda, cmContVer cv WHERE cvda.DigAssetId = da.DigAssetId AND cvda.contVerId = cv.contVerId AND da.digAssetId IN (" + variables + ") ");
+		}
+		else
+		{
+			sql.append("select distinct(da.digitalAssetId) AS id, cv.contentId as column1Value, '' as column2Value, '' as column3Value, '' as column4Value, '' as column5Value, '' as column6Value, '' as column7Value FROM cmDigitalAsset da, cmContentVersionDigitalAsset cvda, cmContentVersion cv WHERE cvda.digitalAssetId = da.digitalAssetId AND cvda.contentVersionId = cv.contentVersionId AND da.digitalAssetId IN (" + variables + ") ");
+		}
+		String SQL = "CALL SQL " + sql.toString() + "AS org.infoglue.cms.entities.management.GeneralOQLResult";
+		
+		OQLQuery oql = db.getOQLQuery(SQL);
+		for(DigitalAssetVO asset : matchingAssets)
+			oql.bind(asset.getId());
+
+		QueryResults results = oql.execute(Database.ReadOnly);
+		Map<Integer,Integer> idMappingMap = new HashMap<Integer,Integer>();
+		while (results.hasMore()) 
+		{
+			GeneralOQLResult resultBean = (GeneralOQLResult)results.next();
+			Integer digitalAssetId = resultBean.getId();
+			Integer contentId = new Integer(resultBean.getValue1());
+			idMappingMap.put(digitalAssetId, contentId);
+		}      
+		
+		for(DigitalAssetVO asset : matchingAssets)
+		{
+			Integer contentId = idMappingMap.get(asset.getId());
+			if(contentId != null)
+				asset.setContentId(contentId);
+		}
+		
+		results.close();
+		oql.close();
+	}
 
 	
 	public Integer getContentId(Integer digitalAssetId) throws Exception

@@ -307,8 +307,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         	}
 
         	this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
-        	System.out.println("this.contentVersionVO:" + this.contentVersionVO.getId());
-		    
         	if(this.contentVersionVO == null && fallBackToMasterLanguage)
 			{
 			    //logger.info("repositoryId:" + repositoryId);
@@ -328,8 +326,6 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         if(contentVersionId != null)	
 			this.contentVersionVO = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId);    		 	
     		//this.contentVersionVO = ContentVersionController.getContentVersionVOWithId(contentVersionId);    		 	
-
-    	System.out.println("this.contentVersionVO:" + this.contentVersionVO.getId());
 
         /*
 		if(this.forceWorkingChange && contentVersionVO != null && !contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))

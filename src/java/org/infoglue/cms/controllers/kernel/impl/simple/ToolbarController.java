@@ -1787,31 +1787,34 @@ public class ToolbarController implements ToolbarProvider
 		moveSiteNodeButton.getSubButtons().add(moveMultipleSiteNodeButton);
 
 		buttons.add(moveSiteNodeButton);
-				
+			
+		ToolbarButton deleteButton = new ToolbarButton("deleteSiteNode",
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageLabel"), 
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageTitle"),
+				  "DeleteSiteNode!V3.action?siteNodeId=" + siteNodeId + "&repositoryId=" + siteNodeVO.getRepositoryId() + "&changeTypeId=4&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "",
+				  "",
+				  "delete",
+				  true,
+				  true,
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageLabel"), 
+				  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageConfirmationLabel", new String[]{siteNodeVO.getName()}),
+				  "inlineDiv");
+		
+		if(SiteNodeVersionController.getLatestPublishedSiteNodeVersionVO(new Integer(siteNodeId)) != null)
+		{
+			deleteButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"),
+				  "javascript:alert('" + formatter.escapeForJavascripts(getLocalizedErrorMessage(locale, "3300")) + "');",
+				  "",
+				  "delete");
+		}
+		
 		//if(!hasPublishedVersion())
 		//{
-			buttons.add(new ToolbarButton("deleteSiteNode",
-					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageLabel"), 
-					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageTitle"),
-					  "DeleteSiteNode!V3.action?siteNodeId=" + siteNodeId + "&repositoryId=" + siteNodeVO.getRepositoryId() + "&changeTypeId=4&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-					  "",
-					  "",
-					  "delete",
-					  true,
-					  true,
-					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageLabel"), 
-					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageConfirmationLabel", new String[]{siteNodeVO.getName()}),
-					  "inlineDiv"));
+			buttons.add(deleteButton);
 			//}
-			if(SiteNodeVersionController.getLatestPublishedSiteNodeVersionVO(new Integer(siteNodeId)) != null)
-			{
-				buttons.add(new ToolbarButton("",
-					  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"), 
-					  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"),
-					  "javascript:alert('" + formatter.escapeForJavascripts(getLocalizedErrorMessage(locale, "3300")) + "');",
-					  "",
-					  "delete"));
-			}
 			
 		/*
 		else

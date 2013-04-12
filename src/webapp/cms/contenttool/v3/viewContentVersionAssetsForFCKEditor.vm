@@ -79,7 +79,12 @@
 				window.location.href=url + "&returnAddress=" + escape(returnAddress);
 			}
 		}
-	
+
+		function getContentVersionId()
+		{
+			return $contentVersionId;
+		}
+
 		$(document).ready(function(){
 			//alert("Loaded:" + document.location.href);
 			setTimeout("initSub()", 500);
@@ -112,7 +117,7 @@
 	</script>
 	<link rel="stylesheet" type="text/css" href="css/assets.css" />
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
-	
+
 </head>
 
 <body class="generaltooledit">

@@ -60,7 +60,7 @@
 			document.inputForm.action = 'MoveMultipleContent!V3.action';
 			document.inputForm.submit();
 		}
-			
+	-->
 	</script>
 #end
 

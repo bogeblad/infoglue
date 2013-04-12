@@ -26,12 +26,22 @@
 		}
 	}
 
+	var uploadButton = true;
+	function showUploadButton(val)
+	{
+		if (assetTabIsActive)
+		{
+			uploadButton = val;
+			toggleUploadButton(true);
+		}
+	}
+
 	function toggleUploadButton(active)
 	{
-		if(!active)
-			$(".attachAsset").hide();
-		else
+		if(active && uploadButton)
 			$(".attachAsset").show();
+		else
+			$(".attachAsset").hide();
 	}
 
 	function toggleUsePageButton(active)
@@ -51,20 +61,23 @@
 		else
 			$(".linkInsertAsset").show();
 	}
-	
+
+	var assetTabIsActive = false;
 	$(document).ready(function(){
 		$("#tabsContainer").tabs({ show:function(e, ui) { 
 				if(ui.index > 0) 
 				{
-					toggleUploadButton(false);
+					toggleUploadButton(true);
 					toggleUsePageButton(false);
 					toggleUseAssetButton(true);
+					assetTabIsActive = true;
 				}
 				else
 				{
 					toggleUploadButton(false);
 					toggleUsePageButton(true);
 					toggleUseAssetButton(false);
+					assetTabIsActive = false;
 				}
 				/*resizeInlineTabDivs();*/ 
 			} 
@@ -290,6 +303,24 @@
 			contentId = -1;
 			
 		return "$templateLogic.getPageUrl(" + siteNodeId + ", $templateLogic.languageId," + contentId + ")";
+	}
+
+	var selectedContentVersionId;
+	function uploadAsset()
+	{
+		var assetFrame = document.getElementById("internalAssetFrame")
+		if (assetFrame)
+		{
+			var assetwindow= assetFrame.contentWindow? assetFrame.contentWindow : assetFrame.contentDocument.defaultView;
+			if (assetwindow && assetwindow.uploadAsset)
+			{
+				assetwindow.uploadAsset();
+			}
+		}
+		else
+		{
+			alert("Error");
+		}
 	}
 	-->
 	</script>

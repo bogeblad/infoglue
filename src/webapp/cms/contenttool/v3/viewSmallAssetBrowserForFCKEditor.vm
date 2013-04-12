@@ -1,4 +1,11 @@
-#beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogHeader" "" "" false false $!disableCloseButton)
+#define( $headerMarkup )
+
+	<script type="text/javascript" src="script/jqueryplugins-latest/thickbox/thickbox-compressed.js"></script>
+	<link rel="stylesheet" type="text/css" href="script/jqueryplugins-latest/thickbox/thickbox-ig.css" />
+
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.assetDialog.assetDialogHeader" "" "" false false false $headerMarkup false "")
 
 <script type="text/javascript">
 <!--
@@ -38,10 +45,84 @@
 		}
 	}
 
+	function setShowUploadButton(val)
+	{
+		if (parent && parent.showUploadButton)
+		{
+			parent.showUploadButton(val);
+		}
+	}
+
+	function getContentVersionIdFromFrame(iframe)
+	{
+		if (iframe)
+		{
+			var iframewindow= iframe.contentWindow? iframe.contentWindow : iframe.contentDocument.defaultView;
+			if (iframewindow && iframewindow.getContentVersionId)
+			{
+				return iframewindow.getContentVersionId();
+			}
+		}
+	}
+
+	function refreshView()
+	{
+		try
+		{
+			if (showingContentVerison)
+			{
+				$("#contentVersionAssetsFrame").get(0).contentWindow.location.reload(true);
+			}
+			else if (showingContentBrowser)
+			{
+				$("#repositoryBrowserFrame").get(0).contentWindow.location.reload(true);
+			}
+		}
+		catch (err)
+		{
+			alert("Error: " + err);
+		}
+	}
+
+	var showingContentVerison = true, showingContentBrowser = false;
+	function uploadAsset()
+	{
+		// getContentVersionId
+		var cid;
+		if (showingContentVerison)
+		{
+			cid = getContentVersionIdFromFrame(document.getElementById("contentVersionAssetsFrame"));
+		}
+		else if (showingContentBrowser)
+		{
+			cid = getContentVersionIdFromFrame(document.getElementById("repositoryBrowserFrame"));
+		}
+		if(cid)
+		{
+			openInlineDiv("ViewDigitalAsset.action?contentVersionId=" + cid, 500, 550, true, true, "uploadAsset");
+		}
+		else
+		{
+			alert("$ui.getString('tool.contenttool.mustSelectContentText')");
+		}
+	}
+
 	$(document).ready(function(){
 		$("#tabsContainer").tabs( { 
 				show:function(e, ui) { 
-					/*resizeInlineTabDivs();*/ 
+					/*resizeInlineTabDivs();*/
+
+					showingContentVerison = ui.index == 0;
+					##showingContentBrowser = ui.index == 2;
+
+					if (ui.index == 0)##  || ui.index == 2
+					{
+						setShowUploadButton(true);
+					}
+					else
+					{
+						setShowUploadButton(false);
+					}
 				},
 			  	select:function(e, ui) { 
 			  		//alert("ui: " + ui.index);

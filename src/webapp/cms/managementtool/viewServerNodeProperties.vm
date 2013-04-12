@@ -263,6 +263,8 @@
 				#set($option8 = ["1000", "1000"])
 				#set($maxNumberOfVersionsForDerivedLastModifiedInLiveOptions = [$option1, $option2, $option3, $option4, $option5, $option6, $option7, $option8]) 
 				#selectFieldCSS("ServerNode.property.maxNumberOfVersionsForDerivedLastModifiedInLive" "maxNumberOfVersionsForDerivedLastModifiedInLive" $this.getPropertyValue('maxNumberOfVersionsForDerivedLastModifiedInLive') $maxNumberOfVersionsForDerivedLastModifiedInLiveOptions "$!cmsPH.setDerivedLastModifiedInLive")
+
+				#editPropertyFieldCSS("ServerNode.property.standardResponseHeaders" "standardResponseHeaders" "$this.getPropertyValue('standardResponseHeaders')" "51" "$!serverNodeId" "$!cmsPH.standardResponseHeaders")
 			</div>
 		
 			<div class="inlineTabDiv" id="urlEncoding">
@@ -416,6 +418,7 @@
 	
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfYearsBeforeExpire" "defaultNumberOfYearsBeforeExpire" "$this.getPropertyValue('defaultNumberOfYearsBeforeExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfYearsBeforeExpire")
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeRedirectExpire" "defaultNumberOfMonthsBeforeRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeRedirectExpire")
+				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeSystemRedirectExpire" "defaultNumberOfMonthsBeforeSystemRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeSystemRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeSystemRedirectExpire")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enableDateTimeDirectEditing" "enableDateTimeDirectEditing" "$this.getPropertyValue('enableDateTimeDirectEditing')" "$!cmsPH.enableDateTimeDirectEditing")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.showContentVersionFirst" "showContentVersionFirst" "$this.getPropertyValue('showContentVersionFirst')" "$!cmsPH.showContentVersionFirst")
 				#editPropertyFieldCSS("ServerNode.property.tree" "tree" "$this.getPropertyValue('tree')" "51" "$!serverNodeId" "$!cmsPH.tree")

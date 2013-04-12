@@ -84,7 +84,7 @@ public abstract class AuthenticationModule
 		    String casProxyValidateUrl 	= InfoGlueAuthenticationFilter.casProxyValidateUrl;
 		    String casLogoutUrl 		= InfoGlueAuthenticationFilter.casLogoutUrl;
 		    
-		    if(true || authenticatorClass.equals("org.infoglue.cms.security.CASBasicAuthenticationModule") && (forceBasicModule || fallBackToBasicBasedOnIP(request)))
+		    if(authenticatorClass.equals("org.infoglue.cms.security.CASBasicAuthenticationModule") && (forceBasicModule || fallBackToBasicBasedOnIP(request)))
 		    {
 		    	authenticationModule = (AuthenticationModule)Class.forName("org.infoglue.cms.security.InfoGlueBasicAuthenticationModule").newInstance();
 				authenticationModule.setAuthenticatorClass("org.infoglue.cms.security.InfoGlueBasicAuthenticationModule");
@@ -161,9 +161,9 @@ public abstract class AuthenticationModule
 		}
 		catch(Exception e)
 		{
-			return getAuthenticationModule(transactionObject, successLoginUrl, request, true);
-			//logger.error("An error occurred when we tried to get an authenticationModule:" + e, e);
-			//throw new SystemException("An error occurred when we tried to get an authenticationModule: " + e.getMessage(), e);
+			//return getAuthenticationModule(transactionObject, successLoginUrl, request, true);
+			logger.error("An error occurred when we tried to get an authenticationModule:" + e, e);
+			throw new SystemException("An error occurred when we tried to get an authenticationModule: " + e.getMessage(), e);
 		}
 		
 		return authenticationModule;

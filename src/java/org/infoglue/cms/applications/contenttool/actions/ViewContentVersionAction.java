@@ -49,6 +49,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
@@ -289,8 +290,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
         //this.contentVO = ContentController.getContentVOWithId(contentId);
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentId);
-        this.availableLanguages = ContentController.getContentController().getRepositoryLanguages(this.contentVO.getRepositoryId());
-        
+        this.availableLanguages = ContentController.getContentController().getRepositoryLanguages(this.contentVO.getId());
+
         if(contentVersionId == null)
 		{	
 			//this.contentVersionVO = ContentVersionControllerProxy.getController().getACLatestActiveContentVersionVO(this.getInfoGluePrincipal(), contentId, languageId);

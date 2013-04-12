@@ -114,20 +114,21 @@
 		//*******************************************
 		// This function changes language version
 		//*******************************************
-		
+
+		var originalIndex;
 		function changeLanguage(contentId, select)
 		{
 			var languageId = $(select).val();
 			
 			attributeName = document.editForm.attributeName.value;
 			
-			if (confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
+			if ((!getDirty() && !checkWYSIWYGDirty()) || confirm('$ui.getString("tool.contenttool.languageVersionChangeWarning")'))
 			{
 				window.location.href="ViewContentVersion!V3.action?contentId=" + contentId + "&languageId=" + languageId + "&attributeName=" + attributeName;
 			}
 			else
 			{
-				document.editForm.languageId.selectedIndex = originalIndex - 1;
+				document.getElementById("languageSelect").selectedIndex = originalIndex;
 			}
 		}
 	
@@ -673,6 +674,11 @@
 			#end
 		</select>
 	</div>
+	<script type="text/javascript">
+		<!--
+		originalIndex = document.getElementById("languageSelect").selectedIndex;
+		-->
+	</script>
 	#end
 
 	<div>

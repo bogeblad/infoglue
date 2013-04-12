@@ -79,7 +79,6 @@
 					}
 				}
 			});
-			window.resizeTo(500,450);
 		});
 		
 		var swfu;
@@ -314,13 +313,16 @@
 			var tt = document.getElementById("tt");
 			var list = document.getElementById("dd");
 			var val = "";
-			if (list.options[list.selectedIndex])
+			if (list.selectedIndex > -1 && list.options[list.selectedIndex])
 			{
 				val = list.options[list.selectedIndex].value;
 			}
 			else
 			{
-				val = list.options[0].value;
+				var firstItem = list.options[0];
+				if (firstItem) {
+					val = list.options[0].value;
+				}
 			}
 			tt.value = val;
 			list.style.visibility = "hidden";
@@ -486,7 +488,7 @@
 			<form>
 				<div id="intro">
 					<strong>$ui.getString("tool.contenttool.fileUpload.fileUploadHeader") <span id="maxSize"> $ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))</span></strong> - <span id="divStatus">0 Files Uploaded</span><br/><br/>
-					<div style="display: inline; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-bottom: 2px;">
+					<div style="display: inline-block; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px; margin-bottom: 2px;">
 						<span id="spanButtonPlaceHolder"></span>
 					</div>
 					<!-- 

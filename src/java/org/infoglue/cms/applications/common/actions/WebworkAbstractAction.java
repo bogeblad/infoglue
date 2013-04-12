@@ -28,6 +28,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -379,10 +380,6 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     		
       		final Method method = getClass().getMethod(methodName.toString(), new Class[0]);
       		result = (String) method.invoke(this, new Object[0]);
-      		
-        	setStandardResponseHeaders();
-
-			RequestAnalyser.getRequestAnalyser().registerComponentStatistics("" + this.getUnencodedCurrentURI(), t.getElapsedTime());
     	} 
     	catch(Exception ie) 
     	{
@@ -470,15 +467,17 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
     	
   	}
   	
-  	/**
-  	 * This method adds a header to all responses which makes all latest IE-browsers fallback to IE8-mode.
-  	 * Some aspects of Infoglue (FCKEditor) does not work in IE9 for example.
-  	 */
 	public void setStandardResponseHeaders() 
 	{
 		try
 		{
-			getResponse().setHeader("X-UA-Compatible", "IE=EmulateIE8");
+			Map<String, String> standardHeaders = CmsPropertyHandler.getStandardResponseHeaders();
+			HttpServletResponse response = getResponse();
+			for (Map.Entry<String, String> entry : standardHeaders.entrySet())
+			{
+				response.setHeader(entry.getKey(), entry.getValue());
+			}
+			response.setHeader("Cache-Control", "no-cache");
 		}
 		catch (Exception e) 
 		{

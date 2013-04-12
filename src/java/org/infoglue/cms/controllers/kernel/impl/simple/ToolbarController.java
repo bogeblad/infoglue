@@ -1702,23 +1702,19 @@ public class ToolbarController implements ToolbarProvider
 				  "", 
 				  ""));
 
-		/*
 		buttons.add(new ToolbarButton("uploadAsset", 
 				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
 				  getLocalizedString(locale, "tool.contenttool.uploadNewAttachment"), 
-				  "openPopup('ViewDigitalAsset.action?contentVersionId=" + contentVersionId + "', 'DigitalAsset', 'width=400,height=200,resizable=no');", 
-				  "", 
-				  "", 
-				  "attachAsset", 
-				  true, 
-				  false, 
-				  "", 
-				  "", 
+				  "uploadAsset();",
 				  "",
-				  300,
-				  200));
-		*/
-		
+				  "", 
+				  "attachAsset",
+				  true,
+				  false,
+				  "",
+				  "",
+				  ""));
+
 		buttons.add(getCommonFooterCancelButton(toolbarKey, principal, locale, request, disableCloseButton, "onCancel();", true));
 
 		return buttons;
@@ -2449,7 +2445,8 @@ public class ToolbarController implements ToolbarProvider
 						  "workIframe"));
 				//buttons.add(new ToolbarButton("UpdateSystemUserPassword!input.action?userName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding), URIEncoding), getLocalizedString(locale, "images.managementtool.buttons.updateSystemUserPassword"), "Update user password"));
 
-				if (principal.getIsAdministrator())
+				boolean hasAccessToRenameSystemUser = hasAccessTo(principal, "SystemUser.changeUsername", false);
+				if (hasAccessToRenameSystemUser)
 				{
 					buttons.add(new ToolbarButton("",
 							getLocalizedString(locale, "tool.managementtool.viewSystemUserUserNameDialog.header"), 
@@ -2476,6 +2473,8 @@ public class ToolbarController implements ToolbarProvider
 
 			//buttons.add(new ToolbarButton("ViewUserProperties.action?userName=" + URLEncoder.encode(URLEncoder.encode(primaryKey, URIEncoding), URIEncoding), getLocalizedString(locale, "images.managementtool.buttons.viewSystemUserProperties"), "View User Properties"));
 		}
+		
+//		if(principal.getIsAdministrator())
 		
 		if(principal.getIsAdministrator())
 		{

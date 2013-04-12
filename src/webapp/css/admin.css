@@ -163,6 +163,9 @@ html,body {
 	margin: 0px;
 	width: 90%;
 }
+#menutoolbarLeft img.divider {
+	float:left;
+}
 /*
 .igToolbarButton
 {

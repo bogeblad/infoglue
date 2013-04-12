@@ -696,14 +696,24 @@
     	
     	<ul>
             <li><a href="#contentVersionDiv"><span>$ui.getString('tool.contenttool.textContentTab')</span></a></li>
-            <li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>
-            <li><a href="#contentVersionAssetsDiv"><span>$ui.getString('tool.contenttool.assetsTab')</span></a></li>
+			#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
+            	<li><a href="#contentVersionCategoriesDiv"><span>$ui.getString('tool.contenttool.categoriesTab')</span></a></li>
+            #end
+			#if($this.hasAccessTo("ContentVersionEditor.Attachments", true, false))
+            	<li><a href="#contentVersionAssetsDiv"><span>$ui.getString('tool.contenttool.assetsTab')</span></a></li>
+            #end
             <li><a href="#contentCoverDiv"><span>$ui.getString('tool.contenttool.coverTab')</span></a></li>
-            <li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
-            <li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
-			#if($contentTypeDefinitionVO.name != "Meta info")
-            <li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
-            <li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>
+			#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
+            	<li><a href="#contentHistoryDiv"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
+            #end
+			#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+            	<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
+			#end
+			#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+				#if($contentTypeDefinitionVO.name != "Meta info")
+		            <li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
+		            <li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>
+	        	#end
         	#end
         </ul>
     	

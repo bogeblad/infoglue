@@ -96,6 +96,12 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ContentVersion.Read", new InterceptionPointVO("ContentVersion", "ContentVersion.Read", "Intercepts the read of a contentversion", true));
 	    systemInterceptionPoints.put("ContentVersion.Publish", new InterceptionPointVO("ContentVersion", "ContentVersion.Publish", "Intercepts the direct publishing of a content version", true));
 
+	    systemInterceptionPoints.put("ContentVersionEditor.Categories", new InterceptionPointVO("ContentVersionEditor", "ContentVersionEditor.Categories", "Intercepts the tab categories", false));
+	    systemInterceptionPoints.put("ContentVersionEditor.Attachments", new InterceptionPointVO("ContentVersionEditor", "ContentVersionEditor.Attachments", "Intercepts the tab attachments", false));
+	    systemInterceptionPoints.put("ContentVersionEditor.History", new InterceptionPointVO("ContentVersionEditor", "ContentVersionEditor.History", "Intercepts the tab history", false));
+	    systemInterceptionPoints.put("ContentVersionEditor.References", new InterceptionPointVO("ContentVersionEditor", "ContentVersionEditor.References", "Intercepts the tab references", false));
+	    systemInterceptionPoints.put("ContentVersionEditor.AccessRights", new InterceptionPointVO("ContentVersionEditor", "ContentVersionEditor.AccessRights", "Intercepts the tabs for access rights", false));
+	    
 	    systemInterceptionPoints.put("Repository.Read", new InterceptionPointVO("Repository", "Repository.Read", "Gives a user access to look at a repository", true));
 	    systemInterceptionPoints.put("Repository.Write", new InterceptionPointVO("Repository", "Repository.Write", "Gives a user possible access to write in the repository", true));
 	    systemInterceptionPoints.put("Repository.ReadForBinding", new InterceptionPointVO("Repository", "Repository.ReadForBinding", "This point intercepts when a user tries to read the repository in a binding dialog", true));

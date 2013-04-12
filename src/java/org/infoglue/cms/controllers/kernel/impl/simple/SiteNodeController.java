@@ -296,7 +296,7 @@ public class SiteNodeController extends BaseController
 		   		SQL.append("order by sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 	    	}
 	    	
-	    	System.out.println("SQL:" + SQL);
+	    	//System.out.println("SQL:" + SQL);
 	    	//logger.info("SQL:" + SQL);
 	    	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
 	    	//logger.info("showDeletedItems:" + showDeletedItems);

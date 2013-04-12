@@ -1803,6 +1803,16 @@ public class ToolbarController implements ToolbarProvider
 					  getLocalizedString(locale, "tool.structuretool.toolbarV3.deletePageConfirmationLabel", new String[]{siteNodeVO.getName()}),
 					  "inlineDiv"));
 			//}
+			if(SiteNodeVersionController.getLatestPublishedSiteNodeVersionVO(new Integer(siteNodeId)) != null)
+			{
+				buttons.add(new ToolbarButton("",
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"), 
+					  getLocalizedString(locale, "tool.contenttool.toolbarV3.deleteContentLabel"),
+					  "javascript:alert('" + formatter.escapeForJavascripts(getLocalizedErrorMessage(locale, "3300")) + "');",
+					  "",
+					  "delete"));
+			}
+			
 		/*
 		else
 		{

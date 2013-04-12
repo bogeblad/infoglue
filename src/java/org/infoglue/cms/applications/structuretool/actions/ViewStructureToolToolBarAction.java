@@ -26,11 +26,14 @@ package org.infoglue.cms.applications.structuretool.actions;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.ImageButton;
+import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
@@ -42,6 +45,8 @@ import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.cms.util.StringManager;
+import org.infoglue.cms.util.StringManagerFactory;
 
 /**
  * This class implements the action class for the framed page in the siteNode tool.
@@ -357,7 +362,20 @@ public class ViewStructureToolToolBarAction extends InfoGlueAbstractAction
 	private List getSiteNodeButtons() throws Exception
 	{
 		List buttons = new ArrayList();
+		
 		buttons.add(new ImageButton("Confirm.action?header=Delete%20siteNode&yesDestination=" + URLEncoder.encode(URLEncoder.encode("DeleteSiteNode.action?siteNodeId=" + this.siteNodeId + "&repositoryId=" + this.repositoryId + "&changeTypeId=4", "UTF-8"), "UTF-8") + "&noDestination=" + URLEncoder.encode(URLEncoder.encode("ViewSiteNode.action?title=SiteNode&siteNodeId=" + this.siteNodeId + "&repositoryId=" + this.repositoryId, "UTF-8"), "UTF-8") + "&message=" + URLEncoder.encode("Do you really want to delete the siteNode " + this.name + " and all its children", "UTF-8"), getLocalizedString(getSession().getLocale(), "images.structuretool.buttons.deleteSiteNode"), "Delete SiteNode"));
+
+		if(hasPublishedVersion())
+		{
+			buttons.add(new ToolbarButton("",
+					  getLocalizedString(getSession().getLocale(), "tool.contenttool.toolbarV3.deleteContentLabel"), 
+					  getLocalizedString(getSession().getLocale(), "tool.contenttool.toolbarV3.deleteContentLabel"),
+					  "javascript:alert('" + formatter.escapeForJavascripts(getLocalizedErrorMessage(getSession().getLocale(), "3300")) + "');",
+					  "",
+					  "delete"));
+		}
+
+		
 		buttons.add(getMoveButton());	
 		buttons.add(getMoveMultipleButton());	
 		buttons.add(getPublishButton());
@@ -505,4 +523,14 @@ public class ViewStructureToolToolBarAction extends InfoGlueAbstractAction
 	{
 		return siteNodeVO;
 	}
+	
+	/**
+	 * <todo>Move to a ConstraintExceptionHelper class?</todo>
+	 */
+	private String getLocalizedErrorMessage(Locale locale, String errorCode) 
+	{
+		final StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.entities", locale);
+		return stringManager.getString(errorCode);
+	}
+
 }

@@ -1351,35 +1351,32 @@ public class LuceneController extends BaseController implements NotificationList
 		    	if(document != null)
 			    	writer.addDocument(document);
 
-		    	if (CmsPropertyHandler.getIndexDigitalAssetContent())
-		    	{
-					logger.info("version assetCount:" + version.getAssetCount());
-					if(version.getAssetCount() == null || version.getAssetCount() > 0)
+				logger.info("version assetCount:" + version.getAssetCount());
+				if(version.getAssetCount() == null || version.getAssetCount() > 0)
+				{
+					List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(version.getId(), db);
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDigitalAssetVOList", (t.getElapsedTimeNanos() / 1000));
+
+					if(digitalAssetVOList.size() > 0)
 					{
-						List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(version.getId(), db);
-						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDigitalAssetVOList", (t.getElapsedTimeNanos() / 1000));
-
-						if(digitalAssetVOList.size() > 0)
+						logger.info("digitalAssetVOList:" + digitalAssetVOList.size());
+						Iterator digitalAssetVOListIterator = digitalAssetVOList.iterator();
+						while(digitalAssetVOListIterator.hasNext())
 						{
-							logger.info("digitalAssetVOList:" + digitalAssetVOList.size());
-							Iterator digitalAssetVOListIterator = digitalAssetVOList.iterator();
-							while(digitalAssetVOListIterator.hasNext())
-							{
-								DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
+							DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
 
-								Document assetDocument = getDocumentFromDigitalAsset(assetVO, version, db);
-								String assetUid = assetDocument.get("uid");
+							Document assetDocument = getDocumentFromDigitalAsset(assetVO, version, db);
+							String assetUid = assetDocument.get("uid");
 
-					    		writer.deleteDocuments(new Term("uid", "" + assetUid));
+				    		writer.deleteDocuments(new Term("uid", "" + assetUid));
 
-					    		if(logger.isDebugEnabled())
-									logger.debug("Adding document with assetUid:" + assetUid + " - " + assetDocument);
-						    	if(assetDocument != null)
-							    	writer.addDocument(assetDocument);
-							}
+				    		if(logger.isDebugEnabled())
+								logger.debug("Adding document with assetUid:" + assetUid + " - " + assetDocument);
+					    	if(assetDocument != null)
+						    	writer.addDocument(assetDocument);
 						}
 					}
-		    	}
+				}
 				
 				newLastContentVersionId = version.getId().intValue();
 			}
@@ -1531,21 +1528,18 @@ public class LuceneController extends BaseController implements NotificationList
 				SmallestContentVersionImpl smallestContentVersionImpl = (SmallestContentVersionImpl)results.next();
 				if(previousContentId == null || !previousContentId.equals(smallestContentVersionImpl.getContentId()))
 				{
-					if (CmsPropertyHandler.getIndexDigitalAssetContent())
+					List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(smallestContentVersionImpl.getId(), db);
+					if(digitalAssetVOList.size() > 0)
 					{
-						List digitalAssetVOList = DigitalAssetController.getDigitalAssetVOList(smallestContentVersionImpl.getId(), db);
-						if(digitalAssetVOList.size() > 0)
+						logger.info("digitalAssetVOList:" + digitalAssetVOList.size());
+						Iterator digitalAssetVOListIterator = digitalAssetVOList.iterator();
+						while(digitalAssetVOListIterator.hasNext())
 						{
-							logger.info("digitalAssetVOList:" + digitalAssetVOList.size());
-							Iterator digitalAssetVOListIterator = digitalAssetVOList.iterator();
-							while(digitalAssetVOListIterator.hasNext())
+							DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
+							if(assetVO.getAssetFileSize() < 10000000) //Do not index large files
 							{
-								DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetVOListIterator.next();
-								if(assetVO.getAssetFileSize() < 10000000) //Do not index large files
-								{
-									NotificationMessage assetNotificationMessage = new NotificationMessage("LuceneController", DigitalAssetImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, assetVO.getId(), "dummy");
-									notificationMessages.add(assetNotificationMessage);
-								}
+								NotificationMessage assetNotificationMessage = new NotificationMessage("LuceneController", DigitalAssetImpl.class.getName(), "SYSTEM", NotificationMessage.TRANS_UPDATE, assetVO.getId(), "dummy");
+								notificationMessages.add(assetNotificationMessage);
 							}
 						}
 					}
@@ -1654,41 +1648,38 @@ public class LuceneController extends BaseController implements NotificationList
 		else if(notificationMessage.getClassName().equals(DigitalAssetImpl.class.getName()) || notificationMessage.getClassName().equals(DigitalAsset.class.getName()))
 		{
 			logger.info("++++++++++++++Got an DigitalAssetImpl notification: " + notificationMessage.getObjectId());
-			if (CmsPropertyHandler.getIndexDigitalAssetContent())
+			Database db2 = CastorDatabaseService.getDatabase();
+
+			beginTransaction(db2);
+
+			try
 			{
-				Database db2 = CastorDatabaseService.getDatabase();
-
-				beginTransaction(db2);
-
-				try
+				//////////ANTAGLIGEN ONDIGT MED MEDIUM hr
+				MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
+				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
+				Collection contentVersions = asset.getContentVersions();
+				if(logger.isInfoEnabled())
+					logger.info("contentVersions:" + contentVersions.size());
+				Iterator contentVersionsIterator = contentVersions.iterator();
+				while(contentVersionsIterator.hasNext())
 				{
-					//////////ANTAGLIGEN ONDIGT MED MEDIUM hr
-					MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
-					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
-					Collection contentVersions = asset.getContentVersions();
-					if(logger.isInfoEnabled())
-						logger.info("contentVersions:" + contentVersions.size());
-					Iterator contentVersionsIterator = contentVersions.iterator();
-					while(contentVersionsIterator.hasNext())
-					{
-						ContentVersion version = (ContentVersion)contentVersionsIterator.next();
-						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentVersionsIterator", t.getElapsedTime());
+					ContentVersion version = (ContentVersion)contentVersionsIterator.next();
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentVersionsIterator", t.getElapsedTime());
 
-						Document document = getDocumentFromDigitalAsset(asset.getValueObject(), version.getValueObject(), db);
-						RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDocumentFromDigitalAsset", t.getElapsedTime());
-						logger.info("00000000000000000: Adding asset document:" + document);
-						if(document != null)
-							returnDocuments.add(document);
-					}
+					Document document = getDocumentFromDigitalAsset(asset.getValueObject(), version.getValueObject(), db);
+					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDocumentFromDigitalAsset", t.getElapsedTime());
+					logger.info("00000000000000000: Adding asset document:" + document);
+					if(document != null)
+						returnDocuments.add(document);
+				}
 
-					commitTransaction(db2);
-				}
-				catch(Exception e)
-				{
-					logger.error("An error occurred so we should not complete the transaction:" + e, e);
-					rollbackTransaction(db2);
-					throw new SystemException(e.getMessage());
-				}
+				commitTransaction(db2);
+			}
+			catch(Exception e)
+			{
+				logger.error("An error occurred so we should not complete the transaction:" + e, e);
+				rollbackTransaction(db2);
+				throw new SystemException(e.getMessage());
 			}
 		}
 		else if(notificationMessage.getClassName().equals(SiteNodeImpl.class.getName()) || notificationMessage.getClassName().equals(SiteNode.class.getName()))
@@ -2147,17 +2138,20 @@ public class LuceneController extends BaseController implements NotificationList
 		// get tokenized and indexed.
 		doc.add(new Field("contents", new StringReader(digitalAssetVO.getAssetKey() + " " + digitalAssetVO.getAssetFileName() + " " + digitalAssetVO.getAssetContentType())));
 
-		//String url = DigitalAssetController.getController().getDigitalAssetUrl(digitalAssetVO, db);
-		//if(logger.isInfoEnabled())
-		//	logger.info("url if we should index file:" + url);
-		String filePath = DigitalAssetController.getController().getDigitalAssetFilePath(digitalAssetVO, db);
-		if(logger.isInfoEnabled())
-			logger.info("filePath if we should index file:" + filePath);
-		File file = new File(filePath);
-		String text = extractTextToIndex(digitalAssetVO, file);
-
-		doc.add(new Field("contents", new StringReader(text)));
-		
+    	if (CmsPropertyHandler.getIndexDigitalAssetContent())
+    	{
+			//String url = DigitalAssetController.getController().getDigitalAssetUrl(digitalAssetVO, db);
+			//if(logger.isInfoEnabled())
+			//	logger.info("url if we should index file:" + url);
+			String filePath = DigitalAssetController.getController().getDigitalAssetFilePath(digitalAssetVO, db);
+			if(logger.isInfoEnabled())
+				logger.info("filePath if we should index file:" + filePath);
+			File file = new File(filePath);
+			String text = extractTextToIndex(digitalAssetVO, file);
+	
+			doc.add(new Field("contents", new StringReader(text)));
+	    }
+    	
 		return doc;
 	}
 

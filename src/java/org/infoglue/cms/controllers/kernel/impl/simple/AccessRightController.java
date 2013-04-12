@@ -2568,6 +2568,52 @@ public class AccessRightController extends BaseController
 	 * This method checks if a role has access to an entity. It takes name and id of the entity. 
 	 */
 
+	public boolean getIsPrincipalAuthorized(InfoGluePrincipal infoGluePrincipal, String interceptionPointName, boolean returnSuccessIfInterceptionPointNotDefined, boolean returnFailureIfInterceptionPointNotDefined, boolean returnTrueIfNoAccessRightsDefined) throws SystemException
+	{
+		if(infoGluePrincipal.getIsAdministrator())
+			return true;
+			
+		String key = "" + infoGluePrincipal.getName() + "_" + interceptionPointName + "_" + returnSuccessIfInterceptionPointNotDefined + "_" + returnFailureIfInterceptionPointNotDefined + "_" + returnTrueIfNoAccessRightsDefined;
+		logger.info("key:" + key);
+		//Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObject("authorizationCache", key);
+		Boolean cachedIsPrincipalAuthorized = (Boolean)CacheController.getCachedObjectFromAdvancedCache("personalAuthorizationCache", key);
+		if(cachedIsPrincipalAuthorized != null)
+		{
+			if(logger.isInfoEnabled() && !cachedIsPrincipalAuthorized.booleanValue())
+				logger.info("Principal " + infoGluePrincipal.getName() + " was not allowed to " + interceptionPointName);
+
+			return cachedIsPrincipalAuthorized.booleanValue();
+		}
+		
+		boolean isPrincipalAuthorized = false;
+		
+		Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+			
+			isPrincipalAuthorized = getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined, returnFailureIfInterceptionPointNotDefined, returnTrueIfNoAccessRightsDefined);
+			
+			//CacheController.cacheObject("authorizationCache", key, new Boolean(isPrincipalAuthorized));
+		    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(isPrincipalAuthorized), new String[]{infoGluePrincipal.getName()}, true);
+			
+			commitTransaction(db);
+		} 
+		catch (Exception e) 
+		{
+			logger.info("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+					
+		return isPrincipalAuthorized;
+	}
+
+	/**
+	 * This method checks if a role has access to an entity. It takes name and id of the entity. 
+	 */
+
 	public boolean getIsPrincipalAuthorized(Database db, InfoGluePrincipal infoGluePrincipal, String interceptionPointName) throws SystemException
 	{		
 		boolean isAuthorized = getIsPrincipalAuthorized(db, infoGluePrincipal, interceptionPointName, false, false, true);

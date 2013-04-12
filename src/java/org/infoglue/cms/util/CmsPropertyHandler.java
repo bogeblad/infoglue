@@ -2626,4 +2626,11 @@ public class CmsPropertyHandler
 	{
 		return CmsPropertyHandler.isValidSetup;
 	}
+
+	public static boolean getIndexDigitalAssetContent()
+	{
+		String value = getServerNodeProperty("indexDigitalAssetContent", true, "false");
+
+		return Boolean.parseBoolean(value);
+	}
 }

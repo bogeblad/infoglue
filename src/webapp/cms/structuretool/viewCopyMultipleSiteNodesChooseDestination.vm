@@ -60,7 +60,7 @@
 			document.inputForm.action = 'MoveMultipleSiteNodes.action';
 			document.inputForm.submit();
 		}
-			
+	-->
 	</script>
 #end
 

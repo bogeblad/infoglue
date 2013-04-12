@@ -162,6 +162,8 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ManagementToolMenu.SystemTools", new InterceptionPointVO("ManagementToolMenu", "ManagementToolMenu.SystemTools", "Intercepts access to the menu item 'SystemTools' in management tool", false));
 	    systemInterceptionPoints.put("ManagementToolMenu.TransactionHistory", new InterceptionPointVO("ManagementToolMenu", "ManagementToolMenu.TransactionHistory", "Intercepts access to the menu item 'TransactionHistory' in management tool", false));
 
+	    systemInterceptionPoints.put("SystemUser.changeUsername", new InterceptionPointVO("SystemUser", "SystemUser.changeUsername", "Intercepts the possibility to rename users", false));
+
 	    systemInterceptionPoints.put("Role.Read", new InterceptionPointVO("Role", "Role.Read", "Intercepts the read of a role", true));
 	    systemInterceptionPoints.put("Role.ReadForAssignment", new InterceptionPointVO("Role", "Role.ReadForAssignment", "Intercepts the read of a role when assigning them to a user", true));
 	    systemInterceptionPoints.put("Role.Write", new InterceptionPointVO("Role", "Role.Write", "Intercepts the write of a role", true));

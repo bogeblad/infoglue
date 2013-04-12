@@ -155,6 +155,7 @@
 				<li><a href="#securitySettings"><span>$ui.getString("entity.ServerNode.property.securitySettings.label")</span></a></li>
 				<li><a href="#deliverSecuritySettings"><span>$ui.getString("entity.ServerNode.property.deliverSecuritySettings.label")</span></a></li>
 				<li><a href="#cmsGUI"><span>$ui.getString("entity.ServerNode.property.cmsGUI.label")</span></a></li>
+				<li><a href="#searchSettings"><span>$ui.getString("entity.ServerNode.property.searchSettings.label")</span></a></li>
 				<li><a href="#specialSettings"><span>$ui.getString("entity.ServerNode.property.specialSettings.label")</span></a></li>
 			</ul>
 
@@ -262,6 +263,8 @@
 				#set($option8 = ["1000", "1000"])
 				#set($maxNumberOfVersionsForDerivedLastModifiedInLiveOptions = [$option1, $option2, $option3, $option4, $option5, $option6, $option7, $option8]) 
 				#selectFieldCSS("ServerNode.property.maxNumberOfVersionsForDerivedLastModifiedInLive" "maxNumberOfVersionsForDerivedLastModifiedInLive" $this.getPropertyValue('maxNumberOfVersionsForDerivedLastModifiedInLive') $maxNumberOfVersionsForDerivedLastModifiedInLiveOptions "$!cmsPH.setDerivedLastModifiedInLive")
+
+				#editPropertyFieldCSS("ServerNode.property.standardResponseHeaders" "standardResponseHeaders" "$this.getPropertyValue('standardResponseHeaders')" "51" "$!serverNodeId" "$!cmsPH.standardResponseHeaders")
 			</div>
 		
 			<div class="inlineTabDiv" id="urlEncoding">
@@ -335,16 +338,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyAllowFolderType" "onlyAllowFolderType" "$this.getPropertyValue('onlyAllowFolderType')" "$!cmsPH.onlyAllowFolderType")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.skipResultDialogIfPossible" "skipResultDialogIfPossible" "$this.getPropertyValue('skipResultDialogIfPossible')" "$!cmsPH.skipResultDialogIfPossible")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowOverrideModifyer" "allowOverrideModifyer" "$this.getPropertyValue('allowOverrideModifyer')" "$!cmsPH.allowOverrideModifyer")
-				
-				#set($SQLSearch = ["$ui.getString('entity.ServerNode.property.sqlSearch.value')", "$ui.getString('entity.ServerNode.property.sqlSearch.label')"])
-				#set($luceneSearch = ["$ui.getString('entity.ServerNode.property.luceneSearch.value')", "$ui.getString('entity.ServerNode.property.luceneSearch.label')"])
-				#set($searchEngineOptions = [$SQLSearch, $luceneSearch]) 
-	
-				#selectFieldCSS("ServerNode.property.internalSearchEngine" "internalSearchEngine" $this.getPropertyValue('internalSearchEngine') $searchEngineOptions "$!cmsPH.internalSearchEngine")
-				#editPropertyFieldCSS("ServerNode.property.maxRows" "maxRows" "$this.getPropertyValue('maxRows')" "51" "$!serverNodeId" "$!cmsPH.maxRows")
-	
-				#editPropertyFieldCSS("ServerNode.property.maxNumberOfAssetInSearches" "maxNumberOfAssetInSearches" "$this.getPropertyValue('maxNumberOfAssetInSearches')" "51" "$!serverNodeId" "$!cmsPH.maxNumberOfAssetInSearches")
-	
+
 				#set($option1 = ["fckeditor2", "FCKEditor 2.x"])
 				#set($option2 = ["ckeditor4", "CKEditor 4.x"])
 	
@@ -424,6 +418,7 @@
 	
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfYearsBeforeExpire" "defaultNumberOfYearsBeforeExpire" "$this.getPropertyValue('defaultNumberOfYearsBeforeExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfYearsBeforeExpire")
 				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeRedirectExpire" "defaultNumberOfMonthsBeforeRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeRedirectExpire")
+				#editPropertyFieldCSS("ServerNode.property.defaultNumberOfMonthsBeforeSystemRedirectExpire" "defaultNumberOfMonthsBeforeSystemRedirectExpire" "$this.getPropertyValue('defaultNumberOfMonthsBeforeSystemRedirectExpire')" "51" "$!serverNodeId" "$!cmsPH.defaultNumberOfMonthsBeforeSystemRedirectExpire")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.enableDateTimeDirectEditing" "enableDateTimeDirectEditing" "$this.getPropertyValue('enableDateTimeDirectEditing')" "$!cmsPH.enableDateTimeDirectEditing")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.showContentVersionFirst" "showContentVersionFirst" "$this.getPropertyValue('showContentVersionFirst')" "$!cmsPH.showContentVersionFirst")
 				#editPropertyFieldCSS("ServerNode.property.tree" "tree" "$this.getPropertyValue('tree')" "51" "$!serverNodeId" "$!cmsPH.tree")
@@ -464,7 +459,19 @@
 				#editPropertyFieldCSS("ServerNode.property.decoratedPageInvoker" "decoratedPageInvoker" "$this.getPropertyValue('decoratedPageInvoker')" "51" "$!serverNodeId" "$!cmsPH.decoratedPageInvoker")
 				#editPropertyFieldCSS("ServerNode.property.defaultRepositoryAccessRoles" "defaultRepositoryAccessRoles" "$this.getPropertyValue('defaultRepositoryAccessRoles')" "51" "$!serverNodeId" "$!cmsPH.defaultRepositoryAccessRoles")
 			</div>
-		
+
+			<div class="inlineTabDiv" id="searchSettings">
+				#set($SQLSearch = ["$ui.getString('entity.ServerNode.property.sqlSearch.value')", "$ui.getString('entity.ServerNode.property.sqlSearch.label')"])
+				#set($luceneSearch = ["$ui.getString('entity.ServerNode.property.luceneSearch.value')", "$ui.getString('entity.ServerNode.property.luceneSearch.label')"])
+				#set($searchEngineOptions = [$SQLSearch, $luceneSearch]) 
+
+				#selectFieldCSS("ServerNode.property.internalSearchEngine" "internalSearchEngine" $this.getPropertyValue('internalSearchEngine') $searchEngineOptions "$!cmsPH.internalSearchEngine")
+				#editPropertyFieldCSS("ServerNode.property.maxRows" "maxRows" "$this.getPropertyValue('maxRows')" "51" "$!serverNodeId" "$!cmsPH.maxRows")
+
+				#editPropertyFieldCSS("ServerNode.property.maxNumberOfAssetInSearches" "maxNumberOfAssetInSearches" "$this.getPropertyValue('maxNumberOfAssetInSearches')" "51" "$!serverNodeId" "$!cmsPH.maxNumberOfAssetInSearches")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.indexDigitalAssetContent" "indexDigitalAssetContent" "$this.getPropertyValue('indexDigitalAssetContent')" "$!cmsPH.indexDigitalAssetContent")
+			</div>
+
 			<div class="inlineTabDiv" id="specialSettings">
 				#yesNoDropDownWithInheritCSS("ServerNode.property.useFreeMarker" "useFreeMarker" "$this.getPropertyValue('useFreeMarker')" "$!cmsPH.useFreeMarker")
 				#editPropertyFieldCSS("ServerNode.property.errorBusyUrl" "errorBusyUrl" "$this.getPropertyValue('errorBusyUrl')" "51" "$!serverNodeId" "$!cmsPH.errorBusyUrl")

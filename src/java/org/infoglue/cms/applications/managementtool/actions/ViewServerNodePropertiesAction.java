@@ -274,6 +274,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    
 	    populate(ps, "defaultNumberOfYearsBeforeExpire");
 	    populate(ps, "defaultNumberOfMonthsBeforeRedirectExpire");
+	    populate(ps, "defaultNumberOfMonthsBeforeSystemRedirectExpire");
 	    populate(ps, "enableDateTimeDirectEditing");
 	    populate(ps, "showContentVersionFirst");
 	    populate(ps, "tree");
@@ -344,6 +345,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populateData(ps, "assetUploadTransformationsSettings");
 
 	    populate(ps, "setDerivedLastModifiedInLive");
+	    populate(ps, "standardResponseHeaders");
 	    populate(ps, "maxNumberOfVersionsForDerivedLastModifiedInLive");
 	    populate(ps, "allowInternalCallsBasedOnIP");
 	    
@@ -357,6 +359,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "protectedProtocolPort");
 	    populate(ps, "accessBasedProtocolRedirectHTTPCode");
 	    populate(ps, "redirectStatusCode");
+
+	    populate(ps, "indexDigitalAssetContent");
 
 	    populate(ps, "allowedDirectLoginNames");
 

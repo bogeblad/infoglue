@@ -1010,7 +1010,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 			else
 			{
 				ContentVersionVO contentVersionVO = getContentVersionVO(db, siteNodeId, contentId, languageId, useLanguageFallback, deliveryContext, infogluePrincipal);
-				System.out.println("contentVersionVO:" + contentVersionVO.getId());
 				
 				deliveryContext.addDebugInformation("contentVersionVO:" + contentVersionVO);
 				if(contentVersionVO != null) 

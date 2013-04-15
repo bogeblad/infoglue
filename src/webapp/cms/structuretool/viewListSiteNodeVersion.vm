@@ -128,13 +128,15 @@
 
 <div class="fullymarginalized">
 
-#if($this.hasAccessTo("PublishingTool.Read") && ($this.hasAccessTo("Repository.Read", "$!repositoryId") || $this.hasAccessTo("Repository.Write", "$!repositoryId")))
-<a href="javascript:submitToPublish('true');">
-<img src="$ui.getString("images.contenttool.buttons.publish")" width="60" height="25" border="0">
-</a>
+#if($this.hasAccessTo("Common.PublishButton", true, false, true))
+	#if($this.hasAccessTo("PublishingTool.Read") && ($this.hasAccessTo("Repository.Read", "$!repositoryId") || $this.hasAccessTo("Repository.Write", "$!repositoryId")))
+	<a href="javascript:submitToPublish('true');">
+	<img src="$ui.getString("images.contenttool.buttons.publish")" width="60" height="25" border="0">
+	</a>
+	#end
 #end
 
-#if($this.hasAccessTo("Common.SubmitToPublishButton", true))
+#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, true))
 <a href="javascript:submitToPublish('false');">
 <img src="$ui.getString("images.contenttool.buttons.submitToPublish")" width="60" height="25" border="0">
 </a>
@@ -276,13 +278,15 @@
 </tr>
 </table>
 <br/><br/>
-#if($this.hasAccessTo("PublishingTool.Read") && $this.hasAccessTo("Repository.Read", "$!repositoryId"))
-<a href="javascript:submitToPublish('true');">
-<img src="$ui.getString("images.contenttool.buttons.publish")" width="60" height="25" border="0">
-</a>
+#if($this.hasAccessTo("Common.PublishButton", true, false, true))
+	#if($this.hasAccessTo("PublishingTool.Read") && $this.hasAccessTo("Repository.Read", "$!repositoryId"))
+	<a href="javascript:submitToPublish('true');">
+	<img src="$ui.getString("images.contenttool.buttons.publish")" width="60" height="25" border="0">
+	</a>
+	#end
 #end
 
-#if($this.hasAccessTo("Common.SubmitToPublishButton", true))
+#if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, true))
 <a href="javascript:submitToPublish('false');">
 <img src="$ui.getString("images.contenttool.buttons.submitToPublish")" width="60" height="25" border="0">
 </a>

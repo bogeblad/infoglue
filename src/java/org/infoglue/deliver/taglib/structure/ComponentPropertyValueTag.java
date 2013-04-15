@@ -103,7 +103,6 @@ public class ComponentPropertyValueTag extends ComponentLogicTag
 	    {
 	        e.printStackTrace();
 	    }
-    	System.out.println("BBBBBB");
 
 	    parseToMap = false;
 	    

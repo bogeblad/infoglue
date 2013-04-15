@@ -630,7 +630,8 @@ public class ComponentLogic
 		String propertyValue = "";
 		
 		Map property = getInheritedComponentProperty(this.infoGlueComponent, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance);
-		System.out.println("property:" + property);
+		if(logger.isInfoEnabled()) 
+			logger.info("property:" + property);
 		if(property != null)
 		{	
 			try
@@ -705,7 +706,8 @@ public class ComponentLogic
 		Locale locale = LanguageDeliveryController.getLanguageDeliveryController().getLocaleWithId(templateController.getDatabase(), templateController.getLanguageId());
 		
 		Map property = getInheritedComponentProperty(component, propertyName, useInheritance, useRepositoryInheritance, useStructureInheritance, useComponentInheritance);
-		System.out.println("property:" + property);
+		if(logger.isInfoEnabled()) 
+			logger.info("property:" + property);
 		if(property != null)
 		{	
 			propertyValue = (String)property.get("path_" + locale.getLanguage());
@@ -790,7 +792,8 @@ public class ComponentLogic
 		Locale locale = LanguageDeliveryController.getLanguageDeliveryController().getLocaleWithId(templateController.getDatabase(), templateController.getLanguageId());
 
 		Map property = getInheritedComponentProperty(siteNodeId, component, propertyName, useInheritance);
-		System.out.println("property:" + property);
+		if(logger.isInfoEnabled()) 
+			logger.info("property:" + property);
 		if(property != null)
 		{	
 			if(property != null)

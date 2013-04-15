@@ -852,13 +852,16 @@ public class ToolbarController implements ToolbarProvider
 				  "",
 				  "createContentsFromUpload");
 
-		syncTreeButton.getSubButtons().add(runTaskButton);
-		syncTreeButton.getSubButtons().add(changeContentTypeButton);
-		syncTreeButton.getSubButtons().add(exportContentButton);
-		syncTreeButton.getSubButtons().add(importContentButton);
-		syncTreeButton.getSubButtons().add(createContentsFromUploadButton);
-		buttons.add(syncTreeButton);
-
+		if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarAdvancedButtons", true))
+		{
+			syncTreeButton.getSubButtons().add(runTaskButton);
+			syncTreeButton.getSubButtons().add(changeContentTypeButton);
+			syncTreeButton.getSubButtons().add(exportContentButton);
+			syncTreeButton.getSubButtons().add(importContentButton);
+			syncTreeButton.getSubButtons().add(createContentsFromUploadButton);
+			buttons.add(syncTreeButton);
+		}
+		
 		return buttons;
 	}
 
@@ -4175,7 +4178,7 @@ public class ToolbarController implements ToolbarProvider
 
 		try
 		{
-			return AccessRightController.getController().getIsPrincipalAuthorized(principal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined);
+			return AccessRightController.getController().getIsPrincipalAuthorized(principal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined, false, true);
 		}
 		catch (SystemException e)
 		{

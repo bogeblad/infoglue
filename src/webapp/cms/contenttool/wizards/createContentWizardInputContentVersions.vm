@@ -89,7 +89,7 @@
 		languageId = document.editForm.languageId.value;
 		contentId = document.editForm.contentId.value;
 		
-		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true))
+		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true, false, true))
 		if(stateId == "2")
 		{
 			alert("$ui.getString("tool.contenttool.statePublishForbidden")");

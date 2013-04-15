@@ -117,7 +117,6 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("SiteNode.ExpireDateComingUp", new InterceptionPointVO("SiteNode", "SiteNode.ExpireDateComingUp", "Intercepts the event of a site node coming close to it's expire date", true));
 	    
 	    systemInterceptionPoints.put("StructureTool.PageTemplateIsOptional", new InterceptionPointVO("StructureTool", "StructureTool.PageTemplateIsOptional", "This interception point limits who has to supply a page template when creating a page", false));
-	    systemInterceptionPoints.put("StructureTool.SaveTemplate", new InterceptionPointVO("StructureTool", "StructureTool.SaveTemplate", "This interception point limits who get the save-button in the toolbar", false));
 	    systemInterceptionPoints.put("StructureTool.Palette", new InterceptionPointVO("StructureTool", "StructureTool.Palette", "This interception point limits who sees the toolbar", false));
 	    
 	    systemInterceptionPoints.put("ComponentEditor.ChangeSlotAccess", new InterceptionPointVO("ComponentEditor", "ComponentEditor.ChangeSlotAccess", "This interception point limits who can set access rights to a slot", false));
@@ -191,13 +190,13 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("WebDAV.Read", new InterceptionPointVO("WebDav", "WebDAV.Read", "Intercepts the WebDAV feature", false));
 	    systemInterceptionPoints.put("ViewApplicationState.Read", new InterceptionPointVO("ViewApplicationState", "ViewApplicationState.Read", "Intercepts access to the View application state screens", false));
 
-	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentAccessRightsTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentAccessRightsTab", "Intercepts the content access rights tab on content version", false));
-	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentVersionAccessRightsTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentVersionAccessRightsTab", "Intercepts the content version access rights tab on content version", false));
-	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentVersionCategoriesTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentVersionCategoriesTab", "Intercepts the content version categorires tab on content version", false));
-
 	    systemInterceptionPoints.put("ToolTabsAndButtons.MySettingsExtendedGUIFields", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.MySettingsExtendedGUIFields", "Intercepts the GUI-version, GUI-theme and Toolbar style fields on my settings", false));
 	    systemInterceptionPoints.put("ToolTabsAndButtons.MySettingsSubcriptionsTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.MySettingsSubcriptionsTab", "Intercepts the Subscriptions-tab on my settings", false));
 	    systemInterceptionPoints.put("ToolTabsAndButtons.MySettingsChangePasswordTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.MySettingsChangePasswordTab", "Intercepts the Change password-tab on my settings", false));
+
+	    systemInterceptionPoints.put("ToolTabsAndButtons.CreatePageAdvancedTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.CreatePageAdvancedTab", "Intercepts the Advanced-tab on create page", false));
+
+	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentToolbarAdvancedButtons", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentToolbarAdvancedButtons", "Intercepts advanced buttons", false));
 	}
     
 	/**

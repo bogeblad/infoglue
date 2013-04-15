@@ -1952,6 +1952,7 @@ public class CacheController extends Thread
 	
 	public static void clearCaches(String entity, String entityId, Map<String,String> extraInformation, String[] cachesToSkip, boolean forceClear) throws Exception
 	{	
+		System.out.println("entity:" + entity + ", " + entityId);
 		Timer t = new Timer();
 		//t.setActive(false);
 		
@@ -3016,7 +3017,6 @@ public class CacheController extends Thread
 											    					//t.printElapsedTime("Split to usedEntities " + usedEntities.length + " took");
 											    					
 													    			ContentVersionVO newContentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(entityId));
-													    			//System.out.println("BBBBBBBBBBBBBBBBBBBBBB:" + newContentVersionVO.getModifiedDateTime().getTime());
 													    			String newComponentStructure = ContentVersionController.getContentVersionController().getAttributeValue(newContentVersionVO, "ComponentStructure", false);
 		
 													    			for(String usedEntity : usedEntities)
@@ -3198,7 +3198,6 @@ public class CacheController extends Thread
 											    					//t.printElapsedTime("Split to usedEntities " + usedEntities.length + " took");
 																	
 											    					ContentVersionVO newestContentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(entityId));
-													    			//System.out.println("BBBBBBBBBBBBBBBBBBBBBB:" + newContentVersionVO.getModifiedDateTime().getTime());
 													    			String newComponentStructure = ContentVersionController.getContentVersionController().getAttributeValue(newestContentVersionVO, "ComponentStructure", false);
 		
 											    					for(String usedEntity : usedEntities)

@@ -104,10 +104,10 @@
 	<div id="tabsContainer" class="flora">      
 		<ul>
 	        <li><a href="#generalSettingsTab"><span>$ui.getString("tool.managementtool.mysettings.generalTabLabel")</span></a></li>
-	        #if($this.hasAccessTo("ToolTabsAndButtons.MySettingsSubcriptionsTab", true))
+	        #if($this.hasAccessTo("ToolTabsAndButtons.MySettingsSubcriptionsTab", true, false))
 	        <li><a href="#subscriptionsTab"><span>$ui.getString("tool.managementtool.mysettings.subscriptionsTabLabel")</span></a></li>
 	        #end
-	        #if($this.hasAccessTo("ToolTabsAndButtons.MySettingsChangePasswordTab", true))
+	        #if($this.hasAccessTo("ToolTabsAndButtons.MySettingsChangePasswordTab", true, false))
 	        <li><a href="#passwordTab"><span>$ui.getString("tool.managementtool.mysettings.changePasswordTabLabel")</span></a></li>
 			#end
 	    </ul>
@@ -145,7 +145,7 @@
 					</select>	
 				</p>
 
-				#if($this.hasAccessTo("ToolTabsAndButtons.MySettingsExtendedGUIFields", true))
+				#if($this.hasAccessTo("ToolTabsAndButtons.MySettingsExtendedGUIFields", true, false))
 				
 				<p style="clear: both;">	
 					<label for="defaultGUI">$ui.getString("tool.managementtool.mysettings.defaultGUI.label")</label>
@@ -178,13 +178,13 @@
 			</form>
 		</div>
 		
-		#if($this.hasAccessTo("ToolTabsAndButtons.MySettingsSubcriptionsTab", true))
+		#if($this.hasAccessTo("ToolTabsAndButtons.MySettingsSubcriptionsTab", true, false))
 		<div id="subscriptionsTab" class="recipientTab inlineTabDiv">
 			<iframe frameborder="0" marginwidth="0" marginheight="0" scrolling="no" name="subscriptionsFrame" id="subscriptionsFrame" src="Subscriptions!inputGlobalSubscriptions.action?standalone=false" width="690" height="450" ></iframe>
 		</div>
 		#end
 
-		#if($this.hasAccessTo("ToolTabsAndButtons.MySettingsChangePasswordTab", true))
+		#if($this.hasAccessTo("ToolTabsAndButtons.MySettingsChangePasswordTab", true, false))
 		<div id="passwordTab" class="recipientTab inlineTabDiv">
 			<iframe frameborder="0" marginwidth="0" marginheight="0" scrolling="no" name="passwordFrame" id="passwordFrame" src="UpdateSystemUserPassword!inputStandaloneV3.action?userName=$infoGluePrincipal.name&returnAddress=ViewMySettings.action" width="690" height="450" ></iframe>
 		</div>

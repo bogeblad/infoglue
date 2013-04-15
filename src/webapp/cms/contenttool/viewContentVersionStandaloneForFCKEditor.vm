@@ -194,7 +194,7 @@
 		contentId 	  = document.getElementById("contentId").value;
 		attributeName = document.editForm.attributeName.value;
 		
-		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true))
+		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true, false, true))
 		if(stateId == "2")
 		{
 			alert("$ui.getString("tool.contenttool.statePublishForbidden")");

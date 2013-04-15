@@ -159,7 +159,7 @@ public class WorkingPublicationThread extends Thread
 
 					List<Map<String,String>> allIGCacheCalls = new ArrayList<Map<String,String>>();
 
-				    logger.info("className:" + className + " objectId:" + objectId + " objectName: " + objectName + " typeId: " + typeId + ":" + extraInformation);
+				    System.out.println("className:" + className + " objectId:" + objectId + " objectName: " + objectName + " typeId: " + typeId + ":" + extraInformation);
 				    if(className.indexOf("AccessRight") > -1)
 				    {
 				    	logger.info("Special handling of access rights..");
@@ -171,6 +171,7 @@ public class WorkingPublicationThread extends Thread
 					        CacheController.clearCache(AccessRightUserImpl.class);
 					        
 				    		CacheController.clearCache("personalAuthorizationCache");
+				    		CacheController.clearCache("userAccessCache");
 				    		accessRightsFlushed = true;
 				    	}
 				    	

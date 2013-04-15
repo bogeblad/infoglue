@@ -79,22 +79,6 @@
 			display: block;
 			margin: 2px 4px 0px 4px;
 		}
-		#*
-		.boxHeader {
-			width: 100%;
-			float: left;
-			background-image:url(css/skins/outlook2007/images/gradBackground.gif);
-			background-repeat:repeat-x;
-			border-top: 1px solid white;
-			border-bottom: 1px solid #808280;
-			height: 20px;
-		}
-		.boxHeader span {
-			float: left;
-			margin: 2px 4px 2px 4px;
-			font-size: 10pt;
-		}		
-		*#
 		
 		.boxHeader {
 			background-image:url(css/skins/outlook2007/images/gradBackground.gif);
@@ -156,304 +140,321 @@
 		
 		<div id="work">
 
-			<div id="expiringContents" class="box">
-				<table>
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="expiringContents">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.mydesktoptool.expiringContents")</th>
+					<th>$ui.getString("tool.mydesktoptool.expirationDate")</th>
+				</tr>
+			</thead>
+			<tbody>
+				#set($size = 0)
+				#foreach($contentVO in $expiringContentsForPrincipal)
+					#if($velocityCount < 6)
 					<tr>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.expiringContents")</span></th>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.expirationDate")</span></th>
+						<td>
+							<a href="#" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentVO.id', '$contentVO.name', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")');">$this.getContentPath($contentVO.id).replaceAll(' ', '&nbsp;')</a>
+						</td>
+						<td>
+							<span>$formatter.formatDate($contentVO.expireDateTime, "yyyy-MM-dd HH:mm")</span>
+						</td>
 					</tr>
-					#set($size = 0)
-					#foreach($contentVO in $expiringContentsForPrincipal)
-						#if($velocityCount < 6)
-						<tr>
-							<td>
-								<a href="#" class="content" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentVO.id', '$contentVO.name', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")');">$this.getContentPath($contentVO.id).replaceAll(' ', '&nbsp;')</a>
-							</td>
-							<td>
-								<span>$formatter.formatDate($contentVO.expireDateTime, "yyyy-MM-DD HH:mm")</span>
-							</td>
-						</tr>
-						#end
-						#set($size = $size + 1)
 					#end
-					#if($size == 0)
-						<tr>
-							<td colspan="2">
-								<span>$ui.getString("tool.mydesktoptool.noContentsFound")</span>
-							</td>
-						</tr>
-					#end
-				</table>
-			</div>
-			
-			<div id="expiringPages" class="box">
-				<table>
+					#set($size = $size + 1)
+				#end
+				#if($size == 0)
 					<tr>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.expiringPages")</span></th>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.expirationDate")</span></th>
+						<td colspan="2">
+							<span>$ui.getString("tool.mydesktoptool.noContentsFound")</span>
+						</td>
 					</tr>
-					#set($size = 0)
-					#foreach($siteNodeVO in $expiringPagesForPrincipal)
-						#if($velocityCount < 6)
-						<tr>
-							<td>
-								<a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$siteNodeVO.id', '$siteNodeVO.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")');">$this.getSiteNodePath($siteNodeVO.id)</a><br/>
-							</td>
-							<td>
-								$formatter.formatDate($siteNodeVO.expireDateTime, "yyyy-MM-DD HH:mm")
-							</td>
-						</tr>
-						#end
-						#set($size = $size + 1)
-					#end
-					#if($size == 0)
-						<tr>
-							<td colspan="2" class="boxContent">
-								<span>$ui.getString("tool.mydesktoptool.noPagesFound")</span>
-							</td>
-						</tr>
-					#end
-				</table>
-			</div>
-		
+				#end
+			</tbody>
+			</table>
 
-			<div id="yourContents" class="box">
-				<table>
-					<tr>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.myContents")</span></th>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.expirationDate")</span></th>
-					</tr>
-					#set($size = 0)
-					#foreach($contentVO in $contentVOListLastModifiedByPincipal)
-						#if($velocityCount < 6)
-						<tr>
-							<td>
-								<a href="#" class="content" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentVO.id', '$contentVO.name', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")');">$this.getContentPath($contentVO.id).replaceAll(' ', '&nbsp;')</a>
-							</td>
-							<td>
-								<span>$formatter.formatDate($contentVO.expireDateTime, "yyyy-MM-DD HH:mm")</span>
-							</td>
-						</tr>
-						#end
-						#set($size = $size + 1)
-					#end
-					#if($size == 0)
-						<tr>
-							<td colspan="2" class="boxContent">
-								<span>$ui.getString("tool.mydesktoptool.noContentsFound")</span>
-							</td>
-						</tr>
-					#end
-				</table>
-			</div>
-
-			<div id="yourPages" class="box">
-				<table>
-					<tr>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.myPages")</span></th>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.expirationDate")</span></th>
-					</tr>
-					#set($size = 0)
-					#foreach($siteNodeVO in $siteNodeVOListLastModifiedByPincipal)
-						#if($velocityCount < 6)
-						<tr>
-							<td>
-								<a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$siteNodeVO.id', '$siteNodeVO.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")');">$this.getSiteNodePath($siteNodeVO.id)</a><br/>
-							</td>
-							<td>
-								<span>$formatter.formatDate($siteNodeVO.expireDateTime, "yyyy-MM-DD HH:mm")</span>
-							</td>
-						</tr>
-						#end
-						#set($size = $size + 1)
-					#end
-					#if($size == 0)
-						<tr>
-							<td colspan="2" class="boxContent">
-								<span>$ui.getString("tool.mydesktoptool.noPagesFound")</span>
-							</td>
-						</tr>
-					#end
-				</table>
-			</div>
-		
 			
-			<div id="activeWorkflows" class="box">
-				<table border="0">
-					<tr>
-						<th class="boxHeader" colspan="2"><span>$ui.getString("tool.mydesktoptool.ongoingWorkflows") / $ui.getString("tool.mydesktoptool.actionNameLabel")</span></th>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.stepNameLabel")</span></th>
-						<!--<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.actionNameLabel")</span></th>-->
-					</tr>
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="expiringPages">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.mydesktoptool.expiringPages")</th>
+					<th>$ui.getString("tool.mydesktoptool.expirationDate")</th>
+				</tr>
+			</thead>
+			<tbody>
 					
-					#set($myActions = $this.getWorkflowActionVOList($webwork.bean('org.infoglue.cms.util.workflow.OwnerStepFilter')))
+				<tr>
+				</tr>
+				#set($size = 0)
+				#foreach($siteNodeVO in $expiringPagesForPrincipal)
+					#if($velocityCount < 6)
+					<tr>
+						<td>
+							<a href="#" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$siteNodeVO.id', '$siteNodeVO.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")');">$this.getSiteNodePath($siteNodeVO.id)</a><br/>
+						</td>
+						<td>
+							$formatter.formatDate($siteNodeVO.expireDateTime, "yyyy-MM-dd HH:mm")
+						</td>
+					</tr>
+					#end
+					#set($size = $size + 1)
+				#end
+				#if($size == 0)
+					<tr>
+						<td colspan="2" class="boxContent">
+							<span>$ui.getString("tool.mydesktoptool.noPagesFound")</span>
+						</td>
+					</tr>
+				#end
+				
+			</tbody>
+			</table>
+		
+
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="yourContents">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.mydesktoptool.myContents")</th>
+					<th>$ui.getString("tool.contenttool.lastUpdatedLabel")</th>
+				</tr>
+			</thead>
+			<tbody>
+				#set($size = 0)
+				#foreach($contentVO in $contentVOListLastModifiedByPincipal)
+					#if($velocityCount < 6)
+					<tr>
+						<td>
+							<a href="#" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentVO.id', '$contentVO.name', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")');">$this.getContentPath($contentVO.id).replaceAll(' ', '&nbsp;')</a>
+						</td>
+						<td>
+							<span>$formatter.formatDate($this.getLatestContentVersionVO($contentVO.id).modifiedDateTime, "yyyy-MM-dd HH:mm")</span>
+						</td>
+					</tr>
+					#end
+					#set($size = $size + 1)
+				#end
+				#if($size == 0)
+					<tr>
+						<td colspan="2">
+							<span>$ui.getString("tool.mydesktoptool.noContentsFound")</span>
+						</td>
+					</tr>
+				#end
+			</tbody>
+			</table>
+
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="yourPages">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.mydesktoptool.myPages")</th>
+					<th>$ui.getString("tool.contenttool.lastUpdatedLabel")</th>
+				</tr>
+			</thead>
+			<tbody>					
+				#set($size = 0)
+				#foreach($siteNodeVO in $siteNodeVOListLastModifiedByPincipal)
+					#if($velocityCount < 6)
+					<tr>
+						<td>
+							<a href="#" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$siteNodeVO.id', '$siteNodeVO.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")');">$this.getSiteNodePath($siteNodeVO.id)</a><br/>
+						</td>
+						<td>
+							<span>$formatter.formatDate($this.getLatestSiteNodeVersionVO($siteNodeVO.id).modifiedDateTime, "yyyy-MM-dd HH:mm")</span>
+						</td>
+					</tr>
+					#end
+					#set($size = $size + 1)
+				#end
+				#if($size == 0)
+					<tr>
+						<td colspan="2">
+							<span>$ui.getString("tool.mydesktoptool.noPagesFound")</span>
+						</td>
+					</tr>
+				#end
+			</tbody>	
+			</table>		
+			
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="activeWorkflows">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.mydesktoptool.ongoingWorkflows") / $ui.getString("tool.mydesktoptool.actionNameLabel")</th>
+					<th>$ui.getString("tool.mydesktoptool.stepNameLabel")</th>
+				</tr>
+			</thead>
+			<tbody>
+				#set($myActions = $this.getWorkflowActionVOList($webwork.bean('org.infoglue.cms.util.workflow.OwnerStepFilter')))
+				
+				#set($cnt = 0)
+				#set($fnutt = '"')
+				#foreach ($workflowVO in $workflowVOList)
+					#set($action = "")
+					#foreach ($workflowActionVO in $workflowVO.globalActions)
+						#set($iconUrl = $workflowActionVO.metaAttributes.get("icon"))
+						#set($viewGlobalAction = $workflowActionVO.getView())
+						#if($viewGlobalAction == "")
+							#set($viewGlobalAction = "Workflow!invoke.action")
+						#end
+						#set($viewGlobalAction = "$viewGlobalAction")
+						#set($action = "$!action&nbsp;<a href=${fnutt}javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$viewGlobalAction');${fnutt}><img src=${fnutt}$iconUrl${fnutt} border=${fnutt}0${fnutt} alt=${fnutt}$workflowActionVO.getName()${fnutt}/></a>")
+					#end
+	
+					#set($view = "$quote$workflowVO.getView()$quote")				
+					#if($workflowVO.getTitle())
+					  	#set($fullTitle = "$workflowVO.getName() - $workflowVO.getTitle()")
+						#set($visibleTitle = $fullTitle)
+						#if($fullTitle.length() > 40)
+							#set($visibleTitle = "$fullTitle.substring(0,37)...")
+						#end
+					#else
+						#set($fullTitle = "$workflowVO.getName()")
+						#set($visibleTitle = $fullTitle)
+						#if($fullTitle.length() > 40)
+							#set($visibleTitle = "$fullTitle.substring(0,37)...")
+						#end
+					#end
+					
+					<tr>
+						<td colspan="2">
+							<a title="$fullTitle" href="#" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');">$visibleTitle</a>
+						</td>
+						<td style="whitespace: nowrap;">							
+							$!action
+							<a href="#" class="workflow" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');"><img src="css/images/v3/info.png" border="0" alt="info"></a>
+						</td>
+					</tr>
 					
 					#set($cnt = 0)
-					#set($fnutt = '"')
-					#foreach ($workflowVO in $workflowVOList)
-						#set($action = "")
-						#foreach ($workflowActionVO in $workflowVO.globalActions)
-							#set($iconUrl = $workflowActionVO.metaAttributes.get("icon"))
-							#set($viewGlobalAction = $workflowActionVO.getView())
-							#if($viewGlobalAction == "")
-								#set($viewGlobalAction = "Workflow!invoke.action")
+					#foreach($workflowActionVO in $myActions)
+						#if($workflowActionVO.workflowId == $workflowVO.id)
+							#set($view = $workflowActionVO.getView())
+							#if($view == "")
+								#set($view = "Workflow!invoke.action")
 							#end
-							#set($viewGlobalAction = "$viewGlobalAction")
-							#set($action = "$!action&nbsp;<a href=${fnutt}javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$viewGlobalAction');${fnutt}><img src=${fnutt}$iconUrl${fnutt} border=${fnutt}0${fnutt} alt=${fnutt}$workflowActionVO.getName()${fnutt}/></a>")
-						#end
-		
-						#set($view = "$quote$workflowVO.getView()$quote")				
-						#if($workflowVO.getTitle())
-						  	#set($fullTitle = "$workflowVO.getName() - $workflowVO.getTitle()")
-							#set($visibleTitle = $fullTitle)
-							#if($fullTitle.length() > 40)
-								#set($visibleTitle = "$fullTitle.substring(0,37)...")
+							
+							#set($stepWorkflow = $workflowActionVO.step.workflow)
+							#if($stepWorkflow.title)
+							  	#set($fullTitle = "$stepWorkflow.name : $stepWorkflow.title")
+							#else
+								#set($fullTitle = "$stepWorkflow.name")
 							#end
-						#else
-							#set($fullTitle = "$workflowVO.getName()")
-							#set($visibleTitle = $fullTitle)
-							#if($fullTitle.length() > 40)
-								#set($visibleTitle = "$fullTitle.substring(0,37)...")
-							#end
-						#end
-						
-						<tr>
-							<td colspan="2">
-								<a title="$fullTitle" href="#" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');">$visibleTitle</a>
-							</td>
-							<td style="whitespace: nowrap;">							
-								$!action
-								<a href="#" class="workflow" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');"><img src="css/images/v3/info.png" border="0" alt="info"></a>
-							</td>
-						</tr>
-						
-						#set($cnt = 0)
-						#foreach($workflowActionVO in $myActions)
-							#if($workflowActionVO.workflowId == $workflowVO.id)
-								#set($view = $workflowActionVO.getView())
-								#if($view == "")
-									#set($view = "Workflow!invoke.action")
-								#end
-								
-								#set($stepWorkflow = $workflowActionVO.step.workflow)
-								#if($stepWorkflow.title)
-								  	#set($fullTitle = "$stepWorkflow.name : $stepWorkflow.title")
-								#else
-									#set($fullTitle = "$stepWorkflow.name")
-								#end
-								<tr>
-									<td width="30">&nbsp;</td>
-									<td width="70%"><a href="javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$view');">$workflowActionVO.name</a></td>
-									<td><span>$workflowActionVO.stepName</span></td>
-								</tr>
-								#set($cnt = $cnt + 1)
-							#end
-						#end
-						
-						#if($cnt == 0)
 							<tr>
-								<td style="text-indent: 20px;"><span>$ui.getString("tool.mydesktoptool.noTasks")</span></td>
+								<td width="30">&nbsp;</td>
+								<td width="70%"><a href="javascript:invokeWorkflowView($workflowActionVO.getWorkflowId(), $workflowActionVO.getId(), '$view');">$workflowActionVO.name</a></td>
+								<td><span>$workflowActionVO.stepName</span></td>
 							</tr>
+							#set($cnt = $cnt + 1)
 						#end
-						
-						#set($cnt = $cnt + 1)
 					#end
-		
+					
 					#if($cnt == 0)
 						<tr>
-							<td colspan="2">$ui.getString("tool.mydesktoptool.noActiveWorkflows")</td>
+							<td style="text-indent: 20px;"><span>$ui.getString("tool.mydesktoptool.noTasks")</span></td>
 						</tr>
 					#end
-				</table>
-			</div>
+					
+					#set($cnt = $cnt + 1)
+				#end
+	
+				#if($cnt == 0)
+					<tr>
+						<td colspan="2">$ui.getString("tool.mydesktoptool.noActiveWorkflows")</td>
+					</tr>
+				#end
+			</tbody>
+			</table>
 			
 		</div>
 
 
 		<div id="actions">
 
-			<div id="workflows" class="box">
-				<table>
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="workflows">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.mydesktoptool.availableWorkflows")</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				#set($cnt = 0)
+				#foreach ($availableWorkflowVO in $availableWorkflowVOList)
+					#set($view = "$availableWorkflowVO.getView()")
+					
+					#set($fullTitle = "$availableWorkflowVO.getName()")
+					#if($availableWorkflowVO.status == 1)
+						#set($fullTitle = "$availableWorkflowVO.name - $availableWorkflowVO.statusMessage")
+					#end
+					
+					#set($visibleTitle = $fullTitle)
+					#if($fullTitle.length() > 40)
+						#set($visibleTitle = "$fullTitle.substring(0,37)...")
+					#end
 					<tr>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.availableWorkflows")</span></th>
-						<th class="boxHeader"><span>&nbsp;</span></th>
+						<td>
+							#if($availableWorkflowVO.status == 0)
+								<a title="$fullTitle" href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())">$visibleTitle</a>
+							#else
+								<a title="$fullTitle" style="color:red">$visibleTitle</a>
+							#end
+						</td>
+						<td>
+							#if($availableWorkflowVO.status == 0)
+								<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="css/images/v3/start.png" border="0" alt="Start workflow"></a>
+								<a href="#" onclick="parent.openInlineDiv('Workflow!showWorkflowDetails.action?workflowName=$formatter.encodeURI($availableWorkflowVO.name)', 600, 800, true, true, 'Workflow');"><img src="css/images/v3/info.png" border="0" alt="info"></a>
+							#end
+						</td>
 					</tr>
-					#set($cnt = 0)
-					#foreach ($availableWorkflowVO in $availableWorkflowVOList)
-						#set($view = "$availableWorkflowVO.getView()")
-						
-						#set($fullTitle = "$availableWorkflowVO.getName()")
-						#if($availableWorkflowVO.status == 1)
-							#set($fullTitle = "$availableWorkflowVO.name - $availableWorkflowVO.statusMessage")
-						#end
-						
-						#set($visibleTitle = $fullTitle)
-						#if($fullTitle.length() > 40)
-							#set($visibleTitle = "$fullTitle.substring(0,37)...")
-						#end
-						<tr>
-							<td>
-								#if($availableWorkflowVO.status == 0)
-									<a title="$fullTitle" href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())">$visibleTitle</a>
-								#else
-									<a title="$fullTitle" style="color:red">$visibleTitle</a>
-								#end
-							</td>
-							<td>
-								#if($availableWorkflowVO.status == 0)
-									<a href="Workflow!startWorkflow.action?workflowName=$formatter.encodeURI($availableWorkflowVO.getName())"><img src="css/images/v3/start.png" border="0" alt="Start workflow"></a>
-									<a href="#" onclick="parent.openInlineDiv('Workflow!showWorkflowDetails.action?workflowName=$formatter.encodeURI($availableWorkflowVO.name)', 600, 800, true, true, 'Workflow');"><img src="css/images/v3/info.png" border="0" alt="info"></a>
-								#end
-							</td>
-						</tr>
-						#set($cnt = $cnt + 1)
-					#end
-	
-					#if($cnt == 0)
-						<tr>
-							<td colspan="2" class="boxContent">
-								<p>$ui.getString("tool.mydesktoptool.noWorkflows")</p>
-							</td>
-						</tr>
-					#end
-				</table>
-			</div>
+					#set($cnt = $cnt + 1)
+				#end
+
+				#if($cnt == 0)
+					<tr>
+						<td colspan="2">
+							<p>$ui.getString("tool.mydesktoptool.noWorkflows")</p>
+						</td>
+					</tr>
+				#end
+			</tbody>
+			</table>
 
 
-			<div id="shortcuts" class="box">
-				<table>
+			<table cellpadding="0" cellspacing="0" border="1" class="display" id="shortcuts">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.mydesktoptool.availableShortcuts")</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody>
+				#set($cnt = 0)
+				#foreach($availableShortcutVO in $availableShortcutVOList)
+					#set($view = "'$availableShortcutVO.getView()'")
+					
+					#set($fullTitle = $availableShortcutVO.getName())
+					#set($visibleTitle = $fullTitle)
+					#if($fullTitle.length() > 40)
+						#set($visibleTitle = "$fullTitle.substring(0,37)...")
+					#end
 					<tr>
-						<th class="boxHeader"><span>$ui.getString("tool.mydesktoptool.availableShortcuts")</span></th>
-						<th class="boxHeader"><span>&nbsp;</span></th>
+						<td>
+							<a title="$fullTitle" href="$availableShortcutVO.getURL()" #if($availableShortcutVO.popup == true)target="_blank"#end>$visibleTitle</a>
+						</td>
+						<td>
+							<a href="$availableShortcutVO.getURL()" #if($availableShortcutVO.popup == true)target="_blank"#end><img src="css/images/v3/start.png" border="0" alt="Start workflow"></a>
+						</td>
 					</tr>
-					#set($cnt = 0)
-					#foreach($availableShortcutVO in $availableShortcutVOList)
-						#set($view = "'$availableShortcutVO.getView()'")
-						
-						#set($fullTitle = $availableShortcutVO.getName())
-						#set($visibleTitle = $fullTitle)
-						#if($fullTitle.length() > 40)
-							#set($visibleTitle = "$fullTitle.substring(0,37)...")
-						#end
-						<tr>
-							<td>
-								<a title="$fullTitle" href="$availableShortcutVO.getURL()" #if($availableShortcutVO.popup == true)target="_blank"#end>$visibleTitle</a>
-							</td>
-							<td>
-								<a href="$availableShortcutVO.getURL()" #if($availableShortcutVO.popup == true)target="_blank"#end><img src="css/images/v3/start.png" border="0" alt="Start workflow"></a>
-							</td>
-						</tr>
-						#set($cnt = $cnt + 1)
-					#end
-					#if($cnt == 0)
-						<tr>
-							<td colspan="2" class="boxContent">
-								<span>$ui.getString("tool.mydesktoptool.noShortcuts")</span>
-							</td>
-						</tr>
-					#end
-				</table>
-			</div>
+					#set($cnt = $cnt + 1)
+				#end
+				#if($cnt == 0)
+					<tr>
+						<td colspan="2" class="boxContent">
+							<span>$ui.getString("tool.mydesktoptool.noShortcuts")</span>
+						</td>
+					</tr>
+				#end
+			</tbody>
+			</table>
+
 		</div>
 	
 	</div>

@@ -536,6 +536,34 @@ public class ContentVersionController extends BaseController
     	
 		return contentVersionVO;
     }
+   	
+    /**
+     * This method returns the latest active content version.
+     */
+    
+   	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId) throws SystemException, Bug
+    {
+    	Database db = CastorDatabaseService.getDatabase();
+    	ContentVersionVO contentVersionVO = null;
+
+        beginTransaction(db);
+
+        try
+        {
+        	contentVersionVO = getLatestActiveContentVersionVO(contentId, db);
+            
+            rollbackTransaction(db);
+        }
+        catch(Exception e)
+        {
+            logger.error("An error occurred so we should not complete the transaction:" + e);
+            logger.warn("An error occurred so we should not complete the transaction:" + e, e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    	
+		return contentVersionVO;
+    }
 
    	/**
 	 * This method returns the latest active content version.
@@ -625,6 +653,32 @@ public class ContentVersionController extends BaseController
 		return contentVersionVO;
     }
 
+
+  	/**
+	 * This method returns the latest active content version.
+	 */
+    
+	public ContentVersionVO getLatestActiveContentVersionVO(Integer contentId, Database db) throws SystemException, Bug, Exception
+	{
+		ContentVersionVO contentVersionVO = null;
+		
+        OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.contentId = $1 AND cv.isActive = $2 ORDER BY cv.contentVersionId desc");
+    	oql.bind(contentId);
+		oql.bind(true);
+    	
+    	QueryResults results = oql.execute(Database.ReadOnly);
+		
+		if (results.hasMore()) 
+        {
+			ContentVersion contentVersion = (ContentVersion)results.next();
+			contentVersionVO = contentVersion.getValueObject();
+        }
+		
+		results.close();
+		oql.close();
+
+		return contentVersionVO;
+	}
 	
    	/**
 	 * This method returns the latest active content version.

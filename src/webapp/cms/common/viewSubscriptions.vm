@@ -15,7 +15,7 @@
 
 <div style="clear: both;"></div>
 
-<h3 style="text-indent: 16px;">
+<h3>
 	$ui.getString("tool.common.subscriptions.title")
 	#if($errorMessage && $errorMessage != "")<span style="color:red">$errorMessage</span>#end
 </h3>

@@ -33,12 +33,16 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ShortcutController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.WorkflowController;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.mydesktop.WorkflowVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.sorters.ReflectionComparator;
@@ -234,6 +238,16 @@ public class ViewMyDesktopAction extends InfoGlueAbstractAction
 			actions.addAll(((WorkflowVO)workflows.next()).getAvailableActions(filter));
 
 		return actions;
+	}
+
+	public ContentVersionVO getLatestContentVersionVO(Integer contentId) throws SystemException, Exception
+	{
+	    return ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId);
+	}
+
+	public SiteNodeVersionVO getLatestSiteNodeVersionVO(Integer siteNodeId) throws SystemException, Exception
+	{
+	    return SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeId);
 	}
 
 	/*

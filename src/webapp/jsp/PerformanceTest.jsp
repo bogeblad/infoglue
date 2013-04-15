@@ -1,3 +1,4 @@
+<%@page import="org.infoglue.cms.entities.structure.SiteNodeVO"%>
 <%@page import="org.infoglue.deliver.util.CacheController"%>
 <%@page import="org.infoglue.cms.controllers.kernel.impl.simple.BaseController"%>
 <%@page import="org.infoglue.deliver.applications.actions.InfoGlueComponent"%>
@@ -53,6 +54,12 @@
 		#testsList {
 			list-style-type: none;
 		}
+		.commonLink {
+			margin: 16px;
+		}
+		.startButton {
+			margin: 16px;
+		}
 	-->
 	</style>
 </head>
@@ -103,7 +110,7 @@ if (request.getParameter("ISPOSTBACK") == null)
 			</label>
 		</li>
 	</ul>
-	<input type="submit" value="Perform tests" />
+	<input type="submit" value="Perform tests" class="startButton" />
 </form>
 <script type="text/javascript">
 	document.getElementById("test_contentList").onchange = function(event) {
@@ -121,6 +128,7 @@ if (request.getParameter("ISPOSTBACK") == null)
 		}
 	};
 </script>
+<a class="commonLink" href="http://www.infoglue.org/metrics">View results for other installations</a>
 <c:if test="${not empty param.ISPOSTBACK}">
 	<%
 		String tableName = "cmSiteNode";
@@ -133,15 +141,33 @@ if (request.getParameter("ISPOSTBACK") == null)
 		if(tableCount != null)
 			numberOfSiteNodes = tableCount.getCount();
 
-		float sampleTotalSize = 150000f;
-		float sampleSize = 1000f;
-		float samleSiteNodeTime = 4500f;
+		tableName = "cmContent";
 
-		float refCompareValue = (sampleTotalSize / sampleSize) * samleSiteNodeTime;
+		int numberOfContents = -1;
+		tableCount = BaseController.getTableCount(tableName, columnName);
+		if(tableCount != null)
+			numberOfContents = tableCount.getCount();
+
+		tableName = "cmContentVersion";
+    	columnName = "contentId";
+    	if(CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    	{
+    		tableName = "cmContVer";
+        	columnName = "contId";
+    	}
+
+    	int numberOfContentVersions = -1;
+    	tableCount = BaseController.getTableCount(tableName, columnName);
+    	if(tableCount != null)
+    		numberOfContentVersions = tableCount.getCount();
+
+		float sampleSize = 1000f;
 	%>
 
 	<p>
-		The reference installation have 150 000 site nodes.
+		The reference installation have 150 000 site nodes.<br/>
+		The reference installation have 344 663 contents.<br/>
+		The reference installation have 356 566 content versions.
 	</p>
 
 	<table id="perfTestTable" border="1" style="border: 1px solid #ccc; border-collapse:collapse;" cellpadding="4">
@@ -158,49 +184,57 @@ if (request.getParameter("ISPOSTBACK") == null)
 	</thead>
 	<%
 
-	long elapsedTime;
+	float elapsedTime;
 	float thisAvg;
 	float refAvg;
 	float compareValue;
 	String tdClass;
 
-	CacheController.clearServerNodeProperty(true);
     CacheController.clearCastorCaches();
     CacheController.clearCaches(null, null, null);
-    CacheController.clearPooledString();
-    CacheController.clearFileCaches("pageCache");
 
 	org.infoglue.deliver.util.Timer timer = new org.infoglue.deliver.util.Timer();
 	if (request.getParameter("test_siteNodeList") != null)
 	{
-		java.util.List nodes = SiteNodeController.getController().getSiteNodeVOList(false, 0, (int)sampleSize);
+		java.util.List<SiteNodeVO> nodes = SiteNodeController.getController().getSiteNodeVOList(false, 0, (int)sampleSize);
 		//java.util.Collection nodes = SiteNodeController.getAllVOObjects(org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl.class, "name", "asc");
 		elapsedTime = timer.getElapsedTime();
 		thisAvg = (float)elapsedTime/(float)nodes.size();
-		refAvg = samleSiteNodeTime / sampleSize;
 
+		float samleSiteNodeTime = 4500f;
+		float sampleTotalSizeSiteNode = 150000f;
+
+		refAvg = samleSiteNodeTime / sampleSize;
+		float refCompareValueSiteNode = (sampleTotalSizeSiteNode / sampleSize) * samleSiteNodeTime;
 		compareValue = (numberOfSiteNodes / sampleSize) * elapsedTime;
 
 		tdClass = "currentBetter";
-		if(compareValue > refCompareValue)
+		if(compareValue > refCompareValueSiteNode)
 			tdClass = "currentWorse";
 
-		out.println("<tr><td>Reading sitenodes</td><td>" + nodes.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "' title='(" + numberOfSiteNodes + " / " + sampleSize + ") * " + elapsedTime + "'>" + thisAvg + "</td><td class='ref'>" + sampleSize + "</td><td class='ref'>" + samleSiteNodeTime + "</td><td class='ref'>" + refAvg + "</td></tr>");
+		out.println("<tr><td>Reading sitenodes</td><td>" + nodes.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "' title='(" + numberOfSiteNodes + " / " + sampleSize + ") * " + elapsedTime + " = " + compareValue +" (" + refCompareValueSiteNode + ")'>" + thisAvg + "</td><td class='ref'>" + sampleSize + "</td><td class='ref'>" + samleSiteNodeTime + "</td><td class='ref'>" + refAvg + "</td></tr>");
 	}
 
 	java.util.List<ContentVO> contents = null;
 	if (request.getParameter("test_contentList") != null)
 	{
 		//java.util.Collection contents = ContentController.getAllVOObjects(org.infoglue.cms.entities.content.impl.simple.ContentImpl.class, "name", "asc");
-		contents = ContentController.getContentController().getContentVOList(1000);
+		contents = ContentController.getContentController().getContentVOList((int)sampleSize);
 		elapsedTime = timer.getElapsedTime();
 		thisAvg = (float)elapsedTime/(float)contents.size();
-		refAvg = (float)84/(float)1000;
+
+		float sampleTotalSizeContent = 344663f;
+		float samleContentTime = 50f;
+
+		refAvg = samleContentTime / sampleSize;
+		float refCompareValueContent = (sampleTotalSizeContent / sampleSize) * samleContentTime;
+		compareValue = (numberOfContents / sampleSize) * elapsedTime;
+
 		tdClass = "currentBetter";
-		if(thisAvg > refAvg)
+		if(compareValue > refCompareValueContent)
 			tdClass = "currentWorse";
 
-		out.println("<tr><td>Reading contents</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>1000</td><td class='ref'>84</td><td class='ref'>" + refAvg + "</td></tr>");
+		out.println("<tr><td>Reading contents</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "' title='(" + numberOfContents + " / " + sampleSize + ") * " + elapsedTime + " = " + compareValue +" (" + refCompareValueContent + ")'>" + thisAvg + "</td><td class='ref'>" + sampleSize + "</td><td class='ref'>" + samleContentTime + "</td><td class='ref'>" + refAvg + "</td></tr>");
 	}
 
 	if (contents != null && request.getParameter("test_contentVersionRead") != null)
@@ -217,12 +251,19 @@ if (request.getParameter("ISPOSTBACK") == null)
 
 		elapsedTime = timer.getElapsedTime();
 		thisAvg =  (float)elapsedTime/(float)contents.size();
-		refAvg = (float)1136/(float)1000;
+
+		float sampleTotalSizeContentVersions = 344663f;
+		float samleContentVersionTime = 4488f;
+
+		refAvg = samleContentVersionTime / sampleSize;
+		float refCompareValueContentVersion = (sampleTotalSizeContentVersions / sampleSize) * samleContentVersionTime;
+		compareValue = (numberOfContentVersions / sampleSize) * elapsedTime;
+
 		tdClass = "currentBetter";
-		if(thisAvg > refAvg)
+		if(compareValue > refCompareValueContentVersion)
 			tdClass = "currentWorse";
 
-		out.println("<tr><td>Reading latest contentVersion</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>1000</td><td class='ref'>1136</td><td class='ref'>" + refAvg + "</td></tr>");
+		out.println("<tr><td>Reading latest contentVersion</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "' title='(" + numberOfContentVersions + " / " + sampleSize + ") * " + elapsedTime + " = " + compareValue +" (" + refCompareValueContentVersion + ")'>" + thisAvg + "</td><td class='ref'>" + sampleSize + "</td><td class='ref'>" + samleContentVersionTime + "</td><td class='ref'>" + refAvg + "</td></tr>");
 	}
 
 	if (contents != null && request.getParameter("test_contentAttributeRead") != null)
@@ -256,12 +297,19 @@ if (request.getParameter("ISPOSTBACK") == null)
 
 		elapsedTime = timer.getElapsedTime();
 		thisAvg =  (float)elapsedTime/(float)contents.size();
-		refAvg = (float)1136/(float)1000;
+
+		float sampleTotalSizeContentVersions = 344663f;
+		float samleContentVersionTime = 1277f;
+
+		refAvg = samleContentVersionTime / sampleSize;
+		float refCompareValueContentAttribute = (sampleTotalSizeContentVersions / sampleSize) * samleContentVersionTime;
+		compareValue = (numberOfContentVersions / sampleSize) * elapsedTime;
+
 		tdClass = "currentBetter";
 		if(thisAvg > refAvg)
 			tdClass = "currentWorse";
 
-		out.println("<tr><td>Reading content attributes</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "'>" + thisAvg + "</td><td class='ref'>1000</td><td class='ref'>1136</td><td class='ref'>" + refAvg + "</td></tr>");
+		out.println("<tr><td>Reading content attributes</td><td>" + contents.size() + "</td><td>" + elapsedTime + "</td><td class='" + tdClass + "' title='(" + numberOfContentVersions + " / " + sampleSize + ") * " + elapsedTime + " = " + compareValue +" (" + refCompareValueContentAttribute + ")'>" + thisAvg + "</td><td class='ref'>" + sampleSize + "</td><td class='ref'>" + samleContentVersionTime + "</td><td class='ref'>" + refAvg + "</td></tr>");
 	}
 
 	%>

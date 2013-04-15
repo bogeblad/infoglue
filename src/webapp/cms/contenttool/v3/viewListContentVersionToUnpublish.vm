@@ -89,7 +89,7 @@
 				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
-				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "normaltextarea")</td>
+				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "smalltextarea")</td>
 			</tr>		
 			<tr>
 				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>

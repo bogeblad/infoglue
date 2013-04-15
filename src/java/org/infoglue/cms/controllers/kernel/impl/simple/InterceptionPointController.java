@@ -195,7 +195,10 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ToolTabsAndButtons.MySettingsChangePasswordTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.MySettingsChangePasswordTab", "Intercepts the Change password-tab on my settings", false));
 
 	    systemInterceptionPoints.put("ToolTabsAndButtons.CreatePageAdvancedTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.CreatePageAdvancedTab", "Intercepts the Advanced-tab on create page", false));
+	    systemInterceptionPoints.put("ToolTabsAndButtons.PageDetailsAdvancedTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.PageDetailsAdvancedTab", "Intercepts the Advanced-tab and Languages on page details", false));
+	    systemInterceptionPoints.put("ToolTabsAndButtons.convertToFromFolderPart", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.convertToFromFolderPart", "Intercepts the link to convert a folder to a normal content or vice versa", false));
 
+	    
 	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentToolbarAdvancedButtons", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentToolbarAdvancedButtons", "Intercepts advanced buttons", false));
 	}
     

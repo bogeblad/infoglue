@@ -151,8 +151,10 @@
 			<ul>
 		        ##<li><a href="#pageMetaDataTab"><span>$ui.getString("tool.structuretool.toolbarV3.editPageMetaInfoLabel")</span></a></li>	        
 		        <li><a href="#basicTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
-		        <li><a href="#advancedTab"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
-		        <li><a href="#languagesTab"><span>$ui.getString("tool.managementtool.viewLanguageList.header")</span></a></li>	        
+		        #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, true))
+			        <li><a href="#advancedTab"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
+					<li><a href="#languagesTab"><span>$ui.getString("tool.managementtool.viewLanguageList.header")</span></a></li>	        
+	            #end
 	            <li><a href="#pageHistoryTab"><span>$ui.getString('tool.contenttool.contentHistoryTab')</span></a></li>
 	            <li><a href="#pageReferencesTab"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
 	            ##<li><a href="#pageAccessRightsTab"><span>$ui.getString('tool.common.accessRights.accessRightsButtonLabel')</span></a></li>
@@ -181,6 +183,7 @@
 					#else
 						#set($dateReadonly = "readonly")
 					#end
+				<p>$ui.getString("tool.common.publicationSpan.label")</p>
 				<p>					
 					#editDateFieldCSS("entity.SiteNode.publishDateTime.label" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")<br/>
 				</p>

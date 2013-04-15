@@ -142,6 +142,7 @@
 				#set($dateReadonly = "readonly")
 			#end
 			
+			<p>$ui.getString("tool.common.publicationSpan.label")</p>
 			<p>
 				#editDateField("Content.publishDateTime" "publishDateTime" $!publishDateTime "30" "date" "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")
 			</p>
@@ -169,6 +170,7 @@
 			</p>		
 			#end
 			
+	        #if($this.hasAccessTo("ToolTabsAndButtons.convertToFromFolderPart", true, false, true))
 			<p>
 				#if($contentVO.isBranch)
 					<a href="UpdateContent!switchToContent.action?contentId=$contentVO.id">$ui.getString("tool.contenttool.switchToContentLabel")</a>
@@ -176,6 +178,7 @@
 					<a href="UpdateContent!switchToFolder.action?contentId=$contentVO.id">$ui.getString("tool.contenttool.switchToFolderLabel")</a>
 				#end
 			</p>
+			#end
 			
 			#if(!$contentVO.contentTypeDefinitionId)
 				<p>

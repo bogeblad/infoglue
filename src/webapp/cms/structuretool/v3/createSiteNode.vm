@@ -73,13 +73,14 @@
 		<div id="tabsContainer" class="flora">      
 			<ul>
 		        <li><a href="#basicTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
-		        #if($this.hasAccessTo("Common.SubmitToPublishButton", true, false, true))
+		        #if($this.hasAccessTo("ToolTabsAndButtons.CreatePageAdvancedTab", true, false, true))
 		        <li><a href="#advancedTab"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
 		    	#end
 		    </ul>
 	
 			<div id="basicTab" class="inlineTabDiv">
 				<p>#editTextField("SiteNode.name" "name" $!name "30" "normaltextfield" "")</p>
+				<p>$ui.getString("tool.common.publicationSpan.label")</p>
 				<p>#editDateField("SiteNode.publishDateTime" "publishDateTime" $!publishDateTime "30" "date"  "ViewCalendar.action?date=$!publishDateTimeAsLong&formPath=document.editForm.publishDateTime" "$dateReadonly")</p>
 				<p>#editDateField("SiteNode.expireDateTime" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")</p>
 				<p>

@@ -13,11 +13,16 @@
 	#includeLatestJQuery()
 
 	<script type="text/javascript">
-	<!-- 		
+	<!--
 		var exp;
 		var treeIsLoaded = false;
 		var currentRepositoryId = "$!repositoryId";
-		
+
+		function markSelected(myId)
+		{
+			document.getElementById("itreeFrame").contentWindow.markSelected(myId);
+		}
+
 		function syncWithTree(path, repositoryId)
 		{
 			try
@@ -37,8 +42,8 @@
 		{
 			removeCookies()
 			window.location.reload(false);
-		}	
-		
+		}
+
 		function treeView()
 		{
 			try 

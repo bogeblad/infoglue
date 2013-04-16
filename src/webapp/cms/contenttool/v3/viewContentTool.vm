@@ -94,7 +94,7 @@
 		
 		$(document).ready(function() {
 			resize(false);
-   			
+
 	   		window.onresize = function() {
 	   			resize(false);
    			}
@@ -113,14 +113,32 @@
 			});
 
 			//openUrlInWorkArea("ViewContentToolStartPage!V3.action");
-			
-			openUrlInWorkArea("ViewContent!V3.action?contentId=$this.getRepositoryRootContent($repositoryId).contentId&repositoryId=$repositoryId");
-						
+
 			$("#menuOverlayDiv").mouseout(function () {
 				$("#contentToolDiv").mouseup();
 			});
+
+			$("#workIframe").load(function() {
+
+				var url = document.getElementById("workIframe").src;
+				try
+				{
+					url = $("#workIframe").get(0).contentDocument.location.href;
+				}
+				catch(e)
+				{
+				}
+
+				if(url.indexOf("contentId") > -1)
+				{
+					var loadedContentId = getRequestParameter(url, "contentId");
+					document.getElementById("treeIframe").contentWindow.markSelected(loadedContentId);
+				}
+			});
+
+			openUrlInWorkArea("ViewContent!V3.action?contentId=$this.getRepositoryRootContent($repositoryId).contentId&repositoryId=$repositoryId");
 		});
-		
+
 		function changeRepository(selectBox)
 		{
 			document.location.href = "ViewContentTool!V3.action?repositoryId=" + selectBox.value;

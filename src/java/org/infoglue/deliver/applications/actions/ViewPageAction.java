@@ -908,8 +908,6 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				{
 				    try
 				    {
-				    	System.out.println("this.principal:" + this.principal);
-				    	System.out.println("getPrincipal:" + templateController.getPrincipal());
 				        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
 				        pageInvoker = pageInvoker.getDecoratedPageInvoker(templateController, deliveryContext);
 				        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);

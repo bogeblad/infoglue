@@ -451,7 +451,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    			if(this.siteNodeVersionVO != null && this.siteNodeVersionVO.getStateId().equals(SiteNodeVersionVO.WORKING_STATE) && !isMetaInfoInWorkingState)
 	    			{
 	    				if(metaInfoContentVersionVO != null)
-	    					metaInfoContentVersionVO = ContentStateController.changeState(metaInfoContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Automatic", true, this.getInfoGluePrincipal(), null, db, new ArrayList());
+	    					metaInfoContentVersionVO = ContentStateController.changeState(metaInfoContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Automatic", true, this.getInfoGluePrincipal(), metaInfoContentVersionVO.getContentId(), db, new ArrayList());
 	    				
 	    				isMetaInfoInWorkingState = true;
 	    			}
@@ -570,8 +570,12 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    			    
 	    			if(this.siteNodeVersionVO != null && this.siteNodeVersionVO.getStateId().equals(SiteNodeVersionVO.WORKING_STATE) && !isMetaInfoInWorkingState)
 	    			{
+    					System.out.println("metaInfoContentVersionVO:" + metaInfoContentVersionVO);
+
 	    				if(metaInfoContentVersionVO != null)
-	    					metaInfoContentVersionVO = ContentStateController.changeState(metaInfoContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Automatic", true, this.getInfoGluePrincipal(), null, db, new ArrayList());
+	    				{
+	    					metaInfoContentVersionVO = ContentStateController.changeState(metaInfoContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "Automatic", true, this.getInfoGluePrincipal(), metaInfoContentVersionVO.getContentId(), db, new ArrayList());
+	    				}
 	    				
 	    				isMetaInfoInWorkingState = true;
 	    			}

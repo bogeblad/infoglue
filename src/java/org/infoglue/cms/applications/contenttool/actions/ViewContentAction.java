@@ -139,7 +139,6 @@ public class ViewContentAction extends InfoGlueAbstractAction
 		this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
         this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentId);
         this.availableLanguages = RepositoryLanguageController.getController().getAvailableLanguageVOListForRepositoryId(this.contentVO.getRepositoryId());
-        t.printElapsedTime("ViwContent 1");
         if(this.repositoryId == null)
             this.repositoryId = this.contentVO.getRepositoryId();
                 

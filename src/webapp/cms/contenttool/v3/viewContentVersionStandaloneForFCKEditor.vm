@@ -365,13 +365,13 @@
 			//alert("viewName:" + viewName);
 			if(viewName == "contentVersionAssets")
 			{
-				loadFrame(2);
+				loadFrame("contentVersionAssetsDiv");
 				$("#tabsContainer").tabs("select", 2);
 				//$("#tabsContainer").tabs("load", 2)
 			}
 		}
 	
-		function loadFrame(index)
+		function loadFrame(tabHref)
 		{
 			var assetSrcUrl 						= "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentVersionId=$!contentVersionId&assetTypeFilter=.*";
 			var contentCoverSrcUrl 					= "ViewContent!V3.action?contentId=$!contentId&stay=true&inline=true";
@@ -383,29 +383,29 @@
 			
 			$("input.compare").hide();
 			$("input.attachAsset").hide();
-			if(index == 2)
+			if(tabHref.indexOf("contentVersionAssetsDiv") > -1)
 			{
 				$("#contentVersionAssetsFrame").attr("src", assetSrcUrl);
 				$("input.attachAsset").show();
 			}
-			else if(index == 3) 
+			else if(tabHref.indexOf("contentCoverDiv") > -1) 
 			{
 				$("#contentCoverFrame").attr("src", contentCoverSrcUrl);
 			}
-			else if(index == 4) 
+			else if(tabHref.indexOf("contentHistoryDiv") > -1) 
 			{
 				$("#contentHistoryFrame").attr("src", contentHistorySrcUrl);
 				$("input.compare").show();
 			}
-			else if(index == 5)
+			else if(tabHref.indexOf("contentReferencesDiv") > -1)
 			{
 				$("#contentReferencesFrame").attr("src", contentReferencesSrcUrl);
 			}
-			else if(index == 6)
+			else if(tabHref.indexOf("contentAccessRightsDiv") > -1)
 			{
 				$("#contentAccessRightsFrame").attr("src", contentAccessRightsSrcUrl);
 			}
-			else if(index == 7)
+			else if(tabHref.indexOf("contentVersionAccessRightsDiv") > -1)
 			{
 				$("#contentVersionAccessRightsFrame").attr("src", contentVersionAccessRightsSrcUrl);
 			}
@@ -423,14 +423,14 @@
 			
 			#if($anchor)
 		    	#if($!anchor == "contentVersionBlock")
-			    	$("#tabsContainer").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+			    	$("#tabsContainer").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    #elseif($!anchor == "categoriesBlock")
-			    	$("#tabsContainer").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+			    	$("#tabsContainer").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    #elseif($!anchor == "digitalAssetsBlock")
-			    	$("#tabsContainer").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+			    	$("#tabsContainer").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    	loadFrame(2);
 			    #else 
-		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    	##alert("Anchor: $anchor");
 		  		#end
 		  	#else
@@ -438,13 +438,13 @@
 		  			{ 
 		  				cache: false, 
 		  				show:function(event, ui) { resizeScrollArea(); },
-		  				select: function(e, ui) { loadFrame(ui.index); }
+		  				select: function(e, ui) { loadFrame(ui.tab.href); }
 		  			} 
 		  		);
 			#end	
 			
 			#if($translate)
-			  	$("#otherLanguageTabsContainer").tabs({ cache: false, show:function() { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+			  	$("#otherLanguageTabsContainer").tabs({ cache: false, show:function() { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			#end
 					
 			generateWYSIWYGS();
@@ -841,6 +841,8 @@
 					
 		</div>
 	
+		#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
+	
 		<div id="contentVersionCategoriesDiv" class="inlineTabDiv">
 			
 			#set($allCategoryKeys = $definedCategoryKeys)
@@ -895,32 +897,41 @@
 			</form>
 			
 		</div>
+
+		#end
 		
-		
+   		#if($this.hasAccessTo("ContentVersionEditor.Attachments", true, false))
     	<div id="contentVersionAssetsDiv" class="inlineTabDiv">
     		<iframe id="contentVersionAssetsFrame" name="contentVersionAssetsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
     	</div>
-    		
+		#end
+		    		
     	<div id="contentCoverDiv" class="inlineTabDiv">
     		<iframe id="contentCoverFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
     	</div>
     		
+		#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
     	<div id="contentHistoryDiv" class="inlineTabDiv">
     		<iframe id="contentHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
     	</div>
-			
-		#if($contentTypeDefinitionVO.name != "Meta info")
-		<div id="contentReferencesDiv" class="inlineTabDiv">
-    		<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    	</div>
-		
-    	<div id="contentAccessRightsDiv" class="inlineTabDiv">
-    		<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    	</div>
+		#end
 
-    	<div id="contentVersionAccessRightsDiv" class="inlineTabDiv">
-    		<iframe id="contentVersionAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    	</div>
+		#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+			<div id="contentReferencesDiv" class="inlineTabDiv">
+	    		<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+	    	</div>
+		#end
+					
+		#if($contentTypeDefinitionVO.name != "Meta info")
+			#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+		    	<div id="contentAccessRightsDiv" class="inlineTabDiv">
+		    		<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+		    	</div>
+					
+		    	<div id="contentVersionAccessRightsDiv" class="inlineTabDiv">
+		    		<iframe id="contentVersionAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+		    	</div>
+			#end
 		#end
 		    				
 	</div><!-- End first tabs collection -->

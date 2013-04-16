@@ -309,45 +309,44 @@
 			//alert("viewName:" + viewName);
 			if(viewName == "contentVersionAssets")
 			{
-				loadFrame(2);
+				loadFrame("contentVersionAssetsDiv");
 				$("#tabsContainer").tabs("select", 2);
 				//$("#tabsContainer").tabs("load", 2)
 			}
 		}
 		
-		function loadFrame(index)
+		function loadFrame(tabHref)
 		{
-			//("$!contentVersionId in loadFrame");
 			var assetSrcUrl 						= "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentVersionId=$!contentVersionId&assetTypeFilter=.*";
 			var contentCoverSrcUrl 					= "ViewContent!V3.action?contentId=$!contentId&stay=true&inline=true";
 			var contentHistorySrcUrl 				= "ViewContentVersionHistory!V3.action?contentId=$!contentId&inline=true";
 			var contentReferencesSrcUrl 			= "ViewContentReferences.action?contentId=$!contentId";
 			var contentAccessRightsSrcUrl 			= "ViewAccessRights!V3.action?interceptionPointCategory=Content&extraParameters=$!contentId&showInline=true";
 			var contentVersionAccessRightsSrcUrl 	= "ViewAccessRights!V3.action?interceptionPointCategory=ContentVersion&extraParameters=$!contentVersionId&showInline=true";
-			//alert("index:" + index);
+			//alert("tabHref:" + tabHref);
 			$("input.compare").hide();
-			if(index == 2) 
+			if(tabHref.indexOf("contentVersionAssetsDiv") > -1) 
 			{
 				$("#contentVersionAssetsFrame").attr("src", assetSrcUrl);
 			}
-			else if(index == 3) 
+			else if(tabHref.indexOf("contentCoverDiv") > -1) 
 			{
 				$("#contentCoverFrame").attr("src", contentCoverSrcUrl);
 			}
-			else if(index == 4) 
+			else if(tabHref.indexOf("contentHistoryDiv") > -1) 
 			{
 				$("#contentHistoryFrame").attr("src", contentHistorySrcUrl);
 				$("input.compare").show();
 			}
-			else if(index == 5)
+			else if(tabHref.indexOf("contentReferencesDiv") > -1)
 			{
 				$("#contentReferencesFrame").attr("src", contentReferencesSrcUrl);
 			}
-			else if(index == 6)
+			else if(tabHref.indexOf("contentAccessRightsDiv") > -1)
 			{
 				$("#contentAccessRightsFrame").attr("src", contentAccessRightsSrcUrl);
 			}
-			else if(index == 7)
+			else if(tabHref.indexOf("contentVersionAccessRightsDiv") > -1)
 			{
 				$("#contentVersionAccessRightsFrame").attr("src", contentVersionAccessRightsSrcUrl);
 			}
@@ -365,12 +364,12 @@
 			
 			#if($anchor)
 		    	#if($!anchor == "contentVersionBlock")
-			    	$("#tabsContainer").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+			    	$("#tabsContainer").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    #elseif($!anchor == "categoriesBlock")
-			    	$("#tabsContainer").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+			    	$("#tabsContainer").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    #elseif($!anchor == "digitalAssetsBlock")
-			    	$("#tabsContainer").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
-			    	loadFrame(2);
+			    	$("#tabsContainer").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+			    	loadFrame("#");
 			    #else 
 		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
 						if(ui.index == 2) 
@@ -383,7 +382,7 @@
 						} 
 						resizeScrollArea(); 
 					}, 
-					select: function(e, ui) { loadFrame(ui.index); }}  );
+					select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 					
 			    	##alert("Anchor: $anchor");
 		  		#end
@@ -403,7 +402,7 @@
 							}
 							resizeScrollArea(); 
 						},
-		  				select: function(e, ui) { loadFrame(ui.index); }
+		  				select: function(e, ui) { loadFrame(ui.tab.href); }
 		  			} 
 		  		);
 			#end	
@@ -418,7 +417,7 @@
 			#end
 			
 			#if($translate)
-			  	$("#otherLanguageTabsContainer").tabs({ cache: false, show:function() { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.index); }}  );
+			  	$("#otherLanguageTabsContainer").tabs({ cache: false, show:function() { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			#end
 			
 			generateWYSIWYGS();
@@ -804,87 +803,97 @@
 	    					
 	    	</div>
 	    	
-	    	<div id="contentVersionCategoriesDiv" class="inlineTabDiv">
-    			    			
-    			#set($allCategoryKeys = $definedCategoryKeys)
-    			#if($allCategoryKeys.size() > 0)
-    				#foreach($categoryKey in $allCategoryKeys)
-    					#if($velocityCount > 1)
-    					<br>
-    					#end
-    					
-    					#set($keyAttribute = $categoryKey.value)
-    					#set($dropdownName = "${keyAttribute}${velocityCount}categoryId")
-    					#set($availableCategories = $this.getAvailableCategories($categoryKey.categoryId))
-    					<div style="margin: 10px 0px 0px 0px; border-bottom: 1px solid #ccc; float: left; width: 100%;">
-    						<div style="float: left;"><h4>$categoryKey.title ("$keyAttribute") - $categoryKey.description</h4></div>
-							<div style="float: right;">
-								#if($contentVersionId)
-    								#addCategorySelect($dropdownName $availableCategories "")
-    								<input type="button" class="add" onclick="addCategory('${keyAttribute}', '${dropdownName}');" value="$ui.getString("tool.common.addButton.label")">
-    							#end
-    						</div>
-    					</div>
-    					<div style="clear: both;"></div>
-						<ul class="assignedEntities">
-							#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
-	    					#foreach($relation in $relatedCategories)
-	                    	<li style="border-bottom: 1px solid #ccc;">
-	                           	<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="css/images/v3/cross.png" border="0"/></a>
-	    						$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)
-	    					</li>
+	    	#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
+		    	<div id="contentVersionCategoriesDiv" class="inlineTabDiv">
+	    			    			
+	    			#set($allCategoryKeys = $definedCategoryKeys)
+	    			#if($allCategoryKeys.size() > 0)
+	    				#foreach($categoryKey in $allCategoryKeys)
+	    					#if($velocityCount > 1)
+	    					<br>
 	    					#end
-	    					#if($relatedCategories.size() == 0)
-	    					<li>
-								#if(!$contentVersionId)
-									$ui.getString("tool.contenttool.saveToRelateCategoriesPrefix") $keyAttribute
-								#else
-									$ui.getString("tool.contenttool.noCategoriesPrefix") $keyAttribute
-								#end
-							</li>
-	    					#end
-						</ul>    					
-    				#end
-    			#else
-    				<h4>There are no category attributes defined in this content type</h4>
-    			#end
-    			
-    			<form id="catForm" name="catForm" action="${root}/ContentCategory!add.action" method="post">
-    				<input type="hidden" id="model/attributeName" name="model/attributeName" value="">
-    				<input type="hidden" id="model/category/categoryId" name="model/category/categoryId" value="">
-    				<input type="hidden" name="model/contentVersionId" value="$contentVersionId">
-    				<input type="hidden" name="contentId" value="$contentId">
-    				<input type="hidden" name="languageId" value="$languageId">
-    			</form>
-
-    		</div>
-    		
-    		
-    		<div id="contentVersionAssetsDiv" class="inlineTabDiv">
-    			<iframe id="contentVersionAssetsFrame" name="contentVersionAssetsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    		</div>
-    		
+	    					
+	    					#set($keyAttribute = $categoryKey.value)
+	    					#set($dropdownName = "${keyAttribute}${velocityCount}categoryId")
+	    					#set($availableCategories = $this.getAvailableCategories($categoryKey.categoryId))
+	    					<div style="margin: 10px 0px 0px 0px; border-bottom: 1px solid #ccc; float: left; width: 100%;">
+	    						<div style="float: left;"><h4>$categoryKey.title ("$keyAttribute") - $categoryKey.description</h4></div>
+								<div style="float: right;">
+									#if($contentVersionId)
+	    								#addCategorySelect($dropdownName $availableCategories "")
+	    								<input type="button" class="add" onclick="addCategory('${keyAttribute}', '${dropdownName}');" value="$ui.getString("tool.common.addButton.label")">
+	    							#end
+	    						</div>
+	    					</div>
+	    					<div style="clear: both;"></div>
+							<ul class="assignedEntities">
+								#set($relatedCategories = $this.getRelatedCategories($keyAttribute))
+		    					#foreach($relation in $relatedCategories)
+		                    	<li style="border-bottom: 1px solid #ccc;">
+		                           	<a href="javascript:deleteCategory('$relation.contentCategoryId', '$contentId', '$languageId');"><img src="css/images/v3/cross.png" border="0"/></a>
+		    						$relation.category.getLocalizedDisplayName($this.languageCode, "none") ($relation.category.name)
+		    					</li>
+		    					#end
+		    					#if($relatedCategories.size() == 0)
+		    					<li>
+									#if(!$contentVersionId)
+										$ui.getString("tool.contenttool.saveToRelateCategoriesPrefix") $keyAttribute
+									#else
+										$ui.getString("tool.contenttool.noCategoriesPrefix") $keyAttribute
+									#end
+								</li>
+		    					#end
+							</ul>    					
+	    				#end
+	    			#else
+	    				<h4>There are no category attributes defined in this content type</h4>
+	    			#end
+	    			
+	    			<form id="catForm" name="catForm" action="${root}/ContentCategory!add.action" method="post">
+	    				<input type="hidden" id="model/attributeName" name="model/attributeName" value="">
+	    				<input type="hidden" id="model/category/categoryId" name="model/category/categoryId" value="">
+	    				<input type="hidden" name="model/contentVersionId" value="$contentVersionId">
+	    				<input type="hidden" name="contentId" value="$contentId">
+	    				<input type="hidden" name="languageId" value="$languageId">
+	    			</form>
+	
+	    		</div>
+    		#end
+    		        	
+    		#if($this.hasAccessTo("ContentVersionEditor.Attachments", true, false))
+	    		<div id="contentVersionAssetsDiv" class="inlineTabDiv">
+	    			<iframe id="contentVersionAssetsFrame" name="contentVersionAssetsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+	    		</div>
+			#end
+			    		
     		<div id="contentCoverDiv" class="inlineTabDiv">
     			<iframe id="contentCoverFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
     		</div>
     		
-    		<div id="contentHistoryDiv" class="inlineTabDiv">
-    			<iframe id="contentHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    		</div>
-			
-		#if($contentTypeDefinitionVO.name != "Meta info")
-			<div id="contentReferencesDiv" class="inlineTabDiv">
-				<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    		</div>
+			#if($this.hasAccessTo("ContentVersionEditor.History", true, false))
+	    		<div id="contentHistoryDiv" class="inlineTabDiv">
+	    			<iframe id="contentHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+	    		</div>
+			#end
 
-    		<div id="contentAccessRightsDiv" class="inlineTabDiv">
-   				<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    		</div>
-
-    		<div id="contentVersionAccessRightsDiv" class="inlineTabDiv">
-   				<iframe id="contentVersionAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
-    		</div>
-		#end
+			#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
+				<div id="contentReferencesDiv" class="inlineTabDiv">
+					<iframe id="contentReferencesFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+	    		</div>
+			#end
+						
+			#if($contentTypeDefinitionVO.name != "Meta info")
+				
+				#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+		    		<div id="contentAccessRightsDiv" class="inlineTabDiv">
+		   				<iframe id="contentAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+		    		</div>
+		
+		    		<div id="contentVersionAccessRightsDiv" class="inlineTabDiv">
+		   				<iframe id="contentVersionAccessRightsFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>
+		    		</div>
+		    	#end
+			#end
     		
     	</div><!-- End first tabs collection -->
     	

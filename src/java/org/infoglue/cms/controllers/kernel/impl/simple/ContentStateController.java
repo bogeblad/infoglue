@@ -34,6 +34,7 @@ import org.infoglue.cms.entities.content.ContentCategoryVO;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.AccessRight;
@@ -122,6 +123,11 @@ public class ContentStateController extends BaseController
         beginTransaction(db);
 		try
 		{
+			if(contentId == null)
+			{
+				SmallestContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getSmallestContentVersionVOWithId(oldContentVersionId, db);
+				contentId = contentVersionVO.getContentId();
+			}
 			ContentVersion newContentVersion = changeState(oldContentVersionId, contentVO, stateId, versionComment, overrideVersionModifyer, recipientFilter, infoGluePrincipal, contentId, db, resultingEvents);
 			if(newContentVersion != null)
 				newContentVersionVO = newContentVersion.getValueObject();

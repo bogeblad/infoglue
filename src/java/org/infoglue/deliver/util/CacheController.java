@@ -1136,8 +1136,6 @@ public class CacheController extends Thread
 
 	public static Object getCachedObjectFromAdvancedCache(String cacheName, String key, boolean useFileCacheFallback, String fileCacheCharEncoding, boolean cacheFileResultInMemory, Object o, Method m, Object[] args, PageInvoker pageInvoker) throws Exception
 	{
-		System.out.println("cacheName:" + cacheName);
-		System.out.println("key:" + key);
 		if(cacheName == null || key == null || key.length() == 0)
 			return null;
 		
@@ -1203,9 +1201,9 @@ public class CacheController extends Thread
 	    //value = getCachedObjectFromAdvancedCache(cacheName, pageKey, CacheEntry.INDEFINITE_EXPIRY);
 		if(value == null)
 		{
-			System.out.println("Invoking:" + cacheName);
+			logger.info("Invoking:" + cacheName);
 		    String result = (String)m.invoke(o, args);
-		    System.out.println("result:" + (result == null ? "null" : result.length()));
+		    logger.info("result:" + (result == null ? "null" : result.length()));
 			value = result;
 			if(result != null)
 			{

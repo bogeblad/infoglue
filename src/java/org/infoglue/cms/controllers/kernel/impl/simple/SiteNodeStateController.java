@@ -194,6 +194,8 @@ public class SiteNodeStateController extends BaseController
 				newSiteNodeVersionVO.setIsProtected(oldMediumSiteNodeVersionImpl.getIsProtected());
 				newSiteNodeVersionVO.setDisableForceIdentityCheck(oldMediumSiteNodeVersionImpl.getDisableForceIdentityCheck());
 				newSiteNodeVersionVO.setForceProtocolChange(oldMediumSiteNodeVersionImpl.getForceProtocolChange());
+				newSiteNodeVersionVO.setIsHidden(oldMediumSiteNodeVersionImpl.getIsHidden());
+				newSiteNodeVersionVO.setSortOrder(oldMediumSiteNodeVersionImpl.getSortOrder());
 
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState 1", t.getElapsedTime());
 
@@ -244,6 +246,8 @@ public class SiteNodeStateController extends BaseController
 				newSiteNodeVersionVO.setIsProtected(oldMediumSiteNodeVersionImpl.getIsProtected());
 				newSiteNodeVersionVO.setDisableForceIdentityCheck(oldMediumSiteNodeVersionImpl.getDisableForceIdentityCheck());
 				newSiteNodeVersionVO.setForceProtocolChange(oldMediumSiteNodeVersionImpl.getForceProtocolChange());
+				newSiteNodeVersionVO.setIsHidden(oldMediumSiteNodeVersionImpl.getIsHidden());
+				newSiteNodeVersionVO.setSortOrder(oldMediumSiteNodeVersionImpl.getSortOrder());
 
 				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("changeState publish1", t.getElapsedTime());
 

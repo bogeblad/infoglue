@@ -54,7 +54,6 @@ public class ComponentPropertyValueTag extends ComponentLogicTag
     {
 	    try
 	    {
-	    	System.out.println("AAAAAAA:" + propertyName);
 	    	String propertyValue = null;
 	    	
 	        if(siteNodeId == null)

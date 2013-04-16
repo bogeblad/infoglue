@@ -642,11 +642,9 @@ public class ComponentLogic
 				else
 					propertyDefinition = getComponentPropertyDefinition(this.infoGlueComponent.getContentId(), propertyName, templateController.getSiteNodeId(), templateController.getLanguageId(), templateController.getContentId(), templateController.getDatabase(), templateController.getPrincipal());
 				
-				System.out.println("propertyDefinition:" + propertyDefinition);
 				if(propertyDefinition != null)
 			    {
 					boolean languageVariationAllowed = propertyDefinition.getAllowLanguageVariations();
-					System.out.println("languageVariationAllowed:" + languageVariationAllowed);
 					if(languageVariationAllowed)
 					{
 						propertyValue = (String)property.get("path_" + this.templateController.getLocale().getLanguage()); 
@@ -666,7 +664,6 @@ public class ComponentLogic
 					if((propertyValue == null || propertyValue.equals("")) && useLanguageFallback)
 						propertyValue = (String)property.get("path");
 				}
-				System.out.println("propertyValue:" + propertyValue);
 			}
 			catch (Exception e) 
 			{

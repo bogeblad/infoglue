@@ -24,7 +24,7 @@
 		siteNodeId    = document.editForm.siteNodeId.value;
 		repositoryId  = document.editForm.repositoryId.value;
 		
-		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true, false, true))
+		#if(!$this.hasAccessTo("Common.SubmitToPublishButton", true, false))
 		if(stateId == "2")
 		{
 			alert("$ui.getString("tool.contenttool.statePublishForbidden")");
@@ -40,7 +40,7 @@
 		}
 	}
 
-	function loadFrame(index)
+	function loadFrame(tabHref)
 	{
 		var pageMetaDataSrcUrl 					= "ViewAndCreateContentForServiceBinding!inline.action?siteNodeId=$siteNodeId&repositoryId=$repositoryId&siteNodeVersionId=$siteNodeVersionId";
 		var pageHistorySrcUrl 					= "ViewSiteNodeHistory.action?siteNodeId=$!siteNodeId&inline=true";
@@ -49,17 +49,18 @@
 		//alert("index:" + index);
 		//alert("pageAccessRightsSrcUrl:" + pageAccessRightsSrcUrl);
 		$("input.compare").hide();
-		if(index == 0) 
+		if(tabHref.indexOf("basicTab") > -1) 
 		{
 			$("#pageMetaDataFrame").attr("src", pageMetaDataSrcUrl);
 		}
-		else if(index == 3) 
+		else if(tabHref.indexOf("pageHistoryTab") > -1) 
 		{
 			$("#pageHistoryFrame").attr("src", pageHistorySrcUrl);
 			$("input.compare").show();
 		}
-		else if(index == 4) 
+		else if(tabHref.indexOf("pageReferences") > -1) 
 		{
+			//alert("Heee");
 			$("#pageReferencesFrame").attr("src", pageReferencesSrcUrl);
 		}
 		resizeScrollArea();
@@ -105,10 +106,9 @@
   		$("#tabsContainer").tabs({ 
   				cache: false, 
   				show: function(event, ui) { resizeScrollArea(); },
-  				select: function(e, ui) { loadFrame(ui.index); }
+  				select: function(e, ui) { loadFrame(ui.tab.href); }
   			} 
   		);
-  		loadFrame(0);
 		
 		//alert($updated);
 		#if($updated)
@@ -151,7 +151,7 @@
 			<ul>
 		        ##<li><a href="#pageMetaDataTab"><span>$ui.getString("tool.structuretool.toolbarV3.editPageMetaInfoLabel")</span></a></li>	        
 		        <li><a href="#basicTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
-		        #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false, true))
+		        #if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false))
 			        <li><a href="#advancedTab"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
 					<li><a href="#languagesTab"><span>$ui.getString("tool.managementtool.viewLanguageList.header")</span></a></li>	        
 	            #end
@@ -234,87 +234,91 @@
 								
 			</div>
 			
-			<div id="advancedTab" class="inlineTabDiv">
-				
-				<p>
-					#editTextFieldCSS("SiteNode.contentType" "contentType" $!contentType "30" true false false "date")
-				</p>
-				<p>	
-					#if($useAccessBasedProtocolRedirects)		
-						<label for="forceProtocolChange">$ui.getString("entity.SiteNode.forceProtocolChange.label")</label>
-						<select name="forceProtocolChange" style="width: 115px;">
-							<option value="0" #if($!forceProtocolChange == 0) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
-							<option value="1" #if($!forceProtocolChange == 1) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeNormallabel")</option>	
-							<option value="2" #if($!forceProtocolChange == 2) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeAllowSecurelabel")</option>	
-							<option value="3" #if($!forceProtocolChange == 3) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeForceSecurelabel")</option>	
+			#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false))
+			
+				<div id="advancedTab" class="inlineTabDiv">
+					
+					<p>
+						#editTextFieldCSS("SiteNode.contentType" "contentType" $!contentType "30" true false false "date")
+					</p>
+					<p>	
+						#if($useAccessBasedProtocolRedirects)		
+							<label for="forceProtocolChange">$ui.getString("entity.SiteNode.forceProtocolChange.label")</label>
+							<select name="forceProtocolChange" style="width: 115px;">
+								<option value="0" #if($!forceProtocolChange == 0) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+								<option value="1" #if($!forceProtocolChange == 1) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeNormallabel")</option>	
+								<option value="2" #if($!forceProtocolChange == 2) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeAllowSecurelabel")</option>	
+								<option value="3" #if($!forceProtocolChange == 3) selected="1" #end> $ui.getString("entity.SiteNode.forceProtocolChangeForceSecurelabel")</option>	
+							</select>
+						#else
+							<input type="hidden" name="forceProtocolChange" value="$forceProtocolChange"/>
+						#end
+					</p>
+					<p>						
+						<label for="disableForceIdentityCheck">$ui.getString("entity.SiteNode.disableForceIdentityCheck.label")</label>
+						<select name="disableForceIdentityCheck" style="width: 115px;">
+							<option value="0" #if($!disableForceIdentityCheck == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+							<option value="1" #if($!disableForceIdentityCheck == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+							<option value="2" #if($!disableForceIdentityCheck == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
 						</select>
-					#else
-						<input type="hidden" name="forceProtocolChange" value="$forceProtocolChange"/>
-					#end
-				</p>
-				<p>						
-					<label for="disableForceIdentityCheck">$ui.getString("entity.SiteNode.disableForceIdentityCheck.label")</label>
-					<select name="disableForceIdentityCheck" style="width: 115px;">
-						<option value="0" #if($!disableForceIdentityCheck == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
-						<option value="1" #if($!disableForceIdentityCheck == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
-						<option value="2" #if($!disableForceIdentityCheck == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
-					</select>
-				</p>
-				<p>	
-					<label for="disableEditOnSight">$ui.getString("entity.SiteNode.disableEditOnSight.label")</label>
-					<select name="disableEditOnSight" style="width: 115px;">
-						<option value="0" #if($!disableEditOnSight == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
-						<option value="1" #if($!disableEditOnSight == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
-						<option value="2" #if($!disableEditOnSight == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
-					</select>
-				</p>
+					</p>
+					<p>	
+						<label for="disableEditOnSight">$ui.getString("entity.SiteNode.disableEditOnSight.label")</label>
+						<select name="disableEditOnSight" style="width: 115px;">
+							<option value="0" #if($!disableEditOnSight == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+							<option value="1" #if($!disableEditOnSight == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+							<option value="2" #if($!disableEditOnSight == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+						</select>
+					</p>
+		
+					<h4>Cache settings</h4>
+						
+					<p>	
+						<label for="disablePageCache">$ui.getString("entity.SiteNode.disablePageCache.label")</label>
+						<select name="disablePageCache" style="width: 115px;">
+							<option value="0" #if($!disablePageCache == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+							<option value="1" #if($!disablePageCache == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+							<option value="2" #if($!disablePageCache == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+						</select>
+					</p>
+					<p>	
+						#editTextFieldCSS("SiteNode.pageCacheKey" "pageCacheKey" $!pageCacheKey "30" true false false "date")
+					</p>
+					<p>	
+						#editTextFieldCSS("SiteNode.pageCacheTimeout" "pageCacheTimeout" $!pageCacheTimeout "30" true false false "date")
+					</p>
+					
+				</div>
 	
-				<h4>Cache settings</h4>
-					
-				<p>	
-					<label for="disablePageCache">$ui.getString("entity.SiteNode.disablePageCache.label")</label>
-					<select name="disablePageCache" style="width: 115px;">
-						<option value="0" #if($!disablePageCache == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
-						<option value="1" #if($!disablePageCache == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
-						<option value="2" #if($!disablePageCache == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
-					</select>
-				</p>
-				<p>	
-					#editTextFieldCSS("SiteNode.pageCacheKey" "pageCacheKey" $!pageCacheKey "30" true false false "date")
-				</p>
-				<p>	
-					#editTextFieldCSS("SiteNode.pageCacheTimeout" "pageCacheTimeout" $!pageCacheTimeout "30" true false false "date")
-				</p>
-				
-			</div>
-
-    		<div id="languagesTab" class="inlineTabDiv">
-
-				<p>	
-					<label for="disableLanguages">$ui.getString("entity.SiteNode.disableLanguages.label")</label>
-					<select name="disableLanguages" style="width: 115px;">
-						<option value="0" #if($!disableLanguages == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
-						<option value="1" #if($!disableLanguages == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
-						<option value="2" #if($!disableLanguages == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
-					</select>
-				</p>
-				#if($disableLanguages == 1)
-					<h4>$ui.getString("tool.structuretool.disableLanguages.header")</h4>
-					<p>
-					#foreach ($language in $availableLanguages)
-						<input type="checkbox" name="disabledLanguageId" value="$language.id" #if($disabledLanguages.contains($language))checked="1"#end>$language.name
-					#end
+	    		<div id="languagesTab" class="inlineTabDiv">
+	
+					<p>	
+						<label for="disableLanguages">$ui.getString("entity.SiteNode.disableLanguages.label")</label>
+						<select name="disableLanguages" style="width: 115px;">
+							<option value="0" #if($!disableLanguages == 0) selected="1" #end> $ui.getString("tool.common.no")</option>	
+							<option value="1" #if($!disableLanguages == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+							<option value="2" #if($!disableLanguages == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>	
+						</select>
 					</p>
-					
-					<h4>$ui.getString("tool.structuretool.enableLanguages.header")</h4>
-					<p>
-					#foreach ($language in $availableLanguages)
-						<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language))checked="1"#end>$language.name
+					#if($disableLanguages == 1)
+						<h4>$ui.getString("tool.structuretool.disableLanguages.header")</h4>
+						<p>
+						#foreach ($language in $availableLanguages)
+							<input type="checkbox" name="disabledLanguageId" value="$language.id" #if($disabledLanguages.contains($language))checked="1"#end>$language.name
+						#end
+						</p>
+						
+						<h4>$ui.getString("tool.structuretool.enableLanguages.header")</h4>
+						<p>
+						#foreach ($language in $availableLanguages)
+							<input type="checkbox" name="enabledLanguageId" value="$language.id" #if($enabledLanguages.contains($language))checked="1"#end>$language.name
+						#end
+						</p>
 					#end
-					</p>
-				#end
+	
+	    		</div>
 
-    		</div>
+	    	#end
 
     		<div id="pageHistoryTab" class="inlineTabDiv">
     			<iframe id="pageHistoryFrame" src="" border="0" width="100%" height="500px" frameborder="0"></iframe>

@@ -121,7 +121,7 @@ public class MatchingContentsTag extends TemplateControllerTag
 		logger.info("cacheInterval:" + cacheInterval);
 		
 		List result = getController().getMatchingContents(contentTypeDefinitionNames, categoryCondition, freeText, freeTextAttributeNamesList, fromDate, toDate, expireFromDate, expireToDate, versionModifier, maximumNumberOfItems, true, cacheResult, cacheInterval, cacheName, cacheKey, scheduleFetch, scheduleInterval, repositoryIdList, this.languageId, skipLanguageCheck, startNodeId, sortColumn, sortOrder, false, validateAccessRightsAsAnonymous, false, false);
-	    System.out.println("result:" + result.size());
+	    logger.info("result:" + result.size());
 		setResultAttribute(result);
 	    
 	    this.contentTypeDefinitionNames = null;

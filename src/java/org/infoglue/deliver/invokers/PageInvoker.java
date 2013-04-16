@@ -202,7 +202,6 @@ public abstract class PageInvoker
 			if(pageCacheTimeout == null)
 				pageCacheTimeout = this.getTemplateController().getPageCacheTimeout();
 			
-			System.out.println("pageCacheTimeout:" + pageCacheTimeout);
 			if(pageCacheTimeout == null)
 			{
 			    //cachedCompressedData = (byte[])CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey());
@@ -436,9 +435,7 @@ public abstract class PageInvoker
 	{
 		if(this.pageString == null)
 		{
-			System.out.println("A");
 			invokePage();
-			System.out.println("B");
 			this.pageString = getPageString();
 
 			//TEST

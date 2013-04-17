@@ -627,8 +627,11 @@ public class CacheController extends Thread
 			logger.info("useFileCacheFallback: " + useFileCacheFallback);
 			logger.info("useMemoryCache: "+ useMemoryCache);
 			logger.info("groups: " + (groups == null ? "null" : groups.length));
-			for(String group : groups)
-				logger.info(group + ",");
+			if(groups != null)
+			{
+				for(String group : groups)
+					logger.info(group + ",");
+			}
 		}
 
 		if(useMemoryCache) 
@@ -1953,7 +1956,7 @@ public class CacheController extends Thread
 	
 	public static void clearCaches(String entity, String entityId, Map<String,String> extraInformation, String[] cachesToSkip, boolean forceClear) throws Exception
 	{	
-		System.out.println("entity:" + entity + ", " + entityId);
+		logger.info("entity:" + entity + ", " + entityId);
 		Timer t = new Timer();
 		//t.setActive(false);
 		

@@ -150,6 +150,8 @@ public class SearchAction extends InfoGlueAbstractAction
 	public String doExecute() throws Exception 
 	{
 		Timer t = new Timer();
+		if(!logger.isInfoEnabled())
+			t.setActive(false);
 		
 	    int maxRows = 100;
 		try

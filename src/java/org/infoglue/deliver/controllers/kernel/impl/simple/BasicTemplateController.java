@@ -5334,7 +5334,8 @@ public class BasicTemplateController implements TemplateController
 				criterias.setSortOrder(sortOrder);
 				
 				final Set set = ExtendedSearchController.getController().search(criterias, getDatabase());
-				t.printElapsedTime("AAAAAAAAAAAAAAAAAAAAAA search returning :" + set.size() + ":" + Thread.currentThread().getId());
+				if(logger.isInfoEnabled())
+					t.printElapsedTime("AAAAAAAAAAAAAAAAAAAAAA search returning :" + set.size() + ":" + Thread.currentThread().getId());
 				final List result = new ArrayList();
 				for(Iterator i = set.iterator(); i.hasNext(); ) 
 				{
@@ -6742,8 +6743,6 @@ public class BasicTemplateController implements TemplateController
 		{
 			try
 			{
-				//Thread.dumpStack();
-				System.out.println("showHidden: " + showHidden);
 				Timer t = new Timer();
 				List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId, levelsToPopulate, showHidden, nameFilter);
 				//if(logger.isInfoEnabled())

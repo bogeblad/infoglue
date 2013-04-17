@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -66,6 +67,7 @@ import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.deliver.util.Timer;
+import org.infoglue.deliver.util.graphics.ColorHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -667,7 +669,7 @@ public class SearchController extends BaseController
 		
 		return matchingAssets;
    	}
-
+   	
    	public List<DigitalAssetVO> getDigitalAssetsFromLucene(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
    	{
    		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
@@ -699,6 +701,7 @@ public class SearchController extends BaseController
 			for(org.apache.lucene.document.Document document : documents)
 			{
 				logger.info("document for asset:" + document);
+				System.out.println("Doc:" + document);
 				String digitalAssetIdString = document.get("digitalAssetId");
 				if(digitalAssetIdString != null)
 				{
@@ -706,6 +709,14 @@ public class SearchController extends BaseController
 					if(logger.isInfoEnabled())
 						logger.info("document:" + document);
 					digitalAssetVO.setContentPath(document.get("path"));
+					if(document.get("contentId") != null && !document.get("contentId").equals(""))
+						digitalAssetVO.setContentId(new Integer(document.get("contentId")));
+					
+					String assetUrl = getDigitalAssetUrl(digitalAssetVO, db);
+					String assetThumbnailUrl = getDigitalAssetThumbnailUrl(digitalAssetVO.getId(), 100, 60, "ffffff", "center", "middle", 100, 60, 75, db);
+					digitalAssetVO.setAssetUrl(assetUrl);
+					digitalAssetVO.setAssetThumbnailUrl(assetThumbnailUrl);
+					
 					matchingAssets.add(digitalAssetVO);
 				}
 			}
@@ -1505,6 +1516,45 @@ public class SearchController extends BaseController
 		doc.add(new Field("contents", new StringReader(text)));
 
 		return doc;
+	}
+
+   	public String getDigitalAssetUrl(DigitalAssetVO digitalAssetVO, Database db) throws Exception
+	{
+		String imageHref = null;
+		try
+		{
+       		imageHref = DigitalAssetController.getController().getDigitalAssetUrl(digitalAssetVO, db);
+		}
+		catch(Exception e)
+		{
+			logger.warn("We could not get the url of the digitalAsset: " + e.getMessage(), e);
+			imageHref = e.getMessage();
+		}
+		
+		return imageHref;
+	}
+   	
+	/**
+	 * This method fetches the blob from the database and saves it on the disk.
+	 * Then it returnes a url for it
+	 */
+	
+	public String getDigitalAssetThumbnailUrl(Integer digitalAssetId, int canvasWidth, int canvasHeight, String canvasColorHexCode, String alignment, String valignment, int width, int height, int quality, Database db) throws Exception
+	{
+		String imageHref = null;
+		try
+		{
+			ColorHelper ch = new ColorHelper();
+			Color canvasColor = ch.getHexColor(canvasColorHexCode);
+       		imageHref = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(digitalAssetId, canvasWidth, canvasHeight, canvasColor, alignment, valignment, width, height, quality, db);
+		}
+		catch(Exception e)
+		{
+			logger.warn("We could not get the url of the thumbnail: " + e.getMessage(), e);
+			imageHref = e.getMessage();
+		}
+		
+		return imageHref;
 	}
 
 	/**

@@ -39,6 +39,8 @@ public class DigitalAssetVO implements BaseEntityVO, Cloneable
     //Fields that may not be populated
     private java.lang.Integer contentId;
     private String contentPath;
+    private String assetUrl;
+	private String assetThumbnailUrl;
 
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntityVO#getId()
@@ -142,6 +144,26 @@ public class DigitalAssetVO implements BaseEntityVO, Cloneable
     {
         this.contentId = contentId;
     }
+
+	public String getAssetUrl() 
+	{
+		return assetUrl;
+	}
+
+	public void setAssetUrl(String assetUrl) 
+	{
+		this.assetUrl = assetUrl;
+	}
+
+	public String getAssetThumbnailUrl() 
+	{
+		return assetThumbnailUrl;
+	}
+
+	public void setAssetThumbnailUrl(String assetThumbnailUrl) 
+	{
+		this.assetThumbnailUrl = assetThumbnailUrl;
+	}
 
 }
         

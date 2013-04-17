@@ -436,8 +436,9 @@
 									#foreach ($digitalAssetVO in $digitalAssetVOList)
 										<tr>
 											<td>
-											 	#set($contentId = $this.getDigitalAssetContentId($digitalAssetVO.digitalAssetId))
-												<a href="#" class="content" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentId&anchor=digitalAssetsBlock', '$digitalAssetVO.assetKey', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$digitalAssetVO.contentPath.replaceAll(' ', '&nbsp;') #*$this.getContentPath($contentId).replaceAll(' ', '&nbsp;')*#</a>
+											 	##set($contentId = $this.getDigitalAssetContentId($digitalAssetVO.digitalAssetId))
+												#set($contentId = $digitalAssetVO.contentId)
+												<a href="#" class="content" onclick="top.openUrlInWorkArea('ViewContent!V3.action?contentId=$contentId&anchor=digitalAssetsBlock', '$digitalAssetVO.assetKey', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$digitalAssetVO.contentPath.replaceAll(' ', '&nbsp;')</a>
 											</td>
 											<td>
 												<span style="white-space:nowrap;">$digitalAssetVO.assetKey</span>
@@ -446,8 +447,12 @@
 												<span style="white-space:nowrap;">$formatter.formatFileSize($digitalAssetVO.assetFileSize)</span>
 											</td>
 											<td style="text-align:center">
+												#*
 												#set($imageUrl = $this.getDigitalAssetUrl($digitalAssetVO.digitalAssetId))
 												#set($thumbnailImageUrl = $this.getDigitalAssetThumbnailUrl($digitalAssetVO.digitalAssetId, 100, 60, "ffffff", "center", "middle", 100, 60, 75))
+												*#
+												#set($imageUrl = $digitalAssetVO.assetUrl)
+												#set($thumbnailImageUrl = $digitalAssetVO.assetThumbnailUrl)
 												<a href="$imageUrl" target="_blank"><img src="$thumbnailImageUrl" alt="$digitalAssetVO.assetKey" border="0" style="border: 1px #ccc solid;"/></a>
 											</td>
 										</tr>

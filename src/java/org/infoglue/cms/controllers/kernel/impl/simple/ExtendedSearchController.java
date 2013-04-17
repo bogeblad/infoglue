@@ -195,15 +195,12 @@ public class ExtendedSearchController extends BaseController
 		    if(logger.isDebugEnabled())
 		    	logger.debug("sql:" + sqlBuilder.getSQL());
 		    
-		    System.out.println("SQL:" + sqlBuilder.getSQL());
-		    
 			final OQLQuery oql = db.getOQLQuery(sqlBuilder.getSQL());
 			for(Iterator i=sqlBuilder.getBindings().iterator(); i.hasNext(); )
 			{
 			    Object o = i.next();
 			    if(logger.isDebugEnabled())
 			    	logger.debug("o:" + o.toString());
-			    System.out.println("o:" + o.toString());
 			    oql.bind(o);
 			}
 			

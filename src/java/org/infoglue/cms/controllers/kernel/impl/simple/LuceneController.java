@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.Writer;
+import java.nio.channels.OverlappingFileLockException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -170,7 +171,8 @@ public class LuceneController extends BaseController implements NotificationList
     	StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_34);
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_34, analyzer);
 
-		if(IndexWriter.isLocked(directory))
+		
+		if(getIsIndexedLocked(true))
 		{
 			logger.error("Directory is locked - leaving the messages in the qeuedMessages list...");
 			throw new Exception("Lock not granted");
@@ -212,8 +214,20 @@ public class LuceneController extends BaseController implements NotificationList
 	
 	private Boolean getIsIndexedLocked() throws Exception
 	{
+		return getIsIndexedLocked(false);
+	}
+
+	private Boolean getIsIndexedLocked(boolean returnIfFileLockException) throws Exception
+	{
 		Directory directory = getDirectory();
-		return IndexWriter.isLocked(directory);
+		try
+		{
+			return IndexWriter.isLocked(directory);
+		}
+		catch (OverlappingFileLockException e) 
+		{
+			return returnIfFileLockException;
+		}
 	}
 
 	private void unlockIndex() throws Exception
@@ -481,7 +495,8 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error indexing notifications:" + e.getMessage(), e);
+				logger.error("Error indexing notifications:" + e.getMessage());
+				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
 			finally
 			{
@@ -695,7 +710,8 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error indexing notifications:" + e.getMessage(), e);
+				logger.error("Error indexing notifications:" + e.getMessage());
+				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
 			finally
 			{
@@ -1100,7 +1116,8 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error indexing notifications:" + e.getMessage(), e);
+				logger.error("Error indexing notifications:" + e.getMessage());
+				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
 			finally
 			{
@@ -1188,7 +1205,8 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error indexing notifications:" + e.getMessage(), e);
+				logger.error("Error indexing notifications:" + e.getMessage());
+				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
 		/*
 		}

@@ -2929,7 +2929,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 			   		SQL.append("order by snv.sortOrder, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 		    	}
 	
-		    	System.out.println("SQL:" + SQL);
+		    	logger.info("SQL:" + SQL);
 		    	//logger.info("siteNodeId:" + siteNodeId);
 		    	OQLQuery oql = db.getOQLQuery(SQL.toString());
 				oql.bind(siteNodeId);
@@ -3036,8 +3036,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 		   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
 	    	}
 
-	    	System.out.println("SQL:" + SQL);
-	    	System.out.println("" + siteNodeId + ":" + false + ":" + true + ":" + getOperatingMode());
+	    	logger.info("SQL:" + SQL);
+	    	logger.info("" + siteNodeId + ":" + false + ":" + true + ":" + getOperatingMode());
 	    	//logger.info("SQL:" + SQL);
 	    	//logger.info("siteNodeId:" + siteNodeId);
 	    	OQLQuery oql = db.getOQLQuery(SQL.toString());

@@ -135,10 +135,9 @@ public class ViewPageFilter implements Filter
         if(logger.isInfoEnabled())
         	logger.info("requestURI:" + requestURI);
 
-        Timer t2 = new Timer();
         try
         {
-        	//logger.info("requestURI:" + requestURI);
+        	//System.out.println("requestURI:" + requestURI);
 			if(logger.isInfoEnabled())
 	        	logger.info("requestURI before decoding:" + requestURI);
             
@@ -151,7 +150,7 @@ public class ViewPageFilter implements Filter
 			String testRequestURI = new String(requestURI.getBytes(fromEncoding), toEncoding);
 			if(testRequestURI.indexOf((char)65533) == -1)
 				requestURI = testRequestURI;
-			//logger.info("requestURI:" + requestURI);
+			//System.out.println("requestURI:" + requestURI);
         }
         catch (Exception e) 
         {
@@ -320,6 +319,9 @@ public class ViewPageFilter implements Filter
 	                Integer contentId = getContentId(httpRequest);
 	                
 	                HttpServletRequest wrappedHttpRequest = prepareRequest(httpRequest, siteNodeId, languageId, contentId);
+	             
+	               	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewPageFilter before ViewPage", t.getElapsedTime());
+	                
 	                wrappedHttpRequest.getRequestDispatcher("/ViewPage.action").forward(wrappedHttpRequest, httpResponse);
 	            } 
 	            catch (SystemException e) 
@@ -441,18 +443,24 @@ public class ViewPageFilter implements Filter
         }
         */
 
-        if(logger.isInfoEnabled())
-        	logger.info("Trying to lookup repositoryId");
+       	logger.info("Trying to lookup repositoryId");
         String serverName = request.getServerName();
         String portNumber = new Integer(request.getServerPort()).toString();
         String repositoryName = request.getParameter("repositoryName");
-        if(logger.isInfoEnabled())
-        {
-	        logger.info("serverName:" + serverName);
-	        logger.info("repositoryName:" + repositoryName);
-	    }
+        String requestURI = request.getRequestURI();
+        logger.info("serverName:" + serverName);
+        logger.info("repositoryName:" + repositoryName);
+        String firstPath = requestURI.replaceAll(request.getContextPath(), "").replaceAll("//", "/");
         
-        String repCacheKey = "" + serverName + "_" + portNumber + "_" + repositoryName;
+        logger.info("firstPath:" + firstPath);
+        if(firstPath.startsWith("/"))
+        	firstPath = firstPath.substring(1);
+        String[] splitPath = firstPath.split("/");
+        if(splitPath.length > 2)
+        	firstPath = "/" + splitPath[0] + "/" + splitPath[1];
+
+        String repCacheKey = "" + serverName + "_" + portNumber + "_" + repositoryName + "_" + firstPath;
+        logger.info("repCacheKey:" + repCacheKey);
         Set<RepositoryVO> repositoryVOList = (Set<RepositoryVO>)CacheController.getCachedObject(uriCache.CACHE_NAME, repCacheKey);
         if (repositoryVOList != null) 
         {
@@ -460,23 +468,21 @@ public class ViewPageFilter implements Filter
             return repositoryVOList;
         }
 
-        Set<RepositoryVO> repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName, request.getRequestURI());
+        Set<RepositoryVO> repositories = RepositoryDeliveryController.getRepositoryDeliveryController().getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName, requestURI);
         if(logger.isInfoEnabled())
         	logger.info("repositories:" + repositories);
         
         if (repositories.size() == 0)
         {
             String redirectUrl = RedirectController.getController().getRedirectUrl(request);
-            if(logger.isInfoEnabled())
-            	logger.info("redirectUrl:" + redirectUrl);
+            logger.info("redirectUrl:" + redirectUrl);
             if(redirectUrl == null || redirectUrl.length() == 0)
             {
                 if (repositories.size() == 0) 
                 {
                     try 
                     {
-                        if(logger.isInfoEnabled())
-                        	logger.info("Adding master repository instead - is this correct?");
+                       	logger.info("Adding master repository instead - is this correct?");
                         repositories.add(RepositoryDeliveryController.getRepositoryDeliveryController().getMasterRepository(db));
                     } 
                     catch (Exception e1) 
@@ -489,6 +495,7 @@ public class ViewPageFilter implements Filter
                     throw new ServletException("Unable to find a repository for server-name " + serverName);
             }
         }
+        //t.printElapsedTime("getRepositoryVOListFromServerName took");
         
         CacheController.cacheObject(uriCache.CACHE_NAME, repCacheKey, repositories);
         //session.setAttribute(FilterConstants.REPOSITORY_ID, repository.getRepositoryId());
@@ -560,16 +567,19 @@ public class ViewPageFilter implements Filter
             repositoryId = ((RepositoryVO)repositoryVOList.toArray()[0]).getId();
         
         logger.info("Looking for languageId for repository " + repositoryId);
-        Locale requestLocale = request.getLocale();
        
         if(repositoryId == null)
         	return null;
-        
+
+        Locale requestLocale = request.getLocale();
+
         try 
         {
             List availableLanguagesForRepository = LanguageDeliveryController.getLanguageDeliveryController().getAvailableLanguagesForRepository(db, repositoryId);
 
-            if (requestLocale != null) 
+            String useBrowserLanguage = CmsPropertyHandler.getUseBrowserLanguage();
+            logger.info("useBrowserLanguage:" + useBrowserLanguage);
+            if (requestLocale != null && useBrowserLanguage != null && useBrowserLanguage.equals("true")) 
             {
                 for (int i = 0; i < availableLanguagesForRepository.size(); i++) 
                 {

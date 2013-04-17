@@ -2127,7 +2127,7 @@ public class AccessRightController extends BaseController
 			}
 		}
 		
-		logger.error("Reading the hard way:" + interceptionPointVO.getId() + ":" + extraParameters);
+		logger.info("Reading the hard way:" + interceptionPointVO.getId() + ":" + extraParameters);
 		
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), extraParameters, db);
 		if(logger.isInfoEnabled())
@@ -2719,7 +2719,7 @@ public class AccessRightController extends BaseController
 			}
 		}
 		
-		logger.error("Reading the hard way: " + interceptionPointVO.getName());
+		logger.info("Reading the hard way: " + interceptionPointVO.getName());
 
 		//List accessRightList = this.getAccessRightList(interceptionPointVO.getId(), db);
 		List accessRightList = this.getAccessRightListOnlyReadOnly(interceptionPointVO.getId(), db);

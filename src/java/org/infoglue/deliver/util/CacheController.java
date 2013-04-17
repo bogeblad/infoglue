@@ -626,7 +626,7 @@ public class CacheController extends Thread
 			logger.info("useGroups: " + useGroups);
 			logger.info("useFileCacheFallback: " + useFileCacheFallback);
 			logger.info("useMemoryCache: "+ useMemoryCache);
-			logger.info("groups: " + groups.length);
+			logger.info("groups: " + (groups == null ? "null" : groups.length));
 			for(String group : groups)
 				logger.info(group + ",");
 		}
@@ -771,9 +771,12 @@ public class CacheController extends Thread
 			
 			if(logger.isInfoEnabled() && cacheName.equalsIgnoreCase("pageCacheExtra"))
 			{
-				logger.info("real groups: " + groups.length);
-				for(String group : groups)
-					logger.info(group + ",");
+				logger.info("real groups: " + (groups == null ? "null" : groups.length));
+				if(groups != null)
+				{
+					for(String group : groups)
+						logger.info(group + ",");
+				}
 			}
 			
 			//Kanske tillbaka om minnet sticker
@@ -4222,8 +4225,6 @@ public class CacheController extends Thread
 	       	RequestAnalyser.getRequestAnalyser().setBlockRequests(true);
 		}
 	    
-	    t.printElapsedTime("evict 1", 2);
-	    	
 	    logger.info("evictWaitingCache starting");
     	logger.info("blocking");
     	

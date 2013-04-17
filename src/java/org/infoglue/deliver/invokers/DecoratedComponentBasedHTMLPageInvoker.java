@@ -110,7 +110,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 	
 	public void invokePage() throws SystemException, Exception
 	{
-		System.out.println("1");
 		Timer timer = new Timer();
 		timer.setActive(false);
 		
@@ -123,13 +122,9 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		Integer repositoryId = nodeDeliveryController.getSiteNodeVO(getDatabase(), this.getDeliveryContext().getSiteNodeId()).getRepositoryId();
 		String componentXML = getPageComponentsString(getDatabase(), this.getTemplateController(), this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), this.getDeliveryContext().getContentId());
 		//logger.info("componentXML:" + componentXML);
-		System.out.println("componentXML:" + componentXML);
 		
 		componentXML = appendPagePartTemplates(componentXML, this.getDeliveryContext().getSiteNodeId());
 		
-		timer.printElapsedTime("After getPageComponentsString");
-		System.out.println("componentXML:" + componentXML);
-
 		Timer decoratorTimer = new Timer();
 		decoratorTimer.setActive(false);
 
@@ -148,15 +143,11 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		        XmlInfosetBuilder builder = XmlInfosetBuilder.newInstance();
 		        XmlDocument doc = builder.parseReader(new StringReader( componentXML ) );
 				List pageComponents = getPageComponentsWithXPP3(getDatabase(), componentXML, doc.getDocumentElement(), "base", this.getTemplateController(), null, unsortedPageComponents);
-				System.out.println("pageComponents:" + pageComponents);
-	
-				preProcessComponents(nodeDeliveryController, repositoryId, unsortedPageComponents, pageComponents);
-				System.out.println("after preProcessComponents:" + pageComponents.size());
 				
+				preProcessComponents(nodeDeliveryController, repositoryId, unsortedPageComponents, pageComponents);
 				if(pageComponents.size() > 0)
 				{
 					baseComponent = (InfoGlueComponent)pageComponents.get(0);
-					System.out.println("baseComponent:" + baseComponent);
 				}
 		    }
 		    catch(Exception e)
@@ -183,9 +174,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				//}
 			}
 		}
-		//System.out.println("After main decoration:" + decoratePageTemplate);
-
-		timer.printElapsedTime("After main decoration");
 
 		if(logger.isInfoEnabled())
 			logger.info("\n\nEvaluateFullDecorated:" + this.getDeliveryContext().getEvaluateFullPage() + ":" + CmsPropertyHandler.getDisableDecoratedFinalRendering());
@@ -208,7 +196,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			new VelocityTemplateProcessor().renderTemplate(context, cachedStream, decoratePageTemplate, false, baseComponent);
 			decoratePageTemplate = cacheString.toString();
 		}
-		//System.out.println("After extra decoration");
 
 		//TODO - TEST
 		//decoratePageTemplate += propertiesDivs + tasksDivs;
@@ -225,8 +212,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		//pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
 
 		this.setPageString(pageString);
-		
-		timer.printElapsedTime("End invokePage");
 	}
 	
 	 /**
@@ -335,7 +320,6 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    boolean showNotifyUserOfPage 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.NotifyUserOfPage", true, false, true);
 		    boolean showContentNotifications 	= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.ContentNotifications", true, false, true);
 		    boolean showPageNotifications 		= AccessRightController.getController().getIsPrincipalAuthorized(templateController.getDatabase(), principal, "ComponentEditor.PageNotifications", true, false, true);
-		    System.out.println("\n\nshowPageNotifications:" + showPageNotifications);
 
 		    String extraHeader 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextDiskPath() + "preview/pageComponentEditorHeader.vm"), "iso-8859-1");
 		    String extraBody 	= FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextDiskPath() + "preview/pageComponentEditorBody.vm"), "iso-8859-1");

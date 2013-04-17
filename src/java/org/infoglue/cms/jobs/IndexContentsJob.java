@@ -77,7 +77,9 @@ public class IndexContentsJob implements Job
 					LuceneController.getController().index();
 				} 
 				catch (Exception e) 
-				{}
+				{
+					
+				}
     		}
     		catch(Exception e)
     	    {

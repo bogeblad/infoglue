@@ -215,7 +215,7 @@ public class ContentController extends BaseController
 		}
 		//String SQL = "CALL SQL " + sql.toString() + " AS org.infoglue.cms.entities.management.GeneralOQLResult";
 		String SQL = "" + sql.toString() + "";
-		System.out.println("SQL:" + SQL);
+		logger.info("SQL:" + SQL);
 		
 		Connection conn = (Connection) db.getJdbcConnection();
 		

@@ -217,8 +217,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 		String componentXML = getPageComponentsString(getDatabase(), this.getTemplateController(), this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), this.getDeliveryContext().getContentId());
 		componentXML = appendPagePartTemplates(componentXML, this.getDeliveryContext().getSiteNodeId());
 		
-		System.out.println("componentXML:" + componentXML)
-		;
 		InfoGlueComponent baseComponent = null;
 		
    		if(componentXML != null && componentXML.length() != 0)
@@ -250,7 +248,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				//logger.info("pageComponents:" + pageComponents.size());
 				preProcessComponents(nodeDeliveryController, repositoryId, unsortedPageComponents, pageComponents);
 				
-				System.out.println("pageComponents.size():" + pageComponents.size());
 				if(pageComponents.size() > 0)
 				{
 					baseComponent = (InfoGlueComponent)pageComponents.get(0);
@@ -259,7 +256,6 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 				if(baseComponent != null)
 				{
 					ContentVO metaInfoContentVO = nodeDeliveryController.getBoundContent(getDatabase(), this.getTemplateController().getPrincipal(), this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), true, "Meta information", this.getDeliveryContext());
-					System.out.println("metaInfoContentVO" + metaInfoContentVO.getId());
 					pageContent = renderComponent(baseComponent, this.getTemplateController(), repositoryId, this.getDeliveryContext().getSiteNodeId(), this.getDeliveryContext().getLanguageId(), this.getDeliveryContext().getContentId(), metaInfoContentVO.getId(), 15, 0);
 				}
 

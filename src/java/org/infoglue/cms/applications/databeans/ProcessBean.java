@@ -34,6 +34,7 @@ import net.sf.cglib.core.ProcessArrayCallback;
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.managementtool.actions.ExportRepositoryAction;
 import org.infoglue.cms.security.InfoGluePrincipal;
+import org.infoglue.cms.util.ChangeNotificationController;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -298,7 +299,10 @@ public class ProcessBean
     	if(status == RUNNING)
     		this.started = new Date();
     	else if(status == FINISHED || status == ERROR)
+    	{
     		this.finished = new Date();
+    		ChangeNotificationController.notifyListeners();
+    	}
     }
     
     public List<String> getProcessEvents()

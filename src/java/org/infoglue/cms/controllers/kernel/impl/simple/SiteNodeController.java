@@ -1312,7 +1312,7 @@ public class SiteNodeController extends BaseController
 	   		SQL.append("	) ");
 	   		SQL.append("order by sn.parentSiteNodeId ASC, snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC LIMIT $3 AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
     	}
-    	System.out.println("SQL:" + SQL);
+   		logger.info("SQL:" + SQL);
     	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
     	//logger.info("showDeletedItems:" + showDeletedItems);
     	OQLQuery oql = db.getOQLQuery(SQL.toString());

@@ -596,7 +596,8 @@ function showComponentMenu(event, element, compId, anInsertUrl, anDeleteUrl, anC
 	{
 		editDivElement.style.display = "none";
 		editInlineDivElement.style.display = "none";
-		subscribeContentDivElement.style.display = "none";
+		if(subscribeContentDivElement)
+			subscribeContentDivElement.style.display = "none";
 	}
 	else
 	{
@@ -607,7 +608,8 @@ function showComponentMenu(event, element, compId, anInsertUrl, anDeleteUrl, anC
 		$(editDivElement).click(function () { edit(anEditUrl); });
 		$(editInlineDivElement).click(function () { editInlineSimple(selectedRepositoryId); });
 		var subscriptionUrl = componentEditorUrl + "Subscriptions!input.action?interceptionPointCategory=Content&entityName=org.infoglue.cms.entities.content.Content&entityId=" + selectedContentId + "&extraParameters=" + selectedContentId + "&returnAddress=" + componentEditorUrl + "ViewInlineOperationMessages.action";
-		$(subscribeContentDivElement).click(function () { openInlineDiv(subscriptionUrl, 700, 750, true); });
+		if(subscribeContentDivElement)
+			$(subscribeContentDivElement).click(function () { openInlineDiv(subscriptionUrl, 700, 750, true); });
 	}
 		
 	var componentEditorInNewWindowDivCompElement = document.getElementById("componentEditorInNewWindowDiv" + compId);

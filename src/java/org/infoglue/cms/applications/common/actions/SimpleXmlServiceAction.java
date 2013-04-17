@@ -476,7 +476,6 @@ public abstract class SimpleXmlServiceAction extends InfoGlueAbstractAction
 			        }
 		        }
 		        
-		        System.out.println("Parameters:" + theNode.getParameters());
 		        //TODO - this was a quickfix only
 		        if(!useTemplate && sup.getClass().getName().indexOf("Content") > -1)
 		        {

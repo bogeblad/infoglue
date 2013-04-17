@@ -308,9 +308,7 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
         	}
         	
         	processBean.updateProcess("Searching for all published versions.");
-        	System.out.println("1");
         	List<SmallestContentVersionVO> contentVersionsVOList = ContentVersionController.getContentVersionController().getPublishedActiveContentVersionVOList(contentIds, db);
-        	System.out.println("2");
         	processBean.updateProcess("Found " + contentVersionsVOList.size() + " versions");
         	
         	for(SmallestContentVersionVO contentVersionVO : contentVersionsVOList)
@@ -321,7 +319,6 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
         		//contentVersion.setVersionModifier(this.getInfoGluePrincipal().getName());
 				
 				ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), db, events);
-	        	System.out.println("3");
         		
 				EventVO eventVO = new EventVO();
 				eventVO.setDescription(this.versionComment);
@@ -345,7 +342,6 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 			    publicationVO.setDescription(getVersionComment());
 			    publicationVO.setPublisher(this.getInfoGluePrincipal().getName());
 			    publicationVO.setRepositoryId(repositoryId);
-	        	System.out.println("4");
 
 			    publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, this.overrideVersionModifyer, this.getInfoGluePrincipal(), db);
 			}
@@ -354,7 +350,6 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
         }
         catch(Exception e)
         {
-        	e.printStackTrace();
 			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
 			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
             rollbackTransaction(db);

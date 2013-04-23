@@ -834,6 +834,40 @@ public class SiteNodeVersionController extends BaseController
 		return siteNodeVersionVO;
     }
 
+	/**
+	 * This method does not cache! Use {@link #getLatestActiveSiteNodeVersionVO(Database, Integer)} if possible.
+	 */
+	public SiteNodeVersionVO getLatestActiveSiteNodeVersionVO(Database db, Integer siteNodeId, Integer stateId) throws SystemException, Bug, Exception
+	{
+		SiteNodeVersionVO siteNodeVersionVO = null;
+		SmallSiteNodeVersionImpl siteNodeVersion = null;
+
+	    OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl cv WHERE cv.siteNodeId = $1 AND cv.isActive = $2 AND cv.stateId = $3 ORDER BY cv.siteNodeVersionId desc");
+		oql.bind(siteNodeId);
+		oql.bind(new Boolean(true));
+		oql.bind(stateId);
+
+		QueryResults results = oql.execute(Database.ReadOnly);
+
+		if (results.hasMore()) 
+	    {
+	    	siteNodeVersion = (SmallSiteNodeVersionImpl)results.next();
+        }
+
+		results.close();
+		oql.close();
+
+	    if(siteNodeVersion != null)
+	    {
+	    	siteNodeVersionVO = siteNodeVersion.getValueObject();
+	    }
+	    else
+	    {
+	    	logger.warn("The siteNode " + siteNodeId + " did not have a latest active siteNodeVersion - very strange.");
+	    }
+
+	    return siteNodeVersionVO;
+	}
     
 	/**
 	 * This is a method used to get the latest site node version of a sitenode within a given transaction.

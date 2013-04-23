@@ -178,10 +178,11 @@
 				#set($option5 = ["604800000", "7 days"])
 				#set($option6 = ["2678400000", "1 month"])
 				#set($minimumTimeBetweenVersionsDuringCleanOptions = [$option1, $option2, $option3, $option4, $option5, $option6]) 
-				
+
 				#selectFieldCSS("ServerNode.property.minimumTimeBetweenVersionsDuringClean" "minimumTimeBetweenVersionsDuringClean" $this.getPropertyValue('minimumTimeBetweenVersionsDuringClean') $minimumTimeBetweenVersionsDuringCleanOptions $!cmsPH.minimumTimeBetweenVersionsDuringCleanOptions)
 				#yesNoDropDownWithInheritCSS("ServerNode.property.duplicateAssetsBetweenVersions" "duplicateAssetsBetweenVersions" "$this.getPropertyValue('duplicateAssetsBetweenVersions')" $!cmsPH.duplicateAssetsBetweenVersions)
 				#editPropertyTextAreaCSS("ServerNode.property.assetUploadTransformationsSettings" "assetUploadTransformationsSettings" "$this.getDataPropertyValue('assetUploadTransformationsSettings')" "40" "6" "righttextarea" "$!serverNodeId" $!cmsPH.assetUploadTransformationsSettings)
+				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyShowReferenceIfLatestVersion" "onlyShowReferenceIfLatestVersion" "$this.getPropertyValue('onlyShowReferenceIfLatestVersion')" $!cmsPH.onlyShowReferenceIfLatestVersion)
 			</div>
 		
 			<div class="inlineTabDiv" id="niceURISettings">
@@ -291,6 +292,9 @@
 				#editPropertyFieldCSS("ServerNode.property.systemEmailSender" "systemEmailSender" "$this.getPropertyValue('systemEmailSender')" "51" "$!serverNodeId" "$!cmsPH.systemEmailSender")
 				#editPropertyFieldCSS("ServerNode.property.warningEmailReceiver" "warningEmailReceiver" "$this.getPropertyValue('warningEmailReceiver')" "51" "$!serverNodeId" "$!cmsPH.warningEmailReceiver")
 				#editPropertyFieldCSS("ServerNode.property.emailRecipientLimit" "emailRecipientLimit" "$this.getPropertyValue('emailRecipientLimit')" "51" "$!serverNodeId" "$!cmsPH.emailRecipientLimit")
+				#editPropertyFieldCSS("ServerNode.property.contactPersonEmailMetaInfoAttribute" "contactPersonEmailMetaInfoAttribute" "$this.getPropertyValue('contactPersonEmailMetaInfoAttribute')" "51" "$!serverNodeId" "$!cmsPH.contactPersonEmailMetaInfoAttribute")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.notifyResponsibleOnReferenceChange" "notifyResponsibleOnReferenceChange" "$this.getPropertyValue('notifyResponsibleOnReferenceChange')" $!cmsPH.notifyResponsibleOnReferenceChange)
+				#editPropertyFieldCSS("ServerNode.property.registryContactMailLanguage" "registryContactMailLanguage" "$this.getPropertyValue('registryContactMailLanguage')" "51" "$!serverNodeId" "$!cmsPH.registryContactMailLanguage")
 			</div>
 				
 		

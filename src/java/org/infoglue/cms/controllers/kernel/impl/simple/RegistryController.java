@@ -25,11 +25,11 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -50,13 +50,12 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
-import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.Registry;
 import org.infoglue.cms.entities.management.RegistryVO;
+import org.infoglue.cms.entities.management.SystemUser;
 import org.infoglue.cms.entities.management.impl.simple.RegistryImpl;
 import org.infoglue.cms.entities.structure.Qualifyer;
-import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
@@ -69,6 +68,7 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.Timer;
 
@@ -117,6 +117,13 @@ public class RegistryController extends BaseController
 		return registryVO;
 	}
 
+	public RegistryVO getRegistryVOWithId(Integer registryId, Database db) throws SystemException, Exception
+	{
+		RegistryVO registryVO = (RegistryVO)getVOWithId(RegistryImpl.class, registryId, db);
+		
+		return registryVO;
+	}
+
 	
 	/**
 	 * This method creates a registry entity in the db.
@@ -147,7 +154,142 @@ public class RegistryController extends BaseController
     	return (RegistryVO) updateEntity(RegistryImpl.class, (BaseEntityVO) valueObject, db);
     }    
     
-    
+    private Map<String, List<ReferenceBean>> groupByContactPerson(List<ReferenceBean> contactPersons)
+	{
+		Map<String, List<ReferenceBean>> result = new HashMap<String, List<ReferenceBean>>();
+
+		for (ReferenceBean referenceBean : contactPersons)
+		{
+			if (referenceBean.getContactPersonEmail() == null || referenceBean.getContactPersonEmail().equals(""))
+			{
+				continue;
+			}
+			List<ReferenceBean> personsList = result.get(referenceBean.getContactPersonEmail());
+			if (personsList == null)
+			{
+				personsList = new ArrayList<ReferenceBean>();
+				result.put(referenceBean.getContactPersonEmail(), personsList);
+			}
+			personsList.add(referenceBean);
+		}
+
+		return result;
+	}
+
+    public void notifyContactPersonsForSiteNode(SiteNodeVO siteNodeVO, List<ReferenceBean> contacts, Database db) throws SystemException, Exception
+    {
+    	Map<String, List<ReferenceBean>> contactMap = groupByContactPerson(contacts);
+
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Will notify people about registry change. " + contactMap);
+    	}
+
+    	String registryContactMailLanguage = CmsPropertyHandler.getRegistryContactMailLanguage();
+    	Locale locale = new Locale(registryContactMailLanguage);
+
+    	try
+    	{
+    		StringBuilder baseContent = new StringBuilder();
+
+    		baseContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.intro"));
+    		baseContent.append("<p>");
+    		baseContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.siteNodeLabel"));
+    		baseContent.append(getSiteNodePath(siteNodeVO, db));
+    		baseContent.append("</p>");
+
+    		String from = CmsPropertyHandler.getSystemEmailSender();
+    		String subject = getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.subject");
+
+	    	for (Map.Entry<String, List<ReferenceBean>> entry : contactMap.entrySet())
+	    	{
+				try
+				{
+					StringBuilder sb = new StringBuilder(baseContent);
+
+					String path;
+					String url;
+					StringBuilder siteNodeBuilder = new StringBuilder(baseContent);
+					StringBuilder contentBuilder = new StringBuilder(baseContent);
+					for (ReferenceBean reference : entry.getValue())
+					{
+						if (reference.getPath() != null && !reference.getPath().equals(""))
+						{
+							path = reference.getPath();
+						}
+						else
+						{
+							path = reference.getName();
+						}
+
+						if (reference.getReferencingCompletingObject().getClass().getName().indexOf("Content") != -1)
+						{
+							Integer languageId;
+							if (reference.getVersions().size() == 0)
+							{
+								languageId = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db).getLanguageId();
+							}
+							else
+							{
+								ContentVersionVO version = (ContentVersionVO)reference.getVersions().get(0).getReferencingObject();
+								languageId = version.getLanguageId();
+							}
+
+							// ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$languageId"
+							url = "ViewContentVersion!standalone.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
+							contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
+						}
+						else
+						{
+							// DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1
+							url = "DeleteContent!fixPage.action?siteNodeId=" + ((SiteNodeVO)reference.getReferencingCompletingObject()).getSiteNodeId() + "&contentId=-1";
+							siteNodeBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
+						}
+					}
+					if (contentBuilder.length() > 0)
+					{
+						sb.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.listHeader.content"));
+						sb.append("<ul>");
+						sb.append(contentBuilder);
+						sb.append("</ul>");
+					}
+					if (siteNodeBuilder.length() > 0)
+					{
+						sb.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.listHeader.siteNode"));
+						sb.append("<ul>");
+						sb.append(siteNodeBuilder);
+						sb.append("</ul>");
+					}
+
+					sb.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.footer"));
+
+					String to = entry.getKey();
+					String content = sb.toString();
+
+					if (contentBuilder.length() > 0 || siteNodeBuilder.length() > 0)
+					{
+						logger.debug("Sending notification email to: " + to);
+						MailServiceFactory.getService().sendEmail("text/html", from, to, null, null, null, null, subject, content, "utf-8");
+					}
+					else
+					{
+						logger.warn("No Contents or SiteNodes were found for the given person. This is very strange. Contact person: " + to + ", SiteNode.id: " + siteNodeVO.getSiteNodeId());
+					}
+				}
+				catch (SystemException ex)
+				{
+					logger.error("Failed to notify contact person about registry change. Person: " + entry.getKey() + ". Message: " + ex.getMessage() + ". Type: " + ex.getClass());
+					logger.warn("Failed to notify contact person about registry change. Person: " + entry.getKey(), ex);
+				}
+	    	}
+    	}
+    	catch (Exception ex)
+    	{
+    		logger.error("Failed to generate email for contact person notfication. Message: " + ex.getMessage() + ". Type: " + ex.getClass());
+			logger.warn("Failed to generate email for contact person notfication.", ex);
+    	}
+    }
+
     /**
      * This method deletes a registry entry
      * @return registryId
@@ -157,9 +299,124 @@ public class RegistryController extends BaseController
     
     public void delete(Integer registryId) throws ConstraintException, SystemException
     {
-    	this.deleteEntity(RegistryImpl.class, registryId);
-    }   
-    
+    	deleteEntity(RegistryImpl.class, registryId);
+    }
+
+    public void delete(String[] registryIds, InfoGluePrincipal principal) throws ConstraintException, SystemException
+    {
+    	Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+			beginTransaction(db);
+
+			Integer registryId;
+			for (String registryIdString : registryIds)
+			{
+				registryId = new Integer(registryIdString);
+				InconsistenciesController.getController().removeReferences(registryId, principal);
+				deleteEntity(RegistryImpl.class, registryId, db);
+			}
+
+		    commitTransaction(db);
+		}
+		catch (Exception e)
+		{
+		    logger.error("Failed to delete registries in list: " + Arrays.toString(registryIds) + ". Message: " + e.getMessage());
+		    rollbackTransaction(db);
+		}
+    }
+
+    public void delete(Integer registryId, Database db) throws ConstraintException, SystemException
+    {
+    	deleteEntity(RegistryImpl.class, registryId, db);
+    }
+
+    public void deleteAllForSiteNode(Integer siteNodeId) throws SystemException
+    {
+    	Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+			beginTransaction(db);
+
+			deleteAllForSiteNode(siteNodeId, db);
+
+		    commitTransaction(db);
+		}
+		catch (Exception ex)
+		{
+			logger.error("Failed to delete SiteNode with all its references. Message: " + ex.getMessage() + ". Type: " + ex.getClass());
+		    logger.warn("Failed to delete SiteNode with all its references.", ex);
+		    rollbackTransaction(db);
+		}
+    }
+
+    public void deleteAllForSiteNode(Integer siteNodeId, Database db) throws SystemException, Exception
+    {
+    	@SuppressWarnings("unchecked")
+		List<RegistryVO> registryEntires = getMatchingRegistryVOList(SiteNode.class.getName(), siteNodeId.toString(), -1, db);
+    	for (RegistryVO registryVO : registryEntires)
+    	{
+    		delete(registryVO.getRegistryId(), db);
+    	}
+    }
+
+	public void deleteAllAndNotifyForSiteNode(Integer siteNodeId) throws SystemException, Exception
+	{
+		deleteAllAndNotifyForSiteNode(siteNodeId, false);
+	}
+
+	public void deleteAllAndNotifyForSiteNode(Integer siteNodeId, Database db) throws SystemException, Exception
+	{
+		deleteAllAndNotifyForSiteNode(siteNodeId, false, db);
+	}
+
+	public void deleteAllAndNotifyForSiteNode(Integer siteNodeId, boolean onlyLatest) throws SystemException, Exception
+    {
+        Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+			beginTransaction(db);
+
+		    deleteAllAndNotifyForSiteNode(siteNodeId, onlyLatest, db);
+
+		    commitTransaction(db);
+		}
+		catch (Exception ex)
+		{
+			logger.error("Failed to delete SiteNode with all its references. Message: " + ex.getMessage() + ". Type: " + ex.getClass());
+		    logger.warn("Failed to delete SiteNode with all its references.", ex);
+		    rollbackTransaction(db);
+		}
+    }
+
+	public void deleteAllAndNotifyForSiteNode(Integer siteNodeId, boolean onlyLatest, Database db) throws SystemException, Exception
+	{
+		@SuppressWarnings("unchecked")
+		List<RegistryVO> registryEntires = getMatchingRegistryVOList(SiteNode.class.getName(), siteNodeId.toString(), -1, db);
+//		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
+		SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithId(siteNodeId, db);
+		Map<String, ReferenceBean> entries = new HashMap<String, ReferenceBean>();
+		List<ReferenceBean> references = new ArrayList<ReferenceBean>();
+		for (RegistryVO registryVO : registryEntires)
+		{
+			if (logger.isInfoEnabled())
+			{
+				logger.info("About to remove registry bean and notify. Referencing-type: " + registryVO.getReferencingEntityName() + ", referencing-id: " + registryVO.getReferencingEntityId());
+			}
+			ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, onlyLatest, db);
+			if (referenceBean != null)
+			{
+				references.add(referenceBean);
+			}
+			//db.remove(registryVO);
+		}
+		notifyContactPersonsForSiteNode(siteNode.getValueObject(), references, db);
+		//db.remove(siteNode);
+	}
+
 	/**
 	 * this method goes through all inline stuff and all relations if ordinary content 
 	 * and all components and bindings if a metainfo.
@@ -295,7 +552,7 @@ public class RegistryController extends BaseController
 				}
 	        }
 	    }
-		
+
 		class DeleteForReferencingEntityNameRunnable implements Runnable
 		{
 			List<String[]> list;
@@ -1527,15 +1784,107 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
     */
+	
+	protected String getContactPersonEmail(ContentVO contentVO, Database db) throws SystemException, Exception
+	{
+		SystemUser su = SystemUserController.getController().getSystemUserWithName(contentVO.getCreatorName(), db);
 
-    public List getReferencingObjectsForSiteNode(Integer siteNodeId) throws SystemException, Exception
+		if (su == null)
+		{
+			return "";
+		}
+		else
+		{
+			return su.getEmail();
+		}
+	}
+	
+	/**
+     * Attempts to get an email address to the contact person of the given SiteNode.
+     *
+     * First the Meta info is examined for a value of an attribute specified by {@link CmsPropertyHandler#getContactPersonEmailMetaInfoAttribute()}
+     * and if nothing is found the SiteNode creator's email is used. An empty String is returned if no value could be found.
+     */
+    protected String getContactPersonEmail(SiteNodeVO siteNode, Database db) throws SystemException, Exception
+	{
+    	String contactPersonEmailMetaInfoAttribute = CmsPropertyHandler.getContactPersonEmailMetaInfoAttribute();
+
+    	if (contactPersonEmailMetaInfoAttribute != null && !contactPersonEmailMetaInfoAttribute.equals(""))
+    	{
+	    	LanguageVO masterLanguage = LanguageController.getController().getMasterLanguage(siteNode.getRepositoryId(), db);
+			if (masterLanguage != null)
+			{
+	    		ContentVersionVO metaInfoContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), masterLanguage.getId(), db);
+	    		if (metaInfoContentVersion != null)
+	    		{
+	    			String contactPersonEmail = ContentVersionController.getContentVersionController().getAttributeValue(metaInfoContentVersion, contactPersonEmailMetaInfoAttribute, false);
+	    			if (contactPersonEmail != null && !contactPersonEmail.equals(""))
+	    			{
+		    			if (logger.isDebugEnabled())
+		    			{
+		    				logger.debug("Reading contact person email from: SiteNode, meta info, master language. Id: " + siteNode.getId());
+		    			}
+		    			return contactPersonEmail;
+	    			}
+	    		}
+			}
+
+			@SuppressWarnings("unchecked")
+			List<LanguageVO> repositoryLanguages = LanguageController.getController().getLanguageVOList(siteNode.getRepositoryId(), db);
+			for (LanguageVO language : repositoryLanguages)
+			{
+				ContentVersionVO metaInfoContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNode.getMetaInfoContentId(), language.getId(), db);
+	    		if (metaInfoContentVersion != null)
+	    		{
+	    			String contactPersonEmail = ContentVersionController.getContentVersionController().getAttributeValue(metaInfoContentVersion, contactPersonEmailMetaInfoAttribute, false);
+	    			if (contactPersonEmail != null && !contactPersonEmail.equals(""))
+	    			{
+		    			if (logger.isDebugEnabled() && contactPersonEmail != null)
+		    			{
+		    				if (logger.isDebugEnabled())
+			    			{
+		    					logger.debug("Reading contact person email from: SiteNode, meta info, language. Language-id: " + language.getId() + ", Id: " + siteNode.getId());
+			    			}
+		    				return contactPersonEmail;
+		    			}
+		    		}
+	    		}
+			}
+    	}
+
+		SystemUser creator = SystemUserController.getController().getSystemUserWithName(siteNode.getCreatorName(), db);
+		if (creator != null)
+		{
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("Reading contact person email from: SiteNode, system user. SystemUser: " + creator.getUserName() + ", Id: " + siteNode.getId());
+			}
+			return creator.getEmail();
+		}
+
+		logger.debug("Found no contact person email. SiteNode.id: " + siteNode.getId());
+		return "";
+	}
+
+
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId) throws SystemException, Exception
     {
-    	return getReferencingObjectsForSiteNode(siteNodeId, -1);
+    	return getReferencingObjectsForSiteNode(siteNodeId, -1, false);
     }
     
-    public List getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows) throws SystemException, Exception
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, boolean onlyLatestVersion) throws SystemException, Exception
     {
-        List referenceBeanList = new ArrayList();
+    	return getReferencingObjectsForSiteNode(siteNodeId, -1, onlyLatestVersion);
+    }
+
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows) throws SystemException, Exception
+    {
+    	return getReferencingObjectsForSiteNode(siteNodeId, maxRows, false);
+    }
+
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion) throws SystemException, Exception
+    {
+        List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
         
         Database db = CastorDatabaseService.getDatabase();
 		
@@ -1543,11 +1892,11 @@ public class RegistryController extends BaseController
 		{
 			beginTransaction(db);
 
-		    referenceBeanList = getReferencingObjectsForSiteNode(siteNodeId, maxRows, db);
+		    referenceBeanList = getReferencingObjectsForSiteNode(siteNodeId, maxRows, onlyLatestVersion, db);
 
 		    commitTransaction(db);
 		}
-		catch (Exception e)		
+		catch (Exception e)
 		{
 		    logger.warn("One of the references was not found which is bad but not critical:" + e.getMessage(), e);
 		    rollbackTransaction(db);
@@ -1556,112 +1905,227 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 
-		    
-    public List getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, Database db) throws SystemException, Exception
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, Database db) throws SystemException, Exception
     {
-        List referenceBeanList = new ArrayList();
-        
-		Map entries = new HashMap();
-		
-		List registryEntires = getMatchingRegistryVOList(SiteNode.class.getName(), siteNodeId.toString(), maxRows, db);
-        Iterator registryEntiresIterator = registryEntires.iterator();
+    	return getReferencingObjectsForSiteNode(siteNodeId, maxRows, false, db);
+    }
+
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion, Database db) throws SystemException, Exception
+    {
+        List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
+
+		Map<String, ReferenceBean> entries = new HashMap<String, ReferenceBean>();
+
+		@SuppressWarnings("unchecked")
+		List<RegistryVO> registryEntires = getMatchingRegistryVOList(SiteNode.class.getName(), siteNodeId.toString(), maxRows, db);
+        Iterator<RegistryVO> registryEntiresIterator = registryEntires.iterator();
         while(registryEntiresIterator.hasNext())
         {
-            RegistryVO registryVO = (RegistryVO)registryEntiresIterator.next();
+            RegistryVO registryVO = registryEntiresIterator.next();
             logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
-            boolean add = true;
-
-            String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
-            //String key = "" + registryVO.getReferencingEntityName() + "_" + registryVO.getReferencingEntityId();
-            ReferenceBean existingReferenceBean = (ReferenceBean)entries.get(key);
-            if(existingReferenceBean == null)
+            ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, onlyLatestVersion, db);
+            if (referenceBean != null)
             {
-                existingReferenceBean = new ReferenceBean();
-	            logger.info("Adding referenceBean to entries with key:" + key);
-	            entries.put(key, existingReferenceBean);
-	            referenceBeanList.add(existingReferenceBean);
-	        }
+            	referenceBeanList.add(referenceBean);
+            }
+        }
 
-            ReferenceVersionBean referenceVersionBean = new ReferenceVersionBean();
-            
-            if(registryVO.getReferencingEntityName().indexOf("Content") > -1)
+        Iterator<ReferenceBean> i = referenceBeanList.iterator();
+        while(i.hasNext())
+        {
+            ReferenceBean referenceBean = i.next();
+            if(referenceBean.getVersions().size() == 0)
+                i.remove();
+        }
+
+        return referenceBeanList;
+    }
+    
+    protected String getSiteNodePath(SiteNodeVO siteNodeVO, Database db) throws Exception
+	{
+		StringBuilder sb = new StringBuilder();
+
+		do
+		{
+			if(siteNodeVO.getParentSiteNodeId() != null)
+			{
+				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
+			}
+			else
+			{
+				siteNodeVO = null;
+			}
+			if (siteNodeVO != null)
+			{
+				sb.insert(0, " / " + siteNodeVO.getName());
+			}
+		} while(siteNodeVO != null);
+
+		return sb.toString();
+	}
+
+    protected String getContentPath(ContentVO contentVO, Database db) throws Exception
+    {
+    	StringBuilder sb = new StringBuilder();
+
+    	do
+    	{
+    		if(contentVO.getParentContentId() != null)
+    		{
+    			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
+    		}
+    		else
+    		{
+    			contentVO = null;
+    		}
+    		if (contentVO != null)
+    		{
+    			sb.insert(0, " / " + contentVO.getName());
+    		}
+    	} while(contentVO != null);
+
+    	return sb.toString();
+    }
+    
+    private ReferenceBean getReferenceBeanFromRegistryVO(RegistryVO registryVO, Map<String, ReferenceBean> entries, boolean onlyLatestVersion, Database db)
+    {
+    	ReferenceBean result = null;
+    	boolean add = true;
+
+        String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
+        //String key = "" + registryVO.getReferencingEntityName() + "_" + registryVO.getReferencingEntityId();
+        ReferenceBean existingReferenceBean = (ReferenceBean)entries.get(key);
+        if(existingReferenceBean == null)
+        {
+            existingReferenceBean = new ReferenceBean();
+            logger.info("Adding referenceBean to entries with key:" + key);
+            entries.put(key, existingReferenceBean);
+//            referenceBeanList.add(existingReferenceBean);
+            result = existingReferenceBean;
+        }
+        else if (logger.isDebugEnabled())
+        {
+        	logger.debug("Already had ReferenceBean for key: " + key);
+        }
+
+        ReferenceVersionBean referenceVersionBean = new ReferenceVersionBean();
+
+        if(registryVO.getReferencingEntityName().indexOf("Content") > -1)
+        {
+            try
             {
-                try
+            	logger.debug("RegistryVO references Content");
+                ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+
+                if (onlyLatestVersion)
                 {
-                    ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
-                    ContentVO content = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), db);
-		    		existingReferenceBean.setName(content.getName());
-		    		existingReferenceBean.setReferencingCompletingObject(content);
+                	ContentVersionVO latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVersion.getContentId(), contentVersion.getLanguageId(), ContentVersionVO.WORKING_STATE, db);
+
+                	if (logger.isDebugEnabled())
+                	{
+                		logger.debug("Latest version in working state for content.id: " + contentVersion.getContentId() + ". latestContentVersion.id: " + (latestContentVersion == null ? "null" : latestContentVersion.getContentVersionId()));
+                	}
+                	
+                	if (latestContentVersion != null && latestContentVersion.getContentVersionId().intValue() != contentVersion.getContentVersionId().intValue())
+                	{
+                		logger.debug("ContentVersion was not latest version. Will not add. ContentVersion-Id: " + contentVersion.getId());
+						add = false;
+                	}
+                }
+
+                if (add)
+                {
+                	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), db);
+		    		existingReferenceBean.setName(contentVO.getName());
+		    		existingReferenceBean.setPath(getContentPath(contentVO, db));
+		    		existingReferenceBean.setReferencingCompletingObject(contentVO);
+
+		    		String contactPersonEmail = getContactPersonEmail(contentVO, db);
+		    		existingReferenceBean.setContactPersonEmail(contactPersonEmail);
 
 		    		referenceVersionBean.setReferencingObject(contentVersion);
 		    		referenceVersionBean.getRegistryVOList().add(registryVO);
                 }
-                catch(Exception e)
-                {
-                    add = false;
-                    logger.info("content:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
-                }
             }
-            else
+            catch(Exception e)
             {
-                try
-                {
-	                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
-                	SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
-		    		existingReferenceBean.setName(siteNode.getName());
-		    		existingReferenceBean.setReferencingCompletingObject(siteNode);
+                add = false;
+                logger.info("content:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
+            }
+        }
+        else
+        {
+            try
+            {
+            	logger.debug("RegistryVO references SiteNode");
+                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+
+            	if (onlyLatestVersion)
+            	{
+            		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVersion.getSiteNodeId(), SiteNodeVersionVO.WORKING_STATE);
+            		if (latestSiteNodeVersion != null && latestSiteNodeVersion.getSiteNodeVersionId() != siteNodeVersion.getSiteNodeVersionId())
+                	{
+                		logger.debug("ContentVersion was not latest version. Will not add. ContentVersion-Id: " + siteNodeVersion.getId());
+						add = false;
+                	}
+            	}
+
+            	if (add)
+            	{
+            		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
+		    		existingReferenceBean.setName(siteNodeVO.getName());
+		    		existingReferenceBean.setPath(getSiteNodePath(siteNodeVO, db));
+		    		existingReferenceBean.setReferencingCompletingObject(siteNodeVO);
 		    		referenceVersionBean.setReferencingObject(siteNodeVersion);
 
+		    		String contactPersonEmail = getContactPersonEmail(siteNodeVO, db);
+		    		existingReferenceBean.setContactPersonEmail(contactPersonEmail);
+
 		    		referenceVersionBean.getRegistryVOList().add(registryVO);
-                }
-                catch(Exception e)
+            	}
+            }
+            catch(Exception e)
+            {
+                add = false;
+                logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
+            }
+        }
+
+        if(add)
+        {
+            boolean exists = false;
+            ReferenceVersionBean existingReferenceVersionBean = null;
+            Iterator<ReferenceVersionBean> versionsIterator = existingReferenceBean.getVersions().iterator();
+            while(versionsIterator.hasNext())
+            {
+                existingReferenceVersionBean = (ReferenceVersionBean)versionsIterator.next();
+                if(existingReferenceVersionBean.getReferencingObject().equals(referenceVersionBean.getReferencingObject()))
                 {
-                    add = false;
-                    logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
+                    exists = true;
+                    break;
                 }
             }
-               
-            if(add)
-            {
-	            boolean exists = false;
-	            ReferenceVersionBean existingReferenceVersionBean = null;
-	            Iterator versionsIterator = existingReferenceBean.getVersions().iterator();
-	            while(versionsIterator.hasNext())
-	            {
-	                existingReferenceVersionBean = (ReferenceVersionBean)versionsIterator.next();
-	                if(existingReferenceVersionBean.getReferencingObject().equals(referenceVersionBean.getReferencingObject()))
-	                {
-	                    exists = true;
-	                    break;
-	                }
-	            }
-	            
-	            if(!exists)
-	                existingReferenceBean.getVersions().add(referenceVersionBean);
-	            else
-	                existingReferenceVersionBean.getRegistryVOList().add(registryVO);
-	        }
+
+            if(!exists)
+                existingReferenceBean.getVersions().add(referenceVersionBean);
+            else
+                existingReferenceVersionBean.getRegistryVOList().add(registryVO);
+
+            logger.debug("Number of versions: " + existingReferenceBean.getVersions());
         }
-        
-        Iterator i = referenceBeanList.iterator();
-        while(i.hasNext())
-        {
-            ReferenceBean referenceBean = (ReferenceBean)i.next();
-            if(referenceBean.getVersions().size() == 0)
-                i.remove();
-        }
-		
-        return referenceBeanList;
+
+
+        return result;
     }
 
 	/**
 	 * Gets matching references
 	 */
-	
+
 	public List getMatchingRegistryVOList(String entityName, String entityId, int maxRows, Database db) throws SystemException, Exception
 	{
 	    List matchingRegistryVOList = new ArrayList();
-	    
+
 		String SQL = "CALL SQL select registryId, entityName, entityid, referencetype, referencingentityname, referencingentityid, referencingentitycomplname, referencingentitycomplid from cmRegistry r where r.entityName = $1 AND r.entityId = $2 AS org.infoglue.cms.entities.management.impl.simple.RegistryImpl";
 		if(maxRows > 0)
 		{
@@ -1672,31 +2136,31 @@ public class RegistryController extends BaseController
 			else if(CmsPropertyHandler.getDatabaseEngine().equalsIgnoreCase("sqlserver"))
 				SQL = "CALL SQL select top " + maxRows + " registryId, entityName, entityid, referencetype, referencingentityname, referencingentityid, referencingentitycomplname, referencingentitycomplid from cmRegistry r where r.entityName = $1 AND r.entityId = $2 AS org.infoglue.cms.entities.management.impl.simple.RegistryImpl";
 		}
-		
+
 		OQLQuery oql = db.getOQLQuery(SQL);
 		//OQLQuery oql = db.getOQLQuery("SELECT r FROM org.infoglue.cms.entities.management.impl.simple.RegistryImpl r WHERE r.entityName = $1 AND r.entityId = $2 ORDER BY r.registryId");
 		oql.bind(entityName);
 		oql.bind(entityId);
-		
+
 		QueryResults results = oql.execute(Database.ReadOnly);
-		
+
 		int i = 0;
 		while (results.hasMore() && (maxRows == -1 || i < maxRows)) 
         {
             Registry registry = (Registry)results.next();
             RegistryVO registryVO = registry.getValueObject();
-                
+
             matchingRegistryVOList.add(registryVO);
 
             i++;
-        }            
-		
+        }
+
 		results.close();
 		oql.close();
 
-		return matchingRegistryVOList;		
+		return matchingRegistryVOList;
 	}
-	
+
 	/**
 	 * Gets matching references
 	 */
@@ -2256,8 +2720,7 @@ public class RegistryController extends BaseController
 
 		return siteNodeVersion;		
 	}
-	
-	
+
 	private static ThreadLocal<List<String[]>> clearRegistryForReferencingEntityNameQueue = new ThreadLocal<List<String[]>>() 
 	{
 		protected List<String[]> initialValue() { return new ArrayList<String[]>(); }
@@ -2276,5 +2739,4 @@ public class RegistryController extends BaseController
 	{
 		clearRegistryForReferencingEntityNameQueue.get().add(new String[]{entityName, entityName});
 	}
-
 }

@@ -22,7 +22,7 @@
 		#if($inlineImageDefaultRepositoryId && $inlineImageDefaultRepositoryId != "")
 			var inlineImageDefaultRepositoryId = $inlineImageDefaultRepositoryId;
 		#end
-
+		
 	</script>
 	
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
@@ -67,7 +67,6 @@
 
 <script type="text/javascript">
 <!--
-	
 	var allowSave = true;  //Sets to false if one does not close like one should
 	var currentEditorIdHash = new Array();
 	var attributesStatus = new Array();

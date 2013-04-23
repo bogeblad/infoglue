@@ -55,7 +55,6 @@ public class CleanOldVersionsJob implements Job
     	
     	if(running.compareAndSet(false, true))
     	{
-    		System.out.println("STARTAR");
 	    	try
 			{
 	    		Boolean deleteVersions = (Boolean)context.get("deleteVersions");
@@ -94,8 +93,6 @@ public class CleanOldVersionsJob implements Job
 			finally
 			{
 				running.set(false);
-	    		System.out.println("STOPPAR");
-
 			}
 			
 		   	logger.info("Cleanup-job finished");

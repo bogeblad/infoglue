@@ -294,7 +294,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                         	logger.info("Has to check repositoryName also:" + repositoryName);
                         if(repositoryVO.getName().equalsIgnoreCase(repositoryName))
                         {
-                        	System.out.println("Adding " + repositoryVO.getName() + ":" + dnsName);
+                        	//System.out.println("Adding " + repositoryVO.getName() + ":" + dnsName);
                         	if(logger.isInfoEnabled())
                             	logger.info("Adding " + repositoryVO.getName());
            
@@ -303,7 +303,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                     }
             	    else
             	    {
-                    	System.out.println("Adding " + repositoryVO.getName() + ":" + dnsName);
+                    	//System.out.println("Adding " + repositoryVO.getName() + ":" + dnsName);
             	    	if(logger.isInfoEnabled())
                         	logger.info("Adding " + repositoryVO.getName());
             	        repositories.add(repositoryVO);

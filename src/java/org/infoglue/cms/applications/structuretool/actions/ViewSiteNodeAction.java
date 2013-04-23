@@ -570,7 +570,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	    			    
 	    			if(this.siteNodeVersionVO != null && this.siteNodeVersionVO.getStateId().equals(SiteNodeVersionVO.WORKING_STATE) && !isMetaInfoInWorkingState)
 	    			{
-    					System.out.println("metaInfoContentVersionVO:" + metaInfoContentVersionVO);
+	    				logger.info("metaInfoContentVersionVO:" + metaInfoContentVersionVO);
 
 	    				if(metaInfoContentVersionVO != null)
 	    				{

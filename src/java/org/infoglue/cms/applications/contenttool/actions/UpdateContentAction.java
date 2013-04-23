@@ -77,7 +77,7 @@ public class UpdateContentAction extends ViewContentAction //WebworkAbstractActi
 		super.initialize(getContentId());
 
 		ContentVO oldContentVO = ContentController.getContentController().getContentVOWithId(getContentId());
-		
+
 		ceb = oldContentVO.validate();
 		
 		ceb.throwIfNotEmpty();

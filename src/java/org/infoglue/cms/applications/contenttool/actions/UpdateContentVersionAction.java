@@ -228,7 +228,7 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 				if(siteNodeVersionVO == null || siteNodeVersionVO.getStateId().intValue() > SiteNodeVersionVO.WORKING_STATE)
 				{
 					logger.info("siteNodeVersionVO: " + siteNodeVersionVO.getId());
-					SiteNodeVersionVO newSiteNodeVersion = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "New version", false, null, this.getInfoGluePrincipal(), null, new ArrayList());
+					SiteNodeVersionVO newSiteNodeVersion = SiteNodeStateController.getController().changeState(siteNodeVersionVO.getId(), SiteNodeVersionVO.WORKING_STATE, "New version", false, null, this.getInfoGluePrincipal(), this.getSiteNodeId(), new ArrayList());
 					logger.info("newSiteNodeVersion: " + newSiteNodeVersion.getId());
 					logger.info("Created new site node version:" + newSiteNodeVersion);
 				}

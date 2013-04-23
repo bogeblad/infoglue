@@ -527,7 +527,6 @@ public class UnpublishSiteNodeVersionAction extends InfoGlueAbstractAction
 			ProcessBean processBean = getProcessBean();
 			if(processBean != null && processBean.getStatus() != ProcessBean.FINISHED)
 			{
-				System.out.println("AAAAA:" + processBean + "-" + processBean.getStatus());
 				sb.append("<h2>" + getLocalizedString(getLocale(), "tool.structuretool.publicationProcess.publicationProcessInfo") + "</h2>");
 
 				sb.append("<ol>");

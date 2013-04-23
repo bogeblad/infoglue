@@ -108,8 +108,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 		
 		String newUserName = getRequest().getParameter("newUserName");
 		
-		System.out.println("------------> Här ska det hända något 111... " + newUserName);
-				
 		return "renameSuccess";
 	}
 	
@@ -119,8 +117,6 @@ public class UpdateSystemUserAction extends ViewSystemUserAction //WebworkAbstra
 		
 		String newUserName = getRequest().getParameter("newUserName");
 		
-		System.out.println("------------> Här ska det hända något 222... " + newUserName);
-				
 		return "renameSuccessAndExit";
 	}
 

@@ -142,7 +142,7 @@ public class OptimizedExportController extends BaseController implements Runnabl
 		String folderName = CmsPropertyHandler.getDigitalAssetPath() + File.separator + exportId + "Archive";
 		File folder = new File(folderName);
 		folder.mkdirs();
-System.out.println("exportId:" + exportId);
+
 		Database db = null;
 		
 		try 

@@ -482,8 +482,8 @@
 				$("#contentAccessRightsFrame").get(0).contentWindow.save();
 			if($("#contentVersionAccessRightsFrame").size() > 0 && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
 				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
-
-			validateAndSubmitContentForm();
+			
+			setTimeout(function(){validateAndSubmitContentForm();}, 500);
 		}
 		
 		function saveAndExit(url)
@@ -496,7 +496,7 @@
 				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
 
 			document.editForm.closeOnLoad.value = "true";
-			validateAndSubmitContentFormThenClose();		
+			setTimeout(function(){validateAndSubmitContentFormThenClose();}, 500);	
 		}
 					
 	    /*
@@ -673,6 +673,15 @@
 			//alert("value:" + value);
 			return value;
 		}
+		
+		#if($parentContentId)
+		try
+		{
+			parent.parent.parent.refreshContent($!parentContentId, 1, $!parentContentId);
+		}
+		catch(e) {console.log("e:" + e);}
+		#end
+		
 	//]]>
 	</script>
 		

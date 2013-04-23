@@ -527,6 +527,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 										}
 										else if(Class.forName(publicationDetailVO.getEntityClass()).getName().equals(SiteNodeVersion.class.getName()))
 										{
+											System.out.println("SiteNodeVersion update....:" + publicationDetailVO.getEntityId());
 											try
 											{
 												SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(publicationDetailVO.getEntityId());
@@ -541,12 +542,12 @@ public class SelectiveLivePublicationThread extends PublicationThread
 	
 											    SiteNodeVO previousSiteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
 											    Integer previousParentSiteNodeId = previousSiteNodeVO.getParentSiteNodeId();
-											    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
 											    Object previousParentSiteNodeIdCandidate = CacheController.getCachedObject("parentSiteNodeCache", "" + siteNodeId);
-											    logger.info("previousParentSiteNodeIdCandidate:" + previousParentSiteNodeIdCandidate);
+											    System.out.println("previousParentSiteNodeIdCandidate:" + previousParentSiteNodeIdCandidate);
 											    if(previousParentSiteNodeIdCandidate != null && !(previousParentSiteNodeIdCandidate instanceof NullObject))
 											    	previousParentSiteNodeId = ((SiteNodeVO)previousParentSiteNodeIdCandidate).getId();
-											    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
 											    	
 											    //CacheController.clearCaches(publicationDetailVO.getEntityClass(), publicationDetailVO.getEntityId().toString(), null);
 												//if(siteNodeId != null)
@@ -658,8 +659,8 @@ public class SelectiveLivePublicationThread extends PublicationThread
 												
 												SiteNodeVO siteNodeVOAfter = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
 											    Integer currentParentSiteNodeId = siteNodeVOAfter.getParentSiteNodeId();
-											    logger.info("previousParentSiteNodeId:" + previousParentSiteNodeId);
-											    logger.info("currentParentSiteNodeId:" + currentParentSiteNodeId);
+											    System.out.println("previousParentSiteNodeId:" + previousParentSiteNodeId);
+											    System.out.println("currentParentSiteNodeId:" + currentParentSiteNodeId);
 	
 											    logger.info("We should also clear the parents...");
 												if(currentParentSiteNodeId != null)
@@ -678,7 +679,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 	
 												if(currentParentSiteNodeId != null && previousParentSiteNodeId != null && !previousParentSiteNodeId.equals(currentParentSiteNodeId))
 												{
-													logger.info("siteNodeVOAfter was not the same - lets clear the old:" + siteNodeVOAfter.getName() + " / " + currentParentSiteNodeId);
+													System.out.println("siteNodeVOAfter was not the same - lets clear the old:" + siteNodeVOAfter.getName() + " / " + currentParentSiteNodeId);
 													//CacheController.clearCaches(SiteNode.class.getName(), previousParentSiteNodeId.toString(), null);
 													addCacheUpdateDirective(SiteNode.class.getName(), currentParentSiteNodeId.toString(), allIGCacheCalls);
 													addCacheUpdateDirective(SiteNode.class.getName(), previousParentSiteNodeId.toString(), allIGCacheCalls);
@@ -687,13 +688,16 @@ public class SelectiveLivePublicationThread extends PublicationThread
 													CacheController.clearCache(SiteNodeImpl.class, new Integer[]{previousParentSiteNodeId});
 													CacheController.clearCache(SmallSiteNodeImpl.class, new Integer[]{previousParentSiteNodeId});
 												}
+												
+												if(publicationDetailVO.getTypeId().intValue() == PublicationDetailVO.MOVED.intValue())
+										    		CacheController.clearCache("childSiteNodesCache");
+
 											}
 											catch (Exception e) 
 											{
 												logger.warn("An error occurred handling sitenode version from publication " + publicationVO.getId() + ":" + e.getMessage());
 											}
 										}
-										
 									}
 								}
 								else

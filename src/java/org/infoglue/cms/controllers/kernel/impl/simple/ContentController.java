@@ -241,7 +241,7 @@ public class ContentController extends BaseController
 			content.setParentContentId(new Integer(rs.getString(6)));
 			content.setStateId(new Integer(rs.getString(7)));
             siteNodeVOMap.put(content.getValueObject().getContentVersionId(), content.getValueObject());
-            System.out.println("Adding:" + content.getValueObject().getContentVersionId() + "=" + content.getValueObject());
+            logger.info("Adding:" + content.getValueObject().getContentVersionId() + "=" + content.getValueObject());
 		}
 		rs.close();
 		psmt.close();
@@ -797,8 +797,8 @@ public class ContentController extends BaseController
         try
         {
             content = (Content)getObjectWithId(ContentImpl.class, contentVO.getId(), db);
-            content.setVO(contentVO);
-            
+    		content.setVO(contentVO);
+    		
             if(contentTypeDefinitionId != null)
             {
                 ContentTypeDefinition contentTypeDefinition = ContentTypeDefinitionController.getController().getContentTypeDefinitionWithId(contentTypeDefinitionId, db);
@@ -818,6 +818,31 @@ public class ContentController extends BaseController
         return content.getValueObject();
     }        
 
+    public void changeRepository(Integer contentId, Integer repositoryId) throws ConstraintException, SystemException
+    {
+        Database db = CastorDatabaseService.getDatabase();
+
+        Content content = null;
+
+        beginTransaction(db);
+
+        try
+        {
+            content = (Content)getObjectWithId(ContentImpl.class, contentId, db);
+            if(repositoryId != null)
+            	content.setRepository((RepositoryImpl)RepositoryController.getController().getRepositoryWithId(repositoryId, db));
+            
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+    }  
+    
 	public List<LanguageVO> getAvailableLanguagesForContentWithId(Integer contentId, Database db) throws ConstraintException, SystemException, Exception
 	{
 		List<LanguageVO> availableLanguageVOList = new ArrayList<LanguageVO>();
@@ -1094,9 +1119,6 @@ public class ContentController extends BaseController
         //oldParentContent = content.getParentContent();
         //newParentContent = getContentWithId(newParentContentId, db);
                     
-		System.out.println(""+content.getValueObject().getParentContentId());
-		System.out.println(""+content.getValueObject().getParentContentId().intValue());
-		System.out.println(""+newParentContentId.intValue());
         if(content.getValueObject().getParentContentId() == null || content.getValueObject().getParentContentId().intValue() == newParentContentId.intValue())
         {
         	logger.warn("You cannot specify the same folder as it originally was located in......");
@@ -1531,7 +1553,7 @@ public class ContentController extends BaseController
    			return null;
    		
 		String key = "root_" + repositoryId;
-		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("rootContentCache", key);
 		if(contentVO != null)
 		{
 			return contentVO;
@@ -1591,7 +1613,7 @@ public class ContentController extends BaseController
         }
 
 		if(contentVO != null)
-			CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+			CacheController.cacheObjectInAdvancedCache("rootContentCache", key, contentVO);
 
         return contentVO;
    	}
@@ -1606,7 +1628,7 @@ public class ContentController extends BaseController
 	public ContentVO getRootContentVO(Integer repositoryId, String userName, boolean createIfNonExisting) throws ConstraintException, SystemException
 	{
 		String key = "root_" + repositoryId;
-		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("rootContentCache", key);
 		if(contentVO != null)
 		{
 			return contentVO;
@@ -1641,7 +1663,7 @@ public class ContentController extends BaseController
 		}
 
 		if(contentVO != null)
-			CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+			CacheController.cacheObjectInAdvancedCache("rootContentCache", key, contentVO);
 
 		return contentVO;
 	}
@@ -1655,7 +1677,7 @@ public class ContentController extends BaseController
 	public ContentVO getRootContentVO(Database db, Integer repositoryId, String userName, boolean createIfNonExisting) throws ConstraintException, SystemException, Exception
 	{
 		String key = "root_" + repositoryId;
-		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("contentCache", key);
+		ContentVO contentVO = (ContentVO)CacheController.getCachedObjectFromAdvancedCache("rootContentCache", key);
 		if(contentVO != null)
 		{
 			return contentVO;
@@ -1687,7 +1709,7 @@ public class ContentController extends BaseController
 		}
 		
 		if(contentVO != null)
-			CacheController.cacheObjectInAdvancedCache("contentCache", key, contentVO);
+			CacheController.cacheObjectInAdvancedCache("rootContentCache", key, contentVO);
 
 		results.close();
 		oql.close();

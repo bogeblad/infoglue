@@ -72,14 +72,20 @@
 		
 		function save()
 		{
-			try
-			{
-				parent.parent.refreshContent($!contentId, 1, $!contentId);
-				
-			}
-			catch(e) {alert("e:" + e);}
 			document.editForm.submit();
 		}
+		
+		#if($unrefreshedContentId > 0)
+		try
+		{
+			if(parent.parent.refreshContent)
+				parent.parent.refreshContent($!contentId, 1, $!contentId);
+			else
+				top.refreshContent($!contentId, 1, $!contentId);
+		}
+		catch(e) {console.log("e:" + e);}
+		#end
+		
 	-->
 	</script>
 #end

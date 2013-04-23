@@ -249,10 +249,13 @@ public class CmsJDOCallback implements CallbackInterceptor
 				{
 					ContentImpl content = (ContentImpl)object;
 					CacheController.clearCacheForGroup("contentCache", "content_" + content.getId());
+					CacheController.clearCache("rootContentCache", "root_" + content.getRepositoryId());
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + content.getId());
 					CacheController.clearCacheForGroup("childContentCache", "content_" + content.getId());
 					if(content.getParentContent() != null)
-						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getParentContent().getId());					
+						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getParentContent().getId());
+					else
+						CacheController.clearCache("rootContentCache", "root_" + content.getRepositoryId());
 				}
 				catch (Exception e) 
 				{
@@ -272,6 +275,8 @@ public class CmsJDOCallback implements CallbackInterceptor
 					CacheController.clearCacheForGroup("contentCache", "content_" + content.getId());
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + content.getId());
 					CacheController.clearCache("childContentCache");
+					if(content.getParentContentId() == null)
+						CacheController.clearCache("rootContentCache", "root_" + content.getRepositoryId());
 				}
 				catch (Exception e) 
 				{
@@ -1031,7 +1036,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 					CacheController.clearCacheForGroup("contentCache", "content_" + content.getId());
 					CacheController.clearCacheForGroup("childContentCache", "content_" + content.getId());
 					if(content.getParentContent() != null)
-						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getParentContent().getId());					
+						CacheController.clearCacheForGroup("childContentCache", "content_" + content.getParentContent().getId());
+					else
+						CacheController.clearCache("rootContentCache", "root_" + content.getRepositoryId());
 				}
 				catch (Exception e) 
 				{

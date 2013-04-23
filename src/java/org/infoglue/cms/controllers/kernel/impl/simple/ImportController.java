@@ -568,19 +568,19 @@ public class ImportController extends BaseController
 			{
 				existingCategories = CategoryController.getController().getActiveCategoryVOListByParent(parentCategory.getCategoryId(), db);//.getActiveByParent(parentCategory.getCategoryId(), db);
 				//existingCategories = CategoryController.getController().findByParent(parentCategory.getCategoryId(), db);
-				System.out.println("existingCategories 1:" + existingCategories);
+				logger.info("existingCategories 1:" + existingCategories);
 			}
 			else
 			{
 				existingCategories = CategoryController.getController().findRootCategoryVOList(db);
-				System.out.println("existingCategories 2:" + existingCategories);
+				logger.info("existingCategories 2:" + existingCategories);
 			}
 			
 			Iterator<CategoryVO> existingCategoriesIterator = existingCategories.iterator();
 			while(existingCategoriesIterator.hasNext())
 			{
 				Object candidate = existingCategoriesIterator.next();
-				System.out.println("candidate:" + candidate.getClass().getName() + ":" + candidate);
+				logger.info("candidate:" + candidate.getClass().getName() + ":" + candidate);
 				CategoryVO existingCategory = (CategoryVO)candidate; //existingCategoriesIterator.next();
 				logger.info("existingCategory:" + existingCategory.getName());
 				if(existingCategory.getName().equals(categoryVO.getName()))

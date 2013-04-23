@@ -701,7 +701,7 @@ public class SearchController extends BaseController
 			for(org.apache.lucene.document.Document document : documents)
 			{
 				logger.info("document for asset:" + document);
-				System.out.println("Doc:" + document);
+				logger.info("Doc:" + document);
 				String digitalAssetIdString = document.get("digitalAssetId");
 				if(digitalAssetIdString != null)
 				{

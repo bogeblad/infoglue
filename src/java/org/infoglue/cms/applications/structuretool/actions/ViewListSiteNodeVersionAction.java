@@ -168,7 +168,7 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 							snVO.setPath(getSiteNodePath(snVO.getSiteNodeId(), db));
 						}
 						else
-							System.out.println("Not adding siteNodeVersion..");
+							logger.info("Not adding siteNodeVersion..");
 					}
 
 				    this.siteNodeVersionVOList.addAll(siteNodeVersionVOList);
@@ -194,7 +194,7 @@ public class ViewListSiteNodeVersionAction extends InfoGlueAbstractAction
 							contentVersionVO.setPath(getContentPath(contentVersionVO.getContentId(), db));
 						}
 						else
-							System.out.println("Not adding contentVersion..");
+							logger.info("Not adding contentVersion..");
 					}
 	
 				    this.contentVersionVOList.addAll(contentVersionVOList);

@@ -1377,11 +1377,11 @@ public class AccessRightController extends BaseController
 		    
 			int interceptionPointIndex = 0;
 			String interceptionPointIdString = request.getParameter((index != null ? index + "_" : "") + interceptionPointIndex + "_InterceptionPointId");
-			System.out.println("interceptionPointIdString:" + interceptionPointIdString);
+			logger.info("interceptionPointIdString:" + interceptionPointIdString);
 			while(interceptionPointIdString != null)
 			{
 			    String hasAccess = request.getParameter((index != null ? index + "_" : "") + interceptionPointIdString + "_hasAccess");
-				System.out.println("interceptionPointIdString:" + interceptionPointIdString);
+			    logger.info("interceptionPointIdString:" + interceptionPointIdString);
 				
 			    AccessRight accessRight = null;
 			     

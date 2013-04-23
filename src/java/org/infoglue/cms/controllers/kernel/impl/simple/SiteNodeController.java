@@ -82,6 +82,7 @@ import org.infoglue.cms.entities.management.impl.simple.AccessRightUserImpl;
 import org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl;
+import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.structure.Qualifyer;
 import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.ServiceBindingVO;
@@ -98,6 +99,8 @@ import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallSiteNodeVersionImpl;
 import org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl;
+import org.infoglue.cms.entities.workflow.Event;
+import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
@@ -1462,7 +1465,7 @@ public class SiteNodeController extends BaseController
 	   		SQL.append("order by snv.sortOrder ASC, sn.name ASC, sn.siteNodeId DESC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");    		
     	}
 
-    	System.out.println("SQL 2:" + SQL);
+    	//logger.info("SQL 2:" + SQL);
     	//logger.info("parentSiteNodeId:" + parentSiteNodeId);
     	//logger.info("showDeletedItems:" + showDeletedItems);
     	OQLQuery oql = db.getOQLQuery(SQL.toString());
@@ -1731,6 +1734,81 @@ public class SiteNodeController extends BaseController
             //siteNode.setRepository(newParentSiteNode.getRepository());
 			newParentSiteNode.getChildSiteNodes().add(siteNode);
 			oldParentSiteNode.getChildSiteNodes().remove(siteNode);
+
+			try
+			{
+				SiteNodeVersionVO publishedVersion = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(siteNode.getId(), db);
+				SiteNodeVersionVO publishedVersionNewParent = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(newParentSiteNode.getId(), db);
+				SiteNodeVersionVO publishedVersionOldParent = SiteNodeVersionController.getController().getLatestPublishedSiteNodeVersionVO(oldParentSiteNode.getId(), db);
+				List<EventVO> events = new ArrayList<EventVO>();
+
+				logger.info("publishedVersion:" + publishedVersion);
+				if(publishedVersion != null)
+	            {
+		            EventVO eventVO = new EventVO();
+					eventVO.setDescription("Moved page");
+					eventVO.setEntityClass(SiteNodeVersion.class.getName());
+					eventVO.setEntityId(publishedVersion.getId());
+					eventVO.setName(siteNode.getName());
+					eventVO.setTypeId(EventVO.MOVED);
+					eventVO = EventController.create(eventVO, newParentSiteNode.getRepository().getId(), principal);
+					events.add(eventVO);
+	            }
+				
+				logger.info("publishedVersionOldParent:" + publishedVersionOldParent);
+				if(publishedVersionNewParent != null)
+	            {
+					EventVO eventVO = new EventVO();
+					eventVO.setDescription("New parent page");
+					eventVO.setEntityClass(SiteNodeVersion.class.getName());
+					eventVO.setEntityId(publishedVersionNewParent.getId());
+					eventVO.setName(newParentSiteNode.getName());
+					eventVO.setTypeId(EventVO.PUBLISH);
+					eventVO = EventController.create(eventVO, newParentSiteNode.getRepository().getId(), principal);
+					events.add(eventVO);
+	            }
+				
+				logger.info("publishedVersionOldParent:" + publishedVersionOldParent);
+				if(publishedVersionOldParent != null)
+	            {
+					EventVO eventVO = new EventVO();
+					eventVO.setDescription("Move page");
+					eventVO.setEntityClass(SiteNodeVersion.class.getName());
+					eventVO.setEntityId(publishedVersionOldParent.getId());
+					eventVO.setName(oldParentSiteNode.getName());
+					eventVO.setTypeId(EventVO.PUBLISH);
+					eventVO = EventController.create(eventVO, oldParentSiteNode.getRepository().getId(), principal);
+					events.add(eventVO);
+	            }
+
+				/*
+				EventVO eventVO = new EventVO();
+				eventVO.setDescription("Moved page");
+				eventVO.setEntityClass(SiteNodeVersion.class.getName());
+				eventVO.setEntityId(publishedVersion.getId());
+				eventVO.setName(siteNode.getName());
+				eventVO.setTypeId(EventVO.MOVED);
+				eventVO = EventController.create(eventVO, siteNode.getRepository().getId(), principal);
+				events.add(eventVO);
+				*/
+				
+				logger.info("events:" + events.size());
+				if(events != null && events.size() > 0)
+				{
+					//Create publication if nodes has published version
+					PublicationVO publicationVO = new PublicationVO();
+					publicationVO.setName("Move of page - auto publication");
+					publicationVO.setDescription("System did an automatic publication");
+					publicationVO.setPublisher(principal.getName());
+					publicationVO.setRepositoryId(newParentSiteNode.getRepository().getId());
+					
+					publicationVO = PublicationController.getController().createAndPublish(publicationVO, events, false, principal);
+	            }
+			}
+			catch (Exception e) 
+			{
+				logger.error("Error publishing move:" + e.getMessage(), e);
+			}
 			
             //If any of the validations or setMethods reported an error, we throw them up now before create.
             ceb.throwIfNotEmpty();
@@ -3630,7 +3708,7 @@ public class SiteNodeController extends BaseController
 			{
 				SiteNodeVO childSiteNodeVO = childrenVOListIterator.next();
 				SiteNodeVersion latestChildSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, childSiteNodeVO.getId());
-				System.out.println("latestChildSiteNodeVersion.getSortOrder():" + latestChildSiteNodeVersion.getSortOrder() + "=" + index);
+				logger.info("latestChildSiteNodeVersion.getSortOrder():" + latestChildSiteNodeVersion.getSortOrder() + "=" + index);
 				if(latestChildSiteNodeVersion.getSortOrder() != index)
 				{
 					latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);
@@ -3639,7 +3717,7 @@ public class SiteNodeController extends BaseController
 					//logger.info("currentSortOrder:" + currentSortOrder + " on " + childSiteNodeVO.getName());
 					//if(currentSortOrder != 100)
 					//{
-					System.out.println("Setting sort order to:" + index + " on " + latestChildSiteNodeVersion.getId());
+					logger.info("Setting sort order to:" + index + " on " + latestChildSiteNodeVersion.getId());
 						latestChildSiteNodeVersion.setSortOrder(index);
 					//}
 				}
@@ -3693,17 +3771,17 @@ public class SiteNodeController extends BaseController
 						newSortOrder = oldSortOrder + 1;
 				}
 				
-            	System.out.println("OldSortOrder:" + oldSortOrder);
+            	logger.info("OldSortOrder:" + oldSortOrder);
 				List<SiteNodeVO> childrenVOList = SiteNodeController.getController().getChildSiteNodeVOList(siteNodeVO.getParentSiteNodeId(), false, db);
 				Iterator<SiteNodeVO> childrenVOListIterator = childrenVOList.iterator();
 				while(childrenVOListIterator.hasNext())
 				{
 					SiteNodeVO childSiteNodeVO = childrenVOListIterator.next();
-					System.out.println("childSiteNodeVO:" + childSiteNodeVO.getId() + ":" + childSiteNodeVO.getSortOrder());
+					logger.info("childSiteNodeVO:" + childSiteNodeVO.getId() + ":" + childSiteNodeVO.getSortOrder());
 					SiteNodeVersion latestChildSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersion(db, childSiteNodeVO.getId());
 					//logger.info("latestChildSiteNodeVersion:" + latestChildSiteNodeVersion.getId());
 					Integer currentSortOrder = latestChildSiteNodeVersion.getSortOrder();
-					System.out.println("currentSortOrder:" + currentSortOrder);
+					logger.info("currentSortOrder:" + currentSortOrder);
 					if(currentSortOrder.equals(oldSortOrder))
 					{
 						latestChildSiteNodeVersion = SiteNodeVersionController.getController().updateStateId(latestChildSiteNodeVersion, SiteNodeVersionVO.WORKING_STATE, "Changed sortOrder", infoGluePrincipal, db);

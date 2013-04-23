@@ -2294,6 +2294,10 @@ public class CacheController extends Thread
 						clear = true;
 						selectiveCacheUpdate = true;
 					}
+					if(cacheName.equalsIgnoreCase("rootContentCache") && entity.indexOf("Content") > 0)
+					{
+						clear = true;
+					}
 					if(cacheName.equalsIgnoreCase("componentContentsCache") && entity.indexOf("Content") > 0)
 					{
 						clear = true;

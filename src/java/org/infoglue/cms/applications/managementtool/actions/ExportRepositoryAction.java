@@ -172,8 +172,6 @@ public class ExportRepositoryAction extends InfoGlueAbstractAction
 	protected String doExecute() throws Exception 
 	{
 		String exportFormat = CmsPropertyHandler.getExportFormat();
-		System.out.println("exportFormat:" + exportFormat);
-		System.out.println("this.exportFormat:" + this.exportFormat);
 		if(exportFormat.equalsIgnoreCase("3") || this.exportFormat.equals("3"))
 		{
 			logger.info("exportFormat:" + exportFormat);

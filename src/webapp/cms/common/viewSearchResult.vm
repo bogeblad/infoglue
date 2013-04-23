@@ -475,54 +475,71 @@
 							<thead>
 								<tr>
 									<th>Found entity</th>
-									<th>Type (class)</th>
+									<th>Type</th>
 								</tr>
 							</thead>
 							<tbody>
 							
 								#foreach ($baseEntityVO in $baseEntityVOList)
 									#set( $baseEntityId = $baseEntityVO.id ) 
-									
-									#set( $entityName = "$baseEntityVO.name")
+
+									#set( $entityName = "$!baseEntityVO.name")
 									#if($baseEntityVO.class.name == "org.infoglue.cms.entities.content.ContentVO")
 										#set( $name = "$baseEntityVO.name")
 										#set( $target = "content")
+										#set( $tool = "ContentTool")
 										#set( $rowUrl = "ViewContent!V3.action?contentId=$baseEntityId")
 										#set( $title = "$this.getContentPath($baseEntityId).replaceAll(' ', '&nbsp;')")
+										#set( $path = $this.getContentPath($baseEntityId).replaceAll(' ', '&nbsp;'))
+										#set( $typeName = "Content")
 									#elseif($baseEntityVO.class.name == "org.infoglue.cms.entities.content.ContentVersionVO")
 										#set( $name = "$baseEntityVO.contentName")
 										#set( $target = "content")
+										#set( $tool = "ContentTool")
 										#set( $rowUrl = "ViewContentVersion!V3.action?contentId=$baseEntityVO.contentId&languageId=$baseEntityVO.languageId")
 										#set( $title = "$this.getContentPath($baseEntityVO.contentId).replaceAll(' ', '&nbsp;')")
 										#set( $entityName = "$baseEntityVO.contentName - $baseEntityVO.languageName")
+										#set( $path = $this.getContentPath($baseEntityVO.contentId).replaceAll(' ', '&nbsp;'))
+										#set( $typeName = "Content version")
 									#elseif($baseEntityVO.class.name == "org.infoglue.cms.entities.content.DigitalAssetVO")
 										#set( $name = "$baseEntityVO.assetKey")
 										#set( $target = "content")
+										#set( $tool = "ContentTool")
 										#set( $contentId = $this.getDigitalAssetContentId($baseEntityVO.id))
 										#set( $rowUrl = "ViewContent!V3.action?contentId=$contentId")
 										#set( $title = "$this.getContentPath($contentId).replaceAll(' ', '&nbsp;')")
 										#set( $entityName = "$baseEntityVO.assetKey")
+										#set( $path = $this.getContentPath($contentId).replaceAll(' ', '&nbsp;'))
+										#set( $typeName = "Asset")
 									#elseif($baseEntityVO.class.name == "org.infoglue.cms.entities.structure.SiteNodeVO")
 										#set( $name = "$baseEntityVO.name")
 										#set( $target = "structure")
+										#set( $tool = "StructureTool")
 										#set( $rowUrl = "ViewSiteNode!V3.action?siteNodeId=$baseEntityVO.siteNodeId")
 										#set( $title = "$this.getSiteNodePath($baseEntityVO.siteNodeId).replaceAll(' ', '&nbsp;')")		
+										#set( $path = $this.getSiteNodePath($baseEntityVO.siteNodeId).replaceAll(' ', '&nbsp;'))
+										#set( $typeName = "Page")
 									#elseif($baseEntityVO.class.name == "org.infoglue.cms.entities.structure.SiteNodeVersionVO")
 										#set( $name = "$baseEntityVO.siteNodeName")
 										#set( $target = "structure")
+										#set( $tool = "StructureTool")
 										#set( $rowUrl = "ViewSiteNode!V3.action?siteNodeId=$baseEntityVO.siteNodeId")
 										#set( $title = "$this.getSiteNodePath($baseEntityVO.siteNodeId).replaceAll(' ', '&nbsp;')")		
 										#set( $entityName = "$baseEntityVO.id of siteNodeId $baseEntityVO.siteNodeId")
+										#set( $path = $this.getSiteNodePath($baseEntityVO.siteNodeId).replaceAll(' ', '&nbsp;'))
+										#set( $typeName = "Page version")
 									#end
+									#if($entityName != "")
 									<tr>
 										<td>
-											<input type="checkbox" id="cv$contentVersionId" name="sel" value="$contentVersionId"/>
-											<a href="#" class="content" title=$title onclick="top.openUrlInWorkArea('$rowUrl', '$name', '$target', ''); return false;">$entityName</a>
+											##<input type="checkbox" id="cv$contentVersionId" name="sel" value="$contentVersionId"/>
+											<a href="#" class="content" onclick="top.openUrlInWorkArea('$rowUrl', '$name', '$target', '$ui.getString("tool.common.contentTabLabelPrefix")', '$tool'); return false;">$path</a>
 										</td>
 										<td>
-											<span>$baseEntityVO.class.name</span>
+											<span>$typeName</span>
 										</td>
 									</tr>
+									#end
 								#end
 								
 							</tbody>

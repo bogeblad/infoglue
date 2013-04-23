@@ -101,13 +101,16 @@ public class ChangeMultiContentStatePublishAction extends InfoGlueAbstractAction
 		*/
 		
 		setContentVersionId( getRequest().getParameterValues("selContentVersions") );
-		System.out.println("contentVersionId:" + contentVersionId.size());
+		if(logger.isInfoEnabled())
+			logger.info("contentVersionId:" + contentVersionId);
 		Map<Integer,ContentVO> contentMap = ContentController.getContentController().getContentVOMapWithNoStateCheck(contentVersionId);
-		System.out.println("contentMap:" + contentMap);
+		if(logger.isInfoEnabled())
+			logger.info("contentMap:" + contentMap);
 		for(Entry<Integer,ContentVO> entry : contentMap.entrySet())
 		{
 			Integer contentVersionId = entry.getKey();
-			System.out.println("contentVersionId:" + contentVersionId);
+			if(logger.isInfoEnabled())
+				logger.info("contentVersionId:" + contentVersionId);
 			logger.info("Publishing:" + siteNodeVersionId);
 			ContentVersionVO contentVersion = ContentStateController.changeState(contentVersionId, entry.getValue(), ContentVersionVO.PUBLISH_STATE, getVersionComment(), this.overrideVersionModifyer, this.recipientFilter, this.getInfoGluePrincipal(), null, events);
 			newContentMap.put(contentVersion.getId(), entry.getValue());

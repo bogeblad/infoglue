@@ -266,11 +266,25 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         initialize(contentVersionId, contentId, languageId, false, true);
     }
     
+    protected ContentVO getRootContent(ContentVO contentVO) throws Exception
+    {
+    	if(contentVO.getParentContentId() == null)
+    		return contentVO;
+    	else
+    	{
+    		ContentVO parentContentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
+    		return getRootContent(parentContentVO);
+    	}
+    }
+    
     protected void initialize(Integer contentVersionId, Integer contentId, Integer languageId, boolean fallBackToMasterLanguage, boolean checkPermission) throws ConstraintException, Exception
     {
-    	System.out.println("contentVersionId:" + contentVersionId);
-    	System.out.println("contentId:" + contentId);
-    	System.out.println("languageId:" + languageId);
+    	if(logger.isInfoEnabled())
+			logger.info("contentVersionId:" + contentVersionId);
+    	if(logger.isInfoEnabled())
+			logger.info("contentId:" + contentId);
+    	if(logger.isInfoEnabled())
+			logger.info("languageId:" + languageId);
     	if(contentVersionId != null && contentId == null)
     	{
     		this.contentVersionVO = ContentVersionControllerProxy.getController().getACContentVersionVOWithId(this.getInfoGluePrincipal(), contentVersionId);    		 	
@@ -279,19 +293,37 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     		this.languageId = contentVersionVO.getLanguageId();
     	}   
 
-        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
-        
-        if(this.contentVO.getRepositoryId() != null && checkPermission && !hasAccessTo("Repository.Read", "" + this.contentVO.getRepositoryId())  && !hasAccessTo("Repository.Write", "" + this.contentVO.getRepositoryId()))
+    	if(contentId != null)
+    	{
+	        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
+	        if(this.contentVO.getRepositoryId() != null && checkPermission && !hasAccessTo("Repository.Read", "" + this.contentVO.getRepositoryId())  && !hasAccessTo("Repository.Write", "" + this.contentVO.getRepositoryId()))
+	        {
+	    		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer(); 
+	    		ceb.add(new AccessConstraintException("Content.contentId", "1000"));
+	    		ceb.throwIfNotEmpty();
+	        }
+    	}
+    	
+        if(this.contentVO != null && this.contentVO.getParentContentId() != null)
         {
-    		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer(); 
-    		ceb.add(new AccessConstraintException("Content.contentId", "1000"));
-    		ceb.throwIfNotEmpty();
+        	ContentVO repoRootContentVO = getRootContent(this.contentVO);
+        	if(this.contentVO.getRepositoryId() != null && repoRootContentVO.getRepositoryId() != null && !this.contentVO.getRepositoryId().equals(repoRootContentVO.getRepositoryId()))
+            {
+        		logger.info("The content was not the same repo - will fix: " + this.contentVO);
+        		ContentController.getContentController().changeRepository(this.contentVO.getId(), repoRootContentVO.getRepositoryId());
+        		logger.info("The content was not - fixed: " + this.contentVO);
+        		this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), contentId);
+            }    
         }
+        
 
         //this.contentVO = ContentController.getContentVOWithId(contentId);
-        this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentId);
-        this.availableLanguages = ContentController.getContentController().getRepositoryLanguages(this.contentVO.getId());
-
+        if(contentId != null)
+        {
+	        this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentId);
+	        this.availableLanguages = ContentController.getContentController().getRepositoryLanguages(this.contentVO.getId());
+        }
+        
         if(contentVersionId == null)
 		{	
 			//this.contentVersionVO = ContentVersionControllerProxy.getController().getACLatestActiveContentVersionVO(this.getInfoGluePrincipal(), contentId, languageId);
@@ -825,6 +857,11 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
     public String getName()
     {
         return this.contentVO.getName();
+    }
+
+    public Integer getParentContentId()
+    {
+        return this.contentVO.getParentContentId();
     }
 
     public java.lang.Integer getRepositoryId()

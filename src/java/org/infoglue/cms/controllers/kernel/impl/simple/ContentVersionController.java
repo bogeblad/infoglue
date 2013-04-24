@@ -1741,65 +1741,73 @@ public class ContentVersionController extends BaseController
     /**
      * This method updates the contentversion.
      */
-    
-    public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
-    {
-    	return update(contentVersionId, contentVersionVO, null);
-    }        
-	
+
+	public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
+	{
+		return update(contentVersionId, contentVersionVO, (InfoGluePrincipal)null);
+	}
+
+	public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO, Database db) throws Exception
+	{
+		return update(contentVersionId, contentVersionVO, (InfoGluePrincipal)null, db);
+	}
+
     public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal) throws ConstraintException, SystemException
     {
-        ContentVersionVO updatedContentVersionVO;
-		
-        Database db = CastorDatabaseService.getDatabase();
+		ContentVersionVO updatedContentVersionVO = null;
 
-        beginTransaction(db);
-        
-        try
-        {     
-            ContentVersion contentVersion = getMediumContentVersionWithId(contentVersionId, db);
-           
-            ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getValueObject().getContentId(), db);
-        	ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
+		Database db = CastorDatabaseService.getDatabase();
 
-        	contentVersion.setValueObject(contentVersionVO);
-        	contentVersion.getValueObject().setContentId(contentVO.getContentId());
+		beginTransaction(db);
 
-        	SiteNodeVersion latestSiteNodeVersion = null;
-		    if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
-		    {
-		    	SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentVO.getContentId());
-				if(siteNode.getMetaInfoContentId() != null && siteNode.getMetaInfoContentId().equals(contentVO.getContentId()))
-				{
-			    	latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestMediumSiteNodeVersion(db, siteNode.getId(), false);
-			    	latestSiteNodeVersion.setVersionModifier(contentVersionVO.getVersionModifier());
-			    	latestSiteNodeVersion.setModifiedDateTime(DateHelper.getSecondPreciseDate());
-					SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersion.getValueObject(), db);
-				}
-			}
-		    
-	    	registryController.updateContentVersionThreaded(contentVersion.getValueObject(), latestSiteNodeVersion == null ? null : latestSiteNodeVersion.getValueObject());
-			   
-	    	updatedContentVersionVO = contentVersion.getValueObject();
-	    	
-	    	commitRegistryAwareTransaction(db);  
-        }
-        catch(ConstraintException ce)
-        {
-        	logger.warn("Validation error:" + ce, ce);
-            rollbackTransaction(db);
-            throw ce;
-        }
-        catch(Exception e)
-        {
+		try
+		{
+			updatedContentVersionVO = update(contentVersionId, contentVersionVO, principal, db);
+			commitRegistryAwareTransaction(db);
+		}
+		catch(ConstraintException ce)
+		{
+			logger.warn("Validation error:" + ce, ce);
+			rollbackTransaction(db);
+			throw ce;
+		}
+		catch(Exception e)
+		{
             logger.error("An error occurred so we should not complete the transaction:" + e);
             logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
-        
-    	return updatedContentVersionVO; //(ContentVersionVO) updateEntity(ContentVersionImpl.class, realContentVersionVO);
-    }        
+
+		return updatedContentVersionVO;
+	}
+
+	public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal, Database db) throws Exception
+	{
+		ContentVersion contentVersion = getMediumContentVersionWithId(contentVersionId, db);
+
+		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getValueObject().getContentId(), db);
+		ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
+
+		contentVersion.setValueObject(contentVersionVO);
+		contentVersion.getValueObject().setContentId(contentVO.getContentId());
+
+		SiteNodeVersion latestSiteNodeVersion = null;
+		if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
+		{
+			SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentVO.getContentId());
+			if(siteNode.getMetaInfoContentId() != null && siteNode.getMetaInfoContentId().equals(contentVO.getContentId()))
+			{
+				latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestMediumSiteNodeVersion(db, siteNode.getId(), false);
+				latestSiteNodeVersion.setVersionModifier(contentVersionVO.getVersionModifier());
+				latestSiteNodeVersion.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+				SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersion.getValueObject(), db);
+			}
+		}
+		registryController.updateContentVersionThreaded(contentVersion.getValueObject(), latestSiteNodeVersion == null ? null : latestSiteNodeVersion.getValueObject());
+
+		return contentVersion.getValueObject();
+	}
 
 	public List getPublishedActiveContentVersionVOList(Integer contentId) throws SystemException, Bug, Exception
     {

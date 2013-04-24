@@ -295,7 +295,7 @@ public class InconsistenciesController extends BaseController
 					contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 					contentVersionVO.setVersionValue(versionValue);
 
-					ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+					ContentVersionController.getContentVersionController().update(contentVersionVO.getContentVersionId(), contentVersionVO, db);
 				}
 			}
 		}

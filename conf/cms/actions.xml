@@ -1128,7 +1128,7 @@
 		<view name="stateLocation">CreateContentWizardChooseParent.action</view>
 		<view name="inputContent">CreateContentWizardInputContent!input.action</view>
 		<view name="inputAssets">CreateContentWizardInputAssets!input.action?contentVersionId=${contentVersionId}&amp;inputMoreAssets=${inputMoreAssets}</view>
-		<view name="inputContentVersionsForFCKEditor">ViewContentVersion!standalone.action?contentVersionId=${contentVersionId}&amp;saveAndExitURL=${encodedRefreshAddress}</view>
+		<view name="inputContentVersionsForFCKEditor">ViewContentVersion!standalone.action?contentVersionId=${contentVersionId}&amp;parentContentId=${parentContentId}&amp;saveAndExitURL=${encodedRefreshAddress}</view>
 		<!--  <view name="inputContentVersionsForFCKEditor">CreateContentWizardInputContentVersions!input.action?contentVersionId=${contentVersionId}</view>-->
 		<view name="success">ViewContent.action</view>
 		<view name="error">/cms/common/error.vm</view>

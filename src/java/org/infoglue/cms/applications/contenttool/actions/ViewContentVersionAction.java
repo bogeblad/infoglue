@@ -304,10 +304,13 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	        }
     	}
     	
+    	logger.info("this.contentVO:" + this.contentVO);
+    	logger.info("this.contentVO.getParentContentId():" + this.contentVO.getParentContentId());
         if(this.contentVO != null && this.contentVO.getParentContentId() != null)
         {
         	ContentVO repoRootContentVO = getRootContent(this.contentVO);
-        	if(this.contentVO.getRepositoryId() != null && repoRootContentVO.getRepositoryId() != null && !this.contentVO.getRepositoryId().equals(repoRootContentVO.getRepositoryId()))
+        	logger.info("repoRootContentVO:" + repoRootContentVO);
+           	if(this.contentVO.getRepositoryId() != null && repoRootContentVO.getRepositoryId() != null && !this.contentVO.getRepositoryId().equals(repoRootContentVO.getRepositoryId()))
             {
         		logger.info("The content was not the same repo - will fix: " + this.contentVO);
         		ContentController.getContentController().changeRepository(this.contentVO.getId(), repoRootContentVO.getRepositoryId());

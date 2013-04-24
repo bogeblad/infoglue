@@ -674,6 +674,9 @@
 			return value;
 		}
 		
+		//$parentContentId
+		//$request.getParameter("parentContentId")
+		//$currentURL
 		#if($parentContentId)
 		try
 		{

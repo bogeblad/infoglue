@@ -24,11 +24,12 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -39,7 +40,6 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RegistryVO;
-import org.infoglue.cms.entities.management.impl.simple.RegistryImpl;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
@@ -107,7 +107,7 @@ public class InconsistenciesController extends BaseController
 					{
 						try
 						{
-							SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
+							SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
 							if(siteNodeVO == null)
 								addSiteNodeInconsistency(inconsistencies, registryVO, db);
 								//inconsistencies.add(registryVO);								
@@ -283,7 +283,7 @@ public class InconsistenciesController extends BaseController
 					String versionValue = contentVersionVO.getVersionValue();
 
 					if(registryVO.getReferenceType().equals(RegistryVO.INLINE_LINK))
-						versionValue = deleteInlineLinks(versionValue, new Integer(registryVO.getEntityId()));
+						versionValue = deleteInlineLinks(versionValue, new Integer(registryVO.getEntityId()), db);
 					if(registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET))
 						versionValue = deleteInlineAssets(versionValue, new Integer(registryVO.getEntityId()));
 					if(registryVO.getReferenceType().equals(RegistryVO.INLINE_SITE_NODE_RELATION))
@@ -459,26 +459,41 @@ public class InconsistenciesController extends BaseController
 		
 		return cleanedVersionValue;
 	}
+
+	private String cleanInlineNonLinkSiteNodes(String versionValue, Integer siteNodeId, Database db) throws ConstraintException, SystemException, Exception
+	{
+	    Pattern pattern = Pattern.compile("\\$templateLogic\\.getPageUrl\\(" + siteNodeId + ",.*?\\)");
+	    Matcher matcher = pattern.matcher(versionValue);
+	    StringBuffer sb = new StringBuffer();
+	    while ( matcher.find() )
+	    {
+	        String match = matcher.group();
+	        logger.info("Found inline non-link SiteNode. Removing... Match: " + match);
+			matcher.appendReplacement(sb, "");
+	    }
+	    matcher.appendTail(sb);
+	    return sb.toString();
+	}
 	
-	private String deleteInlineLinks(String versionValue, Integer siteNodeId) 
+	private String deleteInlineLinks(String versionValue, Integer siteNodeId, Database db)
 	{
 		String cleanedVersionValue = versionValue;
-		
+
 		try
 		{
 			logger.info("versionValue:" + versionValue);
-			
+
 			int startIndex = versionValue.indexOf("<a ");
 			int endIndex = versionValue.indexOf("</a>", startIndex) + 4;
 			int offset = startIndex;
-			
-			Map replaces = new HashMap();
-			
+
+			Map<String, String> replaces = new HashMap<String, String>();
+
 			while(startIndex > -1 && endIndex > startIndex)
 			{
 				String linkString = versionValue.substring(startIndex, endIndex);
 				logger.info("linkString:" + linkString);
-				
+
 				if(linkString.indexOf("getPageUrl(" + siteNodeId + ",") > -1)
 				{
 					int linkTextStartIndex = linkString.indexOf(">");
@@ -487,41 +502,43 @@ public class InconsistenciesController extends BaseController
 					logger.info("linkText:" + linkText);
 					replaces.put(linkString, linkText);
 				}
-				
+
 				startIndex = versionValue.indexOf("<a ", offset);
 				endIndex = versionValue.indexOf("</a>", startIndex) + 4;
 				offset = endIndex;
 			}
-			
-			Iterator replacesIterator = replaces.keySet().iterator();
+
+			Iterator<String> replacesIterator = replaces.keySet().iterator();
 			while(replacesIterator.hasNext())
 			{
-				String original = (String)replacesIterator.next();
-				String linkText = (String)replaces.get(original);
-				
+				String original = replacesIterator.next();
+				String linkText = replaces.get(original);
+
 				int offsetFinal = 0;
 				int linkStart = cleanedVersionValue.indexOf(original, offsetFinal);
 				while(linkStart > -1)
 				{
 					StringBuffer result = new StringBuffer();
-					
+
 					result.append(cleanedVersionValue.substring(offsetFinal, linkStart));
 					result.append(linkText);
 					offsetFinal = cleanedVersionValue.indexOf(original, offsetFinal) + original.length();
 					result.append(cleanedVersionValue.substring(offsetFinal));
-					
+
 					cleanedVersionValue = result.toString();
 					linkStart = cleanedVersionValue.indexOf(original, offsetFinal);
 				}
 			}
-			
+
+			cleanedVersionValue = cleanInlineNonLinkSiteNodes(cleanedVersionValue, siteNodeId, db);
+
 			logger.info("cleanedVersionValue:" + cleanedVersionValue);
 		}
-		catch (Exception e) 
+		catch (Exception ex)
 		{
-			e.printStackTrace();
+			logger.error("Error when deleting inline links in content version. Was looking for SiteNode " + siteNodeId + ". Message: " + ex.getMessage());
+			logger.warn ("Error when deleting inline links in content version. Was looking for SiteNode " + siteNodeId, ex);
 		}
-		
 		return cleanedVersionValue;
 	}
 	

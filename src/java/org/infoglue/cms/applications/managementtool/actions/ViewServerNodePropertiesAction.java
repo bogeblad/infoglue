@@ -367,6 +367,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "allowedDirectLoginNames");
 
 	    populate(ps, "onlyShowReferenceIfLatestVersion");
+	    populate(ps, "registryContactMailLanguage");
 
 	    try
 	    {

@@ -195,7 +195,7 @@ public class RegistryController extends BaseController
     		baseContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.intro"));
     		baseContent.append("<p>");
     		baseContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.siteNodeLabel"));
-    		baseContent.append(getSiteNodePath(siteNodeVO, db));
+    		baseContent.append(getSiteNodePath(siteNodeVO, " / ", db));
     		baseContent.append("</p>");
 
     		String from = CmsPropertyHandler.getSystemEmailSender();
@@ -209,8 +209,8 @@ public class RegistryController extends BaseController
 
 					String path;
 					String url;
-					StringBuilder siteNodeBuilder = new StringBuilder(baseContent);
-					StringBuilder contentBuilder = new StringBuilder(baseContent);
+					StringBuilder siteNodeBuilder = new StringBuilder();
+					StringBuilder contentBuilder = new StringBuilder();
 					for (ReferenceBean reference : entry.getValue())
 					{
 						if (reference.getPath() != null && !reference.getPath().equals(""))
@@ -236,13 +236,13 @@ public class RegistryController extends BaseController
 							}
 
 							// ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$languageId"
-							url = "ViewContentVersion!standalone.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
+							url = CmsPropertyHandler.getCmsFullBaseUrl() + "/ViewContentVersion!standalone.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
 							contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
 						}
 						else
 						{
 							// DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1
-							url = "DeleteContent!fixPage.action?siteNodeId=" + ((SiteNodeVO)reference.getReferencingCompletingObject()).getSiteNodeId() + "&contentId=-1";
+							url = CmsPropertyHandler.getCmsFullBaseUrl() + "/DeleteContent!fixPage.action?siteNodeId=" + ((SiteNodeVO)reference.getReferencingCompletingObject()).getSiteNodeId() + "&contentId=-1";
 							siteNodeBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
 						}
 					}
@@ -318,7 +318,8 @@ public class RegistryController extends BaseController
 				deleteEntity(RegistryImpl.class, registryId, db);
 			}
 
-		    commitTransaction(db);
+//		    commitTransaction(db);
+		    commitRegistryAwareTransaction(db);
 		}
 		catch (Exception e)
 		{
@@ -396,7 +397,6 @@ public class RegistryController extends BaseController
 	{
 		@SuppressWarnings("unchecked")
 		List<RegistryVO> registryEntires = getMatchingRegistryVOList(SiteNode.class.getName(), siteNodeId.toString(), -1, db);
-//		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId, db);
 		SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithId(siteNodeId, db);
 		Map<String, ReferenceBean> entries = new HashMap<String, ReferenceBean>();
 		List<ReferenceBean> references = new ArrayList<ReferenceBean>();
@@ -411,10 +411,10 @@ public class RegistryController extends BaseController
 			{
 				references.add(referenceBean);
 			}
-			//db.remove(registryVO);
+			db.remove(registryVO);
 		}
 		notifyContactPersonsForSiteNode(siteNode.getValueObject(), references, db);
-		//db.remove(siteNode);
+		db.remove(siteNode);
 	}
 
 	/**
@@ -754,7 +754,7 @@ public class RegistryController extends BaseController
 	        public void run() 
 	        {
 	        	Timer t = new Timer();
-	        	try {Thread.currentThread().sleep(30000);} catch (Exception e) {}
+	        	try {Thread.sleep(30000);} catch (Exception e) {}
 	        	
 	        	List<SiteNodeVersionVO> localContentVersions = new ArrayList<SiteNodeVersionVO>();
 	        	synchronized (queuedSiteNodeVersions) 
@@ -839,8 +839,8 @@ public class RegistryController extends BaseController
 			SmallServiceBindingImpl serviceBinding = serviceBindingIterator.next();
 		    if(serviceBinding.getBindingQualifyers() != null)
 		    {
-			    @SuppressWarnings("rawtypes")
-			    Iterator<SmallQualifyerImpl> qualifyersIterator = serviceBinding.getBindingQualifyers().iterator();
+			    @SuppressWarnings("unchecked")
+				Iterator<SmallQualifyerImpl> qualifyersIterator = serviceBinding.getBindingQualifyers().iterator();
 			    while(qualifyersIterator.hasNext())
 			    {
 			    	SmallQualifyerImpl qualifyer = (SmallQualifyerImpl)qualifyersIterator.next();
@@ -1486,34 +1486,34 @@ public class RegistryController extends BaseController
     }
     */
 
-	public List getReferencingObjectsForContent(Integer contentId) throws SystemException
+	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId) throws SystemException
     {
 		return getReferencingObjectsForContent(contentId, -1, true);
     }
 
-	public List getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences) throws SystemException
+	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences) throws SystemException
     {
-		List referenceBeanList = new ArrayList();
-        
+		List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
+
 		Database db = CastorDatabaseService.getDatabase();
-		
+
 		try 
 		{
 			beginTransaction(db);
-			
+
 			referenceBeanList = getReferencingObjectsForContent(contentId, maxRows, excludeInternalContentReferences, db);
-	    
+
 	        commitTransaction(db);
 		}
-		catch (Exception e)		
+		catch (Exception e)
 		{
 		    logger.warn("One of the references was not found which is bad but not critical:" + e.getMessage(), e);
 		    rollbackTransaction(db);
 			//throw new SystemException("An error occurred when we tried to fetch a list of roles in the repository. Reason:" + e.getMessage(), e);			
 		}
-		
+
 		logger.info("referenceBeanList:" + referenceBeanList.size());
-		
+
         return referenceBeanList;
     }
 
@@ -1885,9 +1885,9 @@ public class RegistryController extends BaseController
     public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion) throws SystemException, Exception
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
-        
+
         Database db = CastorDatabaseService.getDatabase();
-		
+
 		try 
 		{
 			beginTransaction(db);
@@ -1901,7 +1901,7 @@ public class RegistryController extends BaseController
 		    logger.warn("One of the references was not found which is bad but not critical:" + e.getMessage(), e);
 		    rollbackTransaction(db);
 		}
-		
+
         return referenceBeanList;
     }
 
@@ -1943,33 +1943,40 @@ public class RegistryController extends BaseController
     
     protected String getSiteNodePath(SiteNodeVO siteNodeVO, Database db) throws Exception
 	{
-		StringBuilder sb = new StringBuilder();
-
-		do
-		{
-			if(siteNodeVO.getParentSiteNodeId() != null)
-			{
-				siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
-			}
-			else
-			{
-				siteNodeVO = null;
-			}
-			if (siteNodeVO != null)
-			{
-				sb.insert(0, " / " + siteNodeVO.getName());
-			}
-		} while(siteNodeVO != null);
-
-		return sb.toString();
+		return getSiteNodePath(siteNodeVO, "/", db);
 	}
-
-    protected String getContentPath(ContentVO contentVO, Database db) throws Exception
+    protected String getSiteNodePath(SiteNodeVO siteNodeVO, String seperator, Database db) throws Exception
     {
     	StringBuilder sb = new StringBuilder();
 
-    	do
+    	while(siteNodeVO != null)
     	{
+    		sb.insert(0, seperator + siteNodeVO.getName());
+    		if(siteNodeVO.getParentSiteNodeId() != null)
+    		{
+    			siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
+    		}
+    		else
+    		{
+    			siteNodeVO = null;
+    		}
+    	}
+
+    	return sb.toString();
+    }
+
+    protected String getContentPath(ContentVO contentVO, Database db) throws Exception
+    {
+    	return getContentPath(contentVO, "/", db);
+    }
+
+    protected String getContentPath(ContentVO contentVO, String seperator, Database db) throws Exception
+    {
+    	StringBuilder sb = new StringBuilder();
+
+    	while(contentVO != null)
+    	{
+    		sb.insert(0, seperator + contentVO.getName());
     		if(contentVO.getParentContentId() != null)
     		{
     			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
@@ -1978,11 +1985,7 @@ public class RegistryController extends BaseController
     		{
     			contentVO = null;
     		}
-    		if (contentVO != null)
-    		{
-    			sb.insert(0, " / " + contentVO.getName());
-    		}
-    	} while(contentVO != null);
+    	}
 
     	return sb.toString();
     }

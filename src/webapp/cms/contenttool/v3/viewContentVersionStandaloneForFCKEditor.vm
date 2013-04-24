@@ -46,10 +46,35 @@
 		}
 		
 	</script>
+	<style type="text/css">
+	#processDiv {  
+	    position:fixed;  
+	    width:300px;  
+	    top:150px;  
+	    left:50%;  
+	    height: 120px;
+	    margin-left:-150px;  
+	    text-align:center;  
+	    padding:40px 0 0 0;  
+	    color: black;
+	    font:bold 11px Arial, Helvetica, sans-serif;  
+	    -moz-border-radius: 10px;
+		border-radius: 10px;
+		border: 2px solid rgba(0,0,0,0.4);
+		background-color: rgba(255,255,255,1);
+		box-shadow: 3px 3px 50px rgba(0,0,0,0.7);
+		z-index: 10000;
+	}  
+</style>
 </head>
 <body>
-	Saving and reloading...
-	
+	<div id="processDiv">
+		<div style="float: left; left: 0px; width: 100%; text-align: center; margin-bottom: 10px;">
+			<font face="Verdana" size="-1" color="#006699"><strong>$ui.getString("tool.common.loading.label")</strong></font>
+		</div>
+		<div style="float: left; width: 100%; text-align: center;"><img alt="" src="css/images/v3/loadingAnimation.gif" /></div>
+	</div>
+
 	<script type="text/javascript">
 		#if($saveAndExitURL && $saveAndExitURL != "")
 			if(parent)parent.document.location.href = "$saveAndExitURL";
@@ -59,6 +84,7 @@
 			submitToPublish();
 		#end
 	</script>
+
 </body>
 </html>
 

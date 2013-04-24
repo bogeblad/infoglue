@@ -234,10 +234,21 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 			returnAddress = returnAddress.replaceAll("#path", createContentWizardInfoBean.getContentVO().getName());
 			createContentWizardInfoBean.setReturnAddress(returnAddress);
 			logger.info("returnAddress:" + returnAddress);
-
+			
 			if(versionDone == null || versionDone.equals("false"))
 			{
-			    return "inputContentVersionsForFCKEditor";
+				if(this.contentVersionId == null)
+				{
+					if(createContentWizardInfoBean.getContentVersions() != null && createContentWizardInfoBean.getContentVersions().size() > 0)
+					{
+						if(createContentWizardInfoBean.getContentVersions().get(1) != null)
+							this.contentVersionId = ((ContentVersionVO)createContentWizardInfoBean.getContentVersions().get(1)).getId();
+						else
+							this.invalidateCreateContentWizardInfoBean();
+					}
+				}
+					
+				return "inputContentVersionsForFCKEditor";
 			}
 								
 			//String returnAddress = createContentWizardInfoBean.getReturnAddress();
@@ -251,6 +262,7 @@ public class CreateContentWizardFinishAction extends CreateContentWizardAbstract
 		catch(Exception e)
 		{
 			e.printStackTrace();
+			this.invalidateCreateContentWizardInfoBean();
 		}
 		
 		return NONE;

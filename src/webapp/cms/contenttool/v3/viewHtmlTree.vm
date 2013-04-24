@@ -367,9 +367,16 @@
 	});
 	
 	var oldSelected = null;
+	oldSelected = "$rootNode.Id";
+	$("[entityid='$rootNode.Id']").addClass("selected");
 	
 	function onTreeItemClick(elem, itemId, repoId, path)
 	{
+		if(oldSelected)
+		{
+			$("[entityid='$rootNode.Id']").removeClass("selected");
+			oldSelected = null;
+		}
 		//if(oldSelected!=null) oldSelected.className="";
 		//elem.className="selected";
 		//oldSelected=elem;

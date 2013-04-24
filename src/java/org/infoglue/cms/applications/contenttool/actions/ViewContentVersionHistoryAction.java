@@ -49,7 +49,7 @@ public class ViewContentVersionHistoryAction extends InfoGlueAbstractAction
 	protected String doExecute() throws Exception 
 	{
 	    this.contentVO = ContentController.getContentController().getContentVOWithId(this.contentId);
-	    contentVersionVOList = ContentVersionController.getContentVersionController().getSmallestContentVersionVOList(contentId);
+	    contentVersionVOList = ContentVersionController.getContentVersionController().getContentVersionVOList(contentId);
 	    
 	    return "success";
 	}

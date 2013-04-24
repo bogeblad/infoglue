@@ -9,30 +9,30 @@
 	<script type="text/javascript">
 	<!--
 		var dmp = new diff_match_patch();
-	
+
 		function calculateDiffSummary(version1Id, version2Id)
 		{
 		  	var element = document.getElementById("summaryDiv");
 		  	var diffDivElement = document.getElementById("diffDiv");
-			
+
 		  	//alert("version1Id:" + version1Id);
 		  	//alert("version2Id:" + version2Id);
 		  	var text1 = document.getElementById("text_" + version1Id).value;
 		  	var text2 = document.getElementById("text_" + version2Id).value;
 		  	//alert("text1:" + text1);
 		  	//alert("text2:" + text2);
-		  			
+
 		  	dmp.Diff_Timeout = parseFloat(3);
 		  	dmp.Diff_EditCost = parseFloat(4);
-		
+
 		  	var ms_start = (new Date()).getTime();
 		  	var d = dmp.diff_main(text1,text2);
 		  	var ms_end = (new Date()).getTime();
-		
+
 		  	dmp.diff_cleanupSemantic(d);
-		  	
+
 		  	var diffConclusionArray = countChanges(d);
-	
+
 			var ds = dmp.diff_prettyHtml(d);
 			ds = ds.replace(/<article/g, "<br/><article");
 			ds = ds.replace(/&lt;article/g, "<br/>&lt;article");
@@ -41,10 +41,10 @@
 			ds = ds.replace(/CDATA\[/g, "CDATA[<br/>").replace(/&para;<BR>/g, "&nbsp;<br/>").replace(/#E6FFE6/g, "#99FF99").replace(/#FFE6E6/g, "#FF8888").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
 
 			diffDivElement.innerHTML = "<p style='background-color: #CCEEff; margin: 0px; padding: 0px; font-family: courier new, courier, serif; font-size: 8pt;'>" + ds + "</p>";
-		  	
+
 			element.innerHTML = "Comparison results: <ins>" + diffConclusionArray[0] + " $ui.getString("tool.managementtool.deploymentQuick.additionsLabel")</ins>, <del>" + diffConclusionArray[1] + " $ui.getString("tool.managementtool.deploymentQuick.removalsLabel")</del>";
-		} 
-				
+		}
+
 		function countChanges(a)
 		{
 			var diffConclusionArray = [0,0];
@@ -64,22 +64,22 @@
 			return diffConclusionArray;
 		}
 
-	
+
 		function compare()
 		{
 			var text1VersionId = "";
 			var text2VersionId = "";
-			
+
 			$('input[type=checkbox]').filter(':checked').each(function(index) {
 															if(text1VersionId == "")
 															 	text1VersionId = $(this).val();
 															else if(text2VersionId == "")
 																text2VersionId = $(this).val();
 														 });
-			
+
 			if(text1VersionId != "" && text2VersionId != "")
 			{
-				calculateDiffSummary(text1VersionId, text2VersionId);					
+				calculateDiffSummary(text1VersionId, text2VersionId);
 
 				$("#compareDiv").show();
 			}
@@ -88,14 +88,12 @@
 				alert("Choose two versions to compare");
 			}
 		}
-	
+
 		$(document).ready(function(){
-			
 			#set($extraParameter = '')
 			#initDataTableImpl("dataTable" $extraParameter)
-					
 		});
-	
+	-->
 	</script>
 #end
 
@@ -124,7 +122,7 @@
 			#foreach($contentVersionVO in $contentVersionVOList)
 				<tr>
 					<td><input type="checkbox" id="contentVersionId" value="$contentVersionVO.id"/></td>
-					<td>$contentVersionVO.id</td>
+					<td><a href="javascript:void(0)" onclick="top.openUrlInWorkArea('ViewContentVersion!V3.action?contentId=$!contentId&contentVersionId=$contentVersionVO.id&languageId=$contentVersionVO.languageId', '$contentVersionVO.contentName', 'content', 'Content', 'ContentTool'); return false;">$contentVersionVO.id</a></td>
 					<td>$this.getLanguageVO($contentVersionVO.languageId).name</td>
 					<td>#stateInText($contentVersionVO.stateId)</td>
 					<td>$contentVersionVO.isActive</td>

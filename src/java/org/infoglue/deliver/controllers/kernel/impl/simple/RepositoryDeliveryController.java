@@ -48,6 +48,8 @@ import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.NullObject;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -105,7 +107,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         return repositoryVO;	
 	}
 
-	public Set<RepositoryVO> getRepositoryVOListFromServerName(String serverName, String portNumber, String repositoryName, String URI) throws SystemException, Exception
+	public Set<RepositoryVO> getRepositoryVOListFromServerName(String serverName, String portNumber, String repositoryName, String url) throws SystemException, Exception
     {
 	    Set<RepositoryVO> repositories = new HashSet<RepositoryVO>();
 	    
@@ -115,7 +117,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    {
 	    	db.begin();
 	    	
-	    	repositories = getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName, URI);
+	    	repositories = getRepositoryVOListFromServerName(db, serverName, portNumber, repositoryName, url);
 	    	
 	    	db.commit();
 	    }
@@ -140,6 +142,9 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 
 	public Set<RepositoryVO> getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName, String url) throws SystemException, Exception
     {
+		Timer t = new Timer();
+		t.setActive(false);
+		
 	    Set<RepositoryVO> repositories = new HashSet<RepositoryVO>();
 	    
 	    String niceURIEncoding = CmsPropertyHandler.getNiceURIEncoding();
@@ -203,7 +208,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
  
 	            if(workingPath != null && url.indexOf(workingPath) == -1 && url.indexOf(workingPathAlternative1) == -1 && url.indexOf(workingPathAlternative2) == -1)
 	            {
-	            	//System.out.println("This repo had a working path but the url did not include any sign of it - let's skip it");
+	            	logger.info("This repo had a working path but the url did not include any sign of it - let's skip it");
 	            	continue;
 	            }
 	        }
@@ -221,7 +226,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 
 	            if(livePath != null && url.indexOf(livePath) == -1 && url.indexOf(livePathAlternative1) == -1 && url.indexOf(livePathAlternative2) == -1)
 	            {
-	            	//System.out.println("This repo had a live path but the url did not include any sign of it - let's skip it");
+	            	logger.info("This repo had a live path but the url did not include any sign of it - let's skip it");
 	            	continue;
 	            }
 	        }
@@ -272,8 +277,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 if(portIndex > -1)
                     dnsName = dnsName.substring(0, portIndex);
 
-                if(logger.isInfoEnabled())
-                	logger.info("Matching only server name - removed protocol if there:" + dnsName);
+                logger.info("Matching only server name - removed protocol if there:" + dnsName);
                 if(logger.isInfoEnabled())
                 	logger.info("dnsName:" + dnsName + ", serverName:" + serverName + ", repositoryName:" + repositoryName);
                 
@@ -290,8 +294,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                 {
             	    if(repositoryName != null && repositoryName.length() > 0)
             	    {
-            	    	if(logger.isInfoEnabled())
-                        	logger.info("Has to check repositoryName also:" + repositoryName);
+            	        logger.info("Has to check repositoryName also:" + repositoryVO.getName() + "=" + repositoryName + "=" + serverName);
                         if(repositoryVO.getName().equalsIgnoreCase(repositoryName))
                         {
                         	if((dnsName.indexOf(":") == -1 && dnsName.indexOf(serverName) == 0) || dnsName.indexOf(serverName + ":" + portNumber) == 0)
@@ -306,18 +309,28 @@ public class RepositoryDeliveryController extends BaseDeliveryController
                     }
             	    else
             	    {
-                    	//System.out.println("Adding " + repositoryVO.getName() + ":" + dnsName);
-            	    	if(logger.isInfoEnabled())
-                        	logger.info("Adding " + repositoryVO.getName());
-            	        repositories.add(repositoryVO);
+            	    	logger.info("dnsName:" + dnsName);
+            	    	logger.info("serverName:" + serverName);
+                    	if(dnsName.startsWith(serverName))
+                	    {
+                    		logger.info("Adding 2:" + repositoryVO.getName() + "=" + repositoryName + "=" + serverName);
+                           	repositories.add(repositoryVO);
+                	    }
+                	    /*
+            	        logger.warn("Adding 2:" + repositoryVO.getName() + "=" + repositoryName);
+            	    	repositories.add(repositoryVO);
+            	    	*/
             	    }
             	}
             }
         }
         
+        RequestAnalyser.getRequestAnalyser().registerComponentStatistics("Getting all repos", t.getElapsedTime());
+
         return repositories;
     }
 
+	/*
 	public List getRepositoryVOListFromServerName(Database db, String serverName, String portNumber, String repositoryName) throws SystemException, Exception
     {
 	    List repositories = new ArrayList();
@@ -358,7 +371,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
         
         return repositories;
     }
-
+*/
 	
     private String[] splitStrings(String str)
     {
@@ -432,20 +445,17 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	public String getPropertyValue(Integer repositoryId, String propertyName) 
 	{
 		String key = "parentRepository_" + repositoryId + "_" + propertyName;
-		if(logger.isInfoEnabled())
-        	logger.info("key:" + key);
+       	logger.info("key:" + key);
 	    Object object = CacheController.getCachedObject("parentRepository", key);
 		
 	    if(object instanceof NullObject)
 		{
-	    	if(logger.isInfoEnabled())
-            	logger.info("There was an cached property but it was null:" + object);
+           	logger.info("There was an cached property but it was null:" + object);
 			return null;
 		}
 		else if(object != null)
 		{
-			if(logger.isInfoEnabled())
-            	logger.info("There was an cached property:" + object);
+           	logger.info("There was an cached property:" + object);
 			return (String)object;
 		}
 		
@@ -456,8 +466,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 	    
 	    propertyValue = ps.getString("repository_" + repositoryId + "_" + propertyName);
-	    if(logger.isInfoEnabled())
-        	logger.info("propertyValue:" + propertyValue);
+       	logger.info("propertyValue:" + propertyValue);
 	    
 	    if(propertyValue != null)
 	        CacheController.cacheObject("parentRepository", key, propertyValue);
@@ -508,8 +517,7 @@ public class RepositoryDeliveryController extends BaseDeliveryController
 				propertyValue = properties.getProperty(propertyName);
 			}
 	    
-		    if(logger.isInfoEnabled())
-            	logger.info("propertyValue:" + propertyValue);
+           	logger.info("propertyValue:" + propertyValue);
 		    if(propertyValue != null)
 		        CacheController.cacheObject("parentRepository", key, propertyValue);
 		    else

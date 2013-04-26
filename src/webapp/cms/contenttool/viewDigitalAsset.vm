@@ -36,10 +36,40 @@
 
 	<script type="text/javascript" src="script/v3/infoglue.js"></script>
 
-	<link rel="stylesheet" type="text/css" href="css/infoglue.css" />
 	<link rel="stylesheet" type="text/css" href="css/tabs.css" media="screen">
 
 	<link href="applications/swfupload/css/infoglue.css" rel="stylesheet" type="text/css" />
+
+	<style type="text/css">
+		.fileUploadTable 
+		{
+			border: none;
+			border-spacing: 8px;
+			width: 410px;
+		}
+		.fileUploadTable td
+		{
+			padding: 0;
+		}
+		.fileUploadThumbnail
+		{
+			width: 150px; 
+			border: 1px solid rgb(200, 200, 200); 
+			background-color: white;
+		}
+		#file1
+		{
+			width: 240px;
+			margin: 0;
+		}
+		.fileUploadTable #cboBoxTable
+		{
+			width: 240px;
+		}
+		
+		#cboBoxTable td {border: 1px solid rgb(200, 200,200);}
+		#cboBoxTable td:first-child {border-right: none;}
+	</style>
 
 	<script type="text/javascript" src="applications/swfupload/swfupload.js"></script>
 	<script type="text/javascript" src="applications/swfupload/plugins/swfupload.queue.js"></script>
@@ -410,9 +440,9 @@
 			<input type="hidden" name="contentVersionId" value="$!contentVersionId">
 			<input type="hidden" name="uploadedFilesCounter" value="$!uploadedFilesCounter">
 			<input type="hidden" name="closeOnLoad" value="false">
-			<table width="350" border="0">
+			<table class="fileUploadTable">
 				<tr>
-					<td class="biglabel" width="250" height="30">
+					<td class="biglabel" colspan="2">
 						<strong>#if($uploadedFilesCounter == 0)
 							$ui.getString("tool.contenttool.fileUpload.fileUploadHeader")
 						#else
@@ -423,7 +453,17 @@
 							$ui.getString("tool.contenttool.myFileUploadLimit", $formatter.formatFileSize($this.userUploadMaxSize))
 						</span>
 					</td>
-					<td rowspan="2" width="100" style="border: 1px solid black; background-color: white;" align="center" valign="middle">
+				</tr>
+				<tr>
+					<td>
+						$ui.getString("tool.contenttool.fileUpload.fileUploadFileLabel")
+					</td>
+				</tr>		
+				<tr>
+					<td>
+						<input type="FILE" name="file1" id="file1" onchange="setAssetKey();">
+					</td>
+					<td class="fileUploadThumbnail" rowspan="4" align="center">
 						#if($uploadedFilesCounter != 0)
 							#set($digitalAssetUrl = "$digitalAssetUrl")
 							<a href="javascript:openPopup('$digitalAssetUrl', 'Preview', 'width=600,height=500,resizable=yes');"><img class="scaledbordered" src="$assetThumbnailUrl"><br>
@@ -434,24 +474,26 @@
 							#end
 							</a>
 						#end
-						&nbsp;
 					</td>
-				</tr>		
+				</tr>
 				<tr>
 					<td>
 						$ui.getString("tool.contenttool.fileUpload.fileUploadKeyLabel")
-						<br/>
+					</td>
+				</tr>
+				<tr>
+					<td>
 						<div id="comboBox">
 						  <table border="0" cellspacing="0" id="cboBoxTable">
 						    <tr>
-						      <td width="10" style="border: 1px solid black;">
+						      <td width="100%">
 						  		<input type="text" name="digitalAssetKey" id="tt" size="20" onfocus="ddHide();" onChange="keyChanged();" style="border: 1px solid #FFFFFF" #if($definedAssetKeys.size() > 0)value="$definedAssetKeys.get(0).assetKey" #end></td>
-						      	<td onClick="ddClick();" style="border: 1px solid black;">
+						      	<td onClick="ddClick();">
 						      	<img border="0" src="css/images/combodown.gif" width="15" height="20">
 						      </td>
 						    </tr>
 						  </table>
-						  <select size="5" name="dd" id="dd" style="border:0px solid #FFFFFF; width: 163px; height: 100; visibility: hidden; z-index: 100; position: absolute;" onClick="ddListClick();">
+						  <select size="5" name="dd" id="dd" style="width: 240px; height: 100; visibility: hidden; z-index: 100; position: absolute;" onClick="ddListClick();">
 							#foreach($assetKeyDefinition in $definedAssetKeys)
 								<option value="$assetKeyDefinition.assetKey">$assetKeyDefinition.assetKey</option>
 							#end
@@ -469,12 +511,6 @@
 						  -->
 						  </script>
 						</div>
-					</td>
-				</tr>		
-				<tr>
-					<td colspan="2">
-						$ui.getString("tool.contenttool.fileUpload.fileUploadFileLabel")<br/>
-						<input size=30 type="FILE" name="file1" id="file1" onchange="setAssetKey();">
 					</td>
 				</tr>
 				</form>	

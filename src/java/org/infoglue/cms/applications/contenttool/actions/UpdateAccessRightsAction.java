@@ -72,6 +72,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	
 	public String doExecute() throws Exception
     {   		
+		System.out.println("Aewgergerg erg erg erg er");
 		AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
 		
 		if(this.extraMultiParameter == null || this.extraMultiParameter.length == 0)

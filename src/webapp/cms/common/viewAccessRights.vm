@@ -291,14 +291,19 @@
 #end
 
 #beginLightCommonToolV3Impl("tool.contenttool.accessRights.header" "" "" false true $!disableCloseButton $headerMarkup false "")
-
+	
+	#set($disabled = "disabled")
+	#if($this.hasAccessTo("Common.ManageAccessRights", true, false, true))
+		#set($disabled = "")
+	#end
+	
 	#if(!$showInline)
 		#lightMenuToolbar("" $buttons $rightButtons)
 	
 	<div style="clear: both;"></div>
 
 	<h3>
-		$ui.getString("tool.contenttool.accessRights.header")
+		$ui.getString("tool.contenttool.accessRights.header") #if($disabled=="disabled")<img src="css/images/accessRightsIcon.gif" title="Read only"/>#end
 		#if($errorMessage && $errorMessage != "")<span style="color:red">$errorMessage</span>#end
 		#if($stateChanged)<span style="color:red">You must publish the page for these access rights to be active live</span>#end
 	</h3>
@@ -333,7 +338,7 @@
 					#set($groups = [])
 					#set($groups = $accessRightGroupsMap.get($interceptionPointVO.id))
 					#foreach($accessRightGroup in $groups)
-						<input type="hidden" name="${interceptionPointVO.id}_${accessRightGroupIndex}_groupName" value="$accessRightGroup.groupName"/>
+						<input type="hidden" name="${interceptionPointVO.id}_${accessRightGroupIndex}_groupName" value="$accessRightGroup.groupName" $disabled/>
 						#set($accessRightGroupIndex = $accessRightGroupIndex + 1)
 					#end
 				#end
@@ -439,7 +444,7 @@
 																				
 									<input type="hidden" name="${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id"/>
 									<input type="hidden" name="${interceptionPointVO.id}_${roleIndex}_roleName" value="$role.name"/>
-									<input type="checkbox" id="${interceptionPointVO.id}_${role.name}_hasAccess" name="${interceptionPointVO.id}_${role.name}_hasAccess" value="true" $checked/>
+									<input type="checkbox" id="${interceptionPointVO.id}_${role.name}_hasAccess" name="${interceptionPointVO.id}_${role.name}_hasAccess" value="true" $checked $disabled/>
 									
 								</td>
 								<td>&nbsp;</td>
@@ -502,7 +507,7 @@
 								#end 
 								<input type="hidden" name="${interceptionPointVO.id}_${userIndex}_userName" value="$accessRightsUserRow.userName"/>
 								<!--<input type="checkbox" name="${interceptionPointVO.id}_${accessRightsUserRow.userName}_hasAccess" value="true" $checked>-->
-								<input type="checkbox" name="${interceptionPointVO.id}_${accessRightsUserRow.userName}_hasAccess" value="true" disabled="true" $checked/>
+								<input type="checkbox" name="${interceptionPointVO.id}_${accessRightsUserRow.userName}_hasAccess" value="true" disabled="true" $checked $disabled/>
 							</td>
 							<td>&nbsp;</td>
 							#set($interceptionPointIndex = $interceptionPointIndex + 1)
@@ -547,7 +552,7 @@
 								
 								<input type="hidden" name="0_${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id"/>
 								<input type="hidden" name="0_interceptionPointId" value="$interceptionPointVO.id"/>
-								<input type="checkbox" name="0_${interceptionPointVO.id}_hasAccess" value="true" $checked/>
+								<input type="checkbox" name="0_${interceptionPointVO.id}_hasAccess" value="true" $checked $disabled/>
 							</td>
 							<td>&nbsp;</td>
 							#set($interceptionPointIndex = $interceptionPointIndex + 1)
@@ -561,6 +566,7 @@
 				</tr>
 				</table>
 			</form>
+			#if($disabled != "disabled")
 			<p>
 				<!--
 				$ui.getString("tool.common.accessRights.addMoreUsers.label")
@@ -568,6 +574,7 @@
 				-->
 				<a href="javascript:document.addUserForm.submit();" style="display: block; float: left; border: 1px solid #ccc; height: 14px; background: url(css/images/v3/footerBackground.gif) repeat-x 0px -10px; white-space: nowrap; padding: 2px 10px 2px 10px; margin-left: 4px;">$ui.getString("tool.common.accessRights.addUserButtonLabel")</a>
 			</p>	
+			#end
 		</div>
 
 		<div id="debugTab" class="inlineTabDiv">
@@ -710,7 +717,7 @@
 									#end
 						
 									<tr>
-										<td><span style="display:none;">$selectedSortText</span><input type="checkbox" id="${interceptionPointVO.id}_${group.name}_hasAccess" name="groupName" value="${group.name}" $selected/></td>
+										<td><span style="display:none;">$selectedSortText</span><input type="checkbox" id="${interceptionPointVO.id}_${group.name}_hasAccess" name="groupName" value="${group.name}" $selected $disabled/></td>
 									  	<td>$group.displayName</td>
 									  	<td>$group.source</td>
 									  	<td>$group.groupType</td>

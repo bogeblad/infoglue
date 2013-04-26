@@ -160,20 +160,22 @@
 				$ui.getString("tool.contenttool.lastUpdatedByLabel") $contentVO.creatorName <br/>Content ID: $contentVO.id
 			</p>
 			
-			#if($contentTypeDefinition.name != "Meta info")
-			<p>
-				#set($isProtectedReadonly = "")
-				#set($protectedContentId = $!this.getProtectedContentId($contentId))
-				#set($isModifier = ($contentVO.creatorName == $infoGluePrincipal.name))
-				#if($protectedContentId && !$isModifier && !$this.hasAccessTo("Content.ChangeAccessRights", "$protectedContentId"))
-					#set($isProtectedReadonly = "disabled")
-					<input type="hidden" name="isProtected" value="$!isProtected"/> 
+			#if($this.hasAccessTo("Common.ManageAccessRights", true, false, true))
+				#if($contentTypeDefinition.name != "Meta info")
+				<p>
+					#set($isProtectedReadonly = "")
+					#set($protectedContentId = $!this.getProtectedContentId($contentId))
+					#set($isModifier = ($contentVO.creatorName == $infoGluePrincipal.name))
+					#if($protectedContentId && !$isModifier && !$this.hasAccessTo("Content.ChangeAccessRights", "$protectedContentId"))
+						#set($isProtectedReadonly = "disabled")
+						<input type="hidden" name="isProtected" value="$!isProtected"/> 
+					#end
+					$ui.getString("entity.Content.isProtected.label")<br>
+					<input type="radio" name="isProtected" value="0" #if($!isProtected == 0) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.no") 
+					<input type="radio" name="isProtected" value="1" #if($!isProtected == 1) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.yes")
+					<input type="radio" name="isProtected" value="2" #if($!isProtected == 2) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.inherit")
+				</p>		
 				#end
-				$ui.getString("entity.Content.isProtected.label")<br>
-				<input type="radio" name="isProtected" value="0" #if($!isProtected == 0) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.no") 
-				<input type="radio" name="isProtected" value="1" #if($!isProtected == 1) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.yes")
-				<input type="radio" name="isProtected" value="2" #if($!isProtected == 2) checked="1" #end $disabled $isProtectedReadonly> $ui.getString("tool.common.inherit")
-			</p>		
 			#end
 			
 	        #if($this.hasAccessTo("ToolTabsAndButtons.convertToFromFolderPart", true, false, true))

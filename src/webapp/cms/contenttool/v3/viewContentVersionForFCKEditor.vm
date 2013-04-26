@@ -459,10 +459,7 @@
 			if($("#contentVersionAccessRightsFrame").size() && $("#contentVersionAccessRightsFrame").get(0).contentWindow.save)
 				$("#contentVersionAccessRightsFrame").get(0).contentWindow.save();
 			
-			if(selected == 3)
-				setTimeout("validateAndSubmitContentForm();", 300);
-			else
-				validateAndSubmitContentForm();
+			validateAndSubmitContentForm();
 		}
 		
 		function saveAndExit(url)
@@ -540,7 +537,7 @@
 				{
 					$(".optionListWidget option").attr('selected', 'selected');
 					buildVersionValue(); 
-					document.editForm.submit();
+					setTimeout(function(){document.editForm.submit();}, 300);
 				}
 			}
 		}
@@ -708,7 +705,7 @@
 			#if($this.hasAccessTo("ContentVersionEditor.References", true, false))
             	<li><a href="#contentReferencesDiv"><span>$ui.getString('tool.contenttool.contentReferencesTab')</span></a></li>
 			#end
-			#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false))
+			#if($this.hasAccessTo("ContentVersionEditor.AccessRights", true, false) && $this.hasAccessTo("Common.ManageAccessRights", true, false, true))
 				#if($contentTypeDefinitionVO.name != "Meta info")
 		            <li><a href="#contentAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentAccessRightsTab')</span></a></li>
 		            <li><a href="#contentVersionAccessRightsDiv"><span>$ui.getString('tool.contenttool.contentVersionAccessRightsTab')</span></a></li>

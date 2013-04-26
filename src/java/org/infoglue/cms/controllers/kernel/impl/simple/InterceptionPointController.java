@@ -144,6 +144,7 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("Publication.Written", new InterceptionPointVO("Publication", "Publication.Written", "This interception point intercepts when an publication is completed", true));
 	    systemInterceptionPoints.put("Common.SubmitToPublishButton", new InterceptionPointVO("Common", "Common.SubmitToPublishButton", "Intercepts the submit to publish button", false));
 	    systemInterceptionPoints.put("Common.PublishButton", new InterceptionPointVO("Common", "Common.PublishButton", "Intercepts the publish button", false));
+	    systemInterceptionPoints.put("Common.ManageAccessRights", new InterceptionPointVO("Common", "Common.ManageAccessRights", "Intercepts any management of access rights", false));
 	    
 	    systemInterceptionPoints.put("ManagementToolMenu.Repositories", new InterceptionPointVO("ManagementToolMenu", "ManagementToolMenu.Repositories", "Intercepts access to the menu item 'Repositories' in management tool", false));
 	    systemInterceptionPoints.put("ManagementToolMenu.SystemUsers", new InterceptionPointVO("ManagementToolMenu", "ManagementToolMenu.SystemUsers", "Intercepts access to the menu item 'SystemUsers' in management tool", false));
@@ -197,9 +198,9 @@ public class InterceptionPointController extends BaseController
 	    systemInterceptionPoints.put("ToolTabsAndButtons.CreatePageAdvancedTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.CreatePageAdvancedTab", "Intercepts the Advanced-tab on create page", false));
 	    systemInterceptionPoints.put("ToolTabsAndButtons.PageDetailsAdvancedTab", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.PageDetailsAdvancedTab", "Intercepts the Advanced-tab and Languages on page details", false));
 	    systemInterceptionPoints.put("ToolTabsAndButtons.convertToFromFolderPart", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.convertToFromFolderPart", "Intercepts the link to convert a folder to a normal content or vice versa", false));
-
 	    
 	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentToolbarAdvancedButtons", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentToolbarAdvancedButtons", "Intercepts advanced buttons", false));
+	    systemInterceptionPoints.put("ToolTabsAndButtons.ContentToolbarContentPropertiesButton", new InterceptionPointVO("ToolTabsAndButtons", "ToolTabsAndButtons.ContentToolbarContentPropertiesButton", "Intercepts the content properties button", false));
 	}
     
 	/**

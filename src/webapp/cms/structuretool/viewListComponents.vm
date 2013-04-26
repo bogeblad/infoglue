@@ -43,10 +43,11 @@
 		$(document).ready(function(){
 			#set($extraParameter = '')
 			#if($useSimpleComponentDialog)
-			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ]')
+				#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ]')
 			#end
 			#initDataTableImpl("dataTable" $extraParameter)
 			
+			$("#dataTable_filter :text").focus();
 		});
 	-->
 	</script>

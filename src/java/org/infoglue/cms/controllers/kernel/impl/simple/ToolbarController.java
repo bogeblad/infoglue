@@ -753,12 +753,15 @@ public class ToolbarController implements ToolbarProvider
 
 		if(contentVO.getIsBranch())
 		{
-			buttons.add(new ToolbarButton("",
+			if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarContentPropertiesButton", true))
+			{
+				buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.editContentMetaInfoLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.editContentMetaInfoTitle"),
 				  "ViewContentProperties!V3.action?contentId=" + contentId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 				  "",
 				  "properties"));
+			}
 		}
 		
 		ToolbarButton publishButton = new ToolbarButton("",
@@ -1237,7 +1240,10 @@ public class ToolbarController implements ToolbarProvider
 				  "exportContent");
 		syncTreeButton.getSubButtons().add(exportContentButton);
 
-		buttons.add(syncTreeButton);
+		if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarAdvancedButtons", true))
+		{
+			buttons.add(syncTreeButton);
+		}
 		/*
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeLabel"), 

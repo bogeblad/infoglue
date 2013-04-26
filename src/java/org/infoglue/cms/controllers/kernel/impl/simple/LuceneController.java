@@ -1244,8 +1244,7 @@ public class LuceneController extends BaseController implements NotificationList
 				if(stopIndexing.get())
 					break outer;
 
-				if(logger.isInfoEnabled())
-					t.printElapsedTime("Queueing " + notificationMessages.size() + " notificationMessages for indexing");
+				logger.error("Queueing " + notificationMessages.size() + " notificationMessages for indexing");
 				for(NotificationMessage notificationMessage : notificationMessages)
 				{
 					notify(notificationMessage);
@@ -1255,7 +1254,7 @@ public class LuceneController extends BaseController implements NotificationList
 				//t.printElapsedTime("Indexing size():" + notificationMessages.size() + " took");
 				
 				Integer newLastContentVersionIdCandidate = getNotificationMessages(notificationMessages, languageVO, newLastContentVersionId, lastCommitedDateTime);
-				logger.info("newLastContentVersionIdCandidate:" + newLastContentVersionIdCandidate + "=" + newLastContentVersionId);
+				logger.error("newLastContentVersionIdCandidate:" + newLastContentVersionIdCandidate + "=" + newLastContentVersionId);
 				if(newLastContentVersionIdCandidate > newLastContentVersionId)
 					newLastContentVersionId = newLastContentVersionIdCandidate;
 				else

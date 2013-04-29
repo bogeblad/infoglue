@@ -2572,7 +2572,7 @@ public class ContentVersionController extends BaseController
 				logger.info("sb:" + sb);
 				contentVersionVO.setVersionValue(sb.toString());
 				contentVersionVO.setVersionModifier(infogluePrincipal.getName());
-				update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infogluePrincipal, skipValidate);
+				update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infogluePrincipal, skipValidate, db);
 			}
 			catch(Exception e)
 			{

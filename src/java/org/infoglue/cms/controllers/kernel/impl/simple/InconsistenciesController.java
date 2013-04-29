@@ -224,6 +224,68 @@ public class InconsistenciesController extends BaseController
 		}
 	}
 
+	public void removeContentReferences(Map<ContentVersionVO, RegistryVO> contentVersionRegistryPair, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
+	{
+		ContentVersionVO contentVersionVO;
+		RegistryVO registryVO;
+		for (Map.Entry<ContentVersionVO, RegistryVO> pair : contentVersionRegistryPair.entrySet())
+		{
+			contentVersionVO = pair.getKey();
+			registryVO = pair.getValue();
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("About to clean ContentVersion " + contentVersionVO.getContentVersionId() + " for references to: " + registryVO.getEntityName() + "<" + registryVO.getEntityId() + ">");
+			}
+			String versionValue = contentVersionVO.getVersionValue();
+
+			if(registryVO.getReferenceType().equals(RegistryVO.INLINE_LINK))
+				versionValue = deleteInlineLinks(versionValue, new Integer(registryVO.getEntityId()), db);
+			if(registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET))
+				versionValue = deleteInlineAssets(versionValue, new Integer(registryVO.getEntityId()));
+			if(registryVO.getReferenceType().equals(RegistryVO.INLINE_SITE_NODE_RELATION))
+				versionValue = deleteInlineSiteNodeRelations(versionValue, new Integer(registryVO.getEntityId()));
+			if(registryVO.getReferenceType().equals(RegistryVO.INLINE_CONTENT_RELATION))
+				versionValue = deleteInlineContentRelations(versionValue, new Integer(registryVO.getEntityId()));
+
+			contentVersionVO.setVersionModifier(infoGluePrincipal.getName());
+			contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+			contentVersionVO.setVersionValue(versionValue);
+
+			ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+		}
+	}
+
+	public void removeSiteNodeReferences(Map<SiteNodeVO, RegistryVO> siteNodeRegistryPair, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
+	{
+		SiteNodeVO siteNodeVO;
+		RegistryVO registryVO;
+		for (Map.Entry<SiteNodeVO, RegistryVO> pair : siteNodeRegistryPair.entrySet())
+		{
+			siteNodeVO = pair.getKey();
+			registryVO = pair.getValue();
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("About to clean SiteNode " + siteNodeVO.getContentVersionId() + " for references to: " + registryVO.getEntityName() + "<" + registryVO.getEntityId() + ">");
+			}
+			Integer metaInfoContentId = siteNodeVO.getMetaInfoContentId();
+			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+			String pageStructure = ContentController.getContentController().getContentAttribute(db, metaInfoContentId, masterLanguageVO.getId(), "ComponentStructure");
+
+			if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT))
+				pageStructure = deleteComponentFromXML(pageStructure, new Integer(registryVO.getEntityId()));
+			if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT_BINDING))
+				pageStructure = deleteComponentBindingFromXML(pageStructure, new Integer(registryVO.getEntityId()), registryVO.getEntityName());
+
+			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(metaInfoContentId, masterLanguageVO.getId(), db);
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", pageStructure, infoGluePrincipal, db);
+		}
+	}
+
+	/**
+	 * Creates a transaction and calls {@link #removeReferences(Integer, InfoGluePrincipal, Database)}.
+	 * @deprecated This method handles clean up of ContentVersions poorly. Please refer to {@link #removeContentReferences(Map, InfoGluePrincipal, Database)}
+	 *  and {@link #removeSiteNodeReferences(Map, InfoGluePrincipal, Database)} instead.
+	 */
 	public void removeReferences(Integer registryId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
     {
     	Database db = CastorDatabaseService.getDatabase();
@@ -244,16 +306,16 @@ public class InconsistenciesController extends BaseController
 		}
     }
 
+	/**
+	 * @deprecated This method handles clean up of ContentVersions poorly. Please refer to {@link #removeContentReferences(Map, InfoGluePrincipal, Database)}
+	 *  and {@link #removeSiteNodeReferences(Map, InfoGluePrincipal, Database)} instead.
+	 */
 	public void removeReferences(Integer registryId, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
 	{
 		RegistryVO registryVO = RegistryController.getController().getRegistryVOWithId(registryId, db);
-
-//		String entityName = registryVO.getEntityName();
 		String referencingEntityName = registryVO.getReferencingEntityName();
 		String referencingEntityCompletingName = registryVO.getReferencingEntityCompletingName();
-//		Integer entityId = new Integer(registryVO.getEntityId());
 		Integer referencingEntityId = new Integer(registryVO.getReferencingEntityId());
-//		Integer referencingEntityCompletingId = new Integer(registryVO.getReferencingEntityCompletingId());
 
 		if(referencingEntityCompletingName.equals(SiteNode.class.getName()))
 		{

@@ -85,10 +85,13 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 		this.siteNodeVO = siteNodeVO;
 	}
 
-	protected String doExecute() throws Exception 
+	protected String executeAction(boolean forceDelete) throws Exception
 	{
-		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(this.siteNodeVO.getSiteNodeId(), CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion());
-		if(this.referenceBeanList != null && this.referenceBeanList.size() > 0)
+		if (!forceDelete)
+		{
+			this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(this.siteNodeVO.getSiteNodeId(), CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion());
+		}
+		if(!forceDelete && this.referenceBeanList != null && this.referenceBeanList.size() > 0)
 		{
 		    return "showRelations";
 		}
@@ -104,20 +107,19 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 				logger.info("The siteNode must have been a root-siteNode because we could not find a parent.");
 			}
 
-			if (CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion())
-			{
-				logger.info("Looking for and removing registry entries that has not been removed because we are in show-only-latest-version-mode.");
-				RegistryController.getController().deleteAllForSiteNode(this.siteNodeVO.getSiteNodeId());
-			}
+//			if (!forceDelete && CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion())
+//			{
+//				logger.info("Looking for and removing registry entries that has not been removed because we are in show-only-latest-version-mode.");
+//				RegistryController.getController().deleteAllForSiteNode(this.siteNodeVO.getSiteNodeId(), getInfoGluePrincipal());
+//			}
 
-			//SiteNodeControllerProxy.getSiteNodeControllerProxy().acDelete(this.getInfoGluePrincipal(), this.siteNodeVO);
-			SiteNodeControllerProxy.getSiteNodeControllerProxy().acMarkForDelete(this.getInfoGluePrincipal(), this.siteNodeVO);
+			SiteNodeControllerProxy.getSiteNodeControllerProxy().acMarkForDelete(this.getInfoGluePrincipal(), this.siteNodeVO, forceDelete);
 
 			return "success";
 	    }
 	}
 
-	public String doV3() throws Exception 
+	protected String executeV3(boolean forceDelete) throws Exception
 	{
 		String result = NONE;
 
@@ -131,7 +133,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
     		logger.info("siteNodeName:" + siteNodeName + " for " + this.siteNodeVO.getSiteNodeId());
     		parentSiteNodeId = new Integer(siteNodeVO.getId());
 
-    		result = doExecute();
+    		result = executeAction(forceDelete);
 
     		String deleteSiteNodeInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.structuretool.deleteSiteNodeInlineOperationDoneHeader", new String[]{siteNodeVO.getName()});
     		String deleteSiteNodeInlineOperationViewDeletedPageParentLinkText = getLocalizedString(getLocale(), "tool.structuretool.deleteSiteNodeInlineOperationViewDeletedPageParentLinkText");
@@ -191,56 +193,28 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
         {
         	return "successV3";
         }
-    }
+	}
 
-//	public String doDeleteReference() throws Exception 
-//	{
-//	    for(int i=0; i<registryId.length; i++)
-//	    {
-//	    	String registryIdString = registryId[i];
-//	    	Integer registryId = new Integer(registryIdString);
-//	    	try
-//	    	{
-//	    		InconsistenciesController.getController().removeReferences(registryId, this.getInfoGluePrincipal());
-//	    	}
-//	    	catch(Exception e)
-//	    	{
-//	    		logger.debug("Error trying to remove reference - must be removed before...");
-//	    	}
-//	    	try
-//	    	{
-//	    		RegistryVO registryVO = RegistryController.getController().getRegistryVOWithId(registryId);
-//	    		if(registryVO != null)
-//	    			RegistryController.getController().delete(registryId);
-//	    	}
-//	    	catch(Exception e)
-//	    	{
-//	    		logger.debug("Error trying to remove reference - must be removed before...");
-//	    	}
-//	    }
-//	    
-//	    return doV3();
-//	}	
+	protected String doExecute() throws Exception
+	{
+		return executeAction(false);
+	}
+
+	public String doV3() throws Exception 
+	{
+		return executeV3(false);
+    }
 
 	public String doDeleteReference() throws Exception 
 	{
-		RegistryController.getController().delete(registryId, this.getInfoGluePrincipal());
+		RegistryController.getController().delete(registryId, this.getInfoGluePrincipal(), true, getOnlyShowLatestReferenceIfLatestVersion());
 
-	    return doV3();
+	    return executeV3(false);
 	}
 
 	public String doDeleteAllReferences() throws Exception
 	{
-		if (CmsPropertyHandler.getNotifyResponsibleOnReferenceChange())
-		{
-			RegistryController.getController().deleteAllAndNotifyForSiteNode(siteNodeVO.getSiteNodeId());
-		}
-		else
-		{
-			RegistryController.getController().deleteAllForSiteNode(siteNodeVO.getSiteNodeId());
-		}
-
-		return doV3();
+		return executeV3(true);
 	}
 
 	public String doFixPage() throws Exception 

@@ -897,6 +897,8 @@ public class SearchController extends BaseController
    	public List<ContentVersionVO> getContentVersionVOListFromLucene(Integer[] repositoryIdAsIntegerToSearch, String searchString, Integer maxRows, String userName, Integer languageId, Integer[] contentTypeDefinitionIds, Integer[] excludedContentTypeDefinitionIds, Integer caseSensitive, Integer stateId, boolean includeAssets, boolean includeSiteNodes, String categoriesExpression) throws SystemException, Bug
    	{
    		Timer t = new Timer();
+   		if(!logger.isInfoEnabled())
+   			t.setActive(false);
    		
    		List<ContentVersionVO> contentVersionVOList = new ArrayList<ContentVersionVO>();
    		
@@ -1390,11 +1392,12 @@ public class SearchController extends BaseController
 			{
 				beginTransaction(db);
 				
-				t.printElapsedTime("Afdter begin trans.." + documents.size());
+				t.printElapsedTime("After begin trans.." + documents.size());
 				
 				for(org.apache.lucene.document.Document doc : documents)
 				{
-					logger.info("doc:" + doc);
+					if(logger.isInfoEnabled())
+						logger.info("doc:" + doc);
 					String contentVersionId = doc.get("contentVersionId");
 					String contentId = doc.get("contentId");
 					String siteNodeId = doc.get("siteNodeId");
@@ -1404,11 +1407,14 @@ public class SearchController extends BaseController
 					{
 						SiteNodeVersionVO snvo = new SiteNodeVersionVO();
 						snvo.setSiteNodeId(new Integer(siteNodeId));
-						if(siteNodeVersionId == null)
+						if(siteNodeVersionId == null && siteNodeId != null)
 						{
-							//
+							SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, new Integer(siteNodeId));
+							snvo.setSiteNodeVersionId(siteNodeVersionVO.getId());
 						}
-						//snvo.setSiteNodeVersionId(new Integer(siteNodeVersionId));
+						else
+							snvo.setSiteNodeVersionId(new Integer(siteNodeVersionId));
+						
 						snvo.setSiteNodeName(doc.get("path"));
 						if(doc.get("modificationDateTime") != null)
 							snvo.setModifiedDateTime(new Date(new Long(doc.get("modificationDateTime"))));
@@ -1421,11 +1427,12 @@ public class SearchController extends BaseController
 					}
 					catch (Exception e) 
 					{
-						e.printStackTrace();
 						logger.error("ContentVersion with id:" + contentVersionId + " was not valid - skipping but how did the index become corrupt?");
 						//deleteVersionFromIndex(contentVersionId);
 					}
 				}
+				t.printElapsedTime("After commit trans.." + documents.size());
+
 				
 				commitTransaction(db);
 			} 

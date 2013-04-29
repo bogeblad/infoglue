@@ -49,7 +49,7 @@ public class RemoteInfoGlueService
     {
 		try
 	    {
-	    	ChangeNotificationController.notifyListeners();
+	    	ChangeNotificationController.getInstance().notifyListeners();
 	    }
 	    catch(Exception e)
 	    {

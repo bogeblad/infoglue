@@ -76,4 +76,9 @@ public class TransactionHistoryWriter implements NotificationListener
 		}
 	}
 
+	public void process() throws Exception 
+	{
+		System.out.println("Whyyyyyyyy 222");
+	}
+
 }

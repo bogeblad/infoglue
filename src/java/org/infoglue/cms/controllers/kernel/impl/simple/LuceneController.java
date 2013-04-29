@@ -828,6 +828,11 @@ public class LuceneController extends BaseController implements NotificationList
 			logger.error("Error notifying: " + e.getMessage());
 		}
 	}
+
+	public void process() throws Exception
+	{
+		notifyListeners(false, true);
+	}
 	
 	public void notifyListeners(boolean forceVersionIndexing, boolean checkForIndexingJobs) throws IOException, Exception
 	{
@@ -1873,7 +1878,7 @@ public class LuceneController extends BaseController implements NotificationList
 		
 		SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVO.getId());
 		doc.add(new NumericField("modificationDateTime", Field.Store.YES, true).setLongValue(siteNodeVersionVO.getModifiedDateTime().getTime()));
-		doc.add(new Field("siteNodeVersionId", "" + siteNodeVersionVO.getSiteNodeVersionId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new Field("siteNodeVersionId", "" + siteNodeVersionVO.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("stateId", "" + siteNodeVersionVO.getStateId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
 		doc.add(new Field("path", "" + getSiteNodePath(siteNodeVO.getId(), db), Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -1934,6 +1939,16 @@ public class LuceneController extends BaseController implements NotificationList
 		doc.add(new Field("isAsset", "false", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("isSiteNode", "true", Field.Store.YES, Field.Index.NOT_ANALYZED));
 		//doc.add(new Field("contentTypeDefinitionId", "" + ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info", db).getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		
+		try
+		{
+			SiteNodeVersionVO siteNodeVersionVO = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, contentVersionVO.getSiteNodeId());
+			doc.add(new Field("siteNodeVersionId", "" + siteNodeVersionVO.getId(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
 		
 		doc.add(new NumericField("modificationDateTime", Field.Store.YES, true).setLongValue(contentVersionVO.getModifiedDateTime().getTime()));
 		doc.add(new Field("stateId", "" + contentVersionVO.getStateId(), Field.Store.YES, Field.Index.NOT_ANALYZED));

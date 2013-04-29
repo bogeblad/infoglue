@@ -44,4 +44,11 @@ public interface NotificationListener
 	 */
 	
 	public void notify(NotificationMessage message);	
+
+	/**
+	 * This method is called when it's time to do stuff (if not before) with the notification messages sent before.
+	 */
+	
+	public void process() throws Exception;	
+
 }

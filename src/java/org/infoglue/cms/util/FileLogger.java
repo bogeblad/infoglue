@@ -68,4 +68,10 @@ public class FileLogger implements NotificationListener
 		logger.info(message);		
 	}
 
+	@Override
+	public void process() throws Exception 
+	{
+		System.out.println("Process in FileLogger... why");
+	}
+
 }

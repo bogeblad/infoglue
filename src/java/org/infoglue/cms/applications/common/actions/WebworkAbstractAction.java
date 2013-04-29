@@ -214,7 +214,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
         try
         {
         	if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))
-        		ChangeNotificationController.notifyListeners();
+        		ChangeNotificationController.getInstance().notifyListeners();
         }
         catch(Exception e)
         {
@@ -456,7 +456,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 
     	try
         {
-        	ChangeNotificationController.notifyListeners();
+        	ChangeNotificationController.getInstance().notifyListeners();
         }
         catch(Exception e)
         {

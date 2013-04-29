@@ -93,4 +93,10 @@ public class XMLNotificationWriter implements NotificationListener, Runnable
 			}
         }
     }
+    
+	public void process() throws Exception 
+	{
+		System.out.println("Whyyyyyyyy 444");
+	}
+
 }

@@ -60,6 +60,11 @@ public class ChangeNotificationController
 		{
 			list.getList().add(message);
 		}
+
+		public void process() 
+		{
+			//System.out.println("WHY????");
+		}
 	}
 
 	private static ThreadLocalNotifications list = new ThreadLocalNotifications();
@@ -69,11 +74,46 @@ public class ChangeNotificationController
 	    list.getList().add(notificationMessage);
 	}
 	
-	public static void notifyListeners()
+	public void notifyListeners()
 	{
 		if(list.getList().size() > 0)
-			logger.info("Now as the transaction is done and there are items in the notification list - let's notify the deliver app...");
-
+			logger.info("Now as the transaction is done and there are items in the notification list - let's notify the deliver app and other listeners...");
+		
+		//This part asks the listeners to do it's stuff before we send the info to deliver.
+		try 
+		{
+			synchronized (listeners)
+			{
+				Iterator i = listeners.iterator();
+				while(i.hasNext())
+				{
+					try
+					{
+						NotificationListener nl = (NotificationListener)i.next();
+						if(!unregisteredlisteners.contains(nl))
+						{
+							logger.info("Notifying the listener to process:" + nl.getClass().getName());
+							nl.process();
+						}
+					}
+					catch(Exception e)
+					{
+						logger.error("One of the listeners threw an exception but we carry on with the others. Error: " + e.getMessage(), e);
+					}
+				}
+				listeners.removeAll(unregisteredlisteners);
+			}
+			synchronized (unregisteredlisteners)
+			{
+				unregisteredlisteners.clear();			
+			}
+		} 
+		catch (Exception e) 
+		{
+			logger.error("Error calling listeners to process:" + e.getMessage(), e);
+		}
+		
+		//Prepare and push notifications to deliver
 		List internalMessageList = new ArrayList();
 		List publicMessageList = new ArrayList();
 

@@ -301,7 +301,7 @@ public class ProcessBean
     	else if(status == FINISHED || status == ERROR)
     	{
     		this.finished = new Date();
-    		ChangeNotificationController.notifyListeners();
+    		ChangeNotificationController.getInstance().notifyListeners();
     	}
     }
     

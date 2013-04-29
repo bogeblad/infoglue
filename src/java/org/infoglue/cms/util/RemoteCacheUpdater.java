@@ -402,4 +402,9 @@ public class RemoteCacheUpdater implements NotificationListener
 			ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
         }
 	}
+
+	public void process() throws Exception 
+	{
+		System.out.println("Whyyyyyyyy");
+	}
 }

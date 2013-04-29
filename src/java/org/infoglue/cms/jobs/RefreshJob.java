@@ -51,7 +51,7 @@ public class RefreshJob implements Job
 		    logger.info("Notifying caches...");
 			NotificationMessage notificationMessage = new NotificationMessage("NightlyRefreshJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
 		    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-        	ChangeNotificationController.notifyListeners();
+        	ChangeNotificationController.getInstance().notifyListeners();
 	        //RemoteCacheUpdater.clearSystemNotificationMessages();
 		}
 		catch(Exception e)

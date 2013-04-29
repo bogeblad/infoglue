@@ -83,7 +83,7 @@ public class CleanOldVersionsJob implements Job
 				
 					NotificationMessage notificationMessage = new NotificationMessage("CleanOldVersionsJob.execute():", "ServerNodeProperties", "administrator", NotificationMessage.SYSTEM, "0", "ServerNodeProperties");
 				    ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);
-		        	ChangeNotificationController.notifyListeners();
+		        	ChangeNotificationController.getInstance().notifyListeners();
 				}
 			}
 			catch(Exception e)

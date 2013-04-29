@@ -117,6 +117,10 @@
 			background-repeat: no-repeat;
 			text-indent: 16px;
 		}
+		
+		#layoutWrapper table {
+			background-color: white;
+		}
 	-->
 	</style>
 #end
@@ -279,6 +283,7 @@
 				<tr>
 					<th>$ui.getString("tool.mydesktoptool.ongoingWorkflows") / $ui.getString("tool.mydesktoptool.actionNameLabel")</th>
 					<th>$ui.getString("tool.mydesktoptool.stepNameLabel")</th>
+					<th><img src="css/images/trans.gif" width="50" height="1"/></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -317,7 +322,7 @@
 						<td colspan="2">
 							<a title="$fullTitle" href="#" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');">$visibleTitle</a>
 						</td>
-						<td style="whitespace: nowrap;">							
+						<td style="whitespace: nowrap">							
 							$!action
 							<a href="#" class="workflow" onclick="parent.openInlineDiv('Workflow!showRunningWorkflowDetails.action?workflowId=$workflowVO.workflowId', 600, 800, true, true, 'Workflow');"><img src="css/images/v3/info.png" border="0" alt="info"></a>
 						</td>

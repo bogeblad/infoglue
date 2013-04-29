@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.LuceneController;
 import org.infoglue.deliver.util.Timer;
 
 import net.sf.hibernate.HibernateException;
@@ -22,7 +24,10 @@ import com.opensymphony.module.propertyset.hibernate.PropertySetItem;
  * Quickfix
  */
 public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySetDAO {
-	/**
+
+    private final static Logger logger = Logger.getLogger(InfoglueHibernatePropertySetDAOImpl.class.getName());
+    
+    /**
 	 * 
 	 */
     private SessionFactory sessionFactory;
@@ -42,35 +47,35 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
         Session session = null;
         
         String entityNameIdKey = "" + item.getEntityName() + "_" + item.getEntityId();
-    	System.out.println("setImpl....:" + entityNameIdKey);
-    	System.out.println("setImpl....:" + item.getKey() + "=" + item.getStringVal());
+    	logger.info("setImpl....:" + entityNameIdKey);
+    	logger.info("setImpl....:" + item.getKey() + "=" + item.getStringVal());
 
     	Map<String,Object> keyMap = entityNameIdKeyMap.get(entityNameIdKey);
         Map<String,Object> valueMap = entityNameIdValueMap.get(entityNameIdKey);
         
-        //System.out.println("entityNameIdValueMap:" + entityNameIdValueMap);
+        //logger.info("entityNameIdValueMap:" + entityNameIdValueMap);
         
-        //System.out.println("valueMap:" + valueMap);
+        //logger.info("valueMap:" + valueMap);
        
         if(valueMap != null)
         {
-            //System.out.println("Removing :" + item.getKey());
+            //logger.info("Removing :" + item.getKey());
         	valueMap.remove(item.getKey());
         }
         
         if(keyMap != null)
         {
-        	//System.out.println("Removing knowledge of " + item.getKey() + " so that it will get search for in the database");
+        	//logger.info("Removing knowledge of " + item.getKey() + " so that it will get search for in the database");
         	if(keyMap.containsKey(item.getKey()))
         	{
         		keyMap.remove(item.getKey());        		
-            	//System.out.println("Rereading object...");
+            	//logger.info("Rereading object...");
         		findByKey(item.getEntityName(), item.getEntityId(), item.getKey());
         	}
         	else
         	{
         		keyMap.put(item.getKey(), true);  
-            	//System.out.println("Rereading object...");
+            	//logger.info("Rereading object...");
         		findByKey(item.getEntityName(), item.getEntityId(), item.getKey());
         	}
         }
@@ -104,13 +109,13 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
         
         if(valueMap != null)
         {
-            //System.out.println("Removing :" + item.getKey());
+            //logger.info("Removing :" + item.getKey());
         	valueMap.put(item.getKey(), item);
         }
     }
 
     public Collection getKeys(String entityName, Long entityId, String prefix, int type) {
-        //System.out.println("getKeys");
+        //logger.info("getKeys");
 
         Session session = null;
         List list = null;
@@ -145,11 +150,11 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
         Timer t = new Timer();
         
         String entityNameIdKey = "" + entityName + "_" + entityId;
-        //System.out.println("findByKey: " + entityNameIdKey);
+        //logger.info("findByKey: " + entityNameIdKey);
         Map<String,Object> keyMap = entityNameIdKeyMap.get(entityNameIdKey);
         Map<String,Object> valueMap = entityNameIdValueMap.get(entityNameIdKey);
         
-        //System.out.println("entityNameIdValueMap:" + entityNameIdValueMap);
+        //logger.info("entityNameIdValueMap:" + entityNameIdValueMap);
         
         if(keyMap == null)
         {
@@ -158,7 +163,7 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
         	List<String> keyList = (List<String>)getKeys(entityName, entityId, null, 0);
         	for(String currentKey : keyList)
         	{
-        		//System.out.println("Found:" + currentKey);
+        		//logger.info("Found:" + currentKey);
         		keyMap.put(currentKey, true);
         	}
         }
@@ -174,16 +179,16 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
         	PropertySetItem item = (PropertySetItem)valueMap.get(key);
             if(key.equals("workflow_status") || key.indexOf("languageId") > -1)
             {
-            	System.out.println("cached Key:" + key);
-            	System.out.println("cached Item:" + item.getType());
-            	System.out.println("cached Item:" + item.getStringVal());
+            	logger.info("cached Key:" + key);
+            	logger.info("cached Item:" + item.getType());
+            	logger.info("cached Item:" + item.getStringVal());
             }
-        	//System.out.println("Cached item exists:" + key);
+        	//logger.info("Cached item exists:" + key);
         	return item;
         }
         if(keyMap != null && keyMap.get(key) == null)
         {
-        	//System.out.println("No key in cached key map... returning null for:" + key);
+        	//logger.info("No key in cached key map... returning null for:" + key);
         	return null;
         }
         */
@@ -214,17 +219,17 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
         	valueMap.put(key, item);
         if(key.equals("workflow_status") || key.indexOf("languageId") > -1)
         {
-        	System.out.println("Key:" + key);
-        	System.out.println("Item:" + item.getType());
-        	System.out.println("Item:" + item.getStringVal());
+        	logger.info("Key:" + key);
+        	logger.info("Item:" + item.getType());
+        	logger.info("Item:" + item.getStringVal());
         }
 
-        t.printElapsedTime("FindByKey: " + entityName + ":" + entityId + ":" + key);
+        //t.printElapsedTime("FindByKey: " + entityName + ":" + entityId + ":" + key);
         return item;
     }
 
     public void remove(String entityName, Long entityId) {
-        System.out.println("remove:" + entityName + "_" + entityId);
+    	logger.info("remove:" + entityName + "_" + entityId);
         Session session = null;
 
         try {
@@ -241,7 +246,7 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
                 Map<String,Object> valueMap = entityNameIdValueMap.get(entityNameIdKey);
                 if(valueMap != null)
                 {
-                	System.out.println("Removing " + key);
+                	logger.info("Removing " + key);
                 	valueMap.remove(key);
                 }
                 
@@ -266,7 +271,7 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
     }
 
     public void remove(String entityName, Long entityId, String key) {
-    	System.out.println("Remove full");
+    	logger.info("Remove full");
         Session session = null;
 
         try {
@@ -276,7 +281,7 @@ public class InfoglueHibernatePropertySetDAOImpl implements HibernatePropertySet
             Map<String,Object> valueMap = entityNameIdValueMap.get(entityNameIdKey);
             if(valueMap != null)
             {
-            	System.out.println("Removing " + key);
+            	logger.info("Removing " + key);
             	valueMap.remove(key);
             }
 

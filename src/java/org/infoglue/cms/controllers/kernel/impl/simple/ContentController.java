@@ -2003,7 +2003,7 @@ public class ContentController extends BaseController
     	}
     	
     	String SQL = sb.toString();
-    	System.out.println(SQL);
+    	logger.info(SQL);
     	
     	//String SQL = "SELECT content FROM org.infoglue.cms.entities.content.impl.simple.SmallishContentImpl content WHERE content.parentContentId = $1 " + showDeletedItemsClause + contentTypeINClause + " ORDER BY content.contentId";
     	//logger.info("SQL:" + SQL);

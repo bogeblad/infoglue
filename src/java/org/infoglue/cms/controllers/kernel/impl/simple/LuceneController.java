@@ -1238,9 +1238,11 @@ public class LuceneController extends BaseController implements NotificationList
 
 			List<NotificationMessage> notificationMessages = new ArrayList<NotificationMessage>();
 			//logger.error("Getting notification messages for " + languageVO.getName());
-			int newLastContentVersionId = getNotificationMessages(notificationMessages, languageVO, lastCommitedContentVersionId, lastCommitedDateTime);
+			int newLastContentVersionId = getNotificationMessages(notificationMessages, languageVO, lastCommitedContentVersionId, lastCommitedDateTime, 1000);
 			while(newLastContentVersionId != -1)
 			{
+				Thread.sleep(1000);
+				
 				if(stopIndexing.get())
 					break outer;
 
@@ -1253,7 +1255,7 @@ public class LuceneController extends BaseController implements NotificationList
 				notificationMessages.clear();
 				//t.printElapsedTime("Indexing size():" + notificationMessages.size() + " took");
 				
-				Integer newLastContentVersionIdCandidate = getNotificationMessages(notificationMessages, languageVO, newLastContentVersionId, lastCommitedDateTime);
+				Integer newLastContentVersionIdCandidate = getNotificationMessages(notificationMessages, languageVO, newLastContentVersionId, lastCommitedDateTime, 1000);
 				logger.error("newLastContentVersionIdCandidate:" + newLastContentVersionIdCandidate + "=" + newLastContentVersionId);
 				if(newLastContentVersionIdCandidate > newLastContentVersionId)
 					newLastContentVersionId = newLastContentVersionIdCandidate;
@@ -1515,7 +1517,7 @@ public class LuceneController extends BaseController implements NotificationList
 		return newLastContentVersionId;
 	}
 
-	private int getNotificationMessages(List notificationMessages, LanguageVO languageVO, int lastContentVersionId, Date lastCheckDateTime) throws Exception
+	private int getNotificationMessages(List notificationMessages, LanguageVO languageVO, int lastContentVersionId, Date lastCheckDateTime, int batchSize) throws Exception
 	{
 		logger.info("getNotificationMessages:" + languageVO.getName() + " : " + lastContentVersionId + ":" + lastCheckDateTime);
 
@@ -1569,6 +1571,11 @@ public class LuceneController extends BaseController implements NotificationList
 				lastCommitedContentVersionId = newLastContentVersionId;
 				processedItems++;
 				logger.info("previousContentId:" + previousContentId + "/" + processedItems);
+				if(processedItems > batchSize)
+				{
+					System.out.println("Batch full...");
+					break;
+				}
 			}
 						
 			results.close();

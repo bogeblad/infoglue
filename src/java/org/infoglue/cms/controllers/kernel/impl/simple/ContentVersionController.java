@@ -29,6 +29,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -73,6 +74,7 @@ import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RegistryVO;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
+import org.infoglue.cms.entities.management.impl.simple.RegistryImpl;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -1594,117 +1596,40 @@ public class ContentVersionController extends BaseController
         }
     }        
 
-    
+
     /**
      * This method updates the contentversion.
+     * @throws Exception
      */
-    
+
+    public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Database db) throws Exception
+    {
+		return update(contentId, languageId, contentVersionVO, null, false, db);
+    }
+
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
     {
-    	return update(contentId, languageId, contentVersionVO, null);
-    }        
-	
+    	return update(contentId, languageId, contentVersionVO, null, false);
+    }
+
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal) throws ConstraintException, SystemException
     {
     	return update(contentId, languageId, contentVersionVO, principal, false);
     }
-    
+
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal, boolean skipValidate) throws ConstraintException, SystemException
     {
-    	Timer t = new Timer();
+//    	Timer t = new Timer();
         ContentVersionVO updatedContentVersionVO;
-		
+
         Database db = CastorDatabaseService.getDatabase();
 
         beginTransaction(db);
-        
+
         try
-        {     
-        	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
-        	ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
-        	ConstraintExceptionBuffer ceb = contentVersionVO.validateAdvanced(contentTypeDefinitionVO);
-            logger.info("Skipping validate:" + skipValidate);
-        	if(!skipValidate)
-            ceb.throwIfNotEmpty();
-            
-        	MediumContentVersionImpl contentVersion = null;
-            Integer contentVersionIdToUpdate = contentVersionVO.getId();
-            
-			contentVersionVO.setModifiedDateTime(new Date());
-	        if(contentVersionVO.getId() == null)
-	    	{
-	    		logger.info("Creating the entity because there was no version at all for: " + contentId + " " + languageId);
-	    		contentVersion = createMedium(contentId, languageId, contentVersionVO, db);
-	    	}
-	    	else
-	    	{
-				ContentVersionVO oldContentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionVO.getId(), db);
-				ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(oldContentVersionVO.getContentId(), oldContentVersionVO.getLanguageId(), db);
-	    	    if(!oldContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE) && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
-				{
-					List<EventVO> events = new ArrayList<EventVO>();
-					contentVersion = ContentStateController.changeState(oldContentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, (contentVersionVO.getVersionComment().equals("No comment") ? "new working version" : contentVersionVO.getVersionComment()), false, null, principal, oldContentVersionVO.getContentId(), db, events);
-					contentVersion.setVersionValue(contentVersionVO.getVersionValue());
-					/*
-					List<String> changedAttributes = getChangedAttributeNames(oldContentVersionVO, contentVersionVO);
-					System.out.println("changedAttributes in contentversioncontroller:" + changedAttributes);
-		    	    Map extraInfoMap = new HashMap();
-		    	    String csList = StringUtils.join(changedAttributes.toArray(), ",");
-		    	    extraInfoMap.put("changedAttributeNames", csList);
-		    		CacheController.setExtraInfo(ContentVersionImpl.class.getName(), contentVersion.getId().toString(), extraInfoMap);
-					*/
-				}
-				else
-				{
-					if(latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
-					{
-						oldContentVersionVO = contentVersionVO;
-						contentVersionIdToUpdate = latestContentVersionVO.getId();
-					}
-						
-			    	List<String> changedAttributes = getChangedAttributeNames(oldContentVersionVO, contentVersionVO);
-		    	    Map<String,String> extraInfoMap = new HashMap<String,String>();
-		    	    String csList = StringUtils.join(changedAttributes.toArray(), ",");
-		    	    //logger.info("csList:" + csList);
-		    	    extraInfoMap.put("changedAttributeNames", csList);
-		    		CacheController.setExtraInfo(ContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), extraInfoMap);
-					contentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(contentVersionIdToUpdate, db);
-					//contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
-					Integer existingContentId = contentVersion.getValueObject().getContentId();
-					contentVersionVO.setContentId(existingContentId);
-					contentVersionVO.setLanguageId(contentVersion.getValueObject().getLanguageId());
-					contentVersion.setValueObject(contentVersionVO);
-					contentVersion.setContentVersionId(contentVersionIdToUpdate);
-					contentVersion.setStateId(ContentVersionVO.WORKING_STATE);
-				}
-	    	}
-
-	        SiteNodeVersionVO latestSiteNodeVersionVO = null;
-		    if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
-		    {
-	    	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentId);
-		    	//SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithMetaInfoContentId(db, contentId);
-				if(siteNodeVO.getMetaInfoContentId() != null && siteNodeVO.getMetaInfoContentId().equals(contentId))
-				{
-			    	latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, siteNodeVO.getId());
-			    	latestSiteNodeVersionVO.setVersionModifier(contentVersionVO.getVersionModifier());
-			    	latestSiteNodeVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
-					SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersionVO, db);
-
-					Map extraInfoMap = new HashMap();
-				    extraInfoMap.put("skipSiteNodeVersionUpdate", "true");
-//		    	    extraInfoMap.put("contentId", ""+contentVO.getId());
-//		    	    extraInfoMap.put("parentContentId", ""+contentVO.getParentContentId());
-//		    	    extraInfoMap.put("repositoryId", ""+contentVO.getRepositoryId());
-					CacheController.setExtraInfo(SiteNodeVersionImpl.class.getName(), latestSiteNodeVersionVO.getId().toString(), extraInfoMap);
-				}
-			}
-
-	    	registryController.updateContentVersionThreaded(contentVersion.getValueObject(), latestSiteNodeVersionVO);
-
-	    	updatedContentVersionVO = contentVersion.getValueObject();
-	    	
-	    	commitRegistryAwareTransaction(db);  
+        {
+        	updatedContentVersionVO = update(contentId, languageId, contentVersionVO, principal, skipValidate, db);
+	    	commitRegistryAwareTransaction(db);
         }
         catch(ConstraintException ce)
         {
@@ -1719,72 +1644,165 @@ public class ContentVersionController extends BaseController
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
-        
+
     	return updatedContentVersionVO; //(ContentVersionVO) updateEntity(ContentVersionImpl.class, realContentVersionVO);
-    }        
+    }
+
+    public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal, boolean skipValidate, Database db) throws Exception
+    {
+    	ContentVersionVO updatedContentVersionVO;
+
+    	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
+    	ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
+    	ConstraintExceptionBuffer ceb = contentVersionVO.validateAdvanced(contentTypeDefinitionVO);
+        logger.info("Skipping validate:" + skipValidate);
+    	if(!skipValidate)
+    		ceb.throwIfNotEmpty();
+
+    	MediumContentVersionImpl contentVersion = null;
+        Integer contentVersionIdToUpdate = contentVersionVO.getId();
+
+		contentVersionVO.setModifiedDateTime(new Date());
+        if(contentVersionVO.getId() == null)
+    	{
+    		logger.info("Creating the entity because there was no version at all for: " + contentId + " " + languageId);
+    		contentVersion = createMedium(contentId, languageId, contentVersionVO, db);
+    	}
+    	else
+    	{
+			ContentVersionVO oldContentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionVO.getId(), db);
+			ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(oldContentVersionVO.getContentId(), oldContentVersionVO.getLanguageId(), db);
+    	    if(!oldContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE) && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+			{
+				List<EventVO> events = new ArrayList<EventVO>();
+				contentVersion = ContentStateController.changeState(oldContentVersionVO.getId(), contentVO, ContentVersionVO.WORKING_STATE, (contentVersionVO.getVersionComment().equals("No comment") ? "new working version" : contentVersionVO.getVersionComment()), false, null, principal, oldContentVersionVO.getContentId(), db, events);
+				contentVersion.setVersionValue(contentVersionVO.getVersionValue());
+				/*
+				List<String> changedAttributes = getChangedAttributeNames(oldContentVersionVO, contentVersionVO);
+				System.out.println("changedAttributes in contentversioncontroller:" + changedAttributes);
+	    	    Map extraInfoMap = new HashMap();
+	    	    String csList = StringUtils.join(changedAttributes.toArray(), ",");
+	    	    extraInfoMap.put("changedAttributeNames", csList);
+	    		CacheController.setExtraInfo(ContentVersionImpl.class.getName(), contentVersion.getId().toString(), extraInfoMap);
+				*/
+			}
+			else
+			{
+				if(latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+				{
+					oldContentVersionVO = contentVersionVO;
+					contentVersionIdToUpdate = latestContentVersionVO.getId();
+				}
+
+		    	List<String> changedAttributes = getChangedAttributeNames(oldContentVersionVO, contentVersionVO);
+	    	    Map<String,String> extraInfoMap = new HashMap<String,String>();
+	    	    String csList = StringUtils.join(changedAttributes.toArray(), ",");
+	    	    //logger.info("csList:" + csList);
+	    	    extraInfoMap.put("changedAttributeNames", csList);
+	    		CacheController.setExtraInfo(ContentVersionImpl.class.getName(), contentVersionVO.getId().toString(), extraInfoMap);
+				contentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(contentVersionIdToUpdate, db);
+				//contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+				Integer existingContentId = contentVersion.getValueObject().getContentId();
+				contentVersionVO.setContentId(existingContentId);
+				contentVersionVO.setLanguageId(contentVersion.getValueObject().getLanguageId());
+				contentVersion.setValueObject(contentVersionVO);
+				contentVersion.setContentVersionId(contentVersionIdToUpdate);
+				contentVersion.setStateId(ContentVersionVO.WORKING_STATE);
+			}
+    	}
+
+        SiteNodeVersionVO latestSiteNodeVersionVO = null;
+	    if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
+	    {
+    	    SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentId);
+	    	//SiteNode siteNode = SiteNodeController.getController().getSiteNodeWithMetaInfoContentId(db, contentId);
+			if(siteNodeVO.getMetaInfoContentId() != null && siteNodeVO.getMetaInfoContentId().equals(contentId))
+			{
+		    	latestSiteNodeVersionVO = SiteNodeVersionController.getController().getLatestSiteNodeVersionVO(db, siteNodeVO.getId());
+		    	latestSiteNodeVersionVO.setVersionModifier(contentVersionVO.getVersionModifier());
+		    	latestSiteNodeVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+				SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersionVO, db);
+
+				Map extraInfoMap = new HashMap();
+			    extraInfoMap.put("skipSiteNodeVersionUpdate", "true");
+//	    	    extraInfoMap.put("contentId", ""+contentVO.getId());
+//	    	    extraInfoMap.put("parentContentId", ""+contentVO.getParentContentId());
+//	    	    extraInfoMap.put("repositoryId", ""+contentVO.getRepositoryId());
+				CacheController.setExtraInfo(SiteNodeVersionImpl.class.getName(), latestSiteNodeVersionVO.getId().toString(), extraInfoMap);
+			}
+		}
+
+    	registryController.updateContentVersionThreaded(contentVersion.getValueObject(), latestSiteNodeVersionVO);
+
+    	updatedContentVersionVO = contentVersion.getValueObject();
+    	return updatedContentVersionVO;
+    }
 
     /**
      * This method updates the contentversion.
      */
-    
-    public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
-    {
-    	return update(contentVersionId, contentVersionVO, null);
-    }        
-	
+
+	public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
+	{
+		return update(contentVersionId, contentVersionVO, null);
+	}
+
     public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal) throws ConstraintException, SystemException
     {
-        ContentVersionVO updatedContentVersionVO;
-		
-        Database db = CastorDatabaseService.getDatabase();
+		ContentVersionVO updatedContentVersionVO = null;
 
-        beginTransaction(db);
-        
-        try
-        {     
-            ContentVersion contentVersion = getMediumContentVersionWithId(contentVersionId, db);
-           
-            ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getValueObject().getContentId(), db);
-        	ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
+		Database db = CastorDatabaseService.getDatabase();
 
-        	contentVersion.setValueObject(contentVersionVO);
-        	contentVersion.getValueObject().setContentId(contentVO.getContentId());
+		beginTransaction(db);
 
-        	SiteNodeVersion latestSiteNodeVersion = null;
-		    if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
-		    {
-		    	SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentVO.getContentId());
-				if(siteNode.getMetaInfoContentId() != null && siteNode.getMetaInfoContentId().equals(contentVO.getContentId()))
-				{
-			    	latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestMediumSiteNodeVersion(db, siteNode.getId(), false);
-			    	latestSiteNodeVersion.setVersionModifier(contentVersionVO.getVersionModifier());
-			    	latestSiteNodeVersion.setModifiedDateTime(DateHelper.getSecondPreciseDate());
-					SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersion.getValueObject(), db);
-				}
-			}
-		    
-	    	registryController.updateContentVersionThreaded(contentVersion.getValueObject(), latestSiteNodeVersion == null ? null : latestSiteNodeVersion.getValueObject());
-			   
-	    	updatedContentVersionVO = contentVersion.getValueObject();
-	    	
-	    	commitRegistryAwareTransaction(db);  
-        }
-        catch(ConstraintException ce)
-        {
-        	logger.warn("Validation error:" + ce, ce);
-            rollbackTransaction(db);
-            throw ce;
-        }
-        catch(Exception e)
-        {
+		try
+		{
+			updatedContentVersionVO = update(contentVersionId, contentVersionVO, principal, db);
+			commitRegistryAwareTransaction(db);
+		}
+		catch(ConstraintException ce)
+		{
+			logger.warn("Validation error:" + ce, ce);
+			rollbackTransaction(db);
+			throw ce;
+		}
+		catch(Exception e)
+		{
             logger.error("An error occurred so we should not complete the transaction:" + e);
             logger.warn("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
-        
-    	return updatedContentVersionVO; //(ContentVersionVO) updateEntity(ContentVersionImpl.class, realContentVersionVO);
-    }        
+
+		return updatedContentVersionVO;
+	}
+
+	public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal, Database db) throws Exception
+	{
+		ContentVersion contentVersion = getMediumContentVersionWithId(contentVersionId, db);
+
+		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getValueObject().getContentId(), db);
+		ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
+
+		contentVersion.setValueObject(contentVersionVO);
+		contentVersion.getValueObject().setContentId(contentVO.getContentId());
+
+		SiteNodeVersion latestSiteNodeVersion = null;
+		if(principal != null && contentTypeDefinitionVO.getName().equalsIgnoreCase("Meta info"))
+		{
+			SiteNodeVO siteNode = SiteNodeController.getController().getSiteNodeVOWithMetaInfoContentId(db, contentVO.getContentId());
+			if(siteNode.getMetaInfoContentId() != null && siteNode.getMetaInfoContentId().equals(contentVO.getContentId()))
+			{
+				latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestMediumSiteNodeVersion(db, siteNode.getId(), false);
+				latestSiteNodeVersion.setVersionModifier(contentVersionVO.getVersionModifier());
+				latestSiteNodeVersion.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+				SiteNodeVersionControllerProxy.getSiteNodeVersionControllerProxy().acUpdate(principal, latestSiteNodeVersion.getValueObject(), db);
+			}
+		}
+		registryController.updateContentVersionThreaded(contentVersion.getValueObject(), latestSiteNodeVersion == null ? null : latestSiteNodeVersion.getValueObject());
+
+		return contentVersion.getValueObject();
+	}
 
 	public List getPublishedActiveContentVersionVOList(Integer contentId) throws SystemException, Bug, Exception
     {
@@ -2461,22 +2479,51 @@ public class ContentVersionController extends BaseController
 	{
 		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, true);
 	}
-	 
+
 	/**
 	 * This method fetches a value from the xml that is the contentVersions Value. If the 
 	 * contentVersioVO is null the contentVersion has not been created yet and no values are present.
 	 */
-	 
+
+	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, Database db) throws SystemException, Bug
+	{
+		updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, true, db);
+	}
+
+	/**
+	 * This method fetches a value from the xml that is the contentVersions Value. If the 
+	 * contentVersioVO is null the contentVersion has not been created yet and no values are present.
+	 */
 	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, boolean skipValidate) throws SystemException, Bug
 	{
+    	Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+			beginTransaction(db);
+
+			updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, skipValidate, db);
+
+		    commitTransaction(db);
+		}
+		catch (Exception ex)
+		{
+			rollbackTransaction(db);
+		    logger.error("Error when updating content attribute value. Message: " + ex.getMessage());
+		    logger.error("Error when updating content attribute value.", ex);
+		}
+	}
+
+	public void updateAttributeValue(Integer contentVersionId, String attributeName, String attributeValue, InfoGluePrincipal infogluePrincipal, boolean skipValidate, Database db) throws SystemException, Bug
+	{
 		ContentVersionVO contentVersionVO = getContentVersionVOWithId(contentVersionId);
-		
+
 		if(contentVersionVO != null)
 		{
 			try
 			{
 				InputSource inputSource = new InputSource(new StringReader(contentVersionVO.getVersionValue()));
-				
+
 				DOMParser parser = new DOMParser();
 				parser.parse(inputSource);
 				Document document = parser.getDocument();
@@ -2520,7 +2567,7 @@ public class ContentVersionController extends BaseController
 				logger.info("sb:" + sb);
 				contentVersionVO.setVersionValue(sb.toString());
 				contentVersionVO.setVersionModifier(infogluePrincipal.getName());
-				update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infogluePrincipal, skipValidate);
+				update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, infogluePrincipal, skipValidate, db);
 			}
 			catch(Exception e)
 			{

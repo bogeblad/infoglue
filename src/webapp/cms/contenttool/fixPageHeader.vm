@@ -11,7 +11,9 @@
 	
 		function closeAndRefresh()
 		{
-			top.opener.location.reload();
+			if (typeof(top.opener) !== "undefined" && top.opener !== null) {
+				top.opener.location.reload();
+			}
 			top.window.close();
 		}
 		

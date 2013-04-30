@@ -196,10 +196,20 @@ public class SmallestSiteNodeImpl extends SiteNodeImpl
     {
         return this.valueObject.getIsHidden();
     }
-            
+
     public void setIsHidden(Boolean isHidden)
     {
         this.valueObject.setIsHidden(isHidden);
+    }
+
+    public Boolean getIsDeleted()
+    {
+		return this.valueObject.getIsDeleted();
+    }
+
+    public void setIsDeleted(Boolean isDeleted)
+    {
+		this.valueObject.setIsDeleted(isDeleted);
     }
 
     public Integer getStateId()

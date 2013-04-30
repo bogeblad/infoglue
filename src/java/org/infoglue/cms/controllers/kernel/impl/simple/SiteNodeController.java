@@ -28,13 +28,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,6 +50,7 @@ import org.exolab.castor.jdo.ObjectNotFoundException;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.ProcessBean;
+import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentCategory;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
@@ -109,6 +114,7 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.cms.util.DateHelper;
 import org.infoglue.cms.util.XMLHelper;
+import org.infoglue.cms.util.mail.MailServiceFactory;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.RequestAnalyser;
 import org.infoglue.deliver.util.Timer;
@@ -3392,15 +3398,21 @@ public class SiteNodeController extends BaseController
 	        version.setVersionValue(contentVersionValue);
     	}
     }
-    
+
     public void markForDeletion(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException
     {
+    	markForDeletion(siteNodeVO, infogluePrincipal, false);
+    }
+
+    public void markForDeletion(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
+    {
     	Database db = CastorDatabaseService.getDatabase();
+    	Map<SiteNodeVO, List<ReferenceBean>> contectPersons = new HashMap<SiteNodeVO, List<ReferenceBean>>();
         beginTransaction(db);
 		try
-        {	
-			markForDeletion(siteNodeVO, db, infogluePrincipal);	
-			
+        {
+			markForDeletion(siteNodeVO, db, forceDelete, infogluePrincipal, contectPersons);
+
 	    	commitTransaction(db);
         }
         catch(ConstraintException ce)
@@ -3414,26 +3426,56 @@ public class SiteNodeController extends BaseController
             logger.error("An error occurred so we should not complete the transaction:" + e, e);
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
-        }        
-    }        
+        }
+
+		if (contectPersons.size() > 0)
+		{
+			logger.info("Will notifiy people about SiteNode removals. Number of nodes: " + contectPersons.size());
+			Database contactDb = CastorDatabaseService.getDatabase();
+			try
+	        {
+				beginTransaction(contactDb);
+				notifyContactPersonsForSiteNode(contectPersons, contactDb);
+		    	commitTransaction(contactDb);
+	        }
+	        catch(Exception ex)
+	        {
+	        	rollbackTransaction(contactDb);
+	            logger.error("An error occurred so we should not contact people about SiteNode removal. Message: " + ex.getMessage());
+	            logger.warn("An error occurred so we should not contact people about SiteNode removal.", ex);
+	            throw new SystemException(ex.getMessage());
+	        }
+		}
+    }
+
+	/**
+	 * This method deletes a siteNode and also erases all the children and all versions.
+	 * 
+	 * This method does not notify contact persons about the removal. Use {@link #markForDeletion(SiteNodeVO, InfoGluePrincipal, boolean)} if you want to notify people.
+	 */
+	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
+	{
+		markForDeletion(siteNodeVO, db, forceDelete, infogluePrincipal, new HashMap<SiteNodeVO, List<ReferenceBean>>());
+	}
+
+	/**
+	 * This method deletes a siteNode and also erases all the children and all versions.
+	 * 
+	 * This method does not notify contact persons about the removal. Use {@link #markForDeletion(SiteNodeVO, InfoGluePrincipal, boolean)} if you want to notify people.
+	 */
+	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
+	{
+		markForDeletion(siteNodeVO, db, false, infogluePrincipal, new HashMap<SiteNodeVO, List<ReferenceBean>>());
+	}
 
 	/**
 	 * This method deletes a siteNode and also erases all the children and all versions.
 	 */
-	    
-	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
-	{
-		markForDeletion(siteNodeVO, db, false, infogluePrincipal);
-	}
-	
-	/**
-	 * This method deletes a siteNode and also erases all the children and all versions.
-	 */
-	    
-	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal) throws ConstraintException, SystemException, Exception
+	public void markForDeletion(SiteNodeVO siteNodeVO, Database db, boolean forceDelete, InfoGluePrincipal infogluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> contactPersons) throws ConstraintException, SystemException, Exception
 	{
 		SiteNode siteNode = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
 		SiteNode parent = siteNode.getParentSiteNode();
+		boolean notifyResponsibleOnReferenceChange = CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
 		if(parent != null)
 		{
 			Iterator childSiteNodeIterator = parent.getChildSiteNodes().iterator();
@@ -3441,14 +3483,14 @@ public class SiteNodeController extends BaseController
 			{
 			    SiteNode candidate = (SiteNode)childSiteNodeIterator.next();
 			    if(candidate.getId().equals(siteNodeVO.getSiteNodeId()))
-			    	markForDeletionRecursive(siteNode, childSiteNodeIterator, db, forceDelete, infogluePrincipal);
+			    	markForDeletionRecursive(siteNode, db, forceDelete, infogluePrincipal, contactPersons, notifyResponsibleOnReferenceChange);
 			}
 		}
 		else
 		{
-			markForDeletionRecursive(siteNode, null, db, forceDelete, infogluePrincipal);
+			markForDeletionRecursive(siteNode, db, forceDelete, infogluePrincipal, contactPersons, notifyResponsibleOnReferenceChange);
 		}
-	}        
+	}
 
 
 	/**
@@ -3456,38 +3498,46 @@ public class SiteNodeController extends BaseController
 	 * This method is a mess as we had a problem with the lazy-loading and transactions. 
 	 * We have to begin and commit all the time...
 	 */
-	
-    private static void markForDeletionRecursive(SiteNode siteNode, Iterator parentIterator, Database db, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Exception
+
+    private static void markForDeletionRecursive(SiteNode siteNode, Database db, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> contactPersons, boolean notifyContactPersons) throws ConstraintException, SystemException, Exception
     {
-        List referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, db);
+        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, db);
 		if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
 			throw new ConstraintException("SiteNode.stateId", "3405", "<br/><br/>" + siteNode.getName() + " (" + siteNode.getId() + ")");
 
-        Collection children = siteNode.getChildSiteNodes();
-		Iterator i = children.iterator();
+        @SuppressWarnings("unchecked")
+		Collection<SiteNode> children = siteNode.getChildSiteNodes();
+		Iterator<SiteNode> i = children.iterator();
 		while(i.hasNext())
 		{
-			SiteNode childSiteNode = (SiteNode)i.next();
-			markForDeletionRecursive(childSiteNode, i, db, forceDelete, infoGluePrincipal);
+			SiteNode childSiteNode = i.next();
+			markForDeletionRecursive(childSiteNode, db, forceDelete, infoGluePrincipal, contactPersons, notifyContactPersons);
    		}
-		
-		if(forceDelete || getIsDeletable(siteNode, infoGluePrincipal, db))
-	    {		 
-			//SiteNodeVersionController.deleteVersionsForSiteNode(siteNode, db, infoGluePrincipal);
-			
-			//ServiceBindingController.deleteServiceBindingsReferencingSiteNode(siteNode, db);
 
-			//if(parentIterator != null) 
-			//    parentIterator.remove();
-			
-			//db.remove(siteNode);
+		if(forceDelete || getIsDeletable(siteNode, infoGluePrincipal, db))
+	    {
 			siteNode.setIsDeleted(true);
+			boolean clean = true;
+			if (notifyContactPersons)
+			{
+				clean = false;
+			}
+			List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infoGluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), db);
+
+			if (notifyContactPersons)
+			{
+				if (contactList != null)
+				{
+					logger.info("Found " + contactList.size() + " people to notify about SiteNode removal. SiteNode.id: " + siteNode.getSiteNodeId());
+					contactPersons.put(siteNode.getValueObject(), contactList);
+				}
+			}
 	    }
 	    else
     	{
     		throw new ConstraintException("SiteNodeVersion.stateId", "3400");
-    	}			
-    }        
+    	}
+    }
 
     /**
 	 * This method restores a siteNode.
@@ -3883,5 +3933,210 @@ public class SiteNodeController extends BaseController
         }
 	}
 
+	private Map<String, List<ReferenceBean>> groupByContactPerson(List<ReferenceBean> contactPersons)
+	{
+		Map<String, List<ReferenceBean>> result = new HashMap<String, List<ReferenceBean>>();
+
+		for (ReferenceBean referenceBean : contactPersons)
+		{
+			if (referenceBean.getContactPersonEmail() == null || referenceBean.getContactPersonEmail().equals(""))
+			{
+				continue;
+			}
+			List<ReferenceBean> personsList = result.get(referenceBean.getContactPersonEmail());
+			if (personsList == null)
+			{
+				personsList = new ArrayList<ReferenceBean>();
+				result.put(referenceBean.getContactPersonEmail(), personsList);
+			}
+			personsList.add(referenceBean);
+		}
+
+		return result;
+	}
+
+	private Map<String, Map<SiteNodeVO, List<ReferenceBean>>> groupByContactPerson(Map<SiteNodeVO, List<ReferenceBean>> contactPersons)
+	{
+		Map<String, Map<SiteNodeVO, List<ReferenceBean>>> result = new HashMap<String, Map<SiteNodeVO,  List<ReferenceBean>>>();
+		for (Map.Entry<SiteNodeVO, List<ReferenceBean>> entry : contactPersons.entrySet())
+		{
+			SiteNodeVO siteNodeVO = entry.getKey();
+			Map<String, List<ReferenceBean>> referencesByContact = groupByContactPerson(entry.getValue());
+			for (Map.Entry<String, List<ReferenceBean>> contactsForSiteNode : referencesByContact.entrySet())
+			{
+				String contactPerson = contactsForSiteNode.getKey();
+				Map<SiteNodeVO,  List<ReferenceBean>> value = result.get(contactPerson);
+				if (value == null)
+				{
+					value = new HashMap<SiteNodeVO,  List<ReferenceBean>>();
+					result.put(contactPerson, value);
+				}
+				value.put(siteNodeVO, contactsForSiteNode.getValue());
+			}
+		}
+		return result;
+	}
+
+    private void notifyContactPersonsForSiteNode(SiteNodeVO siteNodeVO, List<ReferenceBean> contacts, Database db) throws SystemException, Exception
+    {
+		notifyContactPersonsForSiteNode(Collections.singletonMap(siteNodeVO, contacts), db);
+    }
+
+    private void notifyContactPersonsForSiteNode(Map<SiteNodeVO, List<ReferenceBean>> contacts, Database db) throws SystemException, Exception
+    {
+    	Map<String, Map<SiteNodeVO, List<ReferenceBean>>> contactMap = groupByContactPerson(contacts);
+
+    	if (logger.isInfoEnabled())
+    	{
+    		logger.info("Will notify people about registry change. " + contactMap);
+    	}
+
+    	String registryContactMailLanguage = CmsPropertyHandler.getRegistryContactMailLanguage();
+    	Locale locale = new Locale(registryContactMailLanguage);
+
+		try
+		{
+			String from = CmsPropertyHandler.getSystemEmailSender();
+    		String subject = getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.subject");
+			// This loop iterate once for each contact person
+			for (Map.Entry<String, Map<SiteNodeVO, List<ReferenceBean>>> entry : contactMap.entrySet())
+			{
+				String contactPersonEmail = entry.getKey();
+				Set<SiteNodeVO> siteNodesForPerson = entry.getValue().keySet();
+				Map<SiteNodeVO, List<ReferenceBean>> affectedNodes = entry.getValue();
+	    		StringBuilder mailContent = new StringBuilder();
+
+	    		mailContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.intro"));
+	    		mailContent.append("<p style=\"color:black;\">");
+	    		mailContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.siteNodeLabel"));
+	    		mailContent.append("<ul>");
+	    		for (SiteNodeVO siteNodeVO : siteNodesForPerson)
+	    		{
+					mailContent.append("<li>");
+					// Putting a-tags around each entry will prevent email clients from trying to linkify the entries
+	    			mailContent.append(getSiteNodePath(siteNodeVO, " / ", "<a style=\"color:black;\">", "</a>", db));
+	    			mailContent.append("</li>");
+	    		}
+				mailContent.append("</ul>");
+				mailContent.append("</p>");
+
+				boolean hasInformation = false;
+		    	for (Map.Entry<SiteNodeVO, List<ReferenceBean>> affectedNode : affectedNodes.entrySet())
+		    	{
+					StringBuilder sb = new StringBuilder();
+					sb.append("<p style=\"margin-top:30px;color:black;\">");
+					sb.append(getSiteNodePath(affectedNode.getKey(), " / ", "<em><a style=\"color:black;\">", "</a></em>", db));
+
+					String path;
+					String url;
+					StringBuilder siteNodeBuilder = new StringBuilder();
+					StringBuilder contentBuilder = new StringBuilder();
+					for (ReferenceBean reference : affectedNode.getValue())
+					{
+						if (reference.getPath() != null && !reference.getPath().equals(""))
+						{
+							path = reference.getPath();
+						}
+						else
+						{
+							path = reference.getName();
+						}
+
+						if (reference.getReferencingCompletingObject().getClass().getName().indexOf("Content") != -1)
+						{
+							Integer languageId;
+							if (reference.getVersions().size() == 0)
+							{
+								if (reference.getReferencingCompletingObject() instanceof ContentVO)
+								{
+									languageId = LanguageController.getController().getMasterLanguage(((ContentVO)reference.getReferencingCompletingObject()).getRepositoryId(), db).getLanguageId();
+								}
+								else
+								{
+									languageId = ((LanguageVO)LanguageController.getController().getLanguageVOList(db).get(0)).getLanguageId();
+								}
+							}
+							else
+							{
+								ContentVersionVO version = (ContentVersionVO)reference.getVersions().get(0).getReferencingObject();
+								languageId = version.getLanguageId();
+							}
+
+							url = CmsPropertyHandler.getCmsFullBaseUrl() + "/ViewContentVersion!standalone.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
+							contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
+						}
+						else
+						{
+							url = CmsPropertyHandler.getCmsFullBaseUrl() + "/DeleteContent!fixPage.action?siteNodeId=" + ((SiteNodeVO)reference.getReferencingCompletingObject()).getSiteNodeId() + "&contentId=-1";
+							siteNodeBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
+						}
+					}
+					if (contentBuilder.length() > 0)
+					{
+						hasInformation = true;
+						sb.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.listHeader.content"));
+						sb.append("<ul>");
+						sb.append(contentBuilder);
+						sb.append("</ul>");
+					}
+					if (siteNodeBuilder.length() > 0)
+					{
+						hasInformation = true;
+						sb.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.listHeader.siteNode"));
+						sb.append("<ul>");
+						sb.append(siteNodeBuilder);
+						sb.append("</ul>");
+					}
+					sb.append("</p>");
+					mailContent.append(sb);
+				} // end loop: one SiteNode for one contact person
+
+		    	mailContent.append(getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.footer"));
+				if (hasInformation)
+				{
+					logger.debug("Sending notification email to: " + contactPersonEmail);
+					MailServiceFactory.getService().sendEmail("text/html", from, contactPersonEmail, null, null, null, null, subject, mailContent.toString(), "utf-8");
+				}
+				else
+				{
+					logger.warn("No Contents or SiteNodes were found for the given person. This is very strange. Contact person: " + contactPersonEmail + ", SiteNode.ids: " + contacts.keySet());
+				}
+			} // end-loop: contact person
+    	}
+    	catch (Exception ex)
+    	{
+    		logger.error("Failed to generate email for contact person notfication. Message: " + ex.getMessage() + ". Type: " + ex.getClass());
+			logger.warn("Failed to generate email for contact person notfication.", ex);
+			throw ex;
+    	}
+    }
+
+    public String getSiteNodePath(SiteNodeVO siteNodeVO, Database db) throws Exception
+	{
+		return getSiteNodePath(siteNodeVO, "/", "", "", db);
+	}
+
+    public String getSiteNodePath(SiteNodeVO siteNodeVO, String seperator, String prefix, String suffix, Database db) throws Exception
+    {
+    	StringBuilder sb = new StringBuilder();
+
+    	while(siteNodeVO != null)
+    	{
+    		sb.insert(0, suffix);
+    		sb.insert(0, siteNodeVO.getName());
+    		sb.insert(0, prefix);
+    		sb.insert(0, seperator);
+    		if(siteNodeVO.getParentSiteNodeId() != null)
+    		{
+    			siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
+    		}
+    		else
+    		{
+    			siteNodeVO = null;
+    		}
+    	}
+
+    	return sb.toString();
+    }
+
 }
- 

@@ -604,9 +604,9 @@ public class PublicationController extends BaseController
 	        beginTransaction(db);
 
 	        publicationVO = createAndPublish(publicationVO, events, newSiteNodeMap, newContentMap, overrideVersionModifyer, infoGluePrincipal, db);
-	        
-	        commitTransaction(db);
-	        
+
+			commitRegistryAwareTransaction(db);
+
 	        // Notify the interceptors!!!
 	        try
 			{

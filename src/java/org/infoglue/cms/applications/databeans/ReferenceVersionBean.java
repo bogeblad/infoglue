@@ -25,6 +25,9 @@ package org.infoglue.cms.applications.databeans;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.infoglue.cms.entities.management.RegistryVO;
+
+
 /**
  * This bean is really just to give the reference-screens a nice datastructure.
  * 
@@ -34,7 +37,7 @@ import java.util.List;
 public class ReferenceVersionBean
 {
     //private String name;
-    private List registryVOList = new ArrayList();
+	private List<RegistryVO> registryVOList = new ArrayList<RegistryVO>();
     private Object referencingObject;
     
     /*
@@ -59,7 +62,7 @@ public class ReferenceVersionBean
         this.referencingObject = referencingObject;
     }
     
-    public List getRegistryVOList()
+    public List<RegistryVO> getRegistryVOList()
     {
         return registryVOList;
     }

@@ -197,13 +197,18 @@ public class SiteNodeControllerProxy extends SiteNodeController
 	
 	public void acMarkForDelete(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO) throws ConstraintException, SystemException, Bug, Exception
 	{
+		acMarkForDelete(infogluePrincipal, siteNodeVO, false);
+	}
+
+	public void acMarkForDelete(InfoGluePrincipal infogluePrincipal, SiteNodeVO siteNodeVO, boolean forceDelete) throws ConstraintException, SystemException, Bug, Exception
+	{
 		Map hashMap = new HashMap();
 		hashMap.put("siteNodeId", siteNodeVO.getId());
-    	
+
 		intercept(hashMap, "SiteNodeVersion.DeleteSiteNode", infogluePrincipal);
 
-		markForDeletion(siteNodeVO, infogluePrincipal);
-	}   
+		markForDeletion(siteNodeVO, infogluePrincipal, forceDelete);
+	}
 
 	
 	/**

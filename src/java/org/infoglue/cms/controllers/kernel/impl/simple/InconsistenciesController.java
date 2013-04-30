@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -41,6 +43,7 @@ import org.infoglue.cms.entities.management.RegistryVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.DateHelper;
@@ -221,66 +224,147 @@ public class InconsistenciesController extends BaseController
 		}
 	}
 
-	public void removeReferences(Integer registryId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception 
+	public void removeContentReferences(Map<ContentVersionVO, RegistryVO> contentVersionRegistryPair, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
 	{
-		RegistryVO registryVO = RegistryController.getController().getRegistryVOWithId(registryId);
-		
-		String entityName = registryVO.getEntityName();
+		ContentVersionVO contentVersionVO;
+		RegistryVO registryVO;
+		for (Map.Entry<ContentVersionVO, RegistryVO> pair : contentVersionRegistryPair.entrySet())
+		{
+			contentVersionVO = pair.getKey();
+			registryVO = pair.getValue();
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("About to clean ContentVersion " + contentVersionVO.getContentVersionId() + " for references to: " + registryVO.getEntityName() + "<" + registryVO.getEntityId() + ">");
+			}
+			String versionValue = contentVersionVO.getVersionValue();
+
+			if(registryVO.getReferenceType().equals(RegistryVO.INLINE_LINK))
+				versionValue = deleteInlineLinks(versionValue, new Integer(registryVO.getEntityId()), db);
+			if(registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET))
+				versionValue = deleteInlineAssets(versionValue, new Integer(registryVO.getEntityId()));
+			if(registryVO.getReferenceType().equals(RegistryVO.INLINE_SITE_NODE_RELATION))
+				versionValue = deleteInlineSiteNodeRelations(versionValue, new Integer(registryVO.getEntityId()));
+			if(registryVO.getReferenceType().equals(RegistryVO.INLINE_CONTENT_RELATION))
+				versionValue = deleteInlineContentRelations(versionValue, new Integer(registryVO.getEntityId()));
+
+			contentVersionVO.setVersionModifier(infoGluePrincipal.getName());
+			contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
+			contentVersionVO.setVersionValue(versionValue);
+
+			ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO, db);
+		}
+	}
+
+	public void removeSiteNodeReferences(Map<SiteNodeVO, RegistryVO> siteNodeRegistryPair, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
+	{
+		SiteNodeVO siteNodeVO;
+		RegistryVO registryVO;
+		for (Map.Entry<SiteNodeVO, RegistryVO> pair : siteNodeRegistryPair.entrySet())
+		{
+			siteNodeVO = pair.getKey();
+			registryVO = pair.getValue();
+			if (logger.isDebugEnabled())
+			{
+				logger.debug("About to clean SiteNode " + siteNodeVO.getContentVersionId() + " for references to: " + registryVO.getEntityName() + "<" + registryVO.getEntityId() + ">");
+			}
+			Integer metaInfoContentId = siteNodeVO.getMetaInfoContentId();
+			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+			String pageStructure = ContentController.getContentController().getContentAttribute(db, metaInfoContentId, masterLanguageVO.getId(), "ComponentStructure");
+
+			if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT))
+				pageStructure = deleteComponentFromXML(pageStructure, new Integer(registryVO.getEntityId()));
+			if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT_BINDING))
+				pageStructure = deleteComponentBindingFromXML(pageStructure, new Integer(registryVO.getEntityId()), registryVO.getEntityName());
+
+			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(metaInfoContentId, masterLanguageVO.getId(), db);
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", pageStructure, infoGluePrincipal, db);
+		}
+	}
+
+	/**
+	 * Creates a transaction and calls {@link #removeReferences(Integer, InfoGluePrincipal, Database)}.
+	 * @deprecated This method handles clean up of ContentVersions poorly. Please refer to {@link #removeContentReferences(Map, InfoGluePrincipal, Database)}
+	 *  and {@link #removeSiteNodeReferences(Map, InfoGluePrincipal, Database)} instead.
+	 */
+	public void removeReferences(Integer registryId, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+    {
+    	Database db = CastorDatabaseService.getDatabase();
+
+		try
+		{
+			beginTransaction(db);
+
+			removeReferences(registryId, infoGluePrincipal, db);
+
+		    commitTransaction(db);
+		}
+		catch (Exception ex)
+		{
+			rollbackTransaction(db);
+		    logger.error("Failed to remove references. Message: " + ex.getMessage());
+		    logger.warn("Failed to remove references.", ex);
+		}
+    }
+
+	/**
+	 * @deprecated This method handles clean up of ContentVersions poorly. Please refer to {@link #removeContentReferences(Map, InfoGluePrincipal, Database)}
+	 *  and {@link #removeSiteNodeReferences(Map, InfoGluePrincipal, Database)} instead.
+	 */
+	public void removeReferences(Integer registryId, InfoGluePrincipal infoGluePrincipal, Database db) throws SystemException, Exception
+	{
+		RegistryVO registryVO = RegistryController.getController().getRegistryVOWithId(registryId, db);
 		String referencingEntityName = registryVO.getReferencingEntityName();
 		String referencingEntityCompletingName = registryVO.getReferencingEntityCompletingName();
-		Integer entityId = new Integer(registryVO.getEntityId());
 		Integer referencingEntityId = new Integer(registryVO.getReferencingEntityId());
-		Integer referencingEntityCompletingId = new Integer(registryVO.getReferencingEntityCompletingId());
-		
+
 		if(referencingEntityCompletingName.equals(SiteNode.class.getName()))
 		{
-			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()));
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
 			if(siteNodeVO != null)
 			{
 				Integer metaInfoContentId = siteNodeVO.getMetaInfoContentId();
-				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId());
-				String pageStructure = ContentController.getContentController().getContentAttribute(metaInfoContentId, masterLanguageVO.getId(), "ComponentStructure");
+				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+				String pageStructure = ContentController.getContentController().getContentAttribute(db, metaInfoContentId, masterLanguageVO.getId(), "ComponentStructure");
 
 				if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT))
 					pageStructure = deleteComponentFromXML(pageStructure, new Integer(registryVO.getEntityId()));
 				if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT_BINDING))
 					pageStructure = deleteComponentBindingFromXML(pageStructure, new Integer(registryVO.getEntityId()), registryVO.getEntityName());
-			
-				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(metaInfoContentId, masterLanguageVO.getId());
-				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", pageStructure, infoGluePrincipal);
+
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(metaInfoContentId, masterLanguageVO.getId(), db);
+				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", pageStructure, infoGluePrincipal, db);
 			}
 		}
 		else if(referencingEntityCompletingName.equals(Content.class.getName()))
 		{
 			if(referencingEntityName.equals(ContentVersion.class.getName()))
 			{
-				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(referencingEntityId);
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(referencingEntityId, db);
 				if(contentVersionVO != null)
 				{
 					String versionValue = contentVersionVO.getVersionValue();
-					
+
 					if(registryVO.getReferenceType().equals(RegistryVO.INLINE_LINK))
-						versionValue = deleteInlineLinks(versionValue, new Integer(registryVO.getEntityId()));
+						versionValue = deleteInlineLinks(versionValue, new Integer(registryVO.getEntityId()), db);
 					if(registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET))
 						versionValue = deleteInlineAssets(versionValue, new Integer(registryVO.getEntityId()));
 					if(registryVO.getReferenceType().equals(RegistryVO.INLINE_SITE_NODE_RELATION))
 						versionValue = deleteInlineSiteNodeRelations(versionValue, new Integer(registryVO.getEntityId()));
 					if(registryVO.getReferenceType().equals(RegistryVO.INLINE_CONTENT_RELATION))
 						versionValue = deleteInlineContentRelations(versionValue, new Integer(registryVO.getEntityId()));
-					
+
 					contentVersionVO.setVersionModifier(infoGluePrincipal.getName());
 					contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 					contentVersionVO.setVersionValue(versionValue);
-					
-					ContentVersionController.getContentVersionController().update(contentVersionVO.getContentId(), contentVersionVO.getLanguageId(), contentVersionVO);
+
+					ContentVersionController.getContentVersionController().update(contentVersionVO.getContentVersionId(), contentVersionVO, infoGluePrincipal, db);
 				}
 			}
 		}
 		else
 		{
-			logger.error("The registry contained a not supported referencingEntityCompletingName:" + referencingEntityCompletingName);			
+			logger.error("The registry contained a not supported referencingEntityCompletingName:" + referencingEntityCompletingName);
 		}
-		
 	}
 
 	private String deleteInlineContentRelations(String versionValue, Integer contentId) 
@@ -437,26 +521,41 @@ public class InconsistenciesController extends BaseController
 		
 		return cleanedVersionValue;
 	}
+
+	private String cleanInlineNonLinkSiteNodes(String versionValue, Integer siteNodeId, Database db) throws ConstraintException, SystemException, Exception
+	{
+	    Pattern pattern = Pattern.compile("\\$templateLogic\\.getPageUrl\\(" + siteNodeId + ",.*?\\)");
+	    Matcher matcher = pattern.matcher(versionValue);
+	    StringBuffer sb = new StringBuffer();
+	    while ( matcher.find() )
+	    {
+	        String match = matcher.group();
+	        logger.info("Found inline non-link SiteNode. Removing... Match: " + match);
+			matcher.appendReplacement(sb, "");
+	    }
+	    matcher.appendTail(sb);
+	    return sb.toString();
+	}
 	
-	private String deleteInlineLinks(String versionValue, Integer siteNodeId) 
+	private String deleteInlineLinks(String versionValue, Integer siteNodeId, Database db)
 	{
 		String cleanedVersionValue = versionValue;
-		
+
 		try
 		{
 			logger.info("versionValue:" + versionValue);
-			
+
 			int startIndex = versionValue.indexOf("<a ");
 			int endIndex = versionValue.indexOf("</a>", startIndex) + 4;
 			int offset = startIndex;
-			
-			Map replaces = new HashMap();
-			
+
+			Map<String, String> replaces = new HashMap<String, String>();
+
 			while(startIndex > -1 && endIndex > startIndex)
 			{
 				String linkString = versionValue.substring(startIndex, endIndex);
 				logger.info("linkString:" + linkString);
-				
+
 				if(linkString.indexOf("getPageUrl(" + siteNodeId + ",") > -1)
 				{
 					int linkTextStartIndex = linkString.indexOf(">");
@@ -465,41 +564,43 @@ public class InconsistenciesController extends BaseController
 					logger.info("linkText:" + linkText);
 					replaces.put(linkString, linkText);
 				}
-				
+
 				startIndex = versionValue.indexOf("<a ", offset);
 				endIndex = versionValue.indexOf("</a>", startIndex) + 4;
 				offset = endIndex;
 			}
-			
-			Iterator replacesIterator = replaces.keySet().iterator();
+
+			Iterator<String> replacesIterator = replaces.keySet().iterator();
 			while(replacesIterator.hasNext())
 			{
-				String original = (String)replacesIterator.next();
-				String linkText = (String)replaces.get(original);
-				
+				String original = replacesIterator.next();
+				String linkText = replaces.get(original);
+
 				int offsetFinal = 0;
 				int linkStart = cleanedVersionValue.indexOf(original, offsetFinal);
 				while(linkStart > -1)
 				{
 					StringBuffer result = new StringBuffer();
-					
+
 					result.append(cleanedVersionValue.substring(offsetFinal, linkStart));
 					result.append(linkText);
 					offsetFinal = cleanedVersionValue.indexOf(original, offsetFinal) + original.length();
 					result.append(cleanedVersionValue.substring(offsetFinal));
-					
+
 					cleanedVersionValue = result.toString();
 					linkStart = cleanedVersionValue.indexOf(original, offsetFinal);
 				}
 			}
-			
+
+			cleanedVersionValue = cleanInlineNonLinkSiteNodes(cleanedVersionValue, siteNodeId, db);
+
 			logger.info("cleanedVersionValue:" + cleanedVersionValue);
 		}
-		catch (Exception e) 
+		catch (Exception ex)
 		{
-			e.printStackTrace();
+			logger.error("Error when deleting inline links in content version. Was looking for SiteNode " + siteNodeId + ". Message: " + ex.getMessage());
+			logger.warn ("Error when deleting inline links in content version. Was looking for SiteNode " + siteNodeId, ex);
 		}
-		
 		return cleanedVersionValue;
 	}
 	

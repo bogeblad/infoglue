@@ -34,9 +34,11 @@ import java.util.List;
 public class ReferenceBean
 {
     private String name;
+    private String path;
+    private String contactPersonEmail;
     //private List registryVOList;
     private Object referencingCompletingObject;
-    private List versions = new ArrayList();
+    private List<ReferenceVersionBean> versions = new ArrayList<ReferenceVersionBean>();
     
     public String getName()
     {
@@ -48,6 +50,16 @@ public class ReferenceBean
         this.name = name;
     }
     
+    public String getPath()
+	{
+		return path;
+	}
+
+	public void setPath(String path)
+	{
+		this.path = path;
+	}
+
     public Object getReferencingCompletingObject()
     {
         return referencingCompletingObject;
@@ -69,8 +81,18 @@ public class ReferenceBean
         this.registryVOList = registryVOList;
     }
     */
-    public List getVersions()
+    public List<ReferenceVersionBean> getVersions()
     {
         return versions;
     }
+
+	public String getContactPersonEmail()
+	{
+		return contactPersonEmail;
+	}
+
+	public void setContactPersonEmail(String contactPersonEmail)
+	{
+		this.contactPersonEmail = contactPersonEmail;
+	}
 }

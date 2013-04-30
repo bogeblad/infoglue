@@ -215,6 +215,8 @@ public class ContentStateController extends BaseController
 				if(contentVO.getIsProtected().equals(ContentVO.YES))
 					copyAccessRights(oldContentVersion.getId(), newContentVersion.getId(), db);
 				copyContentCategories(oldContentVersion.getId(), newContentVersion.getId(), db);
+
+				RegistryController.getController().updateContentVersionThreaded(newContentVersion.getValueObject(), null);
 			}
 
 			//If the user changes the state to publish we create a copy and set that copy to publish.
@@ -245,7 +247,9 @@ public class ContentStateController extends BaseController
 				copyContentCategories(oldContentVersion.getId(), newContentVersion.getId(), db);
 
 				//Creating the event that will notify the editor...
-				
+
+				RegistryController.getController().updateContentVersionThreaded(newContentVersion.getValueObject(), null);
+
 				ContentTypeDefinitionVO metaInfoCTDVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("Meta info");
 				if(contentVO.getContentTypeDefinitionId() != null && !contentVO.getContentTypeDefinitionId().equals(metaInfoCTDVO.getId()))
 				{
@@ -271,16 +275,17 @@ public class ContentStateController extends BaseController
 
 				logger.info("About to publish an existing version:" + oldContentVersion.getId() + ":" + oldContentVersion.getStateId());
 				Integer oldContentVersionStateId = oldContentVersion.getStateId();
-				
+
 				oldContentVersion.setStateId(stateId);
 				oldContentVersion.setIsActive(new Boolean(true));
 
 				//New logic to add meta data in some cases... ugly but needed if users are removed.
 				insertIGMetaDataAttributes(oldContentVersion, infoGluePrincipal);
+
 				//End new logic 
-				
+
 				newContentVersion = oldContentVersion;
-				
+
 				//Creating the event that will notify the editor...
 				if(oldContentVersionStateId.intValue() == ContentVersionVO.WORKING_STATE.intValue())
 				{
@@ -294,7 +299,7 @@ public class ContentStateController extends BaseController
 						eventVO.setName(contentVO.getName());
 						eventVO.setTypeId(EventVO.PUBLISH);
 						eventVO = EventController.create(eventVO, contentVO.getRepositoryId(), infoGluePrincipal, db);
-	
+
 						resultingEvents.add(eventVO);
 					}
 				}

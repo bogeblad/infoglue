@@ -199,6 +199,8 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "statisticsLogPath");
 	    populate(ps, "statisticsLogOneFilePerDay");
 	    populate(ps, "statisticsLogger");
+	    populate(ps, "contactPersonEmailMetaInfoAttribute");
+	    populate(ps, "notifyResponsibleOnReferenceChange");
 	    populate(ps, "enablePortal");
 	    populate(ps, "portletBase");
 	    populate(ps, "mail.smtp.host");
@@ -363,6 +365,9 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "indexDigitalAssetContent");
 
 	    populate(ps, "allowedDirectLoginNames");
+
+	    populate(ps, "onlyShowReferenceIfLatestVersion");
+	    populate(ps, "registryContactMailLanguage");
 
 	    try
 	    {

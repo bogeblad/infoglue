@@ -2719,11 +2719,35 @@ public class CmsPropertyHandler
 			return new HashMap<String, String>();
 		}
   }
-  
+
   public static boolean getIndexDigitalAssetContent()
 	{
 		String value = getServerNodeProperty("indexDigitalAssetContent", true, "false");
 
 		return Boolean.parseBoolean(value);
   }
+
+	public static String getContactPersonEmailMetaInfoAttribute()
+	{
+		return getServerNodeProperty("contactPersonEmailMetaInfoAttribute", true, "PageResponsibleEmail");
+	}
+
+	public static boolean getNotifyResponsibleOnReferenceChange()
+	{
+		String notifyResponsibleOnReferenceChange = getServerNodeProperty("notifyResponsibleOnReferenceChange", true, "false");
+
+		return Boolean.parseBoolean(notifyResponsibleOnReferenceChange);
+	}
+
+	public static String getRegistryContactMailLanguage()
+	{
+		return getServerNodeProperty("registryContactMailLanguage", true, "en");
+	}
+
+	public static boolean getOnlyShowReferenceIfLatestVersion()
+	{
+		String onlyShowReferenceIfLatestVersion = getServerNodeProperty("onlyShowReferenceIfLatestVersion", true, "false");
+
+		return Boolean.parseBoolean(onlyShowReferenceIfLatestVersion);
+	}
 }

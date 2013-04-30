@@ -504,6 +504,8 @@ public class ToolbarController implements ToolbarProvider
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			if(toolbarKey.equalsIgnoreCase("tool.managementtool.uploadTranslation.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			if(toolbarKey.equalsIgnoreCase("tool.structuretool.deleteSiteNode.header"))
+				return getDeleteSiteNodeFooterButtons(locale);
 
 		}
 		catch(Exception e) {e.printStackTrace();}			
@@ -3767,6 +3769,22 @@ public class ToolbarController implements ToolbarProvider
 		return buttons;				
 	}
 
+	private List<ToolbarButton> getDeleteSiteNodeFooterButtons(Locale locale) throws Exception
+	{
+		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
+
+		buttons.add(new ToolbarButton("",
+				getLocalizedString(locale, "tool.structuretool.removeAllReferences"), 
+				getLocalizedString(locale, "tool.structuretool.removeAllReferences"),
+				"deleteAllReferences();",
+				"",
+				"left",
+				"delete",
+				true));
+
+		return buttons;
+	}
+
 	private List<ToolbarButton> getSystemPublicationsButtons(Locale locale, HttpServletRequest request)
 	{
 	    List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
@@ -4150,7 +4168,6 @@ public class ToolbarController implements ToolbarProvider
 				"",
 				"");
 	}
-
 	
 	/**
 	 * This method checks if the content version is read only (ie publish, published or final).

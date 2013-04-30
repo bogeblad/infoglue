@@ -25,6 +25,7 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -288,11 +289,11 @@ public class SearchContentAction extends InfoGlueAbstractAction
 				selectedRepositoryIdList.add(repositoryIdToSearch[i]);
 			}
 			
-			digitalAssetVOList = SearchController.getController().getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), assetTypeFilter, maxRows);
+			digitalAssetVOList = SearchController.getController().getDigitalAssets(repositoryIdAsIntegerToSearch, this.getSearchString(), assetTypeFilter, maxRows, new HashMap<String,Integer>());
 		}
 		else 
 		{
-			digitalAssetVOList = SearchController.getController().getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows);
+			digitalAssetVOList = SearchController.getController().getDigitalAssets(new Integer[]{this.repositoryId}, this.getSearchString(), assetTypeFilter, maxRows, new HashMap<String,Integer>());
 			selectedRepositoryIdList.add("" + this.repositoryId);
 		}
 

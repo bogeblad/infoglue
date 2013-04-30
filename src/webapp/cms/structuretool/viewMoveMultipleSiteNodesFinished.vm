@@ -13,11 +13,11 @@
 
 	<h3>$ui.getString("tool.structuretool.moveMultipleSiteNode.finished")</h3>
 	<p>
-		The pages you choosed to move are now located in the new destination.
+		$ui.getString("tool.contenttool.moveMultiplePages.successText")
 	</p>
 	#if($errorsOccurred)
 	<p>
-		Some items could not be moved as there was constraints prohibiting this.
+		$ui.getString("tool.contenttool.moveMultiplePages.failureText")
 	</p>
 	#end
 	

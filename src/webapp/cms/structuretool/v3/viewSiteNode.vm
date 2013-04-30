@@ -103,13 +103,13 @@
 	}
 	
 	$(document).ready(function(){
+		$("input.compare").hide();
   		$("#tabsContainer").tabs({ 
   				cache: false, 
   				show: function(event, ui) { resizeScrollArea(); },
   				select: function(e, ui) { loadFrame(ui.tab.href); }
   			} 
   		);
-		
 		//alert($updated);
 		#if($updated)
 			try
@@ -190,32 +190,6 @@
 				<p>
 					#editDateFieldCSS("entity.SiteNode.expireDateTime.label" "expireDateTime" $!expireDateTime "30" "date"  "ViewCalendar.action?date=$!expireDateTimeAsLong&formPath=document.editForm.expireDateTime" "$dateReadonly")<br/>
 				</p>
-				<p>
-					#set($hasAccessToChange = "true")
-					#set($protectedSiteNodeVersionId = $!this.getProtectedSiteNodeVersionId($siteNodeVersionId))
-					#if($protectedSiteNodeVersionId)
-						#set($protectedSiteNodeVersionVO = $this.getSiteNodeVersionVO($protectedSiteNodeVersionId))
-						#set($protectedSiteNodePath = $this.getSiteNodePath($protectedSiteNodeVersionVO.siteNodeId))
-						#if($protectedSiteNodeVersionId && !$this.hasAccessTo("SiteNodeVersion.ChangeAccessRights", "$protectedSiteNodeVersionId"))
-							#set($hasAccessToChange = "false")
-						#end
-					#end
-					
-					<label for="isProtected">$ui.getString("entity.SiteNode.isProtected.label")</label>
-					<select name="isProtected" style="width: 115px;" #if(!$hasAccessToChange)disabled="disabled"#end>
-						<option value="0" #if($!isProtected == 0) selected="1" #end> $ui.getString("tool.common.no")</option>
-						<option value="1" #if($!isProtected == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>
-						<option value="2" #if($!isProtected == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>
-					</select><br/>
-					#if($!isProtected == 2 && $protectedSiteNodeVersionId)Inherited rights defined on <strong>$protectedSiteNodePath</strong><br/>#end
-				</p>
-				<p>					
-					<label for="isHidden">$ui.getString("entity.SiteNode.isHidden.label")</label>
-					<select name="isHidden" style="width: 115px;">
-						<option value="false" #if($!isHidden == false) selected="1" #end> $ui.getString("tool.common.no")</option>	
-						<option value="true" #if($!isHidden == true) selected="1" #end> $ui.getString("tool.common.yes")</option>	
-					</select><br/>
-				</p>
 				#if(!$isSiteNodeTypeDefinitionAssigned)
 				<p>	
 					<label for="siteNodeTypeDefinitionId">SiteNode type</label>
@@ -226,17 +200,45 @@
 					#end
 					</select>
 				</p>
-				#else	
-					<p>The siteNode is of type $siteNodeTypeDefinition.name</p>
 				#end
 			
-				<p>This version was last updated by $siteNodeVersionVO.versionModifier</p>
+				<p>$ui.getString("tool.contenttool.versionLastUpdatedByLabel") $siteNodeVersionVO.versionModifier</p>
 								
 			</div>
 			
 			#if($this.hasAccessTo("ToolTabsAndButtons.PageDetailsAdvancedTab", true, false))
 			
 				<div id="advancedTab" class="inlineTabDiv">
+					
+					#if($isSiteNodeTypeDefinitionAssigned)
+					<p>The siteNode is of type $siteNodeTypeDefinition.name</p>
+					#end
+					<p>
+						#set($hasAccessToChange = "true")
+						#set($protectedSiteNodeVersionId = $!this.getProtectedSiteNodeVersionId($siteNodeVersionId))
+						#if($protectedSiteNodeVersionId)
+							#set($protectedSiteNodeVersionVO = $this.getSiteNodeVersionVO($protectedSiteNodeVersionId))
+							#set($protectedSiteNodePath = $this.getSiteNodePath($protectedSiteNodeVersionVO.siteNodeId))
+							#if($protectedSiteNodeVersionId && !$this.hasAccessTo("SiteNodeVersion.ChangeAccessRights", "$protectedSiteNodeVersionId"))
+								#set($hasAccessToChange = "false")
+							#end
+						#end
+						
+						<label for="isProtected">$ui.getString("entity.SiteNode.isProtected.label")</label>
+						<select name="isProtected" style="width: 115px;" #if(!$hasAccessToChange)disabled="disabled"#end>
+							<option value="0" #if($!isProtected == 0) selected="1" #end> $ui.getString("tool.common.no")</option>
+							<option value="1" #if($!isProtected == 1) selected="1" #end> $ui.getString("tool.common.yes")</option>
+							<option value="2" #if($!isProtected == 2) selected="1" #end> $ui.getString("tool.common.inherit")</option>
+						</select><br/>
+						#if($!isProtected == 2 && $protectedSiteNodeVersionId)Inherited rights defined on <strong>$protectedSiteNodePath</strong><br/>#end
+					</p>
+					<p>					
+						<label for="isHidden">$ui.getString("entity.SiteNode.isHidden.label")</label>
+						<select name="isHidden" style="width: 115px;">
+							<option value="false" #if($!isHidden == false) selected="1" #end> $ui.getString("tool.common.no")</option>	
+							<option value="true" #if($!isHidden == true) selected="1" #end> $ui.getString("tool.common.yes")</option>	
+						</select><br/>
+					</p>
 					
 					<p>
 						#editTextFieldCSS("SiteNode.contentType" "contentType" $!contentType "30" true false false "date")

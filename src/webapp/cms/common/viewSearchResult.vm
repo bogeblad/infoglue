@@ -328,13 +328,13 @@
 	
 					<ul>
 						#if($contentVersionVOList.size() > 0)
-				        	<li><a href="#contentsTab"><span>$ui.getString("tool.common.searchDialog.contentTabLabel") ($contentVersionVOList.size())</span></a></li>	        
+				        	<li><a href="#contentsTab"><span>$ui.getString("tool.common.searchDialog.contentTabLabel") ($contentVersionVOList.size()#* / $totalContentsHits*#)</span></a></li>	        
 				        #end
 						#if($siteNodeVersionVOList.size() > 0)
-				        	<li><a href="#pagesTab"><span>$ui.getString("tool.common.searchDialog.pagesTabLabel") ($siteNodeVersionVOList.size())</span></a></li>	        
+				        	<li><a href="#pagesTab"><span>$ui.getString("tool.common.searchDialog.pagesTabLabel") ($siteNodeVersionVOList.size()#* / $totalSiteNodesHits*#)</span></a></li>	        
 				        #end
 						#if($digitalAssetVOList.size() > 0)
-				        	<li><a href="#assetsTab"><span>$ui.getString("tool.common.searchDialog.assetsTabLabel") ($digitalAssetVOList.size())</span></a></li>	        
+				        	<li><a href="#assetsTab"><span>$ui.getString("tool.common.searchDialog.assetsTabLabel") ($digitalAssetVOList.size()#* / $totalAssetsHits*#)</span></a></li>	        
 				        #end
 				    </ul>
 					

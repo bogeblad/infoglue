@@ -174,7 +174,7 @@ public class LuceneController extends BaseController implements NotificationList
 		
 		if(getIsIndexedLocked(true))
 		{
-			logger.error("Directory is locked - leaving the messages in the qeuedMessages list...");
+			logger.warn("Directory is locked - leaving the messages in the qeuedMessages list...");
 			throw new Exception("Lock not granted");
 		}
 		else
@@ -495,7 +495,7 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error indexing notifications:" + e.getMessage());
+				//logger.error("Error indexing notifications:" + e.getMessage());
 				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
 			finally
@@ -572,7 +572,7 @@ public class LuceneController extends BaseController implements NotificationList
 		return hits;
 	}
 
-	public List<Document> queryDocuments(String[] fields, BooleanClause.Occur[] flags, String[] queries, Sort sort, Integer numberOfHits) throws Exception 
+	public List<Document> queryDocuments(String[] fields, BooleanClause.Occur[] flags, String[] queries, Sort sort, Integer numberOfHits, Map searchMetaData) throws Exception 
 	{
 		IndexSearcher searcher = getIndexSearcher();
 		Query query = MultiFieldQueryParser.parse(Version.LUCENE_34, queries, fields, flags, getStandardAnalyzer());
@@ -580,6 +580,7 @@ public class LuceneController extends BaseController implements NotificationList
 		
 		//Query query = new QueryParser(Version.LUCENE_34, "contents", getStandardAnalyzer()).parse(text);
 		TopDocs hits = searcher.search(query, numberOfHits);
+		searchMetaData.put("totalHits", hits.totalHits);
 		logger.info(hits.totalHits + " total matching documents for '" + query + "'");
 		//System.out.println(hits.totalHits + " total matching documents for '" + queries + "'");
 		List<Document> docs = new ArrayList<Document>();
@@ -710,7 +711,7 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error indexing notifications:" + e.getMessage());
+				//logger.error("Error indexing notifications:" + e.getMessage());
 				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
 			finally
@@ -1170,7 +1171,7 @@ public class LuceneController extends BaseController implements NotificationList
 			return;
 		
 		stopIndexing.set(false);
-		logger.error("################# starting index");
+		logger.info("################# starting index");
 		//if (indexStarted.compareAndSet(false, true)) 
 		//{
 			IndexReader indexReader = null;
@@ -1210,7 +1211,7 @@ public class LuceneController extends BaseController implements NotificationList
 			}
 			catch (Exception e) 
 			{
-				logger.error("Error indexing notifications:" + e.getMessage());
+				//logger.error("Error indexing notifications:" + e.getMessage());
 				logger.warn("Error indexing notifications:" + e.getMessage(), e);
 			}
 		/*
@@ -1251,7 +1252,7 @@ public class LuceneController extends BaseController implements NotificationList
 				if(stopIndexing.get())
 					break outer;
 
-				logger.error("Queueing " + notificationMessages.size() + " notificationMessages for indexing");
+				logger.info("Queueing " + notificationMessages.size() + " notificationMessages for indexing");
 				for(NotificationMessage notificationMessage : notificationMessages)
 				{
 					notify(notificationMessage);
@@ -1261,7 +1262,7 @@ public class LuceneController extends BaseController implements NotificationList
 				//t.printElapsedTime("Indexing size():" + notificationMessages.size() + " took");
 				
 				Integer newLastContentVersionIdCandidate = getNotificationMessages(notificationMessages, languageVO, newLastContentVersionId, lastCommitedDateTime, 1000);
-				logger.error("newLastContentVersionIdCandidate:" + newLastContentVersionIdCandidate + "=" + newLastContentVersionId);
+				logger.info("newLastContentVersionIdCandidate:" + newLastContentVersionIdCandidate + "=" + newLastContentVersionId);
 				if(newLastContentVersionIdCandidate > newLastContentVersionId)
 					newLastContentVersionId = newLastContentVersionIdCandidate;
 				else

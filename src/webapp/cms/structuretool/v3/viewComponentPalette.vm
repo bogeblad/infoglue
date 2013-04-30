@@ -88,7 +88,7 @@
 			#end
 		</ul>
 		#if($components.size() == 0)
-			<p>No components tagged as "favourites". Consult the documentation on how to set it up.</p>
+			<p style="margin-left: 6px;">$ui.getString("tool.common.favouriteComponents.noComponentsTagged")</p>
 		#end
 	</div>
 </body>

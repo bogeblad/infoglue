@@ -855,9 +855,9 @@ public class ToolbarController implements ToolbarProvider
 				  "",
 				  "createContentsFromUpload");
 
+		syncTreeButton.getSubButtons().add(runTaskButton);
 		if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarAdvancedButtons", true))
 		{
-			syncTreeButton.getSubButtons().add(runTaskButton);
 			syncTreeButton.getSubButtons().add(changeContentTypeButton);
 			syncTreeButton.getSubButtons().add(exportContentButton);
 			syncTreeButton.getSubButtons().add(importContentButton);
@@ -1883,13 +1883,16 @@ public class ToolbarController implements ToolbarProvider
 				  "accessRights"));
 		//}
 
-		buttons.add(new ToolbarButton("",
-			  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskLabel"), 
-			  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskTitle"),
-			  "ViewExecuteTask.action?siteNodeId=" + siteNodeId + "",
-			  "",
-			  "runTask"));
-
+		if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarAdvancedButtons", true))
+		{
+			buttons.add(new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskTitle"),
+				  "ViewExecuteTask.action?siteNodeId=" + siteNodeId + "",
+				  "",
+				  "runTask"));
+		}
+		
 		return buttons;
 
 		/*

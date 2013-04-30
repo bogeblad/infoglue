@@ -86,7 +86,7 @@
 
 	<div style="clear: both;"></div>
 
-	<h3>$ui.getString("tool.common.unpublishing.unpublishContentsHeader")</h3>
+	<h3>$ui.getString("tool.common.unpublishing.unpublishContentsHeaderAllVersions")</h3>
 		
 	<div class="inlineTabDiv">	
 		
@@ -101,7 +101,7 @@
 				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
 			</tr>
 			<tr>
-				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "smalltextarea")</td>
+				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "tinytextarea")</td>
 			</tr>		
 			#if($!this.allowOverrideModifyer != "false")
 			<tr>

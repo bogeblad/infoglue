@@ -70,8 +70,10 @@
 
 	<div style="clear: both;"></div>
 
-	<h3>$ui.getString("tool.contenttool.copyContent.introduction")</h3>
-		
+	<h3>$ui.getString("tool.contenttool.copyContent.header")</h3>
+	<p>
+		$ui.getString("tool.contenttool.copyContent.introduction")
+	</p>	
 	<div style="margin: 16px;">	
 	
   		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
@@ -100,9 +102,6 @@
 		<p>
 			$ui.getString("tool.contenttool.importContent.onlyLatestVersionsLabel")
 			<input type="checkbox" name="onlyLatestVersionsCheckbox" value="true" checked="1">
-			
-			$contentId
-			$returnAddress
 		</p>
 						
 		<form name="inputForm" action="CopyContent.action" method="post">

@@ -111,37 +111,6 @@
 				#editTextFieldCSS("Content.name" "name" $formatter.escapeHTML($!name) "30" true false "longtextfield")
 			</p>
 			
-			#if(!$contentVO.contentTypeDefinitionId)
-				#if($isBranch && $this.onlyAllowFolderType)
-					<p style="color:red">
-						This folder has no content type - save and it will receive the default folder content type
-					</p>
-					#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
-						#if($defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
-							<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionVO.getContentTypeDefinitionId()"/>
-						#end
-					#end
-				#else
-					<p>
-						$ui.getString("tool.contenttool.newContent.contentType")<br/>
-						<select class="contenttypes" name="contentTypeDefinitionId">
-						##if($isBranch)<option value="">Not defined yet</option>#end
-						#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
-							#if($isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
-								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
-							#else
-								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()">$contentTypeDefinitionVO.getName()</option>
-							#end
-						#end
-						</select>
-					</p>
-				#end
-			#else
-			<p>
-				$ui.getString("tool.contenttool.contentTypeLabel") $contentTypeDefinition.getName()
-			</p>			
-			#end
-			
 			#if($enableDateTimeDirectEditing == "true")
 				#set($dateReadonly = "")
 			#else
@@ -177,7 +146,38 @@
 				</p>		
 				#end
 			#end
-			
+
+			#if(!$contentVO.contentTypeDefinitionId)
+				#if($isBranch && $this.onlyAllowFolderType)
+					<p style="color:red">
+						This folder has no content type - save and it will receive the default folder content type
+					</p>
+					#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
+						#if($defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
+							<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionVO.getContentTypeDefinitionId()"/>
+						#end
+					#end
+				#else
+					<p>
+						$ui.getString("tool.contenttool.newContent.contentType")<br/>
+						<select class="contenttypes" name="contentTypeDefinitionId">
+						##if($isBranch)<option value="">Not defined yet</option>#end
+						#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
+							#if($isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
+								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
+							#else
+								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()">$contentTypeDefinitionVO.getName()</option>
+							#end
+						#end
+						</select>
+					</p>
+				#end
+			#else
+			<p>
+				$ui.getString("tool.contenttool.contentTypeLabel") $contentTypeDefinition.getName()
+			</p>			
+			#end
+						
 	        #if($this.hasAccessTo("ToolTabsAndButtons.convertToFromFolderPart", true, false, true))
 			<p>
 				#if($contentVO.isBranch)

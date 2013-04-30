@@ -4128,7 +4128,7 @@ public class SiteNodeController extends BaseController
     		sb.insert(0, seperator);
     		if(siteNodeVO.getParentSiteNodeId() != null)
     		{
-    			siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
+    			siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
     		}
     		else
     		{

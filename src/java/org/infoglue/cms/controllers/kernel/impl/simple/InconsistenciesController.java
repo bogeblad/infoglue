@@ -107,7 +107,7 @@ public class InconsistenciesController extends BaseController
 					{
 						try
 						{
-							SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
+							SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getEntityId()), db);
 							if(siteNodeVO == null)
 								addSiteNodeInconsistency(inconsistencies, registryVO, db);
 								//inconsistencies.add(registryVO);								
@@ -319,7 +319,7 @@ public class InconsistenciesController extends BaseController
 
 		if(referencingEntityCompletingName.equals(SiteNode.class.getName()))
 		{
-			SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
+			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(new Integer(registryVO.getReferencingEntityCompletingId()), db);
 			if(siteNodeVO != null)
 			{
 				Integer metaInfoContentId = siteNodeVO.getMetaInfoContentId();
@@ -357,7 +357,7 @@ public class InconsistenciesController extends BaseController
 					contentVersionVO.setModifiedDateTime(DateHelper.getSecondPreciseDate());
 					contentVersionVO.setVersionValue(versionValue);
 
-					ContentVersionController.getContentVersionController().update(contentVersionVO.getContentVersionId(), contentVersionVO, db);
+					ContentVersionController.getContentVersionController().update(contentVersionVO.getContentVersionId(), contentVersionVO, infoGluePrincipal, db);
 				}
 			}
 		}

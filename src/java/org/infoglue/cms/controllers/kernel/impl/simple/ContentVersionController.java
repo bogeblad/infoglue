@@ -1604,12 +1604,12 @@ public class ContentVersionController extends BaseController
 
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, Database db) throws Exception
     {
-		return update(contentId, languageId, contentVersionVO, (InfoGluePrincipal)null, false, db);
+		return update(contentId, languageId, contentVersionVO, null, false, db);
     }
 
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
     {
-    	return update(contentId, languageId, contentVersionVO, (InfoGluePrincipal)null);
+    	return update(contentId, languageId, contentVersionVO, null, false);
     }
 
     public ContentVersionVO update(Integer contentId, Integer languageId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal) throws ConstraintException, SystemException
@@ -1744,12 +1744,7 @@ public class ContentVersionController extends BaseController
 
 	public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO) throws ConstraintException, SystemException
 	{
-		return update(contentVersionId, contentVersionVO, (InfoGluePrincipal)null);
-	}
-
-	public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO, Database db) throws Exception
-	{
-		return update(contentVersionId, contentVersionVO, (InfoGluePrincipal)null, db);
+		return update(contentVersionId, contentVersionVO, null);
 	}
 
     public ContentVersionVO update(Integer contentVersionId, ContentVersionVO contentVersionVO, InfoGluePrincipal principal) throws ConstraintException, SystemException

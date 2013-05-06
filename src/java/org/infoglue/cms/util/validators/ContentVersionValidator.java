@@ -29,7 +29,7 @@ public class ContentVersionValidator
 	/**
 	 * 
 	 */
-	public ConstraintExceptionBuffer validate(ContentTypeDefinitionVO contentType, ContentVersionVO contentVersionVO) {
+	public ConstraintExceptionBuffer validate(ContentTypeDefinitionVO contentType, ContentVersionVO contentVersionVO, String languageCode) {
 		try {
 			ContentVersionBean bean = new ContentVersionBean(contentType, contentVersionVO);
 			ValidatorResources resources = loadResources(contentType);
@@ -40,7 +40,7 @@ public class ContentVersionValidator
 			if(results.isEmpty())
 				return new ConstraintExceptionBuffer();
 			else
-				return populateConstraintExceptionBuffer(results);
+				return populateConstraintExceptionBuffer(results, contentVersionVO, languageCode);
 		} catch(Exception e) {
 			return new ConstraintExceptionBuffer();
 		}
@@ -49,16 +49,43 @@ public class ContentVersionValidator
 	/**
 	 * 
 	 */
-	private static ConstraintExceptionBuffer populateConstraintExceptionBuffer(ValidatorResults results) {
+	private static ConstraintExceptionBuffer populateConstraintExceptionBuffer(ValidatorResults results, ContentVersionVO contentVersionVO, String languageCode) {
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 		Set s = results.getPropertyNames();
-		for(Iterator i=s.iterator(); i.hasNext(); ) {
+		logger.info("s:" + s);
+		for(Iterator i=s.iterator(); i.hasNext(); ) 
+		{
 			ValidatorResult r = results.getValidatorResult((String) i.next());
+			logger.info("r:" + r);
 			Field field       = r.getField();
 			String name       = "ContentVersion" + "." + field.getKey();
-			for(Iterator messages=field.getMessages().values().iterator(); messages.hasNext();) {
+			for(Iterator messages=field.getMessages().values().iterator(); messages.hasNext();) 
+			{
 				Msg m = (Msg) messages.next();
-				ceb.add(new ConstraintException(name, m.getKey()));
+				logger.info("m:" + m);
+			    String errorMessage = m.getKey();
+			    logger.info("errorMessage: " + errorMessage);
+			    if(languageCode != null && errorMessage != null && errorMessage.contains(languageCode + "="))
+			    {
+			    	String[] languageMessages = errorMessage.split(",");
+			    	for(String message : languageMessages)
+			    	{
+			    		if(message.contains(languageCode + "="))
+			    			errorMessage = message.substring(4, message.length() - 1);
+			    	}
+			    }
+			    else if(errorMessage.contains("=["))
+			    {
+			    	String[] languageMessages = errorMessage.split(",");
+			    	for(String message : languageMessages)
+			    	{
+			   			errorMessage = message.substring(4, message.length() - 1);
+			   			break;
+			    	}
+			    }
+			    
+				ceb.add(new ConstraintException(name, errorMessage));
+				//ceb.add(new ConstraintException(name, m.getKey()));
 			}
 		}
 		return ceb;
@@ -87,4 +114,4 @@ public class ContentVersionValidator
 		
 		return new ByteArrayInputStream(validationSchema.getBytes("UTF-8"));		 
 	}
-}
+}	

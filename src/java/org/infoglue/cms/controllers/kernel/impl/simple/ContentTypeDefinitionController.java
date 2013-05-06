@@ -1146,7 +1146,11 @@ public class ContentTypeDefinitionController extends BaseController
 
 							arguments.put(varName, varValue);
 						}	    
-					    
+
+					    String msgText = validatorNode.element("msg").attributeValue("key");
+					    if(msgText != null)
+							arguments.put("msgText", msgText);
+
 					    String attribute = validatorNode.attributeValue("depends");
 					    String[] depends = attribute.split(",");
 					    for(int dependsIndex=0; dependsIndex < depends.length; dependsIndex++)
@@ -1421,6 +1425,14 @@ public class ContentTypeDefinitionController extends BaseController
 
 							arguments.put(varName, varValue);
 						}	    
+					    
+					    NodeList msgNodeList = validatorNode.getElementsByTagName("msg");
+					    if(msgNodeList != null && msgNodeList.getLength() > 0)
+					    {
+						    String msgText = ((Element)msgNodeList.item(0)).getAttribute("key");
+						    if(msgText != null)
+								arguments.put("msgText", msgText);
+					    }
 					    
 					    String attribute = ((Element)validatorNode).getAttribute("depends");
 					    String[] depends = attribute.split(",");

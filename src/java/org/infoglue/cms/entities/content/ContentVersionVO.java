@@ -181,10 +181,10 @@ public class ContentVersionVO implements BaseEntityVO
 		return ceb;
 	}
 
-	public ConstraintExceptionBuffer validateAdvanced(ContentTypeDefinitionVO contentTypeDefinition) 
+	public ConstraintExceptionBuffer validateAdvanced(ContentTypeDefinitionVO contentTypeDefinition, String languageCode) 
 	{ 
 		ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
-		ceb.add(new ContentVersionValidator().validate(contentTypeDefinition, this));
+		ceb.add(new ContentVersionValidator().validate(contentTypeDefinition, this, languageCode));
 		
 		return ceb;
 	}

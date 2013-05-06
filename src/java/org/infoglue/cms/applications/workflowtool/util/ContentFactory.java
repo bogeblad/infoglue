@@ -227,7 +227,7 @@ public class ContentFactory
 	private ConstraintExceptionBuffer validate(final ContentVO contentVO, final ContentVersionVO contentVersionVO) 
 	{
 		final ConstraintExceptionBuffer ceb = contentVO.validate();
-		ceb.add(contentVersionVO.validateAdvanced(contentTypeDefinitionVO));
+		ceb.add(contentVersionVO.validateAdvanced(contentTypeDefinitionVO, "en"));
 		return ceb;
 	}
 

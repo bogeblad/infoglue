@@ -46,10 +46,11 @@
 
 			#set($extraParameter = '')
 			#if($useSimpleComponentDialog)
-			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ]')
+			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ], "iDisplayLength": 10')
 			#end
 			#initDataTableImpl("dataTable" $extraParameter)
 			
+			$("#dataTable_filter :text").focus();
 		});
 	-->
 	</script>
@@ -61,12 +62,12 @@
 
 <div style="clear: both;"></div>
 
-<h3>$ui.getString("tool.structuretool.clickComponentToAddLabel")</h3>
+<h3>$ui.getString("tool.structuretool.clickComponentToChangeToLabel")</h3>
 #if(!$useSimpleComponentDialog)
 <p>
 	#set($allRepositories = $repositories)
     	
-	$ui.getString("tool.structuretool.addComponentChangeRepositoryLabel")<br/>
+	$ui.getString("tool.structuretool.addComponentChangeRepositoryLabel")
 	<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
 	    <option value="-1" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$ui.getString("tool.structuretool.allRepostoriesLabel")</option>
 	    #foreach ($repositoryVO in $allRepositories)
@@ -74,10 +75,28 @@
 	    #end
 	</select>
 </p>
+
+<p>
+	$ui.getString("tool.structuretool.changeComponentMethod.label")
+	<select size="1" name="changeMethod" class="sitedropbox" class="contenttool">
+	    <option value="matchComponentIdAndSlotName">$ui.getString("tool.structuretool.changeComponentMethod.matchComponentIdAndSlotName.label")</option>
+	    <option value="matchComponentId">$ui.getString("tool.structuretool.changeComponentMethod.matchComponentId.label")</option>
+	    <option value="matchComponentContentId">$ui.getString("tool.structuretool.changeComponentMethod.matchComponentContentId.label")</option>
+	</select>
+</p>
+<p>
+	$ui.getString("tool.structuretool.changeComponentRecursionOptions.label")
+	<select size="1" name="recursionMethod" class="sitedropbox" class="contenttool">
+	    <option value="onlyThisPage">$ui.getString("tool.structuretool.changeComponentRecursionOptions.onlyThisPage.label")</option>
+	    <option value="thisAndSubpages">$ui.getString("tool.structuretool.changeComponentRecursionOptions.thisAndSubpages.label")</option>
+	    <option value="theEntireRepository">$ui.getString("tool.structuretool.changeComponentRecursionOptions.theEntireRepository.label")</option>
+	</select>
+</p>
+
 #end
 
 <div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
-
+	
 	<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
 		<thead>
 			<tr>
@@ -153,164 +172,3 @@
 #lightFooterToolbar($footerButtons)
 	
 #endCommonToolV3()
-
-#*
-<?xml version="1.0" encoding="UTF-8"?> 
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html>
-<head>
-	<title>$ui.getString("tool.structuretool.chooseComponentToAddTitle")</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	
-	<script type="text/javascript" language="JavaScript">
-	<!-- 
-	-->
-	</script>
-	
-	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
-	<link rel="stylesheet" type="text/css" href="css/componentEditor.css" /> 
-</head>
-
-<body class="structuretooledit">
-
-#set($allRepositories = $repositories)
-
-<table class="structuretooledit" cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
-<tr>
-	<td valign="top">
-		
-		<table cellpadding="0" cellspacing="0" border="0" width="100%">
-		<tr>
-			<td colspan="5"><img src="css/images/trans.gif" height="10"></td>
-		</tr>
-		<tr class="darkapricot">
-			<td colspan="5" class="smalllabel">$ui.getString("tool.structuretool.clickComponentToAddLabel")</td>
-		</tr>
-		<tr>
-			<td colspan="5" height="1" bgcolor="#FEF8D0"><img src="css/images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td colspan="5" height="1" bgcolor="#F0E1B4"><img src="css/images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td colspan="5" height="1"><img src="css/images/trans.gif" width="1" height="15"></td>
-		</tr>
-		<tr>
-			<td colspan="5">$ui.getString("tool.structuretool.addComponentChangeRepositoryLabel")<br/>
-		  		<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
-				    <option value="-1" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$ui.getString("tool.structuretool.allRepostoriesLabel")</option>
-				    #foreach ($repositoryVO in $allRepositories)
-				    <option value="$repositoryVO.getRepositoryId()" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$repositoryVO.getName()</option>
-				    #end
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td height="5"><img src="css/images/trans.gif" width="1" height="15"></td>
-		</tr>	
-		<tr style="background-color:#F0E1B4; height:20px;">
-			<td height="1" width="50">&nbsp;</td>
-			<td height="1">
-				<strong><a href="ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&specifyBaseTemplate=$!specifyBaseTemplate&parentComponentId=$!parentComponentId&slotId=$slotId&filterRepositoryId=$filterRepositoryId&sortProperty=name&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString">$ui.getString("tool.structuretool.componentNameLabel")</a></strong>
-				#if($sortProperty == "name")<img src="css/images/downArrow.gif">#end
-			</td>
-			<td height="1">
-				<strong><a href="ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&specifyBaseTemplate=$!specifyBaseTemplate&parentComponentId=$!parentComponentId&slotId=$slotId&filterRepositoryId=$filterRepositoryId&sortProperty=repositoryId&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString">$ui.getString("tool.structuretool.repositoryLabel")</a></strong>
-				#if($sortProperty == "repositoryId")<img src="css/images/downArrow.gif">#end
-			</td>
-			<td height="1">
-			<strong><a href="ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&specifyBaseTemplate=$!specifyBaseTemplate&parentComponentId=$!parentComponentId&slotId=$slotId&filterRepositoryId=$filterRepositoryId&sortProperty=GroupName&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString">$ui.getString("tool.structuretool.groupNameLabel")</a></strong>
-				#if($sortProperty == "GroupName")<img src="css/images/downArrow.gif">#end
-			</td>
-			<td height="1" width="20"><img src="css/images/trans.gif" width="20" height="1"></td>
-		</tr>
-		<tr>
-			<td colspan="5" height="1" bgcolor="#FEF8D0"><img src="css/images/trans.gif" width="1" height="1"></td>
-		</tr>
-		<tr>
-			<td colspan="5" height="1" bgcolor="#F0E1B4"><img src="css/images/trans.gif" width="1" height="1"></td>
-		</tr>
-		#set($prevId = -1)
-		#set($isOdd = true)
-		#set($sortedComponents = $this.getSortedComponents($sortProperty))
-		#foreach ($content in $sortedComponents)
-			#set($duplicate = false)
-			#if($prevId == $content.id)
-				#set($duplicate = true)
-			#end
-			#set($prevId = $content.id)
-			
-			#set($hasAccessToContent = true)
-			#if($content.isProtected == 1)
-				#set($hasAccessToContent = $this.hasAccessTo("Component.Select", "$content.id"))
-			#end
-			
-			#if($hasAccessToContent && !$duplicate && ($filterRepositoryId == -1 || $content.repositoryId == $filterRepositoryId || $this.getIsPagePartTemplate($content.contentTypeDefinitionId)))
-
-				#if($isOdd)
-					#set($class = "class='lightapricot'")
-					#set($isOdd = false)
-				#else
-					#set($class = "class='white'")
-					#set($isOdd = true)
-				#end
-				
-				#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
-				#if("$!imageUrl" == "")
-					#set($imageUrl = "css/images/componentIcon.gif")
-				#end
-				<tr $class style="padding-bottom: 2px;">
-					#if($imageUrl.indexOf("componentIcon.gif") > -1)
-						#set($width = "16")
-					#else
-						#set($width = "40")
-					#end
-					<td align="center" rowspan="2" style="border-bottom: 1px solid #666666;"><a href="javascript:changeComponent('$content.id');"><img src="$imageUrl" border="0" width="$width"></a>&nbsp;</td>
-					<td valign="middle"><a href="javascript:changeComponent('$content.id');">$content.getName()</a></td>
-					<td valign="middle">
-						#foreach ($repositoryVO in $allRepositories)
-					    	#if($repositoryVO.id == $content.repositoryId)
-					    		$repositoryVO.getName()
-					    	#end
-					    #end
-					</td>
-					<td valign="middle">$content.extraProperties.get("GroupName")</td>
-					<td valign="middle" rowspan="2" style="border-bottom: 1px solid #666666;">
-						#if($content.extraProperties.get("Description") != "Unknown" && $content.extraProperties.get("Description") != "")
-						<img src="css/images/questionMarkGrad.gif" onclick="toggleDiv('descLayer$content.id');" aonMouseOver="showDiv('descLayer$content.id');" aonMouseOut="hideDiv('descLayer$content.id');">
-						#else
-						&nbsp;
-						#end
-					</td>
-				</tr>
-				<tr $class style="height: 0px;">
-					<td colspan="3" style="height: 0px; border-bottom: 1px solid #666666;">
-						<span id="descLayer$content.id" style="display:none; padding-bottom: 4px;"><b>$ui.getString("tool.structuretool.descriptionLabel"):</b><br/>
-						#if($content.extraProperties.get("Description"))
-							$content.extraProperties.get("Description")
-						#else
-							No description
-						#end
-						</span>
-					</td>
-				</tr>
-				#set($imageUrl = "")
-			#end
-		#end
-		
-		<tr>
-			<td colspan="4">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="4"><a href="javascript:window.close();"><img src="$ui.getString("images.structuretool.buttons.cancel")" border="0"></a></td>
-		</tr>
-		</table>
-	</td>	
-</tr>
-</table>
-
-</body>
-</html>
-*#

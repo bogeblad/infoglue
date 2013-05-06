@@ -3088,7 +3088,9 @@ $ui.getString("entity.${fieldNameKey}.label")
 
 	$("#$tableId").dataTable({
 		"sPaginationType": "full_numbers",
+		#if($!extraParameter.indexOf("iDisplayLength") == -1)
 	    "iDisplayLength": 20,
+	    #end
 	    "bAutoWidth": false,
 	    "sDom": '<"top"lf<"clear">>rt<"bottom"ip<"clear">>',
 	    "oLanguage": {

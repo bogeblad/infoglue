@@ -305,9 +305,7 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 	private void setErrors(ConstraintException exception)
 	{
 		final Locale locale = getSession().getLocale();
-		for (ConstraintException ce = exception;
-			ce != null;
-			ce = ce.getChainedException())
+		for (ConstraintException ce = exception; ce != null; ce = ce.getChainedException())
 		{
 			final String fieldName = ce.getFieldName();
 			final String errorCode = ce.getErrorCode();

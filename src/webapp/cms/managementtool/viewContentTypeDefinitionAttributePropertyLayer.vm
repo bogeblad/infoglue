@@ -64,7 +64,7 @@
 					<tr>
 						<td width="90%">$validator.name</td>
 						<td>&nbsp;</td>
-						<td><a href="javascript:showDiv('${attribute.name}_${validator.name}_layer');"><img src="css/images/properties.gif" border="0"></a></td>
+						<td><a href="javascript:showDiv('${attribute.name}_${velocityCount}_layer');"><img src="css/images/properties.gif" border="0"></a></td>
 						<td>&nbsp;</td>
 						<td><a href="ViewContentTypeDefinition!deleteAttributeValidator.action?contentTypeDefinitionId=$contentTypeDefinitionId&attributeName=${attribute.name}&attributeValidatorName=${validator.name}&attributeToExpand=$attribute.name"><img src="css/images/delete.gif" border="0"></a></td>
 						<td>&nbsp;</td>
@@ -178,7 +178,8 @@
 </div>
 
 #foreach($validator in $attribute.validators)
-	<div id="${attribute.name}_${validator.name}_layer" style="border: 1px solid black; background-color: white; LEFT:250px; position:absolute; TOP:250px; visibility:hidden; z-index:1">
+	##<div id="${attribute.name}_${validator.name}_layer" style="border: 1px solid black; background-color: white; LEFT:250px; position:absolute; TOP:250px; visibility:hidden; z-index:1">
+	<div id="${attribute.name}_${velocityCount}_layer" style="border: 1px solid black; background-color: white; LEFT:250px; position:absolute; TOP:250px; visibility:hidden; z-index:1">
 		<form name="${attribute.name}_${validator.name}ArgumentsForm" action="ViewContentTypeDefinition!updateAttributeValidatorArguments.action" method="POST">
 		<input type="hidden" name="igSecurityCode" value="$!securityCode"/>
 		<h3>Validator arguments</h3>
@@ -188,17 +189,23 @@
 		</tr>
 		#set($index = 0)
 		#foreach($key in $validator.arguments.keySet())
-			<tr>
-				<td>
-					<input type="hidden" name="${index}_argumentName" value="$key">
-					$key:
-				</td>
-				<td>
-					<input type="textfield" name="${index}_argumentValue" value="$validator.arguments.get("$key")" class="normaltextfield">
-				</td>
-			</tr>
-			#set($index = $index + 1)
+			#if($key != "msgText")
+				<tr>
+					<td>
+						<input type="hidden" name="${index}_argumentName" value="$key">
+						$key:<br/>
+						<input type="textfield" name="${index}_argumentValue" value="$validator.arguments.get("$key")" class="normaltextfield">
+					</td>
+				</tr>
+				#set($index = $index + 1)
+			#end
 		#end
+		<tr>
+			<td colspan="2">
+				Error message (leave with code for default message):<br/>
+				<input type="textfield" name="errorMessage" value="$validator.arguments.get("msgText")" class="normaltextfield">
+			</td>
+		</tr>
 		<tr>
 			<td colspan="2">
 				<img src="css/images/trans.gif" width="80" height="25" border="0">
@@ -207,13 +214,15 @@
 		<tr>
 			<td colspan="2" class="buttonPane">
 				<input type="submit" class="saveAndExit" value="$ui.getString("tool.common.saveAndExitButton.label")"/>
-				<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="hideDiv('${attribute.name}_${validator.name}_layer');"/>
+				##<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="hideDiv('${attribute.name}_${validator.name}_layer');"/>
+				<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="hideDiv('${attribute.name}_${velocityCount}_layer');"/>
 			</td>
 		</tr>
 		</table>
 		<input type="hidden" name="contentTypeDefinitionId" value="$contentTypeDefinitionId">
 		<input type="hidden" name="attributeName" value="$attribute.name">
 		<input type="hidden" name="attributeValidatorName" value="$validator.name">
+		<input type="hidden" name="attributeValidatorIndex" value="${velocityCount}">
 		<!--
 		<input type="hidden" name="attributeParameterValueLocale" value="$!currentContentTypeEditorViewLanguageCode">
 		<input type="hidden" name="currentContentTypeEditorViewLanguageCode" value="$!currentContentTypeEditorViewLanguageCode">

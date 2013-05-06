@@ -47,7 +47,7 @@
 
 		function deleteAllReferences()
 		{
-			document.location.href = "DeleteSiteNode!deleteAllReferences.action?siteNodeId=$originalSiteNodeId";
+			document.location.href = "DeleteSiteNode!deleteAllReferences.action?siteNodeId=$originalSiteNodeId&returnAddress=$returnAddress&userSessionKey=$userSessionKey";
 		}
 
 		$(document).ready(function(){

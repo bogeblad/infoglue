@@ -1654,7 +1654,8 @@ public class ContentVersionController extends BaseController
 
     	ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId, db);
     	ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId(), db);
-    	ConstraintExceptionBuffer ceb = contentVersionVO.validateAdvanced(contentTypeDefinitionVO);
+    	String languageCode = CmsPropertyHandler.getPreferredLanguageCode(principal.getName());
+    	ConstraintExceptionBuffer ceb = contentVersionVO.validateAdvanced(contentTypeDefinitionVO, languageCode);
         logger.info("Skipping validate:" + skipValidate);
     	if(!skipValidate)
     		ceb.throwIfNotEmpty();

@@ -44,7 +44,7 @@ public class ConstraintException extends Exception
 {
     // Indicates the error type (basically a resource bundle key).
 	private String errorCode;
-  
+	
 	// The name of the (entity) field causing the exception.
 	private String fieldName;
   
@@ -62,12 +62,13 @@ public class ConstraintException extends Exception
 	// --- [Static] --------------------------------------------------------------
 	// --- [Constructors] --------------------------------------------------------
 
-/**
-   * Construct a ConstraintException with the specified field name and error code.
-   *
-   * @param fieldName the name of the (entity) field causing the exception.
-   * @param errorCode indicates the error type.
-   */
+	/**
+	 * Construct a ConstraintException with the specified field name and error code.
+	 *
+	 * @param fieldName the name of the (entity) field causing the exception.
+	 * @param errorCode indicates the error type.
+	 */
+	
 	public ConstraintException(String fieldName, String errorCode) 
   	{
 		super();
@@ -145,7 +146,7 @@ public class ConstraintException extends Exception
   public String getErrorCode() {
     return this.errorCode;
   }
-
+  
   /**
   *
   */

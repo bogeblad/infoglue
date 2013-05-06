@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.xerces.parsers.DOMParser;
 import org.apache.xpath.XPathAPI;
@@ -613,7 +614,8 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 			if(validatorName != null && !validatorName.equalsIgnoreCase(""))
 			{
 			    String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form";
-				Node formNode = org.apache.xpath.XPathAPI.selectSingleNode(document.getDocumentElement(), validatorsXPath);
+			    
+			    Node formNode = org.apache.xpath.XPathAPI.selectSingleNode(document.getDocumentElement(), validatorsXPath);
 				if(formNode != null)
 				{
 					Element element = (Element)formNode;
@@ -680,14 +682,17 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 			Document document = createDocumentFromDefinition();
 
 			int i = 0;
-			String attributeValidatorName = this.getRequest().getParameter("attributeValidatorName");
-			String argumentName = this.getRequest().getParameter(i + "_argumentName");
+			//String attributeValidatorName = this.getRequest().getParameter("attributeValidatorName");
+			String attributeValidatorIndex = this.getRequest().getParameter("attributeValidatorIndex");
+			Integer attributeValidatorIndexInteger = new Integer(attributeValidatorIndex);
 			
+			String argumentName = this.getRequest().getParameter(i + "_argumentName");
 			while(argumentName != null && !argumentName.equalsIgnoreCase(""))
 			{
 			    String argumentValue = this.getRequest().getParameter(i + "_argumentValue");
 			    
-			    String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form/field[@property = '" + attributeName + "'][@depends = '" + attributeValidatorName + "']";
+			    //String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form/field[@property = '" + attributeName + "'][@depends = '" + attributeValidatorName + "']";
+			    String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form/field[@property = '" + attributeName + "'][" + attributeValidatorIndexInteger + "]";
 				Node fieldNode = org.apache.xpath.XPathAPI.selectSingleNode(document.getDocumentElement(), validatorsXPath);
 				if(fieldNode != null)
 				{
@@ -713,6 +718,28 @@ public class ViewContentTypeDefinitionAction extends InfoGlueAbstractAction
 				argumentName = this.getRequest().getParameter(i + "_argumentName");
 			}
 			
+			//Sets the message part
+		    String msgText = this.getRequest().getParameter("errorMessage");
+		    logger.info("msgText:" + msgText);
+		    msgText = StringEscapeUtils.escapeXml(msgText);
+		    logger.info("msgText:" + msgText);
+		    //se=Du får inte 'ladda' innehållet med "sånt"!<b>NU</b>;en=You cannot do 'this' or "that"
+		    
+		    //String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form/field[@property = '" + attributeName + "'][@depends = '" + attributeValidatorName + "']";
+		    String validatorsXPath = "/xs:schema/xs:complexType[@name = 'Validation']/xs:annotation/xs:appinfo/form-validation/formset/form/field[@property = '" + attributeName + "'][" + attributeValidatorIndexInteger + "]";
+			Node fieldNode = org.apache.xpath.XPathAPI.selectSingleNode(document.getDocumentElement(), validatorsXPath);
+			logger.info("fieldNode:" + fieldNode);
+			if(fieldNode != null)
+			{
+				Element element = (Element)fieldNode;
+				NodeList nl1 = element.getElementsByTagName("msg");
+				for(int nlIndex=0; nlIndex < nl1.getLength(); nlIndex++)
+				{
+				    Element messageElement = (Element)nl1.item(nlIndex);
+				    messageElement.setAttribute("key", msgText);
+				}
+			}
+
 			saveUpdatedDefinition(document);
 		}
 		catch(Exception e)

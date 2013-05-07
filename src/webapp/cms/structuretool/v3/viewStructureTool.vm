@@ -47,7 +47,12 @@
 			}
 			$("#workIframe").get(0).contentDocument.location.reload();
 		}
-		
+
+		function refreshTreeSurface()
+		{
+			$("#treeIframe").get(0).contentDocument.location.reload();
+		}
+				
 		function resize(isLoop)
 		{
 			var windowWidth = $(window).width();

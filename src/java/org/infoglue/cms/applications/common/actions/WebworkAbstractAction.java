@@ -310,7 +310,15 @@ public abstract class WebworkAbstractAction implements Action, ServletRequestAwa
 			final String fieldName = ce.getFieldName();
 			final String errorCode = ce.getErrorCode();
 			final String extraInformation = ce.getExtraInformation();
-			final String localizedErrorMessage = getLocalizedErrorMessage(locale, errorCode);
+		    String localizedErrorMessage 		 = "";
+		    System.out.println(ce.getClass().getName());
+		    if(errorCode.length() > 5)
+		    	localizedErrorMessage = errorCode;
+		    else
+		    	localizedErrorMessage = getLocalizedErrorMessage(locale, errorCode);
+		    //System.out.println("localizedErrorMessage:" + localizedErrorMessage);
+
+			//final String localizedErrorMessage = getLocalizedErrorMessage(locale, errorCode);
 			getErrors().addError(fieldName, localizedErrorMessage + (extraInformation.length() > 0 ? " " + extraInformation + " " : ""));
 
 			getLinkBeans().addAll(ce.getLinkBeans());

@@ -34,6 +34,11 @@
 			//alert("refreshWorkSurface");
 			$("#workIframe").get(0).contentDocument.location.reload();
 		}
+		
+		function refreshTreeSurface()
+		{
+			$("#treeIframe").get(0).contentDocument.location.reload();
+		}
 				
 		function refreshView(viewName)
 		{

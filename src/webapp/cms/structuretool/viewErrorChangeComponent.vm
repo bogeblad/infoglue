@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+	<title>Errors occurred</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
+	<link rel="stylesheet" type="text/css" href="css/componentEditor.css" /> 
+</head>
+
+<body class="structuretooledit">
+	<div class="fullymarginalized">
+		<table border="0" cellpadding="0" cellspacing="0">
+			<tr>
+				<td valign="top">
+					<table cellpadding="0" cellspacing="0" border="0" width="300">
+					<tr>
+						<td colspan="5"><img src="images/trans.gif" height="10"></td>
+					</tr>
+					<tr>
+						<td colspan="5" class="smalllabel">$ui.getString("tool.structuretool.changeComponentError.header")</td>
+					</tr>
+					<tr>
+						<td colspan="5" height="1" bgcolor="#FEF8D0"><img src="images/trans.gif" width="1" height="1"></td>
+					</tr>
+					<tr>
+						<td colspan="5" height="1" bgcolor="#F0E1B4"><img src="images/trans.gif" width="1" height="1"></td>
+					</tr>
+					<tr>
+						<td colspan="5" height="4" bgcolor="#FEF8D0"><img src="images/trans.gif" width="1" height="1"></td>
+					</tr>
+					<tr>
+						<td colspan="5" bgcolor="#FEF8D0">$ui.getString("tool.structuretool.changeComponentError.text")</td>
+					</tr>
+					<tr>
+						<td colspan="5" height="1"><img src="images/trans.gif" width="1" height="15"></td>
+					</tr>
+					<tr>
+						<td height="5"><img src="images/trans.gif" width="1" height="5"></td>
+					</tr>
+					<tr>
+						<td height="5"><img src="images/trans.gif" width="1" height="5"></td>
+					</tr>
+					#foreach ($erroneousSiteNodePath in $erroneousSiteNodePaths)
+						<tr style="padding-bottom: 2px;">
+							<td align="center" style="border-top: 1px solid #666666; padding-top:5px; padding-bottom:5px;">$erroneousSiteNodePath</td>
+						</tr>
+					#end
+					<tr>
+						<td colspan="5" height="1"><img src="images/trans.gif" width="1" height="15"></td>
+					</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

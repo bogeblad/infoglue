@@ -26,11 +26,15 @@ package org.infoglue.cms.applications.structuretool.actions;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
@@ -105,6 +109,9 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	private String slotPositionComponentId = null;
 	private Integer pagePartContentId = null;
 	private boolean hideComponentPropertiesOnLoad = false;
+	private Boolean regardAsCompatible = true;
+	private Boolean recurseChildPages = false;
+	private List<String> erroneousSiteNodePaths = new LinkedList<String>();
 	
 	LanguageVO masterLanguageVO = null;
 	
@@ -1447,103 +1454,186 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		//logger.info("componentId:" + this.componentId);
 		//logger.info("slotId:" + this.slotId);
 		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-				
+
 		logger.info("doChangeComponent:" + this.getRequest().getQueryString());
-		
+
 		logger.info("masterLanguageId:" + this.masterLanguageVO.getId());
 
 		Integer newComponentId = new Integer(0);
 
-		String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());			
-		logger.info("componentXML:" + componentXML);
-		
+		changeComponent(siteNodeId, this.recurseChildPages, this.regardAsCompatible);
+
+		logger.info("newComponentId:" + newComponentId);
+
+		if (erroneousSiteNodePaths.size() > 0)
+		{
+			return "errorChangeComponent";
+		}
+		else
+		{
+			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + newComponentId + "&showSimple=" + this.showSimple;
+			//this.getResponse().sendRedirect(url);
+
+			this.url = this.getResponse().encodeURL(url);
+			this.getResponse().sendRedirect(url);
+
+		    return NONE;
+		}
+	}
+
+	private int getNumberOfComponentsInSlot(Document document, String slotName) throws SystemException
+	{
+		try
+		{
+			String xPath = "//component[@name='" + slotName + "']";
+			NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), xPath);
+			return anl.getLength();
+		}
+		catch (TransformerException ex)
+		{
+			throw new SystemException("Exception when counting components in slot. Message: " + ex.getMessage());
+		}
+	}
+
+	private void changeComponent(Integer siteNodeId, Boolean recursive, Boolean regardAsCompatible) throws Exception
+	{
+		String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
+		logger.info("Find slot name. componentXML:" + componentXML);
 		Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
 		String componentXPath = "//component[@id=" + this.componentId + "]";
-		
 		NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), componentXPath);
 		if(anl.getLength() > 0 && this.newComponentContentId != null)
 		{
-			Element component = (Element)anl.item(0);
-			
-			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.newComponentContentId);
-			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
-			boolean isPagePartReference = false;
-			if(contentTypeDefinitionVO.getName().equals("PagePartTemplate"))
-				isPagePartReference = true;
-
-			ContentVersionVO newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, this.masterLanguageVO.getId());
-			if(newComponentContentVersionVO == null)
-			{			
-				LanguageVO contentMasterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
-				newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, contentMasterLanguageVO.getId());
-			}
-			
-			if(newComponentContentVersionVO != null)
+			Element selectedComponent = (Element)anl.item(0);
+			String slotName = selectedComponent.getAttribute("name");
+			if (slotName == null || slotName.trim().equals(""))
 			{
-				String template = ContentVersionController.getContentVersionController().getAttributeValue(newComponentContentVersionVO, "Template", false);
-				logger.info("template:" + template);
-				
-				String subComponentsXPath = "//component[@id=" + this.componentId + "]//component";
-				NodeList subComponents = org.apache.xpath.XPathAPI.selectNodeList(component, subComponentsXPath);
-				logger.info("subComponents:" + subComponents.getLength());
-				for(int i=0; i<subComponents.getLength(); i++)
+				throw new SystemException("Missing slot name when changing component");
+			}
+			List<Integer> erroneousSiteNodes = changeComponent(siteNodeId, slotName, recursive, regardAsCompatible);
+			if (erroneousSiteNodes.size() > 0)
+			{
+				this.erroneousSiteNodePaths = SiteNodeController.getController().getErroneousSiteNodeNames(erroneousSiteNodes);
+			}
+		}
+		else
+		{
+			logger.warn("Could not find component in page. Page: " + siteNodeId + ". ComponentXML: " + componentXML);
+			throw new SystemException("Could not find the component the user requested to replace in the page.");
+		}
+	}
+
+	private List<Integer> changeComponent(Integer siteNodeId, String slotName, Boolean recursive, Boolean regardAsCompatible)
+	{
+		try
+		{
+			String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
+			logger.info("componentXML:" + componentXML);
+			Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
+
+			int numberOfComponentsInSlot = getNumberOfComponentsInSlot(document, slotName);
+			if (numberOfComponentsInSlot != 1)
+			{
+				logger.info("Will not change component in SiteNode because the slot contains more than one component. SiteNode.id: " + siteNodeId);
+				return Collections.singletonList(siteNodeId);
+			}
+			else
+			{
+				Element componentToReplace = (Element)org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), "//component[@name='" + slotName + "']").item(0);
+
+				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.newComponentContentId);
+				ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+				boolean isPagePartReference = false;
+				if(contentTypeDefinitionVO.getName().equals("PagePartTemplate"))
+					isPagePartReference = true;
+
+				ContentVersionVO newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, this.masterLanguageVO.getId());
+				if(newComponentContentVersionVO == null)
 				{
-					Element subComponent = (Element)subComponents.item(i);
-					if(isPagePartReference)
+					LanguageVO contentMasterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
+					newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, contentMasterLanguageVO.getId());
+				}
+
+				if(newComponentContentVersionVO != null && !regardAsCompatible)
+				{
+					String template = ContentVersionController.getContentVersionController().getAttributeValue(newComponentContentVersionVO, "Template", false);
+					logger.info("template:" + template);
+
+					String subComponentsXPath = "//component[@name='" + slotName + "']//component";
+					NodeList subComponents = org.apache.xpath.XPathAPI.selectNodeList(componentToReplace, subComponentsXPath);
+					logger.info("subComponents:" + subComponents.getLength());
+					for(int i=0; i<subComponents.getLength(); i++)
 					{
-						//Removing children if it was a pagePartReference
-						NodeList propertiesNodeList = subComponent.getElementsByTagName("properties");
-						if(propertiesNodeList.getLength() > 0)
+						Element subComponent = (Element)subComponents.item(i);
+						if(isPagePartReference)
 						{
-							Element propertiesElement = (Element)propertiesNodeList.item(0);
-							NodeList propertyNodeList = propertiesElement.getElementsByTagName("property");
-							for(int j=0; j<propertyNodeList.getLength(); j++)
+							//Removing children if it was a pagePartReference
+							NodeList propertiesNodeList = subComponent.getElementsByTagName("properties");
+							if(propertiesNodeList.getLength() > 0)
 							{
-								Element property = (Element)propertyNodeList.item(j);
-								Node parentNode = property.getParentNode();
-								parentNode.removeChild(property);
+								Element propertiesElement = (Element)propertiesNodeList.item(0);
+								NodeList propertyNodeList = propertiesElement.getElementsByTagName("property");
+								for(int j=0; j<propertyNodeList.getLength(); j++)
+								{
+									Element property = (Element)propertyNodeList.item(j);
+									Node parentNode = property.getParentNode();
+									parentNode.removeChild(property);
+								}
 							}
-						}
-						
-						Node parentNode = subComponent.getParentNode();
-						parentNode.removeChild(subComponent);
-					}
-					else
-					{
-						String slotId = subComponent.getAttribute("name");
-						logger.info("subComponent slotId:" + slotId);	
-						if(template.indexOf("id=\"" + slotId + "\"") == -1)
-						{
-							logger.info("deleting subComponent as it was not part of the new template");
+
 							Node parentNode = subComponent.getParentNode();
 							parentNode.removeChild(subComponent);
-						}	
+						}
+						else
+						{
+							String slotId = subComponent.getAttribute("name");
+							logger.info("subComponent slotId:" + slotId);
+							if(template.indexOf("id=\"" + slotId + "\"") == -1)
+							{
+								logger.info("deleting subComponent as it was not part of the new template");
+								Node parentNode = subComponent.getParentNode();
+								parentNode.removeChild(subComponent);
+							}
+						}
 					}
 				}
+
+				componentToReplace.setAttribute("contentId", "" + this.newComponentContentId);
+				if(isPagePartReference)
+					componentToReplace.setAttribute("isPagePartReference", "true");
+
+				String modifiedXML = XMLHelper.serializeDom(document, new StringBuffer()).toString();
+				logger.info("modifiedXML:" + modifiedXML);
+
+				ContentVO boundContentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(boundContentVO.getId(), this.masterLanguageVO.getId());
+
+				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
 			}
-			
-			component.setAttribute("contentId", "" + this.newComponentContentId);
-			if(isPagePartReference)
-				component.setAttribute("isPagePartReference", "true");
-				
-			String modifiedXML = XMLHelper.serializeDom(document, new StringBuffer()).toString(); 
-			logger.info("modifiedXML:" + modifiedXML);
-			
-			ContentVO boundContentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
-			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(boundContentVO.getId(), this.masterLanguageVO.getId());
-			
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
+
+			List<Integer> erroneousSiteNodes = new LinkedList<Integer>();
+			if (recursive)
+			{
+				List<SiteNodeVO> childSiteNodeVOList = SiteNodeController.getController().getSiteNodeChildrenVOList(siteNodeId);
+				for(SiteNodeVO childSiteNodeVO : childSiteNodeVOList)
+				{
+					erroneousSiteNodes.addAll(changeComponent(childSiteNodeVO.getId(), slotName, recursive, regardAsCompatible));
+				}
+			}
+			return erroneousSiteNodes;
 		}
-		
-		logger.info("newComponentId:" + newComponentId);
-		
-		this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + this.componentId + "&showSimple=" + this.showSimple + "&stateChanged=" + stateChanged;
-		//this.getResponse().sendRedirect(url);		
-		
-		this.url = this.getResponse().encodeURL(url);
-		this.getResponse().sendRedirect(url);
-		
-	    return NONE; 
+		catch (Exception ex)
+		{
+			if (ex instanceof NullPointerException)
+			{
+				logger.warn("Error when changing component in SiteNode. Message: " + ex.getMessage());
+			}
+			else
+			{
+				logger.warn("Error when changing component in SiteNode.", ex);
+			}
+			return Collections.singletonList(siteNodeId);
+		}
 	}
 
 	

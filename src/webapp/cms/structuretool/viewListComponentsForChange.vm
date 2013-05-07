@@ -16,9 +16,11 @@
 	    	//alert("contentId: $!contentId");
 	    	//alert("$slotId: $slotId");
 	    	//alert("componentId:" + componentId);
+	    	var regardAsCompatible = document.getElementById("regardAsCompatible").checked;
+	    	var recurseChildPages = document.getElementById("recurseChildPages").checked;
 			if(!isClicked){
 				isClicked = true;
-		    	url = "ViewSiteNodePageComponents!changeComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$!componentId&newComponentContentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple";
+		    	url = "ViewSiteNodePageComponents!changeComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$!componentId&newComponentContentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple&regardAsCompatible=" + regardAsCompatible + "&recurseChildPages=" + recurseChildPages;
 			    //alert("url" + url);
 		    	parent.location.href = url;
 		    }
@@ -27,7 +29,9 @@
 		function changeRepository(selectBox)
 		{
 			var repositoryId = selectBox.value;
-			var url = "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&slotId=$slotId&componentId=$!componentId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString&filterRepositoryId=" + repositoryId;
+	    	var regardAsCompatible = document.getElementById("regardAsCompatible").checked;
+	    	var recurseChildPages = document.getElementById("recurseChildPages").checked;
+			var url = "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&slotId=$slotId&componentId=$!componentId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString&filterRepositoryId=" + repositoryId + "&regardAsCompatible=" + regardAsCompatible + "&recurseChildPages=" + recurseChildPages;
 			//alert("url:" + url);
 			document.location.href = url;
 		}
@@ -74,6 +78,11 @@
 	    <option value="$repositoryVO.getRepositoryId()" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$repositoryVO.getName()</option>
 	    #end
 	</select>
+</p>
+
+<p>
+	Keep other components and properties intact <input type="checkbox" name="regardAsCompatible" id="regardAsCompatible" value="true"  #if($regardAsCompatible)checked="checked"#end/><br/>
+	Recurse all pages below this <input type="checkbox" name="recurseChildPages" id="recurseChildPages" value="true" #if($recurseChildPages)checked="checked"#end/><br/>
 </p>
 
 <p>

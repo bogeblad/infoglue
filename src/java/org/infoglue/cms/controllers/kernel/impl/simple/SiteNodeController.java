@@ -3407,11 +3407,11 @@ public class SiteNodeController extends BaseController
     public void markForDeletion(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
     {
     	Database db = CastorDatabaseService.getDatabase();
-    	Map<SiteNodeVO, List<ReferenceBean>> contectPersons = new HashMap<SiteNodeVO, List<ReferenceBean>>();
+    	Map<SiteNodeVO, List<ReferenceBean>> contactPersons = new HashMap<SiteNodeVO, List<ReferenceBean>>();
         beginTransaction(db);
 		try
         {
-			markForDeletion(siteNodeVO, db, forceDelete, infogluePrincipal, contectPersons);
+			markForDeletion(siteNodeVO, db, forceDelete, infogluePrincipal, contactPersons);
 
 	    	commitTransaction(db);
         }
@@ -3427,15 +3427,15 @@ public class SiteNodeController extends BaseController
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
-
-		if (contectPersons.size() > 0)
+        System.out.println("Number of people:" + contactPersons.size());
+		if (contactPersons.size() > 0)
 		{
-			logger.info("Will notifiy people about SiteNode removals. Number of nodes: " + contectPersons.size());
+			logger.info("Will notifiy people about SiteNode removals. Number of nodes: " + contactPersons.size());
 			Database contactDb = CastorDatabaseService.getDatabase();
 			try
 	        {
 				beginTransaction(contactDb);
-				notifyContactPersonsForSiteNode(contectPersons, contactDb);
+				notifyContactPersonsForSiteNode(contactPersons, contactDb);
 		    	commitTransaction(contactDb);
 	        }
 	        catch(Exception ex)
@@ -3476,6 +3476,7 @@ public class SiteNodeController extends BaseController
 		SiteNode siteNode = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
 		SiteNode parent = siteNode.getParentSiteNode();
 		boolean notifyResponsibleOnReferenceChange = CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
+		System.out.println("notifyResponsibleOnReferenceChange:" + notifyResponsibleOnReferenceChange);
 		if(parent != null)
 		{
 			Iterator childSiteNodeIterator = parent.getChildSiteNodes().iterator();
@@ -3523,7 +3524,6 @@ public class SiteNodeController extends BaseController
 				clean = false;
 			}
 			List<ReferenceBean> contactList = RegistryController.getController().deleteAllForSiteNode(siteNode.getSiteNodeId(), infoGluePrincipal, clean, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), db);
-
 			if (notifyContactPersons)
 			{
 				if (contactList != null)
@@ -3998,7 +3998,8 @@ public class SiteNodeController extends BaseController
 		{
 			String from = CmsPropertyHandler.getSystemEmailSender();
     		String subject = getLocalizedString(locale, "tool.structuretool.registry.notificationEmail.subject");
-			// This loop iterate once for each contact person
+
+    		// This loop iterate once for each contact person
 			for (Map.Entry<String, Map<SiteNodeVO, List<ReferenceBean>>> entry : contactMap.entrySet())
 			{
 				String contactPersonEmail = entry.getKey();
@@ -4019,7 +4020,7 @@ public class SiteNodeController extends BaseController
 	    		}
 				mailContent.append("</ul>");
 				mailContent.append("</p>");
-
+				
 				boolean hasInformation = false;
 		    	for (Map.Entry<SiteNodeVO, List<ReferenceBean>> affectedNode : affectedNodes.entrySet())
 		    	{
@@ -4139,4 +4140,34 @@ public class SiteNodeController extends BaseController
     	return sb.toString();
     }
 
+	public List<String> getErroneousSiteNodeNames(List<Integer> erroneousSiteNodeIds) throws Exception, SystemException
+	{
+		Database db = CastorDatabaseService.getDatabase();
+	
+		List<String> erroneousSiteNodePaths = new ArrayList<String>();
+		try
+		{
+			beginTransaction(db);
+			
+			for (Integer siteNodeId : erroneousSiteNodeIds)
+			{
+				try
+				{
+					erroneousSiteNodePaths.add(SiteNodeController.getController().getSiteNodePath(siteNodeId, db));
+				}
+				catch (Exception e)
+				{
+					erroneousSiteNodePaths.add("Failed to compute SiteNode path for erroneous SiteNode with id: " + siteNodeId);
+				}
+			}
+			commitTransaction(db);
+		}
+		catch (Exception e) 
+		{
+			rollbackTransaction(db);
+			throw new SystemException("Error getting faulty paths: " + e.getMessage(), e);
+		}
+		
+		return erroneousSiteNodePaths;
+	}
 }

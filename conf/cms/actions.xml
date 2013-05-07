@@ -1392,6 +1392,7 @@
 		<view name="componentAdded">${url}</view>
 		<view name="componentDeleted">${url}</view>
 		<view name="error">/cms/structuretool/error.vm</view>
+		<view name="errorChangeComponent">/cms/structuretool/viewErrorChangeComponent.vm</view>
 	</action>
 	
 	<action name="org.infoglue.cms.applications.structuretool.actions.ViewSiteNodeHistoryAction" alias="ViewSiteNodeHistory">

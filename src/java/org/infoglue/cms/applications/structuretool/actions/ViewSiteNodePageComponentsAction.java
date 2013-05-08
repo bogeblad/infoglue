@@ -95,6 +95,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	private String assetKey = null;
 	private Integer parentComponentId = null;
 	private Integer componentId = null;
+	private String componentName = null;
 	private Integer newComponentContentId = null;
 	private String propertyName = null;
 	private String path 		= null;
@@ -110,8 +111,10 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	private Integer pagePartContentId = null;
 	private boolean hideComponentPropertiesOnLoad = false;
 	private Boolean regardAsCompatible = true;
-	private Boolean recurseChildPages = false;
+	//private Boolean recurseChildPages = false;
 	private List<String> erroneousSiteNodePaths = new LinkedList<String>();
+	private String changeMethod	= "matchComponentIdAndSlotName";
+	private String recursionMethod	= "onlyThisPage";
 	
 	LanguageVO masterLanguageVO = null;
 	
@@ -215,7 +218,22 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		initialize(false);
 
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
-
+		
+		String componentXML = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
+		Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
+		String componentXPath = "//component[@id=" + this.componentId + "]";
+		NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), componentXPath);
+		if(anl.getLength() > 0)
+		{
+			Element selectedComponent = (Element)anl.item(0);
+			String componentContentId = selectedComponent.getAttribute("contentId");
+			
+			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(new Integer(componentContentId));
+			this.componentName = contentVO.getName();
+			System.out.println("this.componentName:" + this.componentName);
+			
+		}
+			
 		return "listComponentsForChange";
 	}
 
@@ -1454,30 +1472,51 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		//logger.info("componentId:" + this.componentId);
 		//logger.info("slotId:" + this.slotId);
 		//logger.info("specifyBaseTemplate:" + this.specifyBaseTemplate);
-
+		System.out.println("changeMethod:" + this.changeMethod);
+		System.out.println("recursionMethod:" + this.recursionMethod);
+		System.out.println("componentId:" + this.componentId);
 		logger.info("doChangeComponent:" + this.getRequest().getQueryString());
-
 		logger.info("masterLanguageId:" + this.masterLanguageVO.getId());
 
-		Integer newComponentId = new Integer(0);
-
-		changeComponent(siteNodeId, this.recurseChildPages, this.regardAsCompatible);
-
-		logger.info("newComponentId:" + newComponentId);
-
-		if (erroneousSiteNodePaths.size() > 0)
+		try
 		{
-			return "errorChangeComponent";
+			Integer newComponentId = new Integer(0);
+			
+			Integer startNodeId = this.siteNodeId;
+			boolean recurseChildPages = false;
+			if(this.recursionMethod.equals("thisAndSubpages"))
+				recurseChildPages = true;
+			else if(this.recursionMethod.equals("theEntireRepository"))
+			{
+				recurseChildPages = true;
+				SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(startNodeId);
+				startNodeId = SiteNodeController.getController().getRootSiteNodeVO(siteNodeVO.getRepositoryId()).getId();
+			}
+			
+			changeComponent(startNodeId, recurseChildPages, this.regardAsCompatible, this.changeMethod);
+			System.out.println("erroneousSiteNodePaths:" + erroneousSiteNodePaths);
+			
+			logger.info("newComponentId:" + newComponentId);
+	
+			if (erroneousSiteNodePaths.size() > 0)
+			{
+				return "errorChangeComponent";
+			}
+			else
+			{
+				this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + newComponentId + "&showSimple=" + this.showSimple;
+				//this.getResponse().sendRedirect(url);
+	
+				this.url = this.getResponse().encodeURL(url);
+				this.getResponse().sendRedirect(url);
+	
+			    return NONE;
+			}
 		}
-		else
+		catch (Exception e) 
 		{
-			this.url = getComponentRendererUrl() + getComponentRendererAction() + "?siteNodeId=" + this.siteNodeId + "&languageId=" + this.languageId + "&contentId=" + this.contentId + "&focusElementId=" + this.componentId + "&activatedComponentId=" + newComponentId + "&showSimple=" + this.showSimple;
-			//this.getResponse().sendRedirect(url);
-
-			this.url = this.getResponse().encodeURL(url);
-			this.getResponse().sendRedirect(url);
-
-		    return NONE;
+			e.printStackTrace();
+			return "errorChangeComponent";
 		}
 	}
 
@@ -1495,9 +1534,9 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		}
 	}
 
-	private void changeComponent(Integer siteNodeId, Boolean recursive, Boolean regardAsCompatible) throws Exception
+	private void changeComponent(Integer siteNodeId, Boolean recursive, Boolean regardAsCompatible, String changeMethod) throws Exception
 	{
-		String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
+		String componentXML = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
 		logger.info("Find slot name. componentXML:" + componentXML);
 		Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
 		String componentXPath = "//component[@id=" + this.componentId + "]";
@@ -1506,14 +1545,18 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		{
 			Element selectedComponent = (Element)anl.item(0);
 			String slotName = selectedComponent.getAttribute("name");
+			String componentContentId = selectedComponent.getAttribute("contentId");
+			System.out.println("componentContentId:" + componentContentId);
 			if (slotName == null || slotName.trim().equals(""))
 			{
 				throw new SystemException("Missing slot name when changing component");
 			}
-			List<Integer> erroneousSiteNodes = changeComponent(siteNodeId, slotName, recursive, regardAsCompatible);
+			List<Integer> erroneousSiteNodes = changeComponent(siteNodeId, slotName, new Integer(componentContentId), recursive, regardAsCompatible, changeMethod);
+			System.out.println("erroneousSiteNodes:" + erroneousSiteNodes.size());
 			if (erroneousSiteNodes.size() > 0)
 			{
 				this.erroneousSiteNodePaths = SiteNodeController.getController().getErroneousSiteNodeNames(erroneousSiteNodes);
+				System.out.println("this.erroneousSiteNodePaths:" + this.erroneousSiteNodePaths);
 			}
 		}
 		else
@@ -1523,107 +1566,191 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		}
 	}
 
-	private List<Integer> changeComponent(Integer siteNodeId, String slotName, Boolean recursive, Boolean regardAsCompatible)
+	private List<Integer> changeComponent(Integer siteNodeId, String slotName, Integer componentContentId, Boolean recursive, Boolean regardAsCompatible, String changeMethod)
 	{
+		System.out.println("siteNodeId:" + siteNodeId);
+		System.out.println("changeMethod:" + changeMethod);
 		try
 		{
-			String componentXML   = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
+			String componentXML = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
 			logger.info("componentXML:" + componentXML);
+			if(siteNodeId == 108)
+				System.out.println("componentXML:" + componentXML);
 			Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
 
-			int numberOfComponentsInSlot = getNumberOfComponentsInSlot(document, slotName);
-			if (numberOfComponentsInSlot != 1)
+			if(changeMethod.equals("matchComponentIdAndSlotName"))
 			{
-				logger.info("Will not change component in SiteNode because the slot contains more than one component. SiteNode.id: " + siteNodeId);
-				return Collections.singletonList(siteNodeId);
-			}
-			else
-			{
-				Element componentToReplace = (Element)org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), "//component[@name='" + slotName + "']").item(0);
-
-				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.newComponentContentId);
-				ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
-				boolean isPagePartReference = false;
-				if(contentTypeDefinitionVO.getName().equals("PagePartTemplate"))
-					isPagePartReference = true;
-
-				ContentVersionVO newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, this.masterLanguageVO.getId());
-				if(newComponentContentVersionVO == null)
+				System.out.println("ewfwefwefwef:" + slotName);
+				int numberOfComponentsInSlot = getNumberOfComponentsInSlot(document, slotName);
+				System.out.println("numberOfComponentsInSlot:" + numberOfComponentsInSlot);
+				
+				if (numberOfComponentsInSlot != 1)
 				{
-					LanguageVO contentMasterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
-					newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, contentMasterLanguageVO.getId());
+					logger.info("Will not change component in SiteNode because the slot contains more than one component. SiteNode.id: " + siteNodeId);
+					return Collections.singletonList(siteNodeId);
 				}
-
-				if(newComponentContentVersionVO != null && !regardAsCompatible)
+				else
 				{
-					String template = ContentVersionController.getContentVersionController().getAttributeValue(newComponentContentVersionVO, "Template", false);
-					logger.info("template:" + template);
-
-					String subComponentsXPath = "//component[@name='" + slotName + "']//component";
-					NodeList subComponents = org.apache.xpath.XPathAPI.selectNodeList(componentToReplace, subComponentsXPath);
-					logger.info("subComponents:" + subComponents.getLength());
-					for(int i=0; i<subComponents.getLength(); i++)
+					System.out.println("ewfwefwefwef1");
+					Element componentToReplace = (Element)org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), "//component[@name='" + slotName + "']").item(0);
+					System.out.println("ewfwefwefwef2");
+					
+					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.newComponentContentId);
+					ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+					boolean isPagePartReference = false;
+					if(contentTypeDefinitionVO.getName().equals("PagePartTemplate"))
+						isPagePartReference = true;
+	
+					ContentVersionVO newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, this.masterLanguageVO.getId());
+					if(newComponentContentVersionVO == null)
 					{
-						Element subComponent = (Element)subComponents.item(i);
-						if(isPagePartReference)
+						LanguageVO contentMasterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
+						newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, contentMasterLanguageVO.getId());
+					}
+	
+					if(newComponentContentVersionVO != null && !regardAsCompatible)
+					{
+						String template = ContentVersionController.getContentVersionController().getAttributeValue(newComponentContentVersionVO, "Template", false);
+						logger.info("template:" + template);
+	
+						String subComponentsXPath = "//component[@name='" + slotName + "']//component";
+						NodeList subComponents = org.apache.xpath.XPathAPI.selectNodeList(componentToReplace, subComponentsXPath);
+						logger.info("subComponents:" + subComponents.getLength());
+						for(int i=0; i<subComponents.getLength(); i++)
 						{
-							//Removing children if it was a pagePartReference
-							NodeList propertiesNodeList = subComponent.getElementsByTagName("properties");
-							if(propertiesNodeList.getLength() > 0)
+							Element subComponent = (Element)subComponents.item(i);
+							if(isPagePartReference)
 							{
-								Element propertiesElement = (Element)propertiesNodeList.item(0);
-								NodeList propertyNodeList = propertiesElement.getElementsByTagName("property");
-								for(int j=0; j<propertyNodeList.getLength(); j++)
+								//Removing children if it was a pagePartReference
+								NodeList propertiesNodeList = subComponent.getElementsByTagName("properties");
+								if(propertiesNodeList.getLength() > 0)
 								{
-									Element property = (Element)propertyNodeList.item(j);
-									Node parentNode = property.getParentNode();
-									parentNode.removeChild(property);
+									Element propertiesElement = (Element)propertiesNodeList.item(0);
+									NodeList propertyNodeList = propertiesElement.getElementsByTagName("property");
+									for(int j=0; j<propertyNodeList.getLength(); j++)
+									{
+										Element property = (Element)propertyNodeList.item(j);
+										Node parentNode = property.getParentNode();
+										parentNode.removeChild(property);
+									}
 								}
-							}
-
-							Node parentNode = subComponent.getParentNode();
-							parentNode.removeChild(subComponent);
-						}
-						else
-						{
-							String slotId = subComponent.getAttribute("name");
-							logger.info("subComponent slotId:" + slotId);
-							if(template.indexOf("id=\"" + slotId + "\"") == -1)
-							{
-								logger.info("deleting subComponent as it was not part of the new template");
+	
 								Node parentNode = subComponent.getParentNode();
 								parentNode.removeChild(subComponent);
 							}
+							else
+							{
+								String slotId = subComponent.getAttribute("name");
+								logger.info("subComponent slotId:" + slotId);
+								if(template.indexOf("id=\"" + slotId + "\"") == -1)
+								{
+									logger.info("deleting subComponent as it was not part of the new template");
+									Node parentNode = subComponent.getParentNode();
+									parentNode.removeChild(subComponent);
+								}
+							}
 						}
 					}
+	
+					componentToReplace.setAttribute("contentId", "" + this.newComponentContentId);
+					if(isPagePartReference)
+						componentToReplace.setAttribute("isPagePartReference", "true");
 				}
-
-				componentToReplace.setAttribute("contentId", "" + this.newComponentContentId);
-				if(isPagePartReference)
-					componentToReplace.setAttribute("isPagePartReference", "true");
-
-				String modifiedXML = XMLHelper.serializeDom(document, new StringBuffer()).toString();
-				logger.info("modifiedXML:" + modifiedXML);
-
-				ContentVO boundContentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
-				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(boundContentVO.getId(), this.masterLanguageVO.getId());
-
-				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
 			}
+			else if(changeMethod.equals("matchComponentContentId"))
+			{
+				System.out.println("componentContentId: " + componentContentId);
+				NodeList componentsToReplace = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), "//component[@contentId='" + componentContentId + "']");
+				System.out.println("componentsToReplace:" + componentsToReplace.getLength());
+				for(int k=0; k<componentsToReplace.getLength(); k++)
+				{
+					Element componentToReplace = (Element)componentsToReplace.item(k);
+					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(this.newComponentContentId);
+					ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
+					boolean isPagePartReference = false;
+					if(contentTypeDefinitionVO.getName().equals("PagePartTemplate"))
+						isPagePartReference = true;
+	
+					ContentVersionVO newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, this.masterLanguageVO.getId());
+					if(newComponentContentVersionVO == null)
+					{
+						LanguageVO contentMasterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
+						newComponentContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(this.newComponentContentId, contentMasterLanguageVO.getId());
+					}
+	
+					if(newComponentContentVersionVO != null && !regardAsCompatible)
+					{
+						String template = ContentVersionController.getContentVersionController().getAttributeValue(newComponentContentVersionVO, "Template", false);
+						logger.info("template:" + template);
+	
+						String subComponentsXPath = "//component[@name='" + slotName + "']//component";
+						NodeList subComponents = org.apache.xpath.XPathAPI.selectNodeList(componentToReplace, subComponentsXPath);
+						logger.info("subComponents:" + subComponents.getLength());
+						for(int i=0; i<subComponents.getLength(); i++)
+						{
+							Element subComponent = (Element)subComponents.item(i);
+							if(isPagePartReference)
+							{
+								//Removing children if it was a pagePartReference
+								NodeList propertiesNodeList = subComponent.getElementsByTagName("properties");
+								if(propertiesNodeList.getLength() > 0)
+								{
+									Element propertiesElement = (Element)propertiesNodeList.item(0);
+									NodeList propertyNodeList = propertiesElement.getElementsByTagName("property");
+									for(int j=0; j<propertyNodeList.getLength(); j++)
+									{
+										Element property = (Element)propertyNodeList.item(j);
+										Node parentNode = property.getParentNode();
+										parentNode.removeChild(property);
+									}
+								}
+	
+								Node parentNode = subComponent.getParentNode();
+								parentNode.removeChild(subComponent);
+							}
+							else
+							{
+								String slotId = subComponent.getAttribute("name");
+								logger.info("subComponent slotId:" + slotId);
+								if(template.indexOf("id=\"" + slotId + "\"") == -1)
+								{
+									logger.info("deleting subComponent as it was not part of the new template");
+									Node parentNode = subComponent.getParentNode();
+									parentNode.removeChild(subComponent);
+								}
+							}
+						}
+					}
+	
+					componentToReplace.setAttribute("contentId", "" + this.newComponentContentId);
+					if(isPagePartReference)
+						componentToReplace.setAttribute("isPagePartReference", "true");
+				}
+			}
+System.out.println("AAAAAA");
+			String modifiedXML = XMLHelper.serializeDom(document, new StringBuffer()).toString();
+			logger.info("modifiedXML:" + modifiedXML);
+
+			ContentVO boundContentVO = NodeDeliveryController.getNodeDeliveryController(siteNodeId, this.masterLanguageVO.getId(), contentId).getBoundContent(this.getInfoGluePrincipal(), siteNodeId, this.masterLanguageVO.getId(), true, "Meta information", DeliveryContext.getDeliveryContext());
+			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(boundContentVO.getId(), this.masterLanguageVO.getId());
+
+			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
 
 			List<Integer> erroneousSiteNodes = new LinkedList<Integer>();
+			System.out.println("recursive:" + recursive);
 			if (recursive)
 			{
 				List<SiteNodeVO> childSiteNodeVOList = SiteNodeController.getController().getSiteNodeChildrenVOList(siteNodeId);
 				for(SiteNodeVO childSiteNodeVO : childSiteNodeVOList)
 				{
-					erroneousSiteNodes.addAll(changeComponent(childSiteNodeVO.getId(), slotName, recursive, regardAsCompatible));
+					erroneousSiteNodes.addAll(changeComponent(childSiteNodeVO.getId(), slotName, componentContentId, recursive, regardAsCompatible, changeMethod));
 				}
 			}
 			return erroneousSiteNodes;
 		}
 		catch (Exception ex)
 		{
+			ex.printStackTrace();
 			if (ex instanceof NullPointerException)
 			{
 				logger.warn("Error when changing component in SiteNode. Message: " + ex.getMessage());
@@ -2719,4 +2846,47 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			return false;
 		}
 	}
+	
+	/**
+	 * @return the changeMethod
+	 */
+	public String getChangeMethod() {
+		return changeMethod;
+	}
+
+	/**
+	 * @param changeMethod the changeMethod to set
+	 */
+	public void setChangeMethod(String changeMethod) {
+		this.changeMethod = changeMethod;
+	}
+
+	/**
+	 * @return the recursionMethod
+	 */
+	public String getRecursionMethod() {
+		return recursionMethod;
+	}
+
+	/**
+	 * @param recursionMethod the recursionMethod to set
+	 */
+	public void setRecursionMethod(String recursionMethod) {
+		this.recursionMethod = recursionMethod;
+	}
+
+	/**
+	 * @return the componentName
+	 */
+	public String getComponentName() {
+		return componentName;
+	}
+
+	/**
+	 * @param componentName the componentName to set
+	 */
+	public void setComponentName(String componentName) {
+		this.componentName = componentName;
+	}
+
 }

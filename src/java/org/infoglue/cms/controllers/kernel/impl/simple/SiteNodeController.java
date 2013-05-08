@@ -4164,6 +4164,7 @@ public class SiteNodeController extends BaseController
 		}
 		catch (Exception e) 
 		{
+			e.printStackTrace();
 			rollbackTransaction(db);
 			throw new SystemException("Error getting faulty paths: " + e.getMessage(), e);
 		}

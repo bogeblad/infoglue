@@ -1433,7 +1433,13 @@ public class ContentController extends BaseController
     		if(contentTypeDefinitionName != null && !contentTypeDefinitionName.equals(""))
     		{
     			ContentTypeDefinitionVO ctdVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName(contentTypeDefinitionName, db);
-    			ctdId = ctdVO.getId();
+    			if(ctdVO != null)
+    				ctdId = ctdVO.getId();
+    			else
+    			{
+    				logger.error("No content type called: " + contentTypeDefinitionName);
+    				continue;
+    			}
     		}
     		OQLQuery oql = null;
 

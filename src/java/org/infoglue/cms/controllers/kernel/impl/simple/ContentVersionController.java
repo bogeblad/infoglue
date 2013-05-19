@@ -3781,4 +3781,92 @@ public class ContentVersionController extends BaseController
         
 		return contentVersionVOList;
 	} 
+	
+	public SmallestContentVersionVO getLatestContentVersionVO(Set<String> contentVersionIds, Database db) throws SystemException, Bug, Exception
+    {
+		Timer t = new Timer();
+		if(contentVersionIds == null || contentVersionIds.size() == 0)
+			return null;
+		
+		SmallestContentVersionVO result = null;
+		
+		StringBuilder variables = new StringBuilder();
+	    for(int i=0; i<contentVersionIds.size(); i++)
+	    	variables.append("$" + (i+1) + (i+1!=contentVersionIds.size() ? "," : ""));
+		
+	    //System.out.println("variables:" + variables);
+	    //System.out.println("variables:" + variables);
+
+	    String SQL = "select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion cv where cv.contentVersionId IN (" + variables + ") AND cv.stateId >= " + CmsPropertyHandler.getOperatingMode() + " ORDER BY cv.modifiedDateTime DESC";
+	    if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+	    	SQL = "select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier FROM cmContVer cv where cv.contVerId IN (" + variables + ") AND cv.stateId >= " + CmsPropertyHandler.getOperatingMode() + " ORDER BY cv.modifiedDateTime DESC";
+	    
+	    //System.out.println("SQL:" + SQL);
+	    
+	    OQLQuery oql = db.getOQLQuery("CALL SQL " + SQL + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    		oql = db.getOQLQuery("CALL SQL " + SQL + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+	
+		for(String contentVersionId : contentVersionIds)
+		{
+			//System.out.println(contentVersionId.replaceAll("contentVersion_", ""));
+			oql.bind(contentVersionId.replaceAll("contentVersion_", ""));
+		}
+		
+		QueryResults results = oql.execute(Database.ReadOnly);
+    	if (results.hasMore()) 
+		{
+			SmallestContentVersionImpl contentVersion = (SmallestContentVersionImpl)results.next();
+			result = contentVersion.getValueObject();
+		}
+
+		results.close();
+		oql.close();
+		
+		return result;
+	}
+	
+	public SmallestContentVersionVO getLatestContentVersionVOByContentIds(Set<String> contentIds, Database db) throws SystemException, Bug, Exception
+    {
+		Timer t = new Timer();
+		if(contentIds == null || contentIds.size() == 0)
+			return null;
+		
+		SmallestContentVersionVO result = null;
+		
+		StringBuilder variables = new StringBuilder();
+	    for(int i=0; i<contentIds.size(); i++)
+	    	variables.append("$" + (i+1) + (i+1!=contentIds.size() ? "," : ""));
+		
+	    //System.out.println("variables:" + variables);
+	    //System.out.println("variables:" + variables);
+
+	    String SQL = "select cv.contentVersionId, cv.stateId, cv.modifiedDateTime, cv.versionComment, cv.isCheckedOut, cv.isActive, cv.contentId, cv.languageId, cv.versionModifier FROM cmContentVersion cv where cv.contentId IN (" + variables + ") AND cv.stateId >= " + CmsPropertyHandler.getOperatingMode() + " ORDER BY cv.modifiedDateTime DESC";
+	    if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+	    	SQL = "select cv.contVerId, cv.stateId, cv.modifiedDateTime, cv.verComment, cv.isCheckedOut, cv.isActive, cv.contId, cv.languageId, cv.versionModifier FROM cmContVer cv where cv.contId IN (" + variables + ") AND cv.stateId >= " + CmsPropertyHandler.getOperatingMode() + " ORDER BY cv.modifiedDateTime DESC";
+	    
+	    //System.out.println("SQL:" + SQL);
+	    
+	    OQLQuery oql = db.getOQLQuery("CALL SQL " + SQL + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+    	if(CmsPropertyHandler.getUseShortTableNames() != null && CmsPropertyHandler.getUseShortTableNames().equalsIgnoreCase("true"))
+    		oql = db.getOQLQuery("CALL SQL " + SQL + " AS org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl");
+	
+		for(String contentId : contentIds)
+		{
+			//System.out.println(contentId.replaceAll("content_", "").replaceAll("_.*", ""));
+			oql.bind(contentId.replaceAll("content_", "").replaceAll("_.*", ""));
+		}
+		
+		QueryResults results = oql.execute(Database.ReadOnly);
+    	if (results.hasMore()) 
+		{
+			SmallestContentVersionImpl contentVersion = (SmallestContentVersionImpl)results.next();
+			result = contentVersion.getValueObject();
+		}
+
+		results.close();
+		oql.close();
+		
+		return result;
+	}
 }

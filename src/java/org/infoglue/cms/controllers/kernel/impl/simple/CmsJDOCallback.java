@@ -61,6 +61,8 @@ import org.infoglue.cms.entities.management.impl.simple.GroupPropertiesImpl;
 import org.infoglue.cms.entities.management.impl.simple.InterceptionPointImpl;
 import org.infoglue.cms.entities.management.impl.simple.InterceptorImpl;
 import org.infoglue.cms.entities.management.impl.simple.LanguageImpl;
+import org.infoglue.cms.entities.management.impl.simple.PageDeliveryMetaDataEntityImpl;
+import org.infoglue.cms.entities.management.impl.simple.PageDeliveryMetaDataImpl;
 import org.infoglue.cms.entities.management.impl.simple.RegistryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl;
@@ -154,7 +156,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 			AccessRightUserImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
     		TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
-    		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1 && modified)
+    		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+    		PageDeliveryMetaDataImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+    		PageDeliveryMetaDataEntityImpl.class.getName().indexOf(object.getClass().getName()) == -1 && modified)
 	    {
 	    	logger.info("Actually stored it:" + object + ":" + modified);
     	    
@@ -684,7 +688,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 			AccessRightUserImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
 			TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
     		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
-    		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1)
+    		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+    		PageDeliveryMetaDataImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+    		PageDeliveryMetaDataEntityImpl.class.getName().indexOf(object.getClass().getName()) == -1)
 	    {
     	    String userName = "SYSTEM";
 			try
@@ -957,7 +963,9 @@ public class CmsJDOCallback implements CallbackInterceptor
 			AccessRightUserImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
 			TransactionHistoryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
        		RegistryImpl.class.getName().indexOf(object.getClass().getName()) == -1 && 
-    		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1)
+    		SubscriptionFilterImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+    		PageDeliveryMetaDataImpl.class.getName().indexOf(object.getClass().getName()) == -1 &&
+    		PageDeliveryMetaDataEntityImpl.class.getName().indexOf(object.getClass().getName()) == -1)
 	    {
        	    String userName = "SYSTEM";
 			try

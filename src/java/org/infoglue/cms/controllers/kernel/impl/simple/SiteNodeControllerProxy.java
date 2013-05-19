@@ -72,6 +72,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 			try
 			{
 				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				infoGlueInterceptor.setInterceptorVO(interceptorVO);
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap);
 			}
 			catch(ClassNotFoundException e)
@@ -96,6 +97,7 @@ public class SiteNodeControllerProxy extends SiteNodeController
 			try
 			{
 				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				infoGlueInterceptor.setInterceptorVO(interceptorVO);
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPoint.getValueObject(), hashMap, db);
 			}
 			catch(ClassNotFoundException e)

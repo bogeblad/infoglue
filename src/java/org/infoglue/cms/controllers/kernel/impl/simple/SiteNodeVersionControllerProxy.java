@@ -86,6 +86,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 			try
 			{
 				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				infoGlueInterceptor.setInterceptorVO(interceptorVO);
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap);
 			}
 			catch(ClassNotFoundException e)
@@ -112,6 +113,7 @@ public class SiteNodeVersionControllerProxy extends SiteNodeVersionController
 			try
 			{
 				InfoGlueInterceptor infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+				infoGlueInterceptor.setInterceptorVO(interceptorVO);
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPoint.getValueObject(), hashMap, db);
 			}
 			catch(ClassNotFoundException e)

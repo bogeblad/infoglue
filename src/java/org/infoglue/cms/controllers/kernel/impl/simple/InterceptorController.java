@@ -23,10 +23,14 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
@@ -42,6 +46,9 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.deliver.util.CacheController;
+
+import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.module.propertyset.PropertySetManager;
 
 /**
  * This class is a helper class for the use case handle Interceptor
@@ -247,7 +254,7 @@ public class InterceptorController extends BaseController
 		return (InterceptorVO) updateEntity(InterceptorImpl.class, (BaseEntityVO)interceptorVO);
 	}        
 
-	public void update(InterceptorVO interceptorVO, String[] values) throws ConstraintException, SystemException
+	public void update(InterceptorVO interceptorVO, String[] values, String configuration) throws ConstraintException, SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
 
@@ -283,12 +290,14 @@ public class InterceptorController extends BaseController
 				}
 			}
 			
+			if(configuration != null)
+				InterceptorController.getController().updateInterceptorConfiguration(interceptorVO.getInterceptorId(), configuration);
+			
 			commitTransaction(db);
 		} 
 		catch (Exception e) 
 		{
-			e.printStackTrace();
-			logger.info("An error occurred so we should not complete the transaction:" + e);
+			logger.error("An error occurred so we should not complete the transaction:" + e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
@@ -298,6 +307,54 @@ public class InterceptorController extends BaseController
 	{
 		deleteEntity(InterceptorImpl.class, interceptorVO.getInterceptorId());
 	}        
+
+	public Properties getInterceptorProperties(Integer interceptorId) throws Exception
+	{
+		String configuration = getInterceptorConfiguration(interceptorId);
+	    if(configuration != null && !configuration.equals(""))
+		{
+	    	try
+			{
+	    		Properties properties = new Properties();
+				properties.load(new ByteArrayInputStream(configuration.getBytes("UTF-8")));
+				return properties;
+			}	
+			catch(Exception e)
+			{
+			    logger.error("Error loading properties from string. Reason:" + e.getMessage());
+			}
+		}
+	    
+	    return null;
+	}
+
+	public String getInterceptorConfiguration(Integer interceptorId) throws Exception
+	{
+        Map args = new HashMap();
+	    args.put("globalKey", "infoglue");
+	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+	    
+	    byte[] configurationBytes = ps.getData("interceptor_" + interceptorId + "_Configuration");
+	    if(configurationBytes != null)
+	    {
+	    	String configuration = new String(configurationBytes, "utf-8");
+		    if(configuration != null && !configuration.equals(""))
+			{
+		    	return configuration;
+			}
+	    }
+	    
+	    return "";
+	}
+	
+	public void updateInterceptorConfiguration(Integer interceptorId, String configuration) throws Exception
+	{
+        Map args = new HashMap();
+	    args.put("globalKey", "infoglue");
+	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
+	    
+	    ps.setData("interceptor_" + interceptorId + "_Configuration", configuration.getBytes("utf-8"));
+	}
 
 	/*
 	public void delete(String name, String value, Database db) throws SystemException, Exception

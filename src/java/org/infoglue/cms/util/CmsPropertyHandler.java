@@ -669,6 +669,9 @@ public class CmsPropertyHandler
 
 	public static String getOperatingMode()
 	{
+		//if(true)
+		//	return "3";
+		
 		if(operatingMode == null)
 			return getProperty("operatingMode");
 		else
@@ -677,6 +680,9 @@ public class CmsPropertyHandler
 
 	public static String getOperatingMode(boolean skipHardCache)
 	{
+		//if(true)
+		//	return "3";
+
 		if(operatingMode == null || skipHardCache)
 		{
 			operatingMode = getProperty("operatingMode");

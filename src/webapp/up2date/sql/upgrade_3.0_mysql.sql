@@ -66,6 +66,30 @@ ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryCategoryIdIndex;
 ALTER TABLE cmCategory DROP INDEX categoryParentIdIndex;
 ALTER TABLE cmCategory DROP INDEX categoryNameIndex;
 
+/*
+CREATE  TABLE `infoglue333`.`cmPageDeliveryMetaData` (
+  `pageDeliveryMetaDataId` INT NOT NULL AUTO_INCREMENT ,
+  `siteNodeId` INT NOT NULL ,
+  `languageId` INT NOT NULL ,
+  `contentId` INT NOT NULL ,
+  `lastModifiedDateTime` TIMESTAMP NOT NULL ,
+  `selectiveCacheUpdateNotApplicable` TINYINT NOT NULL DEFAULT 0 ,
+  `lastModifiedTimeout` INT NOT NULL DEFAULT -1 ,
+  `usedEntities` BLOB NOT NULL ,
+  PRIMARY KEY (`pageDeliveryMetaDataId`) )
+ENGINE = MyISAM;
+
+CREATE  TABLE `infoglue333`.`cmPageDeliveryMetaDataEntity` (
+  `pageDeliveryMetaDataEntityId` INT NOT NULL AUTO_INCREMENT ,
+  `pageDeliveryMetaDataId` INT NOT NULL ,
+  `siteNodeId` INT NULL ,
+  `contentId` INT NULL ,
+  PRIMARY KEY (`pageDeliveryMetaDataEntityId`) )
+ENGINE = MyISAM;
+
+create index searchIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
+*/
+
 create index propCategoryAttrNameIndex on cmPropertiesCategory(attributeName(100));
 create index propCategoryEntityNameIndex on cmPropertiesCategory(entityName(100));
 create index propCategoryEntityIdIndex on cmPropertiesCategory(entityId);

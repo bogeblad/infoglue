@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
@@ -40,6 +41,9 @@ import org.infoglue.cms.util.NotificationMessage;
 
 public interface InfoGlueInterceptor
 {
+	//public void setInterceptionPointVO(InterceptionPointVO vo);
+	public void setInterceptorVO(InterceptorVO vo);
+	
 	/**
 	 * This method will be called when a interceptionPoint is reached.
 	 * 

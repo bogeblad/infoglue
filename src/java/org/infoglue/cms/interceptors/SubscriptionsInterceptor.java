@@ -51,6 +51,7 @@ import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.SubscriptionVO;
 import org.infoglue.cms.entities.management.TransactionHistoryVO;
@@ -508,6 +509,11 @@ public class SubscriptionsInterceptor extends BaseController implements InfoGlue
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void setInterceptorVO(InterceptorVO vo) 
+	{
+		//Dont need it for now
 	}
 	
 }

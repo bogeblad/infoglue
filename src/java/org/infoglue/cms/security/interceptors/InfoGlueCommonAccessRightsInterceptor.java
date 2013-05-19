@@ -35,6 +35,7 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.InterceptionPointVO;
+import org.infoglue.cms.entities.management.InterceptorVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.AccessConstraintException;
 import org.infoglue.cms.exception.ConstraintException;
@@ -474,4 +475,10 @@ public class InfoGlueCommonAccessRightsInterceptor implements InfoGlueIntercepto
 
 		ceb.throwIfNotEmpty();
 	}
+	
+	public void setInterceptorVO(InterceptorVO vo) 
+	{
+		//Dont need it for now
+	}
+
 }

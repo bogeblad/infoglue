@@ -4,4 +4,5 @@
 *.launch
 build.properties
 .gitignore
-.project
+.project/build.properties
+/.gitignore

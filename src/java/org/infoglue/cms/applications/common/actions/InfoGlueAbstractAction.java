@@ -1541,7 +1541,10 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 			{
 				InfoGlueInterceptor infoGlueInterceptor = InterceptionService.getService().getInterceptor(interceptorVO.getName());
 				if(infoGlueInterceptor == null)
+				{
 					infoGlueInterceptor = (InfoGlueInterceptor)Class.forName(interceptorVO.getClassName()).newInstance();
+					infoGlueInterceptor.setInterceptorVO(interceptorVO);
+				}
 				logger.info("infoGlueInterceptor:" + infoGlueInterceptor);
 				infoGlueInterceptor.intercept(infogluePrincipal, interceptionPointVO, hashMap, allowCreatorAccess);
 			}

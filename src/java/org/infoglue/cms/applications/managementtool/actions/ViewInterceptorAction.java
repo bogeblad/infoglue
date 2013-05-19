@@ -37,6 +37,7 @@ public class ViewInterceptorAction extends InfoGlueAbstractAction
     private InterceptorVO interceptorVO;
     private List allInterceptionPoints;
     private List assignedInterceptionPoints;
+    private String configuration;
 
     public ViewInterceptorAction()
     {
@@ -50,9 +51,10 @@ public class ViewInterceptorAction extends InfoGlueAbstractAction
        
     protected void initialize(Integer interceptorId) throws Exception
     {
-		interceptorVO = InterceptorController.getController().getInterceptorVOWithId(getInterceptorId());
-		allInterceptionPoints = InterceptionPointController.getController().getInterceptionPointVOList();
-		assignedInterceptionPoints = InterceptorController.getController().getInterceptionPointVOList(getInterceptorId());
+    	this.interceptorVO = InterceptorController.getController().getInterceptorVOWithId(getInterceptorId());
+    	this.allInterceptionPoints = InterceptionPointController.getController().getInterceptionPointVOList();
+    	this.assignedInterceptionPoints = InterceptorController.getController().getInterceptionPointVOList(getInterceptorId());
+		this.configuration = InterceptorController.getController().getInterceptorConfiguration(getInterceptorId());
     }   
     
     public String doExecute() throws Exception
@@ -101,6 +103,16 @@ public class ViewInterceptorAction extends InfoGlueAbstractAction
 	public InterceptorVO getInterceptorVO()
 	{
 		return this.interceptorVO;
+	}
+
+	public void setConfiguration(String configuration) 
+	{
+		this.configuration = configuration;
+	}
+
+	public String getConfiguration() 
+	{
+		return configuration;
 	}
 
 }

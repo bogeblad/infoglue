@@ -42,6 +42,7 @@ public class UpdateInterceptorAction extends ViewInterceptorAction
 	private static final long serialVersionUID = 1L;
 	
 	private InterceptorVO interceptorVO = new InterceptorVO();
+    private String configuration = null;
 	private ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 	
 	
@@ -55,7 +56,7 @@ public class UpdateInterceptorAction extends ViewInterceptorAction
     	String[] values = getRequest().getParameterValues("interceptionPointId");
     	logger.info("values:" + values);
 		
-		InterceptorController.getController().update(this.interceptorVO, values);
+		InterceptorController.getController().update(this.interceptorVO, values, configuration);
     	
 		return "success";
 	}
@@ -97,6 +98,11 @@ public class UpdateInterceptorAction extends ViewInterceptorAction
 	public void setClassName(String className)
 	{
 		this.interceptorVO.setClassName(className);
+	}
+
+	public void setConfiguration(String configuration)
+	{
+		this.configuration = configuration;
 	}
 
 }

@@ -13,6 +13,7 @@
 		<p>#editField("Interceptor.name" "name" $!interceptorVO.name "50")</p>
 		<p>#editField("Interceptor.description" "description" $!interceptorVO.description "50")</p>
 		<p>#editField("Interceptor.className" "className" $!interceptorVO.className "50")</p>
+		<p>#editTextArea("Interceptor.configuration" "configuration" $!configuration "50" "10" "normaltextarea")</p>
 		<h4>Right now the Interceptor is intercepted by the marked interceptors</h4>
 		#foreach ($interceptionPoint in $allInterceptionPoints)
 		<p>		

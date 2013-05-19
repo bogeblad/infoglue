@@ -1910,5 +1910,91 @@
 	    </field>
     </class>
 
+	<!--  Mapping for GeneralOQLResult  -->
+  	<class name="org.infoglue.cms.entities.management.GeneralOQLResult" identity="id" key-generator="SEQUENCE">
+	    <description>GeneralOQLResult</description>
+	    <cache-type type="none"/>
+	    <map-to table="dummy"/>
+		<field name="id" type="java.lang.Integer">
+	    	<sql name="id" type="integer"/>
+	    </field>
+		<field name="value1" type="java.lang.String">
+	    	<sql name="column1Value" type="varchar"/>
+	    </field>
+		<field name="value2" type="java.lang.String">
+	    	<sql name="column2Value" type="varchar"/>
+	    </field>
+		<field name="value3" type="java.lang.String">
+	    	<sql name="column3Value" type="varchar"/>
+	    </field>
+		<field name="value4" type="java.lang.String">
+	    	<sql name="column4Value" type="varchar"/>
+	    </field>
+		<field name="value5" type="java.lang.String">
+	    	<sql name="column5Value" type="varchar"/>
+	    </field>
+		<field name="value6" type="java.lang.String">
+	    	<sql name="column6Value" type="varchar"/>
+	    </field>
+		<field name="value7" type="java.lang.String">
+	    	<sql name="column7Value" type="varchar"/>
+	    </field>
+    </class>
+    
+	<!--  Mapping for LastModified  -->
+  	<class name="org.infoglue.cms.entities.management.impl.simple.PageDeliveryMetaDataImpl" identity="pageDeliveryMetaDataId" key-generator="SEQUENCE">
+		<description>PageDeliveryMetaData</description>
+	    <cache-type type="none"/>
+	    <map-to table="cmPageDeliveryMetaData"/>
+	    <field name="pageDeliveryMetaDataId" type="java.lang.Integer">
+	      <sql name="pageDeliveryMetaDataId" type="integer" dirty="check" />
+	    </field>
+	    <field name="siteNodeId" type="java.lang.Integer">
+	      	<sql name="siteNodeId" type="integer" dirty="check" />
+	    </field>
+	    <field name="languageId" type="java.lang.Integer">
+	      	<sql name="languageId" type="integer" dirty="check" />
+	    </field>
+	    <field name="contentId" type="java.lang.Integer">
+	      	<sql name="contentId" type="integer" dirty="check" />
+	    </field>
+	    <field name="lastModifiedDateTime" type="java.util.Date">
+	      	<sql name="lastModifiedDateTime" type="timestamp" dirty="check" />
+	    </field>
+	    <field name="selectiveCacheUpdateNotApplicable" type="java.lang.Boolean">
+	      	<sql name="selectiveCacheUpdateNotApplicable" type="integer" dirty="check" />
+	    </field>
+	    <field name="lastModifiedTimeout" type="java.lang.Integer">
+	      	<sql name="lastModifiedTimeout" type="integer" dirty="check" />
+	    </field>
+	    <!--  
+	    <field name="usedEntities" type="java.lang.String">
+	      	<sql name="usedEntities" type="varchar" dirty="check" />
+	    </field>
+	    -->
+	   	<field name="entities" type="org.infoglue.cms.entities.management.impl.simple.PageDeliveryMetaDataEntityImpl" collection="collection">
+		  <sql many-key="pageDeliveryMetaDataId"/>
+		</field>
+	    
+	</class>
+  
+    <class name="org.infoglue.cms.entities.management.impl.simple.PageDeliveryMetaDataEntityImpl" identity="pageDeliveryMetaDataEntityId" key-generator="SEQUENCE">
+		<description>PageDeliveryMetaDataEntity</description>
+	    <cache-type type="none"/>
+	    <map-to table="cmPageDeliveryMetaDataEntity"/>
+	    <field name="pageDeliveryMetaDataEntityId" type="java.lang.Integer">
+	      <sql name="pageDeliveryMetaDataEntityId" type="integer" dirty="check" />
+	    </field>
+		<field name="pageDeliveryMetaData" type="org.infoglue.cms.entities.management.impl.simple.PageDeliveryMetaDataImpl">
+		  <sql name="pageDeliveryMetaDataId"/>
+		</field>
+	    <field name="siteNodeId" type="java.lang.Integer">
+	      	<sql name="siteNodeId" type="integer" dirty="check" />
+	    </field>
+	    <field name="contentId" type="java.lang.Integer">
+	      	<sql name="contentId" type="integer" dirty="check" />
+	    </field>
+	</class>
+	
 </mapping>
 

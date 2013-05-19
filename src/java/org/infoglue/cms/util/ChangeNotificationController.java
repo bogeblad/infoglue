@@ -24,6 +24,7 @@
 package org.infoglue.cms.util;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -95,6 +96,10 @@ public class ChangeNotificationController
 							logger.info("Notifying the listener to process:" + nl.getClass().getName());
 							nl.process();
 						}
+					}
+					catch(ConcurrentModificationException e)
+					{
+						logger.error("One of the listeners threw an exception but we carry on with the others. Error: " + e.getMessage());
 					}
 					catch(Exception e)
 					{
@@ -258,7 +263,10 @@ public class ChangeNotificationController
 	
 	public void registerListener(NotificationListener notificationListener)
 	{
-		this.listeners.add(notificationListener);
+		synchronized (listeners) 
+		{
+			this.listeners.add(notificationListener);
+		}
 	}
 
 	/**

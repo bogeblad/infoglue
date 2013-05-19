@@ -29,10 +29,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
@@ -42,13 +45,18 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.PageDeliveryMetaDataController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.management.PageDeliveryMetaDataEntityVO;
+import org.infoglue.cms.entities.management.PageDeliveryMetaDataVO;
 import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
@@ -213,6 +221,9 @@ public abstract class PageInvoker
 				
 				this.pageString = (String)CacheController.getCachedObjectFromAdvancedCache(pageCacheName, this.getDeliveryContext().getPageKey(), true, "utf-8", true, this, this.getClass().getMethod("invokeAndDecoratePage", argsClasses), args, this);
 			    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey());
+			    
+			    if(this.pageString != null)
+			    	this.getDeliveryContext().setIsCachedResponse(true);
 			}
 			else
 			{
@@ -231,15 +242,44 @@ public abstract class PageInvoker
 					this.pageString = getPageString();
 					
 					//TEST
-					getLastModifiedDateTime();
+					getLastModifiedDateTime(false);
 					//END TEST
 
 					pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
 
 					this.getDeliveryContext().setPagePath(this.templateController.getCurrentPagePath());
 			    }
+			    else
+			    	this.getDeliveryContext().setIsCachedResponse(true);
+			}
+						
+			String usedEntitiesString;
+			if(CmsPropertyHandler.getOperatingMode().equals("0"))
+			{
+				usedEntitiesString = (String)CacheController.getCachedObjectFromAdvancedCache("pageCacheExtra", this.getDeliveryContext().getPageKey() + "_entitiesAsByte");				
+			}
+			else
+			{
+				byte[] usedEntitiesByteArray = (byte[])CacheController.getCachedObjectFromAdvancedCache("pageCacheExtra", this.getDeliveryContext().getPageKey() + "_entitiesAsByte");
+				usedEntitiesString = compressionHelper.decompress(usedEntitiesByteArray);
+			}
+			String[] usedEntities = StringUtils.split(usedEntitiesString, "|");
+			for(String usedEntity : usedEntities)
+			{
+				//System.out.println("usedEntity:" + usedEntity);
+				if(usedEntity.startsWith("content_"))
+					this.getDeliveryContext().addUsedContent(usedEntity);
+				else if(usedEntity.startsWith("contentVersion_"))
+					this.getDeliveryContext().addUsedContentVersion(usedEntity);
+				else if(usedEntity.startsWith("siteNode_"))
+					this.getDeliveryContext().addUsedSiteNode(usedEntity);
+				else if(usedEntity.startsWith("siteNodeVersion_"))
+					this.getDeliveryContext().addUsedSiteNodeVersion(usedEntity);
 			}
 			
+			getLastModifiedDateTime(true);
+
+			//System.out.println("cachedExtraData:" + cachedExtraData);
 		    if(cachedExtraData != null)
 		    	this.getDeliveryContext().populateExtraData(cachedExtraData);
 		    
@@ -262,7 +302,7 @@ public abstract class PageInvoker
 			this.pageString = getPageString();
 			
 			//TEST
-			getLastModifiedDateTime();
+			getLastModifiedDateTime(false);
 			//END TEST
 
 			pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
@@ -291,8 +331,8 @@ public abstract class PageInvoker
 		if(!CmsPropertyHandler.getOperatingMode().equals("3"))
 		{
 			getResponse().setHeader("Cache-Control","no-cache"); 
-	    	getResponse().setHeader("Pragma","no-cache");
-	    	getResponse().setDateHeader ("Expires", 0);
+			getResponse().setHeader("Pragma","no-cache");
+			getResponse().setDateHeader ("Expires", 0);
 		}
 			
 		//logger.info("pageString before:" + pageString);
@@ -439,7 +479,7 @@ public abstract class PageInvoker
 			this.pageString = getPageString();
 
 			//TEST
-			getLastModifiedDateTime();
+			getLastModifiedDateTime(false);
 			//END TEST
 			
 			this.pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
@@ -452,18 +492,37 @@ public abstract class PageInvoker
 		return this.pageString;
 	}
 
-	private void getLastModifiedDateTime() throws Bug
+	private void getLastModifiedDateTime(boolean useContentLookup) throws Bug
 	{
-		if(CmsPropertyHandler.getSetDerivedLastModifiedInLive().equalsIgnoreCase("false"))
-			return;
+		//if(CmsPropertyHandler.getOperatingMode().equals("3") && CmsPropertyHandler.getSetDerivedLastModifiedInLive().equalsIgnoreCase("false"))
+		//	return;
 		
-		Integer maxNumberOfVersionsForDerivedLastModifiedInLive = CmsPropertyHandler.getMaxNumberOfVersionsForDerivedLastModifiedInLive();
+		//Integer maxNumberOfVersionsForDerivedLastModifiedInLive = CmsPropertyHandler.getMaxNumberOfVersionsForDerivedLastModifiedInLive();
 		
 		Date lastModifiedDateTime = null;
-		//logger.info("UsedContentVersions:" + this.deliveryContext.getUsedContentVersions().size());
+		System.out.println("useContentLookup:" + useContentLookup);
+		System.out.println("UsedContentVersions:" + this.deliveryContext.getUsedContentVersions().size());
+		System.out.println("UsedContents:" + this.deliveryContext.getUsedContents().size());
 		Timer t = new Timer();
-		if(this.deliveryContext.getUsedContentVersions().size() > 0)
+		if(this.deliveryContext.getUsedContentVersions().size() > 0 || (useContentLookup && this.deliveryContext.getUsedContents().size() > 0))
 		{
+			try
+			{
+				SmallestContentVersionVO lastContentVersionVO = null;
+				if(useContentLookup)
+					lastContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVOByContentIds(this.deliveryContext.getUsedContents(), getDatabase());
+				else
+					lastContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(this.deliveryContext.getUsedContentVersions(), getDatabase());
+				System.out.println("lastContentVersionVO:" + lastContentVersionVO);
+				if(lastContentVersionVO != null)
+					lastModifiedDateTime = lastContentVersionVO.getModifiedDateTime();
+				System.out.println("lastModifiedDateTime from cvVO:" + lastContentVersionVO.getModifiedDateTime());
+			}
+			catch (Exception e) 
+			{
+				e.printStackTrace();
+			}
+			/*
 			Iterator userContentVersionIterator = this.deliveryContext.getUsedContentVersions().iterator();
 			int processed = 0;
 			while(userContentVersionIterator.hasNext())
@@ -483,6 +542,7 @@ public abstract class PageInvoker
 		    				if(lastModifiedDateTime == null || contentVersion.getModifiedDateTime().after(lastModifiedDateTime))
 			    			{
 			    				lastModifiedDateTime = contentVersion.getModifiedDateTime();
+			    				System.out.println("lastModifiedDateTime:" + lastModifiedDateTime);
 			    			}
 		    			}
 		            }
@@ -498,8 +558,13 @@ public abstract class PageInvoker
 						break;
 				}
 			}
+			*/
+			
 			if(lastModifiedDateTime != null)
+			{
+				System.out.println("The page gets " + lastModifiedDateTime);
 				this.deliveryContext.setLastModifiedDateTime(lastModifiedDateTime);
+			}
 		}
 		
 		long elapsedTime = t.getElapsedTime();

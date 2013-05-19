@@ -323,7 +323,7 @@ public class ViewPageFilter implements Filter
 	               	RequestAnalyser.getRequestAnalyser().registerComponentStatistics("ViewPageFilter before ViewPage", t.getElapsedTime());
 	                
 	                wrappedHttpRequest.getRequestDispatcher("/ViewPage.action").forward(wrappedHttpRequest, httpResponse);
-	            } 
+	            }
 	            catch (SystemException e) 
 	            {
 	                BaseDeliveryController.rollbackTransaction(db);
@@ -761,5 +761,5 @@ public class ViewPageFilter implements Filter
         }
 
     }
-
+    
 }

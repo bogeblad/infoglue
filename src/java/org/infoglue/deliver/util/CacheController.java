@@ -704,6 +704,8 @@ public class CacheController extends Thread
 		    		cacheCapacity = "20000";
 				if(cacheName != null && cacheName.equalsIgnoreCase("latestSiteNodeVersionCache"))
 		    		cacheCapacity = "20000";
+				if(cacheName != null && cacheName.equalsIgnoreCase("pageDeliveryMetaDataCache"))
+		    		cacheCapacity = "50000";
 				
 				/*
 				if(cacheCapacity.length() > 4)
@@ -4474,6 +4476,7 @@ public class CacheController extends Thread
 		caches.add("importTagResultCache");
 		caches.add("assetUrlCacheWithGroups");
 		caches.add("componentPropertyCacheRepoGroups");
+		caches.add("pageDeliveryMetaDataCache");
 
 		List<String> userCaches = CmsPropertyHandler.getExtraPublicationPersistentCacheNames();
 		logger.info("Adding ExtraPublicationPersistentCacheNames:" + userCaches);
@@ -4515,7 +4518,7 @@ public class CacheController extends Thread
     	    
     	    if(logger.isInfoEnabled())
     			logger.info("Raw pageKey:" + pageKey);
-    			
+
     	    int sessionAttributeStartIndex = pageKey.indexOf("$session.");
     	    while(sessionAttributeStartIndex > -1)
     	    {
@@ -4533,7 +4536,7 @@ public class CacheController extends Thread
         	    if(logger.isInfoEnabled())
         	    	logger.info("sessionAttribute:" + sessionAttribute);
 
-        	    pageKey = pageKey.replaceAll("\\$session." + sessionAttribute, "" + sessionAttributeValue);    	    
+        	    pageKey = pageKey.replaceAll("_\\$session." + sessionAttribute, "" + (sessionAttributeValue == null ? "" : "_" + sessionAttributeValue));    	    
     	    
         	    sessionAttributeStartIndex = pageKey.indexOf("$session.");
     	    }
@@ -4556,7 +4559,7 @@ public class CacheController extends Thread
     	    
         	    cookieAttributeStartIndex = pageKey.indexOf("$cookie.");
     	    }
-
+    	    
     	}
     	else
     	    pageKey  = "" + siteNodeId + "_" + languageId + "_" + contentId + "_" + userAgent + "_" + queryString;

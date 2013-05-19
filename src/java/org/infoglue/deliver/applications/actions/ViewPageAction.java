@@ -28,9 +28,14 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.URLEncoder;
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
@@ -42,19 +47,21 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
+import org.infoglue.cms.controllers.kernel.impl.simple.PageDeliveryMetaDataController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserControllerProxy;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.management.PageDeliveryMetaDataEntityVO;
+import org.infoglue.cms.entities.management.PageDeliveryMetaDataVO;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
-import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.exception.NoBaseTemplateFoundException;
@@ -101,6 +108,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
 	private static final long serialVersionUID = 1L;
 
     public final static Logger logger = Logger.getLogger(ViewPageAction.class.getName());
+
+	private static final SimpleDateFormat HTTP_DATE_FORMAT = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH );
 
 	//These are the standard parameters which uniquely defines which page to show.
 	private Integer siteNodeId = null;
@@ -165,6 +174,8 @@ public class ViewPageAction extends InfoGlueAbstractAction
          
     public String doExecute() throws Exception
     {
+    	Timer pageTimer = new Timer();
+    	
         if(isRecacheCall)
         {
 	        //logger.warn("ThreadId:" + Thread.currentThread().getName());
@@ -426,26 +437,152 @@ public class ViewPageAction extends InfoGlueAbstractAction
 				deliveryContext.setHttpServletResponse(this.getResponse());
 				deliveryContext.setUseFullUrl(Boolean.parseBoolean(CmsPropertyHandler.getUseDNSNameInURI()));
 				
-				SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO = getSiteNodeTypeDefinition(this.siteNodeId, dbWrapper.getDatabase());
-								
-			    try
-			    {
-			        String invokerClassName = siteNodeTypeDefinitionVO.getInvokerClassName();
-			        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
-			        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);
-			        pageInvoker.deliverPage();
-
-			        request.setAttribute("progress", "after pageInvoker was called");
-			    }
-			    catch(ClassNotFoundException e)
-			    {
-			        throw new SystemException("An error was thrown when trying to use the page invoker class assigned to this page type:" + e.getMessage(), e);
+				boolean skipRender = false;
+				PageDeliveryMetaDataVO pdmd = null;
+				try
+				{
+					boolean isIfModifiedLogic = getIsIfModifiedLogicValid(deliveryContext, templateController.getPrincipal(), true); 
+					logger.info("isIfModifiedLogic:" + isIfModifiedLogic);
+					if(isIfModifiedLogic)
+					{
+						String ifModifiedSince = this.getRequest().getHeader("If-Modified-Since");
+						logger.info("ifModifiedSince:" + ifModifiedSince);
+						//System.out.println("pageKey:" + pageKey);
+						if(ifModifiedSince != null && !ifModifiedSince.equals(""))
+						{
+							pdmd = PageDeliveryMetaDataController.getController().getPageDeliveryMetaDataVO(dbWrapper.getDatabase(), this.siteNodeId, this.languageId, this.contentId);
+							logger.info("pdmd A:" + (pdmd == null ? "null" : pdmd.getId()));
+							if(pdmd != null && pdmd.getLastModifiedDateTime() != null)
+							{
+								Date ifModifiedSinceDate = HTTP_DATE_FORMAT.parse( ifModifiedSince );
+								logger.info("pdmd B:" + pdmd.getId() + ":" + pdmd.getLastModifiedDateTime());
+								logger.info("*************\nCompares:" + pdmd.getLastModifiedDateTime() + "=" + ifModifiedSinceDate);
+								if(ifModifiedSinceDate.getTime() >= pdmd.getLastModifiedDateTime().getTime() - 1000)
+								{
+									logger.info("Returning NOT_MODIFIED");
+									this.getResponse().setStatus( HttpServletResponse.SC_NOT_MODIFIED );
+									pageTimer.printElapsedTime("Delivered NOT MODIFIED IN", 50);
+									skipRender = true;
+									return NONE;
+								}
+							}
+						}
+					}
 				}
-			    finally
-			    {
-			    	deliveryContext.clear();
-			    	deliveryContext = null;
-			    }
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+				
+				System.out.println("skipRender:" + skipRender);
+				if(!skipRender)
+				{
+					SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO = getSiteNodeTypeDefinition(this.siteNodeId, dbWrapper.getDatabase());
+							
+					try
+				    {
+				        String invokerClassName = siteNodeTypeDefinitionVO.getInvokerClassName();
+				        PageInvoker pageInvoker = (PageInvoker)Class.forName(invokerClassName).newInstance();
+				        pageInvoker.setParameters(dbWrapper, this.getRequest(), this.getResponse(), templateController, deliveryContext);
+				        pageInvoker.deliverPage();
+	
+				        boolean isCachedResponse = deliveryContext.getIsCachedResponse();
+				        logger.info("isCachedResponse:" + isCachedResponse);
+				        
+						boolean isIfModifiedLogic = getIsIfModifiedLogicValid(deliveryContext, templateController.getPrincipal(), false); 
+						logger.info("isIfModifiedLogic 2:" + isIfModifiedLogic);
+						logger.info("deliveryContext.getLastModifiedDateTime():" + deliveryContext.getLastModifiedDateTime());
+						if(isCachedResponse && pdmd == null && isIfModifiedLogic)
+							pdmd = PageDeliveryMetaDataController.getController().getPageDeliveryMetaDataVO(dbWrapper.getDatabase(), this.siteNodeId, this.languageId, this.contentId);
+						
+						
+						if(pdmd != null)
+							logger.info("pdmd():" + pdmd.getLastModifiedDateTime());
+
+						if(isIfModifiedLogic && (!isCachedResponse || pdmd == null/* || deliveryContext.getLastModifiedDateTime().after(pdmd.getLastModifiedDateTime())*/))
+						{
+							Timer t2 = new Timer();
+							logger.info("We should register the last modified date now. Add it to the thread which registers it: " + deliveryContext.getLastModifiedDateTime() + ":" + deliveryContext.hashCode());
+							try
+							{
+								PageDeliveryMetaDataVO pageDeliveryMetaDataVO = new PageDeliveryMetaDataVO();
+
+								List<String> entities = deliveryContext.getAllUsedEntitiesAsSet();
+								
+								List<String> allUsedEntitiesFilteredCopy = new ArrayList<String>();
+								for(String s : entities)
+								{
+									if(s.startsWith("content_") && s.indexOf("_", 8) == -1)
+									{
+										allUsedEntitiesFilteredCopy.add(s.replaceAll("content_", "c_"));
+										//allUsedEntitiesFilteredCopy.add(s); //getPooledString(s.hashCode()));
+										//System.out.println("Added: " + s);
+									}
+									else if(s.startsWith("siteNode_"))
+										allUsedEntitiesFilteredCopy.add(s.replaceAll("siteNode_", "sn_"));
+									else if(s.startsWith("selectiveCacheUpdateNonApplicable"))
+									{
+										allUsedEntitiesFilteredCopy.clear();
+										allUsedEntitiesFilteredCopy.add(s);
+										pageDeliveryMetaDataVO.setSelectiveCacheUpdateNotApplicable(true);
+									}
+								}
+
+								Collection<PageDeliveryMetaDataEntityVO> entitiesCollection = new ArrayList<PageDeliveryMetaDataEntityVO>(); 
+								for(String s : allUsedEntitiesFilteredCopy)
+								{
+									if(s.startsWith("c_"))
+									{
+										PageDeliveryMetaDataEntityVO pageDeliveryMetaDataEntityVO = new PageDeliveryMetaDataEntityVO();
+										pageDeliveryMetaDataEntityVO.setContentId(new Integer(s.replaceAll("c_", "")));
+										pageDeliveryMetaDataEntityVO.setPageDeliveryMetaDataId(pageDeliveryMetaDataVO.getId());
+										entitiesCollection.add(pageDeliveryMetaDataEntityVO);
+									}
+									else if(s.startsWith("sn_"))
+									{
+										PageDeliveryMetaDataEntityVO pageDeliveryMetaDataEntityVO = new PageDeliveryMetaDataEntityVO();
+										pageDeliveryMetaDataEntityVO.setSiteNodeId(new Integer(s.replaceAll("sn_", "")));
+										pageDeliveryMetaDataEntityVO.setPageDeliveryMetaDataId(pageDeliveryMetaDataVO.getId());
+										entitiesCollection.add(pageDeliveryMetaDataEntityVO);
+									}
+								}
+
+								String allUsedEntitiesAsString = StringUtils.join(allUsedEntitiesFilteredCopy, "|");
+								logger.info("allUsedEntitiesAsString:" + allUsedEntitiesAsString);
+								//System.out.println("allUsedEntitiesAsString:" + allUsedEntitiesAsString.length());
+								
+								pageDeliveryMetaDataVO.setSiteNodeId(deliveryContext.getSiteNodeId());
+								pageDeliveryMetaDataVO.setLanguageId(deliveryContext.getLanguageId());
+								pageDeliveryMetaDataVO.setContentId(deliveryContext.getContentId());
+								pageDeliveryMetaDataVO.setLastModifiedDateTime(deliveryContext.getLastModifiedDateTime());
+								if(deliveryContext.getPageCacheTimeout() != null && deliveryContext.getPageCacheTimeout() > -1)
+									pageDeliveryMetaDataVO.setLastModifiedTimeout(deliveryContext.getPageCacheTimeout());
+								pageDeliveryMetaDataVO.setUsedEntities(allUsedEntitiesAsString);
+								PageDeliveryMetaDataController.getController().deletePageDeliveryMetaData(dbWrapper.getDatabase(), pageDeliveryMetaDataVO.getSiteNodeId(), null);
+								PageDeliveryMetaDataController.getController().create(dbWrapper.getDatabase(), pageDeliveryMetaDataVO, entitiesCollection);
+								
+						    	String key = "" + pageDeliveryMetaDataVO.getSiteNodeId() + "_" + pageDeliveryMetaDataVO.getLanguageId() + "_" + pageDeliveryMetaDataVO.getContentId();
+						    	logger.info("key on store:" + key);
+								CacheController.cacheObjectInAdvancedCache("pageDeliveryMetaDataCache", key, pageDeliveryMetaDataVO);
+							}
+							catch (Exception e) 
+							{
+								logger.error("Error storing page meta data: " + e.getMessage(), e);
+							}
+							t2.printElapsedTime("AAAAAAAAAAAAAAAAA",20);
+						}
+				        request.setAttribute("progress", "after pageInvoker was called");
+				    }
+				    catch(ClassNotFoundException e)
+				    {
+				        throw new SystemException("An error was thrown when trying to use the page invoker class assigned to this page type:" + e.getMessage(), e);
+					}
+				    finally
+				    {
+				    	deliveryContext.clear();
+				    	deliveryContext = null;
+				    }
+				}
 			}
 			
 	        //StatisticsService.getStatisticsService().registerRequest(getRequest(), getResponse(), pagePath, elapsedTime);
@@ -620,8 +757,103 @@ public class ViewPageAction extends InfoGlueAbstractAction
         return NONE;
     }
 
-
     /**
+     * The logic is that we only regard the if modified if the page is a standard page.
+     * No custom parameters, no login, no special page key etc.
+     * @param request
+     * @return
+     */
+    private boolean getIsIfModifiedLogicValid(DeliveryContext deliverContext, InfoGluePrincipal principal, boolean regardHeader) 
+    {
+    	String ifModifiedSince = this.getRequest().getHeader("If-Modified-Since");
+    	if((ifModifiedSince == null || ifModifiedSince.equals("")) && regardHeader)
+    		return false;
+    		
+    	String method = deliverContext.getHttpServletRequest().getMethod().toLowerCase();
+    	//int parameterSize = deliverContext.getHttpServletRequest().getParameterMap().size();
+    	//System.out.println("Method:" + method);
+    	//System.out.println("parameterSize:" + parameterSize);
+    	
+    	if(!method.equals("get") || !CmsPropertyHandler.getOperatingMode().equals("3"))
+    	{
+    		return false;
+    	}
+    	else
+    	{
+    		if(principal != null && !principal.getName().equals(CmsPropertyHandler.getAnonymousUser()))
+    			return false;
+    	
+    		for(Object parameterName : deliverContext.getHttpServletRequest().getParameterMap().keySet())
+    		{
+    			if(!parameterName.toString().equalsIgnoreCase("siteNodeId") && 
+    			   !parameterName.toString().equalsIgnoreCase("amp;siteNodeId") && 
+    			   !parameterName.toString().equalsIgnoreCase("languageId") && 
+    	    	   !parameterName.toString().equalsIgnoreCase("amp;languageId") && 
+    			   !parameterName.toString().equalsIgnoreCase("contentId") &&
+    			   !parameterName.toString().equalsIgnoreCase("amp;contentId") &&
+    			   !parameterName.toString().equalsIgnoreCase("originalServletPath") && 
+    			   !parameterName.toString().equalsIgnoreCase("originalRequestURL") && 
+    			   !parameterName.toString().equalsIgnoreCase("originalRequestURI") && 
+    			   !parameterName.toString().equalsIgnoreCase("originalQueryString"))
+    			{
+    				logger.info("parameterName:" + parameterName);
+    				return false;
+    			}
+    		}
+    		
+    		try
+    		{
+    			if(browserBean.getUseragent() != null)
+    			{
+    				Pattern pattern = null;
+    				String userAgentsRegexp = null;
+    				try
+    				{
+    					Map cacheSettings = CmsPropertyHandler.getCacheSettings();
+    					//System.out.println("cacheSettings:" + cacheSettings);
+    			    	if(cacheSettings != null)
+    			    	{
+    			    		userAgentsRegexp = (String)cacheSettings.get("ENABLE_IF_MODIFIED_FOR_USERAGENTSMATCHING");
+    				    	if(userAgentsRegexp != null && !userAgentsRegexp.equals(""))
+    							pattern = Pattern.compile(userAgentsRegexp);
+    				    }
+    				}
+    				catch (Exception e) 
+    				{
+    					logger.warn("cacheSettings was null:" + e.getMessage(), e);
+    				}
+
+    				if(logger.isInfoEnabled())
+    					logger.info("userAgentsRegexp:" + userAgentsRegexp);
+    				
+    				if(pattern != null)
+    				{
+    			        Matcher matcher = pattern.matcher(browserBean.getUseragent());
+    			        if(!matcher.find())
+    			    	{
+    			        	logger.error("Not using if modified logic for:" + browserBean.getUseragent());
+    			        	return false;
+    			    	}
+    			    	matcher.reset();
+    				}
+    				else
+    				{
+    					System.out.println("We disable the IF_MODIFIED feature if not stated.");
+    					return false;
+    				}
+    			}
+    		}
+    		catch (Exception e) 
+    		{
+    			logger.warn("Problem with if modified since: " + e.getMessage(), e);
+    			return false;
+    		}
+    	}
+
+    	return true;
+	}
+
+	/**
      * This method handles redirect of any special cases where we need to redirect the user based on particular situations. 
      * For example to remove a CAS-ticket in the URL or similar.
      * @return true if the user was redirected.

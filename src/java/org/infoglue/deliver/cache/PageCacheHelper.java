@@ -38,6 +38,7 @@ import java.util.zip.CRC32;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.controllers.kernel.impl.simple.PageDeliveryMetaDataController;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.deliver.util.CacheController;
@@ -85,21 +86,29 @@ public class PageCacheHelper implements Runnable
 			try
 			{
 				Thread.sleep(10000);
-				
+
 				List<String> localPageCacheEvicitionQueue = new ArrayList<String>();
 				synchronized (pageCacheEvicitionQueue) 
 				{
 					localPageCacheEvicitionQueue.addAll(pageCacheEvicitionQueue);
 					pageCacheEvicitionQueue.clear();
 				}
-				
+
 				if(localPageCacheEvicitionQueue.size() > 0)
 				{
 					logger.info("Clearing page cache for");
 					for(String entity : localPageCacheEvicitionQueue)
 					{
 						logger.info("entity:" + entity);
+						if(entity.startsWith("siteNode_"))
+							PageDeliveryMetaDataController.getController().deletePageDeliveryMetaDataByReferencingEntity(new Integer(entity.replaceAll("siteNode_", "").replaceAll("_.*", "")), null);
+						else if(entity.startsWith("content_"))
+						{
+							logger.info("entity:" + entity.replaceAll("content_", "").replaceAll("_.*", ""));
+							PageDeliveryMetaDataController.getController().deletePageDeliveryMetaDataByReferencingEntity(null, new Integer(entity.replaceAll("content_", "").replaceAll("_.*", "")));
+						}
 					}
+					CacheController.clearCache("pageDeliveryMetaDataCache");
 					
 					List<String> existingPageKeysForEntities = getMatchingPageKeysForGroups(localPageCacheEvicitionQueue);
 					logger.info("existingPageKeysForEntities:" + existingPageKeysForEntities.size());
@@ -157,7 +166,7 @@ public class PageCacheHelper implements Runnable
 			//System.out.println("This is working mode: let's clear fully.");
 			CacheController.clearCache("pageCacheExtra");
 			CacheController.clearCache("pageCache");
-			
+
 			/*
 			logger.info("Forcing clear for: " + entityString);
 

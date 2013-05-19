@@ -468,7 +468,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 											try
 											{
 												Integer contentId = ContentVersionController.getContentVersionController().getContentIdForContentVersion(publicationDetailVO.getEntityId());
-											    
+											   
 											    ContentVO previousContentVO = ContentController.getContentController().getContentVOWithId(contentId);
 											    Integer previousParentContentId = previousContentVO.getParentContentId();
 											    logger.info("previousParentContentId:" + previousParentContentId);

@@ -23,6 +23,7 @@
 
 package org.infoglue.deliver.applications.databeans;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -105,6 +107,7 @@ public class DeliveryContext implements UsageListener
 	
 	private Date lastModifiedDateTime = null;
 	private boolean registerLastModifiedDate = false;
+	private boolean cachedResponse = false;
 	
 	//private InfoGluePrincipal infoGluePrincipal = null;
 	
@@ -680,9 +683,12 @@ public class DeliveryContext implements UsageListener
 		*/
 		
 		Date lastModifiedDateTime = (Date)extraData.get("lastModifiedDateTime");
-		if(lastModifiedDateTime != null)
+		if(lastModifiedDateTime != null && (this.lastModifiedDateTime == null || this.lastModifiedDateTime.before(lastModifiedDateTime)))
+		{
 			this.lastModifiedDateTime = lastModifiedDateTime;
-
+		}
+		this.getHttpHeaders().put("Last-Modified", HTTP_DATE_FORMAT.format(this.lastModifiedDateTime));
+		
 		Integer pageCacheTimeout = (Integer)extraData.get("pageCacheTimeout");
 		if(pageCacheTimeout != null)
 			this.pageCacheTimeout = pageCacheTimeout;
@@ -693,10 +699,15 @@ public class DeliveryContext implements UsageListener
 		return lastModifiedDateTime;
 	}
 
+	private static final SimpleDateFormat HTTP_DATE_FORMAT = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH );
+
 	public void setLastModifiedDateTime(Date lastModifiedDateTime)
 	{
 		this.lastModifiedDateTime = lastModifiedDateTime;
-		getHttpHeaders().put("Last-Modified", lastModifiedDateTime);
+		if(getHttpHeaders().containsKey("Last-Modified"))
+			System.out.println("Allready has value.... what to do");
+		
+		getHttpHeaders().put("Last-Modified", HTTP_DATE_FORMAT.format(lastModifiedDateTime));
 	}
 
 	public String getOperatingMode()
@@ -812,6 +823,22 @@ public class DeliveryContext implements UsageListener
 	public void resetDebugMode()
 	{
 		this.debugInformation = "";
+	}
+
+	/**
+	 * @return the cachedResponse
+	 */
+	public boolean getIsCachedResponse() 
+	{
+		return cachedResponse;
+	}
+
+	/**
+	 * @param cachedResponse the cachedResponse to set
+	 */
+	public void setIsCachedResponse(boolean cachedResponse) 
+	{
+		this.cachedResponse = cachedResponse;
 	}
 
 }

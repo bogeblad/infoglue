@@ -59,21 +59,6 @@ ALTER TABLE cmGroup ADD source varchar2(255) default 'infoglue' NOT NULL;
 ALTER TABLE cmGroup ADD modifiedDateTime date default sysdate;
 ALTER TABLE cmGroup ADD isActive number default 1 NOT NULL;
 
-CREATE TABLE cmCont (
-  ContId number  NOT NULL,
-  name varchar2(100) NOT NULL,
-  publishDateTime date  NOT NULL,
-  expireDateTime date  NOT NULL,
-  contentTypeDefId number default NULL,
-  parentContId number default NULL,
-  creator varchar2(100) NOT NULL,
-  repositoryId number default 0 NOT NULL,
-  isBranch number default 0 NOT NULL,
-  isProtected number default 2 NOT NULL,
-  isDeleted number DEFAULT 0 NOT NULL,
-PRIMARY KEY  (ContId)
-);
-
 CREATE TABLE cmPageDeliveryMetaData (
   pageDeliveryMetaDataId number NOT NULL,
   siteNodeId number NOT NULL,
@@ -93,7 +78,7 @@ CREATE  TABLE cmPageDeliveryMetaDataEntity (
   PRIMARY KEY (pageDeliveryMetaDataEntityId) 
 );
 
-	create index pageDeliveryMetaDataIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
+create index pageDeliveryMetaDataIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
 
 drop index propCategoryAttrNameIndex;
 drop index propCategoryEntityNameIndex;

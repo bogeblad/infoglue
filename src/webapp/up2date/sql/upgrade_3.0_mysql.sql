@@ -59,36 +59,33 @@ ALTER TABLE cmSystemUser ADD COLUMN source VARCHAR(45) NOT NULL DEFAULT 'infoglu
 ALTER TABLE cmSystemUser ADD COLUMN isActive TINYINT NOT NULL DEFAULT 1;
 ALTER TABLE cmSystemUser ADD COLUMN modifiedDateTime TIMESTAMP NOT NULL DEFAULT '2010-01-01 12:00:00';
 
+CREATE  TABLE cmPageDeliveryMetaData (
+  pageDeliveryMetaDataId INT NOT NULL AUTO_INCREMENT ,
+  siteNodeId INT NOT NULL ,
+  languageId INT NOT NULL ,
+  contentId INT NOT NULL ,
+  lastModifiedDateTime TIMESTAMP NOT NULL ,
+  selectiveCacheUpdateNotApplicable TINYINT NOT NULL DEFAULT 0 ,
+  lastModifiedTimeout INT NOT NULL DEFAULT -1 ,
+  PRIMARY KEY (pageDeliveryMetaDataId) )
+ENGINE = MyISAM;
+
+CREATE  TABLE cmPageDeliveryMetaDataEntity (
+  pageDeliveryMetaDataEntityId INT NOT NULL AUTO_INCREMENT ,
+  pageDeliveryMetaDataId INT NOT NULL ,
+  siteNodeId INT NULL ,
+  contentId INT NULL ,
+  PRIMARY KEY (pageDeliveryMetaDataEntityId) )
+ENGINE = MyISAM;
+
+create index pageDeliveryMetaDataIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
+
 ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryAttrNameIndex;
 ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryEntityNameIndex;
 ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryEntityIdIndex;
 ALTER TABLE cmPropertiesCategory DROP INDEX propCategoryCategoryIdIndex;
 ALTER TABLE cmCategory DROP INDEX categoryParentIdIndex;
 ALTER TABLE cmCategory DROP INDEX categoryNameIndex;
-
-/*
-CREATE  TABLE `infoglue333`.`cmPageDeliveryMetaData` (
-  `pageDeliveryMetaDataId` INT NOT NULL AUTO_INCREMENT ,
-  `siteNodeId` INT NOT NULL ,
-  `languageId` INT NOT NULL ,
-  `contentId` INT NOT NULL ,
-  `lastModifiedDateTime` TIMESTAMP NOT NULL ,
-  `selectiveCacheUpdateNotApplicable` TINYINT NOT NULL DEFAULT 0 ,
-  `lastModifiedTimeout` INT NOT NULL DEFAULT -1 ,
-  `usedEntities` BLOB NOT NULL ,
-  PRIMARY KEY (`pageDeliveryMetaDataId`) )
-ENGINE = MyISAM;
-
-CREATE  TABLE `infoglue333`.`cmPageDeliveryMetaDataEntity` (
-  `pageDeliveryMetaDataEntityId` INT NOT NULL AUTO_INCREMENT ,
-  `pageDeliveryMetaDataId` INT NOT NULL ,
-  `siteNodeId` INT NULL ,
-  `contentId` INT NULL ,
-  PRIMARY KEY (`pageDeliveryMetaDataEntityId`) )
-ENGINE = MyISAM;
-
-create index searchIDX on cmPageDeliveryMetaData(siteNodeId, languageId, contentId);
-*/
 
 create index propCategoryAttrNameIndex on cmPropertiesCategory(attributeName(100));
 create index propCategoryEntityNameIndex on cmPropertiesCategory(entityName(100));

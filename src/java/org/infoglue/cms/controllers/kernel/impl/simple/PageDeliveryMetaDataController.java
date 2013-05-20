@@ -185,9 +185,9 @@ public class PageDeliveryMetaDataController extends BaseController
 	
 	public void deletePageDeliveryMetaData(Database db, Integer siteNodeId, Integer contentId) throws SystemException, Exception
 	{
-		System.out.println("deletePageDeliveryMetaData....");
-		System.out.println("siteNodeId:" + siteNodeId);
-		System.out.println("contentId:" + contentId);
+		//System.out.println("deletePageDeliveryMetaData....");
+		//System.out.println("siteNodeId:" + siteNodeId);
+		//System.out.println("contentId:" + contentId);
 		
 		try
 		{
@@ -208,7 +208,7 @@ public class PageDeliveryMetaDataController extends BaseController
 				sql = "DELETE FROM cmPageDeliveryMetaData WHERE siteNodeId = ? AND contentId = ?";
 				id = siteNodeId;
 			}
-			System.out.println("sql: " + sql);
+			//System.out.println("sql: " + sql);
 			if(sql != null)
 			{
 				Connection conn = (Connection) db.getJdbcConnection();
@@ -226,10 +226,10 @@ public class PageDeliveryMetaDataController extends BaseController
 				System.out.println("result:" + result);
 
 				String sql2 = "DELETE FROM cmPageDeliveryMetaDataEntity WHERE pageDeliveryMetaDataId NOT IN (select pageDeliveryMetaDataId from cmPageDeliveryMetaData)";
-				System.out.println("sql2: " + sql2);
+				//System.out.println("sql2: " + sql2);
 				PreparedStatement psmt2 = conn.prepareStatement(sql2);
 				int result2 = psmt2.executeUpdate();
-				System.out.println("result2:" + result2);
+				//System.out.println("result2:" + result2);
 				CacheController.clearCache("pageDeliveryMetaDataCache");
 			}
 		}
@@ -272,9 +272,9 @@ public class PageDeliveryMetaDataController extends BaseController
 	
 	public void deletePageDeliveryMetaDataByReferencingEntity(Database db, Integer siteNodeId, Integer contentId) throws SystemException, Exception
 	{
-		System.out.println("deletePageDeliveryMetaData....");
-		System.out.println("siteNodeId:" + siteNodeId);
-		System.out.println("contentId:" + contentId);
+		//System.out.println("deletePageDeliveryMetaData....");
+		//System.out.println("siteNodeId:" + siteNodeId);
+		//System.out.println("contentId:" + contentId);
 		
 		try
 		{
@@ -295,28 +295,28 @@ public class PageDeliveryMetaDataController extends BaseController
 				sql = "DELETE FROM cmPageDeliveryMetaData WHERE pageDeliveryMetaDataId IN (SELECT distinct pageDeliveryMetaDataId FROM cmPageDeliveryMetaDataEntity WHERE siteNodeId = ? AND contentId = ?)";
 				id = siteNodeId;
 			}
-			System.out.println("sql: " + sql);
+			//System.out.println("sql: " + sql);
 			if(sql != null)
 			{
 				Connection conn = (Connection) db.getJdbcConnection();
 				
 				PreparedStatement psmt = conn.prepareStatement(sql);
 	    		psmt.setInt(1, id);
-				System.out.println("id: " + id);
+	    		//System.out.println("id: " + id);
 	    		if(siteNodeId != null && contentId != null)
 	    		{
 	    			psmt.setInt(2, contentId);
-					System.out.println("contentId: " + contentId);
+	    			//System.out.println("contentId: " + contentId);
 	    		}
 	    		
 				int result = psmt.executeUpdate();
-				System.out.println("result:" + result);
+				//System.out.println("result:" + result);
 
 				String sql2 = "DELETE FROM cmPageDeliveryMetaDataEntity WHERE pageDeliveryMetaDataId NOT IN (select pageDeliveryMetaDataId from cmPageDeliveryMetaData)";
-				System.out.println("sql2: " + sql2);
+				//System.out.println("sql2: " + sql2);
 				PreparedStatement psmt2 = conn.prepareStatement(sql2);
 				int result2 = psmt2.executeUpdate();
-				System.out.println("result2:" + result2);
+				//System.out.println("result2:" + result2);
 				CacheController.clearCache("pageDeliveryMetaDataCache");
 			}
 		}

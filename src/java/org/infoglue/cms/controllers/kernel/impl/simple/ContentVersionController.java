@@ -3823,6 +3823,7 @@ public class ContentVersionController extends BaseController
 		results.close();
 		oql.close();
 		
+		t.printElapsedTime("getLatestContentVersion from ids took", 20);
 		return result;
 	}
 	
@@ -3867,6 +3868,7 @@ public class ContentVersionController extends BaseController
 		results.close();
 		oql.close();
 		
+		t.printElapsedTime("getLatestContentVersion from content ids took", 20);
 		return result;
 	}
 }

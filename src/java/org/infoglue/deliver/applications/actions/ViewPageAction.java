@@ -474,7 +474,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 					e.printStackTrace();
 				}
 				
-				System.out.println("skipRender:" + skipRender);
+				logger.info("skipRender:" + skipRender);
 				if(!skipRender)
 				{
 					SiteNodeTypeDefinitionVO siteNodeTypeDefinitionVO = getSiteNodeTypeDefinition(this.siteNodeId, dbWrapper.getDatabase());

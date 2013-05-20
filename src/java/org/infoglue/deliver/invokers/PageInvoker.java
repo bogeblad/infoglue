@@ -500,9 +500,9 @@ public abstract class PageInvoker
 		//Integer maxNumberOfVersionsForDerivedLastModifiedInLive = CmsPropertyHandler.getMaxNumberOfVersionsForDerivedLastModifiedInLive();
 		
 		Date lastModifiedDateTime = null;
-		System.out.println("useContentLookup:" + useContentLookup);
-		System.out.println("UsedContentVersions:" + this.deliveryContext.getUsedContentVersions().size());
-		System.out.println("UsedContents:" + this.deliveryContext.getUsedContents().size());
+		logger.info("useContentLookup:" + useContentLookup);
+		logger.info("UsedContentVersions:" + this.deliveryContext.getUsedContentVersions().size());
+		logger.info("UsedContents:" + this.deliveryContext.getUsedContents().size());
 		Timer t = new Timer();
 		if(this.deliveryContext.getUsedContentVersions().size() > 0 || (useContentLookup && this.deliveryContext.getUsedContents().size() > 0))
 		{
@@ -513,10 +513,10 @@ public abstract class PageInvoker
 					lastContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVOByContentIds(this.deliveryContext.getUsedContents(), getDatabase());
 				else
 					lastContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(this.deliveryContext.getUsedContentVersions(), getDatabase());
-				System.out.println("lastContentVersionVO:" + lastContentVersionVO);
+				logger.info("lastContentVersionVO:" + lastContentVersionVO);
 				if(lastContentVersionVO != null)
 					lastModifiedDateTime = lastContentVersionVO.getModifiedDateTime();
-				System.out.println("lastModifiedDateTime from cvVO:" + lastContentVersionVO.getModifiedDateTime());
+				logger.info("lastModifiedDateTime from cvVO:" + lastContentVersionVO.getModifiedDateTime());
 			}
 			catch (Exception e) 
 			{
@@ -562,7 +562,7 @@ public abstract class PageInvoker
 			
 			if(lastModifiedDateTime != null)
 			{
-				System.out.println("The page gets " + lastModifiedDateTime);
+				logger.info("The page gets " + lastModifiedDateTime);
 				this.deliveryContext.setLastModifiedDateTime(lastModifiedDateTime);
 			}
 		}

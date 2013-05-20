@@ -253,28 +253,39 @@ public abstract class PageInvoker
 			    	this.getDeliveryContext().setIsCachedResponse(true);
 			}
 						
-			String usedEntitiesString;
-			if(CmsPropertyHandler.getOperatingMode().equals("0"))
+			logger.info("this.getDeliveryContext().getIsCachedResponse():" + this.getDeliveryContext().getIsCachedResponse());
+			if(this.getDeliveryContext().getIsCachedResponse())
 			{
-				usedEntitiesString = (String)CacheController.getCachedObjectFromAdvancedCache("pageCacheExtra", this.getDeliveryContext().getPageKey() + "_entitiesAsByte");				
-			}
-			else
-			{
-				byte[] usedEntitiesByteArray = (byte[])CacheController.getCachedObjectFromAdvancedCache("pageCacheExtra", this.getDeliveryContext().getPageKey() + "_entitiesAsByte");
-				usedEntitiesString = compressionHelper.decompress(usedEntitiesByteArray);
-			}
-			String[] usedEntities = StringUtils.split(usedEntitiesString, "|");
-			for(String usedEntity : usedEntities)
-			{
-				//System.out.println("usedEntity:" + usedEntity);
-				if(usedEntity.startsWith("content_"))
-					this.getDeliveryContext().addUsedContent(usedEntity);
-				else if(usedEntity.startsWith("contentVersion_"))
-					this.getDeliveryContext().addUsedContentVersion(usedEntity);
-				else if(usedEntity.startsWith("siteNode_"))
-					this.getDeliveryContext().addUsedSiteNode(usedEntity);
-				else if(usedEntity.startsWith("siteNodeVersion_"))
-					this.getDeliveryContext().addUsedSiteNodeVersion(usedEntity);
+				String usedEntitiesString = null;
+				if(CmsPropertyHandler.getOperatingMode().equals("0"))
+				{
+					usedEntitiesString = (String)CacheController.getCachedObjectFromAdvancedCache("pageCacheExtra", this.getDeliveryContext().getPageKey() + "_entitiesAsByte");				
+				}
+				else
+				{
+					byte[] usedEntitiesByteArray = (byte[])CacheController.getCachedObjectFromAdvancedCache("pageCacheExtra", this.getDeliveryContext().getPageKey() + "_entitiesAsByte");
+					if(usedEntitiesByteArray != null)
+						usedEntitiesString = compressionHelper.decompress(usedEntitiesByteArray);
+				}
+				
+				if(logger.isInfoEnabled())
+					logger.info("usedEntitiesString:" + usedEntitiesString);
+				if(usedEntitiesString != null)
+				{
+					String[] usedEntities = StringUtils.split(usedEntitiesString, "|");
+					for(String usedEntity : usedEntities)
+					{
+						//System.out.println("usedEntity:" + usedEntity);
+						if(usedEntity.startsWith("content_"))
+							this.getDeliveryContext().addUsedContent(usedEntity);
+						else if(usedEntity.startsWith("contentVersion_"))
+							this.getDeliveryContext().addUsedContentVersion(usedEntity);
+						else if(usedEntity.startsWith("siteNode_"))
+							this.getDeliveryContext().addUsedSiteNode(usedEntity);
+						else if(usedEntity.startsWith("siteNodeVersion_"))
+							this.getDeliveryContext().addUsedSiteNodeVersion(usedEntity);
+					}
+				}
 			}
 			
 			getLastModifiedDateTime(true);

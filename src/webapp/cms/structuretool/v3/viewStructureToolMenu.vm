@@ -37,7 +37,6 @@
 		
 		function syncWithTree(path, repositoryId)
 		{
-			//alert("syncWithTree");
 			var timeout = 500;
 			if(repositoryId && currentRepositoryId != repositoryId)
 			{

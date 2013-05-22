@@ -49,8 +49,8 @@ public interface PageDeliveryMetaData extends IBaseEntity
     public java.util.Date getLastModifiedDateTime();
     public void setLastModifiedDateTime(java.util.Date lastModifiedDateTime);
     
-    public java.lang.Integer getLastModifiedTimeout();
-    public void setLastModifiedTimeout(java.lang.Integer lastModifiedTimeout);
+    public java.util.Date getLastModifiedTimeout();
+    public void setLastModifiedTimeout(java.util.Date lastModifiedTimeout);
     
     public java.lang.Boolean getSelectiveCacheUpdateNotApplicable();
     public void setSelectiveCacheUpdateNotApplicable(java.lang.Boolean selectiveCacheUpdateNotApplicable);

@@ -66,11 +66,11 @@ CREATE TABLE cmPageDeliveryMetaData (
   contentId number NOT NULL,
   lastModifiedDateTime date NOT NULL,
   selectiveCacheUpdateNotAppl number NOT NULL,
-  lastModifiedTimeout number default -1 NOT NULL,
+  lastModifiedTimeout date default -1 NOT NULL,
   PRIMARY KEY (pageDeliveryMetaDataId) 
 );
 
-CREATE  TABLE cmPageDeliveryMetaDataEntity (
+CREATE  TABLE cmPageDeliveryMetaDataEnt (
   pageDeliveryMetaDataEntityId number NOT NULL,
   pageDeliveryMetaDataId number NOT NULL,
   siteNodeId number NOT NULL,

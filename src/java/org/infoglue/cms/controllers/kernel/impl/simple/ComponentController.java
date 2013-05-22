@@ -147,8 +147,12 @@ public class ComponentController extends BaseController
 				ContentTypeDefinitionVO pagePartTemplateContentType = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithName("PagePartTemplate", db);
 				
 				Timer t = new Timer();
-				List<ContentVersionVO> componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeId(new Integer[]{htmlTemplateContentType.getId(), pagePartTemplateContentType.getId()}, db);
-				
+				List<ContentVersionVO> componentContentVersionVOList = null;
+				if(pagePartTemplateContentType != null)
+					componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeId(new Integer[]{htmlTemplateContentType.getId(), pagePartTemplateContentType.getId()}, db);
+				else
+					componentContentVersionVOList = ContentControllerProxy.getController().getLatestContentVersionVOListByContentTypeId(new Integer[]{htmlTemplateContentType.getId()}, db);
+					
 				logger.warn("Getting componentContentVersionVOList " + componentContentVersionVOList.size() + " took: " + t.getElapsedTime());
 				
 				templatesAndPagePartMap = new HashMap<String,List<ContentVO>>();

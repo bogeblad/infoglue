@@ -39,14 +39,14 @@ public class PageDeliveryMetaDataEntityImpl implements PageDeliveryMetaDataEntit
 		return this.getPageDeliveryMetaDataEntityId();
 	}
 
+	public Integer getPageDeliveryMetaDataEntityId() 
+	{
+		return this.valueObject.getPageDeliveryMetaDataEntityId();
+	}
+
 	public void setPageDeliveryMetaDataEntityId(Integer pageDeliveryMetaDataEntityId) 
 	{
 		this.valueObject.setPageDeliveryMetaDataEntityId(pageDeliveryMetaDataEntityId);
-	}
-
-	public Integer getPageDeliveryMetaDataEntityId() 
-	{
-		return this.valueObject.getPageDeliveryMetaDataId();
 	}
 	
 	public Object getIdAsObject()

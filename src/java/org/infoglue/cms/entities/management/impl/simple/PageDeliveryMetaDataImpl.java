@@ -124,12 +124,12 @@ public class PageDeliveryMetaDataImpl implements PageDeliveryMetaData
         this.valueObject.setLastModifiedDateTime(lastModifiedDateTime);
     }
     
-    public java.lang.Integer getLastModifiedTimeout()
+    public java.util.Date getLastModifiedTimeout()
     {
         return this.valueObject.getLastModifiedTimeout();
     }
             
-    public void setLastModifiedTimeout(java.lang.Integer lastModifiedTimeout)
+    public void setLastModifiedTimeout(java.util.Date lastModifiedTimeout)
     {
         this.valueObject.setLastModifiedTimeout(lastModifiedTimeout);
     }

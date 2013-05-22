@@ -51,6 +51,8 @@ import org.infoglue.deliver.util.CacheController;
 
 public class DeliveryContext implements UsageListener
 {
+	private static final SimpleDateFormat HTTP_DATE_FORMAT = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH );
+
     private final static Logger logger = Logger.getLogger(DeliveryContext.class.getName());
 
 	public static final String META_INFO_BINDING_NAME 					= "Meta information";
@@ -698,8 +700,6 @@ public class DeliveryContext implements UsageListener
 	{
 		return lastModifiedDateTime;
 	}
-
-	private static final SimpleDateFormat HTTP_DATE_FORMAT = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH );
 
 	public void setLastModifiedDateTime(Date lastModifiedDateTime)
 	{

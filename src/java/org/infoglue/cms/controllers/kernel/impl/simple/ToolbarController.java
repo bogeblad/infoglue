@@ -805,12 +805,15 @@ public class ToolbarController implements ToolbarProvider
 		
 		if(contentVO.getIsProtected().intValue() == ContentVO.YES.intValue())
 		{
-			buttons.add(new ToolbarButton("",
-				  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentButtonLabel"), 
-				  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentButtonLabel"),
-				  "ViewAccessRights!V3.action?interceptionPointCategory=Content&extraParameters=" + contentVO.getId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "css/images/v3/accessRightIcon.gif",
-				  "accessRights"));
+			if(hasAccessTo(principal, "Common.ManageAccessRights", true) || !CmsPropertyHandler.getHideAccessRightsIfNotAllowedToManage())
+			{
+				buttons.add(new ToolbarButton("",
+					  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentButtonLabel"), 
+					  getLocalizedString(locale, "tool.common.accessRights.accessRightsContentButtonLabel"),
+					  "ViewAccessRights!V3.action?interceptionPointCategory=Content&extraParameters=" + contentVO.getId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+					  "css/images/v3/accessRightIcon.gif",
+					  "accessRights"));
+			}
 		}
 		
 		String contentPath = getContentIDPath(contentVO);
@@ -1152,12 +1155,15 @@ public class ToolbarController implements ToolbarProvider
 			ContentTypeDefinitionVO contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(contentVO.getContentTypeDefinitionId());
 			if(contentTypeDefinitionVO != null && (contentTypeDefinitionVO.getName().equalsIgnoreCase("HTMLTemplate") || contentTypeDefinitionVO.getName().equalsIgnoreCase("PageTemplate") || contentTypeDefinitionVO.getName().equalsIgnoreCase("PagePartTemplate")))
 			{
-				buttons.add(new ToolbarButton("",
-						  getLocalizedString(locale, "tool.contenttool.toolbarV3.componentAccessRightsLabel"), 
-						  getLocalizedString(locale, "tool.contenttool.toolbarV3.componentAccessRightsTitle"),
-						  "ViewAccessRights!V3.action?interceptionPointCategory=Component&extraParameters=" + contentId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-						  "",
-						  "componentAccessRights"));
+				if(hasAccessTo(principal, "Common.ManageAccessRights", true) || !CmsPropertyHandler.getHideAccessRightsIfNotAllowedToManage())
+				{
+					buttons.add(new ToolbarButton("",
+							  getLocalizedString(locale, "tool.contenttool.toolbarV3.componentAccessRightsLabel"), 
+							  getLocalizedString(locale, "tool.contenttool.toolbarV3.componentAccessRightsTitle"),
+							  "ViewAccessRights!V3.action?interceptionPointCategory=Component&extraParameters=" + contentId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+							  "",
+							  "componentAccessRights"));
+				}
 				
 				buttons.add(new ToolbarButton("",
 						  getLocalizedString(locale, "tool.contenttool.toolbarV3.deployComponentLabel"), 
@@ -1875,15 +1881,15 @@ public class ToolbarController implements ToolbarProvider
 		buttons.add(unpublishButton);
 		*/
 		
-		//if(siteNodeVersionVO.getIsProtected().intValue() == SiteNodeVersionVO.YES.intValue())
-		//{
+		if(hasAccessTo(principal, "Common.ManageAccessRights", true) || !CmsPropertyHandler.getHideAccessRightsIfNotAllowedToManage())
+		{
 			buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonLabel"), 
 				  getLocalizedString(locale, "tool.common.accessRights.accessRightsButtonTitle"),
 				  "ViewAccessRights!V3.action?interceptionPointCategory=SiteNodeVersion&extraParameters=" + siteNodeVersionVO.getId() + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 				  "css/images/v3/accessRightIcon.gif",
 				  "accessRights"));
-		//}
+		}
 
 		if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarAdvancedButtons", true))
 		{
@@ -2921,13 +2927,16 @@ public class ToolbarController implements ToolbarProvider
 				  "properties",
 				  "workIframe"));
 
-		buttons.add(new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.accessRights.header"), 
-				  getLocalizedString(locale, "tool.contenttool.accessRights.header"),
-				  "ViewAccessRights!V3.action?interceptionPointCategory=Repository&extraParameters=" + request.getParameter("repositoryId") + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "css/images/v3/accessRightIcon.gif",
-				  "accessRights",
-				  "inlineDiv"));
+		if(hasAccessTo(principal, "Common.ManageAccessRights", true) || !CmsPropertyHandler.getHideAccessRightsIfNotAllowedToManage())
+		{
+			buttons.add(new ToolbarButton("",
+					  getLocalizedString(locale, "tool.contenttool.accessRights.header"), 
+					  getLocalizedString(locale, "tool.contenttool.accessRights.header"),
+					  "ViewAccessRights!V3.action?interceptionPointCategory=Repository&extraParameters=" + request.getParameter("repositoryId") + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+					  "css/images/v3/accessRightIcon.gif",
+					  "accessRights",
+					  "inlineDiv"));
+		}
 		
 		buttons.add(new ToolbarButton("",
 				  getLocalizedString(locale, "tool.managementtool.repositoryLanguages.header"), 

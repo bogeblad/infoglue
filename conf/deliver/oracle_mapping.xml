@@ -1962,10 +1962,10 @@
 	      	<sql name="lastModifiedDateTime" type="timestamp" dirty="check" />
 	    </field>
 	    <field name="selectiveCacheUpdateNotApplicable" type="java.lang.Boolean">
-	      	<sql name="selectiveCacheUpdateNotApplicable" type="integer" dirty="check" />
+	      	<sql name="selectiveCacheUpdateNotAppl" type="integer" dirty="check" />
 	    </field>
-	    <field name="lastModifiedTimeout" type="java.lang.Integer">
-	      	<sql name="lastModifiedTimeout" type="integer" dirty="check" />
+	    <field name="lastModifiedTimeout" type="java.util.Date">
+	      	<sql name="lastModifiedTimeout" type="timestamp" dirty="check" />
 	    </field>
 	    <!--  
 	    <field name="usedEntities" type="java.lang.String">
@@ -1981,7 +1981,7 @@
     <class name="org.infoglue.cms.entities.management.impl.simple.PageDeliveryMetaDataEntityImpl" identity="pageDeliveryMetaDataEntityId" key-generator="SEQUENCE">
 		<description>PageDeliveryMetaDataEntity</description>
 	    <cache-type type="none"/>
-	    <map-to table="cmPageDeliveryMetaDataEntity"/>
+	    <map-to table="cmPageDeliveryMetaDataEnt"/>
 	    <field name="pageDeliveryMetaDataEntityId" type="java.lang.Integer">
 	      <sql name="pageDeliveryMetaDataEntityId" type="integer" dirty="check" />
 	    </field>

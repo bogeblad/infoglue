@@ -2279,8 +2279,8 @@
 	    <field name="selectiveCacheUpdateNotApplicable" type="java.lang.Boolean">
 	      	<sql name="selectiveCacheUpdateNotApplicable" type="integer" dirty="check" />
 	    </field>
-	    <field name="lastModifiedTimeout" type="java.lang.Integer">
-	      	<sql name="lastModifiedTimeout" type="integer" dirty="check" />
+	    <field name="lastModifiedTimeout" type="java.util.Date">
+	      	<sql name="lastModifiedTimeout" type="timestamp" dirty="check" />
 	    </field>
 	    <!--  
 	    <field name="usedEntities" type="java.lang.String">

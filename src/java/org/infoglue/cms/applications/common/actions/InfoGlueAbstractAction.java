@@ -909,7 +909,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	{
 		return CmsPropertyHandler.getUseSimpleComponentDialog();
 	}
-	
+
+	public Boolean getHideAccessRightsIfNotAllowedToManage()
+	{
+		return CmsPropertyHandler.getHideAccessRightsIfNotAllowedToManage();
+	}
+
 	public Boolean getOnlyAllowFolderType()
 	{
 		return CmsPropertyHandler.getOnlyAllowFolderType();

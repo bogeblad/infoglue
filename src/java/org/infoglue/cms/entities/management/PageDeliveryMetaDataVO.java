@@ -36,7 +36,7 @@ public class PageDeliveryMetaDataVO implements BaseEntityVO
 	private Integer contentId = -1;
 	private Date lastModifiedDateTime;
 	private Boolean selectiveCacheUpdateNotApplicable = false;
-	private Integer lastModifiedTimeout = -1;
+	private Date lastModifiedTimeout = null;
 	private String usedEntities;
 	
 	@Override
@@ -128,13 +128,13 @@ public class PageDeliveryMetaDataVO implements BaseEntityVO
 	/**
 	 * @return the lastModifiedTimeout
 	 */
-	public Integer getLastModifiedTimeout() {
+	public Date getLastModifiedTimeout() {
 		return lastModifiedTimeout;
 	}
 	/**
 	 * @param lastModifiedTimeout the lastModifiedTimeout to set
 	 */
-	public void setLastModifiedTimeout(Integer lastModifiedTimeout) {
+	public void setLastModifiedTimeout(Date lastModifiedTimeout) {
 		this.lastModifiedTimeout = lastModifiedTimeout;
 	}
 

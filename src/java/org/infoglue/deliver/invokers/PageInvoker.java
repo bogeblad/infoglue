@@ -236,15 +236,15 @@ public abstract class PageInvoker
 			    	logger.info("No page file name in memory cache:" + this.getDeliveryContext().getPageKey());
 			    cachedExtraData = (Map)CacheController.getCachedObjectFromAdvancedCache(pageCacheExtraName, this.getDeliveryContext().getPageKey(), pageCacheTimeout.intValue());
 
+			    this.getDeliveryContext().setPageCacheTimeout(pageCacheTimeout.intValue());
+			    
 			    if(this.pageString == null)
 			    {
 			    	invokePage();
 					this.pageString = getPageString();
 					
-					//TEST
 					getLastModifiedDateTime(false);
-					//END TEST
-
+					
 					pageString = decorateHeadAndPageWithVarsFromComponents(pageString);
 
 					this.getDeliveryContext().setPagePath(this.templateController.getCurrentPagePath());

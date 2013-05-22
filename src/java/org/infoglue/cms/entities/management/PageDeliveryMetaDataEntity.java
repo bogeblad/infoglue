@@ -35,9 +35,7 @@ public interface PageDeliveryMetaDataEntity extends IBaseEntity
     public void setValueObject(PageDeliveryMetaDataEntityVO valueObject);
     
     public java.lang.Integer getPageDeliveryMetaDataEntityId();
-
-    public java.lang.Integer getPageDeliveryMetaDataId();
-    public void setPageDeliveryMetaDataId(java.lang.Integer pageDeliveryMetaDataId);
+    public void setPageDeliveryMetaDataEntityId(java.lang.Integer pageDeliveryMetaDataEntityId);
 
     public java.lang.Integer getSiteNodeId();
     public void setSiteNodeId(java.lang.Integer siteNodeId);

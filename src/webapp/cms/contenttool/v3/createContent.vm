@@ -68,6 +68,7 @@
 					$ui.getString("tool.contenttool.newContent.contentType")<br/>
 					<select class="contenttypes" name="contentTypeDefinitionId">
 					#foreach ($contentTypeDefinitionVO in $contentTypeDefinitions)
+						<!-- $contentTypeDefinitionVO.name -->
 						#if($isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
 							<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
 						#elseif(!$isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())

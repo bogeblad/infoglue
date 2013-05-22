@@ -1305,7 +1305,22 @@ public class CmsPropertyHandler
 		
 		return useSimpleComponentDialog;
 	}
-	
+
+	public static Boolean getHideAccessRightsIfNotAllowedToManage()
+	{
+		boolean hideAccessRightsIfNotAllowedToManage = false;
+		try
+		{
+			hideAccessRightsIfNotAllowedToManage = Boolean.parseBoolean(getServerNodeProperty("hideAccessRightsIfNotAllowedToManage", true, "true"));
+		}
+		catch(Exception e)
+		{
+			logger.warn("Error parsing useSimpleComponentDialog:" + e.getMessage());
+		}
+		
+		return hideAccessRightsIfNotAllowedToManage;
+	}
+
 	public static Boolean getOnlyAllowFolderType()
 	{
 		boolean onlyAllowFolderType = true;

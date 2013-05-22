@@ -54,6 +54,7 @@ import org.infoglue.cms.entities.management.impl.simple.RepositoryLanguageImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
+import org.infoglue.cms.util.CmsPropertyHandler;
 import org.infoglue.cms.util.ConstraintExceptionBuffer;
 import org.infoglue.deliver.util.CacheController;
 
@@ -136,18 +137,46 @@ public class PageDeliveryMetaDataController extends BaseController
         return ent.getValueObject();
     }     
 
+	/**
+	 * This method removes a Language from the system and also cleans out all depending repositoryLanguages.
+	 */
+	
+    public PageDeliveryMetaDataVO create(PageDeliveryMetaDataVO pageDeliveryMetaDataVO, Collection<PageDeliveryMetaDataEntityVO> entitiesCollection) throws ConstraintException, SystemException, Exception
+    {
+    	PageDeliveryMetaDataVO result = null;
+    	
+		Database db = CastorDatabaseService.getDatabase();
+		
+		try
+		{
+			beginTransaction(db);
+
+			result = create(db, pageDeliveryMetaDataVO, entitiesCollection);
+			
+			commitTransaction(db);
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred so we should not complete the transaction:" + e, e);
+			rollbackTransaction(db);
+			throw new SystemException(e.getMessage());
+		}
+		
+		return result;
+    } 
+
     public PageDeliveryMetaDataVO create(Database db, PageDeliveryMetaDataVO pageDeliveryMetaDataVO, Collection<PageDeliveryMetaDataEntityVO> entitiesCollection) throws ConstraintException, SystemException, Exception
     {
     	PageDeliveryMetaData ent = new PageDeliveryMetaDataImpl();
         ent.setValueObject(pageDeliveryMetaDataVO);
-        db.create(ent);
+        ent = (PageDeliveryMetaData) createEntity(ent, db);
         
         for(PageDeliveryMetaDataEntityVO entity : entitiesCollection)
         {
         	PageDeliveryMetaDataEntity ent2 = new PageDeliveryMetaDataEntityImpl();
-        	ent2.setValueObject(entity);
         	ent2.setPageDeliveryMetaData(ent);
-            db.create(ent2);
+        	ent2.setValueObject(entity);
+        	ent2 = (PageDeliveryMetaDataEntity) createEntity(ent2, db);
         }
         ent.setEntities(entitiesCollection);
         
@@ -215,17 +244,19 @@ public class PageDeliveryMetaDataController extends BaseController
 				
 				PreparedStatement psmt = conn.prepareStatement(sql);
 	    		psmt.setInt(1, id);
-				System.out.println("id: " + id);
+				//System.out.println("id: " + id);
 	    		if(siteNodeId != null && contentId != null)
 	    		{
 	    			psmt.setInt(2, contentId);
-					System.out.println("contentId: " + contentId);
+					//System.out.println("contentId: " + contentId);
 	    		}
 	    		
 				int result = psmt.executeUpdate();
-				System.out.println("result:" + result);
+				//System.out.println("result:" + result);
 
 				String sql2 = "DELETE FROM cmPageDeliveryMetaDataEntity WHERE pageDeliveryMetaDataId NOT IN (select pageDeliveryMetaDataId from cmPageDeliveryMetaData)";
+				if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+					sql2 = "DELETE FROM cmPageDeliveryMetaDataEnt WHERE pageDeliveryMetaDataId NOT IN (select pageDeliveryMetaDataId from cmPageDeliveryMetaData)";
 				//System.out.println("sql2: " + sql2);
 				PreparedStatement psmt2 = conn.prepareStatement(sql2);
 				int result2 = psmt2.executeUpdate();
@@ -276,23 +307,31 @@ public class PageDeliveryMetaDataController extends BaseController
 		//System.out.println("siteNodeId:" + siteNodeId);
 		//System.out.println("contentId:" + contentId);
 		
+		String selectiveCacheUpdateNotApplicableColumnName = "selectiveCacheUpdateNotApplicable";
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+			selectiveCacheUpdateNotApplicableColumnName = "selectiveCacheUpdateNotAppl";
+
+		String entityTableName = "cmPageDeliveryMetaDataEntity";
+		if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+			entityTableName = "cmPageDeliveryMetaDataEnt";
+
 		try
 		{
 			String sql = null;
 			Integer id = null;
 			if(siteNodeId != null)
 			{
-				sql = "DELETE FROM cmPageDeliveryMetaData WHERE pageDeliveryMetaDataId IN (SELECT distinct pageDeliveryMetaDataId FROM cmPageDeliveryMetaDataEntity WHERE siteNodeId = ?)";
+				sql = "DELETE FROM cmPageDeliveryMetaData WHERE " + selectiveCacheUpdateNotApplicableColumnName + " = 1 OR pageDeliveryMetaDataId IN (SELECT distinct pageDeliveryMetaDataId FROM " + entityTableName + " WHERE siteNodeId = ?)";
 				id = siteNodeId;
 			}
 			if(siteNodeId == null && contentId != null)
 			{
-				sql = "DELETE FROM cmPageDeliveryMetaData WHERE pageDeliveryMetaDataId IN (SELECT distinct pageDeliveryMetaDataId FROM cmPageDeliveryMetaDataEntity WHERE contentId = ?)";
+				sql = "DELETE FROM cmPageDeliveryMetaData WHERE " + selectiveCacheUpdateNotApplicableColumnName + " = 1 OR  pageDeliveryMetaDataId IN (SELECT distinct pageDeliveryMetaDataId FROM " + entityTableName + " WHERE contentId = ?)";
 				id = contentId;
 			}
 			if(siteNodeId != null && contentId != null)
 			{
-				sql = "DELETE FROM cmPageDeliveryMetaData WHERE pageDeliveryMetaDataId IN (SELECT distinct pageDeliveryMetaDataId FROM cmPageDeliveryMetaDataEntity WHERE siteNodeId = ? AND contentId = ?)";
+				sql = "DELETE FROM cmPageDeliveryMetaData WHERE " + selectiveCacheUpdateNotApplicableColumnName + " = 1 OR pageDeliveryMetaDataId IN (SELECT distinct pageDeliveryMetaDataId FROM " + entityTableName + " WHERE siteNodeId = ? AND contentId = ?)";
 				id = siteNodeId;
 			}
 			//System.out.println("sql: " + sql);
@@ -313,6 +352,9 @@ public class PageDeliveryMetaDataController extends BaseController
 				//System.out.println("result:" + result);
 
 				String sql2 = "DELETE FROM cmPageDeliveryMetaDataEntity WHERE pageDeliveryMetaDataId NOT IN (select pageDeliveryMetaDataId from cmPageDeliveryMetaData)";
+				if(CmsPropertyHandler.getUseShortTableNames().equals("true"))
+					sql2 = "DELETE FROM cmPageDeliveryMetaDataEnt WHERE pageDeliveryMetaDataId NOT IN (select pageDeliveryMetaDataId from cmPageDeliveryMetaData)";
+
 				//System.out.println("sql2: " + sql2);
 				PreparedStatement psmt2 = conn.prepareStatement(sql2);
 				int result2 = psmt2.executeUpdate();

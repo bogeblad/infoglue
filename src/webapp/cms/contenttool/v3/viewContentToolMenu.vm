@@ -23,18 +23,25 @@
 			document.getElementById("itreeFrame").contentWindow.markSelected(myId);
 		}
 
-		function syncWithTree(path, repositoryId)
+		function syncWithTree(path, repositoryId, onlyTree)
 		{
 			try
 			{
     			//alert("AAA:" + path + " - " + repositoryId + ":" + currentRepositoryId + ":" + parent);
-    			//if(repositoryId && currentRepositoryId != repositoryId)
-    			//	parent.frames['header'].changeRepository(repositoryId, escape(path));
-   				frames['itreeFrame'].syncWithTree(path);
+    			var timeout = 500;
+    			if(repositoryId && currentRepositoryId != repositoryId)
+    			{
+    				parent.changeRepositoryInMenyById(repositoryId, path);
+    				timeout = 2000;
+   				}
+   				
+   				window.setTimeout(function () {
+	   				frames['itreeFrame'].syncWithTree(path);
+	   				}, timeout);
 			}
 			catch(er) 
 			{
-				//alert("Error syncWithTree:" + er);
+				alert("Error syncWithTree:" + er);
 			} 
 		}
 		

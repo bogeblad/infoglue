@@ -26,7 +26,9 @@ package org.infoglue.cms.applications.common.actions;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 
 /**
  * This class implements the action class for the framed page in the content tool.
@@ -47,6 +49,22 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(getInfoGluePrincipal(), false);
         
 		return "successRepositories";
+    }
+
+	public String doSiteNodeIdPath() throws Exception
+    {
+		String siteNodeIdPath = SiteNodeController.getController().getSiteNodeIdPath(new Integer(getRequest().getParameter("siteNodeId")));
+		this.getResponse().getWriter().print("" + siteNodeIdPath);
+		
+		return NONE;
+    }
+
+	public String doContentIdPath() throws Exception
+    {
+		String contentIdPath = ContentController.getContentController().getContentIdPath(new Integer(getRequest().getParameter("contentId")));
+		this.getResponse().getWriter().print("" + contentIdPath);
+		
+		return NONE;
     }
 
 	public String doExecute() throws Exception

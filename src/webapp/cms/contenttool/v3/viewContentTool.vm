@@ -47,6 +47,11 @@
 				$("#workIframe").get(0).contentWindow.refreshView(viewName);
 		}
 	
+		function syncWithTree(path, repositoryId)
+		{
+			$("#treeIframe").get(0).contentWindow.syncWithTree(path, repositoryId);
+		}
+		
 		function resize(isLoop)
 		{
 			var windowWidth = $(window).width();
@@ -137,6 +142,7 @@
 				if(url.indexOf("contentId") > -1)
 				{
 					var loadedContentId = getRequestParameter(url, "contentId");
+
 					document.getElementById("treeIframe").contentWindow.markSelected(loadedContentId);
 				}
 			});
@@ -148,6 +154,13 @@
 		{
 			document.location.href = "ViewContentTool!V3.action?repositoryId=" + selectBox.value;
 		}	
+		
+		function changeRepositoryInMenyById(repositoryId, path)
+		{
+			//alert(path);
+			$("#treeIframe").attr("src", "ViewContentToolMenu!V3.action?repositoryId=" + repositoryId + "&path=" + path);
+			$("#repositorySelect").val(repositoryId);
+		}
 						
 		var structureToolMenuUrl = "ViewStructureToolMenu!V3.action?repositoryId=";
 		var contentToolMenuUrl	 = "ViewContentToolMenu!V3.action?repositoryId=";

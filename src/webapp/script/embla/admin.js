@@ -259,9 +259,9 @@ function sendMessage()
 	});
 }
 
-function syncWithTree(path, repositoryId, targetFrame)
+function syncWithTree(path, repositoryId, targetFrame, onlyTree)
 {
-	document.getElementById(targetFrame).contentWindow.syncWithTree(path, repositoryId);
+	document.getElementById(targetFrame).contentWindow.syncWithTree(path, repositoryId, onlyTree);
 }
 
 /**

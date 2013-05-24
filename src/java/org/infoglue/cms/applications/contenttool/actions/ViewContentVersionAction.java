@@ -158,7 +158,8 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	//Set to true if version was a state change
 	private Boolean stateChanged = false;
-
+	private Boolean considerLatest = false;
+	
 	public String getQualifyerPath(String entity, String entityId)
 	{	
 		StringBuffer sb = new StringBuffer("");
@@ -640,6 +641,20 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 	public String doViewContentAssetsForFCKEditorV3() throws Exception
 	{
+		logger.info("considerLatest:" + considerLatest);
+
+		if(considerLatest && getContentVersionId() != null) 
+		{
+			ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(getContentVersionId());
+			if(cvVO != null)
+			{
+				logger.info("cvVO1:" + cvVO.getId());
+				cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(cvVO.getContentId(), cvVO.getLanguageId());
+				logger.info("cvVO2:" + cvVO.getId());
+				this.setContentVersionId(cvVO.getId());
+			}
+		}
+
 		if(getContentId() != null && getContentId().intValue() != -1)
 		{
 		    this.initialize(getContentVersionId(), getContentId(), this.languageId, true, false);
@@ -2067,6 +2082,16 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	public void setStateChanged(Boolean stateChanged)
 	{
 		this.stateChanged = stateChanged;
+	}
+
+	public Boolean getConsiderLatest() 
+	{
+		return considerLatest;
+	}
+
+	public void setConsiderLatest(Boolean considerLatest) 
+	{
+		this.considerLatest = considerLatest;
 	}
 
 }

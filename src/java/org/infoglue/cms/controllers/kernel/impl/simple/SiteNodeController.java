@@ -2465,6 +2465,24 @@ public class SiteNodeController extends BaseController
 		return protectedSiteNodeVersionId;
 	}
 
+	public String getSiteNodeIdPath(Integer siteNodeId) throws Exception
+	{
+		StringBuffer sb = new StringBuffer();
+		
+		SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId);
+		sb.insert(0, siteNodeVO.getId());
+		while(siteNodeVO != null && siteNodeVO.getParentSiteNodeId() != null)
+		{
+			sb.insert(0, siteNodeVO.getParentSiteNodeId() + ",");
+			if(siteNodeVO.getParentSiteNodeId() != null)
+				siteNodeVO = getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId());
+			else
+				siteNodeVO = null;
+		}
+			
+		return sb.toString();
+	}
+	
 	public String getSiteNodePath(Integer siteNodeId, Database db) throws Exception
 	{
 		StringBuffer sb = new StringBuffer();

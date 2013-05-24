@@ -105,8 +105,14 @@
 			else
 			{
 				parentNode.expand();
-				var addedNode = tree.getNodeWithMyId(contentId);
-				addedNode.select();
+				//alert("contentId: [" + contentId.trim() + "]");
+				//alert("parentNode: " + parentNode);
+				var addedNode = tree.getNodeWithMyId(contentId.trim());
+				if(addedNode)
+				{
+					//alert("addedNode:" + addedNode);
+					addedNode.select();
+				}
 			}
 		}
 		
@@ -131,35 +137,26 @@
 		function syncWithTree(path)
 		{
 			//alert('path:' + path);
-			#if($treeMode == "classic")
-			var pathArr = path.split(',');
-			// var exp = "$exp";
-			var exp = "";
-			for(i=0;i<pathArr.length;i++)
-			{
-				exp = exp + "/" + pathArr[i] + "/";
-			}
-			document.location.href="ViewContentHtmlTree.action?exp=" + exp + "&repositoryId=${repositoryId}&select=" + pathArr[pathArr.length-1];
-			#else
 			var pathArr = path.split(',');
 			syncWithTreeRec(pathArr, 0);
-			#end			
 		}
 		
 		function syncWithTreeRec(pathArr, level)
 		{
 			if(pathArr.length <= 2)
 			{
-				var node = tree.getNodeWithMyId(pathArr[0]);
-				var id = pathArr[pathArr.length -1];
+				//alert("pathArr[" + pathArr[0].trim() + "]");
+				var node = tree.getNodeWithMyId(pathArr[0].trim());
+				var id = pathArr[pathArr.length -1].trim();
 				selectWhenLoaded(node, id);
 				return;
 			}
 		
 			if(level >= pathArr.length -1) 
 			{
-				var node = tree.getNodeWithMyId(pathArr[pathArr.length -2]);
-				var id = pathArr[pathArr.length-1];
+				//alert("pathArr[" + pathArr[pathArr.length -2].trim() + "]");
+				var node = tree.getNodeWithMyId(pathArr[pathArr.length -2].trim());
+				var id = pathArr[pathArr.length-1].trim();
 				selectWhenLoaded(node, id);
 				return;
 			}
@@ -271,7 +268,7 @@
 		}
 		
 		function onloadFn()
-		{
+		{			
 			if (parent)
 			{
 				if (parent.notifyIsLoaded)

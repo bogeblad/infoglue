@@ -72,14 +72,18 @@
 						#if($isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
 							<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
 						#elseif(!$isBranch && $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName())
-							## DO NOTHING
+							<!-- this is filtered out as: $isBranch and $defaultFolderContentTypeName == $contentTypeDefinitionVO.getName() -->
 						#else
 							#if(!$isBranch && $contentTypeDefinitionVO.getName() == "Folder")
-								## DO NOTHING
+								<!-- this is filtered out as: $isBranch and $contentTypeDefinitionVO.getName() == "Folder" -->
 							#elseif($defaultContentTypeName == $contentTypeDefinitionVO.getName())
 								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()" selected="1">$contentTypeDefinitionVO.getName()</option>
 							#elseif(!$allowedContentTypeNames || $allowedContentTypeNames.indexOf("$contentTypeDefinitionVO.getName(),") > -1)
 								<option value="$contentTypeDefinitionVO.getContentTypeDefinitionId()">$contentTypeDefinitionVO.getName()</option>
+							#else
+								<!-- $contentTypeDefinitionVO.getName() -->
+								<!-- $allowedContentTypeNames -->
+								<!-- $allowedContentTypeNames.indexOf("$contentTypeDefinitionVO.getName(),") -->
 							#end
 						#end
 					#end

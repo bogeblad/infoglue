@@ -210,7 +210,8 @@ public class ContentNodeSupplier extends BaseNodeSupplier
 		while(i.hasNext())
 		{
 			ContentVO vo = (ContentVO) i.next();
-			
+			System.out.println(" " + vo.getName() + ":" + vo.getChildCount());
+
 			boolean hasUserContentAccess = true;
 			String useAccessRightsOnContentTreeString = CmsPropertyHandler.getUseAccessRightsOnContentTree();
 			if(useAccessRightsOnContentTreeString != null && useAccessRightsOnContentTreeString.equalsIgnoreCase("true"))

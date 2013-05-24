@@ -23,8 +23,11 @@
 
 package org.infoglue.cms.applications.structuretool.actions;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.contenttool.actions.ViewContentVersionAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -37,6 +40,8 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 public class ViewStructureToolMenuAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = 1L;
+
+    private final static Logger logger = Logger.getLogger(ViewStructureToolMenuAction.class.getName());
 
     private Integer repositoryId;
     private String tree;
@@ -93,6 +98,21 @@ public class ViewStructureToolMenuAction extends InfoGlueAbstractAction
 	public LanguageVO getMasterLanguageVO() throws Exception
 	{
 	    return LanguageController.getController().getMasterLanguage(repositoryId);
+	}
+
+	public String getFullPath()
+	{
+		String fullPath = path;
+		try
+		{
+			if(path != null && !path.equals(""))
+				fullPath = SiteNodeController.getController().getSiteNodeIdPath(new Integer(path));
+		}
+		catch (Exception e) 
+		{
+			logger.info("Error:" + e.getMessage(), e);
+		}
+		return fullPath;
 	}
 
 	public String getPath()

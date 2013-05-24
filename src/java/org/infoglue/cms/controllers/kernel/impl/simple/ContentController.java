@@ -2790,6 +2790,24 @@ public class ContentController extends BaseController
 		return new ContentVO();
 	}
 	
+	
+	public String getContentIdPath(Integer contentId) throws Exception
+	{
+		StringBuffer sb = new StringBuffer();
+		
+		ContentVO contentVO = getContentVOWithId(contentId);
+		sb.insert(0, contentVO.getId());
+		while(contentVO != null && contentVO.getParentContentId() != null)
+		{
+			sb.insert(0, contentVO.getParentContentId() + ",");
+			if(contentVO.getParentContentId() != null)
+				contentVO = getContentVOWithId(contentVO.getParentContentId());
+			else
+				contentVO = null;
+		}
+			
+		return sb.toString();
+	}
 	 
 	/**
 	 * Returns the path to, and including, the supplied content.

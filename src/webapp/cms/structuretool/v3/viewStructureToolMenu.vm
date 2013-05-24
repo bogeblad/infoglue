@@ -35,12 +35,16 @@
 		}
 		*/
 		
-		function syncWithTree(path, repositoryId)
+		function syncWithTree(path, repositoryId, onlyTree)
 		{
+			console.log("Path:" + path + ":" + onlyTree);
 			var timeout = 500;
 			if(repositoryId && currentRepositoryId != repositoryId)
 			{
-				parent.changeRepositoryById(repositoryId);
+				if(onlyTree)
+					parent.changeRepositoryInMenyById(repositoryId, path);
+				else
+					parent.changeRepositoryById(repositoryId);
 				//parent.changeRepository(repositoryId, escape(path));
 				timeout = 2000;
 			}
@@ -124,9 +128,10 @@
 		}
 		
 		$(document).ready(function(){
-			##alert("$!path");
+			//alert("$!path / $!fullPath");
 			#if($path && $path != "")
-				syncWithTree("$!path", currentRepositoryId);
+				//syncWithTree("$!path", currentRepositoryId);
+				syncWithTree("$!fullPath", currentRepositoryId);
  			##else
 			##	openUrlInWorkArea("ViewStructureToolStartPage!V3.action?repositoryId=$repositoryId", '');
 			#end

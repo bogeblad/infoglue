@@ -147,7 +147,11 @@
 							var loadedSiteNodeId = getRequestParameter(url, "siteNodeId");
 							//alert("loadedSiteNodeId:" + loadedSiteNodeId + ":" + currentRepositoryId);
 							refreshTopToolBar('tool.structuretool.siteNodeComponentsHeader', 'tool.structuretool.siteNodeComponentsHeader', 'siteNodeId=' + loadedSiteNodeId, -1, -1, -1);
-							syncWithTree(loadedSiteNodeId, currentRepositoryId, "treeIframe");
+							//syncWithTree(loadedSiteNodeId, currentRepositoryId, "treeIframe", true);
+							jQuery.get("ViewCommonAjaxServices!siteNodeIdPath.action?siteNodeId=" + loadedSiteNodeId, function(data) {
+								//alert('Path:' + data);
+								syncWithTree(data, currentRepositoryId, "treeIframe", true);
+							});
 							
 							var stateChanged = getRequestParameter(url, "stateChanged");
 							//alert(loadedSiteNodeId + ":" + stateChanged);
@@ -193,6 +197,17 @@
 		function changeRepositoryById(repositoryId)
 		{
 			document.location.href = "ViewStructureTool!V3.action?repositoryId=" + repositoryId;
+		}	
+
+		function changeRepositoryInMenyById(repositoryId, path)
+		{
+			//alert(path);
+			$("#treeIframe").attr("src", "ViewStructureToolMenu!V3.action?repositoryId=" + repositoryId + "&path=" + path);
+			$("#repositorySelect").val(repositoryId);
+			setTimeout(function () {
+				//alert(path);
+				frames['itreeFrame'].syncWithTree(path);
+				}, 1000);
 		}	
 		
 		function toggleFavourites()

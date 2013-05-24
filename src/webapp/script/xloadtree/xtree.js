@@ -413,7 +413,7 @@ WebFXTreeAbstractNode.prototype.getNodeWithId = function(id) {
 	return null;
 }
 WebFXTreeAbstractNode.prototype.getNodeWithMyId = function(id) {
-	// alert("this.myId=" + this.myId + " searching for: " + id);
+	 //alert("this.myId=" + this.myId + " searching for: " + id);
 	if (id == this.myId) return this;
 	for (var i = 0; i < this.childNodes.length; i++) {
 		var theNode = this.childNodes[i].getNodeWithMyId(id);

@@ -300,24 +300,30 @@
 
 		function refreshAll()
 		{
-			//alert("document.location:" + document.location.href);
-			document.location.reload(true);
+			//alert("document.location:" + document.location.href + "&anchor=" + selectedBlock);
+			document.location.href = document.location.href + "&anchor=" + selectedBlock;
+			//document.location.reload(true);
 		}
 
 		function refreshView(viewName)
 		{
-			//alert("viewName:" + viewName);
 			if(viewName == "contentVersionAssets")
 			{
 				loadFrame("contentVersionAssetsDiv");
-				$("#tabsContainer").tabs("select", 2);
+				//$("#tabsContainer").tabs("select", 2);
 				//$("#tabsContainer").tabs("load", 2)
 			}
 		}
 		
+		var selectedBlock = "";
 		function loadFrame(tabHref)
 		{
-			var assetSrcUrl 						= "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentVersionId=$!contentVersionId&assetTypeFilter=.*";
+			//alert("tabHref:" + tabHref);
+			#if($readonly == "disabled")
+				var assetSrcUrl 						= "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentVersionId=$!contentVersionId&assetTypeFilter=.*";
+			#else
+				var assetSrcUrl 						= "ViewContentVersion!viewContentAssetsForFCKEditorV3.action?contentVersionId=$!contentVersionId&considerLatest=true&assetTypeFilter=.*";
+			#end
 			var contentCoverSrcUrl 					= "ViewContent!V3.action?contentId=$!contentId&stay=true&inline=true";
 			var contentHistorySrcUrl 				= "ViewContentVersionHistory!V3.action?contentId=$!contentId&inline=true";
 			var contentReferencesSrcUrl 			= "ViewContentReferences.action?contentId=$!contentId";
@@ -325,8 +331,10 @@
 			var contentVersionAccessRightsSrcUrl 	= "ViewAccessRights!V3.action?interceptionPointCategory=ContentVersion&extraParameters=$!contentVersionId&showInline=true";
 			//alert("tabHref:" + tabHref);
 			$("input.compare").hide();
+			selectedBlock = "";
 			if(tabHref.indexOf("contentVersionAssetsDiv") > -1) 
 			{
+				selectedBlock = "digitalAssetsBlock";
 				$("#contentVersionAssetsFrame").attr("src", assetSrcUrl);
 			}
 			else if(tabHref.indexOf("contentCoverDiv") > -1) 
@@ -362,6 +370,7 @@
 			$("input.compare").hide();
 			$("input.attachAsset").hide();
 			
+			//alert("$anchor");
 			#if($anchor)
 		    	#if($!anchor == "contentVersionBlock")
 			    	$("#tabsContainer").tabs({ selected: 0, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
@@ -369,7 +378,8 @@
 			    	$("#tabsContainer").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    #elseif($!anchor == "digitalAssetsBlock")
 			    	$("#tabsContainer").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
-			    	loadFrame("#");
+			    	loadFrame("contentVersionAssetsDiv");
+			    	##loadFrame("#");
 			    #else 
 		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
 						if(ui.tab.href.indexOf("contentVersionAssetsDiv") > -1) 
@@ -430,6 +440,16 @@
 		    });
 						
 			$("#editForm").submit(function () { return false; });			
+			
+			try
+			{
+				jQuery.get("ViewCommonAjaxServices!contentIdPath.action?contentId=$contentId", function(data) {
+					//alert("Path:" + data + " aaa $contentVO.repositoryId");
+					parent.syncWithTree(data, $contentVO.repositoryId);
+				});
+			}
+			catch(e) {console.log("e:" + e);}
+			
 	  	});
 	  	
 

@@ -98,8 +98,9 @@
 					alert("You have switched to a working version - we must reload the dialog.");
 					//alert("parent.location.href:" + parent.location.href + ":" + parentContentVersionId + "=" + contentVersionId);
 					//alert("parent.location.href:" + document.location.href + ":" + parentContentVersionId + "=" + contentVersionId);
-					parent.location.reload(true);
-					parent.loadFrame(2);
+					parent.location.href = parent.location.href + "&anchor=digitalAssetsBlock";
+					//parent.location.reload(true);
+					//parent.loadFrame("contentVersionAssetsDiv");
 					/*
 					if(parent.location.href.indexOf("contentVersionId") > -1)
 					{
@@ -110,7 +111,6 @@
 					}
 					*/
 				}
-				
 			}
 		});
 	-->

@@ -13,6 +13,7 @@
 		if(viewName == "contentVersionAssets")
 		{	
 			$("#contentVersionAssetsFrame").get(0).contentWindow.location.reload(true);
+			$('#TB_window,#TB_overlay,#TB_HideSelect').unbind().remove();
 		}
 	}
 	

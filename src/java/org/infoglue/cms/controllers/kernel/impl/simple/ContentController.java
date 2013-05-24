@@ -2804,6 +2804,15 @@ public class ContentController extends BaseController
 		return getContentPath(contentId, false, false);
     }
 
+	/**
+	 * Calls {@link #getContentPath(Integer, boolean, boolean, Database)} with <em>includeRootContent</em> and <em>includeRepositoryName</em> set
+	 * to false.
+	 */
+	public String getContentPath(Integer contentId, Database db) throws ConstraintException, SystemException, Bug, Exception
+	{
+		return getContentPath(contentId, false, false, db);
+	}
+
 
 	/**
 	 * Returns the path to, and including, the supplied content.
@@ -2815,30 +2824,25 @@ public class ContentController extends BaseController
 	 */
 	public String getContentPath(Integer contentId, boolean includeRootContent, boolean includeRepositoryName) throws ConstraintException, SystemException, Bug, Exception
 	{
-		StringBuffer sb = new StringBuffer();
+		String contentPath = null;
+		Database db = null;
 
-		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
-
-		sb.insert(0, contentVO.getName());
-
-		while (contentVO.getParentContentId() != null)
+		try
 		{
-			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId());
-
-			if (includeRootContent || contentVO.getParentContentId() != null)
-			{
-				sb.insert(0, contentVO.getName() + "/");
-			}
+			db = CastorDatabaseService.getDatabase();
+			beginTransaction(db);
+			contentPath = getContentPath(contentId, includeRootContent, includeRepositoryName, db);
+			commitTransaction(db);
+		}
+		catch(Exception e)
+		{
+			logger.error("An error occurred when computing the content path so we should not complete the transaction. Message: " + e.getMessage());
+			logger.warn("An error occurred when computing the content path so we should not complete the transaction.", e);
+			rollbackTransaction(db);
+			throw new SystemException("An error occurred when computing the content path");
 		}
 
-		if (includeRepositoryName)
-		{
-			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(contentVO.getRepositoryId());
-			if(repositoryVO != null)
-				sb.insert(0, repositoryVO.getName() + " - /");
-		}
-		
-		return sb.toString();
+		return contentPath;
 	}
 	
 	/**

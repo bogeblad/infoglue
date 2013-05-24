@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -119,7 +118,7 @@ public class RegistryController extends BaseController
 	public RegistryVO getRegistryVOWithId(Integer registryId, Database db) throws SystemException, Exception
 	{
 		RegistryVO registryVO = (RegistryVO)getVOWithId(RegistryImpl.class, registryId, db);
-		
+
 		return registryVO;
 	}
 
@@ -388,62 +387,7 @@ public class RegistryController extends BaseController
     	}
     	return references;
     }
-    
-    
-    
 
-//	public List<ReferenceBean> deleteAllAndGetContactPersonsForSiteNode(Integer siteNodeId) throws SystemException, Exception
-//	{
-//		return deleteAllAndGetContactPersonsForSiteNode(siteNodeId, false);
-//	}
-//
-//	public List<ReferenceBean> deleteAllAndGetContactPersonsForSiteNode(Integer siteNodeId, Database db) throws SystemException, Exception
-//	{
-//		return deleteAllAndGetContactPersonsForSiteNode(siteNodeId, false, db);
-//	}
-//
-//	public List<ReferenceBean> deleteAllAndGetContactPersonsForSiteNode(Integer siteNodeId, boolean onlyLatest) throws SystemException, Exception
-//	{
-//		Database db = CastorDatabaseService.getDatabase();
-//		List<ReferenceBean> contactPersons = new LinkedList<ReferenceBean>();
-//		try
-//		{
-//			beginTransaction(db);
-//
-//		    deleteAllAndGetContactPersonsForSiteNode(siteNodeId, onlyLatest, db);
-//
-//		    commitTransaction(db);
-//		}
-//		catch (Exception ex)
-//		{
-//			logger.error("Failed to delete SiteNode with all its references. Message: " + ex.getMessage() + ". Type: " + ex.getClass());
-//		    logger.warn("Failed to delete SiteNode with all its references.", ex);
-//		    rollbackTransaction(db);
-//		}
-//		return contactPersons;
-//    }
-//
-//	public List<ReferenceBean> deleteAllAndGetContactPersonsForSiteNode(Integer siteNodeId, boolean onlyLatest, Database db) throws SystemException, Exception
-//	{
-//		@SuppressWarnings("unchecked")
-//		List<RegistryVO> registryEntires = getMatchingRegistryVOList(SiteNode.class.getName(), siteNodeId.toString(), -1, db);
-//		Map<String, ReferenceBean> entries = new HashMap<String, ReferenceBean>();
-//		List<ReferenceBean> references = new ArrayList<ReferenceBean>();
-//		for (RegistryVO registryVO : registryEntires)
-//		{
-//			if (logger.isInfoEnabled())
-//			{
-//				logger.info("About to remove registry bean and notify. Referencing-type: " + registryVO.getReferencingEntityName() + ", referencing-id: " + registryVO.getReferencingEntityId());
-//			}
-//			ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, onlyLatest, db);
-//			if (referenceBean != null)
-//			{
-//				references.add(referenceBean);
-//			}
-//			delete(registryVO.getRegistryId(), db);
-//		}
-//		return references;
-//	}
 
 	/**
 	 * this method goes through all inline stuff and all relations if ordinary content 
@@ -1969,45 +1913,18 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 
-    protected String getContentPath(ContentVO contentVO, Database db) throws Exception
-    {
-    	return getContentPath(contentVO, "/", db);
-    }
-
-    protected String getContentPath(ContentVO contentVO, String seperator, Database db) throws Exception
-    {
-    	StringBuilder sb = new StringBuilder();
-
-    	while(contentVO != null)
-    	{
-    		sb.insert(0, seperator + contentVO.getName());
-    		if(contentVO.getParentContentId() != null)
-    		{
-    			contentVO = ContentController.getContentController().getContentVOWithId(contentVO.getParentContentId(), db);
-    		}
-    		else
-    		{
-    			contentVO = null;
-    		}
-    	}
-
-    	return sb.toString();
-    }
-
     private ReferenceBean getReferenceBeanFromRegistryVO(RegistryVO registryVO, Map<String, ReferenceBean> entries, boolean onlyLatestVersion, Database db)
     {
     	ReferenceBean result = null;
     	boolean add = true;
 
         String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
-        //String key = "" + registryVO.getReferencingEntityName() + "_" + registryVO.getReferencingEntityId();
         ReferenceBean existingReferenceBean = (ReferenceBean)entries.get(key);
         if(existingReferenceBean == null)
         {
             existingReferenceBean = new ReferenceBean();
             logger.info("Adding referenceBean to entries with key:" + key);
             entries.put(key, existingReferenceBean);
-//            referenceBeanList.add(existingReferenceBean);
             result = existingReferenceBean;
         }
         else if (logger.isDebugEnabled())
@@ -2022,109 +1939,139 @@ public class RegistryController extends BaseController
             try
             {
 				logger.debug("RegistryVO references Content");
-				ContentVersionVO contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
-				if (!contentVersion.getIsActive())
+				ContentVersionVO contentVersion = null;
+				try
+				{
+					contentVersion = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+				}
+				catch(Exception ex)
 				{
 					add = false;
-					logger.debug("ContentVersion was not active. Will not add to reference list. ContentVersion.id: " + contentVersion.getContentVersionId());
+					result = null;
+					logger.info("content:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
 				}
-				else
+				if (contentVersion != null)
 				{
-					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), db);
-					if (contentVO.getIsDeleted())
+					if (!contentVersion.getIsActive())
 					{
 						add = false;
-						logger.debug("Content is deleted. Will not add to reference list. Content.id: " + contentVO.getContentId());
+						logger.debug("ContentVersion was not active. Will not add to reference list. ContentVersion.id: " + contentVersion.getContentVersionId());
 					}
 					else
 					{
-						if (onlyLatestVersion)
-		                {
-		                	ContentVersionVO latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVersion.getContentId(), contentVersion.getLanguageId(), ContentVersionVO.WORKING_STATE, db);
+						ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentVersion.getContentId(), db);
+						if (contentVO.getIsDeleted())
+						{
+							add = false;
+							logger.debug("Content is deleted. Will not add to reference list. Content.id: " + contentVO.getContentId());
+						}
+						else
+						{
+							if (onlyLatestVersion)
+							{
+								ContentVersionVO latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVersion.getContentId(), contentVersion.getLanguageId(), ContentVersionVO.WORKING_STATE, db);
 
-		                	if (logger.isDebugEnabled())
-		                	{
-		                		logger.debug("Latest version in working state for content.id: " + contentVersion.getContentId() + ". latestContentVersion.id: " + (latestContentVersion == null ? "null" : latestContentVersion.getContentVersionId()));
-		                	}
+								if (logger.isDebugEnabled())
+								{
+									logger.debug("Latest version in working state for content.id: " + contentVersion.getContentId() + ". latestContentVersion.id: " + (latestContentVersion == null ? "null" : latestContentVersion.getContentVersionId()));
+								}
 
-		                	if (latestContentVersion != null && latestContentVersion.getContentVersionId().intValue() != contentVersion.getContentVersionId().intValue())
-		                	{
-		                		logger.debug("ContentVersion was not latest version. Will not add. ContentVersion-Id: " + contentVersion.getId());
-								add = false;
-		                	}
-		                }
-		                if (add)
-		                {
-				    		existingReferenceBean.setName(contentVO.getName());
-				    		existingReferenceBean.setPath(getContentPath(contentVO, db));
-				    		existingReferenceBean.setReferencingCompletingObject(contentVO);
+								if (latestContentVersion != null && latestContentVersion.getContentVersionId().intValue() != contentVersion.getContentVersionId().intValue())
+								{
+									logger.debug("ContentVersion was not latest version. Will not add. ContentVersion-Id: " + contentVersion.getId());
+									add = false;
+								}
+							}
+			                if (add)
+			                {
+								existingReferenceBean.setName(contentVO.getName());
+								existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVO.getContentId(), true, true, db));
+								existingReferenceBean.setReferencingCompletingObject(contentVO);
 
-				    		String contactPersonEmail = getContactPersonEmail(contentVO, db);
-				    		existingReferenceBean.setContactPersonEmail(contactPersonEmail);
+								String contactPersonEmail = getContactPersonEmail(contentVO, db);
+								existingReferenceBean.setContactPersonEmail(contactPersonEmail);
 
-				    		referenceVersionBean.setReferencingObject(contentVersion);
-				    		referenceVersionBean.getRegistryVOList().add(registryVO);
-		                }
+								referenceVersionBean.setReferencingObject(contentVersion);
+								referenceVersionBean.getRegistryVOList().add(registryVO);
+			                }
+						}
 					}
 				}
-            }
-            catch(Exception e)
-            {
-                add = false;
-                logger.info("content:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
-            }
-        }
-        else
-        {
-            try
-            {
-            	logger.debug("RegistryVO references SiteNode");
-				SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
-				if (!siteNodeVersion.getIsActive())
+			}
+			catch(Exception ex)
+			{
+				add = false;
+				result = null;
+				logger.error("Error when creating reference bean from Registry entry for Content. Message: " + ex.getMessage() + ". Class: " + ex.getClass());
+				logger.warn("Error when creating reference bean from Registry entry for Content.", ex);
+			}
+		}
+		else
+		{
+			try
+			{
+				logger.debug("RegistryVO references SiteNode");
+				SiteNodeVersionVO siteNodeVersion = null;
+				try
+                {
+					siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+                }
+				catch (Exception ex)
 				{
 					add = false;
-					logger.debug("SiteNodeVersion was not active. Will not add to reference list. SiteNodeVersion.id: " + siteNodeVersion.getSiteNodeVersionId());
+					result = null;
+					logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
 				}
-				else
+				if (siteNodeVersion != null)
 				{
-					SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
-					if (siteNodeVO.getIsDeleted())
+					if (!siteNodeVersion.getIsActive())
 					{
 						add = false;
-						logger.debug("SiteNode is deleted. Will not add to reference list. Content.id: " + siteNodeVO.getSiteNodeId());
+						logger.debug("SiteNodeVersion was not active. Will not add to reference list. SiteNodeVersion.id: " + siteNodeVersion.getSiteNodeVersionId());
 					}
 					else
 					{
-		            	if (onlyLatestVersion)
-		            	{
-		            		SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVersion.getSiteNodeId(), SiteNodeVersionVO.WORKING_STATE);
-		            		if (latestSiteNodeVersion != null && latestSiteNodeVersion.getSiteNodeVersionId() != siteNodeVersion.getSiteNodeVersionId())
-		                	{
-		                		logger.debug("ContentVersion was not latest version. Will not add. ContentVersion-Id: " + siteNodeVersion.getId());
-								add = false;
-		                	}
-		            	}
-	
-		            	if (add)
-		            	{
-				    		existingReferenceBean.setName(siteNodeVO.getName());
-				    		existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVO, db));
-				    		existingReferenceBean.setReferencingCompletingObject(siteNodeVO);
-				    		referenceVersionBean.setReferencingObject(siteNodeVersion);
-	
-				    		String contactPersonEmail = getContactPersonEmail(siteNodeVO, db);
-				    		existingReferenceBean.setContactPersonEmail(contactPersonEmail);
-	
-				    		referenceVersionBean.getRegistryVOList().add(registryVO);
-		            	}
+						SiteNodeVO siteNodeVO = SiteNodeController.getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
+						if (siteNodeVO.getIsDeleted())
+						{
+							add = false;
+							logger.debug("SiteNode is deleted. Will not add to reference list. Content.id: " + siteNodeVO.getSiteNodeId());
+						}
+						else
+						{
+							if (onlyLatestVersion)
+							{
+								SiteNodeVersionVO latestSiteNodeVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(db, siteNodeVersion.getSiteNodeId(), SiteNodeVersionVO.WORKING_STATE);
+								if (latestSiteNodeVersion != null && latestSiteNodeVersion.getSiteNodeVersionId() != siteNodeVersion.getSiteNodeVersionId())
+								{
+									logger.debug("ContentVersion was not latest version. Will not add. ContentVersion-Id: " + siteNodeVersion.getId());
+									add = false;
+								}
+							}
+
+							if (add)
+							{
+								existingReferenceBean.setName(siteNodeVO.getName());
+								existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVO, true, true, db));
+								existingReferenceBean.setReferencingCompletingObject(siteNodeVO);
+								referenceVersionBean.setReferencingObject(siteNodeVersion);
+
+								String contactPersonEmail = getContactPersonEmail(siteNodeVO, db);
+								existingReferenceBean.setContactPersonEmail(contactPersonEmail);
+
+								referenceVersionBean.getRegistryVOList().add(registryVO);
+							}
+						}
 					}
 				}
-            }
-            catch(Exception e)
-            {
-                add = false;
-                logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
-            }
+			}
+			catch(Exception ex)
+			{
+				add = false;
+				result = null;
+				logger.error("Error when creating reference bean from Registry entry for SiteNode. Message: " + ex.getMessage() + ". Class: " + ex.getClass());
+				logger.warn("Error when creating reference bean from Registry entry for SiteNode.", ex);
+			}
         }
 
         if(add)

@@ -56,7 +56,7 @@
 								#set($lastIndex = $referenceBean.versions.size() - 1)
 								<tr>
 									<td>
-										<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$this.getContentPath($referenceBean.referencingCompletingObject.contentId)</a>
+										<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.getPath()</a>
 					 				</td>
 					 				<td>
 					 					$referenceBean.versions.get($lastIndex).registryVOList.size()
@@ -115,7 +115,7 @@
 								#set($lastIndex = $referenceBean.versions.size() - 1)
 								<tr>
 									<td>
-										<a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)</a>
+										<a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$referenceBean.getPath()</a>
 					 				</td>
 					 				<td>
 										$referenceBean.versions.get($lastIndex).registryVOList.size()

@@ -77,6 +77,7 @@ import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.Registry;
 import org.infoglue.cms.entities.management.RegistryVO;
 import org.infoglue.cms.entities.management.Repository;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.ServiceDefinition;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
@@ -2485,18 +2486,46 @@ public class SiteNodeController extends BaseController
 	
 	public String getSiteNodePath(Integer siteNodeId, Database db) throws Exception
 	{
-		StringBuffer sb = new StringBuffer();
-		
+		return getSiteNodePath(siteNodeId, true, false, db);
+	}
+
+	public String getSiteNodePath(Integer siteNodeId, boolean includeRootSiteNode, boolean includeRepositoryName, Database db) throws Exception
+	{
 		SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId, db);
+		if (siteNodeVO != null)
+		{
+			return getSiteNodePath(siteNodeVO, includeRootSiteNode, includeRepositoryName, db);
+		}
+		else
+		{
+			logger.warn("Tried to compute path for SiteNode but did not find the SiteNode. SiteNode.id: " + siteNodeId);
+			return "";
+		}
+	}
+
+	public String getSiteNodePath(SiteNodeVO siteNodeVO, boolean includeRootSiteNode, boolean includeRepositoryName, Database db) throws Exception
+	{
+		StringBuffer sb = new StringBuffer();
+
+		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(siteNodeVO.getRepositoryId(), db);
 		while(siteNodeVO != null)
 		{
-			sb.insert(0, "/" + siteNodeVO.getName());
+			if (includeRootSiteNode || siteNodeVO.getParentSiteNodeId() != null)
+			{
+				sb.insert(0, "/" + siteNodeVO.getName());
+			}
 			if(siteNodeVO.getParentSiteNodeId() != null)
 				siteNodeVO = getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
 			else
 				siteNodeVO = null;
 		}
-			
+
+		if (includeRepositoryName)
+		{
+			if(repositoryVO != null)
+				sb.insert(0, repositoryVO.getName() + " - ");
+		}
+
 		return sb.toString();
 	}
 
@@ -4033,18 +4062,22 @@ public class SiteNodeController extends BaseController
 	    		{
 					mailContent.append("<li>");
 					// Putting a-tags around each entry will prevent email clients from trying to linkify the entries
-	    			mailContent.append(getSiteNodePath(siteNodeVO, " / ", "<a style=\"color:black;\">", "</a>", db));
-	    			mailContent.append("</li>");
+					mailContent.append("<a style=\"color:black;\">");
+					mailContent.append(getSiteNodePath(siteNodeVO, true, true, db));
+					mailContent.append("</a>");
+					mailContent.append("</li>");
 	    		}
 				mailContent.append("</ul>");
 				mailContent.append("</p>");
-				
+
 				boolean hasInformation = false;
 		    	for (Map.Entry<SiteNodeVO, List<ReferenceBean>> affectedNode : affectedNodes.entrySet())
 		    	{
 					StringBuilder sb = new StringBuilder();
 					sb.append("<p style=\"margin-top:30px;color:black;\">");
-					sb.append(getSiteNodePath(affectedNode.getKey(), " / ", "<em><a style=\"color:black;\">", "</a></em>", db));
+					sb.append("<em><a style=\"color:black;\">");
+					sb.append(getSiteNodePath(affectedNode.getKey(), true, true, db));
+					sb.append("</a></em>");
 
 					String path;
 					String url;
@@ -4128,34 +4161,6 @@ public class SiteNodeController extends BaseController
 			logger.warn("Failed to generate email for contact person notfication.", ex);
 			throw ex;
     	}
-    }
-
-    public String getSiteNodePath(SiteNodeVO siteNodeVO, Database db) throws Exception
-	{
-		return getSiteNodePath(siteNodeVO, "/", "", "", db);
-	}
-
-    public String getSiteNodePath(SiteNodeVO siteNodeVO, String seperator, String prefix, String suffix, Database db) throws Exception
-    {
-    	StringBuilder sb = new StringBuilder();
-
-    	while(siteNodeVO != null)
-    	{
-    		sb.insert(0, suffix);
-    		sb.insert(0, siteNodeVO.getName());
-    		sb.insert(0, prefix);
-    		sb.insert(0, seperator);
-    		if(siteNodeVO.getParentSiteNodeId() != null)
-    		{
-    			siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVO.getParentSiteNodeId(), db);
-    		}
-    		else
-    		{
-    			siteNodeVO = null;
-    		}
-    	}
-
-    	return sb.toString();
     }
 
 	public List<String> getErroneousSiteNodeNames(List<Integer> erroneousSiteNodeIds) throws Exception, SystemException

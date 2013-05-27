@@ -28,6 +28,15 @@
 		    document.inputForm.newParentContentId.value = contentId;
 		}
 	    
+	    function createFolder()
+	    { 
+	    	var parentContentId = document.inputForm.parentContentId.value;
+			var returnUrl = "$formatter.encode("CreateContentWizardFinish!V3.action?repositoryId=$repositoryId&siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&componentId=$componentId&propertyName=$propertyName&$allowedContentTypeIdsAsUrlEncodedString&refreshAddress=$encodedRefreshAddress&showSimple=$showSimple&showDecorated=$!showDecorated")";
+	    	var url = "CreateContent!inputV3.action?isBranch=true&repositoryId=$repositoryId&parentContentId=" + parentContentId + "&returnAddress=" + returnUrl;
+			//alert("url:" + url);
+			document.location.href = url;
+	    }
+	    
 	    function next()
 		{
 			var parentContentId = document.inputForm.parentContentId.value;

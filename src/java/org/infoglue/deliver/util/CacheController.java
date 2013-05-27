@@ -2452,7 +2452,7 @@ public class CacheController extends Thread
 									    	
 									    	
 									    	if(contentId != null)
-									    	{
+									    	{										    			
 									    		//ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId); 
 									    		if(contentTypeDefinitionId != null && !contentTypeDefinitionId.equals(""))
 									    		{
@@ -3688,7 +3688,14 @@ public class CacheController extends Thread
 							    			if(ctdVO.getName().equals("Meta info"))
 							    				cacheInstance.flushAll();
 							    			else
-							    				logger.info("No need to clear page stuff");
+							    			{
+							    				if(cacheName.equalsIgnoreCase("componentEditorCache") && (ctdVO.getName().equals("HTMLTemplate") || ctdVO.getName().equals("PagePartTemplate")))
+							    				{
+							    					cacheInstance.flushAll(); //CacheController.clearCache("componentEditorCache");
+							    				}
+							    				else
+							    					logger.info("No need to clear page stuff");
+							    			}
 							    		}
 							    	}
 							    	catch (Exception e2) 

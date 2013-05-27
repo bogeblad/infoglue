@@ -369,7 +369,7 @@
 					<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 				</tr>	
 				<tr>
-					<td class="menu" style="border: 1px solid #C7D1B3;">    
+					<td class="menu" style="border: 0px solid #ccc;">    
 						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!bindingViewV3.action?repositoryId=${repositoryId}&${allowedContentTypeIdsAsUrlEncodedString}" width="350" height="430" align="baseline"></IFRAME>
 					</td>
 				</tr>	
@@ -403,10 +403,12 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="border: 1px solid #C7D1B3; background-color: white;">				
+					<td style="border: 1px solid #ccc; background-color: white; height: 430px;">
+						<div style="height: 430px; float: left; overflow: auto; width: 100%;">			
 						<table id="qualifyers" border="1">
 					  	
 					  	</table>
+					  	</div>
 					</td>
 				</tr>
 						

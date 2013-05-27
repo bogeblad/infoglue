@@ -183,7 +183,7 @@ public class ChangeMultiSiteNodeVersionStatePublishAction extends InfoGlueAbstra
             setActionMessage(userSessionKey, getLocalizedString(getLocale(), "tool.common.publishing.submitToPublishingInlineOperationDoneHeader"));
 		}
 
-		System.out.println("this.returnAddress:" + this.returnAddress);
+		logger.info("this.returnAddress:" + this.returnAddress);
 		if(this.returnAddress != null && !this.returnAddress.equals(""))
         {
 	        String arguments 	= "userSessionKey=" + userSessionKey + "&attemptDirectPublishing=" + attemptDirectPublishing + "&isAutomaticRedirect=false";

@@ -53,6 +53,11 @@
 		 	document.inputForm.path.value = path;	
 		}
 	    
+	    function add()
+	    {
+	     	addQualifyer();
+	    }
+	    
 	    function addQualifyer()
 		{
 			entityId = document.inputForm.entityId.value;
@@ -432,7 +437,7 @@
 					<td height="1"><img src="css/images/trans.gif" width="1" height="5"></td>
 				</tr>	
 				<tr>
-					<td class="menu" style="border: 1px solid #F0E1B4;">    
+					<td class="menu" style="border-right: 0px solid #ccc;">    
 						<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewStructureToolMenuHtml!bindingViewV3.action?exp=${exp}&repositoryId=${repositoryId}" width="350" height="430" align="baseline"></iframe>
 					</td>
 				</tr>	
@@ -452,7 +457,7 @@
 				</tr>		
 				</table>
 			</td>	
-			<td><a href="javascript:addQualifyer();"><img src="css/images/arrowRightBig.gif" border="0"></a></td>
+			<td>&nbsp;<!--<a href="javascript:addQualifyer();"><img src="css/images/arrowRightBig.gif" border="0"></a>--></td>
 			<td valign="top">
 				<table cellpadding="0" cellspacing="0" border="0" width="100%">
 				<tr>
@@ -468,7 +473,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td style="border: 1px solid #F0E1B4; background-color: white; height: 430px;">
+					<td style="border: 1px solid #ccc; background-color: white; height: 430px;">
 						<div style="height: 430px; float: left; overflow: auto; width: 100%;">
 						<table id="bindings" border="1">
 					  	

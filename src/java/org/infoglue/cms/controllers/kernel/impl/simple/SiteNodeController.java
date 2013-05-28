@@ -2489,6 +2489,33 @@ public class SiteNodeController extends BaseController
 		return getSiteNodePath(siteNodeId, true, false, db);
 	}
 
+
+	public String getSiteNodePath(Integer siteNodeId, boolean includeRootSiteNode, boolean includeRepositoryName) throws ConstraintException, SystemException
+    {
+		String path = "";
+		
+		Database db = CastorDatabaseService.getDatabase();
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+        beginTransaction(db);
+
+        try
+        {
+        	path = getSiteNodePath(siteNodeId, includeRootSiteNode, includeRepositoryName, db);
+        	
+            commitTransaction(db);
+        }
+        catch(Exception e)
+        {
+			logger.error("An error occurred so we should not complete the transaction: " + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction: " + e.getMessage(), e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+		
+        return path;
+    } 
+    
 	public String getSiteNodePath(Integer siteNodeId, boolean includeRootSiteNode, boolean includeRepositoryName, Database db) throws Exception
 	{
 		SiteNodeVO siteNodeVO = getSiteNodeVOWithId(siteNodeId, db);
@@ -2523,10 +2550,10 @@ public class SiteNodeController extends BaseController
 		if (includeRepositoryName)
 		{
 			if(repositoryVO != null)
-				sb.insert(0, repositoryVO.getName() + " - ");
+				sb.insert(0, repositoryVO.getName() + "/");
 		}
 
-		return sb.toString();
+		return sb.toString().replaceAll("//", "/");
 	}
 
 

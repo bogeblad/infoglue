@@ -1,0 +1,46 @@
+<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTableForms">
+	<thead>
+		<tr>
+			<th>$ui.getString("tool.structuretool.componentNameLabel")</th>
+		</tr>
+	</thead>
+	<tbody>
+		
+	#set($prevId = -1)
+	#set($sortedComponents = $this.getSortedFormComponents($sortProperty))
+	#foreach ($content in $sortedComponents)
+		#set($duplicate = false)
+		#if($prevId == $content.id)
+			#set($duplicate = true)
+		#end
+		#set($prevId = $content.id)
+		
+		#set($hasAccessToContent = true)
+		#if($content.isProtected == 1)
+			#set($hasAccessToContent = $this.hasAccessTo("Component.Select", "$content.id"))
+		#end
+		
+		#if($hasAccessToContent && !$duplicate && ($filterRepositoryId == -1 || $content.repositoryId == $filterRepositoryId || $this.getIsPagePartTemplate($content.contentTypeDefinitionId)))
+			
+			<tr>
+				<td>
+					<a href="javascript:addComponent('$content.id');">$content.getName()</a><br/>
+					#if($content.extraProperties.get("Description") != "Unknown" && $content.extraProperties.get("Description") != "")
+					##<br/><span id="descLayer$content.id" style="margin-top: 4px;"><b>$ui.getString("tool.structuretool.descriptionLabel"):</b><br/>
+					#if($content.extraProperties.get("Description"))
+						$content.extraProperties.get("Description")
+					#else
+						No description
+					#end
+					</span>
+					#end
+				</td>
+			</tr>
+			#set($imageUrl = "")
+		#end
+	#end
+		
+	</tbody>
+</table>
+<br/>
+<br/>

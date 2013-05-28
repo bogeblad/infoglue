@@ -482,7 +482,33 @@
 				}
 		    });
 						
-			$("#editForm").submit(function () { return false; });			
+			$("#editForm").submit(function () { return false; });	
+			
+			try
+			{
+				jQuery.get("ViewCommonAjaxServices!referenceCount.action?contentId=$contentId", function(data) {
+					//alert("Count:" + data + " on $contentId");
+					if(data != "0")
+						$('a[href="#contentReferencesDiv"] > span').append("(" + data + ")");
+				});
+
+				#if($contentVersionId)
+	
+					jQuery.get("ViewCommonAjaxServices!assetCount.action?contentVersionId=$contentVersionId", function(data) {
+						//alert("Count:" + data + " on $contentId");
+						if(data != "0")
+							$('a[href="#contentVersionAssetsDiv"] > span').append("(" + data + ")");
+					});
+	
+					jQuery.get("ViewCommonAjaxServices!categoryCount.action?contentVersionId=$contentVersionId", function(data) {
+						//alert("Count:" + data + " on $contentId");
+						if(data != "0")
+							$('a[href="#contentVersionCategoriesDiv"] > span').append("(" + data + ")");
+					});	
+
+				#end
+			}
+			catch(e) {console.log("e:" + e);}	
 	  	});
 	  	
 

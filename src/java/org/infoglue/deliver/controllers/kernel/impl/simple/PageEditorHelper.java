@@ -2803,7 +2803,7 @@ public class PageEditorHelper extends BaseDeliveryController
 			referencingPages = new ArrayList();
 			try
 			{
-				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, false, db);
+				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, false, true, db);
 				
 				Iterator referencingObjectsIterator = referencingObjects.iterator();
 				while(referencingObjectsIterator.hasNext())

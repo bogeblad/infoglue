@@ -2,6 +2,9 @@
 
 	<style type="text/css">
 		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
+		table.display td:first-child {
+			word-break: break-all;
+		}
 	</style>
 	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 
@@ -39,14 +42,14 @@
 				<thead>
 					<tr>
 						<th>$ui.getString("tool.contenttool.searchResultContentHeader")</th>
-						<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
+						##<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
 						<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody>
 					
-					#set($referenceLimit = 20)
+					#set($referenceLimit = 200)
 					#set($hasContentReferences = false)
 					#set($count = 0)	
 					#foreach ($referenceBean in $referenceBeanList)
@@ -56,11 +59,13 @@
 								#set($lastIndex = $referenceBean.versions.size() - 1)
 								<tr>
 									<td>
-										<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.getPath()</a>
+										<img src='css/images/v3/contentIcon.gif'> <a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.getPath()</a>
 					 				</td>
+					 				#*
 					 				<td>
 					 					$referenceBean.versions.get($lastIndex).registryVOList.size()
 					 				</td>
+					 				*#
 					 				<td>
 					 					$referenceBean.contactPersonEmail
 					 				</td>
@@ -73,7 +78,7 @@
 					#if($count > $referenceLimit)
 						<tr>
 							<td style="color: red;">$ui.getString("tool.contenttool.moreContentReferencesFound") $count</td>		
-							<td>&nbsp;</td>		
+							##<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 						</tr>	
@@ -82,7 +87,7 @@
 					#if(!$hasContentReferences)
 						<tr>
 							<td>$ui.getString("tool.structuretool.noContentReferencesFound")</td>		
-							<td>&nbsp;</td>		
+							##<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 						</tr>	
@@ -99,7 +104,7 @@
 				<thead>
 					<tr>
 						<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
-						<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
+						##<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
 						<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
 						<th>&nbsp;</th>
 					</tr>
@@ -115,11 +120,13 @@
 								#set($lastIndex = $referenceBean.versions.size() - 1)
 								<tr>
 									<td>
-										<a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$referenceBean.getPath()</a>
+										<img src='css/images/v3/pageIcon.gif'> <a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$referenceBean.getPath()</a>
 					 				</td>
+					 				#*
 					 				<td>
 										$referenceBean.versions.get($lastIndex).registryVOList.size()
 					 				</td>
+					 				*#
 									<td>
 					 					$referenceBean.contactPersonEmail
 					 				</td>
@@ -132,7 +139,7 @@
 					#if($count > $referenceLimit)
 						<tr>
 							<td>$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
-							<td>&nbsp;</td>		
+							##<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 						</tr>	
@@ -141,7 +148,7 @@
 					#if(!$hasPageReferences)
 						<tr>
 							<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
-							<td>&nbsp;</td>		
+							##<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 						</tr>	
@@ -171,7 +178,7 @@
 								#set($lastIndex = $referencingBeanList.size() - 1)
 								<tr>
 									<td>
-										<a href="ViewContentVersion!standalone.action?contentId=$referencingEntity.id" target="_blank">$this.getContentPath($referencingEntity.id)</a>
+										<img src='css/images/v3/contentIcon.gif'> <a href="ViewContentVersion!standalone.action?contentId=$referencingEntity.id" target="_blank">$this.getContentPath($referencingEntity.id, false, true)</a>
 					 				</td>
 									<td><a href="ViewContentVersion!standalone.action?contentId=$referencingEntity.id" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
 								</tr>	
@@ -187,7 +194,7 @@
 								#end
 								<tr>
 									<td>
-										<a href="ViewSiteNode!V3.action?siteNodeId=$referencingEntity.id" target="_blank">$this.getSiteNodePath($referencingEntity.id)</a>
+										<img src='css/images/v3/pageIcon.gif'> <a href="ViewSiteNode!V3.action?siteNodeId=$referencingEntity.id" target="_blank">$this.getSiteNodePath($referencingEntity.id, false, true)</a>
 					 				</td>
 									<td><a href="ViewSiteNode!V3.action?siteNodeId=$referencingEntity.id" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
 								</tr>	

@@ -704,7 +704,7 @@ public class ContentController extends BaseController
     {
         if(!skipRelationCheck)
         {
-	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, false, db);
+	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, false, false, db);
 			if(referenceBeanList != null && referenceBeanList.size() > 0)
 				throw new ConstraintException("ContentVersion.stateId", "3305");
         }
@@ -3167,7 +3167,7 @@ public class ContentController extends BaseController
     {
         if(!skipRelationCheck)
         {
-	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, true, db);
+	        List referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(content.getId(), -1, true, false, db);
 			if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
 				throw new ConstraintException("ContentVersion.stateId", "3305", "<br/><br/>" + content.getName() + " (" + content.getId() + ")");
         }

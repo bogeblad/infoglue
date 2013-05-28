@@ -1463,7 +1463,6 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	public String getContentPath(Integer contentId, boolean includeRootContent, boolean includeRepositoryName) throws Exception
 	{
 		return ContentController.getContentController().getContentPath(contentId, includeRootContent, includeRepositoryName);
-
 	}
 
 	public SiteNodeVersionVO getSiteNodeVersionVO(Integer siteNodeVersionId) throws Exception
@@ -1502,6 +1501,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		}
 		
 		return sb.toString();
+	}
+
+	public String getSiteNodePath(Integer siteNodeId, boolean includeRootContent, boolean includeRepositoryName) throws Exception
+	{
+		return SiteNodeController.getController().getSiteNodePath(siteNodeId, includeRootContent, includeRepositoryName);
+
 	}
 
 	public SiteNodeVO getRepositoryRootSiteNode(Integer repositoryId) throws Exception

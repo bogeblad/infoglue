@@ -23,12 +23,23 @@
 
 package org.infoglue.cms.applications.common.actions;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.databeans.ReferenceBean;
+import org.infoglue.cms.applications.databeans.ReferenceVersionBean;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.kernel.BaseEntityVO;
 
 /**
  * This class implements the action class for the framed page in the content tool.
@@ -63,6 +74,46 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
     {
 		String contentIdPath = ContentController.getContentController().getContentIdPath(new Integer(getRequest().getParameter("contentId")));
 		this.getResponse().getWriter().print("" + contentIdPath);
+		
+		return NONE;
+    }
+
+	public String doReferenceCount() throws Exception
+    {
+		List<Integer> uniqueList = new ArrayList<Integer>();
+		List<ReferenceBean> refList = RegistryController.getController().getReferencingObjectsForContent(new Integer(getRequest().getParameter("contentId")), 100, true, true);
+		for(ReferenceBean bean : refList)
+		{
+			if(bean.getReferencingCompletingObject() instanceof ContentVO)
+			{
+				for(ReferenceVersionBean versionBean : bean.getVersions())
+				{
+					uniqueList.add(((BaseEntityVO)versionBean.getReferencingObject()).getId());
+				}
+			}
+			else
+			{
+				uniqueList.add(((BaseEntityVO)bean.getReferencingCompletingObject()).getId());
+			}
+		}
+		
+		this.getResponse().getWriter().print("" + uniqueList.size());
+		
+		return NONE;
+    }
+
+	public String doAssetCount() throws Exception
+    {
+		List digitalAssets = DigitalAssetController.getDigitalAssetVOList(new Integer(getRequest().getParameter("contentVersionId")));
+		this.getResponse().getWriter().print("" + digitalAssets.size());
+		
+		return NONE;
+    }
+
+	public String doCategoryCount() throws Exception
+    {
+		List categories = ContentCategoryController.getController().findByContentVersion(new Integer(getRequest().getParameter("contentVersionId")));
+		this.getResponse().getWriter().print("" + categories.size());
 		
 		return NONE;
     }

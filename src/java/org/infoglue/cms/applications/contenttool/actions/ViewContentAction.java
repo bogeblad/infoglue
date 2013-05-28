@@ -183,7 +183,7 @@ public class ViewContentAction extends InfoGlueAbstractAction
 	        else
 	        {
 	            this.initialize(getContentId());
-	    		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(getContentId(), 100, true);
+	    		this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(getContentId(), 100, true, true);
 	            
 	            return "success";
 	        }

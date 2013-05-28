@@ -1460,10 +1460,10 @@ public class RegistryController extends BaseController
 
 	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId) throws SystemException
     {
-		return getReferencingObjectsForContent(contentId, -1, true);
+		return getReferencingObjectsForContent(contentId, -1, true, false);
     }
 
-	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences) throws SystemException
+	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage) throws SystemException
     {
 		List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
@@ -1473,7 +1473,7 @@ public class RegistryController extends BaseController
 		{
 			beginTransaction(db);
 
-			referenceBeanList = getReferencingObjectsForContent(contentId, maxRows, excludeInternalContentReferences, db);
+			referenceBeanList = getReferencingObjectsForContent(contentId, maxRows, excludeInternalContentReferences, onlyOneVersionPerLanguage, db);
 
 	        commitTransaction(db);
 		}
@@ -1524,12 +1524,14 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 	
-	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences, Database db) throws SystemException, Exception
+	public List<ReferenceBean> getReferencingObjectsForContent(Integer contentId, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage, Database db) throws SystemException, Exception
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
         Map entries = new HashMap();
 		
+        Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();
+
         List registryEntires = getMatchingRegistryVOList(Content.class.getName(), contentId.toString(), maxRows, db);
         logger.info("registryEntires:" + registryEntires.size());
         Iterator registryEntiresIterator = registryEntires.iterator();
@@ -1544,7 +1546,6 @@ public class RegistryController extends BaseController
             ReferenceBean existingReferenceBean = (ReferenceBean)entries.get(key);
             if(existingReferenceBean == null)
             {
-                
                 existingReferenceBean = new ReferenceBean();
 	            logger.info("Adding referenceBean to entries with key:" + key);
 	            entries.put(key, existingReferenceBean);
@@ -1557,8 +1558,13 @@ public class RegistryController extends BaseController
                 try
                 {
                     ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
-		    		logger.info("contentVersion:" + contentVersion.getContentVersionId());
-		    		if(excludeInternalContentReferences && contentVersion.getValueObject().getContentId().equals(contentId))
+                    Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId());
+                    if(hasVersion != null && onlyOneVersionPerLanguage)
+                    {
+                    	continue;
+                    	//referenceBeanList.remove(existingReferenceBean);
+                    }
+                    else if(excludeInternalContentReferences && contentVersion.getValueObject().getContentId().equals(contentId))
 		    		{
 		    			logger.info("Skipping internal reference " + contentId + " had on itself.");
 		    			referenceBeanList.remove(existingReferenceBean);
@@ -1586,6 +1592,8 @@ public class RegistryController extends BaseController
 						}
 			    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
 			    		referenceVersionBean.getRegistryVOList().add(registryVO);
+			    		
+			    		checkedLanguageVersions.put("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
 		    		}
                 }
                 catch(Exception e)
@@ -1689,7 +1697,7 @@ public class RegistryController extends BaseController
 			referencingSiteNodeVOList = new ArrayList<SiteNodeVO>();
 			try
 			{
-				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, false, db);
+				List referencingObjects = RegistryController.getController().getReferencingObjectsForContent(contentId, maxRows, false, false, db);
 				
 				Iterator referencingObjectsIterator = referencingObjects.iterator();
 				while(referencingObjectsIterator.hasNext())
@@ -1791,15 +1799,15 @@ public class RegistryController extends BaseController
 	
 	protected String getContactPersonEmail(ContentVO contentVO, Database db) throws SystemException, Exception
 	{
-		SystemUser su = SystemUserController.getController().getSystemUserWithName(contentVO.getCreatorName(), db);
+		InfoGluePrincipal user = UserControllerProxy.getController(db).getUser(contentVO.getCreatorName());
 
-		if (su == null)
+		if (user == null)
 		{
-			return "";
+			return "" + contentVO.getCreatorName();
 		}
 		else
 		{
-			return su.getEmail();
+			return user.getEmail();
 		}
 	}
 	
@@ -1856,18 +1864,17 @@ public class RegistryController extends BaseController
 			}
     	}
 
-		SystemUser creator = SystemUserController.getController().getSystemUserWithName(siteNode.getCreatorName(), db);
-		if (creator != null)
+		InfoGluePrincipal user = UserControllerProxy.getController(db).getUser(siteNode.getCreatorName());
+		if (user != null)
 		{
 			if (logger.isDebugEnabled())
 			{
-				logger.debug("Reading contact person email from: SiteNode, system user. SystemUser: " + creator.getUserName() + ", Id: " + siteNode.getId());
+				logger.debug("Reading contact person email from: SiteNode, system user. User: " + user.getName() + ", Id: " + siteNode.getId());
 			}
-			return creator.getEmail();
+			return user.getEmail();
 		}
-
-		logger.debug("Found no contact person email. SiteNode.id: " + siteNode.getId());
-		return "";
+		else
+			return "" + siteNode.getCreatorName();
 	}
 
 
@@ -2017,7 +2024,7 @@ public class RegistryController extends BaseController
 			                if (add)
 			                {
 								existingReferenceBean.setName(contentVO.getName());
-								existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVO.getContentId(), true, true, db));
+								existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVO.getContentId(), false, true, db));
 								existingReferenceBean.setReferencingCompletingObject(contentVO);
 
 								String contactPersonEmail = getContactPersonEmail(contentVO, db);
@@ -2084,7 +2091,7 @@ public class RegistryController extends BaseController
 							if (add)
 							{
 								existingReferenceBean.setName(siteNodeVO.getName());
-								existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVO, true, true, db));
+								existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVO, false, true, db));
 								existingReferenceBean.setReferencingCompletingObject(siteNodeVO);
 								referenceVersionBean.setReferencingObject(siteNodeVersion);
 

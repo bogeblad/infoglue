@@ -1735,7 +1735,7 @@ public class ContentVersionController extends BaseController
 			}
 		}
 
-    	registryController.updateContentVersionThreaded(contentVersion.getValueObject(), latestSiteNodeVersionVO);
+	    registryController.updateContentVersionThreaded(contentVersion.getValueObject(), latestSiteNodeVersionVO);
 
     	updatedContentVersionVO = contentVersion.getValueObject();
     	return updatedContentVersionVO;
@@ -2507,7 +2507,8 @@ public class ContentVersionController extends BaseController
 
 			updateAttributeValue(contentVersionId, attributeName, attributeValue, infogluePrincipal, skipValidate, db);
 
-		    commitTransaction(db);
+			commitRegistryAwareTransaction(db);
+		    //commitTransaction(db);
 		}
 		catch (Exception ex)
 		{
@@ -3428,7 +3429,7 @@ public class ContentVersionController extends BaseController
         	logger.info("duplicateAssetsBetweenVersions:" + duplicateAssetsBetweenVersions);
     	    if(!duplicateAssetsBetweenVersions)
     	    {
-    	    	DigitalAsset oldDigitalAsset = DigitalAssetController.getController().getDigitalAssetWithId(digitalAssetId, db);
+    	    	DigitalAsset oldDigitalAsset = DigitalAssetController.getController().getMediumDigitalAssetWithId(digitalAssetId, db);
     	    	logger.info("oldDigitalAsset:" + oldDigitalAsset.getContentVersions().size());
         	    if(oldDigitalAsset.getContentVersions().size() > 1)
     	    	{

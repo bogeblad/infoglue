@@ -648,6 +648,8 @@ public class SearchController extends BaseController
 						    ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(contentVersion.getValueObject().getContentId(), contentVersion.getValueObject().getLanguageId(), db);
 							if(latestContentVersion != null && latestContentVersion.getId().intValue() == contentVersion.getId().intValue())
 							{
+								asset.getValueObject().setContentPath(ContentController.getContentController().getContentPath(latestContentVersion.getValueObject().getContentId(), false, true, db));
+								asset.getValueObject().setContentId(latestContentVersion.getValueObject().getContentId());
 								matchingAssets.add(asset.getValueObject());
 							    previousContentId = contentVersion.getValueObject().getContentId();
 							    previousLanguageId = contentVersion.getValueObject().getLanguageId();

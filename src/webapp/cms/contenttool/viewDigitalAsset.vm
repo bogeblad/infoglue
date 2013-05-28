@@ -91,6 +91,7 @@
 		}
 
 		$(document).ready(function(){
+			
 			$("#tabsContainer").tabs({
 				show:function(e, ui) { 
 					if(ui.index > 0) 
@@ -109,6 +110,10 @@
 					}
 				}
 			});
+			
+			if(parent.showTab)
+				parent.showTab(2);
+			
 		});
 		
 		var swfu;

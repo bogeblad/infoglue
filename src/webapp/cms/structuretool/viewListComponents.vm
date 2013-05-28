@@ -41,13 +41,31 @@
 		}
 		
 		$(document).ready(function(){
-			#set($extraParameter = '')
+			#set($extraParameter = '"iDisplayLength": 20')
 			#if($useSimpleComponentDialog)
-				#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ]')
+				#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ], "iDisplayLength": 20')
 			#end
 			#initDataTableImpl("dataTable" $extraParameter)
 			
 			$("#dataTable_filter :text").focus();
+			
+			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
+					resizeScrollArea(); 
+				}, 
+				select: function(e, ui) { 
+					if(ui.index == 1) {
+						//alert("Loading forms");
+						jQuery.get("ViewSiteNodePageComponents!listFormComponents.action", function(data) {
+								//alert('Data:' + data);
+								$("#formsTab").html(data);
+								
+								#set($extraParameter = '"iDisplayLength": 20')
+								#initDataTableImpl("dataTableForms" $extraParameter)
+							});
+					}
+				}
+			});
+					
 		});
 	-->
 	</script>
@@ -61,98 +79,114 @@
 
 <h3>$ui.getString("tool.structuretool.clickComponentToAddLabel")</h3>
 
-#if(!$useSimpleComponentDialog)
-<p>
-	#set($allRepositories = $repositories)
-    
-	$ui.getString("tool.structuretool.addComponentChangeRepositoryLabel")<br/>
-	<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
-	    <option value="-1" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$ui.getString("tool.structuretool.allRepostoriesLabel")</option>
-	    #foreach ($repositoryVO in $allRepositories)
-	    <option value="$repositoryVO.getRepositoryId()" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$repositoryVO.getName()</option>
-	    #end
-	</select>
-</p>
-#end
+<div id="tabsContainer" class="flora cleanTopDiv">      
+	<ul>
+        <li><a href="#simpleTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
+        <li><a href="#formsTab"><span>$ui.getString("tool.common.forms.label")</span></a></li>
+		#if(!$useSimpleComponentDialog)
+        <li><a href="#advancedTab"><span>$ui.getString("tool.common.advanced.label")</span></a></li>
+        #end
+    </ul>
 
-<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	<div id="simpleTab" class="inlineTabDiv">
 
-	<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
-		<thead>
-			<tr>
-				<th>&nbsp;</th>
-				<th>$ui.getString("tool.structuretool.componentNameLabel")</th>
-				#if(!$useSimpleComponentDialog)
-				<th>$ui.getString("tool.structuretool.repositoryLabel")</th>
-				<th>$ui.getString("tool.structuretool.groupNameLabel")</th>
-				#end
-			</tr>
-		</thead>
-		<tbody>
-			
-		#set($prevId = -1)
-		#set($sortedComponents = $this.getSortedComponents($sortProperty))
-		#foreach ($content in $sortedComponents)
-			#set($duplicate = false)
-			#if($prevId == $content.id)
-				#set($duplicate = true)
-			#end
-			#set($prevId = $content.id)
-			
-			#set($hasAccessToContent = true)
-			#if($content.isProtected == 1)
-				#set($hasAccessToContent = $this.hasAccessTo("Component.Select", "$content.id"))
-			#end
-			
-			#if($hasAccessToContent && !$duplicate && ($filterRepositoryId == -1 || $content.repositoryId == $filterRepositoryId || $this.getIsPagePartTemplate($content.contentTypeDefinitionId)))
-				
-				#set($imageUrl = $this.getDigitalAssetUrl($content.id, "paletteThumbnail"))
-				#if("$!imageUrl" == "")
-					#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
-					#if("$!imageUrl" == "")
-						#set($imageUrl = "css/images/componentIcon.gif")
-					#end
-				#end
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
+			<thead>
 				<tr>
-					#if($imageUrl.indexOf("componentIcon.gif") > -1)
-						#set($width = "16")
-					#else
-						#set($width = "80")
-					#end
-					<td align="center"><a href="javascript:addComponent('$content.id');"><img src="$imageUrl" border="0" width="$width"></a>&nbsp;</td>
-					<td>
-						$content.extraProperties.get("Description")
-						<a href="javascript:addComponent('$content.id');">$content.getName()</a><br/><br/>
-						#if($content.extraProperties.get("Description") != "Unknown" && $content.extraProperties.get("Description") != "")
-						<span id="descLayer$content.id" style="margin-top: 4px;"><b>$ui.getString("tool.structuretool.descriptionLabel"):</b><br/>
-						#if($content.extraProperties.get("Description"))
-							$content.extraProperties.get("Description")
-						#else
-							No description
-						#end
-						</span>
-						#end
-					</td>
+					<th>&nbsp;</th>
+					<th>$ui.getString("tool.structuretool.componentNameLabel")</th>
 					#if(!$useSimpleComponentDialog)
-					<td>
-						#foreach ($repositoryVO in $allRepositories)
-					    	#if($repositoryVO.id == $content.repositoryId)
-					    		$repositoryVO.getName()
-					    	#end
-					    #end
-					</td>
-					<td>$content.extraProperties.get("GroupName").replaceAll(",","<br/>")</td>
+					<th>$ui.getString("tool.structuretool.repositoryLabel")</th>
+					<th>$ui.getString("tool.structuretool.groupNameLabel")</th>
 					#end
 				</tr>
-				#set($imageUrl = "")
+			</thead>
+			<tbody>
+				
+			#set($prevId = -1)
+			#set($sortedComponents = $this.getSortedComponents($sortProperty))
+			#foreach ($content in $sortedComponents)
+				#set($duplicate = false)
+				#if($prevId == $content.id)
+					#set($duplicate = true)
+				#end
+				#set($prevId = $content.id)
+				
+				#set($hasAccessToContent = true)
+				#if($content.isProtected == 1)
+					#set($hasAccessToContent = $this.hasAccessTo("Component.Select", "$content.id"))
+				#end
+				
+				#if($hasAccessToContent && !$duplicate && ($filterRepositoryId == -1 || $content.repositoryId == $filterRepositoryId))
+					
+					#set($imageUrl = $this.getDigitalAssetUrl($content.id, "paletteThumbnail"))
+					#if("$!imageUrl" == "")
+						#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
+						#if("$!imageUrl" == "")
+							#set($imageUrl = "css/images/componentIcon.gif")
+						#end
+					#end
+					<tr>
+						#if($imageUrl.indexOf("componentIcon.gif") > -1)
+							#set($width = "16")
+						#else
+							#set($width = "48")
+						#end
+						<td align="center"><a href="javascript:addComponent('$content.id');"><img src="$imageUrl" border="0" width="$width"></a>&nbsp;</td>
+						<td>
+							<a href="javascript:addComponent('$content.id');">$content.getName()</a><br/>
+							#if($content.extraProperties.get("Description") != "Unknown" && $content.extraProperties.get("Description") != "")
+							##<br/><span id="descLayer$content.id" style="margin-top: 4px;"><b>$ui.getString("tool.structuretool.descriptionLabel"):</b><br/>
+							#if($content.extraProperties.get("Description"))
+								$content.extraProperties.get("Description")
+							#else
+								No description
+							#end
+							</span>
+							#end
+						</td>
+						#if(!$useSimpleComponentDialog)
+						<td>
+							#foreach ($repositoryVO in $allRepositories)
+						    	#if($repositoryVO.id == $content.repositoryId)
+						    		$repositoryVO.getName()
+						    	#end
+						    #end
+						</td>
+						<td>$content.extraProperties.get("GroupName").replaceAll(",","<br/>")</td>
+						#end
+					</tr>
+					#set($imageUrl = "")
+				#end
 			#end
-		#end
-			
-		</tbody>
-	</table>
+				
+			</tbody>
+		</table>
+		<br/>
+		<br/>
 
+	</div>
+
+	<div id="formsTab" class="inlineTabDiv">
+		
+	</div>
+		
+	<div id="advancedTab" class="inlineTabDiv">
+		<p>
+			#set($allRepositories = $repositories)
+		    
+			$ui.getString("tool.structuretool.addComponentChangeRepositoryLabel")<br/>
+			<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
+			    <option value="-1" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$ui.getString("tool.structuretool.allRepostoriesLabel")</option>
+			    #foreach ($repositoryVO in $allRepositories)
+			    <option value="$repositoryVO.getRepositoryId()" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$repositoryVO.getName()</option>
+			    #end
+			</select>
+		</p>
+	</div>
+	
 </div>
-
-#lightFooterToolbar($footerButtons)
+	
+##lightFooterToolbar($footerButtons)
 
 #endCommonToolV3()

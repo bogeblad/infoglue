@@ -1567,7 +1567,23 @@ public class RegistryController extends BaseController
 		    		{
 			    		existingReferenceBean.setName(contentVersion.getOwningContent().getName());
 			    		existingReferenceBean.setReferencingCompletingObject(contentVersion.getOwningContent().getValueObject());
-			    		
+			    		existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVersion.getValueObject().getContentId(), false, true, db));
+			    		try
+			    		{
+			    			String userName = contentVersion.getVersionModifier();
+			    			if(userName == null || userName.equals(""))
+			    				userName = contentVersion.getOwningContent().getCreator();
+
+				    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
+				    		if(user != null)
+				    			existingReferenceBean.setContactPersonEmail(user.getEmail());
+				    		else
+				    			existingReferenceBean.setContactPersonEmail(userName);
+			    		}
+			    		catch (Exception e) 
+			    		{
+			    			logger.warn("Problem getting version modifier email: " + e.getMessage());
+						}
 			    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
 			    		referenceVersionBean.getRegistryVOList().add(registryVO);
 		    		}
@@ -1587,7 +1603,23 @@ public class RegistryController extends BaseController
 		    		logger.info("siteNode:" + siteNodeVersion.getOwningSiteNode().getId());
 		    		existingReferenceBean.setName(siteNodeVersion.getOwningSiteNode().getName());
 		    		existingReferenceBean.setReferencingCompletingObject(siteNodeVersion.getOwningSiteNode().getValueObject());
-
+		    		existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVersion.getValueObject().getSiteNodeId(), false, true, db));
+		    		try
+		    		{
+		    			String userName = siteNodeVersion.getVersionModifier();
+		    			if(userName == null || userName.equals(""))
+		    				userName = siteNodeVersion.getOwningSiteNode().getCreator();
+		    			
+			    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
+			    		if(user != null)
+			    			existingReferenceBean.setContactPersonEmail(user.getEmail());
+			    		else
+			    			existingReferenceBean.setContactPersonEmail(userName);
+		    		}
+		    		catch (Exception e) 
+		    		{
+		    			logger.warn("Problem getting version modifier email: " + e.getMessage());
+					}
 		    		referenceVersionBean.setReferencingObject(siteNodeVersion.getValueObject());
 		    		referenceVersionBean.getRegistryVOList().add(registryVO);
                 }

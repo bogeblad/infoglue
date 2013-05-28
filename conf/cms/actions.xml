@@ -1378,6 +1378,8 @@
 		<view name="listComponents">/cms/structuretool/viewListComponents.vm</view>
 		<view name="listComponentsForChange">/cms/structuretool/viewListComponentsForChange.vm</view>
 		<view name="listComponentsForPalette">/cms/structuretool/viewListComponentsForPalette.vm</view>
+		<view name="listFormComponents">/cms/structuretool/viewListFormComponents.vm</view>
+		<view name="listFormComponentsForChange">/cms/structuretool/viewListFormComponentsForChange.vm</view>
 		<view name="showContentTree">/cms/structuretool/viewContentTreeForComponentBinding.vm</view>
 		<view name="showContentTreeV3">/cms/contenttool/v3/viewContentTreeForComponentBinding.vm</view>
 		<view name="showContentTreeForMultipleBinding">/cms/structuretool/viewContentTreeForMultipleComponentBinding.vm</view>

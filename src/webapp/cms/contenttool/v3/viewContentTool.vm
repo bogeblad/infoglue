@@ -46,6 +46,12 @@
 			if($("#workIframe").get(0).contentWindow.refreshView)
 				$("#workIframe").get(0).contentWindow.refreshView(viewName);
 		}
+
+		function showTab(tabIndex)
+		{
+			if($("#workIframe").get(0).contentWindow.selectTab)
+				$("#workIframe").get(0).contentWindow.selectTab(tabIndex);
+		}
 	
 		function syncWithTree(path, repositoryId)
 		{

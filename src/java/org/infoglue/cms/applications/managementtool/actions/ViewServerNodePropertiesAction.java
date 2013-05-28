@@ -267,6 +267,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "useSimpleComponentDialog");
 	    populate(ps, "hideAccessRightsIfNotAllowedToManage");
 	    populate(ps, "onlyAllowFolderType");
+	    populate(ps, "allowedFolderContentTypeNames");
 	    populate(ps, "skipResultDialogIfPossible");
 
 	    populate(ps, "maxRows");

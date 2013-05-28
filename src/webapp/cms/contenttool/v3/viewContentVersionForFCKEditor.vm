@@ -310,8 +310,16 @@
 			if(viewName == "contentVersionAssets")
 			{
 				loadFrame("contentVersionAssetsDiv");
-				//$("#tabsContainer").tabs("select", 2);
-				//$("#tabsContainer").tabs("load", 2)
+				$("#tabsContainer").tabs("select", 2);
+			}
+		}
+
+		function selectTab(tabIndex)
+		{
+			if(tabIndex == 2)
+			{
+				loadFrame("contentVersionAssetsDiv");
+				$("#tabsContainer").tabs("select", tabIndex);
 			}
 		}
 		

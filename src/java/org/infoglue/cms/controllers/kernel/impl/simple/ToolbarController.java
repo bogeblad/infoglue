@@ -767,20 +767,24 @@ public class ToolbarController implements ToolbarProvider
 		}
 		
 		ToolbarButton publishButton = new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentLabel"), 
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentTitle"),
-				  "ViewListContentVersion!V3.action?contentId=" + contentId + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
-				  "",
-				  "publish");
-
-		ToolbarButton submitToPublishButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentsLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentsTitle"),
 				  "ViewListContentVersion!V3.action?contentId=" + contentId + "&recurseContents=true&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 				  "",
+				  "publish");
+		
+		if(hasAccessTo(principal, "Content.PublishFolder", false, true, false))
+		{
+			ToolbarButton submitToPublishButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.publishContentTitle"),
+				  "ViewListContentVersion!V3.action?contentId=" + contentId + "&recurseContents=false&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
+				  "",
 				  "submitToPublish");
-
-		publishButton.getSubButtons().add(submitToPublishButton);
+		
+			publishButton.getSubButtons().add(submitToPublishButton);
+		}
+		
 		buttons.add(publishButton);
 
 		if(ContentController.getContentController().hasPublishedVersion(contentId) || contentVO.getIsBranch())
@@ -4248,6 +4252,26 @@ public class ToolbarController implements ToolbarProvider
 		try
 		{
 			return AccessRightController.getController().getIsPrincipalAuthorized(principal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined, false, true);
+		}
+		catch (SystemException e)
+		{
+		    logger.warn("Error checking access rights", e);
+			return false;
+		}
+	}
+
+	/**
+	 * Used by the view pages to determine if the current user has sufficient access rights
+	 * to perform the action specific by the interception point name.
+	 *
+	 * @param interceptionPointName THe Name of the interception point to check access rights
+	 * @return True is access is allowed, false otherwise
+	 */
+	public boolean hasAccessTo(InfoGluePrincipal principal, String interceptionPointName, boolean returnSuccessIfInterceptionPointNotDefined, boolean returnFailureIfInterceptionPointNotDefined, boolean returnSuccessIfNoAccessRightsDefined)
+	{
+		try
+		{
+			return AccessRightController.getController().getIsPrincipalAuthorized(principal, interceptionPointName, returnSuccessIfInterceptionPointNotDefined, returnFailureIfInterceptionPointNotDefined, returnSuccessIfNoAccessRightsDefined);
 		}
 		catch (SystemException e)
 		{

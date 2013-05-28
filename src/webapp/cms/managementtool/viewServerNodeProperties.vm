@@ -341,6 +341,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideAccessRightsIfNotAllowedToManage" "hideAccessRightsIfNotAllowedToManage" "$this.getPropertyValue('hideAccessRightsIfNotAllowedToManage')" "$!cmsPH.hideAccessRightsIfNotAllowedToManage")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyAllowFolderType" "onlyAllowFolderType" "$this.getPropertyValue('onlyAllowFolderType')" "$!cmsPH.onlyAllowFolderType")
+				#editPropertyFieldCSS("ServerNode.property.allowedFolderContentTypeNames" "allowedFolderContentTypeNames" "$this.getPropertyValue('allowedFolderContentTypeNames')" "51" "$!serverNodeId" "$!cmsPH.allowedFolderContentTypeNames")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.skipResultDialogIfPossible" "skipResultDialogIfPossible" "$this.getPropertyValue('skipResultDialogIfPossible')" "$!cmsPH.skipResultDialogIfPossible")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowOverrideModifyer" "allowOverrideModifyer" "$this.getPropertyValue('allowOverrideModifyer')" "$!cmsPH.allowOverrideModifyer")
 

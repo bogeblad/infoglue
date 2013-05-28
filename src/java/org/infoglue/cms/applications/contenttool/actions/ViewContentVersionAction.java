@@ -48,9 +48,11 @@ import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionControllerP
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.EventController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryLanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
@@ -343,7 +345,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
         	}
 
         	this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
-        	if(this.contentVersionVO == null && fallBackToMasterLanguage)
+           	if(this.contentVersionVO == null && fallBackToMasterLanguage)
 			{
 			    //logger.info("repositoryId:" + repositoryId);
 			    Integer usedRepositoryId = this.repositoryId;
@@ -1657,7 +1659,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 
 		return template;
 	}
-	
+		
 	public Integer getCurrentEditorId()
 	{
 		return currentEditorId;

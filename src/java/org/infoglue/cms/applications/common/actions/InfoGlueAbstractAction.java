@@ -920,6 +920,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return CmsPropertyHandler.getOnlyAllowFolderType();
 	}
 
+	public String getAllowedFolderContentTypeNames()
+	{
+		return CmsPropertyHandler.getAllowedFolderContentTypeNames();
+	}
+
 	public Boolean getSkipResultDialogIfPossible()
 	{
 		return CmsPropertyHandler.getSkipResultDialogIfPossible();
@@ -1453,6 +1458,12 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		sb.insert(0, "/");
 		
 		return sb.toString();
+	}
+	
+	public String getContentPath(Integer contentId, boolean includeRootContent, boolean includeRepositoryName) throws Exception
+	{
+		return ContentController.getContentController().getContentPath(contentId, includeRootContent, includeRepositoryName);
+
 	}
 
 	public SiteNodeVersionVO getSiteNodeVersionVO(Integer siteNodeVersionId) throws Exception

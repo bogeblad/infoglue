@@ -64,6 +64,10 @@
 					#end
 				#end
 			#else
+							
+				#if($allowedFolderContentTypeNames == "" || $allowedFolderContentTypeNames.indexOf($defaultFolderContentTypeName) == -1)
+					#set($defaultFolderContentTypeName = "")
+				#end
 				<p>
 					$ui.getString("tool.contenttool.newContent.contentType")<br/>
 					<select class="contenttypes" name="contentTypeDefinitionId">

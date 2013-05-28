@@ -212,6 +212,18 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	 * This method shows the user a list of Components(HTML Templates). 
 	 */
     
+	public String doListFormComponents() throws Exception
+	{
+		logger.info("queryString:" + this.getRequest().getQueryString());
+		//initialize(false);
+
+		return "listFormComponents";
+	}
+
+	/**
+	 * This method shows the user a list of Components(HTML Templates). 
+	 */
+    
 	public String doListComponentsForChange() throws Exception
 	{
 		logger.info("queryString:" + this.getRequest().getQueryString());
@@ -235,6 +247,33 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 		return "listComponentsForChange";
 	}
 
+	/**
+	 * This method shows the user a list of Components(HTML Templates). 
+	 */
+    
+	public String doListFormComponentsForChange() throws Exception
+	{
+		logger.info("queryString:" + this.getRequest().getQueryString());
+		//initialize(false);
+
+		//this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
+		/*
+		String componentXML = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
+		Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
+		String componentXPath = "//component[@id=" + this.componentId + "]";
+		NodeList anl = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), componentXPath);
+		if(anl.getLength() > 0)
+		{
+			Element selectedComponent = (Element)anl.item(0);
+			String componentContentId = selectedComponent.getAttribute("contentId");
+			
+			ContentVO contentVO = ContentController.getContentController().getContentVOWithId(new Integer(componentContentId));
+			this.componentName = contentVO.getName();
+		}
+		*/
+		return "listFormComponentsForChange";
+	}
+	
 	/**
 	 * This method shows the user a list of Components(HTML Templates). 
 	 */
@@ -2345,6 +2384,27 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 	    {
 	        String direction = "asc";
 	        componentVOList = ComponentController.getController().getComponentVOList(sortProperty, direction, allowedComponentNames, disallowedComponentNames, allowedComponentGroupNames, this.getInfoGluePrincipal());
+	    }
+	    catch(Exception e)
+	    {
+	        logger.error("Error getting sorted components. Message: " + e.getMessage(), e);
+	    }
+		
+	    return componentVOList;
+	}
+	
+	/**
+	 * This method returns the contents that are of contentTypeDefinition "HTMLTemplate" sorted on the property given.
+	 */
+	
+	public List getSortedFormComponents(String sortProperty) throws Exception
+	{
+	    List componentVOList = null;
+	    
+	    try
+	    {
+	        String direction = "asc";
+	        componentVOList = ComponentController.getController().getComponentVOList(sortProperty, direction, allowedComponentNames, disallowedComponentNames, new String[]{"UserForm"}, this.getInfoGluePrincipal());
 	    }
 	    catch(Exception e)
 	    {

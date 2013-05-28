@@ -2289,6 +2289,13 @@ public class CmsPropertyHandler
 	    return customContentTypeIcons;
 	}
 
+	public static String getAllowedFolderContentTypeNames()
+	{
+		String customContentTypeIconsString = getServerNodeProperty("allowedFolderContentTypeNames", false, "Folder");
+	    
+	    return customContentTypeIconsString;
+	}
+
 	public static Map getCacheSettings()
 	{
 		return getCacheSettings(false);

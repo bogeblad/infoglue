@@ -1078,7 +1078,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 			else if(object.getClass().getName().equals(ContentVersionImpl.class.getName()))
 			{
 				CacheController.clearCacheForGroup("contentCategoryCache", "contentVersion_" + getObjectIdentity(object).toString());
-
+				
 				ContentVersionImpl contentVersion = (ContentVersionImpl)object;
 				if(contentVersion.getOwningContent().getContentTypeDefinition() == null || (
 				   contentVersion.getOwningContent().getContentTypeDefinition().getName().equalsIgnoreCase("HTMLTemplate") ||
@@ -1086,6 +1086,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 				{
 					ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getOwningContent().getId());
 				}
+				CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getOwningContent().getId());
 
 				clearCache(MediumContentVersionImpl.class);
 				clearCache(SmallContentVersionImpl.class);
@@ -1108,6 +1109,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 					{
 						ComponentController.getController().reIndexComponentContentsDelayed(contentVersion.getContentId());
 					}
+					CacheController.clearCacheForGroup("contentVersionCache", "content_" + contentVersion.getOwningContent().getId());
 				}
 				catch (Exception e) 
 				{

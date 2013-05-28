@@ -2893,7 +2893,7 @@ public class ContentController extends BaseController
 		{
 			RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(contentVO.getRepositoryId(), db);
 			if(repositoryVO != null)
-				sb.insert(0, repositoryVO.getName() + " - /");
+				sb.insert(0, repositoryVO.getName() + "/");
 		}
 		
 		return sb.toString();

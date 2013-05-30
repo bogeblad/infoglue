@@ -1,3 +1,40 @@
+################################
+##BEGIN REAL CODE
+################################
+#beginLightCommonToolV3Impl("tool.common.constraintException.title" "" "" false true true "" false "")
+
+	##lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+	
+	<h3>$ui.getString("tool.common.constraintException.header")</h3>
+	
+	<p>
+		#foreach($errorList in $errors.allErrors)
+	  		#foreach($error in $errorList)
+	      		<font color="red">
+	      			Error: $error
+	      		</font>
+	    	#end
+	    #end
+	    #if($returnAddress && $returnAddress != "")
+		    <br><br>
+		    #if("!$extraAccessRightInfo" != "")
+		    <div id="debug" style="font-size: 8px; font-weight: normal; overflow: auto; display: none; height: 500px; width: 90%; border: 1px solid #ccc; background-color: #fff;">
+		   	 	<pre>$extraAccessRightInfo</pre>
+		    </div>
+		    <a href="javascript:$('#debug').toggle();">Show/Hide debug</a>
+		    <br><br>
+	    	 #end
+	    	<a href="$returnAddress">Ok</a>
+	    #end
+	</p>
+				
+	##lightFooterToolbar($footerButtons)
+
+#endLightCommonToolV3()
+
+#*
 <?xml version="1.0" encoding="UTF-8"?> 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -17,7 +54,7 @@
         <td>
           <table width="100%">
             <tr>
-              <td class="smalllabel">AAA
+              <td class="smalllabel">
               	#foreach($errorList in $errors.allErrors)
               		#foreach($error in $errorList)
 			      		<font color="red">
@@ -44,3 +81,4 @@
     </table>
   </body>
 </table>
+*#

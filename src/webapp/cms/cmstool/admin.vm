@@ -48,7 +48,7 @@
 				maxWidth: 400,
 				minWidth: 200
 			});
-		
+
 			#if($initialToolName == "ContentTool")
 				activateTool("contentMarkup", "$ui.getString('tool.common.contentTool.name')", "$ui.getString("tool.common.adminTool.header")", false, '$ui.getString("tool.common.contentTabLabelPrefix")');
 				openUrlInWorkArea("ViewContentToolStartPage!V3.action", "$ui.getString('tool.common.contentTool.name')", "content", "$ui.getString('tool.common.contentTabLabelPrefix')");
@@ -66,7 +66,8 @@
 				activateTool("mydesktopMarkup", "$ui.getString('tool.common.myDesktopTool.name')", "$ui.getString("tool.common.adminTool.header")", false, '$ui.getString("tool.common.mydesktopTabLabelPrefix")');
 				openUrlInWorkArea("ViewMyDesktop.action", "$ui.getString('tool.common.myDesktopTool.name')", "mydesktop", "$ui.getString('tool.common.mydesktopTabLabelPrefix')");
 			#end
- 
+			
+
 			var i = 0;
 		    $(document).mouseover(function(e) {
 		    	$("#debug").text("mouseover: " + isDragActive + ":"/* + getDragHTML()*/);

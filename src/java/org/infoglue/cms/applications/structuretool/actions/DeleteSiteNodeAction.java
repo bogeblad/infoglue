@@ -89,7 +89,7 @@ public class DeleteSiteNodeAction extends InfoGlueAbstractAction
 	{
 		if (!forceDelete)
 		{
-			this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(this.siteNodeVO.getSiteNodeId(), CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion());
+			this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(this.siteNodeVO.getSiteNodeId(), -1, CmsPropertyHandler.getOnlyShowReferenceIfLatestVersion(), true);
 		}
 		if(!forceDelete && this.referenceBeanList != null && this.referenceBeanList.size() > 0)
 		{

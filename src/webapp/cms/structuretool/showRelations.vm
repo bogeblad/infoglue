@@ -88,7 +88,6 @@
 				<tr>
 					<th>$ui.getString("tool.common.action.label")</th>
 					<th>$ui.getString("tool.contenttool.searchResultContentHeader")</th>
-					<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
 					<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
 				</tr>
 			</thead>
@@ -98,18 +97,18 @@
 					#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
 						#set($hasContentReferences = true)
 						#set($lastIndex = $referenceBean.versions.size() - 1)
+			
+						#foreach ($version in $referenceBean.versions)
 						<tr>
 							<td><a class="deleteCross" href="DeleteSiteNode!deleteReference.action?siteNodeId=$originalSiteNodeId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey">&nbsp;</a></td>
 							<td>
-								<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.path</a>
-			 				</td>
-			 				<td>
-			 					$referenceBean.versions.get($lastIndex).registryVOList.size()
+								<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.path</a> ($version.referencingObject.languageName)
 			 				</td>
 			 				<td>
 								$referenceBean.contactPersonEmail
 			 				</td>
 						</tr>
+						#end
 					#end
 				#end
 
@@ -117,7 +116,6 @@
 					<tr>
 						<td>&nbsp;</td>
 						<td>$ui.getString("tool.structuretool.noContentReferencesFound")</td>
-						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 					</tr>
 				#end
@@ -132,7 +130,6 @@
 				<tr>
 					<th>$ui.getString("tool.common.action.label")</th>
 					<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
-					<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
 					<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
 				</tr>
 			</thead>
@@ -148,9 +145,6 @@
 								<a href="DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1&returnAddress=$returnAddress" target="_blank">$referenceBean.path</a>
 			 				</td>
 			 				<td>
-			 					$referenceBean.versions.get($lastIndex).registryVOList.size()
-			 				</td>
-			 				<td>
 								$referenceBean.contactPersonEmail
 			 				</td>
 						</tr>
@@ -161,7 +155,6 @@
 					<tr>
 						<td>&nbsp;</td>
 						<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>
-						<td>&nbsp;</td>
 						<td>&nbsp;</td>
 					</tr>
 				#end

@@ -1065,6 +1065,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 
 	public String getInitialToolName()
 	{
+		if(getRequest().getParameter("siteNodeId") != null && !getRequest().getParameter("siteNodeId").equals(""))
+			return "StructureTool";
+		if(getRequest().getParameter("contentId") != null && !getRequest().getParameter("contentId").equals(""))
+			return "ContentTool";
+		
 		return CmsPropertyHandler.getPreferredToolName(getUserName());
 	}
 
@@ -1442,6 +1447,13 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
 
 		return contentVO;
+	}
+
+	public SiteNodeVO getSiteNodeVO(Integer siteNodeId) throws Exception
+	{
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+
+		return siteNodeVO;
 	}
 
 	public String getContentPath(Integer contentId) throws Exception

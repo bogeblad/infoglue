@@ -41,10 +41,16 @@
 			
 			#foreach($tool in $userTools)
 				#if($initialToolName == "$tool.toolName")
-					activateTool('${tool.toolName}', '$tool.title', '$tool.actionUrl', '');			
+					#if($tool.toolName == "StructureTool" && "$!siteNodeId" != "")
+						activateTool('${tool.toolName}', '$tool.title', '${tool.actionUrl}?siteNodeId=$!siteNodeId', '');			
+					#elseif($tool.toolName == "ContentTool" && "$!contentId" != "")
+						activateTool('${tool.toolName}', '$tool.title', '${tool.actionUrl}?contentId=$!contentId&languageId=$!languageId', '');			
+					#else
+						activateTool('${tool.toolName}', '$tool.title', '$tool.actionUrl', '');			
+					#end
 				#end
 			#end
-			
+
 			$(document).mouseover(function(e) {
 		    	$("#debug").text("mouseover: " + isDragActive + ":"/* + getDragHTML()*/);
 				if(isDragActive && !isLocalDragActive && getDragHTML() != "")

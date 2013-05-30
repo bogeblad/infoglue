@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.applications.cmstool.actions;
 
+import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.util.CmsPropertyHandler;
 
@@ -35,7 +36,9 @@ import org.infoglue.cms.util.CmsPropertyHandler;
 public class AdminAction extends InfoGlueAbstractAction
 {
 	private static final long serialVersionUID = -2904286525405758091L;
-	
+
+    private final static Logger logger = Logger.getLogger(AdminAction.class.getName());
+
 	public String doExecute() throws Exception
     {
 		String preferredGUI = CmsPropertyHandler.getDefaultGUI(getUserName());
@@ -62,4 +65,45 @@ public class AdminAction extends InfoGlueAbstractAction
 		return "successReset";
     }
 	
+	public Integer getSiteNodeId()
+	{
+		try
+		{
+			if(getRequest().getParameter("siteNodeId") != null && !getRequest().getParameter("siteNodeId").equals(""))
+				return new Integer(getRequest().getParameter("siteNodeId"));
+		}
+		catch (Exception e) 
+		{
+			logger.error("Error getting siteNodeId: " + e.getMessage());
+		}
+		return null;
+	}
+	
+	public Integer getContentId()
+	{
+		try
+		{
+			if(getRequest().getParameter("contentId") != null && !getRequest().getParameter("contentId").equals(""))
+				return new Integer(getRequest().getParameter("contentId"));
+		}
+		catch (Exception e) 
+		{
+			logger.error("Error getting contentId: " + e.getMessage());
+		}
+		return null;
+	}
+	
+	public Integer getLanguageId()
+	{
+		try
+		{
+			if(getRequest().getParameter("languageId") != null && !getRequest().getParameter("languageId").equals(""))
+				return new Integer(getRequest().getParameter("languageId"));
+		}
+		catch (Exception e) 
+		{
+			logger.error("Error getting languageId: " + e.getMessage());
+		}
+		return null;
+	}
 }

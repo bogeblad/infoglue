@@ -44,7 +44,6 @@
 						<th>$ui.getString("tool.contenttool.searchResultContentHeader")</th>
 						##<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
 						<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
-						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -57,9 +56,11 @@
 							#if($count < $referenceLimit)
 								#set($hasContentReferences = true)
 								#set($lastIndex = $referenceBean.versions.size() - 1)
+								
+								#foreach ($version in $referenceBean.versions)
 								<tr>
 									<td>
-										<img src='css/images/v3/contentIcon.gif'> <a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.getPath()</a>
+										<img src='css/images/v3/contentIcon.gif'> <a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$version.referencingObject.languageId" target="_blank">$referenceBean.getPath()</a> ($version.referencingObject.languageName)
 					 				</td>
 					 				#*
 					 				<td>
@@ -69,8 +70,8 @@
 					 				<td>
 					 					$referenceBean.contactPersonEmail
 					 				</td>
-									<td><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
 								</tr>	
+								#end
 							#end
 							#set($count = $count + 1)
 						#end
@@ -80,7 +81,6 @@
 							<td style="color: red;">$ui.getString("tool.contenttool.moreContentReferencesFound") $count</td>		
 							##<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
-							<td>&nbsp;</td>		
 						</tr>	
 					#end
 					
@@ -88,7 +88,6 @@
 						<tr>
 							<td>$ui.getString("tool.structuretool.noContentReferencesFound")</td>		
 							##<td>&nbsp;</td>		
-							<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 						</tr>	
 					#end
@@ -106,7 +105,6 @@
 						<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
 						##<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
 						<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
-						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -130,7 +128,6 @@
 									<td>
 					 					$referenceBean.contactPersonEmail
 					 				</td>
-									<td><a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
 								</tr>	
 							#end
 							#set($count = $count + 1)
@@ -141,7 +138,6 @@
 							<td>$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
 							##<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
-							<td>&nbsp;</td>		
 						</tr>	
 					#end
 					
@@ -149,7 +145,6 @@
 						<tr>
 							<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
 							##<td>&nbsp;</td>		
-							<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 						</tr>	
 					#end
@@ -182,7 +177,6 @@
 					 				</td>
 									<td><a href="ViewContentVersion!standalone.action?contentId=$referencingEntity.id" target="_blank">$ui.getString("tool.common.edit.label")</a></td>
 								</tr>	
-								
 							#elseif($referencingEntity.class.name.indexOf("SiteNode") > -1)
 								#set($lastIndex = $referencingBeanList.size() - 1)
 								#if($isOdd)

@@ -199,6 +199,8 @@ public class RegistryController extends BaseController
 			Map<SiteNodeVO, RegistryVO> siteNodeRegistryPair = extractSiteNodesFromRegistryList(registryIds, db);
 			InconsistenciesController.getController().removeSiteNodeReferences(siteNodeRegistryPair, principal, db);
     	}
+        Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();
+
 		Map<String, ReferenceBean> entries = new HashMap<String, ReferenceBean>();
 		List<ReferenceBean> references = new ArrayList<ReferenceBean>();
 		for (String registryIdString : registryIds)
@@ -208,7 +210,7 @@ public class RegistryController extends BaseController
 			{
 				logger.info("About to remove registry bean. Referencing-type: " + registryVO.getReferencingEntityName() + ", referencing-id: " + registryVO.getReferencingEntityId());
 			}
-			ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, onlyLatest, db);
+			ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, checkedLanguageVersions, onlyLatest, true, db);
 			if (referenceBean != null)
 			{
 				references.add(referenceBean);
@@ -370,6 +372,9 @@ public class RegistryController extends BaseController
 			Map<SiteNodeVO, RegistryVO> siteNodeRegistryPair = extractSiteNodesFromRegistryList(registryEntires, db);
 			InconsistenciesController.getController().removeSiteNodeReferences(siteNodeRegistryPair, principal, db);
 		}
+		
+        Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();
+
 		Map<String, ReferenceBean> entries = new HashMap<String, ReferenceBean>();
 		List<ReferenceBean> references = new ArrayList<ReferenceBean>();
     	for (RegistryVO registryVO : registryEntires)
@@ -378,7 +383,7 @@ public class RegistryController extends BaseController
 			{
 				logger.info("About to remove registry bean. Referencing-type: " + registryVO.getReferencingEntityName() + ", referencing-id: " + registryVO.getReferencingEntityId());
 			}
-			ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, onlyLatest, db);
+			ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, checkedLanguageVersions, onlyLatest, false, db);
 			if (referenceBean != null)
 			{
 				references.add(referenceBean);
@@ -387,8 +392,7 @@ public class RegistryController extends BaseController
     	}
     	return references;
     }
-
-
+    
 	/**
 	 * this method goes through all inline stuff and all relations if ordinary content 
 	 * and all components and bindings if a metainfo.
@@ -1880,20 +1884,20 @@ public class RegistryController extends BaseController
 
     public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId) throws SystemException, Exception
     {
-    	return getReferencingObjectsForSiteNode(siteNodeId, -1, false);
+    	return getReferencingObjectsForSiteNode(siteNodeId, -1, false, false);
     }
     
     public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, boolean onlyLatestVersion) throws SystemException, Exception
     {
-    	return getReferencingObjectsForSiteNode(siteNodeId, -1, onlyLatestVersion);
+    	return getReferencingObjectsForSiteNode(siteNodeId, -1, onlyLatestVersion, false);
     }
 
     public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows) throws SystemException, Exception
     {
-    	return getReferencingObjectsForSiteNode(siteNodeId, maxRows, false);
+    	return getReferencingObjectsForSiteNode(siteNodeId, maxRows, false, false);
     }
 
-    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion) throws SystemException, Exception
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion, boolean onlyOneVersionPerLanguage) throws SystemException, Exception
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
@@ -1903,7 +1907,7 @@ public class RegistryController extends BaseController
 		{
 			beginTransaction(db);
 
-		    referenceBeanList = getReferencingObjectsForSiteNode(siteNodeId, maxRows, onlyLatestVersion, db);
+		    referenceBeanList = getReferencingObjectsForSiteNode(siteNodeId, maxRows, onlyLatestVersion, onlyOneVersionPerLanguage, db);
 
 		    commitTransaction(db);
 		}
@@ -1916,15 +1920,16 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 
-    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, Database db) throws SystemException, Exception
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyOneVersionPerLanguage, Database db) throws SystemException, Exception
     {
-    	return getReferencingObjectsForSiteNode(siteNodeId, maxRows, false, db);
+    	return getReferencingObjectsForSiteNode(siteNodeId, maxRows, false, onlyOneVersionPerLanguage, db);
     }
 
-    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion, Database db) throws SystemException, Exception
+    public List<ReferenceBean> getReferencingObjectsForSiteNode(Integer siteNodeId, int maxRows, boolean onlyLatestVersion, boolean onlyOneVersionPerLanguage, Database db) throws SystemException, Exception
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
+        Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();
 		Map<String, ReferenceBean> entries = new HashMap<String, ReferenceBean>();
 
 		@SuppressWarnings("unchecked")
@@ -1934,7 +1939,7 @@ public class RegistryController extends BaseController
         {
             RegistryVO registryVO = registryEntiresIterator.next();
             logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
-            ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, onlyLatestVersion, db);
+            ReferenceBean referenceBean = getReferenceBeanFromRegistryVO(registryVO, entries, checkedLanguageVersions, onlyLatestVersion, onlyOneVersionPerLanguage, db);
             if (referenceBean != null)
             {
             	referenceBeanList.add(referenceBean);
@@ -1952,7 +1957,7 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 
-    private ReferenceBean getReferenceBeanFromRegistryVO(RegistryVO registryVO, Map<String, ReferenceBean> entries, boolean onlyLatestVersion, Database db)
+    private ReferenceBean getReferenceBeanFromRegistryVO(RegistryVO registryVO, Map<String, ReferenceBean> entries, Map<String,Boolean> checkedLanguageVersions, boolean onlyLatestVersion, boolean onlyOneVersionPerLanguage, Database db)
     {
     	ReferenceBean result = null;
     	boolean add = true;
@@ -2006,7 +2011,13 @@ public class RegistryController extends BaseController
 						}
 						else
 						{
-							if (onlyLatestVersion)
+		                    Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getContentId() + "_" + contentVersion.getLanguageId());
+		                    if(hasVersion != null && onlyOneVersionPerLanguage)
+		                    {
+		                    	add = false;
+		                    	//referenceBeanList.remove(existingReferenceBean);
+		                    }
+		                    else if (onlyLatestVersion)
 							{
 								ContentVersionVO latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVersion.getContentId(), contentVersion.getLanguageId(), ContentVersionVO.WORKING_STATE, db);
 
@@ -2030,8 +2041,11 @@ public class RegistryController extends BaseController
 								String contactPersonEmail = getContactPersonEmail(contentVO, db);
 								existingReferenceBean.setContactPersonEmail(contactPersonEmail);
 
+								contentVersion.setLanguageName(LanguageController.getController().getLanguageVOWithId(contentVersion.getLanguageId(), db).getName());
 								referenceVersionBean.setReferencingObject(contentVersion);
 								referenceVersionBean.getRegistryVOList().add(registryVO);
+								
+					    		checkedLanguageVersions.put("" + contentVersion.getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
 			                }
 						}
 					}

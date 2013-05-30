@@ -2,6 +2,12 @@
 
 	<style type="text/css">
 		@import "script/jqueryplugins-latest/dataTables/media/css/ig_table.css";
+		tr td {
+			border-bottom: 0px;
+		}
+		tr td .underline {
+			border-bottom: 1px;
+		}
 	</style>
 	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 
@@ -41,11 +47,24 @@
 				div.style.display = 'none';
 		}
 		
+		function deleteAllReferences()
+		{
+			document.location.href = "DeleteContent!deleteAllReferences.action?contentId=$originalContentId&returnAddress=$returnAddress&userSessionKey=$userSessionKey";
+		}
+		
 		$(document).ready(function(){
 
-			#set($extraParameter = '')
-			#initDataTableImpl("dataTable" $extraParameter)
-			
+			#set($extraParameter = '"iDisplayLength":5,"aLengthMenu":[5, 10, 25, 50]')
+			#initDataTableImpl("contentVersions" $extraParameter)
+			#initDataTableImpl("siteNodes" $extraParameter)
+
+			$("#tabsContainer").tabs(
+	  			{
+	  				cache: false,
+	  				show:function() { resizeScrollArea();}
+	  			}
+	  		);
+
 		});
 	-->
 	</script>
@@ -59,60 +78,95 @@
 
 <h3>$ui.getString("tool.contenttool.fixReferencesBeforeDelete.header")</h3>
 
-<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+<div id="tabsContainer" class="flora cleanTopDiv">
+	<ul>
+        <li><a href="#contentReferencesTab"><span>$ui.getString("tool.structuretool.contentVersionReferences.header")</span></a></li>
+        <li><a href="#pageReferencesTab"><span>$ui.getString("tool.structuretool.siteNodeReferences.header")</span></a></li>
+    </ul>
 
-	<form method="POST" name="editForm" action="DeleteContent.action" style="margin: 0px 16px 0px 16px;">
-		<table border="0" cellpadding="2" cellspacing="0" width="100%">
-			<tr>
-				<td colspan="4" width="100%"><b>$ui.getString("tool.contenttool.siteNodeReferences.header")</b></td>
-			</tr>
-			#set($hasPageReferences = false)
-			#foreach ($referenceBean in $referenceBeanList)
-				#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
-					#set($hasPageReferences = true)
-					<tr>
-						<td><img src="css/images/tree/structureRoot.gif"></td>
-						<td width="100%"><a href="DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1&returnAddress=$returnAddress" target="_blank">$referenceBean.name</a> #if($referenceBean.registryVOList.size() > 1)- $referenceBean.registryVOList.size() $ui.getString("tool.structuretool.referencesFound")#end</td>
-						<td><a href="DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1&returnAddress=$returnAddress" target="_blank"><img src="css/images/edit.gif" border="0"></a></td>
-						<td nowrap="1"><a href="DeleteContent!deleteReference.action?contentId=$originalContentId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey"><img src="css/images/ok_icon.gif" border="0"></a><img src="css/images/trans.gif" border="0" width="5" height="5"></td>
-					</tr>																						  		
-				#end
-			#end
-			#if(!$hasPageReferences)
+    <div id="contentReferencesTab" class="inlineTabDiv">
+
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="contentVersions" width="100%">
+			<thead>
 				<tr>
-					<td colspan="4">$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
-				</tr>	
-			#end
+					<th>$ui.getString("tool.common.action.label")</th>
+					<th>$ui.getString("tool.contenttool.searchResultContentHeader")</th>
+					<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
+				</tr>
+			</thead>
+			<tbody>
+				#set($hasContentReferences = false)
+				#foreach ($referenceBean in $referenceBeanList)
+					#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
+						#set($hasContentReferences = true)
+						#set($lastIndex = $referenceBean.versions.size() - 1)
 			
-			<tr>
-				<td colspan="4"><img src="css/images/trans.gif" height="10" width="1"></td>
-			</tr>
-			<tr>
-				<td colspan="4" width="100%"><b>$ui.getString("tool.contenttool.contentVersionReferences.header")</b></td>
-			</tr>
-			#set($hasContentReferences = false)
-			#foreach ($referenceBean in $referenceBeanList)
-				#if($referenceBean.referencingCompletingObject.class.name.indexOf("Content") > -1)
-					#set($hasContentReferences = true)
-					#set($lastIndex = $referenceBean.versions.size() - 1)
-					#set($languageId = $referenceBean.versions.get($lastIndex).referencingObject.languageId)
-					<tr>
-						<td><img src="css/images/tree/contentRoot.gif"></td>
-						<td width="100%"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$languageId" target="_blank">$referenceBean.name</a> #if($referenceBean.registryVOList.size() > 1)- $referenceBean.registryVOList.size() $ui.getString("tool.structuretool.referencesFound")#end</td>
-						<td nowrap="1"><a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$languageId" target="_blank"><img src="css/images/edit.gif" border="0"></a><img src="css/images/trans.gif" border="0" width="5" height="5"></td>
-						<td nowrap="1"><a href="DeleteContent!deleteReference.action?contentId=$originalContentId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey"><img src="css/images/ok_icon.gif" border="0"></a><img src="css/images/trans.gif" border="0" width="5" height="5"></td>		
-					</tr>																						 		
+						#foreach ($version in $referenceBean.versions)
+						<tr>
+							<td><a class="deleteCross" href="DeleteContent!deleteReference.action?siteNodeId=$originalSiteNodeId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey">&nbsp;</a></td>
+							<td>
+								<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.path</a> ($version.referencingObject.languageName)
+			 				</td>
+			 				<td>
+								$referenceBean.contactPersonEmail
+			 				</td>
+						</tr>
+						#end
+					#end
 				#end
-			#end
-			#if(!$hasContentReferences)
-				<tr>
-					<td colspan="4">$ui.getString("tool.structuretool.noContentReferencesFound")</td>		
-				</tr>	
-			#end
-		
-		</table>
-	</form>
 
+				#if(!$hasContentReferences)
+					<tr>
+						<td>&nbsp;</td>
+						<td>$ui.getString("tool.structuretool.noContentReferencesFound")</td>
+						<td>&nbsp;</td>
+					</tr>
+				#end
+
+			</tbody>
+		</table>
+		
+    </div>
+
+    <div id="pageReferencesTab" class="inlineTabDiv">
+    
+		<table cellpadding="0" cellspacing="0" border="1" class="display" id="siteNodes" width="100%">
+			<thead>
+				<tr>
+					<th>$ui.getString("tool.common.action.label")</th>
+					<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
+					<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
+				</tr>
+			</thead>
+			<tbody>
+				#set($hasPageReferences = false)
+				#foreach ($referenceBean in $referenceBeanList)
+					#if($referenceBean.referencingCompletingObject.class.name.indexOf("SiteNode") > -1)
+						#set($hasPageReferences = true)
+						#set($lastIndex = $referenceBean.versions.size() - 1)
+						<tr>
+							<td><a class="deleteCross" href="DeleteContent!deleteReference.action?siteNodeId=$originalSiteNodeId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey">&nbsp;</a></td>
+							<td>
+								<a href="DeleteContent!fixPage.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1&returnAddress=$returnAddress" target="_blank">$referenceBean.path</a>
+			 				</td>
+			 				<td>
+								$referenceBean.contactPersonEmail
+			 				</td>
+						</tr>
+					#end
+				#end
+
+				#if(!$hasPageReferences)
+					<tr>
+						<td>&nbsp;</td>
+						<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>
+						<td>&nbsp;</td>
+					</tr>
+				#end
+
+			</tbody>
+		</table>
+    </div>
 </div>
 
 #lightFooterToolbar($footerButtons)

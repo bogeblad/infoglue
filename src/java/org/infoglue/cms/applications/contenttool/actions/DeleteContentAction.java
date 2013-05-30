@@ -106,9 +106,38 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 
 	    	return "success";
 	    }
-	}	
+	}
 	
-	public String doV3() throws Exception 
+	public String executeAction(boolean forceDelete) throws Exception 
+	{
+		if (!forceDelete)
+		{
+			this.referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(this.contentVO.getContentId());
+		}
+
+		if(!forceDelete && this.referenceBeanList != null && this.referenceBeanList.size() > 0)
+		{
+		    return "showRelations";
+		}
+	    else
+	    {
+	    	try
+			{
+				this.parentContentId = ContentController.getParentContent(this.contentVO.getContentId()).getContentId();
+			}
+			catch(Exception e)
+			{
+				logger.info("The content must have been a root-content because we could not find a parent.");
+			}
+
+	    	//ContentControllerProxy.getController().acDelete(this.getInfoGluePrincipal(), this.contentVO);	    
+    		ContentControllerProxy.getController().acMarkForDelete(this.getInfoGluePrincipal(), this.contentVO, forceDelete);	    
+
+	    	return "success";
+	    }
+	}
+	
+	public String executeV3(boolean forceDelete) throws Exception 
 	{
 		String result = NONE;
 		
@@ -126,7 +155,8 @@ public class DeleteContentAction extends InfoGlueAbstractAction
         	String contentName = contentVO.getName();
         	parentContentId = new Integer(contentVO.getId());
         	
-        	result = doExecute();
+        	result = executeAction(forceDelete);
+        	//result = doExecute();
             
     		String deleteContentInlineOperationDoneHeader = getLocalizedString(getLocale(), "tool.contenttool.deleteContentInlineOperationDoneHeader", contentName);
     		String deleteContentInlineOperationViewDeletedContentParentLinkText = getLocalizedString(getLocale(), "tool.contenttool.deleteContentInlineOperationViewDeletedContentParentLinkText");
@@ -225,9 +255,19 @@ public class DeleteContentAction extends InfoGlueAbstractAction
 	    	}
 	    }
 	    
-	    return doV3();
+	    return executeV3(false);
 	}	
 	
+	public String doV3() throws Exception 
+	{
+		return executeV3(false);
+    }
+	
+	public String doDeleteAllReferences() throws Exception
+	{
+		return executeV3(true);
+	}
+
 	public String doFixPage() throws Exception 
 	{
 	    return "fixPage";

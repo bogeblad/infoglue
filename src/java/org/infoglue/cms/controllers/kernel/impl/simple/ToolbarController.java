@@ -506,6 +506,8 @@ public class ToolbarController implements ToolbarProvider
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
 			if(toolbarKey.equalsIgnoreCase("tool.structuretool.deleteSiteNode.header"))
 				return getDeleteSiteNodeFooterButtons(locale);
+			if(toolbarKey.equalsIgnoreCase("tool.contenttool.deleteContent.header"))
+				return getDeleteContentFooterButtons(locale);
 
 		}
 		catch(Exception e) {e.printStackTrace();}			
@@ -3783,6 +3785,22 @@ public class ToolbarController implements ToolbarProvider
 	}
 
 	private List<ToolbarButton> getDeleteSiteNodeFooterButtons(Locale locale) throws Exception
+	{
+		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
+
+		buttons.add(new ToolbarButton("",
+				getLocalizedString(locale, "tool.structuretool.removeAllReferences"), 
+				getLocalizedString(locale, "tool.structuretool.removeAllReferences"),
+				"deleteAllReferences();",
+				"",
+				"left",
+				"delete",
+				true));
+
+		return buttons;
+	}
+	
+	private List<ToolbarButton> getDeleteContentFooterButtons(Locale locale) throws Exception
 	{
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 

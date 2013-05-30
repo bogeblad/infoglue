@@ -65,6 +65,7 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	public String doSiteNodeIdPath() throws Exception
     {
 		String siteNodeIdPath = SiteNodeController.getController().getSiteNodeIdPath(new Integer(getRequest().getParameter("siteNodeId")));
+		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + siteNodeIdPath);
 		
 		return NONE;
@@ -73,6 +74,7 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	public String doContentIdPath() throws Exception
     {
 		String contentIdPath = ContentController.getContentController().getContentIdPath(new Integer(getRequest().getParameter("contentId")));
+		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + contentIdPath);
 		
 		return NONE;
@@ -96,7 +98,7 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 				uniqueList.add(((BaseEntityVO)bean.getReferencingCompletingObject()).getId());
 			}
 		}
-		
+		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + uniqueList.size());
 		
 		return NONE;
@@ -105,6 +107,8 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	public String doAssetCount() throws Exception
     {
 		List digitalAssets = DigitalAssetController.getDigitalAssetVOList(new Integer(getRequest().getParameter("contentVersionId")));
+
+		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + digitalAssets.size());
 		
 		return NONE;
@@ -113,6 +117,8 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 	public String doCategoryCount() throws Exception
     {
 		List categories = ContentCategoryController.getController().findByContentVersion(new Integer(getRequest().getParameter("contentVersionId")));
+		
+		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + categories.size());
 		
 		return NONE;

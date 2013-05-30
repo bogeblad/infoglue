@@ -310,17 +310,29 @@
 			if(viewName == "contentVersionAssets")
 			{
 				loadFrame("contentVersionAssetsDiv");
-				$("#tabsContainer").tabs("select", 2);
+				#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
+					$("#tabsContainer").tabs("select", 2);
+				#else
+					$("#tabsContainer").tabs("select", 1);
+				#end
 			}
 		}
 
 		function selectTab(tabIndex)
 		{
-			if(tabIndex == 2)
-			{
-				loadFrame("contentVersionAssetsDiv");
-				$("#tabsContainer").tabs("select", tabIndex);
-			}
+			#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
+				if(tabIndex == 2)
+				{
+					loadFrame("contentVersionAssetsDiv");
+					$("#tabsContainer").tabs("select", tabIndex);
+				}
+			#else
+				if(tabIndex == 1)
+				{
+					loadFrame("contentVersionAssetsDiv");
+					$("#tabsContainer").tabs("select", tabIndex);
+				}
+			#end
 		}
 		
 		var selectedBlock = "";

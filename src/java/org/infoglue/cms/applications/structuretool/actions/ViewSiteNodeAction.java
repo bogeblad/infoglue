@@ -310,7 +310,7 @@ public class ViewSiteNodeAction extends InfoGlueAbstractAction
 	{
 		try
 		{
-		    this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNodeId, 100, db);
+		    this.referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNodeId, 100, true, db);
 		    this.referencingBeanList = RegistryController.getController().getReferencedObjects(SiteNodeVersion.class.getName(), siteNodeVersionVO.getSiteNodeVersionId().toString(), db);
 		    logger.info("referenceBeanList:" + referenceBeanList.size());
 		    logger.info("referencingBeanList:" + referencingBeanList.size());

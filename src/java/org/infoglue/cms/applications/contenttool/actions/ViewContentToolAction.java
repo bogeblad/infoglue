@@ -35,6 +35,9 @@ public class ViewContentToolAction extends ViewCMSAbstractToolAction
 {
 	private static final long serialVersionUID = 1L;
 	
+	private Integer contentId = null;
+	private Integer languageId = null;
+
     public String doExecute() throws Exception
     {
         return "success";
@@ -52,4 +55,25 @@ public class ViewContentToolAction extends ViewCMSAbstractToolAction
 	   		getHttpSession().setAttribute("contentRepositoryId", repositoryId);
 		}
     }
+
+	public Integer getContentId() 
+	{
+		return contentId;
+	}
+
+	public void setContentId(Integer contentId) 
+	{
+		this.contentId = contentId;
+	}
+
+	public Integer getLanguageId() 
+	{
+		return languageId;
+	}
+
+	public void setLanguageId(Integer languageId) 
+	{
+		this.languageId = languageId;
+	}
+
 }

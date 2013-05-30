@@ -51,6 +51,7 @@ import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
+import org.infoglue.cms.applications.databeans.ReferenceVersionBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentCategory;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
@@ -770,7 +771,7 @@ public class SiteNodeController extends BaseController
 	
     private static void deleteRecursive(SiteNode siteNode, Iterator parentIterator, Database db, boolean forceDelete, InfoGluePrincipal infoGluePrincipal) throws ConstraintException, SystemException, Exception
     {
-        List referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, db);
+        List referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, db);
 		if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
 			throw new ConstraintException("SiteNode.stateId", "3405");
 
@@ -3480,8 +3481,9 @@ public class SiteNodeController extends BaseController
 
     public void markForDeletion(SiteNodeVO siteNodeVO, InfoGluePrincipal infogluePrincipal, boolean forceDelete) throws ConstraintException, SystemException
     {
-    	Database db = CastorDatabaseService.getDatabase();
     	Map<SiteNodeVO, List<ReferenceBean>> contactPersons = new HashMap<SiteNodeVO, List<ReferenceBean>>();
+
+    	Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);
 		try
         {
@@ -3501,7 +3503,7 @@ public class SiteNodeController extends BaseController
             rollbackTransaction(db);
             throw new SystemException(e.getMessage());
         }
-        System.out.println("Number of people:" + contactPersons.size());
+        logger.info("Number of people:" + contactPersons.size());
 		if (contactPersons.size() > 0)
 		{
 			logger.info("Will notifiy people about SiteNode removals. Number of nodes: " + contactPersons.size());
@@ -3576,7 +3578,7 @@ public class SiteNodeController extends BaseController
 
     private static void markForDeletionRecursive(SiteNode siteNode, Database db, boolean forceDelete, InfoGluePrincipal infoGluePrincipal, Map<SiteNodeVO, List<ReferenceBean>> contactPersons, boolean notifyContactPersons) throws ConstraintException, SystemException, Exception
     {
-        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, db);
+        List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForSiteNode(siteNode.getId(), -1, false, db);
 		if(referenceBeanList != null && referenceBeanList.size() > 0 && !forceDelete)
 			throw new ConstraintException("SiteNode.stateId", "3405", "<br/><br/>" + siteNode.getName() + " (" + siteNode.getId() + ")");
 
@@ -4090,7 +4092,7 @@ public class SiteNodeController extends BaseController
 					mailContent.append("<li>");
 					// Putting a-tags around each entry will prevent email clients from trying to linkify the entries
 					mailContent.append("<a style=\"color:black;\">");
-					mailContent.append(getSiteNodePath(siteNodeVO, true, true, db));
+					mailContent.append(getSiteNodePath(siteNodeVO, false, true, db));
 					mailContent.append("</a>");
 					mailContent.append("</li>");
 	    		}
@@ -4101,10 +4103,10 @@ public class SiteNodeController extends BaseController
 		    	for (Map.Entry<SiteNodeVO, List<ReferenceBean>> affectedNode : affectedNodes.entrySet())
 		    	{
 					StringBuilder sb = new StringBuilder();
-					sb.append("<p style=\"margin-top:30px;color:black;\">");
-					sb.append("<em><a style=\"color:black;\">");
-					sb.append(getSiteNodePath(affectedNode.getKey(), true, true, db));
-					sb.append("</a></em>");
+					sb.append("<h4 style=\"margin-bottom:4px;color:black;\">");
+					sb.append("<a style=\"color:black;\">");
+					sb.append(getSiteNodePath(affectedNode.getKey(), false, true, db));
+					sb.append("</a>");
 
 					String path;
 					String url;
@@ -4134,19 +4136,23 @@ public class SiteNodeController extends BaseController
 								{
 									languageId = ((LanguageVO)LanguageController.getController().getLanguageVOList(db).get(0)).getLanguageId();
 								}
+								url = CmsPropertyHandler.getCmsFullBaseUrl() + "/Admin.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
+								contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
 							}
 							else
 							{
-								ContentVersionVO version = (ContentVersionVO)reference.getVersions().get(0).getReferencingObject();
-								languageId = version.getLanguageId();
+								for(ReferenceVersionBean versionBean : reference.getVersions())
+								{
+									ContentVersionVO version = (ContentVersionVO)versionBean.getReferencingObject();
+									languageId = version.getLanguageId();
+									url = CmsPropertyHandler.getCmsFullBaseUrl() + "/Admin.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
+									contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a> (" + version.getLanguageName() + ")</li>");
+								}
 							}
-
-							url = CmsPropertyHandler.getCmsFullBaseUrl() + "/ViewContentVersion!standalone.action?contentId=" + ((ContentVO)reference.getReferencingCompletingObject()).getContentId() + "&languageId=" + languageId;
-							contentBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
 						}
 						else
 						{
-							url = CmsPropertyHandler.getCmsFullBaseUrl() + "/DeleteContent!fixPage.action?siteNodeId=" + ((SiteNodeVO)reference.getReferencingCompletingObject()).getSiteNodeId() + "&contentId=-1";
+							url = CmsPropertyHandler.getCmsFullBaseUrl() + "/Admin.action?siteNodeId=" + ((SiteNodeVO)reference.getReferencingCompletingObject()).getSiteNodeId();
 							siteNodeBuilder.append("<li><a href=\"" + url + "\">" + path + "</a></li>");
 						}
 					}

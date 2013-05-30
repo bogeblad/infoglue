@@ -34,7 +34,9 @@ import org.infoglue.cms.applications.cmstool.actions.ViewCMSAbstractToolAction;
 public class ViewStructureToolAction extends ViewCMSAbstractToolAction
 { 
 	private static final long serialVersionUID = 1L;
-
+	
+	private Integer siteNodeId = null;
+	
     public String doExecute() throws Exception
     {
         return "success";
@@ -53,4 +55,13 @@ public class ViewStructureToolAction extends ViewCMSAbstractToolAction
 		}
     }
 
+    public void setSiteNodeId(Integer siteNodeId)
+    {
+    	this.siteNodeId = siteNodeId;
+    }
+
+    public Integer getSiteNodeId()
+	{
+		return siteNodeId;
+	}
 }

@@ -173,6 +173,10 @@
 			});
 
 			#set($rootSiteNode = $this.getRepositoryRootSiteNode($repositoryId))
+			#if($siteNodeId)
+				#set($rootSiteNode = $this.getSiteNodeVO($siteNodeId))
+			#end
+
 			#if(!$rootSiteNode)
 				//alert("No sitenode created yet...");
 				jQuery.get("ViewSiteNode!V3.action?siteNodeId=&repositoryId=$repositoryId", function(data) {

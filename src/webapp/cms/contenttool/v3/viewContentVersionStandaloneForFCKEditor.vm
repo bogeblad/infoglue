@@ -392,8 +392,12 @@
 			if(viewName == "contentVersionAssets")
 			{
 				loadFrame("contentVersionAssetsDiv");
-				$("#tabsContainer").tabs("select", 2);
-				//$("#tabsContainer").tabs("load", 2)
+
+				#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
+					$("#tabsContainer").tabs("select", 2);
+				#else
+					$("#tabsContainer").tabs("select", 1);
+				#end
 			}
 		}
 	

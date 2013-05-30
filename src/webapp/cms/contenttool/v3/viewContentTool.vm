@@ -152,8 +152,13 @@
 					document.getElementById("treeIframe").contentWindow.markSelected(loadedContentId);
 				}
 			});
+			
+			#set($rootContent = $this.getRepositoryRootContent($repositoryId))
+			#if($contentId)
+				#set($rootContent = $this.getContentVO($contentId))
+			#end
 
-			openUrlInWorkArea("ViewContent!V3.action?contentId=$this.getRepositoryRootContent($repositoryId).contentId&repositoryId=$repositoryId");
+			openUrlInWorkArea("ViewContent!V3.action?contentId=$rootContent.contentId&languageId=$!languageId&repositoryId=$rootContent.repositoryId");
 		});
 
 		function changeRepository(selectBox)

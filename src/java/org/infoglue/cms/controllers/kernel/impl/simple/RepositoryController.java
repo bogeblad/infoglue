@@ -25,13 +25,16 @@ package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
+import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
@@ -131,9 +134,9 @@ public class RepositoryController extends BaseController
 			if(contentVO != null)
 			{
 				if(forceDelete)
-					ContentController.getContentController().markForDeletion(contentVO, db, true, true, true, infoGluePrincipal);
+					ContentController.getContentController().markForDeletion(contentVO, db, true, true, true, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>());
 				else
-					ContentController.getContentController().markForDeletion(contentVO, infoGluePrincipal, db);
+					ContentController.getContentController().markForDeletion(contentVO, db, false, false, false, infoGluePrincipal, new HashMap<ContentVO, List<ReferenceBean>>());
 			}
 			
 			SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(repositoryVO.getRepositoryId());

@@ -31,10 +31,17 @@
 	    function createFolder()
 	    { 
 	    	var parentContentId = document.inputForm.parentContentId.value;
-			var returnUrl = "$formatter.encode("CreateContentWizardFinish!V3.action?repositoryId=$repositoryId&siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&componentId=$componentId&propertyName=$propertyName&$allowedContentTypeIdsAsUrlEncodedString&refreshAddress=$encodedRefreshAddress&showSimple=$showSimple&showDecorated=$!showDecorated")";
-	    	var url = "CreateContent!inputV3.action?isBranch=true&repositoryId=$repositoryId&parentContentId=" + parentContentId + "&returnAddress=" + returnUrl;
-			//alert("url:" + url);
-			document.location.href = url;
+			if(parentContentId != "")
+			{
+				var returnUrl = "$formatter.encode("CreateContentWizardFinish!V3.action?repositoryId=$repositoryId&siteNodeId=$siteNodeId&languageId=$languageId&contentId=-1&componentId=$componentId&propertyName=$propertyName&$allowedContentTypeIdsAsUrlEncodedString&refreshAddress=$encodedRefreshAddress&showSimple=$showSimple&showDecorated=$!showDecorated")";
+		    	var url = "CreateContent!inputV3.action?isBranch=true&repositoryId=$repositoryId&parentContentId=" + parentContentId + "&returnAddress=" + returnUrl;
+				//alert("url:" + url);
+				document.location.href = url;
+			}
+		    else
+		    {
+				alert("You must select a folder.");
+			}
 	    }
 	    
 	    function next()
@@ -67,7 +74,7 @@
 		<input type="hidden" name="allowedContentTypeIds" value="$allowedContentTypeId">
 		#end
 		<input type="hidden" name="allowedContentTypeIdsAsUrlEncodedString" value="$allowedContentTypeIdsAsUrlEncodedString">
-		<input type="hidden" name="parentContentId" value="">
+		<input type="hidden" name="parentContentId" value="$!this.getRepositoryRootContent($repositoryId).id">
 		<input type="hidden" name="repositoryId" value="$repositoryId">
 		<input type="hidden" name="path" value="">
 	

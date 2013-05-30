@@ -32,7 +32,7 @@
 			if(parent.refreshContent)
 				parent.refreshContent($updateEntityId, 2, $entityId);
 		}
-		catch(e) {alert("e:" + e);}
+		catch(e) {console.log("e:" + e);}
 		#end
 	
 		#if($entity == "SiteNode" && $updateParent)
@@ -41,7 +41,7 @@
 			if(parent.refreshPage)
 				parent.refreshPage($updateEntityId, 2, $entityId);
 		}
-		catch(e) {alert("e:" + e);}
+		catch(e) {console.log("e:" + e);}
 		#end
 
 

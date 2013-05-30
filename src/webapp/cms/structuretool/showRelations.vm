@@ -102,7 +102,7 @@
 						<tr>
 							<td><a class="deleteCross" href="DeleteSiteNode!deleteReference.action?siteNodeId=$originalSiteNodeId#foreach($version in $referenceBean.versions)#foreach($registryVO in $version.registryVOList)&registryId=$registryVO.id#end#end&returnAddress=$returnAddress&userSessionKey=$userSessionKey">&nbsp;</a></td>
 							<td>
-								<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$referenceBean.versions.get($lastIndex).referencingObject.languageId" target="_blank">$referenceBean.path</a> ($version.referencingObject.languageName)
+								<a href="ViewContentVersion!standalone.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$version.referencingObject.languageId" target="_blank">$referenceBean.path</a> ($version.referencingObject.languageName)
 			 				</td>
 			 				<td>
 								$referenceBean.contactPersonEmail

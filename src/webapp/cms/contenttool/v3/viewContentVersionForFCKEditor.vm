@@ -397,7 +397,11 @@
 			    #elseif($!anchor == "categoriesBlock")
 			    	$("#tabsContainer").tabs({ selected: 1, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    #elseif($!anchor == "digitalAssetsBlock")
-			    	$("#tabsContainer").tabs({ selected: 2, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
+			    	#set($selectedIndex = 1)
+			    	#if($this.hasAccessTo("ContentVersionEditor.Categories", true, false))
+				    	#set($selectedIndex = 2)
+			    	#end
+			    	$("#tabsContainer").tabs({ selected: $selectedIndex, cache: false, show:function(event, ui) { resizeScrollArea(); }, select: function(e, ui) { loadFrame(ui.tab.href); }}  );
 			    	loadFrame("contentVersionAssetsDiv");
 			    	##loadFrame("#");
 			    #else 

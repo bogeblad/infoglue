@@ -1222,7 +1222,7 @@ public class ComponentLogic
 			while(bindingsIterator.hasNext())
 			{
 				Integer siteNodeId = bindingsIterator.next().getEntityId();
-				System.out.println("propertyName:" + propertyName);
+				logger.info("propertyName:" + propertyName);
 				childPages.addAll(getChildPages(siteNodeId, levelsToPopulate, nameFilter));
 			}
 		}

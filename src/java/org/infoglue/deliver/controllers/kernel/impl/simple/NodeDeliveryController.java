@@ -2708,9 +2708,9 @@ public class NodeDeliveryController extends BaseDeliveryController
 				SQL.append("order by sn.parentsiteNodeId asc, sn.name ASC AS org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl");
 	    	}
 	    	
-	    	System.out.println("\n\n" + SQL);
-	    	System.out.println("Running SQL QUERY for children to " + siteNodeId + " and possibly below");
-	    	Thread.dumpStack();
+	    	logger.info("\n\n" + SQL);
+	    	logger.info("Running SQL QUERY for children to " + siteNodeId + " and possibly below");
+	    	//Thread.dumpStack();
 	    	
 	    	//logger.info("SQL:" + SQL);
 	    	//logger.info("siteNodeId:" + siteNodeId);
@@ -2746,7 +2746,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         		Integer contentVersionId = siteNode.getValueObject().getContentVersionId();
         		if(versionValue == null)
         		{
-        			System.out.println("Null version for " + siteNode.getSiteNodeId() + ":" + siteNode.getValueObject().getSiteNodeVersionId());
+        			logger.info("Null version for " + siteNode.getSiteNodeId() + ":" + siteNode.getValueObject().getSiteNodeVersionId());
         		}
         		else
         		{

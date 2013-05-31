@@ -57,6 +57,7 @@ public class ContentVO implements BaseEntityVO, Serializable
   	private String creatorName;
   	private String fullPath = null; //Can well be null... used in some views only
   	private String[] versions = new String[0]; //Can well be null... used in some views only
+  	private String[] versionComments = new String[0]; //Can well be null... used in some views only
   	private ContentVersionVO contentVersionVO; //= new ArrayList(); //Can well be null... used in some views only and must be manually populated
   	private Integer stateId = null; //Can well be null... used in some views only - reflects only the lowest state in each language if most current.
 	private Integer contentVersionId; //Can well be null... used in some views only - reflects only the lowest state in each language if most current.
@@ -305,7 +306,17 @@ public class ContentVO implements BaseEntityVO, Serializable
 	{
 		return this.versions;
 	}
-	
+
+	public void setVersionComments(String[] versionComments)
+	{
+		this.versionComments = versionComments;
+	}
+
+	public String[] getVersionComments()
+	{
+		return this.versionComments;
+	}
+
   	/**
 	 * @return the stateId
 	 */

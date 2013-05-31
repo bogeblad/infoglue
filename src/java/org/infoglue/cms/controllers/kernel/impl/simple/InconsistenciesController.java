@@ -267,17 +267,24 @@ public class InconsistenciesController extends BaseController
 			{
 				logger.debug("About to clean SiteNode " + siteNodeVO.getContentVersionId() + " for references to: " + registryVO.getEntityName() + "<" + registryVO.getEntityId() + ">");
 			}
-			Integer metaInfoContentId = siteNodeVO.getMetaInfoContentId();
-			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
-			String pageStructure = ContentController.getContentController().getContentAttribute(db, metaInfoContentId, masterLanguageVO.getId(), "ComponentStructure");
-
-			if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT))
-				pageStructure = deleteComponentFromXML(pageStructure, new Integer(registryVO.getEntityId()));
-			if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT_BINDING))
-				pageStructure = deleteComponentBindingFromXML(pageStructure, new Integer(registryVO.getEntityId()), registryVO.getEntityName());
-
-			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(metaInfoContentId, masterLanguageVO.getId(), db);
-			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", pageStructure, infoGluePrincipal, db);
+			try
+			{
+				Integer metaInfoContentId = siteNodeVO.getMetaInfoContentId();
+				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+				String pageStructure = ContentController.getContentController().getContentAttribute(db, metaInfoContentId, masterLanguageVO.getId(), "ComponentStructure");
+	
+				if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT))
+					pageStructure = deleteComponentFromXML(pageStructure, new Integer(registryVO.getEntityId()));
+				if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT_BINDING))
+					pageStructure = deleteComponentBindingFromXML(pageStructure, new Integer(registryVO.getEntityId()), registryVO.getEntityName());
+	
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(metaInfoContentId, masterLanguageVO.getId(), db);
+				ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", pageStructure, infoGluePrincipal, db);
+			}
+			catch (Exception e) 
+			{
+				logger.warn("Could not remove reference on " + siteNodeVO.getName() + ": " + e.getMessage(), e);
+			}
 		}
 	}
 

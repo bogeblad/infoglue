@@ -195,7 +195,10 @@ public class ViewQuickDeploymentSynchronizeContentsAction extends InfoGlueAbstra
 					
 					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), languageVO.getId());
 					if(contentVersionVO != null)
+					{
 						contentVO.setVersions(new String[]{contentVersionVO.getVersionValue()});
+						contentVO.setVersionComments(new String[]{contentVersionVO.getVersionComment()});
+					}
 					
 					contentVO.setFullPath(fullPath);
 
@@ -227,7 +230,10 @@ public class ViewQuickDeploymentSynchronizeContentsAction extends InfoGlueAbstra
 					
 					ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), languageVO.getId());
 					if(contentVersionVO != null)
+					{
 						contentVO.setVersions(new String[]{contentVersionVO.getVersionValue()});
+						contentVO.setVersionComments(new String[]{contentVersionVO.getVersionComment()});
+					}
 					
 					//contentVO.setFullPath(fullPath);
 					contentVO.setFullPath("deviatingRemoteVersionId=" + deviatingRemoteVersionId);

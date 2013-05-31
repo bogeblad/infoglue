@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentStateController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
@@ -50,6 +51,7 @@ import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.deliver.util.webservices.DynamicWebserviceSerializer;
+
 
 
 /**
@@ -511,8 +513,17 @@ public class RemoteDeploymentServiceImpl extends RemoteInfoGlueService
 					{
 						if(remoteContentVO.getVersions() != null && remoteContentVO.getVersions().length > 0)
 						{
+							if(!contentVersionVO.getStateId().equals(0))
+							{
+								contentVersionVO = ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version: " + contentVersionVO.getVersionComment(), false, principal, contentVO.getId(), new ArrayList());
+							}
+							
 							contentVersionVO.setVersionValue(remoteContentVO.getVersions()[0]);
 							logger.info("Updating :" + contentVersionVO.getContentName() + " with new latest versionValue:" + remoteContentVO.getVersions()[0].length());
+							contentVersionVO.setStateId(0);
+							if(remoteContentVO.getVersionComments().length > 0)
+								contentVersionVO.setVersionComment(remoteContentVO.getVersionComments()[0]);
+							
 							ContentVersionController.getContentVersionController().update(contentVersionVO.getId(), contentVersionVO);								
 						}
 					}
@@ -533,8 +544,16 @@ public class RemoteDeploymentServiceImpl extends RemoteInfoGlueService
 							{
 								if(remoteContentVO.getVersions() != null && remoteContentVO.getVersions().length > 0)
 								{
+									if(!contentVersionVO.getStateId().equals(0))
+									{
+										contentVersionVO = ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version: " + contentVersionVO.getVersionComment(), false, principal, contentVO.getId(), new ArrayList());
+									}
+
 									contentVersionVO.setVersionValue(remoteContentVO.getVersions()[0]);
 									logger.info("Updating :" + contentVersionVO.getContentName() + " with new latest versionValue:" + remoteContentVO.getVersions()[0].length());
+									contentVersionVO.setStateId(0);
+									contentVersionVO.setVersionComment(remoteContentVO.getVersionComments()[0]);
+
 									ContentVersionController.getContentVersionController().update(contentVersionVO.getId(), contentVersionVO);								
 								}
 							}		

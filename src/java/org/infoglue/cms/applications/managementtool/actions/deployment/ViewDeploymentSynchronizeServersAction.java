@@ -276,6 +276,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 							if(contentVersionVO != null)
 							{
 								localContentVO.setVersions(new String[]{contentVersionVO.getVersionValue()});
+								localContentVO.setVersionComments(new String[]{contentVersionVO.getVersionComment()});
 								localContentVO.setContentVersion(contentVersionVO);
 							}
 			    		}
@@ -307,6 +308,7 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 						if(contentVersionVO != null)
 						{
 							localContentVO.setVersions(new String[]{contentVersionVO.getVersionValue()});
+							localContentVO.setVersionComments(new String[]{contentVersionVO.getVersionComment()});
 							localContentVO.setContentVersion(contentVersionVO);
 						}
 			    		bean.setLocalVersion(localContentVO);
@@ -888,8 +890,10 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 						
 						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), languageVO.getId());
 						if(contentVersionVO != null)
+						{
 							contentVO.setVersions(new String[]{contentVersionVO.getVersionValue()});
-						
+							contentVO.setVersionComments(new String[]{"BBBBBB:" + contentVersionVO.getVersionComment()});
+						}
 						contentVO.setFullPath(fullPath);
 
 						missingComponents.add(contentVO);
@@ -915,8 +919,10 @@ public class ViewDeploymentSynchronizeServersAction extends InfoGlueAbstractActi
 						
 						ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVO.getId(), languageVO.getId());
 						if(contentVersionVO != null)
+						{	
 							contentVO.setVersions(new String[]{contentVersionVO.getVersionValue()});
-						
+							contentVO.setVersionComments(new String[]{"AAAAAAA:" + contentVersionVO.getVersionComment()});
+						}
 						contentVO.setFullPath(fullPath);
 
 						deviatingComponents.add(contentVO);

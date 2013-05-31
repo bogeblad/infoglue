@@ -1772,7 +1772,6 @@ public class ContentDeliveryController extends BaseDeliveryController
 			}
 			else
 			{
-				System.out.println("AAAAAAA");
 				assetUrl = getLanguageIndependentAssetUrl(contentId, languageId, siteNodeId, db, null, deliveryContext, infoGluePrincipal);
 			}
         }

@@ -4209,6 +4209,7 @@ public class SiteNodeController extends BaseController
 			{
 				try
 				{
+					erroneousSiteNodePaths.add(SiteNodeController.getController().getSiteNodePath(siteNodeId, false, false, db));
 					erroneousSiteNodePaths.add(SiteNodeController.getController().getSiteNodePath(siteNodeId, db));
 				}
 				catch (Exception e)

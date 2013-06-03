@@ -6,7 +6,7 @@
 	<script type="text/javascript" language="javascript" src="script/jqueryplugins-latest/dataTables/media/js/jquery.dataTables.min.js"></script>
 
 	<script type="text/javascript">
-	<!-- 
+	<!--
 		var isClicked = false;
 		function changeComponent(componentId)
 	    {
@@ -16,41 +16,80 @@
 	    	//alert("contentId: $!contentId");
 	    	//alert("$slotId: $slotId");
 	    	//alert("componentId:" + componentId);
-	    	var regardAsCompatible = document.getElementById("regardAsCompatible").checked;
-	    	var changeMethod = $("#changeMethod").val();
-	    	var recursionMethod = $("#recursionMethod").val();
-			if(!isClicked){
-				isClicked = true;
-		    	url = "ViewSiteNodePageComponents!changeComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$!componentId&newComponentContentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple&regardAsCompatible=" + regardAsCompatible + "&recursionMethod=" + recursionMethod + "&changeMethod=" + changeMethod;
-			    //alert("url" + url);
-			    
-			    var confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.messageVariant1")";
-			    if(changeMethod == "matchComponentContentId" && recursionMethod == "onlyThisPage")
-			    	confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.messageVariant2")";
-			    else if(changeMethod == "matchComponentIdAndSlotName" && recursionMethod == "thisAndSubpages")
-			    	confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.messageVariant3")";
-			    else if(changeMethod == "matchComponentContentId" && recursionMethod == "thisAndSubpages")
-			    	confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.messageVariant4")";
-			    else if(changeMethod == "matchComponentIdAndSlotName" && recursionMethod == "theEntireRepository")
-				    confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.messageVariant5")";
-			    else if(changeMethod == "matchComponentContentId" && recursionMethod == "theEntireRepository")
-					confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.messageVariant6")";
-			    
-			    if(confirm(confirmMessage))
-			    {
-			    	parent.location.href = url;
-			    }
-		    }
+			var changeMethod = $("input:radio[name=changeMethod]:checked").val();
+			if (typeof changeMethod === 'undefined')
+			{
+				alert("$ui.getString("tool.structuretool.changeComponentError.missingChangeMethod")");
+			}
+			else
+			{
+				var regardAsCompatible = document.getElementById("regardAsCompatible").checked;
+				var recursionMethod = $("input:radio[name=recursionMethod]:checked").val();
+				url = "ViewSiteNodePageComponents!changeComponent.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&componentId=$!componentId&newComponentContentId=" + componentId + "&slotId=$slotId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple&regardAsCompatible=" + regardAsCompatible + "&recursionMethod=" + recursionMethod + "&changeMethod=" + changeMethod;
+
+				var confirmMessage;
+				if (changeMethod == "$changeMethods.matchId")
+				{
+					if (recursionMethod == "onlyThisPage")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_componentId_onlyThisPage")";
+					}
+					else if (recursionMethod == "thisAndSubpages")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_componentId_thisAndSubpages", $slotId)";
+					}
+					else if (recursionMethod == "theEntireRepository")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_componentId_theEntireRepository", $slotId)";
+					}
+				}
+				else if (changeMethod == "$changeMethods.matchContentid")
+				{
+					if (recursionMethod == "onlyThisPage")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_componentContentId_onlyThisPage")";
+					}
+					else if (recursionMethod == "thisAndSubpages")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_componentContentId_thisAndSubpages")";
+					}
+					else if (recursionMethod == "theEntireRepository")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_componentContentId_theEntireRepository")";
+					}
+				}
+				else if (changeMethod == "$changeMethods.matchSlotname")
+				{
+					if (recursionMethod == "onlyThisPage")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_slotName_onlyThisPage", $slotId)";
+					}
+					else if (recursionMethod == "thisAndSubpages")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_slotName_thisAndSubpages", $slotId)";
+					}
+					else if (recursionMethod == "theEntireRepository")
+					{
+						confirmMessage = "$ui.getString("tool.structuretool.changeComponentError.message_slotName_theEntireRepository", $slotId)";
+					}
+				}
+
+				if(confirmMessage && confirm(confirmMessage))
+				{
+					parent.location.href = url;
+				}
+			}
 	    }
-	
+
 		function changeRepository(selectBox)
 		{
 			var repositoryId = selectBox.value;
-	    	var regardAsCompatible = document.getElementById("regardAsCompatible").checked;
-	    	var changeMethod = $("#changeMethod").val();
-	    	var recursionMethod = $("#recursionMethod").val();
+			var regardAsCompatible = document.getElementById("regardAsCompatible").checked;
+			var changeMethod = $("input:radio[name=changeMethod]:checked").val();
+			changeMethod = changeMethod || '';
+			var recursionMethod = $("input:radio[name=recursionMethod]:checked").val();
+			recursionMethod = recursionMethod || '';
 			var url = "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=$siteNodeId&languageId=$languageId&contentId=$contentId&parentComponentId=$!parentComponentId&slotId=$slotId&componentId=$!componentId&specifyBaseTemplate=$!specifyBaseTemplate&showSimple=$showSimple&$allowedComponentNamesAsUrlEncodedString&$disallowedComponentNamesAsUrlEncodedString&$allowedComponentGroupNamesAsUrlEncodedString&filterRepositoryId=" + repositoryId + "&regardAsCompatible=" + regardAsCompatible + "&recursionMethod=" + recursionMethod + "&changeMethod=" + changeMethod;
-			//alert("url:" + url);
 			document.location.href = url;
 		}
 
@@ -63,7 +102,6 @@
 				div.style.display = 'none';
 		}
 
-		
 		$(document).ready(function(){
 
 			#set($extraParameter = '"iDisplayLength": 20')
@@ -71,9 +109,9 @@
 			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ], "iDisplayLength": 20')
 			#end
 			#initDataTableImpl("dataTable" $extraParameter)
-			
+
 			$("#dataTable_filter :text").focus();
-			
+
 			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
 					resizeScrollArea(); 
 				}, 
@@ -83,7 +121,7 @@
 						jQuery.get("ViewSiteNodePageComponents!listFormComponentsForChange.action", function(data) {
 								//alert('Data:' + data);
 								$("#formsTab").html(data);
-								
+
 								#set($extraParameter = '"iDisplayLength": 20')
 								#initDataTableImpl("dataTableForms" $extraParameter)
 							});
@@ -94,6 +132,13 @@
 		});
 	-->
 	</script>
+
+	<style type="text/css">
+		#changeMethodContainer, #recursionMethodContainer {margin: 10px 16px;}
+		.radioButtonTable {border: 1px solid #cccccc; width: 100%;}
+		.radioButtonTable td {border: none;padding-bottom:10px;}
+		.radioButtonTable td.radioButton {text-align:center; width: 36px;}
+	</style>
 #end
 
 #beginLightCommonToolV3Impl("tool.structuretool.chooseComponentToAddTitle" "$!siteNodeId" "" false true $!disableCloseButton $headerMarkup false "")
@@ -103,7 +148,7 @@
 <div style="clear: both;"></div>
 
 <h3>$ui.getString("tool.structuretool.clickComponentToChangeToLabel") - $componentName</h3>
-<div id="tabsContainer" class="flora cleanTopDiv">      
+<div id="tabsContainer" class="flora cleanTopDiv">
 	<ul>
         <li><a href="#simpleTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
         <li><a href="#formsTab"><span>$ui.getString("tool.common.forms.label")</span></a></li>
@@ -111,7 +156,7 @@
     </ul>
 
 	<div id="simpleTab" class="inlineTabDiv">
-		
+
 		<table cellpadding="0" cellspacing="0" border="1" class="display" id="dataTable">
 		<thead>
 			<tr>
@@ -124,7 +169,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			
+
 		#set($prevId = -1)
 		#set($sortedComponents = $this.getSortedComponents($sortProperty))
 		#foreach ($content in $sortedComponents)
@@ -133,12 +178,12 @@
 				#set($duplicate = true)
 			#end
 			#set($prevId = $content.id)
-			
+
 			#set($hasAccessToContent = true)
 			#if($content.isProtected == 1)
 				#set($hasAccessToContent = $this.hasAccessTo("Component.Select", "$content.id"))
 			#end
-			
+
 			#if($hasAccessToContent && !$duplicate && ($filterRepositoryId == -1 || $content.repositoryId == $filterRepositoryId))
 
 				#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
@@ -178,22 +223,21 @@
 				#set($imageUrl = "")
 			#end
 		#end
-			
+
 		</tbody>
 		</table>
 		<br/>
 		<br/>
 	</div>
-	
+
 	<div id="formsTab" class="inlineTabDiv">
-		
+
 	</div>
-	
+
 	<div id="advancedTab" class="inlineTabDiv">
 		#if(!$useSimpleComponentDialog)
 		<p>
 			#set($allRepositories = $repositories)
-		    	
 			$ui.getString("tool.structuretool.addComponentChangeRepositoryLabel")<br/>
 			<select size="1" name="repositoryId" class="sitedropbox" onChange="javascript:changeRepository(this);" class="contenttool">
 			    <option value="-1" #if($repositoryVO.id == $filterRepositoryId) selected="1" #end>$ui.getString("tool.structuretool.allRepostoriesLabel")</option>
@@ -203,31 +247,87 @@
 			</select>
 		</p>
 		#end
-		
-		<p>
-			$ui.getString("tool.structuretool.changeComponentMethod.label")<br/>
-			<select size="1" id="changeMethod" name="changeMethod" class="sitedropbox" class="contenttool">
-			    <option value="matchComponentIdAndSlotName">$ui.getString("tool.structuretool.changeComponentMethod.matchComponentIdAndSlotName.label")</option>
-			    <!--<option value="matchComponentId">$ui.getString("tool.structuretool.changeComponentMethod.matchComponentId.label")</option>-->
-			    <option value="matchComponentContentId">$ui.getString("tool.structuretool.changeComponentMethod.matchComponentContentId.label")</option>
-			</select>
-		</p>
-		<p>
-			$ui.getString("tool.structuretool.changeComponentRecursionOptions.label")<br/>
-			<select size="1" id="recursionMethod" name="recursionMethod" class="sitedropbox" class="contenttool">
-			    <option value="onlyThisPage">$ui.getString("tool.structuretool.changeComponentRecursionOptions.onlyThisPage.label")</option>
-			    <option value="thisAndSubpages">$ui.getString("tool.structuretool.changeComponentRecursionOptions.thisAndSubpages.label")</option>
-			    <option value="theEntireRepository">$ui.getString("tool.structuretool.changeComponentRecursionOptions.theEntireRepository.label")</option>
-			</select>
-		</p>
+		<div id="changeMethodContainer">
+			$ui.getString("tool.structuretool.changeComponentMethod.label")
+			<table class="radioButtonTable">
+				<tr>
+					<td class="radioButton">
+						<input type="radio" name="changeMethod" id="matchComponentId" value="$changeMethods.matchId" #if( "$!changeMethod" == "$changeMethods.matchId" ) checked="checked" #end/>
+					</td>
+					<td colspan="4">
+						<label for="matchComponentId">
+							$ui.getString("tool.structuretool.changeComponentMethod.matchComponentId.label", $componentName)<br/>
+							#if( $hasChangeComponentRecursivelyAccess )
+								$ui.getString("tool.structuretool.changeComponentMethod.matchComponentId.recursionSupplement")
+							#end
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<td class="radioButton">
+						<input type="radio" name="changeMethod" id="matchComponentContentId" value="$changeMethods.matchContentid" #if( "$!changeMethod" == "$changeMethods.matchContentid" ) checked="checked" #end/>
+					</td>
+					<td colspan="4">
+						<label for="matchComponentContentId">
+							$ui.getString("tool.structuretool.changeComponentMethod.matchContentId.label", $componentName)
+						</label>
+					</td>
+				</tr>
+				#if( $hasChangeComponentRecursivelyAccess )
+				<tr>
+					<td class="radioButton">
+						<input type="radio" name="changeMethod" id="matchSlotname" value="$changeMethods.matchSlotname" #if( "$!changeMethod" == "$changeMethods.matchSlotname" ) checked="checked" #end/>
+					</td>
+					<td colspan="4">
+						<label for="matchSlotname">
+							$ui.getString("tool.structuretool.changeComponentMethod.matchSlotname.label", $slotId)
+						</label>
+					</td>
+				</tr>
+				#end
+			</table>
+		</div>
+		<div id="recursionMethodContainer">
+			$ui.getString("tool.structuretool.changeComponentRecursionOptions.label")
+			<table class="radioButtonTable">
+				<tr>
+					<td class="radioButton">
+						<input type="radio" name="recursionMethod" id="onlyThisPage" value="onlyThisPage" #if( "$!recursionMethod" == "onlyThisPage" ) checked="checked" #end/>
+					</td>
+					<td colspan="4">
+						<label for="onlyThisPage">
+							$ui.getString("tool.structuretool.changeComponentRecursionOptions.onlyThisPage.label")<br/>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<td class="radioButton">
+						<input type="radio" name="recursionMethod" id="thisAndSubpages" value="thisAndSubpages" #if( "$!recursionMethod" == "thisAndSubpages" ) checked="checked" #end/>
+					</td>
+					<td colspan="4">
+						<label for="thisAndSubpages">
+							$ui.getString("tool.structuretool.changeComponentRecursionOptions.thisAndSubpages.label")
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<td class="radioButton">
+						<input type="radio" name="recursionMethod" id="theEntireRepository" value="theEntireRepository" #if( "$!recursionMethod" == "theEntireRepository" ) checked="checked" #end/>
+					</td>
+					<td colspan="4">
+						<label for="theEntireRepository">
+							$ui.getString("tool.structuretool.changeComponentRecursionOptions.theEntireRepository.label")
+						</label>
+					</td>
+				</tr>
+			</table>
+		</div>
 		<p>
 			Keep other components and properties intact<br/>
 			<input type="checkbox" name="regardAsCompatible" id="regardAsCompatible" value="true" checked="checked"/><br/>
 		</p>
-		
+
 	</div>
 </div>
-	
-##lightFooterToolbar($footerButtons)
-	
+
 #endCommonToolV3()

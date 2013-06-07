@@ -13,7 +13,7 @@
 	#includeLatestJQuery()
 	
 	<script type="text/javascript">
-	<!--		
+	//<!|CDATA[
 		#set($exp = $this.getExpansion($oldContentId))
 		var exp = "$exp";
 		
@@ -39,13 +39,55 @@
 			var url = "ViewContentVersion!viewAssetsDialogForFCKEditorV3.action?repositoryId=" + repositoryId + "&contentId=-1&languageId=$languageId&treatAsLink=$treatAsLink&assetTypeFilter=$assetTypeFilter";
 			document.location.href = url;
 		}
-		
+
+		(function() {
+			var selectedContentId;
+			window.selectedContentId = function(contentId)
+			{
+				if (typeof contentId !== "undefined")
+				{
+					selectedContentId = contentId;
+				}
+				return selectedContentId;
+			}
+
+			var selectedContentHasVersion = false;
+			window.selectedContentVersion = function(hasVersion) {
+				if ( typeof hasVersion !== 'undefined' )
+				{
+					if ( selectedContentHasVersion !== ( selectedContentHasVersion = hasVersion) )
+					{
+						if (parent && parent.showUploadStateChanged)
+						{
+							parent.showUploadStateChanged(selectedContentHasVersion);
+						}
+					}
+				}
+				return selectedContentHasVersion;
+			}
+			window.reloadAssets = function()
+			{
+				var frame = $("#contentVersionAssetsFrame").get(0);
+				if (typeof frame !== 'undefined' && typeof frame.contentWindow !== 'undefined')
+				{
+					var win = frame.contentWindow;
+					win.location.reload(true);
+				}
+			}
+		})();
+
 		function htmlTreeItemClick(entityId, repositoryId, path)
 		{
 			var url = "ViewContentVersion!viewAssetsForFCKEditorSmallV3.action?contentId=" + entityId + "&languageId=$languageId&treatAsLink=$treatAsLink&assetTypeFilter=$assetTypeFilter";
 			document.getElementById("contentVersionAssetsFrame").src = url;
+			selectedContentId(entityId);
 		}
-		
+
+		function reloadAssetView()
+		{
+			document.getElementById("contentVersionAssetsFrame")
+		}
+
 		function assetMarked(contentId, assetKey, assetUrl, contentVersionId)
 		{
 			if(parent.assetMarked)
@@ -181,7 +223,7 @@
 			else
 				div2.style.display = "block";
 		}
-		-->
+		//]]>
 	</script>
 	
 	<META HTTP-EQUIV="pragma" CONTENT="no-cache" />

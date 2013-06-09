@@ -125,10 +125,10 @@
 	margin-top: -8px;
 	position: absolute;
 	margin-left: -7px;
-	background-color: rgb(240, 240, 240);
-	color: rgb(160, 160, 160);
+	background-color: rgb(219, 0, 0);
+	color: rgb(255, 255, 255);
 }
 .notUsed {
-	color: rgb(255, 255, 255);
-	background-color: rgb(219, 0, 0);
+	color: rgb(160, 160, 160);
+	background-color: rgb(240, 240, 240);
 }

@@ -139,8 +139,14 @@
 	#set($changeTypeId = $this.getActionExtraData("changeTypeId"))
 	#set($languageId = $this.getActionExtraData("languageId"))
 
+	#set($confirmationMessage = $this.getActionExtraData("confirmationMessage"))
+	
 	$scripts
 	<script type="text/javascript">
+		#if("$!confirmationMessage" != "")
+			alert("$!confirmationMessage");
+		#end
+		
 		#if($this.skipResultDialogIfPossible)
 			#set($parentCall = false)
 			#if($firstActionLink.target == 'structure' || $firstActionLink.target == 'content' || $firstActionLink.target == 'management')

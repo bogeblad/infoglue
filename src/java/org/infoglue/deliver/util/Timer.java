@@ -23,6 +23,9 @@
 
 package org.infoglue.deliver.util;
 
+import org.apache.log4j.Logger;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+
 /**
  * @author Mattias Bogeblad
  *
@@ -33,6 +36,8 @@ package org.infoglue.deliver.util;
 
 public class Timer
 {
+    private final static Logger logger = Logger.getLogger(Timer.class.getName());
+
 	private long startTime 		= 0;
 	private long elapsedTime 	= 0;
 	private long lastPrintTime  = 0;
@@ -77,7 +82,7 @@ public class Timer
 		{
 			elapsedTime = System.currentTimeMillis() - lastPrintTime;
 			lastPrintTime = System.currentTimeMillis();
-			System.out.println(message + " - Elapsed time since last report: " + elapsedTime);
+			logger.warn(message + " - Elapsed time since last report: " + elapsedTime);
 		}
 	}
 	
@@ -88,7 +93,7 @@ public class Timer
 			elapsedTime = System.currentTimeMillis() - lastPrintTime;
 			lastPrintTime = System.currentTimeMillis();
 			if(elapsedTime > minimumTimeToPrint)
-				System.out.println(message + " - Elapsed time since last report: " + elapsedTime);
+				logger.warn(message + " - Elapsed time since last report: " + elapsedTime);
 		}
 	}
 
@@ -98,7 +103,7 @@ public class Timer
 		{
 			elapsedTimeNanos = System.nanoTime() - lastPrintTimeNanos;
 			lastPrintTimeNanos = System.nanoTime();
-			System.out.println(message + " - Elapsed time since last report (ns): " + elapsedTimeNanos);
+			logger.warn(message + " - Elapsed time since last report (ns): " + elapsedTimeNanos);
 		}
 	}
 
@@ -108,7 +113,7 @@ public class Timer
 		{
 			elapsedTimeNanos = System.nanoTime() - lastPrintTimeNanos;
 			lastPrintTimeNanos = System.nanoTime();
-			System.out.println(message + " - Elapsed time since last report (microsecond): " + elapsedTimeNanos / 1000);
+			logger.warn(message + " - Elapsed time since last report (microsecond): " + elapsedTimeNanos / 1000);
 		}
 	}
 

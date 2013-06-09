@@ -1106,6 +1106,22 @@ public class RegistryController extends BaseController
 	 * This method fetches all inline links from any text.
 	 */
 	
+	public boolean hasInlineAsset(String versionValue, Integer contentId, String assetKey, Database db) throws ConstraintException, SystemException, Exception
+	{
+		Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(" + contentId + ", \"" + assetKey + "\"\\)");
+	    Matcher matcher = pattern.matcher(versionValue);
+	    if ( matcher.find() ) 
+	    { 
+	        String match = matcher.group();
+	        return true;
+	    }
+	    return false;
+	}	
+	
+	/**
+	 * This method fetches all inline links from any text.
+	 */
+	
 	public void getInlineContents(String versionValue, Set<Integer> boundSiteNodeIds, Set<Integer> boundContentIds) throws ConstraintException, SystemException, Exception
 	{
 	    Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(.*?\\)");
@@ -1492,6 +1508,33 @@ public class RegistryController extends BaseController
 
         return referenceBeanList;
     }
+	
+	public List<ReferenceBean> getReferencingObjectsForContentAsset(Integer contentId, String assetKey, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage) throws SystemException
+    {
+		List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
+
+		Database db = CastorDatabaseService.getDatabase();
+
+		try 
+		{
+			beginTransaction(db);
+
+			referenceBeanList = getReferencingObjectsForContentAsset(contentId, assetKey, maxRows, excludeInternalContentReferences, onlyOneVersionPerLanguage, db);
+
+	        commitTransaction(db);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		    logger.warn("One of the references was not found which is bad but not critical:" + e.getMessage(), e);
+		    rollbackTransaction(db);
+			//throw new SystemException("An error occurred when we tried to fetch a list of roles in the repository. Reason:" + e.getMessage(), e);			
+		}
+
+		logger.info("referenceBeanList:" + referenceBeanList.size());
+
+        return referenceBeanList;
+    }
 
 	public Set<SiteNodeVO> getReferencingSiteNodesForContent(Integer contentId, int maxRows, Database db) throws SystemException, Exception
     {
@@ -1678,7 +1721,175 @@ public class RegistryController extends BaseController
 		
         return referenceBeanList;
     }
-    
+
+	public List<ReferenceBean> getReferencingObjectsForContentAsset(Integer contentId, String assetKey, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage, Database db) throws SystemException, Exception
+    {
+        List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
+
+        Map entries = new HashMap();
+		
+        Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();
+
+        List registryEntires = getMatchingRegistryVOList(Content.class.getName(), contentId.toString(), maxRows, db);
+        
+        logger.info("registryEntires:" + registryEntires.size());
+        Iterator registryEntiresIterator = registryEntires.iterator();
+        while(registryEntiresIterator.hasNext())
+        {
+            RegistryVO registryVO = (RegistryVO)registryEntiresIterator.next();
+            if(!registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET))
+            {
+            	//System.out.println("AAAAAAAAAAAAAAAAAAAAAA:" + registryVO.getId());
+            }
+            else
+            {
+	            logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
+	            boolean add = true;
+	            
+	            String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
+	            ReferenceBean existingReferenceBean = (ReferenceBean)entries.get(key);
+	            if(existingReferenceBean == null)
+	            {
+	                existingReferenceBean = new ReferenceBean();
+		            logger.info("Adding referenceBean to entries with key:" + key);
+		            entries.put(key, existingReferenceBean);
+		            referenceBeanList.add(existingReferenceBean);
+		        }
+	
+	            ReferenceVersionBean referenceVersionBean = new ReferenceVersionBean();
+	            if(registryVO.getReferencingEntityName().indexOf("Content") > -1)
+	            {
+	                try
+	                {
+	                    ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	                    Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId());
+	                    if(hasVersion != null && onlyOneVersionPerLanguage)
+	                    {
+	                    	continue;
+	                    	//referenceBeanList.remove(existingReferenceBean);
+	                    }
+	                    else if(excludeInternalContentReferences && contentVersion.getValueObject().getContentId().equals(contentId))
+			    		{
+			    			logger.info("Skipping internal reference " + contentId + " had on itself.");
+			    			referenceBeanList.remove(existingReferenceBean);
+			    		}
+			    		else
+			    		{
+			    			boolean includesAsset = RegistryController.getController().hasInlineAsset(contentVersion.getVersionValue(), new Integer(registryVO.getEntityId()), assetKey, db);
+		                    if(includesAsset)
+		                    {
+		                    	existingReferenceBean.setName(contentVersion.getOwningContent().getName());
+					    		existingReferenceBean.setReferencingCompletingObject(contentVersion.getOwningContent().getValueObject());
+					    		existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVersion.getValueObject().getContentId(), false, true, db));
+					    		try
+					    		{
+					    			String userName = contentVersion.getVersionModifier();
+					    			if(userName == null || userName.equals(""))
+					    				userName = contentVersion.getOwningContent().getCreator();
+		
+						    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
+						    		if(user != null)
+						    			existingReferenceBean.setContactPersonEmail(user.getEmail());
+						    		else
+						    			existingReferenceBean.setContactPersonEmail(userName);
+					    		}
+					    		catch (Exception e) 
+					    		{
+					    			logger.warn("Problem getting version modifier email: " + e.getMessage());
+								}
+					    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
+					    		referenceVersionBean.getRegistryVOList().add(registryVO);
+					    		
+					    		checkedLanguageVersions.put("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
+		                    }
+		                    else
+			    			{
+		                    	referenceBeanList.remove(existingReferenceBean);
+		                    	//System.out.println("NOOOOOOOO: This version had no asset reference...");
+			    			}
+			    		}
+	                }
+	                catch(Exception e)
+	                {
+	                    add = false;
+	                    logger.info("content:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
+	                }
+	            }
+	            else
+	            {
+	            	/*
+	                try
+	                {
+		                SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
+			    		logger.info("siteNodeVersion:" + siteNodeVersion.getSiteNodeVersionId());
+			    		logger.info("siteNode:" + siteNodeVersion.getOwningSiteNode().getId());
+			    		existingReferenceBean.setName(siteNodeVersion.getOwningSiteNode().getName());
+			    		existingReferenceBean.setReferencingCompletingObject(siteNodeVersion.getOwningSiteNode().getValueObject());
+			    		existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVersion.getValueObject().getSiteNodeId(), false, true, db));
+			    		try
+			    		{
+			    			String userName = siteNodeVersion.getVersionModifier();
+			    			if(userName == null || userName.equals(""))
+			    				userName = siteNodeVersion.getOwningSiteNode().getCreator();
+			    			
+				    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
+				    		if(user != null)
+				    			existingReferenceBean.setContactPersonEmail(user.getEmail());
+				    		else
+				    			existingReferenceBean.setContactPersonEmail(userName);
+			    		}
+			    		catch (Exception e) 
+			    		{
+			    			logger.warn("Problem getting version modifier email: " + e.getMessage());
+						}
+			    		referenceVersionBean.setReferencingObject(siteNodeVersion.getValueObject());
+			    		referenceVersionBean.getRegistryVOList().add(registryVO);
+	                }
+	                catch(Exception e)
+	                {
+	                    add = false;
+	                    logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
+	                }
+	                */
+	            }
+	            
+	            if(add)
+	            {
+	                boolean exists = false;
+	                ReferenceVersionBean existingReferenceVersionBean = null;
+		            Iterator versionsIterator = existingReferenceBean.getVersions().iterator();
+		            while(versionsIterator.hasNext())
+		            {
+		                existingReferenceVersionBean = (ReferenceVersionBean)versionsIterator.next();
+		                if(existingReferenceVersionBean == null || existingReferenceVersionBean.getReferencingObject() == null || referenceVersionBean.getReferencingObject() == null || referenceVersionBean == null || existingReferenceVersionBean.getReferencingObject().equals(referenceVersionBean.getReferencingObject()))
+		                {
+		                    exists = true;
+		                    break;
+		                }
+		            }
+	
+		            if(!exists)
+		                existingReferenceBean.getVersions().add(referenceVersionBean);
+		            else
+		                existingReferenceVersionBean.getRegistryVOList().add(registryVO);
+	
+	            }
+            }
+        }
+        
+        Iterator i = referenceBeanList.iterator();
+        while(i.hasNext())
+        {
+            ReferenceBean referenceBean = (ReferenceBean)i.next();
+            if(referenceBean.getVersions().size() == 0)
+                i.remove();
+        }
+	    
+		logger.info("referenceBeanList:" + referenceBeanList.size());
+		
+        return referenceBeanList;
+    }
+	
 	/**
 	 * This method gets a List of pages referencing the given content.
 	 */

@@ -140,10 +140,12 @@ public class ExportImportController extends BaseController
 		Timer t = new Timer();
 		logger.info("onlyLatestVersions:" + onlyLatestVersions);
 		File file = exportContents(contentId, assetMaxSize, false);
-		t.printElapsedTime("Exporting file of " + (file != null ? file.length() / 1000 + " KB" : " error size ") + " took:");
+		if(logger.isInfoEnabled())
+			t.printElapsedTime("Exporting file of " + (file != null ? file.length() / 1000 + " KB" : " error size ") + " took:");
 		if(file != null)
 			importContent(file, newParentContentId, onlyLatestVersions);
-		t.printElapsedTime("Importing file of " + (file != null ? file.length() / 1000 + " KB" : " error size ") + " took:");
+		if(logger.isInfoEnabled())
+			t.printElapsedTime("Importing file of " + (file != null ? file.length() / 1000 + " KB" : " error size ") + " took:");
 	}
 	
 	private File exportContents(Integer contentId, Integer assetMaxSize, boolean includeSystemTypes) throws SystemException, Bug, TransactionNotInProgressException, PersistenceException 

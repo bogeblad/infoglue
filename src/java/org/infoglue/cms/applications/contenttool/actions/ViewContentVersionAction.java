@@ -37,6 +37,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.CategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ComponentPropertyDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController;
@@ -953,8 +954,21 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 	       	}
 			else if(this.contentVersionVO != null && this.contentVersionVO.getContentVersionId() != null)
 	       	{
+				this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionVO.getId());
+				
 				filteredDigitalAssets = DigitalAssetController.getDigitalAssetVOList(this.contentVersionVO.getContentVersionId());
 	       	}
+
+			Iterator digitalAssetsIterator = filteredDigitalAssets.iterator();
+   			while(digitalAssetsIterator.hasNext())
+   			{
+   				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
+   				
+   				//System.out.println("assetVO:" + assetVO.getAssetKey() + "/" + this.contentVersionVO.getContentId());
+   				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, true, true);
+   				//System.out.println("referenceBeans:" + referenceBeans);
+   				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
+   			}
 		}
 		catch(Exception e)
 		{

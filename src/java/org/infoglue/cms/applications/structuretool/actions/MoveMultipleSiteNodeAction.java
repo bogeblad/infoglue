@@ -143,7 +143,8 @@ public class MoveMultipleSiteNodeAction extends InfoGlueAbstractAction
 		}
 		
 		this.topSiteNodeId = SiteNodeController.getController().getRootSiteNodeVO(this.repositoryId).getId();
-		    
+		this.siteNodeVO = getSiteNodeVO(this.newParentSiteNodeId);
+		
         return "success";
     }
 

@@ -176,6 +176,7 @@ public class MoveSiteNodeAction extends InfoGlueAbstractAction
             setActionExtraData(userSessionKey, "unrefreshedSiteNodeId", "" + parentSiteNodeId);
             setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + parentSiteNodeId);
             setActionExtraData(userSessionKey, "changeTypeId", "" + this.changeTypeId);
+            setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.siteNodeMoved.confirmation", getSiteNodeVO(newParentSiteNodeId).getName()));
         }
         catch(ConstraintException ce)
         {

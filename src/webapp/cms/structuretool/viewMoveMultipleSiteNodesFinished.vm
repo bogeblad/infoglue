@@ -2,7 +2,14 @@
 	<script type="text/javascript">
 	<!-- 
 		$(document).ready(function() {
+			#if($errorsOccurred)
+				alert("$ui.getString("tool.contenttool.moveMultiplePages.failureText")");
+			#else
+				alert("$ui.getString("tool.contenttool.siteNodeMoved.confirmation", $siteNodeVO.name)");
+			#end
+	
 			parent.refreshTreeSurface();
+			if(close) close(); if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 		});
 	-->
 	</script>
@@ -10,6 +17,7 @@
 
 #beginLightCommonToolV3Impl("tool.structuretool.moveMultipleSiteNode.finished" "" "" false true $!disableCloseButton $headerMarkup false "")
 	
+#*
 	#lightMenuToolbar("" $buttons $rightButtons) 
 
 	<div style="clear: both;"></div>
@@ -25,6 +33,7 @@
 	#end
 	
 	#lightFooterToolbar($footerButtons)
+*#
 
 #endLightCommonToolV3()
 

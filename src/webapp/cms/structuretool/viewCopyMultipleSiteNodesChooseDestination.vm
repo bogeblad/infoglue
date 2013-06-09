@@ -46,7 +46,10 @@
 		 
 		function finish()
 		{
-		    document.inputForm.submit();
+			if (confirm('$ui.getString("tool.structuretool.copySiteNode.areYouSureWarning")'))
+		    {
+		    	document.inputForm.submit();
+			}
 		}
 	
 		/**

@@ -1582,17 +1582,17 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			Element selectedComponent = (Element)anl.item(0);
 			String slotName = selectedComponent.getAttribute("name");
 			String componentContentId = selectedComponent.getAttribute("contentId");
-			System.out.println("componentContentId:" + componentContentId);
+			logger.info("componentContentId:" + componentContentId);
 			if (slotName == null || slotName.trim().equals(""))
 			{
 				throw new SystemException("Missing slot name when changing component");
 			}
 			List<Integer> erroneousSiteNodes = changeComponent(siteNodeId, slotName, new Integer(componentContentId), recursive, regardAsCompatible, changeMethod);
-			System.out.println("erroneousSiteNodes:" + erroneousSiteNodes.size());
+			logger.info("erroneousSiteNodes:" + erroneousSiteNodes.size());
 			if (erroneousSiteNodes.size() > 0)
 			{
 				this.erroneousSiteNodePaths = SiteNodeController.getController().getErroneousSiteNodeNames(erroneousSiteNodes);
-				System.out.println("this.erroneousSiteNodePaths:" + this.erroneousSiteNodePaths);
+				logger.info("this.erroneousSiteNodePaths:" + this.erroneousSiteNodePaths);
 			}
 		}
 		else
@@ -1604,21 +1604,21 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 
 	private List<Integer> changeComponent(Integer siteNodeId, String slotName, Integer componentContentId, Boolean recursive, Boolean regardAsCompatible, String changeMethod)
 	{
-		System.out.println("siteNodeId:" + siteNodeId);
-		System.out.println("changeMethod:" + changeMethod);
+		logger.info("siteNodeId:" + siteNodeId);
+		logger.info("changeMethod:" + changeMethod);
 		try
 		{
 			String componentXML = getPageComponentsString(siteNodeId, this.masterLanguageVO.getId());
 			logger.info("componentXML:" + componentXML);
 			if(siteNodeId == 108)
-				System.out.println("componentXML:" + componentXML);
+				logger.info("componentXML:" + componentXML);
 			Document document = XMLHelper.readDocumentFromByteArray(componentXML.getBytes("UTF-8"));
 
 			if(changeMethod.equals("matchComponentIdAndSlotName"))
 			{
-				System.out.println("ewfwefwefwef:" + slotName);
+				logger.info("ewfwefwefwef:" + slotName);
 				int numberOfComponentsInSlot = getNumberOfComponentsInSlot(document, slotName);
-				System.out.println("numberOfComponentsInSlot:" + numberOfComponentsInSlot);
+				logger.info("numberOfComponentsInSlot:" + numberOfComponentsInSlot);
 				
 				if (numberOfComponentsInSlot != 1)
 				{
@@ -1692,9 +1692,9 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			}
 			else if(changeMethod.equals("matchComponentContentId"))
 			{
-				System.out.println("componentContentId: " + componentContentId);
+				logger.info("componentContentId: " + componentContentId);
 				NodeList componentsToReplace = org.apache.xpath.XPathAPI.selectNodeList(document.getDocumentElement(), "//component[@contentId='" + componentContentId + "']");
-				System.out.println("componentsToReplace:" + componentsToReplace.getLength());
+				logger.info("componentsToReplace:" + componentsToReplace.getLength());
 				for(int k=0; k<componentsToReplace.getLength(); k++)
 				{
 					Element componentToReplace = (Element)componentsToReplace.item(k);
@@ -1770,7 +1770,7 @@ public class ViewSiteNodePageComponentsAction extends InfoGlueAbstractAction
 			ContentVersionController.getContentVersionController().updateAttributeValue(contentVersionVO.getContentVersionId(), "ComponentStructure", modifiedXML, this.getInfoGluePrincipal());
 
 			List<Integer> erroneousSiteNodes = new LinkedList<Integer>();
-			System.out.println("recursive:" + recursive);
+			logger.info("recursive:" + recursive);
 			if (recursive)
 			{
 				List<SiteNodeVO> childSiteNodeVOList = SiteNodeController.getController().getSiteNodeChildrenVOList(siteNodeId);

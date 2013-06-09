@@ -174,6 +174,15 @@ public class CopyMultipleSiteNodeAction extends InfoGlueAbstractAction
 			processBean.removeProcess();
 		}
 		
+        setActionExtraData(userSessionKey, "refreshToolbarAndMenu", "" + true);
+        setActionExtraData(userSessionKey, "repositoryId", "" + this.repositoryId);
+        setActionExtraData(userSessionKey, "siteNodeId", "" + newParentSiteNodeId);
+        setActionExtraData(userSessionKey, "unrefreshedSiteNodeId", "" + newParentSiteNodeId);
+        setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + newParentSiteNodeId);
+        setActionExtraData(userSessionKey, "changeTypeId", "" + this.changeTypeId);
+
+        setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.siteNodeCopied.confirmation", getSiteNodeVO(newParentSiteNodeId).getName()));
+
 		this.topSiteNodeId = SiteNodeController.getController().getRootSiteNodeVO(this.repositoryId).getId();
 		    
         return "success";

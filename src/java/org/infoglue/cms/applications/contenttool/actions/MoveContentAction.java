@@ -175,6 +175,7 @@ public class MoveContentAction extends InfoGlueAbstractAction
             setActionExtraData(userSessionKey, "unrefreshedContentId", "" + parentContentId);
             setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + parentContentId);
             setActionExtraData(userSessionKey, "changeTypeId", "" + this.changeTypeId);
+            setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.contentMoved.confirmation", getContentVO(parentContentId).getName()));
         }
         catch(ConstraintException ce)
         {

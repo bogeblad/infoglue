@@ -134,6 +134,7 @@ public class CopyContentAction extends InfoGlueAbstractAction
         setActionExtraData(userSessionKey, "unrefreshedContentId", "" + newParentContentId);
         setActionExtraData(userSessionKey, "unrefreshedNodeId", "" + newParentContentId);
         setActionExtraData(userSessionKey, "changeTypeId", "" + 3);
+        setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.contentCopied.confirmation", getContentVO(newParentContentId).getName()));
 
         if(this.newParentContentId == null)
         {

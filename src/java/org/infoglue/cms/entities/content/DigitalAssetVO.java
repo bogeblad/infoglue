@@ -41,6 +41,7 @@ public class DigitalAssetVO implements BaseEntityVO, Cloneable
     private String contentPath;
     private String assetUrl;
 	private String assetThumbnailUrl;
+	private Integer referencingNumberOfObjects;
 
 	/**
 	 * @see org.infoglue.cms.entities.kernel.BaseEntityVO#getId()
@@ -163,6 +164,16 @@ public class DigitalAssetVO implements BaseEntityVO, Cloneable
 	public void setAssetThumbnailUrl(String assetThumbnailUrl) 
 	{
 		this.assetThumbnailUrl = assetThumbnailUrl;
+	}
+
+	public Integer getReferencingNumberOfObjects() 
+	{
+		return referencingNumberOfObjects;
+	}
+
+	public void setReferencingNumberOfObjects(Integer referencingNumberOfObjects) 
+	{
+		this.referencingNumberOfObjects = referencingNumberOfObjects;
 	}
 
 }

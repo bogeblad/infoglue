@@ -46,7 +46,10 @@
 		 
 		function finish()
 		{
-		    document.inputForm.submit();
+		    if (confirm('$ui.getString("tool.contenttool.moveContent.areYouSureWarning")'))
+			{
+				document.inputForm.submit();
+			}
 		}
 	
 		/**

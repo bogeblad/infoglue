@@ -258,6 +258,7 @@ public class MoveMultipleContentAction extends InfoGlueAbstractAction
 				    try
 					{
 				        ContentControllerProxy.getController().acMoveContent(this.getInfoGluePrincipal(), contentVO, this.newParentContentId);
+				        setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.contentMoved.confirmation", getContentVO(this.newParentContentId).getName()));
 					}
 					catch(Exception e)
 					{

@@ -8,33 +8,31 @@
 .imgBox {
 	width:134px;
 	height:124px;
-	background:url(images/v3/imgbox_bg.gif) repeat;
-	border:solid 1px #d8d8d8;
 	display:block;
 	float:left;
-	margin:2px 4px 4px 2px;
+	margin: 10px 6px;
 	text-align:center;
-	}
+	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.25);
+	border: 1px solid rgb(200, 200, 200);
+}
 .imgBoxTop { 
-	position:relative; 
 	height:90px; 
 	text-align:center;
 	margin: 10px 10px 0px 10px;
-	background:url(images/v3/imgbox_bg.gif) repeat;
 }
 .imgBoxTopInner { 
-	padding-top: 10px;
+	padding-top: 5px;
 	text-align:center;
-	background:url(images/v3/imgbox_bg.gif) repeat;
 }
 .imgBoxBottom { 
 	display:inline;
 	float:left;
-	text-align:center;
-	margin: 0px 13px 0px 13px;		
+	text-align:center;	
+	width: 101px;
+	margin: 0 0 0 16px;	
 }
 .imgBoxTopInner img {
-	border:solid 1px #d8d8d8;
+	border: none;
 	cursor: pointer;
 }
 
@@ -50,7 +48,7 @@
 .assetKeyP {
 	font-family:Arial, Helvetica, sans-serif;
 	font-size:11px;
-	margin: 0px; 
+	margin: 14px 0 5px 0; 
 	padding: 0px;
 	text-align: center;
 	width: 100%;
@@ -69,6 +67,12 @@
 	background:url(images/v3/update_img.gif) no-repeat center;}
 .deleteImg {
 	background:url(images/v3/delete_img.gif) no-repeat center;}
+.menuImg {
+	background:url(images/v3/menu_img.png) no-repeat center;
+	background-repeat: no-repeat;
+	background-position: center;
+	margin: 0 11px;
+}
 .linkUpload {	
 	background:url(images/v3/refresh_img.png) no-repeat center;
 	background-position: 0px 0px;
@@ -81,4 +85,50 @@
 	background:url(images/v3/cancelIcon.gif) no-repeat center;
 	background-position: 0px 0px;
 	}
-	
+.popup {
+	display: none;
+	width: 114px;
+	clear: both;
+	margin: 23px 0 0 -17px;
+	position: relative;
+	z-index: 1000;
+}
+.center {margin: 0 auto; display: table;}
+.popup a {
+	width: 99px;
+	border-bottom: 1px solid rgb(200, 200, 200);
+	border-left: 1px solid rgb(200, 200, 200);
+	border-right: 1px solid rgb(200, 200, 200);
+	background-color: rgb(230, 230, 230);
+	height: 24px;
+	line-height: 24px;
+	text-align: left;
+	background-position: 5px center;
+	color: rgb(0, 0, 0);
+	padding: 5px 5px 5px 30px;
+	float: none;
+	font-size: 12px;
+}
+.popup a:first-child {
+	border-top: 1px solid rgb(200, 200, 200);
+}
+.popup a:hover {
+	text-decoration: none; 
+	background-color: rgb(237, 237, 237);
+}
+.usageCounter {
+	border: 2px solid rgb(223, 223, 223);
+	border-radius: 5px;
+	display: table;
+	padding: 2px 5px;
+	float: right;
+	margin-top: -8px;
+	position: absolute;
+	margin-left: -7px;
+	background-color: rgb(240, 240, 240);
+	color: rgb(160, 160, 160);
+}
+.notUsed {
+	color: rgb(255, 255, 255);
+	background-color: rgb(219, 0, 0);
+}

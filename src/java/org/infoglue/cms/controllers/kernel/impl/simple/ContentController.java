@@ -74,6 +74,7 @@ import org.infoglue.cms.entities.management.impl.simple.RepositoryImpl;
 import org.infoglue.cms.entities.structure.Qualifyer;
 import org.infoglue.cms.entities.structure.ServiceBinding;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.structure.impl.simple.SmallestSiteNodeImpl;
 import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.ConstraintException;
@@ -1164,7 +1165,7 @@ public class ContentController extends BaseController
 	 * Such actions would result in model-errors.
 	 */
 		
-	public void moveDigitalAsset(InfoGluePrincipal principal, Integer digitalAssetId, Integer contentId) throws ConstraintException, SystemException
+	public void moveDigitalAsset(InfoGluePrincipal principal, Integer digitalAssetId, Integer contentId, Boolean fixReferences) throws ConstraintException, SystemException
     {
         Database db = CastorDatabaseService.getDatabase();
 
@@ -1172,7 +1173,7 @@ public class ContentController extends BaseController
 
         try
         {
-        	moveDigitalAsset(principal, digitalAssetId, contentId, db);
+        	moveDigitalAsset(principal, digitalAssetId, contentId, fixReferences, db);
             
             commitTransaction(db);
         }
@@ -1199,7 +1200,7 @@ public class ContentController extends BaseController
 	 * Such actions would result in model-errors.
 	 */
 		
-	public void moveDigitalAsset(InfoGluePrincipal principal, Integer digitalAssetId, Integer contentId, Database db) throws ConstraintException, SystemException, Exception
+	public void moveDigitalAsset(InfoGluePrincipal principal, Integer digitalAssetId, Integer contentId, Boolean fixReferences, Database db) throws ConstraintException, SystemException, Exception
     {
         ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
 
@@ -1215,6 +1216,8 @@ public class ContentController extends BaseController
 		MediumContentVersionImpl contentVersion = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionVO.getId(), principal, db);
 		MediumDigitalAssetImpl asset = DigitalAssetController.getController().getMediumDigitalAssetWithId(digitalAssetId, db);
 
+		Map<Integer,Integer> replaceMap = new HashMap<Integer,Integer>();
+		
 		Iterator<MediumContentVersionImpl> versionIterator = asset.getContentVersions().iterator();
 		while(versionIterator.hasNext())
 		{
@@ -1225,6 +1228,7 @@ public class ContentController extends BaseController
 				{
 					logger.info("Removing from:" + cvVO.getId());
 					versionIterator.remove();
+					replaceMap.put(version.getContentId(), contentId);
 					break;
 				}
 			}
@@ -1232,6 +1236,57 @@ public class ContentController extends BaseController
 		contentVersion.getDigitalAssets().add(asset);
 		asset.getContentVersions().add(contentVersion);
 	    
+		if(fixReferences)
+		{
+			for(Integer oldContentId : replaceMap.keySet())
+			{
+				Integer newContentId = replaceMap.get(oldContentId);
+				logger.info("We should replace all instances of " + oldContentId + "(" + asset.getAssetKey() + ") --> " + newContentId + "(" + asset.getAssetKey() + ")");
+   				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(oldContentId, asset.getAssetKey(), 100, true, true);
+   				logger.info("referenceBeans:" + referenceBeans.size());
+   				for(ReferenceBean referenceBean : referenceBeans)
+   				{
+   					for(ReferenceVersionBean referenceVersionBean : referenceBean.getVersions())
+   					{
+   						Object o = referenceVersionBean.getReferencingObject();
+   						logger.info("o:" + o.getClass().getName());
+   						if(o instanceof ContentVersionVO)
+   						{
+   							ContentVersionVO cv = (ContentVersionVO)o;
+   							logger.info("Replacing in:" + cv.getId());
+   							String newVersionValue = cv.getVersionValue().replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+   							newVersionValue = newVersionValue.replaceAll("getInlineAssetUrl\\(" + oldContentId + ",", "getInlineAssetUrl(" + newContentId + ",");
+   							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
+   							cvReal.setVersionValue(newVersionValue);
+   							cvReal.setVersionComment("Asset moved...");
+   							cvReal.setVersionModifier(principal.getName());
+   							cvReal.setModifiedDateTime(new Date());
+
+   							RegistryController.getController().updateContentVersion(cvReal.getValueObject(), null, db);
+   						}
+   						else if(o instanceof SiteNodeVersionVO)
+   						{
+   							SiteNodeVersionVO snvo = (SiteNodeVersionVO)o;
+   							logger.info("Replacing in:" + snvo.getId());
+   							
+   			                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(snvo.getSiteNodeId(), db);
+   				    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+   				    		ContentVersionVO cv = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+
+   							String newVersionValue = cv.getVersionValue().replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+   							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
+   							cvReal.setVersionValue(newVersionValue);
+   							cvReal.setVersionComment("Asset moved...");
+   							cvReal.setVersionModifier(principal.getName());
+   							cvReal.setModifiedDateTime(new Date());
+   							
+   							RegistryController.getController().updateContentVersion(cvReal.getValueObject(), snvo, db);
+   						}
+   					}
+   				}
+			}
+		}
+		
 		//If any of the validations or setMethods reported an error, we throw them up now before create.
         ceb.throwIfNotEmpty();
     }  

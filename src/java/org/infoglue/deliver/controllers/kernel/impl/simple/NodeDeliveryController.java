@@ -1753,8 +1753,8 @@ public class NodeDeliveryController extends BaseDeliveryController
 			LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(db, repositoryId);
 			if(!masterLanguageVO.getId().equals(languageId))
 			{
-				attributeKey = "" + siteNodeId + "_" + masterLanguageVO.getId() + "_" + attributeName;
-				candidate = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", attributeKey);
+				String attributeKeyFallback = "" + siteNodeId + "_" + masterLanguageVO.getId() + "_" + attributeName;
+				candidate = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", attributeKeyFallback);
 			}
     	}
     	

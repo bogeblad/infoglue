@@ -24,6 +24,8 @@
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
 import java.awt.Color;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1110,12 +1112,14 @@ public class RegistryController extends BaseController
 	
 	public boolean hasInlineAsset(String versionValue, Integer contentId, String assetKey, Database db) throws ConstraintException, SystemException, Exception
 	{
-		Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(" + contentId + ", \"" + assetKey + "\"\\)");
+		String encodedAssetKey = URLEncoder.encode(assetKey, "utf-8");
+		Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(" + contentId + ".*?\\)");
 	    Matcher matcher = pattern.matcher(versionValue);
-	    if ( matcher.find() ) 
+	    while ( matcher.find() ) 
 	    { 
 	        String match = matcher.group();
-	        return true;
+	        if(match.contains(assetKey) || match.contains(encodedAssetKey))
+	        	return true;
 	    }
 	    return false;
 	}	
@@ -1128,18 +1132,25 @@ public class RegistryController extends BaseController
 	{
 		StringBuffer sb = new StringBuffer();
 		
-		Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(" + contentId + ", \".*?\"\\)");
+		Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(" + contentId + ".*?\\)");
 	    Matcher matcher = pattern.matcher(versionValue);
 	    while ( matcher.find() ) 
 	    { 
 	        String match = matcher.group();
-	        match = match.substring(match.indexOf("\"")+1, match.length()-2);
-	        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
-	        if(daVO != null && (assetKey == null || assetKey.equals(daVO.getAssetKey())))
+	        String encodedAssetKey = null;
+	        if(assetKey != null)
+	        	encodedAssetKey = URLEncoder.encode(assetKey, "utf-8");
+	        if(assetKey == null || match.contains(assetKey) || match.contains(encodedAssetKey))
 	        {
-		        String assetUrl = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(daVO.getId(), 70, 70, Color.WHITE, "center", "middle", 60, 60, 30, db);
-		        if(assetUrl != null && !assetUrl.equals(""))
-		        	sb.append("<a href='#' onmouseover=\"$('#casset_" + daVO.getId() + "').show();\" onmouseout=\"$('#casset_" + daVO.getId() + "').hide();\">" + match + "</a><div id='casset_" + daVO.getId() + "' style='display: none; position: absolute;'><img src='" + assetUrl + "'/></div>" + ", ");
+		        match = match.substring(match.indexOf("\"")+1, match.length()-2);
+		        match = URLDecoder.decode(match, "utf-8");
+		        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
+		        if(daVO != null && (assetKey == null || assetKey.equals(daVO.getAssetKey())))
+		        {
+			        String assetUrl = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(daVO.getId(), 70, 70, Color.WHITE, "center", "middle", 60, 60, 30, db);
+			        if(assetUrl != null && !assetUrl.equals(""))
+			        	sb.append("<a href='#' onmouseover=\"$('#casset_" + daVO.getId() + "').show();\" onmouseout=\"$('#casset_" + daVO.getId() + "').hide();\">" + match + "</a><div id='casset_" + daVO.getId() + "' style='display: none; position: absolute;'><img src='" + assetUrl + "'/></div>" + ", ");
+		        }
 	        }
 	    }
 	    
@@ -1155,6 +1166,8 @@ public class RegistryController extends BaseController
 		        int indexAssetKey = match.indexOf("assetKey=");
 		        int indexAssetKeyEnd = match.indexOf("\"", indexAssetKey+10);
 		        match = match.substring(indexAssetKey+10, indexAssetKeyEnd);
+		        logger.info("match:" + match);
+		        match = URLDecoder.decode(match, "utf-8");
 		        logger.info("match:" + match);
 		        
 		        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
@@ -1801,14 +1814,12 @@ public class RegistryController extends BaseController
         while(registryEntiresIterator.hasNext())
         {
             RegistryVO registryVO = (RegistryVO)registryEntiresIterator.next();
-            
             if(!registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET) && registryVO.getReferencingEntityName().indexOf("SiteNode") == -1)
             {
-            	logger.info("INLINE ASSET:" + registryVO.getId());
+        		logger.info("NOT INLINE ASSET:" + registryVO.getId());
             }
             else
             {
-                logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
 	            boolean add = true;
 	            
 	            String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
@@ -1835,13 +1846,15 @@ public class RegistryController extends BaseController
 	                    }
 	                    else if(excludeInternalContentReferences && contentVersion.getValueObject().getContentId().equals(contentId))
 			    		{
-			    			logger.info("Skipping internal reference " + contentId + " had on itself.");
+	                    	logger.info("Skipping internal reference " + contentId + " had on itself.");
 			    			referenceBeanList.remove(existingReferenceBean);
 			    		}
 			    		else
 			    		{
+			    			logger.info("contentVersion:" + contentVersion.getId() + " : " + assetKey);
 			    			boolean includesAsset = RegistryController.getController().hasInlineAsset(contentVersion.getVersionValue(), new Integer(registryVO.getEntityId()), assetKey, db);
-		                    if(includesAsset)
+			    			logger.info("includesAsset:" + includesAsset);
+			    			if(includesAsset)
 		                    {
 		                    	existingReferenceBean.setName(contentVersion.getOwningContent().getName());
 					    		existingReferenceBean.setReferencingCompletingObject(contentVersion.getOwningContent().getValueObject());
@@ -1864,7 +1877,7 @@ public class RegistryController extends BaseController
 								}
 					    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
 					    		referenceVersionBean.getRegistryVOList().add(registryVO);
-					    		
+					    
 					    		checkedLanguageVersions.put("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
 		                    }
 		                    else

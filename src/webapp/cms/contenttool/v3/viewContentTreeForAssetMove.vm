@@ -55,7 +55,9 @@
 		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
 	
 		<h3>$ui.getString("tool.contenttool.moveDigitalAsset.header")</h3>
-		
+		<p>
+			<input type="checkbox" name="fixReferences" value="true" checked="1"> Fix reference
+		</p>
 		<p>
 			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?showLeafs=yes&repositoryId=${repositoryId}" width="350" height="460" ></iframe>
 		</p>

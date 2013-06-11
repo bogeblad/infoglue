@@ -357,7 +357,7 @@ public class ContentControllerProxy extends ContentController
 	 * This method moves an asset after first checking that the user has rights to edit it.
 	 */
 
-	public void acMoveDigitalAsset(InfoGluePrincipal infogluePrincipal, Integer digitalAssetId, Integer contentId) throws ConstraintException, SystemException, Bug, Exception
+	public void acMoveDigitalAsset(InfoGluePrincipal infogluePrincipal, Integer digitalAssetId, Integer contentId, Boolean fixReferences) throws ConstraintException, SystemException, Bug, Exception
 	{
 		Map hashMap = new HashMap();
 		hashMap.put("contentId", contentId);
@@ -369,7 +369,7 @@ public class ContentControllerProxy extends ContentController
 
 		//intercept(hashMap, "Content.Create", infogluePrincipal);
 
-		moveDigitalAsset(infogluePrincipal, digitalAssetId, contentId);
+		moveDigitalAsset(infogluePrincipal, digitalAssetId, contentId, fixReferences);
 	}  
 	
 	/**

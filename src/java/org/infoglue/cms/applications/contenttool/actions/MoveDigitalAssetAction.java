@@ -47,6 +47,7 @@ public class MoveDigitalAssetAction extends InfoGlueAbstractAction
     private Integer digitalAssetId;
 	private Integer contentId;
 	private Integer contentVersionId;
+	private Boolean fixReferences = false;
 	
 	private Integer repositoryId;
    	private String userSessionKey;
@@ -105,6 +106,16 @@ public class MoveDigitalAssetAction extends InfoGlueAbstractAction
 	{
 		this.userSessionKey = userSessionKey; 
 	}
+	
+	public Boolean getFixReferences() 
+	{
+		return fixReferences;
+	}
+
+	public void setFixReferences(Boolean fixReferences) 
+	{
+		this.fixReferences = fixReferences;
+	}
 
     public String doInput() throws Exception
     {		
@@ -132,7 +143,7 @@ public class MoveDigitalAssetAction extends InfoGlueAbstractAction
         {
             ceb.throwIfNotEmpty();
         	
-    		ContentControllerProxy.getController().acMoveDigitalAsset(this.getInfoGluePrincipal(), this.getDigitalAssetId(), this.getContentId());
+    		ContentControllerProxy.getController().acMoveDigitalAsset(this.getInfoGluePrincipal(), this.getDigitalAssetId(), this.getContentId(), this.fixReferences);
 
     	    addActionLinkFirst(userSessionKey, new LinkBean("parent.parent.refreshView('contentVersionAssets');", "", "", "", "parent.parent.refreshView('contentVersionAssets');closeDialog();", true, ""));
     	    setActionExtraData(userSessionKey, "confirmationMessage", getLocalizedString(getLocale(), "tool.contenttool.assetMoved.confirmation", getContentVO(this.getContentId()).getName()));

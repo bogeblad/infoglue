@@ -152,7 +152,7 @@
 			#if($firstActionLink.target == 'structure' || $firstActionLink.target == 'content' || $firstActionLink.target == 'management')
 				#set($parentCall = true)
 			#end
-			
+
 			//alert("$firstActionLink.actionURL : $unrefreshedNodeId $this");
 			#if($firstActionLink.actionURL == "refreshParent")
 				refreshParent(null,null,null);

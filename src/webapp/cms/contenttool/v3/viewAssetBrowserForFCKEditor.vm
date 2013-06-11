@@ -39,9 +39,10 @@
 	
 
 	$(document).ready(function(){
+				
 		$("#tabsContainer").tabs( { 
 			show:function(e, ui) { 
-				if(ui.index > 0) 
+				if(ui.index > 0)
 					$(".attachAsset").hide();
 				else
 					$(".attachAsset").show();
@@ -87,6 +88,22 @@
 		setTimeout("init();", 50);
 		setTimeout("resize();", 100);
 		//setTimeout("resizeInlineTabDivs()", 100);
+		
+		try
+		{
+			//alert("CURRENT:" + window.opener.document.getElementById("txtUrl").value);
+			var txtUrl = window.opener.document.getElementById("txtUrl").value;
+			if(txtUrl && txtUrl != "")
+			{
+				var contentId = getRequestParameter(txtUrl, "contentId");
+				jQuery.get("ViewCommonAjaxServices!contentPath.action?contentId=" + contentId, function(data) {
+					//alert("Current located in " + data);
+					$("#currentPath").html("$ui.getString("tool.contenttool.currentSelectedAsset.label"): <b>" + data + "</b>").show();
+				});
+			}
+		}
+		catch(e) {console.log("e:" + e);}
+		
 	});
 
 	var txtUrl = "";
@@ -220,7 +237,7 @@
 
 	<div style="clear: both;"></div>
 	
-	<h3 style="text-indent: 16px;">$ui.getString("tool.contenttool.assetDialog.assetDialogHeader")</h3>
+	<h3>$ui.getString("tool.contenttool.assetDialog.assetDialogHeader") <span id="currentPath" style="font-size: 12px; font-weight: normal; display: none; float: right; margin-right: 10px;"></span></h3>
 
 	<div id="tabsContainer" class="flora">      
 

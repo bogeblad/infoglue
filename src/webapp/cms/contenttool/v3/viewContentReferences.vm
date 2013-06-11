@@ -41,6 +41,7 @@
 				<thead>
 					<tr>
 						<th>$ui.getString("tool.contenttool.contentVersionReferences.header")</th>
+						<th>$ui.getString("tool.contenttool.contentVersionReferencesAssets.header")</th>
 						##<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
 						<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
 						##<th>&nbsp;</th>
@@ -62,6 +63,9 @@
 									<td>
 										<img src='css/images/v3/contentIcon.gif'> <a href="#" onclick="top.openUrlInWorkArea('ViewContentVersion!V3.action?contentId=$referenceBean.referencingCompletingObject.contentId&languageId=$version.referencingObject.languageId', '$version.referencingObject.contentName', 'content', '$ui.getString("tool.common.contentTabLabelPrefix")', 'ContentTool'); return false;">$referenceBean.path</a> ($version.referencingObject.languageName)
 					 				</td>
+					 				<td>
+					 					$version.referencingExtraInfo
+					 				</td>
 					 				#*
 					 				<td>
 					 					$referenceBean.versions.get($lastIndex).registryVOList.size()	
@@ -81,6 +85,7 @@
 						<tr>
 							<td style="color: red;">$ui.getString("tool.contenttool.moreContentReferencesFound") $count</td>		
 							<td>&nbsp;</td>		
+							<td>&nbsp;</td>		
 							##<td>&nbsp;</td>	
 							##<td>&nbsp;</td>		
 						</tr>	
@@ -89,6 +94,7 @@
 					#if(!$hasContentReferences)
 						<tr>
 							<td>$ui.getString("tool.structuretool.noContentReferencesFound")</td>		
+							<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 							##<td>&nbsp;</td>	
 							##<td>&nbsp;</td>		
@@ -106,6 +112,7 @@
 				<thead>
 					<tr>
 						<th>$ui.getString("tool.contenttool.searchResultPageHeader")</th>
+						<th>$ui.getString("tool.contenttool.contentVersionReferencesAssets.header")</th>
 						##<th>$ui.getString("tool.structuretool.deleteReferences.referencesFound")</th>
 						<th>$ui.getString("tool.structuretool.contactPersonEmail.label")</th>
 						##<th>&nbsp;</th>
@@ -120,10 +127,14 @@
 							#if($count < $referenceLimit)
 								#set($hasPageReferences = true)
 								#set($lastIndex = $referenceBean.versions.size() - 1)
+
 								<tr>
 									<td>
 										<img src='css/images/v3/pageIcon.gif'> <a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1', '$referenceBean.referencingCompletingObject.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)</a><br/>
 										##<img src='css/images/v3/pageIcon.gif'> <a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)</a>
+					 				</td>
+					 				<td>
+					 					$referenceBean.versions[0].referencingExtraInfo
 					 				</td>
 					 				#*
 					 				<td>
@@ -143,6 +154,7 @@
 						<tr>
 							<td>$ui.getString("tool.contenttool.morePageReferencesFound") $count</td>		
 							<td>&nbsp;</td>		
+							<td>&nbsp;</td>		
 							##<td>&nbsp;</td>
 							##<td>&nbsp;</td>			
 						</tr>	
@@ -151,6 +163,7 @@
 					#if(!$hasPageReferences)
 						<tr>
 							<td>$ui.getString("tool.contenttool.noPageReferencesFound")</td>		
+							<td>&nbsp;</td>		
 							<td>&nbsp;</td>		
 							##<td>&nbsp;</td>	
 							##<td>&nbsp;</td>		

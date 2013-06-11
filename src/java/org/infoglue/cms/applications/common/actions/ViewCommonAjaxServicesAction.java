@@ -71,11 +71,29 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		return NONE;
     }
 
+	public String doSiteNodePath() throws Exception
+    {
+		String siteNodePath = SiteNodeController.getController().getSiteNodePath(new Integer(getRequest().getParameter("siteNodeId")), false, true);
+		this.getResponse().setContentType("text/plain");
+		this.getResponse().getWriter().print("" + siteNodePath);
+		
+		return NONE;
+    }
+
 	public String doContentIdPath() throws Exception
     {
 		String contentIdPath = ContentController.getContentController().getContentIdPath(new Integer(getRequest().getParameter("contentId")));
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + contentIdPath);
+		
+		return NONE;
+    }
+
+	public String doContentPath() throws Exception
+    {
+		String contentPath = ContentController.getContentController().getContentPath(new Integer(getRequest().getParameter("contentId")), false, true);
+		this.getResponse().setContentType("text/plain");
+		this.getResponse().getWriter().print("" + contentPath);
 		
 		return NONE;
     }

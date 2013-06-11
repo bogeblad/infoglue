@@ -45,7 +45,8 @@
 		//*******************************************
 		//This method refreshes the caller
 		//*******************************************
-	
+		
+		
 		function refreshCaller()
 		{
 			parent.closeDialog();

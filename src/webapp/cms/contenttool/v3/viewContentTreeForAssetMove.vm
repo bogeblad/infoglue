@@ -1,0 +1,67 @@
+#define( $headerMarkup )
+	<script type="text/javascript">
+	<!-- 
+	    function notifyIsLoaded()
+	    {
+	    }
+	    
+	    function notifyExp(v)
+	    {
+	    }
+
+		function htmlTreeItemClick(itemId, repoId)
+		{
+		    document.inputForm.contentId.value = itemId;
+		}
+	
+		function loadMainArea(contentId, repositoryId, path)
+		{
+		    document.inputForm.contentId.value = contentId;
+		}
+	    
+	    function save()
+		{
+			var contentId = document.inputForm.contentId.value;
+			if(contentId != "")
+			{
+			    if (confirm('$ui.getString("tool.contenttool.moveAsset.areYouSureWarning")'))
+				{
+					document.inputForm.submit();
+				}
+			}
+		    else
+		    {
+				alert("$ui.getString("tool.contenttool.moveContent.mustSelectContentWarning")");
+			}
+		}
+	-->
+	</script>
+#end
+
+#beginLightCommonToolV3Impl("tool.contenttool.moveDigitalAsset.header" "" "" false true $!disableCloseButton $headerMarkup false "")
+	
+	#lightMenuToolbar("" $buttons $rightButtons) 
+
+	<div style="clear: both;"></div>
+		
+	<form name="inputForm" action="MoveDigitalAsset.action">
+		<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
+		<input type="hidden" name="repositoryId" value="$repositoryId"/>
+		<input type="hidden" name="contentId" value="$contentId"/>
+		<input type="hidden" name="digitalAssetId" value="$digitalAssetId"/>
+		<input type="hidden" name="returnAddress" value="$returnAddress">
+		<input type="hidden" name="originalAddress" value="$originalAddress">
+	
+		<div id="igEditArea" class="igScrollArea" onfocus="this.blur();">
+	
+		<h3>$ui.getString("tool.contenttool.moveDigitalAsset.header")</h3>
+		
+		<p>
+			<iframe frameborder="0" name="itreeFrame" id="itreeFrame" src="ViewContentHtmlTree!V3.action?showLeafs=yes&repositoryId=${repositoryId}" width="350" height="460" ></iframe>
+		</p>
+	
+		#lightFooterToolbar($footerButtons)
+	
+	</form>
+
+#endLightCommonToolV3()

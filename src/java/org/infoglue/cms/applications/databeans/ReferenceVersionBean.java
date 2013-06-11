@@ -39,6 +39,7 @@ public class ReferenceVersionBean
     //private String name;
 	private List<RegistryVO> registryVOList = new ArrayList<RegistryVO>();
     private Object referencingObject;
+    private String referencingExtraInfo;
     
     /*
     public String getName()
@@ -52,7 +53,7 @@ public class ReferenceVersionBean
     }
     */
     
-    public Object getReferencingObject()
+	public Object getReferencingObject()
     {
         return referencingObject;
     }
@@ -62,6 +63,16 @@ public class ReferenceVersionBean
         this.referencingObject = referencingObject;
     }
     
+	public String getReferencingExtraInfo() 
+	{
+		return referencingExtraInfo;
+	}
+
+	public void setReferencingExtraInfo(String referencingExtraInfo) 
+	{
+		this.referencingExtraInfo = referencingExtraInfo;
+	}
+
     public List<RegistryVO> getRegistryVOList()
     {
         return registryVOList;

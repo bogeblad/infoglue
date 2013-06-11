@@ -181,6 +181,7 @@
 				#if($disableImageEditor != "true" && ($digitalAssetUrl.indexOf(".gif") > -1 || $digitalAssetUrl.indexOf(".jpg") > -1 || $digitalAssetUrl.indexOf(".png") > -1))
 				<a class="editImg" href="#" onclick="parent.openInlineDiv('ImageEditor.action?contentVersionId=$contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId&clearHistory=true', 600, 800, true, true, ''); " >$ui.getString("tool.contenttool.editAttachment")</a>
 				#end
+				<a class="moveImg" href="#" onclick="#if($digitalAsset.referencingNumberOfObjects > 0)if (confirm('$ui.getString("tool.contenttool.assetReferencedWarning", $digitalAsset.referencingNumberOfObjects)')){#end parent.openInlineDiv('MoveDigitalAsset!input.action?contentVersionId=$!contentVersionId&digitalAssetId=$digitalAsset.digitalAssetId', 600, 800, true, true, '');#if($digitalAsset.referencingNumberOfObjects > 0)}#end">$ui.getString("tool.contenttool.moveAttachment")</a>
 			</div>
 		
 		</div>

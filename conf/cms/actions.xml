@@ -935,6 +935,12 @@
 		<view name="error">/cms/contenttool/error.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
 	</action>
+	<action name="org.infoglue.cms.applications.contenttool.actions.MoveDigitalAssetAction" alias="MoveDigitalAsset">
+		<view name="input">/cms/contenttool/v3/viewContentTreeForAssetMove.vm</view>
+		<view name="success">ViewInlineOperationMessages.action?automaticClose=true</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+	</action>
 	<action name="org.infoglue.cms.applications.contenttool.actions.MoveMultipleContentAction" alias="MoveMultipleContent">
 		<view name="input">/cms/contenttool/viewMoveMultipleContentsChooseContents.vm</view>
 		<view name="inputV3">/cms/contenttool/v3/viewMoveMultipleContentsChooseContents.vm</view>

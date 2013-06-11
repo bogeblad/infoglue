@@ -55,6 +55,8 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.MediumContentImpl;
+import org.infoglue.cms.entities.content.impl.simple.MediumContentVersionImpl;
+import org.infoglue.cms.entities.content.impl.simple.MediumDigitalAssetImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallStateContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.SmallestContentVersionImpl;
@@ -1154,7 +1156,85 @@ public class ContentController extends BaseController
         
         //If any of the validations or setMethods reported an error, we throw them up now before create.
         ceb.throwIfNotEmpty();
+    }  
+	
+	/**
+	 * This method moves a content from one parent-content to another. First we check so no illegal actions are 
+	 * in process. For example the target folder must not be the item to be moved or a child to the item.
+	 * Such actions would result in model-errors.
+	 */
+		
+	public void moveDigitalAsset(InfoGluePrincipal principal, Integer digitalAssetId, Integer contentId) throws ConstraintException, SystemException
+    {
+        Database db = CastorDatabaseService.getDatabase();
+
+        beginTransaction(db);
+
+        try
+        {
+        	moveDigitalAsset(principal, digitalAssetId, contentId, db);
+            
+            commitTransaction(db);
+        }
+        catch(ConstraintException ce)
+        {
+			logger.error("An error occurred so we should not complete the transaction:" + ce.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + ce.getMessage(), ce);
+            rollbackTransaction(db);
+            throw new SystemException(ce.getMessage());
+        }
+        catch(Exception e)
+        {
+			logger.error("An error occurred so we should not complete the transaction:" + e.getMessage());
+			logger.warn("An error occurred so we should not complete the transaction:" + e.getMessage(), e);
+            rollbackTransaction(db);
+            throw new SystemException(e.getMessage());
+        }
+
     }   
+
+	/**
+	 * This method moves a content from one parent-content to another. First we check so no illegal actions are 
+	 * in process. For example the target folder must not be the item to be moved or a child to the item.
+	 * Such actions would result in model-errors.
+	 */
+		
+	public void moveDigitalAsset(InfoGluePrincipal principal, Integer digitalAssetId, Integer contentId, Database db) throws ConstraintException, SystemException, Exception
+    {
+        ConstraintExceptionBuffer ceb = new ConstraintExceptionBuffer();
+
+		if(contentId == null)
+        {
+        	logger.warn("You must specify the new content......");
+        	throw new ConstraintException("Content.parentContentId", "3303");
+        }
+		
+		List<SmallestContentVersionVO> versions = DigitalAssetController.getController().getContentVersionVOListConnectedToAssetWithId(digitalAssetId);
+		
+		ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, db);
+		MediumContentVersionImpl contentVersion = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionVO.getId(), principal, db);
+		MediumDigitalAssetImpl asset = DigitalAssetController.getController().getMediumDigitalAssetWithId(digitalAssetId, db);
+
+		Iterator<MediumContentVersionImpl> versionIterator = asset.getContentVersions().iterator();
+		while(versionIterator.hasNext())
+		{
+			MediumContentVersionImpl version = versionIterator.next();
+			for(SmallestContentVersionVO cvVO : versions)
+			{
+				if(version.getContentVersionId().equals(cvVO.getId()))
+				{
+					logger.info("Removing from:" + cvVO.getId());
+					versionIterator.remove();
+					break;
+				}
+			}
+		}
+		contentVersion.getDigitalAssets().add(asset);
+		asset.getContentVersions().add(contentVersion);
+	    
+		//If any of the validations or setMethods reported an error, we throw them up now before create.
+        ceb.throwIfNotEmpty();
+    }  
 
 	/**
 	 * This method copies the content and possibly subcontents/folders into a target folder

@@ -496,6 +496,8 @@ public class ToolbarController implements ToolbarProvider
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, null, getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentLabel"), getLocalizedString(locale, "tool.contenttool.toolbarV3.moveContentLabel"));
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.moveMultipleContent.header"))
 				return getCommonAddNextCancelButton(toolbarKey, principal, locale, request, disableCloseButton);
+			if(toolbarKey.equalsIgnoreCase("tool.contenttool.moveDigitalAsset.header"))
+				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, null, getLocalizedString(locale, "tool.contenttool.moveDigitalAsset.header"), getLocalizedString(locale, "tool.contenttool.moveDigitalAsset.header"));
 
 			if(toolbarKey.equalsIgnoreCase("tool.contenttool.copyContent.header"))
 				return getCommonFooterSaveOrCancelButton(toolbarKey, principal, locale, request, disableCloseButton, null, getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentLabel"), getLocalizedString(locale, "tool.contenttool.toolbarV3.copyContentLabel"));

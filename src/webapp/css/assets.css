@@ -67,6 +67,8 @@
 	background:url(images/v3/update_img.gif) no-repeat center;}
 .deleteImg {
 	background:url(images/v3/delete_img.gif) no-repeat center;}
+.moveImg {
+	background:url(images/v3/moveIcon.png) no-repeat center;}
 .menuImg {
 	background:url(images/v3/menu_img.png) no-repeat center;
 	background-repeat: no-repeat;

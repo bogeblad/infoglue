@@ -23,6 +23,7 @@
 
 package org.infoglue.cms.controllers.kernel.impl.simple;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.CategoryVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinition;
@@ -1117,7 +1119,58 @@ public class RegistryController extends BaseController
 	    }
 	    return false;
 	}	
+
+	/**
+	 * This method fetches all inline links from any text.
+	 */
 	
+	public String getInlineAssetInformation(String versionValue, Integer contentId, Integer languageId, String assetKey, Database db) throws ConstraintException, SystemException, Exception
+	{
+		StringBuffer sb = new StringBuffer();
+		
+		Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(" + contentId + ", \".*?\"\\)");
+	    Matcher matcher = pattern.matcher(versionValue);
+	    while ( matcher.find() ) 
+	    { 
+	        String match = matcher.group();
+	        match = match.substring(match.indexOf("\"")+1, match.length()-2);
+	        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
+	        if(daVO != null && (assetKey == null || assetKey.equals(daVO.getAssetKey())))
+	        {
+		        String assetUrl = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(daVO.getId(), 70, 70, Color.WHITE, "center", "middle", 60, 60, 30, db);
+		        if(assetUrl != null && !assetUrl.equals(""))
+		        	sb.append("<a href='#' onmouseover=\"$('#casset_" + daVO.getId() + "').show();\" onmouseout=\"$('#casset_" + daVO.getId() + "').hide();\">" + match + "</a><div id='casset_" + daVO.getId() + "' style='display: none; position: absolute;'><img src='" + assetUrl + "'/></div>" + ", ");
+	        }
+	    }
+	    
+	    Pattern pattern2 = Pattern.compile("<binding ([^<]*)</binding>");
+	    //Pattern pattern2 = Pattern.compile("<binding *?entity=\"Content\" entityId=\"81\"><binding>");
+	    Matcher matcher2 = pattern2.matcher(versionValue);
+	    while ( matcher2.find() ) 
+	    { 
+	        String match = matcher2.group();
+	        logger.info("match:" + match);
+	        if(match.contains("entityId=\"" + contentId + "\"") && match.contains("assetKey="))
+	        {
+		        int indexAssetKey = match.indexOf("assetKey=");
+		        int indexAssetKeyEnd = match.indexOf("\"", indexAssetKey+10);
+		        match = match.substring(indexAssetKey+10, indexAssetKeyEnd);
+		        logger.info("match:" + match);
+		        
+		        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
+		        if(daVO != null && (assetKey == null || assetKey.equals(daVO.getAssetKey())))
+		        {
+			        String assetUrl = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(daVO.getId(), 70, 70, Color.WHITE, "center", "middle", 60, 60, 30, db);
+			        if(assetUrl != null && !assetUrl.equals(""))
+			        	sb.append("<a href='#' onmouseover=\"$('#passet_" + daVO.getId() + "').show();\" onmouseout=\"$('#passet_" + daVO.getId() + "').hide();\">" + match + "</a><div id='passet_" + daVO.getId() + "' style='display: none; position: absolute;'><img src='" + assetUrl + "'/></div>" + ", ");
+		        }
+	        }
+	    }
+	    
+	    
+	    return sb.toString();
+	}	
+
 	/**
 	 * This method fetches all inline links from any text.
 	 */
@@ -1639,6 +1692,10 @@ public class RegistryController extends BaseController
 						}
 			    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
 			    		referenceVersionBean.getRegistryVOList().add(registryVO);
+		    			
+			    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(contentVersion.getVersionValue(), new Integer(registryVO.getEntityId()), contentVersion.getLanguageId(), null, db);
+			    		if(assetExtraInfo != null)
+			    			referenceVersionBean.setReferencingExtraInfo(assetExtraInfo);
 			    		
 			    		checkedLanguageVersions.put("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
 		    		}
@@ -1653,17 +1710,18 @@ public class RegistryController extends BaseController
             {
                 try
                 {
-	                SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
 		    		logger.info("siteNodeVersion:" + siteNodeVersion.getSiteNodeVersionId());
-		    		logger.info("siteNode:" + siteNodeVersion.getOwningSiteNode().getId());
-		    		existingReferenceBean.setName(siteNodeVersion.getOwningSiteNode().getName());
-		    		existingReferenceBean.setReferencingCompletingObject(siteNodeVersion.getOwningSiteNode().getValueObject());
-		    		existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVersion.getValueObject().getSiteNodeId(), false, true, db));
+		    		logger.info("siteNode:" + siteNodeVO.getId());
+		    		existingReferenceBean.setName(siteNodeVO.getName());
+		    		existingReferenceBean.setReferencingCompletingObject(siteNodeVO);
+		    		existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVO.getSiteNodeId(), false, true, db));
 		    		try
 		    		{
 		    			String userName = siteNodeVersion.getVersionModifier();
 		    			if(userName == null || userName.equals(""))
-		    				userName = siteNodeVersion.getOwningSiteNode().getCreator();
+		    				userName = siteNodeVO.getCreatorName();
 		    			
 			    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
 			    		if(user != null)
@@ -1675,8 +1733,14 @@ public class RegistryController extends BaseController
 		    		{
 		    			logger.warn("Problem getting version modifier email: " + e.getMessage());
 					}
-		    		referenceVersionBean.setReferencingObject(siteNodeVersion.getValueObject());
+		    		referenceVersionBean.setReferencingObject(siteNodeVersion);
 		    		referenceVersionBean.getRegistryVOList().add(registryVO);
+		    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+		    		ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+		    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(cvVO.getVersionValue(), new Integer(registryVO.getEntityId()), masterLanguageVO.getLanguageId(), null, db);
+		    		logger.info("assetExtraInfo:" + assetExtraInfo);
+		    		if(assetExtraInfo != null)
+		    			referenceVersionBean.setReferencingExtraInfo(assetExtraInfo);
                 }
                 catch(Exception e)
                 {
@@ -1737,13 +1801,14 @@ public class RegistryController extends BaseController
         while(registryEntiresIterator.hasNext())
         {
             RegistryVO registryVO = (RegistryVO)registryEntiresIterator.next();
-            if(!registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET))
+            
+            if(!registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET) && registryVO.getReferencingEntityName().indexOf("SiteNode") == -1)
             {
-            	//System.out.println("AAAAAAAAAAAAAAAAAAAAAA:" + registryVO.getId());
+            	logger.info("INLINE ASSET:" + registryVO.getId());
             }
             else
             {
-	            logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
+                logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
 	            boolean add = true;
 	            
 	            String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
@@ -1817,20 +1882,20 @@ public class RegistryController extends BaseController
 	            }
 	            else
 	            {
-	            	/*
-	                try
+	            	try
 	                {
-		                SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
+		                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+		                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
 			    		logger.info("siteNodeVersion:" + siteNodeVersion.getSiteNodeVersionId());
-			    		logger.info("siteNode:" + siteNodeVersion.getOwningSiteNode().getId());
-			    		existingReferenceBean.setName(siteNodeVersion.getOwningSiteNode().getName());
-			    		existingReferenceBean.setReferencingCompletingObject(siteNodeVersion.getOwningSiteNode().getValueObject());
-			    		existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVersion.getValueObject().getSiteNodeId(), false, true, db));
+			    		logger.info("siteNode:" + siteNodeVO.getId());
+			    		existingReferenceBean.setName(siteNodeVO.getName());
+			    		existingReferenceBean.setReferencingCompletingObject(siteNodeVO);
+			    		existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVO.getSiteNodeId(), false, true, db));
 			    		try
 			    		{
 			    			String userName = siteNodeVersion.getVersionModifier();
 			    			if(userName == null || userName.equals(""))
-			    				userName = siteNodeVersion.getOwningSiteNode().getCreator();
+			    				userName = siteNodeVO.getCreatorName();
 			    			
 				    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
 				    		if(user != null)
@@ -1842,15 +1907,22 @@ public class RegistryController extends BaseController
 			    		{
 			    			logger.warn("Problem getting version modifier email: " + e.getMessage());
 						}
-			    		referenceVersionBean.setReferencingObject(siteNodeVersion.getValueObject());
+			    		referenceVersionBean.setReferencingObject(siteNodeVersion);
 			    		referenceVersionBean.getRegistryVOList().add(registryVO);
+
+			    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+			    		ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+			    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(cvVO.getVersionValue(), new Integer(registryVO.getEntityId()), masterLanguageVO.getLanguageId(), assetKey, db);
+			    		if(assetExtraInfo != null && !assetExtraInfo.equals(""))
+			    			referenceVersionBean.setReferencingExtraInfo(assetExtraInfo);
+			    		else
+			    			add = false;
 	                }
 	                catch(Exception e)
 	                {
 	                    add = false;
 	                    logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
 	                }
-	                */
 	            }
 	            
 	            if(add)

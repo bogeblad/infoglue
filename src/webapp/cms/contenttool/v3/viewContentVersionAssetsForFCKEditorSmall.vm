@@ -1,14 +1,14 @@
 #beginLightCommonToolV3("tool.contenttool.assetDialog.assetDialogHeader" "" "" false false $!disableCloseButton)
 
 	<script type="text/javascript">
-	<!--
+	//<!|CDATA[
 		var selectedAssetElement;
 		var contentId;
 		var assetKey = "";
 		var firstAssetKey;
 		var assetUrl;
 		var contentVersionId = "$!contentVersionId";
-			
+
 		function markAsset(object, digitalAssetId, aContentId, anAssetKey, actualAssetKey, anAssetUrl)
 		{
 			//alert("aContentId:" + aContentId);
@@ -89,7 +89,7 @@
 			var dimensionsHeight = $(window).height();
 			$(".imgBoxContainer").height(dimensionsHeight - 40);
 		});
-	-->
+	//]]>
 	</script>
 	<link rel="stylesheet" type="text/css" href="css/assets.css" />
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
@@ -226,6 +226,16 @@
 	#end
 
 </div>
+#else
+<script type="text/javascript">
+	if (parent && parent.selectedContentVersion) {
+	#if( $contentVersionVO.id )
+		parent.selectedContentVersion(true);
+	#else
+		parent.selectedContentVersion(false);
+	#end
+	}
+</script>
 #end
 
 </body>

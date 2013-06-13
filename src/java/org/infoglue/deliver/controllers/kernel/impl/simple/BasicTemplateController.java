@@ -6735,7 +6735,7 @@ public class BasicTemplateController implements TemplateController
 	
 	public List getChildPages(Integer siteNodeId, boolean escapeHTML, boolean hideUnauthorizedPages, Integer levelsToPopulate, String nameFilter, boolean showHidden)
 	{
-        String key = "" + siteNodeId + "_" + escapeHTML + "_" + hideUnauthorizedPages + "_" + levelsToPopulate + "_" + showHidden + "_" + nameFilter;
+        String key = "" + siteNodeId + "_" + escapeHTML + "_" + hideUnauthorizedPages + "_" + levelsToPopulate + "_" + showHidden + "_" + nameFilter + "_" + this.getLanguageId();
 		logger.info("key in getChildSiteNodes:" + key);
 		List<WebPage> childPages = (List<WebPage>)CacheController.getCachedObjectFromAdvancedCache("childPagesCache", key);
 		
@@ -6747,11 +6747,12 @@ public class BasicTemplateController implements TemplateController
 				List childNodeVOList = this.nodeDeliveryController.getChildSiteNodes(getDatabase(), siteNodeId, levelsToPopulate, showHidden, nameFilter);
 				//if(logger.isInfoEnabled())
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getChildSiteNodes(micro)", t.getElapsedTimeNanos() / 1000);
-				childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages);
+					childPages = getPages(childNodeVOList, escapeHTML, hideUnauthorizedPages);
 				//if(logger.isInfoEnabled())
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getChildPages.getPages(micro)", t.getElapsedTimeNanos() / 1000);
-
-				CacheController.cacheObjectInAdvancedCache("childPagesCache", key, childPages, new String[] {CacheController.getPooledString(3, siteNodeId)}, true);
+					
+				if(CmsPropertyHandler.getOperatingMode().equals("3"))
+					CacheController.cacheObjectInAdvancedCache("childPagesCache", key, childPages, new String[] {CacheController.getPooledString(3, siteNodeId)}, true);
 			}
 			catch(Exception e)
 			{

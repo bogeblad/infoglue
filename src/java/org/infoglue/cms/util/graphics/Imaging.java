@@ -26,6 +26,13 @@ package org.infoglue.cms.util.graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.managementtool.actions.ConfirmAction;
@@ -66,6 +73,14 @@ public class Imaging
 
 	public static void resize(File input, File output, int width, int height, String format, boolean constrainProportions) throws Exception
 	{
+		resize(input, output, width, height, format, constrainProportions, 100);
+	}
+
+	public static void resize(File input, File output, int width, int height, String format, boolean constrainProportions, float quality) throws Exception
+	{
+		if(quality > 1)
+			quality = quality / 100;
+		
 		BufferedImage image = javax.imageio.ImageIO.read(input);
 		
 		Mode mode = Mode.AUTOMATIC;
@@ -99,7 +114,20 @@ public class Imaging
 			scaledImage = Scalr.resize(image, width, height);
 		}
 		
-		javax.imageio.ImageIO.write(scaledImage, format, output);
+		//javax.imageio.ImageIO.write(scaledImage, format, output);
+		
+		Iterator iter = ImageIO.getImageWritersByFormatName("jpeg");
+		ImageWriter writer = (ImageWriter)iter.next();
+		ImageWriteParam iwp = writer.getDefaultWriteParam();
+		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		iwp.setCompressionQuality(quality);
+		
+		//output.getParentFile().mkdirs();
+		FileImageOutputStream outputStream = new FileImageOutputStream(output);
+		writer.setOutput(outputStream);
+		IIOImage ioImage = new IIOImage(scaledImage, null, null);
+		writer.write(null, ioImage, iwp);
+		writer.dispose();
 	}
 
 	public static void crop(File input, File output, int x, int y, int width, int height, String format) throws Exception

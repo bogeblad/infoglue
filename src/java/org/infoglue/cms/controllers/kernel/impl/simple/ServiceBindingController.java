@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -382,12 +383,19 @@ public class ServiceBindingController extends BaseController
 
 	public static void deleteServiceBindingsReferencingContent(Content content, Database db) throws ConstraintException, SystemException, Exception
 	{		
+		getCastorCategory().setLevel(Level.DEBUG);
+		getCastorJDOCategory().setLevel(Level.DEBUG);
+		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
 		OQLQuery oql = db.getOQLQuery( "SELECT sb FROM org.infoglue.cms.entities.structure.impl.simple.ServiceBindingImpl sb WHERE sb.bindingQualifyers.name = $1 AND sb.bindingQualifyers.value = $2 ORDER BY sb.serviceBindingId");
 		oql.bind("contentId");
 		oql.bind(content.getContentId().toString());
 		
 		QueryResults results = oql.execute();
 		logger.info("Fetching entity in read/write mode");
+
+		getCastorCategory().setLevel(Level.WARN);
+		getCastorJDOCategory().setLevel(Level.WARN);
 
 		while(results.hasMore()) 
 		{

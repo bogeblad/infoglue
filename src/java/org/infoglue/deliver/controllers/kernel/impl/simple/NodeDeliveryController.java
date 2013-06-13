@@ -1721,7 +1721,6 @@ public class NodeDeliveryController extends BaseDeliveryController
 	public String getPageNavigationTitle(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String metaBindingName, String attributeName, boolean useLanguageFallback, DeliveryContext deliveryContext, boolean escapeHTML) throws SystemException, Exception
 	{
 		String navTitle = "";
-		
 		if(contentId == null || contentId.intValue() == -1)
 		{
 			ContentVO content = getBoundContent(db, infoGluePrincipal, siteNodeId, languageId, useLanguageFallback, metaBindingName, deliveryContext);
@@ -1748,6 +1747,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 		
 		String attributeKey = "" + siteNodeId + "_" + languageId + "_" + attributeName;
     	String candidate = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", attributeKey);
+    	/*
     	if(candidate == null && useLanguageFallback)
     	{
 			LanguageVO masterLanguageVO = LanguageDeliveryController.getLanguageDeliveryController().getMasterLanguageForRepository(db, repositoryId);
@@ -1757,6 +1757,7 @@ public class NodeDeliveryController extends BaseDeliveryController
 				candidate = (String)CacheController.getCachedObjectFromAdvancedCache("metaInfoContentAttributeCache", attributeKeyFallback);
 			}
     	}
+    	*/
     	
     	if(candidate != null)
     	{

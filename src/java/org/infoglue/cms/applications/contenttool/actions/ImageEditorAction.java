@@ -69,7 +69,8 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 	private int width, height = 0;
 	private String keepRatio = "false";
 	private String bestFit = "true";
-
+	private Integer quality = 50;
+	
 	private Integer degrees = 90;
 	private String direction = "cw";
 
@@ -156,20 +157,21 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 		
     	workingFileName = "imageEditorWK_" + System.currentTimeMillis() + "_" + this.getInfoGluePrincipal().getName().hashCode() + "_" + digitalAssetVO.getDigitalAssetId() + getImageFileSuffix(digitalAssetVO.getAssetContentType());    	
     	File outputFile = new File(getImageEditorPath() + File.separator + workingFileName);
-    	outputFile.mkdirs();
-    	
+    	outputFile.getParentFile().mkdirs();
+
     	logger.info("height: " + height);
     	logger.info("width: " + width);
     	logger.info("keepRatio: " + keepRatio);
     	logger.info("bestFit: " + bestFit);
-    	
+    	logger.info("quality: " + quality);
+
     	if(keepRatio.equalsIgnoreCase("true"))
     	{
-        	Imaging.resize(file, outputFile, width, height, getImageFileType(digitalAssetVO.getAssetContentType()), true);
+        	Imaging.resize(file, outputFile, width, height, getImageFileType(digitalAssetVO.getAssetContentType()), true, quality);
         }
     	else //We don't support it for now but when the Imaging-class do it will kick in
         {
-    		Imaging.resize(file, outputFile, width, height, getImageFileType(digitalAssetVO.getAssetContentType()), false);
+    		Imaging.resize(file, outputFile, width, height, getImageFileType(digitalAssetVO.getAssetContentType()), false, quality);
     	}
     	
     	//logger.info("outputFile:" + outputFile.length());
@@ -825,5 +827,14 @@ public class ImageEditorAction extends InfoGlueAbstractAction
 		this.clearHistory = clearHistory;
 	}
 
+	public Integer getQuality() 
+	{
+		return quality;
+	}
+
+	public void setQuality(Integer quality)
+	{
+		this.quality = quality;
+	}
 
 }

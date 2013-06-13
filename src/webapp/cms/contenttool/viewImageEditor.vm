@@ -146,7 +146,8 @@
 			var height = document.getElementById("height").value;
 			var keepRatio = document.getElementById("keepRatio").checked;
 			var bestFit = document.getElementById("bestFit").checked;
-			
+			var quality = document.getElementById("quality").value;
+
 			if(width == "" && height == "")
 			{
 				alert("You must state width or height or both.");
@@ -159,7 +160,7 @@
 				if(height == "")
 					height = "-1";
 												
-				document.location.href = "ImageEditor!resize.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&width=" + width + "&height=" + height + "&keepRatio=" + keepRatio + "&bestFit=" + bestFit;
+				document.location.href = "ImageEditor!resize.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&width=" + width + "&height=" + height + "&keepRatio=" + keepRatio + "&bestFit=" + bestFit + "&quality=" + quality;
 			}
 		} 		
 		
@@ -349,11 +350,11 @@
 		<div style="float: left;">
 			<table class="infotable">
 			  <tr>
-			    <td valign="top" class="infolabel">Selection:</td>
+			    <td valign="top" class="infolabel">$ui.getString("tool.contenttool.imageEditor.selection.label"):</td>
 			    <td id="pxn8_selection_size"> ----,---- </td>
-			    <td valign="top" class="infolabel">Size:</td>
+			    <td valign="top" class="infolabel">$ui.getString("tool.contenttool.imageEditor.size.label"):</td>
 			    <td id="pxn8_image_size"> ----,---- </td>
-			    <td valign="top" class="infolabel">Zoom:</td>
+			    <td valign="top" class="infolabel">$ui.getString("tool.contenttool.imageEditor.zoom.label"):</td>
 			    <td id="pxn8_zoom"> 100% </td>
 			  </tr>
 			</table>
@@ -384,8 +385,8 @@
 	</div>
 
 	<div id="undoDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
-		<h3>Undo last operation</h3>
-		<p>Press undo to skip the last modification. 
+		<h3>$ui.getString("tool.contenttool.imageEditor.undo.label")</h3>
+		<p>$ui.getString("tool.contenttool.imageEditor.undo.description") 
 		</p>
 		<p class="buttonPane">
 			<input type="button" class="save" value="$ui.getString("tool.contenttool.undo.label")" onclick="undo();"/>
@@ -394,8 +395,8 @@
 	</div>
 
 	<div id="saveDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
-		<h3>Save image</h3>
-		<p>Press save to overwrite the original image with this one. 
+		<h3>$ui.getString("tool.contenttool.imageEditor.save.label")</h3>
+		<p>$ui.getString("tool.contenttool.imageEditor.save.description") 
 		</p>
 		<p class="buttonPane">
 			<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="saveImage();"/>
@@ -404,7 +405,7 @@
 	</div>
 			
 	<div id="saveAsDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
-		<h3>State asset key</h3>
+		<h3>$ui.getString("tool.contenttool.imageEditor.saveAs.label")</h3>
 		<p>
 			$ui.getString("tool.contenttool.fileUpload.fileUploadUpdateKeyLabel")
 		</p>
@@ -430,11 +431,25 @@
 	</div>
 	
 	<div id="resizeDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
-		<h3>State resize options</h3>
-		<p><label for="keepRatio">Preserve aspect ratio:</label> <input type="checkbox" id="keepRatio" name="keepRatio" checked="true" readonly="readonly"/></p>
-		<p><label for="bestFit">Best fit:</label> <input type="checkbox" id="bestFit" name="bestFit" checked="true" readonly="readonly"/></p>
-		<p><label for="width">Width in pixels:</label> <input type="textfield" id="width" name="width"/></p>
-		<p><label for="height">Height in pixels:</label> <input type="textfield" id="height" name="height"/></p>
+		<h3>$ui.getString("tool.contenttool.imageEditor.resize.label")</h3>
+		<p><label for="keepRatio">$ui.getString("tool.contenttool.imageEditor.preserveAspectRatio.label"):</label> <input type="checkbox" id="keepRatio" name="keepRatio" checked="true" readonly="readonly"/></p>
+		<p><label for="bestFit">$ui.getString("tool.contenttool.imageEditor.bestFit.label"):</label> <input type="checkbox" id="bestFit" name="bestFit" checked="true" readonly="readonly"/></p>
+		<p><label for="width">$ui.getString("tool.contenttool.imageEditor.widthInPixels.label"):</label> <input type="textfield" id="width" name="width"/></p>
+		<p><label for="height">$ui.getString("tool.contenttool.imageEditor.heightInPixels.label"):</label> <input type="textfield" id="height" name="height"/></p>
+		<p><label for="height">$ui.getString("tool.contenttool.imageEditor.quality.label"):</label> 
+			<select name="quality" id="quality">
+				<option value="100"/>100%</option>
+				<option value="90"/>90%</option>
+				<option value="80"/>80%</option>
+				<option value="70" selected="1"/>70%</option>
+				<option value="60"/>60%</option>
+				<option value="50"/>50%</option>
+				<option value="40"/>40%</option>
+				<option value="30"/>30%</option>
+				<option value="20"/>20v</option>
+				<option value="10"/>10%</option>
+			</select>
+		</p>
 		<p class="buttonPane">
 			<input type="button" class="save" value="$ui.getString("tool.common.saveButton.label")" onclick="resizeImage();"/>
 			<input type="button" class="cancel" value="$ui.getString("tool.common.cancelButton.label")" onclick="document.getElementById('resizeDialog').style.display = 'none';"/>
@@ -444,9 +459,9 @@
 	</div>
 
 	<div id="rotateDialog" style="width: 300px; display: none; position: absolute; top: 100px; left: 100px; z-index: 1000; background-color: white; border: 1px solid #ccc;">
-		<h3>State rotate options</h3>
+		<h3>$ui.getString("tool.contenttool.imageEditor.rotateOptions.label")</h3>
 		<p>
-			<label for="degreesFirm">Degrees:</label> 
+			<label for="degreesFirm">$ui.getString("tool.contenttool.imageEditor.rotateDegrees.label"):</label> 
 			<select name="degreesFirm" id="degreesFirm">
 				<option value=""/>custom</option>
 				<option value="45"/>45</option>
@@ -460,10 +475,10 @@
 			</select>
 			<input type="textfield" id="degrees" name="degrees"/></p>
 		<p>
-			<label for="direction">Direction:</label> 
+			<label for="direction">$ui.getString("tool.contenttool.imageEditor.rotateDirection.label"):</label> 
 			<select name="direction" id="direction">
-				<option value="cw"/>Clockwise</option>
-				<option value="ccw"/>Counter clockwise</option>
+				<option value="cw"/>$ui.getString("tool.contenttool.imageEditor.rotateClockwise.label")</option>
+				<option value="ccw"/>$ui.getString("tool.contenttool.imageEditor.rotateCounterClockwise.label")</option>
 			</select>
 		</p>
 		<p class="buttonPane">

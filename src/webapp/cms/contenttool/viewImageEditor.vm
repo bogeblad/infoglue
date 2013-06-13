@@ -150,7 +150,7 @@
 
 			if(width == "" && height == "")
 			{
-				alert("You must state width or height or both.");
+				alert("$ui.getString("tool.contenttool.imageEditor.mustSelectDimensions.label")");
 			}
 			else
 			{
@@ -175,7 +175,7 @@
 			}
 			else
 			{
-				alert("You must define an area to crop - just mark on the image and drag an area.");
+				alert("$ui.getString("tool.contenttool.imageEditor.mustSelectCropArea.label")");
 			}
 		} 		
 
@@ -189,7 +189,7 @@
 				
 			if(degrees == "" || degrees == "0")
 			{
-				alert("You must state how many degrees you wish to rotate the image.");
+				alert("$ui.getString("tool.contenttool.imageEditor.mustSelectDegrees.label")");
 			}
 			else
 			{
@@ -241,7 +241,7 @@
 			if(digitalAssetKey != "")
 				document.location.href = "ImageEditor!saveAs.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&digitalAssetKey=" + digitalAssetKey;
 			else
-				alert("Must state an asset key");
+				alert("$ui.getString("tool.contenttool.imageEditor.mustStateAssetKey.label")");
 		} 		
 		
 		var sx = -1;

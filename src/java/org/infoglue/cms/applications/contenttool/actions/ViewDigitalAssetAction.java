@@ -28,19 +28,23 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.databeans.AssetKeyDefinition;
 import org.infoglue.cms.applications.databeans.SessionInfoBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentTypeDefinitionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.GroupPropertiesController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RolePropertiesController;
 import org.infoglue.cms.controllers.kernel.impl.simple.UserPropertiesController;
+import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.management.ContentTypeDefinitionVO;
 import org.infoglue.cms.entities.management.GroupProperties;
 import org.infoglue.cms.entities.management.GroupPropertiesVO;
+import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.management.RoleProperties;
 import org.infoglue.cms.entities.management.RolePropertiesVO;
 import org.infoglue.cms.entities.management.UserProperties;
@@ -54,148 +58,171 @@ import org.infoglue.cms.util.CmsSessionContextListener;
 
 public class ViewDigitalAssetAction extends InfoGlueAbstractAction
 {
-    private final static Logger logger = Logger.getLogger(ViewDigitalAssetAction.class.getName());
+	private final static Logger logger = Logger.getLogger(ViewDigitalAssetAction.class.getName());
 
 	private static final long serialVersionUID = 1L;
-	
+
+	@SuppressWarnings("rawtypes")
 	private List availableLanguages  = null;
-	
+
 	private String entity;
 	private Integer entityId;
-	
-	private Integer contentVersionId = null;	
+
+	private Integer contentId = null;
+	private Integer languageId = null;
+
+	private Integer contentVersionId = null;
 	private Integer digitalAssetId   = null;
 	private Integer uploadedFilesCounter = new Integer(0);
 
-	private UserPropertiesVO userPropertiesVO;
-	private UserPropertiesVO rolePropertiesVO;
 	private ContentVersionVO contentVersionVO;
 	protected ContentTypeDefinitionVO contentTypeDefinitionVO;
 	private DigitalAssetVO digitalAssetVO;
-	
-    public ViewDigitalAssetAction() 
-    {
-        this(new ContentVersionVO());
-    }
-    
-    public ViewDigitalAssetAction(ContentVersionVO contentVersionVO) 
-    {
+
+	public ViewDigitalAssetAction()
+	{
+		this(new ContentVersionVO());
+	}
+
+	public ViewDigitalAssetAction(ContentVersionVO contentVersionVO)
+	{
 		logger.info("Construction ViewDigitalAssetAction");
-        this.contentVersionVO = contentVersionVO;
-    }
-    
-    public String doExecute() throws Exception
-    {
-        if(this.contentVersionId != null)
-        {
-	    	this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
-	        this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
-        }
-        else
-        {
-            if(this.entity.equalsIgnoreCase(UserProperties.class.getName()))
-            {
-                UserPropertiesVO userPropertiesVO = UserPropertiesController.getController().getUserPropertiesVOWithId(this.entityId);
-                this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(userPropertiesVO.getContentTypeDefinitionId());            
-            }
-            else if(this.entity.equalsIgnoreCase(RoleProperties.class.getName()))
-            {
-                RolePropertiesVO rolePropertiesVO = RolePropertiesController.getController().getRolePropertiesVOWithId(this.entityId);
-                this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(rolePropertiesVO.getContentTypeDefinitionId());            
-            }
-            else if(this.entity.equalsIgnoreCase(GroupProperties.class.getName()))
-            {
-                GroupPropertiesVO groupPropertiesVO = GroupPropertiesController.getController().getGroupPropertiesVOWithId(this.entityId);
-                this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(groupPropertiesVO.getContentTypeDefinitionId());            
-            }
-        }
-        
-        return "success";
-    }
+		this.contentVersionVO = contentVersionVO;
+	}
 
-    public String doMultiple() throws Exception
-    {
-    	doExecute();
-    	
-        return "successMultiple";
-    }
+	public String doExecute() throws Exception
+	{
+		if (this.contentVersionId != null)
+		{
+			this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
+			this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
+		}
+		else if (this.contentId != null)
+		{
+			logger.info("Using content-id to view upload asset view. Content-id: " + contentId);
+			this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, languageId);
+			if (this.contentVersionVO == null)
+			{
+				logger.info("Could not find a language version. Will fallback to master language. Content-id: " + contentId);
+				ContentVO contentVO = ContentController.getContentController().getContentVOWithId(contentId);
+				LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
 
-    public String doUpdate() throws Exception
-    {
-    	this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
+				logger.debug("Looking for content version with language: " + masterLanguageVO.getLanguageId());
+				this.contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, masterLanguageVO.getId());
+			}
+			if (this.contentVersionVO != null)
+			{
+				this.contentVersionId = this.contentVersionVO.getContentVersionId();
+				this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
+			}
+		}
+		else
+		{
+			if(this.entity.equalsIgnoreCase(UserProperties.class.getName()))
+			{
+				UserPropertiesVO userPropertiesVO = UserPropertiesController.getController().getUserPropertiesVOWithId(this.entityId);
+				this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(userPropertiesVO.getContentTypeDefinitionId());            
+			}
+			else if(this.entity.equalsIgnoreCase(RoleProperties.class.getName()))
+			{
+				RolePropertiesVO rolePropertiesVO = RolePropertiesController.getController().getRolePropertiesVOWithId(this.entityId);
+				this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(rolePropertiesVO.getContentTypeDefinitionId());            
+			}
+			else if(this.entity.equalsIgnoreCase(GroupProperties.class.getName()))
+			{
+				GroupPropertiesVO groupPropertiesVO = GroupPropertiesController.getController().getGroupPropertiesVOWithId(this.entityId);
+				this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(groupPropertiesVO.getContentTypeDefinitionId());            
+			}
+		}
 
-    	if(this.contentVersionId != null)
-        {
-        	this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
-            this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
-        }
-        else
-        {
-            if(this.entity.equalsIgnoreCase(UserProperties.class.getName()))
-            {
-                UserPropertiesVO userPropertiesVO = UserPropertiesController.getController().getUserPropertiesVOWithId(this.entityId);
-                this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(userPropertiesVO.getContentTypeDefinitionId());            
-            }
-            else if(this.entity.equalsIgnoreCase(RoleProperties.class.getName()))
-            {
-                RolePropertiesVO rolePropertiesVO = RolePropertiesController.getController().getRolePropertiesVOWithId(this.entityId);
-                this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(rolePropertiesVO.getContentTypeDefinitionId());            
-            }
-            else if(this.entity.equalsIgnoreCase(GroupProperties.class.getName()))
-            {
-                GroupPropertiesVO groupPropertiesVO = GroupPropertiesController.getController().getGroupPropertiesVOWithId(this.entityId);
-                this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(groupPropertiesVO.getContentTypeDefinitionId());            
-            }
-        }
+		return "success";
+	}
 
-        return "update";
-    }
-     
-    public java.lang.Integer getContentVersionId()
-    {
-        return this.contentVersionId;
-    }
-        
-    public void setContentVersionId(java.lang.Integer contentVersionId)
-    {
-	    this.contentVersionId = contentVersionId;
-    }
-    
+	public String doMultiple() throws Exception
+	{
+		doExecute();
+
+		return "successMultiple";
+	}
+
+	public String doUpdate() throws Exception
+	{
+		this.digitalAssetVO = DigitalAssetController.getDigitalAssetVOWithId(this.digitalAssetId);
+
+		if(this.contentVersionId != null)
+		{
+			this.contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(this.contentVersionId);
+			this.contentTypeDefinitionVO = ContentController.getContentController().getContentTypeDefinition(contentVersionVO.getContentId());
+		}
+		else
+		{
+			if(this.entity.equalsIgnoreCase(UserProperties.class.getName()))
+			{
+				UserPropertiesVO userPropertiesVO = UserPropertiesController.getController().getUserPropertiesVOWithId(this.entityId);
+				this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(userPropertiesVO.getContentTypeDefinitionId());            
+			}
+			else if(this.entity.equalsIgnoreCase(RoleProperties.class.getName()))
+			{
+				RolePropertiesVO rolePropertiesVO = RolePropertiesController.getController().getRolePropertiesVOWithId(this.entityId);
+				this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(rolePropertiesVO.getContentTypeDefinitionId());            
+			}
+			else if(this.entity.equalsIgnoreCase(GroupProperties.class.getName()))
+			{
+				GroupPropertiesVO groupPropertiesVO = GroupPropertiesController.getController().getGroupPropertiesVOWithId(this.entityId);
+				this.contentTypeDefinitionVO = ContentTypeDefinitionController.getController().getContentTypeDefinitionVOWithId(groupPropertiesVO.getContentTypeDefinitionId());            
+			}
+		}
+
+		return "update";
+	}
+
+	public java.lang.Integer getContentVersionId()
+	{
+		return this.contentVersionId;
+	}
+
+	public void setContentVersionId(java.lang.Integer contentVersionId)
+	{
+		this.contentVersionId = contentVersionId;
+	}
+
+	@SuppressWarnings("rawtypes")
 	public List getAvailableLanguages()
 	{
 		return this.availableLanguages;
-	}	
-	
+	}
+
 	public Integer getUploadedFilesCounter()
 	{
 		return this.uploadedFilesCounter;
 	}
 
-	public List getDefinedAssetKeys()
+	public List<AssetKeyDefinition> getDefinedAssetKeys()
 	{
 		return ContentTypeDefinitionController.getController().getDefinedAssetKeys(this.contentTypeDefinitionVO, true);
 	}
 
-    public boolean getAllowedSessionId(String requestSessionId) throws Exception
-    {
+	public boolean getAllowedSessionId(String requestSessionId) throws Exception
+	{
 		boolean allowedSessionId = false;
-		List activeSessionBeanList = CmsSessionContextListener.getSessionInfoBeanList();
-		Iterator activeSessionsIterator = activeSessionBeanList.iterator();
+		@SuppressWarnings("unchecked")
+		List<SessionInfoBean> activeSessionBeanList = CmsSessionContextListener.getSessionInfoBeanList();
+		Iterator<SessionInfoBean> activeSessionsIterator = activeSessionBeanList.iterator();
 		//logger.info("activeSessionBeanList:" + activeSessionBeanList.size());
 		while(activeSessionsIterator.hasNext())
 		{
-			SessionInfoBean sessionBean = (SessionInfoBean)activeSessionsIterator.next();
+			SessionInfoBean sessionBean = activeSessionsIterator.next();
 			//logger.info("sessionBean:" + sessionBean.getId() + "=" + sessionBean.getPrincipal().getName());
 			if(sessionBean.getId().equals(requestSessionId))
 			{
 				//logger.info("Found a matching sessionId");
 				allowedSessionId = true;
-		    	
+
 				break;
 			}
 		}
 		return allowedSessionId;
-    }
+	}
 
 	public Integer getDigitalAssetId()
 	{
@@ -206,34 +233,54 @@ public class ViewDigitalAssetAction extends InfoGlueAbstractAction
 	{
 		this.digitalAssetId = digitalAssetId;
 	}
-	
+
 	public String getDigitalAssetKey()
 	{
 		return this.digitalAssetVO.getAssetKey();
 	}
 
-    public String getEntity()
-    {
-        return entity;
-    }
-    
-    public void setEntity(String entity)
-    {
-        this.entity = entity;
-    }
-    
-    public Integer getEntityId()
-    {
-        return entityId;
-    }
-    
-    public void setEntityId(Integer entityId)
-    {
-        this.entityId = entityId;
-    }
-    
-    public ContentTypeDefinitionVO getContentTypeDefinitionVO()
-    {
-        return contentTypeDefinitionVO;
-    }
+	public String getEntity()
+	{
+		return entity;
+	}
+
+	public void setEntity(String entity)
+	{
+		this.entity = entity;
+	}
+
+	public Integer getEntityId()
+	{
+		return entityId;
+	}
+
+	public void setEntityId(Integer entityId)
+	{
+		this.entityId = entityId;
+	}
+
+	public ContentTypeDefinitionVO getContentTypeDefinitionVO()
+	{
+		return contentTypeDefinitionVO;
+	}
+
+	public Integer getContentId()
+	{
+		return contentId;
+	}
+
+	public void setContentId(Integer contentId)
+	{
+		this.contentId = contentId;
+	}
+
+	public Integer getLanguageId()
+	{
+		return languageId;
+	}
+
+	public void setLanguageId(Integer languageId)
+	{
+		this.languageId = languageId;
+	}
 }

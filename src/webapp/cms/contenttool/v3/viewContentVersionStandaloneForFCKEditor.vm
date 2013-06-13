@@ -738,7 +738,7 @@
 		{
 			parent.parent.parent.refreshContent($!parentContentId, 1, $!parentContentId);
 		}
-		catch(e) {console.log("e:" + e);}
+		catch(e) {typeof console !== 'undefined' && console.log("e:" + e);}
 		#end
 		
 	//]]>

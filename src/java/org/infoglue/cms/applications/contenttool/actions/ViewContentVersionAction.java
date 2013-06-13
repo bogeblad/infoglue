@@ -493,7 +493,13 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
 		    if(getContentId() != null && getContentId().intValue() != -1)
 		        this.contentVO = ContentControllerProxy.getController().getACContentVOWithId(this.getInfoGluePrincipal(), getContentId());
 		}
-		
+
+		if(contentVersionVO.getContentVersionId() == null)
+		{
+			LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(contentVO.getRepositoryId());
+			contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(getContentId(), masterLanguageVO.getId());
+		}
+
 		this.repositories = RepositoryController.getController().getAuthorizedRepositoryVOList(this.getInfoGluePrincipal(), true);
 
 		return "viewAssetBrowserForFCKEditorV3";

@@ -6,17 +6,35 @@
 	<script type="text/javascript" src="script/embla/admin.js"></script>
 
 <script type="text/javascript">
-<!--
+	//<![CDATA[
 	function refreshView(viewName)
 	{
 		//alert("viewName:" + viewName);
-		if(viewName == "contentVersionAssets")
-		{	
-			$("#contentVersionAssetsFrame").get(0).contentWindow.location.reload(true);
-			$('#TB_window,#TB_overlay,#TB_HideSelect').unbind().remove();
+		if (isShowingBrowseContent())
+		{
+			var win = $("#repositoryBrowserFrame").get(0).contentWindow;
+			if (!win || !win.reloadAssets)
+			{
+				alert("Could not reload asset view. Please reload it manually.");
+			}
+			else
+			{
+				win.reloadAssets();
+			}
 		}
+		else if(viewName === "contentVersionAssets")
+		{
+			$("#contentVersionAssetsFrame").get(0).contentWindow.location.reload(true);
+		}
+		$('#TB_window,#TB_overlay,#TB_HideSelect').unbind().remove();
 	}
-	
+
+	// Overrides close callback from admin.js
+	window.closeInlineDiv = function()
+	{
+		refreshView("");
+	}
+
 	function resize()
 	{
 		var dimensionsWidth = $(window).width();
@@ -36,20 +54,52 @@
 			setTimeout("resize()", 300);
 		}
 	}
-	
+
+	(function() {
+		var currentContentId = 0;
+		var latestUploadsId = 1;
+		var browseContentsId = 2;
+		var searchAssetsId = 3;
+		var selectedTab = 0;
+		var browserHasVersion = false;
+		window.shouldHideAssetUpload = function(index)
+		{
+			return index === latestUploadsId || index === searchAssetsId || (index === browseContentsId && !browserHasVersion);
+		};
+		window.isShowingBrowseContent = function()
+		{
+			return selectedTab === browseContentsId;
+		};
+		window.showUploadStateChanged = function(hasVersion)
+		{
+			browserHasVersion = hasVersion;
+			updateAssetUploadDisplay();
+		};
+		window.selectedTab = function(tabIndex) {
+			if (typeof tabIndex !== "undefined")
+			{
+				selectedTab = tabIndex;
+			}
+			return selectedTab;
+		};
+		window.updateAssetUploadDisplay = function(index) {
+			if (typeof index === 'undefined') index = selectedTab
+			if(shouldHideAssetUpload(index))
+				$(".attachAsset").hide();
+			else
+				$(".attachAsset").show();
+		};
+	})();
 
 	$(document).ready(function(){
-				
-		$("#tabsContainer").tabs( { 
-			show:function(e, ui) { 
-				if(ui.index > 0)
-					$(".attachAsset").hide();
-				else
-					$(".attachAsset").show();
+		$("#tabsContainer").tabs( {
+			show:function(e, ui) {
+				updateAssetUploadDisplay(ui.index);
 				/*resizeInlineTabDivs();*/ 
 				},
 			select:function(e, ui) { 
 				//alert("ui: " + ui.index);
+				selectedTab(ui.index);
 				if(ui.index == 1)
 				{
 					if($("#latestAssetsFrame").attr("src") == "")
@@ -126,7 +176,39 @@
 		}
 		return value;
 	}
-	
+
+	function uploadAsset()
+	{
+		if (isShowingBrowseContent())
+		{
+			var repositoryBrowserFrame = document.getElementById("repositoryBrowserFrame")
+			if (repositoryBrowserFrame)
+			{
+				var repositoryBrowserWindow = repositoryBrowserFrame.contentWindow ? repositoryBrowserFrame.contentWindow : repositoryBrowserFrame.contentDocument.defaultView;
+				if (repositoryBrowserWindow && repositoryBrowserWindow.selectedContentId)
+				{
+					var selectedContentParam = "contentId=" + repositoryBrowserWindow.selectedContentId() + "&languageId=${languageId}";
+				}
+				else
+				{
+					alert("Error - could not get selected content-id");
+				}
+			}
+			else
+			{
+				alert("Error");
+			}
+		}
+		else
+		{
+			var selectedContentParam = "contentVersionId=$!contentVersionId"
+		}
+		if (typeof selectedContentParam !== 'undefined')
+		{
+			openInlineDiv("ViewDigitalAsset.action?" + selectedContentParam, 550, 500, true, true, "");
+		}
+	}
+
 	function init() 
 	{
 		#if($contentVO)
@@ -225,8 +307,8 @@
 			}
 		}
 	}
--->
-</script>		
+//]]>
+</script>
 </head>
 
 <body class="generaltooledit yui-skin-sam">

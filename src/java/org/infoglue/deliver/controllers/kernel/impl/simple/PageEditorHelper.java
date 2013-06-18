@@ -1969,6 +1969,14 @@ public class PageEditorHelper extends BaseDeliveryController
 			Slot slotBean = new Slot();
 		    slotBean.setId(id);
 
+		    int displayNameIndex = slot.indexOf(" displayName");
+			if(displayNameIndex > -1)
+			{    
+			    String displayName = slot.substring(displayNameIndex + 13, slot.indexOf("\"", displayNameIndex + 13));
+			    System.out.println("displayName:" + displayName);
+			    slotBean.setDisplayName(displayName);
+			}
+
 		    String[] allowedComponentNamesArray = null;
 		    int allowedComponentNamesIndex = slot.indexOf(" allowedComponentNames");
 			if(allowedComponentNamesIndex > -1)

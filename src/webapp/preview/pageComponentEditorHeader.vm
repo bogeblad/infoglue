@@ -221,7 +221,7 @@
 	background-color: #ffff9d;
 	font-size: 11px;
 	font-family: arial;
-	min-height: 16px;
+	/*min-height: 16px;*/
 	text-align: center;
 	/*
 	display: inline-block;
@@ -243,9 +243,20 @@
     margin-left: auto;
     margin-right: auto;
 	aborder: 1px solid #ccc;
+	width: 16px;
+	height: 16px;
 }
 .addComponentText {
 	clear: both;
+}
+.slotId {
+	display: none;
+}
+.slotDisplayName {
+	margin-bottom: 4px;
+}
+.rightClickToAddText {
+	display: none;
 }
 /*
 .componentDiv img.componentMenuButton {

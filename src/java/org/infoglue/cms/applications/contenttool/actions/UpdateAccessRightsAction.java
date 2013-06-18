@@ -64,7 +64,7 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	private Boolean closeOnLoad = false;
 	private String returnAddress;
 	private String url;
-	private String anchor = null;
+	private String anchor = "";
 	
 	private String interceptionPointCategory;
 	
@@ -533,6 +533,6 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 
 	public String getAnchor()
 	{
-		return this.anchor;
+		return (this.anchor == null ? "" : this.anchor);
 	}
 }

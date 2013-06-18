@@ -43,6 +43,7 @@ public class Slot
 	private String id;
 	private String number;
 	private String name;
+	private String displayName;
 	private boolean inherit;
 	private boolean disableAccessControl = false;
 	private List components = new ArrayList();
@@ -68,6 +69,11 @@ public class Slot
 		return this.name;
 	}
 
+	public String getDisplayName()
+	{
+		return (this.displayName == null ? this.id : this.displayName);
+	}
+
 	public void setComponents(List components)
 	{
 		this.components = components;
@@ -81,6 +87,11 @@ public class Slot
 	public void setName(String name)
 	{
 		this.name = name;
+	}
+
+	public void setDisplayName(String displayName)
+	{
+		this.displayName = displayName;
 	}
 
 	public String getNumber()

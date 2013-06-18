@@ -255,7 +255,7 @@
 				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 			#else
 				$("#tabsContainer").tabs( {
-					#if($anchor)
+					#if($anchor && $anchor != "")
 						selected: $anchor,
 					#end
 					show:function() { resizeScrollArea(); }

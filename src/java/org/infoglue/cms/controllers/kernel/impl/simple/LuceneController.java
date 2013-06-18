@@ -80,6 +80,7 @@ import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.DigitalAssetVO;
+import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
 import org.infoglue.cms.entities.content.impl.simple.DigitalAssetImpl;
@@ -1684,19 +1685,23 @@ public class LuceneController extends BaseController implements NotificationList
 
 			try
 			{
-				//////////ANTAGLIGEN ONDIGT MED MEDIUM hr
-				MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
-				RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
-				Collection contentVersions = asset.getContentVersions();
+				DigitalAssetVO asset = DigitalAssetController.getDigitalAssetVOWithId((Integer)notificationMessage.getObjectId(), db2);
+				//MediumDigitalAssetImpl asset = (MediumDigitalAssetImpl)DigitalAssetController.getMediumDigitalAssetWithIdReadOnly((Integer)notificationMessage.getObjectId(), db2);
+				//RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getMediumDigitalAssetWithIdReadOnly", t.getElapsedTime());
+				//Collection contentVersions = asset.getContentVersions();
+
+				List<SmallestContentVersionVO> contentVersionVOList = DigitalAssetController.getContentVersionVOListConnectedToAssetWithId((Integer)notificationMessage.getObjectId());	
+
 				if(logger.isInfoEnabled())
-					logger.info("contentVersions:" + contentVersions.size());
-				Iterator contentVersionsIterator = contentVersions.iterator();
+					logger.info("contentVersionVOList:" + contentVersionVOList.size());
+				Iterator<SmallestContentVersionVO> contentVersionsIterator = contentVersionVOList.iterator();
 				while(contentVersionsIterator.hasNext())
 				{
-					ContentVersion version = (ContentVersion)contentVersionsIterator.next();
+					SmallestContentVersionVO version = contentVersionsIterator.next();
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("contentVersionsIterator", t.getElapsedTime());
-
-					Document document = getDocumentFromDigitalAsset(asset.getValueObject(), version.getValueObject(), db);
+					ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(version.getId(), db2);
+					
+					Document document = getDocumentFromDigitalAsset(asset, cvVO, db);
 					RequestAnalyser.getRequestAnalyser().registerComponentStatistics("getDocumentFromDigitalAsset", t.getElapsedTime());
 					logger.info("00000000000000000: Adding asset document:" + document);
 					if(document != null)

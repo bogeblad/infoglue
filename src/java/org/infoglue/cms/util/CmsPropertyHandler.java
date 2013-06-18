@@ -1296,7 +1296,7 @@ public class CmsPropertyHandler
 		boolean useSimpleComponentDialog = false;
 		try
 		{
-			useSimpleComponentDialog = Boolean.parseBoolean(getServerNodeProperty("useSimpleComponentDialog", true, "false"));
+			useSimpleComponentDialog = Boolean.parseBoolean(getServerNodeProperty("useSimpleComponentDialog", true, "true"));
 		}
 		catch(Exception e)
 		{

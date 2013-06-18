@@ -180,9 +180,20 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 			}
 			else if(!this.contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 			{
-			    ContentVersionVO contentVersion = ContentStateController.changeState(this.contentVersionVO.getContentVersionId(), ContentVersionVO.WORKING_STATE, "Edit on sight", false, null, this.getInfoGluePrincipal(), this.contentVersionVO.getContentId(), new ArrayList());
-			    this.contentVersionId = contentVersion.getContentVersionId();
-			    this.contentVersionVO = contentVersion;
+				ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(this.contentVersionVO.getContentId(), this.contentVersionVO.getLanguageId());
+	        	if(latestContentVersionVO.getId().intValue() > this.contentVersionVO.getId().intValue() && latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+	        	{
+	        		logger.warn("The version is actually not in published state any more: " + latestContentVersionVO.getContentId());
+	        		this.contentVersionVO = latestContentVersionVO;
+	        		this.contentVersionId = latestContentVersionVO.getId();
+	        	}
+	        	else
+	        	{
+				    ContentVersionVO contentVersion = ContentStateController.changeState(this.contentVersionVO.getContentVersionId(), ContentVersionVO.WORKING_STATE, "Edit on sight", false, null, this.getInfoGluePrincipal(), this.contentVersionVO.getContentId(), new ArrayList());
+				    logger.info("Changed state on: " + latestContentVersionVO.getContentId());
+				    this.contentVersionId = contentVersion.getContentVersionId();
+				    this.contentVersionVO = contentVersion;
+	        	}
 			}
 			
 			String attributeValue = getRequest().getParameter(this.attributeName);

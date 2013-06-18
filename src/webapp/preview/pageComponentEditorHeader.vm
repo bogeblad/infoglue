@@ -217,11 +217,54 @@
 
 <style type="text/css">
 .igAddComponent {
-	border: 1px dotted #ccc;
+	outline: 1px dashed #ccc;
 	background-color: #ffff9d;
-	font-size: 10px;
-	padding: 2px;
+	font-size: 11px;
+	font-family: arial;
+	min-height: 16px;
+	text-align: center;
+	/*
+	display: inline-block;
+	width: 100%;
+	position: relative;
+	*/
 }
+/*
+.slotMenuButton{
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	right: 0px;
+}
+*/
+
+.addComponentButton {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+	aborder: 1px solid #ccc;
+}
+.addComponentText {
+	clear: both;
+}
+/*
+.componentDiv img.componentMenuButton {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	right: 0px;
+	z-index: 100;
+	bottom: 0px;
+}
+.componentDiv .componentDiv img.componentMenuButton {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	right: 0px;
+	z-index: 100;
+	top: 0px;
+}
+*/
 .blockedDropzone {
 	background-color: #c0c0c0;
 }

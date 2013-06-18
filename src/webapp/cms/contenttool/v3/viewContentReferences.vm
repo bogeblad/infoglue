@@ -130,7 +130,7 @@
 
 								<tr>
 									<td>
-										<img src='css/images/v3/pageIcon.gif'> <a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1', '$referenceBean.referencingCompletingObject.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)</a><br/>
+										<img src='css/images/v3/pageIcon.gif'> <a href="#" class="page" onclick="top.openUrlInWorkArea('ViewSiteNode.action?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1', '$referenceBean.referencingCompletingObject.name', 'structure', '$ui.getString("tool.common.pageTabLabelPrefix")', 'StructureTool'); return false;">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId, false, true)</a><br/>
 										##<img src='css/images/v3/pageIcon.gif'> <a href="${componentRendererUrl}${componentRendererAction}?siteNodeId=$referenceBean.referencingCompletingObject.siteNodeId&contentId=-1" target="_blank">$this.getSiteNodePath($referenceBean.referencingCompletingObject.siteNodeId)</a>
 					 				</td>
 					 				<td>

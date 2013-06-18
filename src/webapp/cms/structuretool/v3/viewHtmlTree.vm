@@ -359,6 +359,9 @@
 	    drop: function(event, ui) { 
 			var dragEl = $(ui.draggable); 
 			var movedNodeId = dragEl.attr("entityId");
+			if(!movedNodeId)
+				movedNodeId = $(dragEl).children("a").attr("entityId");
+				
 			var parentNodeId = dragEl.attr("parentEntityId");
 			var newParentNodeId = $("#" + tree.id + " a").attr("entityId");
 			//alert('dropped:' + movedNodeId + " on " + newParentNodeId);

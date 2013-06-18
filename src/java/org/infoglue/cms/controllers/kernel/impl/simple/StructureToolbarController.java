@@ -72,7 +72,7 @@ public class StructureToolbarController
 	        workingUrl = CmsPropertyHandler.getPreviewDeliveryUrl();
 	    }
 	    
-	    return new ToolbarButton("previewPage",
+	    ToolbarButton previewPage = new ToolbarButton("previewPage",
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"), 
 				  getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"),
 				  "javascript:openPopup('" + workingUrl + "?siteNodeId=" + siteNodeId + "', 'Import', 'resizable=yes,toolbar=yes,scrollbars=yes,status=yes,location=yes,menubar=yes');",
@@ -80,6 +80,8 @@ public class StructureToolbarController
 				  "left",
 				  "preview",
 				  true);
+	    	    
+	    return previewPage;
 		/*
 		return new ToolbarButton("",
 				getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"), 

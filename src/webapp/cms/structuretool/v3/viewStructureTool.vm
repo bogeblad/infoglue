@@ -325,6 +325,7 @@
 	
 		<iframe id="treeIframe" name="treeIframe" src="ViewStructureToolMenu!V3.action?repositoryId=$treeRepositoryId" width="100%" height="250" frameborder="0" allowtransparency="true"></iframe>
 	
+		#*
 		<div class="onlyExpanded" id="paletteDiv">
 	    	<div id="componentPaletteHeader">
 	    		<h3>$ui.getString('tool.common.favouriteComponentsHeader')</h3>
@@ -332,6 +333,7 @@
 	        </div>
 			<iframe id="paletteIframe" name="paletteIframe" src="ViewComponentPalette.action" width="100%" height="120" frameborder="0" allowtransparency="true"></iframe>
 	    </div>
+	    *#
 	</div>
 
 	<div id="work" style="float: left;">

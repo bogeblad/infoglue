@@ -2179,6 +2179,7 @@ function viewSource()
 		this.insertUrl = insertUrl;
 		this.deleteUrl = deleteUrl;
 		this.changeUrl = changeUrl;
+		
 		//alert("slotId:" + slotId);
 		//alert("eleId:" + eleId);
 		//alert("this.insertUrl:" + this.insertUrl);
@@ -2186,6 +2187,21 @@ function viewSource()
 		//alert("ele:" + ele + " for " + eleId);
 		ele.thisObj = this;              // Add a property to ele which points
 		                                    // to our myObject4 'this'.
+		
+		/*
+		$("#" + eleId + " > div > img.slotMenuButton").click(function(e) {
+			showEmptySlotMenu(slotId, e, ele.id, insertUrl, slotContentIdVar);
+			e.stopPropagation();
+			return false;
+		});
+		*/
+
+		$("#" + eleId + " > div > img.addComponentButton").click(function(e) {
+			openInlineDiv(insertUrl, 600, 750, true);
+			e.stopPropagation();
+			return false;
+		});
+
 		ele.onclick = function(e)         // onclick is a method of ele not myObject4
 		{   
 		  	//alert("onclick");                              // so 'this' will point to event.currentTarget.
@@ -2241,9 +2257,15 @@ function viewSource()
 		//alert("insertUrl:" + insertUrl);
 		//alert("this.deleteUrl:" + this.deleteUrl);
 		var ele = xGetElementById(eleId); // ele points to our related Element
-		//alert("ele:" + ele);
 		ele.thisObj = this;              // Add a property to ele which points
 		                                    // to our myObject4 'this'.
+		
+		$("#" + eleId + " > img.componentMenuButton").click({objectId: this.objId}, function(e) {
+			showComponentMenu(e, ele.id, e.data.objectId, insertUrl, deleteUrl, changeUrl);
+			e.stopPropagation();
+			return false;
+		});
+
 		ele.onclick = function(e)         // onclick is a method of ele not myObject4
 		{   
 		  	//alert("onclick");                              // so 'this' will point to event.currentTarget.

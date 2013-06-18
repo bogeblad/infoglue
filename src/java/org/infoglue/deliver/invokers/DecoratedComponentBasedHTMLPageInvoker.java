@@ -758,7 +758,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					else
 					{
 						Locale locale = templateController.getLocaleAvailableInTool(principal);
-						clickToAddHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML");
+						clickToAddHTML = getLocalizedString(locale, "deliver.editOnSight.slotInstructionHTML", slotBean.getId());
 					}
 				}
 				
@@ -816,8 +816,8 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 								    }
 								    //<div id=\"dropZone"+ id + index + "_" + subComponent.getId() + "Comp\" class=\"moveDropZone\"></div>
 								    String changeUrl = componentEditorUrl + "ViewSiteNodePageComponents!listComponentsForChange.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "")  + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "");
-								    subComponentString += "<div style=\"display:inline;\" id=\""+ id + index + "_" + subComponent.getId() + "Comp\" class=\"moveZone sortableComponent\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + id + index + "_" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
-								}
+								    subComponentString += "<div style=\"display:inline-block;\" id=\""+ id + index + "_" + subComponent.getId() + "Comp\" class=\"moveZone sortableComponent\">" + childComponentsString + "<script type=\"text/javascript\">initializeComponentEventHandler('" + id + index + "_" + subComponent.getId() + "Comp', '" + subComponent.getId() + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!deleteComponent.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + contentId + "&amp;componentId=" + subComponent.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "','" + changeUrl + "');</script></div>";
+								} 
 								else
 								{
 								    subComponentString += childComponentsString;
@@ -904,7 +904,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 					            allowedComponentGroupNamesAsEncodedString = subSlotBean.getAllowedComponentGroupsArrayAsUrlEncodedString();
 					        }
 					    }
-					    
+	
 					    subComponentString += "<script type=\"text/javascript\">$(function() {initializeSlotEventHandler('Comp" + component.getId() + "_" + id + "', '" + componentEditorUrl + "ViewSiteNodePageComponents!listComponents.action?siteNodeId=" + siteNodeId + "&amp;languageId=" + languageId + "&amp;contentId=" + (contentId == null ? "-1" : contentId) + "&amp;parentComponentId=" + component.getId() + "&amp;slotId=" + id + "&amp;showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + ((allowedComponentNamesAsEncodedString != null) ? "&amp;" + allowedComponentNamesAsEncodedString : "") + ((disallowedComponentNamesAsEncodedString != null) ? "&amp;" + disallowedComponentNamesAsEncodedString : "") + ((allowedComponentGroupNamesAsEncodedString != null) ? "&amp;" + allowedComponentGroupNamesAsEncodedString : "") + "', '', '', '" + id + "', '" + component.getContentId() + "'); });</script></div>";
 					}
 					else
@@ -3491,6 +3491,13 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
     	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
 
     	return stringManager.getString(key);
+  	}
+
+	public String getLocalizedString(Locale locale, String key, String value) 
+  	{
+    	StringManager stringManager = StringManagerFactory.getPresentationStringManager("org.infoglue.cms.applications", locale);
+
+    	return stringManager.getString(key, value);
   	}
 
 }

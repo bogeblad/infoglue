@@ -230,6 +230,7 @@
 			</div>
 		
 			<div class="inlineTabDiv" id="cmsConnection">
+
 				#editPropertyFieldCSS("ServerNode.property.cmsFullBaseUrl" "cmsFullBaseUrl" "$this.getPropertyValue('cmsFullBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.cmsFullBaseUrl")
 				#editPropertyFieldCSS("ServerNode.property.cmsBaseUrl" "cmsBaseUrl" "$this.getPropertyValue('cmsBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.cmsBaseUrl")
 				#editPropertyFieldCSS("ServerNode.property.componentEditorUrl" "componentEditorUrl" "$this.getPropertyValue('componentEditorUrl')" "51" "$!serverNodeId" "$!cmsPH.componentEditorUrl")
@@ -237,6 +238,14 @@
 				#editPropertyFieldCSS("ServerNode.property.componentRendererAction" "componentRendererAction" "$this.getPropertyValue('componentRendererAction')" "51" "$!serverNodeId" "$!cmsPH.componentRendererAction")
 				#editPropertyFieldCSS("ServerNode.property.editOnSiteUrl" "editOnSiteUrl" "$this.getPropertyValue('editOnSiteUrl')" "51" "$!serverNodeId" "$!cmsPH.editOnSiteUrl")
 				#editPropertyFieldCSS("ServerNode.property.webServicesBaseUrl" "webServicesBaseUrl" "$this.getPropertyValue('webServicesBaseUrl')" "51" "$!serverNodeId" "$!cmsPH.webServicesBaseUrl")
+
+				#editPropertyFieldCSS("ServerNode.property.previewDeliveryUrl" "previewDeliveryUrl" "$this.getPropertyValue('previewDeliveryUrl')" "51" "$!serverNodeId" "$!cmsPH.previewDeliveryUrl")
+				#editPropertyFieldCSS("ServerNode.property.stagingDeliveryUrl" "stagingDeliveryUrl" "$this.getPropertyValue('stagingDeliveryUrl')" "51" "$!serverNodeId" "$!cmsPH.stagingDeliveryUrl")
+				#editPropertyTextAreaCSS("ServerNode.property.internalDeliveryUrls" "internalDeliveryUrls" "$this.getDataPropertyValue('internalDeliveryUrls')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.internalDeliveryUrls")
+				#editPropertyTextAreaCSS("ServerNode.property.publicDeliveryUrls" "publicDeliveryUrls" "$this.getDataPropertyValue('publicDeliveryUrls')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.publicDeliveryUrls")
+				#editPropertyTextAreaCSS("ServerNode.property.deploymentServers" "deploymentServers" "$this.getDataPropertyValue('deploymentServers')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.deploymentServers")
+				#editPropertyTextAreaCSS("ServerNode.property.vcServers" "vcServers" "$this.getDataPropertyValue('vcServers')" "50" "5" "normaltextarea" "$!serverNodeId" $!cmsPH.vcServers)
+
 			</div>
 		
 			<div class="inlineTabDiv" id="webSpecifics">
@@ -358,10 +367,19 @@
 
 				#editPropertyFieldCSS("ServerNode.property.GACode" "gaCode" "$this.getPropertyValue('gaCode')" "51" "$!serverNodeId" "$!cmsPH.getGACode()")
 				
+				#editPropertyFieldCSS("ServerNode.property.edition.pageSize" "edition.pageSize" "$this.getPropertyValue('edition.pageSize')" "51" "$!serverNodeId" "$!cmsPH.editionPageSize")
+				#editPropertyFieldCSS("ServerNode.property.content.tree.sort" "content.tree.sort" "$this.getPropertyValue('content.tree.sort')" "51" "$!serverNodeId" "$!cmsPH.contentTreeSort")
+				#editPropertyFieldCSS("ServerNode.property.structure.tree.sort" "structure.tree.sort" "$this.getPropertyValue('structure.tree.sort')" "51" "$!serverNodeId" "$!cmsPH.structureTreeSort")
+				#editPropertyFieldCSS("ServerNode.property.structure.tree.isHidden" "structure.tree.isHidden" "$this.getPropertyValue('structure.tree.isHidden')" "51" "$!serverNodeId" "$!cmsPH.structureTreeIsHidden")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.content.tree.hideForbidden" "content.tree.hideForbidden" "$this.getPropertyValue('content.tree.hideForbidden')" "$!cmsPH.contentTreeHideForbidden")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.structure.tree.hideForbidden" "structure.tree.hideForbidden" "$this.getPropertyValue('structure.tree.hideForbidden')" "$!cmsPH.structureTreeHideForbidden")
+				
 				#editPropertyFieldCSS("ServerNode.property.workingStyleInformation" "workingStyleInformation" "$this.getPropertyValue('workingStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.workingStyleInformation")
 				#editPropertyFieldCSS("ServerNode.property.finalStyleInformation" "finalStyleInformation" "$this.getPropertyValue('finalStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.finalStyleInformation")
 				#editPropertyFieldCSS("ServerNode.property.publishStyleInformation" "publishStyleInformation" "$this.getPropertyValue('publishStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.publishStyleInformation")
 				#editPropertyFieldCSS("ServerNode.property.publishedStyleInformation" "publishedStyleInformation" "$this.getPropertyValue('publishedStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.publishedStyleInformation")
+	
+				#editPropertyTextAreaCSS("ServerNode.property.toolLanguages" "toolLanguages" "$this.getDataPropertyValue('toolLanguages')" "50" "3" "normaltextarea" "$!serverNodeId" $!cmsPH.toolLanguages)
 	
 				#editPropertyTextAreaCSS("ServerNode.property.headerHTML" "headerHTML" "$this.getDataPropertyValue('headerHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.headerHTML")
 	
@@ -432,21 +450,7 @@
 				#editPropertyFieldCSS("ServerNode.property.showComponentsFirst" "showComponentsFirst" "$this.getPropertyValue('showComponentsFirst')" "51" "$!serverNodeId" "$!cmsPH.showComponentsFirst")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.showAllWorkflows" "showAllWorkflows" "$this.getPropertyValue('showAllWorkflows')" "$!cmsPH.showAllWorkflows")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.editOnSight" "editOnSight" "$this.getPropertyValue('editOnSight')" "$!cmsPH.editOnSight")
-				
-				#editPropertyFieldCSS("ServerNode.property.previewDeliveryUrl" "previewDeliveryUrl" "$this.getPropertyValue('previewDeliveryUrl')" "51" "$!serverNodeId" "$!cmsPH.previewDeliveryUrl")
-				#editPropertyFieldCSS("ServerNode.property.stagingDeliveryUrl" "stagingDeliveryUrl" "$this.getPropertyValue('stagingDeliveryUrl')" "51" "$!serverNodeId" "$!cmsPH.stagingDeliveryUrl")
-				#editPropertyTextAreaCSS("ServerNode.property.internalDeliveryUrls" "internalDeliveryUrls" "$this.getDataPropertyValue('internalDeliveryUrls')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.internalDeliveryUrls")
-				#editPropertyTextAreaCSS("ServerNode.property.publicDeliveryUrls" "publicDeliveryUrls" "$this.getDataPropertyValue('publicDeliveryUrls')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.publicDeliveryUrls")
-				#editPropertyTextAreaCSS("ServerNode.property.deploymentServers" "deploymentServers" "$this.getDataPropertyValue('deploymentServers')" "50" "5" "normaltextarea" "$!serverNodeId" "$!cmsPH.deploymentServers")
-				#editPropertyTextAreaCSS("ServerNode.property.vcServers" "vcServers" "$this.getDataPropertyValue('vcServers')" "50" "5" "normaltextarea" "$!serverNodeId" $!cmsPH.vcServers)
-				#editPropertyTextAreaCSS("ServerNode.property.toolLanguages" "toolLanguages" "$this.getDataPropertyValue('toolLanguages')" "50" "3" "normaltextarea" "$!serverNodeId" $!cmsPH.toolLanguages)
-	
-				#editPropertyFieldCSS("ServerNode.property.edition.pageSize" "edition.pageSize" "$this.getPropertyValue('edition.pageSize')" "51" "$!serverNodeId" "$!cmsPH.editionPageSize")
-				#editPropertyFieldCSS("ServerNode.property.content.tree.sort" "content.tree.sort" "$this.getPropertyValue('content.tree.sort')" "51" "$!serverNodeId" "$!cmsPH.contentTreeSort")
-				#editPropertyFieldCSS("ServerNode.property.structure.tree.sort" "structure.tree.sort" "$this.getPropertyValue('structure.tree.sort')" "51" "$!serverNodeId" "$!cmsPH.structureTreeSort")
-				#editPropertyFieldCSS("ServerNode.property.structure.tree.isHidden" "structure.tree.isHidden" "$this.getPropertyValue('structure.tree.isHidden')" "51" "$!serverNodeId" "$!cmsPH.structureTreeIsHidden")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.content.tree.hideForbidden" "content.tree.hideForbidden" "$this.getPropertyValue('content.tree.hideForbidden')" "$!cmsPH.contentTreeHideForbidden")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.structure.tree.hideForbidden" "structure.tree.hideForbidden" "$this.getPropertyValue('structure.tree.hideForbidden')" "$!cmsPH.structureTreeHideForbidden")
+					
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableEmptyUrls" "disableEmptyUrls" "$this.getPropertyValue('disableEmptyUrls')" "$!cmsPH.disableEmptyUrls")
 				#editPropertyFieldCSS("ServerNode.property.cacheUpdateAction" "cacheUpdateAction" "$this.getPropertyValue('cacheUpdateAction')" "51" "$!serverNodeId" "$!cmsPH.cacheUpdateAction")
 				#editPropertyFieldCSS("ServerNode.property.logPath" "logPath" "$this.getPropertyValue('logPath')" "51" "$!serverNodeId" "$!cmsPH.logPath")

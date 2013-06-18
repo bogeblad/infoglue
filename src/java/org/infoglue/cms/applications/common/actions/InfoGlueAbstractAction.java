@@ -894,7 +894,7 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		} 
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			logger.error("Error parsing maxSize: " + e.getMessage() + "(" + Configuration.getString("webwork.multipart.maxSize") + ")");
 		}
 		
 		return maxSize;

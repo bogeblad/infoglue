@@ -651,7 +651,6 @@ public class ViewApplicationStateAction extends InfoGlueAbstractAction
         if(clearFileCache)
         	CacheController.clearFileCaches();
         
-        System.out.println("Yep...");
         if(preCache)
         {
         	if(CmsPropertyHandler.getApplicationName().equalsIgnoreCase("cms"))

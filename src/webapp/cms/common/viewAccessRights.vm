@@ -8,7 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="css/cms.css" />
 	
 	<script type="text/javascript">
-	<!--
+	//<![CDATA[
 		function addUserRow()
 		{
 			var currentUserRowIndex = $("#currentUserRowIndex").val();
@@ -243,19 +243,19 @@
 				document.editForm.submit();
 			}
 		}
-	
+
 		#if($saved == "true")
 		$(document).ready(function() {
 			setTimeout(function() {$("#saved").hide("slow");}, 1000);
 		});
 		#end
-	
+
 		$(document).ready(function(){
 			#if($closeOnLoad)
 				if(parent && parent.document.location.href != document.location.href && parent.closeInlineDiv) parent.closeInlineDiv(); else if(parent && parent.document.location.href != document.location.href && parent.closeDialog) parent.closeDialog(); else { window.close();}
 			#else
 				$("#tabsContainer").tabs( {
-					#if($anchor && $anchor != "")
+					#if($anchor && "$!anchor" != "")
 						selected: $anchor,
 					#end
 					show:function() { resizeScrollArea(); }
@@ -268,9 +268,9 @@
 			    console.log("Selected tab: " + $("#anchor").val());
 			});
 		});
-	-->
+	//]]>
 	</script>
-	
+
 	<style type="text/css">
 		#rolesTable th, #usersTable th {
 			border-bottom: 1px solid #ccc;
@@ -328,7 +328,7 @@
 				<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl"/>
 				<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 				<input type="hidden" name="closeOnLoad" value="false"/>
-				<input type="hidden" name="anchor" id="anchor" value="$anchor"/>
+				<input type="hidden" name="anchor" id="anchor" value="$!anchor"/>
 				<input type="hidden" id="currentUserRowIndex" name="currentUserRowIndex" value="0"/>
 				<input type="hidden" id="selectedUserRowIndex" name="selectedUserRowIndex" value="0"/>
 				

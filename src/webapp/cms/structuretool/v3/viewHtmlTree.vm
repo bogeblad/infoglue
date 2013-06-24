@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-<head> 
+<head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 	<meta http-equiv="Cache-Control" content="no-cache" />
@@ -12,7 +12,7 @@
 	#includeLatestJQuery()
 
 	<script type="text/javascript">
-	<!-- 		
+	//<![CDATA[
 		var languageCode = "$languageCode";
 		
 		var oldSelected;
@@ -107,7 +107,7 @@
 				parentNode.expand();
 				//alert("contentId: [" + contentId.trim() + "]");
 				//alert("parentNode: " + parentNode);
-				var addedNode = tree.getNodeWithMyId(contentId.trim());
+				var addedNode = tree.getNodeWithMyId(jQuery.trim(contentId));
 				if(addedNode)
 				{
 					//alert("addedNode:" + addedNode);
@@ -146,8 +146,8 @@
 			if(pathArr.length <= 2)
 			{
 				//alert("pathArr[" + pathArr[0].trim() + "]");
-				var node = tree.getNodeWithMyId(pathArr[0].trim());
-				var id = pathArr[pathArr.length -1].trim();
+				var node = tree.getNodeWithMyId(jQuery.trim(pathArr[0]));
+				var id = jQuery.trim(pathArr[pathArr.length -1]);
 				selectWhenLoaded(node, id);
 				return;
 			}
@@ -155,8 +155,8 @@
 			if(level >= pathArr.length -1) 
 			{
 				//alert("pathArr[" + pathArr[pathArr.length -2].trim() + "]");
-				var node = tree.getNodeWithMyId(pathArr[pathArr.length -2].trim());
-				var id = pathArr[pathArr.length-1].trim();
+				var node = tree.getNodeWithMyId(jQuery.trim(pathArr[pathArr.length -2]));
+				var id = jQuery.trim(pathArr[pathArr.length-1]);
 				selectWhenLoaded(node, id);
 				return;
 			}
@@ -283,7 +283,7 @@
 			loaded();
 		}
 
-		// -->
+		// ]]>
 	</script>
 
 	<!-- DYNAMIC VERSION SCRIPTS -->

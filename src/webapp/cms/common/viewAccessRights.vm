@@ -13,27 +13,27 @@
 		{
 			var currentUserRowIndex = $("#currentUserRowIndex").val();
 			var previousRow 		= $("#" + currentUserRowIndex + "_userRow");
-				
+
 			var newRowId 			= parseInt(currentUserRowIndex) + 1;
 			var newRow 				= previousRow.clone(true);
-			
+
 			var inputFields 		= newRow.find("input");
-			
+
 			inputFields.each(function(index) {
 				var oldName = $(this).attr("name");
 				var newName = newRowId + oldName.substring(oldName.indexOf("_"));
 				$(this).attr("name", newName);
 				$(this).prop("checked", false);
 			});
-			
+
 			newRow.find("#" + currentUserRowIndex + "_userName").attr("id", newRowId + "_userName");
 			newRow.attr("id", newRowId + "_userRow");
 			previousRow.find(".addButton").remove();
 			newRow.find(".showUsers").attr("href", "javascript: setSelectedUserRow(" + newRowId + "); showUsers(" + newRowId + ")");
 			newRow.find(".selectMyself").attr("href", "javascript: selectMyself(" + newRowId + ")");
-			
+
 			$("#usersTable").append(newRow);
-			
+
 			$("#" + newRowId + "_userName").val("");
 			$("#" + newRowId + "_userName").focus();
 			$("#currentUserRowIndex").val(newRowId);
@@ -104,12 +104,12 @@
 		{
 			save();
 		}
-		
+
 		function save()
 		{
-			$("form").get(0).submit();
+			saveCurrentTab();
 		}
-				
+
 		function saveAndExit(action)
 		{
 			//$("form").get(0).action = action;
@@ -117,12 +117,10 @@
 				parent.saveFormAndExit(window);
 			else
 			{
-				document.editForm.closeOnLoad.value = "true";
-				save();
+				saveCurrentTab(true);
 			}
 		}
-		
-		
+
 		#set($anonymousPrincipal = $anonymousPrincipal)
 		//alert("anonymousPrincipal: + $anonymousPrincipal.roles");
 		//alert("anonymousPrincipal: + $anonymousPrincipal.groups");
@@ -262,11 +260,45 @@
 				});
 			#end
 
-			$('#tabsContainer').bind('tabsselect', function(event, ui) 
-			{
-			    $("#anchor").val(ui.index);
-			    console.log("Selected tab: " + $("#anchor").val());
-			});
+			(function() {
+				#if( "$!anchor" != "" )
+					var selectedTab = $anchor;
+				#else
+					var selectedTab = 0;
+				#end
+				$('#tabsContainer').bind('tabsselect', function(event, ui)
+				{
+					$(".anchorValue").val(ui.index);
+					selectedTab = ui.index;
+				});
+
+				window.saveCurrentTab = function(closeOnSave)
+				{
+					var form = null;
+					if (selectedTab === 0)
+					{
+						form = $("#roleForm");
+					}
+					else if(selectedTab === 1)
+					{
+						form = $("#userForm");
+					}
+					else
+					{
+						alert("You cannot save anything on this tab");
+					}
+					if (form)
+					{
+						form = form.get(0);
+						if (closeOnSave)
+						{
+							form.closeOnLoad.value = "true";
+						}
+						form.submit();
+					}
+				};
+			})();
+
 		});
 	//]]>
 	</script>
@@ -319,7 +351,7 @@
 
 		<div id="rolesTab" class="inlineTabDiv">
 			
-			<form method="post" name="editForm" action="UpdateAccessRights.action">
+			<form method="post" name="editForm" id="roleForm" action="UpdateAccessRights.action">
 				<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory"/>
 				<input type="hidden" name="parameters" value="$extraParameters"/>
 				#foreach($extraMultiParameter in $extraMultiParameters)
@@ -328,8 +360,7 @@
 				<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl"/>
 				<input type="hidden" name="userSessionKey" value="$userSessionKey"/>
 				<input type="hidden" name="closeOnLoad" value="false"/>
-				<input type="hidden" name="anchor" id="anchor" value="$!anchor"/>
-				<input type="hidden" id="currentUserRowIndex" name="currentUserRowIndex" value="0"/>
+				<input type="hidden" name="anchor" id="anchor" class="anchorValue" value="$!anchor"/>
 				<input type="hidden" id="selectedUserRowIndex" name="selectedUserRowIndex" value="0"/>
 				
 				#set($interceptionPointIndex = 0)
@@ -462,14 +493,16 @@
 				
 		<div id="usersTab" class="inlineTabDiv">
 		
-			<form method="post" name="addUserForm" action="UpdateAccessRights!addUserV3.action">
+			<form method="post" name="addUserForm" id="userForm" action="UpdateAccessRights!addUserV3.action">
 				<input type="hidden" name="interceptionPointCategory" value="$interceptionPointCategory"/>
 				<input type="hidden" name="parameters" value="$extraParameters"/>
 				<input type="hidden" id="userName" name="userName" value=""/>
+				<input type="hidden" name="closeOnLoad" value="false"/>
+				<input type="hidden" name="anchor" class="anchorValue" value="$!anchor"/>
 				#foreach($extraMultiParameter in $extraMultiParameters)
 				<input type="hidden" name="extraMultiParameter" value="$extraMultiParameter"/>
 				#end
-				<input type="hidden" name="returnAddress" value="$returnAddress"/>
+				<input type="hidden" name="returnAddress" value="$unencodedCurrentUrl"/>
 
 				<table id="usersTable" border="0" cellpadding="0" cellspacing="0">
 				<tr>
@@ -491,10 +524,13 @@
 					#end
 					<th><img src="css/images/trans.gif" width="10" height="1" alt=""/></th>		
 				</tr>
-				
+				#set( $currentUserIndexCounter = 0 )
 				#foreach($accessRightsUserRow in $accessRightsUserRows)
 				<tr>
-					<td>$accessRightsUserRow.userName</td>
+					<td>
+						$accessRightsUserRow.userName
+						<input type="hidden" id="${currentUserIndexCounter}_userName" name="${currentUserIndexCounter}_userName" value="$accessRightsUserRow.userName" />
+					</td>
 					<td>&nbsp;</td>
 					#set($interceptionPointIndex = 0)
 					#foreach($interceptionPointVO in $interceptionPointVOList)
@@ -504,10 +540,10 @@
 								#set($checked = "")
 								#if($accessRightsUserRow.accessRights.get($interceptionPointVO.id) == true)
 									#set($checked = "checked")
-								#end 
-								<input type="hidden" name="${interceptionPointVO.id}_${userIndex}_userName" value="$accessRightsUserRow.userName"/>
-								<!--<input type="checkbox" name="${interceptionPointVO.id}_${accessRightsUserRow.userName}_hasAccess" value="true" $checked>-->
-								<input type="checkbox" name="${interceptionPointVO.id}_${accessRightsUserRow.userName}_hasAccess" value="true" disabled="true" $checked $disabled/>
+								#end
+								<input type="hidden" name="${currentUserIndexCounter}_${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id"/>
+								<input type="hidden" name="${currentUserIndexCounter}_interceptionPointId" value="$interceptionPointVO.id"/>
+								<input type="checkbox" name="${currentUserIndexCounter}_${interceptionPointVO.id}_hasAccess" value="true" $checked $disabled/>
 							</td>
 							<td>&nbsp;</td>
 							#set($interceptionPointIndex = $interceptionPointIndex + 1)
@@ -515,28 +551,29 @@
 					#end
 					<td><a href="javascript:deleteUser('$accessRightsUserRow.userName');"><img src="css/images/delete.gif" width="12" height="12" border="0" alt=""/></a></td>
 				</tr>
-				#end	
+					#set( $currentUserIndexCounter = $currentUserIndexCounter + 1 )
+				#end
 
 				#set($colspan = $colspan+2)
-				
+
 				#if($accessRightsUserRows.size() == 0)
 				<tr>
 					<td style="border-bottom: 0px; margin-button: 20px;" colspan="$colspan">No rights set on users</td>
 				</tr>
 				#end
-			
+
 				<tr>
 					<td style="border-bottom: 0px; margin-button: 20px;" colspan="$colspan">&nbsp;</td>
 				</tr>
-				
+
 				<tr>
 					<th colspan="$colspan">$ui.getString("tool.common.accessRights.addUserText")</th>
 				</tr>
-				<tr id="0_userRow">
+				<tr id="${currentUserIndexCounter}_userRow">
 					<td style="padding-top: 4px; white-space: nowrap;">
-						<input type="textfield" id="0_userName" name="0_userName" value="" style="display: block; float: left; width: 80px;" onkeydown="checkForEnter();" />
-						<a class="showUsers" href="javascript: setSelectedUserRow(0); showUsers(0);" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
-						<a class="selectMyself" href="javascript:selectMyself(0);" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/user18.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+						<input type="textfield" id="${currentUserIndexCounter}_userName" name="${currentUserIndexCounter}_userName" value="" style="display: block; float: left; width: 80px;" onkeydown="checkForEnter();" />
+						<a class="showUsers" href="javascript: setSelectedUserRow($currentUserIndexCounter); showUsers($currentUserIndexCounter);" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/spyglassIcon.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
+						<a class="selectMyself" href="javascript:selectMyself($currentUserIndexCounter);" style="display: block; float: left; height: 20px; width: 20px; background: url(css/images/user18.gif) no-repeat 0px 0px; margin-left: 4px;">&nbsp;</a>
 					</td>
 					<td>&nbsp;</td>
 					#set($interceptionPointIndex = 0)
@@ -550,9 +587,9 @@
 									##set($accessRightId = $this.getAccessRightId($interceptionPointVO.id, $extraParameters))
 								##end 
 								
-								<input type="hidden" name="0_${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id"/>
-								<input type="hidden" name="0_interceptionPointId" value="$interceptionPointVO.id"/>
-								<input type="checkbox" name="0_${interceptionPointVO.id}_hasAccess" value="true" $checked $disabled/>
+								<input type="hidden" name="${currentUserIndexCounter}_${interceptionPointIndex}_InterceptionPointId" value="$interceptionPointVO.id"/>
+								<input type="hidden" name="${currentUserIndexCounter}_interceptionPointId" value="$interceptionPointVO.id"/>
+								<input type="checkbox" name="${currentUserIndexCounter}_${interceptionPointVO.id}_hasAccess" value="true" $checked $disabled/>
 							</td>
 							<td>&nbsp;</td>
 							#set($interceptionPointIndex = $interceptionPointIndex + 1)
@@ -565,16 +602,8 @@
 					</td>
 				</tr>
 				</table>
+				<input type="hidden" id="currentUserRowIndex" name="currentUserRowIndex" value="$currentUserIndexCounter"/>
 			</form>
-			#if($disabled != "disabled")
-			<p>
-				<!--
-				$ui.getString("tool.common.accessRights.addMoreUsers.label")
-				<div style="clear:both;"></div>
-				-->
-				<a href="javascript:document.addUserForm.submit();" style="display: block; float: left; border: 1px solid #ccc; height: 14px; background: url(css/images/v3/footerBackground.gif) repeat-x 0px -10px; white-space: nowrap; padding: 2px 10px 2px 10px; margin-left: 4px;">$ui.getString("tool.common.accessRights.addUserButtonLabel")</a>
-			</p>	
-			#end
 		</div>
 
 		<div id="debugTab" class="inlineTabDiv">

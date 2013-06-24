@@ -2025,12 +2025,6 @@ public class AccessRightController extends BaseController
 			enableDebug = true;
 		}
 		*/
-		if(extraParameters.equals("108"))
-			enableDebug = true;
-	
-		if(interceptionPointName != null && interceptionPointName.equalsIgnoreCase("Content.Read") && extraParameters.equalsIgnoreCase("6902"))
-			enableDebug = true;
-	
 		String debugInfo = "";
 		if(enableDebug)
 			debugInfo += "\n	getIsPrincipalAuthorized with: " + infoGluePrincipal + ", " + interceptionPointName + ", " + extraParameters;
@@ -2109,11 +2103,16 @@ public class AccessRightController extends BaseController
 				Integer hasAccess = userAccessRightsMap.get(acKey);
 				//if(acKey.indexOf("RightColumnOne") > -1)
 				//	logger.info("hasAccess:" + hasAccess + " on " + acKey);
-
+				
 				if(hasAccess == null)
 				{
-				    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
-					return false;
+					if(returnTrueIfNoAccessRightsDefined && interceptionPointName.indexOf("ContentVersion.") > -1)
+						logger.info("Double checking on access as it's a content version and those are often not protected:" + acKey);
+					else
+					{
+					    CacheController.cacheObjectInAdvancedCache("personalAuthorizationCache", key, new Boolean(false), new String[]{infoGluePrincipal.getName()}, true);
+						return false;
+					}
 				}
 				else if(hasAccess == 1)
 				{

@@ -208,14 +208,12 @@
 		</table>
 	</td>
 	<td align="right" valign="top">
-		<br><br><br>
-		
+		<br>
 	</td>
 </tr>
 <tr>
 	<td colspan="2">
-		<br/><br/>
-		$ui.getString("tool.common.publishing.markVersionsText")<br><br>
+		$ui.getString("tool.common.publishing.markVersionsText")
 	</td>
 </tr>
 <tr>

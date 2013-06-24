@@ -3427,7 +3427,8 @@ public class ContentVersionController extends BaseController
     	    
     	    boolean duplicateAssetsBetweenVersions = CmsPropertyHandler.getDuplicateAssetsBetweenVersions();
         	logger.info("duplicateAssetsBetweenVersions:" + duplicateAssetsBetweenVersions);
-    	    if(!duplicateAssetsBetweenVersions)
+        	
+        	if(!duplicateAssetsBetweenVersions)
     	    {
     	    	DigitalAsset oldDigitalAsset = DigitalAssetController.getController().getMediumDigitalAssetWithId(digitalAssetId, db);
     	    	logger.info("oldDigitalAsset:" + oldDigitalAsset.getContentVersions().size());

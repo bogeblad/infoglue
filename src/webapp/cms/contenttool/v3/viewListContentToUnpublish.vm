@@ -93,34 +93,31 @@
 	<table width="95%" border="0">
 	<tr>
 		<td>
-			<table width="300" border="0" cellpadding="0" cellspacing="0">
-			<tr>
-				<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
-			</tr>		
-			<tr>
-				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
-			</tr>
-			<tr>
-				<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "tinytextarea")</td>
-			</tr>		
+			<table width="90%" border="0" cellpadding="0" cellspacing="0">
+			#if($this.skipVersionComment == false)
+				<tr>
+					<td colspan="3" class="biglabel">$ui.getString("tool.contenttool.stateChangeComment")</td>
+				</tr>		
+				<tr>
+					<td colspan="3">#editTextArea("ContentVersion.versionComment" "xversionComment" $!versionComment "10" "10" "tinytextarea")</td>
+				</tr>		
+			#else
+				<input type="hidden" name="xversionComment" id="xversionComment" value=""/>		
+			#end
 			#if($!this.allowOverrideModifyer != "false")
 			<tr>
-				<td colspan="3"><img src="css/images/trans.gif" height="10" width="1"></td>
-			</tr>
-			<tr>
-				<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))</td>
+				<td colspan="3">#yesNoCheckBox("ContentVersion.overrideVersionModifyer" "xoverrideVersionModifyer" "true" $ui.getString('tool.common.yes'))<br/><br/></td>
 			</tr>	
 			#end
 			</table>
 		</td>
 		<td align="right" valign="top">
-			<br><br><br>
+			<br>
 		</td>
 	</tr>
 	<tr>
 		<td colspan="2">
-			<br/><br/>
-			$ui.getString("tool.common.unpublishing.markContentsText")<br><br>
+			$ui.getString("tool.common.unpublishing.markContentsText")
 		</td>
 	</tr>
 	<tr>

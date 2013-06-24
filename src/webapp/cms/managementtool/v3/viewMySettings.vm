@@ -194,6 +194,17 @@
 	
 	</form>
 
+<style type="text/css">
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	background: url(css/images/v3/footerBackground.gif) no-repeat left center !important;
+}
+.ui-dialog-buttonset > .ui-button:nth-of-type(1) {
+	background: url(css/images/v3/check.png) no-repeat 6px center !important;
+}
+.ui-dialog-buttonset > .ui-button:nth-of-type(2) {
+	background: url(css/images/v3/cancelIcon.gif) no-repeat 6px center !important;
+}
+</style>
 <div id="reloadDialog" title="$ui.getString("tool.managementtool.mysettings.fullReloadQuestionTitle")" style="display: none">
 	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>$ui.getString("tool.managementtool.mysettings.fullReloadQuestionLabel")</p>
 </div>

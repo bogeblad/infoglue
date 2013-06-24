@@ -940,6 +940,16 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return CmsPropertyHandler.getHeaderHTML();
 	}
 
+	public String getInfoButtonLabel()
+	{
+		return CmsPropertyHandler.getInfoButtonLabel(getLocale());
+	}
+
+	public String getSwitchInfoButtonLabelToThisHelpUrl()
+	{
+		return CmsPropertyHandler.getSwitchInfoButtonLabelToThisHelpUrl(getLocale());
+	}
+	
     public String getColorScheme()
     {
         return colorScheme;
@@ -1022,6 +1032,11 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 	public String getAllowOverrideModifyer()
 	{
 	    return CmsPropertyHandler.getAllowOverrideModifyer();
+	}
+
+	public String getSkipVersionComment()
+	{
+	    return CmsPropertyHandler.getSkipVersionComment();
 	}
 
     public Locale getLocale()

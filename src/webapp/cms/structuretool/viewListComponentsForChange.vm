@@ -106,7 +106,7 @@
 
 			#set($extraParameter = '"iDisplayLength": 20')
 			#if($useSimpleComponentDialog)
-			#set($extraParameter = '"aoColumns": [ { "sWidth": "30px" }, null ], "iDisplayLength": 20')
+			#set($extraParameter = '"aoColumns": [ {"bVisible": false}, { "sWidth": "30px" }, null, { "sWidth": "10px" }], "iDisplayLength": 20')
 			#end
 			#initDataTableImpl("dataTable" $extraParameter)
 
@@ -161,11 +161,13 @@
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
+				<th>&nbsp;</th>
 				<th>$ui.getString("tool.structuretool.componentNameLabel")</th>
 				#if(!$useSimpleComponentDialog)
 				<th>$ui.getString("tool.structuretool.repositoryLabel")</th>
 				<th>$ui.getString("tool.structuretool.groupNameLabel")</th>
 				#end
+				<th>&nbsp;</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -188,15 +190,23 @@
 
 				#set($imageUrl = $this.getDigitalAssetUrl($content.id, "thumbnail"))
 				#if("$!imageUrl" == "")
-					#set($imageUrl = "css/images/componentIcon.gif")
+					#set($imageUrl = "css/images/v3/componentIcon.png")
+					##set($imageUrl = "http://icongal.com/gallery/image/9623/puzzle.png")
 				#end
 				<tr>
 					#if($imageUrl.indexOf("componentIcon.gif") > -1)
-						#set($width = "16")
+						#set($width = "48")
 					#else
-						#set($width = "40")
+						#set($width = "48")
 					#end
-					<td align="center"><a href="javascript:changeComponent('$content.id');"><img src="$imageUrl" border="0" width="$width"></a>&nbsp;</td>
+					<td align="center" valign="middle">
+						#if($content.extraProperties.get("GroupName") == "favourites") 
+							0
+						#else
+						 	1
+						#end
+					</td>
+					<td align="center"><img src="$imageUrl" border="0" width="$width" onclick="changeComponent('$content.id');"></td>
 					<td>
 						<a href="javascript:changeComponent('$content.id');">$content.getName()</a><br/><br/>
 						#if($content.extraProperties.get("Description") != "Unknown" && $content.extraProperties.get("Description") != "")
@@ -219,6 +229,14 @@
 					</td>
 					<td>$content.extraProperties.get("GroupName").replaceAll(",","<br/>")</td>
 					#end
+					<td align="center">
+						#if($content.extraProperties.get("GroupName") == "favourites") 
+							<span style="display:none;">0</span> 
+							<img src="css/images/v3/star.png" border="0" width="16" height="16" title="Popular"/>
+						#else
+						 	<span style="display:none;">1</span>
+						#end
+					</td>
 				</tr>
 				#set($imageUrl = "")
 			#end

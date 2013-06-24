@@ -24,6 +24,7 @@
 package org.infoglue.cms.applications.common.actions;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.util.CmsPropertyHandler;
 
 import webwork.action.Action;
 
@@ -38,6 +39,11 @@ public class VersionInfoAction extends InfoGlueAbstractAction
 
 	private static final long serialVersionUID = 1L;
 		
+	public String getAboutHTML()
+	{
+		return CmsPropertyHandler.getAboutHTML(this.getLocale());
+	}
+
 	protected String doExecute() throws Exception
     {
 		return Action.SUCCESS;

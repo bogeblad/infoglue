@@ -263,6 +263,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 
 	    populate(ps, "internalSearchEngine");
 	    populate(ps, "allowOverrideModifyer");
+	    populate(ps, "skipVersionComment");
 
 	    populate(ps, "useSimpleComponentDialog");
 	    populate(ps, "hideAccessRightsIfNotAllowedToManage");
@@ -338,7 +339,10 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "allowCrossSiteSubmitToPublish");
 	    populate(ps, "usePasswordEncryption");
 	    populate(ps, "helpUrl");
+	    populate(ps, "infoButtonLabel");
+	    populate(ps, "switchInfoButtonLabelToThisHelpUrl");
 	    populateData(ps, "headerHTML");
+	    populateData(ps, "aboutHTML");
 	    
 	    populate(ps, "allowPublicationEventFilter");
 	    populate(ps, "defaultPublicationEventFilter");

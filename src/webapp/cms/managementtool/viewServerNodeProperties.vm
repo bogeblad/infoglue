@@ -345,6 +345,10 @@
 		
 			<div class="inlineTabDiv" id="cmsGUI">
 				#editPropertyFieldCSS("ServerNode.property.helpUrl" "helpUrl" "$this.getPropertyValue('helpUrl')" "51" "$!serverNodeId" "$!cmsPH.helpUrl")
+				#editPropertyFieldCSS("ServerNode.property.infoButtonLabel" "infoButtonLabel" "$this.getPropertyValue('infoButtonLabel')" "51" "$!serverNodeId" "$!cmsPH.infoButtonLabel")
+				#editPropertyFieldCSS("ServerNode.property.switchInfoButtonLabelToThisHelpUrl" "switchInfoButtonLabelToThisHelpUrl" "$this.getPropertyValue('switchInfoButtonLabelToThisHelpUrl')" "51" "$!serverNodeId" "$!cmsPH.switchInfoButtonLabelToThisHelpUrl")
+				#editPropertyTextAreaCSS("ServerNode.property.headerHTML" "headerHTML" "$this.getDataPropertyValue('headerHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.headerHTML")
+				#editPropertyTextAreaCSS("ServerNode.property.aboutHTML" "aboutHTML" "$this.getDataPropertyValue('aboutHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.aboutHTML")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.useSimpleComponentDialog" "useSimpleComponentDialog" "$this.getPropertyValue('useSimpleComponentDialog')" "$!cmsPH.useSimpleComponentDialog")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideAccessRightsIfNotAllowedToManage" "hideAccessRightsIfNotAllowedToManage" "$this.getPropertyValue('hideAccessRightsIfNotAllowedToManage')" "$!cmsPH.hideAccessRightsIfNotAllowedToManage")
@@ -352,6 +356,7 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.onlyAllowFolderType" "onlyAllowFolderType" "$this.getPropertyValue('onlyAllowFolderType')" "$!cmsPH.onlyAllowFolderType")
 				#editPropertyFieldCSS("ServerNode.property.allowedFolderContentTypeNames" "allowedFolderContentTypeNames" "$this.getPropertyValue('allowedFolderContentTypeNames')" "51" "$!serverNodeId" "$!cmsPH.allowedFolderContentTypeNames")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.skipResultDialogIfPossible" "skipResultDialogIfPossible" "$this.getPropertyValue('skipResultDialogIfPossible')" "$!cmsPH.skipResultDialogIfPossible")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.skipVersionComment" "skipVersionComment" "$this.getPropertyValue('skipVersionComment')" "$!cmsPH.skipVersionComment")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.allowOverrideModifyer" "allowOverrideModifyer" "$this.getPropertyValue('allowOverrideModifyer')" "$!cmsPH.allowOverrideModifyer")
 
 				#set($option1 = ["fckeditor2", "FCKEditor 2.x"])
@@ -380,8 +385,6 @@
 				#editPropertyFieldCSS("ServerNode.property.publishedStyleInformation" "publishedStyleInformation" "$this.getPropertyValue('publishedStyleInformation')" "51" "$!serverNodeId" "$!cmsPH.publishedStyleInformation")
 	
 				#editPropertyTextAreaCSS("ServerNode.property.toolLanguages" "toolLanguages" "$this.getDataPropertyValue('toolLanguages')" "50" "3" "normaltextarea" "$!serverNodeId" $!cmsPH.toolLanguages)
-	
-				#editPropertyTextAreaCSS("ServerNode.property.headerHTML" "headerHTML" "$this.getDataPropertyValue('headerHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.headerHTML")
 	
 				#set($customContentTypeIcons = $this.getDataPropertyValue("customContentTypeIcons"))
 				#set($customContentTypeIcons = $customContentTypeIcons.replaceAll("&amp;", "&amp;amp;"))

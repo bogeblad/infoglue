@@ -46,13 +46,13 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.managementtool.actions.deployment.DeploymentServerBean;
 import org.infoglue.cms.applications.managementtool.actions.deployment.VersionControlServerBean;
 import org.infoglue.cms.controllers.kernel.impl.simple.InstallationController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LabelController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ServerNodeController;
 import org.infoglue.cms.entities.management.ServerNodeVO;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.NullObject;
 import org.infoglue.deliver.util.Timer;
-import org.netbeans.lib.cvsclient.commandLine.command.log;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.PropertySetManager;
@@ -1702,7 +1702,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersion()
 	{
-	    return getServerNodeProperty("infoGlueVersion", true, "3.0.0.0 RC 2");
+	    return getServerNodeProperty("infoGlueVersion", true, "3.1.0.0 RC1");
 	}
 
 	public static String getInfoGlueDBVersion()
@@ -1712,7 +1712,7 @@ public class CmsPropertyHandler
 
 	public static String getInfoGlueVersionReleaseDate()
 	{
-	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2011-08-11");
+	    return getServerNodeProperty("infoGlueVersionReleaseDate", true, "2013-06-24");
 	}
 
 	public static String getLogDatabaseMessages()
@@ -1819,10 +1819,35 @@ public class CmsPropertyHandler
 	{
 	    return getServerNodeProperty("helpUrl", true);
 	}
+	
+	public static String getInfoButtonLabel(Locale locale)
+	{
+		if(getSwitchInfoButtonLabelToThisHelpUrl(locale) != null && !getSwitchInfoButtonLabelToThisHelpUrl(locale).equals(""))
+			return getServerNodeProperty("infoButtonLabel", false, LabelController.getController(locale).getString("tool.common.helpButton.label"));
+		else
+			return getServerNodeProperty("infoButtonLabel", true, LabelController.getController(locale).getString("header.link.versionInfo"));
+	}
 
+	public static String getSwitchInfoButtonLabelToThisHelpUrl(Locale locale)
+	{
+	    return getServerNodeProperty("switchInfoButtonLabelToThisHelpUrl", true, "");
+	}
+	
 	public static String getHeaderHTML()
 	{
 	    return getServerNodeDataProperty(null, "headerHTML", true, "");
+	}
+
+	public static String getAboutHTML(Locale locale)
+	{
+		String helpUrl = getHelpUrl();
+		String systemAdminEmail = getWarningEmailReceiver();
+		
+		String aboutHTML = "" + LabelController.getController(locale).getString("tool.common.about.html", helpUrl, systemAdminEmail);
+	    String html = getServerNodeDataProperty(null, "aboutHTML", true, aboutHTML);
+	    if(html == null || html.equals(""))
+	    	html = aboutHTML;
+	    return html;
 	}
 
 	public static String getProtectDeliverWorking()
@@ -1875,6 +1900,11 @@ public class CmsPropertyHandler
 	public static String getAllowPublicationEventFilter()
 	{
 	    return getServerNodeProperty("allowPublicationEventFilter", true, "false");
+	}
+
+	public static String getSkipVersionComment()
+	{
+	    return getServerNodeProperty("skipVersionComment", true, "false");
 	}
 
 	public static String getDefaultPublicationEventFilter()

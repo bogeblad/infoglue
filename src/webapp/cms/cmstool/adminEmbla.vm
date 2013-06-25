@@ -120,11 +120,15 @@
 			//alert("" + activeToolName + "=" + toolName + "," + url + ":" + workAreaUrl);
 			if(activeToolName == toolName && workAreaUrl == "")
 				return false;
-
+			
 			if(activeToolName != toolName)
 			{
-				document.title = "" + toolName;
-	
+				jQuery.get("ViewCommonAjaxServices!repositoryName.action?toolName=" + toolName, function(data) {
+					//alert("Current located in " + data);
+					document.title = "" + toolName + " - " + data;
+				});
+				//document.title = "" + toolName;
+				
 				$("#" + toolName + "Tab").removeClass("middleTabPart").addClass("middleTabPartSelected");
 				$("#" + toolName + "Tab .leftTabPart").removeClass("leftTabPart").addClass("leftTabPartSelected");
 				$("#" + toolName + "Tab .rightTabPart").removeClass("rightTabPart").addClass("rightTabPartSelected");

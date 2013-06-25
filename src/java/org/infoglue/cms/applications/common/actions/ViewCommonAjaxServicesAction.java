@@ -98,6 +98,33 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		return NONE;
     }
 
+	public String doRepositoryName() throws Exception
+    {
+		String repositoryName = null;
+		Integer repositoryId = null;
+		if(getRequest().getParameter("repositoryId") != null && getRequest().getParameter("repositoryId").equals(""))
+			repositoryId = new Integer(getRequest().getParameter("repositoryId"));
+		if(repositoryId == null)
+		{
+			String toolName = getRequest().getParameter("toolName");
+			if(toolName.equals("ContentTool"))
+			{
+				repositoryId = getContentRepositoryId();
+			}
+			else if(toolName.equals("StructureTool"))
+			{
+				repositoryId = getStructureRepositoryId();
+			}
+		}
+
+		repositoryName = RepositoryController.getController().getRepositoryVOWithId(new Integer(repositoryId)).getName();
+		
+		this.getResponse().setContentType("text/plain");
+		this.getResponse().getWriter().print("" + repositoryName);
+		
+		return NONE;
+    }
+
 	public String doReferenceCount() throws Exception
     {
 		List<Integer> uniqueList = new ArrayList<Integer>();

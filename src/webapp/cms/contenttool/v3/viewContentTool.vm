@@ -55,10 +55,11 @@
 
 		function isContentVersionFormDirty()
 		{
-			if($("#workIframe").get(0).contentWindow.isFormDirty)
-				return $("#workIframe").get(0).contentWindow.isFormDirty();
-			eler 
-				return false;
+			var result = false;
+			if(typeof($("#workIframe").get(0).contentWindow.isFormDirty) != 'undefined')
+				result = $("#workIframe").get(0).contentWindow.isFormDirty();
+			
+			return result;
 		}
 	
 		function syncWithTree(path, repositoryId)
@@ -171,6 +172,7 @@
 
 		function changeRepository(selectBox)
 		{
+			window.parent.document.title = "ContentTool - " + $("#" + selectBox.id + " option:selected").text();
 			document.location.href = "ViewContentTool!V3.action?repositoryId=" + selectBox.value;
 		}	
 		

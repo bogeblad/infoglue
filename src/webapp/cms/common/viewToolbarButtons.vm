@@ -16,8 +16,8 @@
 				#if($button.useConfirmation())
 					//Event listener for delete option
                 	$("#button$parentCount").click(function () {
-                		if(isContentVersionFormDirty)
-						{
+                		if(typeof(isContentVersionFormDirty) != 'undefined')
+                		{
 						 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
 					 			return;
 		    			}
@@ -63,7 +63,7 @@
                 	});
 				#else
     				$("#button$parentCount").click(function(){
-						if(isContentVersionFormDirty)
+    					if(typeof(isContentVersionFormDirty) != 'undefined')
 						{
 						 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
 					 			return;
@@ -128,7 +128,7 @@
 	    				//Event listener for delete option
 						$("#button$parentCount").click(function () {
 							
-	                		if(isContentVersionFormDirty)
+	                		if(typeof(isContentVersionFormDirty) != 'undefined')
 							{
 							 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
 						 			return;
@@ -176,7 +176,7 @@
 					#else
 	    				$("#button$parentCount").click(function(){
 	    					
-	   	            		if(isContentVersionFormDirty)
+	   	            		if(typeof(isContentVersionFormDirty) != 'undefined')
 							{
 							 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
 						 			return;
@@ -204,7 +204,7 @@
 						#if($subButton.useConfirmation())
 							$("#subButton${parentCount}_$velocityCount").click(function () {
 								
-		                		if(isContentVersionFormDirty)
+		                		if(typeof(isContentVersionFormDirty) != 'undefined')
 								{
 								 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
 							 			return;
@@ -252,7 +252,7 @@
 						#else
 							$("#subButton${parentCount}_$velocityCount").click(function(){
 								
-				        		if(isContentVersionFormDirty)
+				        		if(typeof(isContentVersionFormDirty) != 'undefined')
 								{
 								 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
 							 			return;

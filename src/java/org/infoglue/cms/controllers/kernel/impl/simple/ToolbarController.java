@@ -826,19 +826,14 @@ public class ToolbarController implements ToolbarProvider
 		
 		String contentPath = getContentIDPath(contentVO);
 
+		/*
 		ToolbarButton syncTreeButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeTitle"),
 				  "javascript:syncWithTree('" + contentPath + "', " + contentVO.getRepositoryId() + ", 'contentTreeIframe');",
 				  "",
 				  "syncTree");
-
-		ToolbarButton runTaskButton = new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskLabel"), 
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskTitle"),
-				  "ViewExecuteTask.action?contentId=" + contentId + "",
-				  "",
-				  "runTask");
+		*/
 
 		ToolbarButton changeContentTypeButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeContentTypeDefinitionLabel"), 
@@ -846,6 +841,13 @@ public class ToolbarController implements ToolbarProvider
 				  "UpdateContent!inputContentType.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId(),
 				  "",
 				  "changeContentType");
+
+		ToolbarButton runTaskButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskTitle"),
+				  "ViewExecuteTask.action?contentId=" + contentId + "",
+				  "",
+				  "runTask");
 
 		ToolbarButton exportContentButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.exportContentLabel"), 
@@ -868,14 +870,13 @@ public class ToolbarController implements ToolbarProvider
 				  "",
 				  "createContentsFromUpload");
 
-		syncTreeButton.getSubButtons().add(runTaskButton);
+		changeContentTypeButton.getSubButtons().add(runTaskButton);
 		if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarAdvancedButtons", true))
 		{
-			syncTreeButton.getSubButtons().add(changeContentTypeButton);
-			syncTreeButton.getSubButtons().add(exportContentButton);
-			syncTreeButton.getSubButtons().add(importContentButton);
-			syncTreeButton.getSubButtons().add(createContentsFromUploadButton);
-			buttons.add(syncTreeButton);
+			changeContentTypeButton.getSubButtons().add(exportContentButton);
+			changeContentTypeButton.getSubButtons().add(importContentButton);
+			changeContentTypeButton.getSubButtons().add(createContentsFromUploadButton);
+			buttons.add(changeContentTypeButton);
 		}
 		
 		return buttons;
@@ -1204,14 +1205,22 @@ public class ToolbarController implements ToolbarProvider
 		 */
 
 		String contentPath = getContentIDPath(contentVO);
-
+		/*
 		ToolbarButton syncTreeButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.showContentInTreeTitle"),
 				  "javascript:syncWithTree('" + contentPath + "', " + contentVO.getRepositoryId() + ", 'contentTreeIframe');",
 				  "",
 				  "syncTree");
-
+		*/
+		
+		ToolbarButton changeContentTypeButton = new ToolbarButton("",
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeContentTypeDefinitionLabel"), 
+				  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeContentTypeDefinitionTitle"),
+				  "UpdateContent!inputContentType.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId(),
+				  "",
+				  "changeContentType");
+		
 		ToolbarButton runTaskButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.runTaskTitle"),
@@ -1219,7 +1228,7 @@ public class ToolbarController implements ToolbarProvider
 				  "",
 				  "runTask");
 
-		syncTreeButton.getSubButtons().add(runTaskButton);
+		changeContentTypeButton.getSubButtons().add(runTaskButton);
 
 		if(contentVersionId != null)
 		{
@@ -1229,7 +1238,7 @@ public class ToolbarController implements ToolbarProvider
 					  "ChangeVersionLanguage!inputV3.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId() + "&contentVersionId=" + contentVersionId + "&returnAddress=ViewInlineOperationMessages.action&originalAddress=refreshParent",
 					  "",
 					  "changeLanguage");
-			syncTreeButton.getSubButtons().add(changeLanguageButton);
+			changeContentTypeButton.getSubButtons().add(changeLanguageButton);
 			
 			ToolbarButton versionAsXMLButton = new ToolbarButton("",
 					  getLocalizedString(locale, "tool.contenttool.toolbarV3.showDataAsXMLLabel"), 
@@ -1237,28 +1246,20 @@ public class ToolbarController implements ToolbarProvider
 					  "ViewContentVersion!asXMLV3.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId() + "&contentVersionId=" + contentVersionId,
 					  "",
 					  "showDataAsXML");
-			syncTreeButton.getSubButtons().add(versionAsXMLButton);
+			changeContentTypeButton.getSubButtons().add(versionAsXMLButton);
 		}
 		
-		ToolbarButton changeContentTypeButton = new ToolbarButton("",
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeContentTypeDefinitionLabel"), 
-				  getLocalizedString(locale, "tool.contenttool.toolbarV3.changeContentTypeDefinitionTitle"),
-				  "UpdateContent!inputContentType.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId(),
-				  "",
-				  "changeContentType");
-		syncTreeButton.getSubButtons().add(changeContentTypeButton);
-
 		ToolbarButton exportContentButton = new ToolbarButton("",
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.exportContentLabel"), 
 				  getLocalizedString(locale, "tool.contenttool.toolbarV3.exportContentTitle"),
 				  "ExportContent!input.action?contentId=" + contentId + "&repositoryId=" + contentVO.getRepositoryId(),
 				  "",
 				  "exportContent");
-		syncTreeButton.getSubButtons().add(exportContentButton);
+		changeContentTypeButton.getSubButtons().add(exportContentButton);
 
 		if(hasAccessTo(principal, "ToolTabsAndButtons.ContentToolbarAdvancedButtons", true))
 		{
-			buttons.add(syncTreeButton);
+			buttons.add(changeContentTypeButton);
 		}
 		/*
 		buttons.add(new ToolbarButton("",

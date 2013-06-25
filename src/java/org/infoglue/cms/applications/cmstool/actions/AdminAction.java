@@ -25,7 +25,11 @@ package org.infoglue.cms.applications.cmstool.actions;
 
 import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
+
+import com.caucho.env.repository.Repository;
 
 /**
  * This class implements the action class for the base fram for the entire tool.
@@ -106,4 +110,26 @@ public class AdminAction extends InfoGlueAbstractAction
 		}
 		return null;
 	}
+	
+	public String getRepositoryName(String toolName) throws Exception
+    {
+		String repositoryName = "";
+		Integer repositoryId = getRepositoryId();
+		if(toolName.equals("ContentTool"))
+		{
+			repositoryId = getContentRepositoryId();
+		}
+		else if(toolName.equals("StructureTool"))
+		{
+			repositoryId = getStructureRepositoryId();
+		}
+		
+		RepositoryVO repositoryVO = RepositoryController.getController().getRepositoryVOWithId(repositoryId);
+		if(repositoryVO != null)
+		{
+			repositoryName = repositoryVO.getName();
+		}
+		
+		return repositoryName;
+    }
 }

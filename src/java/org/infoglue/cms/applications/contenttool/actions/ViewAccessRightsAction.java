@@ -25,6 +25,8 @@ package org.infoglue.cms.applications.contenttool.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +35,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
+import org.infoglue.cms.applications.contenttool.actions.databeans.AccessRightsUserRow;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
@@ -85,7 +88,7 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 	private List interceptionPointVOList = new ArrayList();
 	private List roleList = null;
 	private List groupList = null;
-	private Collection accessRightsUserRows = null;
+	private List<AccessRightsUserRow> accessRightsUserRows = null;
 	private Map<Integer,List<AccessRightGroupVO>> accessRightGroupsMap = new HashMap<Integer,List<AccessRightGroupVO>>();
 	private Map<String,Object> accessRightHasAccessMap = new HashMap<String,Object>();
 	private String extraAccessRightInfo = "";
@@ -150,13 +153,23 @@ public class ViewAccessRightsAction extends InfoGlueAbstractAction
 				}
 			}
 		}
-				
+
 		this.interceptionPointVOList = InterceptionPointController.getController().getInterceptionPointVOList(interceptionPointCategory);
 		this.roleList = RoleControllerProxy.getController().getAllRoles();
 		this.groupList = GroupControllerProxy.getController().getAllGroups();
-		
-		this.accessRightsUserRows = AccessRightController.getController().getAccessRightsUserRows(interceptionPointCategory, extraParameters);
-		
+
+		this.accessRightsUserRows = new ArrayList<AccessRightsUserRow>();
+		Collection<AccessRightsUserRow> localAccessRightsUserRows = AccessRightController.getController().getAccessRightsUserRows(interceptionPointCategory, extraParameters);
+		accessRightsUserRows.addAll(localAccessRightsUserRows);
+		Collections.sort(this.accessRightsUserRows, new Comparator<AccessRightsUserRow>()
+		{
+			@Override
+			public int compare(AccessRightsUserRow o1, AccessRightsUserRow o2)
+			{
+				return o1.getUserName().compareToIgnoreCase(o2.getUserName());
+			}
+		});
+
 		Database db = CastorDatabaseService.getDatabase();
         beginTransaction(db);
 

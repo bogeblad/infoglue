@@ -99,14 +99,14 @@
 						$(".save").hide();
 						$(".saveAndExit").hide();
 						$(".cancel").hide();
-						$(".close").show();
+						$("#footertoolbar div input.close").show();
 					}
 					else
 					{	
 						$(".save").show();
 						$(".saveAndExit").show();
 						$(".cancel").show();
-						$(".close").hide();
+						$("#footertoolbar div input.close").hide();
 					}
 				}
 			});

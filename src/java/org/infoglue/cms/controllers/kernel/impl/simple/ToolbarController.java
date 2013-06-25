@@ -1336,7 +1336,7 @@ public class ToolbarController implements ToolbarProvider
 				  					  "css/images/v3/publishIcon.gif"));
 		*/
 
-		String cancelJS = "document.location.reload(true);";
+		String cancelJS = "knownAction = true; document.location.reload(true);";
 		if(request.getRequestURI().indexOf("UpdateContentVersion") > -1)
 		{
 			contentIdParameter = request.getParameter("contentId");
@@ -1344,9 +1344,9 @@ public class ToolbarController implements ToolbarProvider
 			String repositoryIdParameter = request.getParameter("repositoryId");
 			String contentVersionIdParameter = request.getParameter("contentVersionId");
 
-			cancelJS = "document.location.href = 'ViewContent!V3.action?contentId=" + contentIdParameter + "&repositoryId=" + repositoryIdParameter + "';";
+			cancelJS = "knownAction = true; document.location.href = 'ViewContent!V3.action?contentId=" + contentIdParameter + "&repositoryId=" + repositoryIdParameter + "';";
 			if(languageIdParameter != null && !languageIdParameter.equals(""))
-				cancelJS = "document.location.href = 'ViewContentVersion!V3.action?contentId=" + contentIdParameter + "&languageId=" + languageIdParameter + "';";
+				cancelJS = "knownAction = true; document.location.href = 'ViewContentVersion!V3.action?contentId=" + contentIdParameter + "&languageId=" + languageIdParameter + "';";
 			if(contentVersionIdParameter != null && !contentVersionIdParameter.equals(""))
 				cancelJS = cancelJS.replaceFirst("';", "&contentVersionIdParameter=" + contentVersionIdParameter + "';");
 		}
@@ -3854,27 +3854,11 @@ public class ToolbarController implements ToolbarProvider
 	
 	private List<ToolbarButton> getHelpButton(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
 	{
-		String helpPageBaseUrl = "http://www.infoglue.org";
+		String sendToolbarKeyAsParameter = CmsPropertyHandler.getSendToolbarKeyAsParameter();
+		String helpPageUrl = CmsPropertyHandler.getHelpUrl() + "/" + toolbarKey;
+		if(sendToolbarKeyAsParameter != null && sendToolbarKeyAsParameter.equals("true"))
+			helpPageUrl = CmsPropertyHandler.getHelpUrl() + "?toolbarKey=" + toolbarKey;
 		
-		String helpPageUrl = "";
-
-		if(toolbarKey.equalsIgnoreCase("tool.contenttool.contentVersionHeader"))
-			helpPageUrl = "/help/tools/contenttool/contentVersion";
-
-		if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewRoleList.header"))
-			helpPageUrl = "/help/tools/managementtool/roles";
-		if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewRole.header"))
-			helpPageUrl = "/help/tools/managementtool/role";
-		if(toolbarKey.equalsIgnoreCase("tool.managementtool.createRole.header"))
-			helpPageUrl = "/help/tools/managementtool/create_role";
-
-		if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewGroupList.header"))
-			helpPageUrl = "/help/tools/managementtool/groups";
-		if(toolbarKey.equalsIgnoreCase("tool.managementtool.viewGroup.header"))
-			helpPageUrl = "/help/tools/managementtool/group";
-		if(toolbarKey.equalsIgnoreCase("tool.managementtool.createGroup.header"))
-			helpPageUrl = "/help/tools/managementtool/create_group";
-
 		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		buttons.add(new ToolbarButton("helpButton",
 									  getLocalizedString(locale, "tool.common.helpButton.label"), 

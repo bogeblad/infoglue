@@ -7,7 +7,9 @@
     <li><a id="moveDown" href="javascript:void(0);" class="moveDown">$ui.getString("tool.structuretool.toolbarV3.movePageDownLabel")</a></li>
     <li><a id="hidePage" href="javascript:void(0);" class="showHide">$ui.getString("tool.structuretool.toolbarV3.toggleHiddenLabel")</a></li>
     <li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.structuretool.toolbarV3.editPageMetaInfoLabel")</a></li>
+    #if($this.hasAccessTo("Common.ManageAccessRights", true, false, true))
     <li><a id="accessRights" href="javascript:void(0);" class="accessRights">$ui.getString("tool.common.accessRights.accessRightsButtonLabel")</a></li>
+    #end
     <li><a id="publish" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPageLabel")</a></li>
     #if($siteNodeVO.childCount > 0)
     <li><a id="publishTree" href="javascript:void(0);" class="publish">$ui.getString("tool.structuretool.toolbarV3.publishPagesLabel")</a></li>

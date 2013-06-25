@@ -345,10 +345,14 @@
 		
 			<div class="inlineTabDiv" id="cmsGUI">
 				#editPropertyFieldCSS("ServerNode.property.helpUrl" "helpUrl" "$this.getPropertyValue('helpUrl')" "51" "$!serverNodeId" "$!cmsPH.helpUrl")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.useSimpleComponentDialog" "useSimpleComponentDialog" "$this.getPropertyValue('useSimpleComponentDialog')" "$!cmsPH.useSimpleComponentDialog")
 				#editPropertyFieldCSS("ServerNode.property.infoButtonLabel" "infoButtonLabel" "$this.getPropertyValue('infoButtonLabel')" "51" "$!serverNodeId" "$!cmsPH.infoButtonLabel")
 				#editPropertyFieldCSS("ServerNode.property.switchInfoButtonLabelToThisHelpUrl" "switchInfoButtonLabelToThisHelpUrl" "$this.getPropertyValue('switchInfoButtonLabelToThisHelpUrl')" "51" "$!serverNodeId" "$!cmsPH.switchInfoButtonLabelToThisHelpUrl")
 				#editPropertyTextAreaCSS("ServerNode.property.headerHTML" "headerHTML" "$this.getDataPropertyValue('headerHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.headerHTML")
 				#editPropertyTextAreaCSS("ServerNode.property.aboutHTML" "aboutHTML" "$this.getDataPropertyValue('aboutHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.aboutHTML")
+
+				#editPropertyFieldCSS("ServerNode.property.errorTitle" "errorTitle" "$this.getPropertyValue('errorTitle')" "51" "$!serverNodeId" "$!cmsPH.errorTitle")
+				#editPropertyTextAreaCSS("ServerNode.property.errorHTML" "errorHTML" "$this.getDataPropertyValue('errorHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.errorHTML")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.useSimpleComponentDialog" "useSimpleComponentDialog" "$this.getPropertyValue('useSimpleComponentDialog')" "$!cmsPH.useSimpleComponentDialog")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideAccessRightsIfNotAllowedToManage" "hideAccessRightsIfNotAllowedToManage" "$this.getPropertyValue('hideAccessRightsIfNotAllowedToManage')" "$!cmsPH.hideAccessRightsIfNotAllowedToManage")

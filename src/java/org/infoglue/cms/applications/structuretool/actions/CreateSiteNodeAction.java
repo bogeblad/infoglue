@@ -364,7 +364,7 @@ public class CreateSiteNodeAction extends InfoGlueAbstractAction
     public String doInputV3() throws Exception
     {    	
     	AccessConstraintExceptionBuffer ceb = new AccessConstraintExceptionBuffer();
-		
+
 		Integer protectedSiteNodeVersionId = SiteNodeControllerProxy.getController().getProtectedSiteNodeVersionId(parentSiteNodeId);
 		if(protectedSiteNodeVersionId != null && !AccessRightController.getController().getIsPrincipalAuthorized(this.getInfoGluePrincipal(), "SiteNodeVersion.CreateSiteNode", protectedSiteNodeVersionId.toString()))
 			ceb.add(new AccessConstraintException("SiteNode.siteNodeId", "1002"));

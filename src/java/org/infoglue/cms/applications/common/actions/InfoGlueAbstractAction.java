@@ -823,6 +823,16 @@ public abstract class InfoGlueAbstractAction extends WebworkAbstractAction
 		return CmsPropertyHandler.getInfoGlueVersionReleaseDate();
 	}
 
+	public String getErrorTitle()
+	{
+		return CmsPropertyHandler.getErrorTitle(getLocale());
+	}
+
+	public String getErrorHTML()
+	{
+		return CmsPropertyHandler.getErrorHTML(getLocale());
+	}
+
 	public String getDatabaseEngine()
 	{
 		return CmsPropertyHandler.getDatabaseEngine();

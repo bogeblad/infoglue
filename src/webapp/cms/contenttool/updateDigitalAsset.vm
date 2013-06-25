@@ -221,6 +221,14 @@
 		window.onload = function() { refreshCaller(); };
 		#end
 	
+		if(parent.showTab)
+			parent.showTab(2);
+		
+		$(document).ready(function(){
+			alert($(".close").size());
+			$("#footertoolbar div input.close").hide();
+		});
+
 	-->
 	</script>
 	

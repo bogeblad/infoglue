@@ -8,9 +8,11 @@
     <li><a id="move" href="javascript:void(0);" class="moveContent">$ui.getString("tool.contenttool.toolbarV3.moveContentLabel")</a></li>
     <li><a id="properties" href="javascript:void(0);" class="properties">$ui.getString("tool.contenttool.toolbarV3.editContentMetaInfoLabel")</a></li>
     <li><a id="publish" href="javascript:void(0);" class="publish">$ui.getString("tool.contenttool.toolbarV3.publishContentLabel")</a></li>
+    #*
     #if($contentVO.isBranch)
     <li><a id="publishTree" href="javascript:void(0);" class="publish">$ui.getString("tool.contenttool.toolbarV3.publishContentsLabel")</a></li>
 	#end
+	*#
 </ul>
 #*
 <div id="deleteDialog" title="$ui.getString("tool.contenttool.toolbarV3.deleteContentLabel")" style="display: none">

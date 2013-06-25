@@ -52,6 +52,14 @@
 			if($("#workIframe").get(0).contentWindow.selectTab)
 				$("#workIframe").get(0).contentWindow.selectTab(tabIndex);
 		}
+
+		function isContentVersionFormDirty()
+		{
+			if($("#workIframe").get(0).contentWindow.isFormDirty)
+				return $("#workIframe").get(0).contentWindow.isFormDirty();
+			eler 
+				return false;
+		}
 	
 		function syncWithTree(path, repositoryId)
 		{

@@ -1820,6 +1820,11 @@ public class CmsPropertyHandler
 	    return getServerNodeProperty("helpUrl", true);
 	}
 	
+	public static String getSendToolbarKeyAsParameter()
+	{
+	    return getServerNodeProperty("sendToolbarKeyAsParameter", true, "false");
+	}
+	
 	public static String getInfoButtonLabel(Locale locale)
 	{
 		if(getSwitchInfoButtonLabelToThisHelpUrl(locale) != null && !getSwitchInfoButtonLabelToThisHelpUrl(locale).equals(""))
@@ -1847,6 +1852,26 @@ public class CmsPropertyHandler
 	    String html = getServerNodeDataProperty(null, "aboutHTML", true, aboutHTML);
 	    if(html == null || html.equals(""))
 	    	html = aboutHTML;
+	    return html;
+	}
+
+	public static String getErrorTitle(Locale locale)
+	{
+		String errorTitle = "" + LabelController.getController(locale).getString("tool.common.error.title");
+		System.out.println("errorTitle:" + errorTitle);
+	    String html = getServerNodeProperty("errorTitle", true, errorTitle);
+		System.out.println("html:" + html);
+	    if(html == null || html.equals(""))
+	    	html = errorTitle;
+	    return html;
+	}
+
+	public static String getErrorHTML(Locale locale)
+	{
+		String errorHtml = "" + LabelController.getController(locale).getString("tool.common.error.html");
+	    String html = getServerNodeDataProperty(null, "errorHTML", true, errorHtml);
+	    if(html == null || html.equals(""))
+	    	html = errorHtml;
 	    return html;
 	}
 

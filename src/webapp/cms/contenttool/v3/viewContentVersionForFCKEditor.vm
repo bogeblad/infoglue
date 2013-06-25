@@ -563,6 +563,7 @@
 				answer = confirm("You have not saved for " + pastedTime + " minutes. We strongly recommends you copy the text so you don't risk loosing it if you have been inactive for to long. Do you want to save anyway?");
 			}
 			
+			knownAction = true;
 			if (!beenWarned || answer)
 			{
 				isValid = true;
@@ -711,6 +712,20 @@
 			return value;
 		}
 
+		window.onbeforeunload = confirmExit;
+		var knownAction = false;
+		function confirmExit()
+		{	
+			if ((getDirty() || checkWYSIWYGDirty()) && !knownAction)
+				return "$ui.getString("tool.contenttool.formIsDirtyWarning")";
+			else
+				return;
+		}
+		
+		function isFormDirty()
+		{
+			return ((getDirty() || checkWYSIWYGDirty()) && !knownAction);
+		}
 	//]]>
 	 </script>
 	    					

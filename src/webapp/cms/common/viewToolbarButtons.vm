@@ -16,6 +16,12 @@
 				#if($button.useConfirmation())
 					//Event listener for delete option
                 	$("#button$parentCount").click(function () {
+                		if(isContentVersionFormDirty)
+						{
+						 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
+					 			return;
+		    			}
+		    			
 						$("#genericDialog").dialog("destroy");
                 		$("#genericDialog").attr("title", "$button.confirmationTitle");
                 		$("#genericDialog h3").html("$button.confirmationTitle");
@@ -57,7 +63,12 @@
                 	});
 				#else
     				$("#button$parentCount").click(function(){
-						//alert("Click on link: $button.actionURL");
+						if(isContentVersionFormDirty)
+						{
+						 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
+					 			return;
+		    			}
+		    			//alert("Click on link: $button.actionURL");
     	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
     		           		#if($button.target == "inlineDiv")
 	    		           		openInlineDiv("$button.actionURL", 700, 900, true, true, "");
@@ -116,6 +127,13 @@
 					#if($button.useConfirmation())
 	    				//Event listener for delete option
 						$("#button$parentCount").click(function () {
+							
+	                		if(isContentVersionFormDirty)
+							{
+							 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
+						 			return;
+			    			}
+							
 							$("#genericDialog").dialog("destroy");
 	                		$("#genericDialog").attr("title", "$button.confirmationTitle");
                 			$("#genericDialog h3").html("$button.confirmationTitle");
@@ -157,6 +175,13 @@
 	                	});
 					#else
 	    				$("#button$parentCount").click(function(){
+	    					
+	   	            		if(isContentVersionFormDirty)
+							{
+							 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
+						 			return;
+			    			}
+		    					
 							//alert("Click on link");
 	    	            	#if($button.actionURL.indexOf("javascript") == -1 && $button.isJavascript == false && $button.actionURL != '')
 	    		           		#if($button.target == "inlineDiv")
@@ -178,6 +203,13 @@
 					#foreach($subButton in $button.subButtons)
 						#if($subButton.useConfirmation())
 							$("#subButton${parentCount}_$velocityCount").click(function () {
+								
+		                		if(isContentVersionFormDirty)
+								{
+								 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
+							 			return;
+				    			}
+										
 								$("#genericDialog").dialog("destroy");
 		                		$("#genericDialog").attr("title", "$subButton.confirmationTitle");
                 				$("#genericDialog h3").html("$subButton.confirmationTitle");
@@ -219,6 +251,13 @@
 		                	});
 						#else
 							$("#subButton${parentCount}_$velocityCount").click(function(){
+								
+				        		if(isContentVersionFormDirty)
+								{
+								 	if(isContentVersionFormDirty() && !confirm("$ui.getString("tool.contenttool.formIsDirtyWarning")"))
+							 			return;
+				    			}
+										
 				            	#if($subButton.actionURL.indexOf("javascript") == -1 && $subButton.isJavascript == false && $subButton.actionURL != '')
 		    		           		#if($subButton.target == "inlineDiv")
 			    		           		openInlineDiv("$subButton.actionURL", 700, 900, true, true, "");

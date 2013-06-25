@@ -343,6 +343,9 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "switchInfoButtonLabelToThisHelpUrl");
 	    populateData(ps, "headerHTML");
 	    populateData(ps, "aboutHTML");
+	    populate(ps, "sendToolbarKeyAsParameter");
+	    populate(ps, "errorTitle");
+	    populateData(ps, "errorHTML");
 	    
 	    populate(ps, "allowPublicationEventFilter");
 	    populate(ps, "defaultPublicationEventFilter");

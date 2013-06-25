@@ -451,8 +451,21 @@ img.scaledbordered {
 
 .save { background:url(images/v3/saveInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .saveAndExit {background:url(images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
-.ok {background: url(images/v3/check.png) no-repeat 5px center !important;  background-position: 0px 3px;}
-.cancel {background:url(images/v3/cancelIcon.gif) no-repeat left center !important; background-position: 8px 5px !important;}
+.ok {
+	background-image: url(images/v3/check.png) !important; 
+	background-position: 5px center !important;  
+	background-repeat: no-repeat !important;
+	background-color: transparent !important; 
+}
+.cancel {
+	background-image:url(images/v3/cancelIcon.gif) !important;
+	background-position: 8px 5px !important;
+	background-repeat: no-repeat !important;
+	background-color: transparent !important; 
+}
+.cancel:hover, .ok:hover {
+	background-color: #d0e5f5 !important;
+}
 .close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
 .help {background:url(images/v3/helpIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .dropArrow {background:url(images/v3/dropArrowIcon.gif) no-repeat left center; background-position: 0px 2px;}

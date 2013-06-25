@@ -73,7 +73,7 @@
 		<div id="tabsContainer" class="flora">      
 			<ul>
 		        <li><a href="#basicTab"><span>$ui.getString("tool.common.basic.label")</span></a></li>
-		        #if($this.hasAccessTo("ToolTabsAndButtons.CreatePageAdvancedTab", true, false, true))
+		        #if($this.hasAccessTo("ToolTabsAndButtons.CreatePageAdvancedTab", true, false, false))
 		        <li><a href="#advancedTab"><span>$ui.getString("tool.common.advanced.label")</span></a></li>	        
 		    	#end
 		    </ul>

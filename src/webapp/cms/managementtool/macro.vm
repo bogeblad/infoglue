@@ -2130,11 +2130,11 @@ $ui.getString("entity.${fieldNameKey}.label")
 			#if($button.isJavascript == false)
          		#if($button.id != "")
 		        	$("#$button.id").click(function(){
-						callUrlWithAlternative('http://www.infoglue.org${button.actionURL}', '/infoglueDeliverWorking${button.actionURL}');
+						callUrlWithAlternative('${button.actionURL}', '${button.actionURL.replaceAll("http://www.infoglue.org","")}');
 		        	});
         		#else
 					$("#$button.id").click(function(){
-						callUrlWithAlternative('http://www.infoglue.org${button.actionURL}', '/infoglueDeliverWorking${button.actionURL}');
+						callUrlWithAlternative('${button.actionURL}', '${button.actionURL.replaceAll("http://www.infoglue.org","")}');
 					});
         		#end
         	#else

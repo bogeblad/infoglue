@@ -871,18 +871,18 @@ public class AccessRightController extends BaseController
 		return accessRightUserList;		
 	}
 
-	public List getAccessRightListForEntity(Integer interceptionPointId, String parameters, Database db)  throws SystemException, Bug
+	public List<AccessRight> getAccessRightListForEntity(Integer interceptionPointId, String parameters, Database db)  throws SystemException, Bug
 	{
-		List accessRightList = new ArrayList();
-		
+		List<AccessRight> accessRightList = new ArrayList<AccessRight>();
+
 		try
 		{
 		    //logger.info("getAccessRightListForEntity(Integer interceptionPointId, String parameters, Database db)");
 		    //logger.info("interceptionPointId:" + interceptionPointId);
 		    //logger.info("parameters:" + parameters);
-			
+
 			OQLQuery oql = null;
-			
+
 			if(parameters == null || parameters.length() == 0)
 			{
 				oql = db.getOQLQuery("SELECT f FROM org.infoglue.cms.entities.management.impl.simple.AccessRightImpl f WHERE f.interceptionPoint = $1 AND (is_undefined(f.parameters) OR f.parameters = $2) ORDER BY f.accessRightId");
@@ -895,9 +895,9 @@ public class AccessRightController extends BaseController
 				oql.bind(interceptionPointId);
 				oql.bind(parameters);
 			}
-						
+
 			QueryResults results = oql.execute();
-			this.logger.info("Fetching entity in read/write mode");
+			logger.info("Fetching entity in read/write mode");
 
 			while (results.hasMore()) 
 			{
@@ -905,18 +905,18 @@ public class AccessRightController extends BaseController
 				//logger.info("accessRight:" + accessRight.getAccessRightId());
 				accessRightList.add(accessRight);
 			}
-			
+
 			results.close();
 			oql.close();
 		}
 		catch(Exception e)
 		{
-			throw new SystemException("An error occurred when we tried to fetch a list of Function. Reason:" + e.getMessage(), e);    
+			throw new SystemException("An error occurred when we tried to fetch a list of Function. Reason:" + e.getMessage(), e);
 		}
-		
-		return accessRightList;		
+
+		return accessRightList;
 	}
-	
+
 	public List<AccessRight> getAccessRightListForEntity(List<InterceptionPoint> interceptionPointVOList, String parameters, Database db, boolean readOnly)  throws SystemException, Bug
 	{
 		List accessRightList = new ArrayList();
@@ -1341,17 +1341,16 @@ public class AccessRightController extends BaseController
 	 * @throws ConstraintException
 	 * @throws SystemException
 	 */
-	
 	public void addUser(String interceptionPointCategory, String parameters, String userName, Integer index, HttpServletRequest request) throws ConstraintException, SystemException
 	{
 		Database db = CastorDatabaseService.getDatabase();
-		
+
 		logger.info("parameters:" + parameters);
-		
-		try 
+
+		try
 		{
 			beginTransaction(db);
-			
+
 			try
 			{
 			    InfoGluePrincipal infoGluePrincipal = UserControllerProxy.getController(db).getUser(userName);
@@ -1362,19 +1361,20 @@ public class AccessRightController extends BaseController
 			{
 		        throw new SystemException("The user named " + userName + " does not exist in the system.");
 			}
-			
+
 		    List accessRightsUsers = getAccessRightsUsers(interceptionPointCategory, parameters, userName, db);
 		    Iterator accessRightsUsersIterator = accessRightsUsers.iterator();
 		    while(accessRightsUsersIterator.hasNext())
 		    {
 		        AccessRightUser accessRightUser = (AccessRightUser)accessRightsUsersIterator.next();
 
-		        db.remove(accessRightUser.getAccessRight());
+		        AccessRight ar = getAccessRightWithId(accessRightUser.getAccessRight().getAccessRightId(), db);
 
+		        ar.getUsers().remove(accessRightUser);
 		        accessRightsUsersIterator.remove();
 		        db.remove(accessRightUser);
 		    }
-		    
+
 			int interceptionPointIndex = 0;
 			String interceptionPointIdString = request.getParameter((index != null ? index + "_" : "") + interceptionPointIndex + "_InterceptionPointId");
 			logger.info("interceptionPointIdString:" + interceptionPointIdString);
@@ -1382,12 +1382,12 @@ public class AccessRightController extends BaseController
 			{
 			    String hasAccess = request.getParameter((index != null ? index + "_" : "") + interceptionPointIdString + "_hasAccess");
 			    logger.info("interceptionPointIdString:" + interceptionPointIdString);
-				
+
 			    AccessRight accessRight = null;
-			     
+
+			    List<AccessRight> accessRights = getAccessRightListForEntity(new Integer(interceptionPointIdString), parameters, db);
 				if(hasAccess != null)
 				{
-					List accessRights = getAccessRightListForEntity(new Integer(interceptionPointIdString), parameters, db);
 				    if(accessRights == null || accessRights.size() == 0)
 				    {
 						AccessRightVO accessRightVO = new AccessRightVO();
@@ -1400,7 +1400,7 @@ public class AccessRightController extends BaseController
 				    {
 				        accessRight = (AccessRight)accessRights.get(0);
 				    }
-				    
+
 					if(userName != null && accessRight != null)
 					{
 					    AccessRightUserVO accessRightUserVO = new AccessRightUserVO();
@@ -1409,20 +1409,44 @@ public class AccessRightController extends BaseController
 					    accessRight.getUsers().add(accessRightUser);
 					}
 				}
-				
+
+				// If we do not have an access right reference here we try to get one so that we can do some cleaning
+				if (accessRight == null)
+				{
+					if (accessRights.size() < 1)
+					{
+						logger.info("We have no access right and there is none in the list. IP: " + interceptionPointIdString + ". Parameters: " + parameters);
+					}
+					else
+					{
+						accessRight = (AccessRight)accessRights.get(0);
+					}
+				}
+				if (accessRight != null)
+				{
+					logger.debug("Check if we should remove access right: " + accessRight.getAccessRightId() + ". IP.name: " + accessRight.getInterceptionPointName());
+					if (   (accessRight.getRoles() == null || accessRight.getRoles().size() == 0)
+						&& (accessRight.getGroups() == null || accessRight.getGroups().size() == 0)
+						&& (accessRight.getUsers() == null || accessRight.getUsers().size() == 0))
+					{
+						logger.info("Cleaning access right since it is not used anymore. AccessRight.id: " + accessRight.getAccessRightId());
+						db.remove(accessRight);
+					}
+				}
+
 				interceptionPointIndex++;
 				interceptionPointIdString = request.getParameter((index != null ? index + "_" : "") + interceptionPointIndex + "_InterceptionPointId");
 			}
-			
+
 			if(interceptionPointCategory.equalsIgnoreCase("Content"))
-			{	
+			{
 				Integer contentId = new Integer(parameters);
 				Content content = ContentControllerProxy.getController().getContentWithId(contentId, db);
 				if(!content.getIsProtected().equals(ContentVO.YES))
 					content.setIsProtected(ContentVO.YES);
 			}
 			else if(interceptionPointCategory.equalsIgnoreCase("SiteNodeVersion"))
-			{	
+			{
 				Integer siteNodeVersionId = new Integer(parameters);
 				SiteNodeVersion siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionWithId(siteNodeVersionId, db);
 				if(!siteNodeVersion.getIsProtected().equals(SiteNodeVersionVO.YES))
@@ -1430,8 +1454,8 @@ public class AccessRightController extends BaseController
 			}
 
 		    commitTransaction(db);
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			logger.info("An error occurred so we should not complete the transaction:" + e);
 			rollbackTransaction(db);
@@ -1602,7 +1626,7 @@ public class AccessRightController extends BaseController
 				List accessRightsRoles = getAccessRightsRoles(interceptionPointCategory, parameters, db, true);
 				List accessRightsGroups = getAccessRightsGroups(interceptionPointCategory, parameters, db, true);
 				logger.info("accessRightsRoles:" + accessRightsRoles.size());
-				if(accessRightsRoles == null || accessRightsRoles.size() == 0 && accessRightsGroups == null || accessRightsGroups.size() == 0)
+				if((accessRightsRoles == null || accessRightsRoles.size() == 0) && (accessRightsGroups == null || accessRightsGroups.size() == 0))
 				{
 					if(interceptionPointCategory.equalsIgnoreCase("Content"))
 					{	
@@ -2949,34 +2973,34 @@ public class AccessRightController extends BaseController
 		return isPrincipalAuthorized;
 	}
 
-	public Collection getAccessRightsUserRows(String interceptionPointCategory, String parameters) throws SystemException, Bug
+	public Collection<AccessRightsUserRow> getAccessRightsUserRows(String interceptionPointCategory, String parameters) throws SystemException, Bug
 	{
-		Collection principalVOList = null;
-		
+		Collection<AccessRightsUserRow> principalVOList = null;
+
 		Database db = CastorDatabaseService.getDatabase();
 
 		try 
 		{
 			beginTransaction(db);
-			
+
 			principalVOList = getAccessRightsUserRows(interceptionPointCategory, parameters, db);
 
 			commitTransaction(db);
 		} 
-		catch (Exception e) 
+		catch (Exception e)
 		{
 			logger.warn("An error occurred so we should not complete the transaction:" + e, e);
 			rollbackTransaction(db);
 			throw new SystemException(e.getMessage());
 		}
-		
-		return principalVOList;	
+
+		return principalVOList;
 	}
 
-	public Collection getAccessRightsUserRows(String interceptionPointCategory, String parameters, Database db) throws SystemException, Bug
+	public Collection<AccessRightsUserRow> getAccessRightsUserRows(String interceptionPointCategory, String parameters, Database db) throws SystemException, Bug
 	{
-	    Map accessRightsUserRows = new HashMap();
-		
+	    Map<String, AccessRightsUserRow> accessRightsUserRows = new HashMap<String, AccessRightsUserRow>();
+
 		try
 		{
 		    List accessRightUsers = getAccessRightsUsers(interceptionPointCategory, parameters, db, true);
@@ -2987,7 +3011,7 @@ public class AccessRightController extends BaseController
 			    try
 			    {
 					AccessRightUser accessRightUser = (AccessRightUser)accessRightUsersIterator.next();
-					
+
 					AccessRightsUserRow accessRightsUserRow = (AccessRightsUserRow)accessRightsUserRows.get(accessRightUser.getUserName());
 					if(accessRightsUserRow == null)
 					{
@@ -3002,7 +3026,7 @@ public class AccessRightController extends BaseController
 					}
 					else
 					{
-					    accessRightsUserRow.getAccessRights().put(accessRightUser.getAccessRight().getInterceptionPoint().getId(), new Boolean(true));				    
+					    accessRightsUserRow.getAccessRights().put(accessRightUser.getAccessRight().getInterceptionPoint().getId(), new Boolean(true));
 					}
 			    }
 			    catch(Exception e)
@@ -3013,10 +3037,10 @@ public class AccessRightController extends BaseController
 		}
 		catch(Exception e)
 		{
-			throw new SystemException("An error occurred when we tried to fetch a list of Access rights. Reason:" + e.getMessage(), e);    
+			throw new SystemException("An error occurred when we tried to fetch a list of Access rights. Reason:" + e.getMessage(), e);
 		}
-		
-		return accessRightsUserRows.values();		
+
+		return accessRightsUserRows.values();
 	}
 
 	public List getAccessRightsUsers(String interceptionPointCategory, String parameters, Database db, boolean readOnly) throws SystemException, Bug

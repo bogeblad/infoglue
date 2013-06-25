@@ -317,6 +317,14 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
 		}
 
+		this.url = this.url.replaceAll("&anchor=[0-9]{1,2}", "");
+		this.url = this.url + "&anchor=" + getAnchor();
+
+		if(this.closeOnLoad)
+		{
+			this.url = this.url.replaceAll("&KeepThis=true","&closeOnLoad=true&KeepThis=true");
+		}
+
 		if(this.returnAddress.indexOf("http") == 0)
 		{
 			getResponse().sendRedirect(url);
@@ -408,24 +416,24 @@ public class UpdateAccessRightsAction extends InfoGlueAbstractAction
 	}
 
 	public String doDeleteUserV3() throws Exception
-    {   
-		doDeleteUser();
-		
-		this.url = getResponse().encodeRedirectURL(this.returnAddress);
-		if(newParameters != null)
-		{
-			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
-			if(this.url.indexOf("ViewAccessRights") > -1)
-				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
-		}
-
-		if(this.returnAddress.indexOf("http") == 0)
-		{
-			getResponse().sendRedirect(url);
-			return Action.NONE;
-		}
-		else
-			return "success";
+    {
+		return doDeleteUser();
+//
+//		this.url = getResponse().encodeRedirectURL(this.returnAddress);
+//		if(newParameters != null)
+//		{
+//			this.url = this.url.replaceAll(this.oldParameters, this.newParameters);
+//			if(this.url.indexOf("ViewAccessRights") > -1)
+//				this.url = this.url + (!this.url.endsWith("&") ? "&stateChanged=true" : "stateChanged=true");
+//		}
+//
+//		if(this.returnAddress.indexOf("http") == 0)
+//		{
+//			getResponse().sendRedirect(url);
+//			return NONE;
+//		}
+//		else
+//			return "success";
     }
 	
 	public String doSaveAndExit() throws Exception

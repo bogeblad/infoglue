@@ -79,6 +79,8 @@ import org.infoglue.cms.util.graphics.ThumbnailGenerator;
 import org.infoglue.deliver.controllers.kernel.impl.simple.LanguageDeliveryController;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.HttpHelper;
+import org.infoglue.deliver.util.RequestAnalyser;
+import org.infoglue.deliver.util.Timer;
 
 /**
  * @author Mattias Bogeblad
@@ -850,22 +852,23 @@ public class DigitalAssetController extends BaseController
 	/**
 	 * This method should return a list of those digital assets the contentVersion has.
 	 */
-	   	
-	public static List getDigitalAssetVOList(Integer contentVersionId, Database db) throws Exception
-    {
+
+	public static List<DigitalAssetVO> getDigitalAssetVOList(Integer contentVersionId, Database db) throws Exception
+	{
 		String key = "all_" + contentVersionId;
 		String cacheName = "digitalAssetCache";
-		List digitalAssetVOList = (List)CacheController.getCachedObject(cacheName, key);
+		@SuppressWarnings("unchecked")
+		List<DigitalAssetVO> digitalAssetVOList = (List<DigitalAssetVO>)CacheController.getCachedObject(cacheName, key);
 		if(digitalAssetVOList != null)
 		{
 			if(logger.isInfoEnabled())
 				logger.info("There was an cached digitalAssetVOList:" + digitalAssetVOList);
-			
+
 			return digitalAssetVOList;
 		}
 
-		digitalAssetVOList = new ArrayList();
-    	
+		digitalAssetVOList = new ArrayList<DigitalAssetVO>();
+
 		if(logger.isInfoEnabled())
 			logger.info("Making a sql call for assets on " + contentVersionId);
 
@@ -874,23 +877,23 @@ public class DigitalAssetController extends BaseController
     		oql = db.getOQLQuery("CALL SQL SELECT c.DigAssetId, c.assetFileName, c.assetKey, c.assetFilePath, c.assetContentType, c.assetFileSize FROM cmDigAsset c, cmContVerDigAsset cvda where cvda.DigAssetId = c.DigAssetId AND cvda.ContVerId = $1 ORDER BY c.DigAssetId AS org.infoglue.cms.entities.content.impl.simple.SmallDigitalAssetImpl");
 
     	oql.bind(contentVersionId);
-    	
+
     	QueryResults results = oql.execute(Database.ReadOnly);
-		
+
 		while(results.hasMore()) 
         {
         	SmallDigitalAssetImpl digitalAsset = (SmallDigitalAssetImpl)results.next();
         	digitalAssetVOList.add(digitalAsset.getValueObject());
         }
-		
+
 		results.close();
 		oql.close();
-    	
+
 		if(digitalAssetVOList != null)
 			CacheController.cacheObject(cacheName, key, digitalAssetVOList);
-		
+
 		return digitalAssetVOList;
-    }
+	}
 
 
 	/**
@@ -1759,8 +1762,7 @@ public class DigitalAssetController extends BaseController
 				String toEncoding = CmsPropertyHandler.getAssetKeyToEncoding();
 				if(toEncoding == null)
 					toEncoding = "utf-8";
-				
-				String[] controlChars = new String[]{"å","ä","ö","Å","Ä","Ö","Â","‰","ˆ","≈","ƒ","÷"};
+				String[] controlChars = new String[]{"\u0153", "\u0160", "\u0161", "", "\u20AC", "\u2026", "\u00E5", "\u00E4", "\u00F6", "\u00C5", "\u00C4", "\u00D6"};
 				boolean convert = true;
 				for(String charToTest : controlChars)
 				{
@@ -2319,23 +2321,32 @@ public class DigitalAssetController extends BaseController
 
 		return numberOfUnusedAssetsCount;
 	}
+
+	public static boolean dumpDigitalAsset(DigitalAssetVO digitalAssetVO, String fileName, String filePath, Database db) throws Exception
+	{
+		return dumpDigitalAsset(digitalAssetVO, fileName, filePath, false, db);
+	}
 	
 	/**
 	 * This method checks if the given file exists on disk. If it does it's ignored because
 	 * that means that the file is allready cached on the server. If not we take out the stream from the 
 	 * digitalAsset-object and dumps it.
 	 */
-	public static boolean dumpDigitalAsset(DigitalAssetVO digitalAssetVO, String fileName, String filePath, Database db) throws Exception
+	public static boolean dumpDigitalAsset(DigitalAssetVO digitalAssetVO, String fileName, String filePath, boolean forceDump, Database db) throws Exception
 	{
 		logger.info("fileName:" + fileName);
 		File outputFile = new File(filePath + File.separator + fileName);
 		File tmpOutputFile = new File(filePath + File.separator + "tmp_" + Thread.currentThread().getId() + "_" + fileName);
-		if(outputFile.exists())
+		if(!forceDump && outputFile.exists())
 		{
 			if(logger.isInfoEnabled())
 				logger.info("The file allready exists so we don't need to dump it again..");
-			
+
 			return true;
+		}
+		if (logger.isDebugEnabled() && forceDump && outputFile.exists())
+		{
+			logger.debug("The file already exists but the dump is forced so we need to dump it again..");
 		}
 
 		try
@@ -2369,7 +2380,7 @@ public class DigitalAssetController extends BaseController
 					bos.close();
 	
 					logger.info("\n\nExists" + tmpOutputFile.getAbsolutePath() + "=" + tmpOutputFile.exists() + " OR " + outputFile.exists() + ":" + outputFile.length());
-					if(tmpOutputFile.length() == 0 || tmpOutputFile.length() != digitalAsset.getAssetFileSize() || outputFile.exists())
+					if(tmpOutputFile.length() == 0 || tmpOutputFile.length() != digitalAsset.getAssetFileSize() || (!forceDump && outputFile.exists()) )
 					{
 						logger.info("outputFile:" + outputFile.getAbsolutePath());	
 						logger.info("written file:" + tmpOutputFile.length() + " - removing temp and not renaming it...");	
@@ -2379,7 +2390,11 @@ public class DigitalAssetController extends BaseController
 					{
 						if(tmpOutputFile.length() == digitalAsset.getAssetFileSize())
 						{
-							logger.info("written file:" + tmpOutputFile.getAbsolutePath() + " - renaming it to " + outputFile.getAbsolutePath());	
+							logger.info("written file:" + tmpOutputFile.getAbsolutePath() + " - renaming it to " + outputFile.getAbsolutePath());
+							if (forceDump)
+							{
+								outputFile.delete();
+							}
 							tmpOutputFile.renameTo(outputFile);
 							logger.info("Renamed to" + outputFile.getAbsolutePath() + "=" + outputFile.exists());
 						}
@@ -2752,6 +2767,87 @@ public class DigitalAssetController extends BaseController
     	out.close();    	
   	}
 
+	/**
+	 * Get the folder as a file for the given <em>digitalAssetVO</em>. Returns null if the file does not exist or is not
+	 * a folder.
+	 */
+	public File getAssetFolderFile(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
+	{
+		String folderName = "" + (digitalAssetVO.getDigitalAssetId().intValue() / 1000);
+
+		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		{
+			if(contentId == null || languageId == null)
+			{
+				DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
+				if(asset.getContentVersions() != null && asset.getContentVersions().size() > 0)
+				{
+					ContentVersion cv = (ContentVersion)asset.getContentVersions().iterator().next();
+					contentId = cv.getValueObject().getContentId();
+					languageId = cv.getValueObject().getLanguageId();
+				}
+			}
+			folderName = "" + (contentId / 1000);
+		}
+
+		String folderPath = CmsPropertyHandler.getDigitalAssetPath() + File.separator + folderName;
+		File assetFolderFile = new File(folderPath);
+
+		if (!assetFolderFile.isDirectory())
+		{
+			logger.info("Asset folder is not right. Exists:" + assetFolderFile.exists() + " . Is directory: " + assetFolderFile.isDirectory());
+			assetFolderFile = null;
+		}
+
+		return assetFolderFile;
+	}
+
+	public String getAssetFileName(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
+	{
+		VisualFormatter formatter = new VisualFormatter();
+		String fileName = digitalAssetVO.getDigitalAssetId() + "_" + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetFileName(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter());
+
+		if(CmsPropertyHandler.getAssetFileNameForm().equals("contentId_languageId_assetKey"))
+		{
+			if(contentId == null || languageId == null)
+			{
+				DigitalAsset asset = DigitalAssetController.getMediumDigitalAssetWithIdReadOnly(digitalAssetVO.getId(), db);
+				if(asset.getContentVersions() != null && asset.getContentVersions().size() > 0)
+				{
+					ContentVersion cv = (ContentVersion)asset.getContentVersions().iterator().next();
+					contentId = cv.getValueObject().getContentId();
+					languageId = cv.getValueObject().getLanguageId();
+				}
+			}
+
+			String assetFileName = digitalAssetVO.getAssetFileName();
+			String suffix = "";
+			int endingStartIndex = assetFileName.lastIndexOf(".");
+			if(endingStartIndex > -1)
+				suffix = assetFileName.substring(endingStartIndex);
+
+			fileName = "" + contentId + "_" + languageId + formatter.replaceNiceURINonAsciiWithSpecifiedChars(digitalAssetVO.getAssetKey(), CmsPropertyHandler.getNiceURIDefaultReplacementCharacter()) + suffix;
+		}
+
+		return fileName;
+	}
+
+	public File getAssetFile(DigitalAssetVO digitalAssetVO, Integer contentId, Integer languageId, Database db) throws Exception
+	{
+		File assetFolder = getAssetFolderFile(digitalAssetVO, contentId, languageId, db);
+		String assetFilename = getAssetFileName(digitalAssetVO, contentId, languageId, db);
+		File assetFile = new File(assetFolder, assetFilename);
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("Getting file: " + assetFile.getAbsolutePath() + ". Based on DA: " + digitalAssetVO + ". ContentId: " + contentId + ". LanguageId: " + languageId);
+		}
+		if (!assetFile.isFile())
+		{
+			logger.info("Asset file is not right. Exists: " + assetFile.exists() + " . Is directory: " + assetFile.isFile());
+			return null;
+		}
+		return assetFile;
+	}
 
 }
 /*

@@ -345,7 +345,7 @@
 		
 			<div class="inlineTabDiv" id="cmsGUI">
 				#editPropertyFieldCSS("ServerNode.property.helpUrl" "helpUrl" "$this.getPropertyValue('helpUrl')" "51" "$!serverNodeId" "$!cmsPH.helpUrl")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.useSimpleComponentDialog" "useSimpleComponentDialog" "$this.getPropertyValue('useSimpleComponentDialog')" "$!cmsPH.useSimpleComponentDialog")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.sendToolbarKeyAsParameter" "sendToolbarKeyAsParameter" "$this.getPropertyValue('sendToolbarKeyAsParameter')" "$!cmsPH.sendToolbarKeyAsParameter")
 				#editPropertyFieldCSS("ServerNode.property.infoButtonLabel" "infoButtonLabel" "$this.getPropertyValue('infoButtonLabel')" "51" "$!serverNodeId" "$!cmsPH.infoButtonLabel")
 				#editPropertyFieldCSS("ServerNode.property.switchInfoButtonLabelToThisHelpUrl" "switchInfoButtonLabelToThisHelpUrl" "$this.getPropertyValue('switchInfoButtonLabelToThisHelpUrl')" "51" "$!serverNodeId" "$!cmsPH.switchInfoButtonLabelToThisHelpUrl")
 				#editPropertyTextAreaCSS("ServerNode.property.headerHTML" "headerHTML" "$this.getDataPropertyValue('headerHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.headerHTML")

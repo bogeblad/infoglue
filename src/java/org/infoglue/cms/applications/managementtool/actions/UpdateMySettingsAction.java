@@ -61,12 +61,16 @@ public class UpdateMySettingsAction extends InfoGlueAbstractAction
 	    args.put("globalKey", "infoglue");
 	    PropertySet ps = PropertySetManager.getInstance("jdbc", args);
 	    
-	    ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_languageCode", languageCode);
+	    if(languageCode != null)
+	    	ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_languageCode", languageCode);
 	    ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultToolName", defaultToolName);
 	    ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultRepositoryId", defaultRepositoryId);
-	    ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultGUI", defaultGUI);
-	    ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_theme", theme);
-	    ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant", toolbarVariant);
+	    if(defaultGUI != null)
+	    	ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_defaultGUI", defaultGUI);
+	    if(theme != null)
+	    	ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_theme", theme);
+	    if(toolbarVariant != null)
+	    	ps.setString("principal_" + this.getInfoGluePrincipal().getName() + "_toolbarVariant", toolbarVariant);
 	    
 		NotificationMessage notificationMessage = new NotificationMessage("UpdateMySettingsAction.doExecute():", "ServerNodeProperties", this.getInfoGluePrincipal().getName(), NotificationMessage.SYSTEM, "0", "MySettings");
 		ChangeNotificationController.getInstance().addNotificationMessage(notificationMessage);

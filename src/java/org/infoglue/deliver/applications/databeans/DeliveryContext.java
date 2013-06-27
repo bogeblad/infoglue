@@ -689,7 +689,10 @@ public class DeliveryContext implements UsageListener
 		{
 			this.lastModifiedDateTime = lastModifiedDateTime;
 		}
-		this.getHttpHeaders().put("Last-Modified", HTTP_DATE_FORMAT.format(this.lastModifiedDateTime));
+		if (this.lastModifiedDateTime != null)
+		{
+			this.getHttpHeaders().put("Last-Modified", HTTP_DATE_FORMAT.format(this.lastModifiedDateTime));
+		}
 		
 		Integer pageCacheTimeout = (Integer)extraData.get("pageCacheTimeout");
 		if(pageCacheTimeout != null)

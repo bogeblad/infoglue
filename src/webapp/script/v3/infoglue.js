@@ -360,6 +360,8 @@ function resizeScrollArea()
 	    	
 	    //alert("inlineDivHeight:" + $(this).attr("id") + "="  + inlineDivHeight);
 		$(this).height(inlineDivHeight);
+		if(inlineDivHeight < 1)
+			$(this).css("margin-bottom", "0");
 		
 		$("#" + $(this).attr("id") + " > iframe").each(function(index) {
 			$(this).height(inlineDivHeight-5);

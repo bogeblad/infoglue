@@ -101,11 +101,17 @@
 					oEditor = CKEDITOR.instances["FullText"];
 					oEditor = CKEDITOR.instances[plainTextAreaName];
 					if(oEditor.checkDirty())
+					{
+						//alert("plainTextAreaName:" + plainTextAreaName);
 						isDirty = true;
+					}
 				#else
 					oEditor = FCKeditorAPI.GetInstance(plainTextAreaName);
 					if(oEditor.IsDirty())
+					{
+						//alert("plainTextAreaName:" + plainTextAreaName);
 						isDirty = true;
+					}
 				#end
 			}
 			
@@ -185,6 +191,25 @@
 		}
 		
 		
+		function resetDirty(textAreaName)
+		{
+			//console.log(knownAction);
+	        //console.log(textAreaName);
+        	var oEditorTest = FCKeditorAPI.GetInstance(textAreaName);
+        	try
+        	{
+	        	//console.log(oEditorTest);
+	            oEditorTest.ResetIsDirty();
+	            knownAction = false;
+	        }
+	       	catch(err)
+	       	{
+	       		//console.log("error:" + err);
+	            knownAction = true;
+	       		setTimeout(function(){resetDirty(textAreaName)},200);
+	       	}
+		}
+		
 		//*******************************************
 		// This is the method that generates the wysiwygs when the page is loaded
 		//*******************************************
@@ -235,6 +260,14 @@
 						//oFCKeditor.Config["ToolbarStartExpanded"] = false;
 						//oFCKeditor.ToolbarStartExpanded = false ;
 						oFCKeditor.ReplaceTextarea();
+						
+						//console.log(oFCKeditor);
+						setTimeout((function(textAreaName){
+					        return function() { 
+					        	resetDirty(textAreaName);
+					        };
+					    })(plainTextAreaName), 200);
+						
 						
 						htmlEditors[plainTextAreaName + "WYSIWYGEditor"] = oFCKeditor;
 					}
@@ -713,9 +746,10 @@
 		}
 
 		window.onbeforeunload = confirmExit;
-		var knownAction = false;
+		var knownAction = true;
 		function confirmExit()
 		{	
+			//alert(getDirty() + ":" + checkWYSIWYGDirty() + ":" + knownAction);
 			if ((getDirty() || checkWYSIWYGDirty()) && !knownAction)
 				return "$ui.getString("tool.contenttool.formIsDirtyWarning")";
 			else

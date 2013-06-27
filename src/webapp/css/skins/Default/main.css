@@ -448,7 +448,7 @@ img.scaledbordered {
 .ok {background: url(../../images/v3/check.png) no-repeat left center;  background-position: 0px 3px;}
 .cancel {background:url(../../images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 3px;}
 .close {background:url(../../images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
-.help {background:url(../../images/v3/helpIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.help {background:url(../../images/v3/help_index.png) no-repeat left center; background-position: 0px 2px; background-size:20px 20px;}
 .dropArrow {background:url(../../images/v3/dropArrowIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .publish {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .submitToPublish {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
@@ -456,7 +456,7 @@ img.scaledbordered {
 .next {background:url(../../images/v3/nextBackground.gif) no-repeat left center; background-position: 0px 2px;}
 .add {background:url(../../images/v3/addIcon.png) no-repeat left center; background-position: 0px 2px;}
 .versionInfo {background:url(../../images/v3/versionInfo.png) no-repeat left center; background-position: 0px 2px;}
-.mySettings {background:url(../../images/v3/kuser.png) no-repeat left center; background-position: 0px 2px;}
+.mySettings {background:url(../../images/v3/kuser.png) no-repeat left center; background-position: 0px 2px; background-size:20px 20px;}
 .properties { background:url(../../images/v3/metadataIcon.gif) no-repeat left center; background-position: 4px 2px;}
 .showHide { background:url(../../images/v3/showHideIcon.png) no-repeat left center; background-position: 4px 2px;}
 .copy { background:url(../../images/v3/copyIcon.png) no-repeat left center; background-position: 6px 2px;}
@@ -475,7 +475,7 @@ img.scaledbordered {
 .pageDetails {background:url(../../images/v3/metadataIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .pageStructureSimple {background:url(../../images/v3/structureIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .logout {background:url(../../images/v3/exit.png) no-repeat left center; background-position: 0px 2px;}
-.trashcan {background:url(../../images/v3/trashcan.png) no-repeat left center; background-position: 0px 2px;}
+.trashcan {background:url(../../images/v3/trashcan_full.png) no-repeat left center; background-position: 0px 2px; background-size:20px 20px;}
 .clearTrashcan {background:url(../../images/v3/clearTrashcan.png) no-repeat left center; background-position: 0px 2px;}
 .accessRights {background:url(../../images/v3/file_locked.png) no-repeat left center; background-position: 0px 4px;}
 .transferUser {background:url(../../images/v3/group.png) no-repeat left center; background-position: 0px 4px;}

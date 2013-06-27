@@ -467,7 +467,11 @@ img.scaledbordered {
 	background-color: #d0e5f5 !important;
 }
 .close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
+/*
 .help {background:url(images/v3/helpIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.help {background:url(images/v3/helpIcon.gif) no-repeat left center; background-position: 0px 2px;}
+*/
+.help {background:url(images/v3/help.png) no-repeat left center; background-position: 0px 2px;}
 .dropArrow {background:url(images/v3/dropArrowIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .publish {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .submitToPublish {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}

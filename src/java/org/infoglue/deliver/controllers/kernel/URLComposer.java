@@ -59,18 +59,20 @@ public abstract class URLComposer
     }
 
 
-    public abstract String composeDigitalAssetUrl(String dnsName, Integer siteNodeId, Integer contentId, Integer languageId, String assetKey, DeliveryContext deliveryContext, Database db) throws Exception;
+	public abstract String composeDigitalAssetUrl(String dnsName, Integer siteNodeId, Integer contentId, Integer languageId, String assetKey, DeliveryContext deliveryContext, Database db) throws Exception;
 
-    public abstract String composeDigitalAssetUrl(String dnsName, String filename, DeliveryContext deliveryContext);
+	public abstract String composeDigitalAssetUrl(String dnsName, String filename, DeliveryContext deliveryContext);
 
-    public abstract String composeDigitalAssetUrl(String dnsName, String folderName, String filename, DeliveryContext deliveryContext);
+	public abstract String composeDigitalAssetUrl(String dnsName, String folderName, String filename, DeliveryContext deliveryContext);
 
-    public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
+	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
 
-    public abstract String composePageUrlForRedirectRegistry(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext, Boolean useNiceURI, Boolean enableNiceURIForLanguage) throws SystemException, Exception;
+	public abstract String composePageUrl(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, String applicationContext, DeliveryContext deliveryContext) throws SystemException, Exception;
 
-    public abstract String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
+	public abstract String composePageUrlForRedirectRegistry(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext, Boolean useNiceURI, Boolean enableNiceURIForLanguage) throws SystemException, Exception;
 
-    public abstract String composePageBaseUrl(String dnsName);
+	public abstract String composePageUrlAfterLanguageChange(Database db, InfoGluePrincipal infoGluePrincipal, Integer siteNodeId, Integer languageId, Integer contentId, DeliveryContext deliveryContext) throws SystemException, Exception;
 
-} 
+	public abstract String composePageBaseUrl(String dnsName);
+
+}

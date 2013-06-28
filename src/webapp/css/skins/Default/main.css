@@ -448,7 +448,8 @@ img.scaledbordered {
 .ok {background: url(../../images/v3/check.png) no-repeat left center;  background-position: 0px 3px;}
 .cancel {background:url(../../images/v3/cancelIcon.gif) no-repeat left center; background-position: 0px 3px;}
 .close {background:url(../../images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
-.help {background:url(../../images/v3/help_index.png) no-repeat left center; background-position: 0px 2px; background-size:20px 20px;}
+.help {background:url(../../images/v3/help.png) no-repeat left center; background-position: 0px 2px; background-size:20px 20px;}
+.helpIndex {background:url(../../images/v3/help_index.png) no-repeat left center; background-position: 0px 2px; background-size:20px 20px;}
 .dropArrow {background:url(../../images/v3/dropArrowIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .publish {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .submitToPublish {background:url(../../images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
@@ -498,7 +499,7 @@ img.scaledbordered {
 li.content {background:url(../../images/v3/contentIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
 li.page {background:url(../../images/v3/pageIcon.gif) no-repeat left center; background-position: 0px 0px; height: 20px; text-indent: 18px; }
 
-.save, .saveAndExit, .cancelIcon, .close, .help {
+.save, .saveAndExit, .cancelIcon, .close, .help, .helpIndex {
 	padding-left:28px;
 }
 

@@ -1822,7 +1822,7 @@ public class CmsPropertyHandler
 	
 	public static String getSendToolbarKeyAsParameter()
 	{
-	    return getServerNodeProperty("sendToolbarKeyAsParameter", true, "false");
+	    return getServerNodeProperty("sendToolbarKeyAsParameter", true, "true");
 	}
 	
 	public static String getInfoButtonLabel(Locale locale)

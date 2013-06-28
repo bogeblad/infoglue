@@ -100,7 +100,7 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 
 	public String doRepositoryName() throws Exception
     {
-		String repositoryName = null;
+		String repositoryName = "";
 		Integer repositoryId = null;
 		if(getRequest().getParameter("repositoryId") != null && getRequest().getParameter("repositoryId").equals(""))
 			repositoryId = new Integer(getRequest().getParameter("repositoryId"));
@@ -116,8 +116,8 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 				repositoryId = getStructureRepositoryId();
 			}
 		}
-
-		repositoryName = RepositoryController.getController().getRepositoryVOWithId(new Integer(repositoryId)).getName();
+		if(repositoryId != null)
+			repositoryName = RepositoryController.getController().getRepositoryVOWithId(new Integer(repositoryId)).getName();
 		
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + repositoryName);

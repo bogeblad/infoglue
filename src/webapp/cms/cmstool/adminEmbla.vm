@@ -123,11 +123,20 @@
 			
 			if(activeToolName != toolName)
 			{
-				jQuery.get("ViewCommonAjaxServices!repositoryName.action?toolName=" + toolName, function(data) {
-					//alert("Current located in " + data);
-					document.title = "" + toolName + " - " + data;
-				});
-				//document.title = "" + toolName;
+				if(toolName == "ContentTool" || toolName == "StructureTool")
+				{
+					jQuery.get("ViewCommonAjaxServices!repositoryName.action?toolName=" + toolName, function(data) {
+						//alert("Current located in " + data);
+						if(data != "")
+							document.title = "" + toolName + " - " + data;
+						else
+							document.title = "" + toolName
+					});
+				}
+				else
+				{
+					document.title = "" + toolName;
+				}
 				
 				$("#" + toolName + "Tab").removeClass("middleTabPart").addClass("middleTabPartSelected");
 				$("#" + toolName + "Tab .leftTabPart").removeClass("leftTabPart").addClass("leftTabPartSelected");
@@ -269,7 +278,7 @@
   		<div id="leftFooter" style="float: left;">
 			
 			#if($this.switchInfoButtonLabelToThisHelpUrl != "")
-				<a class='igToolbarButton igToolbarHeaderButton' href="$this.switchInfoButtonLabelToThisHelpUrl" target="_blank" id="versionInfoButton" name="versionInfoButton" title="$ui.getString("header.link.versionInfo") - $infoGlueVersion"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='help' title="$ui.getString("header.link.versionInfo") - $infoGlueVersion">$infoButtonLabel</span></span></a>
+				<a class='igToolbarButton igToolbarHeaderButton' href="$this.switchInfoButtonLabelToThisHelpUrl" target="_blank" id="versionInfoButton" name="versionInfoButton" title="$ui.getString("header.link.versionInfo") - $infoGlueVersion"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='helpIndex' title="$ui.getString("header.link.versionInfo") - $infoGlueVersion">$infoButtonLabel</span></span></a>
 			#else
 				<a class='igToolbarButton igToolbarHeaderButton' href="#" id="versionInfoButton" name="versionInfoButton" title="$ui.getString("header.link.versionInfo") - $infoGlueVersion"><span class='igToolbarButtonOuterSpan igToolbarHeaderButton'><span class='versionInfo' title="$ui.getString("header.link.versionInfo") - $infoGlueVersion">$infoButtonLabel</span></span></a>
 				<script type="text/javascript">

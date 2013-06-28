@@ -606,7 +606,7 @@ public class SearchController extends BaseController
    			return getDigitalAssetsFromLucene(repositoryId, searchString, assetTypeFilter, maxRows, searchMetaData);
    	}
 
-   	public static List<DigitalAssetVO> getDigitalAssetsFromCastor(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
+   	public List<DigitalAssetVO> getDigitalAssetsFromCastor(Integer[] repositoryId, String searchString, String assetTypeFilter, int maxRows) throws SystemException, Bug
    	{
    		List<DigitalAssetVO> matchingAssets = new ArrayList<DigitalAssetVO>();
 
@@ -650,6 +650,12 @@ public class SearchController extends BaseController
 							{
 								asset.getValueObject().setContentPath(ContentController.getContentController().getContentPath(latestContentVersion.getValueObject().getContentId(), false, true, db));
 								asset.getValueObject().setContentId(latestContentVersion.getValueObject().getContentId());
+
+								String assetUrl = getDigitalAssetUrl(asset.getValueObject(), db);
+								String assetThumbnailUrl = getDigitalAssetThumbnailUrl(asset.getValueObject().getId(), 100, 60, "ffffff", "center", "middle", 100, 60, 75, db);
+								asset.getValueObject().setAssetUrl(assetUrl);
+								asset.getValueObject().setAssetThumbnailUrl(assetThumbnailUrl);
+
 								matchingAssets.add(asset.getValueObject());
 							    previousContentId = contentVersion.getValueObject().getContentId();
 							    previousLanguageId = contentVersion.getValueObject().getLanguageId();

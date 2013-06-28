@@ -310,6 +310,9 @@ td.menu {
 ***************/
 
 select, input {
+	font-size: 12px;
+}
+input[type=text] {
 	border : 1px solid #C2D0E2;
 	font-size: 12px;
 }

@@ -518,7 +518,8 @@ ul.assignedEntities li
 .uncheckAll {background:url(images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}
 */
 .close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
-.help {background:url(images/v3/helpIcon.gif) no-repeat left center; background-position: 0px 2px;}
+.help {background:url(images/v3/help.png) no-repeat left center; background-position: 0px 2px;}
+.helpIndex {background:url(images/v3/help_index.png) no-repeat left center; background-position: 0px 2px;}
 .dropArrow {background:url(images/v3/dropArrowIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .publish {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .submitToPublish {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
@@ -595,6 +596,8 @@ label {
 select, input {
 	font-family      : arial, sans-serif;
 	font-size        : 12px;
+}
+input[type=text] {
 	border			 : 1px solid #B3B3B3;
 }
 select:focus, input:focus

@@ -95,6 +95,12 @@
 		<view name="error">/deliver/error.vm</view>
 	</action>
 
+	<!-- AJAX-services -->
+	<action name="org.infoglue.cms.applications.common.actions.ViewCommonAjaxServicesAction" alias="ViewCommonAjaxServices">
+		<view name="successRepositories">/cms/common/viewRepositoyListAsJSON.vm</view>
+		<view name="error">/cms/contenttool/error.vm</view>
+	</action>
+
 	<!-- Site Delivery -->
 	<action name="org.infoglue.deliver.applications.actions.ViewPageAction" alias="ViewPage">
 		<view name="error">/deliver/error.vm</view>

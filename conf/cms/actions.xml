@@ -142,6 +142,7 @@
 		<view name="successEmbla">/cms/cmstool/adminEmbla.vm</view>
 		<view name="successClassic">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=ViewCMS.action</view>
 		<view name="successReset">org.infoglue.cms.applications.common.actions.ExtendedRedirect.action?url=Admin.action</view>
+		<view name="successLogin">/cms/cmstool/loginSuccessStandalone.vm</view>
 	</action>
 	<action name="org.infoglue.cms.applications.common.actions.ViewToolbarButtonsAction" alias="ViewToolbarButtons">
 		<view name="success">/cms/common/viewToolbarButtons.vm</view>

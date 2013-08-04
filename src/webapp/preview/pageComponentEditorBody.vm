@@ -40,7 +40,296 @@
 <div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
 </div>
 
+<div id="pageToolbar" class="editOnSightFooterToolbar buttonPane">
+	<div class="left" style="margin-left: 8px; margin-bottom: 6px;">
+		<input id="igSaveButton" type="button" style="display:none;" class="save" value="Save" onclick="saveAllEditing();"/>
+		##<input id="igCancelButton" type="button" style="display:none;" class="cancel" value="Cancel" onclick="hideDiv('component" + componentId + "Properties');"/>
+		<input id="igPublishButton" type="button" style="display:none;" class="publish" value="Publish" onclick="submitToPublish($siteNodeId, contentId, languageId, repositoryId, componentEditorUrl + '/ViewInlineOperationMessages.action');"/>
+		<input id="igPreviewButton" type="button" class="preview" value="Preview" onclick="previewPage();"/>
+	</div>
+
+	<div class="right myHome"></div>
+	<div class="right mySettings" onclick="openInlineDivImpl(componentEditorUrl + '/ViewMySettings.action', 700, 750, true, true);"></div>
+	<div class="right">Inline editing: <input type="checkbox" id="inlineEditing" value="true" checked="checked" onclick="toggleInline();"/></div>
+	<div id="igStatusDiv" class="right working">State: <span id="igStatus">Unknown</span></div>
+</div>
+
 <script type="text/javascript">
+
+function previewPage()
+{
+	var currentUrl = document.location.href;
+	currentUrl = currentUrl.replace("!renderDecoratedPage.", ".");
+	window.open(currentUrl);
+}
+
+function hideFooterButtons()
+{	
+	if(window.self !== window.top)
+	{
+		$(".myHome, .mySettings, .preview").hide();
+	}
+}
+
+function registerOnChange()
+{
+	for (key in editOnSightAttributeNames)
+	{
+		//alert("key:" + key);
+		if(key.indexOf("_type") == -1 && 
+		   key.indexOf("_enableWYSIWYG") == -1 && 
+		   key.indexOf("_WYSIWYGToolbar") == -1 &&
+		   key.indexOf("_WYSIWYGExtraConfig") == -1 &&
+		   key.indexOf("_contentId") == -1 &&
+		   key.indexOf("_languageId") == -1)
+		{
+			//alert("key:" + key);
+			//alert("key:" + CKEDITOR.instances[key]);
+			if(CKEDITOR.instances[key])
+			{
+				//alert("regii:" + key);
+				CKEDITOR.instances[key].on('blur', function(e) {
+				    //alert("E:" +e.editor.checkDirty());
+				    if (e.editor.checkDirty()) {
+				        $("#igSaveButton").show();
+				    }
+				});
+
+				CKEDITOR.instances[key].on('focus', function(e) {
+					//alert("on focus:" + key);
+					//alert("on focus:" + e.editor.element.getId());
+					var attributeName = editOnSightAttributeNames[e.editor.element.getId()];
+					//alert("att name:" + attributeName);
+					var attributeType = editOnSightAttributeNames[e.editor.element.getId() + "_type"];
+					var attributeContentId = editOnSightAttributeNames[e.editor.element.getId() + "_contentId"];
+					var attributeLanguageId = editOnSightAttributeNames[e.editor.element.getId() + "_languageId"];
+				 	var enableWYSIWYG = editOnSightAttributeNames[e.editor.element.getId() + "_enableWYSIWYG"];
+							
+					var data = "contentId=" + attributeContentId + "&languageId=" + attributeLanguageId + "&attributeName=" + attributeName;
+							
+					$.ajax({
+					   	type: "GET",
+					   	url: "" + componentEditorUrl + "UpdateContentVersionAttribute!getAttributeValue.action",
+					   	data: data,
+					   	cache: false,
+					   	success: function(msg, textStatus){
+							plainAttribute = msg;
+						 	
+						 	if(enableWYSIWYG == "true")
+						 	{
+						 		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+						 		{	
+						 			//alert(e.editor.checkDirty());
+						 			if(!e.editor.checkDirty())
+						 			{
+						 				//alert(msg);
+							 			e.editor.setData(msg, function() {
+										    this.checkDirty(); // true
+										});
+									}
+						 		}
+						 	}
+					   },
+					   error: function (XMLHttpRequest, textStatus, errorThrown) {
+						   //alert("textStatus:" + textStatus);
+						   alert("ResponseCode:" + XMLHttpRequest.status);
+						   //alert("errorThrown:" + errorThrown);
+						   if(XMLHttpRequest.status == 403)
+						   {
+							   alert("You are not logged in properly to the administrative tools - please log in again.");
+							   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+						   }
+						   else
+						   {
+							   alert("You are not allowed to edit this text!");
+						   }
+					   }
+					});
+				});
+			}
+		}
+	}
+}
+
+var inlineOff = false;
+
+function toggleInline()
+{
+	var turnOn = false;
+	if(inlineOff)
+		turnOn = true;
+		
+	for (key in editOnSightAttributeNames)
+	{
+		//alert("key:" + key);
+		if(key.indexOf("_type") == -1 && 
+		   key.indexOf("_enableWYSIWYG") == -1 && 
+		   key.indexOf("_WYSIWYGToolbar") == -1 &&
+		   key.indexOf("_WYSIWYGExtraConfig") == -1 &&
+		   key.indexOf("_contentId") == -1 &&
+		   key.indexOf("_languageId") == -1)
+		{
+			//alert("key:" + key);
+			//alert("key:" + CKEDITOR.instances[key]);
+			if(CKEDITOR.instances[key])
+			{
+				if(!turnOn)
+				{
+					console.log("regii:" + key);
+					console.log(CKEDITOR.instances[key]);
+					CKEDITOR.instances[key].destroy();
+					$("#" + key).attr("contenteditable", "false");
+				}
+			}
+			else
+			{	
+				//alert("ON again:" + editOnSightAttributeNames[key + "_type"]);
+				$("#" + key).attr("contenteditable", "true");
+				if(editOnSightAttributeNames[key + "_type"] == "textfield")
+				{
+	        		CKEDITOR.inline( key , {
+					    removePlugins: 'toolbar',
+					    /*customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + */
+						autoParagraph: false,	
+						/*WYSIWYGExtraConfig +*/
+						});
+				}
+				else
+				{				
+					CKEDITOR.inline( key, {
+						toolbar: '" + WYSIWYGToolbar + "',
+					    /*customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + 
+						language: '" + languageCode + "'," +
+						WYSIWYGExtraConfig +*/
+						});
+				}									
+			}
+		}
+	}
+	
+	if(turnOn)
+		inlineOff = false;
+	else
+		inlineOff = true;
+}
+
+function saveAllEditing()
+{
+	var allSavedItems = 0;
+	for (key in editOnSightAttributeNames)
+	{
+		//alert("Key:" + key);
+		if(key.indexOf("_type") == -1 && 
+		   key.indexOf("_enableWYSIWYG") == -1 && 
+		   key.indexOf("_WYSIWYGToolbar") == -1 &&
+		   key.indexOf("_WYSIWYGExtraConfig") == -1)
+		{
+			var attributeName = editOnSightAttributeNames[key];
+			var attributeType = editOnSightAttributeNames[key + "_type"];
+			var attributeContentId = editOnSightAttributeNames[key + "_contentId"];
+			var attributeLanguageId = editOnSightAttributeNames[key + "_languageId"];
+
+			//console.log(CKEDITOR.instances);
+			//console.log(key);
+			//console.log(CKEDITOR.instances[key]);
+			if(CKEDITOR.instances[key])
+			{
+				//alert(CKEDITOR.instances[key].checkDirty());
+				if(CKEDITOR.instances[key].checkDirty())
+				{
+					CKEDITOR.instances[key].resetDirty();
+					//alert(CKEDITOR.instances[key].getData());
+					saveAttribute(attributeContentId, attributeLanguageId, attributeName, attributeType, key);
+					allSavedItems++;
+				}
+			}
+		}
+	}
+	
+	var noDirty = true;
+	for (key in editOnSightAttributeNames)
+	{
+		//alert("Key:" + key);
+		if(key.indexOf("_type") == -1 && 
+		   key.indexOf("_enableWYSIWYG") == -1 && 
+		   key.indexOf("_WYSIWYGToolbar") == -1 &&
+		   key.indexOf("_WYSIWYGExtraConfig") == -1)
+		{
+			var attributeName = editOnSightAttributeNames[key];
+			var attributeType = editOnSightAttributeNames[key + "_type"];
+			var attributeContentId = editOnSightAttributeNames[key + "_contentId"];
+			var attributeLanguageId = editOnSightAttributeNames[key + "_languageId"];
+
+			if(CKEDITOR.instances[key])
+			{
+				//alert(CKEDITOR.instances[key].checkDirty());
+				if(CKEDITOR.instances[key].checkDirty())
+				{
+					noDirty = false;
+				}
+			}
+		}
+	}
+	if(noDirty)
+		$("#igSaveButton").hide();
+			
+	if(allSavedItems == 0)
+		alert("No changes had been made and so nothing was saved");
+}
+
+function updatePageStatus()
+{
+	try
+	{
+		var data = "contentId=" + contentId + "&siteNodeId=$siteNodeId";
+		$.ajax({
+			type: "GET",
+		   	url: "" + cmsBaseUrl + "/ViewCommonAjaxServices!publishableNumberOfItems.action",
+		   	data: data,
+		   	cache: false,
+		   	success: function(msg, textStatus){
+				//alert("msg:" + msg);
+				//alert("textStatus:" + textStatus);
+				
+				if(msg != "0")
+				{
+					$('#igStatusDiv').attr("class", "right working");
+					$('#igStatus').html("<!--<img src='css/images/v3/greenBall.png' width='16'/>--> " + msg);
+					$('#igPublishButton').show();
+					$('#igCancelButton').show();
+				}
+				else
+				{
+					$('#igStatusDiv').attr("class", "right published");
+					$('#igStatus').html("<!--<img src='css/images/v3/publishedBall.png' width='16'/>--> Published");
+					$('#igPublishButton').hide();
+					$('#igCancelButton').hide();
+				}
+				
+		   },
+		   error: function (XMLHttpRequest, textStatus, errorThrown) {
+			   //alert("textStatus:" + textStatus);
+			   alert("ResponseCode:" + XMLHttpRequest.status);
+			   //alert("errorThrown:" + errorThrown);
+			   if(XMLHttpRequest.status == 403)
+			   {
+				   alert("You are not logged in properly to the administrative tools - please log in again.");
+				   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+			   }
+			   else if(XMLHttpRequest.status == 0)
+			   {
+			   		window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+			   }
+			   else
+			   {
+				   alert("You are not allowed to edit this text!");
+			   }
+		   }
+		});
+	}
+	catch(e) {console.log("e:" + e);}
+}
+
 $addComponentJavascript
 $deleteComponentJavascript
 $changeComponentJavascript

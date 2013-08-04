@@ -1447,19 +1447,26 @@ function cancelSaveAttributes(selectedContentId, selectedLanguageId)
 
 function completeEditInlineSave(selectedContentId, selectedAttributeName)
 {
-    delete savingAttributes["" + selectedContentId]["" + selectedAttributeName];
-    savedAttributes["" + selectedContentId]["" + selectedAttributeName] = "true";
-    
-	var size = 0;
-	for (var i in savingAttributes["" + selectedContentId])
-		size++;
-	
-	if(size == 0)
+	try
 	{
-		$("#saveButtons" + selectedContentId).remove();
-		//alert("selectedContentId:" + selectedContentId + " setting to false");
-		isInInlineEditingMode["" + selectedContentId] = "false"
-		savedAttributes = new Array();
+	    delete savingAttributes["" + selectedContentId]["" + selectedAttributeName];
+	    savedAttributes["" + selectedContentId]["" + selectedAttributeName] = "true";
+	
+		var size = 0;
+		for (var i in savingAttributes["" + selectedContentId])
+			size++;
+		
+		if(size == 0)
+		{
+			$("#saveButtons" + selectedContentId).remove();
+			//alert("selectedContentId:" + selectedContentId + " setting to false");
+			isInInlineEditingMode["" + selectedContentId] = "false"
+			savedAttributes = new Array();
+		}
+	}
+	catch(err)
+	{
+		console.log("Error saving changes:" + err.message);
 	}
 }
 
@@ -1492,8 +1499,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		}
 		
 		//alert("value:" + value);
-		//var data = "contentId=" + selectedContentId + "&languageId=" + selectedLanguageId + "&attributeName=" + selectedAttributeName + "&" + selectedAttributeName + "=" + value + "&deliverContext=" + currentContext;
-
+		
 		var data = new Object();
 		data.contentId = selectedContentId;
 		data.languageId = selectedLanguageId;
@@ -1512,8 +1518,15 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		     	{	
 		     		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
 		     		{
-		     			CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].destroy();
-		     			$("#attribute" + selectedContentId + selectedAttributeName).html(msg);
+		     			//CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].destroy();
+		     			if(msg != $("#attribute" + selectedContentId + selectedAttributeName).html())
+		     			{
+		     				//alert("Strange - the text and the saved text was not the same");
+		     				//alert(msg);
+		     				//alert($("#attribute" + selectedContentId + selectedAttributeName).html());
+		     			}
+		     			//$("#attribute" + selectedContentId + selectedAttributeName).html(msg);
+		     			//alert("update status...");
 		     		}
 		     		else
 		     		{
@@ -1528,6 +1541,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 		     	}
 
      			completeEditInlineSave(selectedContentId, selectedAttributeName);
+     			updatePageStatus();
 		   },
 		   error: function (XMLHttpRequest, textStatus, errorThrown) {
 			   if(XMLHttpRequest.status == 403)
@@ -1543,6 +1557,7 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 			   {
 				   alert("Update failed!");
 			   }
+    			updatePageStatus();
 		   }
 		 });
 	}
@@ -1550,6 +1565,10 @@ function saveAttribute(selectedContentId, selectedLanguageId, selectedAttributeN
 	{
 		//alert("Saving: " + selectedContentId + " " + selectedLanguageId + " " +  selectedAttributeName);
 		var value = $("#inputattribute" + selectedContentId + selectedAttributeName).val();
+		if(userPrefferredWYSIWYG  == "ckeditor4" || userPrefferredWYSIWYG  == "" || typeof(userPrefferredWYSIWYG )=="undefined")
+ 		{
+ 			var value = CKEDITOR.instances["attribute" + selectedContentId + selectedAttributeName].getData();
+ 		}
 		//alert("Value: " + value);
 		//value = Url.encode(value);
 		//alert("Value: " + value);

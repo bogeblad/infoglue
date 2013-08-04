@@ -354,6 +354,9 @@
 				#editPropertyFieldCSS("ServerNode.property.errorTitle" "errorTitle" "$this.getPropertyValue('errorTitle')" "51" "$!serverNodeId" "$!cmsPH.errorTitle")
 				#editPropertyTextAreaCSS("ServerNode.property.errorHTML" "errorHTML" "$this.getDataPropertyValue('errorHTML')" "50" "10" "normaltextarea" "$!serverNodeId" "$!cmsPH.errorHTML")
 				
+				#yesNoDropDownWithInheritCSS("ServerNode.property.editOnSight" "editOnSight" "$this.getPropertyValue('editOnSight')" "$!cmsPH.editOnSight")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.disableEditOnSightToolbar" "disableEditOnSightToolbar" "$this.getPropertyValue('disableEditOnSightToolbar')" "$!cmsPH.disableEditOnSightToolbar")
+				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.useSimpleComponentDialog" "useSimpleComponentDialog" "$this.getPropertyValue('useSimpleComponentDialog')" "$!cmsPH.useSimpleComponentDialog")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideAccessRightsIfNotAllowedToManage" "hideAccessRightsIfNotAllowedToManage" "$this.getPropertyValue('hideAccessRightsIfNotAllowedToManage')" "$!cmsPH.hideAccessRightsIfNotAllowedToManage")
 				
@@ -456,7 +459,6 @@
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableCustomIcons" "disableCustomIcons" "$this.getPropertyValue('disableCustomIcons')" "$!cmsPH.disableCustomIcons")
 				#editPropertyFieldCSS("ServerNode.property.showComponentsFirst" "showComponentsFirst" "$this.getPropertyValue('showComponentsFirst')" "51" "$!serverNodeId" "$!cmsPH.showComponentsFirst")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.showAllWorkflows" "showAllWorkflows" "$this.getPropertyValue('showAllWorkflows')" "$!cmsPH.showAllWorkflows")
-				#yesNoDropDownWithInheritCSS("ServerNode.property.editOnSight" "editOnSight" "$this.getPropertyValue('editOnSight')" "$!cmsPH.editOnSight")
 					
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableEmptyUrls" "disableEmptyUrls" "$this.getPropertyValue('disableEmptyUrls')" "$!cmsPH.disableEmptyUrls")
 				#editPropertyFieldCSS("ServerNode.property.cacheUpdateAction" "cacheUpdateAction" "$this.getPropertyValue('cacheUpdateAction')" "51" "$!serverNodeId" "$!cmsPH.cacheUpdateAction")

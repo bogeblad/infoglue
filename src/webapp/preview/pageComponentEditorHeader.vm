@@ -1,5 +1,6 @@
 <script type="text/javascript">
 <!--
+	var cmsBaseUrl = "${cmsBaseUrl}";
 	var componentEditorUrl = "${componentEditorUrl}";
 	var currentContext = "${contextName}";
 	var currentUrl = "${currentUrl}";
@@ -169,7 +170,7 @@
 			    if(draggedComponentId.indexOf("comp_") > -1)
 			    	draggedComponentId = draggedComponentId.substring(5);
 			    
-			}			
+			}	
         });
 
 		$(document).mousemove(function(e){
@@ -198,6 +199,14 @@
 			
           	$("#tempDraggable").remove();
         });
+        
+        if(${editOnSightFooterToolbarIsActive})
+        {
+	        CKEDITOR.disableAutoInline = true;
+	        updatePageStatus();	
+	        hideFooterButtons();	
+	        setTimeout(function(){registerOnChange();}, 1000);
+        }	
 	});
 -->
 </script>
@@ -216,6 +225,9 @@
 <![endif]-->
 
 <style type="text/css">
+body {
+margin-bottom: 43px !important;
+}
 .igAddComponent {
 	outline: 1px dashed #ccc;
 	background-color: #ffff9d;
@@ -276,6 +288,80 @@
 	top: 0px;
 }
 */
+#pageToolbar {
+	position: fixed;
+	height: 43px;
+	width: 100%;
+	bottom: 0px;
+	margin: 0px;
+	border-top: 0px solid #9caabd;
+	width: 100%;
+	z-index: 100;
+	background-image: url("${contextName}/css/images/v3/footerBackground.gif");
+	background-repeat: repeat-x;
+	background-color: white;
+	float: left;
+	font-family: Arial;
+	box-shadow: 10px 10px 10px 10px #666;
+}
+#pageToolbar > .left {
+	float: left;
+	margin-right: 10px;
+}
+#pageToolbar > .right {
+	border-left: 1px solid #ccc;
+	float: right;
+	margin-top: 12px;
+	margin-right: 10px;
+	font-size: 13px;
+	padding-left: 10px;
+}
+#pageToolbar > .middle {
+	border-left: 1px solid #ccc;
+	float: right;
+	margin-right: 10px;
+	margin-left: 300px;
+	font-size: 13px;
+	padding-left: 10px;
+	
+}
+.working {
+	margin-bottom: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	margin-top: 7px !important;
+	font-size: 12px !important;
+	background-color: #f89406 !important;
+	color: white !important;
+	padding: 6px; 
+	border: 1px solid #B4B4B4 !important;
+}
+
+.published {
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	margin-top: 7px !important;
+	font-size: 12px !important;
+	background-color: #4b883e !important;
+	color: white !important;
+	padding: 6px; 
+	border: 1px solid #B4B4B4 !important;
+}
+.mySettings {
+	background: url(${contextName}/css/images/v3/mySettingsIcon.gif) no-repeat left center;
+	background-position: 10px 0px;
+	background-size: 16px 16px;
+	width: 16px;
+	height: 16px;
+}
+.myHome {
+	background: url(${contextName}/css/images/v3/house.png) no-repeat left center;
+	background-position: 10px 0px;
+	background-size: 16px 16px;
+	width: 26px;
+	height: 16px;
+}
+
 .blockedDropzone {
 	background-color: #c0c0c0;
 }
@@ -286,6 +372,7 @@
 	background-color: #ffff00;
 	border: 1px solid blue;
 }
+${editOnSightFooterToolbarOverideCSS}
 </style>
 
 </head>

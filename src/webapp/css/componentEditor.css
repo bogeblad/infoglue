@@ -404,7 +404,7 @@ border-bottom:1px solid #9CAABD;
 	overflow: auto;
 	float: left;
 }
-.igDialogFooter, .componentPropertiesFooter {
+.igDialogFooter, .componentPropertiesFooter, .editOnSightFooterToolbar {
     background-color: white;
     background-image: url("images/v3/footerBackground.gif");
     background-repeat: repeat-x;
@@ -415,7 +415,7 @@ border-bottom:1px solid #9CAABD;
     margin: 0;
     width: 100%;
 }
-.igDialogFooter input[type="button"], .componentPropertiesFooter input[type="button"]
+.igDialogFooter input[type="button"], .componentPropertiesFooter input[type="button"], .editOnSightFooterToolbar input[type="button"]
 { 
 	border: 1px solid #555; 
 	padding: 4px;
@@ -430,7 +430,7 @@ border-bottom:1px solid #9CAABD;
 	line-height:1.4em;
 	margin:8px 4px 0px 0px;
 }
-.igDialogFooter input[type="button"]:hover, .componentPropertiesFooter input[type="button"]:hover
+.igDialogFooter input[type="button"]:hover, .componentPropertiesFooter input[type="button"]:hover, .editOnSightFooterToolbar input[type="button"]:hover
 { 
 	background-color: #d0e5f5;
 }
@@ -438,6 +438,8 @@ border-bottom:1px solid #9CAABD;
 .saveAndExit {background:url(images/v3/saveAndExitInlineIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .cancel {background:url(images/v3/cancel.png) no-repeat left center; background-position: 0px 3px;}
 .close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
+.publish { background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 0px;}
+.preview { background:url(images/v3/previewIcon.png) no-repeat left center; background-position: 0px 0px;}
 
 .igPropertiesTable {
 	border-collapse: separate;

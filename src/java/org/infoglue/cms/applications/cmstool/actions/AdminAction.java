@@ -60,7 +60,7 @@ public class AdminAction extends InfoGlueAbstractAction
 		else
 			return "successEmbla";
     }
-	
+
 	public String doResetGUI() throws Exception
     {
 		this.getHttpSession().removeAttribute("repositoryId");

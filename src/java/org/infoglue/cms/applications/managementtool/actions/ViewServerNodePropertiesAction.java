@@ -288,6 +288,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "showComponentsFirst");
 	    populate(ps, "showAllWorkflows");
 	    populate(ps, "editOnSight");
+	    populate(ps, "disableEditOnSightToolbar");
 	    populate(ps, "previewDeliveryUrl");
 	    populate(ps, "stagingDeliveryUrl");
 	    populateData(ps, "internalDeliveryUrls");

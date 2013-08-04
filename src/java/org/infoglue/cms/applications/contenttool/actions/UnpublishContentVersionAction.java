@@ -208,11 +208,11 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
 			Integer contentVersionId = (Integer)it.next();
 			ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getFullContentVersionVOWithId(contentVersionId);
 			
-			ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
-			if(contentVersionVO.getId().equals(latestContentVersionVO.getId()))
+			ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
+			if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
 			{
 				logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
-				ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
+				ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
 			}
 			
 			EventVO eventVO = new EventVO();
@@ -309,16 +309,22 @@ public class UnpublishContentVersionAction extends InfoGlueAbstractAction
         	
         	processBean.updateProcess("Searching for all published versions.");
         	List<SmallestContentVersionVO> contentVersionsVOList = ContentVersionController.getContentVersionController().getPublishedActiveContentVersionVOList(contentIds, db);
+        	Map checkedLanguages = new HashMap();
         	processBean.updateProcess("Found " + contentVersionsVOList.size() + " versions");
         	
         	for(SmallestContentVersionVO contentVersionVO : contentVersionsVOList)
         	{
-        		//ContentVersion contentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(contentVersionVO.getId(), db);
-        		//contentVersion.setStateId(0);
-        		//contentVersion.setVersionComment(this.versionComment);
-        		//contentVersion.setVersionModifier(this.getInfoGluePrincipal().getName());
-				
-				ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), db, events);
+				if(checkedLanguages.get(contentVersionVO.getLanguageId()) == null)
+				{
+					checkedLanguages.put(contentVersionVO.getLanguageId(), new Boolean(true));
+					ContentVersionVO latestContentVersionVO = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentVersionVO.getContentId(), contentVersionVO.getLanguageId());
+					if(latestContentVersionVO != null && !latestContentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+					{
+						logger.info("Creating a new working version as there was no active working version left...:" + contentVersionVO.getLanguageName());
+						ContentStateController.changeState(latestContentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, null, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), events);
+					}
+				}
+				//ContentStateController.changeState(contentVersionVO.getId(), ContentVersionVO.WORKING_STATE, "new working version", false, this.getInfoGluePrincipal(), contentVersionVO.getContentId(), db, events);
         		
 				EventVO eventVO = new EventVO();
 				eventVO.setDescription(this.versionComment);

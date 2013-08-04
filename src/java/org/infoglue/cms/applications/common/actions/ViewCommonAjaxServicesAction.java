@@ -25,21 +25,30 @@ package org.infoglue.cms.applications.common.actions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.infoglue.cms.applications.databeans.ProcessBean;
 import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.applications.databeans.ReferenceVersionBean;
+import org.infoglue.cms.applications.structuretool.actions.ViewListSiteNodeVersionAction;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentCategoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentControllerProxy;
+import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
 import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
+import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RegistryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
+import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
+import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 
 /**
  * This class implements the action class for the framed page in the content tool.
@@ -166,6 +175,47 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().getWriter().print("" + categories.size());
 		
+		return NONE;
+    }
+
+	public String doPublishableNumberOfItems() throws Exception
+    {
+		Set<SiteNodeVersionVO> siteNodeVersionVOList = new HashSet<SiteNodeVersionVO>();
+		Set<ContentVersionVO> contentVersionVOList = new HashSet<ContentVersionVO>();
+
+		Integer contentId = null;
+		if(getRequest().getParameter("contentId") != null && !getRequest().getParameter("contentId").equals("") && !getRequest().getParameter("contentId").equals("null"))
+			contentId = new Integer(getRequest().getParameter("contentId"));
+
+		Integer siteNodeId = null;
+		if(getRequest().getParameter("siteNodeId") != null && !getRequest().getParameter("siteNodeId").equals("") && !getRequest().getParameter("siteNodeId").equals("null"))
+			siteNodeId = new Integer(getRequest().getParameter("siteNodeId"));
+
+		if(contentId != null && contentId > -1)
+		{
+			ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(getInfoGluePrincipal(), contentId);
+			List languageVOList = LanguageController.getController().getLanguageVOList(contentVO.getRepositoryId());
+			Iterator languageVOListIterator = languageVOList.iterator();
+			while(languageVOListIterator.hasNext())
+			{
+				LanguageVO language = (LanguageVO)languageVOListIterator.next();
+				ContentVersionVO contentVersionVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(contentId, language.getId());
+				if(contentVersionVO != null && contentVersionVO.getStateId().equals(ContentVersionVO.WORKING_STATE))
+				{
+					contentVersionVOList.add(contentVersionVO);
+				}
+			}
+		}
+
+		ProcessBean processBean = ProcessBean.createProcessBean(ViewListSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
+		SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(siteNodeId, SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, false, this.getInfoGluePrincipal(), processBean, getLocale());
+				
+		this.getResponse().setContentType("text/plain");
+		if(siteNodeVersionVOList.size() > 0 || contentVersionVOList.size() > 0)
+			this.getResponse().getWriter().print("" + siteNodeVersionVOList.size() + " page(s) and " + contentVersionVOList.size() + " content(s) in working mode");
+		else
+			this.getResponse().getWriter().print("" + (siteNodeVersionVOList.size() + contentVersionVOList.size()) + "");
+			
 		return NONE;
     }
 

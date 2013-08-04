@@ -295,6 +295,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		
 		try
 		{
+			String cmsBaseUrl = CmsPropertyHandler.getCmsBaseUrl();
 			String componentEditorUrl = CmsPropertyHandler.getComponentEditorUrl();
 
 			InfoGluePrincipal principal = templateController.getPrincipal();
@@ -335,6 +336,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			StringBuffer path = getPagePathAsCommaseparatedIds(templateController);
 			
 			extraHeader = extraHeader.replaceAll("\\$\\{focusElementId\\}", "" + this.getRequest().getParameter("focusElementId"));
+			extraHeader = extraHeader.replaceAll("\\$\\{cmsBaseUrl\\}", cmsBaseUrl);
 			extraHeader = extraHeader.replaceAll("\\$\\{contextName\\}", this.getRequest().getContextPath());
 			extraHeader = extraHeader.replaceAll("\\$\\{componentEditorUrl\\}", componentEditorUrl);
 			if(principal.getName().equalsIgnoreCase(CmsPropertyHandler.getAnonymousUser()))
@@ -355,7 +357,17 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			extraHeader = extraHeader.replaceAll("\\$\\{userPrefferredLanguageCode\\}", "" + CmsPropertyHandler.getPreferredLanguageCode(principal.getName()));
 			extraHeader = extraHeader.replaceAll("\\$\\{userPrefferredWYSIWYG\\}", "" + CmsPropertyHandler.getPrefferedWYSIWYG());
 			extraHeader = extraHeader.replaceAll("\\$\\{WYSIWYGEditorJS\\}", WYSIWYGEditorFile);
-			
+			if(CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(principal.getName()))
+			{				
+				extraHeader = extraHeader.replaceAll("\\$\\{editOnSightFooterToolbarIsActive\\}", "false");
+				extraHeader = extraHeader.replaceAll("\\$\\{editOnSightFooterToolbarOverideCSS\\}", ".editOnSightFooterToolbar{display:none}");
+			}
+			else
+			{
+				extraHeader = extraHeader.replaceAll("\\$\\{editOnSightFooterToolbarIsActive\\}", "true");
+				extraHeader = extraHeader.replaceAll("\\$\\{editOnSightFooterToolbarOverideCSS\\}", "");
+			}
+				
 			String sortBaseUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&languageId=" + templateController.getLanguageId() + "&contentId=" + templateController.getContentId() + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
 			extraHeader = extraHeader.replaceAll("\\$\\{sortBaseUrl\\}", sortBaseUrl);
 			
@@ -774,12 +786,20 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				{
 					//logger.info("SUBCOMPONENTS:" + subComponents.size());
 					int index = 0;
+					List<Integer> handledComponents = new ArrayList<Integer>();
+
 					Iterator subComponentsIterator = subComponents.iterator();
 					while(subComponentsIterator.hasNext())
 					{
 						InfoGlueComponent subComponent = (InfoGlueComponent)subComponentsIterator.next();
+						
 						if(subComponent != null)
 						{
+							if(handledComponents.contains(subComponent.getId()))
+								continue;
+
+							handledComponents.add(subComponent.getId());
+							
 							component.getComponents().put(subComponent.getSlotName(), subComponent);
 							if(subComponent.getIsInherited())
 							{

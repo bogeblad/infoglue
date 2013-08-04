@@ -1970,6 +1970,28 @@ public class CmsPropertyHandler
 		return (theme == null ? "" : theme);
 	}
 
+	public static String getDisableEditOnSightToolbar()
+	{
+		String disableEditOnSightToolbar = getServerNodeProperty("disableEditOnSightToolbar", true, "false");
+		if(getPrefferedWYSIWYG().equalsIgnoreCase("fckeditor2"))
+			disableEditOnSightToolbar = "true";
+		return disableEditOnSightToolbar;
+	}
+
+	public static boolean getPersonalDisableEditOnSightToolbar(String userName)
+	{
+		String systemDisableEditOnSightToolbar = getDisableEditOnSightToolbar();
+		if(systemDisableEditOnSightToolbar.equals("true"))
+		{
+			return true;
+		}
+		else
+		{
+			String disableEditOnSightToolbar = getPropertySet().getString("principal_" + userName + "_disableEditOnSightToolbar");
+			return (disableEditOnSightToolbar == null || !disableEditOnSightToolbar.equals("true") ? false : true);
+		}
+	}
+
 	public static String getPreferredRepositoryId(String userName)
 	{
 	    return getPropertySet().getString("principal_" + userName + "_defaultRepositoryId");

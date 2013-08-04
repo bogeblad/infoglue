@@ -442,12 +442,14 @@ public class InfoGlueAuthenticationFilter implements Filter
 				if(httpServletRequest.getMethod().equalsIgnoreCase("get") && httpServletRequest.getParameter("ticket") != null && httpServletRequest.getParameter("ticket").length() > 0)
 				{
 					String remainingQueryString = HttpUtilities.removeParameter(httpServletRequest.getQueryString(), "ticket");
+					logger.info("Redirecting to login without ticket");
 					httpServletResponse.sendRedirect(URI + (remainingQueryString != null && !remainingQueryString.equals("") ? "?" + remainingQueryString : ""));
 					return;
 				}
 
 			    if(successLoginBaseUrl != null && !URL.startsWith(successLoginBaseUrl))
 			    {
+			    	logger.info("Redirecting to successLoginBaseUrl: " + successLoginBaseUrl);
 			        checkSuccessRedirect(request, response, URL);
 			    }
 			    else

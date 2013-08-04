@@ -71,7 +71,7 @@ public class FileLogger implements NotificationListener
 	@Override
 	public void process() throws Exception 
 	{
-		System.out.println("Process in FileLogger... why");
+		logger.info("Process inside FileLogger");
 	}
 
 }

@@ -26,6 +26,7 @@ package org.infoglue.deliver.controllers.kernel.impl.simple;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -86,6 +87,7 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
 			String enableWYSIWYG = "false";
 			String WYSIWYGToolbar = "Default";
 			String WYSIWYGExtraConfig = "";
+			boolean noTextArea = false;
 			if(contentTypeAttribute != null)
 			{
 				className = contentTypeAttribute.getInputType();
@@ -117,17 +119,76 @@ public class EditOnSiteBasicTemplateController extends BasicTemplateController
             setContentItemParametersJavascript.append( "#" + attributeName + "Anchor');" );
             
             StringBuffer decoratedAttributeValue = new StringBuffer();
-            decoratedAttributeValue.append("<span class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</span>");
-            decoratedAttributeValue.append("<script type=\"text/javascript\">" +
-            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "\"]=\"" + attributeName + "\";" +
-            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_type\"]=\"" + className + "\";" +
-            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_enableWYSIWYG\"]=\"" + enableWYSIWYG + "\";" +
-            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGToolbar\"]=\"" + WYSIWYGToolbar + "\";" +
-            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGExtraConfig\"]=\"" + WYSIWYGExtraConfig + "\";" +
-            		"var element=$(\"#attribute" + contentId + attributeName + "\");" +
-            		"element.dblclick(function(){editInline(" + this.getSiteNode().getRepositoryId() + "," + contentId + "," + languageId + ",true);" +
-            		"});" +
-            		"</script>");
+            
+            String languageCode = "en";
+            try
+            {
+            	Locale locale = getLocaleAvailableInTool(getPrincipal());
+            	languageCode = locale.getLanguage();
+            }
+            catch (Exception e) 
+            {
+            	logger.warn("Error getting locale:" + e.getMessage(), e);
+			}
+            
+            String parameterString = "repositoryId=" + getRepositoryId() + "&contentId=" + contentId + "&languageId=" + languageId;
+            
+            boolean isInlineEditingOn = true;
+            if(CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))
+            	isInlineEditingOn = false;
+            
+            if(className != null && className.equalsIgnoreCase("textfield"))
+    		{	
+                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"true\"" : "")  + " class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
+                
+                decoratedAttributeValue.append("<script type=\"text/javascript\">");
+                if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))
+                {
+                	decoratedAttributeValue.append( "CKEDITOR.inline('attribute" + contentId + attributeName + "', {" +
+							                		"				    removePlugins: 'toolbar'," +
+													"				    customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + 
+							    					"					autoParagraph: false," + 	
+							    					WYSIWYGExtraConfig +
+							    					"				});");
+                }
+                
+                decoratedAttributeValue.append(		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "\"]=\"" + attributeName + "\";" +
+    							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_contentId\"]=\"" + contentId + "\";" +
+    							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_languageId\"]=\"" + languageId + "\";" +
+    							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_type\"]=\"" + className + "\";" +
+    							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_enableWYSIWYG\"]=\"" + enableWYSIWYG + "\";" +
+    							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGToolbar\"]=\"" + WYSIWYGToolbar + "\";" +
+    							            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGExtraConfig\"]=\"" + WYSIWYGExtraConfig + "\";" +
+   							            		"</script>");
+    		}
+    		else if(className != null && className.equalsIgnoreCase("textarea"))
+    		{
+                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"" + enableWYSIWYG + "\"" : "") + " class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
+                
+                decoratedAttributeValue.append("<script type=\"text/javascript\">");
+                if(!CmsPropertyHandler.getPersonalDisableEditOnSightToolbar(getPrincipal().getName()))
+                {
+                	decoratedAttributeValue.append(	"CKEDITOR.inline( 'attribute" + contentId + attributeName + "', {" +
+								            		"				    toolbar: '" + WYSIWYGToolbar + "'," +
+													"				    customConfig: '" + CmsPropertyHandler.getComponentEditorUrl() + "WYSIWYGProperties.action?" + parameterString + "'," + 
+													"					language: '" + languageCode + "'," +
+													WYSIWYGExtraConfig +
+													"				});");
+                }
+                
+                decoratedAttributeValue.append(		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "\"]=\"" + attributeName + "\";" +
+								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_contentId\"]=\"" + contentId + "\";" +
+								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_languageId\"]=\"" + languageId + "\";" +
+								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_type\"]=\"" + className + "\";" +
+								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_enableWYSIWYG\"]=\"" + enableWYSIWYG + "\";" +
+								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGToolbar\"]=\"" + WYSIWYGToolbar + "\";" +
+								            		"editOnSightAttributeNames[\"attribute" + contentId + attributeName + "_WYSIWYGExtraConfig\"]=\"" + WYSIWYGExtraConfig + "\";" +
+								            	"</script>");
+    		}
+    		else
+    		{
+                decoratedAttributeValue.append("<div " + (isInlineEditingOn ? "contenteditable=\"false\"" : "") + " class=\"" + className + " attribute" + contentId + "\" id=\"attribute" + contentId + attributeName + "\" oncontextmenu=\"" + setContentItemParametersJavascript + "\">" + attributeValue + "</div>");
+    		}
             
             /*
             decoratedAttributeValue.append("<script type=\"text/javascript\"><!-- var element = $(\"#attribute" + contentId + attributeName + "\");");

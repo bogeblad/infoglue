@@ -1657,10 +1657,15 @@ public class ComponentBasedHTMLPageInvoker extends PageInvoker
 					}
 
 					List subComponents = getInheritedComponents(templateController.getDatabase(), templateController, component, templateController.getSiteNodeId(), id, inherit);
+					List<Integer> handledComponents = new ArrayList<Integer>();
 					Iterator subComponentsIterator = subComponents.iterator();
 					while(subComponentsIterator.hasNext())
 					{
 						InfoGlueComponent subComponent = (InfoGlueComponent)subComponentsIterator.next();
+						if(handledComponents.contains(subComponent.getId()))
+							continue;
+
+						handledComponents.add(subComponent.getId());
 						
 						if(logger.isInfoEnabled())
 							logger.info(component.getName() + " had subcomponent " + subComponent.getName() + ":" + subComponent.getId());

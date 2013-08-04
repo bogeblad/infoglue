@@ -252,6 +252,7 @@ public class CmsJDOCallback implements CallbackInterceptor
 				try
 				{
 					ContentImpl content = (ContentImpl)object;
+
 					CacheController.clearCacheForGroup("contentCache", "content_" + content.getId());
 					CacheController.clearCache("rootContentCache", "root_" + content.getRepositoryId());
 					CacheController.clearCacheForGroup("contentVersionCache", "content_" + content.getId());

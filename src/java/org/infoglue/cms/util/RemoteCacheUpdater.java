@@ -405,6 +405,6 @@ public class RemoteCacheUpdater implements NotificationListener
 
 	public void process() throws Exception 
 	{
-		System.out.println("Whyyyyyyyy");
+		logger.info("Process inside RemoteCacheUpdater");
 	}
 }

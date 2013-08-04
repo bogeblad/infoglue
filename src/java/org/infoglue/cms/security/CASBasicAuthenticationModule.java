@@ -138,10 +138,11 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			   CmsPropertyHandler.getApplicationName().equalsIgnoreCase("deliver") ||
 			   requestURI.indexOf("ViewCMSTool.action") > -1 ||
 			   requestURI.indexOf("Admin.action") > -1 ||
-			   requestURI.indexOf("standalone") > -1 ||
+			   requestURI.toLowerCase().indexOf("standalone") > -1 ||
 			   requestURI.indexOf("workflows") > -1 ||
 			   requestURI.indexOf("ViewDigitalAsset") > -1 ||
 			   requestURI.indexOf("Editor") > -1 ||
+			   requestURI.indexOf("ViewCommonAjaxServices") > -1 ||
 			   requestURI.indexOf("binding") > -1 || 
 			   queryString.indexOf("directView") > -1
 			   )
@@ -156,6 +157,7 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			}
 			else
 			{
+				logger.info("redirectUrl 2:" + "index-cms.html");
 				response.sendRedirect("index-cms.html");
 			}
 				
@@ -176,7 +178,7 @@ public class CASBasicAuthenticationModule extends AuthenticationModule//, Author
 			else
 				redirectUrl = loginUrl + "?service=" + getService(request) + ((casRenew != null && !casRenew.equals("")) ? "&renew="+ casRenew : "");
 		
-			logger.info("redirectUrl 2:" + redirectUrl);
+			logger.error("redirectUrl 2:" + redirectUrl);
 			response.sendRedirect(redirectUrl);
 	
 			return null;

@@ -833,6 +833,7 @@ public class LuceneController extends BaseController implements NotificationList
 
 	public void process() throws Exception
 	{
+		logger.info("Process inside LuceneController");
 		notifyListeners(false, true);
 	}
 	

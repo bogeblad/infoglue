@@ -64,7 +64,7 @@ public class ChangeNotificationController
 
 		public void process() 
 		{
-			//System.out.println("WHY????");
+			logger.info("Process inside ChangeNotificationController");
 		}
 	}
 

@@ -119,7 +119,7 @@ public class ViewPageFilter implements Filter
         long end, start = System.currentTimeMillis();
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-
+        
         if(httpRequest.getParameter("igEncodingTest") != null && !httpRequest.getParameter("igEncodingTest").equals(""))
         	logger.warn("httpRequest:" + httpRequest.getParameter("name"));
         

@@ -539,7 +539,12 @@ Slot classes
 .componentDiv:hover {
     border 			 : solid 0px red;
 }
-
+.clearfix:after { 
+   content: " ";
+   display: block; 
+   height: 0; 
+   clear: both;
+}
 input.normaltextfield {
 	font-family      : verdana, arial, sans-serif;
 	font-size        : 11px;

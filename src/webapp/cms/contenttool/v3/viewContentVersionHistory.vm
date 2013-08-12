@@ -40,7 +40,7 @@
 			ds = ds.replace(/]]&gt;/g, "<br/>]]&gt;<br/>");
 			ds = ds.replace(/CDATA\[/g, "CDATA[<br/>").replace(/&para;<BR>/g, "&nbsp;<br/>").replace(/#E6FFE6/g, "#99FF99").replace(/#FFE6E6/g, "#FF8888").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
 
-			diffDivElement.innerHTML = "<p style='background-color: #CCEEff; margin: 0px; padding: 0px; font-family: courier new, courier, serif; font-size: 8pt;'>" + ds + "</p>";
+			diffDivElement.innerHTML = "<p style='background-color: white; margin: 0px; padding: 0px; font-family: courier new, courier, serif; font-size: 8pt;'>" + ds + "</p>";
 
 			element.innerHTML = "Comparison results: <ins>" + diffConclusionArray[0] + " $ui.getString("tool.managementtool.deploymentQuick.additionsLabel")</ins>, <del>" + diffConclusionArray[1] + " $ui.getString("tool.managementtool.deploymentQuick.removalsLabel")</del>";
 		}
@@ -141,9 +141,9 @@
 	#lightFooterToolbar($footerButtons)
 #end
 
-<div id="compareDiv" style="display: none; position: absolute; margin: 0px; top: 0px; background-color: yellow;">
-	<div style="float: left; width: 100%;"><div id="summaryDiv" style="float: left; padding: 4px;"></div><div style="float: right; padding: 4px;"><a href="#" onclick="$('#compareDiv').hide();">Close</a></div></div>
-	<div style="float: left; width: 100%" id="diffDiv"></div>
+<div id="compareDiv" style="display: none; position: absolute; margin: 4px; top: 0px; outline: 1px solid #ccc; float: left;">
+	<div style="float: left; width: 100%; background-color: rgb(204, 204, 204);"><div id="summaryDiv" style="float: left; padding: 4px;"></div><div style="float: right; padding: 4px;"><a href="#" onclick="$('#compareDiv').hide();">Close</a></div></div>
+	<div style="float: left; width: 100%; padding: 10px; background-color: white" id="diffDiv"></div>
 </div>
 #foreach($contentVersionVO in $contentVersionVOList)
 	<textarea id="text_$contentVersionVO.id" style="visibility: hidden;">$contentVersionVO.versionValue</textarea>

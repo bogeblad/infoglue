@@ -34,11 +34,16 @@ public class HTMLHeadItemTag extends TemplateControllerTag
 {
 	private static final long serialVersionUID = 3905242346756059449L;
 	private String value;
+	private boolean prepend = false;
 	
 	public int doEndTag() throws JspException
     {
 		getController().getDeliveryContext().getHtmlHeadItems().add(value);
-        return EVAL_PAGE;
+		
+		this.value = null;
+		this.prepend = false;
+
+		return EVAL_PAGE;
     }	
 	
 	/**
@@ -52,4 +57,14 @@ public class HTMLHeadItemTag extends TemplateControllerTag
 		this.value = evaluateString("HTMLHeadItem", "value", value);
 	}
 
+	/**
+	 * Sets the prepend attribute.
+	 * 
+	 * @param value the value to use.
+	 * @throws JspException if an error occurs while evaluating value parameter.
+	 */
+	public void setPrepend(final String prepend) throws JspException
+	{
+		this.prepend = (Boolean)evaluate("HTMLHeadItem", "prepend", prepend, Boolean.class);
+	}
 }

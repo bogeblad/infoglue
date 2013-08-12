@@ -1007,6 +1007,7 @@ public class ViewPageAction extends InfoGlueAbstractAction
 			return NONE; //doExecute();
 		}
 		
+		
 		Timer t = new Timer();
         while(CmsPropertyHandler.getActuallyBlockOnBlockRequests() && RequestAnalyser.getRequestAnalyser().getBlockRequests())
         {

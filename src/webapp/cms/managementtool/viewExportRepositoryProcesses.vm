@@ -78,7 +78,7 @@
 
 		.activate::before {
 			content: " ";
-			background: transparent url("images/workinganim.gif") no-repeat center center;
+			background: transparent url("css/images/workinganim.gif") no-repeat center center;
 			width: 12px;
 			height: 12px;
 			display: block;
@@ -120,7 +120,7 @@
 		<p class="processError"></p>
 		<ul class="actions">
 			<li class="downloadProcessAction"></li>
-			<li class="deleteProcessAction"><a href="javascript:void(0)" onclick="deleteProcess(this)"><img src="images/delete.gif" width="12" height="12" border="0"> $ui.getString("tool.managementtool.exportRepository.removeProcess.label")</a></li>
+			<li class="deleteProcessAction"><a href="javascript:void(0)" onclick="deleteProcess(this)"><img src="css/images/delete.gif" width="12" height="12" border="0"> $ui.getString("tool.managementtool.exportRepository.removeProcess.label")</a></li>
 			<li class="toggleEventsAction"><a href="javascript:void(0)" onclick="toggleProcessEventList(this)">$ui.getString("tool.managementtool.exportRepository.status.showProcessEvents")</a></li>
 		</ul>
 		<ol class="processEvents"></ol>
@@ -242,7 +242,7 @@
 									if (file && file.url)
 									{
 										downloadActionString += '<li><a class="download" href="' + file.url + '">';
-										downloadActionString += '<img src="images/v3/saveInlineIcon.gif" width="16" height="16" border="0" style="margin-bottom: -2px;">';
+										downloadActionString += '<img src="css/images/v3/saveInlineIcon.gif" width="16" height="16" border="0" style="margin-bottom: -2px;">';
 
 										var size = "$ui.getString("tool.managementtool.exportRepository.status.file.no")";
 										if (file.fileSize)

@@ -25,6 +25,7 @@ package org.infoglue.cms.applications.common.actions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,8 @@ import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.deliver.util.HttpHelper;
 
 /**
  * This class implements the action class for the framed page in the content tool.
@@ -219,6 +222,28 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		return NONE;
     }
 
+	public String doValidateW3C() throws Exception
+    {
+		String markup = getRequest().getParameter("markup");
+		
+		if(markup != null && !markup.equals(""))
+		{
+			Hashtable inHash = new Hashtable();
+			inHash.put("fragment", markup);
+			inHash.put("output", "json");
+			
+			HttpHelper httpHelper = new HttpHelper();
+			String result = httpHelper.postToUrl(CmsPropertyHandler.getW3CValidationServiceUrl(), inHash, "utf-8");
+			logger.info("result:" + result);
+			
+			this.getResponse().setContentType("text/json");
+			this.getResponse().getWriter().print(result);
+		}
+		
+		return NONE;
+    }
+
+	
 	public String doExecute() throws Exception
     {
 		

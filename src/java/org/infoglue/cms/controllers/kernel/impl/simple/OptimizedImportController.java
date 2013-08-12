@@ -358,6 +358,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 		Map<Integer,List<Integer>> assetVersionsMap = new HashMap<Integer,List<Integer>>();
 		Map<String, AvailableServiceBinding> readAvailableServiceBindings = new HashMap<String, AvailableServiceBinding>();
 		Map<Integer,Language> languages = new HashMap<Integer,Language>();
+		Map<Integer,SiteNodeTypeDefinition> siteNodeTypeDefinitions = new HashMap<Integer,SiteNodeTypeDefinition>();
 		
 		InfoGlueExportImpl master = getInfoGlueExportImpl(mainExportFile, encoding);
 		logger.info("master:" + master);
@@ -365,6 +366,11 @@ public class OptimizedImportController extends BaseController implements Runnabl
 		for(Language lang : master.getLanguages())
 		{
 			languages.put(lang.getId(), lang);
+		}
+		
+		for(SiteNodeTypeDefinition siteNodeTypeDefinition : master.getSiteNodeTypeDefinitions())
+		{
+			siteNodeTypeDefinitions.put(siteNodeTypeDefinition.getId(), siteNodeTypeDefinition);
 		}
 		
 		importFoundation(master, encoding, isCopyAction, replaceMap, categoryIdMap, repositoryIdMap);
@@ -379,7 +385,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 		CacheController.clearCache("contentVersionCache");
 		CacheController.clearCache("contentCache");
 		
-		processStructure(archiveFolder, /*siteNodeVersionsFile, siteNodesFile, */encoding, onlyLatestVersions, contentIdMap, siteNodeIdMap, replaceMap, repositoryIdMap, siteNodeVersionIdMap, allSiteNodes, readAvailableServiceBindings, master.getRepositories());
+		processStructure(archiveFolder, /*siteNodeVersionsFile, siteNodesFile, */encoding, onlyLatestVersions, contentIdMap, siteNodeIdMap, replaceMap, repositoryIdMap, siteNodeVersionIdMap, allSiteNodes, readAvailableServiceBindings, master.getRepositories(), siteNodeTypeDefinitions);
 
 		processBean.updateProcess("Structure imported in " + (t.getElapsedTime() / 1000) + " seconds");
 		
@@ -563,9 +569,14 @@ public class OptimizedImportController extends BaseController implements Runnabl
 								 String encoding, 
 								 String onlyLatestVersions, 
 								 Map contentIdMap,
-								 Map siteNodeIdMap, Map replaceMap, Map repositoryIdMap,
-								 Map siteNodeVersionIdMap, List allSiteNodes,
-								 Map<String, AvailableServiceBinding> readAvailableServiceBindings, Collection<Repository> repositories)
+								 Map siteNodeIdMap, 
+								 Map replaceMap, 
+								 Map repositoryIdMap,
+								 Map siteNodeVersionIdMap, 
+								 List allSiteNodes,
+								 Map<String, AvailableServiceBinding> readAvailableServiceBindings, 
+								 Collection<Repository> repositories, 
+								 Map<Integer,SiteNodeTypeDefinition> siteNodeTypeDefinitions)
 								 throws Exception 
 	{
 		Map<String, SiteNode> repositorySiteNodeMap = new HashMap<String, SiteNode>();
@@ -666,7 +677,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			{
 				db.begin();
 			
-				createStructure(rootSiteNode, allSiteNodeVersionMap, contentIdMap, siteNodeIdMap, siteNodeVersionIdMap, readAvailableServiceBindings, allSiteNodes, db, onlyLatestVersions, replaceMap);
+				createStructure(rootSiteNode, allSiteNodeVersionMap, contentIdMap, siteNodeIdMap, siteNodeVersionIdMap, readAvailableServiceBindings, allSiteNodes, db, onlyLatestVersions, replaceMap, siteNodeTypeDefinitions);
 				
 				db.commit();
 			}
@@ -997,7 +1008,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 	 * @param db
 	 * @throws Exception
 	 */
-	private void createStructure(SiteNode siteNode, Map<Integer,List<SiteNodeVersion>> allSiteNodeVersionMap, Map contentIdMap, Map siteNodeIdMap, Map siteNodeVersionIdMap, Map readAvailableServiceBindings, List allSiteNodes, Database db, String onlyLatestVersions, Map<String,String> replaceMap) throws Exception
+	private void createStructure(SiteNode siteNode, Map<Integer,List<SiteNodeVersion>> allSiteNodeVersionMap, Map contentIdMap, Map siteNodeIdMap, Map siteNodeVersionIdMap, Map readAvailableServiceBindings, List allSiteNodes, Database db, String onlyLatestVersions, Map<String,String> replaceMap, Map<Integer,SiteNodeTypeDefinition> siteNodeTypeDefinitions) throws Exception
 	{
 		logger.info("createStructure with siteNode:" + siteNode.getName());
 
@@ -1006,11 +1017,19 @@ public class OptimizedImportController extends BaseController implements Runnabl
 		logger.info("originalSiteNodeId:" + originalSiteNodeId);
 
 		SiteNodeTypeDefinition originalSiteNodeTypeDefinition = siteNode.getSiteNodeTypeDefinition();
+		System.out.println("originalSiteNodeTypeDefinition:" +originalSiteNodeTypeDefinition);
+		
+		if(originalSiteNodeTypeDefinition == null)
+		{
+			Integer siteNodeTypeDefinitionId = siteNode.getValueObject().getSiteNodeTypeDefinitionId();
+			originalSiteNodeTypeDefinition = siteNodeTypeDefinitions.get(siteNodeTypeDefinitionId);
+		}
+		
 		SiteNodeTypeDefinition siteNodeTypeDefinition = null;
 		if(originalSiteNodeTypeDefinition != null)
 		{
 			logger.info("originalSiteNodeTypeDefinition:" + originalSiteNodeTypeDefinition);
-			siteNodeTypeDefinition = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionWithName(siteNode.getSiteNodeTypeDefinition().getName(), db, false);
+			siteNodeTypeDefinition = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionWithName(originalSiteNodeTypeDefinition.getName(), db, false);
 			logger.info("siteNodeTypeDefinition:" + siteNodeTypeDefinition);
 			if(siteNodeTypeDefinition == null)
 			{
@@ -1020,6 +1039,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			
 			siteNode.setSiteNodeTypeDefinition((SiteNodeTypeDefinitionImpl)siteNodeTypeDefinition);
 		}
+		
 		
 		String mappedMetaInfoContentId = "-1";
 		if(siteNode.getMetaInfoContentId() != null)
@@ -1188,7 +1208,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 				//childSiteNode.setRepository(siteNode.getRepository());
 				childSiteNode.setParentSiteNode((SiteNodeImpl)siteNode);
 				childSiteNode.getValueObject().setParentSiteNodeId(siteNode.getValueObject().getSiteNodeId());
-				createStructure(childSiteNode, allSiteNodeVersionMap, contentIdMap, siteNodeIdMap, siteNodeVersionIdMap, readAvailableServiceBindings, allSiteNodes, db, onlyLatestVersions, replaceMap);
+				createStructure(childSiteNode, allSiteNodeVersionMap, contentIdMap, siteNodeIdMap, siteNodeVersionIdMap, readAvailableServiceBindings, allSiteNodes, db, onlyLatestVersions, replaceMap, siteNodeTypeDefinitions);
 			}
 		}
 		

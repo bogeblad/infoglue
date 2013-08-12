@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -183,6 +184,22 @@ public class UpdateContentVersionAction extends ViewContentVersionAction
 		concurrentModification = false;
 		
 		return "success";
+	}
+	
+	public String doRevertToVersion() throws Exception
+	{
+		String contentVersionIdParameter = getRequest().getParameter("contentVersionId");
+		ContentVersionVO contentVersionVOToRevertTo = ContentVersionController.getContentVersionController().getContentVersionVOWithId(new Integer(contentVersionIdParameter));
+		this.contentId = contentVersionVOToRevertTo.getContentId();
+		this.languageId = contentVersionVOToRevertTo.getLanguageId();
+		
+		contentVersionVOToRevertTo.setVersionModifier(this.getInfoGluePrincipal().getName());
+		contentVersionVOToRevertTo.setModifiedDateTime(new Date());
+		contentVersionVOToRevertTo.setStateId(ContentVersionVO.WORKING_STATE);
+		
+		ContentVersionController.getContentVersionController().create(contentVersionVOToRevertTo.getContentId(), contentVersionVOToRevertTo.getLanguageId(), contentVersionVOToRevertTo, contentVersionVOToRevertTo.getId(), true, false);
+		
+		return "successVersionReverted";
 	}
 
 	public String doUpdateVersionXMLV3() throws Exception

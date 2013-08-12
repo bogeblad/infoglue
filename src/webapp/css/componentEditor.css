@@ -589,7 +589,7 @@ Slot classes
 	border: solid 0px red;
 }
 .componentDiv {
-	border: dotted 0px #0070FF;
+	outline: dashed 1px #ccc;
 /*	position: relative;*/
 }
 
@@ -601,7 +601,17 @@ Slot classes
 	outline: dotted 0px #0070FF;
 /*	position: relative;*/
 }
-
+/*
+.sortableComponent:hover {
+	outline: rgba(82,168,236,.8) auto 3px;
+}
+*/
+.clearfix:after { 
+   content: " ";
+   display: block; 
+   height: 0; 
+   clear: both;
+}
 input.normaltextfield {
 	font-family: Tahoma, verdana, arial, sans-serif;
 	font-size: 11px;

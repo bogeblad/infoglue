@@ -492,6 +492,7 @@ function displayNotification(aMessage, aAutoHide, aClassName)
 	
 	if (notificationIsHot)
 	{
+		$("#popupAlertMessageDivContainer").css("height", "35px");
 		$("#popupAlertMessageDiv p").html(aMessage); 
 		$("#popupAlertMessageDiv").attr("class", aClassName);
 		$("#popupAlertMessageDiv").css("margin-top", "0");
@@ -508,4 +509,7 @@ function hideNotification()
 {
 	notificationIsHot = false; 
 	$("#popupAlertMessageDiv").css("margin-top", "35px");
+	setTimeout(function() {
+		$("#popupAlertMessageDivContainer").css("height", "1px");
+	}, 2000);
 }

@@ -23,18 +23,6 @@ if(typeof CKEDITOR != "undefined")
 			['Format','FontSize'],
 			['Maximize','ShowBlocks']
 		];
-
-	    /*[
-	        ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Scayt'],
-	        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-	        ['Image'],
-	        '/',
-	        ['Format'],
-	        ['Bold','Italic','Strike'],
-	        ['NumberedList','BulletedList'],
-	        ['Link','Unlink'],
-	        ['Maximize','-','About']
-	    ];*/
 	    
 	    config.toolbar_Full =
     	[
@@ -54,9 +42,8 @@ if(typeof CKEDITOR != "undefined")
     	    ['TextColor','BGColor'],
     	    ['Maximize', 'ShowBlocks','-','About']
     	];
-	    config.skin = 'kama';
-	   // config.skin = 'office2003';
-	   // config.contentsCss = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
+	    config.skin = 'moono';
+	   	config.contentsCss = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
 	    	
 	    config.filebrowserBrowseUrl = '$request.contextPath/ViewLinkDialog!viewLinkDialogForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")';
 	    config.filebrowserImageBrowseUrl = '$request.contextPath/ViewContentVersion!viewAssetBrowserForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")&assetTypeFilter=*';

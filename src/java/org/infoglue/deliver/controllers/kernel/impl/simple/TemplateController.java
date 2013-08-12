@@ -807,7 +807,7 @@ public interface TemplateController
 	 * This method is meant to be used for javascript plugins and similar bundles - and the target directory is therefore the infoglueDeliverXXXX/digitalAssets/extensions
 	 */
 	 
-	public abstract String getScriptExtensionUrls(Integer contentId, String assetKey, String fileNames, Boolean autoCreateMarkup, Boolean addToHeader, Boolean addToBody, Boolean addToBundledIncludes, String bundleName);
+	public abstract String getScriptExtensionUrls(Integer contentId, String assetKey, String fileNames, Boolean autoCreateMarkup, Boolean addToHeader, Boolean addToBody, Boolean addToBundledIncludes, String bundleName, boolean prepend);
 
     public abstract Vector getArchiveEntries(Integer contentId, String assetKey);
 

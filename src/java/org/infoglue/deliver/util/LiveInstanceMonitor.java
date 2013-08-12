@@ -83,7 +83,7 @@ public class LiveInstanceMonitor implements Runnable
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		System.out.println("Starting LiveInstanceMonitor....");
+		logger.info("Starting LiveInstanceMonitor....");
 		while(true)
 		{
 			try

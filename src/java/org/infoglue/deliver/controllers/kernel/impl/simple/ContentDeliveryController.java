@@ -2438,7 +2438,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 	 * This method is meant to be used for javascript plugins and similar bundles - and the target directory is therefore the infoglueDeliverXXXX/script/extensions
 	 */
 
-	public String getScriptExtensionUrls(Database db, Integer contentId, Integer languageId, String assetKey, String fileNames, Boolean autoCreateMarkup, Boolean addToHeader, Boolean addToBodyEnd, Boolean addToBundledIncludes, String bundleName, Integer siteNodeId, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
+	public String getScriptExtensionUrls(Database db, Integer contentId, Integer languageId, String assetKey, String fileNames, Boolean autoCreateMarkup, Boolean addToHeader, Boolean addToBodyEnd, Boolean addToBundledIncludes, String bundleName, boolean prepend, Integer siteNodeId, boolean useLanguageFallback, DeliveryContext deliveryContext, InfoGluePrincipal infoGluePrincipal) throws SystemException, Exception
 	{
 		Timer t = new Timer();
 		String scriptExtensionUrls = "";
@@ -2508,7 +2508,7 @@ public class ContentDeliveryController extends BaseDeliveryController
 								scriptExtensionFileUrl = "<script type=\"text/javascript\" src=\"" + scriptExtensionFileUrl + "\"></script>";
 						}
 
-						if(!addToHeader && !addToBundledIncludes)
+						if(!addToHeader && !addToBodyEnd && !addToBundledIncludes)
 						{
 							scriptExtensionUrls = scriptExtensionUrls + scriptExtensionFileUrl + "";
 						}
@@ -2532,9 +2532,9 @@ public class ContentDeliveryController extends BaseDeliveryController
 								}
 							}
 							else if(addToHeader)
-								deliveryContext.getHtmlHeadItems().add(scriptExtensionFileUrl);
+								deliveryContext.addHtmlHeadItem(scriptExtensionFileUrl, prepend);
 							else if(addToBodyEnd)
-								deliveryContext.getHtmlBodyEndItems().add(scriptExtensionFileUrl);
+								deliveryContext.addHtmlBodyEndItem(scriptExtensionFileUrl, prepend);
 						}
 					}					
 				}

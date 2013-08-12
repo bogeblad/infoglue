@@ -356,6 +356,7 @@
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.editOnSight" "editOnSight" "$this.getPropertyValue('editOnSight')" "$!cmsPH.editOnSight")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.disableEditOnSightToolbar" "disableEditOnSightToolbar" "$this.getPropertyValue('disableEditOnSightToolbar')" "$!cmsPH.disableEditOnSightToolbar")
+				#yesNoDropDownWithInheritCSS("ServerNode.property.showInlinePropertiesIcon" "showInlinePropertiesIcon" "$this.getPropertyValue('showInlinePropertiesIcon')" "$!cmsPH.showInlinePropertiesIcon")
 				
 				#yesNoDropDownWithInheritCSS("ServerNode.property.useSimpleComponentDialog" "useSimpleComponentDialog" "$this.getPropertyValue('useSimpleComponentDialog')" "$!cmsPH.useSimpleComponentDialog")
 				#yesNoDropDownWithInheritCSS("ServerNode.property.hideAccessRightsIfNotAllowedToManage" "hideAccessRightsIfNotAllowedToManage" "$this.getPropertyValue('hideAccessRightsIfNotAllowedToManage')" "$!cmsPH.hideAccessRightsIfNotAllowedToManage")
@@ -378,6 +379,8 @@
 				#selectFieldCSS("ServerNode.property.componentBindningAssetBrowser" "componentBindningAssetBrowser" $this.getPropertyValue('componentBindningAssetBrowser') $componentBindningAssetBrowserOptions "$!cmsPH.componentBindningAssetBrowser")
 
 				#editPropertyFieldCSS("ServerNode.property.GACode" "gaCode" "$this.getPropertyValue('gaCode')" "51" "$!serverNodeId" "$!cmsPH.getGACode()")
+
+				#editPropertyFieldCSS("ServerNode.property.w3cValidationServiceUrl" "w3cValidationServiceUrl" "$this.getPropertyValue('w3cValidationServiceUrl')" "51" "$!serverNodeId" "$!cmsPH.w3cValidationServiceUrl")
 				
 				#editPropertyFieldCSS("ServerNode.property.edition.pageSize" "edition.pageSize" "$this.getPropertyValue('edition.pageSize')" "51" "$!serverNodeId" "$!cmsPH.editionPageSize")
 				#editPropertyFieldCSS("ServerNode.property.content.tree.sort" "content.tree.sort" "$this.getPropertyValue('content.tree.sort')" "51" "$!serverNodeId" "$!cmsPH.contentTreeSort")

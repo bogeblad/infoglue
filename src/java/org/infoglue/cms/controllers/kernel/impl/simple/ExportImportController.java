@@ -179,6 +179,7 @@ public class ExportImportController extends BaseController
 			List contentTypeDefinitions = ContentTypeDefinitionController.getController().getContentTypeDefinitionList(db);
 			List categories = CategoryController.getController().getAllActiveCategories();
 			List languages = LanguageController.getController().getLanguageList(db);
+			List siteNodeTypeDefinitions = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionList(db);
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
 			
@@ -204,6 +205,7 @@ public class ExportImportController extends BaseController
 				infoGlueExportImpl.setLanguages(languages);
 				infoGlueExportImpl.setContentTypeDefinitions(contentTypeDefinitions);
 				infoGlueExportImpl.setCategories(categories);
+				infoGlueExportImpl.setSiteNodeTypeDefinitions(siteNodeTypeDefinitions);
 			}
 			
 			marshaller.marshal(infoGlueExportImpl);

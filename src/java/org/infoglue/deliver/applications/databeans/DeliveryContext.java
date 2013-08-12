@@ -142,8 +142,8 @@ public class DeliveryContext implements UsageListener
 	private String operatingMode = null;
 	
 	private Map pageAttributes = new HashMap();
-	private Set htmlHeadItems = new HashSet();
-	private Set<String> htmlBodyEndItems = new HashSet<String>();
+	private List<String> htmlHeadItems = new ArrayList<String>();
+	private List<String> htmlBodyEndItems = new ArrayList<String>();
 	private Map<String, Set<String>> scriptExtensionHeadBundles = new HashMap<String, Set<String>>();
 	private Map<String, Set<String>> scriptExtensionBodyBundles = new HashMap<String, Set<String>>();
 	private Map<String, Set<String>> cssExtensionBundles = new HashMap<String, Set<String>>();
@@ -580,14 +580,33 @@ public class DeliveryContext implements UsageListener
 		this.useDownloadAction = useDownloadAction;
 	}
 
-	public Set<String> getHtmlHeadItems()
+	public List<String> getHtmlHeadItems()
 	{
 		return htmlHeadItems;
 	}
 
-	public Set<String> getHtmlBodyEndItems()
+	public List<String> getHtmlBodyEndItems()
 	{
 		return htmlBodyEndItems;
+	}
+
+	public void addHtmlHeadItem(String item, boolean prepend)
+	{
+		if(!getHtmlHeadItems().contains(item))
+		{
+			if(prepend) getHtmlHeadItems().add(0, item);
+			else getHtmlHeadItems().add(item);
+		}
+	}
+
+	public void addHtmlBodyEndItem(String item, boolean prepend)
+	{
+		if(!getHtmlBodyEndItems().contains(item))
+		{
+			if(prepend) getHtmlBodyEndItems().add(0, item);
+			else getHtmlBodyEndItems().add(item);
+		}
+
 	}
 
 	public Map getHttpHeaders()

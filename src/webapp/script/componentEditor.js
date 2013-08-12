@@ -616,17 +616,17 @@ function showComponentMenu(event, element, compId, anInsertUrl, anDeleteUrl, anC
 	if(window.parent.name == "PageComponents" && componentEditorInNewWindowDivCompElement)
 		componentEditorInNewWindowDivCompElement.style.display = "none";
 	
-	if(hasAccessToPageNotifications) 
+	if(window.hasAccessToPageNotifications) 
     	$(".linkTakePage").css("display","block");
 	else
     	$(".linkTakePage").css("display","none");
 
-    if(hasAccessToContentNotifications) 
+    if(window.hasAccessToContentNotifications) 
     	$(".linkTakeContent").css("display","block");
 	else
     	$(".linkTakeContent").css("display","none");
 
-    if(hasAccessToSavePageTemplate) 
+    if(window.hasAccessToSavePageTemplate) 
     	$(".linkCreatePageTemplate").css("display","block");
 	else
     	$(".linkCreatePageTemplate").css("display","none");
@@ -661,7 +661,7 @@ function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUr
 	
 	try
 	{
-		var access = eval("hasAccessToDeleteComponent" + convertName(slotName)); 
+		var access = eval("window.hasAccessToDeleteComponent" + convertName(slotName)); 
 	    //alert("access:" + access);
 	    if(access) 
 	    {
@@ -674,7 +674,7 @@ function showComponentInTreeMenu(event, element, compId, anInsertUrl, anDeleteUr
 	    	document.getElementById("componentInTreeMenuTopSeparator").style.display = "none";
 	    }
 
-		var changeAccess = eval("hasAccessToChangeComponent" + convertName(slotName)); 
+		var changeAccess = eval("window.hasAccessToChangeComponent" + convertName(slotName)); 
 	    //alert("changeAccess:" + changeAccess);
 	    if(changeAccess) 
 	    {
@@ -756,61 +756,50 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 	
 	try
 	{
-	    if(hasAccessToPageNotifications) 
+	    if(window.hasAccessToPageNotifications) 
 	    	$(".linkTakePage").css("display","block");
 		else
 	    	$(".linkTakePage").css("display","none");
 
-	    if(hasAccessToContentNotifications) 
+	    if(window.hasAccessToContentNotifications) 
 	    	$(".linkTakeContent").css("display","block");
 		else
 	    	$(".linkTakeContent").css("display","none");
 
-	    if(hasAccessToSavePageTemplate) 
+	    if(window.hasAccessToSavePageTemplate) 
 	    	$(".linkCreatePageTemplate").css("display","block");
 		else
 	    	$(".linkCreatePageTemplate").css("display","none");
 
-
-	    var hasPageStructureAccess = eval("hasPageStructureAccess"); 
-	    if(hasPageStructureAccess) 
+	    if(window.hasPageStructureAccess) 
 	    	$(".linkPageComponents").css("display", "block");
 		else
 	    	$(".linkPageComponents").css("display", "none");
 
-		var hasAccessToOpenInNewWindow = eval("hasOpenInNewWindowAccess"); 
-	    if(hasAccessToOpenInNewWindow) 
+	    if(window.hasOpenInNewWindowAccess) 
 	    	$(".linkOpenInNewWindow").css("display","block");
 		else
 	    	$(".linkOpenInNewWindow").css("display","none");
 
-		var hasAccessToViewSource = eval("hasAccessToViewSource"); 
-	    if(hasAccessToViewSource) 
+	    if(window.hasAccessToViewSource) 
 	    	$(".linkViewSource").css("display","block");
 		else
 	    	$(".linkViewSource").css("display","none");
 	    
 	    
-	    var access = eval("hasAccessToAddComponent" + convertName(compId)); 
-	    //alert("hasAccessToAddComponent" + convertName(compId) + "=" + access);
-	    //alert("access:" + access);
+	    var access = eval("window.hasAccessToAddComponent" + convertName(compId)); 
 	    if(access) 
 	    {
 	    	$(".linkAddComponent").css("display", "block");
 	    	$("#emptySlotMenuTopSeparator").css("display", "block");
-	    	//document.getElementById("addComponentMenuItem").style.display = "block";
-	    	//document.getElementById("emptySlotMenuTopSeparator").style.display = "block";
 		}
 		else
 		{
 			$(".linkAddComponent").css("display", "none");
 	    	$("#emptySlotMenuTopSeparator").css("display", "none");
-	    	//document.getElementById("addComponentMenuItem").style.display = "none";
-	    	//document.getElementById("emptySlotMenuTopSeparator").style.display = "none";
 	    }
 
-		var accessToAccessRights = eval("hasAccessToAccessRights"); 
-	    //alert("accessToAccessRights:" + accessToAccessRights);
+		var accessToAccessRights = eval("window.hasAccessToAccessRights"); 
 	    if(accessToAccessRights) 
 	    {
 	    	document.getElementById("accessRightsMenuItem").style.display = "block";
@@ -820,7 +809,7 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 	    	document.getElementById("accessRightsMenuItem").style.display = "none";
 	    }
 
-		var hasAccessToChangeComponent = eval("hasAccessToChangeComponent" + convertName(compId)); 
+		var hasAccessToChangeComponent = eval("window.hasAccessToChangeComponent" + convertName(compId)); 
 	    //alert("hasAccessToChangeComponent:" + hasAccessToChangeComponent);
 	    if(hasAccessToChangeComponent) 
 	    {
@@ -830,15 +819,6 @@ function showEmptySlotMenu(slotId, event, compId, anInsertUrl, slotContentIdVar)
 		{
 	    	document.getElementById("changeComponentMenuItem").style.display = "none";
 	    }
-
-		/*
-		var hasAccessToSubmitToPublish = eval("hasAccessToSubmitToPublish"); 
-	    alert("hasAccessToSubmitToPublish:" + hasAccessToSubmitToPublish);
-	    if(hasAccessToSubmitToPublish) 
-	    	document.getElementById("submitToPublishMenuItem").style.display = "block";
-		else
-	    	document.getElementById("submitToPublishMenuItem").style.display = "none";
-		*/
 	}
 	catch(e)
 	{
@@ -1449,10 +1429,15 @@ function completeEditInlineSave(selectedContentId, selectedAttributeName)
 {
 	try
 	{
-	    delete savingAttributes["" + selectedContentId]["" + selectedAttributeName];
-	    savedAttributes["" + selectedContentId]["" + selectedAttributeName] = "true";
-	
-		var size = 0;
+		if(savingAttributes["" + selectedContentId] && savingAttributes["" + selectedContentId]["" + selectedAttributeName])
+			delete savingAttributes["" + selectedContentId]["" + selectedAttributeName];
+	    
+		if(!savingAttributes["" + selectedContentId])
+			savedAttributes["" + selectedContentId] = {};
+		
+		savedAttributes["" + selectedContentId]["" + selectedAttributeName] = "true";
+		
+	    var size = 0;
 		for (var i in savingAttributes["" + selectedContentId])
 			size++;
 		

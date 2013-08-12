@@ -46,9 +46,7 @@
 				#set($extraParameter = '"aoColumns": [ {"bVisible": false}, { "sWidth": "30px" }, null, { "sWidth": "10px" }], "iDisplayLength": 20')
 			#end
 			#initDataTableImpl("dataTable" $extraParameter)
-			
-			$("#dataTable_filter :text").focus();
-			
+						
 			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
 					resizeScrollArea(); 
 				}, 
@@ -62,10 +60,21 @@
 								#set($extraParameter = '"iDisplayLength": 20')
 								#initDataTableImpl("dataTableForms" $extraParameter)
 							});
+						setTimeout(function(){
+							$("#dataTableForms_filter :text").focus();	
+							}, 500);
+					}
+					else {
+						setTimeout(function(){
+							$("#dataTable_filter :text").focus();	
+							}, 500);
 					}
 				}
 			});
-					
+			
+			setTimeout(function(){
+				$("#dataTable_filter :text").focus();	
+				}, 500);
 		});
 	-->
 	</script>

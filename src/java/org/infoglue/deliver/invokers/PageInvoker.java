@@ -275,7 +275,6 @@ public abstract class PageInvoker
 					String[] usedEntities = StringUtils.split(usedEntitiesString, "|");
 					for(String usedEntity : usedEntities)
 					{
-						//System.out.println("usedEntity:" + usedEntity);
 						if(usedEntity.startsWith("content_"))
 							this.getDeliveryContext().addUsedContent(usedEntity);
 						else if(usedEntity.startsWith("contentVersion_"))
@@ -290,7 +289,6 @@ public abstract class PageInvoker
 			
 			getLastModifiedDateTime(true);
 
-			//System.out.println("cachedExtraData:" + cachedExtraData);
 		    if(cachedExtraData != null)
 		    	this.getDeliveryContext().populateExtraData(cachedExtraData);
 		    
@@ -594,7 +592,7 @@ public abstract class PageInvoker
 			this.generateExtensionBundles(this.getTemplateController().getDeliveryContext().getScriptExtensionBodyBundles(), "text/javascript", "body");
 			this.generateExtensionBundles(this.getTemplateController().getDeliveryContext().getCSSExtensionBundles(), "text/css", "head");
 			
-			Set htmlHeadItems = this.getTemplateController().getDeliveryContext().getHtmlHeadItems();
+			List htmlHeadItems = this.getTemplateController().getDeliveryContext().getHtmlHeadItems();
 			if(htmlHeadItems != null && htmlHeadItems.size() > 0)
 			{
 				int indexOfHeadEndTag = pageString.indexOf("</head");
@@ -617,7 +615,7 @@ public abstract class PageInvoker
 				}
 			}
 
-			Set htmlBodyEndItems = this.getTemplateController().getDeliveryContext().getHtmlBodyEndItems();
+			List<String> htmlBodyEndItems = this.getTemplateController().getDeliveryContext().getHtmlBodyEndItems();
 			if(htmlBodyEndItems != null && htmlBodyEndItems.size() > 0)
 			{
 				if(sb == null)

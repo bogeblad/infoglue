@@ -1144,6 +1144,11 @@ public class CmsPropertyHandler
 		return getServerNodeProperty("gaCode", true, "");
 	}
 
+	public static String getW3CValidationServiceUrl()
+	{
+		return getServerNodeProperty("w3cValidationServiceUrl", true, "http://validator.w3.org/check");
+	}
+
 	public static String getMaxRows()
 	{
 		return getServerNodeProperty("maxRows", true, "100");
@@ -1990,6 +1995,11 @@ public class CmsPropertyHandler
 			String disableEditOnSightToolbar = getPropertySet().getString("principal_" + userName + "_disableEditOnSightToolbar");
 			return (disableEditOnSightToolbar == null || !disableEditOnSightToolbar.equals("true") ? false : true);
 		}
+	}
+
+	public static String getShowInlinePropertiesIcon()
+	{
+	    return getServerNodeProperty("showInlinePropertiesIcon", true, "true");
 	}
 
 	public static String getPreferredRepositoryId(String userName)

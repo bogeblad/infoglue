@@ -38,9 +38,9 @@ import org.infoglue.cms.entities.content.impl.simple.ExportContentVersionImpl;
 import org.infoglue.cms.entities.management.AccessRight;
 import org.infoglue.cms.entities.management.Language;
 import org.infoglue.cms.entities.management.Repository;
+import org.infoglue.cms.entities.management.SiteNodeTypeDefinition;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVersion;
-import org.infoglue.cms.entities.structure.impl.simple.SiteNodeImpl;
 
 public class InfoGlueExportImpl
 {
@@ -50,6 +50,7 @@ public class InfoGlueExportImpl
 	//private ContentImpl rootContent;
 	//private SiteNodeImpl rootSiteNode;
 	private Collection<Language> languages = new ArrayList<Language>();
+	private Collection<SiteNodeTypeDefinition> siteNodeTypeDefinitions = new ArrayList<SiteNodeTypeDefinition>();
 	private Collection contentTypeDefinitions = new ArrayList();
 	private Collection categories = new ArrayList();
 	private Collection<Repository> repositories = new ArrayList<Repository>();
@@ -113,6 +114,16 @@ public class InfoGlueExportImpl
 	public void setLanguages(Collection<Language> languages)
 	{
 		this.languages = languages;
+	}
+
+	public Collection<SiteNodeTypeDefinition> getSiteNodeTypeDefinitions()
+	{
+		return siteNodeTypeDefinitions;
+	}
+
+	public void setSiteNodeTypeDefinitions(Collection<SiteNodeTypeDefinition> siteNodeTypeDefinitions)
+	{
+		this.siteNodeTypeDefinitions = siteNodeTypeDefinitions;
 	}
 
 	public Collection getContentTypeDefinitions()

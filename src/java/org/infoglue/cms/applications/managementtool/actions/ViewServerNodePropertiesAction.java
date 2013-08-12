@@ -274,6 +274,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "maxRows");
 	    populate(ps, "maxNumberOfAssetInSearches");
 	    populate(ps, "gaCode");
+	    populate(ps, "w3cValidationServiceUrl");
 	    populate(ps, "componentBindningAssetBrowser");
 	    populate(ps, "prefferedWYSIWYG");
 	    
@@ -289,6 +290,7 @@ public class ViewServerNodePropertiesAction extends InfoGluePropertiesAbstractAc
 	    populate(ps, "showAllWorkflows");
 	    populate(ps, "editOnSight");
 	    populate(ps, "disableEditOnSightToolbar");
+	    populate(ps, "showInlinePropertiesIcon");
 	    populate(ps, "previewDeliveryUrl");
 	    populate(ps, "stagingDeliveryUrl");
 	    populateData(ps, "internalDeliveryUrls");

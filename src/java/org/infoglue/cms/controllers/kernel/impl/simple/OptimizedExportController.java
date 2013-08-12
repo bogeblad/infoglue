@@ -248,6 +248,8 @@ public class OptimizedExportController extends BaseController implements Runnabl
 			logger.info("contentTypeDefinitions");
 			List categories = CategoryController.getController().getAllActiveCategories();
 			logger.info("categories");
+			List siteNodeTypeDefinitions = SiteNodeTypeDefinitionController.getController().getSiteNodeTypeDefinitionList(db);
+			
 			processBean.updateProcess("Content type and categories exported in " + (t.getElapsedTime() / 1000) + " seconds");
 			
 			InfoGlueExportImpl infoGlueExportImpl = new InfoGlueExportImpl();
@@ -285,7 +287,8 @@ public class OptimizedExportController extends BaseController implements Runnabl
 			infoGlueExportImpl.setLanguages(languages);
 			infoGlueExportImpl.setContentTypeDefinitions(contentTypeDefinitions);
 			infoGlueExportImpl.setCategories(categories);
-
+			infoGlueExportImpl.setSiteNodeTypeDefinitions(siteNodeTypeDefinitions);
+			
 			infoGlueExportImpl.setRepositoryProperties(allRepositoryProperties);
 			infoGlueExportImpl.setContentProperties(allContentProperties);
 			infoGlueExportImpl.setSiteNodeProperties(allSiteNodeProperties);

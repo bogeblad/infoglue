@@ -5,7 +5,7 @@
 <div class="igmenuitems linkTakePage" onclick="openInlineDivImpl('$pageSubscriptionUrl', 700, 750, true, true);"><a name='subscribePage'>$subscribeToPageHTML</a></div>
 <div class="igmenuitems linkAddComponent" onclick="insertComponent();"><a href='#'>$addComponentHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
-<hr id="emptySlotMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<hr id="emptySlotMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
 <div id="accessRightsMenuItem" class="igmenuitems linkAccessRights" onclick="setAccessRights(slotName, slotContentId);"><a href='#'>$accessRightsHTML</a></div>
 <div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='javascript:void(0);'>$pageComponents</a></div>
 <div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
@@ -19,9 +19,9 @@
 <div id="changeComponentMenuItem" class="igmenuitems linkChangeComponent" onclick="changeComponent();"><a href='#'>$changeComponentHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$savePartTemplateUrl"><a href='#'>$savePagePartTemplateHTML</a></div>
-<hr id="componentMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<hr id="componentMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
 <div class="igmenuitems linkComponentProperties" onclick="javascript:showComponent();"><a href='#'>$propertiesHTML</a></div>
-<hr id="componentMenuMiddleSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<hr id="componentMenuMiddleSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
 <div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='#'>$pageComponents</a></div>
 <div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
 <div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
@@ -32,9 +32,9 @@
 <div id="changeComponentInTreeMenuItem" class="igmenuitems linkChangeComponent" onclick="changeComponent();"><a href='#'>$changeComponentHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$saveTemplateUrl"><a href='#'>$savePageTemplateHTML</a></div>
 <div class="igmenuitems linkCreatePageTemplate" onclick="$savePartTemplateUrl"><a href='#'>$savePagePartTemplateHTML</a></div>
-<hr id="componentInTreeMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<hr id="componentInTreeMenuTopSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
 <div class="igmenuitems linkComponentProperties" onclick="javascript:showComponent();"><a href='#'>$propertiesHTML</a></div>
-<hr id="emptySlotMenuMiddleSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px;"/>
+<hr id="emptySlotMenuMiddleSeparator" style="border:0px; border-top:1px solid #bbb; margin-top:4px; margin-bottom:4px;"/>
 <div class="igmenuitems linkPageComponents" onclick="toggleDiv('pageComponents');"><a href='#'>$pageComponents</a></div>
 <div class="igmenuitems linkOpenInNewWindow" onclick="window.open(document.location.href,'PageComponents','');"><a href='#'>$componentEditorInNewWindowHTML</a></div>
 <div class="igmenuitems linkViewSource"><a href='javascript:viewSource();'>$viewSource</a></div>
@@ -48,13 +48,75 @@
 		<input id="igPreviewButton" type="button" class="preview" value="Preview" onclick="previewPage();"/>
 	</div>
 
-	<div class="right myHome"></div>
-	<div class="right mySettings" onclick="openInlineDivImpl(componentEditorUrl + '/ViewMySettings.action', 700, 750, true, true);"></div>
+	<div class="right myHome" title="${deliver.editOnSight.toolbarHomeButton.title}"></div>
+	<div class="right mySettings" title="${deliver.editOnSight.toolbarMySettingsButton.title}" onclick="openInlineDivImpl(componentEditorUrl + '/ViewMySettings.action', 700, 750, true, true);"></div>
+	<div class="right openInNewWindow" title="${deliver.editOnSight.toolbarNewWindowButton.title}" onclick="window.open(document.location.href,'PageComponents','');"></div>
+	<div class="right validateW3C" title="${deliver.editOnSight.toolbarValidateW3CButton.title}" onclick="validateW3C();"><div class="errorCountW3C"></div></div>
 	<div class="right">Inline editing: <input type="checkbox" id="inlineEditing" value="true" checked="checked" onclick="toggleInline();"/></div>
 	<div id="igStatusDiv" class="right working">State: <span id="igStatus">Unknown</span></div>
 </div>
 
+<form id="validatorW3CForm" method="post" action="http://validator.w3.org/check" target="_blank">
+	<input type="hidden" id="fragment" name="fragment" value=""/>
+</form>
+
 <script type="text/javascript">
+
+function validateW3C()
+{
+	var previewUrl = document.location.href;
+	previewUrl = previewUrl.replace("!renderDecoratedPage.", ".");
+	
+	$.get(previewUrl, function(data) {
+	  
+	  	try
+		{
+			$.ajax({
+				type: "POST",
+			   	url: "" + cmsBaseUrl + "/ViewCommonAjaxServices!validateW3C.action",
+			   	data: { "markup": data },
+			   	dataType: 'json',
+			   	cache: false,
+			   	success: function(msg, textStatus){
+					//alert("msg:" + msg);
+					//alert("textStatus:" + textStatus);
+					//alert("Messages:" + msg.messages);
+					var errors = 0;
+					jQuery.each(msg.messages, function() {
+					  	//alert("lastLine: " + this.lastLine + ", lastColumn: " + this.lastColumn + ", message: " + this.message + ", type:" + this.type);
+					  	if(this.type == "error")
+					  	{
+					  		errors++;
+					  	}
+					});
+					
+					if(errors > 0)
+					{
+						$(".errorCountW3C").css("display","table").html(errors);
+						var confirmQuestion = "${deliver.editOnSight.toolbarValidateW3CErrorsQuestion.label}";
+						confirmQuestion = confirmQuestion.replace("{0}",errors);
+						if(confirm(confirmQuestion))
+						{
+							$("#fragment").val(data);
+							$("#validatorW3CForm").get(0).submit();
+						}
+					}
+					else
+					{
+						alert("${deliver.editOnSight.toolbarValidateW3CNoErrors.label}");
+			   		}
+			   },
+			   error: function (XMLHttpRequest, textStatus, errorThrown) {
+				   //alert("textStatus:" + textStatus);
+				   //alert("ResponseCode:" + XMLHttpRequest.status);
+				   alert("We could not validate against W3C: " + textStatus + "/" + errorThrown);
+			   }
+			});
+		}
+		catch(e) {console.log("e:" + e);}
+	
+	});
+}
 
 function previewPage()
 {
@@ -68,6 +130,10 @@ function hideFooterButtons()
 	if(window.self !== window.top)
 	{
 		$(".myHome, .mySettings, .preview").hide();
+	}
+	else
+	{
+		$(".openInNewWindow").hide();
 	}
 }
 

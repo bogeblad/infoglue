@@ -47,7 +47,8 @@ public class ScriptExtensionUrlTag extends ComponentLogicTag
     private Boolean addToHTMLBody = false;
     private Boolean addToBundledIncludes = false;
     private String bundleName;
-    
+	private boolean prepend = false;
+
     public ScriptExtensionUrlTag()
     {
         super();
@@ -57,11 +58,10 @@ public class ScriptExtensionUrlTag extends ComponentLogicTag
     {
         try
         {
-        	String scriptBaseUrl = "";
         	if(contentId == null)
         		this.contentId = getController().getComponentContentId();
-        		
-            produceResult(getController().getScriptExtensionUrls(this.contentId, this.assetKey, this.fileNames, this.autoCreateMarkup, this.addToHTMLHeader, this.addToHTMLBody, this.addToBundledIncludes, this.bundleName));
+
+            produceResult(getController().getScriptExtensionUrls(this.contentId, this.assetKey, this.fileNames, this.autoCreateMarkup, this.addToHTMLHeader, this.addToHTMLBody, this.addToBundledIncludes, this.bundleName, prepend));
         }
         catch(Exception e)
         {
@@ -76,6 +76,7 @@ public class ScriptExtensionUrlTag extends ComponentLogicTag
         this.addToHTMLBody = false;
         this.addToBundledIncludes = false;
         this.assetKey = null;
+        this.prepend = false;
         
         return EVAL_PAGE;
     }
@@ -120,4 +121,14 @@ public class ScriptExtensionUrlTag extends ComponentLogicTag
         this.bundleName = evaluateString("scriptExtensionBaseUrl", "bundleName", bundleName);
     }
 
+	/**
+	 * Sets the prepend attribute.
+	 * 
+	 * @param prepend If the item should be added on top of the list.
+	 * @throws JspException if an error occurs while evaluating value parameter.
+	 */
+	public void setPrepend(final String prepend) throws JspException
+	{
+		this.prepend = (Boolean)evaluate("scriptExtensionBaseUrl", "prepend", prepend, Boolean.class);
+	}
 }

@@ -34,10 +34,15 @@ public class HTMLBodyItemTag extends TemplateControllerTag
 {
 	private static final long serialVersionUID = 3905242346756059449L;
 	private String value;
+	private boolean prepend = false;
 	
 	public int doEndTag() throws JspException
     {
-		getController().getDeliveryContext().getHtmlBodyEndItems().add(value);
+		getController().getDeliveryContext().addHtmlBodyEndItem(value, prepend);
+		
+		this.value = null;
+		this.prepend = false;
+		
         return EVAL_PAGE;
     }	
 	
@@ -52,4 +57,14 @@ public class HTMLBodyItemTag extends TemplateControllerTag
 		this.value = evaluateString("HTMLBodyItem", "value", value);
 	}
 
+	/**
+	 * Sets the prepend attribute.
+	 * 
+	 * @param prepend If the item should be added on top of the list.
+	 * @throws JspException if an error occurs while evaluating value parameter.
+	 */
+	public void setPrepend(final String prepend) throws JspException
+	{
+		this.prepend = (Boolean)evaluate("HTMLBodyItem", "prepend", prepend, Boolean.class);
+	}
 }

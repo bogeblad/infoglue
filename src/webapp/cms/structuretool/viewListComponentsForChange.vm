@@ -125,10 +125,22 @@
 								#set($extraParameter = '"iDisplayLength": 20')
 								#initDataTableImpl("dataTableForms" $extraParameter)
 							});
+
+						setTimeout(function(){
+							$("#dataTableForms_filter :text").focus();	
+							}, 500);
+					}
+					else {
+						setTimeout(function(){
+							$("#dataTable_filter :text").focus();	
+							}, 500);
 					}
 				}
 			});
 
+			setTimeout(function(){
+				$("#dataTable_filter :text").focus();	
+				}, 500);
 		});
 	-->
 	</script>

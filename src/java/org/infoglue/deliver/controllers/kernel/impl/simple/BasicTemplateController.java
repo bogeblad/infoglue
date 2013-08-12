@@ -3661,13 +3661,13 @@ public class BasicTemplateController implements TemplateController
 	 * This method is meant to be used for javascript plugins and similar bundles - and the target directory is therefore the infoglueDeliverXXXX/digitalAssets/extensions
 	 */
 	 
-	public String getScriptExtensionUrls(Integer contentId, String assetKey, String fileNames, Boolean autoCreateMarkup, Boolean addToHeader, Boolean addToBody, Boolean addToBundledIncludes, String bundleName) 
+	public String getScriptExtensionUrls(Integer contentId, String assetKey, String fileNames, Boolean autoCreateMarkup, Boolean addToHeader, Boolean addToBody, Boolean addToBundledIncludes, String bundleName, boolean prepend) 
 	{
 		String assetUrl = "";
 		
 		try
 		{
-			assetUrl = ContentDeliveryController.getContentDeliveryController().getScriptExtensionUrls(getDatabase(), contentId, this.languageId, assetKey, fileNames, autoCreateMarkup, addToHeader, addToBody, addToBundledIncludes, bundleName, this.siteNodeId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal);
+			assetUrl = ContentDeliveryController.getContentDeliveryController().getScriptExtensionUrls(getDatabase(), contentId, this.languageId, assetKey, fileNames, autoCreateMarkup, addToHeader, addToBody, addToBundledIncludes, bundleName, prepend, this.siteNodeId, USE_LANGUAGE_FALLBACK, this.deliveryContext, this.infoGluePrincipal);
 		}
 		catch(Exception e)
 		{

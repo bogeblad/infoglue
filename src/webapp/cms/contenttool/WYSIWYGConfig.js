@@ -1,7 +1,43 @@
 if(typeof CKEDITOR != "undefined")
 {
+    if(!CKEDITOR.stylesSet.get("infoglue"))
+	{
+	    CKEDITOR.stylesSet.add( 'infoglue',
+		[
+	    	{ name : 'Code', element : 'p', attributes : { 'class' : 'code' } }
+		]);
+	}
+
 	CKEDITOR.editorConfig = function( config )
 	{
+		// The toolbar groups arrangement, optimized for two toolbar rows.
+        config.toolbarGroups = [
+                { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+                { name: 'links' },
+                { name: 'insert' },
+                { name: 'forms' },
+                { name: 'tools' },
+                { name: 'document',        groups: [ 'mode', 'document', 'doctools' ] },
+                { name: 'others' },
+                '/',
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                { name: 'styles' },
+                { name: 'colors' },
+                { name: 'about' }
+        ];
+
+		// Remove some buttons, provided by the standard plugins, which we don't
+        // need to have in the Standard(s) toolbar.
+        config.removeButtons = 'Underline,Subscript,Superscript';
+
+        // Se the most common block elements.
+        config.format_tags = 'p;h1;h2;h3;pre';
+
+        // Make dialogs simpler.
+        config.removeDialogTabs = 'image:advanced;link:advanced';
+
 		config.toolbar_Mini =
 	    [
 	        ['Bold','Italic','Link','Unlink','Image']
@@ -11,22 +47,10 @@ if(typeof CKEDITOR != "undefined")
 	    [
 	        ['Bold','Italic','NumberedList','BulletedList','Link','Unlink','Image','Flash','Maximize','Format']
 	    ];
-	
-	    config.toolbar_Default =
-	    [
-	        ['Cut','Copy','Paste','PasteText','PasteFromWord','-','Scayt'],
-	        ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-	        ['Image'],
-	        '/',
-	        ['Format'],
-	        ['Bold','Italic','Strike'],
-	        ['NumberedList','BulletedList'],
-	        ['Link','Unlink'],
-	        ['Maximize','-','About']
-	    ];
-	    
-	    config.skin = 'office2003';
-	    config.contentsCss = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
+
+	    config.skin = 'moono';
+	    config.stylesSet = 'infoglue';
+	   	config.contentsCss = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
 	    	
 	    config.filebrowserBrowseUrl = '$request.contextPath/ViewLinkDialog!viewLinkDialogForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")';
 	    config.filebrowserImageBrowseUrl = '$request.contextPath/ViewContentVersion!viewAssetBrowserForFCKEditorV3.action?repositoryId=$!request.getParameter("repositoryId")&contentId=$!request.getParameter("contentId")&languageId=$!request.getParameter("languageId")&assetTypeFilter=*';
@@ -37,6 +61,7 @@ if(typeof CKEDITOR != "undefined")
 else if(typeof FCKConfig != "undefined")
 {
 	FCKConfig.CustomConfigurationsPath = '' ;
+	FCKConfig.EditorAreaCSS = '/infoglueDeliverWorking/ViewPage.action?siteNodeId=65';
 	
 	//FCKConfig.EditorAreaCSS = FCKConfig.BasePath + 'css/fck_editorarea.css' ;
 	//FCKConfig.ToolbarComboPreviewCSS = '' ;
@@ -329,11 +354,11 @@ function overrideLabels()
 	//alert("Lang:" + FCKConfig.DefaultLanguage);
 	if(FCKConfig.DefaultLanguage == "sv")
 	{
-		FCKLang.DlgBtnBrowseServer = "Välj från InfoGlue...";
+		FCKLang.DlgBtnBrowseServer = "VŠlj frŒn InfoGlue...";
 		FCKLang.DlgImgBtnUpload = "Ladda upp till InfoGlue";
 		FCKLang.DlgLnkBtnUpload = "Ladda upp till InfoGlue";
-	    FCKLang.DlgImgURL = "URL (glöm ej http:// om du anger extern URL)";
-	    FCKLang.DlgLnkURL = "URL (glöm ej http:// om du anger extern URL)";
+	    FCKLang.DlgImgURL = "URL (glšm ej http:// om du anger extern URL)";
+	    FCKLang.DlgLnkURL = "URL (glšm ej http:// om du anger extern URL)";
 	}
 	else
 	{
@@ -341,6 +366,6 @@ function overrideLabels()
 		FCKLang.DlgImgBtnUpload = "Send to InfoGlue";
 		FCKLang.DlgLnkBtnUpload = "Send to InfoGlue";
 	    FCKLang.DlgImgURL = "URL (don't forget http:// if you state an external url)";
-	    FCKLang.DlgLnkURL = "URL (glöm ej http:// om du anger extern URL)";
+	    FCKLang.DlgLnkURL = "URL (glšm ej http:// om du anger extern URL)";
 	}
 }

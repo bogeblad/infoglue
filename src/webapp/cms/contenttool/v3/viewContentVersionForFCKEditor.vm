@@ -440,6 +440,9 @@
 			    	##loadFrame("#");
 			    #else 
 		  			$("#tabsContainer").tabs({ cache: false, show:function(event, ui) { 
+						if(ui.tab.href.indexOf("contentVersionDiv") > -1) { $(".reset").show(); }
+						else { $(".reset").hide(); } 
+						
 						if(ui.tab.href.indexOf("contentVersionAssetsDiv") > -1) 
 						{
 							$(".attachAsset").show();
@@ -459,6 +462,10 @@
 		  			{ 
 		  				cache: false, 
 		  				show:function(event, ui) {
+		  					
+		  					if(ui.tab.href.indexOf("contentVersionDiv") > -1) { $(".reset").show(); }
+							else { $(".reset").hide(); } 
+						
 							if(ui.tab.href.indexOf("contentVersionAssetsDiv") > -1) 
 							{
 								console.log($(".attachAsset"));

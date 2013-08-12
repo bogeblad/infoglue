@@ -1035,6 +1035,7 @@
 		<view name="saveAndExitInline">ViewInlineOperationMessages.action</view>
 		<view name="error">/cms/contenttool/error.vm</view>
 		<view name="accessDenied">/cms/contenttool/viewConstraintException.vm</view>
+		<view name="successVersionReverted">ExtendedRedirect.action?url=ViewContent!V3.action#contentId#languageId</view>
 	</action>
 	<action name="org.infoglue.cms.applications.contenttool.actions.RequestContentVersionUnpublishAction" alias="RequestContentVersionUnpublish">
 		<view name="success">ViewContentVersion.action</view>

@@ -43,6 +43,9 @@
     <field name="contentTypeDefinitions" type="org.infoglue.cms.entities.management.impl.simple.ContentTypeDefinitionImpl" collection="collection">
       	<bind-xml node="element"/>
     </field>
+    <field name="siteNodeTypeDefinitions" type="org.infoglue.cms.entities.management.impl.simple.SiteNodeTypeDefinitionImpl" collection="collection">
+      	<bind-xml node="element"/>
+    </field>
     <field name="categories" type="org.infoglue.cms.entities.management.CategoryVO" collection="collection">
       	<bind-xml node="element"/>
     </field>

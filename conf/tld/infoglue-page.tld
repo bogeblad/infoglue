@@ -117,6 +117,11 @@
         	<required>true</required>
 	        <rtexprvalue>false</rtexprvalue>
     	</attribute>
+        <attribute>
+    	    <name>prepend</name>
+        	<required>false</required>
+	        <rtexprvalue>false</rtexprvalue>
+    	</attribute>
     </tag>
 
 	<tag>
@@ -127,6 +132,11 @@
         <attribute>
     	    <name>value</name>
         	<required>true</required>
+	        <rtexprvalue>false</rtexprvalue>
+    	</attribute>
+        <attribute>
+    	    <name>prepend</name>
+        	<required>false</required>
 	        <rtexprvalue>false</rtexprvalue>
     	</attribute>
     </tag>

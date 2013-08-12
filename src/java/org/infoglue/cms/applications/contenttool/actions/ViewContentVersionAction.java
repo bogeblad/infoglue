@@ -971,7 +971,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
    				DigitalAssetVO assetVO = (DigitalAssetVO)digitalAssetsIterator.next();
    				
    				//System.out.println("assetVO:" + assetVO.getAssetKey() + "/" + this.contentVersionVO.getContentId());
-   				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, true, true);
+				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true);
    				//System.out.println("referenceBeans:" + referenceBeans);
    				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
    			}

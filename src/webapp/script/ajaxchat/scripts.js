@@ -44,19 +44,9 @@ function handlehHttpReceiveChat()
 
 //inserts the new content into the page
 function insertNewContent(liName,liText) {
-	insertO = document.getElementById("outputList");
-	oLi = document.createElement('li');
-	oLi.setAttribute('className','chatitem'); //for IE's sake
-	oLi.setAttribute('class','chatitem');
-	oSpan = document.createElement('span');
-	oSpan.setAttribute('className','name'); //for IE's sake
-	oSpan.setAttribute('class','name');
-	oName = document.createTextNode(liName+': ');
-	oText = document.createTextNode(liText);
-	oSpan.appendChild(oName);
-	oLi.appendChild(oSpan);
-	oLi.appendChild(oText);
-	insertO.insertBefore(oLi, insertO.firstChild);
+	liText = liText.replace(/\[/g,"<");
+	liText = liText.replace(/\\\//g,"/");
+	$("#outputList").prepend("<li class='chatitem'><span class='name'><b>" + liName + ":</b></span><br/>" + liText + "</li>");
 }
 
 //stores a new comment on the server
@@ -72,7 +62,7 @@ function sendComment() {
   		httpSendChat.onreadystatechange = handlehHttpSendChat;
   		httpSendChat.send(param);
   		document.getElementById("message").value = '';
-  		document.getElementById("isSystemMessage").checked = false;
+  		//document.getElementById("isSystemMessage").checked = false;
 	} 
 	else 
 	{

@@ -169,7 +169,7 @@
 			if(sx && sx > 0 && sy && sy > 0 && ex && ex > 0 && ey && ey > 0 && sx != ex && sy != ey)
 			{
 				//alert("" + sx + ":" + sy + ":" + ex + ":" + ey);
-				var url = "ImageEditor!crop.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&xpos1=" + sx + "&ypos1=" + sy + "&xpos2=" + ex + "&ypos2=" + ey;
+				var url = "ImageEditor!crop.action?workingFileName=" + workingFileName + "&digitalAssetId=$digitalAssetId&contentVersionId=$contentVersionId&xpos1=" + Math.round(sx) + "&ypos1=" + Math.round(sy) + "&xpos2=" + Math.round(ex) + "&ypos2=" + Math.round(ey);
 				//alert("url:" + url);
 				document.location.href = url;
 			}

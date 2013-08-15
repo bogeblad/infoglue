@@ -135,7 +135,7 @@
 				{
 					if($(this).find(".propertiesButton").size() == 0)
 					{
-						console.log("ID:" + $(this).closest( ".sortableComponent" ).attr("id"));
+						//console.log("ID:" + $(this).closest( ".sortableComponent" ).attr("id"));
 						var id = $(this).closest( ".sortableComponent" ).attr("id");
 						id = id.substr(id.lastIndexOf("_")+1).replace("Comp","");
 						//console.log("id: " + id);
@@ -145,7 +145,7 @@
 				}
 				else
 				{
-					console.log("Special:" + $(this).find(".propertiesButton").size());
+					//console.log("Special:" + $(this).find(".propertiesButton").size());
 					if($(this).find(".propertiesButton").size() == 0)
 					{
 						var id = $(this).closest( ".sortableComponent" ).attr("id");

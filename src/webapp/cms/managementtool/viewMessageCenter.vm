@@ -19,7 +19,7 @@
 		<div style="float: left; width:90%; margin: 0px 10px 0px 16px">
 			<div style="float: left; width:65%;">
 				<b>$ui.getString("tool.managementtool.messages.header")</b><br/>
-				<div id="outputList" style="float: left; width:95%; height: 300px; overflow: auto; border: 1px solid #333333; background-color: white;"></div>
+				<div id="outputList" style="list-style: none; padding: 4px; float: left; width:95%; height: 300px; overflow: auto; border: 1px solid #333333; background-color: white;"></div>
 				<form style="float: left; width:95%;" id="chatForm" name="chatForm" onsubmit="return false;" action=""> 
 					<strong>$ui.getString("tool.managementtool.yourMessage.label"):</strong><br/>
 				  	<textarea id="message" name="message" class="normaltextfield" style="width:100%; height: 50px; border: 1px solid #333333;"/></textarea><br/>

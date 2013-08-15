@@ -212,9 +212,8 @@ function receiveSystemMessagesText(loopAfter)
 				    	type = item.type;
 				    	messageUserName = item.userName;
 				    	
-				    	//alert("lastId:" + lastId);
-				    	//alert("extradata:" + extradata);
-				    	//alert("type:" + type);
+				    	if(extradata.indexOf("openChat") > -1)
+				    		extradata = extradata.replace(/\[/g,"<");
 				    	if(type != "-1")
 				    		setTimeout(extradata, "200");
 					}	
@@ -246,7 +245,7 @@ function openChat(message)
 		curr_sec = "0" + curr_sec;
 
 	var nowDateTime = "" + curr_hour + ":" + curr_min + ":" + curr_sec;
-	$("#messages").prepend("<p><span style='font-weight: bold'>" + messageUserName + "(" + nowDateTime + ")" + "" + ":</span> " + message + "</p>")
+	$("#messages").prepend("<p><span style='font-weight: bold'>" + messageUserName + "(" + nowDateTime + ")" + "" + ":</span><br/> " + message + "</p>")
 	$("#messagesDiv").dialog({ title: 'System messages', modal: true, maxHeight: 500, maxWeight: 600, width: 700, minHeight: 200 }).dialog( 'open' );
 }
 

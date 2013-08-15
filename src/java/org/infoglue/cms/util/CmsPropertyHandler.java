@@ -1942,7 +1942,8 @@ public class CmsPropertyHandler
 
 	public static String getPreferredLanguageCode(String userName)
 	{
-        return getPropertySet().getString("principal_" + userName + "_languageCode");
+        String langCode = getPropertySet().getString("principal_" + userName + "_languageCode");
+        return (langCode == null ? "en" : langCode);
 	}
 
 	public static String getPreferredToolName(String userName)

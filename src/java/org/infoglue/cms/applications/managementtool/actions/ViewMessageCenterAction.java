@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.applications.common.actions.InfoGlueAbstractAction;
 import org.infoglue.cms.entities.management.Chat;
 import org.infoglue.cms.entities.management.Message;
@@ -125,12 +127,16 @@ public class ViewMessageCenterAction extends InfoGlueAbstractAction
     	if(getInfoGluePrincipal() == null)
     		return ERROR;
     	
-    	chat.addMessage(this.getUserName(), CHAT_MESSAGE_TYPE, this.message);
-
-    	if(this.isSystemMessage)
-    	    systemMessagesChat.addMessage(this.getUserName(), SYSTEM_MESSAGE_TYPE, "openChat('" + this.message + "');");
+    	VisualFormatter vf = new VisualFormatter();
+    	String convertedMessage = this.message.replaceAll("(\r\n|\n\r|\r|\n)", "<br />");;
+    	convertedMessage = vf.escapeJSON(convertedMessage).replaceAll("\"", "");
     	
-        return "successMessageSent";
+    	chat.addMessage(this.getUserName(), CHAT_MESSAGE_TYPE, convertedMessage);
+    	if(this.isSystemMessage)
+    	{
+    	    systemMessagesChat.addMessage(this.getUserName(), SYSTEM_MESSAGE_TYPE, "openChat('" + convertedMessage + "');");
+    	}
+    	return "successMessageSent";
     }
 
     public static void addSystemMessage(String userName, Integer messageType, String command)

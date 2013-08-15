@@ -972,7 +972,7 @@ public class ViewContentVersionAction extends InfoGlueAbstractAction
    				
    				//System.out.println("assetVO:" + assetVO.getAssetKey() + "/" + this.contentVersionVO.getContentId());
 				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(this.contentVersionVO.getContentId(), assetVO.getAssetKey(), 100, false, true);
-   				//System.out.println("referenceBeans:" + referenceBeans);
+   				logger.info("referenceBeans:" + referenceBeans);
    				assetVO.setReferencingNumberOfObjects(referenceBeans.size());
    			}
 		}

@@ -1118,7 +1118,13 @@ public class RegistryController extends BaseController
 	    while ( matcher.find() ) 
 	    { 
 	        String match = matcher.group();
-	        if(match.contains(assetKey) || match.contains(encodedAssetKey))
+	        if(logger.isInfoEnabled())
+	        {
+		        logger.info("match:" + match);
+		        logger.info("assetKey:" + assetKey);
+		        logger.info("encodedAssetKey:" + encodedAssetKey);
+	        }
+	        if(match.contains("\"" + assetKey + "\"") || match.contains("\"" + encodedAssetKey + "\""))
 	        	return true;
 	    }
 	    return false;
@@ -1142,6 +1148,8 @@ public class RegistryController extends BaseController
 	        	encodedAssetKey = URLEncoder.encode(assetKey, "utf-8");
 	        if(assetKey == null || match.contains(assetKey) || match.contains(encodedAssetKey))
 	        {
+	        	logger.info("assetKey:" + assetKey);
+	        	logger.info("match:" + match);
 		        match = match.substring(match.indexOf("\"")+1, match.length()-2);
 		        match = URLDecoder.decode(match, "utf-8");
 		        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);

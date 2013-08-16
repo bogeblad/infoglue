@@ -225,7 +225,6 @@
 			parent.showTab(2);
 		
 		$(document).ready(function(){
-			alert($(".close").size());
 			$("#footertoolbar div input.close").hide();
 		});
 

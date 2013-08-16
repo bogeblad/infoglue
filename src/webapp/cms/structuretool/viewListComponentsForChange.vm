@@ -212,7 +212,7 @@
 						#set($width = "48")
 					#end
 					<td align="center" valign="middle">
-						#if($content.extraProperties.get("GroupName") == "favourites") 
+						#if($content.extraProperties.get("GroupName").contains("favourites")) 
 							0
 						#else
 						 	1
@@ -242,7 +242,7 @@
 					<td>$content.extraProperties.get("GroupName").replaceAll(",","<br/>")</td>
 					#end
 					<td align="center">
-						#if($content.extraProperties.get("GroupName") == "favourites") 
+						#if($content.extraProperties.get("GroupName").contains("favourites")) 
 							<span style="display:none;">0</span> 
 							<img src="css/images/v3/star.png" border="0" width="16" height="16" title="Popular"/>
 						#else

@@ -167,6 +167,7 @@ public class ComponentController extends BaseController
 						String descriptionDefault = "Unknown";
 			        	String groupNameAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
 			        	String descriptionAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "Description", false);
+			        	logger.info("GroupInfo ContentVersionId:" + contentVersionVO.getId() + " - " + groupNameAttribute);
 						contentVO.getExtraProperties().put("GroupName", (groupNameAttribute == null ? groupNameDefault : groupNameAttribute));
 						contentVO.getExtraProperties().put("Description", (descriptionAttribute == null ? descriptionDefault : descriptionAttribute));
 	
@@ -299,8 +300,8 @@ public class ComponentController extends BaseController
 		    	String groupNameDefault = "Unknown";
 				String descriptionDefault = "Unknown";
 		    	String groupNameAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "GroupName", false);
-		    	logger.info("groupNameAttribute:" + groupNameAttribute);
 		    	String descriptionAttribute = ContentVersionController.getContentVersionController().getAttributeValue(contentVersionVO, "Description", false);
+	        	logger.info("GroupInfo ContentVersionId:" + contentVersionVO.getId() + " - " + groupNameAttribute);
 				contentVO.getExtraProperties().put("GroupName", (groupNameAttribute == null ? groupNameDefault : groupNameAttribute));
 				contentVO.getExtraProperties().put("Description", (descriptionAttribute == null ? descriptionDefault : descriptionAttribute));
 			

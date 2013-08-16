@@ -1124,6 +1124,8 @@ public class RegistryController extends BaseController
 		        logger.info("assetKey:" + assetKey);
 		        logger.info("encodedAssetKey:" + encodedAssetKey);
 	        }
+
+	        //if(match.contains("\"" + assetKey + "\"") || match.contains("\"" + encodedAssetKey + "\""))
 	        if(match.contains("\"" + assetKey + "\"") || match.contains("\"" + encodedAssetKey + "\""))
 	        	return true;
 	    }
@@ -1146,14 +1148,15 @@ public class RegistryController extends BaseController
 	        String encodedAssetKey = null;
 	        if(assetKey != null)
 	        	encodedAssetKey = URLEncoder.encode(assetKey, "utf-8");
-	        if(assetKey == null || match.contains(assetKey) || match.contains(encodedAssetKey))
+	        
+	        if(assetKey == null || match.contains("\"" + assetKey + "\"") || match.contains("\"" + encodedAssetKey + "\""))
 	        {
 	        	logger.info("assetKey:" + assetKey);
 	        	logger.info("match:" + match);
 		        match = match.substring(match.indexOf("\"")+1, match.length()-2);
 		        match = URLDecoder.decode(match, "utf-8");
 		        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
-		        if(daVO != null && (assetKey == null || assetKey.equals(daVO.getAssetKey())))
+		        if(daVO != null && (assetKey == null || assetKey.equals("\"" + daVO.getAssetKey() + "\"")))
 		        {
 			        String assetUrl = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(daVO.getId(), 70, 70, Color.WHITE, "center", "middle", 60, 60, 30, db);
 			        if(assetUrl != null && !assetUrl.equals(""))
@@ -1168,7 +1171,6 @@ public class RegistryController extends BaseController
 	    while ( matcher2.find() ) 
 	    { 
 	        String match = matcher2.group();
-	        logger.info("match:" + match);
 	        if(match.contains("entityId=\"" + contentId + "\"") && match.contains("assetKey="))
 	        {
 		        int indexAssetKey = match.indexOf("assetKey=");
@@ -1179,7 +1181,7 @@ public class RegistryController extends BaseController
 		        logger.info("match:" + match);
 		        
 		        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
-		        if(daVO != null && (assetKey == null || assetKey.equals(daVO.getAssetKey())))
+		        if(daVO != null && (assetKey == null || assetKey.equals("\"" + daVO.getAssetKey() + "\"")))
 		        {
 			        String assetUrl = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(daVO.getId(), 70, 70, Color.WHITE, "center", "middle", 60, 60, 30, db);
 			        if(assetUrl != null && !assetUrl.equals(""))

@@ -43,7 +43,7 @@ public class CreateUserServiceTag extends TemplateControllerTag
 	/**
 	 * 
 	 */
-	private SystemUserVO systemUserVO;
+	private SystemUserVO systemUserVO = new SystemUserVO();
 
 	private String[] roleNames = new String[]{};
 	private String[] groupNames = new String[]{};
@@ -137,6 +137,31 @@ public class CreateUserServiceTag extends TemplateControllerTag
    public void setSystemUserVO(final String systemUserVO) throws JspException
    {
 	   this.systemUserVO = (SystemUserVO)this.evaluate("remoteUserService", "systemUserVO", systemUserVO, SystemUserVO.class);
+   }
+
+   public void setUserName(final String userName) throws JspException
+   {
+	   this.systemUserVO.setUserName(this.evaluateString("remoteUserService", "userName", userName));
+   }
+
+   public void setFirstName(final String firstName) throws JspException
+   {
+	   this.systemUserVO.setFirstName(this.evaluateString("remoteUserService", "firstName", firstName));
+   }
+
+   public void setLastName(final String lastName) throws JspException
+   {
+	   this.systemUserVO.setLastName(this.evaluateString("remoteUserService", "lastName", lastName));
+   }
+
+   public void setPassword(final String password) throws JspException
+   {
+	   this.systemUserVO.setPassword(this.evaluateString("remoteUserService", "password", password));
+   }
+
+   public void setEmail(final String email) throws JspException
+   {
+	   this.systemUserVO.setEmail(this.evaluateString("remoteUserService", "email", email));
    }
 
    /**

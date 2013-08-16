@@ -404,7 +404,8 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 	        
 	        String url = "$templateLogic.getInlineAssetUrl(" + parsedContentId + ", \"" + parsedAssetKey + "\")";
     	    logger.info("url:" + url);
-            replacements.put(match.substring(1, match.length() - 1), url);
+            //replacements.put(match.substring(1, match.length() - 1), url);
+            replacements.put(match, url);
 	    }
 		logger.info("********************\n\n");
 	    
@@ -427,7 +428,19 @@ public class UpdateContentVersionAttributeAction extends ViewContentVersionActio
 	    	replacement = replacement.replaceAll("\\)", "\\\\)");
 	    	logger.info("replacement " + replacement);
 
+	    	logger.info("patternToReplace: " + patternToReplace);
+	    	logger.info("replacement: " + replacement);
+
 	    	logger.info("attributeValue before " + attributeValue);
+	    	String delimeter = "";
+	    	if(patternToReplace.startsWith("\""))
+	    		delimeter = "\"";
+	    	if(patternToReplace.startsWith("\'"))
+	    		delimeter = "\'";
+	    	
+	    	replacement = delimeter + replacement + delimeter;
+	    	
+	    	logger.info("replacement: " + replacement);
 	    	attributeValue = attributeValue.replaceAll(patternToReplace, replacement);
 	    	logger.info("attributeValue after " + attributeValue);
 	    }

@@ -22,22 +22,28 @@
 */
 package org.infoglue.deliver.util;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
+import org.exolab.castor.jdo.PersistenceException;
+import org.exolab.castor.jdo.TransactionNotInProgressException;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.CastorDatabaseService;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentVersionController;
+import org.infoglue.cms.controllers.kernel.impl.simple.DigitalAssetController;
 import org.infoglue.cms.controllers.kernel.impl.simple.InterceptionPointController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PublicationController;
@@ -47,6 +53,7 @@ import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAssetVO;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentVersionImpl;
@@ -436,6 +443,7 @@ public class SelectiveLivePublicationThread extends PublicationThread
 								PublicationVO publicationVO = PublicationController.getController().getPublicationVO(new Integer(objectId));
 								if(publicationVO != null)
 								{
+									AssetCleanerThread assetCleaningThread = new AssetCleanerThread();
 									List publicationDetailVOList = PublicationController.getController().getPublicationDetailVOList(new Integer(objectId));
 									Iterator publicationDetailVOListIterator = publicationDetailVOList.iterator();
 									while(publicationDetailVOListIterator.hasNext())
@@ -518,6 +526,11 @@ public class SelectiveLivePublicationThread extends PublicationThread
 													CacheController.clearCache(SmallContentImpl.class, new Integer[]{previousParentContentId});
 													CacheController.clearCache(SmallishContentImpl.class, new Integer[]{previousParentContentId});
 													CacheController.clearCache(MediumContentImpl.class, new Integer[]{previousParentContentId});
+												}
+
+												if (publicationDetailVO.getTypeId().equals(PublicationDetailVO.UNPUBLISH_LATEST))
+												{
+													assetCleaningThread.addContentVersion(publicationDetailVO.getEntityId());
 												}
 											}
 											catch(Exception e)
@@ -699,6 +712,8 @@ public class SelectiveLivePublicationThread extends PublicationThread
 											}
 										}
 									}
+
+									assetCleaningThread.startIfNotEmpty();
 								}
 								else
 								{
@@ -1166,5 +1181,93 @@ public class SelectiveLivePublicationThread extends PublicationThread
 			throw new Bug("The object with id [" + id + "] was not found. This should never happen.");
 		}
 		return object;
+	}
+
+	private static class AssetCleanerThread extends Thread
+	{
+		private Set<Integer> contentVersions;
+
+		protected AssetCleanerThread()
+		{
+			this.contentVersions = new HashSet<Integer>();
+		}
+
+		public void addContentVersion(Integer contentVersionId)
+		{
+			contentVersions.add(contentVersionId);
+		}
+
+		public void startIfNotEmpty()
+		{
+			logger.info("Starting asset cleaning thread if we have versions. ContentVersions: " + contentVersions);
+			if (contentVersions.size() > 0)
+			{
+				start();
+			}
+		}
+
+		@Override
+		public void run()
+		{
+			Set<Integer> deletedFiles = new HashSet<Integer>();
+			Database db = null;
+			try
+			{
+				db = CastorDatabaseService.getDatabase();
+				db.begin();
+
+				ContentVersionVO contentVersionVO;
+				for (Integer contentVersionId : contentVersions)
+				{
+					contentVersionVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(contentVersionId, db);
+					Integer contentId = contentVersionVO.getContentId();
+					Integer languageId = contentVersionVO.getLanguageId();
+					@SuppressWarnings("static-access")
+					List<DigitalAssetVO> digitalAssetVOs = DigitalAssetController.getController().getDigitalAssetVOList(contentVersionVO.getContentVersionId(), db);
+
+					for (DigitalAssetVO digitalAssetVO : digitalAssetVOs)
+					{
+						if (deletedFiles.contains(digitalAssetVO.getDigitalAssetId()))
+						{
+							logger.debug("Asset already deleted. DigitalAsset.id: " + digitalAssetVO.getDigitalAssetId());
+						}
+						else
+						{
+							logger.debug("Asset needs deleting. DigitalAsset.id: " + digitalAssetVO.getDigitalAssetId());
+							File currentAssetFile = DigitalAssetController.getController().getAssetFile(digitalAssetVO, contentId, languageId, db);
+							if (currentAssetFile == null)
+							{
+								logger.debug("Found no file on disk for asset. DigitalAssetId.id: " + digitalAssetVO.getDigitalAssetId());
+							}
+							else
+							{
+								boolean success = currentAssetFile.delete();
+								logger.debug("Deleted asset from disk: " + success);
+							}
+							deletedFiles.add(digitalAssetVO.getDigitalAssetId());
+						}
+					}
+				}
+
+				db.commit();
+			}
+			catch(Throwable tr)
+			{
+				logger.error("An error occured when cleaning assets. Let's rollback the transaction. Message: " + tr.getMessage());
+				logger.warn("An error occured when cleaning assets. Let's rollback the transaction.", tr);
+				if (db != null)
+				{
+					try
+					{
+						db.rollback();
+						db.close();
+					}
+					catch (Exception ex2)
+					{
+						logger.error("Failed to rollback transaction after an error occured. Message: " + ex2.getMessage());
+					}
+				}
+			}
+		}
 	}
 }

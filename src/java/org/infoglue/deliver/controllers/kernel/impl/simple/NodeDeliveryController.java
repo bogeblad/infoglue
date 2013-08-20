@@ -1821,7 +1821,7 @@ public class NodeDeliveryController extends BaseDeliveryController
         {
         	try
         	{
-        		siteNodes = this.getChildSiteNodes(db, parentSiteNodeId);
+        		siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 0, true, null);
         		//NEW!!! siteNodes = this.getChildSiteNodes(db, parentSiteNodeId, 1);
         	}
         	catch (Exception e) 
@@ -1834,7 +1834,6 @@ public class NodeDeliveryController extends BaseDeliveryController
         while (siteNodeIterator.hasNext()) 
         {
             SiteNodeVO siteNodeVO = (SiteNodeVO)siteNodeIterator.next();
-	        
 	        if (path == null || path.length() == 0) 
 	        {
 	            logger.info("Returning siteNode:" + siteNodeVO.getName());
@@ -2344,7 +2343,7 @@ public class NodeDeliveryController extends BaseDeliveryController
     	Integer parentSiteNodeId = new Integer(siteNodeIdString);
     	
 		SiteNodeVO sitenodeVO = getNodeDeliveryController(deliveryContext).getSiteNodeVO(db, new Integer(siteNodeIdString));
-        for (int i = 0; i < path.length; i++) 
+		for (int i = 0; i < path.length; i++) 
         {
         	siteNodeId = NodeDeliveryController.getNodeDeliveryController(null, null, null).getSiteNodeId(db, infogluePrincipal, sitenodeVO.getRepositoryId(), path[i], attributeName, parentSiteNodeId, languageId, deliveryContext);
 			if(siteNodeId != null)

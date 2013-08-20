@@ -545,7 +545,7 @@ public class CacheController extends Thread
 		if(cacheName == null || key == null)
 			return null;
 		
-		if(getDefeatCaches() != null && getDefeatCaches().getDefeatCache())
+		if(getDefeatCaches() != null && getDefeatCaches().getDefeatCache("" + cacheName + "_" + key))
 		{
 			if(!cacheName.equals("serverNodePropertiesCache") &&
 			   !cacheName.equals("contentTypeDefinitionCache")
@@ -1041,7 +1041,7 @@ public class CacheController extends Thread
 		if(cacheName == null || key == null || key.length() == 0)
 			return null;
 		
-		if(getDefeatCaches().getDefeatCache())
+		if(getDefeatCaches().getDefeatCache("" + cacheName + "_" + key))
 			return null;
 		
 	    Object value = null;
@@ -1484,7 +1484,7 @@ public class CacheController extends Thread
 		if(cacheName == null || key == null)
 			return null;
 		
-		if(getDefeatCaches().getDefeatCache())
+		if(getDefeatCaches().getDefeatCache("" + cacheName + "_" + key))
 			return null;
 
 	    //logger.info("getCachedObjectFromAdvancedCache start:" + cacheName + ":" + key + ":" + updateInterval);

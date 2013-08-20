@@ -157,9 +157,9 @@ public class RoleControllerProxy extends BaseController
 	 * This method returns a list of InfoGlue Principals which are part of this role
 	 */
 	
-	public List getInfoGluePrincipals(String roleName) throws ConstraintException, SystemException, Exception
+	public List<InfoGluePrincipal> getInfoGluePrincipals(String roleName) throws ConstraintException, SystemException, Exception
 	{
-		List infoGluePrincipals = new ArrayList();
+		List<InfoGluePrincipal> infoGluePrincipals = new ArrayList<InfoGluePrincipal>();
     	
 		infoGluePrincipals = getAuthorizationModule().getUsers(roleName);
 		

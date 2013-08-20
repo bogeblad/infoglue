@@ -32,6 +32,7 @@ import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,7 +76,9 @@ import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeVersionController;
 import org.infoglue.cms.entities.content.ContentCategoryVO;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
+import org.infoglue.cms.entities.content.DigitalAsset;
 import org.infoglue.cms.entities.content.SmallestContentVersionVO;
 import org.infoglue.cms.entities.content.impl.simple.ContentCategoryImpl;
 import org.infoglue.cms.entities.content.impl.simple.ContentImpl;
@@ -146,6 +149,7 @@ import org.infoglue.cms.entities.workflow.impl.simple.ConsequenceImpl;
 import org.infoglue.cms.entities.workflow.impl.simple.EventImpl;
 import org.infoglue.cms.entities.workflow.impl.simple.WorkflowDefinitionImpl;
 import org.infoglue.cms.entities.workflow.impl.simple.WorkflowImpl;
+import org.infoglue.cms.exception.Bug;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.io.FileHelper;
 import org.infoglue.cms.security.InfoGlueAuthenticationFilter;
@@ -157,6 +161,7 @@ import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.applications.databeans.DatabaseWrapper;
 import org.infoglue.deliver.cache.PageCacheHelper;
 import org.infoglue.deliver.controllers.kernel.impl.simple.ContentDeliveryController;
+import org.infoglue.deliver.controllers.kernel.impl.simple.DigitalAssetDeliveryController;
 import org.infoglue.deliver.controllers.kernel.impl.simple.NodeDeliveryController;
 import org.infoglue.deliver.invokers.PageInvoker;
 import org.infoglue.deliver.portal.ServletConfigContainer;
@@ -3320,6 +3325,8 @@ public class CacheController extends Thread
 									    	logger.info("After flushGroup2...");
 							    		}
 								    	//}
+
+										new AssetUpdatingThread(entityId).start();
 							    	}
 							    	catch(SystemException se)
 							    	{
@@ -4999,7 +5006,7 @@ public class CacheController extends Thread
 	 * Ends a transaction on the named database
 	 */
 	
-    private static void commitTransaction(Database db) throws SystemException
+    static void commitTransaction(Database db) throws SystemException
 	{
 		try
 		{

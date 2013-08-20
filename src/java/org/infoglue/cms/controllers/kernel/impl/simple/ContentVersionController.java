@@ -2150,6 +2150,39 @@ public class ContentVersionController extends BaseController
 		return contentVersionVO;
     }
 
+	public ContentVersionVO getSecondLatestActiveContentVersionVO(Integer contentId, Integer languageId, boolean isActive, Database db) throws SystemException, Bug, Exception
+	{
+		ContentVersionVO contentVersionVO = null;
+
+		OQLQuery oql = db.getOQLQuery( "SELECT cv FROM org.infoglue.cms.entities.content.impl.simple.SmallContentVersionImpl cv WHERE cv.contentId = $1 AND cv.languageId = $2 AND cv.isActive = $3 AND cv.stateId >= $4 ORDER BY cv.contentVersionId desc");
+		oql.bind(contentId);
+		oql.bind(languageId);
+		oql.bind(new Boolean(true));
+		oql.bind(CmsPropertyHandler.getOperatingMode());
+
+		QueryResults results = oql.execute(Database.ReadOnly);
+
+		if (results.hasMore())
+		{
+			results.next();
+			logger.debug("found first latest content version");
+			if (results.hasMore())
+			{
+				ContentVersion contentVersion = (ContentVersion)results.next();
+				if (logger.isInfoEnabled())
+				{
+					logger.info("found second latest content version:" + contentVersion.getValueObject());
+				}
+				contentVersionVO = contentVersion.getValueObject();
+			}
+		}
+
+		results.close();
+		oql.close();
+
+		return contentVersionVO;
+	}
+
 
 	/**
 	 * This method deletes the relation to a digital asset - not the asset itself.

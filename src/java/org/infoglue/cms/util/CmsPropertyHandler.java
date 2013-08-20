@@ -925,7 +925,7 @@ public class CmsPropertyHandler
 
 	public static String getDisableAssetDeletionInLiveThread()
 	{
-	    return getServerNodeProperty("getDisableAssetDeletionInLiveThread", true, "false");
+	    return getServerNodeProperty("disableAssetDeletionInLiveThread", true, "false");
 	}
 
 	public static String getExtranetCookieTimeout()

@@ -176,6 +176,7 @@ public class UpdateDigitalAssetAction extends ViewDigitalAssetAction
 			List<Integer> newContentVersionIdList = new ArrayList<Integer>();
 
 			DigitalAssetVO digitalAssetVO = ContentVersionController.getContentVersionController().checkStateAndChangeIfNeeded(contentVersionId, digitalAssetId, getInfoGluePrincipal(), newContentVersionIdList);
+			
 			if(newContentVersionIdList.size() > 0)
 	    	{
 	    		Integer newContentVersionId = newContentVersionIdList.get(0);

@@ -1488,7 +1488,9 @@ public class PublicationController extends BaseController
 	{
 	    try
 	    {
+	    	logger.info("recipientFilter:" + recipientFilter);
 		    String recipients = getRecipients(principal, repositoryId, recipientFilter, db);
+		    logger.info("recipients:" + recipients);
 		    if(recipients == null || recipients.length() == 0)
 		    	return;
 		    
@@ -1520,7 +1522,7 @@ public class PublicationController extends BaseController
 			logger.info("recipients:" + recipients);
 
 			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for publishing", email, "utf-8");
-		}
+	    }
 		catch(Exception e)
 		{
 			logger.error("The notification was not sent. Reason:" + e.getMessage(), e);

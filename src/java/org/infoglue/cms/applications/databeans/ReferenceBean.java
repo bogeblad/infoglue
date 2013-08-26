@@ -95,4 +95,5 @@ public class ReferenceBean
 	{
 		this.contactPersonEmail = contactPersonEmail;
 	}
+	
 }

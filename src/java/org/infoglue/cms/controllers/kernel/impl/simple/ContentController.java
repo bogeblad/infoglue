@@ -38,8 +38,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.log4j.Level;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
@@ -1242,10 +1244,13 @@ public class ContentController extends BaseController
 			{
 				Integer newContentId = replaceMap.get(oldContentId);
 				logger.info("We should replace all instances of " + oldContentId + "(" + asset.getAssetKey() + ") --> " + newContentId + "(" + asset.getAssetKey() + ")");
-   				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(oldContentId, asset.getAssetKey(), 100, true, true);
+   				List<ReferenceBean> referenceBeans = RegistryController.getController().getReferencingObjectsForContentAsset(oldContentId, asset.getAssetKey(), 100, true, true, false);
+
    				logger.info("referenceBeans:" + referenceBeans.size());
    				for(ReferenceBean referenceBean : referenceBeans)
    				{
+   					logger.info("ReferenceBean:" + referenceBean.getName() + ":" + referenceBean.getReferencingCompletingObject());
+
    					for(ReferenceVersionBean referenceVersionBean : referenceBean.getVersions())
    					{
    						Object o = referenceVersionBean.getReferencingObject();
@@ -1254,8 +1259,43 @@ public class ContentController extends BaseController
    						{
    							ContentVersionVO cv = (ContentVersionVO)o;
    							logger.info("Replacing in:" + cv.getId());
-   							String newVersionValue = cv.getVersionValue().replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
-   							newVersionValue = newVersionValue.replaceAll("getInlineAssetUrl\\(" + oldContentId + ",", "getInlineAssetUrl(" + newContentId + ",");
+   	   						String newVersionValue = cv.getVersionValue(); //.replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+   							
+   							Pattern p = Pattern.compile("<binding.*?>");
+   						    Matcher m = p.matcher(newVersionValue);
+   						    while (m.find()) 
+	   						{
+   						    	logger.info("Found a " + m.group() + ".");
+	   							String binding = m.group();
+	   							if(binding.contains("\"" + oldContentId + "\"") && binding.contains("\"" + asset.getAssetKey() + "\""))
+	   							{
+	   								binding = binding.replaceFirst("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+
+	   								logger.info("Replacing:" + m.group() + ":" + binding);
+		   							newVersionValue = StringUtils.replace(newVersionValue, m.group(), binding);
+		   							//newVersionValue = newVersionValue.replaceAll(m.group(), binding);
+		   							logger.info("newVersionValue: " + newVersionValue);
+	   							}
+	   						}
+   							
+   						    Pattern pInlineAssets = Pattern.compile("getInlineAssetUrl\\(.*?\\)");
+						    Matcher mInlineAssets = pInlineAssets.matcher(newVersionValue);
+						    while (mInlineAssets.find()) 
+	   						{
+						    	logger.info("Found a " + mInlineAssets.group() + ".");
+	   							String assetCall = mInlineAssets.group();
+	   							if(assetCall.contains(oldContentId + ",") && assetCall.contains("\"" + asset.getAssetKey() + "\""))
+	   							{
+	   								logger.info("Replacing:" + mInlineAssets.group() + ":" + assetCall);
+
+		   							assetCall = assetCall.replaceFirst("" + oldContentId + ",", "" + newContentId + ",");
+		   							newVersionValue = StringUtils.replace(newVersionValue, mInlineAssets.group(), assetCall);
+		   							//newVersionValue = newVersionValue.replaceAll(mInlineAssets.group(), assetCall);
+		   							logger.info("newVersionValue: " + newVersionValue);
+	   							}
+	   						}
+						    
+   							//newVersionValue = newVersionValue.replaceAll("getInlineAssetUrl\\(" + oldContentId + ",", "getInlineAssetUrl(" + newContentId + ",");
    							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
    							cvReal.setVersionValue(newVersionValue);
    							cvReal.setVersionComment("Asset moved...");
@@ -1267,13 +1307,31 @@ public class ContentController extends BaseController
    						else if(o instanceof SiteNodeVersionVO)
    						{
    							SiteNodeVersionVO snvo = (SiteNodeVersionVO)o;
-   							logger.info("Replacing in:" + snvo.getId());
+   							logger.info("Replacing in sn:" + snvo.getId());
    							
    			                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(snvo.getSiteNodeId(), db);
    				    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
    				    		ContentVersionVO cv = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+   				    		logger.info("Replacing in:" + cv.getVersionValue());
+   							
+   							String newVersionValue = cv.getVersionValue(); //.replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+   							
+   							Pattern p = Pattern.compile("<binding.*?>");
+   						    Matcher m = p.matcher(newVersionValue);
+   						    while (m.find()) 
+	   						{
+   						    	logger.info("Found a " + m.group() + ".");
+	   							String binding = m.group();
+	   							if(binding.contains("\"" + oldContentId + "\"") && binding.contains("\"" + asset.getAssetKey() + "\""))
+	   							{
+	   								binding = binding.replaceFirst("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
 
-   							String newVersionValue = cv.getVersionValue().replaceAll("\"" + oldContentId + "\"", "\"" + newContentId + "\"");
+	   								logger.info("Replacing:" + m.group() + ":" + binding);
+		   							newVersionValue = StringUtils.replace(newVersionValue, m.group(), binding);
+		   							logger.info("newVersionValue: " + newVersionValue);
+	   							}
+	   						}
+   							
    							ContentVersion cvReal = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(cv.getId(), db);
    							cvReal.setVersionValue(newVersionValue);
    							cvReal.setVersionComment("Asset moved...");

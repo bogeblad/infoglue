@@ -3473,8 +3473,22 @@ public class ContentVersionController extends BaseController
 	            	if(contentVersion == null)
 	            		contentVersion = ContentVersionController.getContentVersionController().getMediumContentVersionWithId(contentVersionId, db);
 	            	
-	    	    	digitalAssetVO = copyDigitalAssetAndRemoveOldReference(contentVersion, oldDigitalAsset, false, db);
-	    	    	logger.info("new digitalAssetVO:" + digitalAssetVO.getId());
+	            	boolean exists = false;
+	            	logger.info("contentVersion:" + contentVersion.getId());
+	            	for(MediumDigitalAssetImpl asset : (Collection<MediumDigitalAssetImpl>)contentVersion.getDigitalAssets())
+	            	{
+	            		logger.info("asset:" + asset.getId() + "-" + asset.getAssetKey());
+	            		if(asset.getAssetKey().equals(oldDigitalAsset.getAssetKey()))
+	            		{
+	            			exists = true;
+	            			digitalAssetVO = asset.getValueObject();
+	            		}
+	            	}
+	            	if(!exists)
+	            	{
+		            	digitalAssetVO = copyDigitalAssetAndRemoveOldReference(contentVersion, oldDigitalAsset, false, db);
+		            	logger.info("new digitalAssetVO:" + digitalAssetVO.getId());
+	            	}
     	    	}
     	    }
         		

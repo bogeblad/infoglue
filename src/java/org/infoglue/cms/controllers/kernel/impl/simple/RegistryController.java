@@ -1136,8 +1136,9 @@ public class RegistryController extends BaseController
 	 * This method fetches all inline links from any text.
 	 */
 	
-	public String getInlineAssetInformation(String versionValue, Integer contentId, Integer languageId, String assetKey, Database db) throws ConstraintException, SystemException, Exception
+	public String getInlineAssetInformation(String versionValue, Integer contentId, Integer languageId, String assetKey, boolean returnMatchOnNoAssetKey, Database db) throws ConstraintException, SystemException, Exception
 	{
+		logger.info("getInlineAssetInformation: " + contentId + "/" + assetKey);
 		StringBuffer sb = new StringBuffer();
 		
 		Pattern pattern = Pattern.compile("\\$templateLogic\\.getInlineAssetUrl\\(" + contentId + ".*?\\)");
@@ -1151,12 +1152,13 @@ public class RegistryController extends BaseController
 	        
 	        if(assetKey == null || match.contains("\"" + assetKey + "\"") || match.contains("\"" + encodedAssetKey + "\""))
 	        {
-	        	logger.info("assetKey:" + assetKey);
-	        	logger.info("match:" + match);
 		        match = match.substring(match.indexOf("\"")+1, match.length()-2);
 		        match = URLDecoder.decode(match, "utf-8");
-		        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
-		        if(daVO != null && (assetKey == null || assetKey.equals("\"" + daVO.getAssetKey() + "\"")))
+		        DigitalAssetVO daVO = null;
+		        if(returnMatchOnNoAssetKey || !match.equals(""))
+		        	daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
+		        
+		        if(daVO != null && (assetKey == null || assetKey.equals(daVO.getAssetKey())))
 		        {
 			        String assetUrl = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(daVO.getId(), 70, 70, Color.WHITE, "center", "middle", 60, 60, 30, db);
 			        if(assetUrl != null && !assetUrl.equals(""))
@@ -1171,7 +1173,8 @@ public class RegistryController extends BaseController
 	    while ( matcher2.find() ) 
 	    { 
 	        String match = matcher2.group();
-	        if(match.contains("entityId=\"" + contentId + "\"") && match.contains("assetKey="))
+	    	//System.out.println("assetKey:" + assetKey + ", match:" + match);
+	    	if(match.contains("entityId=\"" + contentId + "\"") && match.contains("assetKey="))
 	        {
 		        int indexAssetKey = match.indexOf("assetKey=");
 		        int indexAssetKeyEnd = match.indexOf("\"", indexAssetKey+10);
@@ -1179,10 +1182,14 @@ public class RegistryController extends BaseController
 		        logger.info("match:" + match);
 		        match = URLDecoder.decode(match, "utf-8");
 		        logger.info("match:" + match);
+		        		        
+		        DigitalAssetVO daVO = null;
+		        if(returnMatchOnNoAssetKey || !match.equals(""))
+		        	daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
 		        
-		        DigitalAssetVO daVO = DigitalAssetController.getController().getDigitalAssetVO(contentId, languageId, match, true, db);
-		        if(daVO != null && (assetKey == null || assetKey.equals("\"" + daVO.getAssetKey() + "\"")))
+		        if(daVO != null && (assetKey == null || assetKey.equals(daVO.getAssetKey())))
 		        {
+		        	logger.info("daVO.getAssetKey():" + daVO.getAssetKey());
 			        String assetUrl = DigitalAssetController.getController().getDigitalAssetThumbnailUrl(daVO.getId(), 70, 70, Color.WHITE, "center", "middle", 60, 60, 30, db);
 			        if(assetUrl != null && !assetUrl.equals(""))
 			        	sb.append("<a href='#' onmouseover=\"$('#passet_" + daVO.getId() + "').show();\" onmouseout=\"$('#passet_" + daVO.getId() + "').hide();\">" + match + "</a><div id='passet_" + daVO.getId() + "' style='display: none; position: absolute;'><img src='" + assetUrl + "'/></div>" + ", ");
@@ -1585,7 +1592,7 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 	
-	public List<ReferenceBean> getReferencingObjectsForContentAsset(Integer contentId, String assetKey, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage) throws SystemException
+	public List<ReferenceBean> getReferencingObjectsForContentAsset(Integer contentId, String assetKey, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage, boolean discardMiss) throws SystemException
     {
 		List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
@@ -1595,7 +1602,7 @@ public class RegistryController extends BaseController
 		{
 			beginTransaction(db);
 
-			referenceBeanList = getReferencingObjectsForContentAsset(contentId, assetKey, maxRows, excludeInternalContentReferences, onlyOneVersionPerLanguage, db);
+			referenceBeanList = getReferencingObjectsForContentAsset(contentId, assetKey, maxRows, excludeInternalContentReferences, onlyOneVersionPerLanguage, discardMiss, db);
 
 	        commitTransaction(db);
 		}
@@ -1661,7 +1668,7 @@ public class RegistryController extends BaseController
         while(registryEntiresIterator.hasNext())
         {
             RegistryVO registryVO = (RegistryVO)registryEntiresIterator.next();
-            logger.info("registryVO:" + registryVO.getReferencingEntityId() + ":" +  registryVO.getReferencingEntityCompletingId());
+            logger.info("registryVO:" + registryVO.getReferencingEntityName() + ":" + registryVO.getReferencingEntityId() + ":" + registryVO.getReferencingEntityCompletingName() + ":" + registryVO.getReferencingEntityCompletingId());
             boolean add = true;
             
             String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
@@ -1716,10 +1723,12 @@ public class RegistryController extends BaseController
 			    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
 			    		referenceVersionBean.getRegistryVOList().add(registryVO);
 		    			
-			    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(contentVersion.getVersionValue(), new Integer(registryVO.getEntityId()), contentVersion.getLanguageId(), null, db);
+			    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(contentVersion.getVersionValue(), new Integer(registryVO.getEntityId()), contentVersion.getLanguageId(), null, true, db);
 			    		if(assetExtraInfo != null)
 			    			referenceVersionBean.setReferencingExtraInfo(assetExtraInfo);
 			    		
+			    		logger.info("assetExtraInfo:" + assetExtraInfo);
+
 			    		checkedLanguageVersions.put("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
 		    		}
                 }
@@ -1760,18 +1769,19 @@ public class RegistryController extends BaseController
 		    		referenceVersionBean.getRegistryVOList().add(registryVO);
 		    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
 		    		ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
-		    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(cvVO.getVersionValue(), new Integer(registryVO.getEntityId()), masterLanguageVO.getLanguageId(), null, db);
+		    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(cvVO.getVersionValue(), new Integer(registryVO.getEntityId()), masterLanguageVO.getLanguageId(), null, true, db);
 		    		logger.info("assetExtraInfo:" + assetExtraInfo);
 		    		if(assetExtraInfo != null)
 		    			referenceVersionBean.setReferencingExtraInfo(assetExtraInfo);
                 }
                 catch(Exception e)
                 {
-                    add = false;
-                    logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
+                	add = false;
+                    logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping:" + e.getMessage());
                 }
             }
             
+            logger.info("Add:" + add);
             if(add)
             {
                 boolean exists = false;
@@ -1809,7 +1819,7 @@ public class RegistryController extends BaseController
         return referenceBeanList;
     }
 
-	public List<ReferenceBean> getReferencingObjectsForContentAsset(Integer contentId, String assetKey, int maxRows, boolean excludeInternalContentReferences, boolean onlyOneVersionPerLanguage, Database db) throws SystemException, Exception
+	public List<ReferenceBean> getReferencingObjectsForContentAsset(Integer contentId, String assetKey, int maxRows, boolean excludeInternalContentReferences, boolean onlyLatestVersionPerLanguage, boolean discardMiss, Database db) throws SystemException, Exception
     {
         List<ReferenceBean> referenceBeanList = new ArrayList<ReferenceBean>();
 
@@ -1824,12 +1834,105 @@ public class RegistryController extends BaseController
         while(registryEntiresIterator.hasNext())
         {
             RegistryVO registryVO = (RegistryVO)registryEntiresIterator.next();
+            logger.info("registryVO.getReferenceType():" + registryVO.getReferenceType() + ":" + registryVO.getReferencingEntityName() + ":" + registryVO.getReferencingEntityId() + ":" + registryVO.getReferencingEntityCompletingName() + ":" + registryVO.getReferencingEntityCompletingId());
+            
             if(!registryVO.getReferenceType().equals(RegistryVO.INLINE_ASSET) && registryVO.getReferencingEntityName().indexOf("SiteNode") == -1)
             {
-        		logger.info("NOT INLINE ASSET:" + registryVO.getId());
+            	logger.info("NOT INLINE ASSET:" + registryVO.getId());
             }
+        	else if(registryVO.getReferenceType().equals(RegistryVO.PAGE_COMPONENT_BINDING))
+            {
+        		logger.info("Page component binding:" + registryVO.getId() + " - " + registryVO.getReferencingEntityName() + ":" + registryVO.getReferencingEntityId() + ":" + registryVO.getReferencingEntityCompletingName() + ":" + registryVO.getReferencingEntityCompletingId());
+
+	            boolean add = true;
+	            
+	            String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
+	            ReferenceBean existingReferenceBean = (ReferenceBean)entries.get(key);
+	            if(existingReferenceBean == null)
+	            {
+	                existingReferenceBean = new ReferenceBean();
+	                logger.info("Adding referenceBean to entries with key:" + key);
+		            entries.put(key, existingReferenceBean);
+		            referenceBeanList.add(existingReferenceBean);
+		        }
+	
+	            ReferenceVersionBean referenceVersionBean = new ReferenceVersionBean();
+
+            	try
+                {
+	                SiteNodeVersionVO siteNodeVersion = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	                SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeVersion.getSiteNodeId(), db);
+	                logger.info("siteNodeVersion:" + siteNodeVersion.getSiteNodeVersionId());
+	                logger.info("siteNode:" + siteNodeVO.getId());
+		    		existingReferenceBean.setName(siteNodeVO.getName());
+		    		existingReferenceBean.setReferencingCompletingObject(siteNodeVO);
+		    		existingReferenceBean.setPath(SiteNodeController.getController().getSiteNodePath(siteNodeVO.getSiteNodeId(), false, true, db));
+		    		try
+		    		{
+		    			String userName = siteNodeVersion.getVersionModifier();
+		    			if(userName == null || userName.equals(""))
+		    				userName = siteNodeVO.getCreatorName();
+		    			
+			    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
+			    		if(user != null)
+			    			existingReferenceBean.setContactPersonEmail(user.getEmail());
+			    		else
+			    			existingReferenceBean.setContactPersonEmail(userName);
+		    		}
+		    		catch (Exception e) 
+		    		{
+		    			logger.warn("Problem getting version modifier email: " + e.getMessage());
+					}
+
+		    		referenceVersionBean.setReferencingObject(siteNodeVersion);
+		    		referenceVersionBean.getRegistryVOList().add(registryVO);
+
+		    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
+		    		ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
+		    		logger.info("cvVO:" + cvVO.getId());
+		    		
+		    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(cvVO.getVersionValue(), new Integer(registryVO.getEntityId()), masterLanguageVO.getLanguageId(), assetKey, false, db);
+		    		logger.info("assetExtraInfo:" + assetExtraInfo);
+		    		
+		    		if(assetExtraInfo != null && !assetExtraInfo.equals(""))
+		    			referenceVersionBean.setReferencingExtraInfo(assetExtraInfo);
+		    		else if(discardMiss)
+			    	{
+		    			add = false;
+		    		}                	
+                }
+                catch(Exception e)
+                {
+                    add = false;
+                    logger.info("siteNode:" + registryVO.getReferencingEntityId() + " did not exist - skipping..");
+                }
+	            
+	            if(add)
+	            {
+	                boolean exists = false;
+	                ReferenceVersionBean existingReferenceVersionBean = null;
+		            Iterator versionsIterator = existingReferenceBean.getVersions().iterator();
+		            while(versionsIterator.hasNext())
+		            {
+		                existingReferenceVersionBean = (ReferenceVersionBean)versionsIterator.next();
+		                if(existingReferenceVersionBean == null || existingReferenceVersionBean.getReferencingObject() == null || referenceVersionBean.getReferencingObject() == null || referenceVersionBean == null || existingReferenceVersionBean.getReferencingObject().equals(referenceVersionBean.getReferencingObject()))
+		                {
+		                    exists = true;
+		                    break;
+		                }
+		            }
+	
+		            if(!exists)
+		                existingReferenceBean.getVersions().add(referenceVersionBean);
+		            else
+		                existingReferenceVersionBean.getRegistryVOList().add(registryVO);
+		            logger.info("existingReferenceBean.getVersions():" + existingReferenceBean.getVersions());
+	            }
+	        }
             else
             {
+            	logger.info("Inline ASSET binding: " + assetKey);
+            	
 	            boolean add = true;
 	            
 	            String key = "" + registryVO.getReferencingEntityCompletingName() + "_" + registryVO.getReferencingEntityCompletingId();
@@ -1847,33 +1950,34 @@ public class RegistryController extends BaseController
 	            {
 	                try
 	                {
-	                    ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
-	                    Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId());
-	                    if(hasVersion != null && onlyOneVersionPerLanguage)
+	                    ContentVersion cv = ContentVersionController.getContentVersionController().getContentVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
+	                    ContentVersion latestContentVersion = ContentVersionController.getContentVersionController().getLatestActiveContentVersion(new Integer(registryVO.getReferencingEntityCompletingId()), cv.getLanguageId(), db);
+	                    Boolean hasVersion = checkedLanguageVersions.get("" + latestContentVersion.getValueObject().getContentId() + "_" + latestContentVersion.getLanguageId());
+	                    if(hasVersion != null && onlyLatestVersionPerLanguage)
 	                    {
 	                    	continue;
 	                    	//referenceBeanList.remove(existingReferenceBean);
 	                    }
-	                    else if(excludeInternalContentReferences && contentVersion.getValueObject().getContentId().equals(contentId))
+	                    else if(excludeInternalContentReferences && latestContentVersion.getValueObject().getContentId().equals(contentId))
 			    		{
 	                    	logger.info("Skipping internal reference " + contentId + " had on itself.");
 			    			referenceBeanList.remove(existingReferenceBean);
 			    		}
 			    		else
 			    		{
-			    			logger.info("contentVersion:" + contentVersion.getId() + " : " + assetKey);
-			    			boolean includesAsset = RegistryController.getController().hasInlineAsset(contentVersion.getVersionValue(), new Integer(registryVO.getEntityId()), assetKey, db);
+			    			logger.info("contentVersion:" + latestContentVersion.getId() + " : " + assetKey);
+			    			boolean includesAsset = RegistryController.getController().hasInlineAsset(latestContentVersion.getVersionValue(), new Integer(registryVO.getEntityId()), assetKey, db);
 			    			logger.info("includesAsset:" + includesAsset);
 			    			if(includesAsset)
 		                    {
-		                    	existingReferenceBean.setName(contentVersion.getOwningContent().getName());
-					    		existingReferenceBean.setReferencingCompletingObject(contentVersion.getOwningContent().getValueObject());
-					    		existingReferenceBean.setPath(ContentController.getContentController().getContentPath(contentVersion.getValueObject().getContentId(), false, true, db));
+		                    	existingReferenceBean.setName(latestContentVersion.getOwningContent().getName());
+					    		existingReferenceBean.setReferencingCompletingObject(latestContentVersion.getOwningContent().getValueObject());
+					    		existingReferenceBean.setPath(ContentController.getContentController().getContentPath(latestContentVersion.getValueObject().getContentId(), false, true, db));
 					    		try
 					    		{
-					    			String userName = contentVersion.getVersionModifier();
+					    			String userName = latestContentVersion.getVersionModifier();
 					    			if(userName == null || userName.equals(""))
-					    				userName = contentVersion.getOwningContent().getCreator();
+					    				userName = latestContentVersion.getOwningContent().getCreator();
 		
 						    		InfoGluePrincipal user = UserControllerProxy.getController().getUser(userName);
 						    		if(user != null)
@@ -1885,15 +1989,16 @@ public class RegistryController extends BaseController
 					    		{
 					    			logger.warn("Problem getting version modifier email: " + e.getMessage());
 								}
-					    		referenceVersionBean.setReferencingObject(contentVersion.getValueObject());
+					    		referenceVersionBean.setReferencingObject(latestContentVersion.getValueObject());
 					    		referenceVersionBean.getRegistryVOList().add(registryVO);
 					    
-					    		checkedLanguageVersions.put("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId(), new Boolean(true));
+					    		checkedLanguageVersions.put("" + latestContentVersion.getValueObject().getContentId() + "_" + latestContentVersion.getLanguageId(), new Boolean(true));
 		                    }
 		                    else
 			    			{
-		                    	referenceBeanList.remove(existingReferenceBean);
-		                    	//System.out.println("NOOOOOOOO: This version had no asset reference...");
+		                    	//if(existingReferenceBean.getVersions().size() == 0)
+		                    		referenceBeanList.remove(existingReferenceBean);
+		                    	//logger.info("NOOOOOOOO: This version had no asset reference...");
 			    			}
 			    		}
 	                }
@@ -1935,7 +2040,7 @@ public class RegistryController extends BaseController
 
 			    		LanguageVO masterLanguageVO = LanguageController.getController().getMasterLanguage(siteNodeVO.getRepositoryId(), db);
 			    		ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getLatestActiveContentVersionVO(siteNodeVO.getMetaInfoContentId(), masterLanguageVO.getId(), db);
-			    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(cvVO.getVersionValue(), new Integer(registryVO.getEntityId()), masterLanguageVO.getLanguageId(), assetKey, db);
+			    		String assetExtraInfo = RegistryController.getController().getInlineAssetInformation(cvVO.getVersionValue(), new Integer(registryVO.getEntityId()), masterLanguageVO.getLanguageId(), assetKey, false, db);
 			    		if(assetExtraInfo != null && !assetExtraInfo.equals(""))
 			    			referenceVersionBean.setReferencingExtraInfo(assetExtraInfo);
 			    		else
@@ -1970,12 +2075,14 @@ public class RegistryController extends BaseController
 	
 	            }
             }
+            
         }
         
         Iterator i = referenceBeanList.iterator();
         while(i.hasNext())
         {
             ReferenceBean referenceBean = (ReferenceBean)i.next();
+            logger.info("referenceBean:" + referenceBean.getPath() + "/" + referenceBean.getVersions().size());
             if(referenceBean.getVersions().size() == 0)
                 i.remove();
         }
@@ -2526,8 +2633,8 @@ public class RegistryController extends BaseController
 		    for(int i=0; i<partOfEntityIds.length; i++)
 		    	variables.append("$" + (i+2) + (i+1!=partOfEntityIds.length ? "," : ""));
 			
-		    //System.out.println("partOfEntityIds:" + partOfEntityIds.length);
-		    //System.out.println("variables:" + variables);
+		    //logger.info("partOfEntityIds:" + partOfEntityIds.length);
+		    //logger.info("variables:" + variables);
 
 			String SQL = "CALL SQL select registryid, entityname, entityid, referencetype, referencingentityname, referencingentityid, referencingentitycomplname, referencingentitycomplid from cmRegistry r where r.entityName = $1 AND entityid IN (" + variables + ") AND r.registryid = (select max(registryId) from cmregistry where entityName = r.entityName AND entityid = r.entityId) ORDER BY r.registryId AS org.infoglue.cms.entities.management.impl.simple.RegistryImpl";
 			//System.out.println("SQL:" + SQL);

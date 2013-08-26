@@ -90,7 +90,7 @@
 		}
 
 		$(document).ready(function(){
-			#set($extraParameter = '')
+			#set($extraParameter = '"aaSorting": [[ 1, "desc" ]]')
 			#initDataTableImpl("dataTable" $extraParameter)
 		});
 	-->

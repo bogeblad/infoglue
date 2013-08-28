@@ -1613,6 +1613,11 @@ public class PublicationController extends BaseController
 		
 		String recipients = "";
 	    
+    	if(recipientFilter.indexOf("testUsers") > -1)
+    	{
+    		return "mattias.bogeblad@knowit.se;tomas.edquist@uadm.uu.se";
+    	}
+
 		List users = new ArrayList();
 		
 		/*

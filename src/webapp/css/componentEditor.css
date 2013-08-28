@@ -417,6 +417,7 @@ border-bottom:1px solid #9CAABD;
 }
 .igDialogFooter input[type="button"], .componentPropertiesFooter input[type="button"], .editOnSightFooterToolbar input[type="button"]
 { 
+	border-radius: 0px !important;
 	border: 1px solid #555; 
 	padding: 4px;
 	padding-left: 28px; 
@@ -429,6 +430,8 @@ border-bottom:1px solid #9CAABD;
 	background-position: 8px 3px;
 	line-height:1.4em;
 	margin:8px 4px 0px 0px;
+	background: inherit !important;
+	text-shadow: 0px !important;
 }
 .igDialogFooter input[type="button"]:hover, .componentPropertiesFooter input[type="button"]:hover, .editOnSightFooterToolbar input[type="button"]:hover
 { 

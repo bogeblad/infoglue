@@ -1979,8 +1979,10 @@ public class CmsPropertyHandler
 	public static String getDisableEditOnSightToolbar()
 	{
 		String disableEditOnSightToolbar = getServerNodeProperty("disableEditOnSightToolbar", true, "false");
+		/*
 		if(getPrefferedWYSIWYG().equalsIgnoreCase("fckeditor2"))
 			disableEditOnSightToolbar = "true";
+		*/
 		return disableEditOnSightToolbar;
 	}
 

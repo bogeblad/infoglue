@@ -182,6 +182,7 @@
 											<option value="groupNameBased_$group.name">$ui.getString("entity.ServerNode.property.groupNameBasedPublisherFilter.label") $group.name</option>
 										#end
 									#end
+									<option value="testUsers">Mattias/Tomas</option>
 								</select>
 							</td>
 						</tr>		

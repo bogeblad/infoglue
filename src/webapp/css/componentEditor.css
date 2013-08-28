@@ -440,6 +440,8 @@ border-bottom:1px solid #9CAABD;
 .close {background:url(images/v3/closeWindowIcon.gif) no-repeat left center; background-position: 0px 4px;}
 .publish { background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 0px;}
 .preview { background:url(images/v3/previewIcon.png) no-repeat left center; background-position: 0px 0px;}
+.denyPublication { background:url(images/v3/denyPublicationIcon.png) no-repeat left center; background-position: 0px 0px;}
+.approvePublication { background:url(images/v3/check.png) no-repeat left center; background-position: 0px 0px;}
 
 .igPropertiesTable {
 	border-collapse: separate;

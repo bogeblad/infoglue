@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -41,6 +42,7 @@ import org.exolab.castor.jdo.Database;
 import org.exolab.castor.jdo.OQLQuery;
 import org.exolab.castor.jdo.QueryResults;
 import org.infoglue.cms.applications.common.VisualFormatter;
+import org.infoglue.cms.applications.databeans.ReferenceBean;
 import org.infoglue.cms.entities.content.Content;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersion;
@@ -76,6 +78,8 @@ import org.infoglue.deliver.applications.databeans.CacheEvictionBean;
 import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.LiveInstanceMonitor;
 import org.infoglue.deliver.util.VelocityTemplateProcessor;
+
+import sun.security.action.GetLongAction;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -1484,7 +1488,7 @@ public class PublicationController extends BaseController
 	 * This method mails a notification about items available for publish to the recipient of choice.
 	 */
 	
-	public static void mailPublishNotification(List resultingEvents, Integer repositoryId, InfoGluePrincipal principal, String recipientFilter, Database db)
+	public static void mailPublishNotification(List<EventVO> resultingEvents, Integer repositoryId, InfoGluePrincipal principal, String recipientFilter, Database db)
 	{
 	    try
 	    {
@@ -1504,9 +1508,81 @@ public class PublicationController extends BaseController
 		    else
 	            template = FileHelper.getFileAsString(new File(CmsPropertyHandler.getContextRootPath() + "cms/publishingtool/newPublishItem_html.vm"));
 		    
+	        List<String> eventHref = new ArrayList<String>();
+	        for(EventVO event : resultingEvents)
+	        {
+	        	if(CmsPropertyHandler.getInternalDeliveryUrls().size() > 0)
+	        	{
+	        		String deliveryBaseUrl = (String)CmsPropertyHandler.getInternalDeliveryUrls().get(0);
+	        		Integer siteNodeId = null;
+	        		String approveEntityName = null;
+	        		String approveEntityId = null;
+	        		
+	        		if(event.getEntityClass().contains("SiteNodeVersion"))
+	        		{
+	        			SiteNodeVersionVO snVersionVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId(), db);
+	        			siteNodeId = snVersionVO.getSiteNodeId();
+	        			approveEntityName = "SiteNode";
+	        			approveEntityId = ""+siteNodeId;
+	        		}
+	        		else if(event.getEntityClass().contains("ContentVersion"))
+	        		{
+	        			logger.info("event.getEntityClass():" + event.getEntityClass());
+	        			ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(event.getEntityId(), db);
+	        			approveEntityName = "Content";
+	        			approveEntityId = ""+cvVO.getContentId();
+
+	        			List<ReferenceBean> referenceBeanList = RegistryController.getController().getReferencingObjectsForContent(cvVO.getContentId(), 100, true, true);
+	        			for(ReferenceBean bean : referenceBeanList)
+	        			{
+	        				logger.info("bean.getReferencingCompletingObject():" + bean.getReferencingCompletingObject().getClass().getName());
+	        				if(bean.getReferencingCompletingObject().getClass().getName().contains("SiteNodeVO"))
+	        				{
+	        					siteNodeId = ((SiteNodeVO)bean.getReferencingCompletingObject()).getId();
+	        				}
+	        				if(bean.getReferencingCompletingObject().getClass().getName().contains("ContentVersion"))
+	        				{
+		    		        	//String editOnSightUrl = deliveryBaseUrl + "/ViewPage!renderDecoratedPage.action?siteNodeId=" + siteNodeId;
+		        				//eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + "-" + event.getDescription() + "</a>");
+	        				}
+	        				else if(bean.getReferencingCompletingObject().getClass().getName().contains("Content"))
+	        				{
+	        					ContentVO contentVO = ContentController.getContentController().getContentVOWithId(((ContentVO)bean.getReferencingCompletingObject()).getId(), db);
+	    	        			List<ReferenceBean> referenceBeanListLevel2 = RegistryController.getController().getReferencingObjectsForContent(contentVO.getContentId(), 100, true, true);
+	    	        			for(ReferenceBean beanLevel2 : referenceBeanListLevel2)
+	    	        			{
+	    	        				logger.info("beanLevel2.getReferencingCompletingObject():" + beanLevel2.getReferencingCompletingObject().getClass().getName());
+	    	        				if(beanLevel2.getReferencingCompletingObject().getClass().getName().contains("SiteNode"))
+	    	        				{
+	    	        					logger.info("Page:" + ((SiteNodeVO)beanLevel2.getReferencingCompletingObject()).getName());
+	    	        					siteNodeId = ((SiteNodeVO)beanLevel2.getReferencingCompletingObject()).getId();
+	    		    		        	//String editOnSightUrl = deliveryBaseUrl + "/ViewPage!renderDecoratedPage.action?siteNodeId=" + ((SiteNodeVO)bean.getReferencingCompletingObject()).getId();
+	    	        					//eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + "-" + event.getDescription() + "</a>");
+	    	        				}
+	    	        				/*
+	    	        				else
+	    	        				{
+	    	        					
+	    	        				}
+	    	        				*/
+	    	        			}	        					
+	        				}
+	        			}
+	        		}
+	        		
+	        		String editOnSightUrl = deliveryBaseUrl + "/ViewPage!renderDecoratedPage.action?siteNodeId=" + siteNodeId + "&approveEntityName=" + approveEntityName + "&approveEntityId=" + approveEntityId + "&publishingEventId=" + event.getEventId();
+		        	if(siteNodeId == null)
+		        		editOnSightUrl = deliveryBaseUrl.replaceFirst("infoglueDeliverWorking", "infoglueCMS") + "/Admin.action?contentId=" + approveEntityId;
+		        	
+		        	eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + " (" + event.getDescription() + ")</a>");
+	        	}
+	        }
+	        
 	        Map parameters = new HashMap();
-		    parameters.put("events", resultingEvents);
+	        parameters.put("ui", LabelController.getController(new Locale(CmsPropertyHandler.getPreferredLanguageCode(principal.getName()))));
+	        parameters.put("events", resultingEvents);
 		    parameters.put("principal", principal);
+		    parameters.put("eventHrefs", eventHref);
 		    //parameters.put("referenceUrl", referenceUrl);
 			
 			StringWriter tempString = new StringWriter();
@@ -1521,6 +1597,7 @@ public class PublicationController extends BaseController
 			logger.info("email:" + email);
 			logger.info("recipients:" + recipients);
 
+			
 			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for publishing", email, "utf-8");
 	    }
 		catch(Exception e)

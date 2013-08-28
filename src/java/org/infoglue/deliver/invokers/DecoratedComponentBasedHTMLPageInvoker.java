@@ -51,10 +51,12 @@ import org.infoglue.cms.controllers.kernel.impl.simple.AccessRightController;
 import org.infoglue.cms.controllers.kernel.impl.simple.ContentController;
 import org.infoglue.cms.controllers.kernel.impl.simple.LanguageController;
 import org.infoglue.cms.controllers.kernel.impl.simple.PageTemplateController;
+import org.infoglue.cms.controllers.kernel.impl.simple.RepositoryController;
 import org.infoglue.cms.controllers.kernel.impl.simple.SiteNodeController;
 import org.infoglue.cms.entities.content.ContentVO;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.LanguageVO;
+import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.structure.SiteNode;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
 import org.infoglue.cms.exception.SystemException;
@@ -378,6 +380,19 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				extraHeader = extraHeader.replaceAll("\\$\\{useInlinePropertiesIcon\\}", "true");
 			}
 
+			if(getRequest().getParameter("approveEntityName") != null && !getRequest().getParameter("approveEntityName").equals("") && getRequest().getParameter("approveEntityId") != null && !getRequest().getParameter("approveEntityId").equals(""))
+			{
+				extraHeader = extraHeader.replaceAll("\\$\\{approveEntityName\\}", "" + getRequest().getParameter("approveEntityName"));
+				extraHeader = extraHeader.replaceAll("\\$\\{approveEntityId\\}", "" + getRequest().getParameter("approveEntityId"));
+				extraHeader = extraHeader.replaceAll("\\$\\{publishingEventId\\}", "" + getRequest().getParameter("publishingEventId"));
+			}
+			else
+			{
+				extraHeader = extraHeader.replaceAll("\\$\\{approveEntityName\\}", "");
+				extraHeader = extraHeader.replaceAll("\\$\\{approveEntityId\\}", "");
+				extraHeader = extraHeader.replaceAll("\\$\\{publishingEventId\\}", "");
+			}
+			
 			String sortBaseUrl = componentEditorUrl + "ViewSiteNodePageComponents!moveComponent.action?siteNodeId=" + templateController.getSiteNodeId() + "&languageId=" + templateController.getLanguageId() + "&contentId=" + templateController.getContentId() + "&showSimple=" + this.getTemplateController().getDeliveryContext().getShowSimple() + "";
 			extraHeader = extraHeader.replaceAll("\\$\\{sortBaseUrl\\}", sortBaseUrl);
 			
@@ -418,6 +433,21 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 				savePartTemplateUrl = "alert('Not authorized to save part template');";
 			}
 			
+			String personalStartUrl = "/";
+			String repositoryId = CmsPropertyHandler.getPreferredRepositoryId(principal.getName());
+			System.out.println("repositoryId: " + repositoryId);
+			if(repositoryId == null)
+			{
+				List<RepositoryVO> repos = RepositoryController.getController().getAuthorizedRepositoryVOList(principal, false);
+				if(repos.size() > 0)
+					repositoryId = "" + repos.get(0).getId();
+			}
+			if(repositoryId != null)
+			{
+				SiteNodeVO siteNodeVO = SiteNodeController.getController().getRootSiteNodeVO(new Integer(repositoryId), templateController.getDatabase());
+				personalStartUrl = "ViewPage!renderDecoratedPage.action?siteNodeId=" + siteNodeVO.getId();
+			}
+			
 			String returnAddress = "" + componentEditorUrl + "ViewInlineOperationMessages.action";
 
 	    	String notifyUrl 			= componentEditorUrl + "CreateEmail!inputChooseRecipientsV3.action?originalUrl=" + URLEncoder.encode(templateController.getOriginalFullURL().replaceFirst("cmsUserName=.*?", ""), "utf-8") + "&amp;returnAddress=" + URLEncoder.encode(returnAddress, "utf-8") + "&amp;extraTextProperty=tool.managementtool.createEmailNotificationPageExtraText.text"; 
@@ -453,7 +483,33 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 		    extraBody = extraBody.replaceAll("\\$viewSource", viewSourceHTML);
 			extraBody = extraBody.replaceAll("\\$propertiesHTML", propertiesHTML);
 			extraBody = extraBody.replaceAll("\\$favouriteComponentsHeader", favouriteComponentsHeader);
-		    
+
+			extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.pendingPageApproval.title\\}", getLocalizedString(locale, "deliver.editOnSight.pendingPageApproval.title"));
+			extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.pendingContentApproval.title\\}", getLocalizedString(locale, "deliver.editOnSight.pendingContentApproval.title"));
+			extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.toolbarInlineEditing.title\\}", getLocalizedString(locale, "deliver.editOnSight.toolbarInlineEditing.title"));
+			extraBody = extraBody.replaceAll("\\$\\{deliver.editOnSight.toolbarState.title\\}", getLocalizedString(locale, "deliver.editOnSight.toolbarState.title"));
+			extraBody = extraBody.replaceAll("\\$\\{tool.contenttool.approve.label\\}", getLocalizedString(locale, "tool.contenttool.approve.label"));
+			extraBody = extraBody.replaceAll("\\$\\{tool.contenttool.deny.label\\}", getLocalizedString(locale, "tool.contenttool.deny.label"));
+
+			extraBody = extraBody.replaceAll("\\$\\{tool.common.saveButton.label\\}", getLocalizedString(locale, "tool.common.saveButton.label"));
+			extraBody = extraBody.replaceAll("\\$\\{tool.common.cancelButton.label\\}", getLocalizedString(locale, "tool.common.cancelButton.label"));
+			extraBody = extraBody.replaceAll("\\$\\{tool.common.publishing.publishButtonLabel\\}", getLocalizedString(locale, "tool.common.publishing.publishButtonLabel"));
+			extraBody = extraBody.replaceAll("\\$\\{tool.structuretool.toolbarV3.previewPageLabel\\}", getLocalizedString(locale, "tool.structuretool.toolbarV3.previewPageLabel"));
+
+			extraBody = extraBody.replaceAll("\\$\\{homeURL\\}", personalStartUrl);
+
+			extraBody = extraBody.replaceAll("\\$\\{currentLanguageCode\\}", ""+templateController.getLanguageCode(templateController.getLanguageId()).getLanguage().toUpperCase());
+			extraBody = extraBody.replaceAll("\\$\\{currentLanguageName\\}", templateController.getLanguageCode(templateController.getLanguageId()).getDisplayName().toUpperCase());
+
+			StringBuffer languagesSB = new StringBuffer();
+			List<LanguageVO> languages = templateController.getAvailableLanguages();
+			for(LanguageVO language : languages)
+			{
+				if(language.getId() != templateController.getLanguageId())
+					languagesSB.append("<li style=\"margin-bottom: 6px;\"><a style=\"color: black;\" href=\"" + templateController.getCurrentPageUrl().replaceAll("languageId=" + templateController.getLanguageId(), "languageId=" + language.getId()) + "\">" + language.getLanguageCode().toUpperCase() + "</a></li>");
+			}
+			extraBody = extraBody.replaceAll("\\$\\{languageList\\}", languagesSB.toString());
+			
 		    extraBody = extraBody.replaceAll("\\$addComponentJavascript", "window.hasAccessToAddComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToAddComponent + ";");
 		    extraBody = extraBody.replaceAll("\\$deleteComponentJavascript", "window.hasAccessToDeleteComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToDeleteComponent + ";");
 		    extraBody = extraBody.replaceAll("\\$changeComponentJavascript", "window.hasAccessToChangeComponent" + component.getId() + "_" + component.getSlotName().replaceAll("[^0-9,a-z,A-Z]", "_") + " = " + hasAccessToChangeComponent + ";");

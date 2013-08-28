@@ -101,11 +101,6 @@ public class CreateEditionAction extends ViewPublicationsAction
 		// Content versions to publish
     	setEvents(getRequest().getParameterValues("sel"));
     	
-    	//String[] contents = getRequest().getParameterValues("sel");
-    	//String[] siteNodes = getRequest().getParameterValues("sit");
-    	//setContentToPublish(PublicationController.getContentVersionVOToPublish(contents));
-    	//setSiteNodeToPublish(PublicationController.getSiteNodeVersionVOToPublish(siteNodes));
-
     	ceb.throwIfNotEmpty();		
 
     	this.publicationVO = PublicationController.getController().createAndPublish(this.publicationVO, events, false, this.getInfoGluePrincipal());

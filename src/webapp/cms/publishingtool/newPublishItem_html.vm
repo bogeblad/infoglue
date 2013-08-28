@@ -1,15 +1,24 @@
-<div><h2>New items up for publication</h2></div>
+<div><h2>$ui.getString("tool.publishingtool.approveMail.title")</h2></div>
 <div>
-	CMS notification: The user $principal.firstName $principal.lastName submitted $events.size() items for publishing.<br/>
+	$principal.firstName $principal.lastName ($principal.name) $ui.getString("tool.publishingtool.approveMail.submittedText", $events.size())<br/>
 	<br/>
-	<h3>Items</h3> 
+	<h3>Items</h3>  
+	#*
 	#foreach($event in $events)
 		$event.name - $event.description<br/>
 	#end
+	<hr/>
+	*#
+	
+	<ul>
+	#foreach($eventHref in $eventHrefs)
+		<li>$eventHref</li>
+	#end
+	</ul>
+	
 	<br/>
-	Please visit the publishing tool to review the changes. <br/>
+	$ui.getString("tool.publishingtool.approveMail.instructions")<br/>
 	<br/>
 	<hr/>
-	This email was automatically generated and the sender is the CMS-system.<br/>
-	Do not reply to this email. <br/>
+	$ui.getString("tool.publishingtool.approveMail.footerText")<br/>
 </div>

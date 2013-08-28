@@ -42,18 +42,21 @@
 
 <div id="pageToolbar" class="editOnSightFooterToolbar buttonPane">
 	<div class="left" style="margin-left: 8px; margin-bottom: 6px;">
-		<input id="igSaveButton" type="button" style="display:none;" class="save" value="Save" onclick="saveAllEditing();"/>
-		##<input id="igCancelButton" type="button" style="display:none;" class="cancel" value="Cancel" onclick="hideDiv('component" + componentId + "Properties');"/>
-		<input id="igPublishButton" type="button" style="display:none;" class="publish" value="Publish" onclick="submitToPublish($siteNodeId, contentId, languageId, repositoryId, componentEditorUrl + '/ViewInlineOperationMessages.action');"/>
-		<input id="igPreviewButton" type="button" class="preview" value="Preview" onclick="previewPage();"/>
+		<input id="igSaveButton" type="button" style="display:none;" class="save" value="${tool.common.saveButton.label}" onclick="saveAllEditing();"/>
+		##<input id="igCancelButton" type="button" style="display:none;" class="cancel" value="${tool.common.cancelButton.label}" onclick="hideDiv('component" + componentId + "Properties');"/>
+		<input id="igApproveButton" type="button" style="display:none;" class="approvePublication" value="${tool.contenttool.approve.label}" onclick="approvePublication();"/>
+		<input id="igDenyButton" type="button" style="display:none;" class="denyPublication" value="${tool.contenttool.deny.label}" onclick="denyPublication();"/>
+		<input id="igPublishButton" type="button" style="display:none;" class="publish" value="${tool.common.publishing.publishButtonLabel}" onclick="submitToPublish($siteNodeId, contentId, languageId, repositoryId, componentEditorUrl + '/ViewInlineOperationMessages.action');"/>
+		<input id="igPreviewButton" type="button" style="display:none;" class="preview" value="${tool.structuretool.toolbarV3.previewPageLabel}" onclick="previewPage();"/>
 	</div>
 
-	<div class="right myHome" title="${deliver.editOnSight.toolbarHomeButton.title}"></div>
-	<div class="right mySettings" title="${deliver.editOnSight.toolbarMySettingsButton.title}" onclick="openInlineDivImpl(componentEditorUrl + '/ViewMySettings.action', 700, 750, true, true);"></div>
-	<div class="right openInNewWindow" title="${deliver.editOnSight.toolbarNewWindowButton.title}" onclick="window.open(document.location.href,'PageComponents','');"></div>
+	<div class="right myHome" style="display:none;" title="${deliver.editOnSight.toolbarHomeButton.title}" onclick="document.location.href='${homeURL}';"></div>
+	<div class="right mySettings" style="display:none;" title="${deliver.editOnSight.toolbarMySettingsButton.title}" onclick="openInlineDivImpl(componentEditorUrl + '/ViewMySettings.action', 700, 750, true, true);"></div>
+	<div class="right openInNewWindow" style="display:none;" title="${deliver.editOnSight.toolbarNewWindowButton.title}" onclick="window.open(document.location.href,'PageComponents','');"></div>
 	<div class="right validateW3C" title="${deliver.editOnSight.toolbarValidateW3CButton.title}" onclick="validateW3C();"><div class="errorCountW3C"></div></div>
-	<div class="right">Inline editing: <input type="checkbox" id="inlineEditing" value="true" checked="checked" onclick="toggleInline();"/></div>
-	<div id="igStatusDiv" class="right working">State: <span id="igStatus">Unknown</span></div>
+	<div class="right">${deliver.editOnSight.toolbarInlineEditing.title}: <input type="checkbox" id="inlineEditing" value="true" checked="checked" onclick="toggleInline();"/></div>
+	<div class="right"><span title="${currentLanguageName}" onclick="$('#languageSelector').toggle();">${currentLanguageCode}</span><div id="languageSelector" style="display: none; position: fixed; padding: 6px 0 0 10px; bottom: 42px; margin-left: -11px; width: 28px; color: black; background-color: white; box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 3px;"><ul style="list-style: none;">${languageList}</ul></div></div>
+	<div id="igStatusDiv" class="right loadingState">${deliver.editOnSight.toolbarState.title}: <span id="igStatus">-</span></div>
 </div>
 
 <form id="validatorW3CForm" method="post" action="http://validator.w3.org/check" target="_blank">
@@ -130,9 +133,11 @@ function hideFooterButtons()
 	if(window.self !== window.top)
 	{
 		$(".myHome, .mySettings, .preview").hide();
+		$(".openInNewWindow").show();
 	}
 	else
 	{
+		$(".myHome, .mySettings, .preview").show();
 		$(".openInNewWindow").hide();
 	}
 }
@@ -348,6 +353,9 @@ function updatePageStatus()
 	try
 	{
 		var data = "contentId=" + contentId + "&siteNodeId=$siteNodeId";
+		if(approveEntityName != "" && approveEntityId != "")
+			var data = "contentId=" + contentId + "&siteNodeId=$siteNodeId&approveEntityName=" + approveEntityName + "&approveEntityId=" + approveEntityId + "&eventId=" + publishingEventId;
+			
 		$.ajax({
 			type: "GET",
 		   	url: "" + cmsBaseUrl + "/ViewCommonAjaxServices!publishableNumberOfItems.action",
@@ -361,13 +369,23 @@ function updatePageStatus()
 				{
 					$('#igStatusDiv').attr("class", "right working");
 					$('#igStatus').html("<!--<img src='css/images/v3/greenBall.png' width='16'/>--> " + msg);
-					$('#igPublishButton').show();
+					if(msg.indexOf("approve=true") > -1)
+					{
+						$('#igApproveButton').show();
+						$('#igDenyButton').show();
+					}
+					else
+					{
+						$('#igPublishButton').show();
+					}
 					$('#igCancelButton').show();
 				}
 				else
 				{
 					$('#igStatusDiv').attr("class", "right published");
 					$('#igStatus').html("<!--<img src='css/images/v3/publishedBall.png' width='16'/>--> Published");
+					$('#igApproveButton').hide();
+					$('#igDenyButton').hide();
 					$('#igPublishButton').hide();
 					$('#igCancelButton').hide();
 				}
@@ -377,6 +395,86 @@ function updatePageStatus()
 			   //alert("textStatus:" + textStatus);
 			   alert("ResponseCode:" + XMLHttpRequest.status);
 			   //alert("errorThrown:" + errorThrown);
+			   if(XMLHttpRequest.status == 403)
+			   {
+				   alert("You are not logged in properly to the administrative tools - please log in again.");
+				   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+			   }
+			   else if(XMLHttpRequest.status == 0)
+			   {
+			   		window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+			   }
+			   else
+			   {
+				   alert("You are not allowed to edit this text!");
+			   }
+		   }
+		});
+	}
+	catch(e) {console.log("e:" + e);}
+}
+
+function approvePublication()
+{
+	try
+	{
+		var data = "eventId=" + publishingEventId + "&repositoryId=" + repositoryId;
+		$.ajax({
+			type: "GET",
+		   	url: "" + cmsBaseUrl + "/ViewCommonAjaxServices!approvePublication.action",
+		   	data: data,
+		   	dataType: "html", 
+		   	cache: false,
+		   	success: function(msg, textStatus){
+				//alert("msg:" + msg);
+				//alert("textStatus:" + textStatus);
+				//alert("OK");
+				document.location.reload(true);
+		   },
+		   error: function (XMLHttpRequest, textStatus, errorThrown) {
+			   //alert("textStatus:" + textStatus);
+			   //alert("ResponseCode:" + XMLHttpRequest.status);
+			   //console.log(errorThrown);
+			   if(XMLHttpRequest.status == 403)
+			   {
+				   alert("You are not logged in properly to the administrative tools - please log in again.");
+				   window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+			   }
+			   else if(XMLHttpRequest.status == 0)
+			   {
+			   		window.open("" + componentEditorUrl + "ViewCMSTool!loginStandalone.action", "Login", "width=400,height=420");
+			   }
+			   else
+			   {
+				   alert("You are not allowed to edit this text!");
+			   }
+		   }
+		});
+	}
+	catch(e) {console.log("e:" + e);}
+}
+
+function denyPublication()
+{
+	try
+	{
+		var data = "eventId=" + publishingEventId + "&repositoryId=" + repositoryId;
+		$.ajax({
+			type: "GET",
+		   	url: "" + cmsBaseUrl + "/ViewCommonAjaxServices!denyPublication.action",
+		   	data: data,
+		   	dataType: "html", 
+		   	cache: false,
+		   	success: function(msg, textStatus){
+				//alert("msg:" + msg);
+				//alert("textStatus:" + textStatus);
+				//alert("OK");
+				document.location.reload(true);
+		   },
+		   error: function (XMLHttpRequest, textStatus, errorThrown) {
+			   //alert("textStatus:" + textStatus);
+			   //alert("ResponseCode:" + XMLHttpRequest.status);
+			   //console.log(errorThrown);
 			   if(XMLHttpRequest.status == 403)
 			   {
 				   alert("You are not logged in properly to the administrative tools - please log in again.");

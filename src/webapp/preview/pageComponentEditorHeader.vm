@@ -13,6 +13,10 @@
 	var languageId = ${languageId};
 	var contentId = ${contentId};
 	var metaInfoContentId = ${metaInfoContentId};
+
+	var approveEntityName = "${approveEntityName}";
+	var approveEntityId = "${approveEntityId}";
+	var publishingEventId = "${publishingEventId}";
 			
 	${limitedUserWarning}
 	
@@ -123,7 +127,7 @@
 	{
 		$("#paletteDiv").hide();
 	}
-	
+
 	$(function() {
 		
 		var useInlinePropertiesIcon = ${useInlinePropertiesIcon};

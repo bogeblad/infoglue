@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<link rel="stylesheet" type="text/css" href="css/cms.css" /> 
 
-	<script Language=JavaScript>
+	<script type="text/javascript">
 	
 		var current = 0;
 		function showNext() 
@@ -78,7 +78,7 @@
 				#set( $contentVO = $this.getOwningContent($cId) )
 				#set( $title = "${contentVO.getName()}")
 				#set( $comment = "${contentVersionVO.getVersionComment()}")
-				#set($navBar = "${navBar}<a icon='css/images/tree/contentItem.gif' title='${title}' id='lnk${cnt}' href='ViewContentVersion!preview.action?contentId=$contentVO.contentId&contentVersionId=$contentVersionVO.getContentVersionId()' target='previewMain'>${cnt}</a> ")						
+				#set($navBar = "${navBar}<a icon='css/images/tree/contentItem.gif' title='${title}' id='lnk${cnt}' href='ViewContentVersion!preview.action?contentId=$contentVO.contentId&contentVersionId=$contentVersionVO.getContentVersionId()&approvalMode=true&approveEntityName=ContentVersion&approveEntityId=$contentVersionVO.getContentVersionId()' target='previewMain'>${cnt}</a> ")						
 				#set($cnt = $cnt + 1)
 			#end
 
@@ -88,8 +88,9 @@
 				#set( $siteNodeVO = $this.getOwningSiteNode($cId) )
 				#set( $title = "${siteNodeVO.getName()}")
 				#set( $comment = "${siteNodeVersionVO.getVersionComment()}")
+				#set( $previewBase = "$previewUrl.replaceAll('.action','!renderDecoratedPage.action')")
 				
-				#set($navBar = "${navBar}<a icon='css/images/tree/structureItem.gif' comment='${comment}' title='${title}' id='lnk${cnt}' href='$previewUrl?siteNodeId=$siteNodeVO.getSiteNodeId()' target='previewMain'>${cnt}</a> ")
+				#set($navBar = "${navBar}<a icon='css/images/tree/structureItem.gif' comment='${comment}' title='${title}' id='lnk${cnt}' href='$previewBase?siteNodeId=$siteNodeVO.getSiteNodeId()&approvalMode=true&approveEntityName=SiteNode&approveEntityId=$siteNodeVO.getSiteNodeId()' target='previewMain'>${cnt}</a> ")
 				#set($cnt = $cnt + 1)				
 			#end
 

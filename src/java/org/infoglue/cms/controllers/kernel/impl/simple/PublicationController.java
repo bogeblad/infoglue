@@ -1513,7 +1513,7 @@ public class PublicationController extends BaseController
 	        {
 	        	if(CmsPropertyHandler.getInternalDeliveryUrls().size() > 0)
 	        	{
-	        		String deliveryBaseUrl = (String)CmsPropertyHandler.getInternalDeliveryUrls().get(0);
+	        		String cmsBaseUrl = (String)CmsPropertyHandler.getCmsFullBaseUrl();
 	        		Integer siteNodeId = null;
 	        		String approveEntityName = null;
 	        		String approveEntityId = null;
@@ -1570,9 +1570,9 @@ public class PublicationController extends BaseController
 	        			}
 	        		}
 	        		
-	        		String editOnSightUrl = deliveryBaseUrl + "/ViewPage!renderDecoratedPage.action?siteNodeId=" + siteNodeId + "&approveEntityName=" + approveEntityName + "&approveEntityId=" + approveEntityId + "&publishingEventId=" + event.getEventId();
+	        		String editOnSightUrl = cmsBaseUrl.replaceFirst("infoglueCMS", "infoglueDeliverWorking") + "/ViewPage!renderDecoratedPage.action?siteNodeId=" + siteNodeId + "&approveEntityName=" + approveEntityName + "&approveEntityId=" + approveEntityId + "&publishingEventId=" + event.getEventId();
 		        	if(siteNodeId == null)
-		        		editOnSightUrl = deliveryBaseUrl.replaceFirst("infoglueDeliverWorking", "infoglueCMS") + "/Admin.action?contentId=" + approveEntityId;
+		        		editOnSightUrl = cmsBaseUrl + "/Admin.action?contentId=" + approveEntityId;
 		        	
 		        	eventHref.add("<a href=\"" + editOnSightUrl + "\">" + event.getName() + " (" + event.getDescription() + ")</a>");
 	        	}

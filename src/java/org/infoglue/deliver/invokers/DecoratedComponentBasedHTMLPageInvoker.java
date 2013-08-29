@@ -435,7 +435,7 @@ public class DecoratedComponentBasedHTMLPageInvoker extends ComponentBasedHTMLPa
 			
 			String personalStartUrl = "/";
 			String repositoryId = CmsPropertyHandler.getPreferredRepositoryId(principal.getName());
-			System.out.println("repositoryId: " + repositoryId);
+			logger.info("repositoryId: " + repositoryId);
 			if(repositoryId == null)
 			{
 				List<RepositoryVO> repos = RepositoryController.getController().getAuthorizedRepositoryVOList(principal, false);

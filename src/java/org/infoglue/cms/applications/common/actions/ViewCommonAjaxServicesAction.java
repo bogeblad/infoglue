@@ -270,7 +270,7 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 			}
 			catch (Exception e) 
 			{
-				System.out.println("No event found probably:" + e.getMessage());
+				logger.info("No event found probably:" + e.getMessage());
 			}
 		}
 
@@ -280,7 +280,10 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().setCharacterEncoding("UTF-8");
 		if(siteNodeVersionVOList.size() > 0 || contentVersionVOList.size() > 0)
-			this.getResponse().getWriter().print("" + siteNodeVersionVOList.size() + " page(s) and " + contentVersionVOList.size() + " content(s) in working mode");
+		{
+			String text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStateWorking.text", new Integer[]{siteNodeVersionVOList.size(), contentVersionVOList.size()});
+			this.getResponse().getWriter().print("" + text);
+		}
 		else
 			this.getResponse().getWriter().print("" + (siteNodeVersionVOList.size() + contentVersionVOList.size()) + "");
 			

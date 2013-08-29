@@ -368,7 +368,7 @@ function updatePageStatus()
 				if(msg != "0")
 				{
 					$('#igStatusDiv').attr("class", "right working");
-					$('#igStatus').html("<!--<img src='css/images/v3/greenBall.png' width='16'/>--> " + msg);
+					$('#igStatus').html("" + msg);
 					if(msg.indexOf("approve=true") > -1)
 					{
 						$('#igApproveButton').show();
@@ -383,7 +383,7 @@ function updatePageStatus()
 				else
 				{
 					$('#igStatusDiv').attr("class", "right published");
-					$('#igStatus').html("<!--<img src='css/images/v3/publishedBall.png' width='16'/>--> Published");
+					$('#igStatus').html("Published");
 					$('#igApproveButton').hide();
 					$('#igDenyButton').hide();
 					$('#igPublishButton').hide();

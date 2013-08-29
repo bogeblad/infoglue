@@ -240,7 +240,8 @@
         
         if(${editOnSightFooterToolbarIsActive})
         {
-	        CKEDITOR.disableAutoInline = true;
+        	if(typeof(CKEDITOR) != 'undefined')
+	        	CKEDITOR.disableAutoInline = true;
 	        updatePageStatus();	
 	        hideFooterButtons();	
 	        setTimeout(function(){registerOnChange();}, 1000);

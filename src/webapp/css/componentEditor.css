@@ -431,7 +431,7 @@ border-bottom:1px solid #9CAABD;
 	line-height:1.4em;
 	margin:8px 4px 0px 0px;
 	background-color: transparent !important;
-	text-shadow: 0px !important;
+	text-shadow: none !important;
 }
 .igDialogFooter input[type="button"]:hover, .componentPropertiesFooter input[type="button"]:hover, .editOnSightFooterToolbar input[type="button"]:hover
 { 

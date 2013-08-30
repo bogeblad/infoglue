@@ -164,6 +164,63 @@
 			document.location.href = "ViewListContentVersion.action?contentId=$contentId&returnAddress=" + returnAddress;
 		}
 				
+		
+		function approvePublication(eventId)
+		{
+			try
+			{
+				var data = "eventId=" + eventId + "&repositoryId=$!repositoryId";
+				$.ajax({
+					type: "GET",
+				   	url: "ViewCommonAjaxServices!approvePublication.action",
+				   	data: data,
+				   	dataType: "html", 
+				   	cache: false,
+				   	success: function(msg, textStatus){
+						alert("msg:" + msg);
+						//alert("textStatus:" + textStatus);
+						//alert("OK");
+						document.location.reload(true);
+				   },
+				   error: function (XMLHttpRequest, textStatus, errorThrown) {
+					   //alert("textStatus:" + textStatus);
+					   //alert("ResponseCode:" + XMLHttpRequest.status);
+					   //console.log(errorThrown);
+					   alert("Failed to approve: " + textStatus);
+				   }
+				});
+			}
+			catch(e) {console.log("e:" + e);}
+		}
+		
+		function denyPublication(eventId)
+		{
+			try
+			{
+				var data = "eventId=" + publishingEventId + "&repositoryId=$!repositoryId";
+				$.ajax({
+					type: "GET",
+				   	url: "ViewCommonAjaxServices!denyPublication.action",
+				   	data: data,
+				   	dataType: "html", 
+				   	cache: false,
+				   	success: function(msg, textStatus){
+						alert("msg:" + msg);
+						//alert("textStatus:" + textStatus);
+						//alert("OK");
+						document.location.reload(true);
+				   },
+				   error: function (XMLHttpRequest, textStatus, errorThrown) {
+					   //alert("textStatus:" + textStatus);
+					   //alert("ResponseCode:" + XMLHttpRequest.status);
+					   //console.log(errorThrown);
+					   alert("Failed to deny: " + textStatus);
+				   }
+				});
+			}
+			catch(e) {console.log("e:" + e);}
+		}
+		
 		var inlineImageDefaultRepositoryId = null;
 		#set($inlineImageDefaultRepositoryId = $map.get("inlineImageDefaultRepositoryId"))
 		#if($inlineImageDefaultRepositoryId && $inlineImageDefaultRepositoryId != "")
@@ -289,9 +346,9 @@
 						//alert("Creating a textarea for " + plainTextAreaName + " = " + i);
 						document.getElementById(plainTextAreaName).value = transformAttribute(document.getElementById(plainTextAreaName).value);
 	
-						var configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "'}";
+						var configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "', 'width':'" + $("#" + plainTextAreaName).width() + "px', 'height':'" + $("#" + plainTextAreaName).height() + "px'}";
 			 			if(WYSIWYGExtraConfig && WYSIWYGExtraConfig != '')
-			 				configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "'," + WYSIWYGExtraConfig + "}";
+			 				configString = "{'customConfig': '${root}/WYSIWYGProperties.action?repositoryId=$!repositoryId&contentId=$!contentId&languageId=$languageId&contentVersionId=$!contentVersionId','language': '$languageCode', 'toolbar': '" + WYSIWYGToolbar + "', 'width':'" + $("#" + plainTextAreaName).width() + "px', 'height':'" + $("#" + plainTextAreaName).height() + "px'," + WYSIWYGExtraConfig + "}";
 			 			var configObject = eval('(' + configString + ')');
 				
 						CKEDITOR.replace( plainTextAreaName, configObject);

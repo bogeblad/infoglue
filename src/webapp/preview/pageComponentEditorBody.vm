@@ -371,8 +371,13 @@ function updatePageStatus()
 					$('#igStatus').html("" + msg);
 					if(msg.indexOf("approve=true") > -1)
 					{
-						$('#igApproveButton').show();
-						$('#igDenyButton').show();
+						var eventId = ""+msg.match(/eventId=[0-9]{1,10}/g);
+						if(eventId != "")
+						{
+							window.publishingEventId = eventId.substring(8);
+							$('#igApproveButton').show();
+							$('#igDenyButton').show();
+						}
 					}
 					else
 					{

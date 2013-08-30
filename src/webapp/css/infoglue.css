@@ -541,7 +541,7 @@ ul.assignedEntities li
 .preview { background:url(images/v3/previewIcon.png) no-repeat left center; background-position: 4px 2px;}
 .publishPage {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .publishPages {background:url(images/v3/publishPageIcon.gif) no-repeat left center; background-position: 0px 2px;}
-.denyPublication {background:url(images/v3/denyPublicationIcon.png) no-repeat left center; background-position: 0px 2px;}
+.denyPublication {background:url(images/v3/denyPublicationIcon.png) no-repeat left center; background-position: 0px 4px;}
 .pageCover {background:url(images/v3/pageCoverIcon.png) no-repeat left center; background-position: 0px 2px;}
 .pageDetails {background:url(images/v3/metadataIcon.gif) no-repeat left center; background-position: 0px 2px;}
 .pageStructureSimple {background:url(images/v3/structureIcon.gif) no-repeat left center; background-position: 0px 2px;}
@@ -554,6 +554,8 @@ ul.assignedEntities li
 .upload { background:url(images/v3/refresh_img.png) no-repeat center; background-position: 0px 4px; }
 .attachAsset { background:url(images/v3/refresh_img.png) no-repeat left center; background-position: 0px 4px; }
 .linkInsert, .linkInsertAsset { background:url("images/v3/insert_img.gif") no-repeat left center; background-position: 0px 4px;}
+.approvePublication { background:url(images/v3/refresh_img.png) no-repeat left center; background-position: 0px 4px; }
+.denyPublication { background:url(images/v3/denyPublicationIcon.png) no-repeat left center; background-position: 0px 4px; }
 
 .unpublish {background:url(images/v3/unpublishIcon.png) no-repeat left center; background-position: 0px 2px;}
 .unpublishPage {background:url(images/v3/unpublishPageIcon.png) no-repeat left center; background-position: 0px 2px;}

@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.infoglue.cms.applications.common.ToolbarButton;
 import org.infoglue.cms.applications.common.VisualFormatter;
 import org.infoglue.cms.entities.content.ContentVO;
+import org.infoglue.cms.entities.content.ContentVersion;
 import org.infoglue.cms.entities.content.ContentVersionVO;
 import org.infoglue.cms.entities.management.AvailableServiceBindingVO;
 import org.infoglue.cms.entities.management.CategoryVO;
@@ -25,7 +26,9 @@ import org.infoglue.cms.entities.management.RepositoryVO;
 import org.infoglue.cms.entities.management.ServiceDefinitionVO;
 import org.infoglue.cms.entities.management.SiteNodeTypeDefinitionVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
+import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.entities.workflow.WorkflowDefinitionVO;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.providers.ToolbarProvider;
@@ -1289,14 +1292,6 @@ public class ToolbarController implements ToolbarProvider
 
 	private List<ToolbarButton> getContentVersionFooterButtons(String toolbarKey, InfoGluePrincipal principal, Locale locale, HttpServletRequest request, boolean disableCloseButton) throws Exception
 	{
-		String saveAndExitURL = (String)request.getAttribute("saveAndExitURL");
-		
-		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
-		
-		buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
-
-		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
-				
 		String contentIdParameter 	= "" + request.getAttribute("contentId");
 		String languageIdParameter 	= "" + request.getAttribute("languageId");
 		String contentVersionIdParameter = request.getParameter("contentVersionId");
@@ -1312,8 +1307,40 @@ public class ToolbarController implements ToolbarProvider
 		{
 			logger.error("Error parsing contentId or languageId. contentId: " + contentIdParameter + ", languageId: " + languageIdParameter);
 		}
+
+		List<ToolbarButton> buttons = new ArrayList<ToolbarButton>();
 		
 		ContentVersionVO cvvo = ContentVersionController.getContentVersionController().getLatestContentVersionVO(contentId, languageId);
+
+		if (cvvo != null && (cvvo.getStateId().intValue() == ContentVersionVO.PUBLISH_STATE || cvvo.getStateId().intValue() == ContentVersionVO.UNPUBLISH_STATE))
+		{
+			List<EventVO> eventVOList = EventController.getEventVOListForEntity(ContentVersion.class.getName(), cvvo.getId());
+			if(eventVOList != null && eventVOList.size() > 0)
+			{
+				buttons.add(new ToolbarButton("approvePublication",
+	  					  getLocalizedString(locale, "tool.contenttool.approve.label"), 
+	  					  getLocalizedString(locale, "tool.contenttool.approve.label"),
+	  					  "approvePublication(" + eventVOList.get(0).getId() + ");",
+	  					  "css/images/v3/cancelIcon.gif",
+	  					  "left",
+						  "approvePublication",
+	  					  true));
+
+				buttons.add(new ToolbarButton("denyPublication",
+	  					  getLocalizedString(locale, "tool.contenttool.deny.label"), 
+	  					  getLocalizedString(locale, "tool.contenttool.deny.label"),
+	  					  "denyPublication(" + eventVOList.get(0).getId() + ");",
+	  					  "css/images/v3/cancelIcon.gif",
+	  					  "left",
+						  "denyPublication",
+	  					  false));
+			}
+		}
+
+		buttons.add(getCompareButton(toolbarKey, principal, locale, request, disableCloseButton));
+
+		buttons.add(getCommonFooterSaveButton(toolbarKey, principal, locale, request, disableCloseButton));
+				
 		if (cvvo != null)
 		{
 			Integer latestContentVersionId = cvvo.getContentVersionId();
@@ -1333,7 +1360,6 @@ public class ToolbarController implements ToolbarProvider
 					  500,
 					  550));
 		}
-		
 		/*
 		buttons.add(new ToolbarButton("",
 									  getLocalizedString(locale, "tool.contenttool.publish.label"), 

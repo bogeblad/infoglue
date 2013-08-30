@@ -56,6 +56,7 @@ import org.infoglue.cms.entities.kernel.BaseEntityVO;
 import org.infoglue.cms.entities.management.LanguageVO;
 import org.infoglue.cms.entities.publishing.PublicationVO;
 import org.infoglue.cms.entities.structure.SiteNodeVO;
+import org.infoglue.cms.entities.structure.SiteNodeVersion;
 import org.infoglue.cms.entities.structure.SiteNodeVersionVO;
 import org.infoglue.cms.entities.workflow.EventVO;
 import org.infoglue.cms.util.CmsPropertyHandler;
@@ -212,6 +213,78 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 		if(getRequest().getParameter("siteNodeId") != null && !getRequest().getParameter("siteNodeId").equals("") && !getRequest().getParameter("siteNodeId").equals("null"))
 			siteNodeId = new Integer(getRequest().getParameter("siteNodeId"));
 	
+		SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
+		SiteNodeVersionVO latestVersion = SiteNodeVersionController.getController().getLatestActiveSiteNodeVersionVO(siteNodeId);
+
+		boolean isApprover = false;
+		boolean hasAccessToPublishingTool = hasAccessTo("Common.ApproveDenyPublications", false);
+		if(!hasAccessToPublishingTool)
+			hasAccessToPublishingTool = hasAccessTo("PublishingTool.Read", false);
+		if(hasAccessToPublishingTool)
+		{
+			boolean hasAccessToRepository = hasAccessTo("Repository.Read", "" + siteNodeVO.getRepositoryId());
+			if(!hasAccessToRepository)
+				hasAccessToRepository = hasAccessTo("Repository.Write", "" + siteNodeVO.getRepositoryId());
+			
+			if(hasAccessToRepository)
+				isApprover = true;
+		}
+		
+		List<EventVO> eventVOList = null;
+		boolean showEvent = false;
+		if(siteNodeId != null && isApprover)
+		{
+			if(latestVersion.getStateId().intValue() == SiteNodeVersionVO.PUBLISH_STATE)
+			{
+				eventVOList = EventController.getEventVOListForEntity(SiteNodeVersion.class.getName(), latestVersion.getId());
+				showEvent = true;
+			}
+		}
+		
+		if(eventVOList != null && eventVOList.size() > 0)
+		{
+			eventId = eventVOList.get(0).getId().toString();
+		}
+		
+		if(eventId != null && !eventId.equals(""))
+		{
+			try
+			{
+				EventVO event = EventController.getEventVOWithId(new Integer(eventId));
+				logger.info("event:" + event.getEntityClass() + ":" + event.getEntityId());
+				if(event.getTypeId() != 2)
+				{
+					if(event.getEntityClass().contains("SiteNodeVersion"))
+					{
+						SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId());
+						if(snvVO.getSiteNodeId().toString().equals(approveEntityId) || showEvent)
+						{
+							this.getResponse().setContentType("text/plain");
+							this.getResponse().setCharacterEncoding("UTF-8");
+							this.getResponse().getWriter().print("" + getLocalizedString(getLocale(), "deliver.editOnSight.pendingPageApproval.title") + " <a href='#' onclick='$(\"#comment\").toggle();' style='background-image: url(css/images/v3/info.png); width: 16px; height:16px; display: inline-block;'>&nbsp;</a><div id='comment' style='display: none; position: fixed; padding: 6px; bottom: 42px; margin-left: -55px; width: 250px; height: 70px; color: black; background-color: white; box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 3px;'><b>" + getLocalizedString(getLocale(), "tool.contenttool.versionComment") + ":</b> " + event.getDescription() + "<br/><b>" + getLocalizedString(getLocale(), "tool.contenttool.versionModifier") + ":</b> " + event.getCreator() + "</div><!-- approve=true eventId=" + event.getId() + " -->");
+							return NONE;
+						}
+					}
+					else if(event.getEntityClass().contains("ContentVersion"))
+					{
+						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(event.getEntityId());
+						logger.info("cvVO:" + cvVO);
+						if(cvVO.getContentId().toString().equals(approveEntityId) || showEvent)
+						{
+							this.getResponse().setContentType("text/plain");
+							this.getResponse().setCharacterEncoding("UTF-8");
+							this.getResponse().getWriter().print("" + getLocalizedString(getLocale(), "deliver.editOnSight.pendingContentApproval.title") + " <a href='#' onclick='$(\"#comment\").toggle();' style='background-image: url(css/images/v3/info.png); width: 16px; height:16px; display: inline-block;'>&nbsp;</a><div id='comment' style='display: none; position: fixed; padding: 6px; bottom: 42px; margin-left: -55px; width: 250px; height: 70px; color: black; background-color: white; box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 3px;'><b>" + getLocalizedString(getLocale(), "tool.contenttool.versionComment") + ":</b> " + event.getDescription() + "<br/><b>" + getLocalizedString(getLocale(), "tool.contenttool.versionModifier") + ":</b> " + event.getCreator() + "</div><!-- approve=true eventId=" + event.getId() + " -->");
+							return NONE;
+						}
+					}
+				}
+			}
+			catch (Exception e) 
+			{
+				logger.info("No event found probably:" + e.getMessage());
+			}
+		}
+		
 		if(contentId != null && contentId > -1)
 		{
 			ContentVO contentVO = ContentControllerProxy.getController().getACContentVOWithId(getInfoGluePrincipal(), contentId);
@@ -232,61 +305,27 @@ public class ViewCommonAjaxServicesAction extends InfoGlueAbstractAction
 			}
 		}
 
-		if(eventId != null && !eventId.equals(""))
-		{
-			String filter = CmsPropertyHandler.getDefaultPublicationEventFilter();
-			SiteNodeVO siteNodeVO = SiteNodeController.getController().getSiteNodeVOWithId(siteNodeId);
-			
-			try
-			{
-				EventVO event = EventController.getEventVOWithId(new Integer(eventId));
-				logger.info("event:" + event.getEntityClass() + ":" + event.getEntityId());
-				if(event.getTypeId() != 2)
-				{
-					if(event.getEntityClass().contains("SiteNodeVersion"))
-					{
-						SiteNodeVersionVO snvVO = SiteNodeVersionController.getController().getSiteNodeVersionVOWithId(event.getEntityId());
-						if(snvVO.getSiteNodeId().toString().equals(approveEntityId))
-						{
-							this.getResponse().setContentType("text/plain");
-							this.getResponse().setCharacterEncoding("UTF-8");
-							this.getResponse().getWriter().print("" + getLocalizedString(getLocale(), "deliver.editOnSight.pendingPageApproval.title") + " <a href='#' onclick='$(\"#comment\").toggle();' style='background-image: url(css/images/v3/info.png); width: 16px; height:16px; display: inline-block;'>&nbsp;</a><div id='comment' style='display: none; position: fixed; padding: 6px; bottom: 42px; margin-left: -55px; width: 250px; height: 70px; color: black; background-color: white; box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 3px;'><b>" + getLocalizedString(getLocale(), "tool.contenttool.versionComment") + ":</b> " + event.getDescription() + "<br/><b>" + getLocalizedString(getLocale(), "tool.contenttool.versionModifier") + ":</b> " + event.getCreator() + "</div><!-- approve=true -->");
-							return NONE;
-						}
-					}
-					else if(event.getEntityClass().contains("ContentVersion"))
-					{
-						ContentVersionVO cvVO = ContentVersionController.getContentVersionController().getContentVersionVOWithId(event.getEntityId());
-						logger.info("cvVO:" + cvVO);
-						if(cvVO.getContentId().toString().equals(approveEntityId))
-						{
-							this.getResponse().setContentType("text/plain");
-							this.getResponse().setCharacterEncoding("UTF-8");
-							this.getResponse().getWriter().print("" + getLocalizedString(getLocale(), "deliver.editOnSight.pendingContentApproval.title") + " <a href='#' onclick='$(\"#comment\").toggle();' style='background-image: url(css/images/v3/info.png); width: 16px; height:16px; display: inline-block;'>&nbsp;</a><div id='comment' style='display: none; position: fixed; padding: 6px; bottom: 42px; margin-left: -55px; width: 250px; height: 70px; color: black; background-color: white; box-shadow: rgba(0, 0, 0, 0.2) 0px -3px 3px;'><b>" + getLocalizedString(getLocale(), "tool.contenttool.versionComment") + ":</b> " + event.getDescription() + "<br/><b>" + getLocalizedString(getLocale(), "tool.contenttool.versionModifier") + ":</b> " + event.getCreator() + "</div><!-- approve=true -->");
-							return NONE;
-						}
-					}
-				}
-			}
-			catch (Exception e) 
-			{
-				logger.info("No event found probably:" + e.getMessage());
-			}
-		}
-
 		ProcessBean processBean = ProcessBean.createProcessBean(ViewListSiteNodeVersionAction.class.getName(), "" + getInfoGluePrincipal().getName());
 		SiteNodeVersionController.getController().getSiteNodeAndAffectedItemsRecursive(siteNodeId, SiteNodeVersionVO.WORKING_STATE, siteNodeVersionVOList, contentVersionVOList, false, false, this.getInfoGluePrincipal(), processBean, getLocale());
 		
 		this.getResponse().setContentType("text/plain");
 		this.getResponse().setCharacterEncoding("UTF-8");
-		if(siteNodeVersionVOList.size() > 0 || contentVersionVOList.size() > 0)
+		if(latestVersion.getStateId().intValue() == SiteNodeVersionVO.PUBLISH_STATE)
+		{
+			String text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStateWorking.text", new Integer[]{siteNodeVersionVOList.size(), contentVersionVOList.size()});
+			if(siteNodeVersionVOList.size() > 0 || contentVersionVOList.size() > 0)
+				this.getResponse().getWriter().print("" + text + " " + getLocalizedString(getLocale(), "deliver.editOnSight.pendingPageApproval.title"));			
+			else
+				this.getResponse().getWriter().print("" + getLocalizedString(getLocale(), "deliver.editOnSight.pendingPageApproval.title"));
+		}
+		else if(siteNodeVersionVOList.size() > 0 || contentVersionVOList.size() > 0)
 		{
 			String text = getLocalizedString(getLocale(), "deliver.editOnSight.toolbarStateWorking.text", new Integer[]{siteNodeVersionVOList.size(), contentVersionVOList.size()});
 			this.getResponse().getWriter().print("" + text);
 		}
 		else
 			this.getResponse().getWriter().print("" + (siteNodeVersionVOList.size() + contentVersionVOList.size()) + "");
-			
+
 		return NONE;
     }
 

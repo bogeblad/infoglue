@@ -79,8 +79,6 @@ import org.infoglue.deliver.util.HttpHelper;
 import org.infoglue.deliver.util.LiveInstanceMonitor;
 import org.infoglue.deliver.util.VelocityTemplateProcessor;
 
-import sun.security.action.GetLongAction;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -1597,12 +1595,15 @@ public class PublicationController extends BaseController
 			logger.info("email:" + email);
 			logger.info("recipients:" + recipients);
 
-			
 			MailServiceFactory.getService().sendEmail(contentType, systemEmailSender, systemEmailSender, recipients, null, null, null, "CMS - " + principal.getFirstName() + " " + principal.getLastName() + " submitted " + resultingEvents.size() + " items for publishing", email, "utf-8");
 	    }
 		catch(Exception e)
 		{
 			logger.error("The notification was not sent. Reason:" + e.getMessage(), e);
+		}
+		catch(Throwable t)
+		{
+			logger.error("The notification was not sent. Reason:" + t.getMessage(), t);
 		}
 	}
 

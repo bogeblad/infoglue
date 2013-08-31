@@ -1010,19 +1010,24 @@ public class OptimizedImportController extends BaseController implements Runnabl
 	 */
 	private void createStructure(SiteNode siteNode, Map<Integer,List<SiteNodeVersion>> allSiteNodeVersionMap, Map contentIdMap, Map siteNodeIdMap, Map siteNodeVersionIdMap, Map readAvailableServiceBindings, List allSiteNodes, Database db, String onlyLatestVersions, Map<String,String> replaceMap, Map<Integer,SiteNodeTypeDefinition> siteNodeTypeDefinitions) throws Exception
 	{
-		logger.info("createStructure with siteNode:" + siteNode.getName());
-
+		if(siteNode != null)
+			logger.info("createStructure with siteNode:" + siteNode.getName());
+		else
+			logger.info("createStructure with siteNode:" + siteNode);
 		Integer originalSiteNodeId = siteNode.getValueObject().getSiteNodeId();
 
 		logger.info("originalSiteNodeId:" + originalSiteNodeId);
 
 		SiteNodeTypeDefinition originalSiteNodeTypeDefinition = siteNode.getSiteNodeTypeDefinition();
-		System.out.println("originalSiteNodeTypeDefinition:" +originalSiteNodeTypeDefinition);
+		logger.info("originalSiteNodeTypeDefinition:" +originalSiteNodeTypeDefinition);
 		
 		if(originalSiteNodeTypeDefinition == null)
 		{
 			Integer siteNodeTypeDefinitionId = siteNode.getValueObject().getSiteNodeTypeDefinitionId();
+			logger.info("siteNodeTypeDefinitionId: " + siteNodeTypeDefinitionId);
 			originalSiteNodeTypeDefinition = siteNodeTypeDefinitions.get(siteNodeTypeDefinitionId);
+			logger.info("siteNodeTypeDefinitions: " + siteNodeTypeDefinitions);
+			logger.info("originalSiteNodeTypeDefinition: " + originalSiteNodeTypeDefinition);
 		}
 		
 		SiteNodeTypeDefinition siteNodeTypeDefinition = null;
@@ -1035,8 +1040,11 @@ public class OptimizedImportController extends BaseController implements Runnabl
 			{
 			    db.create(originalSiteNodeTypeDefinition);
 			    siteNodeTypeDefinition = originalSiteNodeTypeDefinition;
+				logger.info("originalSiteNodeTypeDefinition ID:" + originalSiteNodeTypeDefinition.getId());
 			}
-			
+			else
+				logger.info("siteNodeTypeDefinition ID:" + siteNodeTypeDefinition.getId());
+
 			siteNode.setSiteNodeTypeDefinition((SiteNodeTypeDefinitionImpl)siteNodeTypeDefinition);
 		}
 		

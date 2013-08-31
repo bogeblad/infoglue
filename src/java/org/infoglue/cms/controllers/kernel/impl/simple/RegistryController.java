@@ -28,6 +28,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,6 +72,7 @@ import org.infoglue.cms.exception.ConstraintException;
 import org.infoglue.cms.exception.SystemException;
 import org.infoglue.cms.security.InfoGluePrincipal;
 import org.infoglue.cms.util.CmsPropertyHandler;
+import org.infoglue.cms.util.sorters.ReflectionComparator;
 import org.infoglue.deliver.util.CacheController;
 import org.infoglue.deliver.util.Timer;
 
@@ -1662,7 +1664,13 @@ public class RegistryController extends BaseController
 		
         Map<String,Boolean> checkedLanguageVersions = new HashMap<String,Boolean>();
 
-        List registryEntires = getMatchingRegistryVOList(Content.class.getName(), contentId.toString(), maxRows, db);
+        List<RegistryVO> registryEntires = getMatchingRegistryVOList(Content.class.getName(), contentId.toString(), maxRows, db);
+        if(onlyOneVersionPerLanguage)
+        {
+        	Collections.sort(registryEntires, new ReflectionComparator("referencingEntityId"));
+        	Collections.reverse(registryEntires);
+        }        
+        
         logger.info("registryEntires:" + registryEntires.size());
         Iterator registryEntiresIterator = registryEntires.iterator();
         while(registryEntiresIterator.hasNext())
@@ -1688,6 +1696,7 @@ public class RegistryController extends BaseController
                 try
                 {
                     ContentVersion contentVersion = ContentVersionController.getContentVersionController().getContentVersionWithId(new Integer(registryVO.getReferencingEntityId()), db);
+                    //logger.info("content: " + contentVersion.getOwningContent().getContentId() + " - contentVersion: " + contentVersion.getId());
                     Boolean hasVersion = checkedLanguageVersions.get("" + contentVersion.getValueObject().getContentId() + "_" + contentVersion.getLanguageId());
                     if(hasVersion != null && onlyOneVersionPerLanguage)
                     {
@@ -2571,9 +2580,9 @@ public class RegistryController extends BaseController
 	 * Gets matching references
 	 */
 
-	public List getMatchingRegistryVOList(String entityName, String entityId, int maxRows, Database db) throws SystemException, Exception
+	public List<RegistryVO> getMatchingRegistryVOList(String entityName, String entityId, int maxRows, Database db) throws SystemException, Exception
 	{
-	    List matchingRegistryVOList = new ArrayList();
+	    List<RegistryVO> matchingRegistryVOList = new ArrayList<RegistryVO>();
 
 		String SQL = "CALL SQL select registryId, entityName, entityid, referencetype, referencingentityname, referencingentityid, referencingentitycomplname, referencingentitycomplid from cmRegistry r where r.entityName = $1 AND r.entityId = $2 AS org.infoglue.cms.entities.management.impl.simple.RegistryImpl";
 		if(maxRows > 0)

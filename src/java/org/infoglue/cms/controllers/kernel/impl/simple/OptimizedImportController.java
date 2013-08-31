@@ -1046,6 +1046,7 @@ public class OptimizedImportController extends BaseController implements Runnabl
 				logger.info("siteNodeTypeDefinition ID:" + siteNodeTypeDefinition.getId());
 
 			siteNode.setSiteNodeTypeDefinition((SiteNodeTypeDefinitionImpl)siteNodeTypeDefinition);
+			siteNode.getValueObject().setSiteNodeTypeDefinitionId(siteNodeTypeDefinition.getId());
 		}
 		
 		
@@ -1058,7 +1059,8 @@ public class OptimizedImportController extends BaseController implements Runnabl
 		siteNode.setMetaInfoContentId(new Integer(mappedMetaInfoContentId));
 		
 		siteNode.setName(substituteStrings(siteNode.getName(), replaceMap));
-
+		System.out.println("siteNode:" + siteNode.getClass().getName() + ":" + siteNode.getSiteNodeTypeDefinition().getId());
+		System.out.println("siteNode:" + siteNode.getName() + ":" + siteNode.getValueObject().getSiteNodeTypeDefinitionId());
 		db.create(siteNode);
 		
 		allSiteNodes.add(siteNode);

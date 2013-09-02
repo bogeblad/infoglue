@@ -3552,7 +3552,7 @@ public class SiteNodeController extends BaseController
 		SiteNode siteNode = getSiteNodeWithId(siteNodeVO.getSiteNodeId(), db);
 		SiteNode parent = siteNode.getParentSiteNode();
 		boolean notifyResponsibleOnReferenceChange = CmsPropertyHandler.getNotifyResponsibleOnReferenceChange();
-		System.out.println("notifyResponsibleOnReferenceChange:" + notifyResponsibleOnReferenceChange);
+		logger.info("notifyResponsibleOnReferenceChange:" + notifyResponsibleOnReferenceChange);
 		if(parent != null)
 		{
 			Iterator childSiteNodeIterator = parent.getChildSiteNodes().iterator();
